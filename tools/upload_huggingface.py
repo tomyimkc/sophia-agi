@@ -17,7 +17,23 @@ CORPUS = ROOT / "training" / "corpus.jsonl"
 CARD = ROOT / "huggingface" / "README.md"
 
 
+def load_dotenv() -> None:
+    env_path = ROOT / ".env"
+    if not env_path.exists():
+        return
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if value and "your" not in value.lower():
+            os.environ.setdefault(key, value)
+
+
 def main() -> int:
+    load_dotenv()
     try:
         from huggingface_hub import HfApi
     except ImportError:

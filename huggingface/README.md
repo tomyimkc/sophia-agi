@@ -8,6 +8,9 @@ task_categories:
 - text-generation
 tags:
 - philosophy
+- psychology
+- history
+- religion
 - agi
 - provenance
 - attribution
@@ -20,7 +23,7 @@ size_categories:
 
 # Sophia AGI Corpus
 
-**Wisdom before intelligence.** Bilingual training data for provenance-aware philosophy reasoning.
+**Wisdom before intelligence.** Bilingual training data for provenance-aware reasoning across philosophy, psychology, history, and religion (19 examples, v0.3.1).
 
 ## Dataset description
 
@@ -50,9 +53,9 @@ Evaluate models on the **Sophia Attribution Benchmark** in the GitHub repo:
 
 `tests/attribution_bench.json` + `tools/score_benchmark.py`
 
-## Planned domains
+## Domains
 
-Philosophy (active) → Psychology, History, Religion (planned).
+Philosophy · Psychology · History · Religion — all active with per-domain benchmarks.
 
 ## Citation
 

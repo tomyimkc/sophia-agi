@@ -73,7 +73,7 @@ See [docs/08-Domains/Overview.md](docs/08-Domains/Overview.md) and answer [Expan
 
 ## Hugging Face
 
-Dataset card: `huggingface/README.md` — upload `training/corpus.jsonl` as `tomyimkc/sophia-agi-corpus`.
+Dataset: [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) (19 training examples, JSONL).
 
 ## Contributing
 
