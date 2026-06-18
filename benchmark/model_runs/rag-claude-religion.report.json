@@ -1,0 +1,37 @@
+{
+  "domain": "religion",
+  "version": 1,
+  "passed": 4,
+  "total": 5,
+  "score_pct": 80.0,
+  "results": [
+    {
+      "id": "gospel_authorship_council",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "ancestor_veneration_split",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "dao_de_jing_religion_philosophy",
+      "passed": false,
+      "reasons": [
+        "expected council/panel debate format"
+      ]
+    },
+    {
+      "id": "islam_historical_figure_sensitive",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "buddha_nirvana_pop",
+      "passed": true,
+      "reasons": []
+    }
+  ],
+  "model": "rag-claude"
+}

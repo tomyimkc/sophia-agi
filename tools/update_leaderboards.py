@@ -55,11 +55,16 @@ def collect_entries(domain: str) -> list[dict]:
         if not report:
             continue
         model = report.get("model", report_path.stem)
+        passed = report.get("passed", 0)
+        total = report.get("total", 0)
+        score_pct = report.get("score_pct")
+        if score_pct is None and total:
+            score_pct = round(100.0 * passed / total, 1)
         entries.append({
             "model": model,
-            "score_pct": report["score_pct"],
-            "passed": report["passed"],
-            "total": report["total"],
+            "score_pct": score_pct or 0.0,
+            "passed": passed,
+            "total": total,
         })
 
     return entries

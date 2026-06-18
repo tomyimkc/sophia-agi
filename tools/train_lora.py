@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import traceback
 from pathlib import Path
 from typing import Any
@@ -38,9 +39,16 @@ def verify_checkpoint(output: Path) -> list[str]:
     return [name for name in REQUIRED_ADAPTER_FILES if not (output / name).exists()]
 
 
-def build_model_and_tokenizer(model_id: str, four_bit: bool, lora_r: int, lora_alpha: int) -> tuple[Any, Any]:
+def build_model_and_tokenizer(
+    model_id: str,
+    four_bit: bool,
+    lora_r: int,
+    lora_alpha: int,
+    *,
+    resume_adapter: Path | None = None,
+) -> tuple[Any, Any]:
     import torch
-    from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+    from peft import LoraConfig, PeftModel, get_peft_model, prepare_model_for_kbit_training
     from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
     tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
@@ -65,15 +73,19 @@ def build_model_and_tokenizer(model_id: str, four_bit: bool, lora_r: int, lora_a
     model.config.use_cache = False
     model.gradient_checkpointing_enable()
 
-    lora = LoraConfig(
-        r=lora_r,
-        lora_alpha=lora_alpha,
-        lora_dropout=0.05,
-        bias="none",
-        task_type="CAUSAL_LM",
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
-    )
-    model = get_peft_model(model, lora)
+    if resume_adapter and resume_adapter.exists():
+        model = PeftModel.from_pretrained(model, str(resume_adapter), is_trainable=True)
+        print(f"Resumed adapter from {resume_adapter}")
+    else:
+        lora = LoraConfig(
+            r=lora_r,
+            lora_alpha=lora_alpha,
+            lora_dropout=0.05,
+            bias="none",
+            task_type="CAUSAL_LM",
+            target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+        )
+        model = get_peft_model(model, lora)
     model.print_trainable_parameters()
     return model, tokenizer
 
@@ -111,6 +123,12 @@ def main() -> int:
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--train", type=Path, default=TRAIN_JSONL)
     parser.add_argument("--output", type=Path, default=ROOT / "training" / "lora" / "checkpoints" / "sophia-v1")
+    parser.add_argument(
+        "--resume-adapter",
+        type=Path,
+        default=None,
+        help="Continue training from an existing PEFT adapter (e.g. sophia-v1 -> sophia-v2)",
+    )
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--lr", type=float, default=2e-4)
@@ -126,29 +144,34 @@ def main() -> int:
         return 1
 
     rows = load_rows(args.train)
-    print(f"Train rows: {len(rows)} | model: {args.model} | output: {args.output}")
+    print(f"Train rows: {len(rows)} | model: {args.model} | output: {args.output}", flush=True)
     if args.dry_run or not rows:
         return 0
 
+    print("loading torch...", flush=True)
     try:
         import torch
+        print("loading transformers...", flush=True)
         from transformers import DataCollatorForLanguageModeling, Trainer, TrainingArguments
-    except ImportError:
-        print("Install LoRA deps: pip install -r requirements-lora.txt")
+    except Exception as exc:
+        print(f"Install LoRA deps: pip install -r requirements-lora.txt ({type(exc).__name__}: {exc})", flush=True)
+        traceback.print_exc(file=sys.stdout)
         return 1
 
+    print(f"cuda available: {torch.cuda.is_available()}", flush=True)
     if not torch.cuda.is_available():
-        print("CUDA GPU not detected. Use Google Colab: notebooks/Sophia-LoRA-Colab.ipynb")
+        print("CUDA GPU not detected. Use Google Colab: notebooks/Sophia-LoRA-Colab.ipynb", flush=True)
         return 1
 
     if args.four_bit:
+        print("loading bitsandbytes...", flush=True)
         try:
             import bitsandbytes  # noqa: F401
-        except ImportError:
-            print("4-bit requires bitsandbytes. Colab: pip install bitsandbytes")
+        except ImportError as exc:
+            print(f"4-bit requires bitsandbytes. Colab: pip install bitsandbytes ({exc})", flush=True)
             return 1
 
-    print(f"torch={torch.__version__}")
+    print(f"torch={torch.__version__}", flush=True)
 
     args.output.mkdir(parents=True, exist_ok=True)
     marker = args.output / DONE_MARKER
@@ -160,6 +183,7 @@ def main() -> int:
         args.four_bit,
         args.lora_r,
         args.lora_alpha,
+        resume_adapter=args.resume_adapter,
     )
     train_ds = tokenize_dataset(tokenizer, rows, args.max_seq_len)
 
@@ -211,6 +235,8 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
+    except SystemExit:
+        raise
     except Exception:
-        traceback.print_exc()
+        traceback.print_exc(file=sys.stdout)
         raise SystemExit(1)

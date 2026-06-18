@@ -24,6 +24,8 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 OUT_DIR = ROOT / "benchmark" / "model_runs"
 DOMAINS = ("philosophy", "psychology", "history", "religion")
 
@@ -44,6 +46,7 @@ PROVIDERS: dict[str, tuple[str, str]] = {
     "gpt-4o": ("gpt-4o", "OPENAI_API_KEY"),
     "claude-sonnet": ("claude-sonnet-4-6", "ANTHROPIC_API_KEY"),
     "grok": ("x-ai/grok-3-beta", "XAI_API_KEY"),
+    "gemini": ("gemini-2.0-flash", "GOOGLE_API_KEY"),
 }
 
 
@@ -94,10 +97,20 @@ def anthropic_base_url() -> str | None:
     return value.rstrip("/") if value else None
 
 
+def google_api_key() -> str | None:
+    for name in ("GOOGLE_API_KEY", "GEMINI_API_KEY", "GOOGLE_GENAI_API_KEY"):
+        value = os.environ.get(name, "").strip()
+        if is_real_secret(value):
+            return value
+    return None
+
+
 def direct_api_key(provider: str) -> str | None:
     _, env_name = PROVIDERS[provider]
     if env_name == "ANTHROPIC_API_KEY":
         return anthropic_api_key()
+    if env_name == "GOOGLE_API_KEY":
+        return google_api_key()
     value = os.environ.get(env_name, "").strip()
     return value if is_real_secret(value) else None
 
@@ -107,8 +120,18 @@ def model_override(provider: str, default: str) -> str:
         "gpt-4o": "OPENAI_MODEL",
         "claude-sonnet": "ANTHROPIC_MODEL",
         "grok": "XAI_MODEL",
+        "gemini": "GEMINI_MODEL",
     }
     return os.environ.get(env_map.get(provider, ""), default)
+
+
+def ask_gemini(question: str, model: str) -> str:
+    from agent.gemini_llm import complete_with_context
+    from agent.retrieval import format_context, retrieve
+
+    chunks = retrieve(question, top_k=8)
+    context = format_context(chunks)
+    return complete_with_context(question, context)
 
 
 def ask_openai_compatible(question: str, model: str, *, api_key: str, base_url: str | None = None) -> str:
@@ -186,7 +209,12 @@ def ask_provider(provider: str, question: str) -> str:
             return ask_openai_compatible(question, model, api_key=direct, base_url=base)
         if provider == "claude-sonnet":
             return ask_anthropic_native(question, model)
+        if provider == "gemini":
+            return ask_gemini(question, model)
         return ask_xai_native(question, model)
+
+    if provider == "gemini":
+        raise RuntimeError("Set GOOGLE_API_KEY or GEMINI_API_KEY in .env for Gemini benchmark")
 
     monica_key = monica_api_key()
     if monica_key:
@@ -202,6 +230,8 @@ def ask_provider(provider: str, question: str) -> str:
 
 
 def provider_available(provider: str) -> bool:
+    if provider == "gemini":
+        return bool(google_api_key())
     return bool(direct_api_key(provider) or monica_api_key())
 
 
@@ -232,6 +262,8 @@ def describe_backend() -> str:
         parts.append("GPT (direct OpenAI API)")
     if os.environ.get("XAI_API_KEY", "").strip():
         parts.append("Grok (direct xAI API)")
+    if google_api_key():
+        parts.append("Gemini (Google API + curated RAG)")
     if monica_api_key():
         parts.append("Monica gateway (fallback for providers without direct keys)")
     return " | ".join(parts) if parts else "no API keys found"

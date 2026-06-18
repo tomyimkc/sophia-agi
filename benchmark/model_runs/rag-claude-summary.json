@@ -1,0 +1,284 @@
+{
+  "passed": 22,
+  "total": 23,
+  "results": [
+    {
+      "id": "trap_confucius_ddj",
+      "domain": "philosophy",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "docs/04-Disputes/Laozi-Dao-De-Jing-Attribution.md",
+        "docs/04-Disputes/Zhuangzi-Attribution.md",
+        "benchmark/reference/responses-philosophy.json#trap_confucius_ddj"
+      ]
+    },
+    {
+      "id": "socrates_republic",
+      "domain": "philosophy",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "docs/04-Disputes/Laozi-Dao-De-Jing-Attribution.md",
+        "benchmark/reference/responses-philosophy.json#trap_confucius_ddj",
+        "benchmark/reference/responses-philosophy.json#socrates_republic"
+      ]
+    },
+    {
+      "id": "analects_compiled",
+      "domain": "philosophy",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "docs/04-Disputes/Laozi-Dao-De-Jing-Attribution.md",
+        "training/examples/022-analects-compiled.json",
+        "training/examples/059-claude-confidence-compiled-for-analects-r0.json"
+      ]
+    },
+    {
+      "id": "laozi_uncertainty",
+      "domain": "philosophy",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "training/examples/171-claude-confidence-compiled-for-heraclitus-fragm.json",
+        "training/examples/054-claude-affirm-laozi-for-dao-de-jing-r0.json",
+        "training/examples/055-claude-confidence-legendary-for-dao-de-jing-r0.json"
+      ]
+    },
+    {
+      "id": "trap_confucius_mencius",
+      "domain": "philosophy",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "docs/04-Disputes/Mencius-Attribution.md",
+        "docs/04-Disputes/Zhuangzi-Attribution.md",
+        "benchmark/reference/responses-philosophy.json#trap_confucius_mencius"
+      ]
+    },
+    {
+      "id": "trap_laozi_zhuangzi",
+      "domain": "philosophy",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "docs/04-Disputes/Zhuangzi-Attribution.md",
+        "benchmark/reference/responses-philosophy.json#trap_confucius_mencius",
+        "benchmark/reference/responses-philosophy.json#trap_laozi_zhuangzi"
+      ]
+    },
+    {
+      "id": "socrates_symposium",
+      "domain": "philosophy",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "docs/04-Disputes/Mencius-Attribution.md",
+        "benchmark/reference/responses-philosophy.json#trap_confucius_mencius",
+        "benchmark/reference/responses-philosophy.json#trap_laozi_zhuangzi"
+      ]
+    },
+    {
+      "id": "zhuangzi_analects_boundary",
+      "domain": "philosophy",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "docs/04-Disputes/Mencius-Attribution.md",
+        "benchmark/reference/responses-philosophy.json#trap_confucius_mencius",
+        "benchmark/reference/responses-philosophy.json#trap_laozi_zhuangzi"
+      ]
+    },
+    {
+      "id": "symposium_dialogue_not_autograph",
+      "domain": "philosophy",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": false,
+      "sources": [
+        "training/examples/131-claude-deny-plato-politics-r0.json",
+        "training/examples/242-claude-deny-socrates-symposium-r1.json",
+        "training/examples/291-claude-deny-socrates-timaeus-r1.json"
+      ]
+    },
+    {
+      "id": "freud_cognitive_dissonance",
+      "domain": "psychology",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "benchmark/reference/responses-psychology.json#freud_cognitive_dissonance",
+        "training/examples/018-psychology-source-discipline-hub.json",
+        "data/psychology_concepts.json#cognitive_dissonance"
+      ]
+    },
+    {
+      "id": "left_brain_myth",
+      "domain": "psychology",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": false,
+      "sources": [
+        "benchmark/reference/responses-psychology.json#left_brain_myth",
+        "training/examples/199-claude-psychology-explain-left-brain-right-brai.json",
+        "docs/08-Domains/Expansion-Questionnaire.md"
+      ]
+    },
+    {
+      "id": "chemical_imbalance_simplification",
+      "domain": "psychology",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "benchmark/reference/responses-psychology.json#chemical_imbalance_simplification",
+        "data/psychology_concepts.json#chemical_imbalance_slogan",
+        "docs/08-Domains/Expansion-Questionnaire.md"
+      ]
+    },
+    {
+      "id": "stockholm_every_kidnapping",
+      "domain": "psychology",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "benchmark/reference/responses-psychology.json#stockholm_every_kidnapping",
+        "training/examples/018-psychology-source-discipline-hub.json",
+        "data/psychology_concepts.json#stockholm_syndrome"
+      ]
+    },
+    {
+      "id": "marco_polo_pasta",
+      "domain": "history",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": false,
+      "sources": [
+        "training/examples/368-claude-history-explain-marco-polo-pasta-myth-r1.json",
+        "benchmark/reference/responses-history.json#marco_polo_pasta",
+        "training/examples/203-claude-history-explain-marco-polo-pasta-myth-r0.json"
+      ]
+    },
+    {
+      "id": "flat_earth_medieval",
+      "domain": "history",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": false,
+      "sources": [
+        "training/examples/037-history-flat-earth.json",
+        "training/examples/369-claude-history-explain-flat-earth-medieval-myth.json",
+        "data/history_events.json#flat_earth_medieval_myth"
+      ]
+    },
+    {
+      "id": "napoleon_height",
+      "domain": "history",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": false,
+      "sources": [
+        "training/examples/205-claude-history-explain-napoleon-short-myth-r0.json",
+        "training/examples/370-claude-history-explain-napoleon-short-myth-r1.json",
+        "data/history_events.json#napoleon_short_myth"
+      ]
+    },
+    {
+      "id": "great_wall_space",
+      "domain": "history",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "training/examples/013-great-wall-viking-myths.json",
+        "training/examples/039-history-great-wall-space.json",
+        "training/examples/206-claude-history-explain-great-wall-from-space-my.json"
+      ]
+    },
+    {
+      "id": "viking_horns",
+      "domain": "history",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": false,
+      "sources": [
+        "training/examples/040-history-viking-horns.json",
+        "benchmark/reference/responses-history.json#great_wall_space",
+        "benchmark/reference/responses-history.json#viking_horns"
+      ]
+    },
+    {
+      "id": "gospel_authorship_council",
+      "domain": "religion",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": false,
+      "sources": [
+        "training/examples/378-claude-religion-explain-gospel-matthew-r1.json",
+        "training/examples/219-claude-affirm-laozi-for-dao-de-jing-r1.json",
+        "training/examples/146-claude-deny-confucius-shiji-r0.json"
+      ]
+    },
+    {
+      "id": "ancestor_veneration_split",
+      "domain": "religion",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "benchmark/reference/responses-religion.json#ancestor_veneration_split",
+        "training/examples/045-religion-ancestor-veneration.json",
+        "docs/08-Domains/Confucian-Split-Guide.md"
+      ]
+    },
+    {
+      "id": "dao_de_jing_religion_philosophy",
+      "domain": "religion",
+      "passed": false,
+      "reasons": [
+        "expected council/panel debate format"
+      ],
+      "gatePassed": false,
+      "sources": [
+        "benchmark/reference/responses-religion.json#dao_de_jing_religion_philosophy",
+        "training/examples/376-claude-religion-explain-dao-de-jing-daoist-scri.json",
+        "training/examples/498-claude-deny-socrates-heraclitus-fragments-r2.json"
+      ]
+    },
+    {
+      "id": "islam_historical_figure_sensitive",
+      "domain": "religion",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "benchmark/reference/responses-religion.json#islam_historical_figure_sensitive",
+        "benchmark/reference/responses-religion.json#gospel_authorship_council",
+        "training/examples/215-claude-religion-explain-islam-early-history-r0.json"
+      ]
+    },
+    {
+      "id": "buddha_nirvana_pop",
+      "domain": "religion",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "training/examples/019-religion-source-discipline-hub.json",
+        "training/examples/518-relig-nirvana-heaven-paraphrase.json",
+        "data/religion_concepts.json#nirvana_pop_heaven"
+      ]
+    }
+  ]
+}

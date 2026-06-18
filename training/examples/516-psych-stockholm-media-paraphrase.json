@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Tag clinical vs pop_myth subfields. Bilingual EN + 中文 summary."
+    },
+    {
+      "role": "user",
+      "content": "Why do crime documentaries treat Stockholm syndrome as something every hostage automatically has?"
+    },
+    {
+      "role": "assistant",
+      "content": "That framing is a **pop_myth** — media overgeneralizes a **clinical** concept. Stockholm syndrome names bonding patterns under extreme coercion in some cases; **not all** hostages develop it. Documentaries often collapse rare clinical observations into a universal narrative.\n\nSource discipline: separate **clinical** evidence from **pop_myth** storytelling.\n\n中文：犯罪紀錄片把斯德哥爾摩症候群普遍化屬 **pop_myth**；臨床上是 **clinical** 概念，**並非所有**人質都會出現。"
+    }
+  ],
+  "metadata": {
+    "source": "v2-train-paraphrase",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "recordIds": ["stockholm_syndrome"],
+    "subfield": "clinical",
+    "trap": "stockholm_media_paraphrase"
+  }
+}

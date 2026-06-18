@@ -1,0 +1,42 @@
+{
+  "passed": 3,
+  "total": 3,
+  "results": [
+    {
+      "id": "stockholm_every_kidnapping",
+      "domain": "psychology",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "benchmark/reference/responses-psychology.json#stockholm_every_kidnapping",
+        "training/examples/018-psychology-source-discipline-hub.json",
+        "data/psychology_concepts.json#stockholm_syndrome"
+      ]
+    },
+    {
+      "id": "ancestor_veneration_split",
+      "domain": "religion",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "benchmark/reference/responses-religion.json#ancestor_veneration_split",
+        "training/examples/045-religion-ancestor-veneration.json",
+        "docs/08-Domains/Confucian-Split-Guide.md"
+      ]
+    },
+    {
+      "id": "buddha_nirvana_pop",
+      "domain": "religion",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "training/examples/019-religion-source-discipline-hub.json",
+        "training/examples/518-relig-nirvana-heaven-paraphrase.json",
+        "data/religion_concepts.json#nirvana_pop_heaven"
+      ]
+    }
+  ]
+}

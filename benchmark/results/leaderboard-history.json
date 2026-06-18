@@ -21,6 +21,12 @@
       "score_pct": 100.0,
       "passed": 5,
       "total": 5
+    },
+    {
+      "model": "rag-claude",
+      "score_pct": 100.0,
+      "passed": 5,
+      "total": 5
     }
   ]
 }

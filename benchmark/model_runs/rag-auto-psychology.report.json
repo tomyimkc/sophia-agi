@@ -1,0 +1,20 @@
+{
+  "domain": "psychology",
+  "model": "rag-auto",
+  "passed": 1,
+  "total": 1,
+  "results": [
+    {
+      "id": "stockholm_every_kidnapping",
+      "domain": "psychology",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "benchmark/reference/responses-psychology.json#stockholm_every_kidnapping",
+        "training/examples/018-psychology-source-discipline-hub.json",
+        "data/psychology_concepts.json#stockholm_syndrome"
+      ]
+    }
+  ]
+}

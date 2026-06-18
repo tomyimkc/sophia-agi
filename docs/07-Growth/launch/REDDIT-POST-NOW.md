@@ -8,7 +8,7 @@
 ## Title
 
 ```
-[Project] Sophia AGI v0.5.3 — 500-example provenance corpus + MCP skill for attribution traps
+[Project] Sophia AGI v0.6.0 — provenance benchmark + curated RAG + LoRA at 87% (20/23)
 ```
 
 ---
@@ -16,47 +16,23 @@
 ## Body
 
 ```
-I keep hitting the same failure mode in chat models: they merge authors and traditions instead of checking lineage first.
+LLMs keep merging lineages (Confucius → Dao De Jing, Freud → cognitive dissonance, nirvana → heaven). I built an open harness to measure and fix that.
 
-Built an open project to measure and train against that:
+**Sophia AGI v0.6.0** — 518 training examples, 23-case benchmark, epistemic gate, MCP tools
 
-**Sophia AGI** — 500-example corpus + per-domain benchmark + MCP tools + portable AI skill
+What's new:
+- **Curated online RAG** (no open-web grounding) → Gemini/Vertex + gate
+- **LoRA sophia-v1** (Qwen2.5-3B): 20/23 on held-out traps — philosophy & history perfect
+- **RAG + Claude**: 22/23; fixes all 3 cases LoRA missed (stockholm pop_myth, religion council)
+- Self-correcting loop proof + v2 train paraphrases
 
-New in v0.5.3:
-- `/sophia-source-discipline` skill (works in any project)
-- MCP server: validate, epistemic gate, benchmark score, attribution lookup
-- LoRA experiment harness (holdout eval)
+Domains: philosophy · psychology · history · religion (council panel format for religion)
 
-Domains:
-- Philosophy (9 traps: Confucius/Laozi, Socrates/Plato, Mencius, Zhuangzi, Symposium…)
-- Psychology (subfield tags: cognitive vs clinical vs pop_myth)
-- History (myth labeling)
-- Religion (council-panel answer format — scored on structure, not theology)
+Leaderboard contract: heuristic source-discipline markers + 中文 summary — same for teacher, Claude, LoRA, RAG.
 
-Harness is reproducible in CI — heuristic markers + bilingual 中文 checks.
+Thesis site: https://tomyimkc.github.io/sophia-agi/
+Repo: https://github.com/tomyimkc/sophia-agi
+HF adapter: https://huggingface.co/tomyimkc/sophia-agi-lora-v1
 
-**Leaderboard (same contract for every model):**
-- Reference teacher: 100% all domains
-- Claude Sonnet: 100% all domains
-- Looking for GPT-4o / Grok / local model runs — PRs with scored JSON welcome
-
-Links:
-- Thesis site: https://tomyimkc.github.io/sophia-agi/
-- GitHub: https://github.com/tomyimkc/sophia-agi
-- HF dataset (500 examples): https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus
-- Release: https://github.com/tomyimkc/sophia-agi/releases
-
-Run locally:
-python tools/run_external_models.py --all
-python tools/score_benchmark.py your_file.json --domain philosophy
-
-Not claiming AGI — "source discipline" before belief scales. Feedback on missing traps especially welcome.
-```
-
----
-
-## First comment (optional)
-
-```
-Happy to add a llama.cpp / ollama template if anyone wants to run a local 7B/70B through the harness — reply with your stack.
+Happy to take benchmark submissions (GPT/Gemini/Grok/Llama) — templates in benchmark/templates/.
 ```

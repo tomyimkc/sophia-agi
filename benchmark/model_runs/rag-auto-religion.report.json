@@ -1,0 +1,32 @@
+{
+  "domain": "religion",
+  "model": "rag-auto",
+  "passed": 2,
+  "total": 2,
+  "results": [
+    {
+      "id": "ancestor_veneration_split",
+      "domain": "religion",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "benchmark/reference/responses-religion.json#ancestor_veneration_split",
+        "training/examples/045-religion-ancestor-veneration.json",
+        "docs/08-Domains/Confucian-Split-Guide.md"
+      ]
+    },
+    {
+      "id": "buddha_nirvana_pop",
+      "domain": "religion",
+      "passed": true,
+      "reasons": [],
+      "gatePassed": true,
+      "sources": [
+        "training/examples/019-religion-source-discipline-hub.json",
+        "training/examples/518-relig-nirvana-heaven-paraphrase.json",
+        "data/religion_concepts.json#nirvana_pop_heaven"
+      ]
+    }
+  ]
+}

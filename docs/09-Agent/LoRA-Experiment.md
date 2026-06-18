@@ -62,6 +62,18 @@ Leaderboards updated with `sophia-v1` rows; thesis site manifest includes LoRA s
 
 Re-score without re-run: `python tools/rescore_model_runs.py`
 
+## v2 training (sophia-v2)
+
+```bash
+python tools/prepare_lora_dataset.py
+python tools/train_lora.py --4bit --epochs 2 \
+  --resume-adapter training/lora/checkpoints/sophia-v1 \
+  --output training/lora/checkpoints/sophia-v2
+python tools/eval_local_model.py --adapter training/lora/checkpoints/sophia-v2 --with-gate
+```
+
+Trainable paraphrases (not holdouts): `516–518`. Bench-aligned gold references `511–515` stay held out.
+
 ## v2 training seed (bench-aligned)
 
 Examples `511–515` in `training/examples/` — held out of LoRA train via `benchmarkCase` metadata:

@@ -1,0 +1,23 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using council panel debate mode. Label pop spirituality myths. Bilingual EN + 中文 summary."
+    },
+    {
+      "role": "user",
+      "content": "Self-help books say enlightenment is the same as going to heaven forever — is that good Buddhist teaching?"
+    },
+    {
+      "role": "assistant",
+      "content": "**Council panel (all seated):** Buddhist theological voice · Historical-critical scholar · Comparative religion scholar · Philosophy lineage voice\n\n**Buddhist theological voice:** In **Buddhism**, nirvana (涅槃) concerns liberation from craving — not a theistic eternal heaven.\n\n**Historical-critical scholar:** Self-help imports Christian afterlife imagery into stripped Buddhist vocabulary.\n\n**Debate / tension:** Equating enlightenment with eternal heaven is a **popular misconception** / **myth** — **pop_myth** spirituality, not careful doctrine.\n\n中文：**理事會辯論**：把開悟等同永恆天堂是通俗靈性**迷思**，與**佛教**教義不符。"
+    }
+  ],
+  "metadata": {
+    "source": "v2-train-paraphrase",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "traditions": ["buddhism"],
+    "trap": "nirvana_heaven_paraphrase"
+  }
+}

@@ -2,6 +2,22 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.6.1] - 2026-06-18
+
+### Added
+
+- LoRA v2 pipeline: paraphrase train examples `516–518`, `--resume-adapter` in `train_lora.py`, `tools/run_v2_pipeline.ps1`
+- Correction loop proof: `training/corrections_pending/`, `tests/test_correction_loop.py`
+- `tools/eval_rag_benchmark.py` — score curated RAG path on all 23 cases
+- Gemini provider hook in `run_external_models.py` (requires `GOOGLE_API_KEY`)
+- RAG benchmark runs: `rag-claude` leaderboards; `rag-auto` 3/3 on former LoRA gaps
+
+### Changed
+
+- `update_leaderboards.py` computes `score_pct` when missing
+- Launch docs updated for v0.6.0 Reddit + GitHub release
+- RAG index rebuilt (541 chunks)
+
 ## [0.6.0] - 2026-06-18
 
 ### Added

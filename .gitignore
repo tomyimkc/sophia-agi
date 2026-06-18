@@ -7,6 +7,8 @@ venv/
 .env
 rag/index/embeddings.npz
 benchmark/model_runs/*.log
+train-error.log
+train-out.txt
 agent/memory/*.jsonl
 
 # OS / editor
