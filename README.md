@@ -8,6 +8,8 @@
 
 **Wisdom before intelligence.** Open-source corpus and benchmark for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea* — before AGI-scale belief propagation.
 
+**Thesis site:** https://tomyimkc.github.io/sophia-agi/
+
 > *Sophia* (σοφία) = wisdom. Four domains active — philosophy, psychology, history, religion — plus a **three-path agent** (advisor, repo, life).
 
 ## Why it matters
@@ -45,7 +47,7 @@ python tools/build_web_data.py   # refresh web/data/manifest.json
 python tools/serve_web.py        # http://127.0.0.1:8765
 ```
 
-- **Static deploy:** `web/` works on GitHub Pages (leaderboards + thesis; agent panel falls back to CLI hints).
+- **Live site:** https://tomyimkc.github.io/sophia-agi/ (leaderboards + thesis; agent panel falls back to CLI hints).
 - **Live agent:** `POST /api/ask` with `{ "mode": "advisor|repo|life", "question": "..." }` when `serve_web.py` runs (requires `ANTHROPIC_API_KEY` in `.env`).
 - **Design record:** [docs/10-Web/UI-Council-Decisions.md](docs/10-Web/UI-Council-Decisions.md)
 

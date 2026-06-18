@@ -31,6 +31,8 @@ jobs:
           python-version: "3.12"
       - name: Build web manifest
         run: python tools/build_web_data.py
+      - name: Add .nojekyll for GitHub Pages
+        run: touch web/.nojekyll
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
