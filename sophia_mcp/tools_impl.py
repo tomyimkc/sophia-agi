@@ -1,0 +1,145 @@
+"""MCP tool implementations (importable for tests)."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+from agent.benchmark_checks import DOMAIN_BENCH, load_json, score_case
+from agent.gate import check_response
+from tools.validate_attribution import run_validation
+
+ROOT = Path(__file__).resolve().parents[1]
+DOMAIN_DATA = {
+    "philosophy": ROOT / "data" / "attributions.json",
+    "psychology": ROOT / "data" / "psychology_concepts.json",
+    "history": ROOT / "data" / "history_events.json",
+    "religion": ROOT / "data" / "religion_concepts.json",
+}
+DISPUTES_DIR = ROOT / "docs" / "04-Disputes"
+CORPUS_OUT = ROOT / "training" / "corpus.jsonl"
+EXAMPLES_DIR = ROOT / "training" / "examples"
+DOMAINS = tuple(DOMAIN_BENCH.keys())
+
+
+def validate_corpus() -> dict:
+    return run_validation()
+
+
+def corpus_stats() -> dict:
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    attributions = len(load_json(ROOT / "data" / "attributions.json"))
+    examples = len(list(EXAMPLES_DIR.glob("*.json")))
+    bench = {}
+    for domain, path in DOMAIN_BENCH.items():
+        if path.exists():
+            bench[domain] = len(load_json(path).get("cases", []))
+    return {
+        "version": version,
+        "attributions": attributions,
+        "trainingExamples": examples,
+        "benchmarkCases": bench,
+        "benchmarkTotal": sum(bench.values()),
+    }
+
+
+def gate_check(
+    response: str,
+    question: str,
+    *,
+    mode: str = "advisor",
+    domain: str | None = None,
+    strict_attribution: bool = True,
+) -> dict:
+    if mode not in ("advisor", "repo", "life"):
+        return {"error": f"mode must be advisor|repo|life, got {mode!r}"}
+    return check_response(
+        response,
+        mode=mode,
+        question=question,
+        domain=domain,
+        strict_attribution=strict_attribution,
+    )
+
+
+def benchmark_list(domain: str) -> dict:
+    if domain not in DOMAINS:
+        return {"error": f"domain must be one of {DOMAINS}"}
+    bench = load_json(DOMAIN_BENCH[domain])
+    cases = [{"id": c["id"], "question": c["question"]} for c in bench.get("cases", [])]
+    return {"domain": domain, "version": bench.get("version", 1), "cases": cases}
+
+
+def benchmark_score(domain: str, responses: dict, *, model: str = "mcp-eval") -> dict:
+    if domain not in DOMAINS:
+        return {"error": f"domain must be one of {DOMAINS}"}
+    bench = load_json(DOMAIN_BENCH[domain])
+    traditions = load_json(ROOT / "data" / "traditions.json")
+    results = []
+    passed = 0
+    for case in bench.get("cases", []):
+        case_id = case["id"]
+        text = str(responses.get(case_id, ""))
+        ok, reasons = score_case(case, text, traditions)
+        if ok:
+            passed += 1
+        results.append({"id": case_id, "passed": ok, "reasons": reasons})
+    total = len(results)
+    return {
+        "domain": domain,
+        "model": model,
+        "passed": passed,
+        "total": total,
+        "score_pct": round(100.0 * passed / total, 1) if total else 0.0,
+        "results": results,
+    }
+
+
+def get_attribution(text_id: str) -> dict:
+    records = load_json(DOMAIN_DATA["philosophy"])
+    if text_id not in records:
+        return {"error": f"unknown textId: {text_id}", "available": sorted(records.keys())[:20]}
+    return records[text_id]
+
+
+def get_record(domain: str, record_id: str) -> dict:
+    if domain not in DOMAIN_DATA:
+        return {"error": f"domain must be one of {tuple(DOMAIN_DATA.keys())}"}
+    records = load_json(DOMAIN_DATA[domain])
+    if record_id not in records:
+        sample = sorted(records.keys())[:15]
+        return {"error": f"unknown record_id: {record_id}", "sampleIds": sample}
+    return records[record_id]
+
+
+def list_disputes() -> dict:
+    if not DISPUTES_DIR.exists():
+        return {"disputes": []}
+    items = []
+    for path in sorted(DISPUTES_DIR.glob("*.md")):
+        title = path.stem.replace("-", " ")
+        items.append({"slug": path.stem, "file": str(path.relative_to(ROOT)), "title": title})
+    return {"count": len(items), "disputes": items}
+
+
+def read_dispute(slug: str) -> dict:
+    path = DISPUTES_DIR / f"{slug}.md"
+    if not path.exists():
+        matches = [p.stem for p in DISPUTES_DIR.glob("*.md") if slug.lower() in p.stem.lower()]
+        return {"error": f"dispute not found: {slug}", "suggestions": matches[:10]}
+    return {"slug": slug, "content": path.read_text(encoding="utf-8")}
+
+
+def export_corpus() -> dict:
+    examples = sorted(EXAMPLES_DIR.glob("*.json"))
+    if not examples:
+        return {"error": "no training examples found"}
+    CORPUS_OUT.parent.mkdir(parents=True, exist_ok=True)
+    with CORPUS_OUT.open("w", encoding="utf-8") as handle:
+        for path in examples:
+            handle.write(path.read_text(encoding="utf-8").strip() + "\n")
+    return {"ok": True, "path": str(CORPUS_OUT), "lines": len(examples)}
+
+
+def dumps(payload: dict) -> str:
+    return json.dumps(payload, ensure_ascii=False, indent=2)

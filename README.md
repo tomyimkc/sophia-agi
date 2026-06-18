@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.5.2-blue)
+![Version](https://img.shields.io/badge/version-0.5.3-blue)
 ![Training examples](https://img.shields.io/badge/training_examples-500-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
@@ -99,12 +99,20 @@ See [docs/08-Domains/Overview.md](docs/08-Domains/Overview.md) and answer [Expan
 - [90-Day Launch Playbook](docs/07-Growth/90-Day-Launch.md)
 - [Good first issues](GOOD_FIRST_ISSUES.md)
 
-## AI skill + MCP
+## AI skills + MCP
 
-- **Skill:** `.grok/skills/sophia-agi/SKILL.md` — invoke with `/sophia-agi` or ask about source discipline
-- **MCP tools:** `pip install -r requirements-mcp.txt` then wire `mcp/server.py` in `.cursor/mcp.json`
+| Layer | Command / path |
+|-------|----------------|
+| **Project skill** | `/sophia-agi` — `.grok/skills/sophia-agi/SKILL.md` |
+| **Portable skill** | `/sophia-source-discipline` — `python tools/install_skills.py --all` |
+| **MCP server** | `sophia_mcp/server.py` — 10 tools (validate, gate, benchmark, lookup) |
 
-See [docs/09-Agent/MCP-Server.md](docs/09-Agent/MCP-Server.md).
+```bash
+pip install -r requirements-mcp.txt
+python tools/install_skills.py --all --cursor
+```
+
+See [Skills-Install.md](docs/09-Agent/Skills-Install.md) and [MCP-Server.md](docs/09-Agent/MCP-Server.md).
 
 ## LoRA experiment (optional)
 

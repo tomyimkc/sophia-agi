@@ -2,6 +2,16 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.5.3] - 2026-06-18
+
+### Added
+
+- Portable user skill: `skills/portable/sophia-source-discipline/` (`/sophia-source-discipline`)
+- `tools/install_skills.py` — install to `~/.grok/skills/` (+ optional `~/.cursor/skills/`)
+- MCP expanded: attribution lookup, domain records, disputes, export corpus (10 tools total)
+- `sophia_mcp/` package (renamed from `mcp/` to avoid pip clash), `tests/test_mcp_tools.py`
+- [Skills-Install.md](docs/09-Agent/Skills-Install.md)
+
 ## [0.5.2] - 2026-06-18
 
 ### Added

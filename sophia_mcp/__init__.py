@@ -1,0 +1,1 @@
+"""Sophia AGI MCP server package (named sophia_mcp to avoid clash with pip mcp)."""

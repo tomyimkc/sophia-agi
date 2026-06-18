@@ -30,8 +30,9 @@ Open corpus for **provenance-aware philosophy** and AGI-shaped epistemic reasoni
 | Layer | Path |
 |-------|------|
 | **Grok skill** | `.grok/skills/sophia-agi/SKILL.md` — `/sophia-agi` |
-| **MCP server** | `mcp/server.py` — `sophia_validate`, `sophia_gate_check`, `sophia_benchmark_*` |
-| **Setup** | `docs/09-Agent/MCP-Server.md`, `.cursor/mcp.json.example` |
+| **Portable skill** | `skills/portable/sophia-source-discipline/` — `/sophia-source-discipline` (any project) |
+| **MCP server** | `sophia_mcp/server.py` — validate, gate, benchmark, lookup, disputes, export |
+| **Install** | `python tools/install_skills.py --all` — [Skills-Install.md](docs/09-Agent/Skills-Install.md) |
 
 Docs: `docs/09-Agent/Sophia-Agent.md`
 

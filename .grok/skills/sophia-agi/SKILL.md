@@ -20,6 +20,7 @@ metadata:
 2. `data/attributions.json` for any cited text
 3. `docs/04-Disputes/` when authorship is contested
 4. `docs/09-Agent/MCP-Server.md` for MCP tool wiring
+5. Portable skill (any repo): `skills/portable/sophia-source-discipline/` — install via `python tools/install_skills.py --all`
 
 ## Hard rules
 
@@ -38,6 +39,10 @@ metadata:
 | `sophia_benchmark_list` | Listing eval cases for a domain |
 | `sophia_benchmark_score` | Scoring model responses JSON |
 | `sophia_corpus_stats` | Version / example counts for release notes |
+| `sophia_export_corpus` | Regenerate `training/corpus.jsonl` |
+| `sophia_get_attribution` | Lookup philosophy textId |
+| `sophia_get_record` | Lookup psychology/history/religion record |
+| `sophia_list_disputes` / `sophia_read_dispute` | Dispute notes |
 
 ## CLI fallback
 

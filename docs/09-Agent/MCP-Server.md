@@ -1,6 +1,8 @@
 # Sophia AGI MCP server
 
-Local MCP tools for **validate**, **epistemic gate**, and **benchmark** — usable from Cursor, Grok CLI, or any MCP client.
+Local MCP tools for **validate**, **epistemic gate**, **benchmark**, **corpus lookup**, and **dispute notes**.
+
+Package path: `sophia_mcp/` (avoids name clash with pip `mcp`).
 
 ## Tools
 
@@ -8,76 +10,52 @@ Local MCP tools for **validate**, **epistemic gate**, and **benchmark** — usab
 |------|-------------|
 | `sophia_validate` | Validate `data/attributions.json` + `training/examples/` |
 | `sophia_corpus_stats` | Version, counts, benchmark case totals |
+| `sophia_export_corpus` | Write `training/corpus.jsonl` from examples |
 | `sophia_gate_check` | Post-generation gate (traps, 中文, discipline) |
 | `sophia_benchmark_list` | List case IDs + questions per domain |
-| `sophia_benchmark_score` | Score a JSON map of `{case_id: response}` |
+| `sophia_benchmark_score` | Score `{case_id: response}` JSON |
+| `sophia_get_attribution` | Lookup `data/attributions.json` by textId |
+| `sophia_get_record` | Lookup psychology/history/religion/philosophy record |
+| `sophia_list_disputes` | List `docs/04-Disputes/` slugs |
+| `sophia_read_dispute` | Read dispute markdown by slug |
 
 ## Install
 
 ```bash
 pip install -r requirements-mcp.txt
-python mcp/server.py   # stdio MCP — should hang waiting for client
+python sophia_mcp/server.py   # stdio MCP — waits for client
+python tests/test_mcp_tools.py
 ```
 
 ## Cursor / Grok wiring
 
-Edit `sophia-agi/.cursor/mcp.json` (merge with existing `github` entry):
+Edit `sophia-agi/.cursor/mcp.json`:
 
 ```json
 {
   "mcpServers": {
     "sophia-agi": {
       "command": "python",
-      "args": ["mcp/server.py"],
+      "args": ["sophia_mcp/server.py"],
       "cwd": "C:/Users/tomyim/Documents/GitHub/sophia-agi"
-    },
-    "github": {
-      "url": "https://api.githubcopilot.com/mcp/x/issues",
-      "headers": {
-        "Authorization": "Bearer YOUR_GITHUB_PAT"
-      }
     }
   }
 }
 ```
 
-Replace `cwd` with your clone path. On macOS/Linux use forward slashes.
+See `.cursor/mcp.json.example`. Reload MCP after edits.
 
-**Global fallback:** duplicate the `sophia-agi` block in `~/.cursor/mcp.json` with an absolute `cwd`.
+## Skills pairing
 
-Reload MCP in Cursor: Command Palette → **MCP: List Servers** → restart `sophia-agi`.
+| Skill | Install |
+|-------|---------|
+| Project `/sophia-agi` | `.grok/skills/sophia-agi/` in repo |
+| Portable `/sophia-source-discipline` | `python tools/install_skills.py --all` |
 
-## Skill pairing
-
-Project skill: `.grok/skills/sophia-agi/SKILL.md`
-
-- Slash: `/sophia-agi`
-- Auto-invokes on: source discipline, provenance, attribution traps, corpus validation
-- Prefer MCP tools when the server is connected; CLI fallback documented in the skill
-
-## Example tool calls
-
-**Gate check**
-
-```json
-{
-  "response": "Confucius wrote the Dao De Jing...",
-  "question": "Did Confucius write the Dao De Jing?",
-  "mode": "advisor"
-}
-```
-
-**Benchmark score**
-
-```json
-{
-  "domain": "philosophy",
-  "responses_json": "{\"trap_confucius_ddj\": \"Confucius did not write the Dao De Jing...\"}"
-}
-```
+Full guide: [Skills-Install.md](Skills-Install.md)
 
 ## Security
 
-- No network calls; reads local repo data only
-- Does not execute `sophia_agent.py` or shell commands (read-only eval + validate)
-- Keep `.env` out of MCP — gate/validate do not need API keys
+- Local repo reads only; no API keys required
+- `sophia_export_corpus` writes `training/corpus.jsonl` only
+- Does not run shell or `sophia_agent.py` automatically

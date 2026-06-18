@@ -2,7 +2,7 @@
   "mcpServers": {
     "sophia-agi": {
       "command": "python",
-      "args": ["mcp/server.py"],
+      "args": ["sophia_mcp/server.py"],
       "cwd": "C:/Users/tomyim/Documents/GitHub/sophia-agi"
     },
     "github": {
