@@ -1,0 +1,25 @@
+{
+  "confucian": {
+    "id": "confucian",
+    "labelZh": "儒家",
+    "labelEn": "Confucian",
+    "doNotMergeWith": ["daoist"]
+  },
+  "daoist": {
+    "id": "daoist",
+    "labelZh": "道家",
+    "labelEn": "Daoist",
+    "doNotMergeWith": ["confucian"]
+  },
+  "platonist": {
+    "id": "platonist",
+    "labelEn": "Platonist",
+    "doNotMergeWith": []
+  },
+  "socratic": {
+    "id": "socratic",
+    "labelEn": "Socratic",
+    "notes": "No direct writings; mediated tradition",
+    "doNotMergeWith": []
+  }
+}

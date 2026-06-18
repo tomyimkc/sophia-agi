@@ -1,0 +1,44 @@
+{
+  "dao_de_jing": {
+    "textId": "dao_de_jing",
+    "canonicalTitleZh": "道德經",
+    "canonicalTitleEn": "Dao De Jing",
+    "tradition": "daoist",
+    "attributedAuthor": "laozi",
+    "authorConfidence": "legendary",
+    "compilationPeriod": "warring_states",
+    "doNotAttributeTo": ["confucius", "socrates", "plato"]
+  },
+  "analects": {
+    "textId": "analects",
+    "canonicalTitleZh": "論語",
+    "canonicalTitleEn": "Analects",
+    "tradition": "confucian",
+    "attributedAuthor": "confucius",
+    "authorConfidence": "compiled",
+    "compilationPeriod": "warring_states",
+    "notes": "Teachings of Confucius assembled by students and later editors",
+    "doNotAttributeTo": ["laozi", "plato"]
+  },
+  "republic": {
+    "textId": "republic",
+    "canonicalTitleZh": "理想國",
+    "canonicalTitleEn": "Republic",
+    "tradition": "platonist",
+    "attributedAuthor": "plato",
+    "authorConfidence": "attributed",
+    "compilationPeriod": "classical_greece",
+    "doNotAttributeTo": ["socrates", "confucius", "laozi"]
+  },
+  "socrates_corpus": {
+    "textId": "socrates_corpus",
+    "canonicalTitleZh": null,
+    "canonicalTitleEn": "Socratic corpus",
+    "tradition": "socratic",
+    "attributedAuthor": "socrates",
+    "authorConfidence": "none_extant",
+    "compilationPeriod": "classical_greece",
+    "notes": "Socrates wrote no books; known through Plato, Xenophon, and others",
+    "doNotAttributeTo": []
+  }
+}
