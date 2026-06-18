@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Minimal LoRA SFT for Sophia AGI corpus (GPU / Colab workflow).
 
-Uses HuggingFace Trainer + PEFT only (no TRL) for Colab stability.
+Uses a minimal manual SFT loop + PEFT (no HF Trainer — avoids Windows Trainer import crash).
 
 Install: pip install -r requirements-lora.txt
 Prepare: python tools/prepare_lora_dataset.py
@@ -106,6 +106,58 @@ def tokenize_dataset(tokenizer: Any, rows: list[dict], max_seq_len: int) -> Any:
     return ds.map(tokenize_batch, batched=True, remove_columns=["text"])
 
 
+def run_manual_train(
+    model: Any,
+    tokenizer: Any,
+    train_ds: Any,
+    *,
+    epochs: int,
+    batch_size: int,
+    lr: float,
+    grad_accum: int,
+    four_bit: bool,
+) -> None:
+    import torch
+    from torch.utils.data import DataLoader
+    from transformers import DataCollatorForLanguageModeling
+
+    device = model.get_input_embeddings().weight.device
+    collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+    loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, collate_fn=collator)
+
+    trainable = [p for p in model.parameters() if p.requires_grad]
+    if four_bit:
+        import bitsandbytes as bnb
+
+        optimizer = bnb.optim.Adam8bit(trainable, lr=lr)
+    else:
+        optimizer = torch.optim.AdamW(trainable, lr=lr)
+
+    model.train()
+    total_steps = max(1, (len(loader) * epochs) // grad_accum)
+    global_step = 0
+
+    print(f"Manual SFT: {epochs} epoch(s), batch={batch_size}, grad_accum={grad_accum}", flush=True)
+    for epoch in range(epochs):
+        optimizer.zero_grad(set_to_none=True)
+        for step, batch in enumerate(loader):
+            batch = {k: v.to(device) for k, v in batch.items()}
+            outputs = model(**batch)
+            loss = outputs.loss / grad_accum
+            loss.backward()
+            if (step + 1) % grad_accum == 0:
+                optimizer.step()
+                optimizer.zero_grad(set_to_none=True)
+                global_step += 1
+                if global_step % 10 == 0 or global_step == 1:
+                    pct = round(100.0 * global_step / total_steps, 1)
+                    print(f"epoch {epoch + 1}/{epochs} step {global_step}/{total_steps} ({pct}%) loss={loss.item() * grad_accum:.4f}", flush=True)
+
+        if len(loader) % grad_accum != 0:
+            optimizer.step()
+            optimizer.zero_grad(set_to_none=True)
+
+
 def save_adapter(model: Any, tokenizer: Any, output: Path, base_model: str, meta: dict[str, Any]) -> None:
     output.mkdir(parents=True, exist_ok=True)
     model.save_pretrained(output)
@@ -152,7 +204,7 @@ def main() -> int:
     try:
         import torch
         print("loading transformers...", flush=True)
-        from transformers import DataCollatorForLanguageModeling, Trainer, TrainingArguments
+        from transformers import AutoModelForCausalLM  # noqa: F401 — warmup import
     except Exception as exc:
         print(f"Install LoRA deps: pip install -r requirements-lora.txt ({type(exc).__name__}: {exc})", flush=True)
         traceback.print_exc(file=sys.stdout)
@@ -187,32 +239,16 @@ def main() -> int:
     )
     train_ds = tokenize_dataset(tokenizer, rows, args.max_seq_len)
 
-    training_args = TrainingArguments(
-        output_dir=str(args.output / "hf_trainer_state"),
-        num_train_epochs=args.epochs,
-        per_device_train_batch_size=args.batch_size,
-        gradient_accumulation_steps=4,
-        learning_rate=args.lr,
-        logging_steps=10,
-        save_strategy="no",
-        fp16=True,
-        bf16=False,
-        report_to="none",
-        gradient_checkpointing=True,
-        optim="paged_adamw_8bit" if args.four_bit else "adamw_torch",
-        remove_unused_columns=False,
-        dataloader_pin_memory=False,
+    run_manual_train(
+        model,
+        tokenizer,
+        train_ds,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        lr=args.lr,
+        grad_accum=4,
+        four_bit=args.four_bit,
     )
-
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=train_ds,
-        data_collator=DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False),
-    )
-
-    print("Starting training (HF Trainer + PEFT, no TRL)...")
-    trainer.train()
 
     meta = {
         "trainRows": len(rows),

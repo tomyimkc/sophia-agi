@@ -64,6 +64,21 @@ Re-score without re-run: `python tools/rescore_model_runs.py`
 
 ## v2 training (sophia-v2)
 
+### Google Colab (recommended)
+
+Windows local training can fail on HF `Trainer` import; Colab + manual SFT loop is stable.
+
+1. Open [Sophia-LoRA-Colab.ipynb](../../notebooks/Sophia-LoRA-Colab.ipynb) → **Runtime → T4 GPU**
+2. Clone repo (gets v0.6.1+ with `516–518` and `--resume-adapter`)
+3. Run **sophia-v2** cells: pull `tomyimkc/sophia-agi-lora-v1` from HF → train → download `sophia-lora-v2.zip`
+4. Eval: [Sophia-LoRA-Eval-Colab.ipynb](../../notebooks/Sophia-LoRA-Eval-Colab.ipynb) (upload v2 zip, set adapter path to `sophia-v2`)
+
+**Important:** v2 must use **`Qwen/Qwen2.5-3B-Instruct`** (same base as v1). Do not switch to 7B when resuming.
+
+~30–45 min on Colab T4 for 2 epochs / 439 rows.
+
+### Local (RTX 3080+)
+
 ```bash
 python tools/prepare_lora_dataset.py
 python tools/train_lora.py --4bit --epochs 2 \
@@ -71,6 +86,8 @@ python tools/train_lora.py --4bit --epochs 2 \
   --output training/lora/checkpoints/sophia-v2
 python tools/eval_local_model.py --adapter training/lora/checkpoints/sophia-v2 --with-gate
 ```
+
+Or: `.\tools\run_v2_pipeline.ps1`
 
 Trainable paraphrases (not holdouts): `516–518`. Bench-aligned gold references `511–515` stay held out.
 
