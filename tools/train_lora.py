@@ -62,28 +62,34 @@ def main() -> int:
         print("Install LoRA deps: pip install -r requirements-lora.txt")
         return 1
 
+    if not torch.cuda.is_available():
+        print("CUDA GPU not detected. Use Google Colab: notebooks/Sophia-LoRA-Colab.ipynb")
+        return 1
+
     if args.four_bit:
         try:
             import bitsandbytes  # noqa: F401
+            from transformers import BitsAndBytesConfig
         except ImportError:
-            print("4-bit requires bitsandbytes + CUDA GPU. Retry without --4bit or: pip install bitsandbytes")
+            print("4-bit requires bitsandbytes. Colab: pip install bitsandbytes")
             return 1
 
     tokenizer = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    load_kwargs: dict = {"trust_remote_code": True}
+    load_kwargs: dict = {"trust_remote_code": True, "device_map": "auto"}
     if args.four_bit:
-        load_kwargs.update({
-            "load_in_4bit": True,
-            "device_map": "auto",
-            "torch_dtype": torch.float16,
-        })
+        from transformers import BitsAndBytesConfig
+
+        load_kwargs["quantization_config"] = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.float16,
+            bnb_4bit_use_double_quant=True,
+        )
     else:
-        load_kwargs["torch_dtype"] = torch.float16 if torch.cuda.is_available() else torch.float32
-        if torch.cuda.is_available():
-            load_kwargs["device_map"] = "auto"
+        load_kwargs["torch_dtype"] = torch.float16
 
     model = AutoModelForCausalLM.from_pretrained(args.model, **load_kwargs)
     lora = LoraConfig(

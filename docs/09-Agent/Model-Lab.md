@@ -53,6 +53,14 @@ ollama create sophia-7b -f models/ollama/Modelfile
 | `models/hf-model-card/README.md` | Adapter model card template |
 | `models/manifest.json` | Build metadata |
 
+## Google Colab (no local GPU)
+
+Open [`notebooks/Sophia-LoRA-Colab.ipynb`](../../notebooks/Sophia-LoRA-Colab.ipynb) in Colab:
+
+1. Runtime → **GPU**
+2. Run all cells
+3. Download `sophia-lora-v1.zip` → unzip into `training/lora/checkpoints/sophia-v1`
+
 ## Always use the gate
 
 Weights alone ≠ trustworthy Sophia answers. Run `sophia_gate_check` (MCP) or `--with-gate` on eval.
