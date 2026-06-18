@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sophia AGI record schema",
+  "description": "Unified provenance record for philosophy, psychology, history, and religion domains.",
+  "type": "object",
+  "required": ["recordId", "domain", "recordType", "confidence"],
+  "properties": {
+    "recordId": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "domain": {
+      "type": "string",
+      "enum": ["philosophy", "psychology", "history", "religion"]
+    },
+    "recordType": {
+      "type": "string",
+      "enum": ["text", "concept", "event", "figure", "school"]
+    },
+    "canonicalTitleEn": { "type": ["string", "null"] },
+    "canonicalTitleZh": { "type": ["string", "null"] },
+    "attributedAuthor": { "type": ["string", "null"] },
+    "authorConfidence": {
+      "type": "string",
+      "enum": [
+        "attributed",
+        "compiled",
+        "legendary",
+        "none_extant",
+        "disputed",
+        "consensus",
+        "anachronism_risk"
+      ]
+    },
+    "tradition": { "type": ["string", "null"] },
+    "period": { "type": ["string", "null"] },
+    "doNotAttributeTo": { "type": "array", "items": { "type": "string" } },
+    "doNotMergeWith": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "string" }
+  }
+}

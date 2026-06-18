@@ -1,0 +1,13 @@
+{
+  "benchmark": "sophia-attribution-v1",
+  "updated": "2026-06-18",
+  "entries": [
+    {
+      "model": "seed-training-example (reference)",
+      "score_pct": 100.0,
+      "passed": 4,
+      "total": 4,
+      "notes": "Heuristic scorer on bundled assistant text; refresh via python tools/run_benchmark.py baseline"
+    }
+  ]
+}

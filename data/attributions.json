@@ -1,6 +1,8 @@
 {
   "dao_de_jing": {
     "textId": "dao_de_jing",
+    "domain": "philosophy",
+    "recordType": "text",
     "canonicalTitleZh": "道德經",
     "canonicalTitleEn": "Dao De Jing",
     "tradition": "daoist",
@@ -11,6 +13,8 @@
   },
   "analects": {
     "textId": "analects",
+    "domain": "philosophy",
+    "recordType": "text",
     "canonicalTitleZh": "論語",
     "canonicalTitleEn": "Analects",
     "tradition": "confucian",
@@ -22,6 +26,8 @@
   },
   "republic": {
     "textId": "republic",
+    "domain": "philosophy",
+    "recordType": "text",
     "canonicalTitleZh": "理想國",
     "canonicalTitleEn": "Republic",
     "tradition": "platonist",
@@ -32,6 +38,8 @@
   },
   "socrates_corpus": {
     "textId": "socrates_corpus",
+    "domain": "philosophy",
+    "recordType": "figure",
     "canonicalTitleZh": null,
     "canonicalTitleEn": "Socratic corpus",
     "tradition": "socratic",

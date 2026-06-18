@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate attributions and training examples
+        run: python tools/validate_attribution.py
+      - name: Export corpus JSONL
+        run: python tools/export_training_jsonl.py
+      - name: Corpus stats
+        run: python tools/corpus_stats.py
+      - name: Benchmark baseline
+        run: python tools/run_benchmark.py baseline

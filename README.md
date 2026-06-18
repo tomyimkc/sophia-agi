@@ -1,20 +1,18 @@
 # Sophia AGI
 
-**Wisdom before intelligence.** Open-source corpus and tooling to train AGI-shaped systems in **provenance-aware philosophy** — knowing *who wrote what* before reasoning with ideas.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
+![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![Training examples](https://img.shields.io/badge/training_examples-1-green)
+![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
-> *Sophia* (σοφία) — wisdom in the Greek philosophical tradition. This project treats rigorous authorship and tradition boundaries as a foundation layer for trustworthy general intelligence.
+**Wisdom before intelligence.** Open-source corpus and benchmark for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea* — before AGI-scale belief propagation.
 
-## Why Sophia AGI
+> *Sophia* (σοφία) = wisdom. Philosophy is live today; **psychology**, **history**, and **religion** are on the roadmap.
 
-Language models confuse lineages: they attribute 《道德經》 to Confucius, treat compilers as authors, and flatten 儒家 and 道家 into one voice. **Source discipline** — our core method — fixes that by enforcing evidence-based attribution before belief propagation.
+## Why it matters
 
-This repository provides:
-
-- Structured **attribution data** (machine-readable)
-- **Dispute notes** on contested authorship (bilingual)
-- **Training examples** for fine-tuning and evaluation
-- **Validation tools** that catch misattribution
-- A **teacher agent** (`grok-cli-teacher`) for scaling the corpus
+LLMs merge lineages: Confucius → 《道德經》, Socrates → *Republic*, pop psych → clinical science. **Source discipline** is our fix — evidence first, then reasoning.
 
 ## Quick start
 
@@ -22,28 +20,58 @@ This repository provides:
 git clone https://github.com/tomyimkc/sophia-agi.git
 cd sophia-agi
 python tools/validate_attribution.py
-python tools/export_training_jsonl.py --out training/corpus.jsonl
+python tools/export_training_jsonl.py
+python tools/run_benchmark.py template    # create model response template
+python tools/run_benchmark.py score benchmark/responses.template.json
 ```
+
+## Sophia Attribution Benchmark (v1)
+
+| Model | Score | Passed |
+|-------|-------|--------|
+| Seed training example (reference) | 100% | 4/4 |
+
+Submit your model: fill `benchmark/responses.template.json`, then `python tools/run_benchmark.py score your-file.json`. Open a PR to update `benchmark/results/leaderboard.json`.
+
+Benchmark spec: `tests/attribution_bench.json`
 
 ## Repository layout
 
 ```text
 sophia-agi/
-├── docs/           # Documentation and dispute notes
-├── data/           # attributions.json, traditions.json
-├── training/       # JSONL-ready examples
-├── tools/          # Validators and exporters
-├── tests/          # Evaluation benchmarks
-└── .grok/agents/   # grok-cli-teacher agent spec
+├── data/              # attributions, domains, schema (multi-domain)
+├── docs/              # disputes, growth playbook, domain expansion
+├── training/          # JSONL-ready examples
+├── benchmark/         # responses template + leaderboard
+├── tools/             # validate, export, score, stats
+├── tests/             # attribution benchmark cases
+└── huggingface/       # HF dataset card (upload corpus.jsonl)
 ```
 
-## Roadmap
+## Domains
 
-See [docs/06-Roadmap/Open-Intelligence-Plan.md](docs/06-Roadmap/Open-Intelligence-Plan.md) for the step-by-step path from philosophy teacher → epistemic gate → AGI-shaped stack.
+| Domain | Status | Data file |
+|--------|--------|-----------|
+| Philosophy | Active | `data/attributions.json` |
+| Psychology | Planned | `data/psychology_concepts.json` |
+| History | Planned | `data/history_events.json` |
+| Religion | Planned | `data/religion_concepts.json` |
+
+See [docs/08-Domains/Overview.md](docs/08-Domains/Overview.md) and answer [Expansion-Questionnaire.md](docs/08-Domains/Expansion-Questionnaire.md) to shape the next domains.
+
+## Roadmap & growth
+
+- [Open Intelligence Plan](docs/06-Roadmap/Open-Intelligence-Plan.md)
+- [90-Day Launch Playbook](docs/07-Growth/90-Day-Launch.md)
+- [Good first issues](GOOD_FIRST_ISSUES.md)
+
+## Hugging Face
+
+Dataset card: `huggingface/README.md` — upload `training/corpus.jsonl` as `tomyimkc/sophia-agi-corpus`.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md). Changelog: [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

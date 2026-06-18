@@ -11,9 +11,12 @@ Step-by-step plan to grow this repository into a general **provenance gate** for
 
 ## Phase 1 — Expand corpus (Weeks 2–4)
 
-- [ ] 30+ attribution records
+- [ ] 30+ philosophy attribution records
 - [ ] 10+ dispute notes
 - [ ] Tradition boundary docs for Platonist / Stoic / Buddhist entries
+- [ ] Psychology domain: scope locked via [Expansion-Questionnaire](../08-Domains/Expansion-Questionnaire.md)
+- [ ] History domain: starter events + myth traps
+- [ ] Religion domain: scripture attribution + sect boundaries
 
 ## Phase 2 — Teacher loop (Weeks 3–6)
 

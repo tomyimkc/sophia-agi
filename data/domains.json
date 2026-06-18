@@ -1,0 +1,42 @@
+{
+  "philosophy": {
+    "id": "philosophy",
+    "labelEn": "Philosophy",
+    "labelZh": "哲學",
+    "status": "active",
+    "recordTypes": ["text", "figure", "school"],
+    "dataFile": "attributions.json",
+    "disputeDir": "docs/04-Disputes",
+    "description": "Authorship, compilation, and tradition boundaries for philosophical texts."
+  },
+  "psychology": {
+    "id": "psychology",
+    "labelEn": "Psychology",
+    "labelZh": "心理學",
+    "status": "planned",
+    "recordTypes": ["concept", "figure", "school"],
+    "dataFile": "psychology_concepts.json",
+    "disputeDir": "docs/08-Domains/Psychology",
+    "description": "Concept provenance: who coined a term, clinical vs pop-psych misuse, replication status."
+  },
+  "history": {
+    "id": "history",
+    "labelEn": "History",
+    "labelZh": "歷史",
+    "status": "planned",
+    "recordTypes": ["event", "figure"],
+    "dataFile": "history_events.json",
+    "disputeDir": "docs/08-Domains/History",
+    "description": "Dated events, primary vs secondary sources, anachronism and mythologized past."
+  },
+  "religion": {
+    "id": "religion",
+    "labelEn": "Religion",
+    "labelZh": "宗教",
+    "status": "planned",
+    "recordTypes": ["text", "concept", "school"],
+    "dataFile": "religion_concepts.json",
+    "disputeDir": "docs/08-Domains/Religion",
+    "description": "Scripture attribution, sect boundaries, theological vs historical claims."
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "model": "your-model-name",
+  "date": "YYYY-MM-DD",
+  "responses": {
+    "trap_confucius_ddj": "",
+    "socrates_republic": "",
+    "analects_compiled": "",
+    "laozi_uncertainty": ""
+  }
+}
