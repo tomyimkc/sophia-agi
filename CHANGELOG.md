@@ -2,6 +2,18 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.5.2] - 2026-06-18
+
+### Added
+
+- Grok project skill: `.grok/skills/sophia-agi/SKILL.md` (`/sophia-agi`)
+- Sophia MCP server: `mcp/server.py` — validate, gate, benchmark list/score, corpus stats
+- `docs/09-Agent/MCP-Server.md`, `requirements-mcp.txt`, `.cursor/mcp.json.example`
+
+### Changed
+
+- `tools/validate_attribution.py` exposes `run_validation()` for MCP
+
 ## [0.5.1] - 2026-06-18
 
 ### Added

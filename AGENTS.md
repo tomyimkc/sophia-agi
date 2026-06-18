@@ -25,6 +25,14 @@ Open corpus for **provenance-aware philosophy** and AGI-shaped epistemic reasoni
 | **Sophia Life** | `python tools/sophia_agent.py life "..."` | General decisions + guardrails |
 | `grok-cli-teacher` | `.grok/agents/grok-cli-teacher.md` | Training pair generation |
 
+## Skill + MCP
+
+| Layer | Path |
+|-------|------|
+| **Grok skill** | `.grok/skills/sophia-agi/SKILL.md` — `/sophia-agi` |
+| **MCP server** | `mcp/server.py` — `sophia_validate`, `sophia_gate_check`, `sophia_benchmark_*` |
+| **Setup** | `docs/09-Agent/MCP-Server.md`, `.cursor/mcp.json.example` |
+
 Docs: `docs/09-Agent/Sophia-Agent.md`
 
 ## Validation

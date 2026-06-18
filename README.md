@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.5.1-blue)
+![Version](https://img.shields.io/badge/version-0.5.2-blue)
 ![Training examples](https://img.shields.io/badge/training_examples-500-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
@@ -98,6 +98,13 @@ See [docs/08-Domains/Overview.md](docs/08-Domains/Overview.md) and answer [Expan
 - [Open Intelligence Plan](docs/06-Roadmap/Open-Intelligence-Plan.md)
 - [90-Day Launch Playbook](docs/07-Growth/90-Day-Launch.md)
 - [Good first issues](GOOD_FIRST_ISSUES.md)
+
+## AI skill + MCP
+
+- **Skill:** `.grok/skills/sophia-agi/SKILL.md` — invoke with `/sophia-agi` or ask about source discipline
+- **MCP tools:** `pip install -r requirements-mcp.txt` then wire `mcp/server.py` in `.cursor/mcp.json`
+
+See [docs/09-Agent/MCP-Server.md](docs/09-Agent/MCP-Server.md).
 
 ## LoRA experiment (optional)
 

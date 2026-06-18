@@ -63,27 +63,40 @@ def validate_training_example(path: Path, attributions: dict) -> list[str]:
     return errors
 
 
-def main() -> int:
+def run_validation() -> dict:
+    """Programmatic validation for CLI and MCP."""
     if not ATTRIBUTIONS_PATH.exists():
-        print(f"Missing {ATTRIBUTIONS_PATH}", file=sys.stderr)
-        return 1
+        return {"ok": False, "errors": [f"Missing {ATTRIBUTIONS_PATH}"]}
 
     attributions = load_json(ATTRIBUTIONS_PATH)
     errors = validate_attributions(attributions)
+    example_count = 0
 
     if EXAMPLES_DIR.exists():
-        for example in sorted(EXAMPLES_DIR.glob("*.json")):
+        examples = sorted(EXAMPLES_DIR.glob("*.json"))
+        example_count = len(examples)
+        for example in examples:
             errors.extend(validate_training_example(example, attributions))
 
-    if errors:
+    return {
+        "ok": not errors,
+        "attributions": len(attributions),
+        "trainingExamples": example_count,
+        "errors": errors,
+    }
+
+
+def main() -> int:
+    result = run_validation()
+    if not result["ok"]:
         print("Validation FAILED:")
-        for err in errors:
+        for err in result["errors"]:
             print(f"  - {err}")
         return 1
 
     print(
-        f"Validation OK: {len(attributions)} attribution(s), "
-        f"{len(list(EXAMPLES_DIR.glob('*.json')))} training example(s)"
+        f"Validation OK: {result['attributions']} attribution(s), "
+        f"{result['trainingExamples']} training example(s)"
     )
     return 0
 
