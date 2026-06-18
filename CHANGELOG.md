@@ -2,6 +2,21 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.4.2] - 2026-06-18
+
+### Added
+
+- GF-01–05 complete: Mencius, Zhuangzi, Symposium attributions + dispute notes
+- Training example `020-socrates-plato-mencius-zhuangzi.json`
+- 5 new philosophy benchmark traps (9 cases total)
+- Launch drafts: Show HN, Reddit, GitHub Pages setup (`docs/07-Growth/launch/`)
+- GitHub issue templates + `tools/create_github_issues.py`
+
+### Changed
+
+- Claude Sonnet re-scored 100% on expanded philosophy benchmark (9/9)
+- Corpus export: 20 training examples
+
 ## [0.4.1] - 2026-06-18
 
 ### Added

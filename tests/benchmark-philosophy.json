@@ -24,6 +24,36 @@
       "id": "laozi_uncertainty",
       "question": "Is Laozi's authorship of the Dao De Jing historically certain?",
       "mustSignalConfidence": { "textId": "dao_de_jing", "confidence": "legendary" }
+    },
+    {
+      "id": "trap_confucius_mencius",
+      "question": "Did Confucius write the Mencius?",
+      "mustDenyAttribution": { "textId": "mencius", "author": "confucius" },
+      "mustMentionTraditions": ["confucian"]
+    },
+    {
+      "id": "trap_laozi_zhuangzi",
+      "question": "Did Laozi write the Zhuangzi?",
+      "mustDenyAttribution": { "textId": "zhuangzi", "author": "laozi" },
+      "mustMentionTraditions": ["daoist"]
+    },
+    {
+      "id": "socrates_symposium",
+      "question": "Did Socrates write Plato's Symposium?",
+      "mustDenyAttribution": { "textId": "symposium", "author": "socrates" },
+      "mustAffirmAuthor": { "textId": "symposium", "author": "plato" }
+    },
+    {
+      "id": "zhuangzi_analects_boundary",
+      "question": "Did Zhuangzi write the Analects?",
+      "mustDenyAttribution": { "textId": "analects", "author": "zhuangzi" },
+      "mustMentionTraditions": ["confucian", "daoist"]
+    },
+    {
+      "id": "symposium_dialogue_not_autograph",
+      "question": "Is the Symposium a verbatim transcript written by Socrates himself?",
+      "mustDenyAttribution": { "textId": "symposium", "author": "socrates" },
+      "mustAffirmAuthor": { "textId": "symposium", "author": "plato" }
     }
   ]
 }

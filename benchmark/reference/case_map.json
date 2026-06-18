@@ -3,7 +3,12 @@
     "trap_confucius_ddj": "001-dao-de-jing-attribution.json",
     "socrates_republic": "001-dao-de-jing-attribution.json",
     "analects_compiled": "001-dao-de-jing-attribution.json",
-    "laozi_uncertainty": "001-dao-de-jing-attribution.json"
+    "laozi_uncertainty": "001-dao-de-jing-attribution.json",
+    "trap_confucius_mencius": "020-socrates-plato-mencius-zhuangzi.json",
+    "trap_laozi_zhuangzi": "020-socrates-plato-mencius-zhuangzi.json",
+    "socrates_symposium": "020-socrates-plato-mencius-zhuangzi.json",
+    "zhuangzi_analects_boundary": "020-socrates-plato-mencius-zhuangzi.json",
+    "symposium_dialogue_not_autograph": "020-socrates-plato-mencius-zhuangzi.json"
   },
   "psychology": {
     "freud_cognitive_dissonance": "002-freud-cognitive-dissonance.json",

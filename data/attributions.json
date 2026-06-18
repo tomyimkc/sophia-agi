@@ -48,5 +48,44 @@
     "compilationPeriod": "classical_greece",
     "notes": "Socrates wrote no books; known through Plato, Xenophon, and others",
     "doNotAttributeTo": []
+  },
+  "mencius": {
+    "textId": "mencius",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "孟子",
+    "canonicalTitleEn": "Mencius",
+    "tradition": "confucian",
+    "attributedAuthor": "mencius",
+    "authorConfidence": "attributed",
+    "compilationPeriod": "warring_states",
+    "notes": "Attributed to Mencius (孟子, Meng Ke); compiled and edited across Warring States and Han",
+    "doNotAttributeTo": ["confucius", "laozi", "plato", "socrates"]
+  },
+  "zhuangzi": {
+    "textId": "zhuangzi",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "莊子",
+    "canonicalTitleEn": "Zhuangzi",
+    "tradition": "daoist",
+    "attributedAuthor": "zhuangzi",
+    "authorConfidence": "compiled",
+    "compilationPeriod": "warring_states",
+    "notes": "Core chapters linked to Zhuang Zhou; outer chapters likely later additions",
+    "doNotAttributeTo": ["confucius", "laozi", "plato", "socrates"]
+  },
+  "symposium": {
+    "textId": "symposium",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "會飲篇",
+    "canonicalTitleEn": "Symposium",
+    "tradition": "platonist",
+    "attributedAuthor": "plato",
+    "authorConfidence": "attributed",
+    "compilationPeriod": "classical_greece",
+    "notes": "Platonic dialogue; Socrates is a character, not the author",
+    "doNotAttributeTo": ["socrates", "confucius", "laozi", "mencius"]
   }
 }

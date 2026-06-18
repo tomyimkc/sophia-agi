@@ -1,0 +1,23 @@
+name: Good first — attribution record
+description: Add or fix a philosophy attribution record
+title: "[GF] Add attribution: "
+labels: ["good first issue", "corpus", "philosophy"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        See [GOOD_FIRST_ISSUES.md](../../GOOD_FIRST_ISSUES.md). Run `python tools/validate_attribution.py` before PR.
+  - type: textarea
+    id: text
+    attributes:
+      label: Text or figure
+      description: e.g. Mencius, Zhuangzi, Symposium
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Files to touch
+      value: "data/attributions.json, docs/04-Disputes/"
+    validations:
+      required: true

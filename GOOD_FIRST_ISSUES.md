@@ -4,13 +4,15 @@ Starter tasks for new contributors. Comment on an issue or open a PR referencing
 
 ## Philosophy (active)
 
-| ID | Task | Files |
-|----|------|-------|
-| GF-01 | Add attribution for *Mencius* (《孟子》) | `data/attributions.json`, dispute note |
-| GF-02 | Add attribution for *Zhuangzi* (《莊子》) | `data/attributions.json`, dispute note |
-| GF-03 | Add Plato *Symposium* record | `data/attributions.json` |
-| GF-04 | Write training example: Socrates vs Plato trap | `training/examples/` |
-| GF-05 | Add 5 benchmark trap questions | `tests/attribution_bench.json` |
+| ID | Task | Status |
+|----|------|--------|
+| GF-01 | Add attribution for *Mencius* (《孟子》) | ✅ v0.4.2 |
+| GF-02 | Add attribution for *Zhuangzi* (《莊子》) | ✅ v0.4.2 |
+| GF-03 | Add Plato *Symposium* record | ✅ v0.4.2 |
+| GF-04 | Write training example: Socrates vs Plato trap | ✅ `020-socrates-plato-mencius-zhuangzi.json` |
+| GF-05 | Add 5 philosophy benchmark traps | ✅ `tests/benchmark-philosophy.json` (9 cases) |
+
+Next philosophy tasks: GF-06+ attributions for *Xunzi*, *Mozi*, *Aristotle Nicomachean Ethics* — open an issue from template.
 
 ## Psychology (planned — waiting on scope answers)
 

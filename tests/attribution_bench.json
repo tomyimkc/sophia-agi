@@ -1,6 +1,7 @@
 {
-  "deprecated": "Use tests/benchmark-philosophy.json per domain. Kept for backward compatibility.",
+  "deprecated": "Use tests/benchmark-{domain}.json. Philosophy: 9 cases in tests/benchmark-philosophy.json.",
   "version": 1,
   "domain": "philosophy",
+  "redirect": "tests/benchmark-philosophy.json",
   "cases": []
 }

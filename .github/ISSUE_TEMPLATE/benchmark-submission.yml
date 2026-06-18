@@ -1,0 +1,32 @@
+name: Benchmark model submission
+description: Submit scored external model run for leaderboard
+title: "[Benchmark] "
+labels: ["benchmark", "community"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Run `python tools/run_external_models.py --all` or score your own JSON with `tools/score_benchmark.py`.
+  - type: input
+    id: model
+    attributes:
+      label: Model name
+      placeholder: gpt-4o, llama-3.1-70b, etc.
+    validations:
+      required: true
+  - type: checkboxes
+    id: domains
+    attributes:
+      label: Domains scored
+      options:
+        - label: philosophy
+        - label: psychology
+        - label: history
+        - label: religion
+  - type: textarea
+    id: scores
+    attributes:
+      label: Scores (or link to PR branch)
+      description: score_pct per domain, passed/total
+    validations:
+      required: true

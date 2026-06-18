@@ -41,12 +41,12 @@ Track weekly in GitHub Discussions → **Metrics** thread.
 
 ### Week 1–2 (immediate)
 
-- [ ] Enable GitHub Pages (Settings → Pages → GitHub Actions)
-- [ ] Tag `v0.4.1` on GitHub; link thesis URL in README
-- [ ] Hacker News Show HN: *"Sophia AGI — stop LLMs merging Confucius and Laozi"* → thesis URL
-- [ ] Reddit: r/LocalLLaMA, r/MachineLearning (benchmark table screenshot, not hype)
+- [ ] Enable GitHub Pages (Settings → Pages → GitHub Actions) — **your click**
+- [x] Tag `v0.4.2` on GitHub; link thesis URL in README
+- [ ] Hacker News Show HN — draft ready: `docs/07-Growth/launch/show-hn-draft.md`
+- [ ] Reddit — drafts ready: `docs/07-Growth/launch/reddit-localllama-draft.md`
 - [ ] Post on X/LinkedIn: one thread on **lineage-merge failure** + leaderboard proof
-- [ ] Open 5 **Good First Issues** as real GitHub issues (GF-01–05)
+- [x] GF-01–05 implemented in corpus; community issues GF-10+ via `tools/create_github_issues.py`
 
 ### Week 3–4
 
