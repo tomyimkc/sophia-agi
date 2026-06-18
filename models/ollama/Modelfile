@@ -1,7 +1,7 @@
-# Sophia AGI local model — v0.5.4
-# Base: Qwen/Qwen2.5-7B-Instruct
+# Sophia AGI local model — v0.6.0
+# Base: Qwen/Qwen2.5-3B-Instruct
 # Adapter: training\lora\checkpoints\sophia-v1
-FROM Qwen/Qwen2.5-7B-Instruct
+FROM Qwen/Qwen2.5-3B-Instruct
 
 PARAMETER temperature 0.2
 PARAMETER top_p 0.9

@@ -24,7 +24,8 @@
       <a href="#council-ui">IV. UI Council</a>
       <a href="#results">V. Benchmark Results</a>
       <a href="#agent">VI. Agent Architecture</a>
-      <a href="#try">VII. Ask Sophia</a>
+      <a href="#online-rag">VII. Online RAG</a>
+      <a href="#try">VIII. Ask Sophia</a>
       <a href="#references">References</a>
       <p class="links" style="margin-top:2rem">
         <a href="https://github.com/tomyimkc/sophia-agi" target="_blank" rel="noopener">GitHub</a>
@@ -98,7 +99,7 @@
         <h3>3.1 Data layer</h3>
         <p>
           Structured JSON in <code>data/</code>: <code>attributions.json</code>, <code>psychology_concepts.json</code>,
-          <code>religion_concepts.json</code>, <code>traditions.json</code>. Twenty bilingual training examples in
+          <code>religion_concepts.json</code>, <code>traditions.json</code>. <strong>515</strong> bilingual training examples in
           <code>training/examples/</code> export to <code>corpus.jsonl</code> on Hugging Face.
         </p>
         <h3>3.2 Benchmark layer</h3>
@@ -107,10 +108,11 @@
           uses explicit markers: denial patterns, myth labels, council format, tradition ids, subfield tags.
           Reference teacher responses score 100% on all domains; external models are compared on the same harness.
         </p>
-        <h3>3.3 Agent layer (v0.4.0)</h3>
+        <h3>3.3 Agent layer (v0.6.0)</h3>
         <p>
-          Three paths — <em>advisor</em>, <em>repo</em>, <em>life</em> — share RAG over data/docs/examples, Claude via configured API,
+          Three paths — <em>advisor</em>, <em>repo</em>, <em>life</em> — share curated RAG (<code>rag/index</code>), Claude or Gemini via configured API,
           epistemic self-check, and decision memory (<code>agent/memory/decisions.jsonl</code>).
+          Local LoRA <strong>sophia-v1</strong> (Qwen2.5-3B) scores <strong>20/23 (87%)</strong> on the benchmark harness.
         </p>
       </section>
 
@@ -172,13 +174,35 @@
           <tr><td><strong>Life</strong></td><td>General decisions + guardrails</td><td><code>sophia_agent.py life</code></td></tr>
         </table>
         <p>
-          Pipeline: <strong>Question → RAG retrieval → LLM → epistemic gate → memory</strong>.
+          Pipeline: <strong>Question → curated RAG (<code>rag/index</code>) → LLM → epistemic gate → memory</strong>.
           Repo tools (validate, export, benchmark, HF upload) execute only with explicit <code>--approve</code>.
         </p>
       </section>
 
-      <section id="try" class="chapter">
+      <section id="online-rag" class="chapter">
         <div class="chapter-label">Chapter VII</div>
+        <h2>Online RAG: Gemini API &amp; Vertex AI</h2>
+        <p>
+          v0.6.0 adds <strong>curated online RAG</strong> — no open-web grounding. Retrieval uses a pre-built index
+          (<code>rag/index/chunks.jsonl</code>, benchmark holdouts excluded) over data, disputes, domain docs, reference answers,
+          and teacher examples. Generation runs on <strong>Gemini API</strong> (local MVP) or <strong>Vertex AI</strong> (Cloud Run production),
+          with Claude fallback and the same epistemic gate as the agent CLI.
+        </p>
+        <table>
+          <tr><th>Component</th><th>Path</th></tr>
+          <tr><td>Build index</td><td><code>python tools/build_rag_index.py</code></td></tr>
+          <tr><td>CLI + gate</td><td><code>python tools/sophia_rag.py "…"</code></td></tr>
+          <tr><td>HTTP API</td><td><code>services/rag_api/</code> — <code>POST /ask</code></td></tr>
+          <tr><td>Deploy</td><td><code>tools/deploy_rag_api.ps1</code></td></tr>
+          <tr><td>LoRA adapter</td><td><a href="https://huggingface.co/tomyimkc/sophia-agi-lora-v1" target="_blank" rel="noopener">tomyimkc/sophia-agi-lora-v1</a></td></tr>
+        </table>
+        <div class="zh-block">
+          <strong>中文：</strong>線上 RAG 僅檢索審定語料（非開放網路），經 Gemini 或 Vertex 生成後再過史源關卡；本地 LoRA 模型 sophia-v1 評測 20/23。
+        </div>
+      </section>
+
+      <section id="try" class="chapter">
+        <div class="chapter-label">Chapter VIII</div>
         <h2>Ask Sophia (live council)</h2>
         <p>Query the agent through this panel when <code>tools/serve_web.py</code> is running. Otherwise the CLI path is shown.</p>
         <div class="agent-panel">

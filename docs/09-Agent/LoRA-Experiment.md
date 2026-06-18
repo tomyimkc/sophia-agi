@@ -48,7 +48,7 @@ Repo: `tomyimkc/sophia-agi-lora-v1`
 
 ## Publish results
 
-Add a row to the thesis site leaderboards with `local-sophia-v1` scores. Document base vs LoRA vs LoRA+gate in `CHANGELOG.md`.
+Leaderboards updated with `sophia-v1` rows; thesis site manifest includes LoRA score (v0.6.0). See also [Online-RAG.md](Online-RAG.md) for cloud retrieval path.
 
 ## v1 eval (2026-06-18)
 

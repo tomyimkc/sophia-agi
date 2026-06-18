@@ -46,9 +46,16 @@ python tools/sophia_agent.py tools
 ## Architecture
 
 ```text
-Question → RAG (data/, docs/, examples/) → Claude → Epistemic gate → Memory
+Question → RAG (rag/index curated corpus) → Claude → Epistemic gate → Memory
                                               ↓
                                     Repo tools (if --execute --approve)
+```
+
+When `rag/index/chunks.jsonl` exists, retrieval uses the **curated index** (holdouts excluded). See [Online-RAG.md](Online-RAG.md) for Gemini/Vertex generation and Cloud Run API.
+
+```powershell
+python tools/build_rag_index.py
+python tools/sophia_rag.py "Did Confucius write the Dao De Jing?"   # Gemini + gate
 ```
 
 ## Repo tools (approval required)

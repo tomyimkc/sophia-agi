@@ -1,5 +1,5 @@
 {
-  "version": "0.5.4",
+  "version": "0.6.0",
   "trainingExamples": 515,
   "domains": [
     "philosophy",
@@ -113,8 +113,30 @@
       ]
     }
   },
+  "rag": {
+    "indexChunks": 538,
+    "backends": [
+      "gemini",
+      "vertex",
+      "claude"
+    ],
+    "cli": "python tools/sophia_rag.py",
+    "docs": "docs/09-Agent/Online-RAG.md"
+  },
+  "localModel": {
+    "name": "sophia-v1",
+    "base": "Qwen/Qwen2.5-3B-Instruct",
+    "benchmark": {
+      "model": "sophia-v1",
+      "passed": 20,
+      "total": 23,
+      "scorePct": 87.0
+    },
+    "hf": "https://huggingface.co/tomyimkc/sophia-agi-lora-v1"
+  },
   "links": {
     "github": "https://github.com/tomyimkc/sophia-agi",
-    "huggingface": "https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus"
+    "huggingface": "https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus",
+    "hfModel": "https://huggingface.co/tomyimkc/sophia-agi-lora-v1"
   }
 }

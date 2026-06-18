@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.5.4-blue)
+![Version](https://img.shields.io/badge/version-0.6.0-blue)
 ![Training examples](https://img.shields.io/badge/training_examples-500-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
@@ -37,6 +37,18 @@ python tools/sophia_agent.py life "Should I prioritize corpus or marketing?"
 ```
 
 See [docs/09-Agent/Sophia-Agent.md](docs/09-Agent/Sophia-Agent.md).
+
+## Online RAG (Gemini / Vertex)
+
+Curated corpus retrieval (no open-web grounding) + Gemini generation + epistemic gate:
+
+```bash
+pip install -r requirements-rag.txt
+python tools/build_rag_index.py
+python tools/sophia_rag.py "Did Confucius write the Dao De Jing?"
+```
+
+Cloud Run API: `services/rag_api/` — see [docs/09-Agent/Online-RAG.md](docs/09-Agent/Online-RAG.md).
 
 ## Thesis web UI (council-decided)
 

@@ -17,9 +17,9 @@ tags:
 
 - **Project:** [github.com/tomyimkc/sophia-agi](https://github.com/tomyimkc/sophia-agi)
 - **Dataset:** [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus)
-- **Version:** 0.5.4
+- **Version:** 0.6.0
 - **Train split:** 436 examples (benchmark cases held out)
-- **Benchmark total:** 23 held-out cases
+- **Benchmark score:** 20/23 (87%) on sophia-v1 harness (philosophy 9/9, history 5/5, psychology 3/4, religion 3/5)
 
 ## Load adapter
 

@@ -11,6 +11,20 @@ WEB_DATA = ROOT / "web" / "data" / "manifest.json"
 DOMAINS = ("philosophy", "psychology", "history", "religion")
 
 
+def _rag_chunk_count() -> int:
+    chunks_path = ROOT / "rag" / "index" / "chunks.jsonl"
+    if not chunks_path.exists():
+        return 0
+    return sum(1 for line in chunks_path.read_text(encoding="utf-8").splitlines() if line.strip())
+
+
+def _models_meta() -> dict:
+    manifest_path = ROOT / "models" / "manifest.json"
+    if manifest_path.exists():
+        return json.loads(manifest_path.read_text(encoding="utf-8"))
+    return {}
+
+
 def main() -> int:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     examples = len(list((ROOT / "training" / "examples").glob("*.json")))
@@ -20,14 +34,28 @@ def main() -> int:
         if path.exists():
             leaderboards[domain] = json.loads(path.read_text(encoding="utf-8"))
 
+    models = _models_meta()
     payload = {
         "version": version,
         "trainingExamples": examples,
         "domains": list(DOMAINS),
         "leaderboards": leaderboards,
+        "rag": {
+            "indexChunks": _rag_chunk_count(),
+            "backends": ["gemini", "vertex", "claude"],
+            "cli": "python tools/sophia_rag.py",
+            "docs": "docs/09-Agent/Online-RAG.md",
+        },
+        "localModel": {
+            "name": "sophia-v1",
+            "base": models.get("baseModel", "Qwen/Qwen2.5-3B-Instruct"),
+            "benchmark": models.get("benchmarkScore", {}),
+            "hf": models.get("hfModelRepo", ""),
+        },
         "links": {
             "github": "https://github.com/tomyimkc/sophia-agi",
             "huggingface": "https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus",
+            "hfModel": "https://huggingface.co/tomyimkc/sophia-agi-lora-v1",
         },
     }
     WEB_DATA.parent.mkdir(parents=True, exist_ok=True)

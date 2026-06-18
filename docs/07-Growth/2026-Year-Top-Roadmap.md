@@ -6,15 +6,15 @@ Goal: make **Sophia AGI** the default name for *provenance-aware reasoning* — 
 
 ---
 
-## Where you are now (v0.4.1)
+## Where you are now (v0.6.0)
 
 | Done | Item |
 |------|------|
-| ✅ | 4 active domains, 19 training examples, HF corpus live |
-| ✅ | Per-domain leaderboards; reference + Claude 100% |
-| ✅ | Three-path agent (advisor · repo · life) |
+| ✅ | 4 active domains, **515** training examples, HF corpus live |
+| ✅ | Per-domain leaderboards; reference + Claude 100%; **sophia-v1 LoRA 20/23 (87%)** |
+| ✅ | Three-path agent (advisor · repo · life) + **curated online RAG** (Gemini / Vertex) |
 | ✅ | Thesis web UI + UI council + GitHub Pages deploy |
-| ✅ | CI, validation, benchmark harness |
+| ✅ | CI, validation, benchmark harness, MCP (10 tools), LoRA Colab + HF adapter |
 
 **Gap:** visibility, corpus scale, external citations, contributor funnel.
 

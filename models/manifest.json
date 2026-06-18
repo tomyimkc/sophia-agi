@@ -1,14 +1,21 @@
 {
-  "version": "0.5.4",
+  "version": "0.6.0",
   "baseModel": "Qwen/Qwen2.5-3B-Instruct",
-  "adapterPath": "training\\lora\\checkpoints\\sophia-v1",
-  "ollamaModelfile": "models\\ollama\\Modelfile",
-  "hfModelCard": "models\\hf-model-card\\README.md",
+  "adapterPath": "training/lora/checkpoints/sophia-v1",
+  "ollamaModelfile": "models/ollama/Modelfile",
+  "hfModelCard": "models/hf-model-card/README.md",
   "hfModelRepo": "https://huggingface.co/tomyimkc/sophia-agi-lora-v1",
+  "benchmarkScore": {
+    "model": "sophia-v1",
+    "passed": 20,
+    "total": 23,
+    "scorePct": 87.0
+  },
   "stats": {
-    "version": "0.5.4",
+    "version": "0.6.0",
     "attributions": 30,
-    "trainingExamples": 510,
+    "trainingExamples": 515,
+    "ragIndexChunks": 538,
     "benchmarkCases": {
       "philosophy": 9,
       "psychology": 4,

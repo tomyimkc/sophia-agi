@@ -2,8 +2,11 @@
 __pycache__/
 *.py[cod]
 .venv/
+.venv-gpu/
 venv/
 .env
+rag/index/embeddings.npz
+benchmark/model_runs/*.log
 agent/memory/*.jsonl
 
 # OS / editor

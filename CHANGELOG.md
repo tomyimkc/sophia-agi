@@ -2,6 +2,26 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.6.0] - 2026-06-18
+
+### Added
+
+- **Online RAG** — curated corpus retrieval + Gemini / Vertex generation + epistemic gate
+  - `agent/rag_sources.py`, `agent/vector_store.py`, `agent/rag_pipeline.py`
+  - `agent/google_genai_client.py`, `agent/gemini_llm.py`, `agent/rag_embed.py`
+  - `tools/build_rag_index.py`, `tools/sophia_rag.py`, `tools/deploy_rag_api.ps1`
+  - `services/rag_api/` — FastAPI `POST /ask` for Cloud Run
+  - `rag/index/chunks.jsonl` — **538** curated chunks (benchmark holdouts excluded)
+  - [Online-RAG.md](docs/09-Agent/Online-RAG.md), `requirements-rag.txt`, `tests/test_rag_index.py`
+
+### Changed
+
+- `agent/retrieval.py` prefers `rag/index` when present (agent + web API)
+- LoRA **sophia-v1** benchmark: **20/23 (87%)** after scorer fix; v2 train seeds `511–515`
+- `training/lora/manifest.json` — 515 examples, 79 holdouts
+- `models/ollama/Modelfile` — base `Qwen/Qwen2.5-3B-Instruct` (matches trained adapter)
+- Thesis web UI — v0.6.0 stats, LoRA row, online RAG section
+
 ## [0.5.4] - 2026-06-18
 
 ### Added

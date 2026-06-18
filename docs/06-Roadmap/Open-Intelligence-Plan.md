@@ -28,6 +28,8 @@ Step-by-step plan to grow this repository into a general **provenance gate** for
 ## Phase 3 — Runtime gate (Weeks 6–10)
 
 - [x] RAG retrieval over `data/` + `docs/04-Disputes/` (agent retrieval)
+- [x] Curated online RAG index + Gemini / Vertex path (v0.6.0 — [Online-RAG.md](../09-Agent/Online-RAG.md))
+- [x] LoRA sophia-v1 local eval **20/23 (87%)**; HF adapter `tomyimkc/sophia-agi-lora-v1`
 - [x] Post-generation misattribution checker (`agent/gate.py` + `agent/benchmark_checks.py`)
 - [x] Philosophy benchmark reference 100% at gate (`tests/test_gate.py`)
 - [x] Claude Sonnet **100%** on all four domain benchmarks (v0.5.1)

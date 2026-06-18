@@ -23,6 +23,7 @@ Open corpus for **provenance-aware philosophy** and AGI-shaped epistemic reasoni
 | **Sophia Advisor** | `python tools/sophia_agent.py advisor "..."` | Project & epistemic decisions |
 | **Sophia Repo** | `python tools/sophia_agent.py repo "..."` | Repo ops + approved tools |
 | **Sophia Life** | `python tools/sophia_agent.py life "..."` | General decisions + guardrails |
+| **Online RAG** | `python tools/sophia_rag.py "..."` | Curated index + Gemini/Vertex + gate |
 | `grok-cli-teacher` | `.grok/agents/grok-cli-teacher.md` | Training pair generation |
 
 ## Skill + MCP
@@ -34,7 +35,7 @@ Open corpus for **provenance-aware philosophy** and AGI-shaped epistemic reasoni
 | **MCP server** | `sophia_mcp/server.py` — validate, gate, benchmark, lookup, disputes, export |
 | **Install** | `python tools/install_skills.py --all` — [Skills-Install.md](docs/09-Agent/Skills-Install.md) |
 
-Docs: `docs/09-Agent/Sophia-Agent.md`
+Docs: `docs/09-Agent/Sophia-Agent.md`, `docs/09-Agent/Online-RAG.md`, `docs/09-Agent/LoRA-Experiment.md`
 
 ## Validation
 

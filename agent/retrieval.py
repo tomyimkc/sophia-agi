@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -86,7 +87,7 @@ def collect_corpus() -> list[tuple[str, str, str]]:
     return items
 
 
-def retrieve(query: str, *, top_k: int = 8) -> list[SourceChunk]:
+def _retrieve_keyword(query: str, *, top_k: int = 8) -> list[SourceChunk]:
     query_tokens = _tokenize(query)
     ranked: list[SourceChunk] = []
     for path_label, title, text in collect_corpus():
@@ -97,6 +98,39 @@ def retrieve(query: str, *, top_k: int = 8) -> list[SourceChunk]:
         ranked.append(SourceChunk(path=path_label, title=title, excerpt=excerpt, score=score))
     ranked.sort(key=lambda c: c.score, reverse=True)
     return ranked[:top_k]
+
+
+def retrieve(query: str, *, top_k: int = 8) -> list[SourceChunk]:
+    """Retrieve sources — prefers curated `rag/index` when present."""
+    try:
+        from agent.vector_store import index_dir, load_index, search
+
+        indexed = load_index(index_dir())
+        if indexed:
+            from agent.config import load_dotenv
+
+            load_dotenv()
+            backend = (os.environ.get("SOPHIA_RAG_BACKEND") or "auto").strip().lower()
+            if backend == "vertex":
+                os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
+            query_embedding = None
+            use_vectors = backend in {"gemini", "vertex", "auto"} and indexed[0].embedding is not None
+            if use_vectors:
+                try:
+                    from agent.rag_embed import embed_query
+
+                    query_embedding = embed_query(query)
+                except Exception:
+                    use_vectors = False
+            return search(
+                query,
+                indexed,
+                top_k=top_k,
+                query_embedding=query_embedding if use_vectors else None,
+            )
+    except Exception:
+        pass
+    return _retrieve_keyword(query, top_k=top_k)
 
 
 def format_context(chunks: list[SourceChunk]) -> str:
