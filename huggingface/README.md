@@ -23,7 +23,9 @@ size_categories:
 
 # Sophia AGI Corpus
 
-**Wisdom before intelligence.** Bilingual training data for provenance-aware reasoning across philosophy, psychology, history, and religion (500 examples, v0.5.1).
+**Wisdom before intelligence.** Bilingual training data for provenance-aware reasoning across philosophy, psychology, history, and religion (**500** examples, v0.5.3).
+
+Includes Claude-teacher pairs with attribution traps across four domains. Pair with the [Sophia MCP server](https://github.com/tomyimkc/sophia-agi/blob/main/docs/09-Agent/MCP-Server.md) and portable `/sophia-source-discipline` skill for eval.
 
 ## Dataset description
 

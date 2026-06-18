@@ -8,7 +8,7 @@
 ## Title
 
 ```
-[Project] Sophia AGI — open benchmark for attribution traps (Confucius ≠ Dao De Jing, 9 philosophy cases)
+[Project] Sophia AGI v0.5.3 — 500-example provenance corpus + MCP skill for attribution traps
 ```
 
 ---
@@ -20,7 +20,12 @@ I keep hitting the same failure mode in chat models: they merge authors and trad
 
 Built an open project to measure and train against that:
 
-**Sophia AGI** — corpus + per-domain benchmark + optional agent
+**Sophia AGI** — 500-example corpus + per-domain benchmark + MCP tools + portable AI skill
+
+New in v0.5.3:
+- `/sophia-source-discipline` skill (works in any project)
+- MCP server: validate, epistemic gate, benchmark score, attribution lookup
+- LoRA experiment harness (holdout eval)
 
 Domains:
 - Philosophy (9 traps: Confucius/Laozi, Socrates/Plato, Mencius, Zhuangzi, Symposium…)
@@ -38,7 +43,8 @@ Harness is reproducible in CI — heuristic markers + bilingual 中文 checks.
 Links:
 - Thesis site: https://tomyimkc.github.io/sophia-agi/
 - GitHub: https://github.com/tomyimkc/sophia-agi
-- HF dataset (20 examples): https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus
+- HF dataset (500 examples): https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus
+- Release: https://github.com/tomyimkc/sophia-agi/releases
 
 Run locally:
 python tools/run_external_models.py --all

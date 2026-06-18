@@ -129,7 +129,7 @@ See [docs/09-Agent/LoRA-Experiment.md](docs/09-Agent/LoRA-Experiment.md).
 
 ## Hugging Face
 
-Dataset: [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) (500 training examples in-repo; HF sync pending).
+Dataset: [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) (**500** examples, synced from `training/corpus.jsonl`).
 
 ## Contributing
 

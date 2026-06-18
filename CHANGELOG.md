@@ -6,6 +6,8 @@ All notable changes to Sophia AGI are documented here.
 
 ### Added
 
+- `tools/create_github_release.py` — publish release from CHANGELOG
+- HF corpus sync (500 examples) + launch doc updates
 - Portable user skill: `skills/portable/sophia-source-discipline/` (`/sophia-source-discipline`)
 - `tools/install_skills.py` — install to `~/.grok/skills/` (+ optional `~/.cursor/skills/`)
 - MCP expanded: attribution lookup, domain records, disputes, export corpus (10 tools total)

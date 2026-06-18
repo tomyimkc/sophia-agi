@@ -1,5 +1,5 @@
 {
-  "version": "0.5.0",
+  "version": "0.5.3",
   "trainingExamples": 500,
   "domains": [
     "philosophy",

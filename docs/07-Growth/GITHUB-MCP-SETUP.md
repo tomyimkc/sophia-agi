@@ -36,6 +36,7 @@ https://github.com/settings/personal-access-tokens/new?name=Sophia+AGI+MCP+issue
 | **Actions** | No access | **Read-only** (check CI runs) | No access |
 | **Pull requests** | No access | **Read and write** (if opening PRs) | No access |
 | **Administration** | No access | No access | **Read and write** only if setting repo **topics** (`PUT /repos/.../topics`) |
+| **Contents** | No access | **Read and write** | **Read and write** if creating GitHub Releases (`tools/create_github_release.py`) |
 
 **Minimum for your launch task (create GF-10…GF-40 issues):**
 
