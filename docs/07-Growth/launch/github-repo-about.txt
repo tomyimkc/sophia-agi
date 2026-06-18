@@ -1,0 +1,19 @@
+Copy into GitHub → sophia-agi → ⚙️ About (right sidebar)
+
+Description:
+Open corpus + benchmark for provenance-aware LLM answers (source discipline)
+
+Website:
+https://tomyimkc.github.io/sophia-agi/
+
+Topics (add each):
+llm
+benchmark
+rag
+philosophy
+machine-learning
+dataset
+chinese
+attribution
+open-source
+nlp
