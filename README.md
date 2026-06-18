@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.4.0-blue)
+![Version](https://img.shields.io/badge/version-0.4.1-blue)
 ![Training examples](https://img.shields.io/badge/training_examples-19-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
@@ -36,6 +36,19 @@ python tools/sophia_agent.py life "Should I prioritize corpus or marketing?"
 
 See [docs/09-Agent/Sophia-Agent.md](docs/09-Agent/Sophia-Agent.md).
 
+## Thesis web UI (council-decided)
+
+Scholarly single-page site with chapter nav, UI council panel, live leaderboards, and optional agent API.
+
+```bash
+python tools/build_web_data.py   # refresh web/data/manifest.json
+python tools/serve_web.py        # http://127.0.0.1:8765
+```
+
+- **Static deploy:** `web/` works on GitHub Pages (leaderboards + thesis; agent panel falls back to CLI hints).
+- **Live agent:** `POST /api/ask` with `{ "mode": "advisor|repo|life", "question": "..." }` when `serve_web.py` runs (requires `ANTHROPIC_API_KEY` in `.env`).
+- **Design record:** [docs/10-Web/UI-Council-Decisions.md](docs/10-Web/UI-Council-Decisions.md)
+
 ## Benchmarks (per-domain leaderboards)
 
 | Domain | Cases | Leaderboard | Seed reference |
@@ -60,7 +73,8 @@ sophia-agi/
 ├── docs/              # disputes, growth playbook, domain expansion
 ├── training/          # JSONL-ready examples
 ├── benchmark/         # responses template + leaderboard
-├── tools/             # validate, export, score, stats
+├── tools/             # validate, export, score, stats, serve_web
+├── web/               # thesis UI (council-decided; GitHub Pages)
 ├── tests/             # attribution benchmark cases
 └── huggingface/       # HF dataset card (upload corpus.jsonl)
 ```

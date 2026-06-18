@@ -2,6 +2,15 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.4.1] - 2026-06-18
+
+### Added
+
+- **Thesis web UI** — `web/` scholarly monograph site (Abstract → Agent chapters)
+- **UI Council** — design decisions in `docs/10-Web/UI-Council-Decisions.md`; council panel in Chapter IV
+- `tools/build_web_data.py` — bundle leaderboards into `web/data/manifest.json`
+- `tools/serve_web.py` — static serve + `POST /api/ask` for advisor | repo | life agent
+
 ## [0.4.0] - 2026-06-18
 
 ### Added

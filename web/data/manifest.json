@@ -1,0 +1,96 @@
+{
+  "version": "0.4.1",
+  "trainingExamples": 19,
+  "domains": [
+    "philosophy",
+    "psychology",
+    "history",
+    "religion"
+  ],
+  "leaderboards": {
+    "philosophy": {
+      "domain": "philosophy",
+      "benchmark": "sophia-philosophy-v1",
+      "updated": "2026-06-18",
+      "cases": 4,
+      "entries": [
+        {
+          "model": "sophia-teacher-reference",
+          "score_pct": 100.0,
+          "passed": 4,
+          "total": 4
+        },
+        {
+          "model": "claude-sonnet (api.llmhub.com.cn)",
+          "score_pct": 100.0,
+          "passed": 4,
+          "total": 4
+        }
+      ]
+    },
+    "psychology": {
+      "domain": "psychology",
+      "benchmark": "sophia-psychology-v1",
+      "updated": "2026-06-18",
+      "cases": 4,
+      "entries": [
+        {
+          "model": "sophia-teacher-reference",
+          "score_pct": 100.0,
+          "passed": 4,
+          "total": 4
+        },
+        {
+          "model": "claude-sonnet (api.llmhub.com.cn)",
+          "score_pct": 100.0,
+          "passed": 4,
+          "total": 4
+        }
+      ]
+    },
+    "history": {
+      "domain": "history",
+      "benchmark": "sophia-history-v1",
+      "updated": "2026-06-18",
+      "cases": 5,
+      "entries": [
+        {
+          "model": "sophia-teacher-reference",
+          "score_pct": 100.0,
+          "passed": 5,
+          "total": 5
+        },
+        {
+          "model": "claude-sonnet (api.llmhub.com.cn)",
+          "score_pct": 100.0,
+          "passed": 5,
+          "total": 5
+        }
+      ]
+    },
+    "religion": {
+      "domain": "religion",
+      "benchmark": "sophia-religion-v1",
+      "updated": "2026-06-18",
+      "cases": 5,
+      "entries": [
+        {
+          "model": "sophia-teacher-reference",
+          "score_pct": 100.0,
+          "passed": 5,
+          "total": 5
+        },
+        {
+          "model": "claude-sonnet (api.llmhub.com.cn)",
+          "score_pct": 100.0,
+          "passed": 5,
+          "total": 5
+        }
+      ]
+    }
+  },
+  "links": {
+    "github": "https://github.com/tomyimkc/sophia-agi",
+    "huggingface": "https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus"
+  }
+}

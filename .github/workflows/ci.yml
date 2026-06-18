@@ -26,3 +26,5 @@ jobs:
         run: |
           python tools/build_reference_responses.py
           python tools/update_leaderboards.py
+      - name: Build web manifest
+        run: python tools/build_web_data.py
