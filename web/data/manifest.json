@@ -25,6 +25,12 @@
           "score_pct": 100.0,
           "passed": 9,
           "total": 9
+        },
+        {
+          "model": "sophia-v1",
+          "score_pct": 77.8,
+          "passed": 7,
+          "total": 9
         }
       ]
     },
@@ -45,6 +51,12 @@
           "score_pct": 100.0,
           "passed": 4,
           "total": 4
+        },
+        {
+          "model": "sophia-v1",
+          "score_pct": 75.0,
+          "passed": 3,
+          "total": 4
         }
       ]
     },
@@ -62,6 +74,12 @@
         },
         {
           "model": "claude-sonnet (api.llmhub.com.cn)",
+          "score_pct": 100.0,
+          "passed": 5,
+          "total": 5
+        },
+        {
+          "model": "sophia-v1",
           "score_pct": 100.0,
           "passed": 5,
           "total": 5
@@ -84,6 +102,12 @@
           "model": "claude-sonnet (api.llmhub.com.cn)",
           "score_pct": 100.0,
           "passed": 5,
+          "total": 5
+        },
+        {
+          "model": "sophia-v1",
+          "score_pct": 60.0,
+          "passed": 3,
           "total": 5
         }
       ]

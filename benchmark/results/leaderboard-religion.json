@@ -15,6 +15,12 @@
       "score_pct": 100.0,
       "passed": 5,
       "total": 5
+    },
+    {
+      "model": "sophia-v1",
+      "score_pct": 60.0,
+      "passed": 3,
+      "total": 5
     }
   ]
 }

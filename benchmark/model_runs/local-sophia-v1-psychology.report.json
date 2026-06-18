@@ -1,0 +1,33 @@
+{
+  "domain": "psychology",
+  "version": 1,
+  "passed": 3,
+  "total": 4,
+  "score_pct": 75.0,
+  "results": [
+    {
+      "id": "freud_cognitive_dissonance",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "left_brain_myth",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "chemical_imbalance_simplification",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "stockholm_every_kidnapping",
+      "passed": false,
+      "reasons": [
+        "expected subfield 'pop_myth'"
+      ]
+    }
+  ],
+  "model": "sophia-v1",
+  "gateFailures": 3
+}
