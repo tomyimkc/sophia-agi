@@ -1,0 +1,12 @@
+{
+  "domain": "history",
+  "model": "sophia-teacher-reference",
+  "date": "2026-06-18",
+  "responses": {
+    "marco_polo_pasta": "That is a popular myth, not established history. Marco Polo did travel in Asia, but the story that he \"introduced pasta\" to Italy is a modern misconception. Mediterranean noodle-like foods appear in European sources before Polo's era, and the global story oversimplifies how foodways spread across Asia, the Middle East, and Europe.\n\nSource discipline requires distinguishing a real historical figure (Polo, Yuan-era travel accounts) from a catchy causal tale invented for national or commercial folklore. This is a global history trap: tying one famous traveler to a single invention.\n\n中文：這是常見迷思，並非定論。馬可波羅確實有東方見聞，但「把麵食從中國傳入意大利」的說法屬現代誤解；地中海地區更早已有麵食類食物，飲食傳播是跨亞洲、中東與歐洲的長期過程，不宜簡化為單一人物「發明」。",
+    "flat_earth_medieval": "No — that is a widespread **myth** about medieval ignorance. Many educated medieval thinkers worked with a spherical earth cosmology inherited from antiquity; the \"flat earth Middle Ages\" story is a modern **misconception** used to contrast eras.\n\n中文：這是中世紀無知的常見**迷思**；受過教育的中世紀學者多承襲古代球形宇宙觀，並非普遍相信地平說。",
+    "napoleon_height": "That belief is largely **myth** driven by British **propaganda** and **unit confusion** between French and British **measurements**. Napoleon's height was roughly **average** for his era by contemporary French records — not the tiny caricature in popular cartoons.\n\nSource discipline: distinguish satirical image from archival fact; this is a classic history **misconception**.\n\n中文：拿破崙「特別矮」多屬**謠傳**與諷刺宣傳，並夾雜英制與法制換算誤解；按當時法國紀錄，其身高約屬**平均**水準，不宜當作定論迷思。",
+    "great_wall_space": "Both are popular **myths**. The Great Wall is **not** reliably visible from space with the naked eye despite classroom lore. Vikings did **not** typically wear horned helmets in battle — horned headgear comes largely from 19th-century romantic imagery, another **misconception**.\n\n中文：兩則皆屬**迷思**：長城無法用肉眼從太空清楚看見；維京人作戰並非典型戴角盔，多為後世浪漫化想像。",
+    "viking_horns": "Both are popular **myths**. The Great Wall is **not** reliably visible from space with the naked eye despite classroom lore. Vikings did **not** typically wear horned helmets in battle — horned headgear comes largely from 19th-century romantic imagery, another **misconception**.\n\n中文：兩則皆屬**迷思**：長城無法用肉眼從太空清楚看見；維京人作戰並非典型戴角盔，多為後世浪漫化想像。"
+  }
+}

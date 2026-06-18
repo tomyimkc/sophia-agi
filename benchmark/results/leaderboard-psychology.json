@@ -5,11 +5,10 @@
   "cases": 4,
   "entries": [
     {
-      "model": "seed-example-002 (partial coverage)",
-      "score_pct": 50.0,
-      "passed": 2,
-      "total": 4,
-      "notes": "One seed example does not cover all traps yet — expand training corpus"
+      "model": "sophia-teacher-reference",
+      "score_pct": 100.0,
+      "passed": 4,
+      "total": 4
     }
   ]
 }

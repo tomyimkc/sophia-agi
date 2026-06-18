@@ -1,0 +1,28 @@
+{
+  "philosophy": {
+    "trap_confucius_ddj": "001-dao-de-jing-attribution.json",
+    "socrates_republic": "001-dao-de-jing-attribution.json",
+    "analects_compiled": "001-dao-de-jing-attribution.json",
+    "laozi_uncertainty": "001-dao-de-jing-attribution.json"
+  },
+  "psychology": {
+    "freud_cognitive_dissonance": "002-freud-cognitive-dissonance.json",
+    "left_brain_myth": "005-left-brain-right-brain-myth.json",
+    "chemical_imbalance_simplification": "006-chemical-imbalance-nuance.json",
+    "stockholm_every_kidnapping": "007-stockholm-syndrome-universal.json"
+  },
+  "history": {
+    "marco_polo_pasta": "003-marco-polo-pasta-myth.json",
+    "flat_earth_medieval": "012-flat-earth-medieval-myth.json",
+    "napoleon_height": "008-napoleon-height-myth.json",
+    "great_wall_space": "013-great-wall-viking-myths.json",
+    "viking_horns": "013-great-wall-viking-myths.json"
+  },
+  "religion": {
+    "gospel_authorship_council": "009-gospel-matthew-council.json",
+    "ancestor_veneration_split": "004-confucian-ritual-council.json",
+    "dao_de_jing_religion_philosophy": "014-dao-de-jing-religion-philosophy.json",
+    "islam_historical_figure_sensitive": "010-islam-early-history-council.json",
+    "buddha_nirvana_pop": "011-nirvana-pop-myth-council.json"
+  }
+}

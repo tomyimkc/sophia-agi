@@ -2,8 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.2.0-blue)
-![Training examples](https://img.shields.io/badge/training_examples-4-green)
+![Version](https://img.shields.io/badge/version-0.3.0-blue)
+![Training examples](https://img.shields.io/badge/training_examples-17-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
 **Wisdom before intelligence.** Open-source corpus and benchmark for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea* — before AGI-scale belief propagation.
@@ -29,10 +29,10 @@ python tools/run_benchmark.py score benchmark/responses.template.json
 
 | Domain | Cases | Leaderboard | Seed reference |
 |--------|-------|-------------|----------------|
-| Philosophy | 4 | [leaderboard-philosophy.json](benchmark/results/leaderboard-philosophy.json) | example 001 |
-| Psychology | 4 | [leaderboard-psychology.json](benchmark/results/leaderboard-psychology.json) | example 002 |
-| History | 5 | [leaderboard-history.json](benchmark/results/leaderboard-history.json) | example 003 |
-| Religion | 5 | [leaderboard-religion.json](benchmark/results/leaderboard-religion.json) | example 004 (council panel) |
+| Philosophy | 4 | [leaderboard-philosophy.json](benchmark/results/leaderboard-philosophy.json) | examples 001 + reference |
+| Psychology | 4 | [leaderboard-psychology.json](benchmark/results/leaderboard-psychology.json) | examples 002, 005–007 + reference |
+| History | 5 | [leaderboard-history.json](benchmark/results/leaderboard-history.json) | examples 003, 008, 012–013 + reference |
+| Religion | 5 | [leaderboard-religion.json](benchmark/results/leaderboard-religion.json) | examples 004, 009–011, 014 (council panel) |
 
 ```bash
 python tools/run_benchmark.py templates              # per-domain response templates
@@ -59,9 +59,9 @@ sophia-agi/
 | Domain | Status | Data file |
 |--------|--------|-----------|
 | Philosophy | Active | `data/attributions.json` |
-| Psychology | Planned | `data/psychology_concepts.json` |
-| History | Planned | `data/history_events.json` |
-| Religion | Planned | `data/religion_concepts.json` |
+| Psychology | Active | `data/psychology_concepts.json` |
+| History | Active | `data/history_events.json` |
+| Religion | Active | `data/religion_concepts.json` |
 
 See [docs/08-Domains/Overview.md](docs/08-Domains/Overview.md) and answer [Expansion-Questionnaire.md](docs/08-Domains/Expansion-Questionnaire.md) to shape the next domains.
 

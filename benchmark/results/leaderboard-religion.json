@@ -5,11 +5,10 @@
   "cases": 5,
   "entries": [
     {
-      "model": "seed-example-004 (partial coverage)",
-      "score_pct": 40.0,
-      "passed": 2,
-      "total": 5,
-      "notes": "Council panel seed covers Confucian split; add Gospel/Islam/Buddhism examples next"
+      "model": "sophia-teacher-reference",
+      "score_pct": 100.0,
+      "passed": 5,
+      "total": 5
     }
   ]
 }

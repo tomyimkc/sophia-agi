@@ -1,10 +1,11 @@
 {
   "domain": "philosophy",
-  "benchmark": "sophia-attribution-v1",
+  "benchmark": "sophia-philosophy-v1",
   "updated": "2026-06-18",
+  "cases": 4,
   "entries": [
     {
-      "model": "seed-training-example (reference)",
+      "model": "sophia-teacher-reference",
       "score_pct": 100.0,
       "passed": 4,
       "total": 4

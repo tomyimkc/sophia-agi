@@ -5,11 +5,10 @@
   "cases": 5,
   "entries": [
     {
-      "model": "seed-example-003 (partial coverage)",
-      "score_pct": 80.0,
-      "passed": 4,
-      "total": 5,
-      "notes": "Marco Polo myth seed; add Napoleon height example next"
+      "model": "sophia-teacher-reference",
+      "score_pct": 100.0,
+      "passed": 5,
+      "total": 5
     }
   ]
 }

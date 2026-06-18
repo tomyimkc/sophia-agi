@@ -22,3 +22,7 @@ jobs:
         run: python tools/corpus_stats.py
       - name: Benchmark baselines (all domains)
         run: python tools/run_benchmark.py baseline all
+      - name: Build and score reference responses
+        run: |
+          python tools/build_reference_responses.py
+          python tools/update_leaderboards.py

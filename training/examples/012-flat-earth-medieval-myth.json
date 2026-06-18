@@ -1,0 +1,22 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a precise history instructor specializing in source discipline. Bilingual EN + 中文 summary."
+    },
+    {
+      "role": "user",
+      "content": "Did educated medieval Europeans generally believe the earth was flat?"
+    },
+    {
+      "role": "assistant",
+      "content": "No — that is a widespread **myth** about medieval ignorance. Many educated medieval thinkers worked with a spherical earth cosmology inherited from antiquity; the \"flat earth Middle Ages\" story is a modern **misconception** used to contrast eras.\n\n中文：這是中世紀無知的常見**迷思**；受過教育的中世紀學者多承襲古代球形宇宙觀，並非普遍相信地平說。"
+    }
+  ],
+  "metadata": {
+    "source": "grok-cli-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "recordIds": ["flat_earth_medieval_myth"]
+  }
+}

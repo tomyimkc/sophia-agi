@@ -2,6 +2,23 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.3.0] - 2026-06-18
+
+### Added
+
+- Training examples 005–017 (psychology myths, history traps, religion council cases)
+- Dedicated Dao De Jing philosophy/religion council example (014)
+- Reference response pipeline: `benchmark/reference/case_map.json`, `tools/build_reference_responses.py`
+- External model runner: `tools/run_external_models.py` (GPT-4o, Claude, Grok — requires API keys)
+- Hugging Face upload script: `tools/upload_huggingface.py` + `docs/07-Growth/HuggingFace-Upload.md`
+- Leaderboard refresh: `tools/update_leaderboards.py`
+- `.env.example` for HF and model API tokens
+
+### Changed
+
+- Religion reference mapping: `dao_de_jing_religion_philosophy` → example 014 (was 004)
+- README: 17 training examples, domains marked Active
+
 ## [0.2.0] - 2026-06-18
 
 ### Added

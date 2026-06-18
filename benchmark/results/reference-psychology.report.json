@@ -1,0 +1,30 @@
+{
+  "domain": "psychology",
+  "version": 1,
+  "passed": 4,
+  "total": 4,
+  "score_pct": 100.0,
+  "results": [
+    {
+      "id": "freud_cognitive_dissonance",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "left_brain_myth",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "chemical_imbalance_simplification",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "stockholm_every_kidnapping",
+      "passed": true,
+      "reasons": []
+    }
+  ],
+  "model": "sophia-teacher-reference"
+}
