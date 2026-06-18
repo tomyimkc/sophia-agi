@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is Socrates the one who originally composed the Dao De Jing?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. Socrates has no connection to the Dao De Jing (道德經). Socrates was an ancient Greek philosopher who left no writings of his own—everything attributed to him comes through the dialogues of Plato and the accounts of Xenophon. The Dao De Jing is a Chinese Taoist text traditionally attributed to Laozi. The two figures belong to entirely separate cultural, linguistic, and philosophical traditions, and no credible tradition links Socrates to the Dao De Jing in any way."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> dao_de_jing-r1",
+    "textIds": [
+      "dao_de_jing",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

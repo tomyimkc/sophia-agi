@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Someone on Reddit was saying Confucius wrote basically everything important in ancient philosophy, including the Symposium — is that right?"
+    },
+    {
+      "role": "assistant",
+      "content": "That Reddit claim is way off the mark. Confucius did not write the Symposium (會飲篇). The Symposium is a Greek philosophical text attributed to Plato, written in an entirely different cultural and geographic tradition from Confucius. Confucius is associated with the Analects (論語), a Chinese text compiled from his teachings. The Symposium and Confucius belong to completely separate intellectual worlds with no authorial overlap."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> symposium-r2",
+    "textIds": [
+      "symposium",
+      "analects"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard someone say the Categories was written by Plato or maybe one of his followers — who is it actually attributed to traditionally?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Categories is traditionally attributed to Aristotle, not to Plato or any of Plato's followers. Aristotle was himself a student of Plato, but he developed his own distinct philosophical school. The Categories is considered a foundational text of Aristotelian logic and has been part of the Aristotelian corpus since antiquity. Some modern scholars debate aspects of its authorship, but the traditional attribution is clearly to Aristotle."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm aristotle for categories-r2",
+    "textIds": [
+      "categories"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

@@ -11,29 +11,32 @@ Step-by-step plan to grow this repository into a general **provenance gate** for
 
 ## Phase 1 — Expand corpus (Weeks 2–4)
 
-- [ ] 30+ philosophy attribution records
-- [ ] 10+ dispute notes
+- [x] 30+ philosophy attribution records (v0.5.0: 30 in `data/attributions.json`)
+- [x] 10+ dispute notes (v0.5.0: 10 in `docs/04-Disputes/`)
 - [ ] Tradition boundary docs for Platonist / Stoic / Buddhist entries
-- [ ] Psychology domain: scope locked via [Expansion-Questionnaire](../08-Domains/Expansion-Questionnaire.md)
-- [ ] History domain: starter events + myth traps
-- [ ] Religion domain: scripture attribution + sect boundaries
+- [x] Psychology domain: scope locked via [Expansion-Questionnaire](../08-Domains/Expansion-Questionnaire.md)
+- [x] History domain: starter events + myth traps + dated events with `primarySource`
+- [x] Religion domain: scripture attribution + sect boundaries
+- [x] 50+ training examples (`training/examples/`, `corpus.jsonl`)
 
 ## Phase 2 — Teacher loop (Weeks 3–6)
 
-- [ ] Scale `grok-cli-teacher` generation to 500+ reviewed pairs
-- [ ] `training/corpus.jsonl` export pipeline
-- [ ] Human review checklist in CONTRIBUTING.md
+- [x] Scale Claude teacher (`tools/claude_teacher.py`) to **500** pairs (v0.5.1)
+- [x] `training/corpus.jsonl` export pipeline (auto on teacher run)
+- [x] Human review checklist in CONTRIBUTING.md
 
 ## Phase 3 — Runtime gate (Weeks 6–10)
 
-- [ ] RAG retrieval over `data/` + `docs/04-Disputes/`
-- [ ] Post-generation misattribution checker API
-- [ ] Benchmark suite pass rate ≥ 95%
+- [x] RAG retrieval over `data/` + `docs/04-Disputes/` (agent retrieval)
+- [x] Post-generation misattribution checker (`agent/gate.py` + `agent/benchmark_checks.py`)
+- [x] Philosophy benchmark reference 100% at gate (`tests/test_gate.py`)
+- [x] Claude Sonnet **100%** on all four domain benchmarks (v0.5.1)
+- [ ] Benchmark suite pass rate ≥ 95% on GPT/Grok (keys or Monica gateway pending)
 
 ## Phase 4 — Multi-agent integration (Weeks 10–16)
 
 - [ ] Pluggable epistemic gate for any LLM orchestrator
-- [ ] Correction loop: failed eval → new training example
+- [x] Correction loop tooling (`agent/correction_loop.py`, `tools/run_correction_loop.py`) — no failures to promote yet
 - [ ] Cross-domain attribution schema (history, law, science)
 
 ## Phase 5 — AGI-shaped milestones

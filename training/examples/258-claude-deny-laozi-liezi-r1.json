@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Was the Liezi actually composed by Laozi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Liezi (列子) is not attributed to Laozi. According to traditional accounts, it is associated with Liezi (列禦寇) himself, a figure of the Warring States period. Laozi is the legendary author of the Dao De Jing (道德經), a distinct text. While both works belong broadly to the Daoist tradition and share thematic overlap, they are separate compositions with separate attributed authors. Conflating the two would be a significant misattribution."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> liezi-r1",
+    "textIds": [
+      "liezi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

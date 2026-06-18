@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who is the traditionally attributed author of Metaphysics?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Metaphysics (形而上學) is traditionally attributed to Aristotle. It is one of his foundational philosophical works, exploring questions about being, existence, causality, and substance. While the exact compilation and editing of the text occurred over time, Aristotle is the recognized author in the philosophical tradition."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm aristotle for metaphysics-r0",
+    "textIds": [
+      "metaphysics"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

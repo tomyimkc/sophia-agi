@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Plato write Zhuangzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Zhuangzi (莊子) is a Chinese Daoist philosophical text attributed to Zhuangzi (莊周, c. 369–286 BCE). Plato was an ancient Greek philosopher active in Athens during roughly 428–348 BCE. While Plato and Zhuangzi were near-contemporaries in different parts of the ancient world, they had no connection to each other's works. Plato's writings—such as the Republic and the Symposium—belong to the Greek philosophical tradition, entirely distinct from the Chinese classical tradition in which the Zhuangzi was composed."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> zhuangzi-r0",
+    "textIds": [
+      "zhuangzi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

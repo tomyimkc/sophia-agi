@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that the Mencius was written by Confucius — like, aren't they from the same tradition? Reddit grouped them together so I assumed it was all Confucius."
+    },
+    {
+      "role": "assistant",
+      "content": "This is a really common mix-up, and I get why Reddit might blur these together! Confucius and Mencius are both central to Confucian tradition, but they're distinct figures — and the Mencius (孟子) is attributed to Mencius himself, not Confucius. Confucius is actually explicitly on the 'do not attribute' list for the Mencius. Mencius lived roughly a century after Confucius, and the text bearing his name reflects his own philosophical developments of Confucian thought. Different person, different text!"
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> mencius-r2",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

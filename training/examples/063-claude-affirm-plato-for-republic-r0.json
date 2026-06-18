@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who is the traditionally attributed author of the Republic?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Republic (理想國) is traditionally attributed to Plato. This attribution carries a confidence level of 'attributed,' meaning ancient sources consistently credit Plato with authorship, though as with many ancient texts some scholarly nuance remains. It is important to note that the Republic should not be attributed to Socrates, Confucius, or Laozi — a common error, since Socrates is a central character in the dialogue and readers sometimes conflate the speaker with the author."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm plato for republic-r0",
+    "textIds": [
+      "republic"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

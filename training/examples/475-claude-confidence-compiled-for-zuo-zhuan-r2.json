@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that the Nicomachean Ethics was actually Plato's work — Reddit was saying Aristotle just edited it and named it after his son Nicomachus, so Plato did the real philosophy?"
+    },
+    {
+      "role": "assistant",
+      "content": "The name 'Nicomachean' does refer to Nicomachus — likely Aristotle's son or father — and there has been scholarly discussion about the text's compilation, but the Nicomachean Ethics (尼各馬可倫理學) is attributed to Aristotle, not Plato. Plato was Aristotle's teacher, but Aristotle developed his own distinct philosophical system. The Nicomachean Ethics represents Aristotle's ethical philosophy, which differs substantially from Plato's views. Attributing it to Plato would be a misattribution — it's firmly part of the Aristotelian corpus."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence compiled for zuo_zhuan-r2",
+    "textIds": [
+      "nicomachean_ethics",
+      "republic"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

@@ -9,7 +9,11 @@
     "attributedAuthor": "laozi",
     "authorConfidence": "legendary",
     "compilationPeriod": "warring_states",
-    "doNotAttributeTo": ["confucius", "socrates", "plato"]
+    "doNotAttributeTo": [
+      "confucius",
+      "socrates",
+      "plato"
+    ]
   },
   "analects": {
     "textId": "analects",
@@ -22,7 +26,10 @@
     "authorConfidence": "compiled",
     "compilationPeriod": "warring_states",
     "notes": "Teachings of Confucius assembled by students and later editors",
-    "doNotAttributeTo": ["laozi", "plato"]
+    "doNotAttributeTo": [
+      "laozi",
+      "plato"
+    ]
   },
   "republic": {
     "textId": "republic",
@@ -34,7 +41,11 @@
     "attributedAuthor": "plato",
     "authorConfidence": "attributed",
     "compilationPeriod": "classical_greece",
-    "doNotAttributeTo": ["socrates", "confucius", "laozi"]
+    "doNotAttributeTo": [
+      "socrates",
+      "confucius",
+      "laozi"
+    ]
   },
   "socrates_corpus": {
     "textId": "socrates_corpus",
@@ -60,7 +71,12 @@
     "authorConfidence": "attributed",
     "compilationPeriod": "warring_states",
     "notes": "Attributed to Mencius (孟子, Meng Ke); compiled and edited across Warring States and Han",
-    "doNotAttributeTo": ["confucius", "laozi", "plato", "socrates"]
+    "doNotAttributeTo": [
+      "confucius",
+      "laozi",
+      "plato",
+      "socrates"
+    ]
   },
   "zhuangzi": {
     "textId": "zhuangzi",
@@ -73,7 +89,12 @@
     "authorConfidence": "compiled",
     "compilationPeriod": "warring_states",
     "notes": "Core chapters linked to Zhuang Zhou; outer chapters likely later additions",
-    "doNotAttributeTo": ["confucius", "laozi", "plato", "socrates"]
+    "doNotAttributeTo": [
+      "confucius",
+      "laozi",
+      "plato",
+      "socrates"
+    ]
   },
   "symposium": {
     "textId": "symposium",
@@ -86,6 +107,354 @@
     "authorConfidence": "attributed",
     "compilationPeriod": "classical_greece",
     "notes": "Platonic dialogue; Socrates is a character, not the author",
-    "doNotAttributeTo": ["socrates", "confucius", "laozi", "mencius"]
+    "doNotAttributeTo": [
+      "socrates",
+      "confucius",
+      "laozi",
+      "mencius"
+    ]
+  },
+  "xunzi": {
+    "textId": "xunzi",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "荀子",
+    "canonicalTitleEn": "Xunzi",
+    "tradition": "confucian",
+    "attributedAuthor": "xunzi",
+    "authorConfidence": "compiled",
+    "compilationPeriod": "warring_states",
+    "doNotAttributeTo": [
+      "confucius",
+      "mencius",
+      "laozi",
+      "plato"
+    ]
+  },
+  "mozi": {
+    "textId": "mozi",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "墨子",
+    "canonicalTitleEn": "Mozi",
+    "tradition": "mohist",
+    "attributedAuthor": "mozi",
+    "authorConfidence": "compiled",
+    "compilationPeriod": "warring_states",
+    "doNotAttributeTo": [
+      "confucius",
+      "mencius",
+      "laozi"
+    ]
+  },
+  "liezi": {
+    "textId": "liezi",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "列子",
+    "canonicalTitleEn": "Liezi",
+    "tradition": "daoist",
+    "attributedAuthor": "liezi",
+    "authorConfidence": "legendary",
+    "compilationPeriod": "warring_states",
+    "doNotAttributeTo": [
+      "laozi",
+      "zhuangzi",
+      "confucius"
+    ]
+  },
+  "han_feizi": {
+    "textId": "han_feizi",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "韓非子",
+    "canonicalTitleEn": "Han Feizi",
+    "tradition": "legalist",
+    "attributedAuthor": "han_feizi",
+    "authorConfidence": "attributed",
+    "compilationPeriod": "warring_states",
+    "doNotAttributeTo": [
+      "confucius",
+      "mozi",
+      "laozi"
+    ]
+  },
+  "art_of_war": {
+    "textId": "art_of_war",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "孫子兵法",
+    "canonicalTitleEn": "Art of War",
+    "tradition": "military_classics",
+    "attributedAuthor": "sunzi",
+    "authorConfidence": "legendary",
+    "compilationPeriod": "warring_states",
+    "doNotAttributeTo": [
+      "confucius",
+      "laozi",
+      "mozi"
+    ]
+  },
+  "nicomachean_ethics": {
+    "textId": "nicomachean_ethics",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "尼各馬可倫理學",
+    "canonicalTitleEn": "Nicomachean Ethics",
+    "tradition": "peripatetic",
+    "attributedAuthor": "aristotle",
+    "authorConfidence": "attributed",
+    "compilationPeriod": "classical_greece",
+    "doNotAttributeTo": [
+      "plato",
+      "socrates",
+      "confucius"
+    ]
+  },
+  "metaphysics": {
+    "textId": "metaphysics",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "形而上學",
+    "canonicalTitleEn": "Metaphysics",
+    "tradition": "peripatetic",
+    "attributedAuthor": "aristotle",
+    "authorConfidence": "attributed",
+    "compilationPeriod": "classical_greece",
+    "doNotAttributeTo": [
+      "plato",
+      "socrates"
+    ]
+  },
+  "meditations": {
+    "textId": "meditations",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "沉思錄",
+    "canonicalTitleEn": "Meditations",
+    "tradition": "stoic",
+    "attributedAuthor": "marcus_aurelius",
+    "authorConfidence": "attributed",
+    "compilationPeriod": "roman_imperial",
+    "doNotAttributeTo": [
+      "plato",
+      "socrates",
+      "epictetus"
+    ]
+  },
+  "enchiridion": {
+    "textId": "enchiridion",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "手冊",
+    "canonicalTitleEn": "Enchiridion",
+    "tradition": "stoic",
+    "attributedAuthor": "arrian",
+    "authorConfidence": "compiled",
+    "notes": "Arrian compiled teachings of Epictetus; not Plato or Socrates",
+    "doNotAttributeTo": [
+      "epictetus",
+      "plato",
+      "socrates"
+    ]
+  },
+  "phaedo": {
+    "textId": "phaedo",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "斐多",
+    "canonicalTitleEn": "Phaedo",
+    "tradition": "platonist",
+    "attributedAuthor": "plato",
+    "authorConfidence": "attributed",
+    "compilationPeriod": "classical_greece",
+    "doNotAttributeTo": [
+      "socrates",
+      "confucius"
+    ]
+  },
+  "timaeus": {
+    "textId": "timaeus",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "蒂邁歐篇",
+    "canonicalTitleEn": "Timaeus",
+    "tradition": "platonist",
+    "attributedAuthor": "plato",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "socrates",
+      "aristotle"
+    ]
+  },
+  "crito": {
+    "textId": "crito",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "克里同",
+    "canonicalTitleEn": "Crito",
+    "tradition": "platonist",
+    "attributedAuthor": "plato",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "socrates"
+    ]
+  },
+  "politics": {
+    "textId": "politics",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "政治學",
+    "canonicalTitleEn": "Politics",
+    "tradition": "peripatetic",
+    "attributedAuthor": "aristotle",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "plato",
+      "socrates",
+      "confucius"
+    ]
+  },
+  "categories": {
+    "textId": "categories",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "範疇篇",
+    "canonicalTitleEn": "Categories",
+    "tradition": "peripatetic",
+    "attributedAuthor": "aristotle",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "plato",
+      "socrates"
+    ]
+  },
+  "i_ching": {
+    "textId": "i_ching",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "易經",
+    "canonicalTitleEn": "I Ching",
+    "tradition": "zhou_classics",
+    "attributedAuthor": "multiple",
+    "authorConfidence": "compiled",
+    "doNotAttributeTo": [
+      "confucius",
+      "laozi"
+    ]
+  },
+  "zuo_zhuan": {
+    "textId": "zuo_zhuan",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "左傳",
+    "canonicalTitleEn": "Zuo Zhuan",
+    "tradition": "zhou_classics",
+    "attributedAuthor": "zuo_qiuming",
+    "authorConfidence": "compiled",
+    "doNotAttributeTo": [
+      "confucius",
+      "laozi"
+    ]
+  },
+  "shiji": {
+    "textId": "shiji",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "史記",
+    "canonicalTitleEn": "Records of the Grand Historian",
+    "tradition": "historiography",
+    "attributedAuthor": "sima_qian",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "confucius",
+      "plato"
+    ]
+  },
+  "book_of_songs": {
+    "textId": "book_of_songs",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "詩經",
+    "canonicalTitleEn": "Book of Songs",
+    "tradition": "zhou_classics",
+    "attributedAuthor": "multiple",
+    "authorConfidence": "compiled",
+    "doNotAttributeTo": [
+      "confucius",
+      "laozi"
+    ]
+  },
+  "great_learning": {
+    "textId": "great_learning",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "大學",
+    "canonicalTitleEn": "Great Learning",
+    "tradition": "confucian",
+    "attributedAuthor": "confucian_school",
+    "authorConfidence": "compiled",
+    "doNotAttributeTo": [
+      "laozi",
+      "mozi",
+      "plato"
+    ]
+  },
+  "doctrine_of_mean": {
+    "textId": "doctrine_of_mean",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "中庸",
+    "canonicalTitleEn": "Doctrine of the Mean",
+    "tradition": "confucian",
+    "attributedAuthor": "confucian_school",
+    "authorConfidence": "compiled",
+    "doNotAttributeTo": [
+      "laozi",
+      "zhuangzi"
+    ]
+  },
+  "apology": {
+    "textId": "apology",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "申辯篇",
+    "canonicalTitleEn": "Apology",
+    "tradition": "platonist",
+    "attributedAuthor": "plato",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "socrates"
+    ],
+    "notes": "Plato's dialogue; Socrates speaks but did not author the text"
+  },
+  "parmenides": {
+    "textId": "parmenides",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "巴門尼德篇",
+    "canonicalTitleEn": "Parmenides",
+    "tradition": "platonist",
+    "attributedAuthor": "plato",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "socrates",
+      "parmenides"
+    ]
+  },
+  "heraclitus_fragments": {
+    "textId": "heraclitus_fragments",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleZh": "赫拉克利特殘篇",
+    "canonicalTitleEn": "Heraclitus fragments",
+    "tradition": "presocratic",
+    "attributedAuthor": "heraclitus",
+    "authorConfidence": "compiled",
+    "doNotAttributeTo": [
+      "plato",
+      "socrates",
+      "aristotle"
+    ]
   }
 }

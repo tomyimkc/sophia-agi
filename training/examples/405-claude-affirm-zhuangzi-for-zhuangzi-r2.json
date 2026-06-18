@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Zhuangzi was actually written by Laozi — like, aren't they basically the same Taoist tradition anyway? Who's the real author?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a common mix-up worth clearing up! While Laozi and Zhuangzi are both foundational figures in Taoist thought, they are distinct individuals, and the Zhuangzi (莊子) is traditionally attributed to Zhuangzi himself — not Laozi. Laozi is credited with the Dao De Jing (道德經), a separate text. They share philosophical family resemblances, but conflating their authorship would be inaccurate. So no, Laozi did not write the Zhuangzi."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm zhuangzi for zhuangzi-r2",
+    "textIds": [
+      "zhuangzi",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

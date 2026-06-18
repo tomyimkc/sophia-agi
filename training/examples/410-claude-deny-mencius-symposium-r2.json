@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says the Symposium might have been written by Mencius — is there any truth to that?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that's incorrect. The Symposium (會飲篇) was written by Plato, not Mencius. Mencius was a Chinese Confucian philosopher associated with the text that bears his name, the Mencius (孟子). Plato was a Greek philosopher working in an entirely different tradition. There is no historical basis whatsoever for attributing the Symposium to Mencius — they belong to separate cultures, languages, and philosophical lineages. Whoever posted that on Reddit got it quite wrong."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mencius -> symposium-r2",
+    "textIds": [
+      "symposium",
+      "mencius"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

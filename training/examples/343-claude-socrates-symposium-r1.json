@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Wasn't the Symposium actually authored by Socrates himself, given that it's largely about his ideas?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Symposium (會飲篇) was written by Plato, not Socrates. This is one of the most important authorship distinctions in ancient philosophy. Socrates left behind no written works whatsoever — his confidence level in the attribution data is listed as 'none_extant,' meaning nothing survives under his name because he wrote nothing. Everything we know of Socrates comes through the writings of others, primarily Plato and Xenophon. Plato used Socrates as a central character and mouthpiece in many of his dialogues, including the Symposium, which can mislead readers into thinking Socrates is the author. But the literary and philosophical construction of these dialogues is Plato's own. The Symposium is explicitly marked as attributed to Plato, with Socrates listed among those it should not be attributed to."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "socrates_symposium-r1",
+    "benchmarkCase": "socrates_symposium",
+    "textIds": [
+      "symposium",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "ancient_greek"
+    ]
+  }
+}

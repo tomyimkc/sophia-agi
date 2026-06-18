@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Confucius wrote the Book of Songs — is that actually a thing people believe?"
+    },
+    {
+      "role": "assistant",
+      "content": "Some traditional accounts do credit Confucius with editing or selecting the poems that make up the Book of Songs (詩經), but he is not considered its author. The poems in the collection were composed by many different anonymous authors over several centuries, likely spanning roughly the 11th to 7th centuries BCE. Confucius is associated with the text in a curatorial or editorial sense in certain traditions, but authorship of the Book of Songs is not attributed to him."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> book_of_songs-r2",
+    "textIds": [
+      "book_of_songs"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

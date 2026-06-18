@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard Socrates wrote the Apology himself — like, he actually sat down and wrote it out. Is that a thing?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a very common misconception. Socrates is famously known for leaving no written works of his own — he preferred spoken dialogue and was skeptical of writing as a medium for genuine philosophical inquiry. The Apology we have today was written by Plato and represents Plato's account of Socrates's defense speech at his trial in 399 BCE. Whether it accurately reflects what Socrates actually said is a matter of scholarly debate, but the text itself is Plato's composition, not Socrates's."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> apology-r2",
+    "textIds": [
+      "apology"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

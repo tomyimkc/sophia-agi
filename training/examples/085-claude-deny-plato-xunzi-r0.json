@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Plato write the Xunzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Plato did not write the Xunzi (荀子). Plato was an ancient Greek philosopher whose works include the Republic and the Symposium. The Xunzi is a classical Chinese philosophical text from the Confucian tradition, attributed to the Chinese thinker Xunzi. The two belong to entirely separate philosophical traditions, cultures, and languages, with no connection in authorship."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> xunzi-r0",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

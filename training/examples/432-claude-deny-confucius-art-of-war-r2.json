@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard somewhere that Confucius wrote the Art of War — like, both were around the same era, so maybe it got mixed up?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a mix-up worth correcting. The Art of War (孫子兵法) is traditionally attributed to Sunzi (Sun Tzu), a military strategist, not to Confucius. While both figures are associated with roughly the same broad historical period, they worked in entirely different domains — Confucius focused on ethics, ritual, and governance, whereas the Art of War is a treatise on military strategy. The Analects is the text most associated with Confucian thought. There's no scholarly tradition attributing the Art of War to Confucius."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> art_of_war-r2",
+    "textIds": [
+      "art_of_war"
+    ],
+    "traditions": [
+      "military_classics"
+    ]
+  }
+}

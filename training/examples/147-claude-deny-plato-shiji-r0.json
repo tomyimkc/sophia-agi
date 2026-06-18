@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Plato write the Dao De Jing?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Plato did not write the Dao De Jing (道德經). The Dao De Jing is traditionally attributed to Laozi, the ancient Chinese sage and foundational figure of Taoism. Laozi is said to have composed the text sometime around the 6th to 4th century BCE, though the historicity of Laozi himself is legendary and debated among scholars. Plato was a Greek philosopher working in an entirely separate tradition, and there is no credible basis for attributing this Chinese classic to him."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> shiji-r0",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "historiography"
+    ]
+  }
+}

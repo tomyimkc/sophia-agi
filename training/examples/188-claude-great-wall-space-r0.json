@@ -1,0 +1,23 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Can the Great Wall of China be seen from space with the naked eye?"
+    },
+    {
+      "role": "assistant",
+      "content": "No — this is a persistent myth that fails basic geometric scrutiny. The Great Wall is extraordinarily long (thousands of kilometers) but very narrow, typically only 4–9 meters wide. Visibility from a distance is determined primarily by width, not length. From low Earth orbit (roughly 400 km altitude, where the International Space Station orbits), the Wall's width subtends an angle far below the resolution threshold of the human eye, which is approximately 1 arc minute. Astronauts have consistently confirmed they cannot see it. Chinese astronaut Yang Liwei specifically reported being unable to spot the Wall after his 2003 spaceflight, which prompted the myth to be addressed in Chinese school textbooks. NASA has noted that with the aid of a powerful camera lens under optimal lighting conditions photographs have captured portions of the Wall, but this is not naked-eye vision. The claim likely originated in a 1932 Ripley's Believe It or Not entry and was repeated so frequently it became accepted as fact. Other man-made features — highways, airports, large reservoirs, cities — are far more visible from orbit than the narrow Wall."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "great_wall_space-r0",
+    "benchmarkCase": "great_wall_space"
+  }
+}

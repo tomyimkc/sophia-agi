@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Plato wrote the Republic — like, that's just common knowledge, right? Or is Reddit lying to me again?"
+    },
+    {
+      "role": "assistant",
+      "content": "Reddit's not lying to you on this one! The Republic is traditionally attributed to Plato, and that attribution is pretty solid by ancient philosophical standards — marked as 'attributed' with reasonable scholarly confidence. So yes, Plato is your guy here. That said, 'attributed' does mean there's always some degree of scholarly nuance involved, but no serious alternative author is proposed for the Republic."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm plato for republic-r2",
+    "textIds": [
+      "republic"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

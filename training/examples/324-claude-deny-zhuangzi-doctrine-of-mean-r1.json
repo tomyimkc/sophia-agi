@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is the Zhuangzi something Laozi personally composed?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, the Zhuangzi (莊子) is not attributed to Laozi. It is traditionally associated with Zhuangzi (莊子), the Daoist philosopher. However, the authorship confidence is 'compiled,' meaning the text as we have it was likely assembled by later hands and may contain contributions from multiple authors beyond Zhuangzi himself. Laozi is the legendary figure credited with the Dao De Jing (道德經), a separate and distinct work."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny zhuangzi -> doctrine_of_mean-r1",
+    "textIds": [
+      "zhuangzi",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

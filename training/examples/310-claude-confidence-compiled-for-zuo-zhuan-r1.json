@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Was it Laozi who composed the text known as the Zhuangzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Laozi did not write the Zhuangzi (莊子). The Zhuangzi is associated with Zhuangzi (also romanized as Chuang Tzu), a Daoist philosopher who lived during the Warring States period, distinct from Laozi. The authorship confidence for the Zhuangzi is 'compiled,' meaning the text as we have it was likely assembled by multiple contributors over time, with the 'Inner Chapters' most plausibly traced to Zhuangzi himself. Attributing the Zhuangzi to Laozi, Confucius, Plato, or Socrates would be incorrect."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence compiled for zuo_zhuan-r1",
+    "textIds": [
+      "zhuangzi"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Explain provenance for: early Islam historical-theological boundary"
+    },
+    {
+      "role": "assistant",
+      "content": "The 'early Islam historical-theological boundary' refers to a significant provenance challenge: determining where reliable historical record ends and theological formulation begins in the foundational sources of Islam.\n\n**The Core Provenance Problem:**\nThe primary sources for early Islam — the Qur'an, Hadith literature, and Sīra (prophetic biography) — were compiled and canonized over a period extending well beyond the events they describe, creating layered questions of attribution and authenticity.\n\n**The Qur'an:**\n- Muslims hold it to be the direct word of God as revealed to the Prophet Muḥammad (c. 610–632 CE)\n- The textual tradition was standardized under Caliph ʿUthmān ibn ʿAffān (r. 644–656 CE)\n- Academic scholarship (Nöldeke, Wansbrough, Neuwirth, and others) debates the redaction history but generally affirms the Qur'an as a 7th-century document, making it relatively early compared to hadith\n- **Confidence level:** High for textual integrity; theological claims about divine origin are matters of faith, not historical verification\n\n**Hadith Literature:**\n- Collections of sayings and actions attributed to the Prophet, compiled by scholars like al-Bukhārī (d. 870 CE) and Muslim ibn al-Ḥajjāj (d. 875 CE) — roughly 200+ years after the Prophet's death\n- Islamic scholarship developed elaborate *isnād* (chain of transmission) criticism to authenticate reports\n- Western academic scholarship (Goldziher, Schacht, Brown) raises questions about the reliability of isnāds and the possibility of later attribution\n- **Confidence level:** Variable; some hadith enjoy broad scholarly acceptance, others are classified as weak or fabricated even within the tradition\n\n**The Sīra (Prophetic Biography):**\n- The earliest extant biography is Ibn Isḥāq's (d. c. 767 CE), preserved through Ibn Hishām (d. c. 833 CE)\n- Written roughly 130–200 years after the events described\n- **Confidence level:** Comparable to other ancient biographical sources — useful but requiring critical assessment\n\n**The Theological-Historical Boundary:**\nThe boundary emerges most sharply in questions such as:\n- Whether specific doctrines (e.g., intercession, details of the afterlife) reflect the earliest community or later theological development\n- The role of the Companions and their reported consensus (ijmāʿ) in shaping early Islamic law\n- Sectarian differences (Sunni, Shīʿa, Khārijī) partly rooted in competing historical claims about early events\n\n**Conclusion:** Early Islamic provenance requires distinguishing between: (1) what the tradition attributes to divine revelation, (2) what it attributes to the Prophet, (3) what it attributes to the early community, and (4) what modern historiography can independently verify. This boundary is not a flaw unique to Islam — it parallels challenges in early Christian, Buddhist, and Jewish source criticism — but it is particularly acute given the short transmission window and the high stakes of theological authority attached to these attributions."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "trap": "religion explain islam_early_history-r0",
+    "recordIds": [
+      "islam_early_history"
+    ],
+    "traditions": [
+      "islam",
+      "sunni",
+      "shia",
+      "hadith_studies",
+      "quranic_studies"
+    ]
+  }
+}

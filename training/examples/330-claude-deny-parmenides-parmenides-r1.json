@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Was the Dao De Jing actually penned by Confucius?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, the Dao De Jing is not attributed to Confucius. It is traditionally associated with Laozi, a legendary figure in Chinese philosophy and the founding thinker of Taoism. Confucius and Laozi represent distinct and in many ways contrasting intellectual traditions — Confucianism and Taoism respectively — and attributing the Dao De Jing to Confucius would be a significant historical error."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny parmenides -> parmenides-r1",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "taoism",
+      "confucianism"
+    ]
+  }
+}

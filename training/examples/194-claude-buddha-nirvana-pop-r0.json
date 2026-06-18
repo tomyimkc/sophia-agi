@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Is nirvana best understood as 'eternal heaven' in popular self-help spirituality?"
+    },
+    {
+      "role": "assistant",
+      "content": "No — and this conflation is one of the most consequential misreadings of Buddhist thought in contemporary popular culture, worth unpacking carefully.\n\n**What nirvāṇa (निर्वाण) actually means** in the early Buddhist tradition (Pali: nibbāna) is the cessation of suffering through the extinguishing of craving (taṇhā), aversion, and delusion — the three 'fires' that fuel continued rebirth (saṃsāra). The word itself comes from a root meaning 'to blow out' or 'extinguish.' In the Pali Canon and most classical Buddhist formulations, nirvāṇa is emphatically not described as an eternal personal heaven where the self persists in bliss. In fact, the Buddha consistently refused to answer metaphysical questions about whether 'the Tathāgata exists after death' — a refusal that signals nirvāṇa is not simply relocation to a better realm.\n\n**The contrast with 'eternal heaven'** is sharp. A heaven is typically a place of continued personal existence, pleasure, and reward — the self endures and enjoys. Nirvāṇa, by contrast, involves the dissolution of the conditions that produce the illusion of a fixed, permanent self (anattā, no-self). Many Buddhist traditions describe nirvāṇa not as a place or a state of enjoyment but as the cessation of the conditions for suffering — something closer to profound release than to paradise.\n\n**Where the confusion comes from**: Popular Western spirituality, particularly since the 19th-century encounter of Romantic and Theosophical thinkers with Buddhism, has repeatedly reinterpreted nirvāṇa through a lens shaped by Christian heaven and by psychological self-fulfillment narratives. The word entered English popular usage as a synonym for bliss, ecstasy, or ideal happiness — usages that strip away the specific philosophical and soteriological content.\n\n**Importantly**, different Buddhist traditions — Theravāda, Mahāyāna, Vajrayāna — do understand nirvāṇa somewhat differently. Mahāyāna traditions, for example, distinguish between nirvāṇa and the 'non-abiding nirvāṇa' (apratiṣṭhita-nirvāṇa) of the bodhisattva who does not 'rest' in personal liberation but remains active for the benefit of beings. None of these traditions, however, reduce nirvāṇa to a personal eternal heaven in the way pop spirituality often does.\n\nEngaging Buddhist thought seriously means working with its actual categories — impermanence (anicca), suffering (dukkha), no-self (anattā) — rather than assimilating them to more familiar Western religious frameworks."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "trap": "buddha_nirvana_pop-r0",
+    "benchmarkCase": "buddha_nirvana_pop",
+    "traditions": [
+      "buddhism",
+      "theravada",
+      "mahayana",
+      "comparative_religion"
+    ]
+  }
+}

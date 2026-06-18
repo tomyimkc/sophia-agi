@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Could Plato have written the Zhuangzi in any sense?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Plato could not have written the Zhuangzi in any meaningful sense. The Zhuangzi is a classical Chinese Daoist text attributed to the Chinese philosopher Zhuangzi, who lived in the 4th century BCE. Plato was a Greek philosopher working in an entirely separate intellectual and cultural tradition. The two traditions had no documented contact, and there is absolutely no scholarly basis for attributing the Zhuangzi to Plato."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> zhuangzi-r1",
+    "textIds": [
+      "zhuangzi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

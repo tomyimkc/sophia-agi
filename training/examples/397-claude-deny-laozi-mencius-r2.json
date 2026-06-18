@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard somewhere — maybe Reddit — that Laozi wrote the Mencius since they were both ancient Chinese philosophers. Is that right?"
+    },
+    {
+      "role": "assistant",
+      "content": "Nope, that's a mix-up! I totally get how ancient Chinese philosophy can feel like a blur of names, but Laozi and Mencius are very different thinkers from different traditions. Laozi is associated with Daoism and the Dao De Jing (道德經) — not the Mencius. The Mencius (孟子) is attributed to Mencius, a Confucian thinker, and Laozi is explicitly listed as someone *not* to attribute it to. The two even represent somewhat opposing philosophical currents — Confucian ethics vs. Daoist naturalism."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> mencius-r2",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

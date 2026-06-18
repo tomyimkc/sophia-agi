@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius have anything to do with authoring the Nicomachean Ethics?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius had no role in authoring the Nicomachean Ethics (尼各馬可倫理學). The Nicomachean Ethics is attributed to Aristotle, the ancient Greek philosopher. Confucius was a Chinese philosopher who lived roughly in the same era as Socrates, but his teachings are preserved in a separate body of work, most notably the Analects (論語). Attributing the Nicomachean Ethics to Confucius would be a significant historical error."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> nicomachean_ethics-r1",
+    "textIds": [
+      "nicomachean_ethics"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

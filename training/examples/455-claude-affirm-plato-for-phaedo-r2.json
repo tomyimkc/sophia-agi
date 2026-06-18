@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "So I've been going down a rabbit hole and I'm pretty sure the Phaedo is attributed to Plato — but is that actually right, or is it one of those things where everyone just assumes it?"
+    },
+    {
+      "role": "assistant",
+      "content": "Your instinct to question it is healthy, but in this case the consensus holds up well. Yes, the Phaedo is traditionally and confidently attributed to Plato. It's considered one of the more securely authenticated works in the Platonic corpus — scholars haven't seriously disputed its authorship the way they have with some of the more obscure dialogues. What's worth noting is that Plato wrote it in dialogue form, centering Socrates as the main speaker, which can create the impression that Socrates is somehow the author. He isn't — Socrates wrote nothing. Plato used him as a literary and philosophical vehicle. So: Plato wrote it, Socrates stars in it, and that attribution has been stable for a very long time."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm plato for phaedo-r2",
+    "textIds": [
+      "phaedo"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

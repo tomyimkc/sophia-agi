@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I've heard Socrates might be behind the Meditations — is that right?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that is incorrect. Socrates wrote nothing that survives, and he lived centuries before the Meditations was composed. The Meditations was authored by Marcus Aurelius, the Roman emperor, as a personal journal of Stoic reflections. Socrates has no authorial connection to it."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> meditations-r1",
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

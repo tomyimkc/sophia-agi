@@ -91,7 +91,12 @@ class SophiaHandler(BaseHTTPRequestHandler):
 
             chunks = retrieve(question, top_k=6)
             answer = complete(MODE_PROMPTS[mode], build_user_prompt(mode, question))
-            gate = check_response(answer, mode=mode)
+            gate = check_response(
+                answer,
+                mode=mode,
+                question=question,
+                sources=[c.path for c in chunks],
+            )
             log_decision(
                 mode=mode,
                 question=question,

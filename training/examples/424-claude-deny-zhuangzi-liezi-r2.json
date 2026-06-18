@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says the Liezi was probably written by Zhuangzi because it reads so similarly to the Zhuangzi — does that check out?"
+    },
+    {
+      "role": "assistant",
+      "content": "Reddit is leading you astray here. While it's true that the Liezi shares stylistic and thematic overlap with the Zhuangzi — both are Taoist texts full of parables and paradoxes — Zhuangzi is not the attributed author of the Liezi. The Liezi is traditionally attributed to a figure called Liezi (列子), a legendary Taoist master. The resemblance in tone reflects a shared philosophical milieu, not common authorship. Zhuangzi has his own text bearing his name."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny zhuangzi -> liezi-r2",
+    "textIds": [
+      "liezi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

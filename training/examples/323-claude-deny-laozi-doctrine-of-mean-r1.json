@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is the Art of War a work that Confucius composed?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, the Art of War (孫子兵法) was not composed by Confucius. It is traditionally attributed to Sunzi, also known as Sun Tzu, a Chinese military strategist. Confucius was a moral and political philosopher whose body of work focused on ethics, ritual, and governance — military treatises like the Art of War fall outside his tradition entirely. The attribution to Sunzi is described as legendary, meaning the historical details remain uncertain, but Confucius is definitively not the author."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> doctrine_of_mean-r1",
+    "textIds": [
+      "art_of_war"
+    ],
+    "traditions": [
+      "military_philosophy",
+      "confucianism"
+    ]
+  }
+}

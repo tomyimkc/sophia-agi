@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write the Mencius?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius did not write the Mencius (孟子). The Mencius is attributed to Mencius — also known as Mengzi — a Confucian philosopher who lived approximately 372–289 BCE, roughly a century after Confucius (551–479 BCE). While Mencius was deeply influenced by Confucian thought and considered himself a defender of the Confucian tradition, he was a distinct thinker who developed his own philosophical positions. The attribution of the Mencius to Confucius is a specific misattribution that scholars explicitly reject."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> mencius-r0",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

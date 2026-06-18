@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard Laozi might have written the Symposium — like, both are ancient wisdom texts, so couldn't they have the same source?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's not accurate. The Symposium (會飲篇) was written by Plato, a Greek philosopher, not Laozi. Laozi is traditionally credited with the Dao De Jing (道德經), a Chinese Taoist text. While both are ancient and philosophical, they come from entirely separate traditions, cultures, and centuries. Attributing the Symposium to Laozi is not supported by any historical or scholarly evidence — the two figures lived in distinct intellectual worlds with no documented connection."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> symposium-r2",
+    "textIds": [
+      "symposium",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

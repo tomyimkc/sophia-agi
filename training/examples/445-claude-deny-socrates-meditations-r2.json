@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Okay so I saw a post claiming Socrates wrote the Meditations — is that true? I mean he was always reflecting on stuff so it kind of fits?"
+    },
+    {
+      "role": "assistant",
+      "content": "The 'reflective' vibe is a fun connection, but no — Socrates did not write the *Meditations*. Two big reasons: first, Socrates wrote **nothing** — he had no extant writings whatsoever, and everything attributed to him comes through disciples like Plato. Second, the *Meditations* was written by **Marcus Aurelius**, a Roman Stoic emperor who lived roughly **600 years after Socrates**. It's a private philosophical journal, not a Socratic dialogue. The post you saw was mistaken."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> meditations-r2",
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Okay so Reddit says the Analects were written by Confucius himself — is that actually the case, or is it more complicated than that?"
+    },
+    {
+      "role": "assistant",
+      "content": "Good instinct to question it — it is more complicated! Confucius is indeed the traditional and most widely recognized attributed author of the Analects (論語), so in that sense Reddit isn't wrong. However, scholars describe the authorship confidence as 'compiled,' meaning the text was almost certainly not written by Confucius himself in a single sitting. Rather, it was assembled by his disciples and later followers, recording his sayings and conversations over time. So 'attributed to Confucius' is more accurate than 'written by Confucius.'"
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm confucius for analects-r2",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

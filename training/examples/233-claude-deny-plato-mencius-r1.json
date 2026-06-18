@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is there any chance Plato had a hand in writing the Mencius?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Plato had no connection to the Mencius. The Mencius is a Chinese philosophical text attributed to the Confucian thinker Mencius, composed in a completely separate intellectual and geographical tradition from Plato's Greek philosophy. Although Mencius and Plato were rough contemporaries in the broad sense of the ancient world, there is no historical link between them, and attributing the Mencius to Plato would be a clear misattribution."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> mencius-r1",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did the Stoic philosopher Epictetus write the Meditations?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. Although Epictetus was a major Stoic influence on Marcus Aurelius, he did not write the Meditations. The Meditations was composed by Marcus Aurelius himself as a private set of philosophical notes. Epictetus's own teachings are preserved separately in the Discourses and the Enchiridion, recorded by his student Arrian."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny epictetus -> meditations-r1",
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

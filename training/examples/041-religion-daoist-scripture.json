@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "How should we attribute the Dao De Jing in religious context?"
+    },
+    {
+      "role": "assistant",
+      "content": "Council panel: treat the Dao De Jing as Daoist scripture with legendary Laozi attribution; do not merge with Confucian ritual frameworks without scholarly debate.\n\n中文：理事會格式：將《道德經》視為道家經典，老子歸屬存疑，不可與儒家禮儀傳統任意合併。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "recordIds": [
+      "dao_de_jing_daoist_scripture"
+    ]
+  }
+}

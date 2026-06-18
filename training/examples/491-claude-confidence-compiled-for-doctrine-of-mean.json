@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard the authorship of the Doctrine of the Mean (中庸) is pretty well established — like, scholars are confident about who wrote it, right?"
+    },
+    {
+      "role": "assistant",
+      "content": "Actually, that's not quite accurate. The authorship of the Doctrine of the Mean (中庸) is far from settled. The traditional attribution to Zisi, Confucius's grandson, is plausible but unverified — it's more of a received tradition than a firmly documented historical fact. Modern scholars debate both the authorship and the date of composition, with some arguing the text was compiled over time rather than written by a single author. So the confidence level around its authorship is really 'compiled' or 'traditional attribution' at best, not something historians would call certain."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence compiled for doctrine_of_mean-r2",
+    "textIds": [
+      "doctrine_of_mean"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Did Marco Polo introduce pasta to Italy?"
+    },
+    {
+      "role": "assistant",
+      "content": "This is a modern myth. Marco Polo did not introduce pasta to Italy; Mediterranean pasta-like foods predate him. Label as mythologized history.\n\n中文：馬可波羅將麵食傳入意大利是現代迷思，並非可靠史實。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "history",
+    "recordIds": [
+      "marco_polo_pasta_myth"
+    ]
+  }
+}

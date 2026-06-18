@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Was the Analects actually composed by Plato?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Analects (論語) is not a work by Plato. It is a classical Chinese text traditionally compiled by the disciples of Confucius, recording his sayings and conversations. Plato was an ancient Greek philosopher working in an entirely different tradition, and he had no connection to the Analects whatsoever."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> analects-r1",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

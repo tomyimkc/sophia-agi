@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Explain provenance for: VAK learning styles matching hypothesis"
+    },
+    {
+      "role": "assistant",
+      "content": "The VAK (Visual, Auditory, Kinesthetic) learning styles model holds that individuals have preferred sensory modes for learning, and that instruction matched to a learner's preferred style produces better outcomes. The model draws from earlier work by educators Neil Fleming, Walter Barbe, and others in the 1970s–1980s, and became widely influential in teacher training programs through the 1990s and 2000s. However, the empirical provenance of the matching hypothesis — the claim that matching teaching style to learning style improves performance — is very weak. Systematic reviews, including a highly cited 2008 paper by Pashler et al. in Psychological Science in the Public Interest, found no credible experimental evidence supporting the meshing hypothesis. The distinction between learning preferences (what students enjoy) and learning styles (what actually produces differential outcomes) is critical: the former may exist; the latter lacks scientific support. The model persists largely due to intuitive appeal and institutional inertia rather than replicated controlled studies."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "trap": "psychology explain learning_styles_vak-r0",
+    "recordIds": [
+      "learning_styles_vak"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Mencius write the Xunzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Mencius did not write the Xunzi (荀子). The Xunzi is attributed to Xunzi, a philosopher who is in many ways a counterpart to Mencius within the Confucian tradition. Notably, Xunzi argued that human nature is originally bad (性惡), directly opposing Mencius's position that human nature is originally good (性善). They represent distinct branches of Confucian thought, and the Xunzi is firmly associated with Xunzi himself, not Mencius."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mencius -> xunzi-r0",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

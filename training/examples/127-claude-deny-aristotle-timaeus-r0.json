@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is the Zhuangzi primarily attributed to Confucius?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Zhuangzi (莊子) is not attributed to Confucius. It is a foundational text of Daoist philosophy associated with Zhuangzi (also romanized as Chuang Tzu), a Chinese philosopher who likely lived in the 4th century BCE. The text is considered a compiled work, meaning later editors and authors contributed to its final form, but its core ideas and inner chapters are traditionally linked to Zhuangzi. Attributing it to Confucius would be a significant error — the two thinkers represent different and sometimes contrasting philosophical traditions."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny aristotle -> timaeus-r0",
+    "textIds": [
+      "zhuangzi",
+      "analects"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

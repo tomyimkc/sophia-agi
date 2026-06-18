@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Plato write the Republic?"
+    },
+    {
+      "role": "assistant",
+      "content": "Yes, the Republic (理想國) is attributed to Plato. This attribution carries an 'attributed' level of confidence, which means scholars broadly accept Plato as the author based on strong ancient testimony and stylistic analysis, though absolute certainty about ancient authorship is always constrained by historical distance. The Republic is one of Plato's most well-known dialogues, featuring Socrates as the primary interlocutor. However, it is important to note that Socrates himself did not write it — Socrates left no writings of his own, and the Republic represents Plato's literary and philosophical elaboration, not Socrates's direct authorship."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> apology-r0",
+    "textIds": [
+      "republic"
+    ],
+    "traditions": [
+      "platonism"
+    ]
+  }
+}

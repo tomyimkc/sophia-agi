@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that the Symposium was actually written by Socrates himself — like, Reddit says Plato was just his student so maybe Socrates gets credit?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a really common mix-up, and it's worth untangling! The Symposium is traditionally attributed to **Plato**, not Socrates. You're right that Socrates appears as a character inside the dialogue — he's actually one of the main speakers at the dinner party discussing the nature of love — but the work itself was composed by Plato. Socrates left no writings of his own; everything we know about his ideas comes through the pens of others, primarily Plato. So the attribution goes: Plato wrote it, Socrates inspired it. The confidence on this attribution is solid for ancient standards — it's consistently listed among Plato's works across the manuscript tradition."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm plato for symposium-r2",
+    "textIds": [
+      "symposium"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

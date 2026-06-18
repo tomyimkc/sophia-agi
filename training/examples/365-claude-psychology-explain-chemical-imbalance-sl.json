@@ -1,0 +1,32 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is Aristotle the one who wrote the Nicomachean Ethics, or was it actually Plato?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Nicomachean Ethics (尼各馬可倫理學) was written by Aristotle, not Plato. This is an important distinction because, while Aristotle was famously Plato's student, their philosophical approaches diverge considerably — especially on ethics. Plato tends toward idealism and grounds ethics in the Form of the Good, whereas Aristotle's Nicomachean Ethics is more empirical, grounding virtue in human nature, habit, and practical wisdom (phronesis). The work is named either for Aristotle's father Nicomachus or his son of the same name, though the exact reason remains debated. The attribution to Aristotle carries attributed-level confidence, consistent with texts of this era. Plato and Socrates are definitively not the authors; Socrates wrote nothing, and Plato's ethical thinking is expressed in his own dialogues such as the Republic. Assigning the Nicomachean Ethics to Plato would erase a foundational distinction between two of antiquity's greatest philosophical minds."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "psychology explain chemical_imbalance_slogan-r1",
+    "recordIds": [
+      "nicomachean_ethics"
+    ],
+    "textIds": [
+      "nicomachean_ethics"
+    ],
+    "traditions": [
+      "aristotelian",
+      "greek"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Laozi write the Zhuangzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Zhuangzi (莊子) is attributed to Zhuangzi (also romanized as Chuang-tzu), a Daoist philosopher who lived in the 4th century BCE — not to Laozi. While both figures are central to the Daoist tradition and the Zhuangzi does engage with ideas found in the Dao De Jing, they are distinct works by distinct authors. The Zhuangzi is considered a compiled text, meaning the core inner chapters are attributed to Zhuangzi himself while the outer and miscellaneous chapters were likely added by later disciples. Laozi is traditionally credited only with the Dao De Jing (道德經)."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm confucian_school for great_learning-r0",
+    "textIds": [
+      "zhuangzi",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

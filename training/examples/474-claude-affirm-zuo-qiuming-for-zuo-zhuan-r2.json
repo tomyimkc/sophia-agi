@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that the Analects were written by Laozi — like, someone on Reddit was saying both Laozi and Confucius were Daoist philosophers so it makes sense?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a significant mix-up on a couple of levels. First, Confucius was not a Daoist philosopher — he was the founder of Confucianism, a very different philosophical tradition focused on ritual, virtue, and social order. Laozi is the figure associated with Daoism. Second, the Analects (論語) are compiled from the sayings and teachings of Confucius, recorded by his disciples — Laozi has no connection to that text. Attributing the Analects to Laozi would conflate two distinct thinkers from two distinct traditions."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm zuo_qiuming for zuo_zhuan-r2",
+    "textIds": [
+      "analects",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

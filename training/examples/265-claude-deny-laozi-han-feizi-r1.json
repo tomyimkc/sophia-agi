@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Some people say Laozi wrote the Han Feizi — is that accurate?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that is not accurate. The Han Feizi (韓非子) is traditionally attributed to Han Fei, a Legalist thinker, not to Laozi. While Han Fei did engage with and comment on Daoist texts including the Dao De Jing, he was a distinct philosopher with a very different orientation. Attributing the Han Feizi to Laozi would be a misattribution."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> han_feizi-r1",
+    "textIds": [
+      "han_feizi"
+    ],
+    "traditions": [
+      "legalist"
+    ]
+  }
+}

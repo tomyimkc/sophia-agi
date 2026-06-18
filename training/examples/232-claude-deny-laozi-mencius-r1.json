@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Could the Mencius have originated with Laozi or the Daoist tradition rather than Mencius himself?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, the Mencius is not associated with Laozi or Daoism. The text belongs firmly within the Confucian tradition and is attributed to Mencius, who developed and defended Confucian ethics — particularly his doctrine of the innate goodness of human nature. Laozi is associated with the Dao De Jing and the Daoist school, which represents a philosophically distinct tradition. Attributing the Mencius to Laozi would be a significant misattribution."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> mencius-r1",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

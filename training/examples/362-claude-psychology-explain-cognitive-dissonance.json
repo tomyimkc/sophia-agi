@@ -1,0 +1,32 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Could you walk me through the authorship history of the Analects?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Analects (論語) is the foundational text of Confucianism and is associated with Confucius, though its authorship is best described as 'compiled.' Confucius himself almost certainly did not write it; rather, it was assembled by his disciples and later followers, recording conversations, sayings, and teachings attributed to him. The compilation likely occurred over several generations after his death (479 BCE), with different sections possibly added at different times. This means the text reflects how Confucius was remembered and interpreted by his school, rather than being a direct first-person composition. It should not be attributed to Laozi or Plato, who have no connection to this work. The Analects remains one of the most influential texts in East Asian intellectual history, but readers should understand its collaborative, memorial nature."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "psychology explain cognitive_dissonance-r1",
+    "recordIds": [
+      "analects"
+    ],
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "confucian",
+      "chinese"
+    ]
+  }
+}

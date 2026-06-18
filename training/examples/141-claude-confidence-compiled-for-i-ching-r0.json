@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write the Dao De Jing?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius did not write the Dao De Jing (道德經). The Dao De Jing is traditionally attributed to Laozi, a legendary figure associated with the origins of Taoist philosophy. While Confucius and Laozi were roughly contemporaneous in Chinese intellectual tradition and some accounts even describe a meeting between them, the Dao De Jing belongs firmly to the Taoist lineage and is not attributed to Confucius. It is worth noting that the historical authorship of the Dao De Jing is uncertain — 'legendary' in confidence — meaning we cannot be fully sure a single historical person named Laozi authored it, but Confucius is definitively not the attributed source."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence compiled for i_ching-r0",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

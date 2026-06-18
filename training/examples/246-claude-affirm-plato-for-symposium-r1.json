@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Which philosopher is traditionally credited with writing the Symposium?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Symposium (會飲篇) is traditionally attributed to Plato. It is one of his celebrated dialogues, dramatizing a series of speeches on the nature of love delivered at a banquet. While Socrates appears as a central character within the dialogue, the work itself was written by Plato, not Socrates. The attribution carries strong historical confidence."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm plato for symposium-r1",
+    "textIds": [
+      "symposium"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

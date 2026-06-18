@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is Mencius a text that Socrates had any hand in writing?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. Socrates had no hand in writing the Mencius. The Mencius is a classical Chinese philosophical text attributed to Mencius (孟子), a Confucian thinker who lived in the 4th century BCE. Socrates was a Greek philosopher of an earlier generation, and the two traditions developed entirely independently. There is no scholarly basis for connecting Socrates to the Mencius in any way."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> mencius-r1",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

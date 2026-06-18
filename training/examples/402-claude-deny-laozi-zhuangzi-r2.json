@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says the Zhuangzi was written by Laozi because they were both Daoist — does that check out?"
+    },
+    {
+      "role": "assistant",
+      "content": "Reddit has it wrong here. Laozi and Zhuangzi are both associated with Daoism, but they are regarded as separate figures and the Zhuangzi is not attributed to Laozi. Laozi is the legendary author of the Dao De Jing (道德經), a different text entirely. Zhuangzi (莊子) is a distinct thinker associated with his own text, the Zhuangzi. Sharing a broad philosophical tradition doesn't mean the same person wrote all its texts — that would be like assuming every Christian theological text was written by the same author. The Zhuangzi is understood to be compiled from writings attributed to Zhuangzi and his school."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> zhuangzi-r2",
+    "textIds": [
+      "zhuangzi",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

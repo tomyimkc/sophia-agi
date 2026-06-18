@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says the Records of the Grand Historian was written by Sima Qian — is that actually right, or is it more complicated?"
+    },
+    {
+      "role": "assistant",
+      "content": "Reddit is essentially correct on this one. Records of the Grand Historian (史記) is traditionally attributed to Sima Qian (司馬遷), a Han dynasty historian who lived roughly 145–86 BCE. He is credited with compiling and writing the majority of the work, though his father Sima Tan began the project before him. So while the authorship has some nuance — it was a multigenerational effort — Sima Qian is the primary and traditionally recognized author."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm sima_qian for shiji-r2",
+    "textIds": [
+      "shiji"
+    ],
+    "traditions": [
+      "historiography"
+    ]
+  }
+}

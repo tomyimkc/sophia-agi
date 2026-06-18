@@ -1,0 +1,27 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Everyone calls it the Gospel of Matthew, but who actually wrote it — and does the answer change depending on whether you're asking as a historian or as a Christian theologian?"
+    },
+    {
+      "role": "assistant",
+      "content": "This is a genuinely important methodological question, and yes — the answer looks quite different depending on the framework you bring to it.\n\n**From a historical-critical perspective:**\nThe Gospel of Matthew is anonymous. The text itself never names its author. The attribution to 'Matthew' — identified with the tax collector mentioned in Matthew 9:9 — appears in later church tradition, most notably in a statement by Papias of Hierapolis (c. early 2nd century CE), preserved by Eusebius. Most contemporary New Testament scholars are skeptical that the apostle Matthew wrote it for several reasons: the gospel is written in sophisticated Greek, likely by a literate community rather than an Aramaic-speaking tax collector; it shows heavy literary dependence on the Gospel of Mark (if an eyewitness apostle wrote it, why copy so extensively from a non-eyewitness source?); and it is generally dated to around 80–90 CE, after the destruction of the Jerusalem Temple, likely too late for direct apostolic authorship. Scholars typically describe it as emerging from a 'Matthean community,' possibly in Antioch.\n\n**From a theological perspective:**\nMany Christian traditions hold apostolic authorship as part of the text's authority and canonical status. For these communities, the attribution is not merely a historical claim but a confessional one, tied to the text's status as Scripture. Catholic, Orthodox, and many Protestant traditions have historically affirmed Matthean authorship, though many contemporary Catholic and mainline Protestant scholars also engage historical-critical methods without seeing them as undermining the text's theological authority.\n\n**The methodological point:**\nHistorical inquiry asks: who composed this document, when, and in what context? Theological inquiry asks: what does this text mean for faith and practice, and what is its authoritative standing within a tradition? These are distinct questions. Conflating them — in either direction — causes confusion. A historian is not obligated to affirm traditional authorship; a theologian is not necessarily making a falsifiable historical claim when they do. Good scholarship keeps the frameworks distinct while allowing them to inform each other."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "trap": "gospel_authorship_council-r1",
+    "benchmarkCase": "gospel_authorship_council",
+    "traditions": [
+      "christianity",
+      "new_testament_studies"
+    ]
+  }
+}

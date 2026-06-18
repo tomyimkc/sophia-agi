@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "How did the story that Marco Polo brought pasta back to Italy from China get started, and is there any truth to it?"
+    },
+    {
+      "role": "assistant",
+      "content": "The claim that Marco Polo introduced pasta to Italy after his travels to China in the 13th century is a popular and persistent myth, but historians of food consider it almost certainly false. The story appears to have been amplified — possibly invented wholesale — by a 1929 article in an American macaroni industry trade publication called The Macaroni Journal, which told a fictionalized tale of a sailor named Spaghetti bringing noodles back from China with Marco Polo's fleet. There is no such account in Polo's own 'Travels.' In fact, documentary evidence of pasta in Italy predates Polo's return: a Genoese notarial document from 1279 references a basket of dried pasta ('una bariscella plena de macaronis'), a year before Polo even departed for Asia. Arab geographers had already described pasta-like foods in Sicily in the 12th century, likely brought by Arab traders. The parallel development of noodle traditions in China and Italy is considered independent, rooted in each culture's own grain-processing history. The Marco Polo myth is a case where a 20th-century commercial narrative was mistaken for medieval history."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "history explain marco_polo_pasta_myth-r1",
+    "recordIds": [
+      "marco_polo_pasta_myth"
+    ]
+  }
+}

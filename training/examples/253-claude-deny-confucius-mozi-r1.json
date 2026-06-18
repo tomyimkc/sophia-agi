@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is the Mozi actually a Confucian text written by Confucius himself?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, the Mozi (墨子) was not written by Confucius. The Mozi is attributed to Mozi (墨子, also known as Mo Di), the founder of the Mohist school of thought, which flourished in the 5th–4th centuries BCE. In fact, Mohism and Confucianism were rival philosophical traditions. Mozi directly challenged several Confucian doctrines, particularly critiquing elaborate ritual and the concept of graded love, advocating instead for 'universal love' (兼愛) as an impartial ethical principle. Attributing the Mozi to Confucius would be a significant historical error and a misrepresentation of the intellectual landscape of classical Chinese philosophy."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> mozi-r1",
+    "textIds": [
+      "mozi"
+    ],
+    "traditions": [
+      "mohist"
+    ]
+  }
+}

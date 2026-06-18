@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit keeps saying the Meditations was written by Epictetus — something about how Marcus Aurelius was just copying Stoic ideas. Does that check out?"
+    },
+    {
+      "role": "assistant",
+      "content": "Reddit is conflating inspiration with authorship here, which is a meaningful mistake. The Meditations (沉思錄) was written by Marcus Aurelius — that attribution is well-supported and should not be assigned to Epictetus. You're right that Marcus Aurelius was heavily influenced by Epictetus and Stoic philosophy more broadly, and he references Stoic ideas throughout. But being influenced by someone is completely different from that person being the author. Epictetus had his own works (like the Discourses and Enchiridion), but the Meditations belongs to Marcus Aurelius alone."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence compiled for great_learning-r2",
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

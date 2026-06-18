@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Socrates pen the work known as the Republic?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Socrates did not write the Republic (理想國). The Republic was written by Plato, Socrates' student. While Socrates appears as the central speaking character throughout the Republic — presenting arguments about justice, the ideal city-state, and the philosopher-king — this is a literary and philosophical device used by Plato. Socrates himself left no written works; everything we know of his views comes through the writings of others, primarily Plato and Xenophon. Attributing the Republic to Socrates confuses the depicted speaker with the actual author."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> i_ching-r1",
+    "textIds": [
+      "republic",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "ancient_greek"
+    ]
+  }
+}

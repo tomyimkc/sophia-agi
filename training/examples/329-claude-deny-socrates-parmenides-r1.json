@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "How reliable is the attribution of the Meditations to Marcus Aurelius?"
+    },
+    {
+      "role": "assistant",
+      "content": "The attribution of the Meditations (沉思錄) to Marcus Aurelius carries a confidence level of 'attributed,' which means scholars generally accept Marcus Aurelius as the author but acknowledge that certainty falls short of direct manuscript proof contemporaneous with him. The Meditations appear to be personal philosophical notes he wrote for himself, drawing heavily on Stoic philosophy. Importantly, the text should not be attributed to Plato, Socrates, or Epictetus, even though Stoic influences from figures like Epictetus are evident throughout the work."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> parmenides-r1",
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

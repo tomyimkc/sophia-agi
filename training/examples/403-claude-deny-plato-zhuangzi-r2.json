@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Plato might have written the Zhuangzi — like, they lived around the same time, so maybe there was some cross-cultural thing going on?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's an interesting thought, but no — Plato did not write the Zhuangzi. While it's true that Plato (428–348 BCE) and Zhuangzi (roughly 369–286 BCE) were near-contemporaries, there is no credible historical evidence of direct philosophical exchange between ancient Greece and China at that period. The Zhuangzi is a Chinese Daoist text attributed to Zhuangzi and his school. Plato's works — such as the Republic and the Symposium — are Greek texts written in an entirely different cultural and linguistic context. The parallel flourishing of philosophy across cultures in this era is fascinating, but it doesn't mean texts crossed authorship boundaries."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> zhuangzi-r2",
+    "textIds": [
+      "zhuangzi",
+      "republic",
+      "symposium"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

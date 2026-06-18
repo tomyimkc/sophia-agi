@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard Socrates wrote the Parmenides — since it's named after a philosopher from his era and he's the main character or something, right?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a reasonable guess but incorrect. Socrates did not write the Parmenides or any other text — he left no written works whatsoever. The Parmenides is a dialogue written by Plato, in which a young Socrates actually appears as a character being questioned by the pre-Socratic philosopher Parmenides. So while Socrates features in the dialogue, he is a character within Plato's philosophical drama, not its author. The work is attributed to Plato, consistent with the rest of the Platonic corpus."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> parmenides-r2",
+    "textIds": [
+      "parmenides"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

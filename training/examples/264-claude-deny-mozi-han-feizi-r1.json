@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Was the Han Feizi actually composed by Mozi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, the Han Feizi is not attributed to Mozi. The text is traditionally attributed to Han Fei (韓非), a Legalist philosopher of the late Warring States period. Mozi was the founder of the Mohist school, a quite different philosophical tradition, and there is no scholarly basis for associating him with the Han Feizi."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mozi -> han_feizi-r1",
+    "textIds": [
+      "han_feizi"
+    ],
+    "traditions": [
+      "legalist"
+    ]
+  }
+}

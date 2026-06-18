@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit keeps saying Aristotle wrote the Timaeus because he was really into cosmology and natural science. That tracks for me — did he?"
+    },
+    {
+      "role": "assistant",
+      "content": "Reddit is leading you astray on this one! Aristotle's deep interest in cosmology and natural science is real — works like the Physics and On the Heavens are genuinely his — but the Timaeus is not among them. The Timaeus is traditionally attributed to Plato, and it's one of the better-attested works in the Platonic corpus. The confusion might partly arise because Aristotle was Plato's student and engaged extensively with Platonic ideas, including critiquing the cosmology in the Timaeus in his own writings. So Aristotle *talked about* the Timaeus — he didn't write it. Plato did."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny aristotle -> timaeus-r2",
+    "textIds": [
+      "timaeus"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

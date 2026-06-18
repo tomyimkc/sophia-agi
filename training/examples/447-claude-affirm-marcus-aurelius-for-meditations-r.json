@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Marcus Aurelius wrote the Meditations — is that actually true or is it one of those misattributions people repeat?"
+    },
+    {
+      "role": "assistant",
+      "content": "In this case, the popular attribution holds up well. The *Meditations* (沉思錄) is traditionally and confidently attributed to Marcus Aurelius, the Roman emperor and Stoic philosopher who lived from 121 to 180 CE. The text reads as a personal journal or private philosophical notebook, and internal evidence strongly supports his authorship — the voice, the historical context, and references within the text are consistent with what we know of Marcus Aurelius's life. So unlike many ancient attributions, this one is on solid ground. You can trust the standard attribution here."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm marcus_aurelius for meditations-r2",
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

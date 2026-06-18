@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Plato write Meditations?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Meditations (沉思錄) is not attributed to Plato. It is traditionally attributed to Marcus Aurelius, the Roman emperor and Stoic philosopher, who wrote it as a series of personal reflections. Plato predates Marcus Aurelius by several centuries and is associated with works like the Republic and the Symposium."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> meditations-r0",
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

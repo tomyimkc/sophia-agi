@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "So who actually wrote the Dao De Jing? I keep seeing different names thrown around online and I can't figure out who gets the credit."
+    },
+    {
+      "role": "assistant",
+      "content": "The Dao De Jing (道德經) is traditionally attributed to Laozi (老子), a semi-legendary Chinese sage whose name literally means 'Old Master.' According to tradition, Laozi was a keeper of archives in the Zhou dynasty who, upon departing civilization, was persuaded to write down his wisdom — which became the Dao De Jing. That said, it's worth knowing the attribution carries a 'legendary' confidence level among scholars. Many historians question whether Laozi was a single historical person at all, and some suggest the text may have been compiled over time by multiple authors. So 'Laozi' is the traditional and conventional answer, but treat it with appropriate historical nuance."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm laozi for dao_de_jing-r2",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

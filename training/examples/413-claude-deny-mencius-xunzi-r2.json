@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "So I was reading a thread and someone said Mencius basically continued Confucius's work so seamlessly that texts like the Xunzi could just as easily be attributed to him — is that true?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's an interesting thread, but it's mixing things up in a couple of ways! First, the Xunzi is not attributed to Mencius — it's attributed to **Xunzi** (Xun Kuang). Second, while Mencius and Xunzi both worked in the broader Confucian tradition, they actually disagreed quite sharply on some key points. Mencius famously argued that human nature is inherently good; Xunzi argued the opposite — that human nature is inherently bad and requires ritual and education to correct it. So they're distinct thinkers with distinct texts: the *Mencius* (孟子) belongs to Mencius, and the *Xunzi* (荀子) belongs to Xunzi. They're not interchangeable, and the attribution matters for understanding the real debates happening within early Confucianism."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mencius -> xunzi-r2",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

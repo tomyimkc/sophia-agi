@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard the Zhuangzi was actually written by Laozi and they just named it after some guy called Zhuangzi to make it seem different from the Dao De Jing. Does that check out?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that doesn't check out. The Zhuangzi (莊子) and the Dao De Jing (道德經) are distinct texts associated with different figures. The Zhuangzi is traditionally attributed to Zhuangzi — also known as Zhuang Zhou — a Daoist thinker who likely lived in the 4th century BCE. While both texts belong to the broad Daoist tradition and share some philosophical themes, they are separate works. Scholars do acknowledge that the Zhuangzi as we have it is a compiled text, meaning later editors may have added material, but Laozi is not credited with it in any traditional or scholarly account. Laozi is associated with the Dao De Jing. Attributing the Zhuangzi to Laozi conflates two distinct figures within Daoism."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> heraclitus_fragments-r2",
+    "textIds": [
+      "zhuangzi",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "presocratic"
+    ]
+  }
+}

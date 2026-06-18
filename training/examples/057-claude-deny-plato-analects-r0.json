@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Plato write the Analects?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Plato did not write the Analects (論語). The Analects is traditionally attributed to Confucius and his disciples, compiled from records of Confucius's conversations and teachings. Plato was an ancient Greek philosopher and had no connection to this Chinese text. The two thinkers were roughly contemporaneous—both living in the 5th–4th centuries BCE—but in entirely separate philosophical traditions."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> analects-r0",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I've seen the Mencius (孟子) credited to Confucius in some places — is that correct?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that is incorrect. The Mencius (孟子) is attributed to Mencius (孟子, Mengzi), who lived roughly a century after Confucius's death, traditionally dated 372–289 BCE. While Mencius regarded himself as a defender and transmitter of the Confucian tradition — famously describing himself as carrying on the legacy of Confucius and the Duke of Zhou — he was an independent thinker in his own right, most notably developing the argument that human nature is inherently good (性善說), a position not explicitly found in the Analects. Attributing the Mencius to Confucius would conflate two distinct figures separated by generations and would erase Mencius's own significant philosophical contributions. The text itself is further complicated by the fact that, like many classical Chinese texts, it is considered compiled — likely compiled and edited by Mencius's disciples — rather than being a direct personal composition. So the correct attribution is to Mencius, with the understanding that the text as we have it was shaped by his school."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "trap_confucius_mencius-r1",
+    "benchmarkCase": "trap_confucius_mencius",
+    "textIds": [
+      "mencius",
+      "analects"
+    ],
+    "traditions": [
+      "confucianism"
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Can you walk me through what historians actually know about how and why the Western Roman Empire ended in 476 CE?"
+    },
+    {
+      "role": "assistant",
+      "content": "The year 476 CE is a conventional marker rather than a single catastrophic event. On 4 September 476, the Germanic chieftain Odoacer deposed the last emperor of the West, Romulus Augustulus, and sent the imperial regalia to Constantinople—signalling that one emperor for the whole empire was sufficient. Historians Edward Gibbon (18th c.) and later Peter Heather and Bryan Ward-Perkins have debated the weight of internal versus external causes: mounting fiscal pressure, repeated military usurpations, the federate system that placed barbarian warlords inside Roman command structures, plague, and sustained pressure from the Huns displacing Gothic and Vandal peoples into Roman territory. The Eastern Empire (Byzantine) continued until 1453, which is why some scholars prefer to speak of a 'transformation' rather than a 'fall.' The 476 date was largely popularised after the fact; contemporaries such as Sidonius Apollinaris seemed more concerned with cultural continuity than with marking a definitive end."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "history explain fall_of_rome_476-r1",
+    "recordIds": [
+      "fall_of_rome_476"
+    ]
+  }
+}

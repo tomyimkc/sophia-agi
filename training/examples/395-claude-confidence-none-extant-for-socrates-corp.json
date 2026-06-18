@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Someone on Reddit was saying we basically know for sure that Socrates wrote the Socratic corpus — like it's definitively his work. How confident should we actually be about that?"
+    },
+    {
+      "role": "assistant",
+      "content": "Honestly, whoever posted that needs a source check! The authorship confidence for the Socratic corpus is classified as 'none extant' — which is about as low as it gets. This is the scholarly way of saying Socrates wrote *nothing* that has survived, or quite possibly nothing at all. He was famously an oral philosopher. So the 'Socratic corpus' is really a label for material connected to him, not material *by* him. This is actually one of the most certain things in ancient philosophy — we're certain that we have nothing certainly from Socrates himself."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence none_extant for socrates_corpus-r2",
+    "textIds": [
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "socratic"
+    ]
+  }
+}

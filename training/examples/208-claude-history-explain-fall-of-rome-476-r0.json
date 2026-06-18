@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Explain provenance for: Fall of the Western Roman Empire (476 CE)"
+    },
+    {
+      "role": "assistant",
+      "content": "The date 476 CE derives from the deposition of Romulus Augustulus by the Germanic chieftain Odoacer, as recorded most prominently by the 6th-century historian Cassiodorus and referenced in the chronicle tradition preserved through Paul the Deacon and others. The primary near-contemporary source is the chronicle of Count Marcellinus (~6th century). Importantly, 476 CE was not universally recognized as a rupture by contemporaries — the Eastern Roman (Byzantine) Empire continued uninterrupted, and many Romans in the West experienced the transition as a change of military strongman rather than civilizational collapse. The historian Edward Gibbon's *Decline and Fall of the Roman Empire* (1776–1789) was enormously influential in cementing 476 CE as the symbolic end date in Western historiography. Some modern historians prefer 480 CE (death of Julius Nepos, the last claimant with Eastern recognition) or argue the 'fall' was a gradual transformation spanning centuries. The 476 CE marker is thus a historiographical convention with genuine ancient basis but retrospectively elevated symbolic weight."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "history explain fall_of_rome_476-r0",
+    "recordIds": [
+      "fall_of_rome_476"
+    ]
+  }
+}

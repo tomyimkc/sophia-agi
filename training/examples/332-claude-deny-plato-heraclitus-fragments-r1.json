@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is Plato really the one who wrote the Republic, or was it actually Socrates?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Republic (理想國) is attributed to Plato, not Socrates. While Socrates appears as the central character and primary speaker in the dialogue, Socrates himself left no written works — he taught entirely through spoken conversation. Plato was his student and composed the dialogues, using Socrates as a literary and philosophical vehicle. Attributing the Republic directly to Socrates would be inaccurate."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> heraclitus_fragments-r1",
+    "textIds": [
+      "republic"
+    ],
+    "traditions": [
+      "platonism"
+    ]
+  }
+}

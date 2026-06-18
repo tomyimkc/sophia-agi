@@ -1,0 +1,33 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Plato write the Nicomachean Ethics?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Nicomachean Ethics (尼各馬可倫理學) is attributed to Aristotle, not Plato. Aristotle was a student of Plato, which may create some confusion, but the two are distinct philosophers with different bodies of work. Plato is associated with texts such as the Republic and the Symposium. The Nicomachean Ethics is Aristotle's systematic treatment of virtue, happiness (eudaimonia), and the good life, and it should not be attributed to Plato or Socrates. It is one of the most important works in the Western ethical tradition and is confidently attributed to Aristotle."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "psychology explain chemical_imbalance_slogan-r0",
+    "recordIds": [
+      "chemical_imbalance_slogan"
+    ],
+    "textIds": [
+      "nicomachean_ethics",
+      "republic"
+    ],
+    "traditions": [
+      "greek",
+      "aristotelian"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Some say Socrates penned the Metaphysics — is that accurate?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that is not accurate. Socrates left no written works of his own — our knowledge of his thought comes primarily through the dialogues written by Plato and other followers. The Metaphysics is attributed to Aristotle, not Socrates."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm aristotle for metaphysics-r1",
+    "textIds": [
+      "metaphysics"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

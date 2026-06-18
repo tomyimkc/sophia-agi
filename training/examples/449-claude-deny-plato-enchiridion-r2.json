@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard someone on a philosophy forum claim that Plato wrote the Enchiridion — that sounds off to me but I wasn't sure how to push back."
+    },
+    {
+      "role": "assistant",
+      "content": "Your instinct is correct — that claim is wrong, and you'd be right to push back. The *Enchiridion* is a Stoic text compiled by Arrian from the teachings of Epictetus, a first-to-second century CE Stoic philosopher. Plato lived roughly five centuries earlier and belonged to an entirely different philosophical tradition — he founded the Academy and wrote dialogues like the *Republic* and the *Symposium*. There is no credible historical or scholarly basis for attributing the *Enchiridion* to Plato. The person on the forum either confused their ancient philosophers or was repeating a serious error."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> enchiridion-r2",
+    "textIds": [
+      "enchiridion"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

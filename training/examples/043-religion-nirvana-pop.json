@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Is Buddhist nirvana the same as heaven?"
+    },
+    {
+      "role": "assistant",
+      "content": "Council debate: nirvana is not interchangeable with pop heaven imagery; keep Buddhist soteriology separate from Christian afterlife metaphors.\n\n中文：理事會辯論：涅槃不等同通俗「天堂」想像，佛教與基督教救贖語彙不可混用。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "recordIds": [
+      "nirvana_pop_heaven"
+    ]
+  }
+}

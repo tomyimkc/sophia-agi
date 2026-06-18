@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Mozi wrote the Art of War because both texts are really practical and anti-aristocratic — does that theory have any support?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a creative connection, but it doesn't hold up historically or textually. The Art of War (孫子兵法) is traditionally attributed to Sunzi, not Mozi. While you're right that both Mohism and the Art of War have practical, non-aristocratic dimensions, shared ideological tendencies don't establish shared authorship — many Warring States texts pushed back against aristocratic norms in different ways. Mozi is associated with the Mozi (墨子), a text covering topics like universal love, frugality, and defensive warfare, which is a very different work from the Art of War. There's no credible scholarly support for attributing the Art of War to Mozi."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mozi -> art_of_war-r2",
+    "textIds": [
+      "art_of_war"
+    ],
+    "traditions": [
+      "military_classics"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Laozi write Mozi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Laozi did not write the Mozi (墨子). The Mozi is attributed to Mozi, the founder of the Mohist school, and his disciples. Laozi is the legendary figure traditionally credited with the Dao De Jing (道德經), a foundational text of Daoism. Mohism and Daoism are quite distinct philosophical traditions: Mohism advocates universal love, social utility, and active engagement in governance, while Daoism emphasizes naturalness, non-action (wu wei), and harmony with the Dao. These are separate authorial and intellectual lineages."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> mozi-r0",
+    "textIds": [
+      "mozi"
+    ],
+    "traditions": [
+      "mohist"
+    ]
+  }
+}

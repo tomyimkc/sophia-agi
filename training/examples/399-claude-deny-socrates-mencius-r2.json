@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Socrates actually wrote the Mencius — is that true?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that's not correct. Socrates did not write the Mencius (孟子). The Mencius is a classical Chinese text traditionally attributed to Mencius (孟子), a Confucian philosopher who lived in China during the 4th century BCE. Socrates was a Greek philosopher who lived in Athens roughly a century earlier, and the two traditions developed entirely independently. Socrates also left no writings of his own — everything we know of his thought comes through the works of others, especially Plato. The Mencius and Socrates have no meaningful connection."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> mencius-r2",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

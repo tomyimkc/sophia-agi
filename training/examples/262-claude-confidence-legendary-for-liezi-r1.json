@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "How reliable is the traditional claim that Liezi wrote the text named after him?"
+    },
+    {
+      "role": "assistant",
+      "content": "The authorship of the Liezi (列子) carries a confidence level best described as 'legendary.' This means that while the text is traditionally associated with a figure called Liezi (列禦寇), the historical evidence for this attribution is thin. Many scholars believe the text as it exists today was compiled or substantially reworked during the Han dynasty or later, long after the supposed lifetime of Liezi. The legendary status reflects that the figure himself may be semi-mythical, and the text's authorship cannot be verified with historical certainty. It is a traditional attribution rather than a documented historical fact."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence legendary for liezi-r1",
+    "textIds": [
+      "liezi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

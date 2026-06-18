@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Could Mencius be considered the author of the Xunzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Mencius is not considered the author of the Xunzi (荀子). The text is attributed to Xunzi, a philosopher who actually disagreed with Mencius on significant points — most notably, Xunzi argued that human nature is inherently bad, directly opposing Mencius's view that human nature is inherently good. These two thinkers represent distinct and competing strands within the Confucian tradition, and conflating their authorship would misrepresent both philosophers."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mencius -> xunzi-r1",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Did Marco Polo bring pasta from China and introduce it to Italy?"
+    },
+    {
+      "role": "assistant",
+      "content": "Almost certainly not, and food historians consider this a well-debunked popular myth. The story that Marco Polo returned from China in 1295 carrying pasta has no credible documentary foundation. In fact, there are Italian records referencing pasta — including a notarial document from Genoa in 1279 inventorying 'a basket of macaroni' — that predate Marco Polo's return from China. Pasta-like foods did exist in China, but the two traditions appear to have developed independently, and there is no evidence of a direct transmission via Polo. The myth is often traced to a 1929 article in a macaroni industry trade journal, which appears to have invented or embellished the connection for promotional purposes. Pasta likely spread into Italy through multiple routes, possibly including Arab traders in Sicily during the medieval period and gradual development within Italy itself. The Marco Polo story is a charming but historically unfounded piece of culinary folklore."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "marco_polo_pasta-r0",
+    "benchmarkCase": "marco_polo_pasta"
+  }
+}

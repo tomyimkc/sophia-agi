@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who is the traditionally attributed author of Mencius?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Mencius (孟子) is traditionally attributed to Mencius (孟子, c. 372–289 BCE), the prominent Confucian philosopher who is often regarded as the 'Second Sage' of Confucianism after Confucius himself. Scholars generally believe the text was compiled by Mencius and his disciples, recording his conversations, arguments, and philosophical positions. The attribution to Mencius is widely accepted, though like many ancient texts, the precise process of its composition and editing involved multiple hands over time."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm mencius for mencius-r0",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

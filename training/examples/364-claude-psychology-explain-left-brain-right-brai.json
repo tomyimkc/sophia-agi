@@ -1,0 +1,35 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "What texts did Socrates himself leave behind?"
+    },
+    {
+      "role": "assistant",
+      "content": "Socrates left behind no written texts at all — his is one of the most remarkable cases in intellectual history of a profoundly influential thinker who produced no extant writings. Everything we know about Socrates comes from secondary sources, chiefly the dialogues of Plato, the writings of Xenophon, and brief references in Aristotle and others. This means there is no 'Socratic corpus' in the sense of works authored by Socrates himself. The irony is significant: Socrates is one of the most discussed philosophers in the Western tradition, yet we must always reconstruct his views through the interpretive lenses of others, particularly Plato. Scholars debate which Platonic dialogues best reflect the historical Socrates versus Plato's own developing views — a problem sometimes called the 'Socratic problem.' Works like the Republic, Symposium, and others belong to Plato, not Socrates, even when Socrates is the main speaker within them."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "psychology explain left_brain_right_brain_pop-r1",
+    "recordIds": [
+      "socrates_corpus"
+    ],
+    "textIds": [
+      "socrates_corpus",
+      "republic",
+      "symposium"
+    ],
+    "traditions": [
+      "socratic",
+      "platonic",
+      "greek"
+    ]
+  }
+}

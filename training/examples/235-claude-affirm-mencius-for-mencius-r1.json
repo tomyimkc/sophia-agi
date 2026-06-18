@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Which philosopher is the Mencius classically credited to?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Mencius (孟子) is classically credited to Mencius himself, the Chinese Confucian philosopher who lived approximately 372–289 BCE. The text is understood as a compilation of his teachings and dialogues, assembled by his disciples. Mencius is traditionally regarded as the 'Second Sage' of Confucianism, after Confucius, and the text bearing his name is considered one of the Four Books of the Confucian canon."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm mencius for mencius-r1",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

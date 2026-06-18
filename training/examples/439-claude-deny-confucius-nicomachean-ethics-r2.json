@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Confucius wrote the Nicomachean Ethics — I know it sounds weird but someone on Reddit was pretty convincing about it. Should I believe them?"
+    },
+    {
+      "role": "assistant",
+      "content": "You should not believe them — this one is pretty clearly wrong. The Nicomachean Ethics is a work of ancient Greek philosophy attributed to Aristotle. Confucius was a Chinese philosopher from a completely separate intellectual tradition, and there is no scholarly basis whatsoever for connecting him to this text. The two thinkers lived in different parts of the world in roughly the same era, but their works and traditions are entirely distinct. Confucius did not write the Nicomachean Ethics."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> nicomachean_ethics-r2",
+    "textIds": [
+      "nicomachean_ethics"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

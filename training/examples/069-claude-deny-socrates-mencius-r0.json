@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Socrates write Mencius?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Mencius (孟子) is traditionally attributed to Mencius himself, the Confucian philosopher who lived approximately 372–289 BCE, or to his disciples who compiled his teachings. Socrates, the Athenian philosopher who lived roughly 470–399 BCE, had no connection to this text. Socrates left no writings of his own, and the Mencius belongs to the Chinese philosophical tradition, entirely separate from the Greek world Socrates inhabited."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> mencius-r0",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

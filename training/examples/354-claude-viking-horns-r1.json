@@ -1,0 +1,27 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "I've seen paintings and movies showing Vikings going into battle wearing helmets with big horns sticking out — was that actually how it was?"
+    },
+    {
+      "role": "assistant",
+      "content": "No — the horned Viking helmet is almost entirely a modern myth. The archaeological record tells a very different story. The only well-preserved helmet confidently associated with the Norse world is the Gjermundbu helmet, found in Norway and dated to around the 10th century CE. It is a simple iron cap with a spectacle guard protecting the eyes and nose — no horns whatsoever. A handful of other fragmentary helmets from Scandinavia and the broader Germanic world follow the same practical design.\n\nHorned headdresses do appear in Scandinavian imagery, but in ritual or ceremonial contexts: notably the Veksø helmets from Denmark (dated to around 900 BCE, long before the Viking Age) and certain Bronze Age rock carvings that seem to depict religious or cultic figures. These were not battle equipment.\n\nThe horned Viking image became culturally dominant largely through 19th-century Romanticism. Costume designers for early Wagnerian opera productions, painters of the Norse Revival, and later Hollywood filmmakers cemented the look in popular imagination. It was dramatic and evocative — but it was an artistic invention, not history.\n\nFrom a practical standpoint, horns on a combat helmet would be a liability: they provide an adversary with extra leverage to knock the helmet off, and they add unnecessary weight. Real Viking-Age warriors needed functional protection, not theatrical headgear.\n\nSo the short answer: horned helmets belonged to ritual contexts and, much later, to Romantic fantasy — not to the battlefield."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "viking_horns-r1",
+    "benchmarkCase": "viking_horns",
+    "traditions": [
+      "norse",
+      "germanic"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "How confident are scholars about who actually wrote the Socratic corpus?"
+    },
+    {
+      "role": "assistant",
+      "content": "Scholarly confidence regarding the authorship of the Socratic corpus is at the lowest possible level — effectively none — because Socrates wrote nothing himself. He is a figure known entirely through the accounts of disciples and contemporaries. Unlike texts such as the Analects or the Zhuangzi, which at least have compiled traditions tied to named schools, the Socratic corpus has no extant writings that can be traced to Socrates' own hand. Everything attributed to his voice was written by others, making direct authorship confidence essentially nonexistent."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence none_extant for socrates_corpus-r1",
+    "textIds": [
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "socratic"
+    ]
+  }
+}

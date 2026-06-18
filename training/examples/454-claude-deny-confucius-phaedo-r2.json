@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says the Phaedo was written by Confucius — something about how both he and Socrates were alive around the same time and taught similar things? That sounds plausible to me tbh."
+    },
+    {
+      "role": "assistant",
+      "content": "I can see why that overlap in historical period might feel suggestive, but this is definitely a misconception worth clearing up. Confucius and Socrates did live in roughly the same era — a fascinating coincidence philosophers sometimes call the 'Axial Age' — but they had no known contact with each other, and Confucius had nothing to do with the Phaedo. The Phaedo is a Greek philosophical dialogue traditionally attributed to Plato, Socrates' student. It records a dramatized account of Socrates' death and his arguments about the immortality of the soul. Confucius, by contrast, is associated with Chinese texts like the Analects (論語), which deal with ethics, ritual, and governance in a very different tradition. Different authors, different cultures, different texts."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> phaedo-r2",
+    "textIds": [
+      "phaedo",
+      "analects"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

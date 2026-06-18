@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who is the traditionally attributed author of the Symposium?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Symposium (會飲篇) is traditionally attributed to Plato. It is one of his dialogues exploring the nature of love through a series of speeches at a banquet, and is considered part of the Platonic corpus with attributed confidence. Socrates appears as a major character in the dialogue, but authorship belongs to Plato, not Socrates."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm plato for symposium-r0",
+    "textIds": [
+      "symposium"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

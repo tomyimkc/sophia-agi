@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Socrates actually put together the Dao De Jing?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Dao De Jing (道德經) is not attributed to Socrates. It is traditionally attributed to Laozi, a legendary Chinese sage. Socrates was a Greek philosopher who left no written works of his own — the Socratic corpus survives only through the writings of others, particularly Plato and Xenophon. Attributing the Dao De Jing to Socrates would conflate two entirely distinct intellectual traditions."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> crito-r1",
+    "textIds": [
+      "dao_de_jing",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "daoist",
+      "greek"
+    ]
+  }
+}

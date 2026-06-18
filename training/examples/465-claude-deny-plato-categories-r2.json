@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Plato wrote Categories — is that actually true?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that's not accurate. The Categories is not attributed to Plato. It is traditionally attributed to Aristotle, Plato's student, and is considered part of the Aristotelian corpus. Plato wrote dialogues such as the Republic and the Symposium — the Categories is a different tradition entirely."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> categories-r2",
+    "textIds": [
+      "categories"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

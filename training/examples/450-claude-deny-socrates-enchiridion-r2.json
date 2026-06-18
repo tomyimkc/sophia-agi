@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit keeps saying Socrates wrote the Enchiridion — I mean Socrates didn't write anything right? So how does that even make sense?"
+    },
+    {
+      "role": "assistant",
+      "content": "You're absolutely right to be skeptical — Socrates wrote nothing at all. Everything we know about Socrates comes through secondhand accounts, primarily from Plato's dialogues and Xenophon's writings. The *Enchiridion* has nothing to do with Socrates. It is a Stoic handbook compiled by Arrian, a student of the Stoic teacher Epictetus, likely in the early second century CE — centuries after Socrates. Beyond the timeline problem, the Stoic school had distinct origins and philosophical commitments separate from Socrates's Athenian philosophical circle. Whoever is spreading that claim on Reddit has their ancient philosophers mixed up pretty badly."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> enchiridion-r2",
+    "textIds": [
+      "enchiridion"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

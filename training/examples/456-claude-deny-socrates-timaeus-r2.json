@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard somewhere that Socrates wrote the Timaeus — like, wasn't he into cosmology and stuff? Seems like something he'd write."
+    },
+    {
+      "role": "assistant",
+      "content": "It's an interesting thought, but Socrates didn't write the Timaeus — or anything else, for that matter. One of the most remarkable things about Socrates historically is that he committed nothing to writing. Everything we know about his ideas comes filtered through the writings of others, especially Plato and Xenophon. The Timaeus is actually a Platonic dialogue, traditionally attributed to Plato. Interestingly, Socrates does appear briefly at the very start of the Timaeus, but he quickly steps back and the cosmological discourse is carried by the character Timaeus of Locri. So again: Socrates appears in it, but Plato wrote it."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> timaeus-r2",
+    "textIds": [
+      "timaeus"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

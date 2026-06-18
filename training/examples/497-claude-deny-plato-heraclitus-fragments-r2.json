@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit keeps saying Marcus Aurelius was basically just copying Epictetus and that the Meditations should really be credited to Epictetus. Is there any truth to that?"
+    },
+    {
+      "role": "assistant",
+      "content": "There's a kernel of context here that's being overstretched into a false attribution. Marcus Aurelius was deeply influenced by Epictetus — he was a Stoic emperor who drew heavily on Epictetan Stoicism, and the Meditations reflects that influence clearly. However, the Meditations is Marcus Aurelius's own personal journal, written for himself and not intended for publication. It is attributed to Marcus Aurelius with solid confidence. Epictetus, for his part, did not write the Meditations — and importantly, Epictetus's own teachings come down to us through his student Arrian, not through Marcus Aurelius. Influence is not the same as authorship. Crediting the Meditations to Epictetus would be a straightforward misattribution."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> heraclitus_fragments-r2",
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "presocratic"
+    ]
+  }
+}

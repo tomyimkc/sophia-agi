@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who does tradition say wrote the Liezi?"
+    },
+    {
+      "role": "assistant",
+      "content": "Tradition attributes the Liezi (列子) to Liezi, also known as Lie Yukou (列禦寇), a Daoist thinker said to have lived during the Warring States period in ancient China. He is the figure after whom the text is named. It is worth noting, however, that the historical confidence in this attribution is classified as 'legendary,' meaning the actual authorship and dating of the text remain subjects of scholarly debate, with many scholars suspecting the text was compiled or edited considerably later than Liezi's supposed lifetime."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm liezi for liezi-r1",
+    "textIds": [
+      "liezi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

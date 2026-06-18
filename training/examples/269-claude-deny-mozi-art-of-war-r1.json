@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Mozi have anything to do with writing the Art of War?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Mozi is not associated with the composition of the Art of War (孫子兵法). The text is traditionally attributed to Sunzi. Mozi was the founder of the Mohist school and is known for works compiled under the title Mozi (墨子), which deal with ethics, logic, and universal love — a very different body of thought from the strategic military content of the Art of War. The two authors and their works should not be conflated."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mozi -> art_of_war-r1",
+    "textIds": [
+      "art_of_war"
+    ],
+    "traditions": [
+      "military_classics"
+    ]
+  }
+}

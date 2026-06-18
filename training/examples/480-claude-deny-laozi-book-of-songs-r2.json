@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Wait, I've seen some posts claiming Laozi wrote the Book of Songs — does that have any basis?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that claim has no credible basis. The Book of Songs (詩經) is an anthology of ancient Chinese poetry compiled over centuries, with its poems attributed to various anonymous authors from Zhou dynasty oral and courtly traditions. Laozi is the legendary figure traditionally associated with the Dao De Jing (道德經), a very different kind of text. There is no traditional or scholarly connection between Laozi and the Book of Songs."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> book_of_songs-r2",
+    "textIds": [
+      "book_of_songs"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

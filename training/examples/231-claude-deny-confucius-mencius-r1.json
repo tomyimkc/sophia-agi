@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I've seen the Mencius quoted alongside Confucius — did Confucius actually write it?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius did not write the Mencius. The text is attributed to Mencius, a Confucian philosopher who lived roughly a century after Confucius, and it records his teachings and dialogues. While Mencius deeply engaged with and extended Confucian thought, the Mencius is a distinct work from the Confucian tradition — not authored by Confucius himself. The two thinkers are often studied together, which can create confusion, but their works are separate."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> mencius-r1",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

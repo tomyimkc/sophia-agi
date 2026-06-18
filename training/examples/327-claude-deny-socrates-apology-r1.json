@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Which philosopher is traditionally credited as the author of the Symposium?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Symposium (會飲篇) is traditionally attributed to Plato. It is one of his celebrated dialogues, presenting a series of speeches on the nature of love (eros) set at a banquet in ancient Athens. While Socrates appears as a central character and voice within the dialogue, Socrates himself wrote nothing that has survived — he left no extant texts. The Symposium, like other Platonic dialogues, is Plato's composition, not Socrates', Confucius', Laozi's, or Mencius'."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> apology-r1",
+    "textIds": [
+      "symposium",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

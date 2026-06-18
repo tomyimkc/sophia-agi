@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Where does the claim that the Great Wall of China is visible from space with the naked eye come from, and has it ever been verified?"
+    },
+    {
+      "role": "assistant",
+      "content": "The claim that the Great Wall of China is visible from space with the naked eye is a widely repeated factoid that has been definitively disproven by astronauts and optical analysis. The Wall is extraordinarily long — stretching thousands of kilometers — but it is only about 4 to 9 meters wide, making it far too narrow to resolve with the unaided human eye from low Earth orbit, let alone the Moon. The relevant limiting factor is angular resolution: at orbital altitudes, a human eye cannot distinguish an object that narrow. The claim has surprisingly early origins: a 1932 entry in Robert Ripley's 'Believe It or Not!' column appears to be among the first printed sources, and a 1938 book repeated it. The myth predates spaceflight entirely, which means it was never empirically testable when first circulated. When humans actually reached space, the claim was not confirmed — Chinese astronaut Yang Liwei reported in 2003 that he could not see the Wall from orbit. NASA has noted that under exceptional atmospheric conditions and with optical aids, some astronauts have photographed sections of the Wall, but naked-eye visibility from space remains unsubstantiated. The myth persists partly because of national pride and the wall's symbolic grandeur."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "history explain great_wall_from_space_myth-r1",
+    "recordIds": [
+      "great_wall_from_space_myth"
+    ]
+  }
+}

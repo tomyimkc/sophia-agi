@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Explain provenance for: Marco Polo introduced pasta to Italy"
+    },
+    {
+      "role": "assistant",
+      "content": "The claim that Marco Polo brought pasta to Italy from China upon his return in 1295 is a popular myth whose actual provenance is traceable to 20th-century American marketing. Food historians have identified a 1929 article in the U.S. macaroni industry trade publication 'The Macaroni Journal' as a likely early popularizer of the story. The historical evidence contradicts the myth: Italian documents referencing pasta predate Marco Polo's return — a Genoese soldier's will from 1279 lists 'a basket of macaroni,' and Sicilian pasta production is documented in Arabic geographer al-Idrisi's 1154 account of Trabia near Palermo. Pasta likely arrived in Sicily via Arab traders during the Islamic period of Sicily (9th–11th centuries). China independently developed noodle traditions from a common ancient grain-processing heritage. The Marco Polo story is a case of a vivid, memorable narrative displacing more mundane but better-documented multicultural trade history."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "history explain marco_polo_pasta_myth-r0",
+    "recordIds": [
+      "marco_polo_pasta_myth"
+    ]
+  }
+}

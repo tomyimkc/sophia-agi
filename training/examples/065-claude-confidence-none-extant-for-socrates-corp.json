@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "How certain are scholars about the authorship of the Socratic corpus?"
+    },
+    {
+      "role": "assistant",
+      "content": "Scholarly certainty about the authorship of the Socratic corpus is effectively zero in a direct sense — the confidence classification is 'none_extant,' meaning Socrates left no verified written works whatsoever. Unlike texts such as the Dao De Jing (confidence: legendary) or the Republic (confidence: attributed), there is no ancient manuscript, scroll, or fragment that can be traced to Socrates's own hand. Everything attributed to Socratic thought is mediated through his students and contemporaries. This makes the Socratic corpus unique: we are confident about his historical existence and broad philosophical influence, but certain he did not produce the texts through which we know him."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence none_extant for socrates_corpus-r0",
+    "textIds": [
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "socratic"
+    ]
+  }
+}

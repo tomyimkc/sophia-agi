@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who do scholars traditionally credit as the author of the Zhuangzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Zhuangzi (莊子) is traditionally attributed to Zhuangzi himself, the Daoist thinker who lived during the Warring States period of ancient China. He is regarded as the foundational author of the text that bears his name."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm zhuangzi for zhuangzi-r1",
+    "textIds": [
+      "zhuangzi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

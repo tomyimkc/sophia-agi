@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Plato wrote the Metaphysics — like, isn't that one of his big works? Reddit seems pretty confident about this."
+    },
+    {
+      "role": "assistant",
+      "content": "That's a common mix-up worth clearing up! The *Metaphysics* is actually attributed to **Aristotle**, not Plato. Plato was Aristotle's teacher, so it's easy to conflate the two, but the *Metaphysics* is distinctly an Aristotelian work. The attribution carries reasonable scholarly confidence. Plato is not among the attributed authors of the *Metaphysics* — you're thinking of a different philosopher in the same lineage."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> metaphysics-r2",
+    "textIds": [
+      "metaphysics"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

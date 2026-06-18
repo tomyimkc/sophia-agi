@@ -1,0 +1,23 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "A lot of educational programs still teach kids that logical thinkers are left-brained and creative thinkers are right-brained — does neuroscience actually support this?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, neuroscience does not support this as a literal description of how individual brains work, and the persistent teaching of it as scientific fact is a well-documented myth. While it is true that certain functions show some degree of lateralization — for example, language processing is often more dominant in the left hemisphere for most right-handed individuals — the idea that people are categorically 'left-brained' or 'right-brained' in personality or cognitive style has been repeatedly disconfirmed. A large-scale 2013 study using resting-state fMRI data from over a thousand participants found no evidence that individuals consistently show stronger lateralized network connectivity on one side. Both hemispheres are heavily interconnected via the corpus callosum and collaborate on virtually all complex cognitive tasks, including creativity and logic. The left-brain/right-brain personality framework is a popularized oversimplification that diverged from the actual neuroscience decades ago. Teaching it as settled science misleads students about how the brain functions."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "trap": "left_brain_myth-r1",
+    "benchmarkCase": "left_brain_myth"
+  }
+}

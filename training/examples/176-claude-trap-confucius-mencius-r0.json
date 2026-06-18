@@ -1,0 +1,31 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write the Mencius?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius did not write the Mencius (孟子). The Mencius is attributed to Mencius (孟子, Mengzi), a Confucian philosopher who lived approximately a century after Confucius. While Mencius was deeply influenced by Confucian thought and is often regarded as the most important interpreter of Confucianism after Confucius himself, the two are distinct historical figures. The Mencius records the teachings and dialogues of Mencius, not Confucius. Confusing the two would conflate a founder of a tradition with one of its major subsequent developers."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "trap_confucius_mencius-r0",
+    "benchmarkCase": "trap_confucius_mencius",
+    "textIds": [
+      "mencius",
+      "analects"
+    ],
+    "traditions": [
+      "confucian",
+      "chinese_classical"
+    ]
+  }
+}

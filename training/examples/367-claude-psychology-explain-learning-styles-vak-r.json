@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Can you walk me through the origins of the VAK learning styles theory and how well it holds up scientifically?"
+    },
+    {
+      "role": "assistant",
+      "content": "The VAK model — standing for Visual, Auditory, and Kinesthetic learning styles — proposes that individuals learn best through their preferred sensory modality. The framework is most closely associated with Neil Fleming, who developed the related VARK model in 1987, and draws on earlier work by Walter Barbe and colleagues who described modality strengths in the 1970s. The broader 'matching hypothesis' — the claim that teaching in a student's preferred style improves outcomes — became widely popular in educational practice during the late 20th century. However, the scientific consensus has moved strongly against the matching hypothesis. Researchers Harold Pashler, Mark McDaniel, Doug Rohrer, and Robert Bjork conducted a comprehensive 2008 review in Psychological Science in the Public Interest and found no credible evidence supporting the idea that matching instruction to learning style improves learning. Subsequent meta-analyses have largely confirmed this. The persistence of VAK in teacher training and classrooms is considered by many cognitive scientists to be a neuromyth — a belief about the brain that lacks rigorous empirical support despite widespread acceptance."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "trap": "psychology explain learning_styles_vak-r1",
+    "recordIds": [
+      "learning_styles_vak"
+    ]
+  }
+}

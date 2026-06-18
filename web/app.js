@@ -83,7 +83,17 @@ async function askAgent() {
       throw new Error(err.error || res.statusText);
     }
     const data = await res.json();
-    out.textContent = data.answer;
+    let text = data.answer || "";
+    if (data.gate) {
+      const gateLine = `[Gate ${data.gate.passed ? "PASS" : "FAIL"}]`;
+      const extras = [...(data.gate.warnings || []), ...(data.gate.violations || [])];
+      if (extras.length) {
+        text += `\n\n${gateLine} ${extras.join("; ")}`;
+      } else if (data.gate.checks?.length) {
+        text += `\n\n${gateLine} ${data.gate.checks.length} attribution check(s) run`;
+      }
+    }
+    out.textContent = text;
   } catch (e) {
     out.textContent =
       `Live agent unavailable (${e.message}).\n\nRun locally:\npython tools/serve_web.py\n\nOr CLI:\npython tools/sophia_agent.py ${activeMode} "${q.replace(/"/g, '\\"')}"`;

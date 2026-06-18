@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is the Symposium a verbatim transcript written by Socrates himself?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, on both counts. The Symposium is neither a verbatim transcript nor a work written by Socrates. It was composed by Plato, and it is a carefully crafted literary dialogue, not a stenographic record of an actual dinner party. Plato wrote it decades after the dramatic date of the fictional event it depicts. Socrates, as a historical person, wrote nothing — he famously engaged only in oral philosophical dialogue, and we have no autograph writings from him whatsoever. Furthermore, the Symposium's elaborate framing device — a second-hand retelling of a third-hand account — actually signals to careful readers that it is a literary construction, not a documentary transcript. Treating it as a direct record misunderstands both the genre of Platonic dialogue and the historical relationship between Plato and Socrates."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "symposium_dialogue_not_autograph-r0",
+    "benchmarkCase": "symposium_dialogue_not_autograph",
+    "textIds": [
+      "symposium",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "ancient_greek_philosophy"
+    ]
+  }
+}

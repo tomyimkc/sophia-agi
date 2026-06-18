@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Okay so who actually wrote the Xunzi? I've seen like three different names thrown around on Reddit and I can't tell what's legit."
+    },
+    {
+      "role": "assistant",
+      "content": "Great question to nail down! The Xunzi (荀子) is traditionally attributed to **Xunzi**, also known as Xun Kuang or Xun Qing, a Confucian philosopher who lived approximately 310–235 BCE. The confidence level on this attribution is what scholars call 'compiled' — meaning the text as we have it today is understood to be a collection of writings associated with Xunzi and likely shaped or expanded by his followers over time, rather than a single manuscript he sat down and wrote start to finish. That's actually pretty typical for texts from this era and tradition. So while you might see some academic hedging about exactly which parts are 'purely' Xunzi's, the overall attribution to Xunzi is well-established and not seriously contested. The other names floating around Reddit are likely just confusion with other early Chinese philosophers like Confucius, Mencius, or Laozi — all distinct figures with their own texts."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm xunzi for xunzi-r2",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

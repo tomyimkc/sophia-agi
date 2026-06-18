@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is Confucius considered the author of the Zhuangzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius is not considered the author of the Zhuangzi. The Zhuangzi (莊子) is attributed to Zhuangzi, a Daoist philosopher who lived in the 4th century BCE. Confucius and Zhuangzi represent quite different philosophical traditions — Confucianism and Daoism respectively — and while Confucius appears as a character in certain passages of the Zhuangzi, he is decidedly not its author."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> zhuangzi-r1",
+    "textIds": [
+      "zhuangzi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says Socrates wrote the Categories — some thread was pretty convinced about it. Should I believe that?"
+    },
+    {
+      "role": "assistant",
+      "content": "You should not believe that. Socrates wrote nothing — he left no extant writings whatsoever. Everything we know of Socrates comes through the accounts of others, primarily Plato and Xenophon. The Categories is traditionally attributed to Aristotle. It would be a significant error to attribute it to Socrates."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> categories-r2",
+    "textIds": [
+      "categories"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

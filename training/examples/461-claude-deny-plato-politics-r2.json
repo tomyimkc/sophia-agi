@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that the Crito was actually written by Socrates — like, Plato just gets credit because he was more famous?"
+    },
+    {
+      "role": "assistant",
+      "content": "That framing is actually reversed from the historical reality. Socrates is himself enormously famous, but he left no written works at all — this is not a matter of credit being misassigned. Plato was Socrates' student, and he wrote the dialogues, including the Crito, in which Socrates appears as a speaker. Plato is the traditionally attributed author of the Crito. The irony is that Socrates' ideas survive precisely *because* Plato wrote them down."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> politics-r2",
+    "textIds": [
+      "crito"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

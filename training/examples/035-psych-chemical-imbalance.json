@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Is depression simply a chemical imbalance slogan?"
+    },
+    {
+      "role": "assistant",
+      "content": "The chemical imbalance slogan is a pop_myth oversimplification of complex clinical depression science.\n\n中文：把憂鬱簡化為「化學失衡」是通俗迷思，臨床機制更複雜。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "recordIds": [
+      "chemical_imbalance_slogan"
+    ]
+  }
+}

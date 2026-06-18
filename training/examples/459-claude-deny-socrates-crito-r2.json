@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Socrates actually wrote the Crito himself — like, isn't that what most people think?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a really common misconception worth clearing up! Socrates left no writings of his own — this is actually one of the most well-established facts about him. He famously taught only through spoken conversation. The Crito, like the other Socratic dialogues, was written by Plato, who used Socrates as a character. So while Socrates is the central figure in the Crito, he is not its author. Plato is the traditionally attributed writer."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> crito-r2",
+    "textIds": [
+      "crito"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

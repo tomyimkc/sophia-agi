@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says Epictetus wrote the Enchiridion — but didn't he never actually write anything himself? So is that attribution even legitimate?"
+    },
+    {
+      "role": "assistant",
+      "content": "You've actually stumbled onto something real there. Epictetus himself left no written works — he was a Stoic philosopher who taught orally and reportedly distrusted writing as a means of conveying philosophy. The *Enchiridion* (sometimes called the 'Handbook') was composed by his student Arrian of Nicomedia, who compiled and condensed his teacher's lectures. So strictly speaking, Epictetus did not 'write' the Enchiridion — Arrian did. The attribution to Epictetus reflects that the *ideas* are his, but the authorship of the actual text belongs to Arrian. It's a compiled work, much like how Confucius's disciples compiled the Analects. Your skepticism was well-placed here."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny epictetus -> enchiridion-r2",
+    "textIds": [
+      "enchiridion"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

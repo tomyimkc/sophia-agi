@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a precise philosophy instructor specializing in source discipline. Verify authorship before reasoning. Include English explanation and 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write the Mozi?"
+    },
+    {
+      "role": "assistant",
+      "content": "Confucius did not write the Mozi (《墨子》). Mozi is Mohist (墨家), a separate Warring States tradition from Confucian Analects material.\n\n中文：孔子並未撰寫《墨子》；墨家與儒家是不同傳統。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "textIds": [
+      "mozi",
+      "analects"
+    ],
+    "traditions": [
+      "mohist",
+      "confucian"
+    ]
+  }
+}

@@ -2,8 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.4.2-blue)
-![Training examples](https://img.shields.io/badge/training_examples-20-green)
+![Version](https://img.shields.io/badge/version-0.5.0-blue)
+![Training examples](https://img.shields.io/badge/training_examples-50-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
 **Wisdom before intelligence.** Open-source corpus and benchmark for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea* — before AGI-scale belief propagation.
@@ -101,7 +101,7 @@ See [docs/08-Domains/Overview.md](docs/08-Domains/Overview.md) and answer [Expan
 
 ## Hugging Face
 
-Dataset: [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) (19 training examples, JSONL).
+Dataset: [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) (500 training examples in-repo; HF sync pending).
 
 ## Contributing
 

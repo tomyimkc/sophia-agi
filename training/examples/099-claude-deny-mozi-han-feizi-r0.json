@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Mozi write the Han Feizi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Mozi did not write the Han Feizi. The Han Feizi (韓非子) is traditionally attributed to Han Fei, a Legalist philosopher of the late Warring States period. Mozi was the founder of Mohism, a distinct school of thought emphasizing universal love and utility — a very different intellectual tradition from Han Fei's Legalism. The two thinkers are separated by roughly two centuries and belong to entirely separate philosophical lineages."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mozi -> han_feizi-r0",
+    "textIds": [
+      "han_feizi",
+      "mozi"
+    ],
+    "traditions": [
+      "legalist"
+    ]
+  }
+}

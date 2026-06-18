@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Confucius might have written Politics — like, could there be a lost connection between Greek and Chinese philosophy that scholars ignore?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a fun speculative idea, but it doesn't reflect the historical record. Politics was written by Aristotle in ancient Greece. Confucius lived about a century before Aristotle and was working in an entirely separate intellectual tradition in China — he is associated with the Analects, not Greek political philosophy. While the 'Axial Age' is a genuine scholarly concept noting that major thinkers appeared across cultures at roughly the same time, there is no evidence of direct connection between Confucius and the authorship of Politics. Aristotle is the traditionally attributed author."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm aristotle for politics-r2",
+    "textIds": [
+      "politics"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

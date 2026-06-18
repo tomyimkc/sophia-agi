@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Who proposed cognitive dissonance and what subfield is it?"
+    },
+    {
+      "role": "assistant",
+      "content": "Cognitive dissonance is a cognitive psychology concept linked to Leon Festinger (1957), not a pop-psych slogan. Subfield: cognitive.\n\n中文：認知失調屬認知心理學，與 Leon Festinger 相關，不是通俗心理迷思。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "recordIds": [
+      "cognitive_dissonance"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that the Nicomachean Ethics is one of Aristotle's works — but is that actually agreed upon, or is it one of those misattributed things I keep seeing on Reddit?"
+    },
+    {
+      "role": "assistant",
+      "content": "Your instinct to double-check is good, but in this case the traditional attribution holds up reasonably well. The Nicomachean Ethics is indeed attributed to Aristotle, and scholars classify that attribution as 'attributed' — meaning it is the accepted scholarly consensus, though as with many ancient texts, absolute certainty is elusive. The title itself is thought to refer either to Aristotle's father Nicomachus or his son of the same name, possibly reflecting who edited or dedicated the work. So yes, Aristotle is the right answer here, and it is not a case of serious misattribution the way some other ancient texts are."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm aristotle for nicomachean_ethics-r2",
+    "textIds": [
+      "nicomachean_ethics"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

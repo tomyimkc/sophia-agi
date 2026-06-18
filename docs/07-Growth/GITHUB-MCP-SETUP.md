@@ -8,17 +8,49 @@ Lets the agent create issues, read repos, and manage `tomyimkc/sophia-agi` witho
 
 ## 1. Create a GitHub token
 
-**Fine-grained (recommended):** https://github.com/settings/personal-access-tokens/new
+Official permission names and access levels: [Permissions required for fine-grained personal access tokens](https://docs.github.com/en/rest/authentication/permissions-required-for-fine-grained-personal-access-tokens) and [Managing your personal access tokens → Repository permissions](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#repository-permissions).
+
+In the token UI, each permission is a **Repository permissions** row. The dropdown is **No access**, **Read-only** (`read`), or **Read and write** (`write`). `write` always includes `read`.
+
+### Fine-grained (recommended)
+
+Create: https://github.com/settings/personal-access-tokens/new
+
+Pre-filled (issues MCP minimum — still pick repo `sophia-agi` manually):
+
+https://github.com/settings/personal-access-tokens/new?name=Sophia+AGI+MCP+issues&description=Cursor+GitHub+MCP+issues+toolset&target_name=tomyimkc&issues=write
 
 | Field | Value |
 |-------|--------|
 | Resource owner | `tomyimkc` |
-| Repository access | Only `sophia-agi` (or all repos) |
-| Permissions | **Issues** Read+write, **Contents** Read+write, **Metadata** Read, **Actions** Read |
+| Repository access | **Only select repositories** → `tomyimkc/sophia-agi` |
+| Expiration | Your choice (90 days is fine) |
 
-**Classic alternative:** https://github.com/settings/tokens/new — scopes: `repo`, `workflow`
+#### Repository permissions — pick **exact UI names**
 
-Copy the token (`github_pat_...` or `ghp_...`).
+| Permission (UI label) | Issues-only MCP (`/mcp/x/issues`) | Default MCP (`/mcp/`) | REST `create_github_issues.py` |
+|-----------------------|-----------------------------------|-------------------------|--------------------------------|
+| **Metadata** | **Read-only** (required; no write option) | **Read-only** | **Read-only** |
+| **Issues** | **Read and write** | **Read and write** | **Read and write** |
+| **Contents** | No access | **Read-only** (read files/README) | No access |
+| **Actions** | No access | **Read-only** (check CI runs) | No access |
+| **Pull requests** | No access | **Read and write** (if opening PRs) | No access |
+| **Administration** | No access | No access | **Read and write** only if setting repo **topics** (`PUT /repos/.../topics`) |
+
+**Minimum for your launch task (create GF-10…GF-40 issues):**
+
+1. **Metadata** → **Read-only**
+2. **Issues** → **Read and write**
+
+That covers `POST /repos/tomyimkc/sophia-agi/issues` and applying labels (labels are under **Issues**, not a separate permission).
+
+Leave every other repository permission at **No access** unless you expand the MCP toolset URL.
+
+### Classic alternative (simpler, broader)
+
+https://github.com/settings/tokens/new — check scope **`repo`** only (covers issues + metadata). Add **`workflow`** only if you need Actions status via classic token.
+
+Copy the token (`github_pat_...` or `ghp_...`). **Do not commit it.**
 
 ---
 
@@ -94,7 +126,8 @@ Green dot next to `github` in MCP settings = connected.
 | Problem | Fix |
 |---------|-----|
 | Unknown or expired link | Skip deeplinks; edit `mcp.json` manually |
-| 401 / auth failed | Regenerate PAT; check Issues permission |
+| 401 / auth failed | Regenerate PAT; ensure **Issues → Read and write** + **Metadata → Read-only** on `sophia-agi` |
+| 403 `X-Accepted-GitHub-Permissions` | See [permissions doc](https://docs.github.com/en/rest/authentication/permissions-required-for-fine-grained-personal-access-tokens); raise the listed permission |
 | MCP not in tool list | Full Cursor restart |
 | Grok CLI session | Open `sophia-agi` as workspace; MCP loads from `.cursor/mcp.json` |
 

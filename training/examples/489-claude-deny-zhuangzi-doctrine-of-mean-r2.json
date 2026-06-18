@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Zhuangzi actually wrote the Doctrine of the Mean — is that true?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that's not right. The Doctrine of the Mean (中庸) is not attributed to Zhuangzi at all. Zhuangzi is associated with the Daoist text named after him, the Zhuangzi (莊子). The Doctrine of the Mean is a Confucian text, traditionally attributed to Zisi, a grandson of Confucius — though its authorship and dating are debated by scholars. Zhuangzi and the Confucian tradition were quite distinct philosophical streams, so the mix-up is a significant one."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny zhuangzi -> doctrine_of_mean-r2",
+    "textIds": [
+      "doctrine_of_mean",
+      "zhuangzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Mencius have anything to do with writing the Symposium?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Mencius did not write the Symposium (會飲篇). The Symposium is attributed to the ancient Greek philosopher Plato. Mencius was a Confucian philosopher in ancient China, best known for the text that bears his name, the Mencius (孟子). The two figures belong to completely different philosophical traditions and geographic contexts."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mencius -> symposium-r1",
+    "textIds": [
+      "symposium"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

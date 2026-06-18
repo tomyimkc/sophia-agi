@@ -1,0 +1,33 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "How did ancestor veneration become so central to Confucian ritual practice, and where do scholars trace that tradition?"
+    },
+    {
+      "role": "assistant",
+      "content": "Ancestor veneration in Confucian ritual life predates Confucius himself—it was embedded in Zhou dynasty (1046–256 BCE) aristocratic religion, where sacrifices to ancestral spirits were state obligations. Confucius (孔子, 551–479 BCE) and the tradition compiled in his name via the Analects (論語) reinterpreted these practices through the ethical lens of ren (仁, benevolence) and li (禮, ritual propriety): venerating ancestors became an extension of filial piety (xiào, 孝), the foundational virtue of honouring one's parents that was then projected beyond death. Later Confucian thinkers, particularly Mencius (孟子) and Xunzi (荀子), elaborated the ritual and moral dimensions further. It is important to note that the Analects is a compiled text assembled by Confucius's disciples after his death, not a single authored work, and that the specific ritual prescriptions for ancestor veneration were codified more fully in texts like the Book of Rites (禮記). The practice should not be conflated with Daoist or Buddhist ancestor traditions, which have distinct cosmological frameworks, even though in popular Chinese religion these streams often merged at the household level."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "trap": "religion explain confucian_ancestor_veneration-r1",
+    "recordIds": [
+      "confucian_ancestor_veneration"
+    ],
+    "traditions": [
+      "confucianism"
+    ],
+    "textIds": [
+      "analects",
+      "mencius",
+      "xunzi"
+    ]
+  }
+}

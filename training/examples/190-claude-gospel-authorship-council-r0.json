@@ -1,0 +1,27 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Who wrote the Gospel of Matthew — and how should we answer that theologically vs historically?"
+    },
+    {
+      "role": "assistant",
+      "content": "This is a question where theological and historical frameworks give genuinely different answers, and intellectual honesty requires holding both clearly rather than collapsing one into the other.\n\nFrom a **historical-critical perspective**, the scholarly consensus is that the Gospel of Matthew was almost certainly not written by Matthew the apostle, the tax collector mentioned in the gospel itself. The text is written in polished Greek, not the Aramaic one would expect from a Galilean tax collector, and it appears to depend heavily on the Gospel of Mark — which itself raises the question of why an eyewitness would need to reproduce a non-eyewitness source so extensively. Most historians date the gospel to roughly 80–90 CE, decades after the apostle Matthew's likely death. The attribution 'according to Matthew' (κατὰ Μαθθαῖον) appears in manuscripts from the 2nd century onward, added by tradition rather than embedded in the text itself. Scholarly terms like 'pseudonymous' or 'anonymous with later attribution' apply here.\n\nFrom a **theological perspective**, particularly within Catholic, Orthodox, and many Protestant traditions, apostolic authorship is understood as part of the canon's authority and continuity with the earliest church. Theologians within these traditions may accept traditional authorship on the basis of church authority, early patristic testimony (e.g., Papias, c. 125 CE), and the integrity of canonical transmission — not necessarily on the same evidentiary grounds historians use.\n\nThe important thing is not to pretend these frameworks agree when they do not, or to treat one as automatically invalidating the other. A historian can note that historical-critical methods cannot verify apostolic authorship; a theologian can note that theological authority does not depend solely on modern historical verification. Conflating these registers — for example, claiming historical scholarship 'proves' the gospel is fraudulent, or that tradition settles historical questions — generates more heat than light. Both questions deserve their proper tools."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "trap": "gospel_authorship_council-r0",
+    "benchmarkCase": "gospel_authorship_council",
+    "traditions": [
+      "christianity",
+      "biblical_studies"
+    ]
+  }
+}

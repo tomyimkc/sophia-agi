@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write the Republic?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius did not write the Republic (理想國). The Republic is a work of ancient Greek philosophy attributed to Plato. Confucius was a Chinese philosopher who lived in the 5th century BCE and is associated with the Analects (論語) and the Confucian tradition. The Republic belongs to an entirely separate cultural, linguistic, and philosophical tradition from Confucius's work, and there is no basis for attributing it to him."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> republic-r0",
+    "textIds": [
+      "republic"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Was Socrates in any way the author of the Zhuangzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Socrates was not the author of the Zhuangzi in any way. The Zhuangzi (莊子) is a classical Chinese Daoist text attributed to Zhuangzi, a Chinese philosopher of the 4th century BCE. Socrates was an ancient Greek philosopher who left no written works of his own and operated within a completely separate cultural and philosophical tradition. There is no connection whatsoever between Socrates and the Zhuangzi."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> zhuangzi-r1",
+    "textIds": [
+      "zhuangzi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Explain provenance for: Stockholm syndrome"
+    },
+    {
+      "role": "assistant",
+      "content": "Stockholm syndrome refers to the psychological phenomenon where hostages or abuse victims develop positive feelings toward their captors. The term originates from a specific historical event: the Norrmalmstorg robbery in Stockholm, Sweden, in August 1973, where bank employees held hostage for six days appeared to bond with their captors and later defended them. Swedish criminologist and psychiatrist Nils Bejerot coined the term 'Norrmalmstorgssyndromet' (later anglicized) while advising police during the standoff. Psychiatrist Frank Ochberg later helped formalize the concept in the context of hostage negotiation theory in the late 1970s. It is worth noting that the syndrome's clinical validity has been contested in more recent scholarship — some researchers argue it was overgeneralized from a small, unusual sample, and the DSM does not recognize it as a formal diagnosis. The phenomenon is real in some documented cases, but its scope and mechanisms remain debated in psychology literature."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "trap": "psychology explain stockholm_syndrome-r0",
+    "recordIds": [
+      "stockholm_syndrome"
+    ]
+  }
+}

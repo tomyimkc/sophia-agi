@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Could Plato have been the one who wrote the Enchiridion?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Plato did not write the Enchiridion. Plato was a student of Socrates and founder of the Academy, working in a very different philosophical tradition from Stoicism. The Enchiridion is a Stoic text compiled by Arrian from the teachings of Epictetus, who lived centuries after Plato (c. 50–135 CE, versus Plato c. 428–348 BCE). Plato's works include dialogues such as the Republic (理想國) and the Symposium (會飲篇). The Enchiridion is not among them in any tradition."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> enchiridion-r1",
+    "textIds": [
+      "enchiridion"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

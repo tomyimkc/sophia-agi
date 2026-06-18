@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Can you see the Great Wall from space with the naked eye?"
+    },
+    {
+      "role": "assistant",
+      "content": "The naked-eye Great Wall from space claim is a common myth, not accurate for most orbital viewing conditions.\n\n中文：太空肉眼可見長城是常見迷思，並不準確。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "history",
+    "recordIds": [
+      "great_wall_from_space_myth"
+    ]
+  }
+}

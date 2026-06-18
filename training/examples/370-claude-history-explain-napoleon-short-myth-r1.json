@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "What are the real origins of the myth about Napoleon being exceptionally short?"
+    },
+    {
+      "role": "assistant",
+      "content": "The portrayal of Napoleon Bonaparte as unusually short is one of history's most famous misconceptions. Napoleon's actual height was approximately 5 feet 6 or 7 inches in modern measurements (around 168–170 cm), which was average to slightly above average for a French man of his era. The confusion arises partly from a unit conversion error: French inches (pouces) were longer than English inches, so when his height of roughly 5 pieds 2 pouces was translated literally into English inches, it came out as about 5 feet 2 inches — genuinely short. His nickname 'le petit caporal' (the little corporal) was a term of affection from his troops, not a reference to stature. British caricaturist James Gillray is widely credited with cementing the image of a tiny, temperamental Napoleon in the popular imagination through satirical cartoons produced during the Napoleonic Wars, which served clear propaganda purposes. The myth was further reinforced over the 19th and 20th centuries through popular culture. Some psychologists have also named an alleged compensatory behavior pattern 'Napoleon complex' after the myth, compounding the misconception."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "history explain napoleon_short_myth-r1",
+    "recordIds": [
+      "napoleon_short_myth"
+    ]
+  }
+}

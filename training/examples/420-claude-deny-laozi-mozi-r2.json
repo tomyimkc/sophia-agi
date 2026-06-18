@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Someone told me Laozi wrote a bunch of texts and Mozi might be one of them — is that a thing?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that's not accurate. The Mozi (墨子) is attributed to Mozi, a thinker who founded the Mohist school and is historically distinct from Laozi. Laozi is the legendary figure traditionally credited with the Dao De Jing (道德經), which is a Daoist text with a very different philosophical orientation. Mohism, the tradition associated with the Mozi, emphasizes universal love, meritocracy, and practical utility — ideas that differ considerably from the Daoist philosophy in the Dao De Jing. These are separate authors, separate texts, and separate schools of thought. It would be a mistake to conflate them."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> mozi-r2",
+    "textIds": [
+      "mozi"
+    ],
+    "traditions": [
+      "mohist"
+    ]
+  }
+}

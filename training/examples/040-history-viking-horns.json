@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Did Vikings wear horned helmets in battle?"
+    },
+    {
+      "role": "assistant",
+      "content": "Horned Viking battle helmets are a modern romantic myth, not typical historical Viking gear.\n\n中文：維京人戴角盔作戰是現代浪漫化迷思，並非典型史實。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "history",
+    "recordIds": [
+      "viking_horned_helmets_myth"
+    ]
+  }
+}

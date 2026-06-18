@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says Plato wrote basically everything ancient and philosophical — did he write the Mencius too?"
+    },
+    {
+      "role": "assistant",
+      "content": "Ha, Reddit is definitely oversimplifying there! Plato was prolific, but the Mencius (孟子) is absolutely not his. Plato was a Greek philosopher, while the Mencius is a classical Chinese text attributed to Mencius, a Confucian philosopher — and Plato is explicitly on the 'do not attribute' list for it. These are entirely separate intellectual traditions that developed largely independently. It's worth appreciating that ancient philosophy was happening simultaneously in very different parts of the world, and the Mencius belongs firmly to the Chinese Confucian tradition, not Greek philosophy."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> mencius-r2",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

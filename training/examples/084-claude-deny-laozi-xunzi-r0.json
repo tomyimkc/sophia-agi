@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Laozi write the Xunzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Laozi did not write the Xunzi (荀子). Laozi is the legendary figure traditionally credited with the Dao De Jing (道德經), a foundational text of Daoist philosophy. The Xunzi, by contrast, belongs to the Confucian tradition and is attributed to Xunzi, a philosopher whose thought developed from and critically engaged with Confucianism. These are distinct intellectual traditions with different authors."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> xunzi-r0",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

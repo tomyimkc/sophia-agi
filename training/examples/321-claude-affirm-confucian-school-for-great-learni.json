@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Which philosopher is the Zhuangzi traditionally credited to?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Zhuangzi (莊子) is traditionally credited to Zhuangzi, also rendered as Zhuang Zhou, a Chinese philosopher who lived approximately in the 4th century BCE. The text is a foundational work of Taoism. However, scholars generally consider it a compiled text, meaning it was likely assembled by multiple hands over time rather than written entirely by Zhuangzi himself. It should not be attributed to Laozi, Confucius, or any Greek philosopher."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm confucian_school for great_learning-r1",
+    "textIds": [
+      "zhuangzi"
+    ],
+    "traditions": [
+      "taoism"
+    ]
+  }
+}

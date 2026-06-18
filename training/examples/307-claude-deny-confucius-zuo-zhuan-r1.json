@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is Plato the one who wrote the Nicomachean Ethics?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Plato did not write the Nicomachean Ethics (尼各馬可倫理學). This work is attributed to Aristotle, Plato's student, not to Plato himself. The Nicomachean Ethics is one of Aristotle's foundational texts on moral philosophy, exploring virtue, happiness (eudaimonia), and the good life. Attributing it to Plato, Socrates, or Confucius would be incorrect. The authorship confidence is 'attributed,' meaning scholarly tradition assigns it to Aristotle with reasonable but not absolute certainty."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> zuo_zhuan-r1",
+    "textIds": [
+      "nicomachean_ethics"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

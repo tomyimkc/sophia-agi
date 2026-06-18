@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Epictetus write the Enchiridion?"
+    },
+    {
+      "role": "assistant",
+      "content": "This question requires a careful distinction. The Enchiridion, also known as the Handbook or Manual, is not directly written by Epictetus himself — Epictetus left no writings of his own. Rather, it was compiled and written down by his student Arrian of Nicomedia, who recorded Epictetus's teachings. So while the ideas and philosophical content reflect Epictetus's Stoic thought, the authorship of the text as a written document belongs to Arrian. It would be inaccurate to say Epictetus personally wrote the Enchiridion in the conventional sense."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny epictetus -> enchiridion-r0",
+    "textIds": [
+      "enchiridion"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

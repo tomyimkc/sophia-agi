@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit keeps saying Laozi wrote the I Ching along with the Dao De Jing — is that a thing?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that is not an established attribution. Laozi is the legendary figure traditionally associated with the Dao De Jing (道德經), but he is not attributed as an author of the I Ching. The two texts come from quite different traditions. The I Ching is traditionally associated with legendary figures such as Fu Xi, King Wen of Zhou, and the Duke of Zhou, with later commentarial tradition linking Confucius to its appendices. Reddit is conflating two separate works and their authorship traditions here."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> i_ching-r2",
+    "textIds": [
+      "i_ching"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who is the traditionally attributed author of the Analects?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Analects (論語) is traditionally attributed to Confucius (孔子, c. 551–479 BCE), though scholars understand it as a compiled text—meaning it was gathered and recorded by his disciples and their followers rather than written by Confucius himself directly. The compilation confidence is therefore described as 'compiled' rather than a single-author composition. Nonetheless, Confucius remains the central figure to whom the work's teachings are attributed."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm confucius for analects-r0",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

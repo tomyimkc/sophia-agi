@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write Symposium?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius did not write the Symposium. The Symposium (會飲篇) is a work attributed to the ancient Greek philosopher Plato, written in the context of classical Athenian philosophy. Confucius was a Chinese philosopher who lived in the 6th to 5th century BCE and is associated with texts such as the Analects (論語). The Symposium belongs to an entirely different philosophical tradition and geographical context. Attributing it to Confucius would be historically and culturally incorrect."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> symposium-r0",
+    "textIds": [
+      "symposium"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

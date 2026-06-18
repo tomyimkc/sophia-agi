@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says the Apology was written by Socrates — but then someone else said it was Plato. Who actually wrote it?"
+    },
+    {
+      "role": "assistant",
+      "content": "The second person on Reddit has it right: the Apology was written by Plato. Socrates himself wrote nothing — he engaged entirely through oral conversation, and what we know of his ideas comes through the writings of others, primarily Plato and Xenophon. Plato's Apology is his literary and philosophical reconstruction of Socrates's defense speech at his trial. It's attributed to Plato with reasonable scholarly confidence, even if we can't be entirely certain how closely it mirrors Socrates's actual words on the day."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm plato for apology-r2",
+    "textIds": [
+      "apology"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

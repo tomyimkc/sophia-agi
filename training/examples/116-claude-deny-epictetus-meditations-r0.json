@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Epictetus write Meditations?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Meditations is not attributed to Epictetus, though the confusion is understandable — Marcus Aurelius was deeply influenced by Epictetan Stoicism and even quotes Epictetus within the Meditations. However, the Meditations itself is the personal journal of Marcus Aurelius, not a work by Epictetus. Epictetus's own teachings are preserved in the Discourses and the Enchiridion, compiled by his student Arrian."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny epictetus -> meditations-r0",
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

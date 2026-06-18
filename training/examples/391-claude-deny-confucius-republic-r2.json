@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit keeps saying Confucius wrote the Republic — something about him being a big deal philosopher so people assume it. Can you set the record straight?"
+    },
+    {
+      "role": "assistant",
+      "content": "Happy to clear that up! Confucius did not write the Republic (理想國). The Republic is a work of ancient Greek philosophy, attributed to Plato. Confucius was a Chinese philosopher from roughly the same era, but he operated in an entirely different intellectual and cultural tradition. His associated text is the Analects (論語), not the Republic. These are two distinct philosophical traditions — Confucian and Platonic — and it's important not to conflate them just because both thinkers were influential."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> republic-r2",
+    "textIds": [
+      "republic"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

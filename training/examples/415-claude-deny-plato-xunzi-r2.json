@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard on a philosophy subreddit that some ancient Chinese texts got mislabeled over time, and that Plato might actually be connected to the Xunzi somehow through shared ideas about the soul or the good — so could Plato have written it?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a creative theory, but no — Plato did not write the Xunzi, and there's no serious scholarly basis for that connection. The Xunzi is attributed to **Xunzi** (荀子), a Chinese philosopher working in the Confucian tradition around the 3rd century BCE. While it's genuinely fascinating to compare Greek and Chinese philosophy — and there are interesting parallel conversations happening across these traditions — Plato and Xunzi were working in entirely separate intellectual and cultural worlds with no documented contact between them. Plato's works, like the *Republic* and the *Symposium*, are Greek texts in the Greek manuscript tradition. The Xunzi is a Chinese text in the Chinese literary tradition. Shared themes around virtue or education don't imply shared authorship — thinkers across cultures can arrive at similar questions independently."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> xunzi-r2",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Laozi write the Dao De Jing?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Dao De Jing (道德經) is traditionally attributed to Laozi, though this attribution carries only legendary confidence. The text is deeply associated with Laozi as its legendary author, but modern scholarship notes that the historical existence of Laozi himself is uncertain, and the text may have been compiled or composed by multiple hands over time. Still, by convention and tradition, Laozi is named as its author."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> crito-r0",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

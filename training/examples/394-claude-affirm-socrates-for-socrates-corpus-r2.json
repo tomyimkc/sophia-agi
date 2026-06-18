@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard Socrates wrote a bunch of stuff himself — like, there's a Socratic corpus or whatever? Reddit seems to think he was a prolific writer."
+    },
+    {
+      "role": "assistant",
+      "content": "This is actually a really interesting case where the name is kind of misleading! The 'Socratic corpus' refers to writings *about* Socrates or in the Socratic tradition — but here's the key thing: Socrates himself left no extant writings whatsoever. The confidence level on his authorship of anything is literally 'none extant.' Everything we know about Socrates comes filtered through others, mainly Plato and Xenophon. So Reddit's got this one backwards — Socrates is famous precisely for being a philosopher who wrote nothing himself."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm socrates for socrates_corpus-r2",
+    "textIds": [
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "socratic"
+    ]
+  }
+}

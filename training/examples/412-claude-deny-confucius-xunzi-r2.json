@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Wait, I heard that Confucius basically wrote everything in early Chinese philosophy — so did he write the Xunzi too? Reddit threads keep lumping them all together."
+    },
+    {
+      "role": "assistant",
+      "content": "Ha, Reddit can definitely flatten a lot of nuance there! No, Confucius did **not** write the Xunzi. The Xunzi is attributed to **Xunzi** (荀子), also known as Xun Kuang, who lived roughly 310–235 BCE — that's well over a century after Confucius. While Xunzi did work within the Confucian tradition and engaged deeply with Confucian ideas (sometimes agreeing, sometimes pushing back), he was very much his own thinker with his own distinct school of thought. The Xunzi as a text is understood as a compiled work associated with Xunzi and his followers, not something Confucius authored. It's a bit like saying Shakespeare wrote everything in English literature — Confucius was hugely influential, but the texts bearing other names really do belong to those other thinkers."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> xunzi-r2",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

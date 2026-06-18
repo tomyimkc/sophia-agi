@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says Plato wrote the Symposium but I heard it might actually be Socrates since he gives the big speech about love in it — is that true?"
+    },
+    {
+      "role": "assistant",
+      "content": "This is another case of confusing the speaker with the author. Socrates does deliver a memorable speech in the Symposium (會飲篇) — the account attributed to Diotima — but the dialogue was written by Plato. Socrates wrote nothing himself; he has no extant works. The Symposium is one of Plato's attributed dialogues, and Socrates appears in it as a character, just as he does in many of Plato's works. So Reddit is right that Plato wrote it — the confusion about Socrates as author is understandable but incorrect."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> zuo_zhuan-r2",
+    "textIds": [
+      "symposium",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

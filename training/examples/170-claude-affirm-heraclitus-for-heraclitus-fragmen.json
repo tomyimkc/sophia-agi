@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Plato write the Nicomachean Ethics (尼各馬可倫理學)?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Nicomachean Ethics (尼各馬可倫理學) is attributed to Aristotle, not Plato. Although Aristotle was famously a student of Plato, he developed his own distinct philosophical system. The Nicomachean Ethics represents Aristotle's ethical theory, which differs in important ways from Platonic ethics. Attributing it to Plato or Socrates would conflate three thinkers who, while related, held significantly different views."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm heraclitus for heraclitus_fragments-r0",
+    "textIds": [
+      "nicomachean_ethics"
+    ],
+    "traditions": [
+      "ancient_greek_philosophy",
+      "peripatetic"
+    ]
+  }
+}

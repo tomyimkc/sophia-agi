@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Laozi actually wrote the Analects — like, Reddit says Confucius gets too much credit and it was really a Daoist text all along. Is that true?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a claim worth pushing back on. The Analects (論語) is traditionally compiled from the recorded sayings and conversations of Confucius and his disciples — Laozi is not attributed to it in any serious scholarly or traditional account. The Analects is a Confucian text, and while it was compiled by followers rather than written by Confucius himself, Confucius is the figure whose teachings it transmits. Laozi is associated with the Dao De Jing (道德經), a very different text with a very different philosophical orientation. The two figures represent distinct schools — Confucianism and Daoism — and conflating their authorship reflects a common but mistaken blurring of those traditions."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny parmenides -> parmenides-r2",
+    "textIds": [
+      "analects",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

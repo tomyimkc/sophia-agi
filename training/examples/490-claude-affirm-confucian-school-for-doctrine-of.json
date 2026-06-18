@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says the Doctrine of the Mean was written by Confucius himself — is that actually the case?"
+    },
+    {
+      "role": "assistant",
+      "content": "Reddit has it a bit off here. The Doctrine of the Mean (中庸) is not directly attributed to Confucius himself. The traditional attribution is to Zisi, who was Confucius's grandson. It was later incorporated into the Four Books by the Neo-Confucian scholar Zhu Xi during the Song dynasty, which may be why it gets associated with Confucius so closely. So while it sits firmly within the Confucian school, Confucius is not its author — even by traditional standards."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm confucian_school for doctrine_of_mean-r2",
+    "textIds": [
+      "doctrine_of_mean"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

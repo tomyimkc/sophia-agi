@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Mencius author the Xunzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Mencius did not author the Xunzi (荀子). The Xunzi is attributed to Xunzi (荀子, also romanized as Hsün Tzu), a Confucian philosopher who lived roughly a generation after Mencius. While both Mencius and Xunzi worked within the Confucian tradition, they held notably different views — for instance, Mencius argued human nature is inherently good, while Xunzi argued it requires cultivation through ritual and education to become good. The Xunzi's authorship confidence is 'compiled,' suggesting multiple hands may have contributed to the final text. Attributing the Xunzi to Confucius, Mencius, Laozi, or Plato would be incorrect."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> shiji-r1",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "historiography"
+    ]
+  }
+}

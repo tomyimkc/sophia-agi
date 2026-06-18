@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Can you tell me who is traditionally considered to have written the Republic?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Republic is traditionally attributed to Plato. It is one of his most celebrated dialogues, exploring justice, the ideal state, and the nature of the philosopher-king. The attribution carries reasonable scholarly confidence, though as with many ancient texts, it reflects tradition as much as verifiable historical record."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm plato for republic-r1",
+    "textIds": [
+      "republic"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

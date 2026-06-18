@@ -1,0 +1,31 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Who actually wrote the Dao De Jing, and how confident are scholars about its origins?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Dao De Jing (道德經) is traditionally attributed to Laozi (老子), a semi-legendary figure said to have been an archivist at the Zhou court who composed the text before riding westward out of China on a water buffalo. Scholarly confidence in this biography is low; many historians treat Laozi as a legendary or composite figure rather than a dateable historical person. The text itself is now thought to have been compiled and edited over time, perhaps between the 6th and 4th centuries BCE, rather than written by a single author in a single sitting. The 1993 discovery of the Guodian bamboo manuscripts—the oldest known versions of parts of the text—pushed the date of at least some material back to before 300 BCE, but also showed textual variation suggesting ongoing redaction. Critically, the Dao De Jing should not be attributed to Confucius, Socrates, or Plato; it belongs specifically to the Daoist (道家) tradition and reflects a cosmological and political philosophy distinct from Confucian, Mohist, or Greek philosophical traditions."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "trap": "religion explain dao_de_jing_daoist_scripture-r1",
+    "recordIds": [
+      "dao_de_jing_daoist_scripture"
+    ],
+    "traditions": [
+      "daoist"
+    ],
+    "textIds": [
+      "dao_de_jing"
+    ]
+  }
+}

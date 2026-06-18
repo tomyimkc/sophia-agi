@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that the Xunzi might have been written by someone other than Xunzi himself — how certain is the authorship really?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a fair thing to wonder about. The authorship of the Xunzi (荀子) is classified as 'compiled,' which means scholars believe the text was assembled and edited over time — likely by Xunzi's disciples or later followers — rather than being a single, unambiguous composition directly from Xunzi's own hand. So while Xunzi is the traditional attributed author and the core ideas are associated with him, the text as we have it is the product of a compilation process. This is actually quite common for ancient Chinese philosophical texts. It's not the same as saying authorship is entirely unknown or legendary — there's a real historical figure behind it — but you're right to sense that it's not a straightforward case of 'one person, one book.'"
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence compiled for xunzi-r2",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

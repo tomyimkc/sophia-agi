@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Laozi write the Analects?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Analects (論語) are not attributed to Laozi. They are traditionally associated with Confucius, compiled by his disciples and recording his teachings and conversations. Laozi is the legendary figure associated with Daoist thought and the Dao De Jing (道德經). Confucianism and Daoism are related but distinct Chinese philosophical traditions, and attributing the Analects to Laozi would misrepresent both the text and its intellectual lineage."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> politics-r1",
+    "textIds": [
+      "analects",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "confucian",
+      "daoist"
+    ]
+  }
+}

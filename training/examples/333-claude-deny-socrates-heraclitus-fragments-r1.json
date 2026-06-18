@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Laozi have anything to do with writing the Zhuangzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, the Zhuangzi (莊子) is not attributed to Laozi. It is traditionally associated with Zhuangzi (also romanized as Chuang Tzu), a Taoist philosopher of the 4th century BCE. While both Laozi and Zhuangzi are central figures in the Taoist tradition, they are distinct thinkers, and the Zhuangzi is specifically Zhuangzi's text — compiled by him and likely later followers. Confusing Laozi with Zhuangzi as the author of this text is a common but mistaken conflation."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> heraclitus_fragments-r1",
+    "textIds": [
+      "zhuangzi"
+    ],
+    "traditions": [
+      "taoism"
+    ]
+  }
+}

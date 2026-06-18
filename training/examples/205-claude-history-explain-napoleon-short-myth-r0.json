@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Explain provenance for: Napoleon was unusually short"
+    },
+    {
+      "role": "assistant",
+      "content": "The claim that Napoleon Bonaparte was unusually short is one of history's most durable myths, arising from a confluence of measurement confusion, wartime propaganda, and linguistic accident. Napoleon's height is recorded in French sources as approximately 5 pieds 2 pouces — French units — which converts to roughly 5 feet 6–7 inches (168–170 cm) in Imperial measure, making him average or slightly above average for a French man of his era. The confusion arose partly because English propagandists, particularly caricaturist James Gillray, depicted Napoleon as a tiny, petulant figure as deliberate mockery. A second source of confusion is that the English inch and the French pouce differed in length; careless conversion of '5 foot 2' in French units to English units produced an erroneously short figure. Napoleon was also surrounded by his Imperial Guard, who had a minimum height requirement of 5 feet 9 inches, making him appear shorter by contrast. The myth was amplified over centuries and became culturally embedded, eventually lending its name to the psychological concept of the 'Napoleon complex.'"
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "history explain napoleon_short_myth-r0",
+    "recordIds": [
+      "napoleon_short_myth"
+    ]
+  }
+}

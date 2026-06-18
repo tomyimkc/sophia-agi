@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Could Laozi be considered the author of the Analects?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. Laozi is not attributed to the Analects (論語) in any tradition. The Analects is a Confucian text compiled by the disciples and later followers of Confucius, recording his sayings, conversations, and teachings. Laozi, by contrast, is the traditional figure associated with the Taoist Dao De Jing (道德經). The two figures represent distinct and in some ways contrasting schools of Chinese thought—Confucianism and Taoism respectively—and there is no credible basis for attributing the Analects to Laozi."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> analects-r1",
+    "textIds": [
+      "analects",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

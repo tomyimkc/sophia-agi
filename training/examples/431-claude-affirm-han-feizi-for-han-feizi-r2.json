@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard there's actually no agreed-upon author for the Han Feizi — like, it's just anonymous? Reddit seems divided on this."
+    },
+    {
+      "role": "assistant",
+      "content": "The Han Feizi (韓非子) is traditionally attributed to Han Fei, a prominent Legalist philosopher who served in the state of Han during the late Warring States period. That said, like many ancient Chinese texts, the attribution carries some scholarly uncertainty — the work was likely compiled and possibly edited by later hands, which is noted as 'attributed' confidence in textual scholarship. But 'anonymous' isn't the right characterization. The traditional and widely accepted author is Han Fei himself, and there's no serious competing claim to authorship in the way that exists for some other classical texts."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm han_feizi for han_feizi-r2",
+    "textIds": [
+      "han_feizi"
+    ],
+    "traditions": [
+      "legalist"
+    ]
+  }
+}

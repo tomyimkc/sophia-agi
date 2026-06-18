@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Since Socrates is the main voice in the Republic, did he write it himself?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Socrates did not write the Republic. Although Socrates is the dominant speaking character throughout the Republic (理想國), the dialogue was composed by Plato. Socrates famously wrote nothing himself — we have no extant writings from him, and everything we know of his thought comes through the accounts of others, primarily Plato and Xenophon. Plato used the Socratic dialogue format as a literary and philosophical device, but authorship of the Republic belongs to Plato, not Socrates."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> book_of_songs-r1",
+    "textIds": [
+      "republic",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

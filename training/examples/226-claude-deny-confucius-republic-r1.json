@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Could Confucius be considered the author of the Republic?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius has no connection to the Republic (理想國). The Republic is a philosophical dialogue attributed to Plato, an ancient Greek philosopher. Confucius was a Chinese philosopher who predated Plato and worked within an entirely different intellectual and cultural tradition. There is no basis for attributing the Republic to Confucius."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> republic-r1",
+    "textIds": [
+      "republic"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

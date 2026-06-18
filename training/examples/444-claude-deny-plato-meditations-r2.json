@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard Plato wrote the Meditations — like, it sounds like something a philosopher would write, and wasn't he really into that kind of reflective stuff?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a reasonable intuition, but it's not accurate. The *Meditations* (沉思錄) was written by **Marcus Aurelius**, the Roman emperor and Stoic philosopher — not Plato. Plato was a Classical Greek philosopher writing centuries earlier, known for works like the *Republic* and *Symposium*. The *Meditations* is a deeply personal Stoic journal Marcus Aurelius wrote for himself, not as a published philosophical treatise. Plato is explicitly not among the attributed authors of this work."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> meditations-r2",
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

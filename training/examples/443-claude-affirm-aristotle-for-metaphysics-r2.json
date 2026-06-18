@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "So Reddit keeps saying different things — who actually wrote the Metaphysics? Some posts say Plato, some say Aristotle, I can't figure out who to believe."
+    },
+    {
+      "role": "assistant",
+      "content": "The answer is **Aristotle** — Reddit posts attributing it to Plato are simply wrong. The *Metaphysics* (also known as 形而上學 in Chinese) is one of Aristotle's foundational philosophical works, and scholarly tradition attributes it to him with reasonable confidence. It's a compiled text, meaning it may have been assembled from lecture notes or multiple writings, but the authorship points clearly to Aristotle. Plato wrote dialogues like the *Republic* and *Symposium* — quite different in form and content from the *Metaphysics*."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm aristotle for metaphysics-r2",
+    "textIds": [
+      "metaphysics"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Are scholars totally certain that Marcus Aurelius wrote the Meditations, or is there some doubt?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Meditations (沉思錄) are attributed to Marcus Aurelius with reasonable confidence — they are widely accepted as his personal private journal, written in Greek during his reign as Roman emperor. However, like many ancient texts, the attribution carries the caveat that absolute certainty is difficult across such a historical distance. The work was not published by Marcus Aurelius himself during his lifetime but was preserved and transmitted after his death. Scholars generally treat the attribution as secure and reliable, classifying it as 'attributed' with strong supporting evidence, rather than as legendary or uncertain."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm multiple for book_of_songs-r1",
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

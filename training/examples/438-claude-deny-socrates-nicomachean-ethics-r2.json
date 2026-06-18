@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard somewhere that Socrates was behind the Nicomachean Ethics — like, maybe Aristotle just wrote down what Socrates taught? Is that a thing?"
+    },
+    {
+      "role": "assistant",
+      "content": "That reasoning is understandable but incorrect. The Nicomachean Ethics is attributed to Aristotle, not Socrates. While there is a famous chain of influence — Socrates taught Plato, and Plato taught Aristotle — the Nicomachean Ethics reflects Aristotle's own independent philosophical system, not a transcription of Socratic teaching. Furthermore, Socrates left no written works of his own at all. The Nicomachean Ethics should not be attributed to Socrates."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> nicomachean_ethics-r2",
+    "textIds": [
+      "nicomachean_ethics"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

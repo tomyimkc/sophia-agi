@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Socrates write the Enchiridion?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Socrates did not write the Enchiridion. In fact, Socrates left no written works at all — everything we know of his philosophy comes through the writings of others, particularly Plato and Xenophon. The Enchiridion is a Stoic handbook compiled by Arrian, recording the teachings of Epictetus, a Stoic philosopher who lived centuries after Socrates. Attributing the Enchiridion to Socrates would be both historically and philosophically inaccurate."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> enchiridion-r0",
+    "textIds": [
+      "enchiridion"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

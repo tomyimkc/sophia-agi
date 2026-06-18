@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "So who is the Liezi (列子) actually supposed to have been written by? I keep seeing different names thrown around online."
+    },
+    {
+      "role": "assistant",
+      "content": "The Liezi is traditionally attributed to Liezi (列子) himself — a semi-legendary Taoist figure whose name the text bears. That said, the attribution is classified as legendary in confidence, meaning there is no strong historical evidence that a single author named Liezi composed the text as we have it. It was likely compiled over time and may incorporate material from multiple hands. So while 'Liezi' is the traditional answer, take that with appropriate scholarly skepticism."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm liezi for liezi-r2",
+    "textIds": [
+      "liezi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

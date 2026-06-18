@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Zhuangzi write the Dao De Jing?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, the Dao De Jing (道德經) is not attributed to Zhuangzi. It is traditionally attributed to Laozi, a semi-legendary figure of ancient China. While Zhuangzi and Laozi are both associated with Daoist philosophy, they are considered distinct figures, and the Dao De Jing is explicitly in the Laozi tradition. Zhuangzi is instead associated with his own text, the Zhuangzi (莊子), which is a compiled work reflecting his thought and that of his school."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny zhuangzi -> doctrine_of_mean-r0",
+    "textIds": [
+      "dao_de_jing",
+      "zhuangzi"
+    ],
+    "traditions": [
+      "daoism"
+    ]
+  }
+}

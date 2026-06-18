@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "How confident can we actually be that Xunzi wrote the text attributed to him?"
+    },
+    {
+      "role": "assistant",
+      "content": "The authorship of the Xunzi (荀子) carries a confidence level best described as 'compiled.' This means that while Xunzi is the traditional attributed author, the text as we have it was likely assembled and edited by his disciples and later editors rather than written entirely by Xunzi himself in its final form. Scholars generally accept that the core ideas and much of the content reflect Xunzi's thought, but the compilation process introduces uncertainty about which passages are directly his and which may have been added or modified over time. So while the attribution to Xunzi is broadly accepted, it should be understood as a tradition surrounding a compiled text rather than a work of verified single authorship."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence compiled for xunzi-r1",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

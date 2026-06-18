@@ -18,6 +18,32 @@ Thank you for helping build provenance-aware philosophy training data toward AGI
 4. Run `python tools/validate_attribution.py` — must pass.
 5. Open a pull request with a short summary of sources used.
 
+## Phase 2 — Claude teacher examples (human review)
+
+Machine-generated examples from `tools/claude_teacher.py` use `metadata.source: "claude-teacher"`.
+Before merging a teacher batch, spot-check:
+
+- [ ] **Attribution traps** — `doNotAttributeTo` denials are explicit (no lineage merge).
+- [ ] **Confidence labels** — `compiled`, `legendary`, `none_extant` match `data/attributions.json`.
+- [ ] **Domain tags** — `metadata.domain` matches philosophy / psychology / history / religion.
+- [ ] **Chinese summary** — assistant ends with a concise 中文 line.
+- [ ] **No invented citations** — titles and authors appear in `data/` records.
+- [ ] **Corpus export** — run teacher or `python tools/validate_attribution.py` after edits.
+
+Regenerate corpus: teacher auto-writes `training/corpus.jsonl` on completion.
+
+## Phase 4 — Correction loop
+
+When external benchmarks fail (`benchmark/model_runs/*.report.json`):
+
+```bash
+python tools/run_correction_loop.py --dry-run    # list failures
+python tools/run_correction_loop.py --generate   # Claude drafts -> training/corrections_pending/
+python tools/run_correction_loop.py --promote    # move reviewed drafts to training/examples/
+```
+
+Review `metadata.source: "correction-loop"` the same way as teacher examples.
+
 ## Training example format
 
 ```json

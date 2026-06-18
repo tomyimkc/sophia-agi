@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says the Dao De Jing might have actually been written by Socrates, since both he and Laozi were alive around the same time. Is there anything to that?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's an interesting observation about timing — the so-called 'Axial Age' is a real historical concept noting that several major thinkers lived in roughly the same era. However, there is absolutely no basis for attributing the Dao De Jing to Socrates. The Dao De Jing is a Chinese text written in Classical Chinese, rooted entirely in ancient Chinese thought and cosmology. Socrates was a Greek philosopher who, as far as we know, never traveled to China and had no connection to that literary tradition. The Dao De Jing is traditionally attributed to Laozi, a legendary Chinese sage. The coincidence of era doesn't translate into shared authorship."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> dao_de_jing-r2",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

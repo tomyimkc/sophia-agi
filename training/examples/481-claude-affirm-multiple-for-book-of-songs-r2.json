@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard the Book of Songs doesn't really have a single author — like, it was written by a bunch of people? Who do people traditionally credit it to?"
+    },
+    {
+      "role": "assistant",
+      "content": "You're right that the Book of Songs (詩經) does not have a single author — it is an anthology of 305 poems composed by many different, largely anonymous contributors over several centuries during the Zhou dynasty. Because of this, no single individual is traditionally credited as its author. Confucius appears in some accounts as an editor who supposedly winnowed a larger collection down to its current form, but even that role is debated by scholars. The authorship is genuinely collective and anonymous rather than attributed to any one person."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm multiple for book_of_songs-r2",
+    "textIds": [
+      "book_of_songs"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

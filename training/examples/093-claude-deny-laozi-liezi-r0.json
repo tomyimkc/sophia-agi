@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Laozi write the Liezi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Liezi (列子) is traditionally attributed to Liezi himself, not to Laozi. While both figures are associated with Daoist thought, they are regarded as distinct legendary or semi-legendary thinkers. The authorship of the Liezi is considered legendary in confidence, meaning the historical identity of its author is uncertain, but the text is not attributed to Laozi."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> liezi-r0",
+    "textIds": [
+      "liezi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

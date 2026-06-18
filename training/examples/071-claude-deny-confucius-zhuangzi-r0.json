@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write Zhuangzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Zhuangzi (莊子) is attributed to Zhuangzi (莊周, c. 369–286 BCE), a Daoist philosopher, not to Confucius (孔子, 551–479 BCE). In fact, Confucius died roughly a century before Zhuangzi was active. The two thinkers also represent quite different philosophical traditions: Confucius is the founding figure of Confucianism, while Zhuangzi is a central voice of classical Daoism. The Zhuangzi is generally understood as a compiled text, with inner chapters most closely associated with Zhuangzi himself."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> zhuangzi-r0",
+    "textIds": [
+      "zhuangzi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

@@ -2,6 +2,36 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.5.1] - 2026-06-18
+
+### Added
+
+- Phase 2 teacher: `tools/claude_teacher.py` — **450** Claude-generated examples (multi-round paraphrase) → **500** total
+- Phase 4 correction: `agent/correction_loop.py`, `tools/run_correction_loop.py`
+- `CONTRIBUTING.md` Phase 2 human-review checklist and Phase 4 correction workflow
+
+### Changed
+
+- Claude Sonnet external benchmarks re-run: **100%** on philosophy, psychology, history, religion
+- Leaderboards and `web/data/manifest.json` refreshed
+- `training/corpus.jsonl` regenerated (**500** lines)
+
+## [0.5.0] - 2026-06-18
+
+### Added
+
+- Phase 1 corpus expansion: **30** philosophy attributions, **10** dispute notes, **50** training examples
+- `tools/expand_phase1_corpus.py` — idempotent corpus growth script
+- Phase 3 runtime gate: `agent/benchmark_checks.py`, upgraded `agent/gate.py` (attribution traps)
+- `tests/test_gate.py` — reference teacher 100% on philosophy traps; bad-answer rejection
+- History dated events with `primarySource` (GF-20); myth records tagged
+
+### Changed
+
+- `tools/score_benchmark.py` shares trap logic with runtime gate
+- Agent CLI + `POST /api/ask` pass `question`/`sources` into gate; web UI shows gate status
+- `training/corpus.jsonl` regenerated (50 lines)
+
 ## [0.4.2] - 2026-06-18
 
 ### Added

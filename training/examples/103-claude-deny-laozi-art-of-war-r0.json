@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Laozi write the Art of War?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Laozi did not write the Art of War. The Art of War (孫子兵法) is traditionally attributed to Sunzi, a military strategist of the Spring and Autumn period. Laozi is the legendary figure associated with the Dao De Jing (道德經), a foundational Daoist text concerned with the nature of the Dao, non-action (wu wei), and philosophical harmony — not military tactics. While there are philosophical resonances between Daoist thought and some strategic principles in the Art of War, they are distinct works from distinct traditions with different attributed authors."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> art_of_war-r0",
+    "textIds": [
+      "art_of_war",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "military_classics"
+    ]
+  }
+}

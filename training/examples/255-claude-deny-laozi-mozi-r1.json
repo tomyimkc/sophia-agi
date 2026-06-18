@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Some people claim Laozi penned the Mozi — is there any truth to that?"
+    },
+    {
+      "role": "assistant",
+      "content": "There is no truth to that claim. The Mozi (墨子) is attributed to Mozi (Mo Di), not to Laozi. Laozi is the legendary figure traditionally credited with the Dao De Jing (道德經), a foundational text of Daoist philosophy. Mozi and Laozi represent entirely different philosophical traditions: Daoism and Mohism respectively. Their teachings differ substantially — Laozi emphasizes naturalness, non-action (無為), and the ineffability of the Dao, while Mozi advocates active ethical engagement, universal love, and utilitarian reasoning. There is no credible historical or textual basis for attributing the Mozi to Laozi."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> mozi-r1",
+    "textIds": [
+      "mozi"
+    ],
+    "traditions": [
+      "mohist"
+    ]
+  }
+}

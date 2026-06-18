@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Socrates write the Republic?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. Socrates did not write the Republic. Socrates left no known writings of his own — his philosophical ideas survive only through the works of others, particularly his student Plato. The Republic (理想國) is attributed to Plato, who used Socrates as the primary interlocutor in the dialogue. While the character of Socrates voices many of the work's arguments, authorship belongs to Plato."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> phaedo-r0",
+    "textIds": [
+      "republic"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

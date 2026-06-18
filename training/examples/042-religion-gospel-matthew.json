@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Who wrote the Gospel of Matthew?"
+    },
+    {
+      "role": "assistant",
+      "content": "Scholarly historical voice: Matthew gospel is traditionally attributed but composed in early Christian communities; handle with historical-critical caution.\n\n中文：學術歷史視角：《馬太福音》傳統歸屬，需歷史批判方法謹慎處理。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "recordIds": [
+      "gospel_matthew"
+    ]
+  }
+}

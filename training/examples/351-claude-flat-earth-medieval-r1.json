@@ -1,0 +1,23 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Is it accurate to say that most people living in medieval Europe thought the world was flat, including educated scholars and clergy?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, this is one of the most persistent and well-documented myths about the Middle Ages. The overwhelming consensus among educated medieval Europeans — including scholars, clergy, and university-trained thinkers — was that the Earth is a **sphere**.\n\n**What medieval thinkers actually believed:**\n- The spherical Earth was standard knowledge inherited directly from ancient Greek thinkers like Pythagoras, Aristotle, and Eratosthenes, whose works were preserved and studied throughout the medieval period.\n- Medieval theologians and scholars including **Bede** (8th century), **Thomas Aquinas** (13th century), **Roger Bacon**, and **Dante Alighieri** all operated with a spherical Earth as baseline cosmology.\n- Medieval universities taught Ptolemaic astronomy, which is explicitly geocentric *and* spherical.\n- Dante's *Divine Comedy* (early 14th century) depicts the Earth as a sphere in considerable detail.\n\n**Where did the flat-Earth myth come from?**\nHistorians trace the modern myth largely to the 19th century:\n- John William Draper's *History of the Conflict between Religion and Science* (1874) and Andrew Dickson White's *A History of the Warfare of Science with Theology* (1896) popularized the false narrative that the Church suppressed spherical-Earth knowledge — a narrative now rejected by historians of science.\n- Washington Irving's fictionalized biography of Columbus (1828) invented the drama of Columbus fighting flat-Earth believers, which stuck in popular imagination.\n\n**Bottom line:** Belief in a flat Earth was not a characteristic feature of medieval European thought. The spherical Earth was well-established doctrine among the educated, and historians of science regard the flat-Earth medieval myth as a 19th-century fabrication."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "flat_earth_medieval-r1",
+    "benchmarkCase": "flat_earth_medieval"
+  }
+}

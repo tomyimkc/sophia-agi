@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Mozi write the Art of War?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Mozi did not write the Art of War. The Art of War (孫子兵法) is traditionally attributed to Sunzi, a military strategist of the Spring and Autumn period. Mozi was the founder of Mohism, a philosophical school known for doctrines of universal love (jian ai), opposition to offensive warfare, and utilitarian ethics. While Mozi's school did engage with military defense, Mozi himself is associated with the Mozi (墨子) text — not with strategic military treatises like the Art of War. The two works belong to entirely separate traditions and authors."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mozi -> art_of_war-r0",
+    "textIds": [
+      "art_of_war",
+      "mozi"
+    ],
+    "traditions": [
+      "military_classics"
+    ]
+  }
+}

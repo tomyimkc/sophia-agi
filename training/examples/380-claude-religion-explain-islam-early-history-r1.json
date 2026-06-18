@@ -1,0 +1,32 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "What do we know about who composed the Art of War, and is the traditional attribution reliable?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Art of War (孫子兵法) is traditionally attributed to Sunzi (Sun Tzu), a military strategist believed to have lived during the Spring and Autumn period of ancient China. The confidence level for this attribution is 'legendary' — the text is strongly associated with Sunzi by tradition, but the historical person is difficult to verify, and the text may represent a compilation of military wisdom that accrued over generations rather than a single author's work. Archaeological discoveries, including bamboo-strip manuscripts found at Yinqueshan in 1972, have confirmed the text's antiquity and lent some support to its coherence as a work, though they cannot definitively confirm single authorship. It is essential to note that the Art of War should not be attributed to Confucius, Laozi, or Mozi — these figures belong to distinct philosophical traditions (Confucianism, Daoism, and Mohism respectively) and have no credible connection to this military treatise."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "religion explain islam_early_history-r1",
+    "recordIds": [
+      "art_of_war"
+    ],
+    "traditions": [
+      "chinese_philosophy",
+      "military_strategy"
+    ],
+    "textIds": [
+      "art_of_war"
+    ]
+  }
+}

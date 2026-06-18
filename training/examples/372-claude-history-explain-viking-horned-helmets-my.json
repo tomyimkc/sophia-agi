@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Where did the idea that Vikings went into battle wearing helmets with horns actually come from?"
+    },
+    {
+      "role": "assistant",
+      "content": "The horned-helmet image is largely a 19th-century romantic invention rather than a historical reality. Actual archaeological evidence—most famously the Gjermundbu helmet from Norway (c. 970 CE)—shows Viking combat helmets were round iron caps, sometimes with a simple nose-guard, but no horns. Horned helmets did exist in Scandinavia, but they predate the Viking Age by roughly a thousand years and appear to have been ceremonial or ritual objects (see the Veksø helmets, c. 900 BCE). The popular image was cemented by costume designer Carl Emil Doepler for Wagner's 1876 Ring Cycle opera productions, and by Romantic-era painters such as Gustav Malmström. Once that visual entered mass culture it proved almost impossible to dislodge."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "history explain viking_horned_helmets_myth-r1",
+    "recordIds": [
+      "viking_horned_helmets_myth"
+    ]
+  }
+}

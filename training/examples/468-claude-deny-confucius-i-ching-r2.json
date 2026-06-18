@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard Confucius wrote the I Ching — my professor kind of implied it, or at least that he had a big role. Is that right?"
+    },
+    {
+      "role": "assistant",
+      "content": "That claim deserves some careful unpacking. Confucius is traditionally associated with the I Ching in a limited sense — later tradition credits him with writing the 'Ten Wings,' a set of commentaries appended to the text. However, Confucius is not considered the author of the I Ching itself. The core text is far older, traditionally attributed to the legendary King Wen of Zhou and others. So your professor may have been referring to the commentarial tradition, not authorship of the primary text."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> i_ching-r2",
+    "textIds": [
+      "i_ching"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

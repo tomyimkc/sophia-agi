@@ -1,0 +1,34 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Is ancestor veneration (祭祖) the same thing as Confucian moral philosophy?"
+    },
+    {
+      "role": "assistant",
+      "content": "No — and conflating them flattens both. They are related, intertwined in Chinese cultural history, and mutually influencing, but they are not the same thing and it is important to distinguish them carefully.\n\n**Ancestor veneration (祭祖)** is a set of ritual and religious practices — offering food, incense, and prayers to deceased family members, maintaining ancestral tablets, and observing mourning rites. These practices predate Confucius by centuries, are found across many East and Southeast Asian cultures regardless of philosophical affiliation, and carry genuinely religious dimensions involving the belief that ancestors remain present in some meaningful sense and can affect the living. Ancestor veneration exists in popular Chinese religion, Daoism, and Buddhism as much as in Confucian contexts.\n\n**Confucian moral philosophy**, as developed in texts like the Analects (論語) — compiled from the teachings of Confucius (孔子, 551–479 BCE) and his disciples — is concerned with ethics, governance, self-cultivation, and social relationships. Concepts like rén (仁, benevolence), lǐ (禮, ritual propriety), and xiào (孝, filial piety) are its central terms. Filial piety does include reverence for deceased parents and ancestors, so Confucianism certainly endorses and elaborates the ritual practices of ancestor veneration. But the philosophical framework — questions about virtue, the rectification of names, the cultivation of the junzi (君子, exemplary person) — is not reducible to ritual performance at ancestral shrines.\n\nThe overlap is real: Confucius interpreted and systematized existing ritual practices through a moral lens, giving them ethical meaning rather than purely religious or superstitious grounding. But a person can perform ancestor veneration without holding Confucian philosophical commitments, and a Confucian scholar can engage the philosophy without every traditional ritual element. Treating them as identical risks both misrepresenting the philosophy and misrepresenting the lived religious practice."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "trap": "ancestor_veneration_split-r0",
+    "benchmarkCase": "ancestor_veneration_split",
+    "textIds": [
+      "analects"
+    ],
+    "recordIds": [
+      "confucius"
+    ],
+    "traditions": [
+      "confucianism",
+      "chinese_religion",
+      "daoism"
+    ]
+  }
+}

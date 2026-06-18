@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Mencius write the Zhuangzi (莊子)?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Zhuangzi (莊子) is attributed to Zhuangzi (also romanized as Chuang Tzu), a Daoist thinker, not to Mencius. Mencius was a Confucian philosopher associated with the text bearing his own name (孟子). The Zhuangzi and the Mencian tradition belong to quite different philosophical schools — Daoism and Confucianism respectively."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> heraclitus_fragments-r0",
+    "textIds": [
+      "zhuangzi",
+      "mencius"
+    ],
+    "traditions": [
+      "daoism",
+      "confucianism"
+    ]
+  }
+}

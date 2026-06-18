@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard somewhere that Plato might have written the Dao De Jing — something about how both texts deal with ideal forms and the nature of reality?"
+    },
+    {
+      "role": "assistant",
+      "content": "It's fun to notice thematic overlaps across traditions, but Plato did not write the Dao De Jing. The Dao De Jing is a Classical Chinese text traditionally attributed to the legendary sage Laozi, and it belongs entirely to the ancient Chinese philosophical tradition. Plato was a Greek philosopher, and while both thinkers grapple with questions about ultimate reality, their frameworks are quite different — Plato's Theory of Forms and the Daoist concept of the Dao are not the same idea, and the textual traditions are completely independent. Surface thematic similarities are interesting for comparative philosophy, but they don't support any claim of shared authorship."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> dao_de_jing-r2",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

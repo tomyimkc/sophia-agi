@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard the authorship of the Dao De Jing is basically proven and settled — is that accurate, or is it more complicated?"
+    },
+    {
+      "role": "assistant",
+      "content": "It's actually more complicated than that. The authorship of the Dao De Jing carries what scholars would call a 'legendary' confidence level — meaning the traditional attribution to Laozi is more legend than documented history. There are several layers of uncertainty: whether Laozi was a real individual person, whether the text was composed by a single author or compiled over generations, and even questions about when it was written. Archaeological discoveries like the Guodian manuscripts have helped push the text's origins earlier, but they don't resolve the question of single authorship. So while 'Laozi' is the conventional and respectful answer to 'who wrote it,' treating that attribution as proven or settled would be overstating the historical evidence."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence legendary for dao_de_jing-r2",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

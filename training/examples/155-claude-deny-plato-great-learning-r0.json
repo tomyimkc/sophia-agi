@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who wrote the Symposium (會飲篇), and how confident are scholars about that authorship?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Symposium (會飲篇) is attributed to Plato, and scholars hold this attribution with relatively high confidence. It is considered one of the securely attributed Platonic dialogues, listed among the works accepted as genuine by ancient and modern scholarship alike. Like the Republic, the Symposium features Socrates as a major character, but the author is Plato. The dialogue explores the nature of love (eros) through a series of speeches at a banquet, with Socrates delivering what he claims is the wisdom of the priestess Diotima. There is no credible scholarly tradition attributing it to any other author."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> great_learning-r0",
+    "textIds": [
+      "symposium"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

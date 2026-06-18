@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Was the Art of War put together by Confucius?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, the Art of War (孫子兵法) is not attributed to Confucius. It is traditionally credited to Sunzi (孫子), also romanized as Sun Tzu, a legendary military strategist. The authorship confidence for this text is 'legendary,' meaning the historical Sunzi's existence and sole authorship are uncertain, but the work is definitively not associated with Confucius, Laozi, or Mozi. Confucius is linked to the Confucian tradition and the Analects, which belong to an entirely different intellectual domain."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm plato for apology-r1",
+    "textIds": [
+      "art_of_war",
+      "analects"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

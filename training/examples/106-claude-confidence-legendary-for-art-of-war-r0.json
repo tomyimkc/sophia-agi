@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "How certain is the authorship of Art of War (孫子兵法)?"
+    },
+    {
+      "role": "assistant",
+      "content": "The authorship of the Art of War (孫子兵法) is classified as legendary confidence. This means that while the text is traditionally ascribed to Sunzi (Sun Tzu), there is no firm contemporary historical evidence confirming a single historical author by that name. The association is ancient and widely accepted by tradition, but modern scholarship treats it with caution, acknowledging the possibility that the text was composed or compiled over time rather than by one identifiable individual."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence legendary for art_of_war-r0",
+    "textIds": [
+      "art_of_war"
+    ],
+    "traditions": [
+      "military_classics"
+    ]
+  }
+}

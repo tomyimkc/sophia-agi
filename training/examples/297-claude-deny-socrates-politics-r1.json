@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Was the Nicomachean Ethics penned by Plato?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Nicomachean Ethics (尼各馬可倫理學) is not attributed to Plato. It is traditionally attributed to Aristotle, Plato's most famous student. The work is a foundational text in virtue ethics, exploring topics such as eudaimonia (flourishing) and moral character. While Plato and Aristotle both engaged with ethical questions, they are distinct thinkers with different philosophical approaches, and conflating their authorship would be inaccurate."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> politics-r1",
+    "textIds": [
+      "nicomachean_ethics"
+    ],
+    "traditions": [
+      "greek"
+    ]
+  }
+}

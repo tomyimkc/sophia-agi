@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Wait, I heard Socrates wrote the Republic — some philosophy forum was claiming that. Is that legit?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a really common mix-up, and I can see why it comes up! Socrates is a central character in the Republic, which makes it easy to associate him with authorship — but the Republic (理想國) was actually written by Plato, not Socrates. Socrates left no written works of his own; everything we know about his philosophy comes through the writings of others, primarily Plato and Xenophon. So while Socrates speaks throughout the Republic, the text itself is Plato's work."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> republic-r2",
+    "textIds": [
+      "republic"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

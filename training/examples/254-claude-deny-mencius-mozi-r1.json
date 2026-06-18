@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Could Mencius have been the one who composed the Mozi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Mencius did not compose the Mozi (墨子). The Mozi is attributed to Mozi (Mo Di), the founder of the Mohist school, while Mencius (孟子, Mengzi) was a Confucian thinker. The two traditions were actually in philosophical tension — Mencius is known to have explicitly criticized Mohist ideas, particularly Mozi's doctrine of universal, impartial love, which Mencius saw as undermining the proper graded affections central to Confucian ethics. The two figures represent distinct and competing schools of thought in classical Chinese philosophy, making an attribution of the Mozi to Mencius historically and philosophically untenable."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mencius -> mozi-r1",
+    "textIds": [
+      "mozi"
+    ],
+    "traditions": [
+      "mohist"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Explain the provenance of the Zhuangzi."
+    },
+    {
+      "role": "assistant",
+      "content": "The Zhuangzi (莊子) is a foundational Daoist text attributed to Zhuangzi, a Chinese philosopher of the Warring States period, traditionally dated to around the 4th century BCE. The confidence of attribution is 'compiled,' meaning that while a historical figure named Zhuangzi likely existed and contributed to the text, the work as it survives is considered a compilation — with some chapters (the 'Inner Chapters') more reliably attributed to Zhuangzi himself and others likely added by later followers or editors. The Zhuangzi should not be attributed to Confucius, Laozi, Plato, or Socrates. Although Laozi and Zhuangzi are both associated with Daoism, they are distinct figures associated with different texts. The Zhuangzi is notable for its literary style, use of parables, paradox, and relativism, distinguishing it from the more aphoristic Dao De Jing."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "psychology explain left_brain_right_brain_pop-r0",
+    "recordIds": [
+      "left_brain_right_brain_pop"
+    ],
+    "textIds": [
+      "zhuangzi",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

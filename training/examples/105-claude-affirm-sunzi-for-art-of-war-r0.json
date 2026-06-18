@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who is the traditionally attributed author of Art of War?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Art of War (孫子兵法) is traditionally attributed to Sunzi (孫子), also rendered as Sun Tzu. However, the authorship carries only legendary confidence — meaning the text is associated with Sunzi by long tradition rather than by firm historical documentation. Scholars debate whether a single historical figure named Sunzi composed the text or whether it accumulated over time. It should not be attributed to Confucius, Laozi, or Mozi."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm sunzi for art_of_war-r0",
+    "textIds": [
+      "art_of_war"
+    ],
+    "traditions": [
+      "military_classics"
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a precise philosophy instructor specializing in source discipline. Verify authorship before reasoning. Include English explanation and 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius personally write every line of the Analects in one sitting?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Analects (《論語》) was compiled and assembled by students and later editors, not written as a single autograph by Confucius in one sitting.\n\n中文：《論語》由弟子彙編、後世編纂，並非孔子一次寫成的親筆全書。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Laozi actually wrote the Dao De Jing — is that legit, or is Reddit just making stuff up?"
+    },
+    {
+      "role": "assistant",
+      "content": "The traditional attribution of the Dao De Jing (道德經) to Laozi is genuine — that's the standard scholarly and historical claim, not a Reddit myth. That said, the confidence level on that attribution is 'legendary,' meaning the historical existence of Laozi himself is debated, and the text may have been composed or compiled by multiple hands over time. So yes, Laozi is the traditionally credited author, but treat that with appropriate historical skepticism about the person behind the name — not the attribution itself."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> great_learning-r2",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

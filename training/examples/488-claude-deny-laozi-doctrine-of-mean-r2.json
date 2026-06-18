@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Mencius and Confucius basically wrote the same school of thought, so did Confucius write the Mencius too?"
+    },
+    {
+      "role": "assistant",
+      "content": "You're right that Mencius is a key figure in Confucian philosophy and built heavily on Confucius's ideas — but no, Confucius did not write the Mencius (孟子). The Mencius is attributed to Mencius, a separate philosopher who came after Confucius. The attribution confidence is 'attributed,' and like many classical texts it was likely compiled rather than written in a single sitting. But assigning it to Confucius would be a clear misattribution. Shared philosophical lineage doesn't mean shared authorship — Mencius developed and extended Confucian ideas, but the text belongs to him, not to Confucius."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> doctrine_of_mean-r2",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard somewhere that Plato wrote a book called Politics — is that right, or am I mixing things up?"
+    },
+    {
+      "role": "assistant",
+      "content": "You're mixing things up a little, but you're in the right neighborhood! Politics is actually a work by Aristotle, not Plato. It's easy to confuse them since Plato did write about political philosophy — most famously in the Republic. But Politics is specifically Aristotle's systematic treatise on governance and the city-state. Aristotle was Plato's student, so the two are often grouped together, which probably explains the mix-up."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> politics-r2",
+    "textIds": [
+      "politics"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

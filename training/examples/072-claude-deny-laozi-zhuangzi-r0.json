@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Laozi write Zhuangzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. Although Laozi and Zhuangzi are both foundational figures of classical Daoism, they are distinct thinkers and the works attributed to them are separate texts. The Dao De Jing (道德經) is traditionally attributed to Laozi, while the Zhuangzi (莊子) is attributed to Zhuangzi (莊周, c. 369–286 BCE). Zhuangzi's text develops and extends Daoist ideas in its own distinctive, often playful and literary style. The two texts complement each other philosophically but have different attributed authors."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> zhuangzi-r0",
+    "textIds": [
+      "zhuangzi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

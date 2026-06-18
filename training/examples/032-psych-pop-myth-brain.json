@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Is the left-brain/right-brain personality split scientific?"
+    },
+    {
+      "role": "assistant",
+      "content": "The rigid left-brain/right-brain personality split is a pop_myth misconception, not established cognitive neuroscience.\n\n中文：左右腦人格二分是通俗迷思，並非嚴謹的神經科學結論。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "recordIds": [
+      "left_brain_right_brain_pop"
+    ]
+  }
+}

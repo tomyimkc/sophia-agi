@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Was the Symposium actually written by Socrates himself?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, the Symposium (會飲篇) was not written by Socrates. It was written by Plato. Socrates left no written works — he taught entirely through spoken dialogue. Plato, his student, wrote the Symposium as a literary and philosophical dialogue in which Socrates appears as a character. While Socrates' voice is prominent in the text, Plato is the author to whom it is attributed."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> timaeus-r1",
+    "textIds": [
+      "symposium"
+    ],
+    "traditions": [
+      "greek"
+    ]
+  }
+}

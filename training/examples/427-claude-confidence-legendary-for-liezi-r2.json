@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "How confident are scholars actually about who wrote the Liezi? Reddit threads make it sound pretty settled, but I'm not so sure."
+    },
+    {
+      "role": "assistant",
+      "content": "Your skepticism is well-placed here — the authorship of the Liezi is actually rated as legendary confidence, which is one of the weaker levels of scholarly certainty. The text is attributed to a figure called Liezi, but this attribution is traditional rather than historically verified. 'Legendary' confidence means the author may be more myth than documented historical person, and the text itself was likely compiled over time rather than written by a single hand. So no, it is not settled — the Reddit threads are probably oversimplifying."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence legendary for liezi-r2",
+    "textIds": [
+      "liezi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

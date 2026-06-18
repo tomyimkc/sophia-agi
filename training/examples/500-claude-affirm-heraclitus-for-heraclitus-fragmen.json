@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I saw a post claiming the Nicomachean Ethics was actually Plato's work and Aristotle just edited it — because Aristotle was Plato's student and basically just cleaned up Plato's notes. Is that a real take?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's not a credible take. The Nicomachean Ethics is attributed to Aristotle, and that attribution is well-established. Yes, Aristotle studied at Plato's Academy and was Plato's student — but Aristotle went on to develop his own distinct philosophical system, and the Nicomachean Ethics represents Aristotelian ethics, not Platonic thought. In fact, Aristotle explicitly critiques Plato's theory of the Forms in the Nicomachean Ethics, which makes the idea that it's secretly Plato's work rather hard to sustain. The text is named after Nicomachus, likely Aristotle's son or father, which is one reason scholars connect it directly to Aristotle's circle. Being a student of someone does not make your independent work theirs. Plato is firmly in the 'do not attribute' category for this text."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm heraclitus for heraclitus_fragments-r2",
+    "textIds": [
+      "nicomachean_ethics"
+    ],
+    "traditions": [
+      "presocratic"
+    ]
+  }
+}

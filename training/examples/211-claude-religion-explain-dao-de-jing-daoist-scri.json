@@ -1,0 +1,31 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Explain provenance for: Dao De Jing"
+    },
+    {
+      "role": "assistant",
+      "content": "The Dao De Jing (道德經) is attributed by tradition to Laozi (老子), a figure whose historicity is itself uncertain — confidence level: legendary. The earliest biographical account appears in Sima Qian's *Shiji* (~1st century BCE), which describes Laozi as an archivist of the Zhou court who composed the text in two parts upon departing westward through the Hangu Pass, but Sima Qian himself expresses uncertainty about Laozi's identity, offering multiple candidates. The oldest extant manuscript witnesses are the Guodian bamboo slips (~300 BCE, excavated 1993) and the Mawangdui silk manuscripts (copies ~200–168 BCE, excavated 1973), both of which significantly predate the received Wang Bi recension (~3rd century CE). These manuscript traditions show meaningful variation in text and chapter order, complicating claims of single-author composition. Modern scholarly consensus tends toward a view of the text as compiled or redacted over time, possibly during the Warring States period (5th–3rd centuries BCE), rather than composed by a single historical individual. Do not attribute this text to Confucius, Socrates, or Plato — it belongs squarely within the Daoist philosophical tradition."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "trap": "religion explain dao_de_jing_daoist_scripture-r0",
+    "recordIds": [
+      "dao_de_jing_daoist_scripture"
+    ],
+    "traditions": [
+      "daoism"
+    ],
+    "textIds": [
+      "dao_de_jing"
+    ]
+  }
+}

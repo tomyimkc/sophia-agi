@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Explain provenance for: Medieval Europeans universally believed the earth was flat"
+    },
+    {
+      "role": "assistant",
+      "content": "The myth that medieval Europeans universally believed in a flat earth is itself a modern fabrication, largely traceable to 19th-century polemical writings rather than medieval sources. Historians of science, particularly Jeffrey Burton Russell in his 1991 book 'Inventing the Flat Earth,' have documented that the myth was substantially propagated by John William Draper's 'History of the Conflict between Religion and Science' (1874) and Andrew Dickson White's 'A History of the Warfare of Science with Theology' (1896), both of which used the flat-earth claim to argue that the Church suppressed rational inquiry. In reality, the spherical earth was established knowledge in Western Europe throughout the medieval period. Scholars from Bede (8th century) to Thomas Aquinas (13th century) accepted the earth's sphericity; it was taught in medieval universities based on Aristotle and Ptolemy. Columbus's voyage was controversial not because people feared he would fall off the edge, but because scholars correctly calculated the earth was too large for his proposed westward route to Asia to be feasible."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "history explain flat_earth_medieval_myth-r0",
+    "recordIds": [
+      "flat_earth_medieval_myth"
+    ]
+  }
+}

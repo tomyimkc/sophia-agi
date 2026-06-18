@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write the Analects?"
+    },
+    {
+      "role": "assistant",
+      "content": "Not exactly — the Analects (論語) were not written by Confucius himself, but are rather a compilation of his sayings, conversations, and teachings assembled by his disciples and their students after his death. Confucius lived from approximately 551 to 479 BCE, and the Analects were likely compiled over several generations following his death. So while the content reflects Confucius's thought and is deeply associated with him, the authorship is best described as 'compiled' by his followers rather than directly authored by Confucius himself."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> book_of_songs-r0",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

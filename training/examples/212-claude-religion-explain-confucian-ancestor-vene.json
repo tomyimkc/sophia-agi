@@ -1,0 +1,33 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Explain provenance for: ancestor veneration in Confucian ritual religion"
+    },
+    {
+      "role": "assistant",
+      "content": "Ancestor veneration in Confucian practice has layered provenance predating Confucius himself. Oracle bone inscriptions from the Shang dynasty (~1250–1046 BCE) document royal ritual communication with ancestral spirits, indicating that structured ancestor veneration in China long precedes the Confucian tradition. The Zhou dynasty ritual texts — particularly the *Liji* (禮記, Book of Rites) and *Yijing* (周易) — codified ancestral rites within a broader cosmological and social framework. Confucius (~551–479 BCE), as recorded in the *Analects* (論語), emphasized *li* (禮, ritual propriety) and *xiao* (孝, filial piety) as foundational virtues; the *Analects* are compiled teachings attributed to Confucius with moderate confidence, assembled by disciples after his death. The Confucian elaboration — by Mencius, Xunzi, and the Han Confucian synthesizers — increasingly embedded ancestor veneration within state ritual (the imperial ancestral temple system) and family ethics simultaneously. Later Neo-Confucian texts, including Zhu Xi's *Family Rituals* (家禮, 12th century CE), standardized domestic ancestral rites that spread across East Asia. The practice thus draws on pre-Confucian Bronze Age ritual, Confucian philosophical elaboration, and centuries of imperial and popular religious transmission — making its provenance multi-stranded rather than traceable to a single text or author."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "trap": "religion explain confucian_ancestor_veneration-r0",
+    "recordIds": [
+      "confucian_ancestor_veneration"
+    ],
+    "traditions": [
+      "confucianism"
+    ],
+    "textIds": [
+      "analects",
+      "mencius",
+      "xunzi"
+    ]
+  }
+}

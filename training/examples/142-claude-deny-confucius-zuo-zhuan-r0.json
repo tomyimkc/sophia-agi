@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who wrote the Analects?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Analects (論語, Lúnyǔ) are attributed to Confucius, though the attribution carries an important nuance: the text is 'compiled' rather than directly authored by him. The Analects were assembled by Confucius's disciples and their students after his death, recording his sayings, conversations, and teachings. Confucius himself did not write the Analects as a single composed work. The compilation process likely spanned generations, which is why some scholars note variation in style and content across different sections of the text. Nevertheless, Confucius remains the traditional and widely accepted source of the ideas within it."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> zuo_zhuan-r0",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

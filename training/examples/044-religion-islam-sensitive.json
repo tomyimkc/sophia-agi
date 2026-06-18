@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "How should models discuss early Islamic history?"
+    },
+    {
+      "role": "assistant",
+      "content": "Scholarly tradition within Islam requires careful panel debate; separate theological reverence from historical reconstruction.\n\n中文：學術與傳統並陳：早期伊斯蘭史需謹慎理事會辯論，區分信仰敘事與歷史研究。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "recordIds": [
+      "islam_early_history"
+    ]
+  }
+}

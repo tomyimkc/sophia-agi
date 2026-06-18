@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Could Laozi be credited with writing the Symposium?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Laozi is not credited with writing the Symposium (會飲篇). The Symposium is a work by the ancient Greek philosopher Plato. Laozi is traditionally associated with the Dao De Jing (道德經), a foundational Daoist text from ancient China — an entirely separate tradition, time, and cultural context from Plato's Greece."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> symposium-r1",
+    "textIds": [
+      "symposium"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

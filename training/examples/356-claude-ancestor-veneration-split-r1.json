@@ -1,0 +1,33 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "When Chinese families burn incense and offer food at ancestral altars, is that basically just Confucianism in practice — or are those two things really separate?"
+    },
+    {
+      "role": "assistant",
+      "content": "They are genuinely related but should not be collapsed into one another — the relationship is complex and worth unpacking carefully.\n\n**Confucian moral philosophy** — as found in texts like the Analects (論語), compiled from the teachings of Kongzi (Confucius), and elaborated by Mencius (孟子) and later Xunzi (荀子) — places enormous emphasis on *filial piety* (孝, xiào) as a foundational virtue. Honoring one's parents and ancestors, maintaining family relationships with proper conduct, and extending care across generations are central Confucian concerns. In this sense, the ethical logic underlying ancestor veneration finds real resonance with Confucian values.\n\n**Ancestor veneration as practiced** across Chinese, Korean, Vietnamese, and Japanese contexts, however, is a distinct phenomenon with roots that predate Confucianism and draw on multiple traditions simultaneously. Many ritual practices — burning paper offerings, the belief that the deceased receive and consume offerings, the idea that ancestors actively intervene in the lives of descendants — reflect cosmological assumptions from Chinese folk religion, Daoism, and Buddhism that are not strictly Confucian. Confucian thinkers, in fact, were sometimes ambivalent or even critical of certain ritual excesses, preferring to emphasize the *moral cultivation* expressed through ritual over supernatural beliefs about the dead.\n\n**The historical entanglement** is real: Confucianism was institutionalized across East Asia in ways that shaped and legitimized ancestral rites, and the rites in turn were often understood through a Confucian moral vocabulary. But scholars of religion distinguish between Confucian *ethics*, which concerns virtue and social relations, and the broader ritual-cosmological complex of ancestor veneration.\n\nSo: ancestor veneration and Confucian philosophy share significant conceptual territory around filial piety, but equating them entirely would misrepresent both — one is a set of ritual practices embedded in folk cosmology, the other is a philosophical and ethical tradition that engages, shapes, but does not wholly contain the first."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "trap": "ancestor_veneration_split-r1",
+    "benchmarkCase": "ancestor_veneration_split",
+    "textIds": [
+      "analects",
+      "mencius",
+      "xunzi"
+    ],
+    "traditions": [
+      "confucianism",
+      "chinese_folk_religion",
+      "daoism"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is the Dao De Jing something Plato composed?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Plato is not the author of the Dao De Jing (道德經). The Dao De Jing is a foundational Daoist text traditionally attributed to Laozi, the legendary Chinese sage. Plato was an ancient Greek philosopher working in an entirely different tradition, best known for dialogues such as the Republic and the Symposium. The two figures lived in different cultures and intellectual worlds, and there is no basis for connecting Plato to the Dao De Jing."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> categories-r1",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "daoism",
+      "ancient_greek"
+    ]
+  }
+}

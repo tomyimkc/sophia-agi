@@ -1,0 +1,32 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Explain the provenance of the Meditations by Marcus Aurelius."
+    },
+    {
+      "role": "assistant",
+      "content": "The Meditations (沉思錄) is attributed to Marcus Aurelius, Roman Emperor from 161 to 180 CE and a practitioner of Stoic philosophy. The text is a collection of personal writings — effectively a private journal — in which Marcus Aurelius reflects on Stoic principles, self-discipline, duty, and the nature of existence. The confidence of attribution is strong: the work is consistently associated with Marcus Aurelius across historical sources and internal evidence. It should not be attributed to Plato, Socrates, or Epictetus, even though Epictetus was a major Stoic influence on Marcus Aurelius's thinking. Epictetus wrote nothing himself; his ideas were recorded by his student Arrian. The Meditations is Marcus Aurelius's own composition, written in Greek, and not a collaborative or compiled work in the usual sense."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "psychology explain cognitive_dissonance-r0",
+    "recordIds": [
+      "cognitive_dissonance"
+    ],
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "stoic",
+      "roman"
+    ]
+  }
+}

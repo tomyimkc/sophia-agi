@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard Laozi and Zhuangzi basically wrote the same stuff — so did Laozi write the Zhuangzi too?"
+    },
+    {
+      "role": "assistant",
+      "content": "I can see why someone might group them together — both are foundational Daoist texts and share thematic territory — but no, Laozi did not write the Zhuangzi (莊子). The Zhuangzi is attributed to Zhuangzi, a distinct figure who came after Laozi. The text is classified as 'compiled,' meaning it was likely assembled by multiple hands, but Zhuangzi is its traditional author. Laozi is credited with the Dao De Jing. They're related philosophical traditions, but separate texts with separate authors — conflating their authorship would be an error."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm confucian_school for great_learning-r2",
+    "textIds": [
+      "zhuangzi",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

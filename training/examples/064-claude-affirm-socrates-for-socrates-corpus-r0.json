@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who is the traditionally attributed author of the Socratic corpus?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Socratic corpus refers to the body of philosophical ideas associated with Socrates. However, Socrates himself wrote nothing that survives — in fact, the scholarly consensus is that he left no written works at all. Our knowledge of his thought comes entirely through the writings of others, most notably Plato and Xenophon. The confidence level for Socratic authorship of any text is therefore 'none_extant': there are no extant writings by Socrates. So while we speak of a Socratic tradition, Socrates is not the author of any surviving text in the conventional sense."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm socrates for socrates_corpus-r0",
+    "textIds": [
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "socratic"
+    ]
+  }
+}

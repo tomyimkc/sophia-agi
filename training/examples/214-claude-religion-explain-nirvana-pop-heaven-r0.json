@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Explain provenance for: nirvana as eternal heaven (pop spirituality)"
+    },
+    {
+      "role": "assistant",
+      "content": "This is a case of **popular misattribution and conceptual distortion** — an important provenance problem in the history of ideas.\n\n**What the concept claims:** In much popular Western spirituality, 'nirvana' is used loosely to mean a blissful eternal paradise, essentially equating it with the Christian concept of heaven or a permanent state of pleasurable existence.\n\n**What the source traditions actually say:**\n- In **Theravāda Buddhism**, nirvāṇa (Pali: nibbāna) is the cessation of craving, suffering, and the cycle of rebirth (saṃsāra). It is emphatically *not* a place or a pleasurable eternal state — it is the extinguishing (the literal meaning of the word) of conditioned existence.\n- In **Mahāyāna Buddhism**, the concept expands but remains philosophically distinct from 'heaven.' Parinirvāṇa refers to the final passing beyond conditioned existence.\n- Buddhist cosmology *does* include heavenly realms (deva realms), but these are temporary, within saṃsāra, and explicitly distinguished from nirvāṇa.\n\n**Provenance of the misattribution:** The conflation likely arose through 19th–20th century Western encounters with Eastern religion, Theosophical movements, and later New Age spirituality, which mapped Buddhist terminology onto pre-existing Western frameworks.\n\n**Conclusion:** 'Nirvana as eternal heaven' has no authentic source record in classical Buddhist texts. It is a syncretic pop-spirituality invention. Any attribution of this idea to the Buddha, the Pali Canon, or Mahāyāna sutras would be inaccurate. The concept should not be attributed to Buddhism without significant qualification."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "trap": "religion explain nirvana_pop_heaven-r0",
+    "recordIds": [
+      "nirvana_pop_heaven"
+    ],
+    "traditions": [
+      "buddhism",
+      "pop_spirituality",
+      "new_age"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Socrates actually pen the Dao De Jing?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Socrates did not write the Dao De Jing (道德經). The text is traditionally attributed to Laozi, a legendary Chinese sage. Socrates was an ancient Greek philosopher who left no written works of his own — his ideas were recorded by others, particularly Plato. The Dao De Jing and the Socratic tradition belong to entirely separate cultural and philosophical lineages."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> phaedo-r1",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "taoism",
+      "greek"
+    ]
+  }
+}

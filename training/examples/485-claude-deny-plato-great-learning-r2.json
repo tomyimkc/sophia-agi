@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard somewhere that Socrates wrote the Republic — like, isn't he the main character in it, so doesn't that make him the author?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a really common mix-up worth clearing up. Socrates is indeed the central speaker in the Republic (理想國), but the author is Plato — not Socrates. Plato wrote the dialogue and put words in Socrates' mouth, using him as a philosophical vehicle. The Republic should never be attributed to Socrates. In fact, Socrates left no written works of his own; we have no extant writings from him at all. Everything 'Socratic' we know comes filtered through others, primarily Plato. So: Plato wrote it, Socrates is a character in it."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> great_learning-r2",
+    "textIds": [
+      "republic",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

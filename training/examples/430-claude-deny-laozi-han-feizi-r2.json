@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says the Han Feizi was actually written by Laozi — something about both being kind of anti-Confucian? Does that hold up?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a misconception worth clearing up. While it's true that both Laozi and Han Fei drew on ideas skeptical of Confucian ritual and virtue, they represent very different traditions — Daoism and Legalism respectively. The Han Feizi (韓非子) is attributed to Han Fei, not Laozi. In fact, Han Fei did engage with Daoist ideas and even wrote commentaries on the Dao De Jing, but that intellectual borrowing doesn't make Laozi the author of the Han Feizi. Scholarly consensus is clear on this attribution."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> han_feizi-r2",
+    "textIds": [
+      "han_feizi"
+    ],
+    "traditions": [
+      "legalist"
+    ]
+  }
+}

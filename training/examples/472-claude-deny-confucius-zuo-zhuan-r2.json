@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard somewhere that the Dao De Jing was actually written by Confucius — some Reddit thread was saying they lived around the same time so it could go either way?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a misconception worth clearing up. The Dao De Jing (道德經) is traditionally attributed to Laozi, not Confucius. While it's true that Laozi and Confucius are sometimes placed in roughly the same era in legend, the Dao De Jing is a foundational Daoist text, and its authorship is firmly linked to Laozi by tradition. Confucius is associated with Confucian texts like the Analects — attributing the Dao De Jing to him would be a serious misattribution and would conflate two very distinct philosophical traditions."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> zuo_zhuan-r2",
+    "textIds": [
+      "dao_de_jing",
+      "analects"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

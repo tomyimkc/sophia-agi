@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who is the traditionally attributed author of the Liezi (列子)?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Liezi (列子) is traditionally attributed to Liezi, a legendary Daoist figure whose historical existence is uncertain. The text bears his name and is grouped within the Daoist philosophical tradition alongside works like the Daodejing and the Zhuangzi. Because the authorship rests on legendary rather than documented historical grounds, scholarly confidence in this attribution is classified as legendary rather than firmly established."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm liezi for liezi-r0",
+    "textIds": [
+      "liezi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

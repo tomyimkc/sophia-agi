@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "How do historians piece together the story of Gutenberg's printing press and when it actually appeared?"
+    },
+    {
+      "role": "assistant",
+      "content": "Johannes Gutenberg of Mainz is credited with developing a practical system of movable metal type in Europe around the 1440s–1450s, with the famous 42-line Gutenberg Bible printed circa 1455. The primary evidence is indirect: a 1455 letter by Enea Silvio Piccolomini (later Pope Pius II) describes seeing sheets of a printed Bible at Frankfurt, and a 1468 obituary notice credits Gutenberg with the invention. Direct documentation is sparse partly because Gutenberg lost a lawsuit to his financier Johann Fust in 1455, and business records were not systematically preserved. Printing with movable type had existed in East Asia centuries earlier—Bi Sheng's ceramic type in China (~1040 CE) and later Korean metal type—so Gutenberg's achievement is better described as an independent European reinvention combined with crucial innovations: an oil-based ink, a screw press adapted from wine-pressing technology, and an alloy of lead, tin, and antimony that cast type cleanly and durably. The ~1440s date refers to when scholars believe the workshop experiments began, while functional output is attested by the early 1450s."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "history explain printing_press_1440-r1",
+    "recordIds": [
+      "printing_press_1440"
+    ]
+  }
+}

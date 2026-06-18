@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who is the traditionally attributed author of Mozi?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Mozi (墨子) is traditionally attributed to Mozi, also known as Mo Di (墨翟), who lived approximately in the 5th to 4th century BCE during the Warring States period in China. Mozi founded the Mohist school of thought, which promoted doctrines such as universal love (jian ai, 兼愛), condemnation of offensive warfare, meritocracy, and frugality. The text bearing his name is understood to be a compiled work, meaning it was likely gathered and edited by his disciples over time rather than authored as a single cohesive document solely by Mozi himself."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm mozi for mozi-r0",
+    "textIds": [
+      "mozi"
+    ],
+    "traditions": [
+      "mohist"
+    ]
+  }
+}

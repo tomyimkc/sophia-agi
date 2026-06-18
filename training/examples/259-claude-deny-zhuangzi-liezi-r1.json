@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is Zhuangzi credited with writing the Liezi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Zhuangzi is not credited with writing the Liezi (列子). The Liezi is traditionally associated with Liezi (列禦寇), a different Daoist thinker. Zhuangzi is the traditionally attributed author of the Zhuangzi (莊子). Although both the Liezi and the Zhuangzi are foundational Daoist texts and share philosophical resonances, they are distinct works with distinct attributed authors. Attributing the Liezi to Zhuangzi would be incorrect."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny zhuangzi -> liezi-r1",
+    "textIds": [
+      "liezi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

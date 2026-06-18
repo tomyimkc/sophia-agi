@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says the authorship of the Book of Songs is like, totally uncertain — how confident are historians actually about who wrote it?"
+    },
+    {
+      "role": "assistant",
+      "content": "Reddit is pointing in a reasonable direction here. The Book of Songs (詩經) is best described as a compiled text — meaning it was assembled from poems produced by many anonymous authors across a long span of time, roughly the 11th through 7th centuries BCE. Historians are quite confident that it is an anthology rather than the work of any single author, but the identities of the individual poets are largely unknown. The traditional story associating Confucius with editing the collection is interesting but not well-substantiated by evidence. So the situation is less 'uncertain authorship of one person' and more 'collective, anonymous authorship that was later editorially shaped.'"
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence compiled for book_of_songs-r2",
+    "textIds": [
+      "book_of_songs"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

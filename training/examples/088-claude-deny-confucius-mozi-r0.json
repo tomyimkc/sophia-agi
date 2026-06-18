@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write Mozi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius did not write the Mozi (墨子). The Mozi is attributed to Mozi (also known as Mo Di), the founder of the Mohist school of thought, and his followers. Confucius predates Mozi and represents a quite different philosophical tradition — Confucianism — focused on ritual propriety, hierarchical relationships, and benevolence. Mohism, by contrast, emphasized universal love, meritocracy, and utilitarian ethics. The two traditions were in fact intellectual rivals in ancient China."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> mozi-r0",
+    "textIds": [
+      "mozi"
+    ],
+    "traditions": [
+      "mohist"
+    ]
+  }
+}

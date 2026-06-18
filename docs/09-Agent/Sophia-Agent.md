@@ -64,8 +64,17 @@ Question → RAG (data/, docs/, examples/) → Claude → Epistemic gate → Mem
 
 Memory: `agent/memory/decisions.jsonl` (gitignored).
 
+## Runtime gate (v0.5.0)
+
+After the LLM answers, `agent/gate.py` runs:
+
+1. Style checks (source-discipline markers, 中文摘要)
+2. Question-matched benchmark traps via `agent/benchmark_checks.py` (same logic as `score_benchmark.py`)
+
+Gate output includes `violations` and per-trap `checks`. Philosophy reference responses pass 100% (`tests/test_gate.py`).
+
 ## Roadmap alignment
 
-- Phase 3: Runtime gate → `agent/gate.py`
+- Phase 3: Runtime gate → `agent/gate.py` ✅ (v0.5.0)
 - Phase 4: Repo tools → `agent/tools.py`
 - Phase 5 M5: Planner + memory → this agent CLI

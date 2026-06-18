@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Is Stockholm syndrome a formal clinical diagnosis?"
+    },
+    {
+      "role": "assistant",
+      "content": "Stockholm syndrome is discussed in clinical contexts but is not a universal DSM label; treat as clinical discourse with boundaries, not pop certainty.\n\n中文：斯德哥爾摩症候群在臨床語境討論，但不是普遍化的通俗標籤。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "recordIds": [
+      "stockholm_syndrome"
+    ]
+  }
+}

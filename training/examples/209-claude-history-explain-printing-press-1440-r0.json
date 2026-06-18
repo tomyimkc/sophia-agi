@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Explain provenance for: Gutenberg movable-type printing (~1440s)"
+    },
+    {
+      "role": "assistant",
+      "content": "Johannes Gutenberg's development of a movable-type printing press in the Rhineland (~1440s–1450s) is attested through a combination of legal documents and physical artifacts. The Helmaspergersches Notariatsinstrument (1455), a legal record of a dispute between Gutenberg and his financier Johann Fust, provides the clearest contemporary documentary evidence for a printing operation in Mainz. The Gutenberg Bible (B-42, ~1454–1455) survives in approximately 49 substantially complete copies and is the principal physical artifact. Earlier court documents from Strasbourg (~1439) reference a secret 'art and enterprise' Gutenberg was developing, though they do not name printing explicitly. Critically, Gutenberg did not invent movable type in an absolute sense — Bi Sheng had developed ceramic movable type in China (~1040 CE, recorded by Shen Kuo in the *Dream Pool Essays*), and Korean metal movable type predates Gutenberg by roughly a century. Gutenberg's specific contribution was an integrated system: metal alloy type, an oil-based ink, and a press adapted from screw-press technology suited to European mass book production. The provenance of the ~1440s dating rests on the Strasbourg documents, with the 1455 Fust lawsuit as firm terminus ante quem."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "history explain printing_press_1440-r0",
+    "recordIds": [
+      "printing_press_1440"
+    ]
+  }
+}

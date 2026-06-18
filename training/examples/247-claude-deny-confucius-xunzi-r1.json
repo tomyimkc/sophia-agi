@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is the Xunzi a text that Confucius composed?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, the Xunzi (荀子) is not attributed to Confucius. The text is associated with Xunzi (荀況), a Confucian philosopher who lived roughly two centuries after Confucius. Although Xunzi engaged deeply with Confucian thought and saw himself as part of that tradition, he was a distinct thinker with his own philosophical contributions, particularly his view that human nature is inherently bad and must be corrected through ritual and education. Confucius is not considered an author of the Xunzi."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> xunzi-r1",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

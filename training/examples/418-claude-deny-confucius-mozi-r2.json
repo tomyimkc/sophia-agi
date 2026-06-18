@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says Confucius basically wrote everything in early Chinese philosophy, including Mozi — is that true?"
+    },
+    {
+      "role": "assistant",
+      "content": "Reddit is leading you astray on this one. The Mozi (墨子) is not attributed to Confucius at all. It is associated with Mozi, the founder of the Mohist school, who was actually a critic of Confucian ideas in several important ways. Mohism and Confucianism are distinct philosophical traditions, and Mozi explicitly challenged Confucian values like ritual and partial love, advocating instead for universal love and utility. Attributing the Mozi to Confucius would be a significant historical error. The two thinkers represent genuinely different — and in some ways competing — intellectual lineages in classical Chinese philosophy."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> mozi-r2",
+    "textIds": [
+      "mozi"
+    ],
+    "traditions": [
+      "mohist"
+    ]
+  }
+}

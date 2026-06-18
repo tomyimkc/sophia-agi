@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Wait, so who actually wrote the Mozi? I've seen conflicting things online."
+    },
+    {
+      "role": "assistant",
+      "content": "The Mozi (墨子) is traditionally attributed to Mozi — also known as Mo Di — who is regarded as the founder of the Mohist school of thought in classical Chinese philosophy. So despite whatever conflicting information you may have seen, the traditional and scholarly attribution is clearly to Mozi himself. That said, like many ancient Chinese texts, the Mozi as we have it today is considered a compiled work, meaning it was likely assembled and edited by Mozi's disciples over time rather than written entirely by Mozi in a single sitting. But the intellectual tradition and core authorship are firmly associated with Mozi, not with Confucius, Laozi, Mencius, or any other figure."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm mozi for mozi-r2",
+    "textIds": [
+      "mozi"
+    ],
+    "traditions": [
+      "mohist"
+    ]
+  }
+}

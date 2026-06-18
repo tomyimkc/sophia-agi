@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who wrote the Meditations, and could it have been written by Epictetus or Plato?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Meditations (沉思錄) was written by Marcus Aurelius, the Roman Emperor who reigned from 161 to 180 CE. Scholars attribute this work to him with confidence — it is a private journal he kept in Greek, never intended for publication, reflecting his Stoic philosophical practice. It could not have been written by Epictetus or Plato. Epictetus, although a major Stoic influence on Marcus Aurelius, was a freed slave philosopher who lived in the 1st–2nd century CE; his own teachings were recorded by his student Arrian in works like the Discourses and the Enchiridion. Plato lived centuries earlier, in the 4th–5th century BCE, and was a founder of the entirely different Platonic tradition. The Meditations is solely the work of Marcus Aurelius."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> doctrine_of_mean-r0",
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

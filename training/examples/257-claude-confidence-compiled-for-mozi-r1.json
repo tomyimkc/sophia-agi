@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "What level of certainty do scholars assign to the authorship of the Mozi (墨子)?"
+    },
+    {
+      "role": "assistant",
+      "content": "Scholars assign the Mozi (墨子) a confidence level of 'compiled,' meaning that while the text is associated with Mozi (Mo Di) as its founding figure and attributed author, the work as we have it today was almost certainly compiled and expanded by his disciples across multiple generations. The Mozi consists of various sections that differ in style, focus, and probable date of composition, suggesting that it grew as a living text within the Mohist school rather than being written as a unified work by a single hand. The core doctrines — such as universal love (兼愛), condemnation of offensive warfare, and utilitarian ethics — are understood to reflect Mozi's own thought, but the full text represents the broader tradition of the Mohist community rather than a single author's composition."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence compiled for mozi-r1",
+    "textIds": [
+      "mozi"
+    ],
+    "traditions": [
+      "mohist"
+    ]
+  }
+}

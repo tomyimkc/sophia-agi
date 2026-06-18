@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says Socrates wrote Politics and that historians just don't give him enough credit — is there any truth to that?"
+    },
+    {
+      "role": "assistant",
+      "content": "That Reddit claim doesn't hold up at all. Socrates wrote nothing — he left zero texts, which is one of the most agreed-upon facts in the history of philosophy. Politics was written by Aristotle. Socrates predated Aristotle by a generation, and everything Socrates taught was transmitted orally or through Plato's writings. The idea that historians are hiding Socrates' authorship of Politics simply has no basis."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> politics-r2",
+    "textIds": [
+      "politics"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Some people say Laozi wrote the Republic — is that true?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that is not true. The Republic (理想國) was written by Plato, the ancient Greek philosopher, not by Laozi. Laozi is the legendary Chinese sage traditionally credited with composing the Dao De Jing (道德經). The two figures belong to completely separate philosophical traditions — ancient Greek and ancient Chinese — and Laozi had no role in producing the Republic."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> republic-r1",
+    "textIds": [
+      "republic"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

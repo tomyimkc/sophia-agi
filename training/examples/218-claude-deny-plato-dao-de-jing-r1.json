@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Some people say Plato wrote the Dao De Jing—is that true?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that is not true. Plato did not write the Dao De Jing (道德經). Plato was an ancient Greek philosopher whose works—such as the Republic (理想國) and the Symposium (會飲篇)—are written in Greek and belong to the Western philosophical tradition. The Dao De Jing is a classical Chinese Taoist text traditionally attributed to Laozi. There is no historical, textual, or traditional basis for attributing the Dao De Jing to Plato."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> dao_de_jing-r1",
+    "textIds": [
+      "dao_de_jing",
+      "republic",
+      "symposium"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

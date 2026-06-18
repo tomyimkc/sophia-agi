@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Mencius write the Analects?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Analects (論語) are not attributed to Mencius. The Analects is a compiled record of the sayings and teachings of Confucius, assembled by his disciples. Mencius lived roughly a century after Confucius and is associated with his own text, the Mencius (孟子), which records his own philosophical teachings. While Mencius was a major developer of Confucian thought and deeply influenced by Confucius, he is not the author of the Analects."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> i_ching-r0",
+    "textIds": [
+      "analects",
+      "mencius"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

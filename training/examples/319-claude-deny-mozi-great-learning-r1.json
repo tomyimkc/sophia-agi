@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Wasn't it Plato who originally authored the Analects?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Plato did not author the Analects (論語). The Analects is a Chinese text compiled by the disciples of Confucius, recording his teachings and conversations. Plato was an ancient Greek philosopher whose works — such as the Republic and the Symposium — belong to an entirely separate tradition. There is no connection between Plato and the Analects."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mozi -> great_learning-r1",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "confucianism",
+      "platonism"
+    ]
+  }
+}

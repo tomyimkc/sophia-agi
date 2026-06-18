@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write the Han Feizi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Han Feizi (韓非子) is attributed to Han Fei, a prominent Legalist philosopher of the late Warring States period in ancient China. Confucius lived roughly two centuries earlier and is associated with the Confucian tradition, not Legalism. In fact, Legalism and Confucianism represent philosophically opposing schools on questions of governance, human nature, and ethics. The Han Feizi is not attributed to Confucius by any traditional or scholarly account."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> han_feizi-r0",
+    "textIds": [
+      "han_feizi"
+    ],
+    "traditions": [
+      "legalist"
+    ]
+  }
+}

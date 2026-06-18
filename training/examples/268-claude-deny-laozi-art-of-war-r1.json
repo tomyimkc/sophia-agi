@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is there any tradition that credits Laozi with writing the Art of War?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, there is no credible tradition crediting Laozi with authorship of the Art of War (孫子兵法). The text is traditionally attributed to Sunzi, a military strategist of the Spring and Autumn period. While both Laozi and Sunzi lived in roughly the same era and there are occasional thematic overlaps — such as an appreciation for yielding and economy of force — they are considered distinct figures, and the Art of War is firmly associated with Sunzi, not Laozi."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> art_of_war-r1",
+    "textIds": [
+      "art_of_war"
+    ],
+    "traditions": [
+      "military_classics"
+    ]
+  }
+}

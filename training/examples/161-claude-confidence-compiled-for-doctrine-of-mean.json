@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "How certain is the authorship of the Analects (論語)?"
+    },
+    {
+      "role": "assistant",
+      "content": "The authorship of the Analects (論語) is held with compiled confidence. This means the text is not considered the direct literary composition of a single author. Rather, it is a compilation of sayings and dialogues attributed to Confucius and his disciples, assembled by later followers over time. While Confucius is the central figure whose teachings the text preserves, he almost certainly did not write the Analects himself. Scholars regard it as a post-Confucius editorial product that nonetheless reliably reflects his teachings, though with some variation across different strata of the text."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence compiled for doctrine_of_mean-r0",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "confucianism"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Can we treat Plato's Symposium as a word-for-word record of what Socrates actually said at a dinner party?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that would be a serious misreading of the text. The Symposium is a literary and philosophical composition by Plato, not a verbatim transcript or stenographic record. Its confidence level is 'attributed' — meaning it is a work we ascribe to Plato as author, not a documentary account. Socrates wrote nothing himself and left no autograph texts; his confidence level is 'none_extant.' Even within the dialogue, Plato frames the account through multiple layers of narration — one speaker recalls what another speaker reported — which itself signals literary artifice rather than journalistic record. Plato used Socrates as a dramatic character to explore philosophical ideas, and scholars debate how much of 'Socrates' in Plato reflects the historical man versus Plato's own developing philosophy. Treating it as a transcript mistakes the nature of ancient philosophical dialogue as a genre."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "symposium_dialogue_not_autograph-r1",
+    "benchmarkCase": "symposium_dialogue_not_autograph",
+    "textIds": [
+      "symposium",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "ancient_greek"
+    ]
+  }
+}

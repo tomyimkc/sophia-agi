@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Could Confucius have been the original author of the Art of War?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius is not associated with the Art of War (孫子兵法). The text is traditionally attributed to Sunzi (Sun Tzu), a military strategist believed to have lived during the Spring and Autumn period. Confucius was a moral and political philosopher, and his concerns were quite removed from the strategic military theory found in the Art of War. There is no credible basis for attributing it to Confucius."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> art_of_war-r1",
+    "textIds": [
+      "art_of_war"
+    ],
+    "traditions": [
+      "military_classics"
+    ]
+  }
+}

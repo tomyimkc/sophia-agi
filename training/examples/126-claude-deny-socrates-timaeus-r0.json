@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Laozi write the Analects?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. Laozi did not write the Analects. The Analects (論語) is a compilation of the teachings and sayings of Confucius, assembled by his disciples after his death. Laozi is associated with a very different philosophical tradition — Daoism — and is the legendary figure behind the Dao De Jing (道德經). Confucius and Laozi represent distinct schools of thought in classical Chinese philosophy, and the Analects belongs firmly to the Confucian tradition."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> timaeus-r0",
+    "textIds": [
+      "analects",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Mencius write Symposium?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Mencius did not write the Symposium. The Symposium (會飲篇) is a philosophical dialogue attributed to the ancient Greek thinker Plato, set in Athens and centered on speeches about the nature of love (Eros). Mencius was a Confucian philosopher in ancient China, best known for the text bearing his name, the Mencius (孟子), which explores human nature, benevolence, and righteous governance. These two figures are separated by geography, culture, and philosophical tradition, and Mencius has no authorial connection to the Symposium."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mencius -> symposium-r0",
+    "textIds": [
+      "symposium"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

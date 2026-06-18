@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Was Napoleon unusually short?"
+    },
+    {
+      "role": "assistant",
+      "content": "Napoleon being unusually short is a popular myth tied to propaganda and unit confusion, not a straightforward biographical fact.\n\n中文：拿破崙特別矮小是流行迷思，涉及宣傳與單位混淆。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "history",
+    "recordIds": [
+      "napoleon_short_myth"
+    ]
+  }
+}

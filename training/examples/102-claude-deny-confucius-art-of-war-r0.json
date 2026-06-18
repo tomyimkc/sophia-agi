@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write the Art of War?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius did not write the Art of War. The Art of War (孫子兵法) is traditionally attributed to Sunzi (Sun Tzu), a military strategist believed to have lived during the Spring and Autumn period. Confucius was a moral and political philosopher whose work — collected in the Analects — focused on ethics, ritual propriety, and governance through virtue. He had no known connection to military strategy texts, and the Art of War sits entirely outside the Confucian corpus."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> art_of_war-r0",
+    "textIds": [
+      "art_of_war",
+      "analects"
+    ],
+    "traditions": [
+      "military_classics"
+    ]
+  }
+}

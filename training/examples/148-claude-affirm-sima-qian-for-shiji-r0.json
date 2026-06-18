@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who is the traditionally attributed author of the Dao De Jing (道德經)?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Dao De Jing (道德經) is traditionally attributed to Laozi (老子), a semi-legendary Chinese thinker regarded as the founding figure of Taoism. According to tradition, Laozi composed the text around the 6th century BCE, possibly when departing China through a western gate, at the request of a gatekeeper. However, the confidence in this attribution is classified as 'legendary' — modern scholars debate whether Laozi was a single historical individual, a composite figure, or entirely mythological. The text itself may have been compiled or edited over time rather than written by one person."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm sima_qian for shiji-r0",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "historiography"
+    ]
+  }
+}

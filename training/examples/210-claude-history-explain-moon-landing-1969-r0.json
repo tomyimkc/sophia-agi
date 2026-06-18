@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Explain provenance for: Apollo 11 Moon landing (1969)"
+    },
+    {
+      "role": "assistant",
+      "content": "The Apollo 11 mission (July 16–24, 1969) is among the most thoroughly documented events in human history. Primary sources include: NASA mission transcripts and telemetry records, maintained in the NASA Technical Reports Server and the National Archives; the astronauts' own testimony (Neil Armstrong, Buzz Aldrin, Michael Collins, all of whom gave extensive accounts across decades); contemporaneous global broadcast footage received by tracking stations including Honeysuckle Creek (Australia) and Goldstone (USA); independent tracking confirmation by observatories and amateur radio operators worldwide, including Soviet tracking stations during the Space Race; and the physical samples — approximately 21.5 kg of lunar regolith and rock — which have been studied by hundreds of independent research teams globally and whose isotopic and mineralogical properties are inconsistent with terrestrial origin. The event is confirmed by retroreflectors placed on the lunar surface by the crew, still actively used by observatories today for laser-ranging experiments. The claim that the landing was staged lacks any credible evidentiary basis; the conspiracy hypothesis requires coordinated deception across tens of thousands of engineers, scientists, and international observers including Cold War adversaries with strong incentive to expose any fraud."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "history explain moon_landing_1969-r0",
+    "recordIds": [
+      "moon_landing_1969"
+    ]
+  }
+}

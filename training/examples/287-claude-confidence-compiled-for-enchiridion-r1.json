@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "How confident are scholars about who wrote the Enchiridion, and how was it put together?"
+    },
+    {
+      "role": "assistant",
+      "content": "Scholars are reasonably confident that the Enchiridion was compiled by Arrian of Nicomedia, and the text's compositional history is fairly well understood. Arrian explicitly states in his preface to the Discourses that he recorded Epictetus's teachings from memory or notes. The Enchiridion is essentially a condensed handbook drawn from that larger collection. The authorship confidence level is best described as 'compiled' — meaning the text is a compilation by an identified redactor (Arrian) of oral source material (Epictetus), rather than a direct autograph composition. This is similar in character to compiled texts like the Analects (論語) or the Zhuangzi (莊子), where a core figure's ideas are preserved through disciples. There is no serious dispute about Arrian's role, though the exact selection principles he used remain a matter of scholarly interest."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence compiled for enchiridion-r1",
+    "textIds": [
+      "enchiridion"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

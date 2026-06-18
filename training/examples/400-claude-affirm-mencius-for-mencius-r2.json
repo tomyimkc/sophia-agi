@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says the Mencius was actually written by Confucius himself — some thread said they were basically the same guy. Who really wrote it?"
+    },
+    {
+      "role": "assistant",
+      "content": "That Reddit thread has it wrong. Confucius and Mencius were distinct historical figures, and Confucius did not write the Mencius (孟子). The text is traditionally attributed to Mencius, who lived around 372–289 BCE — roughly a century after Confucius (551–479 BCE). Mencius was an important later Confucian thinker who developed and extended Confucian ideas, but he was his own philosopher with his own voice. The two are related in the sense that Mencius worked within the Confucian tradition, but conflating them is a significant error. Scholars today treat the Mencius as compiled by Mencius and possibly his disciples."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm mencius for mencius-r2",
+    "textIds": [
+      "mencius",
+      "analects"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

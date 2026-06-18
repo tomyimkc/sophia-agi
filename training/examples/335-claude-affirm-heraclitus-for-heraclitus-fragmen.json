@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Was it Plato or Aristotle who composed the Nicomachean Ethics?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Nicomachean Ethics (尼各馬可倫理學) was composed by Aristotle, not Plato. Although Aristotle was Plato's student, he developed an independent philosophical system that in significant ways departed from Platonic thought. The Nicomachean Ethics is one of Aristotle's foundational works on moral philosophy and virtue ethics. It should not be attributed to Plato or Socrates. The name 'Nicomachean' is traditionally linked to Aristotle's son Nicomachus, possibly as editor or dedicatee of the text."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm heraclitus for heraclitus_fragments-r1",
+    "textIds": [
+      "nicomachean_ethics"
+    ],
+    "traditions": [
+      "aristotelianism",
+      "platonism"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Socrates write Nicomachean Ethics?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Socrates did not write the Nicomachean Ethics (尼各馬可倫理學). The Nicomachean Ethics is attributed to Aristotle. Importantly, Socrates left no known extant writings at all — our knowledge of his philosophy comes primarily through the dialogues written by Plato and the accounts of Xenophon. Attributing the Nicomachean Ethics to Socrates would be doubly mistaken: it belongs to Aristotle, and Socrates is not known to have authored any text."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> nicomachean_ethics-r0",
+    "textIds": [
+      "nicomachean_ethics",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

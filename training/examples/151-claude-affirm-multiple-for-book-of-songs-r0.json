@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Aristotle write the Republic?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Aristotle did not write the Republic (理想國). The Republic is attributed to Plato, Aristotle's teacher. It is one of Plato's most famous dialogues, exploring justice, the ideal state, and the philosopher-king. Aristotle, though deeply influenced by Plato and a student at his Academy, developed his own distinct philosophical works such as the Nicomachean Ethics and the Metaphysics. Confucius, Laozi, and Socrates are also not the authors of the Republic — it belongs firmly to Plato's corpus."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm multiple for book_of_songs-r0",
+    "textIds": [
+      "republic"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

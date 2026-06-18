@@ -1,0 +1,23 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Did Freud discover cognitive dissonance?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Freud did not discover cognitive dissonance. Cognitive dissonance is a concept introduced by the American social psychologist Leon Festinger in his 1957 book 'A Theory of Cognitive Dissonance.' Festinger developed the theory based on empirical research, most famously a study of a doomsday cult whose members rationalized their beliefs after the predicted apocalypse failed to occur. Sigmund Freud was a neurologist and the founder of psychoanalysis, working in a very different theoretical tradition focused on the unconscious, repression, the id/ego/superego structure, and psychosexual development. While Freudian concepts like rationalization bear a surface resemblance to cognitive dissonance — both involve mental tension and its resolution — they are distinct constructs from different eras and methodological traditions. Attributing cognitive dissonance to Freud conflates two separate thinkers and misrepresents the history of psychology."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "trap": "freud_cognitive_dissonance-r0",
+    "benchmarkCase": "freud_cognitive_dissonance"
+  }
+}

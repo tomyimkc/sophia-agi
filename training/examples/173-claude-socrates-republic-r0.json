@@ -1,0 +1,31 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Socrates write the Republic?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Socrates did not write the Republic (理想國). The Republic was written by Plato, one of Socrates' most famous students. Socrates himself left no known writings; he taught entirely through oral dialogue. While Socrates appears as the principal speaker in the Republic, this is a literary device used by Plato. The views expressed in the Republic are generally understood to be Plato's own philosophical positions, which may or may not faithfully represent the historical Socrates. This distinction between the 'Platonic Socrates' and the historical Socrates is an important one in scholarship."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "socrates_republic-r0",
+    "benchmarkCase": "socrates_republic",
+    "textIds": [
+      "republic",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "greek_classical",
+      "platonic"
+    ]
+  }
+}

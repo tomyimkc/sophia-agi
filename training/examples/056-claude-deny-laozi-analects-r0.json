@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Laozi write the Analects?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Analects (論語) is not attributed to Laozi. The Analects is a compilation of the sayings and conversations of Confucius (孔子), assembled by his disciples and their followers after his death. Laozi is the legendary figure associated with Daoism and the Dao De Jing, a tradition quite distinct from the Confucian school to which the Analects belongs. Attributing the Analects to Laozi would conflate two separate and philosophically distinct traditions."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> analects-r0",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

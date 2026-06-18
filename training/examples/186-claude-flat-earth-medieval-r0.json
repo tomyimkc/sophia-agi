@@ -1,0 +1,23 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Did educated medieval Europeans generally believe the earth was flat?"
+    },
+    {
+      "role": "assistant",
+      "content": "No — this is one of the most persistent myths about the Middle Ages, and historians of science have thoroughly debunked it. Educated Europeans in the medieval period almost universally knew the Earth was spherical. The spherical Earth was established by ancient Greek thinkers including Pythagoras, Aristotle, and Eratosthenes (who calculated its circumference with impressive accuracy around 240 BCE), and this knowledge was transmitted into medieval European scholarship through Latin texts. Theologians and natural philosophers such as Thomas Aquinas, Roger Bacon, Albertus Magnus, and Dante (whose Commedia literally depicts a spherical Earth) all worked from a spherical Earth assumption. Major medieval universities taught geocentric but spherical cosmology based on Ptolemy's model. The myth that medieval people believed in a flat Earth was largely invented and popularized in the 19th century — notably by Washington Irving's fictionalized biography of Columbus (1828) and later by John William Draper and Andrew Dickson White, who promoted a now-discredited 'conflict thesis' between science and religion. Columbus's dispute with Spanish scholars was not about the shape of the Earth but about the size of the Atlantic."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "flat_earth_medieval-r0",
+    "benchmarkCase": "flat_earth_medieval"
+  }
+}

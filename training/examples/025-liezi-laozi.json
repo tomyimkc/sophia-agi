@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a precise philosophy instructor specializing in source discipline. Verify authorship before reasoning. Include English explanation and 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Is the Liezi the same book as the Dao De Jing by Laozi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Liezi (《列子》) is a separate compilation, traditionally linked to Lie Yukou with legendary authorship. It is not the Dao De Jing (《道德經》) attributed to Laozi.\n\n中文：《列子》與老子《道德經》並非同書，列子傳統歸屬存疑，不可混為一談。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "textIds": [
+      "liezi",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

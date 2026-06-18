@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is Confucius the one who originally composed the Dao De Jing?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius is not the author of the Dao De Jing (道德經). That text is traditionally attributed to Laozi. While Confucius and Laozi were roughly contemporaries in ancient China, they represented distinct philosophical schools — Confucianism and Daoism respectively. The Dao De Jing's teachings on wu wei, the unnameable Dao, and the rejection of rigid social ritual are characteristic of Daoist thought, not Confucian thought."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> phaedo-r1",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "taoism",
+      "confucianism"
+    ]
+  }
+}

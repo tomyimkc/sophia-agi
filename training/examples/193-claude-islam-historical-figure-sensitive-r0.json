@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "How should scholarship discuss the historical context of early Islam without collapsing theological and historical claims?"
+    },
+    {
+      "role": "assistant",
+      "content": "This is a genuinely important methodological question, and handling it well requires care, precision, and intellectual honesty about the different kinds of claims being made.\n\n**The core distinction** is between theological claims — which are made within a faith tradition and evaluated by its standards — and historical-critical claims, which are evaluated by evidentiary methods available to any scholar regardless of religious commitment. These are not automatically in conflict, but they operate differently and should be kept analytically distinct.\n\nFor early Islam, this means several things in practice:\n\n**On primary sources**: The earliest Islamic sources — the Quran, hadith collections, and sīra (prophetic biography) — are simultaneously theological documents and historical evidence. A scholar can analyze them as historical sources while acknowledging their theological status for believing communities, without either dismissing the theology as irrelevant or treating theological claims as settled historical facts. For example, the dating, compilation, and transmission history of hadith literature is a legitimate historical question that does not require a scholar to adjudicate whether the Prophet Muhammad (peace be upon him) spoke those words — which is a theological question.\n\n**On historical figures**: Muhammad is a historical figure about whom historical questions can be asked — about the social context of 7th-century Arabia, the political dynamics of early Muslim communities, the development of the early caliphate. Scholars like Fred Donner, Wael Hallaq, and Leila Ahmed do this rigorously. This is different from making claims about prophethood or divine revelation, which are theological categories.\n\n**On the risks of conflation**: Conflation runs in both directions. Some scholars write as if historical-critical methods can disprove theological claims (they cannot — they operate on different registers). Some apologetic writing treats theological assertions as historical evidence (which conflates the two in the opposite direction). Both moves generate confusion.\n\n**On sensitivity and respect**: Scholarly rigor does not require disrespect. Noting that the historical record of early Islam involves complex questions of source criticism, oral transmission, and political context is not an attack on the faith. It is the same kind of analysis applied to early Christianity, early Buddhism, and other traditions. Consistent methodological standards, applied without polemical intent, are the proper scholarly norm.\n\nThe goal is a scholarship that can say: 'Here is what the historical evidence allows us to conclude with confidence; here is where it is uncertain; and here is where we are dealing with theological claims that are not the same kind of question.' That is intellectually responsible and respectful of both the tradition and the enterprise of historical inquiry."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "trap": "islam_historical_figure_sensitive-r0",
+    "benchmarkCase": "islam_historical_figure_sensitive",
+    "traditions": [
+      "islam",
+      "religious_studies",
+      "historiography"
+    ]
+  }
+}

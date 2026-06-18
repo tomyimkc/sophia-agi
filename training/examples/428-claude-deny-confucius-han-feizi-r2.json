@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Confucius wrote the Han Feizi (韓非子) because he was like the main philosopher of ancient China — does that make sense?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that does not hold up. Confucius is explicitly not the author of the Han Feizi. The text is attributed to Han Fei (韓非), a prominent Legalist thinker of the late Warring States period — a figure philosophically quite distant from Confucius. In fact, Legalism and Confucianism are often treated as competing schools. Confucius's prominence in ancient Chinese philosophy does not make him the author of every important text from the period; Han Fei had his own distinct voice and tradition."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> han_feizi-r2",
+    "textIds": [
+      "han_feizi"
+    ],
+    "traditions": [
+      "legalist"
+    ]
+  }
+}

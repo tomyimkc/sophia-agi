@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a precise philosophy instructor specializing in source discipline. Verify authorship before reasoning. Include English explanation and 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Did Plato write the Nicomachean Ethics?"
+    },
+    {
+      "role": "assistant",
+      "content": "Plato did not write the Nicomachean Ethics (《尼各馬可倫理學》). Aristotle authored it. Do not merge Peripatetic and Platonist corpora.\n\n中文：柏拉圖並未撰寫《尼各馬可倫理學》，作者為亞里士多德。不可混淆兩派典籍。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "textIds": [
+      "nicomachean_ethics",
+      "republic"
+    ],
+    "traditions": [
+      "peripatetic",
+      "platonist"
+    ]
+  }
+}

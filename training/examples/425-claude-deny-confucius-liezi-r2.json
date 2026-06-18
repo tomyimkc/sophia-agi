@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard somewhere that Confucius wrote the Liezi — is that a thing people actually believe?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that is not a credible position. Confucius is explicitly not among the candidates for authorship of the Liezi. The text is traditionally attributed to Liezi (列子), a semi-legendary Taoist figure. Confucius and Liezi represent quite different intellectual traditions — Confucius is associated with Confucian ethics and social ritual, while the Liezi belongs firmly in the Taoist stream. Whoever told you that was mistaken."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> liezi-r2",
+    "textIds": [
+      "liezi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

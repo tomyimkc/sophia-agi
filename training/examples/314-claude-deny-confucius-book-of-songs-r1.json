@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Which philosopher is traditionally credited with writing the Republic?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Republic (理想國) is traditionally attributed to Plato, the ancient Greek philosopher who was a student of Socrates and teacher of Aristotle. Plato wrote it as a Socratic dialogue, meaning Socrates appears as the central speaker, which sometimes leads to confusion. However, the text itself was composed by Plato — Socrates left no writings of his own. The attribution to Plato carries reasonably strong confidence, consistent with the broader ancient attribution tradition for his dialogues."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> book_of_songs-r1",
+    "textIds": [
+      "republic"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

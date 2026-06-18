@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Mencius write Mozi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Mencius did not write the Mozi (墨子). The Mozi is attributed to Mozi and his Mohist school of followers. Mencius was a Confucian philosopher who actually argued against Mohist ideas in his own text, the Mencius (孟子). Mencius famously criticized the Mohist doctrine of universal, undifferentiated love as being in conflict with the proper graded love and filial piety that Confucianism teaches. The two figures represent distinct and competing philosophical traditions."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mencius -> mozi-r0",
+    "textIds": [
+      "mozi"
+    ],
+    "traditions": [
+      "mohist"
+    ]
+  }
+}

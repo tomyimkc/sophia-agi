@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Laozi write the Zhuangzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Laozi did not write the Zhuangzi. The Zhuangzi (莊子) is attributed to Zhuangzi (库子), a distinct thinker who lived approximately a century after Laozi. Scholars classify the Zhuangzi as a compiled text, meaning it was likely assembled by multiple hands over time rather than authored in a single sitting by one person. While both Laozi and Zhuangzi are foundational figures in Daoist thought and share overlapping themes — such as naturalness (自然, zìrán) and effortless action (無為, wúwéi) — their works are separate, have distinct literary voices, and are attributed to different authors. Attributing the Zhuangzi to Laozi would conflate two independent thinkers simply because they share a philosophical tradition."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "trap_laozi_zhuangzi-r0",
+    "benchmarkCase": "trap_laozi_zhuangzi",
+    "textIds": [
+      "dao_de_jing",
+      "zhuangzi"
+    ],
+    "traditions": [
+      "daoism"
+    ]
+  }
+}

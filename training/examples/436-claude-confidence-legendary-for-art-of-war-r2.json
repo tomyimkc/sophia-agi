@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that scholars are basically 100% certain Sunzi wrote the Art of War himself — like, it's totally confirmed, right?"
+    },
+    {
+      "role": "assistant",
+      "content": "Not quite — that confidence is actually pretty shaky. The authorship of the Art of War (孫子兵法) is classified as 'legendary,' which is about as uncertain as it gets in historical attribution. While Sunzi is the traditional name attached to the text, scholars debate whether a single historical figure by that name even existed, let alone personally authored the work. It may have been compiled or developed over time by multiple hands. So 'basically 100% certain' is very far from where the scholarly consensus actually sits."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence legendary for art_of_war-r2",
+    "textIds": [
+      "art_of_war"
+    ],
+    "traditions": [
+      "military_classics"
+    ]
+  }
+}

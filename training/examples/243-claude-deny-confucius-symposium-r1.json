@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Was the Symposium composed by Confucius?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius did not write the Symposium (會飲篇). The Symposium is a philosophical dialogue written by the ancient Greek philosopher Plato. Confucius was a Chinese thinker from a different cultural and intellectual tradition entirely, and has no connection to this work."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> symposium-r1",
+    "textIds": [
+      "symposium"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

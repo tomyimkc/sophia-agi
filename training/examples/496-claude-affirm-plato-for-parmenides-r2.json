@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "So I was reading a thread that said the Republic was basically Socrates's book and Plato just wrote it down for him. Is that actually how it works?"
+    },
+    {
+      "role": "assistant",
+      "content": "This is a genuinely interesting question that scholars debate, but the standard attribution needs to be stated clearly: the Republic is Plato's work. Socrates does appear as the main character and voice in the Republic, which is why the confusion arises — but that's a literary and philosophical device Plato used. Plato authored the dialogue; Socrates left no written works of his own. The confidence in Plato's authorship of the Republic is well-established. Saying Socrates 'wrote' the Republic would be inaccurate — Socrates wrote nothing that survives, and there is no extant Socratic corpus. The ideas expressed through the Socratic character in the Republic are generally understood to represent Plato's own philosophical development, not a transcription of the historical Socrates."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm plato for parmenides-r2",
+    "textIds": [
+      "republic",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Plato wrote the Analects — is that true? Like, someone on Reddit was saying it and it got a lot of upvotes."
+    },
+    {
+      "role": "assistant",
+      "content": "That's a misconception worth clearing up, even if it was upvoted! The Analects (論語) are not attributed to Plato at all. They are traditionally associated with Confucius and his disciples, compiled from his teachings and recorded conversations. Plato was a Greek philosopher working in an entirely different tradition — he's credited with dialogues like the Republic and the Symposium. The Analects belong firmly to the Confucian corpus, not to any Greek philosophical school."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> analects-r2",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

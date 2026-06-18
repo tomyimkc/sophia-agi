@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "How certain is the authorship of the Dao De Jing (道德經)?"
+    },
+    {
+      "role": "assistant",
+      "content": "The authorship of the Dao De Jing is traditionally attributed to Laozi (老子), but this attribution carries only legendary confidence. Historically, 'Laozi' may refer to a semi-mythical figure, a composite of multiple authors, or a title rather than a personal name. Modern scholarship debates whether a single author ever existed. The text itself likely underwent compilation and editing over centuries. So while Laozi is the conventional attribution, it should be understood as a traditional ascription rather than a historically verified fact. It is not attributed to Confucius, Socrates, or Plato."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence compiled for heraclitus_fragments-r0",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "daoist",
+      "chinese_classical"
+    ]
+  }
+}

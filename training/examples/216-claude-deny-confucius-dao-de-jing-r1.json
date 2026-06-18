@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Was the Dao De Jing actually penned by Confucius?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Dao De Jing (道德經) is not attributed to Confucius in any traditional or scholarly account. Confucius is associated with the Confucian school and is credited—through his disciples—with the Analects (論語). The Dao De Jing belongs to the Taoist tradition and is traditionally attributed to Laozi, a legendary sage figure. There is no credible textual, historical, or traditional basis for a Confucian authorship of the Dao De Jing."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> dao_de_jing-r1",
+    "textIds": [
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

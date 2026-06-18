@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard the I Ching has like a bunch of different authors — some say Fu Xi, some say Confucius, some say King Wen. Who is it actually attributed to? Is there even one answer?"
+    },
+    {
+      "role": "assistant",
+      "content": "You are right to sense the complexity here — the I Ching has a layered authorship tradition, and there genuinely is no single traditional author. The core hexagrams are traditionally attributed to the legendary figure Fu Xi, while King Wen of Zhou and the Duke of Zhou are credited with adding the judgments and line statements. Confucius is traditionally associated with the 'Ten Wings,' a set of later commentaries, but not the original text. So the honest answer is that the I Ching is a composite text with multiple attributed contributors across different historical and legendary periods, which makes it quite different from works like the Dao De Jing or the Analects."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm multiple for i_ching-r2",
+    "textIds": [
+      "i_ching"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says Socrates wrote the Zhuangzi and the Dao De Jing — apparently he traveled to China? Is any of that real?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that's not historically credible — it sounds like the thread was mixing up fringe pseudohistory with actual scholarship. Socrates did not write the Zhuangzi or the Dao De Jing. Socrates was an Athenian philosopher (470–399 BCE) who, as far as all reliable historical evidence shows, lived and worked in Greece and wrote nothing himself. The Zhuangzi is attributed to the Chinese Daoist thinker Zhuangzi, and the Dao De Jing is legendarily attributed to Laozi — both are Chinese texts with no connection to Socrates. The idea that Socrates traveled to China is not supported by any credible ancient sources and belongs to the category of internet mythology rather than history or philosophy."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> zhuangzi-r2",
+    "textIds": [
+      "zhuangzi",
+      "dao_de_jing"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who does tradition identify as the author behind the Xunzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Xunzi (荀子) is traditionally attributed to Xunzi, also known as Xun Kuang or Xun Qing, a Chinese philosopher who lived during the late Warring States period (approximately 310–235 BCE). The text is considered a compiled work, meaning it was likely assembled and edited by Xunzi's disciples from his teachings and writings rather than being composed as a single unified manuscript by Xunzi alone. Nevertheless, Xunzi is the figure to whom the text is attributed. He is notable within the Confucian tradition for his rationalist approach and his argument that human nature requires moral cultivation to become good."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm xunzi for xunzi-r1",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

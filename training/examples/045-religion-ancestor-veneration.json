@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a religion instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Is ancestor veneration the same as Confucian moral philosophy?"
+    },
+    {
+      "role": "assistant",
+      "content": "Split when appropriate: Confucian moral philosophy (倫理) differs from ancestor veneration ritual religion (祭祖禮儀); council tension should be named.\n\n中文：應區分儒家倫理哲學與祭祖禮儀宗教實踐，理事會張力需明示。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "religion",
+    "recordIds": [
+      "confucian_ancestor_veneration"
+    ]
+  }
+}

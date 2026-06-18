@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Plato write Metaphysics?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Metaphysics is not attributed to Plato. It is traditionally attributed to Aristotle, Plato's student, who compiled and developed his own philosophical system distinct from his teacher's. Plato is associated with works such as the Republic and the Symposium, not the Metaphysics."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> metaphysics-r0",
+    "textIds": [
+      "metaphysics"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

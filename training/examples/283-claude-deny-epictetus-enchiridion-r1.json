@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is it accurate to say Epictetus authored the Enchiridion?"
+    },
+    {
+      "role": "assistant",
+      "content": "This requires a careful distinction. Epictetus himself wrote nothing — he left no texts of his own. The Enchiridion (also called the Handbook) is a summary of Epictetan teachings compiled by his student Arrian of Nicomedia. So while the philosophical content reflects Epictetus's thought, Arrian is the actual author-compiler of the text. Attributing the Enchiridion directly to Epictetus as author overstates his role; the accurate attribution is to Arrian, compiled from Epictetus's oral teachings."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny epictetus -> enchiridion-r1",
+    "textIds": [
+      "enchiridion"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

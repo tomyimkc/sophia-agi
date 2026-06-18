@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that the Art of War was actually written by Confucius — is that true, or is Reddit just making stuff up again?"
+    },
+    {
+      "role": "assistant",
+      "content": "Reddit is leading you astray on this one! The Art of War (孫子兵法) is traditionally attributed to Sunzi (also romanized as Sun Tzu), not Confucius. Confucius and Sunzi are entirely distinct figures from ancient China — Confucius was a moral philosopher concerned with ethics, ritual, and governance, while Sunzi is the legendary military strategist credited with this text. So no, Confucius did not write the Art of War."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm sunzi for art_of_war-r2",
+    "textIds": [
+      "art_of_war"
+    ],
+    "traditions": [
+      "military_classics"
+    ]
+  }
+}

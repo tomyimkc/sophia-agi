@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write the Xunzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius did not write the Xunzi (荀子). The Xunzi is attributed to Xunzi (also known as Xun Kuang or Xun Qing), a Confucian philosopher who lived roughly a century after Confucius. While Xunzi engaged deeply with Confucian thought and developed it in distinctive directions — notably arguing that human nature is originally bad and must be shaped by ritual — the text bears his name and is understood to be his work, not that of Confucius himself."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> xunzi-r0",
+    "textIds": [
+      "xunzi"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

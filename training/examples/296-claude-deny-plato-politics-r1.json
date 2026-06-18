@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is Confucius the one who wrote the Zhuangzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Zhuangzi (莊子) is not attributed to Confucius. It is traditionally associated with Zhuangzi, a Daoist thinker of the Warring States period. Confucius was a Confucian philosopher whose teachings are recorded in the Analects (論語). The Zhuangzi and Confucian texts represent distinct and often contrasting philosophical traditions — Daoism and Confucianism respectively — and attributing the Zhuangzi to Confucius would be a significant error."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> politics-r1",
+    "textIds": [
+      "zhuangzi",
+      "analects"
+    ],
+    "traditions": [
+      "daoist",
+      "confucian"
+    ]
+  }
+}

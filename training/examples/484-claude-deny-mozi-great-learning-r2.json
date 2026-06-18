@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says Confucius wrote the Analects himself, like sat down and wrote a book. Is that actually true?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a common oversimplification worth correcting. The Analects (論語) are attributed to Confucius, but the confidence level is 'compiled' — meaning the text is a collection of sayings and dialogues assembled by his disciples after his death, not something Confucius personally sat down and authored as a unified work. So Confucius is the source of the teachings recorded there, but he didn't write it in the way you'd write a modern book. Reddit is roughly pointing at the right person, but getting the nature of the authorship wrong."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny mozi -> great_learning-r2",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

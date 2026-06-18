@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Wait, I saw somewhere online that Socrates wrote the Metaphysics? That would make sense since he's like the OG Greek philosopher, right?"
+    },
+    {
+      "role": "assistant",
+      "content": "I get why that logic might seem intuitive, but no — Socrates did not write the *Metaphysics*. In fact, Socrates left behind **no extant writings at all**; everything we know of him comes through others, primarily Plato. The *Metaphysics* is attributed to **Aristotle**, Plato's student and Socrates' philosophical grandchild, so to speak. The 'OG' status doesn't translate into authorship here!"
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> metaphysics-r2",
+    "textIds": [
+      "metaphysics"
+    ],
+    "traditions": [
+      "peripatetic"
+    ]
+  }
+}

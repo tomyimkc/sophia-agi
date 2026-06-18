@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard somewhere that Confucius wrote the Zhuangzi — like, weren't all early Chinese philosophical texts basically written by Confucius?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a common misconception worth clearing up. Confucius did not write the Zhuangzi (莊子), and no, not all early Chinese philosophical texts came from him. Ancient Chinese philosophy was remarkably diverse. The Zhuangzi is attributed to Zhuangzi (庄子), a Daoist thinker who lived around the 4th century BCE. Zhuangzi's philosophy is actually quite distinct from — and at times humorously critical of — Confucian thought. The text as we have it today is generally understood to be a compiled work, with some portions likely written by Zhuangzi himself and others added by later followers."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny confucius -> zhuangzi-r2",
+    "textIds": [
+      "zhuangzi",
+      "analects"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Were the Analects (論語) composed by Confucius himself as a unified book in a single authorial session?"
+    },
+    {
+      "role": "assistant",
+      "content": "Not at all — the Analects (論語) are a compiled text, not a unified work authored by Confucius (孔子) in any single sitting. Confucius himself almost certainly wrote nothing that survives. The Analects were assembled by his disciples and their subsequent followers over a period that scholars estimate may have extended across several generations after Confucius's death in 479 BCE. Different books within the Analects show distinct stylistic registers, levels of formality, and theological emphases, which has led researchers to propose that different sections likely originated from different disciples or schools within early Confucianism — for example, the school associated with Zengzi (曾子) appears prominently in certain chapters. Textual and archaeological evidence, including bamboo-strip manuscripts discovered at sites like Dingzhou, confirms the text's layered formation. So while the Analects are the single most important source for understanding Confucian thought and almost certainly preserve genuine memories of Confucius's teachings, they should be understood as a compiled community document rather than a personally authored book."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "analects_compiled-r1",
+    "benchmarkCase": "analects_compiled",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "confucianism"
+    ]
+  }
+}

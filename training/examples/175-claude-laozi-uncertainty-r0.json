@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who wrote the Nicomachean Ethics (尼各馬可倫理學), and how certain is the attribution?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Nicomachean Ethics is attributed to Aristotle, and this attribution carries reasonable scholarly confidence. It is not attributed to Plato, Socrates, or Confucius. The title likely refers to Aristotle's son Nicomachus, who may have edited or compiled the work posthumously, which introduces some uncertainty about the final form of the text. Nevertheless, the philosophical content is firmly within Aristotle's intellectual tradition, and the work is broadly accepted as representing his ethical thought. Compared to texts with 'legendary' attributions, Aristotle's authorship of the Nicomachean Ethics stands on relatively solid ground."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "laozi_uncertainty-r0",
+    "benchmarkCase": "laozi_uncertainty",
+    "textIds": [
+      "nicomachean_ethics"
+    ],
+    "traditions": [
+      "greek_classical",
+      "aristotelian"
+    ]
+  }
+}

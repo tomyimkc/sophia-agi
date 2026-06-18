@@ -1,0 +1,31 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Zhuangzi write the Analects?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Zhuangzi did not write the Analects. The Analects (論語, Lúnyǔ) is a Confucian text compiled by disciples of Confucius, recording his sayings and conversations. Zhuangzi was a Daoist thinker operating in a different philosophical tradition entirely. The two figures represent not only different schools of thought — Confucianism versus Daoism — but also different intellectual priorities: the Analects emphasizes ritual propriety (禮, lǐ), humaneness (仁, rén), and social ethics, whereas Zhuangzi's work explores spontaneity, relativism, and transcending conventional distinctions. Conflating them ignores both the textual evidence and the profound philosophical differences between the Confucian and Daoist traditions."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "zhuangzi_analects_boundary-r0",
+    "benchmarkCase": "zhuangzi_analects_boundary",
+    "textIds": [
+      "zhuangzi",
+      "analects"
+    ],
+    "traditions": [
+      "daoism",
+      "confucianism"
+    ]
+  }
+}

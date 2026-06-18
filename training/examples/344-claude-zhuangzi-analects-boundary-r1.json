@@ -1,0 +1,31 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Could Zhuangzi have been the author of the Analects, since both texts come from ancient China?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. The Analects (論語) is a compilation of the teachings of Confucius, recorded and assembled by his disciples. Zhuangzi is not among those to whom the Analects should be attributed. Zhuangzi is associated with his own text, the Zhuangzi (莊子), which belongs to the Daoist tradition — a tradition that in many ways positioned itself in contrast to the Confucian values that permeate the Analects. Sharing a geographic and historical era does not mean two thinkers co-authored or interchanged their works. The Confucian and Daoist canons represent distinct intellectual lineages, and attributing the Analects to Zhuangzi would misrepresent both traditions."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "zhuangzi_analects_boundary-r1",
+    "benchmarkCase": "zhuangzi_analects_boundary",
+    "textIds": [
+      "zhuangzi",
+      "analects"
+    ],
+    "traditions": [
+      "daoism",
+      "confucianism"
+    ]
+  }
+}

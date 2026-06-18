@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "So who actually wrote the Enchiridion? I keep seeing different names attached to it and I genuinely don't know what to believe anymore."
+    },
+    {
+      "role": "assistant",
+      "content": "The confusion is understandable but the answer is actually fairly clear. The *Enchiridion* was written by **Arrian** of Nicomedia, a Greek historian and philosopher who was a devoted student of the Stoic teacher Epictetus. Arrian compiled the handbook — the word 'enchiridion' means 'handbook' or 'manual' in Greek — from his notes on Epictetus's lectures. Because the content represents Epictetus's philosophy and teaching, Epictetus's name is often associated with the work, which is a legitimate way to credit the source of the ideas. But the actual author who put the text together is Arrian. Think of it like the *Analects* (論語), where Confucius's disciples compiled his teachings — the ideas are the master's but the text is the students' work."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm arrian for enchiridion-r2",
+    "textIds": [
+      "enchiridion"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

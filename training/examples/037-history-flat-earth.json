@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Did medieval Europeans universally believe the earth was flat?"
+    },
+    {
+      "role": "assistant",
+      "content": "The claim that all medieval Europeans believed in a flat earth is a modern misconception, not accurate medieval consensus history.\n\n中文：「中世紀歐洲普遍地平說」是現代誤解，並非嚴謹史學共識。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "history",
+    "recordIds": [
+      "flat_earth_medieval_myth"
+    ]
+  }
+}

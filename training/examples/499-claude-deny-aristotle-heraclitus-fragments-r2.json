@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Someone told me that Mencius was basically just Confucius under a different name and the Mencius text is really a Confucian work that should be attributed to Confucius. Is that legit?"
+    },
+    {
+      "role": "assistant",
+      "content": "This reflects a real connection but draws the wrong conclusion about authorship. Mencius was indeed a Confucian thinker — one of the most important figures in the Confucian tradition — and the Mencius (孟子) develops and extends ideas from Confucian thought. But 'working within a tradition' is very different from being the same person or sharing authorship. Confucius and Mencius were distinct historical figures, separated by roughly a century. The Mencius is traditionally attributed to Mencius himself, though like many classical Chinese texts it was likely compiled and edited by his disciples. Confucius is not credited with the Mencius in any traditional or scholarly framework. The Analects is the text associated with Confucius. Saying the Mencius should be attributed to Confucius would be a clear misattribution."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny aristotle -> heraclitus_fragments-r2",
+    "textIds": [
+      "mencius",
+      "analects"
+    ],
+    "traditions": [
+      "presocratic"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says the Art of War was written by Laozi because it has all that 'yielding overcomes the hard' Daoist strategy stuff in it — is that legit?"
+    },
+    {
+      "role": "assistant",
+      "content": "It's an interesting observation that the Art of War does share some conceptual overlap with Daoist ideas — themes of yielding, adaptability, and working with natural forces do appear in both. However, that thematic resonance doesn't make Laozi the author. The Art of War (孫子兵法) is traditionally attributed to Sunzi, a military strategist, while the Dao De Jing is attributed to Laozi. These are distinct texts with distinct authors. The Daoist flavor in the Art of War likely reflects broader intellectual currents of the period rather than shared authorship."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> art_of_war-r2",
+    "textIds": [
+      "art_of_war"
+    ],
+    "traditions": [
+      "military_classics"
+    ]
+  }
+}

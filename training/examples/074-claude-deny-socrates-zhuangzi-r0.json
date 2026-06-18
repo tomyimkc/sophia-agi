@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Socrates write Zhuangzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. Socrates (c. 470–399 BCE) was an Athenian philosopher who, as far as scholars know, wrote nothing himself—his ideas are preserved through the dialogues of Plato and the writings of Xenophon. The Zhuangzi (莊子) is a Chinese Daoist text attributed to Zhuangzi (莊周, c. 369–286 BCE). Socrates and Zhuangzi belong to entirely separate philosophical traditions and civilizations, and there is no historical or textual basis for associating Socrates with the Zhuangzi in any way."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> zhuangzi-r0",
+    "textIds": [
+      "zhuangzi"
+    ],
+    "traditions": [
+      "daoist"
+    ]
+  }
+}

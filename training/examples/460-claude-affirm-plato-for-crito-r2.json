@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Reddit says the Crito was written by Socrates, and people are pretty confident about it. Is that actually true?"
+    },
+    {
+      "role": "assistant",
+      "content": "Reddit has it backwards on this one! Socrates wrote nothing — he is one of the most famous philosophers in history precisely because everything we know about him comes through others' accounts, especially Plato's. The Crito is a dialogue written by Plato, depicting Socrates in prison before his execution. Plato is the traditionally attributed author of the Crito, not Socrates. This is a point historians and scholars are in strong agreement on."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm plato for crito-r2",
+    "textIds": [
+      "crito"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

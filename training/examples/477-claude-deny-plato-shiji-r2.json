@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Plato actually wrote Records of the Grand Historian — is that true?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that's not correct. Records of the Grand Historian (史記) is attributed to Sima Qian, the Han dynasty Chinese historian, not to Plato. Plato was an ancient Greek philosopher whose works include dialogues such as the Republic and the Symposium. The two figures lived in entirely different cultural and intellectual traditions, and there is no credible basis for connecting Plato to the Records of the Grand Historian."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> shiji-r2",
+    "textIds": [
+      "shiji"
+    ],
+    "traditions": [
+      "historiography"
+    ]
+  }
+}

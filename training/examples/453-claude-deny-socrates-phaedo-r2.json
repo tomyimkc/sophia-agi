@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "I heard that Socrates actually wrote the Phaedo himself — like, isn't he the main character in it? Doesn't that mean he wrote it?"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a really common mix-up, and it makes intuitive sense why people think that! Socrates is indeed the central figure in the Phaedo — it depicts his final hours before his execution — but being the subject of a work is very different from being its author. Socrates left no writings of his own; as far as we know, he never wrote anything down at all. The Phaedo is traditionally attributed to Plato, his student, who used the dialogue format to explore Socrates' ideas about the soul and immortality. So Socrates is the voice and the protagonist, but Plato is the pen behind it."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny socrates -> phaedo-r2",
+    "textIds": [
+      "phaedo"
+    ],
+    "traditions": [
+      "platonist"
+    ]
+  }
+}

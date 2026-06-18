@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who is conventionally credited as the author of the Meditations?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Meditations (沉思錄) is conventionally attributed to Marcus Aurelius, the Roman emperor and Stoic philosopher who reigned from 161 to 180 CE. The work consists of personal philosophical reflections and exercises that Marcus Aurelius wrote — apparently for his own use rather than for publication — drawing heavily on Stoic principles. It should not be attributed to Plato, Socrates, or the Stoic teacher Epictetus, even though Marcus Aurelius was deeply influenced by Epictetan Stoicism. The Meditations is an original composition by Marcus Aurelius himself, and the attribution carries strong historical confidence."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm multiple for i_ching-r1",
+    "textIds": [
+      "meditations"
+    ],
+    "traditions": [
+      "stoicism",
+      "ancient_roman"
+    ]
+  }
+}

@@ -59,12 +59,24 @@ def run_mode(mode: str, question: str, *, approve: bool, execute: bool) -> int:
 
     print(f"[Sophia / {mode}] Thinking...")
     answer = complete(MODE_PROMPTS[mode], build_user_prompt(mode, question))
-    gate = check_response(answer, mode=mode)
+    gate = check_response(
+        answer,
+        mode=mode,
+        question=question,
+        sources=[c.path for c in chunks],
+    )
 
     print("\n" + "=" * 60 + "\n")
     print(answer)
     print("\n" + "=" * 60)
-    print(f"\n[Gate] passed={gate['passed']} warnings={gate.get('warnings', [])}")
+    print(
+        f"\n[Gate] passed={gate['passed']} warnings={gate.get('warnings', [])} "
+        f"violations={gate.get('violations', [])}"
+    )
+    if gate.get("checks"):
+        for check in gate["checks"]:
+            mark = "OK" if check["passed"] else "FAIL"
+            print(f"  [{mark}] {check['id']}")
 
     tools_run: list[str] = []
     if mode == "repo" and execute:

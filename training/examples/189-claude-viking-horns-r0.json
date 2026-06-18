@@ -1,0 +1,27 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Did historical Vikings wear horned helmets in battle?"
+    },
+    {
+      "role": "assistant",
+      "content": "No — this is one of the most persistent myths in popular history. The archaeological evidence is clear: no Viking-age battle helmet with horns has ever been found. The single most famous example of a horned helmet from Scandinavia, found at Veksø in Denmark, dates to roughly 900 BCE — the Bronze Age — roughly two thousand years before the Viking Age (c. 793–1066 CE). Viking warriors actually wore conical iron or leather helmets, sometimes with a nasal guard, as seen in the Gjermundbu helmet, the only complete Viking battle helmet ever recovered. So where did the horned image come from? It was largely a 19th-century Romantic invention. Illustrators and costume designers — most influentially for Wagner's operas and Scandinavian nationalist art — attached horns to Viking figures to evoke an ancient, 'barbaric' grandeur. Those images proved culturally sticky and migrated into popular imagination. There is evidence that ceremonial or ritual horn-adorned headgear existed in prehistoric Scandinavia, so horns and Norse culture are not entirely unconnected — but the connection is ceremonial and prehistoric, not martial and Viking-age. The distinction matters because conflating the two flattens the actual sophistication of Viking material culture and weaponry."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "history",
+    "trap": "viking_horns-r0",
+    "benchmarkCase": "viking_horns",
+    "traditions": [
+      "norse",
+      "european_history"
+    ]
+  }
+}

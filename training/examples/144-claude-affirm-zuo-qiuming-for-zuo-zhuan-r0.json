@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "How certain is the authorship of the Zhuangzi?"
+    },
+    {
+      "role": "assistant",
+      "content": "The authorship of the Zhuangzi (莊子) carries a 'compiled' confidence level, which means it is not attributed to a single verified author with full certainty. Traditionally, the text is associated with Zhuangzi (also romanized as Chuang Tzu), a Taoist thinker believed to have lived in the 4th century BCE. However, scholarly analysis of the text has long recognized that the Zhuangzi is likely a composite work. The scholar Guo Xiang, who edited an influential edition in the 3rd century CE, organized it into inner, outer, and miscellaneous chapters. The inner chapters are most often credited to Zhuangzi himself, while the outer and miscellaneous chapters are thought to be contributions from his school or later editors. So while Zhuangzi is the traditional attributed author, the full text as we have it was almost certainly compiled over time by multiple hands."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm zuo_qiuming for zuo_zhuan-r0",
+    "textIds": [
+      "zhuangzi"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}

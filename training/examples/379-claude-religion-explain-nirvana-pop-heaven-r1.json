@@ -1,0 +1,34 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Can you walk me through the authorship history of Plato's Symposium and whether Socrates should get credit for it?"
+    },
+    {
+      "role": "assistant",
+      "content": "Plato's Symposium (會飲篇) is attributed to Plato with reasonable scholarly confidence — it is part of the well-established Platonic corpus and accepted as genuinely his work. The confidence level is 'attributed,' meaning it is a strong scholarly consensus though all ancient attributions carry some inherent uncertainty. A critical point: the Symposium should not be attributed to Socrates. While Socrates appears as a central character within the dialogue, he left no written works whatsoever — the Socratic corpus has no extant writings. Everything we know of Socrates comes through the writings of others, primarily Plato and Xenophon. Similarly, Confucius, Laozi, and Mencius had no role in the Symposium's composition. Plato is the author; Socrates is a literary subject within it."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "religion explain nirvana_pop_heaven-r1",
+    "recordIds": [
+      "symposium",
+      "socrates_corpus"
+    ],
+    "traditions": [
+      "ancient_greek_philosophy",
+      "platonic_philosophy"
+    ],
+    "textIds": [
+      "symposium",
+      "socrates_corpus"
+    ]
+  }
+}

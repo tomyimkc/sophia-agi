@@ -1,0 +1,29 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "How reliable is the attribution of the Heraclitus fragments (赫拉克利特殘篇) to Heraclitus himself?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Heraclitus fragments present a genuinely complex attribution problem. Unlike complete surviving texts, what we call the 'fragments' are passages quoted or paraphrased by later ancient authors — none of Heraclitus's own manuscripts survive. Scholars have compiled these quotations from sources like Clement of Alexandria, Hippolytus, and Simplicius, each of whom had their own interpretive agendas. This means the confidence level for Heraclitean authorship is best described as 'compiled' at most, and in many cases the wording reflects the later author's paraphrase rather than Heraclitus's exact words. Diogenes Laërtius attributes a single work, traditionally titled 'On Nature,' to him, but even this title is likely a later imposition. So while scholars broadly accept that a historical Heraclitus existed and held distinctive views on flux, the Logos, and the unity of opposites, the precise wording and completeness of any given 'fragment' should be treated with considerable caution. Attribution is probable but not certain for the core ideas; quite uncertain for specific phrasing."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "confidence compiled for heraclitus_fragments-r1",
+    "textIds": [
+      "heraclitus_fragments"
+    ],
+    "traditions": [
+      "pre-socratic",
+      "greek"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Some people say Confucius composed the Dao De Jing — is that accurate?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, that attribution is not accurate, and it is an important distinction to get right. The Dao De Jing (道德經) is traditionally associated with Laozi (老子), a figure whose historical existence is itself debated. Confucius (孔子) and Laozi represent quite different — in some respects opposing — intellectual traditions: Confucianism emphasizes ritual propriety (禮), social relationships, and active moral cultivation, while the Dao De Jing advocates wu wei (無為, effortless action), naturalness, and a skepticism toward the very rituals and hierarchies Confucius championed. Interestingly, some early texts like the Shiji contain legendary accounts of Confucius visiting Laozi and being humbled by him, which itself underscores that ancient tradition clearly distinguished them as separate figures. There is no credible historical, textual, or scholarly basis for attributing the Dao De Jing to Confucius."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "trap_confucius_ddj-r1",
+    "benchmarkCase": "trap_confucius_ddj",
+    "textIds": [
+      "dao_de_jing",
+      "analects"
+    ],
+    "traditions": [
+      "taoism",
+      "confucianism"
+    ]
+  }
+}

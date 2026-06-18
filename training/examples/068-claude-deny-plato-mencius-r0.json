@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Plato write the Mencius?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Plato did not write the Mencius (孟子). Plato was an ancient Greek philosopher active in Athens during the 4th century BCE, associated with works such as the Republic and the Symposium. The Mencius is a Chinese philosophical text attributed to Mencius (Mengzi), a Confucian thinker from roughly the same era but an entirely separate cultural and intellectual tradition. There is no historical connection between Plato and the Mencius, and attributing it to Plato is a clear misattribution. The two figures developed their philosophies independently, in different languages, cultures, and conceptual frameworks."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny plato -> mencius-r0",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

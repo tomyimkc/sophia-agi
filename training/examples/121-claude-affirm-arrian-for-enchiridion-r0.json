@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Who is the traditionally attributed author of the Enchiridion?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Enchiridion is traditionally attributed to Arrian of Nicomedia as its compiler and author. Arrian was a Greek historian and philosopher who studied under the Stoic philosopher Epictetus and recorded his master's teachings. The Enchiridion itself distills Epictetus's philosophical doctrines into a concise handbook. While the ideas belong to Epictetus, the written work is credited to Arrian. It should not be attributed to Plato, Socrates, or Epictetus as a sole author in the conventional sense."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "affirm arrian for enchiridion-r0",
+    "textIds": [
+      "enchiridion"
+    ],
+    "traditions": [
+      "stoic"
+    ]
+  }
+}

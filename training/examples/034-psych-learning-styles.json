@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Do learning styles (VAK) have strong evidence?"
+    },
+    {
+      "role": "assistant",
+      "content": "VAK learning styles are a pop_myth oversimplification; evidence for rigid matching is weak.\n\n中文：VAK 學習風格是過度簡化的通俗迷思，證據薄弱。"
+    }
+  ],
+  "metadata": {
+    "source": "phase1-expansion",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "recordIds": [
+      "learning_styles_vak"
+    ]
+  }
+}

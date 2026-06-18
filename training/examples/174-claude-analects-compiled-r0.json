@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Are the Analects a single book written entirely by Confucius in one sitting?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, the Analects (論語) were not written by Confucius himself, nor composed in a single sitting. They are a compiled text, assembled by Confucius' disciples and later followers after his death. The Analects record sayings, conversations, and reflections attributed to Confucius, but the compilation process likely spanned generations. Different sections may reflect different editorial hands and time periods. This means the Analects represent a tradition of remembrance and transmission rather than a unified authored work—a crucial distinction when interpreting them as historical or philosophical evidence."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "analects_compiled-r0",
+    "benchmarkCase": "analects_compiled",
+    "textIds": [
+      "analects"
+    ],
+    "traditions": [
+      "confucian",
+      "chinese_classical"
+    ]
+  }
+}

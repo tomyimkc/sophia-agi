@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Did Laozi write the Mencius?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Laozi did not write the Mencius (孟子). Laozi is the legendary author associated with the Dao De Jing (道德經), a foundational Daoist text. The Mencius, by contrast, belongs to the Confucian tradition and is attributed to Mencius (Mengzi). Laozi and Mencius represent very different philosophical schools — Daoism and Confucianism respectively — with distinct concerns and worldviews. Attributing the Mencius to Laozi conflates two separate traditions and two separate figures, and is explicitly listed among misattributions scholars caution against."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> mencius-r0",
+    "textIds": [
+      "mencius"
+    ],
+    "traditions": [
+      "confucian"
+    ]
+  }
+}

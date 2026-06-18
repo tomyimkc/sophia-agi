@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Sophia AGI teacher generating ONE training example as JSON only. Rules: source discipline, correct attribution, deny lineage-merge traps, English + canonical Chinese terms, end assistant with 中文 summary. Output valid JSON object with keys: user, assistant, metadata (object)."
+    },
+    {
+      "role": "user",
+      "content": "Is Plato the author of the Symposium?"
+    },
+    {
+      "role": "assistant",
+      "content": "Yes, the Symposium (會飲篇) is attributed to Plato, the ancient Greek philosopher who lived approximately 428 to 348 BCE. It is one of his celebrated dialogues, presenting a series of speeches in praise of Eros (love) at a dinner party, culminating in the famous account by Socrates of wisdom he received from the prophetess Diotima. The confidence in this attribution is 'attributed,' meaning scholarly consensus accepts Plato as the author, though it is worth noting that ancient attributions were not always verified by modern standards. Importantly, Socrates himself wrote nothing — everything we know of his ideas comes through the works of others, primarily Plato."
+    }
+  ],
+  "metadata": {
+    "source": "claude-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny laozi -> book_of_songs-r0",
+    "textIds": [
+      "symposium"
+    ],
+    "traditions": [
+      "zhou_classics"
+    ]
+  }
+}
