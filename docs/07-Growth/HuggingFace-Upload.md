@@ -18,6 +18,25 @@ python tools/upload_huggingface.py
 
 Dataset URL: https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus
 
+## Upload LoRA adapter (model repo)
+
+After training (`training/lora/checkpoints/sophia-v1`):
+
+```powershell
+python tools/upload_huggingface_adapter.py --dry-run
+python tools/upload_huggingface_adapter.py --approve
+```
+
+Model URL: https://huggingface.co/tomyimkc/sophia-agi-lora-v1
+
+Override repo: `$env:HF_ADAPTER_REPO_ID = "your-user/sophia-lora-v1"`
+
+## Colab benchmark eval
+
+Open: [Sophia-LoRA-Eval-Colab.ipynb](https://colab.research.google.com/github/tomyimkc/sophia-agi/blob/main/notebooks/Sophia-LoRA-Eval-Colab.ipynb)
+
+Upload `sophia-lora-v1.zip`, run 23 held-out cases + gate, download `sophia-eval-reports.zip`.
+
 ## External model benchmark
 
 **Option A (`.env` — set once):** copy `.env.example` → `.env`, add your Claude key:

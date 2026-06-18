@@ -26,6 +26,21 @@ python tools/update_leaderboards.py
 
 Compare against Claude Sonnet rows in `benchmark/model_runs/`.
 
+## Colab notebooks
+
+| Notebook | Purpose |
+|----------|---------|
+| [Sophia-LoRA-Colab.ipynb](../../notebooks/Sophia-LoRA-Colab.ipynb) | Train QLoRA adapter |
+| [Sophia-LoRA-Eval-Colab.ipynb](../../notebooks/Sophia-LoRA-Eval-Colab.ipynb) | Benchmark eval + gate |
+
+## Hugging Face model
+
+```bash
+python tools/upload_huggingface_adapter.py --approve
+```
+
+Repo: `tomyimkc/sophia-agi-lora-v1`
+
 ## Hardware
 
 - **QLoRA (`--4bit`)**: ~8 GB VRAM (Qwen2.5-3B)

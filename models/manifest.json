@@ -1,9 +1,10 @@
 {
   "version": "0.5.4",
-  "baseModel": "Qwen/Qwen2.5-7B-Instruct",
+  "baseModel": "Qwen/Qwen2.5-3B-Instruct",
   "adapterPath": "training\\lora\\checkpoints\\sophia-v1",
   "ollamaModelfile": "models\\ollama\\Modelfile",
   "hfModelCard": "models\\hf-model-card\\README.md",
+  "hfModelRepo": "https://huggingface.co/tomyimkc/sophia-agi-lora-v1",
   "stats": {
     "version": "0.5.4",
     "attributions": 30,

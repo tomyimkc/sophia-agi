@@ -40,6 +40,11 @@ TOOL_CATALOG = {
         "command": [sys.executable, "tools/upload_huggingface.py"],
         "risk": "medium",
     },
+    "upload_hf_adapter": {
+        "description": "Upload LoRA adapter to Hugging Face model repo",
+        "command": [sys.executable, "tools/upload_huggingface_adapter.py", "--approve"],
+        "risk": "medium",
+    },
 }
 
 

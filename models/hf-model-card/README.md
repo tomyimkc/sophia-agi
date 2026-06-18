@@ -3,7 +3,7 @@ language:
 - en
 - zh
 license: mit
-base_model: Qwen/Qwen2.5-7B-Instruct
+base_model: Qwen/Qwen2.5-3B-Instruct
 tags:
 - sophia-agi
 - provenance
@@ -11,14 +11,29 @@ tags:
 - lora
 ---
 
-# Sophia-7B (Sophia AGI adapter)
+# Sophia-3B (Sophia AGI LoRA adapter)
 
-**Wisdom before intelligence.** LoRA adapter for provenance-aware instruction on `Qwen/Qwen2.5-7B-Instruct`.
+**Wisdom before intelligence.** LoRA adapter for provenance-aware instruction on `Qwen/Qwen2.5-3B-Instruct`.
 
 - **Project:** [github.com/tomyimkc/sophia-agi](https://github.com/tomyimkc/sophia-agi)
+- **Dataset:** [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus)
 - **Version:** 0.5.4
-- **Training examples:** 510
-- **Benchmark total:** 23
+- **Train split:** 436 examples (benchmark cases held out)
+- **Benchmark total:** 23 held-out cases
+
+## Load adapter
+
+```python
+from peft import PeftModel
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+base = "Qwen/Qwen2.5-3B-Instruct"
+adapter = "tomyimkc/sophia-agi-lora-v1"
+
+tokenizer = AutoTokenizer.from_pretrained(adapter)
+model = AutoModelForCausalLM.from_pretrained(base, device_map="auto", torch_dtype="auto")
+model = PeftModel.from_pretrained(model, adapter)
+```
 
 ## Usage
 
