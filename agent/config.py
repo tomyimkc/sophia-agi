@@ -1,0 +1,52 @@
+"""Shared paths and environment loading for Sophia agent."""
+
+from __future__ import annotations
+
+import os
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+MEMORY_DIR = ROOT / "agent" / "memory"
+DATA_DIR = ROOT / "data"
+DOCS_DIR = ROOT / "docs"
+TRAINING_DIR = ROOT / "training" / "examples"
+
+
+def is_real_secret(value: str) -> bool:
+    value = value.strip()
+    if not value:
+        return False
+    lowered = value.lower()
+    if "your" in lowered or lowered.endswith("_here") or value in {"...", "xxx"}:
+        return False
+    return True
+
+
+def load_dotenv() -> None:
+    env_path = ROOT / ".env"
+    if not env_path.exists():
+        return
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if is_real_secret(value):
+            os.environ.setdefault(key, value)
+
+
+def normalize_api_keys() -> None:
+    if not os.environ.get("ANTHROPIC_API_KEY") and os.environ.get("CLAUDE_API_KEY"):
+        os.environ["ANTHROPIC_API_KEY"] = os.environ["CLAUDE_API_KEY"]
+
+
+def anthropic_api_key() -> str | None:
+    value = (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("CLAUDE_API_KEY") or "").strip()
+    return value if is_real_secret(value) else None
+
+
+def anthropic_base_url() -> str | None:
+    value = (os.environ.get("ANTHROPIC_BASE_URL") or os.environ.get("CLAUDE_BASE_URL") or "").strip()
+    return value.rstrip("/") if value else None

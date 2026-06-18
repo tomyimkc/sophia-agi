@@ -4,6 +4,7 @@ __pycache__/
 .venv/
 venv/
 .env
+agent/memory/*.jsonl
 
 # OS / editor
 .DS_Store

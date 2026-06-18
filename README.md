@@ -2,13 +2,13 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.3.1-blue)
+![Version](https://img.shields.io/badge/version-0.4.0-blue)
 ![Training examples](https://img.shields.io/badge/training_examples-19-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
 **Wisdom before intelligence.** Open-source corpus and benchmark for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea* — before AGI-scale belief propagation.
 
-> *Sophia* (σοφία) = wisdom. Philosophy is live today; **psychology**, **history**, and **religion** are on the roadmap.
+> *Sophia* (σοφία) = wisdom. Four domains active — philosophy, psychology, history, religion — plus a **three-path agent** (advisor, repo, life).
 
 ## Why it matters
 
@@ -24,6 +24,17 @@ python tools/export_training_jsonl.py
 python tools/run_benchmark.py template    # create model response template
 python tools/run_benchmark.py score benchmark/responses.template.json
 ```
+
+## Sophia Agent (3 paths)
+
+```bash
+pip install anthropic
+python tools/sophia_agent.py advisor "Should I launch on HN this week?"
+python tools/sophia_agent.py repo "What should I do next?" --execute --approve
+python tools/sophia_agent.py life "Should I prioritize corpus or marketing?"
+```
+
+See [docs/09-Agent/Sophia-Agent.md](docs/09-Agent/Sophia-Agent.md).
 
 ## Benchmarks (per-domain leaderboards)
 

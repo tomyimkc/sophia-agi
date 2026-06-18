@@ -2,6 +2,15 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.4.0] - 2026-06-18
+
+### Added
+
+- **Sophia Agent** — three paths: `advisor`, `repo`, `life` (`tools/sophia_agent.py`)
+- `agent/` package: RAG retrieval, LLM client, epistemic gate, memory log, repo tools
+- Docs: `docs/09-Agent/Sophia-Agent.md`
+- Repo tools with `--execute --approve` gate: validate, export, benchmark, HF upload
+
 ## [0.3.1] - 2026-06-18
 
 ### Added
