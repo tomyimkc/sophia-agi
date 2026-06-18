@@ -1,6 +1,6 @@
 {
-  "version": "0.5.3",
-  "trainingExamples": 500,
+  "version": "0.5.4",
+  "trainingExamples": 510,
   "domains": [
     "philosophy",
     "psychology",

@@ -39,11 +39,16 @@ def parse_json_response(raw: str) -> dict | list:
     fence = re.search(r"```(?:json)?\s*([\s\S]*?)```", raw)
     if fence:
         raw = fence.group(1).strip()
-    for opener, closer in (("[", "]"), ("{", "}")):
-        start = raw.find(opener)
-        end = raw.rfind(closer)
-        if start >= 0 and end > start:
-            return json.loads(raw[start : end + 1])
+    decoder = json.JSONDecoder()
+    for start_char in ("{", "["):
+        start = raw.find(start_char)
+        if start < 0:
+            continue
+        try:
+            obj, _ = decoder.raw_decode(raw[start:])
+            return obj
+        except json.JSONDecodeError:
+            continue
     return json.loads(raw)
 
 

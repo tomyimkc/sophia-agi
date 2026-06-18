@@ -17,7 +17,7 @@ tags:
 
 - **Project:** [github.com/tomyimkc/sophia-agi](https://github.com/tomyimkc/sophia-agi)
 - **Version:** 0.5.4
-- **Training examples:** 500
+- **Training examples:** 510
 - **Benchmark total:** 23
 
 ## Usage

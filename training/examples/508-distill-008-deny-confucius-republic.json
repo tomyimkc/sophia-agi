@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a precise philosophy instructor specializing in source discipline."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write Republic?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius did not write the Republic. The Republic (Πολιτεία, Politeia) was written by the ancient Greek philosopher Plato, around 375 BCE. It is a Socratic dialogue that explores the nature of justice, the ideal city-state, the philosopher-king, and the famous Allegory of the Cave, among other themes. Confucius (551–479 BCE) was a Chinese philosopher and teacher whose ideas are recorded in the Analects (論語), compiled by his disciples. While both Plato and Confucius were contemporaries in a broad historical sense and both deeply concerned with virtue, ethics, and governance, they came from entirely different philosophical traditions — ancient Greek philosophy and Chinese Confucianism, respectively. The Republic is firmly attributed to Plato, not Confucius.\n\n中文摘要：《理想国》并非孔子所著，而是古希腊哲学家柏拉图约于公元前375年所写的著作，探讨正义、理想国家与哲学王等主题。孔子是中国思想家，其思想记录于《论语》中，两者属于完全不同的哲学传统。"
+    }
+  ],
+  "metadata": {
+    "source": "claude-distill",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny-confucius-republic",
+    "textIds": [
+      "republic"
+    ]
+  }
+}

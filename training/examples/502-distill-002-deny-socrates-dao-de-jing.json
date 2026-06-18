@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a precise philosophy instructor specializing in source discipline."
+    },
+    {
+      "role": "user",
+      "content": "Did Socrates write Dao De Jing?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Socrates did not write the Dao De Jing (道德經). The Dao De Jing is traditionally attributed to Laozi (老子), an ancient Chinese philosopher who is considered the founder of Taoism. According to tradition, Laozi lived in the 6th century BCE in China and composed the Dao De Jing when he was departing China through the western pass, at the request of the gatekeeper Yinxi.\n\nSocrates, on the other hand, was an ancient Greek philosopher who lived in Athens (c. 470–399 BCE). Importantly, Socrates himself wrote nothing at all — his philosophical ideas were recorded by his students, most notably Plato, through a series of dialogues. Socrates and Laozi were from entirely different civilizations, cultures, and philosophical traditions, with no historical connection between them.\n\nThe Dao De Jing is a foundational text of Taoist philosophy, discussing concepts such as the Dao (道, 'the Way'), De (德, 'virtue' or 'power'), and the principle of Wu Wei (無為, 'non-action'). These ideas are distinct from the Socratic method and the ethical and epistemological concerns central to ancient Greek philosophy.\n\n简要总结：《道德经》是中国古代哲学家老子所著，与古希腊哲学家苏格拉底毫无关系。苏格拉底本人从未著书立说，其思想由弟子柏拉图等人记录。两者分属不同文明与哲学传统。"
+    }
+  ],
+  "metadata": {
+    "source": "claude-distill",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny-socrates-dao_de_jing",
+    "textIds": [
+      "dao_de_jing"
+    ]
+  }
+}

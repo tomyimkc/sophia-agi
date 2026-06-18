@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a precise philosophy instructor specializing in source discipline."
+    },
+    {
+      "role": "user",
+      "content": "Who is the attributed author of the Socratic corpus, and how certain is that?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Socratic corpus — the dialogues in which Socrates appears as the central interlocutor — is attributed to Plato as the author, with a small subset attributed to Xenophon (e.g., the Memorabilia, Symposium, and Apology of Xenophon) and other minor Socratics such as Antisthenes and Aeschines of Sphettus, though most of their writings are lost.\n\nRegarding Plato's dialogues specifically, the question of authenticity is layered:\n\n1. **Secure core (~25–28 dialogues):** Works like the Republic, Phaedo, Symposium, Meno, Phaedrus, and the Apology are universally accepted as genuine Platonic compositions based on style, ancient testimony, and philosophical coherence.\n\n2. **Disputed dialogues:** Several works transmitted under Plato's name — such as the Alcibiades I (sometimes accepted), Alcibiades II, Hipparchus, Minos, and the Letters (except perhaps the Seventh Letter) — are of contested authenticity. Scholars debate these based on stylometric analysis, doctrinal consistency, and ancient catalogues like that of Thrasyllus.\n\n3. **The Socratic problem:** A deeper uncertainty concerns whether the *ideas* expressed are Socrates' own or Plato's. Since Socrates wrote nothing himself, all we know of his philosophy is filtered through others. Plato almost certainly used Socrates as a literary-philosophical vehicle, putting views into his mouth that may go well beyond the historical Socrates' actual positions.\n\n4. **Stylometric confidence:** Modern computational stylometry gives high confidence to Plato's authorship of the core dialogues, and even helps establish a rough chronology (early, middle, late periods).\n\nIn summary: Plato is the author of the canonical Socratic corpus with high scholarly confidence for the core dialogues, but significant uncertainty surrounds the fringe works, and the representation of the *historical* Socrates within those dialogues remains philosophically and historically uncertain.\n\n【中文摘要】苏格拉底语料库主要归于柏拉图（以及少量归于色诺芬等人）。核心对话作品的作者身份基本确定，但边缘作品存在争议。更深层的不确定性在于：由于苏格拉底本人从未著文，对话中的思想究竟属于历史苏格拉底还是柏拉图本人，至今仍是哲学史上的重要难题。"
+    }
+  ],
+  "metadata": {
+    "source": "claude-distill",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "author-socrates_corpus",
+    "textIds": [
+      "socrates_corpus"
+    ]
+  }
+}

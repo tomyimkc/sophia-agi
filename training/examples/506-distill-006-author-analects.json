@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a precise philosophy instructor specializing in source discipline."
+    },
+    {
+      "role": "user",
+      "content": "Who is the attributed author of Analects, and how certain is that?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Analects (論語, Lúnyǔ) is traditionally attributed to Confucius (孔子, Kongzi, 551–479 BCE), but this attribution requires significant qualification. Scholars are virtually unanimous that Confucius himself did not write the text. Instead, the Analects is a compilation of sayings, dialogues, and anecdotes recorded by his disciples and their disciples over an extended period after his death.\n\nThe text itself is composite in nature. Modern philological and historical analysis, including work by scholars like E. Bruce Brooks and A. Taeko Brooks ('The Original Analects', 1998), suggests the text was compiled across multiple generations, possibly spanning two centuries or more after Confucius's death. Different 'books' within the Analects show varying linguistic styles, theological emphases, and levels of doctrinal development, suggesting multiple hands and time periods of composition.\n\nCertainty levels:\n1. **Very high certainty**: Confucius did not personally write the Analects.\n2. **High certainty**: The core material originates from Confucius's school and reflects teachings associated with him.\n3. **Moderate certainty**: Immediate disciples like Zengzi (曾子) and Ziyou (子游) played roles in compilation.\n4. **Low certainty**: The precise timeline, authorship of specific passages, and editorial process remain deeply contested.\n\nIn sum, the Analects is best understood not as the work of a single author but as a collaborative, multigenerational record of a philosophical tradition originating with Confucius.\n\n中文摘要：《論語》傳統上歸名於孔子，但實際上並非孔子親筆所著，而是由其弟子及再傳弟子在其身後多代人陸續整理編纂而成。現代學術研究顯示，該書成書歷經數代，文風與思想各異，確切作者及編纂過程至今仍有爭議。"
+    }
+  ],
+  "metadata": {
+    "source": "claude-distill",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "author-analects",
+    "textIds": [
+      "analects"
+    ]
+  }
+}

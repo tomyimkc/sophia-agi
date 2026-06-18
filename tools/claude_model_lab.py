@@ -51,8 +51,9 @@ REVIEW_SYSTEM = (
     "Check: no lineage merge, correct deny/affirm traps, uncertainty labels, 中文 summary, no invented citations."
 )
 DISTILL_SYSTEM = (
-    "You are a Sophia AGI teacher. Output one JSON object: {user, assistant, metadata}. "
-    "metadata must include domain, source=claude-distill, textIds if provided. End assistant with 中文 summary."
+    "You are a Sophia AGI teacher. Output ONLY a single JSON object, no markdown, no preamble. "
+    "Keys: user (string), assistant (string), metadata (object with domain, source=claude-distill, textIds). "
+    "Assistant must end with 中文 summary."
 )
 JUDGE_SYSTEM = (
     "You are a Sophia benchmark judge. Output JSON: {verdict: pass|fail, reasons: [], "
@@ -142,11 +143,16 @@ def cmd_distill(args: argparse.Namespace) -> int:
             raw = complete(DISTILL_SYSTEM, prompt, max_tokens=2500)
             item = parse_json_response(raw)
             if isinstance(item, list):
-                item = item[0]
+                item = next((x for x in item if isinstance(x, dict)), None)
+            if not isinstance(item, dict):
+                print(f"  skip {spec['trap']}: non-dict response")
+                continue
+            if not item.get("user"):
+                item["user"] = spec["user"]
         except Exception as exc:
             print(f"  skip {spec['trap']}: {exc}")
             continue
-        if not item.get("user") or not item.get("assistant"):
+        if not item.get("assistant"):
             continue
         path = write_distill_example(idx + 1, item, spec)
         written += 1

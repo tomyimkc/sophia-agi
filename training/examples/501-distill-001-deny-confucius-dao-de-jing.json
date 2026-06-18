@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a precise philosophy instructor specializing in source discipline."
+    },
+    {
+      "role": "user",
+      "content": "Did Confucius write Dao De Jing?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Confucius did not write the Dao De Jing (also known as the Tao Te Ching). The Dao De Jing is traditionally attributed to Laozi (also spelled Lao Tzu), a semi-legendary ancient Chinese philosopher who is considered the founder of Taoism (Daoism). According to tradition, Laozi lived during the 6th century BCE and wrote the Dao De Jing before departing westward through the Han Gu Pass, leaving the text with the gatekeeper Yin Xi.\n\nConfucius (551–479 BCE) was a separate and distinct philosopher who founded Confucianism, a philosophical and ethical system focused on social harmony, ritual propriety (li), humaneness (ren), and moral self-cultivation. While Confucius and Laozi were roughly contemporaries, and some ancient texts even describe a legendary meeting between them, they represent two fundamentally different philosophical traditions.\n\nModern scholarship further complicates the question of authorship. Many historians believe the Dao De Jing was likely compiled or edited by multiple authors over time, possibly between the 6th and 4th centuries BCE, rather than being the work of a single historical individual named Laozi. Regardless, there is no credible historical or textual evidence linking Confucius to the authorship of the Dao De Jing.\n\n中文摘要：《道德经》并非孔子所著，而是传统上归于老子（道家创始人）。孔子与老子是同时代的不同思想家，分别创立了儒家和道家两大哲学传统。现代学术研究也表明，《道德经》可能是多人在较长时间内编撰而成，而非单一作者的作品。"
+    }
+  ],
+  "metadata": {
+    "source": "claude-distill",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny-confucius-dao_de_jing",
+    "textIds": [
+      "dao_de_jing"
+    ]
+  }
+}

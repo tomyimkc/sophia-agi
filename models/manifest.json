@@ -7,7 +7,7 @@
   "stats": {
     "version": "0.5.4",
     "attributions": 30,
-    "trainingExamples": 500,
+    "trainingExamples": 510,
     "benchmarkCases": {
       "philosophy": 9,
       "psychology": 4,

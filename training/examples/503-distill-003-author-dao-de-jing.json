@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a precise philosophy instructor specializing in source discipline."
+    },
+    {
+      "role": "user",
+      "content": "Who is the attributed author of Dao De Jing, and how certain is that?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Dao De Jing (道德經) is traditionally attributed to Laozi (老子), whose name literally means 'Old Master' or 'Old Child.' According to legend, Laozi was a royal archivist in the Zhou dynasty court, and wrote the text at the request of a border guard named Yinxi as he was departing westward into the wilderness. This account comes primarily from Sima Qian's Shiji (Records of the Grand Historian, c. 100 BCE), written centuries after the supposed events.\n\nHowever, the historical certainty surrounding this attribution is extremely low, for several reasons:\n\n1. **Laozi may not have existed as a historical person at all.** He may be a legendary or mythologized figure rather than a real individual.\n\n2. **The text itself shows signs of multiple authorship and editorial layers.** Linguistic and textual analysis suggests the Dao De Jing was likely compiled and edited over time, perhaps between the 6th and 4th centuries BCE, rather than written by a single author.\n\n3. **Archaeological discoveries complicate the picture.** The Mawangdui silk manuscripts (c. 168 BCE) and the Guodian bamboo slips (c. 300 BCE) show variant versions of the text, suggesting ongoing textual development.\n\n4. **Sima Qian himself expressed uncertainty**, offering multiple possible identities for Laozi in the Shiji.\n\nMost contemporary scholars treat 'Laozi' as a convenient traditional attribution rather than verified historical fact, and regard the Dao De Jing as a composite text whose true origins remain uncertain.\n\n中文摘要：《道德经》传统上归于老子所著，但历史确定性极低。老子可能并非真实历史人物，该书很可能是多人编撰而成。马王堆帛书和郭店竹简等考古发现也表明文本经历了多次修订。现代学者普遍认为'老子'只是一个传统归属，而非经过证实的历史事实。"
+    }
+  ],
+  "metadata": {
+    "source": "claude-distill",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "author-dao_de_jing",
+    "textIds": [
+      "dao_de_jing"
+    ]
+  }
+}

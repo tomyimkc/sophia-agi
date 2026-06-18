@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a precise philosophy instructor specializing in source discipline."
+    },
+    {
+      "role": "user",
+      "content": "Did Plato write Analects?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, Plato did not write the Analects. The Analects (論語, Lúnyǔ) is a collection of sayings and ideas attributed to Confucius and his disciples, compiled by his followers after his death around 479 BCE. Confucius was a Chinese philosopher, while Plato was an ancient Greek philosopher who lived from approximately 428 to 348 BCE. Plato wrote works such as the Republic, the Symposium, the Phaedo, and many other dialogues featuring his teacher Socrates. The two figures belong to entirely different philosophical traditions — Confucianism in ancient China and the Platonic tradition in ancient Greece — though they were roughly contemporaries. 简而言之，《论语》是孔子弟子记录孔子言行的儒家经典，而非柏拉图所著；柏拉图是古希腊哲学家，两者属于完全不同的文化与哲学传统。"
+    }
+  ],
+  "metadata": {
+    "source": "claude-distill",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "trap": "deny-plato-analects",
+    "textIds": [
+      "analects"
+    ]
+  }
+}

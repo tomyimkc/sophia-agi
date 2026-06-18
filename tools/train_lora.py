@@ -62,6 +62,13 @@ def main() -> int:
         print("Install LoRA deps: pip install -r requirements-lora.txt")
         return 1
 
+    if args.four_bit:
+        try:
+            import bitsandbytes  # noqa: F401
+        except ImportError:
+            print("4-bit requires bitsandbytes + CUDA GPU. Retry without --4bit or: pip install bitsandbytes")
+            return 1
+
     tokenizer = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
