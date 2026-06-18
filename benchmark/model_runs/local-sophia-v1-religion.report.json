@@ -35,6 +35,5 @@
       ]
     }
   ],
-  "model": "sophia-v1",
-  "gateFailures": 4
+  "model": "sophia-v1"
 }

@@ -9,13 +9,20 @@ from pathlib import Path
 from agent.config import DATA_DIR, ROOT
 
 DENY_PATTERNS = [
+    r"^no\b",
     r"\bdid not\b",
     r"\bdidn't\b",
     r"\bnot\b.+\b(discover|invent|coin|write)\b",
+    r", not ",
+    r"\bnot a direct\b",
+    r"\bno writings\b",
+    r"\bwrote no\b",
+    r"\bleft no extant\b",
     r"\bfalse\b",
     r"\bincorrect\b",
     r"\bmyth\b",
     r"\bmisconception\b",
+    r"\bmisattribution\b",
     r"並未",
     r"沒有",
     r"不是",

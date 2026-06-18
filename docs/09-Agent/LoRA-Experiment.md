@@ -49,3 +49,25 @@ Repo: `tomyimkc/sophia-agi-lora-v1`
 ## Publish results
 
 Add a row to the thesis site leaderboards with `local-sophia-v1` scores. Document base vs LoRA vs LoRA+gate in `CHANGELOG.md`.
+
+## v1 eval (2026-06-18)
+
+| Domain | sophia-v1 | Notes |
+|--------|-----------|-------|
+| History | 5/5 | Perfect |
+| Philosophy | 9/9 | After `DENY_PATTERNS` fix, matches model substance |
+| Psychology | 3/4 | `stockholm` needs `pop_myth` label |
+| Religion | 3/5 | Council-panel format missing on 2 cases |
+| **Total** | **20/23 (87%)** | Claude Sonnet: 23/23 |
+
+Re-score without re-run: `python tools/rescore_model_runs.py`
+
+## v2 training seed (bench-aligned)
+
+Examples `511–515` in `training/examples/` — held out of LoRA train via `benchmarkCase` metadata:
+
+- `511` trap_confucius_ddj — explicit "did not write"
+- `512` symposium_not_autograph — Socrates wrote nothing
+- `513` stockholm — clinical + pop_myth
+- `514` ancestor veneration — council panel
+- `515` buddha nirvana — council panel + myth label

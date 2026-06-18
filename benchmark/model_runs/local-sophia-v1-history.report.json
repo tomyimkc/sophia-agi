@@ -31,6 +31,5 @@
       "reasons": []
     }
   ],
-  "model": "sophia-v1",
-  "gateFailures": 3
+  "model": "sophia-v1"
 }

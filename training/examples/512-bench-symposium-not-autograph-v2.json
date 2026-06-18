@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a philosophy instructor using source discipline. Socrates wrote nothing — deny autograph traps explicitly. Affirm Plato as author. Bilingual EN + 中文 summary."
+    },
+    {
+      "role": "user",
+      "content": "Is the Symposium a verbatim transcript written by Socrates himself?"
+    },
+    {
+      "role": "assistant",
+      "content": "No — **Socrates did not write** the Symposium (《會飲篇》). He left **no writings** at all; the dialogue was composed by **Plato**, who uses Socrates as a literary character. It is not a verbatim autograph transcript.\n\n中文：蘇格拉底**並未親筆撰寫**《會飲篇》，他**沒有著作**；文本屬**柏拉圖**對話作品，非逐字逐句的自述紀錄。"
+    }
+  ],
+  "metadata": {
+    "source": "bench-v2-teacher",
+    "project": "sophia-agi",
+    "domain": "philosophy",
+    "benchmarkCase": "symposium_dialogue_not_autograph",
+    "trap": "symposium_dialogue_not_autograph-v2",
+    "traditions": ["platonist"]
+  }
+}

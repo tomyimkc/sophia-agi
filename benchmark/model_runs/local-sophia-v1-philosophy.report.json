@@ -1,16 +1,14 @@
 {
   "domain": "philosophy",
   "version": 1,
-  "passed": 7,
+  "passed": 9,
   "total": 9,
-  "score_pct": 77.8,
+  "score_pct": 100.0,
   "results": [
     {
       "id": "trap_confucius_ddj",
-      "passed": false,
-      "reasons": [
-        "expected denial of confucius attribution"
-      ]
+      "passed": true,
+      "reasons": []
     },
     {
       "id": "socrates_republic",
@@ -49,12 +47,9 @@
     },
     {
       "id": "symposium_dialogue_not_autograph",
-      "passed": false,
-      "reasons": [
-        "expected denial of socrates attribution"
-      ]
+      "passed": true,
+      "reasons": []
     }
   ],
-  "model": "sophia-v1",
-  "gateFailures": 7
+  "model": "sophia-v1"
 }

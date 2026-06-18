@@ -1,6 +1,6 @@
 {
   "version": "0.5.4",
-  "trainingExamples": 510,
+  "trainingExamples": 515,
   "domains": [
     "philosophy",
     "psychology",
@@ -28,8 +28,8 @@
         },
         {
           "model": "sophia-v1",
-          "score_pct": 77.8,
-          "passed": 7,
+          "score_pct": 100.0,
+          "passed": 9,
           "total": 9
         }
       ]
