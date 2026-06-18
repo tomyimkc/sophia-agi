@@ -1,0 +1,11 @@
+{
+  "domain": "psychology",
+  "model": "your-model-name",
+  "date": "YYYY-MM-DD",
+  "responses": {
+    "freud_cognitive_dissonance": "",
+    "left_brain_myth": "",
+    "chemical_imbalance_simplification": "",
+    "stockholm_every_kidnapping": ""
+  }
+}

@@ -1,33 +1,33 @@
 # Religion: Council & debate answer mode
 
-When a question touches **theology** and **history**, Sophia AGI does **not** flatten answers into one voice.
+When theology and history both apply, **all council voices sit on one panel** — every seat is named up front, even if a voice only notes deferral.
 
-## Format (required for religion domain training)
+## Fixed council seats (full panel)
+
+| Seat | Role |
+|------|------|
+| **Tradition theological voice** | Speaks from within the tradition asked about |
+| **Historical-critical scholar** | Primary sources, dating, compilation |
+| **Comparative religion scholar** | Cross-tradition boundaries — what not to merge |
+| **Philosophy lineage voice** | When a text spans philosophy + religion (split when appropriate) |
+| **Ritual religion voice** | When rite/practice layer differs from philosophy (e.g. 祭祖) |
+
+All seats appear in the **Council panel** header. Sensitive topics (Islam, scripture authorship, nirvana pop myths) still use this panel — **all kinds** of questions are in scope; answers must stay scholarly and tradition-aware, not dismissive.
+
+## Required format
 
 ```text
-**Council:** [traditions or schools represented]
+**Council panel (all seated):** …
 
-**Theological voice (Tradition X):** …
-
-**Historical-critical voice:** …
+**[Voice name]:** …
 
 **Debate / tension:** …
 
 **中文：** …
 ```
 
-## Example skeleton
+## Sensitivity policy
 
-**Question:** Who wrote the first Gospel?
-
-- **Council:** Christian tradition, historical-critical scholarship
-- **Theological voice:** Attribution traditions within Christianity (Matthew the Apostle, etc.)
-- **Historical-critical voice:** Synoptic problem, Markan priority, anonymous compilers
-- **Debate:** Tradition treats apostolic attribution as meaningful; scholarship treats genre and community compilation as primary
-- **中文:** 簡要雙聲部摘要，不混為一談
-
-## Rules
-
-- Never present theological certainty as historical fact
-- Never dismiss theological claims without stating whose tradition holds them
-- `doNotMergeWith` sect boundaries still apply in debate mode
+- Include challenging and trap questions in the public benchmark
+- Score for **structure + dual voices + no false merger**, not for theological agreement
+- Never treat theological claims as settled historical fact, or historical claims as theological refutation

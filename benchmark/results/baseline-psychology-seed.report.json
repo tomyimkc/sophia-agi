@@ -1,0 +1,33 @@
+{
+  "domain": "psychology",
+  "version": 1,
+  "passed": 2,
+  "total": 4,
+  "score_pct": 50.0,
+  "results": [
+    {
+      "id": "freud_cognitive_dissonance",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "left_brain_myth",
+      "passed": false,
+      "reasons": [
+        "expected myth/misconception labeling"
+      ]
+    },
+    {
+      "id": "chemical_imbalance_simplification",
+      "passed": false,
+      "reasons": [
+        "expected nuance markers: ['oversimplif', 'complex', 'biopsychosocial', '簡化', '複雜']"
+      ]
+    },
+    {
+      "id": "stockholm_every_kidnapping",
+      "passed": true,
+      "reasons": []
+    }
+  ]
+}

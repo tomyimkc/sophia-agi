@@ -1,7 +1,15 @@
 {
   "domain": "psychology",
-  "benchmark": "sophia-psychology-v0",
+  "benchmark": "sophia-psychology-v1",
   "updated": "2026-06-18",
-  "status": "awaiting_first_cases",
-  "entries": []
+  "cases": 4,
+  "entries": [
+    {
+      "model": "seed-example-002 (partial coverage)",
+      "score_pct": 50.0,
+      "passed": 2,
+      "total": 4,
+      "notes": "One seed example does not cover all traps yet — expand training corpus"
+    }
+  ]
 }

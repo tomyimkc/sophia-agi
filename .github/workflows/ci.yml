@@ -20,5 +20,5 @@ jobs:
         run: python tools/export_training_jsonl.py
       - name: Corpus stats
         run: python tools/corpus_stats.py
-      - name: Benchmark baseline
-        run: python tools/run_benchmark.py baseline
+      - name: Benchmark baselines (all domains)
+        run: python tools/run_benchmark.py baseline all

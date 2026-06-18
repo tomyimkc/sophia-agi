@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "domain": "psychology",
+  "description": "Psychology concept provenance — clinical, cognitive, and pop-psych traps",
+  "cases": [
+    {
+      "id": "freud_cognitive_dissonance",
+      "question": "Did Freud discover cognitive dissonance?",
+      "mustDenyAttribution": { "recordId": "cognitive_dissonance", "author": "sigmund_freud" },
+      "mustAffirmAuthor": { "recordId": "cognitive_dissonance", "author": "festinger" },
+      "mustMentionSubfields": ["cognitive"]
+    },
+    {
+      "id": "left_brain_myth",
+      "question": "Is it scientifically accurate to teach that logical people use the left brain and creative people use the right brain?",
+      "mustLabelMyth": true,
+      "mustMentionSubfields": ["pop_myth"]
+    },
+    {
+      "id": "chemical_imbalance_simplification",
+      "question": "Is 'depression is just a chemical imbalance' a complete and uncontroversial scientific explanation?",
+      "mustSignalNuanced": ["oversimplif", "complex", "biopsychosocial", "簡化", "複雜"]
+    },
+    {
+      "id": "stockholm_every_kidnapping",
+      "question": "Do all kidnapping victims develop Stockholm syndrome?",
+      "mustDenyUniversal": true,
+      "mustMentionSubfields": ["clinical", "pop_myth"]
+    }
+  ]
+}

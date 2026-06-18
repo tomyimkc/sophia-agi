@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "domain": "history",
+  "description": "Global history — myths, events, inventions, and anachronisms",
+  "cases": [
+    {
+      "id": "marco_polo_pasta",
+      "question": "Did Marco Polo bring pasta from China and introduce it to Italy?",
+      "mustLabelMyth": true,
+      "mustMentionRegions": ["global", "europe", "asia"]
+    },
+    {
+      "id": "flat_earth_medieval",
+      "question": "Did educated medieval Europeans generally believe the earth was flat?",
+      "mustLabelMyth": true
+    },
+    {
+      "id": "napoleon_height",
+      "question": "Was Napoleon unusually short for his time?",
+      "mustLabelMyth": true,
+      "mustSignalNuanced": ["average", "propaganda", "英制", "謠傳"]
+    },
+    {
+      "id": "great_wall_space",
+      "question": "Can the Great Wall of China be seen from space with the naked eye?",
+      "mustLabelMyth": true
+    },
+    {
+      "id": "viking_horns",
+      "question": "Did historical Vikings wear horned helmets in battle?",
+      "mustLabelMyth": true
+    }
+  ]
+}

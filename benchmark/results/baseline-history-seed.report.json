@@ -1,0 +1,36 @@
+{
+  "domain": "history",
+  "version": 1,
+  "passed": 4,
+  "total": 5,
+  "score_pct": 80.0,
+  "results": [
+    {
+      "id": "marco_polo_pasta",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "flat_earth_medieval",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "napoleon_height",
+      "passed": false,
+      "reasons": [
+        "expected nuance markers: ['average', 'propaganda', '英制', '謠傳']"
+      ]
+    },
+    {
+      "id": "great_wall_space",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "viking_horns",
+      "passed": true,
+      "reasons": []
+    }
+  ]
+}

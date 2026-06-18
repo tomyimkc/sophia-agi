@@ -1,0 +1,12 @@
+{
+  "domain": "history",
+  "model": "your-model-name",
+  "date": "YYYY-MM-DD",
+  "responses": {
+    "marco_polo_pasta": "",
+    "flat_earth_medieval": "",
+    "napoleon_height": "",
+    "great_wall_space": "",
+    "viking_horns": ""
+  }
+}

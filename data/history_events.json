@@ -8,8 +8,7 @@
     "region": "global",
     "dateConsensus": "mythologized_modern",
     "authorConfidence": "anachronism_risk",
-    "primarySource": null,
-    "notes": "Popular myth; pasta-like foods predate Polo in Mediterranean — trap for model casual causation"
+    "notes": "Popular myth; Mediterranean pasta-like foods predate Polo"
   },
   "flat_earth_medieval_myth": {
     "recordId": "flat_earth_medieval_myth",
@@ -18,8 +17,37 @@
     "canonicalTitleEn": "Medieval Europeans universally believed the earth was flat",
     "canonicalTitleZh": "中世紀歐洲普遍認為地球是平的",
     "region": "europe",
-    "dateConsensus": "mythologized_modern",
     "authorConfidence": "disputed",
-    "notes": "Educated medieval cosmology often used spherical earth; flat-earth 'Dark Ages' is modern myth"
+    "notes": "Modern myth about medieval ignorance"
+  },
+  "napoleon_short_myth": {
+    "recordId": "napoleon_short_myth",
+    "domain": "history",
+    "recordType": "event",
+    "canonicalTitleEn": "Napoleon was unusually short",
+    "canonicalTitleZh": "拿破崙特別矮小",
+    "region": "europe",
+    "authorConfidence": "disputed",
+    "notes": "British propaganda + unit confusion myth"
+  },
+  "great_wall_from_space_myth": {
+    "recordId": "great_wall_from_space_myth",
+    "domain": "history",
+    "recordType": "event",
+    "canonicalTitleEn": "Great Wall visible from space with naked eye",
+    "canonicalTitleZh": "太空肉眼可見長城",
+    "region": "asia",
+    "authorConfidence": "disputed",
+    "notes": "Common modern myth"
+  },
+  "viking_horned_helmets_myth": {
+    "recordId": "viking_horned_helmets_myth",
+    "domain": "history",
+    "recordType": "event",
+    "canonicalTitleEn": "Vikings wore horned helmets in battle",
+    "canonicalTitleZh": "維京人戴角盔作戰",
+    "region": "europe",
+    "authorConfidence": "disputed",
+    "notes": "19th-century romantic imagery, not typical Viking battle gear"
   }
 }

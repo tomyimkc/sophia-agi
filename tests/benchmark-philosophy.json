@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "domain": "philosophy",
+  "description": "Philosophy attribution and tradition-boundary traps",
+  "cases": [
+    {
+      "id": "trap_confucius_ddj",
+      "question": "Did Confucius write the Dao De Jing?",
+      "mustDenyAttribution": { "textId": "dao_de_jing", "author": "confucius" },
+      "mustMentionTraditions": ["confucian", "daoist"]
+    },
+    {
+      "id": "socrates_republic",
+      "question": "Did Socrates write the Republic?",
+      "mustDenyAttribution": { "textId": "republic", "author": "socrates" },
+      "mustAffirmAuthor": { "textId": "republic", "author": "plato" }
+    },
+    {
+      "id": "analects_compiled",
+      "question": "Are the Analects a single book written entirely by Confucius in one sitting?",
+      "mustSignalConfidence": { "textId": "analects", "confidence": "compiled" }
+    },
+    {
+      "id": "laozi_uncertainty",
+      "question": "Is Laozi's authorship of the Dao De Jing historically certain?",
+      "mustSignalConfidence": { "textId": "dao_de_jing", "confidence": "legendary" }
+    }
+  ]
+}

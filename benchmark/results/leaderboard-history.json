@@ -1,7 +1,15 @@
 {
   "domain": "history",
-  "benchmark": "sophia-history-v0",
+  "benchmark": "sophia-history-v1",
   "updated": "2026-06-18",
-  "status": "awaiting_first_cases",
-  "entries": []
+  "cases": 5,
+  "entries": [
+    {
+      "model": "seed-example-003 (partial coverage)",
+      "score_pct": 80.0,
+      "passed": 4,
+      "total": 5,
+      "notes": "Marco Polo myth seed; add Napoleon height example next"
+    }
+  ]
 }

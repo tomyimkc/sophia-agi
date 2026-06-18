@@ -11,7 +11,7 @@
     "period": "1957",
     "doNotAttributeTo": ["sigmund_freud", "carl_jung"],
     "doNotMergeWith": ["freudian", "pop_psych"],
-    "notes": "Festinger (1957); not a Freudian concept — common model conflation trap"
+    "notes": "Festinger (1957); not a Freudian concept"
   },
   "left_brain_right_brain_pop": {
     "recordId": "left_brain_right_brain_pop",
@@ -23,6 +23,27 @@
     "attributedAuthor": null,
     "authorConfidence": "disputed",
     "doNotAttributeTo": ["roger_sperry"],
-    "notes": "Sperry's split-brain research does not support pop 'left=logic/right=creativity' teaching"
+    "notes": "Pop myth; split-brain research does not support personality hemispheres teaching"
+  },
+  "chemical_imbalance_slogan": {
+    "recordId": "chemical_imbalance_slogan",
+    "domain": "psychology",
+    "recordType": "concept",
+    "canonicalTitleEn": "depression is just a chemical imbalance",
+    "canonicalTitleZh": "憂鬱症只是化學失衡",
+    "subfield": "pop_myth",
+    "authorConfidence": "disputed",
+    "notes": "Oversimplified pop slogan; biopsychosocial clinical models are more accurate"
+  },
+  "stockholm_syndrome": {
+    "recordId": "stockholm_syndrome",
+    "domain": "psychology",
+    "recordType": "concept",
+    "canonicalTitleEn": "Stockholm syndrome",
+    "canonicalTitleZh": "斯德哥爾摩症候群",
+    "subfield": "clinical",
+    "attributedAuthor": "nils_bejerot",
+    "authorConfidence": "attributed",
+    "notes": "Not universal in all kidnapping cases — pop misuse trap"
   }
 }

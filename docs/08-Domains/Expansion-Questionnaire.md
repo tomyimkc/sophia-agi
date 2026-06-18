@@ -41,10 +41,19 @@ When theology and history conflict, the teacher agent uses **structured debate**
 
 ---
 
-## Next implementation steps (from answers)
+## Round 2 answers (2026-06-18)
 
-1. Split leaderboards: `benchmark/results/leaderboard-{domain}.json`
-2. Populate starter records in psychology / history / religion JSON files
-3. Add `subfield` to psychology schema usage
-4. Add religion `answerMode: council_debate` to training metadata
-5. Expand benchmark with first cross-domain trap questions
+| Topic | Answer |
+|-------|--------|
+| Psychology traps | **All kinds** — clinical, cognitive, pop myth, oversimplification |
+| History events | **All kinds** — global myths, wars, inventions, biographies |
+| Religion council | **All voices sit on one panel** (full fixed council header) |
+| Sensitive religion traps | **All kinds** in public benchmark — score structure, not dismissal |
+| Confucian split | **Split when appropriate** — see [Confucian-Split-Guide.md](Confucian-Split-Guide.md) |
+
+## Implemented (Step 7)
+
+- [x] Per-domain benchmarks: `tests/benchmark-{philosophy,psychology,history,religion}.json`
+- [x] Training examples 002–004 (psychology, history, religion council)
+- [x] Expanded domain data records
+- [x] Multi-domain scorer + response templates

@@ -1,0 +1,12 @@
+{
+  "domain": "religion",
+  "model": "your-model-name",
+  "date": "YYYY-MM-DD",
+  "responses": {
+    "gospel_authorship_council": "",
+    "ancestor_veneration_split": "",
+    "dao_de_jing_religion_philosophy": "",
+    "islam_historical_figure_sensitive": "",
+    "buddha_nirvana_pop": ""
+  }
+}

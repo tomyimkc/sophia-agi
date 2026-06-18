@@ -1,0 +1,41 @@
+{
+  "domain": "religion",
+  "version": 1,
+  "passed": 2,
+  "total": 5,
+  "score_pct": 40.0,
+  "results": [
+    {
+      "id": "gospel_authorship_council",
+      "passed": false,
+      "reasons": [
+        "expected tradition context 'christianity'"
+      ]
+    },
+    {
+      "id": "ancestor_veneration_split",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "dao_de_jing_religion_philosophy",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "islam_historical_figure_sensitive",
+      "passed": false,
+      "reasons": [
+        "expected tradition context 'islam'"
+      ]
+    },
+    {
+      "id": "buddha_nirvana_pop",
+      "passed": false,
+      "reasons": [
+        "expected myth/misconception labeling",
+        "expected tradition context 'buddhism'"
+      ]
+    }
+  ]
+}

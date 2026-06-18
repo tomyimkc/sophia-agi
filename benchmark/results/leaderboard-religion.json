@@ -1,7 +1,15 @@
 {
   "domain": "religion",
-  "benchmark": "sophia-religion-v0",
+  "benchmark": "sophia-religion-v1",
   "updated": "2026-06-18",
-  "status": "awaiting_first_cases",
-  "entries": []
+  "cases": 5,
+  "entries": [
+    {
+      "model": "seed-example-004 (partial coverage)",
+      "score_pct": 40.0,
+      "passed": 2,
+      "total": 5,
+      "notes": "Council panel seed covers Confucian split; add Gospel/Islam/Buddhism examples next"
+    }
+  ]
 }

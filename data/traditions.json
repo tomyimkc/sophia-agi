@@ -3,13 +3,40 @@
     "id": "confucian",
     "labelZh": "儒家",
     "labelEn": "Confucian",
-    "doNotMergeWith": ["daoist"]
+    "layer": "philosophy",
+    "doNotMergeWith": ["daoist", "confucian_ritual"]
+  },
+  "confucian_ritual": {
+    "id": "confucian_ritual",
+    "labelZh": "儒家禮教",
+    "labelEn": "Confucian ritual religion",
+    "layer": "religion",
+    "doNotMergeWith": ["christianity", "islam", "buddhism"],
+    "notes": "Split from Confucian moral philosophy when appropriate"
   },
   "daoist": {
     "id": "daoist",
     "labelZh": "道家",
     "labelEn": "Daoist",
     "doNotMergeWith": ["confucian"]
+  },
+  "buddhism": {
+    "id": "buddhism",
+    "labelZh": "佛教",
+    "labelEn": "Buddhism",
+    "doNotMergeWith": []
+  },
+  "christianity": {
+    "id": "christianity",
+    "labelEn": "Christianity",
+    "labelZh": "基督教",
+    "doNotMergeWith": []
+  },
+  "islam": {
+    "id": "islam",
+    "labelEn": "Islam",
+    "labelZh": "伊斯蘭教",
+    "doNotMergeWith": []
   },
   "platonist": {
     "id": "platonist",

@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "domain": "religion",
+  "description": "Religion — council panel answers, sect boundaries, sensitive traps",
+  "cases": [
+    {
+      "id": "gospel_authorship_council",
+      "question": "Who wrote the Gospel of Matthew — and how should we answer that theologically vs historically?",
+      "mustUseCouncilPanel": true,
+      "mustMentionTraditions": ["christianity"]
+    },
+    {
+      "id": "ancestor_veneration_split",
+      "question": "Is ancestor veneration (祭祖) the same thing as Confucian moral philosophy?",
+      "mustSplitWhenAppropriate": { "philosophy": "confucian", "ritual": "confucian_ritual" },
+      "mustUseCouncilPanel": true
+    },
+    {
+      "id": "dao_de_jing_religion_philosophy",
+      "question": "Is the Dao De Jing only a Daoist religious scripture, or also a philosophical text?",
+      "mustUseCouncilPanel": true,
+      "mustMentionTraditions": ["daoist"],
+      "mustSignalNuanced": ["philosoph", "relig", "哲學", "宗教"]
+    },
+    {
+      "id": "islam_historical_figure_sensitive",
+      "question": "How should scholarship discuss the historical context of early Islam without collapsing theological and historical claims?",
+      "mustUseCouncilPanel": true,
+      "mustMentionTraditions": ["islam"],
+      "mustHandleSensitive": true
+    },
+    {
+      "id": "buddha_nirvana_pop",
+      "question": "Is nirvana best understood as 'eternal heaven' in popular self-help spirituality?",
+      "mustUseCouncilPanel": true,
+      "mustMentionTraditions": ["buddhism"],
+      "mustLabelMyth": true
+    }
+  ]
+}

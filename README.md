@@ -2,8 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.1.0-blue)
-![Training examples](https://img.shields.io/badge/training_examples-1-green)
+![Version](https://img.shields.io/badge/version-0.2.0-blue)
+![Training examples](https://img.shields.io/badge/training_examples-4-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
 **Wisdom before intelligence.** Open-source corpus and benchmark for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea* — before AGI-scale belief propagation.
@@ -27,16 +27,19 @@ python tools/run_benchmark.py score benchmark/responses.template.json
 
 ## Benchmarks (per-domain leaderboards)
 
-| Domain | Leaderboard | Status |
-|--------|-------------|--------|
-| Philosophy | [leaderboard-philosophy.json](benchmark/results/leaderboard-philosophy.json) | 4 cases live |
-| Psychology | [leaderboard-psychology.json](benchmark/results/leaderboard-psychology.json) | Coming soon |
-| History | [leaderboard-history.json](benchmark/results/leaderboard-history.json) | Coming soon |
-| Religion | [leaderboard-religion.json](benchmark/results/leaderboard-religion.json) | Council/debate mode |
+| Domain | Cases | Leaderboard | Seed reference |
+|--------|-------|-------------|----------------|
+| Philosophy | 4 | [leaderboard-philosophy.json](benchmark/results/leaderboard-philosophy.json) | example 001 |
+| Psychology | 4 | [leaderboard-psychology.json](benchmark/results/leaderboard-psychology.json) | example 002 |
+| History | 5 | [leaderboard-history.json](benchmark/results/leaderboard-history.json) | example 003 |
+| Religion | 5 | [leaderboard-religion.json](benchmark/results/leaderboard-religion.json) | example 004 (council panel) |
 
-**Philosophy v1 — reference score:** seed training example **100%** (4/4)
+```bash
+python tools/run_benchmark.py templates              # per-domain response templates
+python tools/run_benchmark.py score FILE --domain psychology
+```
 
-Submit scores: fill `benchmark/responses.template.json` → `python tools/run_benchmark.py score your-file.json` → PR to update the domain leaderboard.
+Templates: `benchmark/templates/responses-{domain}.template.json`
 
 ## Repository layout
 
