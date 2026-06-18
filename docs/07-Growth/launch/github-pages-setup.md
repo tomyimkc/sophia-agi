@@ -1,27 +1,66 @@
 # GitHub Pages setup (one-time)
 
-The workflow `.github/workflows/pages.yml` deploys `web/` on every push to `main`.
+Workflow `.github/workflows/pages.yml` builds `web/` and pushes to the **`gh-pages`** branch.
 
-## Steps (requires repo admin — **your click**)
+## Why gh-pages branch?
 
-1. Open https://github.com/tomyimkc/sophia-agi/settings/pages
-2. **Build and deployment → Source:** select **GitHub Actions** (not "Deploy from branch")
-3. Push to `main` or run workflow manually: **Actions → Deploy thesis site → Run workflow**
-4. Wait ~2 minutes; URL appears on Settings → Pages
+If **Deploy thesis site** failed with:
 
-**Expected URL:** https://tomyimkc.github.io/sophia-agi/
+`Failed to create deployment (status: 404) ... Ensure GitHub Pages has been enabled`
+
+GitHub Actions “deploy-pages” requires **Source: GitHub Actions** in Settings. Many repos only show **Deploy from a branch** until Pages is enabled — the `gh-pages` branch method avoids that 404.
+
+---
+
+## Steps (your clicks)
+
+### 1. Workflow permissions
+
+**Settings → Actions → General → Workflow permissions**
+
+- Select **Read and write permissions** → **Save**
+
+### 2. Run deploy workflow
+
+**Actions → Deploy thesis site → Run workflow** (branch `main`)
+
+Wait for green checkmark. This creates/updates the **`gh-pages`** branch with your site files.
+
+### 3. Enable Pages (branch source)
+
+**Settings → Pages → Build and deployment**
+
+| Field | Value |
+|-------|--------|
+| **Source** | Deploy from a branch |
+| **Branch** | `gh-pages` |
+| **Folder** | `/ (root)` |
+
+Click **Save**.
+
+### 4. Open site
+
+After 1–3 minutes:
+
+**https://tomyimkc.github.io/sophia-agi/**
+
+---
 
 ## Verify
 
-- Abstract loads with version + training example count
-- Chapter V shows 4 leaderboards
-- Chapter VII "Ask Sophia" shows CLI fallback (static Pages has no `/api/ask`)
+- Abstract shows version + training example count
+- Chapter V shows leaderboards
+- Chapter VII falls back to CLI hints (static Pages has no `/api/ask`)
 
-## Live agent (optional)
+## Live agent (local)
 
 ```bash
 python tools/serve_web.py
-# http://127.0.0.1:8765 — full /api/ask
+# http://127.0.0.1:8765
 ```
 
-Hosted agent (Fly.io / Railway) is a Phase B item — needs your deployment preference.
+---
+
+## Optional: GitHub Actions source later
+
+If your Settings → Pages later shows **Source: GitHub Actions**, you can switch — not required for the thesis site to work.
