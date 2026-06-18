@@ -11,7 +11,7 @@
     "period": "1957",
     "doNotAttributeTo": ["sigmund_freud", "carl_jung"],
     "doNotMergeWith": ["freudian", "pop_psych"],
-    "notes": "Festinger (1957); not a Freudian concept"
+    "notes": "Festinger (1957); deny sigmund_freud attribution — philosophy-style source discipline"
   },
   "left_brain_right_brain_pop": {
     "recordId": "left_brain_right_brain_pop",
@@ -44,6 +44,17 @@
     "subfield": "clinical",
     "attributedAuthor": "nils_bejerot",
     "authorConfidence": "attributed",
-    "notes": "Not universal in all kidnapping cases — pop misuse trap"
+    "doNotMergeWith": ["pop_myth"],
+    "notes": "Not universal in all kidnapping cases — tag pop_myth when overgeneralized"
+  },
+  "learning_styles_vak": {
+    "recordId": "learning_styles_vak",
+    "domain": "psychology",
+    "recordType": "concept",
+    "canonicalTitleEn": "VAK learning styles matching hypothesis",
+    "canonicalTitleZh": "VAK學習風格配對假說",
+    "subfield": "pop_myth",
+    "authorConfidence": "disputed",
+    "notes": "Preference is not evidence-based instruction matching"
   }
 }

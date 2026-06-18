@@ -1,16 +1,28 @@
-# Psychology domain (planned)
+# Psychology domain (active)
 
-## Proposed source-discipline questions
+## Source discipline (philosophy methodology)
 
-- Who **coined** this term (Freud, Jung, DSM committee, Twitter)?
-- Is this **clinical** psychology or **pop psychology**?
-- What is the **replication** status?
-- What should **not** be merged (e.g. Freudian vs cognitive behavioral)?
+Same provenance rules as philosophy attributions — applied to concepts instead of texts:
 
-## Example trap (future benchmark)
+- Who **coined** this term? (`attributedAuthor`, `doNotAttributeTo`)
+- Which **subfield** owns it? (`cognitive`, `clinical`, `pop_myth`)
+- What **pop myths** must be denied?
 
-> "Did Freud invent the concept of cognitive dissonance?"
+## Data center
+
+- **Records:** `data/psychology_concepts.json`
+- **Hub training:** `training/examples/018-psychology-source-discipline-hub.json`
+- **Benchmark:** `tests/benchmark-psychology.json` (4 cases)
+
+## Example traps
+
+| Trap | Record | Deny / tag |
+|------|--------|------------|
+| Freud → cognitive dissonance | `cognitive_dissonance` | Deny `sigmund_freud`; affirm Festinger |
+| Left-brain personality | `left_brain_right_brain_pop` | `pop_myth` |
+| Chemical imbalance slogan | `chemical_imbalance_slogan` | Nuance / biopsychosocial |
+| Universal Stockholm | `stockholm_syndrome` | `clinical` + deny universal; tag `pop_myth` misuse |
 
 ## Status
 
-**Blocked on:** [Expansion-Questionnaire.md](Expansion-Questionnaire.md) — psychology section.
+**Active** — scope locked in [Expansion-Questionnaire.md](Expansion-Questionnaire.md). See [Source-Discipline-Methodology.md](Source-Discipline-Methodology.md).

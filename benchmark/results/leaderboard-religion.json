@@ -9,6 +9,12 @@
       "score_pct": 100.0,
       "passed": 5,
       "total": 5
+    },
+    {
+      "model": "claude-sonnet (api.llmhub.com.cn)",
+      "score_pct": 100.0,
+      "passed": 5,
+      "total": 5
     }
   ]
 }

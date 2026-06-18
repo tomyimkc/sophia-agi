@@ -2,6 +2,22 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.3.1] - 2026-06-18
+
+### Added
+
+- Psychology hub example 018 + religion hub example 019 (philosophy-style source discipline)
+- `docs/08-Domains/Source-Discipline-Methodology.md`
+- Expanded `psychology_concepts.json` and `religion_concepts.json` source records
+- LLMHub / custom `ANTHROPIC_BASE_URL` support in `run_external_models.py`
+
+### Changed
+
+- Psychology and Religion domain docs marked **Active** with data-center layout
+- Benchmark SYSTEM prompt: explicit subfield/tradition/myth vocabulary
+- Scorer: author aliases (Freud, Festinger) and tradition aliases (Christian, Buddhist)
+- Claude Sonnet benchmark: **100%** on all four domains via LLMHub
+
 ## [0.3.0] - 2026-06-18
 
 ### Added

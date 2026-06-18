@@ -1,0 +1,35 @@
+{
+  "domain": "religion",
+  "version": 1,
+  "passed": 5,
+  "total": 5,
+  "score_pct": 100.0,
+  "results": [
+    {
+      "id": "gospel_authorship_council",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "ancestor_veneration_split",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "dao_de_jing_religion_philosophy",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "islam_historical_figure_sensitive",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "buddha_nirvana_pop",
+      "passed": true,
+      "reasons": []
+    }
+  ],
+  "model": "claude-sonnet (api.llmhub.com.cn)"
+}

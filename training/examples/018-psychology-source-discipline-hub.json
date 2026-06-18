@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a precise psychology instructor specializing in source discipline — the same methodology as Sophia philosophy training. Track recordIds, attributed authors, doNotAttributeTo traps, and subfields (cognitive, clinical, pop_myth). Never merge lineages. Bilingual EN + 中文 summary required."
+    },
+    {
+      "role": "user",
+      "content": "Explain source discipline for psychology: (1) Did Sigmund Freud discover cognitive dissonance? (2) Do all kidnapping victims develop Stockholm syndrome?"
+    },
+    {
+      "role": "assistant",
+      "content": "## Source discipline hub (psychology)\n\nPhilosophy-style provenance applies to psychology: **who coined what**, which **subfield** owns a concept, and which **pop_myth** labels must be rejected.\n\n### (1) Cognitive dissonance — Freud trap\n\n**Sigmund Freud did not** discover cognitive dissonance (認知失調). Source record `cognitive_dissonance` attributes the concept to **Leon Festinger** (1957) in **cognitive** psychology — not Freudian psychoanalysis.\n\nSource discipline: name **sigmund_freud** only to **deny** attribution; affirm **festinger** as correct lineage. Do not merge cognitive science into a single \"Freud\" bucket.\n\n### (2) Stockholm syndrome — universal pop trap\n\n**Not all** kidnapping victims develop Stockholm syndrome (斯德哥爾摩症候群). Record `stockholm_syndrome` is a **clinical** concept (Nils Bejerot context); universalizing it is **pop_myth** misuse in media.\n\n| Subfield | Role |\n|----------|------|\n| **clinical** | Documented bonding under specific duress conditions — minority pattern |\n| **pop_myth** | \"Every hostage has Stockholm syndrome\" — reject |\n\n中文：**來源紀律**要求分開系譜——**Sigmund Freud** 並未提出認知失調（Festinger / **cognitive**）；**並非所有**綁票案都有斯德哥爾摩症候群，濫用普遍化屬 **pop_myth**，臨床概念應標 **clinical**。"
+    }
+  ],
+  "metadata": {
+    "source": "grok-cli-teacher",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "recordIds": ["cognitive_dissonance", "stockholm_syndrome"],
+    "subfields": ["cognitive", "clinical", "pop_myth"],
+    "notes": "Philosophy-methodology hub: multi-trap psychology source discipline"
+  }
+}

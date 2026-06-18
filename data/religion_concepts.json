@@ -23,5 +23,43 @@
     "answerMode": "council_debate",
     "doNotMergeWith": ["christianity", "islam", "buddhism"],
     "notes": "Ritual religion distinct from philosophical Confucianism — boundary trap for models"
+  },
+  "gospel_matthew": {
+    "recordId": "gospel_matthew",
+    "domain": "religion",
+    "recordType": "text",
+    "canonicalTitleZh": "馬太福音",
+    "canonicalTitleEn": "Gospel of Matthew",
+    "tradition": "christianity",
+    "attributedAuthor": "matthew_tradition",
+    "authorConfidence": "disputed",
+    "answerMode": "council_debate",
+    "doNotMergeWith": ["islam", "buddhism", "daoist"],
+    "notes": "Theological apostolic attribution vs historical-critical anonymous composition — council panel required"
+  },
+  "nirvana_pop_heaven": {
+    "recordId": "nirvana_pop_heaven",
+    "domain": "religion",
+    "recordType": "concept",
+    "canonicalTitleZh": "涅槃即永恆天堂",
+    "canonicalTitleEn": "nirvana as eternal heaven (pop spirituality)",
+    "tradition": "buddhism",
+    "attributedAuthor": null,
+    "authorConfidence": "disputed",
+    "answerMode": "council_debate",
+    "doNotMergeWith": ["christianity", "islam"],
+    "notes": "Pop self-help myth — must label misconception; contrast with Buddhist doctrinal nirvana"
+  },
+  "islam_early_history": {
+    "recordId": "islam_early_history",
+    "domain": "religion",
+    "recordType": "concept",
+    "canonicalTitleEn": "early Islam historical-theological boundary",
+    "canonicalTitleZh": "早期伊斯蘭歷史與神學分界",
+    "tradition": "islam",
+    "authorConfidence": "consensus",
+    "answerMode": "council_debate",
+    "doNotMergeWith": ["christianity", "buddhism"],
+    "notes": "Sensitive trap — scholarly vs theological claims must not collapse"
   }
 }

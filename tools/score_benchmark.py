@@ -84,13 +84,33 @@ def load_responses(payload: dict) -> dict[str, str]:
     return {k: str(v) for k, v in payload.items() if k not in {"model", "date", "domain"}}
 
 
+AUTHOR_ALIASES: dict[str, list[str]] = {
+    "sigmund_freud": ["freud"],
+    "leon_festinger": ["festinger"],
+}
+
+TRADITION_ALIASES: dict[str, list[str]] = {
+    "christianity": ["christian"],
+    "buddhism": ["buddhist"],
+    "islam": ["muslim", "islamic"],
+    "daoist": ["daoism", "taoist"],
+}
+
+
 def tradition_markers(tradition_id: str, traditions: dict) -> list[str]:
     record = traditions.get(tradition_id, {})
     markers = [tradition_id, tradition_id.replace("_", " ")]
+    markers.extend(TRADITION_ALIASES.get(tradition_id, []))
     for key in ("labelEn", "labelZh"):
         value = record.get(key)
         if value:
             markers.append(str(value).lower())
+    return markers
+
+
+def author_markers(author_id: str) -> list[str]:
+    markers = [author_id, author_id.replace("_", " ")]
+    markers.extend(AUTHOR_ALIASES.get(author_id, []))
     return markers
 
 
@@ -102,7 +122,7 @@ def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[
     deny = case.get("mustDenyAttribution")
     if deny:
         author = deny["author"]
-        if author.replace("_", " ") not in text and author not in text:
+        if not any(marker.lower() in text for marker in author_markers(author)):
             ok = False
             reasons.append(f"expected discussion of {author}")
         elif not matches_any(text, DENY_PATTERNS):
@@ -111,10 +131,10 @@ def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[
 
     affirm = case.get("mustAffirmAuthor")
     if affirm:
-        author = affirm["author"].replace("_", " ")
-        if author not in text and affirm["author"] not in text:
+        author_id = affirm["author"]
+        if not any(marker.lower() in text for marker in author_markers(author_id)):
             ok = False
-            reasons.append(f"expected mention of correct author '{affirm['author']}'")
+            reasons.append(f"expected mention of correct author '{author_id}'")
 
     signal = case.get("mustSignalConfidence")
     if signal:
