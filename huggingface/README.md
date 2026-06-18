@@ -23,7 +23,7 @@ size_categories:
 
 # Sophia AGI Corpus
 
-**Wisdom before intelligence.** Bilingual training data for provenance-aware reasoning across philosophy, psychology, history, and religion (19 examples, v0.3.1).
+**Wisdom before intelligence.** Bilingual training data for provenance-aware reasoning across philosophy, psychology, history, and religion (500 examples, v0.5.1).
 
 ## Dataset description
 

@@ -6,6 +6,7 @@ All notable changes to Sophia AGI are documented here.
 
 ### Added
 
+- LoRA experiment pipeline: `prepare_lora_dataset.py`, `train_lora.py`, `eval_local_model.py`, `requirements-lora.txt`
 - Phase 2 teacher: `tools/claude_teacher.py` — **450** Claude-generated examples (multi-round paraphrase) → **500** total
 - Phase 4 correction: `agent/correction_loop.py`, `tools/run_correction_loop.py`
 - `CONTRIBUTING.md` Phase 2 human-review checklist and Phase 4 correction workflow

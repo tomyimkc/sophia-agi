@@ -2,8 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.5.0-blue)
-![Training examples](https://img.shields.io/badge/training_examples-50-green)
+![Version](https://img.shields.io/badge/version-0.5.1-blue)
+![Training examples](https://img.shields.io/badge/training_examples-500-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
 **Wisdom before intelligence.** Open-source corpus and benchmark for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea* — before AGI-scale belief propagation.
@@ -55,7 +55,7 @@ python tools/serve_web.py        # http://127.0.0.1:8765
 
 | Domain | Cases | Leaderboard | Seed reference |
 |--------|-------|-------------|----------------|
-| Philosophy | 4 | [leaderboard-philosophy.json](benchmark/results/leaderboard-philosophy.json) | examples 001 + reference |
+| Philosophy | 9 | [leaderboard-philosophy.json](benchmark/results/leaderboard-philosophy.json) | examples 001 + reference |
 | Psychology | 4 | [leaderboard-psychology.json](benchmark/results/leaderboard-psychology.json) | examples 002, 005–007 + reference |
 | History | 5 | [leaderboard-history.json](benchmark/results/leaderboard-history.json) | examples 003, 008, 012–013 + reference |
 | Religion | 5 | [leaderboard-religion.json](benchmark/results/leaderboard-religion.json) | examples 004, 009–011, 014 (council panel) |
@@ -98,6 +98,19 @@ See [docs/08-Domains/Overview.md](docs/08-Domains/Overview.md) and answer [Expan
 - [Open Intelligence Plan](docs/06-Roadmap/Open-Intelligence-Plan.md)
 - [90-Day Launch Playbook](docs/07-Growth/90-Day-Launch.md)
 - [Good first issues](GOOD_FIRST_ISSUES.md)
+
+## LoRA experiment (optional)
+
+Hold out benchmark cases, fine-tune a small instruct model, compare base vs LoRA vs LoRA+gate:
+
+```bash
+pip install -r requirements-lora.txt
+python tools/prepare_lora_dataset.py
+python tools/train_lora.py --4bit --epochs 3
+python tools/eval_local_model.py --adapter training/lora/checkpoints/sophia-v1 --with-gate
+```
+
+See [docs/09-Agent/LoRA-Experiment.md](docs/09-Agent/LoRA-Experiment.md).
 
 ## Hugging Face
 

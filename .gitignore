@@ -16,3 +16,4 @@ Thumbs.db
 *.jsonl.bak
 dist/
 build/
+training/lora/checkpoints/

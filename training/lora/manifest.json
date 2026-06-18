@@ -1,0 +1,32 @@
+{
+  "totalExamples": 500,
+  "trainCount": 426,
+  "holdoutCount": 74,
+  "benchmarkCaseCount": 23,
+  "holdoutReasons": {
+    "exact_benchmark_question": 28,
+    "benchmarkCase=trap_confucius_ddj": 2,
+    "benchmarkCase=socrates_republic": 2,
+    "benchmarkCase=analects_compiled": 2,
+    "benchmarkCase=laozi_uncertainty": 2,
+    "benchmarkCase=trap_confucius_mencius": 2,
+    "benchmarkCase=trap_laozi_zhuangzi": 2,
+    "benchmarkCase=socrates_symposium": 2,
+    "benchmarkCase=zhuangzi_analects_boundary": 2,
+    "benchmarkCase=symposium_dialogue_not_autograph": 2,
+    "benchmarkCase=freud_cognitive_dissonance": 2,
+    "benchmarkCase=left_brain_myth": 2,
+    "benchmarkCase=chemical_imbalance_simplification": 2,
+    "benchmarkCase=stockholm_every_kidnapping": 2,
+    "benchmarkCase=marco_polo_pasta": 2,
+    "benchmarkCase=flat_earth_medieval": 2,
+    "benchmarkCase=napoleon_height": 2,
+    "benchmarkCase=great_wall_space": 2,
+    "benchmarkCase=viking_horns": 2,
+    "benchmarkCase=gospel_authorship_council": 2,
+    "benchmarkCase=ancestor_veneration_split": 2,
+    "benchmarkCase=dao_de_jing_religion_philosophy": 2,
+    "benchmarkCase=islam_historical_figure_sensitive": 2,
+    "benchmarkCase=buddha_nirvana_pop": 2
+  }
+}
