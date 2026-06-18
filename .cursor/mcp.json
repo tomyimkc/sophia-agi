@@ -5,6 +5,11 @@
       "args": ["sophia_mcp/server.py"],
       "cwd": "C:/Users/tomyim/Documents/GitHub/sophia-agi"
     },
+    "colab-mcp": {
+      "command": "C:/Users/tomyim/AppData/Local/Programs/Python/Python312/Scripts/uvx.exe",
+      "args": ["git+https://github.com/googlecolab/colab-mcp"],
+      "timeout": 30000
+    },
     "github": {
       "url": "https://api.githubcopilot.com/mcp/x/issues",
       "headers": {

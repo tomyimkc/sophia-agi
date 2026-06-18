@@ -68,6 +68,8 @@ Re-score without re-run: `python tools/rescore_model_runs.py`
 
 Windows local training can fail on HF `Trainer` import; Colab + manual SFT loop is stable.
 
+**Agent-driven:** With [Colab-MCP.md](Colab-MCP.md) wired in `.cursor/mcp.json`, open the notebook in the browser, enable T4 GPU, reload MCP, then ask the agent to run the sophia-v2 cells.
+
 1. Open [Sophia-LoRA-Colab.ipynb](../../notebooks/Sophia-LoRA-Colab.ipynb) → **Runtime → T4 GPU**
 2. Clone repo (gets v0.6.1+ with `516–518` and `--resume-adapter`)
 3. Run **sophia-v2** cells: pull `tomyimkc/sophia-agi-lora-v1` from HF → train → download `sophia-lora-v2.zip`

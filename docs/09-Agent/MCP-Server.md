@@ -45,6 +45,10 @@ Edit `sophia-agi/.cursor/mcp.json`:
 
 See `.cursor/mcp.json.example`. Reload MCP after edits.
 
+## Colab MCP (browser training)
+
+For GPU training on Google Colab from the agent, add `colab-mcp` to the same `mcp.json` and keep a Colab tab open. Full setup: [Colab-MCP.md](Colab-MCP.md).
+
 ## Skills pairing
 
 | Skill | Install |
