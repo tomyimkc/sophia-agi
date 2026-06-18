@@ -17,3 +17,6 @@ Thumbs.db
 dist/
 build/
 training/lora/checkpoints/
+training/lab/reviews/*.json
+training/lab/judgements/*.json
+training/lab/distill/distill-*.json

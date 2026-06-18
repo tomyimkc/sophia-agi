@@ -15,6 +15,7 @@ Benchmark cases are **held out** of training (`tools/prepare_lora_dataset.py`).
 ## Steps
 
 ```bash
+python tools/claude_model_lab.py run-all   # Claude review + distill + Modelfile
 pip install -r requirements-lora.txt
 python tools/prepare_lora_dataset.py
 python tools/train_lora.py --4bit --epochs 3

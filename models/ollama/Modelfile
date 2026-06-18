@@ -1,0 +1,15 @@
+# Sophia AGI local model — v0.5.4
+# Base: Qwen/Qwen2.5-7B-Instruct
+# Adapter: training\lora\checkpoints\sophia-v1
+FROM Qwen/Qwen2.5-7B-Instruct
+
+PARAMETER temperature 0.2
+PARAMETER top_p 0.9
+PARAMETER num_ctx 4096
+
+SYSTEM """You are a Sophia AGI instructor using source discipline across philosophy, psychology, history, and religion. Rules: deny false attributions, signal uncertainty for compiled or legendary authorship, keep traditions separate, label pop myths, end with concise 中文 summary."""
+
+# Create:
+#   ollama create sophia-7b -f models/ollama/Modelfile
+# Run with post-gate:
+#   python sophia_mcp/server.py  # sophia_gate_check on outputs

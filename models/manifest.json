@@ -1,0 +1,19 @@
+{
+  "version": "0.5.4",
+  "baseModel": "Qwen/Qwen2.5-7B-Instruct",
+  "adapterPath": "training\\lora\\checkpoints\\sophia-v1",
+  "ollamaModelfile": "models\\ollama\\Modelfile",
+  "hfModelCard": "models\\hf-model-card\\README.md",
+  "stats": {
+    "version": "0.5.4",
+    "attributions": 30,
+    "trainingExamples": 500,
+    "benchmarkCases": {
+      "philosophy": 9,
+      "psychology": 4,
+      "history": 5,
+      "religion": 5
+    },
+    "benchmarkTotal": 23
+  }
+}

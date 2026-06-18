@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.5.3-blue)
+![Version](https://img.shields.io/badge/version-0.5.4-blue)
 ![Training examples](https://img.shields.io/badge/training_examples-500-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
@@ -114,18 +114,19 @@ python tools/install_skills.py --all --cursor
 
 See [Skills-Install.md](docs/09-Agent/Skills-Install.md) and [MCP-Server.md](docs/09-Agent/MCP-Server.md).
 
-## LoRA experiment (optional)
+## Build your local LLM (Claude + LoRA)
 
-Hold out benchmark cases, fine-tune a small instruct model, compare base vs LoRA vs LoRA+gate:
+Claude API builds data and packaging; **open weights** run offline:
 
 ```bash
+python tools/claude_model_lab.py run-all          # review, distill, Ollama Modelfile
 pip install -r requirements-lora.txt
-python tools/prepare_lora_dataset.py
-python tools/train_lora.py --4bit --epochs 3
+python tools/train_lora.py --4bit --epochs 3      # Qwen2.5-7B QLoRA
 python tools/eval_local_model.py --adapter training/lora/checkpoints/sophia-v1 --with-gate
+ollama create sophia-7b -f models/ollama/Modelfile
 ```
 
-See [docs/09-Agent/LoRA-Experiment.md](docs/09-Agent/LoRA-Experiment.md).
+See [Model-Lab.md](docs/09-Agent/Model-Lab.md) and [LoRA-Experiment.md](docs/09-Agent/LoRA-Experiment.md).
 
 ## Hugging Face
 

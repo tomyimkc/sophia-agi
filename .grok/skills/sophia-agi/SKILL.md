@@ -54,6 +54,10 @@ python tools/run_external_models.py --domain philosophy --providers claude-sonne
 python tools/score_benchmark.py benchmark/model_runs/MODEL.json --domain philosophy
 python tools/claude_teacher.py --limit 20 --dry-run
 python tools/prepare_lora_dataset.py --dry-run
+python tools/claude_model_lab.py run-all --dry-run
+python tools/claude_model_lab.py review-batch --limit 10
+python tools/claude_model_lab.py distill --limit 20 --promote
+python tools/claude_model_lab.py write-modelfile
 ```
 
 ## Workflows

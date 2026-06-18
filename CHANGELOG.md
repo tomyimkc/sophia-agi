@@ -2,6 +2,18 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.5.4] - 2026-06-18
+
+### Added
+
+- **Claude Model Lab:** `tools/claude_model_lab.py` + `tools/model_lab_lib.py`
+  - `review-batch` — Claude QA on teacher examples
+  - `distill` — gold answers for new attribution questions
+  - `judge` — Claude judge on failed local benchmark runs
+  - `write-modelfile` — Ollama Modelfile + HF adapter model card
+  - `run-all` — orchestrated pipeline
+- [Model-Lab.md](docs/09-Agent/Model-Lab.md), `tests/test_model_lab.py`
+
 ## [0.5.3] - 2026-06-18
 
 ### Added
