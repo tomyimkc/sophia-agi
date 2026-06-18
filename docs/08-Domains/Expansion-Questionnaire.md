@@ -1,71 +1,50 @@
 # Domain expansion questionnaire
 
-**Owner:** @tomyimkc — please answer below (edit this file or reply in an issue). Answers gate the psychology, history, and religion rollout.
+**Status:** Answered 2026-06-18 by @tomyimkc
 
 ---
 
-## A. Psychology
+## A. Psychology — **All three from the start**
 
-1. **Scope:** Clinical psychology, cognitive science, pop psych, or all three?
-2. **Trap priority:** What are the top 5 concepts models get wrong? (e.g. "Freud invented X", "left brain / right brain")
-3. **Figures:** Which thinkers must have separate lineages? (Freud/Jung/Skinner/CBT/Damasio…)
-4. **Language:** English only, or bilingual EN + 中文 (e.g. 心理學 terms)?
-5. **Sensitivity:** Any topics to exclude or handle with extra care (diagnosis, trauma, DSM)?
+- **Scope:** Clinical / DSM, cognitive science, **and** pop-psych myth-busting (mixed corpus)
+- **Implication:** Every psychology record should tag `subfield`: `clinical` | `cognitive` | `pop_myth`
+- **Top traps (seed list):** Freud misattribution, left/right brain myth, "chemical imbalance" simplification, Stockholm syndrome misuse, Maslow everywhere
 
-## B. History
+## B. History — **Global**
 
-1. **Geographic focus:** Global, East Asia, Western, or user-priority regions?
-2. **Time range:** Ancient only, medieval–modern, or through 21st century?
-3. **Event types:** Wars, inventions, biographies, cultural myths — which first?
-4. **Source standard:** Require primary source IDs in every record?
-5. **Top 5 myths** you want the benchmark to trap (model-friendly popular errors)?
+- **Geography:** Worldwide events and myths — not limited to one region
+- **Implication:** Records require `region` + `dateConsensus` + `primarySource` fields
+- **Top myths (seed list):** Marco Polo invented pasta, "medieval people thought earth was flat", Napoleon height myth, Great Wall visible from space, Vikings horned helmets
 
-## C. Religion
+## C. Religion — **Multi-tradition**
 
-1. **Traditions in scope:** Which families first? (e.g. Christianity, Buddhism, Daoism, Islam, folk religion)
-2. **Claim types:** Separate theological answers from historical-critical answers — always, or per question?
-3. **Scripture focus:** Authorship disputes (like philosophy) or doctrinal boundary disputes?
-4. **Sensitivity policy:** How should the teacher agent handle interfaith comparisons?
-5. **Language:** Sacred text names in original scripts (阿拉伯文, 梵文, 希伯來文) required?
+**In scope first:** Buddhism, Daoism, Christianity, Islam, Confucian ritual religion (祭祀 / 儒家禮教)
 
-## D. Cross-domain (AGI goal)
+**Claim handling — Council / debate mode**
 
-1. **Unified benchmark** across all four domains, or separate leaderboards per domain?
-2. **Training mix:** Single system prompt for all domains, or domain-specific teacher agents?
-3. **Target audience:** Researchers, students, fine-tuners, or general public?
-4. **Monetization / premium:** Will Sophia AGI stay 100% MIT OSS forever?
+When theology and history conflict, the teacher agent uses **structured debate**, not a single blended answer:
+
+1. **Council panel** — name the traditions or scholarly schools represented
+2. **Theological voice** — "Within tradition X, the claim is…"
+3. **Historical-critical voice** — "Primary sources and scholarship suggest…"
+4. **Debate mode** — surface the tension explicitly; do not merge into one false consensus
+5. **中文 summary** — same structure, tradition labels preserved
+
+## D. Cross-domain
+
+| Question | Answer |
+|----------|--------|
+| Benchmark structure | **Per-domain leaderboards** + combined rollup |
+| Language | **Always bilingual** EN + 中文 (all domains) |
+| Training agents | Domain-tagged examples; shared source-discipline system prompt |
+| OSS | MIT, public corpus |
 
 ---
 
-## Answers (fill in)
+## Next implementation steps (from answers)
 
-### Psychology
-
-- Scope:
-- Top 5 traps:
-- Lineage splits:
-- Languages:
-- Sensitivity:
-
-### History
-
-- Geography:
-- Time range:
-- Event types:
-- Source standard:
-- Top 5 myths:
-
-### Religion
-
-- Traditions:
-- Theological vs historical:
-- Scripture vs doctrine:
-- Interfaith policy:
-- Languages:
-
-### Cross-domain
-
-- Benchmark structure:
-- Training agents:
-- Audience:
-- OSS commitment:
+1. Split leaderboards: `benchmark/results/leaderboard-{domain}.json`
+2. Populate starter records in psychology / history / religion JSON files
+3. Add `subfield` to psychology schema usage
+4. Add religion `answerMode: council_debate` to training metadata
+5. Expand benchmark with first cross-domain trap questions

@@ -1,1 +1,28 @@
-{}
+{
+  "cognitive_dissonance": {
+    "recordId": "cognitive_dissonance",
+    "domain": "psychology",
+    "recordType": "concept",
+    "canonicalTitleEn": "cognitive dissonance",
+    "canonicalTitleZh": "認知失調",
+    "subfield": "cognitive",
+    "attributedAuthor": "leon_festinger",
+    "authorConfidence": "attributed",
+    "period": "1957",
+    "doNotAttributeTo": ["sigmund_freud", "carl_jung"],
+    "doNotMergeWith": ["freudian", "pop_psych"],
+    "notes": "Festinger (1957); not a Freudian concept — common model conflation trap"
+  },
+  "left_brain_right_brain_pop": {
+    "recordId": "left_brain_right_brain_pop",
+    "domain": "psychology",
+    "recordType": "concept",
+    "canonicalTitleEn": "left brain / right brain personality dichotomy",
+    "canonicalTitleZh": "左右腦人格二分法",
+    "subfield": "pop_myth",
+    "attributedAuthor": null,
+    "authorConfidence": "disputed",
+    "doNotAttributeTo": ["roger_sperry"],
+    "notes": "Sperry's split-brain research does not support pop 'left=logic/right=creativity' teaching"
+  }
+}

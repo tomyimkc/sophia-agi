@@ -1,1 +1,25 @@
-{}
+{
+  "marco_polo_pasta_myth": {
+    "recordId": "marco_polo_pasta_myth",
+    "domain": "history",
+    "recordType": "event",
+    "canonicalTitleEn": "Marco Polo introduced pasta to Italy",
+    "canonicalTitleZh": "馬可波羅將麵食傳入意大利",
+    "region": "global",
+    "dateConsensus": "mythologized_modern",
+    "authorConfidence": "anachronism_risk",
+    "primarySource": null,
+    "notes": "Popular myth; pasta-like foods predate Polo in Mediterranean — trap for model casual causation"
+  },
+  "flat_earth_medieval_myth": {
+    "recordId": "flat_earth_medieval_myth",
+    "domain": "history",
+    "recordType": "event",
+    "canonicalTitleEn": "Medieval Europeans universally believed the earth was flat",
+    "canonicalTitleZh": "中世紀歐洲普遍認為地球是平的",
+    "region": "europe",
+    "dateConsensus": "mythologized_modern",
+    "authorConfidence": "disputed",
+    "notes": "Educated medieval cosmology often used spherical earth; flat-earth 'Dark Ages' is modern myth"
+  }
+}

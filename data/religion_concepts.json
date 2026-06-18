@@ -1,1 +1,27 @@
-{}
+{
+  "dao_de_jing_daoist_scripture": {
+    "recordId": "dao_de_jing_daoist_scripture",
+    "domain": "religion",
+    "recordType": "text",
+    "canonicalTitleZh": "道德經",
+    "canonicalTitleEn": "Dao De Jing",
+    "tradition": "daoist",
+    "attributedAuthor": "laozi",
+    "authorConfidence": "legendary",
+    "answerMode": "council_debate",
+    "doNotMergeWith": ["confucian_ritual", "buddhism"],
+    "notes": "Daoist scripture layer — overlaps philosophy attribution; religion record tracks ritual/theological reception"
+  },
+  "confucian_ancestor_veneration": {
+    "recordId": "confucian_ancestor_veneration",
+    "domain": "religion",
+    "recordType": "concept",
+    "canonicalTitleZh": "祭祖",
+    "canonicalTitleEn": "ancestor veneration in Confucian ritual religion",
+    "tradition": "confucian_ritual",
+    "authorConfidence": "consensus",
+    "answerMode": "council_debate",
+    "doNotMergeWith": ["christianity", "islam", "buddhism"],
+    "notes": "Ritual religion distinct from philosophical Confucianism — boundary trap for models"
+  }
+}

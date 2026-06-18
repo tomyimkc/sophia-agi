@@ -1,6 +1,12 @@
 {
-  "benchmark": "sophia-attribution-v1",
+  "benchmark": "sophia-combined-rollup",
   "updated": "2026-06-18",
+  "perDomainLeaderboards": [
+    "leaderboard-philosophy.json",
+    "leaderboard-psychology.json",
+    "leaderboard-history.json",
+    "leaderboard-religion.json"
+  ],
   "entries": [
     {
       "model": "seed-training-example (reference)",

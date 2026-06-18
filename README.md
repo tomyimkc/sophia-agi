@@ -25,15 +25,18 @@ python tools/run_benchmark.py template    # create model response template
 python tools/run_benchmark.py score benchmark/responses.template.json
 ```
 
-## Sophia Attribution Benchmark (v1)
+## Benchmarks (per-domain leaderboards)
 
-| Model | Score | Passed |
-|-------|-------|--------|
-| Seed training example (reference) | 100% | 4/4 |
+| Domain | Leaderboard | Status |
+|--------|-------------|--------|
+| Philosophy | [leaderboard-philosophy.json](benchmark/results/leaderboard-philosophy.json) | 4 cases live |
+| Psychology | [leaderboard-psychology.json](benchmark/results/leaderboard-psychology.json) | Coming soon |
+| History | [leaderboard-history.json](benchmark/results/leaderboard-history.json) | Coming soon |
+| Religion | [leaderboard-religion.json](benchmark/results/leaderboard-religion.json) | Council/debate mode |
 
-Submit your model: fill `benchmark/responses.template.json`, then `python tools/run_benchmark.py score your-file.json`. Open a PR to update `benchmark/results/leaderboard.json`.
+**Philosophy v1 — reference score:** seed training example **100%** (4/4)
 
-Benchmark spec: `tests/attribution_bench.json`
+Submit scores: fill `benchmark/responses.template.json` → `python tools/run_benchmark.py score your-file.json` → PR to update the domain leaderboard.
 
 ## Repository layout
 
