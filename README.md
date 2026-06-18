@@ -92,6 +92,7 @@ See [docs/08-Domains/Overview.md](docs/08-Domains/Overview.md) and answer [Expan
 
 ## Roadmap & growth
 
+- [**2026 Year-Top Roadmap**](docs/07-Growth/2026-Year-Top-Roadmap.md) — stars, authority, category ownership
 - [Open Intelligence Plan](docs/06-Roadmap/Open-Intelligence-Plan.md)
 - [90-Day Launch Playbook](docs/07-Growth/90-Day-Launch.md)
 - [Good first issues](GOOD_FIRST_ISSUES.md)
