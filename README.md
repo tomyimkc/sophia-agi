@@ -1,24 +1,26 @@
-# Source Discipline
+# Sophia AGI
 
-Open-source corpus, training data, and tooling for **provenance-aware philosophy education** — teaching AI (and humans) to distinguish real authorship from legendary attribution across Eastern and Western intellectual traditions.
+**Wisdom before intelligence.** Open-source corpus and tooling to train AGI-shaped systems in **provenance-aware philosophy** — knowing *who wrote what* before reasoning with ideas.
 
-## Why this project
+> *Sophia* (σοφία) — wisdom in the Greek philosophical tradition. This project treats rigorous authorship and tradition boundaries as a foundation layer for trustworthy general intelligence.
 
-Philosophy models fail in predictable ways: they merge lineages (e.g. attributing 《道德經》 to Confucius), treat compilers as authors, and ignore uncertainty (Laozi historicity). **Source discipline** is the practice of following evidence about who wrote what, when, and in which tradition — before reasoning with the ideas.
+## Why Sophia AGI
 
-This repository holds:
+Language models confuse lineages: they attribute 《道德經》 to Confucius, treat compilers as authors, and flatten 儒家 and 道家 into one voice. **Source discipline** — our core method — fixes that by enforcing evidence-based attribution before belief propagation.
+
+This repository provides:
 
 - Structured **attribution data** (machine-readable)
-- **Dispute notes** (human-readable, bilingual)
-- **Training examples** for fine-tuning or evaluation
-- **Validation tools** to catch misattribution
-- A **teacher agent spec** for generating new training pairs
+- **Dispute notes** on contested authorship (bilingual)
+- **Training examples** for fine-tuning and evaluation
+- **Validation tools** that catch misattribution
+- A **teacher agent** (`grok-cli-teacher`) for scaling the corpus
 
 ## Quick start
 
 ```bash
-git clone https://github.com/tomyimkc/source-discipline.git
-cd source-discipline
+git clone https://github.com/tomyimkc/sophia-agi.git
+cd sophia-agi
 python tools/validate_attribution.py
 python tools/export_training_jsonl.py --out training/corpus.jsonl
 ```
@@ -26,7 +28,7 @@ python tools/export_training_jsonl.py --out training/corpus.jsonl
 ## Repository layout
 
 ```text
-source-discipline/
+sophia-agi/
 ├── docs/           # Documentation and dispute notes
 ├── data/           # attributions.json, traditions.json
 ├── training/       # JSONL-ready examples
@@ -35,14 +37,14 @@ source-discipline/
 └── .grok/agents/   # grok-cli-teacher agent spec
 ```
 
+## Roadmap
+
+See [docs/06-Roadmap/Open-Intelligence-Plan.md](docs/06-Roadmap/Open-Intelligence-Plan.md) for the step-by-step path from philosophy teacher → epistemic gate → AGI-shaped stack.
+
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Every new text must include an attribution record in `data/attributions.json` and, when contested, a dispute note in `docs/04-Disputes/`.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
 MIT — see [LICENSE](LICENSE).
-
-## Citation
-
-If you use this corpus in research or training, please cite the repository URL and note which commit or release you used.

@@ -1,10 +1,10 @@
-# Roadmap: Open epistemic intelligence
+# Sophia AGI Roadmap
 
-Step-by-step plan to grow this repository into a general **provenance gate** for AI systems.
+Step-by-step plan to grow this repository into a general **provenance gate** for AGI-shaped systems.
 
 ## Phase 0 — Corpus bootstrap ✅ (this release)
 
-- [x] Public repo structure
+- [x] Public repo: **Sophia AGI**
 - [x] Attribution schema
 - [x] First dispute note + training example
 - [x] Validation tooling
@@ -29,11 +29,11 @@ Step-by-step plan to grow this repository into a general **provenance gate** for
 
 ## Phase 4 — Multi-agent integration (Weeks 10–16)
 
-- [ ] Pluggable gate for any LLM orchestrator
+- [ ] Pluggable epistemic gate for any LLM orchestrator
 - [ ] Correction loop: failed eval → new training example
 - [ ] Cross-domain attribution schema (history, law, science)
 
-## Phase 5 — General intelligence milestones
+## Phase 5 — AGI-shaped milestones
 
 | Milestone | Description |
 |-----------|-------------|
@@ -41,6 +41,6 @@ Step-by-step plan to grow this repository into a general **provenance gate** for
 | M2 | Runtime gate blocks lineage-merge errors |
 | M3 | Gate generalizes beyond philosophy |
 | M4 | Self-correcting loop from eval failures |
-| M5 | Planner + tools + memory + provenance gate |
+| M5 | Planner + tools + memory + Sophia epistemic gate |
 
 See `tests/attribution_bench.json` for measurable pass criteria.

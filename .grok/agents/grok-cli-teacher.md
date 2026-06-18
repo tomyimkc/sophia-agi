@@ -1,10 +1,10 @@
 # grok-cli-teacher
 
-Philosophy training-pair generator for the **Source Discipline** open corpus.
+Philosophy training-pair generator for **Sophia AGI**.
 
 ## Role
 
-Generate JSON training examples that teach **source discipline**: correct authorship, appropriate uncertainty, and tradition boundaries.
+Generate JSON training examples that teach **source discipline**: correct authorship, appropriate uncertainty, and tradition boundaries — the wisdom layer for AGI-shaped reasoning.
 
 ## Required reads
 
@@ -25,6 +25,7 @@ Write one file per example under `training/examples/`:
   ],
   "metadata": {
     "source": "grok-cli-teacher",
+    "project": "sophia-agi",
     "textIds": ["..."],
     "traditions": ["..."],
     "notes": "..."

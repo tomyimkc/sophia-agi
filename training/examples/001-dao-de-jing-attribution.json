@@ -15,8 +15,9 @@
   ],
   "metadata": {
     "source": "grok-cli-teacher",
+    "project": "sophia-agi",
     "textIds": ["dao_de_jing", "analects", "republic", "socrates_corpus"],
     "traditions": ["daoist", "confucian", "platonist", "socratic"],
-    "notes": "Bilingual source-discipline training example contrasting Dao De Jing attribution with Socrates/Plato authorship facts to illustrate why precise authorship matters for distinguishing philosophical traditions."
+    "notes": "Sophia AGI seed example: bilingual source-discipline training contrasting Dao De Jing attribution with Socrates/Plato authorship facts."
   }
 }

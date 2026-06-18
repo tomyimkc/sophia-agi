@@ -1,6 +1,6 @@
-# Contributing
+# Contributing to Sophia AGI
 
-Thank you for helping build provenance-aware philosophy training data.
+Thank you for helping build provenance-aware philosophy training data toward AGI-shaped reasoning.
 
 ## What we accept
 
@@ -29,7 +29,8 @@ Thank you for helping build provenance-aware philosophy training data.
   ],
   "metadata": {
     "source": "grok-cli-teacher",
-    "text_ids": ["dao_de_jing"],
+    "project": "sophia-agi",
+    "textIds": ["dao_de_jing"],
     "traditions": ["daoist", "confucian"],
     "notes": "..."
   }
@@ -39,7 +40,7 @@ Thank you for helping build provenance-aware philosophy training data.
 Assistant answers must:
 
 - State attribution with appropriate uncertainty
-- Explain why provenance matters
+- Explain why provenance matters for intellectual history
 - Use English with canonical Chinese terms where relevant
 - End with a concise 中文 summary
 

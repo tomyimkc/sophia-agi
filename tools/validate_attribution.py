@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate attribution records and training examples in the Source Discipline corpus."""
+"""Validate attribution records and training examples in the Sophia AGI corpus."""
 
 from __future__ import annotations
 

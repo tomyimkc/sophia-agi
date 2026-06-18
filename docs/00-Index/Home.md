@@ -1,6 +1,8 @@
-# Source Discipline — Documentation Home
+# Sophia AGI — Documentation Home
 
-Open corpus for provenance-aware philosophy education and AI training.
+Open corpus for provenance-aware philosophy education and AGI-shaped epistemic training.
+
+**Tagline:** Wisdom before intelligence.
 
 ## Start here
 
@@ -10,8 +12,8 @@ Open corpus for provenance-aware philosophy education and AI training.
 | Tradition boundaries | `docs/03-Traditions/` |
 | Contested authorship | `docs/04-Disputes/` |
 | Training examples | `training/examples/` |
-| Roadmap | `docs/06-Roadmap/Open-Intelligence-Plan.md` |
+| AGI roadmap | `docs/06-Roadmap/Open-Intelligence-Plan.md` |
 
-## Core principle
+## Core method: source discipline
 
-**Source discipline** — follow evidence about who wrote what before using an idea in argument, comparison, or synthesis.
+Follow evidence about **who wrote what** before using an idea in argument, comparison, or synthesis. This is the epistemic foundation layer for Sophia AGI.

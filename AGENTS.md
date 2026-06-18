@@ -1,6 +1,6 @@
-# Source Discipline — AI Assistant Guide
+# Sophia AGI — AI Assistant Guide
 
-This repository trains and evaluates **provenance-aware philosophy reasoning**.
+Open corpus for **provenance-aware philosophy** and AGI-shaped epistemic reasoning.
 
 ## Read first
 
@@ -11,8 +11,8 @@ This repository trains and evaluates **provenance-aware philosophy reasoning**.
 
 ## Rules
 
-- Never attribute a text to a figure listed in `do_not_attribute_to`.
-- Flag `author_confidence: legendary` or `compiled` as uncertain — do not state as settled fact.
+- Never attribute a text to a figure listed in `doNotAttributeTo`.
+- Flag `authorConfidence: legendary` or `compiled` as uncertain — do not state as settled fact.
 - Keep 儒家 (Confucian) and 道家 (Daoist) lineages distinct unless evidence supports a link.
 - Training outputs: bilingual EN + 中文 summary; JSONL-compatible structure.
 
