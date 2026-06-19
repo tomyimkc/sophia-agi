@@ -1,5 +1,5 @@
 {
-  "version": "0.6.1",
+  "version": "0.6.2",
   "trainingExamples": 518,
   "domains": [
     "philosophy",
@@ -169,6 +169,79 @@
       "scorePct": 87.0
     },
     "hf": "https://huggingface.co/tomyimkc/sophia-agi-lora-v1"
+  },
+  "agiProof": {
+    "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
+    "proofLadder": [
+      {
+        "level": 0,
+        "name": "Corpus and schema",
+        "status": "implemented"
+      },
+      {
+        "level": 1,
+        "name": "Reproducible local benchmarks",
+        "status": "implemented"
+      },
+      {
+        "level": 2,
+        "name": "RAG and local model baselines",
+        "status": "implemented"
+      },
+      {
+        "level": 3,
+        "name": "Baseline and ablation comparisons",
+        "status": "protocol-ready"
+      },
+      {
+        "level": 4,
+        "name": "Hidden reviewer packs",
+        "status": "protocol-ready"
+      },
+      {
+        "level": 5,
+        "name": "External public benchmarks",
+        "status": "not_run"
+      },
+      {
+        "level": 6,
+        "name": "Third-party replication",
+        "status": "not_run"
+      }
+    ],
+    "externalBenchmarks": [
+      {
+        "name": "ARC-AGI / ARC-AGI-3",
+        "status": "not_run",
+        "purpose": "novel reasoning and skill acquisition"
+      },
+      {
+        "name": "GAIA-style tasks",
+        "status": "not_run",
+        "purpose": "tool-using assistant reasoning"
+      },
+      {
+        "name": "SWE-bench-style repo tasks",
+        "status": "not_run",
+        "purpose": "software maintenance agency"
+      },
+      {
+        "name": "METR-style autonomy",
+        "status": "not_run",
+        "purpose": "long-horizon autonomous work"
+      }
+    ],
+    "requiredProofData": [
+      "pre-registered AGI definition and thresholds",
+      "hidden reviewer packs that Sophia cannot see before evaluation",
+      "baseline and ablation deltas against raw models and missing Sophia components",
+      "long-horizon task logs with intervention counts",
+      "learning-under-shift pre/post results with append-only memory records",
+      "failure ledger with claim impact",
+      "third-party reproduction on a clean clone"
+    ],
+    "docs": "agi-proof/README.md",
+    "manifest": "agi-proof/evidence-manifest.json"
   },
   "links": {
     "github": "https://github.com/tomyimkc/sophia-agi",

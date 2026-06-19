@@ -1,7 +1,7 @@
 Copy into GitHub → sophia-agi → ⚙️ About (right sidebar)
 
 Description:
-Open corpus + benchmark for provenance-aware LLM answers (source discipline)
+AGI-candidate proof package for provenance-aware reasoning, source discipline, RAG/local-model benchmarks
 
 Website:
 https://tomyimkc.github.io/sophia-agi/
@@ -17,3 +17,5 @@ chinese
 attribution
 open-source
 nlp
+agi
+agents

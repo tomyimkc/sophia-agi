@@ -2,15 +2,32 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.6.1-blue)
-![Training examples](https://img.shields.io/badge/training_examples-500-green)
+![Version](https://img.shields.io/badge/version-0.6.2-blue)
+![Training examples](https://img.shields.io/badge/training_examples-518-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
-**Wisdom before intelligence.** Open-source corpus and benchmark for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea* — before AGI-scale belief propagation.
+**Wisdom before intelligence.** Open-source corpus, benchmark, RAG/local-model baseline, and **AGI-candidate proof package** for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea* — before AGI-scale belief propagation.
 
 **Thesis site:** https://tomyimkc.github.io/sophia-agi/
 
 > *Sophia* (σοφία) = wisdom. Four domains active — philosophy, psychology, history, religion — plus a **three-path agent** (advisor, repo, life).
+
+## AGI-candidate proof package
+
+Sophia is **not claimed as proven AGI**. The stronger and more defensible public claim is:
+
+> Sophia AGI is an AGI-candidate proof package for provenance-aware reasoning.
+
+The proof package defines the operational AGI definition, pre-registered thresholds, current benchmark evidence, external benchmark gaps, ablation plan, hidden-reviewer protocol, long-horizon autonomy logs, learning-under-shift protocol, failure ledger, and third-party replication checklist.
+
+- Evidence package: [agi-proof/README.md](agi-proof/README.md)
+- Machine-readable manifest: [agi-proof/evidence-manifest.json](agi-proof/evidence-manifest.json)
+- Public thesis chapter: https://tomyimkc.github.io/sophia-agi/#agi-proof
+
+```bash
+python tools/build_agi_proof_package.py
+python tools/build_web_data.py
+```
 
 ## Why it matters
 
@@ -87,6 +104,7 @@ sophia-agi/
 ├── docs/              # disputes, growth playbook, domain expansion
 ├── training/          # JSONL-ready examples
 ├── benchmark/         # responses template + leaderboard
+├── agi-proof/         # AGI-candidate proof package and evidence manifest
 ├── tools/             # validate, export, score, stats, serve_web
 ├── web/               # thesis UI (council-decided; GitHub Pages)
 ├── tests/             # attribution benchmark cases
@@ -142,7 +160,7 @@ See [Model-Lab.md](docs/09-Agent/Model-Lab.md) and [LoRA-Experiment.md](docs/09-
 
 ## Hugging Face
 
-Dataset: [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) (**500** examples, synced from `training/corpus.jsonl`).
+Dataset: [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) (**518** examples, synced from `training/corpus.jsonl`).
 
 ## Contributing
 

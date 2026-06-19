@@ -25,6 +25,13 @@ def _models_meta() -> dict:
     return {}
 
 
+def _agi_proof_meta() -> dict:
+    manifest_path = ROOT / "agi-proof" / "evidence-manifest.json"
+    if manifest_path.exists():
+        return json.loads(manifest_path.read_text(encoding="utf-8"))
+    return {}
+
+
 def main() -> int:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     examples = len(list((ROOT / "training" / "examples").glob("*.json")))
@@ -35,6 +42,7 @@ def main() -> int:
             leaderboards[domain] = json.loads(path.read_text(encoding="utf-8"))
 
     models = _models_meta()
+    agi_proof = _agi_proof_meta()
     payload = {
         "version": version,
         "trainingExamples": examples,
@@ -51,6 +59,17 @@ def main() -> int:
             "base": models.get("baseModel", "Qwen/Qwen2.5-3B-Instruct"),
             "benchmark": models.get("benchmarkScore", {}),
             "hf": models.get("hfModelRepo", ""),
+        },
+        "agiProof": {
+            "claimBoundary": agi_proof.get(
+                "claimBoundary",
+                "Sophia is an AGI-candidate proof package; true AGI is not claimed.",
+            ),
+            "proofLadder": agi_proof.get("proofLadder", []),
+            "externalBenchmarks": agi_proof.get("externalBenchmarks", []),
+            "requiredProofData": agi_proof.get("requiredProofData", []),
+            "docs": "agi-proof/README.md",
+            "manifest": "agi-proof/evidence-manifest.json",
         },
         "links": {
             "github": "https://github.com/tomyimkc/sophia-agi",

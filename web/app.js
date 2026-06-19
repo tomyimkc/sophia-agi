@@ -8,6 +8,7 @@ async function loadManifest() {
     manifest = await res.json();
     renderStats();
     renderLeaderboards();
+    renderProofPackage();
   } catch {
     document.getElementById("stats").innerHTML =
       "<p class='agent-hint'>Run <code>python tools/build_web_data.py</code> and serve via <code>python tools/serve_web.py</code>.</p>";
@@ -49,6 +50,49 @@ function renderLeaderboards() {
     }
     section.appendChild(table);
     root.appendChild(section);
+  }
+}
+
+function renderProofPackage() {
+  const proof = manifest?.agiProof;
+  if (!proof) return;
+  const boundary = document.getElementById("proof-boundary");
+  if (boundary && proof.claimBoundary) boundary.textContent = proof.claimBoundary;
+
+  const ladder = document.getElementById("proof-ladder");
+  if (ladder) {
+    ladder.innerHTML = "";
+    for (const item of proof.proofLadder || []) {
+      const card = document.createElement("article");
+      card.className = "proof-card";
+      card.innerHTML = `
+        <div class="proof-level">Level ${item.level}</div>
+        <h3>${item.name}</h3>
+        <span class="proof-status">${item.status}</span>`;
+      ladder.appendChild(card);
+    }
+  }
+
+  const required = document.getElementById("proof-required");
+  if (required) {
+    required.innerHTML = "";
+    for (const item of proof.requiredProofData || []) {
+      const li = document.createElement("li");
+      li.textContent = item;
+      required.appendChild(li);
+    }
+  }
+
+  const external = document.getElementById("proof-external");
+  if (external) {
+    const table = document.createElement("table");
+    table.innerHTML = "<tr><th>Benchmark</th><th>Status</th><th>Purpose</th></tr>";
+    for (const item of proof.externalBenchmarks || []) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${item.name}</td><td>${item.status}</td><td>${item.purpose}</td>`;
+      table.appendChild(tr);
+    }
+    external.replaceChildren(table);
   }
 }
 

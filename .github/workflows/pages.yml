@@ -8,6 +8,8 @@ on:
     branches: [main]
     paths:
       - "web/**"
+      - "agi-proof/**"
+      - "tools/build_agi_proof_package.py"
       - "tools/build_web_data.py"
       - "benchmark/results/**"
       - "VERSION"
@@ -30,7 +32,9 @@ jobs:
         with:
           python-version: "3.12"
       - name: Build web manifest
-        run: python tools/build_web_data.py
+        run: |
+          python tools/build_agi_proof_package.py
+          python tools/build_web_data.py
       - name: Add .nojekyll for GitHub Pages
         run: touch web/.nojekyll
       - name: Deploy to gh-pages branch

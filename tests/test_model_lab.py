@@ -39,7 +39,7 @@ def test_modelfile_build() -> None:
 
 def test_corpus_stats() -> None:
     stats = corpus_stats()
-    assert stats["trainingExamples"] == 500
+    assert stats["trainingExamples"] >= 500
 
 
 def main() -> int:

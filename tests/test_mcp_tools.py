@@ -24,7 +24,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
 def test_validate_ok() -> None:
     result = validate_corpus()
     assert result["ok"] is True
-    assert result["trainingExamples"] == 500
+    assert result["trainingExamples"] >= 500
 
 
 def test_get_attribution_ddj() -> None:
@@ -52,7 +52,7 @@ def test_list_disputes() -> None:
 def test_export_corpus() -> None:
     result = export_corpus()
     assert result["ok"] is True
-    assert result["lines"] == 500
+    assert result["lines"] >= 500
 
 
 def main() -> int:

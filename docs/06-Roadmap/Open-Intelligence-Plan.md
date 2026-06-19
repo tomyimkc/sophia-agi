@@ -51,4 +51,18 @@ Step-by-step plan to grow this repository into a general **provenance gate** for
 | M4 | Self-correcting loop from eval failures |
 | M5 | Planner + tools + memory + Sophia epistemic gate |
 
+## AGI-Candidate Proof Package
+
+The proof package now lives in `agi-proof/`. It keeps the claim boundary explicit:
+Sophia is an AGI-candidate proof package, not proven AGI.
+
+Required next evidence before stronger claims:
+
+- hidden reviewer packs;
+- baseline and ablation deltas;
+- long-horizon autonomy logs;
+- learning-under-distribution-shift results;
+- external benchmark results;
+- third-party clean-clone reproduction.
+
 See `tests/attribution_bench.json` for measurable pass criteria.

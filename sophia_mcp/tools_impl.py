@@ -137,7 +137,8 @@ def export_corpus() -> dict:
     CORPUS_OUT.parent.mkdir(parents=True, exist_ok=True)
     with CORPUS_OUT.open("w", encoding="utf-8") as handle:
         for path in examples:
-            handle.write(path.read_text(encoding="utf-8").strip() + "\n")
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
     return {"ok": True, "path": str(CORPUS_OUT), "lines": len(examples)}
 
 

@@ -2,6 +2,23 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.6.2] - 2026-06-19
+
+### Added
+
+- `agi-proof/` — AGI-candidate proof package with operational definition,
+  pre-registered thresholds, external benchmark plan, ablation protocol,
+  hidden-reviewer protocol, long-horizon autonomy plan, learning-under-shift
+  protocol, failure ledger, and third-party replication checklist.
+- `tools/build_agi_proof_package.py` — writes
+  `agi-proof/evidence-manifest.json` from current repo evidence.
+- GitHub Pages thesis chapter for the AGI-candidate proof package.
+
+### Changed
+
+- README and repo-about copy now describe Sophia as an AGI-candidate proof
+  package while explicitly avoiding a proven-AGI claim.
+
 ## [0.6.1] - 2026-06-18
 
 ### Added
