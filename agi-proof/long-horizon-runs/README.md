@@ -23,3 +23,24 @@ Sophia needs evidence that it can work beyond single-turn answers.
 
 Runs with frequent human steering should be reported as partial autonomy, not
 full autonomy.
+
+## Harness
+
+`tools/run_long_horizon.py` is the run logger that records every required field
+above as append-only JSONL (so a run survives interruption and can be resumed),
+and emits a public summary with the autonomy classification (full / mostly /
+partial) and the duration tier.
+
+```bash
+# Short self-test demonstration of the harness (no credentials needed):
+python3.12 tools/run_long_horizon.py --self-test
+
+# A real timed run drives a longer spec; resume after interruption:
+python3.12 tools/run_long_horizon.py --spec my-run.json
+python3.12 tools/run_long_horizon.py --resume agi-proof/long-horizon-runs/<run>.log.jsonl \
+  --intervene "operator restarted backend"
+```
+
+The included demo report is tier `below-short-demo` (shorter than the 30-minute
+Short tier) — it proves the harness works, not that a 30-min/2h/1-day run has
+been done. Unit tests: `tests/test_long_horizon.py`.

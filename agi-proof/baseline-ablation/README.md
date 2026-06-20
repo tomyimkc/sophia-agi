@@ -29,3 +29,22 @@ question is whether Sophia's method adds value beyond the base model.
 Sophia-full should outperform raw and ablated variants on hidden tasks,
 especially attribution traps, tradition-boundary tasks, and mixed-domain
 questions.
+
+## Runner
+
+`tools/run_ablation_sophia.py` runs every mode over the same pack and the same
+scorer (the shared `run_case` pipeline in `tools/run_hidden_eval_sophia.py`), then
+publishes per-mode scores and `full-minus-mode` deltas plus a falsification check
+against `preregistered-thresholds.md` line 32.
+
+```bash
+# Smoke / demo on the visible example pack (needs a working backend):
+python3.12 tools/run_ablation_sophia.py agi-proof/baseline-ablation/example-pack.json \
+  --backend grok --modes all \
+  --out agi-proof/baseline-ablation/ablation-deltas-EXAMPLE.public-report.json
+```
+
+A real Level-3 artifact uses a private, reviewer-authored, unspent pack. Deltas
+are auto keyword/regex scores until two-pass manual semantic review is done. A
+null or negative delta is reported honestly — it is a valid scientific outcome.
+Unit tests: `tests/test_ablation_runner.py`.

@@ -1,0 +1,111 @@
+{
+  "packId": "ablation-example-visible-2026-06-20",
+  "createdAt": "2026-06-20",
+  "visibility": "revealed-after-eval",
+  "reviewer": {
+    "status": "example-only",
+    "note": "VISIBLE EXAMPLE PACK for smoke-testing the ablation/hidden/learning runners. This is NOT hidden evidence. A real Level-3 run requires a private, reviewer-authored, unspent pack per agi-proof/hidden-reviewer-packs/."
+  },
+  "salt": "example-not-secret",
+  "cases": [
+    {
+      "id": "phil_example_001",
+      "domain": "philosophy",
+      "prompt": "Did Confucius write the Dao De Jing? Identify the correct tradition and likely author, and keep Confucian and Daoist lineages distinct.",
+      "materials": [],
+      "scoring": {
+        "maxPoints": 3,
+        "rubric": [
+          "Denies the false attribution",
+          "Names Laozi / Daoist tradition for the Dao De Jing",
+          "Keeps 儒家 and 道家 distinct"
+        ],
+        "mustInclude": [
+          {"match": "Laozi", "aliases": ["老子", "Lao Tzu"]},
+          {"match": "Daoist", "aliases": ["道家", "Taoist"]}
+        ],
+        "mustAvoid": [
+          {"match": "Confucius wrote", "aliases": ["孔子寫", "Confucius authored"]}
+        ],
+        "manualReview": "semantic-review-required",
+        "semanticChecks": [
+          {"id": "phil_sem_001", "description": "Explains why the attribution is contested/false using source discipline."}
+        ]
+      }
+    },
+    {
+      "id": "hist_example_001",
+      "domain": "history",
+      "prompt": "When did the Western Roman Empire fall, and why is a single date an oversimplification?",
+      "materials": [],
+      "scoring": {
+        "maxPoints": 2,
+        "rubric": ["States 476 CE as the conventional date", "Qualifies that decline was gradual"],
+        "mustInclude": [
+          {"match": "476"},
+          {"match": "gradual", "aliases": ["process", "decline", "oversimpl"]}
+        ],
+        "manualReview": "semantic-review-required",
+        "semanticChecks": [
+          {"id": "hist_sem_001", "description": "Distinguishes the conventional date from the historical process."}
+        ]
+      }
+    },
+    {
+      "id": "psy_example_001",
+      "domain": "psychology",
+      "prompt": "Is the claim 'we only use 10% of our brains' supported by evidence? Label any pop-psychology myth.",
+      "materials": [],
+      "scoring": {
+        "maxPoints": 2,
+        "rubric": ["Labels the 10% claim a myth", "Cites that most of the brain is active"],
+        "mustInclude": [
+          {"match": "myth", "aliases": ["misconception", "迷思", "false"]}
+        ],
+        "mustAvoid": [
+          {"match": "we only use 10"}
+        ],
+        "manualReview": "semantic-review-required",
+        "semanticChecks": [
+          {"id": "psy_sem_001", "description": "Corrects the myth with an accurate account of brain activity."}
+        ]
+      }
+    },
+    {
+      "id": "coding_example_001",
+      "domain": "coding",
+      "prompt": "A Python function silently swallows exceptions with a bare 'except: pass'. Review the risk and propose a patch-level fix with test guidance.",
+      "materials": ["def load(p):\n    try:\n        return open(p).read()\n    except:\n        pass"],
+      "scoring": {
+        "maxPoints": 3,
+        "rubric": ["Names the bare-except risk", "Proposes a specific patch", "Mentions a test"],
+        "mustInclude": [
+          {"match": "except", "aliases": ["exception"]},
+          {"match": "test", "aliases": ["pytest", "unit test"]}
+        ],
+        "manualReview": "semantic-review-required",
+        "semanticChecks": [
+          {"id": "coding_sem_001", "description": "Patch is concrete (names the exception to catch / re-raises) and reviews edge cases."}
+        ]
+      }
+    },
+    {
+      "id": "tool_example_001",
+      "domain": "tool_use",
+      "prompt": "Verify the repository's proof manifest is valid JSON and report what the tool output proves.",
+      "materials": [],
+      "requiresToolLog": true,
+      "scoring": {
+        "maxPoints": 2,
+        "rubric": ["Cites the actual tool/command log", "Explains what the returncode proves"],
+        "mustInclude": [
+          {"match": "returncode", "aliases": ["return code", "exit code", "0"]}
+        ],
+        "manualReview": "semantic-review-required",
+        "semanticChecks": [
+          {"id": "tool_sem_001", "description": "Grounds the claim in the runner-collected command log, not assertion."}
+        ]
+      }
+    }
+  ]
+}

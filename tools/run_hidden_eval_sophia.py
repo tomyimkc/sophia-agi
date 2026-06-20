@@ -19,6 +19,7 @@ import tempfile
 import time
 import urllib.error
 import urllib.request
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -33,7 +34,7 @@ if str(TOOLS_DIR) not in sys.path:
 from agent.gate import check_response  # noqa: E402
 from agent.coding_council import format_coding_council, route_coding_council  # noqa: E402
 from agent.llm import complete  # noqa: E402
-from agent.prompts import MODE_PROMPTS  # noqa: E402
+from agent.prompts import MODE_PROMPTS, MODE_PROMPTS_NO_COUNCIL  # noqa: E402
 from agent.retrieval import format_context, retrieve  # noqa: E402
 from agent.rubric_review import build_rubric_review, format_rubric_review  # noqa: E402
 from agent.web_evidence import format_evidence_context, gather_evidence  # noqa: E402
@@ -747,6 +748,296 @@ def failure_training_candidates(private_report: dict[str, Any], payload: dict[st
     return candidates
 
 
+# ---------------------------------------------------------------------------
+# Reusable single-case pipeline (shared by the hidden runner and the ablation
+# runner). The default ablation is sophia-full, so main() behaviour is
+# unchanged; run_ablation_sophia.py passes component-suppressed variants.
+# ---------------------------------------------------------------------------
+
+RAW_SYSTEM_PROMPT = (
+    "You are a capable, knowledgeable assistant. Answer the task as accurately, "
+    "completely, and helpfully as you can, showing brief reasoning where it helps. "
+    "There are no special formatting requirements."
+)
+
+NEUTRAL_GATE: dict[str, Any] = {
+    "passed": True,
+    "warnings": [],
+    "violations": [],
+    "checks": [],
+    "gateApplied": False,
+}
+
+
+@dataclass(frozen=True)
+class RunConfig:
+    """Backend/runtime configuration shared by every case in a run."""
+
+    backend: str
+    timeout_sec: int = 240
+    grok_cwd: Path | None = None
+    repair: bool = False
+    online_evidence: bool = False
+    web_provider: str = "off"
+    web_search_top_k: int = 5
+    local_evidence_top_k: int = 3
+
+
+@dataclass(frozen=True)
+class Ablation:
+    """Which Sophia components are active for a case.
+
+    Maps 1:1 onto the seven modes in agi-proof/baseline-ablation/README.md.
+    """
+
+    label: str = "sophia-full"
+    raw_system: bool = False  # neutral RAW_SYSTEM_PROMPT instead of MODE_PROMPTS
+    use_kb: bool = True  # retrieval context (local source records)
+    use_evidence: bool = True  # local/web evidence gathering
+    use_council: bool = True  # coding/figure council synthesis
+    use_gate: bool = True  # post-generation epistemic gate
+    use_memory: bool = True  # append-only learning probe + memory diff
+    use_tools: bool = True  # operational tool logs
+    allow_repair: bool = True  # bounded Sophia repair attempt
+
+
+SOPHIA_FULL = Ablation()
+
+ABLATION_MODES: dict[str, Ablation] = {
+    "raw-model": Ablation(
+        label="raw-model",
+        raw_system=True,
+        use_kb=False,
+        use_evidence=False,
+        use_council=False,
+        use_gate=False,
+        use_memory=False,
+        use_tools=False,
+        allow_repair=False,
+    ),
+    "raw-model-plus-tools": Ablation(
+        label="raw-model-plus-tools",
+        raw_system=True,
+        use_kb=False,
+        use_evidence=False,
+        use_council=False,
+        use_gate=False,
+        use_memory=False,
+        use_tools=True,
+        allow_repair=False,
+    ),
+    "sophia-full": SOPHIA_FULL,
+    "sophia-no-kb": Ablation(label="sophia-no-kb", use_kb=False, use_evidence=False),
+    "sophia-no-gate": Ablation(label="sophia-no-gate", use_gate=False),
+    "sophia-no-memory": Ablation(label="sophia-no-memory", use_memory=False),
+    "sophia-no-council": Ablation(label="sophia-no-council", use_council=False),
+}
+
+
+def build_raw_user_prompt(case: dict[str, Any], *, operational_evidence: str = "") -> str:
+    """Minimal task prompt with no Sophia source-discipline contract.
+
+    Used by the raw-model baselines so the comparison does not leak Sophia
+    discipline into the base model.
+    """
+    materials = "\n".join(f"- {item}" for item in case.get("materials", [])) or "(none)"
+    tool_block = ""
+    if operational_evidence:
+        tool_block = f"\n\n## Tool output available to you\n{operational_evidence}\n"
+    return f"""Task ({case["domain"]}):
+{case["prompt"]}
+
+Materials:
+{materials}
+{tool_block}"""
+
+
+def run_case(
+    case: dict[str, Any],
+    pack_id: str,
+    *,
+    config: RunConfig,
+    ablation: Ablation = SOPHIA_FULL,
+) -> dict[str, Any]:
+    """Run one case through the (optionally ablated) Sophia pipeline.
+
+    Returns every per-case artifact both runners need so they can assemble an
+    identical payload shape for score_pack/sanitized_report.
+    """
+    case_id = case["id"]
+
+    if ablation.use_kb:
+        chunks = retrieve(case["prompt"], top_k=8)
+        context = format_context(chunks)
+        case_sources = [chunk.path for chunk in chunks]
+    else:
+        context = ""
+        case_sources = []
+
+    if ablation.use_evidence:
+        evidence = gather_evidence(
+            case["prompt"],
+            local_top_k=config.local_evidence_top_k,
+            web_top_k=config.web_search_top_k,
+            online=config.online_evidence,
+            provider=config.web_provider,
+        )
+        evidence_context = format_evidence_context(evidence)
+    else:
+        evidence = {}
+        evidence_context = ""
+
+    mode = task_mode(case)
+    if ablation.raw_system:
+        system = RAW_SYSTEM_PROMPT
+    elif not ablation.use_council:
+        # Ablate council instructions at the prompt level too, not just the
+        # structured coding route, so sophia-no-council genuinely removes
+        # council-style multi-voice synthesis (incl. the religion-figure council).
+        system = MODE_PROMPTS_NO_COUNCIL[mode]
+    else:
+        system = MODE_PROMPTS[mode]
+
+    council_route: dict[str, Any] = {}
+    council_context = ""
+    if ablation.use_council and case["domain"] in {"coding", "tool_use", "planning", "learning"}:
+        council_route = route_coding_council(case["prompt"], case.get("materials", []))
+        council_context = format_coding_council(council_route)
+
+    tool_log = run_operational_tools(case) if ablation.use_tools else {}
+
+    learning_probe: dict[str, Any] = {}
+    if ablation.use_memory:
+        learning_probe = run_learning_probe(
+            case,
+            context,
+            system,
+            backend=config.backend,
+            timeout_sec=config.timeout_sec,
+            grok_cwd=config.grok_cwd,
+        )
+    memory_diff = learning_probe.get("memoryDiff", {})
+
+    operational_evidence = format_operational_evidence(
+        tool_log=tool_log,
+        memory_diff=memory_diff,
+        learning_probe=learning_probe,
+    )
+
+    if ablation.raw_system:
+        user = build_raw_user_prompt(
+            case,
+            operational_evidence=operational_evidence if ablation.use_tools else "",
+        )
+    else:
+        user = build_user_prompt(
+            case,
+            context,
+            coding_council=council_context,
+            evidence_context=evidence_context,
+            operational_evidence=operational_evidence,
+        )
+
+    first = call_model(
+        system,
+        user,
+        backend=config.backend,
+        timeout_sec=config.timeout_sec,
+        grok_cwd=config.grok_cwd,
+    )
+    answer = first["answer"]
+    if ablation.use_gate:
+        gate = check_response(answer, mode=mode, question=case["prompt"], domain=None)
+    else:
+        gate = dict(NEUTRAL_GATE)
+
+    def _score_one(candidate: str) -> dict[str, Any]:
+        return score_pack(
+            {"packId": pack_id, "cases": [case]},
+            {
+                "responses": {case_id: candidate},
+                "toolLogs": {case_id: tool_log},
+                "memoryDiffs": {case_id: memory_diff},
+            },
+        )["results"][0]
+
+    provisional = _score_one(answer)
+    review = build_rubric_review(
+        case,
+        answer,
+        provisional,
+        gate,
+        sources=case_sources,
+        evidence=evidence,
+        tool_log=tool_log,
+        memory_diff=memory_diff,
+    )
+
+    repair_count = 0
+    if should_attempt_repair(
+        enabled=config.repair and ablation.allow_repair,
+        first=first,
+        provisional=provisional,
+        gate=gate,
+    ):
+        repair_count = 1
+        repair = {
+            **repair_payload(provisional, gate),
+            "rubricReview": review_payload(review),
+        }
+        second = call_model(
+            system,
+            build_user_prompt(
+                case,
+                context,
+                repair=repair,
+                coding_council=council_context,
+                evidence_context=evidence_context,
+                operational_evidence=operational_evidence,
+                rubric_review_context=format_rubric_review(review),
+            ),
+            backend=config.backend,
+            timeout_sec=config.timeout_sec,
+            grok_cwd=config.grok_cwd,
+        )
+        if second["answer"].strip():
+            answer = second["answer"]
+            first["repair"] = second
+            if ablation.use_gate:
+                gate = check_response(answer, mode=mode, question=case["prompt"], domain=None)
+            final_score = _score_one(answer)
+            review = build_rubric_review(
+                case,
+                answer,
+                final_score,
+                gate,
+                sources=case_sources,
+                evidence=evidence,
+                tool_log=tool_log,
+                memory_diff=memory_diff,
+            )
+
+    model_log = {k: v for k, v in first.items() if k != "answer"}
+    if learning_probe:
+        model_log["learningProbe"] = learning_probe
+
+    return {
+        "answer": answer,
+        "sources": case_sources,
+        "gate": gate,
+        "modelLog": model_log,
+        "toolLog": tool_log,
+        "memoryDiff": memory_diff,
+        "repairAttempts": repair_count,
+        "codingCouncilRoute": council_route,
+        "webEvidence": evidence,
+        "rubricReview": review,
+        "returncode": first.get("returncode"),
+        "elapsedSec": first.get("elapsedSec"),
+        "ablation": ablation.label,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run hidden eval pack through Sophia pipeline")
     parser.add_argument("pack", type=Path)
@@ -834,144 +1125,33 @@ def main() -> int:
     web_evidence: dict[str, Any] = {}
     rubric_reviews: dict[str, Any] = {}
 
+    config = RunConfig(
+        backend=args.backend,
+        timeout_sec=args.timeout_sec,
+        grok_cwd=args.grok_cwd,
+        repair=args.repair,
+        online_evidence=args.web_evidence,
+        web_provider=args.web_provider,
+        web_search_top_k=args.web_search_top_k,
+        local_evidence_top_k=args.local_evidence_top_k,
+    )
+
     for index, case in enumerate(pack["cases"], 1):
         print(f"[{index}/{len(pack['cases'])}] {case['id']} ({case['domain']})", flush=True)
-        chunks = retrieve(case["prompt"], top_k=8)
-        context = format_context(chunks)
-        sources[case["id"]] = [chunk.path for chunk in chunks]
-        evidence = gather_evidence(
-            case["prompt"],
-            local_top_k=args.local_evidence_top_k,
-            web_top_k=args.web_search_top_k,
-            online=args.web_evidence,
-            provider=args.web_provider,
-        )
-        web_evidence[case["id"]] = evidence
-        evidence_context = format_evidence_context(evidence)
-
-        mode = task_mode(case)
-        system = MODE_PROMPTS[mode]
-        council_route: dict[str, Any] = {}
-        council_context = ""
-        if case["domain"] in {"coding", "tool_use", "planning", "learning"}:
-            council_route = route_coding_council(case["prompt"], case.get("materials", []))
-            coding_council_routes[case["id"]] = council_route
-            council_context = format_coding_council(council_route)
-        tool_logs[case["id"]] = run_operational_tools(case)
-        learning_probe = run_learning_probe(
-            case,
-            context,
-            system,
-            backend=args.backend,
-            timeout_sec=args.timeout_sec,
-            grok_cwd=args.grok_cwd,
-        )
-        memory_diffs[case["id"]] = learning_probe.get("memoryDiff", {})
-        operational_evidence = format_operational_evidence(
-            tool_log=tool_logs[case["id"]],
-            memory_diff=memory_diffs[case["id"]],
-            learning_probe=learning_probe,
-        )
-        user = build_user_prompt(
-            case,
-            context,
-            coding_council=council_context,
-            evidence_context=evidence_context,
-            operational_evidence=operational_evidence,
-        )
-        first = call_model(
-            system,
-            user,
-            backend=args.backend,
-            timeout_sec=args.timeout_sec,
-            grok_cwd=args.grok_cwd,
-        )
-        answer = first["answer"]
-        gate = check_response(answer, mode=mode, question=case["prompt"], domain=None)
-        provisional = score_pack(
-            {"packId": pack["packId"], "cases": [case]},
-            {
-                "responses": {case["id"]: answer},
-                "toolLogs": {case["id"]: tool_logs[case["id"]]},
-                "memoryDiffs": {case["id"]: memory_diffs[case["id"]]},
-            },
-        )["results"][0]
-        review = build_rubric_review(
-            case,
-            answer,
-            provisional,
-            gate,
-            sources=sources[case["id"]],
-            evidence=evidence,
-            tool_log=tool_logs[case["id"]],
-            memory_diff=memory_diffs[case["id"]],
-        )
-
-        repair_attempts[case["id"]] = 0
-        if (
-            should_attempt_repair(
-                enabled=args.repair,
-                first=first,
-                provisional=provisional,
-                gate=gate,
-            )
-        ):
-            repair_attempts[case["id"]] = 1
-            repair = {
-                **repair_payload(provisional, gate),
-                "rubricReview": review_payload(review),
-            }
-            second = call_model(
-                system,
-                build_user_prompt(
-                    case,
-                    context,
-                    repair=repair,
-                    coding_council=council_context,
-                    evidence_context=evidence_context,
-                    operational_evidence=operational_evidence,
-                    rubric_review_context=format_rubric_review(review),
-                ),
-                backend=args.backend,
-                timeout_sec=args.timeout_sec,
-                grok_cwd=args.grok_cwd,
-            )
-            if second["answer"].strip():
-                answer = second["answer"]
-                first["repair"] = second
-                gate = check_response(
-                    answer,
-                    mode=mode,
-                    question=case["prompt"],
-                    domain=None,
-                )
-                final_score = score_pack(
-                    {"packId": pack["packId"], "cases": [case]},
-                    {
-                        "responses": {case["id"]: answer},
-                        "toolLogs": {case["id"]: tool_logs[case["id"]]},
-                        "memoryDiffs": {case["id"]: memory_diffs[case["id"]]},
-                    },
-                )["results"][0]
-                review = build_rubric_review(
-                    case,
-                    answer,
-                    final_score,
-                    gate,
-                    sources=sources[case["id"]],
-                    evidence=evidence,
-                    tool_log=tool_logs[case["id"]],
-                    memory_diff=memory_diffs[case["id"]],
-                )
-
-        responses[case["id"]] = answer
-        gates[case["id"]] = gate
-        rubric_reviews[case["id"]] = review
-        model_logs[case["id"]] = {k: v for k, v in first.items() if k != "answer"}
-        if learning_probe:
-            model_logs[case["id"]]["learningProbe"] = learning_probe
-        if first.get("returncode") != 0:
-            print(f"  backend returned {first.get('returncode')}", flush=True)
+        result = run_case(case, pack["packId"], config=config, ablation=SOPHIA_FULL)
+        responses[case["id"]] = result["answer"]
+        sources[case["id"]] = result["sources"]
+        gates[case["id"]] = result["gate"]
+        model_logs[case["id"]] = result["modelLog"]
+        tool_logs[case["id"]] = result["toolLog"]
+        memory_diffs[case["id"]] = result["memoryDiff"]
+        repair_attempts[case["id"]] = result["repairAttempts"]
+        web_evidence[case["id"]] = result["webEvidence"]
+        rubric_reviews[case["id"]] = result["rubricReview"]
+        if result["codingCouncilRoute"]:
+            coding_council_routes[case["id"]] = result["codingCouncilRoute"]
+        if result["returncode"] not in (None, 0):
+            print(f"  backend returned {result['returncode']}", flush=True)
 
     payload = {
         "packId": pack["packId"],

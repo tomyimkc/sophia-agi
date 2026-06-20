@@ -28,3 +28,21 @@ For hidden learning cases, `tools/run_hidden_eval_sophia.py` records:
 
 The case fails the operational evidence check if the memory append is missing or
 any protected old record hash changes.
+
+## Standalone Experiment Runner
+
+`tools/run_learning_shift.py` runs the full five-phase protocol as one publishable
+experiment: pre-test → append-only learning (with a promotion gate that keeps
+unreviewed records out) → post-test on fresh cases → old-benchmark stability
+re-test → contamination audit + protected-knowledge hash proof.
+
+```bash
+# Demo on the visible example spec (needs a working backend):
+python3.12 tools/run_learning_shift.py agi-proof/learning-under-shift/example-spec.json \
+  --backend grok \
+  --out agi-proof/learning-under-shift/shift-result-EXAMPLE.public-report.json
+```
+
+The `passingSignal` is true only when post > pre AND protected knowledge is
+unchanged AND the contamination audit is clean AND old-benchmark performance is
+stable. Unit tests: `tests/test_learning_shift.py`.

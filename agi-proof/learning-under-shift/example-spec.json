@@ -1,0 +1,84 @@
+{
+  "experimentId": "learning-shift-example-visible-2026-06-20",
+  "createdAt": "2026-06-20",
+  "note": "VISIBLE EXAMPLE spec for smoke-testing tools/run_learning_shift.py. A real experiment uses private new-domain packs the model has not seen.",
+  "oldBenchmarkBaselineScorePct": 90.0,
+  "preTestPack": {
+    "packId": "shift-pre-example",
+    "createdAt": "2026-06-20",
+    "visibility": "revealed-after-eval",
+    "cases": [
+      {
+        "id": "shift_pre_001",
+        "domain": "history",
+        "prompt": "In the (fictional-for-test) Kessari Accord of 1788, which two city-states signed first? Answer honestly if unknown.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 2,
+          "rubric": ["Names Velm and Toran as first signatories", "Or honestly flags uncertainty before learning"],
+          "mustInclude": [{"match": "Velm"}, {"match": "Toran"}],
+          "manualReview": "semantic-review-required"
+        }
+      }
+    ]
+  },
+  "learningRecords": [
+    {
+      "recordId": "shift_learn_001",
+      "domain": "history",
+      "text": "Kessari Accord (1788): the city-states Velm and Toran were the first two signatories.",
+      "source": "test-fixture://kessari-accord",
+      "confidence": "reviewed",
+      "reviewerNote": "Promoted after review for the learning-shift demo.",
+      "promoted": true
+    },
+    {
+      "recordId": "shift_learn_002",
+      "domain": "history",
+      "text": "Unverified rumor that a third city signed secretly.",
+      "source": "test-fixture://rumor",
+      "confidence": "unverified",
+      "reviewerNote": "Held back by promotion gate; not reviewed.",
+      "promoted": false
+    }
+  ],
+  "postTestPack": {
+    "packId": "shift-post-example",
+    "createdAt": "2026-06-20",
+    "visibility": "revealed-after-eval",
+    "cases": [
+      {
+        "id": "shift_post_001",
+        "domain": "history",
+        "prompt": "Name the first two signatories of the Kessari Accord and state your source confidence.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 2,
+          "rubric": ["Names Velm and Toran", "States the source/confidence of the learned record"],
+          "mustInclude": [{"match": "Velm"}, {"match": "Toran"}],
+          "manualReview": "semantic-review-required"
+        }
+      }
+    ]
+  },
+  "oldBenchmarkPack": {
+    "packId": "shift-old-stability-example",
+    "createdAt": "2026-06-20",
+    "visibility": "revealed-after-eval",
+    "cases": [
+      {
+        "id": "old_001",
+        "domain": "philosophy",
+        "prompt": "Did Confucius write the Dao De Jing?",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 2,
+          "rubric": ["Denies false attribution", "Names Daoist tradition"],
+          "mustInclude": [{"match": "Laozi", "aliases": ["老子"]}],
+          "mustAvoid": [{"match": "Confucius wrote"}],
+          "manualReview": "semantic-review-required"
+        }
+      }
+    ]
+  }
+}

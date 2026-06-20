@@ -11,8 +11,9 @@ that Sophia is proven AGI.
 - [x] Repo, docs, MCP tools, benchmark suite, source discipline, council system,
       memory gates, and executor/proof scaffolds exist.
   Evidence: `sophia_mcp/`, `benchmarks/`, `agent/`, `docs/08-Domains/`, `agi-proof/evidence-manifest.json`.
-- [ ] Publish an architecture diagram tying RAG, council, gate, memory, executor,
+- [x] Publish an architecture diagram tying RAG, council, gate, memory, executor,
       hidden eval, and proof package into one flow.
+  Evidence: `docs/09-Agent/Sophia-Architecture.md`.
 
 ## General Cognitive Competence
 
@@ -33,7 +34,10 @@ that Sophia is proven AGI.
 - [x] Baseline/ablation protocol is documented.
   Evidence: `agi-proof/baseline-ablation/README.md`.
 - [x] Baseline ablation runner exists.
-  Evidence: `tools/sophia_agent.py sophia_baseline_ablation_run`, MCP tool metadata.
+  Evidence: `tools/run_ablation_sophia.py` runs all seven modes over the shared
+  `run_case` pipeline; `tests/test_ablation_runner.py`; example
+  `agi-proof/baseline-ablation/example-pack.json`.
+  Run: `python3.12 tools/run_ablation_sophia.py <pack.json> --backend grok --modes all`.
 - [ ] Compare Sophia-full against raw model.
 - [ ] Compare Sophia-full against raw model plus tools.
 - [ ] Compare Sophia-full against Sophia without knowledge base.
@@ -51,6 +55,11 @@ that Sophia is proven AGI.
   Evidence: `tools/run_hidden_eval_sophia.py`.
 - [x] Protected knowledge hash check exists to prove old records were not changed.
   Evidence: `tools/run_hidden_eval_sophia.py`.
+- [x] Standalone learning-under-shift experiment runner exists (pre-test,
+      promotion gate, post-test, old-benchmark stability, contamination audit,
+      protected-hash proof).
+  Evidence: `tools/run_learning_shift.py`, `tests/test_learning_shift.py`,
+  `agi-proof/learning-under-shift/example-spec.json`.
 - [ ] Run pre-test on an unknown domain.
 - [ ] Run append-only learning phase.
 - [ ] Run fresh post-test tasks not seen during learning.
@@ -60,6 +69,11 @@ that Sophia is proven AGI.
 
 - [x] Long-horizon run protocol is documented.
   Evidence: `agi-proof/long-horizon-runs/README.md`.
+- [x] Long-horizon autonomy harness exists (append-only run log, tool/state/
+      failure/self-correction events, human-intervention counter, checkpoint/
+      resume, tier + autonomy classification).
+  Evidence: `tools/run_long_horizon.py`, `tests/test_long_horizon.py`, demo
+  `agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json`.
 - [ ] Run a 30-minute task with action/tool/failure/self-correction logs.
 - [ ] Run a 2-hour task with action/tool/failure/self-correction logs.
 - [ ] Run a 1-day task with action/tool/failure/self-correction logs.
@@ -79,6 +93,10 @@ that Sophia is proven AGI.
 
 - [x] Third-party replication checklist is documented.
   Evidence: `agi-proof/third-party-replication/README.md`.
+- [x] Replication harness exists (records commit/env, runs validation + tests,
+      emits a reviewer-signature template; cannot self-certify).
+  Evidence: `tools/run_replication_check.py`, sample
+  `agi-proof/third-party-replication/replication-check-2026-06-20.json`.
 - [ ] External reviewer clones the repo from scratch.
 - [ ] External reviewer runs validation and proof package build.
 - [ ] External reviewer adds hidden questions Sophia has not seen.
@@ -101,11 +119,19 @@ that Sophia is proven AGI.
 
 ## Current Blocking Gaps
 
+The Level-3 *harnesses* now exist and are unit-tested (ablation, learning-shift,
+long-horizon, replication, architecture diagram). The remaining gaps are
+evidence runs that need either a live backend or an external human.
+
 - [ ] Fresh independent hidden pack is needed; the current diagnostic packs are spent.
 - [ ] Manual semantic review is still required for strict hidden-test claims.
+- [ ] Ablation and learning-shift deltas not yet produced on a live backend
+      (grok token expired / `DEEPSEEK_API_KEY` unset); runners are ready.
 - [ ] External benchmarks are not yet run.
-- [ ] Independent clean-clone replication is not yet run.
-- [ ] Long-horizon evidence is protocol-ready but not yet executed.
+- [ ] Independent clean-clone replication is not yet run (harness ready; a real
+      external reviewer must run and sign it).
+- [ ] Long-horizon 30-minute / 2-hour / 1-day runs not yet executed (harness ready;
+      only a short self-test demo exists).
 
 ## Claim Boundary
 

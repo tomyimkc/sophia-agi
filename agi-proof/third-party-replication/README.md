@@ -23,6 +23,23 @@ python -m pytest
 - [ ] I reported failures beside successes.
 - [ ] I did not describe pending external benchmarks as achieved.
 
+## Harness
+
+`tools/run_replication_check.py` runs the clean-clone checklist, records the
+commit hash + environment + per-command returncodes, and emits a
+reviewer-signature template with the machine-checkable items filled and the human
+attestation left blank. It **cannot self-certify** — the reviewer identity,
+the reviewer-authored hidden tasks, and the signature must be completed by an
+independent human.
+
+```bash
+# Machine-checkable items (read-only; skips mutating builders):
+python3.12 tools/run_replication_check.py
+
+# In a real clean clone, a reviewer also runs the builders:
+python3.12 tools/run_replication_check.py --full
+```
+
 Reviewer:
 
 Date:

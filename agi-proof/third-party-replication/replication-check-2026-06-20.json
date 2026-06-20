@@ -1,0 +1,149 @@
+{
+  "kind": "third-party-replication-check",
+  "runAt": "2026-06-20T16:07:41",
+  "selfCertified": false,
+  "note": "Machine-checkable items are filled by this harness. Independence items (reviewer identity, hidden tasks created by the reviewer, signature) MUST be completed by an external human; this tool cannot self-certify.",
+  "commit": "470e11ba0cf38be55c2a89a0c1946c8580884999",
+  "workingTreeDirty": true,
+  "environment": {
+    "python": "3.12.13",
+    "executable": "/Users/tom/.local/bin/python3.12",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  "ranBuilders": false,
+  "machineChecklist": [
+    {
+      "name": "validate-attribution",
+      "category": "validation",
+      "cmd": "/Users/tom/.local/bin/python3.12 tools/validate_attribution.py",
+      "returncode": 0,
+      "passed": true,
+      "stdoutTail": "Validation OK: 30 attribution(s), 518 training example(s)\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "build-agi-proof",
+      "category": "builder",
+      "cmd": "/Users/tom/.local/bin/python3.12 tools/build_agi_proof_package.py",
+      "skipped": "builder skipped without --full (mutates tracked artifacts)"
+    },
+    {
+      "name": "build-web-data",
+      "category": "builder",
+      "cmd": "/Users/tom/.local/bin/python3.12 tools/build_web_data.py",
+      "skipped": "builder skipped without --full (mutates tracked artifacts)"
+    },
+    {
+      "name": "tests-direct",
+      "category": "tests",
+      "cmd": "python tests/test_*.py (pytest unavailable)",
+      "passed": false,
+      "summary": "15/16 test scripts passed",
+      "perTest": [
+        {
+          "test": "test_ablation_runner.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_benchmark_scorer.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_coding_council.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_correction_loop.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_gate.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_hidden_eval_protocol.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_hidden_eval_runner.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_learning_shift.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_long_horizon.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_mcp_tools.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_model_lab.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_rag_index.py",
+          "passed": false,
+          "stderrTail": " IndexedChunk, save_index, load_index, search  # noqa: E402\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/tom/Documents/GitHub/sophia-agi/agent/vector_store.py\", line 10, in <module>\n    import numpy as np\nModuleNotFoundError: No module named 'numpy'\n"
+        },
+        {
+          "test": "test_religion_council_figures.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_rubric_review.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_upload_adapter.py",
+          "passed": true,
+          "stderrTail": ""
+        },
+        {
+          "test": "test_web_evidence.py",
+          "passed": true,
+          "stderrTail": ""
+        }
+      ]
+    }
+  ],
+  "machineChecksPassed": false,
+  "reviewerChecklist": {
+    "usedCleanClone": null,
+    "recordedCommitAndEnvironment": true,
+    "ranValidationAndTests": false,
+    "createdHiddenTasksNotVisibleToSophia": null,
+    "ranBaselinesAndAblationsOnSameHiddenPack": null,
+    "reportedFailuresBesideSuccesses": null,
+    "didNotDescribePendingExternalBenchmarksAsAchieved": null
+  },
+  "reviewerSignature": {
+    "reviewer": null,
+    "date": null,
+    "commit": "470e11ba0cf38be55c2a89a0c1946c8580884999",
+    "environment": {
+      "python": "3.12.13",
+      "executable": "/Users/tom/.local/bin/python3.12",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "machine": "arm64"
+    },
+    "signature": null
+  }
+}

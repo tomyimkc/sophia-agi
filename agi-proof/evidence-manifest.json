@@ -1,6 +1,6 @@
 {
   "version": "0.6.3",
-  "generated": "2026-06-20T12:05:59",
+  "generated": "2026-06-20T16:07:41",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "operationalDefinition": {
     "summary": "For this repo, AGI evidence means broad task competence, transfer, tool use, long-horizon autonomy, learning under distribution shift, baseline superiority, and independent reproduction.",
@@ -1452,7 +1452,7 @@
     {
       "level": 3,
       "name": "Baseline and ablation comparisons",
-      "status": "protocol-ready"
+      "status": "runner-implemented-awaiting-live-run"
     },
     {
       "level": 4,
@@ -1508,6 +1508,11 @@
     "benchmarkResults": "agi-proof/benchmark-results/README.md",
     "externalBenchmarks": "agi-proof/external-benchmarks/README.md",
     "baselineAblation": "agi-proof/baseline-ablation/README.md",
+    "baselineAblationRunner": "tools/run_ablation_sophia.py",
+    "learningShiftRunner": "tools/run_learning_shift.py",
+    "longHorizonHarness": "tools/run_long_horizon.py",
+    "replicationHarness": "tools/run_replication_check.py",
+    "architectureDiagram": "docs/09-Agent/Sophia-Architecture.md",
     "hiddenReview": "agi-proof/hidden-reviewer-packs/README.md",
     "manualSemanticReview": "agi-proof/hidden-reviewer-packs/MANUAL-SEMANTIC-REVIEW.md",
     "webEvidence": "docs/09-Agent/Online-RAG.md",
