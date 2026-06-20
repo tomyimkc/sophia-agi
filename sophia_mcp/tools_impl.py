@@ -74,6 +74,29 @@ def gate_check(
     )
 
 
+def check_claim(text: str) -> dict:
+    """Mode-free source-discipline check: ``{passed, reasons, violations}``.
+
+    Unlike ``gate_check`` (moded, needs a question + style scoring), this is the
+    pure provenance verifier — text in, verdict out — so a caller can gate any
+    claim against Sophia's "don't merge lineages" rule. Read-only, offline.
+    """
+    from agent.guarded import check_claim as _check_claim
+
+    return _check_claim(text)
+
+
+def belief(entity: str) -> dict:
+    """Belief-graph lookup for one entity: effectiveConfidenceRank (min over the
+    derivesFrom chain), declared confidence, attribution, contradictions, and a
+    confidenceLaundered flag. Read-only, offline."""
+    import okf
+    from agent import wiki_store
+
+    graph = okf.build_graph(wiki_store.load_all_pages())
+    return okf.belief(graph, entity)
+
+
 def benchmark_list(domain: str) -> dict:
     if domain not in DOMAINS:
         return {"error": f"domain must be one of {DOMAINS}"}

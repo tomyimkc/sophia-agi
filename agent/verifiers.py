@@ -9,8 +9,11 @@ combinators. Quality follows verifiability.
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
+import warnings
+from glob import glob as _glob
 from pathlib import Path
 from typing import Any, Callable
 
@@ -131,16 +134,67 @@ def citation_present(sources: list[str]) -> Verifier:
 # --------------------------------------------------------------------------- #
 
 
+# Env var letting a user enforce their OWN attribution rules (legal/corporate/code
+# provenance) through the same machine-checked gate, beyond the seeded domains.
+# Value is a directory (its *.json), a glob, a single file, or several of these
+# joined by the OS path separator.
+_DISCIPLINE_RECORDS_ENV = "SOPHIA_DISCIPLINE_RECORDS"
+
+
+def _merge_records(into: dict, data: object, *, source: str, warn_skips: bool = False) -> None:
+    """Merge a ``{key: record}`` mapping into ``into``, keeping only records that
+    carry a non-empty ``doNotAttributeTo`` list (the one field this gate enforces).
+    With ``warn_skips`` (user-supplied files), emit a warning for each skip so a
+    malformed record is visible rather than silently ignored."""
+    if not isinstance(data, dict):
+        warnings.warn(f"discipline records in {source} are not a JSON object; skipped")
+        return
+    for key, record in data.items():
+        if isinstance(record, dict) and record.get("doNotAttributeTo"):
+            into[record.get("recordId") or record.get("textId") or key] = record
+        elif warn_skips:
+            warnings.warn(f"{source}: record '{key}' has no doNotAttributeTo; skipped")
+
+
+def _user_record_paths() -> list[Path]:
+    """Resolve ``SOPHIA_DISCIPLINE_RECORDS`` to a list of JSON files. Each entry
+    may be a directory (its ``*.json``), a glob, or a single file."""
+    spec = os.environ.get(_DISCIPLINE_RECORDS_ENV, "").strip()
+    if not spec:
+        return []
+    paths: list[Path] = []
+    for part in spec.split(os.pathsep):
+        part = part.strip()
+        if not part:
+            continue
+        p = Path(part).expanduser()
+        if p.is_dir():
+            paths.extend(sorted(p.glob("*.json")))
+        elif p.exists():
+            paths.append(p)
+        else:
+            matched = sorted(Path(m) for m in _glob(os.path.expanduser(part)))
+            if matched:
+                paths.extend(matched)
+            else:
+                warnings.warn(f"{_DISCIPLINE_RECORDS_ENV} path not found: {part}")
+    return paths
+
+
 def _load_provenance_records() -> dict:
     records: dict = {}
     for filename in _PROVENANCE_FILES:
         path = DATA_DIR / filename
         if not path.exists():
             continue
-        data = json.loads(path.read_text(encoding="utf-8"))
-        for key, record in data.items():
-            if isinstance(record, dict) and record.get("doNotAttributeTo"):
-                records[record.get("recordId") or record.get("textId") or key] = record
+        _merge_records(records, json.loads(path.read_text(encoding="utf-8")), source=str(path))
+    for path in _user_record_paths():
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError) as exc:
+            warnings.warn(f"could not load discipline records from {path}: {exc}")
+            continue
+        _merge_records(records, data, source=str(path), warn_skips=True)
     return records
 
 

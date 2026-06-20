@@ -164,7 +164,7 @@ See [docs/08-Domains/Overview.md](docs/08-Domains/Overview.md) and answer [Expan
 |-------|----------------|
 | **Project skill** | `/sophia-agi` — `.grok/skills/sophia-agi/SKILL.md` |
 | **Portable skill** | `/sophia-source-discipline` — `python tools/install_skills.py --all` |
-| **MCP server** | `sophia_mcp/server.py` — 19 tools (validate, gate, benchmark, lookup, sector councils, OKF wiki, OpenClaw infer) |
+| **MCP server** | `sophia_mcp/server.py` — 21 tools (validate, gate, check_claim, belief, benchmark, lookup, sector councils, OKF wiki, OpenClaw infer) |
 
 ```bash
 pip install -r requirements-mcp.txt

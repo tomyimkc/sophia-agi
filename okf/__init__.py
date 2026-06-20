@@ -15,6 +15,7 @@ Public API:
 from __future__ import annotations
 
 from okf.frontmatter import dump_block, parse, serialize, strip
+from okf.graph import belief
 from okf.graph import build as build_graph
 from okf.graph import contradiction_ledger, propagate_confidence
 from okf.linker import link_report
@@ -36,6 +37,7 @@ __all__ = [
     "load",
     "load_pages",
     "build_graph",
+    "belief",
     "contradiction_ledger",
     "propagate_confidence",
     "link_report",

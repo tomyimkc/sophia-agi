@@ -160,6 +160,41 @@ def propagate_confidence(graph: Graph) -> "dict":
     return {nid: eff(nid, set()) for nid in graph.nodes}
 
 
+def belief(graph: Graph, entity: str) -> "dict":
+    """Belief record for one entity (page id, alias, or [[wikilink]] target).
+
+    Exposes ``effectiveConfidenceRank`` — the min-over-derivesFrom-chain rank, so a
+    claim that declares high confidence while resting on a weak source is flagged
+    (``confidenceLaundered``) rather than read at face value — alongside the
+    attribution/provenance fields a caller needs to respect source discipline.
+    """
+    nid = resolve(graph, entity)
+    if nid is None:
+        return {"found": False, "entity": entity, "id": None}
+    node = graph.nodes[nid]
+    meta = node["meta"]
+    own = meta.get("authorConfidence")
+    own_rank = confidence_rank(own)
+    effective = propagate_confidence(graph).get(nid, own_rank)
+    derives = as_list(meta.get("derivesFrom"))
+    return {
+        "found": True,
+        "entity": entity,
+        "id": nid,
+        "pageType": node["pageType"],
+        "attributedAuthor": meta.get("attributedAuthor"),
+        "doNotAttributeTo": [str(a) for a in as_list(meta.get("doNotAttributeTo"))],
+        "tradition": meta.get("tradition"),
+        "authorConfidence": own,
+        "confidenceRank": own_rank,
+        "effectiveConfidenceRank": effective,
+        "confidenceLaundered": bool(own and derives and own_rank > effective),
+        "derivesFrom": [resolve(graph, t) or t for t in derives],
+        "contradicts": [resolve(graph, t) or t for t in as_list(meta.get("contradicts"))],
+        "supersededBy": [resolve(graph, t) or t for t in as_list(meta.get("supersededBy"))],
+    }
+
+
 def confidence_laundering(graph: Graph) -> "list[dict]":
     """Nodes asserting more confidence than their weakest provenance dependency."""
     effective = propagate_confidence(graph)

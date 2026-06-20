@@ -175,29 +175,55 @@ def skill_keyword_verifier(must_include: list[str]) -> Verifier:
 # --------------------------------------------------------------------------- #
 
 
-def _memory_recall(goal: str, *, max_pages: int = 3) -> str:
+def _memory_recall(goal: str, *, max_pages: int = 3, search_fn=None, graph=None) -> str:
     """Recall relevant OKF wiki pages at plan time (prior knowledge + provenance
-    warnings). Never raises — recall failure must not break planning."""
-    try:
-        from agent import wiki_store
+    warnings), annotated with the belief graph's EFFECTIVE confidence so a page
+    that launders weak provenance into a confident claim is shown as capped, not
+    at face value. Never raises — recall failure must not break planning.
 
-        pages = wiki_store.search(goal, top_k=max_pages)
+    ``search_fn`` / ``graph`` are injectable for testing; by default they wire
+    wiki_store search and a graph built over the whole corpus.
+    """
+    try:
+        if search_fn is None:
+            from agent import wiki_store
+
+            search_fn = wiki_store.search
+        pages = search_fn(goal, top_k=max_pages)
         if not pages:
             return ""
-        lines = []
-        for page in pages:
-            dna = page.meta.get("doNotAttributeTo") or []
-            dnm = page.meta.get("doNotMergeWith") or []
-            conf = page.meta.get("authorConfidence")
-            note = (f" (confidence={conf})" if conf else "")
-            if dna:
-                note += f" ⚠ do-not-attribute: {', '.join(dna)}."
-            if dnm:
-                note += f" ⚠ do-not-merge: {', '.join(dnm)}."
-            lines.append(f"- [[{page.id}]]{note}")
+        if graph is None:
+            import okf
+            from agent import wiki_store
+
+            graph = okf.build_graph(wiki_store.load_all_pages())
+        lines = [_recall_line(page, graph) for page in pages]
         return "## Memory (prior knowledge — build on it, respect the warnings)\n" + "\n".join(lines)
     except Exception:
         return ""
+
+
+def _recall_line(page, graph) -> str:
+    """One memory bullet: page id + effective (graph) confidence + provenance warnings."""
+    import okf
+
+    dna = page.meta.get("doNotAttributeTo") or []
+    dnm = page.meta.get("doNotMergeWith") or []
+    conf = page.meta.get("authorConfidence")
+    belief = okf.belief(graph, page.id) if graph is not None else {}
+    note = ""
+    if conf:
+        note += f" (confidence={conf}"
+        if belief.get("found"):
+            note += f", effectiveRank={belief['effectiveConfidenceRank']}/{belief['confidenceRank']}"
+        note += ")"
+    if belief.get("confidenceLaundered"):
+        note += " ⚠ confidence capped by weak provenance."
+    if dna:
+        note += f" ⚠ do-not-attribute: {', '.join(dna)}."
+    if dnm:
+        note += f" ⚠ do-not-merge: {', '.join(dnm)}."
+    return f"- [[{page.id}]]{note}"
 
 
 def plan(task: AgentTask, client: ModelClient, *, max_steps: int = 4) -> list[dict]:

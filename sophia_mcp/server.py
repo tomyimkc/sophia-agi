@@ -16,8 +16,10 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from sophia_mcp.tools_impl import (  # noqa: E402
+    belief,
     benchmark_list,
     benchmark_score,
+    check_claim,
     corpus_stats,
     dumps,
     export_corpus,
@@ -81,6 +83,21 @@ def sophia_gate_check(
 ) -> str:
     """Run the Sophia epistemic gate on a draft answer (attribution traps + style checks)."""
     return dumps(gate_check(response, question, mode=mode, domain=domain, strict_attribution=strict_attribution))
+
+
+@mcp.tool()
+def sophia_check_claim(text: str) -> str:
+    """Mode-free source-discipline check: is an attribution forbidden by Sophia's
+    'don't merge lineages' rule? Returns {passed, reasons, violations}. Read-only."""
+    return dumps(check_claim(text))
+
+
+@mcp.tool()
+def sophia_belief(entity: str) -> str:
+    """Belief-graph lookup for an entity (page id/alias): effectiveConfidenceRank
+    (min over the derivesFrom chain), declared confidence, attribution, and a
+    confidenceLaundered flag. Read-only."""
+    return dumps(belief(entity))
 
 
 @mcp.tool()
