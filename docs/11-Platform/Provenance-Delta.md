@@ -58,7 +58,7 @@ and `.md`.
 | `provenance_bench/data/wikidata_snapshot.json` | TRUE attributions (gold + false-positive controls) |
 | `provenance_bench/dataset.py` | external files → case set |
 | `provenance_bench/judge.py` | independent referee (lexical screen; LLM-judge hook) |
-| `provenance_bench/runner.py` | per case: model *alone* vs *gated* (`agent/guarded.py`) |
+| `provenance_bench/runner.py` | per case: model *alone* vs *gated* — same answer, gate-filtered (reuses `agent/guarded.py` helpers); prompt held constant to isolate the gate's effect |
 | `provenance_bench/score.py` | the three metrics |
 | `provenance_bench/report.py` | JSON + markdown report |
 | `tools/run_provenance_delta.py` | CLI |

@@ -55,7 +55,7 @@ coverage — we never assume it.
 |---|---|
 | `provenance_bench/dataset.py` | Load the two external files → list of `Case`; `write_jsonl`. |
 | `provenance_bench/judge.py` | Independent judge: extract the author an answer *asserts* for a work and whether it abstained; compare to `gold_author`. Default = lexical extractor (a screen, clearly labeled); injectable `judge_fn` hook for an LLM-judge. **Shares no code with the gate.** |
-| `provenance_bench/runner.py` | Per case: produce the *raw* model answer and the *gated* answer (via `agent.guarded.guarded_complete`). Model injected as a `generate` callable (mock in tests). |
+| `provenance_bench/runner.py` | Per case: one natural generation shared by both arms; the *gated* answer is that same answer **gate-filtered** (on a violation: repair→cited-abstention / abstain / hedge / passthrough, reusing `agent.guarded` helpers). Holding the prompt constant isolates the gate's effect and avoids the empty-retrieval abstention artifact. Model injected as a `generate` callable (mock in tests). |
 | `provenance_bench/score.py` | Aggregate the three metrics from judged raw vs gated answers. |
 | `provenance_bench/report.py` | Emit `agi-proof/benchmark-results/provenance-delta.public-report.json` + a markdown table. |
 | `tools/run_provenance_delta.py` | CLI entry point (build → run → score → report). |
