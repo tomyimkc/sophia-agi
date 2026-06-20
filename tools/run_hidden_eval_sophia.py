@@ -368,6 +368,24 @@ def call_model(
         return run_grok_direct(system, user, timeout_sec=timeout_sec, grok_cwd=grok_cwd)
     if backend == "deepseek":
         return run_deepseek(system, user, timeout_sec=timeout_sec)
+    if backend == "adapter":
+        # route through the unified adapter (agent/model.py) so GLM-5.2 / vLLM /
+        # SGLang / Ollama / llama.cpp / any OpenAI-compatible endpoint can run the
+        # hidden eval and ablation; provider is set via SOPHIA_MODEL_PROVIDER/.env.
+        from agent.model import default_client
+
+        result = default_client().generate(system, user)
+        return {
+            "backend": f"adapter:{result.provider}",
+            "model": result.model,
+            "returncode": 0 if result.ok else 1,
+            "elapsedSec": result.latency_sec,
+            "answer": result.text,
+            "stderrTail": (result.error or "")[-2000:],
+            "costUsd": result.cost_usd,
+            "promptTokens": result.prompt_tokens,
+            "completionTokens": result.completion_tokens,
+        }
     raise ValueError(f"unknown backend: {backend}")
 
 
@@ -402,7 +420,7 @@ def run_operational_tools(case: dict[str, Any]) -> dict[str, Any]:
         {"argv": ["git", "status", "--short"], "purpose": "check repo working tree state"},
         {"argv": ["find", "agi-proof", "-maxdepth", "3", "-type", "f"], "purpose": "inspect proof/evidence files"},
         {
-            "argv": ["python", "-m", "json.tool", "agi-proof/evidence-manifest.json"],
+            "argv": [sys.executable, "-m", "json.tool", "agi-proof/evidence-manifest.json"],
             "purpose": "validate proof manifest JSON",
         },
     ]
@@ -1043,7 +1061,7 @@ def main() -> int:
     parser.add_argument("pack", type=Path)
     parser.add_argument(
         "--backend",
-        choices=["anthropic", "grok", "deepseek"],
+        choices=["anthropic", "grok", "deepseek", "adapter"],
         default=os.environ.get("SOPHIA_HIDDEN_BACKEND", "grok"),
     )
     parser.add_argument("--responses-out", type=Path, required=True)

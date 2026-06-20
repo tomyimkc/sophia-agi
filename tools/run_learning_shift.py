@@ -265,7 +265,7 @@ def build_report(
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run a learning-under-distribution-shift experiment")
     parser.add_argument("spec", type=Path, help="Experiment spec JSON")
-    parser.add_argument("--backend", choices=["anthropic", "grok", "deepseek"], default="grok")
+    parser.add_argument("--backend", choices=["anthropic", "grok", "deepseek", "adapter"], default="grok")
     parser.add_argument("--out", type=Path, default=None)
     parser.add_argument("--memory-file", type=Path, default=SHIFT_MEMORY_FILE)
     parser.add_argument("--timeout-sec", type=int, default=240)

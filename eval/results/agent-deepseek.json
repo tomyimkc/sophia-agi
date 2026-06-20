@@ -1,0 +1,38 @@
+{
+  "runAt": "2026-06-20T17:33:56",
+  "provider": "deepseek",
+  "caseCount": 3,
+  "passed": 2,
+  "passRate": 0.6667,
+  "failureHistogram": {
+    "max_retries_exhausted": 1
+  },
+  "meanCostUsd": 0.004278,
+  "meanLatencySec": 33.217,
+  "totalCostUsd": 0.012835,
+  "results": [
+    {
+      "id": "advisor_decision",
+      "ok": true,
+      "failures": [],
+      "costUsd": 0.004693,
+      "latencySec": 36.589
+    },
+    {
+      "id": "rag_summary",
+      "ok": true,
+      "failures": [],
+      "costUsd": 0.006115,
+      "latencySec": 41.67
+    },
+    {
+      "id": "repo_next_step",
+      "ok": false,
+      "failures": [
+        "s1:max_retries_exhausted"
+      ],
+      "costUsd": 0.002027,
+      "latencySec": 21.393
+    }
+  ]
+}

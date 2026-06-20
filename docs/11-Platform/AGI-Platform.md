@@ -100,15 +100,45 @@ Create `skills/registry/<name>.json` with: `name`, `whenToUse`, `triggers`,
 auto-selectable (`agent.skills.select`). Add a routing test in
 `tests/test_skills.py`.
 
-## 4. Verifiers
+## 4. Verifiers (`agent/verifiers.py`)
 
-A verifier is `(text, task, step) -> {passed, reasons, detail}`. Defaults:
-`agent.harness.gate_verifier` (epistemic gate) and
-`skill_keyword_verifier`/`combined_verifier` (keyword + gate). Plug unit tests,
-`hidden_eval_protocol.score_pack`, SQL/result checks, or citation checks the same
-way — this is the seam the verifier-based RL loop uses.
+A verifier is `(text, task, step) -> {passed, reasons, detail}`. Built-ins:
+`exact_match`, `regex_match`, `keyword`, `unit_test` (grades by a command's exit
+code — the strongest signal for code), `score_pack_case` (rubric/operational),
+`citation_present`, plus `all_of`/`any_of` combinators. The harness default is
+`gate_verifier` (epistemic gate). This is the seam the RL/eval loops use —
+quality follows verifiability.
 
-## 5. Evaluation (`tools/eval_agent.py`)
+## 5. RAG quality
+
+- `agent/chunking.py` — token-aware recursive chunking with overlap + stable ids
+  (replaces the old 4000-char truncation; wired into `agent/retrieval.py`).
+- `agent/rerank.py` — `lexical_rerank` (BM25-lite), optional `llm_rerank` via the
+  adapter, and `citation_faithfulness` (is each answer sentence grounded in a
+  source?).
+- `tools/eval_retrieval.py` — golden-query `recall@k` / `MRR`, so retrieval
+  changes are measurable.
+
+## 6. Safety
+
+- `agent/untrusted.py` — fences retrieved/web/material text in untrusted-data
+  delimiters (prompt-injection defense), wired into the agent prompt boundary;
+  flags common injection phrasings.
+- `sophia_mcp/audit.py` — append-only audit log for every MCP tool call + a
+  risk/approval gate (mutating tools need `SOPHIA_MCP_APPROVE_WRITES=1`).
+- `agent/tools.py` — repo-tool execution stays approval-gated.
+
+## 7. Self-improvement flywheel
+
+- `tools/collect_traces.py` — agent run traces → verified SFT + (chosen,rejected)
+  DPO jsonl, with benchmark-leakage check.
+- `tools/distill_export.py` — teacher model (GLM-5.2/DeepSeek/Claude via the
+  adapter) → verifier-gated SFT + rejected set + trajectory.
+- `tools/train_lora.py`, `tools/prepare_lora_dataset.py`, `tools/eval_local_model.py`
+  — train and grade a local student. See `docs/11-Platform/Inference.md` for the
+  distill→serve loop and inference optimization.
+
+## 8. Evaluation (`tools/eval_agent.py`)
 
 ```bash
 python tools/eval_agent.py --provider mock                 # offline plumbing smoke
@@ -119,19 +149,18 @@ Reports pass-rate, failure-class histogram, mean cost, and latency — so every
 agent/model change is measurable. Pairs with `tools/run_benchmark.py`,
 `tools/run_ablation_sophia.py`, and the hidden-eval harnesses.
 
-## 6. Add an MCP tool
+## 9. Add an MCP tool
 
 Implement in `sophia_mcp/tools_impl.py` (return a dict, structured errors),
 register a thin `@mcp.tool()` wrapper in `sophia_mcp/server.py` (typed params +
 docstring schema), and add a smoke test in `tests/test_mcp_tools.py`. See
 `sophia_sector_council` for a template.
 
-## 7. Improve the model (existing pipelines)
+## 10. Improve the model (pipelines)
 
-- Trace collection: agent runs persist to `agent/memory/agent_runs/`; eval
-  failures and `failure_training_candidates` feed correction data.
+- Trace collection: `tools/collect_traces.py` (agent runs → SFT/DPO).
+- Distillation: `tools/distill_export.py` (verifier-gated teacher data).
 - LoRA/QLoRA: `tools/train_lora.py`, `tools/prepare_lora_dataset.py`.
-- Distillation: `tools/claude_teacher.py`, `tools/claude_model_lab.py`.
-- Before/after: `tools/eval_local_model.py`.
+- Before/after: `tools/eval_local_model.py`. Serving: `docs/11-Platform/Inference.md`.
 
 See the [Roadmap](./Roadmap.md) for what is built vs planned across all 12 areas.

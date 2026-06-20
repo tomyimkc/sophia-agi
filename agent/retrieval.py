@@ -48,9 +48,14 @@ def _load_json_records(path: Path) -> list[tuple[str, str]]:
 def _iter_markdown(path: Path, max_chars: int = 4000) -> list[tuple[str, str]]:
     if not path.exists():
         return []
-    text = path.read_text(encoding="utf-8")[:max_chars]
+    from agent.chunking import chunk_text
+
+    text = path.read_text(encoding="utf-8")
     title = path.stem.replace("-", " ")
-    return [(title, text)]
+    chunks = chunk_text(text, source_id=path.stem)
+    if len(chunks) <= 1:
+        return [(title, text[:max_chars] if not chunks else chunks[0].text)]
+    return [(f"{title} [chunk {c.index}]", c.text) for c in chunks]
 
 
 def collect_corpus() -> list[tuple[str, str, str]]:

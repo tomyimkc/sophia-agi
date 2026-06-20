@@ -254,7 +254,7 @@ def parse_modes(raw: str) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run Sophia baseline/ablation sweep on a hidden pack")
     parser.add_argument("pack", type=Path)
-    parser.add_argument("--backend", choices=["anthropic", "grok", "deepseek"], default="grok")
+    parser.add_argument("--backend", choices=["anthropic", "grok", "deepseek", "adapter"], default="grok")
     parser.add_argument("--modes", default="all", help="'all' or comma-separated mode names")
     parser.add_argument(
         "--out",

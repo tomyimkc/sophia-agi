@@ -16,6 +16,7 @@ from agent.sector_council import (
     route_council,
 )
 from agent.web_evidence import gather_evidence
+from sophia_mcp.audit import audited
 from tools.validate_attribution import run_validation
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -219,6 +220,7 @@ def sector_council(council_id: str, query: str, *, materials: list | None = None
     }
 
 
+@audited("sophia_export_corpus", risk="medium")
 def export_corpus() -> dict:
     examples = sorted(EXAMPLES_DIR.glob("*.json"))
     if not examples:

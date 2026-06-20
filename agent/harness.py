@@ -28,6 +28,7 @@ from agent.gate import check_response
 from agent.model import ModelClient, ModelResult, default_client
 from agent.prompts import MODE_PROMPTS
 from agent.tools import TOOL_CATALOG, parse_tool_requests, run_tools
+from agent.untrusted import wrap_untrusted
 
 RUNS_DIR = ROOT / "agent" / "memory" / "agent_runs"
 
@@ -235,7 +236,8 @@ def _build_step_prompt(task: AgentTask, step: dict, prior: str, reflection: str 
     system = MODE_PROMPTS.get(task.mode, MODE_PROMPTS["advisor"])
     parts = [f"## Goal\n{task.goal}", f"## Current step\n{step['description']}"]
     if task.context:
-        parts.append(f"## Context\n{task.context}")
+        # external context is untrusted -> fence it against prompt injection
+        parts.append("## Context\n" + wrap_untrusted(task.context, "task-context"))
     if task.skill:
         parts.append("## Skill verification\n" + "\n".join(f"- {v}" for v in task.skill.get("verification", [])))
     if prior:
@@ -283,6 +285,9 @@ def _execute_step(
 
         passed = model_result.ok and bool(text.strip()) and verify.get("passed", False) and all(t.get("ok") for t in tool_results)
         result.output = text
+        fclass = None if passed else classify_failure(result=model_result, gate=gate_check, verifier=verify, tool_results=tool_results)
+        # full output is logged (gitignored run dir) so collect_traces can build SFT/DPO data
+        store.log("step_output", step=step["id"], attempt=attempt, passed=passed, failureClass=fclass, output=text)
         if passed:
             result.ok = True
             result.reasons = []
@@ -290,7 +295,7 @@ def _execute_step(
             store.log("step_done", step=step["id"], attempts=attempt)
             return result
 
-        result.failure_class = classify_failure(result=model_result, gate=gate_check, verifier=verify, tool_results=tool_results)
+        result.failure_class = fclass
         result.reasons = verify.get("reasons", []) or ([model_result.error] if model_result.error else [])
         if attempt <= max_retries:
             reflection = _reflect(client, task, text, result.reasons)

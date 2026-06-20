@@ -52,8 +52,17 @@ def test_list_disputes() -> None:
     assert data["count"] >= 10
 
 
-def test_export_corpus() -> None:
-    result = export_corpus()
+def test_export_corpus_requires_approval() -> None:
+    import os
+
+    os.environ.pop("SOPHIA_MCP_APPROVE_WRITES", None)
+    denied = export_corpus()
+    assert denied.get("denied") is True and "error" in denied
+    os.environ["SOPHIA_MCP_APPROVE_WRITES"] = "1"
+    try:
+        result = export_corpus()
+    finally:
+        os.environ.pop("SOPHIA_MCP_APPROVE_WRITES", None)
     assert result["ok"] is True
     assert result["lines"] >= 500
 
@@ -99,7 +108,7 @@ def main() -> int:
     test_benchmark_list_philosophy()
     test_gate_rejects_bad_ddj()
     test_list_disputes()
-    test_export_corpus()
+    test_export_corpus_requires_approval()
     test_web_evidence_search_offline()
     test_rubric_review_flags_missing()
     test_sector_council_law_routes_specialist()
