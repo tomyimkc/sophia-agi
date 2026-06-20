@@ -32,13 +32,17 @@ Output: `agi-proof/evidence-manifest.json`
 |---|---|
 | Operational definition | `definition.md` |
 | Pre-registered thresholds | `preregistered-thresholds.md` |
+| Benchmark result artifacts | `benchmark-results/README.md` |
 | External benchmark plan | `external-benchmarks/README.md` |
 | Baseline and ablation protocol | `baseline-ablation/README.md` |
-| Hidden reviewer packs | `hidden-reviewer-packs/README.md` |
+| Hidden reviewer packs | `hidden-reviewer-packs/README.md`, `hidden-reviewer-packs/schema.json` |
 | Long-horizon autonomy logs | `long-horizon-runs/README.md` |
 | Learning under distribution shift | `learning-under-shift/README.md` |
 | Failure ledger | `failure-ledger.md` |
 | Third-party replication | `third-party-replication/README.md` |
+| Religion figure council | `../docs/08-Domains/Religion-Figure-Council.md` |
+| Coding council | `../docs/08-Domains/Coding-Council.md` |
+| Manual semantic review | `hidden-reviewer-packs/MANUAL-SEMANTIC-REVIEW.md` |
 
 ## Claim Ladder
 

@@ -51,6 +51,8 @@ def main() -> int:
         "rag": {
             "indexChunks": _rag_chunk_count(),
             "backends": ["gemini", "vertex", "claude"],
+            "webEvidenceProviders": ["brave", "tavily", "serpapi"],
+            "webEvidenceDefault": "off-for-hidden-evals",
             "cli": "python tools/sophia_rag.py",
             "docs": "docs/09-Agent/Online-RAG.md",
         },
@@ -68,6 +70,7 @@ def main() -> int:
             "proofLadder": agi_proof.get("proofLadder", []),
             "externalBenchmarks": agi_proof.get("externalBenchmarks", []),
             "requiredProofData": agi_proof.get("requiredProofData", []),
+            "artifactIndex": agi_proof.get("artifactIndex", {}),
             "docs": "agi-proof/README.md",
             "manifest": "agi-proof/evidence-manifest.json",
         },

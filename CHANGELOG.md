@@ -2,6 +2,23 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.6.3] - 2026-06-19
+
+### Added
+
+- Religion figure council seats for Jesus traditions and Buddhist dharma
+  traditions, grounded as source witnesses rather than impersonation.
+- `data/religion_council_figures.json` plus Christianity/Buddhism source-seat
+  docs and the Religion Figure Council guide.
+- Hidden-reviewer pack schema, operating protocol, commitment generator, and
+  hidden-eval scoring/template helper.
+- `agi-proof/benchmark-results/` for visible and hidden evaluation artifacts.
+
+### Changed
+
+- Sophia prompts now route religion founder/scripture questions through a
+  source-grounded council with no sacred-figure impersonation.
+
 ## [0.6.2] - 2026-06-19
 
 ### Added

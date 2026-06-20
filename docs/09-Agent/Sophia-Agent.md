@@ -71,6 +71,30 @@ python tools/sophia_rag.py "Did Confucius write the Dao De Jing?"   # Gemini + g
 
 Memory: `agent/memory/decisions.jsonl` (gitignored).
 
+## Web Evidence And Review Tools
+
+Sophia can now collect local RAG evidence plus optional online evidence:
+
+```powershell
+# local-only source context
+python tools/sophia_agent.py web_evidence "Buddhist no-self doctrine and modern psychology"
+
+# opt-in online search via Brave, Tavily, or SerpAPI
+python tools/sophia_agent.py web_evidence "Buddhist no-self doctrine and modern psychology" --web-evidence --web-provider auto
+```
+
+Draft answers can be checked before publishing:
+
+```powershell
+python tools/sophia_agent.py rubric_review "Question" \
+  --response "Draft answer" \
+  --must-include-json "[\"source path\", \"Decision\"]"
+```
+
+Hidden evals use the same review pass to build a rubric evidence map. Online
+search remains disabled by default for hidden packs to avoid leaking reviewer
+prompts to third-party APIs.
+
 ## Runtime gate (v0.5.0)
 
 After the LLM answers, `agent/gate.py` runs:

@@ -1,0 +1,161 @@
+{
+  "packId": "prepared-pack-2026-06-19",
+  "model": "grok-cli",
+  "runAt": "2026-06-19T19:45:21",
+  "visibility": "public-aggregate-no-prompts",
+  "hiddenStatus": "used-prepared-hidden-pack",
+  "caseCount": 8,
+  "domains": [
+    "coding",
+    "history",
+    "learning",
+    "logic",
+    "philosophy",
+    "planning",
+    "psychology",
+    "tool_use"
+  ],
+  "passed": 2,
+  "totalCases": 8,
+  "score": 28.75,
+  "maxScore": 40.0,
+  "scorePct": 71.88,
+  "scoreMethod": "automatic keyword/avoidance screen with partial credit; manual rubric remains in the private reviewer report",
+  "domainResults": {
+    "philosophy": {
+      "passed": 0,
+      "total": 1,
+      "score": 3.75,
+      "maxScore": 5.0,
+      "scorePct": 75.0
+    },
+    "psychology": {
+      "passed": 0,
+      "total": 1,
+      "score": 2.5,
+      "maxScore": 5.0,
+      "scorePct": 50.0
+    },
+    "history": {
+      "passed": 1,
+      "total": 1,
+      "score": 5.0,
+      "maxScore": 5.0,
+      "scorePct": 100.0
+    },
+    "logic": {
+      "passed": 1,
+      "total": 1,
+      "score": 5.0,
+      "maxScore": 5.0,
+      "scorePct": 100.0
+    },
+    "coding": {
+      "passed": 0,
+      "total": 1,
+      "score": 3.75,
+      "maxScore": 5.0,
+      "scorePct": 75.0
+    },
+    "planning": {
+      "passed": 0,
+      "total": 1,
+      "score": 3.75,
+      "maxScore": 5.0,
+      "scorePct": 75.0
+    },
+    "tool_use": {
+      "passed": 0,
+      "total": 1,
+      "score": 1.25,
+      "maxScore": 5.0,
+      "scorePct": 25.0
+    },
+    "learning": {
+      "passed": 0,
+      "total": 1,
+      "score": 3.75,
+      "maxScore": 5.0,
+      "scorePct": 75.0
+    }
+  },
+  "caseResults": [
+    {
+      "id": "hidden_philosophy_001",
+      "domain": "philosophy",
+      "passed": false,
+      "score": 3.75,
+      "maxPoints": 5,
+      "passedChecks": 3,
+      "totalChecks": 4
+    },
+    {
+      "id": "hidden_psychology_001",
+      "domain": "psychology",
+      "passed": false,
+      "score": 2.5,
+      "maxPoints": 5,
+      "passedChecks": 2,
+      "totalChecks": 4
+    },
+    {
+      "id": "hidden_history_001",
+      "domain": "history",
+      "passed": true,
+      "score": 5.0,
+      "maxPoints": 5,
+      "passedChecks": 4,
+      "totalChecks": 4
+    },
+    {
+      "id": "hidden_logic_001",
+      "domain": "logic",
+      "passed": true,
+      "score": 5.0,
+      "maxPoints": 5,
+      "passedChecks": 4,
+      "totalChecks": 4
+    },
+    {
+      "id": "hidden_coding_001",
+      "domain": "coding",
+      "passed": false,
+      "score": 3.75,
+      "maxPoints": 5,
+      "passedChecks": 3,
+      "totalChecks": 4
+    },
+    {
+      "id": "hidden_planning_001",
+      "domain": "planning",
+      "passed": false,
+      "score": 3.75,
+      "maxPoints": 5,
+      "passedChecks": 3,
+      "totalChecks": 4
+    },
+    {
+      "id": "hidden_tool_use_001",
+      "domain": "tool_use",
+      "passed": false,
+      "score": 1.25,
+      "maxPoints": 5,
+      "passedChecks": 1,
+      "totalChecks": 4
+    },
+    {
+      "id": "hidden_learning_001",
+      "domain": "learning",
+      "passed": false,
+      "score": 3.75,
+      "maxPoints": 5,
+      "passedChecks": 3,
+      "totalChecks": 4
+    }
+  ],
+  "notes": [
+    "Prepared pack is now spent; do not reuse as fresh hidden evidence.",
+    "Prompt text, materials, responses, and detailed rubric remain private.",
+    "Use a new third-party hidden pack for stronger AGI-candidate claims."
+  ]
+}

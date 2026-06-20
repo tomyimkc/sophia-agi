@@ -1,6 +1,6 @@
 # Sophia AGI MCP server
 
-Local MCP tools for **validate**, **epistemic gate**, **benchmark**, **corpus lookup**, and **dispute notes**.
+Local MCP tools for **validate**, **epistemic gate**, **benchmark**, **corpus lookup**, **dispute notes**, **web evidence**, and **rubric review**.
 
 Package path: `sophia_mcp/` (avoids name clash with pip `mcp`).
 
@@ -18,6 +18,8 @@ Package path: `sophia_mcp/` (avoids name clash with pip `mcp`).
 | `sophia_get_record` | Lookup psychology/history/religion/philosophy record |
 | `sophia_list_disputes` | List `docs/04-Disputes/` slugs |
 | `sophia_read_dispute` | Read dispute markdown by slug |
+| `sophia_web_evidence_search` | Local RAG plus optional Brave/Tavily/SerpAPI evidence search |
+| `sophia_rubric_review` | Deterministic strict-pass review of a draft answer |
 
 ## Install
 
@@ -62,4 +64,5 @@ Full guide: [Skills-Install.md](Skills-Install.md)
 
 - Local repo reads only; no API keys required
 - `sophia_export_corpus` writes `training/corpus.jsonl` only
+- Web evidence is offline by default; online mode requires provider keys and may share the query with a third-party search API
 - Does not run shell or `sophia_agent.py` automatically

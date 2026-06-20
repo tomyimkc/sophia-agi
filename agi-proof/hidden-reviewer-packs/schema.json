@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sophia Hidden Evaluation Pack",
+  "type": "object",
+  "required": ["packId", "createdAt", "visibility", "cases"],
+  "properties": {
+    "packId": { "type": "string" },
+    "createdAt": { "type": "string" },
+    "visibility": { "enum": ["private-hidden", "revealed-after-eval"] },
+    "salt": { "type": "string" },
+    "reviewer": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "string" },
+        "note": { "type": "string" }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "domain", "prompt", "scoring"],
+        "properties": {
+          "id": { "type": "string" },
+          "domain": {
+            "enum": [
+              "philosophy",
+              "psychology",
+              "history",
+              "logic",
+              "coding",
+              "planning",
+              "tool_use",
+              "learning"
+            ]
+          },
+          "prompt": { "type": "string" },
+          "materials": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "learningProtocol": {
+            "type": "object",
+            "properties": {
+              "preTestPrompt": { "type": "string" },
+              "postTestPrompt": { "type": "string" }
+            }
+          },
+          "scoring": {
+            "type": "object",
+            "required": ["maxPoints", "rubric"],
+            "properties": {
+              "maxPoints": { "type": "number" },
+              "mustInclude": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    { "type": "string" },
+                    {
+                      "type": "object",
+                      "required": ["match"],
+                      "properties": {
+                        "match": { "type": "string" },
+                        "aliases": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "mustAvoid": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    { "type": "string" },
+                    {
+                      "type": "object",
+                      "required": ["match"],
+                      "properties": {
+                        "match": { "type": "string" },
+                        "aliases": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "aliases": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              },
+              "semanticChecks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["id", "description"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "description": { "type": "string" }
+                  }
+                }
+              },
+              "rubric": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "manualReview": { "type": "string" },
+              "artifactRequired": { "type": "boolean" }
+            }
+          },
+          "requiresToolLog": { "type": "boolean" },
+          "requiresMemoryDiff": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

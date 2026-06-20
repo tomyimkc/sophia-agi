@@ -1,0 +1,236 @@
+{
+  "packId": "fresh-reviewer-pack-2026-06-19",
+  "model": "sophia-full-grok",
+  "runAt": "2026-06-19T20:56:19",
+  "visibility": "public-aggregate-no-prompts",
+  "hiddenStatus": "used-hidden-pack",
+  "caseCount": 8,
+  "domains": [
+    "coding",
+    "history",
+    "learning",
+    "logic",
+    "philosophy",
+    "planning",
+    "psychology",
+    "tool_use"
+  ],
+  "passed": 0,
+  "totalCases": 8,
+  "score": 0.0,
+  "maxScore": 40.0,
+  "scorePct": 0.0,
+  "scoreMethod": "alias/regex keyword screen plus operational tool/memory evidence; manual semantic judge review remains required for strong claims",
+  "backendHealth": {},
+  "responseHealth": {
+    "nonemptyAnswers": 0,
+    "totalAnswers": 8,
+    "backendFailureCount": 8,
+    "backendFailures": {
+      "philosophy_fresh_001": {
+        "returncode": 1,
+        "timedOut": false,
+        "missingExecutable": false
+      },
+      "psychology_fresh_001": {
+        "returncode": 1,
+        "timedOut": false,
+        "missingExecutable": false
+      },
+      "history_fresh_001": {
+        "returncode": 1,
+        "timedOut": false,
+        "missingExecutable": false
+      },
+      "logic_fresh_001": {
+        "returncode": 1,
+        "timedOut": false,
+        "missingExecutable": false
+      },
+      "coding_fresh_001": {
+        "returncode": 1,
+        "timedOut": false,
+        "missingExecutable": false
+      },
+      "planning_fresh_001": {
+        "returncode": 1,
+        "timedOut": false,
+        "missingExecutable": false
+      },
+      "tool_use_fresh_001": {
+        "returncode": 1,
+        "timedOut": false,
+        "missingExecutable": false
+      },
+      "learning_fresh_001": {
+        "returncode": 1,
+        "timedOut": false,
+        "missingExecutable": false
+      }
+    }
+  },
+  "repairAttempts": {
+    "philosophy_fresh_001": 0,
+    "psychology_fresh_001": 0,
+    "history_fresh_001": 0,
+    "logic_fresh_001": 0,
+    "coding_fresh_001": 0,
+    "planning_fresh_001": 0,
+    "tool_use_fresh_001": 0,
+    "learning_fresh_001": 0
+  },
+  "domainResults": {
+    "philosophy": {
+      "passed": 0,
+      "total": 1,
+      "score": 0.0,
+      "maxScore": 5.0,
+      "scorePct": 0.0
+    },
+    "psychology": {
+      "passed": 0,
+      "total": 1,
+      "score": 0.0,
+      "maxScore": 5.0,
+      "scorePct": 0.0
+    },
+    "history": {
+      "passed": 0,
+      "total": 1,
+      "score": 0.0,
+      "maxScore": 5.0,
+      "scorePct": 0.0
+    },
+    "logic": {
+      "passed": 0,
+      "total": 1,
+      "score": 0.0,
+      "maxScore": 5.0,
+      "scorePct": 0.0
+    },
+    "coding": {
+      "passed": 0,
+      "total": 1,
+      "score": 0.0,
+      "maxScore": 5.0,
+      "scorePct": 0.0
+    },
+    "planning": {
+      "passed": 0,
+      "total": 1,
+      "score": 0.0,
+      "maxScore": 5.0,
+      "scorePct": 0.0
+    },
+    "tool_use": {
+      "passed": 0,
+      "total": 1,
+      "score": 0.0,
+      "maxScore": 5.0,
+      "scorePct": 0.0
+    },
+    "learning": {
+      "passed": 0,
+      "total": 1,
+      "score": 0.0,
+      "maxScore": 5.0,
+      "scorePct": 0.0
+    }
+  },
+  "caseResults": [
+    {
+      "id": "philosophy_fresh_001",
+      "domain": "philosophy",
+      "passed": false,
+      "score": 0,
+      "maxPoints": 5,
+      "passedChecks": 0,
+      "totalChecks": 7,
+      "requiresManualReview": true,
+      "manualReview": "required for semantic adequacy"
+    },
+    {
+      "id": "psychology_fresh_001",
+      "domain": "psychology",
+      "passed": false,
+      "score": 0,
+      "maxPoints": 5,
+      "passedChecks": 0,
+      "totalChecks": 7,
+      "requiresManualReview": true,
+      "manualReview": "required for tone and safety"
+    },
+    {
+      "id": "history_fresh_001",
+      "domain": "history",
+      "passed": false,
+      "score": 0,
+      "maxPoints": 5,
+      "passedChecks": 0,
+      "totalChecks": 7,
+      "requiresManualReview": true,
+      "manualReview": "required for historical reasoning"
+    },
+    {
+      "id": "logic_fresh_001",
+      "domain": "logic",
+      "passed": false,
+      "score": 0,
+      "maxPoints": 5,
+      "passedChecks": 0,
+      "totalChecks": 7,
+      "requiresManualReview": true,
+      "manualReview": "required for validity/soundness distinction"
+    },
+    {
+      "id": "coding_fresh_001",
+      "domain": "coding",
+      "passed": false,
+      "score": 0,
+      "maxPoints": 5,
+      "passedChecks": 0,
+      "totalChecks": 7,
+      "requiresManualReview": true,
+      "manualReview": "required for patch quality"
+    },
+    {
+      "id": "planning_fresh_001",
+      "domain": "planning",
+      "passed": false,
+      "score": 0,
+      "maxPoints": 5,
+      "passedChecks": 0,
+      "totalChecks": 7,
+      "requiresManualReview": true,
+      "manualReview": "required for operational realism"
+    },
+    {
+      "id": "tool_use_fresh_001",
+      "domain": "tool_use",
+      "passed": false,
+      "score": 0,
+      "maxPoints": 5,
+      "passedChecks": 0,
+      "totalChecks": 8,
+      "requiresManualReview": true,
+      "manualReview": "required for log-grounding"
+    },
+    {
+      "id": "learning_fresh_001",
+      "domain": "learning",
+      "passed": false,
+      "score": 0,
+      "maxPoints": 5,
+      "passedChecks": 0,
+      "totalChecks": 8,
+      "requiresManualReview": true,
+      "manualReview": "required for learning-transfer evidence"
+    }
+  ],
+  "notes": [
+    "Full prompts, responses, detailed rubrics, tool output, and memory diffs remain private.",
+    "This runner exercises Sophia retrieval, gate checks, bounded repair, tool logs, and append-only memory evidence.",
+    "Backend failures and empty model answers are recorded separately from semantic failures.",
+    "Fresh third-party packs still require an external reviewer signature."
+  ]
+}

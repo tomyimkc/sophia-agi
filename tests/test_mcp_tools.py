@@ -17,7 +17,9 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     gate_check,
     get_attribution,
     list_disputes,
+    rubric_review,
     validate_corpus,
+    web_evidence_search,
 )
 
 
@@ -55,6 +57,22 @@ def test_export_corpus() -> None:
     assert result["lines"] >= 500
 
 
+def test_web_evidence_search_offline() -> None:
+    result = web_evidence_search("Dao De Jing attribution", online=False, local_top_k=1)
+    assert result["web"]["online"] is False
+    assert result["localSources"]
+
+
+def test_rubric_review_flags_missing() -> None:
+    result = rubric_review(
+        "Should the answer include sources?",
+        "Decision: yes.\n中文摘要: 是。",
+        must_include=["source path"],
+    )
+    assert result["strictPassReady"] is False
+    assert result["missing"]
+
+
 def main() -> int:
     test_validate_ok()
     test_get_attribution_ddj()
@@ -62,6 +80,8 @@ def main() -> int:
     test_gate_rejects_bad_ddj()
     test_list_disputes()
     test_export_corpus()
+    test_web_evidence_search_offline()
+    test_rubric_review_flags_missing()
     print("test_mcp_tools: OK")
     return 0
 

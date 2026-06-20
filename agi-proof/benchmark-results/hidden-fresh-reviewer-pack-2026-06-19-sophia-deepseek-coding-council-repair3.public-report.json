@@ -1,0 +1,228 @@
+{
+  "packId": "fresh-reviewer-pack-2026-06-19",
+  "model": "sophia-full-deepseek-coding-council-repair3",
+  "runAt": "2026-06-20T00:43:51",
+  "visibility": "public-aggregate-no-prompts",
+  "hiddenStatus": "used-hidden-pack",
+  "caseCount": 8,
+  "domains": [
+    "coding",
+    "history",
+    "learning",
+    "logic",
+    "philosophy",
+    "planning",
+    "psychology",
+    "tool_use"
+  ],
+  "passed": 0,
+  "totalCases": 8,
+  "score": 31.899999999999995,
+  "maxScore": 40.0,
+  "scorePct": 79.75,
+  "scoreMethod": "alias/regex keyword screen plus operational tool/memory evidence; manual semantic judge review remains required for strong claims",
+  "backendHealth": {
+    "backend": "deepseek",
+    "model": "deepseek-v4-pro",
+    "returncode": 0,
+    "elapsedSec": 4.43,
+    "stderrTail": "",
+    "ok": true,
+    "answerPreview": "SOPHIA_PREFLIGHT_OK  \nDecision: OK  \n摘要: 预检通过，后端服务正常。",
+    "expectedMarker": "SOPHIA_PREFLIGHT_OK"
+  },
+  "responseHealth": {
+    "nonemptyAnswers": 8,
+    "totalAnswers": 8,
+    "backendFailureCount": 0,
+    "backendFailures": {}
+  },
+  "repairAttempts": {
+    "philosophy_fresh_001": 1,
+    "psychology_fresh_001": 1,
+    "history_fresh_001": 1,
+    "logic_fresh_001": 1,
+    "coding_fresh_001": 1,
+    "planning_fresh_001": 1,
+    "tool_use_fresh_001": 1,
+    "learning_fresh_001": 1
+  },
+  "councilRouting": {
+    "codingCasesRouted": 1,
+    "cases": {
+      "coding_fresh_001": {
+        "seatCount": 6,
+        "seats": [
+          "Data science language seat",
+          "Python readability seat",
+          "QA and test reviewer",
+          "Final code reviewer",
+          "Software architecture reviewer",
+          "Security reviewer"
+        ]
+      }
+    }
+  },
+  "domainResults": {
+    "philosophy": {
+      "passed": 0,
+      "total": 1,
+      "score": 4.29,
+      "maxScore": 5.0,
+      "scorePct": 85.8
+    },
+    "psychology": {
+      "passed": 0,
+      "total": 1,
+      "score": 3.57,
+      "maxScore": 5.0,
+      "scorePct": 71.4
+    },
+    "history": {
+      "passed": 0,
+      "total": 1,
+      "score": 4.29,
+      "maxScore": 5.0,
+      "scorePct": 85.8
+    },
+    "logic": {
+      "passed": 0,
+      "total": 1,
+      "score": 4.29,
+      "maxScore": 5.0,
+      "scorePct": 85.8
+    },
+    "coding": {
+      "passed": 0,
+      "total": 1,
+      "score": 4.29,
+      "maxScore": 5.0,
+      "scorePct": 85.8
+    },
+    "planning": {
+      "passed": 0,
+      "total": 1,
+      "score": 4.29,
+      "maxScore": 5.0,
+      "scorePct": 85.8
+    },
+    "tool_use": {
+      "passed": 0,
+      "total": 1,
+      "score": 2.5,
+      "maxScore": 5.0,
+      "scorePct": 50.0
+    },
+    "learning": {
+      "passed": 0,
+      "total": 1,
+      "score": 4.38,
+      "maxScore": 5.0,
+      "scorePct": 87.6
+    }
+  },
+  "caseResults": [
+    {
+      "id": "philosophy_fresh_001",
+      "domain": "philosophy",
+      "passed": false,
+      "score": 4.29,
+      "maxPoints": 5,
+      "passedChecks": 6,
+      "totalChecks": 7,
+      "requiresManualReview": true,
+      "manualReview": "required for semantic adequacy",
+      "missedRubricCount": 2
+    },
+    {
+      "id": "psychology_fresh_001",
+      "domain": "psychology",
+      "passed": false,
+      "score": 3.57,
+      "maxPoints": 5,
+      "passedChecks": 5,
+      "totalChecks": 7,
+      "requiresManualReview": true,
+      "manualReview": "required for tone and safety",
+      "missedRubricCount": 3
+    },
+    {
+      "id": "history_fresh_001",
+      "domain": "history",
+      "passed": false,
+      "score": 4.29,
+      "maxPoints": 5,
+      "passedChecks": 6,
+      "totalChecks": 7,
+      "requiresManualReview": true,
+      "manualReview": "required for historical reasoning",
+      "missedRubricCount": 2
+    },
+    {
+      "id": "logic_fresh_001",
+      "domain": "logic",
+      "passed": false,
+      "score": 4.29,
+      "maxPoints": 5,
+      "passedChecks": 6,
+      "totalChecks": 7,
+      "requiresManualReview": true,
+      "manualReview": "required for validity/soundness distinction",
+      "missedRubricCount": 2
+    },
+    {
+      "id": "coding_fresh_001",
+      "domain": "coding",
+      "passed": false,
+      "score": 4.29,
+      "maxPoints": 5,
+      "passedChecks": 6,
+      "totalChecks": 7,
+      "requiresManualReview": true,
+      "manualReview": "required for patch quality",
+      "missedRubricCount": 2
+    },
+    {
+      "id": "planning_fresh_001",
+      "domain": "planning",
+      "passed": false,
+      "score": 4.29,
+      "maxPoints": 5,
+      "passedChecks": 6,
+      "totalChecks": 7,
+      "requiresManualReview": true,
+      "manualReview": "required for operational realism",
+      "missedRubricCount": 2
+    },
+    {
+      "id": "tool_use_fresh_001",
+      "domain": "tool_use",
+      "passed": false,
+      "score": 2.5,
+      "maxPoints": 5,
+      "passedChecks": 4,
+      "totalChecks": 8,
+      "requiresManualReview": true,
+      "manualReview": "required for log-grounding",
+      "missedRubricCount": 5
+    },
+    {
+      "id": "learning_fresh_001",
+      "domain": "learning",
+      "passed": false,
+      "score": 4.38,
+      "maxPoints": 5,
+      "passedChecks": 7,
+      "totalChecks": 8,
+      "requiresManualReview": true,
+      "manualReview": "required for learning-transfer evidence",
+      "missedRubricCount": 2
+    }
+  ],
+  "notes": [
+    "Full prompts, responses, detailed rubrics, tool output, and memory diffs remain private.",
+    "This runner exercises Sophia retrieval, gate checks, bounded repair, tool logs, and append-only memory evidence.",
+    "Backend failures and empty model answers are recorded separately from semantic failures.",
+    "Fresh third-party packs still require an external reviewer signature."
+  ]
+}

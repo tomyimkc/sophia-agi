@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.6.2-blue)
+![Version](https://img.shields.io/badge/version-0.6.3-blue)
 ![Training examples](https://img.shields.io/badge/training_examples-518-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
@@ -22,6 +22,7 @@ The proof package defines the operational AGI definition, pre-registered thresho
 
 - Evidence package: [agi-proof/README.md](agi-proof/README.md)
 - Machine-readable manifest: [agi-proof/evidence-manifest.json](agi-proof/evidence-manifest.json)
+- Religion figure council: [docs/08-Domains/Religion-Figure-Council.md](docs/08-Domains/Religion-Figure-Council.md)
 - Public thesis chapter: https://tomyimkc.github.io/sophia-agi/#agi-proof
 
 ```bash

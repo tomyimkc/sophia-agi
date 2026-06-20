@@ -1,0 +1,60 @@
+{
+  "packId": "prepared-pack-2026-06-19",
+  "createdAt": "2026-06-19",
+  "visibility": "public-commitment-only",
+  "caseCount": 8,
+  "domains": [
+    "coding",
+    "history",
+    "learning",
+    "logic",
+    "philosophy",
+    "planning",
+    "psychology",
+    "tool_use"
+  ],
+  "commitmentMethod": "sha256(json({salt,id,domain,prompt,materials,scoring}, sort_keys=True))",
+  "saltStatus": "withheld until reveal",
+  "cases": [
+    {
+      "id": "hidden_philosophy_001",
+      "domain": "philosophy",
+      "sha256": "275cb2bcb368426bb46236bc2a57702e4203492c34b0b1d2b4af5117f8e61725"
+    },
+    {
+      "id": "hidden_psychology_001",
+      "domain": "psychology",
+      "sha256": "0db8822c9d9773f49e3fae471672b8c23a6601fed5c4bb6bda1d1ee94fdd067b"
+    },
+    {
+      "id": "hidden_history_001",
+      "domain": "history",
+      "sha256": "36edc3808f2175233d19bb2496dec09aa23adf390e50c9d447277ac01a9e4691"
+    },
+    {
+      "id": "hidden_logic_001",
+      "domain": "logic",
+      "sha256": "e80e789e6f32a689d9e9d963981aa7d570021eabb4a83d0f2003b1130042221a"
+    },
+    {
+      "id": "hidden_coding_001",
+      "domain": "coding",
+      "sha256": "b49ad67359c6a0d1a00c0fafa673ca77dfea18e9417f976627fb579c398778de"
+    },
+    {
+      "id": "hidden_planning_001",
+      "domain": "planning",
+      "sha256": "672584e419d7e3d7cac6df2b4cc5149fbb0bfe061165615ac00f2bc3b4072e35"
+    },
+    {
+      "id": "hidden_tool_use_001",
+      "domain": "tool_use",
+      "sha256": "154176088ea4c496dacad1f8adb7bcb4c828aaa80b290df23f10027a5e1f490b"
+    },
+    {
+      "id": "hidden_learning_001",
+      "domain": "learning",
+      "sha256": "396470774b1ffbaafb158457a9a6db3ba5cc8b0a23c254a220ad2f9d6c770c3f"
+    }
+  ]
+}

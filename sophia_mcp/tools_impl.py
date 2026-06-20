@@ -7,6 +7,8 @@ from pathlib import Path
 
 from agent.benchmark_checks import DOMAIN_BENCH, load_json, score_case
 from agent.gate import check_response
+from agent.rubric_review import build_rubric_review
+from agent.web_evidence import gather_evidence
 from tools.validate_attribution import run_validation
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -130,6 +132,60 @@ def read_dispute(slug: str) -> dict:
     return {"slug": slug, "content": path.read_text(encoding="utf-8")}
 
 
+def web_evidence_search(
+    query: str,
+    *,
+    online: bool = False,
+    provider: str = "off",
+    top_k: int = 5,
+    local_top_k: int = 3,
+) -> dict:
+    if not query.strip():
+        return {"error": "query is required"}
+    return gather_evidence(
+        query,
+        local_top_k=local_top_k,
+        web_top_k=top_k,
+        online=online,
+        provider=provider,
+    )
+
+
+def rubric_review(
+    question: str,
+    response: str,
+    *,
+    domain: str = "philosophy",
+    must_include: list | None = None,
+    must_avoid: list | None = None,
+) -> dict:
+    if not question.strip():
+        return {"error": "question is required"}
+    if not response.strip():
+        return {"error": "response is required"}
+    mode = "repo" if domain in {"coding", "planning", "tool_use"} else "advisor"
+    gate = check_response(response, mode=mode, question=question, domain=domain if domain in DOMAIN_DATA else None)
+    must_include = must_include or []
+    must_avoid = must_avoid or []
+    failed_include = [item for item in must_include if _plain_match_missing(response, item)]
+    failed_avoid = [item for item in must_avoid if not _plain_match_missing(response, item)]
+    total = len(must_include) + len(must_avoid)
+    passed_checks = len(must_include) - len(failed_include) + len(must_avoid) - len(failed_avoid)
+    score_result = {
+        "passed": bool(total and passed_checks == total),
+        "failedInclude": failed_include,
+        "failedAvoid": failed_avoid,
+        "semanticResults": [],
+    }
+    case = {
+        "id": "mcp_rubric_review",
+        "domain": domain,
+        "prompt": question,
+        "scoring": {"mustInclude": must_include, "mustAvoid": must_avoid, "semanticChecks": []},
+    }
+    return build_rubric_review(case, response, score_result, gate)
+
+
 def export_corpus() -> dict:
     examples = sorted(EXAMPLES_DIR.glob("*.json"))
     if not examples:
@@ -140,6 +196,15 @@ def export_corpus() -> dict:
             payload = json.loads(path.read_text(encoding="utf-8"))
             handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
     return {"ok": True, "path": str(CORPUS_OUT), "lines": len(examples)}
+
+
+def _plain_match_missing(response: str, item: object) -> bool:
+    text = response.lower()
+    if isinstance(item, dict):
+        options = [str(item.get("match", "")), *[str(alias) for alias in item.get("aliases", [])]]
+    else:
+        options = [str(item)]
+    return not any(option and option.lower() in text for option in options)
 
 
 def dumps(payload: dict) -> str:

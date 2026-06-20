@@ -1,5 +1,5 @@
 {
-  "version": "0.6.2",
+  "version": "0.6.3",
   "trainingExamples": 518,
   "domains": [
     "philosophy",
@@ -156,6 +156,12 @@
       "vertex",
       "claude"
     ],
+    "webEvidenceProviders": [
+      "brave",
+      "tavily",
+      "serpapi"
+    ],
+    "webEvidenceDefault": "off-for-hidden-evals",
     "cli": "python tools/sophia_rag.py",
     "docs": "docs/09-Agent/Online-RAG.md"
   },
@@ -240,6 +246,23 @@
       "failure ledger with claim impact",
       "third-party reproduction on a clean clone"
     ],
+    "artifactIndex": {
+      "definition": "agi-proof/definition.md",
+      "thresholds": "agi-proof/preregistered-thresholds.md",
+      "benchmarkResults": "agi-proof/benchmark-results/README.md",
+      "externalBenchmarks": "agi-proof/external-benchmarks/README.md",
+      "baselineAblation": "agi-proof/baseline-ablation/README.md",
+      "hiddenReview": "agi-proof/hidden-reviewer-packs/README.md",
+      "manualSemanticReview": "agi-proof/hidden-reviewer-packs/MANUAL-SEMANTIC-REVIEW.md",
+      "hiddenPackCommitments": "agi-proof/hidden-reviewer-packs/prepared-pack-2026-06-19.commitments.json",
+      "freshHiddenPackCommitments": "agi-proof/hidden-reviewer-packs/fresh-reviewer-pack-2026-06-19.commitments.json",
+      "longHorizon": "agi-proof/long-horizon-runs/README.md",
+      "learningShift": "agi-proof/learning-under-shift/README.md",
+      "failureLedger": "agi-proof/failure-ledger.md",
+      "replication": "agi-proof/third-party-replication/README.md",
+      "religionFigureCouncil": "docs/08-Domains/Religion-Figure-Council.md",
+      "codingCouncil": "docs/08-Domains/Coding-Council.md"
+    },
     "docs": "agi-proof/README.md",
     "manifest": "agi-proof/evidence-manifest.json"
   },

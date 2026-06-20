@@ -26,7 +26,9 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     get_record,
     list_disputes,
     read_dispute,
+    rubric_review,
     validate_corpus,
+    web_evidence_search,
 )
 
 try:
@@ -117,6 +119,45 @@ def sophia_list_disputes() -> str:
 def sophia_read_dispute(slug: str) -> str:
     """Read a dispute markdown file by slug (e.g. Laozi-Dao-De-Jing-Attribution)."""
     return dumps(read_dispute(slug))
+
+
+@mcp.tool()
+def sophia_web_evidence_search(
+    query: str,
+    online: bool = False,
+    provider: str = "off",
+    top_k: int = 5,
+    local_top_k: int = 3,
+) -> str:
+    """Search Sophia local RAG plus optional Brave/Tavily/SerpAPI web evidence."""
+    return dumps(web_evidence_search(query, online=online, provider=provider, top_k=top_k, local_top_k=local_top_k))
+
+
+@mcp.tool()
+def sophia_rubric_review(
+    question: str,
+    response: str,
+    domain: str = "philosophy",
+    must_include_json: str = "[]",
+    must_avoid_json: str = "[]",
+) -> str:
+    """Review a draft against required/forbidden rubric items plus Sophia gate checks."""
+    try:
+        must_include = json.loads(must_include_json)
+        must_avoid = json.loads(must_avoid_json)
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid rubric JSON: {exc}"})
+    if not isinstance(must_include, list) or not isinstance(must_avoid, list):
+        return dumps({"error": "must_include_json and must_avoid_json must be JSON arrays"})
+    return dumps(
+        rubric_review(
+            question,
+            response,
+            domain=domain,
+            must_include=must_include,
+            must_avoid=must_avoid,
+        )
+    )
 
 
 if __name__ == "__main__":

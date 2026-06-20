@@ -72,6 +72,8 @@ def collect_corpus() -> list[tuple[str, str, str]]:
         DOCS_DIR / "07-Growth",
         DOCS_DIR / "06-Roadmap",
         DOCS_DIR / "04-Disputes",
+        DOCS_DIR / "09-Agent",
+        ROOT / "agi-proof",
         ROOT / "GOOD_FIRST_ISSUES.md",
         ROOT / "README.md",
     ]

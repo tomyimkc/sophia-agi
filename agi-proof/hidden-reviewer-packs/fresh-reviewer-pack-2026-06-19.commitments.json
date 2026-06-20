@@ -1,0 +1,60 @@
+{
+  "packId": "fresh-reviewer-pack-2026-06-19",
+  "createdAt": "2026-06-19T00:00:00+08:00",
+  "visibility": "public-commitment-only",
+  "caseCount": 8,
+  "domains": [
+    "coding",
+    "history",
+    "learning",
+    "logic",
+    "philosophy",
+    "planning",
+    "psychology",
+    "tool_use"
+  ],
+  "commitmentMethod": "sha256(json({salt,id,domain,prompt,materials,scoring,requiresToolLog,requiresMemoryDiff}, sort_keys=True))",
+  "saltStatus": "withheld until reveal",
+  "cases": [
+    {
+      "id": "philosophy_fresh_001",
+      "domain": "philosophy",
+      "sha256": "1cfc1fb25fc5baba18ab2d73ce6aa36063f13d41152c917aad0383be05c660f6"
+    },
+    {
+      "id": "psychology_fresh_001",
+      "domain": "psychology",
+      "sha256": "92d2cad5194c5ea1681458d49272dbc59be4d654b785df750ddc953189b6d1cd"
+    },
+    {
+      "id": "history_fresh_001",
+      "domain": "history",
+      "sha256": "69f31207dfc22de11538f3e823644345edec18201c6f88fade90e1d5b27b7024"
+    },
+    {
+      "id": "logic_fresh_001",
+      "domain": "logic",
+      "sha256": "da60273dcce58700a085f13cd99e955e4b4603085c3ef7b04668986baa58e2ea"
+    },
+    {
+      "id": "coding_fresh_001",
+      "domain": "coding",
+      "sha256": "a6abf263910d0c71803211c655a25d2951750194cb5ef1137bac2345563a3a53"
+    },
+    {
+      "id": "planning_fresh_001",
+      "domain": "planning",
+      "sha256": "68661f16f2fc4aa73c73cfe026acfd168ba9dbd1b5dc0c68b24fd5b59e093330"
+    },
+    {
+      "id": "tool_use_fresh_001",
+      "domain": "tool_use",
+      "sha256": "af2853b5994b514498b4e11ec05858b1c18945f5d6a85b116bc495064435eb2c"
+    },
+    {
+      "id": "learning_fresh_001",
+      "domain": "learning",
+      "sha256": "761aa31d7ca24cac7ce7baf7800cba03381a92b9918ea7b8ff0bbe52351b3afe"
+    }
+  ]
+}

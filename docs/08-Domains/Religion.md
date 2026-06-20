@@ -8,12 +8,16 @@ Philosophy-style provenance plus **full council panel** debate mode:
 - **Tradition boundary** — Christianity, Buddhism, Islam, Daoist, Confucian ritual
 - **Theological vs historical** — do not collapse
 - **Pop spirituality myths** — label misconception / myth
+- **Figure source seats** — Jesus tradition witness and Buddhist dharma witness,
+  grounded in documented textual traditions rather than impersonation
 
 ## Data center
 
 - **Records:** `data/religion_concepts.json`
+- **Figure seats:** `data/religion_council_figures.json`
 - **Hub training:** `training/examples/019-religion-source-discipline-hub.json`
 - **Council spec:** [Religion-Council-Debate-Mode.md](Religion-Council-Debate-Mode.md)
+- **Figure council:** [Religion-Figure-Council.md](Religion-Figure-Council.md)
 - **Benchmark:** `tests/benchmark-religion.json` (5 cases)
 
 ## Example traps

@@ -47,12 +47,87 @@ def leaderboard_summary() -> dict[str, Any]:
     return summary
 
 
+def latest_hidden_report() -> dict[str, Any] | None:
+    reports = hidden_public_reports()
+    if not reports:
+        return None
+    return max(reports, key=hidden_report_sort_key)
+
+
+def hidden_report_sort_key(report: dict[str, Any]) -> tuple[datetime, str]:
+    run_at = str(report.get("runAt", ""))
+    try:
+        parsed = datetime.fromisoformat(run_at)
+    except ValueError:
+        parsed = datetime.min
+    return parsed, str(report.get("artifact", ""))
+
+
+def public_artifact(path: Path) -> str:
+    return str(path.relative_to(ROOT))
+
+
+def load_hidden_report(path: Path) -> dict[str, Any] | None:
+    report = load_json(path, None)
+    if not isinstance(report, dict):
+        return None
+    enriched = dict(report)
+    enriched["artifact"] = public_artifact(path)
+    return enriched
+
+
+def hidden_public_reports() -> list[dict[str, Any]]:
+    reports: list[dict[str, Any]] = []
+    for path in sorted((AGI_PROOF_DIR / "benchmark-results").glob("hidden-*.public-report.json")):
+        report = load_hidden_report(path)
+        if report:
+            reports.append(report)
+    return reports
+
+
+def hidden_commitments() -> dict[str, Any]:
+    prepared = AGI_PROOF_DIR / "hidden-reviewer-packs" / "prepared-pack-2026-06-19.commitments.json"
+    fresh = AGI_PROOF_DIR / "hidden-reviewer-packs" / "fresh-reviewer-pack-2026-06-19.commitments.json"
+    fresh_report_paths = {
+        "grok": (
+            AGI_PROOF_DIR
+            / "benchmark-results"
+            / "hidden-fresh-reviewer-pack-2026-06-19-sophia-grok.public-report.json"
+        ),
+        "deepseek": (
+            AGI_PROOF_DIR
+            / "benchmark-results"
+            / "hidden-fresh-reviewer-pack-2026-06-19-sophia-deepseek.public-report.json"
+        ),
+    }
+    fresh_results = {
+        backend: report
+        for backend, path in fresh_report_paths.items()
+        if (report := load_hidden_report(path)) is not None
+    }
+    fresh_result = max(fresh_results.values(), key=hidden_report_sort_key) if fresh_results else None
+    return {
+        "spentPreparedPack": load_json(prepared, None),
+        "freshCandidatePack": load_json(fresh, None),
+        "freshCandidateRun": fresh_result,
+        "freshCandidateRuns": fresh_results,
+        "freshCandidateStatus": (
+            "spent-on-2026-06-19; candidate pack was not independent third-party evidence; "
+            "rerun requires a new unspent reviewer-controlled pack"
+            if fresh_result
+            else "sealed-unrun-candidate-third-party-pack; independent evidence requires external reviewer signature"
+        ),
+    }
+
+
 def build_manifest() -> dict[str, Any]:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     models = load_json(ROOT / "models" / "manifest.json", {})
     rag_summary = load_json(ROOT / "benchmark" / "model_runs" / "rag-claude-summary.json", {})
     leaderboards = leaderboard_summary()
     benchmark_total = sum(item["cases"] for item in leaderboards.values())
+    hidden_report = latest_hidden_report()
+    commitments = hidden_commitments()
 
     return {
         "version": version,
@@ -111,6 +186,9 @@ def build_manifest() -> dict[str, Any]:
                     else None
                 ),
             },
+            "hiddenLatestPublicReport": hidden_report,
+            "hiddenPreparedPack": hidden_report,
+            "hiddenPackCommitments": commitments,
         },
         "proofLadder": [
             {"level": 0, "name": "Corpus and schema", "status": "implemented"},
@@ -139,13 +217,23 @@ def build_manifest() -> dict[str, Any]:
         "artifactIndex": {
             "definition": "agi-proof/definition.md",
             "thresholds": "agi-proof/preregistered-thresholds.md",
+            "benchmarkResults": "agi-proof/benchmark-results/README.md",
             "externalBenchmarks": "agi-proof/external-benchmarks/README.md",
             "baselineAblation": "agi-proof/baseline-ablation/README.md",
             "hiddenReview": "agi-proof/hidden-reviewer-packs/README.md",
+            "manualSemanticReview": "agi-proof/hidden-reviewer-packs/MANUAL-SEMANTIC-REVIEW.md",
+            "webEvidence": "docs/09-Agent/Online-RAG.md",
+            "rubricReviewTools": "docs/09-Agent/Sophia-Agent.md",
+            "hiddenPackCommitments": "agi-proof/hidden-reviewer-packs/prepared-pack-2026-06-19.commitments.json",
+            "freshHiddenPackCommitments": (
+                "agi-proof/hidden-reviewer-packs/fresh-reviewer-pack-2026-06-19.commitments.json"
+            ),
             "longHorizon": "agi-proof/long-horizon-runs/README.md",
             "learningShift": "agi-proof/learning-under-shift/README.md",
             "failureLedger": "agi-proof/failure-ledger.md",
             "replication": "agi-proof/third-party-replication/README.md",
+            "religionFigureCouncil": "docs/08-Domains/Religion-Figure-Council.md",
+            "codingCouncil": "docs/08-Domains/Coding-Council.md",
         },
     }
 

@@ -10,6 +10,7 @@ benchmark/model_runs/*.log
 train-error.log
 train-out.txt
 agent/memory/*.jsonl
+private/hidden-evals/
 
 # OS / editor
 .DS_Store

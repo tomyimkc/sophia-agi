@@ -61,5 +61,33 @@
     "answerMode": "council_debate",
     "doNotMergeWith": ["christianity", "buddhism"],
     "notes": "Sensitive trap — scholarly vs theological claims must not collapse"
+  },
+  "jesus_gospel_teachings": {
+    "recordId": "jesus_gospel_teachings",
+    "domain": "religion",
+    "recordType": "figure_source_seat",
+    "canonicalTitleEn": "Jesus traditions in the canonical Gospels",
+    "canonicalTitleZh": "福音書中的耶穌傳統",
+    "tradition": "christianity",
+    "representativeFigure": "jesus_of_nazareth",
+    "sourceAnchors": ["canonical_gospels", "sermon_on_mount", "early_church_reception"],
+    "answerMode": "religion_figure_council",
+    "authorConfidence": "layered",
+    "doNotMergeWith": ["buddhism", "islam", "pop_spirituality"],
+    "notes": "Use as a Christian tradition witness seat, not first-person impersonation. Split theological voice from historical-critical reconstruction."
+  },
+  "buddha_dharma_teachings": {
+    "recordId": "buddha_dharma_teachings",
+    "domain": "religion",
+    "recordType": "figure_source_seat",
+    "canonicalTitleEn": "Buddha traditions in Buddhist canons",
+    "canonicalTitleZh": "佛教經藏中的佛陀傳統",
+    "tradition": "buddhism",
+    "representativeFigure": "gautama_buddha",
+    "sourceAnchors": ["pali_canon", "dhammapada", "mahayana_sutras"],
+    "answerMode": "religion_figure_council",
+    "authorConfidence": "layered",
+    "doNotMergeWith": ["christianity", "islam", "pop_spirituality"],
+    "notes": "Use as a Buddhist dharma witness seat, not first-person impersonation. Split doctrinal voice from historical-critical reconstruction."
   }
 }

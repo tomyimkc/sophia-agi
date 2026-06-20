@@ -16,3 +16,15 @@ rewriting old knowledge.
 
 Sophia improves on fresh post-test tasks while old benchmark performance remains
 stable and all memory changes are auditable.
+
+## Hidden Runner Evidence
+
+For hidden learning cases, `tools/run_hidden_eval_sophia.py` records:
+
+- pre-test model answer before the append;
+- append-only write to `agent/memory/hidden_eval_learning.jsonl`;
+- post-test model answer after the append;
+- hashes for protected old records before and after the append.
+
+The case fails the operational evidence check if the memory append is missing or
+any protected old record hash changes.
