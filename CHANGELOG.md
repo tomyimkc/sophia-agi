@@ -2,6 +2,29 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.2] - 2026-06-20
+
+### Added
+
+- **Source-discipline gate (Sophia → OpenClaw)** — `tools/source_discipline_cli.py`, a
+  dependency-free, offline CLI that runs Sophia's `provenance_faithful` /
+  `source_discipline` verifier (a ~2 ms local-regex check, no model call) over text on
+  stdin and prints `{passed, reasons, violations}`. It is the bridge an OpenClaw
+  `before_agent_finalize` plugin spawns to block agent replies that assert a forbidden
+  lineage merge / hallucinated attribution — Sophia's "never merge lineages" rule now
+  governs an external gateway's output.
+- `tests/test_source_discipline_cli.py` (offline) — proves the forbidden-attribution case
+  fails and the negation/debunk case passes across the CLI boundary; wired into CI.
+- Design note: `docs/superpowers/specs/2026-06-20-source-discipline-gate-design.md` and
+  `docs/11-Platform/Source-Discipline-Gate.md`.
+
+### Notes
+
+- Output-gating only; reuses the existing ~31-record `doNotAttributeTo` corpus (high
+  precision, honestly narrow). Writes no knowledge and does not touch Sophia's provenance
+  gate. The OpenClaw plugin lives outside this repo (`~/.openclaw/plugins/`). Independent of
+  the OpenClaw model-provider work (v0.7.1, PR #9); renumber if that lands after this.
+
 ## [0.7.0] - 2026-06-20
 
 ### Added
