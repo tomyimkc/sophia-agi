@@ -1,3 +1,12 @@
+---
+id: marco_polo_pasta_myth
+pageType: dispute
+domain: history
+links: [marco_polo_pasta_myth]
+sources: [data/history_events.json]
+contradicts: []
+---
+
 # Marco Polo pasta myth
 
 **Canon level:** Established

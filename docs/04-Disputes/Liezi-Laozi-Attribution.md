@@ -1,3 +1,12 @@
+---
+id: liezi_laozi_attribution
+pageType: dispute
+domain: philosophy
+links: [liezi, dao_de_jing, zhuangzi]
+sources: [data/attributions.json]
+contradicts: []
+---
+
 # Liezi vs Laozi
 
 **Canon level:** Provisional

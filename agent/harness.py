@@ -175,6 +175,31 @@ def skill_keyword_verifier(must_include: list[str]) -> Verifier:
 # --------------------------------------------------------------------------- #
 
 
+def _memory_recall(goal: str, *, max_pages: int = 3) -> str:
+    """Recall relevant OKF wiki pages at plan time (prior knowledge + provenance
+    warnings). Never raises — recall failure must not break planning."""
+    try:
+        from agent import wiki_store
+
+        pages = wiki_store.search(goal, top_k=max_pages)
+        if not pages:
+            return ""
+        lines = []
+        for page in pages:
+            dna = page.meta.get("doNotAttributeTo") or []
+            dnm = page.meta.get("doNotMergeWith") or []
+            conf = page.meta.get("authorConfidence")
+            note = (f" (confidence={conf})" if conf else "")
+            if dna:
+                note += f" ⚠ do-not-attribute: {', '.join(dna)}."
+            if dnm:
+                note += f" ⚠ do-not-merge: {', '.join(dnm)}."
+            lines.append(f"- [[{page.id}]]{note}")
+        return "## Memory (prior knowledge — build on it, respect the warnings)\n" + "\n".join(lines)
+    except Exception:
+        return ""
+
+
 def plan(task: AgentTask, client: ModelClient, *, max_steps: int = 4) -> list[dict]:
     """Ask the model for a compact JSON plan; fall back to a single answer step."""
     skill_block = ""
@@ -183,13 +208,17 @@ def plan(task: AgentTask, client: ModelClient, *, max_steps: int = 4) -> list[di
             f"\nUse this skill workflow:\n- when: {task.skill.get('whenToUse', '')}\n"
             + "\n".join(f"- step: {s}" for s in task.skill.get("workflow", []))
         )
+    memory_block = _memory_recall(task.goal)
     system = "You are a planner. Output ONLY a JSON array of steps."
-    user = (
-        f"Goal: {task.goal}\nMode: {task.mode}\n{task.context}{skill_block}\n\n"
+    parts = [f"Goal: {task.goal}\nMode: {task.mode}\n{task.context}{skill_block}"]
+    if memory_block:
+        parts.append(memory_block)
+    parts.append(
         f"Available repo tools: {', '.join(TOOL_CATALOG)}.\n"
         f"Return up to {max_steps} steps as JSON: "
         '[{"id":"s1","description":"...","action":"model|tool","tool":"<tool name or empty>"}].'
     )
+    user = "\n\n".join(parts)
     result = client.generate(system, user)
     steps = _parse_plan(result.text, max_steps=max_steps)
     if not steps:
@@ -322,8 +351,13 @@ def run_agent(
     max_steps: int = 4,
     approve_tools: bool = False,
     resume: bool = False,
+    consolidate: bool = False,
 ) -> AgentResult:
-    """Run the full plan -> execute -> critic -> reflect/retry loop."""
+    """Run the full plan -> execute -> critic -> reflect/retry loop.
+
+    When ``consolidate=True``, a verified run folds its conclusion into a gated OKF
+    memory page so future runs can recall it (continual learning, off by default).
+    """
     client = client or default_client()
     verifier = verifier or gate_verifier
     store = RunStore(task.task_id)
@@ -362,6 +396,14 @@ def run_agent(
     # all steps already complete has no new step_results and is also ok).
     ok = not failures and all(s.ok for s in step_results)
     store.set_final(final_text)
+    if consolidate and ok and final_text.strip():
+        try:
+            from agent.memory_consolidation import consolidate_result
+
+            cons = consolidate_result(task.goal, final_text, task_id=task.task_id, mode=task.mode)
+            store.log("consolidate", ok=cons.get("ok"), id=cons.get("id"), reasons=cons.get("reasons"))
+        except Exception as exc:  # consolidation must never fail the run
+            store.log("consolidate", ok=False, error=repr(exc))
     store.log("task_end", ok=ok, failures=failures, costUsd=round(total_cost, 6), latencySec=round(total_latency, 3))
     return AgentResult(
         task_id=task.task_id,

@@ -5,10 +5,10 @@ from __future__ import annotations
 import json
 import os
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from agent.config import DATA_DIR, DOCS_DIR, ROOT, TRAINING_DIR
+from agent.config import DATA_DIR, DOCS_DIR, ROOT, TRAINING_DIR, WIKI_DIR
 
 
 @dataclass
@@ -17,6 +17,11 @@ class SourceChunk:
     title: str
     excerpt: str
     score: float
+    # Provenance carried from OKF wiki frontmatter (empty for non-wiki sources).
+    page_id: "str | None" = None
+    tradition: "str | None" = None
+    author_confidence: "str | None" = None
+    do_not_attribute_to: list = field(default_factory=list)
 
 
 def _tokenize(text: str) -> set[str]:
@@ -45,12 +50,29 @@ def _load_json_records(path: Path) -> list[tuple[str, str]]:
     return chunks
 
 
+def _provenance_from_meta(meta: dict) -> "dict | None":
+    """Extract retrieval-facing provenance from OKF frontmatter, or None."""
+    if not meta:
+        return None
+    keys = ("tradition", "authorConfidence", "doNotAttributeTo")
+    if not any(meta.get(k) for k in keys) and not meta.get("id"):
+        return None
+    return {
+        "page_id": meta.get("id"),
+        "tradition": meta.get("tradition"),
+        "author_confidence": meta.get("authorConfidence"),
+        "do_not_attribute_to": list(meta.get("doNotAttributeTo") or []),
+    }
+
+
 def _iter_markdown(path: Path, max_chars: int = 4000) -> list[tuple[str, str]]:
     if not path.exists():
         return []
     from agent.chunking import chunk_text
+    from okf import frontmatter
 
-    text = path.read_text(encoding="utf-8")
+    # Strip OKF frontmatter so it is not indexed as body noise (disputes/wiki carry it).
+    text = frontmatter.strip(path.read_text(encoding="utf-8"))
     title = path.stem.replace("-", " ")
     chunks = chunk_text(text, source_id=path.stem)
     if len(chunks) <= 1:
@@ -58,21 +80,35 @@ def _iter_markdown(path: Path, max_chars: int = 4000) -> list[tuple[str, str]]:
     return [(f"{title} [chunk {c.index}]", c.text) for c in chunks]
 
 
-def collect_corpus() -> list[tuple[str, str, str]]:
-    """Return (path_label, title, text) for all searchable sources."""
-    items: list[tuple[str, str, str]] = []
+def _markdown_provenance(path: Path) -> "dict | None":
+    if not path.exists():
+        return None
+    from okf import frontmatter
+
+    meta, _ = frontmatter.parse(path.read_text(encoding="utf-8"))
+    return _provenance_from_meta(meta)
+
+
+def collect_corpus() -> list[tuple]:
+    """Return (path_label, title, text, provenance|None) for all searchable sources.
+
+    OKF wiki pages (and frontmatter'd disputes) carry a provenance dict so retrieval
+    can rank by source confidence and surface doNotAttributeTo constraints inline.
+    """
+    items: list[tuple] = []
 
     for json_path in sorted(DATA_DIR.glob("*.json")):
         for key, text in _load_json_records(json_path):
-            items.append((f"data/{json_path.name}", key, text))
+            items.append((f"data/{json_path.name}", key, text, None))
 
     for example in sorted(TRAINING_DIR.glob("*.json")):
         payload = json.loads(example.read_text(encoding="utf-8"))
         assistant = next((m["content"] for m in payload.get("messages", []) if m.get("role") == "assistant"), "")
         user = next((m["content"] for m in payload.get("messages", []) if m.get("role") == "user"), "")
-        items.append((f"training/{example.name}", example.stem, f"Q: {user}\nA: {assistant[:2000]}"))
+        items.append((f"training/{example.name}", example.stem, f"Q: {user}\nA: {assistant[:2000]}", None))
 
     doc_roots = [
+        WIKI_DIR,  # OKF provenance wiki — first-class, provenance-stamped source
         DOCS_DIR / "08-Domains",
         DOCS_DIR / "07-Growth",
         DOCS_DIR / "06-Roadmap",
@@ -84,25 +120,44 @@ def collect_corpus() -> list[tuple[str, str, str]]:
     ]
     for root in doc_roots:
         if root.is_file():
+            prov = _markdown_provenance(root)
             for title, text in _iter_markdown(root):
-                items.append((str(root.relative_to(ROOT)), title, text))
+                items.append((str(root.relative_to(ROOT)), title, text, prov))
         elif root.is_dir():
             for md in sorted(root.rglob("*.md")):
+                prov = _markdown_provenance(md)
                 for title, text in _iter_markdown(md):
-                    items.append((str(md.relative_to(ROOT)), title, text))
+                    items.append((str(md.relative_to(ROOT)), title, text, prov))
 
     return items
+
+
+# A retrieved page on its own tradition outranks a raw JSON dump of the same fact.
+_CONFIDENCE_BOOST = {
+    "consensus": 0.20, "attributed": 0.12, "compiled": 0.10, "layered": 0.08,
+    "disputed": 0.04, "legendary": 0.02, "anachronism_risk": 0.0, "none_extant": 0.0,
+}
 
 
 def _retrieve_keyword(query: str, *, top_k: int = 8) -> list[SourceChunk]:
     query_tokens = _tokenize(query)
     ranked: list[SourceChunk] = []
-    for path_label, title, text in collect_corpus():
+    for item in collect_corpus():
+        path_label, title, text = item[0], item[1], item[2]
+        prov = item[3] if len(item) > 3 else None
         score = _score(query_tokens, f"{title} {text}")
         if score <= 0:
             continue
+        if prov:  # provenance boost: curated, confident wiki pages win over raw dumps
+            score += 0.05 + _CONFIDENCE_BOOST.get(prov.get("author_confidence"), 0.0)
         excerpt = text[:1200] + ("..." if len(text) > 1200 else "")
-        ranked.append(SourceChunk(path=path_label, title=title, excerpt=excerpt, score=score))
+        ranked.append(SourceChunk(
+            path=path_label, title=title, excerpt=excerpt, score=score,
+            page_id=(prov or {}).get("page_id"),
+            tradition=(prov or {}).get("tradition"),
+            author_confidence=(prov or {}).get("author_confidence"),
+            do_not_attribute_to=list((prov or {}).get("do_not_attribute_to") or []),
+        ))
     ranked.sort(key=lambda c: c.score, reverse=True)
     return ranked[:top_k]
 
@@ -145,5 +200,20 @@ def format_context(chunks: list[SourceChunk]) -> str:
         return "(No matching sources — answer from general reasoning and flag uncertainty.)"
     parts = []
     for i, chunk in enumerate(chunks, 1):
-        parts.append(f"### Source {i}: {chunk.path} / {chunk.title} (relevance {chunk.score:.2f})\n{chunk.excerpt}")
+        header = f"### Source {i}: {chunk.path} / {chunk.title} (relevance {chunk.score:.2f})"
+        confidence = getattr(chunk, "author_confidence", None)
+        tradition = getattr(chunk, "tradition", None)
+        dna = getattr(chunk, "do_not_attribute_to", None) or []
+        prov_bits = []
+        if confidence:
+            prov_bits.append(f"confidence={confidence}")
+        if tradition:
+            prov_bits.append(f"tradition={tradition}")
+        if prov_bits:
+            header += " [" + ", ".join(prov_bits) + "]"
+        body = chunk.excerpt
+        if dna:
+            # surface the source-discipline constraint at generation time
+            body += f"\n⚠ Source discipline — do NOT attribute this to: {', '.join(dna)}."
+        parts.append(f"{header}\n{body}")
     return "\n\n".join(parts)

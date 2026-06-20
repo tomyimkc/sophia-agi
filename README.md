@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.6.3-blue)
+![Version](https://img.shields.io/badge/version-0.7.0-blue)
 ![Training examples](https://img.shields.io/badge/training_examples-518-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
@@ -29,6 +29,34 @@ The proof package defines the operational AGI definition, pre-registered thresho
 python tools/build_agi_proof_package.py
 python tools/build_web_data.py
 ```
+
+## OKF provenance wiki (new in 0.7.0)
+
+An **Open Knowledge Format / LLM-Wiki** layer that turns Sophia's scattered provenance
+(`data/*.json` + `docs/04-Disputes/*.md`) into **one version-controlled, machine-checkable
+belief graph** — because Sophia's differentiator, *source discipline*, literally **is** the
+frontmatter (`authorConfidence`, `doNotAttributeTo`, `doNotMergeWith`, `tradition`).
+
+- **`okf/`** — dependency-free package: frontmatter codec, schema, wikilinks, a belief
+  **graph** with contradiction detection + min-over-chain confidence propagation.
+- **Provenance gate** (`agent/verifiers.py:provenance_faithful`) — encodes "never merge
+  lineages" as a hard, machine-checked verifier (catches "Confucius wrote the Dao De Jing"
+  across many phrasings; passes the dispute pages that *correctly debunk* such merges).
+- **58 OKF pages** generated from `data/*.json` (`tools/wiki_sync.py`, data stays source of
+  truth, CI fails on drift); the 10 dispute pages gained OKF frontmatter.
+- **Librarian + memory** — `agent/wiki_librarian.py` ingests raw sources into gated drafts;
+  `agent/memory_consolidation.py` folds verified runs into provenance-gated memory the
+  planner recalls (continual learning without retraining).
+- **Flywheel + proof** — `tools/wiki_to_training.py` (provenance SFT/DPO),
+  `tools/wiki_health.py`, `tools/run_compounding_curve.py`, audited `sophia_wiki_*` MCP tools.
+
+```bash
+python tools/wiki_sync.py emit          # data/*.json -> 58 OKF pages
+python tools/wiki_validate.py           # schema + links + contradictions + drift
+python tools/lint_wiki_provenance.py    # provenance falsifier: 0 forbidden attributions
+```
+
+See [docs/11-Platform/OKF-Wiki.md](docs/11-Platform/OKF-Wiki.md).
 
 ## Why it matters
 

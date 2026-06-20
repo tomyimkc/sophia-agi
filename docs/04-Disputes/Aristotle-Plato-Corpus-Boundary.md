@@ -1,3 +1,12 @@
+---
+id: aristotle_plato_corpus_boundary
+pageType: dispute
+domain: philosophy
+links: [metaphysics, nicomachean_ethics, republic, symposium]
+sources: [data/attributions.json]
+contradicts: []
+---
+
 # Aristotle vs Plato corpora
 
 **Canon level:** Established

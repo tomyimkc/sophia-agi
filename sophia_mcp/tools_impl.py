@@ -233,6 +233,59 @@ def export_corpus() -> dict:
     return {"ok": True, "path": str(CORPUS_OUT), "lines": len(examples)}
 
 
+# --------------------------------------------------------------------------- #
+# OKF wiki tools — read surface + audited write surface (the librarian's hands).
+# --------------------------------------------------------------------------- #
+
+
+def wiki_read(page_id: str) -> dict:
+    from agent import wiki_store
+
+    page = wiki_store.read_page(page_id)
+    if page is None:
+        return {"error": f"wiki page not found: {page_id}"}
+    return {"id": page.id, "pageType": page.page_type, "path": str(page.path.relative_to(ROOT)),
+            "frontmatter": page.meta, "body": page.body}
+
+
+def wiki_search(query: str, *, top_k: int = 8) -> dict:
+    from agent import wiki_store
+
+    hits = wiki_store.search(query, top_k=top_k)
+    return {"query": query, "results": [{"id": p.id, "pageType": p.page_type,
+                                         "path": str(p.path.relative_to(ROOT))} for p in hits]}
+
+
+def wiki_contradictions() -> dict:
+    from agent import wiki_store
+
+    return wiki_store.contradictions()
+
+
+def wiki_validate_tool() -> dict:
+    from tools.wiki_validate import run_validation as _wiki_run_validation
+
+    return _wiki_run_validation()
+
+
+@audited("sophia_wiki_upsert", risk="medium")
+def wiki_upsert(page_id: str, frontmatter_json: str = "{}", body: str = "", tier: str = "draft") -> dict:
+    """Create/update an agent-owned wiki page (gated by provenance verifiers).
+
+    Mutating + audited: needs SOPHIA_MCP_APPROVE_WRITES=1. Even when approved, the
+    write only lands if it passes the source-discipline gate.
+    """
+    from agent import wiki_store
+
+    try:
+        meta = json.loads(frontmatter_json) if frontmatter_json else {}
+    except json.JSONDecodeError as exc:
+        return {"error": f"invalid frontmatter_json: {exc}"}
+    if not isinstance(meta, dict):
+        return {"error": "frontmatter_json must be a JSON object"}
+    return wiki_store.upsert(page_id, meta=meta, body=body, tier=tier)
+
+
 def _plain_match_missing(response: str, item: object) -> bool:
     text = response.lower()
     if isinstance(item, dict):

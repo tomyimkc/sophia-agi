@@ -88,7 +88,10 @@ def _json_records(path: Path, *, domain: str | None, kind: str) -> list[RagChunk
 def _markdown_chunks(path: Path, *, domain: str | None, kind: str, max_chars: int = 5000) -> list[RagChunk]:
     if not path.exists():
         return []
-    text = path.read_text(encoding="utf-8")[:max_chars]
+    from okf import frontmatter
+
+    # strip OKF frontmatter (disputes/wiki carry it) so it is not indexed as body
+    text = frontmatter.strip(path.read_text(encoding="utf-8"))[:max_chars]
     rel = str(path.relative_to(ROOT)).replace("\\", "/")
     return [
         RagChunk(

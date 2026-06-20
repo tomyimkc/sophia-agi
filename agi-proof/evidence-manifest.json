@@ -1,6 +1,6 @@
 {
-  "version": "0.6.3",
-  "generated": "2026-06-20T16:07:41",
+  "version": "0.7.0",
+  "generated": "2026-06-20T18:55:12",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "operationalDefinition": {
     "summary": "For this repo, AGI evidence means broad task competence, transfer, tool use, long-horizon autonomy, learning under distribution shift, baseline superiority, and independent reproduction.",

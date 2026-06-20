@@ -8,14 +8,28 @@ combinators. Quality follows verifiability.
 
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 from pathlib import Path
 from typing import Any, Callable
 
-from agent.config import ROOT
+from agent.config import DATA_DIR, ROOT
 
 Verifier = Callable[[str, Any, dict], dict]
+
+# Attribution verbs/markers that signal an *assertion* of authorship (any language).
+_ATTR_VERBS = [
+    r"\bwrote\b", r"\bwritten\b", r"\bauthored?\b", r"\bauthor of\b", r"\bpenned\b",
+    r"\bcomposed\b", r"\battribut", r"\bby\b", r"'s\b", r"’s\b", r"著", r"作者", r"撰", r"所著",
+]
+# Domain files whose records carry doNotAttributeTo lists.
+_PROVENANCE_FILES = (
+    "attributions.json",
+    "psychology_concepts.json",
+    "religion_concepts.json",
+    "history_events.json",
+)
 
 
 def _ok(detail: dict | None = None) -> dict:
@@ -108,6 +122,153 @@ def citation_present(sources: list[str]) -> Verifier:
         lowered = text.lower()
         hit = any(tok.lower() in lowered for tok in tokens) or bool(re.search(r"\[(?:local|web)\s*\d+\]|source", lowered))
         return _ok() if hit else _fail(["no citation to a provided source"], {"sources": tokens})
+
+    return _verify
+
+
+# --------------------------------------------------------------------------- #
+# OKF / provenance verifiers — encode "don't merge lineages" as a hard gate.
+# --------------------------------------------------------------------------- #
+
+
+def _load_provenance_records() -> dict:
+    records: dict = {}
+    for filename in _PROVENANCE_FILES:
+        path = DATA_DIR / filename
+        if not path.exists():
+            continue
+        data = json.loads(path.read_text(encoding="utf-8"))
+        for key, record in data.items():
+            if isinstance(record, dict) and record.get("doNotAttributeTo"):
+                records[record.get("recordId") or record.get("textId") or key] = record
+    return records
+
+
+def provenance_faithful(records: "dict | None" = None) -> Verifier:
+    """Fail if the text asserts an attribution forbidden by a record's
+    doNotAttributeTo — Sophia's core "don't merge lineages" rule, machine-checked.
+
+    Sentence-scoped with a negation/contrast carve-out (reusing the benchmark
+    DENY/MYTH markers), so a page that CORRECTLY says "Confucius did not write the
+    Dao De Jing" passes while "Confucius wrote the Dao De Jing" fails. Works on
+    agent answers and on wiki page bodies alike.
+    """
+    from agent.benchmark_checks import DENY_PATTERNS, MYTH_PATTERNS, author_markers, matches_any
+
+    records = records if records is not None else _load_provenance_records()
+    the = r"(?:the\s+)?"
+    attr = r"(?:wrote|authored|penned|composed)"          # active
+    attr_p = r"(?:written|authored|penned|composed)"      # passive participle
+    # Skip non-assertions: instructions ("do not attribute X to Y"), reported/hedged
+    # speech ("summaries say ...", "often said"), and scare-quoted verbs ("wrote").
+    extra_deny = [
+        r"do not attribut", r"not\s+\w*\s*attribut", r"never\s+\w*\s*attribut",
+        r"misattribut", r"wrongly", r"falsely", r"erroneous", r"並非", r"勿",
+        r"summaries say", r'say[s]?\s+["“\']', r"often\s+said", r"commonly\s+(said|believed|attributed)",
+        r"\bpopular", r"\bmisread", r"\bmistaken", r"\bloosely\b", r"\bas if\b", r"main speaker",
+        r'["“\'](?:wrote|written|authored|composed|penned|attributed)["”\']',
+    ]
+
+    specs: list[tuple] = []
+    for rid, record in records.items():
+        titles = [
+            str(t).lower()
+            for t in (record.get("canonicalTitleEn"), record.get("canonicalTitleZh"), rid.replace("_", " "))
+            if t and len(str(t)) >= 3
+        ]
+        if not titles:
+            continue
+        title_alt = "(?:" + "|".join(re.escape(t) for t in titles) + ")"
+        for author in record.get("doNotAttributeTo", []):
+            a = "(?:" + "|".join(re.escape(m.lower()) for m in author_markers(author)) + r")\b"
+            t = title_alt + r"\b"
+            # Explicit grammatical constructions of *asserted authorship*, in both
+            # orders, with tight connectors only (no wildcard gap) so a comparison
+            # ("Plato wrote Republic — not Socrates") or a possessive of a different
+            # noun ("from Epictetus's teachings") does not cross-match.
+            patterns = [
+                re.compile(a + r"\s+" + attr + r"\s+" + the + t),                                        # X wrote (the) Y
+                re.compile(a + r"(?:\s+(?:is|was|being))?\s+" + the + r"(?:author|writer|composer)\s+of\s+" + the + t),  # X is the author of Y
+                re.compile(a + r"\s+(?:is|was)\s+credited\s+with\s+\w+ing\s+" + the + t),                # X is credited with writing Y
+                re.compile(a + r"['’]s\s+" + the + t),                                                   # X's (the) Y
+                re.compile(t + r"(?:\s*,)?(?:\s+(?:was|is|were|been))?\s+(?:" + attr_p + r"|attributed)\s+by\s+" + a),  # Y (was) written by X
+                re.compile(t + r"(?:\s*,)?\s+(?:a\s+|the\s+)?(?:work|text|book|composition|treatise)\s+(?:by|of)\s+" + a),  # Y, a work by X
+                re.compile(t + r"\s+(?:was\s+|is\s+)?" + a + r"['’]s\s+(?:\w+\s+)?(?:work|text|masterpiece|composition|book|treatise)\b"),  # Y was X's work
+                re.compile(a + r"\s*著\s*" + title_alt),                                                 # X 著 Y
+            ]
+            specs.append((rid, author, patterns))
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        violations: list[str] = []
+        for sentence in re.split(r"[.!?。！？\n]+", text):
+            low = sentence.lower()
+            if not low.strip():
+                continue
+            if matches_any(low, DENY_PATTERNS) or matches_any(low, MYTH_PATTERNS) or matches_any(low, extra_deny):
+                continue  # the correction/negation/instruction case — allowed
+            for rid, author, patterns in specs:
+                if any(p.search(low) for p in patterns):
+                    violations.append(f"{author} -> {rid}")
+        violations = sorted(set(violations))
+        if violations:
+            return _fail([f"forbidden attribution asserted: {v}" for v in violations], {"violations": violations})
+        return _ok({"recordsChecked": len(records)})
+
+    return _verify
+
+
+# Alias used in the brainstorm/docs.
+source_discipline = provenance_faithful
+
+
+def frontmatter_schema_valid() -> Verifier:
+    """Pass if the text parses as an OKF page with schema-valid frontmatter."""
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        from okf import frontmatter, schema
+
+        meta, _ = frontmatter.parse(text)
+        if not meta:
+            return _fail(["no OKF frontmatter found"])
+        errors = schema.validate_meta(meta)
+        return _ok({"id": meta.get("id")}) if not errors else _fail(errors, {"frontmatter": meta})
+
+    return _verify
+
+
+def no_broken_wikilink(known_ids: list[str]) -> Verifier:
+    """Pass if every [[wikilink]] in the text resolves to a known page id."""
+    from okf import wikilinks
+
+    known = {wikilinks.normalize_target(k) for k in known_ids}
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        broken = [t for t in wikilinks.extract_links(text) if t not in known]
+        return _ok() if not broken else _fail([f"broken wikilink: [[{t}]]" for t in sorted(set(broken))])
+
+    return _verify
+
+
+def wiki_consistent(roots: "list | None" = None) -> Verifier:
+    """World-state verifier: the OKF wiki must be a clean provenance graph.
+
+    Ignores `text` (like unit_test) — it grades the repository, not the answer.
+    """
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        from okf import linker
+
+        paths = roots or [ROOT / "wiki", ROOT / "docs" / "04-Disputes"]
+        existing = [p for p in paths if Path(p).exists()]
+        report = linker.link_report(*existing)
+        if report["ok"]:
+            return _ok({"pages": report["pages"]})
+        reasons = (
+            [f"schema {e['page']}" for e in report["schemaErrors"]]
+            + [f"dangling {d['page']}->[[{d['target']}]]" for d in report["danglingLinks"]]
+            + [f"lineage-merge {m['page']}" for m in report["contradictions"]["selfMerges"]]
+        )
+        return _fail(reasons or ["wiki inconsistent"], {"pages": report["pages"]})
 
     return _verify
 

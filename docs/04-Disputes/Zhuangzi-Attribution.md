@@ -1,3 +1,12 @@
+---
+id: zhuangzi_attribution
+pageType: dispute
+domain: philosophy
+links: [zhuangzi, dao_de_jing]
+sources: [data/attributions.json]
+contradicts: []
+---
+
 # Dispute: Zhuangzi (《莊子》) authorship
 
 **Canon level:** Established (compiled text); Provisional (Zhuang Zhou historicity of outer chapters)

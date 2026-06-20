@@ -20,6 +20,7 @@ AUDIT_LOG = ROOT / "agent" / "memory" / "mcp_audit.jsonl"
 # default risk per tool; anything not listed is treated as "low" (read-only)
 TOOL_RISK = {
     "sophia_export_corpus": "medium",  # writes training/corpus.jsonl
+    "sophia_wiki_upsert": "medium",    # writes an agent-owned OKF wiki page
 }
 
 APPROVE_ENV = "SOPHIA_MCP_APPROVE_WRITES"  # set to "1" to allow medium/high tools

@@ -1,3 +1,12 @@
+---
+id: socrates_republic_attribution
+pageType: dispute
+domain: philosophy
+links: [socrates_corpus, republic]
+sources: [data/attributions.json]
+contradicts: []
+---
+
 # Socrates and the Republic
 
 **Canon level:** Established

@@ -20,6 +20,15 @@ Thumbs.db
 .idea/
 .vscode/
 
+# OKF wiki: agent draft proposals + raw source drops (keep README + sample)
+wiki/drafts/
+raw/*
+!raw/README.md
+!raw/sample-oikeiosis.txt
+# generated OKF outputs (regenerable; not committed)
+training/wiki_provenance_*.jsonl
+eval/provenance_audit.json
+
 # Build artifacts
 *.jsonl.bak
 dist/

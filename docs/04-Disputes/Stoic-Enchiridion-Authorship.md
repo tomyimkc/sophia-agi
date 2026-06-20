@@ -1,3 +1,12 @@
+---
+id: stoic_enchiridion_authorship
+pageType: dispute
+domain: philosophy
+links: [enchiridion, meditations]
+sources: [data/attributions.json]
+contradicts: []
+---
+
 # Enchiridion authorship
 
 **Canon level:** Established

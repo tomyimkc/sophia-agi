@@ -30,6 +30,11 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     sector_council,
     validate_corpus,
     web_evidence_search,
+    wiki_contradictions,
+    wiki_read,
+    wiki_search,
+    wiki_upsert,
+    wiki_validate_tool,
 )
 
 try:
@@ -182,6 +187,40 @@ def sophia_rubric_review(
             must_avoid=must_avoid,
         )
     )
+
+
+@mcp.tool()
+def sophia_wiki_read(page_id: str) -> str:
+    """Read an OKF wiki page (frontmatter + body) by id from the provenance wiki."""
+    return dumps(wiki_read(page_id))
+
+
+@mcp.tool()
+def sophia_wiki_search(query: str, top_k: int = 8) -> str:
+    """Keyword-search the OKF wiki; returns matching page ids/types (not raw chunks)."""
+    return dumps(wiki_search(query, top_k=top_k))
+
+
+@mcp.tool()
+def sophia_wiki_contradictions() -> str:
+    """Structural contradiction ledger over the wiki: lineage merges, cycles, laundering."""
+    return dumps(wiki_contradictions())
+
+
+@mcp.tool()
+def sophia_wiki_validate() -> str:
+    """Validate the OKF wiki: schema, link integrity, contradictions, data drift."""
+    return dumps(wiki_validate_tool())
+
+
+@mcp.tool()
+def sophia_wiki_upsert(page_id: str, frontmatter_json: str = "{}", body: str = "", tier: str = "draft") -> str:
+    """Create/update an agent-owned wiki page (gated + audited).
+
+    Mutating: needs SOPHIA_MCP_APPROVE_WRITES=1. The write only lands if it passes
+    the source-discipline gate (schema-valid + no forbidden attribution/lineage merge).
+    """
+    return dumps(wiki_upsert(page_id, frontmatter_json=frontmatter_json, body=body, tier=tier))
 
 
 if __name__ == "__main__":

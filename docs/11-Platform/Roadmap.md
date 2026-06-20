@@ -46,6 +46,27 @@ Legend: ✅ built · 🟡 partial (existing pieces, gaps remain) · ⬜ planned.
 - ✅ `tools/distill_export.py`: teacher → verifier-gated SFT + rejected set + trajectory.
 - ⬜ remaining: assistant-loss masking + holdout early-stop in `train_lora.py`; executable coding-eval verifier; online GRPO loop.
 
+**Stage 5 — OKF provenance wiki (DONE)**
+- ✅ `okf/` package: dependency-free frontmatter codec, schema, wikilinks, belief
+  graph (contradiction detection + min-over-chain confidence propagation), linker.
+- ✅ `tools/wiki_sync.py`: project `data/*.json` → 58 OKF pages, CI drift gate; OKF
+  frontmatter on the 10 `docs/04-Disputes/*.md`.
+- ✅ Provenance verifiers in `agent/verifiers.py` (`provenance_faithful` /
+  `frontmatter_schema_valid` / `no_broken_wikilink` / `wiki_consistent`) — zero false
+  positives on the committed corpus, true lineage merges caught.
+- ✅ `agent/retrieval.py` carries provenance on `SourceChunk` and surfaces
+  `doNotAttributeTo` at generation time.
+- ✅ Librarian (`agent/wiki_librarian.py` + `wiki-maintenance` skill), gated
+  `agent/wiki_store.py`, audited `sophia_wiki_*` MCP tools.
+- ✅ Continual learning: `agent/memory_consolidation.py` (episodic→semantic, gated) +
+  plan-time recall in `agent/harness.py` (`consolidate=True` closes the loop).
+- ✅ Flywheel/proof: `tools/wiki_to_training.py`, `tools/wiki_health.py`,
+  `tools/run_compounding_curve.py` (rising answerable-coverage curve). CI runs
+  wiki_sync check + wiki_validate + provenance lint + okf tests.
+- ⬜ remaining: model-backed compounding **quality** curve; learning-under-shift
+  `--mode wiki`; long-horizon wiki-maintenance spec; cross-encoder rerank over wiki.
+- See [OKF-Wiki.md](./OKF-Wiki.md).
+
 ## Tracked TODOs (specific, justified)
 
 - [ ] `train_lora.py`: assistant-only loss masking + consume `holdout.jsonl` for early-stop (currently trains on full sequence).

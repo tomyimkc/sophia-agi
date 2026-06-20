@@ -2,6 +2,35 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.0] - 2026-06-20
+
+### Added
+
+- **OKF provenance wiki** — an Open Knowledge Format / LLM-Wiki layer that unifies
+  `data/*.json` and the dispute pages into one machine-checkable belief graph.
+- `okf/` package (dependency-free, 3.9+): frontmatter codec, schema, wikilinks, belief
+  graph with contradiction detection + min-over-chain confidence propagation, linker.
+- Provenance verifiers in `agent/verifiers.py` (`provenance_faithful` / `source_discipline`,
+  `frontmatter_schema_valid`, `no_broken_wikilink`, `wiki_consistent`) — "never merge
+  lineages" as a hard gate; zero false positives on the corpus, robust to phrasing bypasses.
+- `tools/wiki_sync.py` (data → 58 OKF pages + CI drift gate), `tools/wiki_validate.py`,
+  `tools/lint_wiki_provenance.py` (provenance falsifier), `tools/wiki_health.py`,
+  `tools/wiki_ingest.py`, `tools/consolidate_runs.py`, `tools/wiki_to_training.py`,
+  `tools/run_compounding_curve.py`.
+- Librarian (`agent/wiki_librarian.py` + `wiki-maintenance` skill), gated
+  `agent/wiki_store.py`, `agent/memory_consolidation.py`, and plan-time recall in the harness.
+- Audited `sophia_wiki_*` MCP tools (read surface + permission-gated `wiki_upsert`).
+- OKF frontmatter on the 10 `docs/04-Disputes/*.md`; `docs/11-Platform/OKF-Wiki.md`.
+- Test suites: `test_okf`, `test_wiki_tools`, `test_wiki_librarian`, `test_wiki_mcp`,
+  `test_memory_consolidation`, `test_wiki_proof`, plus CI wiring.
+
+### Changed
+
+- `agent/retrieval.py` carries provenance on `SourceChunk` and surfaces `doNotAttributeTo`
+  at generation time; markdown readers strip OKF frontmatter.
+- `data/schema.json` reconciled with corpus (`authorConfidence: layered` added) — a real
+  pre-existing schema/data drift caught by the new OKF validator.
+
 ## [0.6.3] - 2026-06-19
 
 ### Added

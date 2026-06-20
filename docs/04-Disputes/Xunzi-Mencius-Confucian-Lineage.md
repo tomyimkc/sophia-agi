@@ -1,3 +1,12 @@
+---
+id: xunzi_mencius_confucian_lineage
+pageType: dispute
+domain: philosophy
+links: [xunzi, mencius, analects]
+sources: [data/attributions.json]
+contradicts: []
+---
+
 # Xunzi and Mencius within Confucianism
 
 **Canon level:** Provisional

@@ -1,3 +1,12 @@
+---
+id: mencius_attribution
+pageType: dispute
+domain: philosophy
+links: [mencius, analects]
+sources: [data/attributions.json]
+contradicts: []
+---
+
 # Dispute: Mencius (《孟子》) authorship
 
 **Canon level:** Established (Mencius as figure); Provisional (exact compilation layers)

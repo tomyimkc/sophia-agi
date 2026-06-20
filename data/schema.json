@@ -26,7 +26,8 @@
         "none_extant",
         "disputed",
         "consensus",
-        "anachronism_risk"
+        "anachronism_risk",
+        "layered"
       ]
     },
     "tradition": { "type": ["string", "null"] },

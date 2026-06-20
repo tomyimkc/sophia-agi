@@ -16,6 +16,21 @@ jobs:
           python-version: "3.12"
       - name: Validate attributions and training examples
         run: python tools/validate_attribution.py
+      - name: Validate OKF wiki (drift, links, provenance)
+        run: |
+          python tools/wiki_sync.py check
+          python tools/wiki_validate.py
+          python tools/lint_wiki_provenance.py
+      - name: OKF + provenance verifier tests
+        run: |
+          python tests/test_okf.py
+          python tests/test_wiki_tools.py
+          python tests/test_verifiers.py
+          python tests/test_wiki_librarian.py
+          python tests/test_wiki_mcp.py
+          python tests/test_memory_consolidation.py
+          python tests/test_wiki_proof.py
+          python tests/test_agent_harness.py
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

@@ -1,3 +1,12 @@
+---
+id: laozi_dao_de_jing_attribution
+pageType: dispute
+domain: philosophy
+links: [dao_de_jing, analects, republic]
+sources: [data/attributions.json]
+contradicts: []
+---
+
 # Dispute: Laozi and the Dao De Jing (《道德經》)
 
 **Canon level:** Established (scholarly consensus on compilation); Provisional (Laozi historicity)
