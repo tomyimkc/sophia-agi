@@ -215,6 +215,7 @@ def build_manifest() -> dict[str, Any]:
             "third-party reproduction on a clean clone",
         ],
         "artifactIndex": {
+            "todo": "agi-proof/TODO.md",
             "definition": "agi-proof/definition.md",
             "thresholds": "agi-proof/preregistered-thresholds.md",
             "benchmarkResults": "agi-proof/benchmark-results/README.md",

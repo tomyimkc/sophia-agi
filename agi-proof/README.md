@@ -30,6 +30,7 @@ Output: `agi-proof/evidence-manifest.json`
 
 | Area | File |
 |---|---|
+| Consolidated proof TODO | `TODO.md` |
 | Operational definition | `definition.md` |
 | Pre-registered thresholds | `preregistered-thresholds.md` |
 | Benchmark result artifacts | `benchmark-results/README.md` |
