@@ -10,7 +10,9 @@ benchmark/model_runs/*.log
 train-error.log
 train-out.txt
 agent/memory/*.jsonl
+agent/memory/agent_runs/
 private/hidden-evals/
+private/agent-grok-cwd/
 
 # OS / editor
 .DS_Store

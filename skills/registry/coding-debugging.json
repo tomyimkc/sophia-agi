@@ -1,0 +1,32 @@
+{
+  "name": "coding-debugging",
+  "whenToUse": "Fix a bug, implement a code change, or make failing tests pass in a repository.",
+  "triggers": ["bug", "fix", "error", "traceback", "test", "failing", "implement", "patch", "refactor", "debug", "code"],
+  "requiredTools": ["code_search", "filesystem", "terminal", "ci_test_runner"],
+  "workflow": [
+    "Reproduce the failure with a concrete command and capture the exact error.",
+    "Locate the responsible code via code/repo search; read the surrounding context.",
+    "Form a minimal hypothesis for the root cause before editing.",
+    "Make the smallest patch that addresses the root cause, matching surrounding style.",
+    "Run the relevant tests / typecheck / lint; iterate until green.",
+    "State the root cause, the fix, and the verification command in the answer."
+  ],
+  "ioSchema": {
+    "input": {"goal": "string", "repoPath": "string", "failingCommand": "string?"},
+    "output": {"rootCause": "string", "patchSummary": "string", "verificationCommand": "string", "testsPass": "boolean"}
+  },
+  "verification": [
+    "The named test/typecheck/lint command exits 0.",
+    "The patch is minimal and scoped to the root cause.",
+    "No unrelated files changed."
+  ],
+  "commonFailures": [
+    "Editing symptoms instead of the root cause.",
+    "Not running the test before claiming success.",
+    "Over-broad refactors that change unrelated behavior.",
+    "Silent breakage of other tests."
+  ],
+  "examples": [
+    {"input": "pytest fails on test_user_login with KeyError 'token'", "output": "Root cause: login() returns dict without 'token' on 2FA path. Patch: add token to both branches. Verify: pytest tests/test_auth.py -k login (0)."}
+  ]
+}

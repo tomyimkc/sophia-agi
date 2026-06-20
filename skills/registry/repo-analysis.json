@@ -1,0 +1,31 @@
+{
+  "name": "repo-analysis",
+  "whenToUse": "Map a codebase, locate where a feature lives, or summarize architecture and dependencies before changing anything.",
+  "triggers": ["repo", "codebase", "architecture", "where", "structure", "analyze", "map", "overview", "dependencies", "locate"],
+  "requiredTools": ["code_search", "filesystem", "git_provider"],
+  "workflow": [
+    "Survey the top-level structure and entry points (README, package manifests).",
+    "Search by symbol/keyword to locate the relevant modules; read excerpts, not whole files.",
+    "Trace the call/data flow across the modules that matter for the goal.",
+    "Identify the change surface and the tests that guard it.",
+    "Summarize with file:line references the next step can act on."
+  ],
+  "ioSchema": {
+    "input": {"goal": "string", "repoPath": "string"},
+    "output": {"entryPoints": "array<string>", "relevantFiles": "array<string>", "callFlow": "string", "changeSurface": "string"}
+  },
+  "verification": [
+    "Every claim references a real file:line.",
+    "The change surface and its guarding tests are identified.",
+    "No invented files or symbols."
+  ],
+  "commonFailures": [
+    "Reading whole files instead of locating excerpts.",
+    "Citing files that do not exist.",
+    "Missing the tests that guard the change surface.",
+    "Confusing similarly-named modules."
+  ],
+  "examples": [
+    {"input": "Where is model access defined?", "output": "Unified in agent/model.py (ModelClient.generate); legacy paths agent/llm.py:complete and call_model in tools/run_hidden_eval_sophia.py:339."}
+  ]
+}

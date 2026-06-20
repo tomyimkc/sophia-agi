@@ -1,0 +1,32 @@
+{
+  "name": "eval-generation",
+  "whenToUse": "Create new evaluation cases (hidden-pack or benchmark) with rubrics and verifiers for a capability or domain.",
+  "triggers": ["eval", "evaluation", "benchmark", "test case", "rubric", "verifier", "pack", "regression", "generate eval"],
+  "requiredTools": ["filesystem", "ci_test_runner", "document_search"],
+  "workflow": [
+    "Define the capability and the failure modes the eval must catch.",
+    "Author cases conforming to the hidden-pack schema (id, domain, prompt, scoring).",
+    "For each case give mustInclude/mustAvoid + a semantic check and a verifier method.",
+    "Prefer auto-verifiable signals (exact answer, unit test, SQL result, citation) over prose.",
+    "Validate the pack with hidden_eval_protocol.py validate; dry-run the scorer.",
+    "Record the difficulty and the expected-failure baseline."
+  ],
+  "ioSchema": {
+    "input": {"capability": "string", "domain": "string", "count": "integer"},
+    "output": {"packPath": "string", "caseCount": "integer", "verifierTypes": "array<string>"}
+  },
+  "verification": [
+    "Pack passes tools/hidden_eval_protocol.py validate.",
+    "Each case has at least one auto-checkable signal or a defined manual rubric.",
+    "Cases are not duplicates of existing visible benchmark items (no leakage)."
+  ],
+  "commonFailures": [
+    "Rubrics so loose any answer passes, or so strict none can.",
+    "Only prose checks with no auto-verifier.",
+    "Leaking cases from the public benchmark into the hidden pack.",
+    "Missing the expected-failure baseline, so deltas are meaningless."
+  ],
+  "examples": [
+    {"input": "5 tool-use cases for repo ops", "output": "private/hidden-evals/toolops.json (5 cases, requiresToolLog), verifierTypes: [tool_log, mustInclude]; validate OK."}
+  ]
+}

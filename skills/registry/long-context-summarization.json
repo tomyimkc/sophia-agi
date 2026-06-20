@@ -1,0 +1,31 @@
+{
+  "name": "long-context-summarization",
+  "whenToUse": "Condense long documents, transcripts, or many files into a faithful, citable summary without losing decision-critical detail.",
+  "triggers": ["summarize", "summary", "condense", "tldr", "digest", "long", "transcript", "document", "overview"],
+  "requiredTools": ["document_search", "filesystem"],
+  "workflow": [
+    "Segment the source into coherent chunks with stable ids.",
+    "Summarize each chunk independently, preserving claims + their source span.",
+    "Merge chunk summaries hierarchically; deduplicate and resolve contradictions.",
+    "Produce a working-memory summary plus a detail index (claim -> source chunk).",
+    "Verify coverage: every required section/entity from the source appears."
+  ],
+  "ioSchema": {
+    "input": {"source": "string|array<string>", "maxTokens": "integer", "focus": "string?"},
+    "output": {"summary": "string", "claimIndex": "array<{claim,chunkId}>", "coverageGaps": "array<string>"}
+  },
+  "verification": [
+    "No claim in the summary is absent from the source (no hallucinated detail).",
+    "Every decision-critical entity from the source is represented.",
+    "Summary stays within the token budget."
+  ],
+  "commonFailures": [
+    "Dropping decision-critical detail to hit a length target.",
+    "Hallucinating connective claims not in the source.",
+    "Losing the source mapping so claims can't be traced.",
+    "Letting later chunks overwrite earlier facts."
+  ],
+  "examples": [
+    {"input": "summarize a 40-page design doc, focus on risks", "output": "12-bullet risk summary + claimIndex mapping each risk to its section id; coverageGaps: none."}
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "terminal-automation",
+  "whenToUse": "Run repo/build/validation commands or multi-step shell automation safely with approval and audit logging.",
+  "triggers": ["run", "command", "terminal", "shell", "build", "validate", "export", "execute", "script", "pipeline"],
+  "requiredTools": ["terminal", "ci_test_runner", "filesystem"],
+  "workflow": [
+    "State the intended commands and their expected effect before running.",
+    "Classify each command's risk (read-only vs mutating vs destructive).",
+    "Require explicit approval for mutating/high-risk commands.",
+    "Run in a constrained working directory; capture stdout/stderr and return codes.",
+    "On failure, classify (transient vs real), self-correct once, then stop and report.",
+    "Emit an audit log of every command, return code, and artifact produced."
+  ],
+  "ioSchema": {
+    "input": {"goal": "string", "commands": "array<string>", "approved": "boolean"},
+    "output": {"results": "array<{cmd,returncode,ok}>", "artifacts": "array<string>", "auditLog": "string"}
+  },
+  "verification": [
+    "Every command's return code is recorded.",
+    "No mutating command ran without approval.",
+    "Final state matches the stated intended effect."
+  ],
+  "commonFailures": [
+    "Running destructive commands without approval.",
+    "Ignoring non-zero return codes.",
+    "No audit trail of what ran.",
+    "Leaking secrets into logs."
+  ],
+  "examples": [
+    {"input": "validate the corpus and export jsonl (approved)", "output": "ran tools/validate_attribution.py (0) and tools/export_training_jsonl.py (0); artifact training/corpus.jsonl; audit logged."}
+  ]
+}

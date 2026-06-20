@@ -1,0 +1,32 @@
+{
+  "name": "lora-dataset-creation",
+  "whenToUse": "Turn task traces, teacher outputs, or corrected answers into a clean SFT / preference dataset for LoRA/QLoRA training or distillation.",
+  "triggers": ["lora", "dataset", "sft", "fine-tune", "finetune", "distill", "training data", "preference", "dpo", "trace", "qlora"],
+  "requiredTools": ["filesystem", "ci_test_runner"],
+  "workflow": [
+    "Collect raw traces (agent runs, teacher answers, corrections) with their verifier verdicts.",
+    "Filter to verified-good examples only; route rejected ones to a rejected set.",
+    "Normalize to the messages schema (system/user/assistant) with metadata + provenance.",
+    "Build preference pairs (chosen=verified, rejected=failed) where both exist for a prompt.",
+    "De-leak against eval holdouts; split train/holdout with stable hashing.",
+    "Validate row schema and emit SFT jsonl + DPO jsonl + a dataset card."
+  ],
+  "ioSchema": {
+    "input": {"traceDir": "string", "outDir": "string", "holdoutFrac": "number"},
+    "output": {"sftPath": "string", "dpoPath": "string", "rejectedPath": "string", "rows": "integer", "leakageChecked": "boolean"}
+  },
+  "verification": [
+    "Every kept example passed its verifier (score_case / gate / unit test).",
+    "No training row overlaps an eval holdout (leakage check passes).",
+    "All rows conform to the messages schema; preference pairs have distinct chosen/rejected."
+  ],
+  "commonFailures": [
+    "Training on unverified or teacher-hallucinated answers.",
+    "Leaking eval/holdout prompts into the training split.",
+    "Imbalanced or trivially-separable preference pairs.",
+    "Losing provenance so bad data can't be traced and removed."
+  ],
+  "examples": [
+    {"input": "build SFT+DPO from agent_runs/ traces", "output": "training/sft.jsonl (412 rows, all verified), training/dpo.jsonl (88 pairs), rejected.jsonl (130); leakageChecked: true."}
+  ]
+}
