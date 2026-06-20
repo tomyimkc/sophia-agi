@@ -32,6 +32,11 @@ jobs:
           python tests/test_memory_consolidation.py
           python tests/test_wiki_proof.py
           python tests/test_agent_harness.py
+      - name: Model adapter + OpenClaw provider tests
+        run: |
+          python tests/test_model_adapter.py
+          python tests/test_model_openclaw.py
+          python tests/test_mcp_openclaw.py
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

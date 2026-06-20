@@ -164,7 +164,7 @@ See [docs/08-Domains/Overview.md](docs/08-Domains/Overview.md) and answer [Expan
 |-------|----------------|
 | **Project skill** | `/sophia-agi` — `.grok/skills/sophia-agi/SKILL.md` |
 | **Portable skill** | `/sophia-source-discipline` — `python tools/install_skills.py --all` |
-| **MCP server** | `sophia_mcp/server.py` — 13 tools (validate, gate, benchmark, lookup, sector councils) |
+| **MCP server** | `sophia_mcp/server.py` — 19 tools (validate, gate, benchmark, lookup, sector councils, OKF wiki, OpenClaw infer) |
 
 ```bash
 pip install -r requirements-mcp.txt
@@ -172,6 +172,13 @@ python tools/install_skills.py --all --cursor
 ```
 
 See [Skills-Install.md](docs/09-Agent/Skills-Install.md) and [MCP-Server.md](docs/09-Agent/MCP-Server.md).
+
+**Model providers.** The unified adapter (`agent/model.py`) speaks Anthropic, any OpenAI-compatible
+server (GLM / vLLM / SGLang / Ollama / llama.cpp / DeepSeek), `grok`, **`openclaw`** (the local
+[OpenClaw](https://github.com/openclaw/openclaw) gateway), and an offline `mock`. OpenClaw is
+opt-in (`--provider openclaw`) and shells out to the `openclaw` CLI behind a stubbable adapter —
+it adds no knowledge-write path and never bypasses the provenance gate. See
+[docs/11-Platform/OpenClaw.md](docs/11-Platform/OpenClaw.md).
 
 ## Build your local LLM (Claude + LoRA)
 

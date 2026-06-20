@@ -25,6 +25,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     get_attribution,
     get_record,
     list_disputes,
+    openclaw_infer,
     read_dispute,
     rubric_review,
     sector_council,
@@ -221,6 +222,17 @@ def sophia_wiki_upsert(page_id: str, frontmatter_json: str = "{}", body: str = "
     the source-discipline gate (schema-valid + no forbidden attribution/lineage merge).
     """
     return dumps(wiki_upsert(page_id, frontmatter_json=frontmatter_json, body=body, tier=tier))
+
+
+@mcp.tool()
+def sophia_openclaw_infer(prompt: str, model: str = "xai/grok-4.3") -> str:
+    """Read-only text inference via the local OpenClaw gateway CLI (risk=low, audited).
+
+    OpenClaw owns provider auth/fallback; `model` is its <provider>/<model> route. This is
+    pure inference and NOT a knowledge-write path — OpenClaw output only enters the wiki
+    via sophia_wiki_upsert and the source-discipline gate (no lineage merge can be written).
+    """
+    return dumps(openclaw_infer(model=model, prompt=prompt))
 
 
 if __name__ == "__main__":
