@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
 from pathlib import Path
 
 from agent.benchmark_checks import DOMAIN_BENCH, load_json, score_case
@@ -284,6 +286,53 @@ def wiki_upsert(page_id: str, frontmatter_json: str = "{}", body: str = "", tier
     if not isinstance(meta, dict):
         return {"error": "frontmatter_json must be a JSON object"}
     return wiki_store.upsert(page_id, meta=meta, body=body, tier=tier)
+
+
+def _openclaw_infer(model: str, prompt: str, *, timeout_sec: int = 120) -> dict:
+    """Pure logic for the OpenClaw inference tool — shell to the CLI, parse JSON.
+
+    Read-only and offline-stubbable: when the binary is absent (FileNotFoundError) or the
+    output is unparsable, it returns a structured error dict and never raises.
+    """
+    if not prompt:
+        return {"ok": False, "error": "prompt is required"}
+    binary = os.environ.get("SOPHIA_OPENCLAW_BIN", "openclaw")
+    command = [binary, "infer", "model", "run", "--model", model, "--prompt", prompt, "--json"]
+    try:
+        proc = subprocess.run(command, text=True, capture_output=True, timeout=timeout_sec, check=False)
+    except (subprocess.TimeoutExpired, FileNotFoundError, OSError) as exc:
+        return {"ok": False, "error": repr(exc)}
+    if proc.returncode != 0:
+        return {"ok": False, "error": (proc.stderr or proc.stdout or "")[-500:]}
+    try:
+        data = json.loads(proc.stdout or "{}")
+    except json.JSONDecodeError as exc:
+        return {"ok": False, "error": f"unparsable openclaw output: {exc}"}
+    outputs = data.get("outputs") if isinstance(data, dict) else None
+    text = ""
+    if isinstance(outputs, list) and outputs and isinstance(outputs[0], dict):
+        text = (outputs[0].get("text") or "").strip()
+    ok = bool(isinstance(data, dict) and data.get("ok", True)) and bool(text)
+    return {
+        "ok": ok,
+        "provider": data.get("provider") if isinstance(data, dict) else None,
+        "model": model,
+        "text": text,
+        "error": None if ok else "openclaw returned no usable text",
+    }
+
+
+@audited("sophia_openclaw_infer", risk="low")
+def openclaw_infer(model: str = "xai/grok-4.3", prompt: str = "") -> dict:
+    """Read-only text inference through the local OpenClaw gateway CLI.
+
+    OpenClaw owns provider auth/fallback; ``model`` is its ``<provider>/<model>`` route.
+    Pure inference -> risk="low" (audited but no approval needed). This is NOT a
+    knowledge-write path: to land OpenClaw output in the wiki, route it through
+    sophia_wiki_upsert -> wiki_store.upsert -> the source-discipline gate, which
+    independently rejects lineage merges even when writes are approved.
+    """
+    return _openclaw_infer(model, prompt)
 
 
 def _plain_match_missing(response: str, item: object) -> bool:

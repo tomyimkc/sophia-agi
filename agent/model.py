@@ -12,6 +12,10 @@ Providers
                       GLM-5.2 (Zhipu), vLLM, SGLang, Ollama, llama.cpp server,
                       DeepSeek, and OpenAI itself. Uses urllib (no new deps).
 - ``grok``          : the local grok CLI (subprocess), mirroring the hidden runner.
+- ``openclaw``      : the local OpenClaw CLI gateway (subprocess) — unified text
+                      inference (``openclaw infer model run --json``) routed across
+                      OpenClaw's own provider/auth profiles. Pure inference (writes no
+                      knowledge); offline-stubbable, degrades to ``ok=False`` when absent.
 - ``mock``          : deterministic, offline — lets the whole stack be tested
                       without network or credentials.
 
@@ -72,6 +76,7 @@ PRESETS: dict[str, dict[str, Any]] = {
     "sglang": {"kind": "openai", "base_url": "http://localhost:30000/v1", "api_key_env": "SGLANG_API_KEY", "model": "local", "api_key_default": "EMPTY"},
     "llamacpp": {"kind": "openai", "base_url": "http://localhost:8080/v1", "api_key_env": "LLAMACPP_API_KEY", "model": "local", "api_key_default": "sk-no-key"},
     "grok": {"kind": "grok", "model": "grok-cli"},
+    "openclaw": {"kind": "openclaw", "model": "xai/grok-4.3"},
     "mock": {"kind": "mock", "model": "mock-1"},
 }
 
@@ -82,7 +87,7 @@ TRANSIENT_HTTP = {408, 409, 425, 429, 500, 502, 503, 504}
 class ModelConfig:
     """Resolved configuration for one model endpoint."""
 
-    kind: str  # anthropic | openai | grok | mock
+    kind: str  # anthropic | openai | grok | openclaw | mock
     model: str
     label: str = ""
     base_url: str | None = None
@@ -403,11 +408,46 @@ def _call_grok(system: str, user: str, cfg: ModelConfig, **_: Any) -> ModelResul
             prompt_file.unlink()
 
 
+def _call_openclaw(system: str, user: str, cfg: ModelConfig, **_: Any) -> ModelResult:
+    """OpenClaw gateway via its local CLI: ``openclaw infer model run --json``.
+
+    ``cfg.model`` is the OpenClaw route ``<provider>/<model>`` (e.g. ``xai/grok-4.3``);
+    OpenClaw owns provider auth/fallback. Pure inference — writes no knowledge, so this
+    transport never touches the provenance gate. Degrades to ``ok=False`` when the binary
+    is absent so the fallback chain (``...,mock``) keeps the stack offline-testable.
+    """
+    prompt = f"{system}\n\n{user}"
+    binary = os.environ.get("SOPHIA_OPENCLAW_BIN", "openclaw")
+    command = [binary, "infer", "model", "run", "--model", cfg.model, "--prompt", prompt, "--json"]
+    try:
+        proc = subprocess.run(command, text=True, capture_output=True, timeout=cfg.timeout_sec, check=False)
+        if proc.returncode != 0:
+            return ModelResult(text="", provider="openclaw", model=cfg.model, ok=False, error=(proc.stderr or proc.stdout or "")[-500:], finish_reason="error")
+        data = json.loads(proc.stdout or "{}")
+        outputs = data.get("outputs") if isinstance(data, dict) else None
+        text = ""
+        if isinstance(outputs, list) and outputs and isinstance(outputs[0], dict):
+            text = (outputs[0].get("text") or "").strip()
+        ok = bool(isinstance(data, dict) and data.get("ok", True)) and bool(text)
+        return ModelResult(
+            text=text,
+            provider="openclaw",
+            model=cfg.model,
+            ok=ok,
+            error=None if ok else "openclaw returned no usable text",
+            finish_reason="stop" if ok else "error",
+            raw=data if isinstance(data, dict) else None,
+        )
+    except (subprocess.TimeoutExpired, FileNotFoundError, json.JSONDecodeError, TypeError) as exc:
+        return ModelResult(text="", provider="openclaw", model=cfg.model, ok=False, error=repr(exc), finish_reason="error")
+
+
 _TRANSPORTS: dict[str, Callable[..., ModelResult]] = {
     "mock": _call_mock,
     "anthropic": _call_anthropic,
     "openai": _call_openai_compatible,
     "grok": _call_grok,
+    "openclaw": _call_openclaw,
 }
 
 
