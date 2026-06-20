@@ -2,6 +2,50 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.3] - 2026-06-21
+
+### Added — Discipline layer (small-model source discipline, CPU-only)
+
+A layer that lets any local/small model inherit Sophia's "never merge lineages"
+discipline at run time, plus the data to train it in. All offline, no GPU for the
+runtime paths (only the DPO *training* step needs one).
+
+- **User-supplied records (Phase 0)** — `agent.verifiers._load_provenance_records`
+  now also merges JSON records from the `SOPHIA_DISCIPLINE_RECORDS` env var
+  (directory / glob / single file), so a user can enforce their OWN attribution
+  rules (legal/corporate/code provenance) through the same machine-checked gate,
+  beyond the seeded domains. Validation warnings on malformed/skipped records.
+- **Guarded completion loop (Phase 1)** — `agent/guarded.py`: `guarded_complete()`
+  wraps a model as retrieve → generate → judge (`provenance_faithful`) and, on a
+  violation, branches by `SOPHIA_ON_FAIL` = `repair` (one bounded re-generation,
+  else cited abstention) | `abstain` | `hedge` | `passthrough`. The cited
+  abstention itself passes the gate. `check_claim()` is the mode-free verifier
+  surface, exposed as the `sophia_check_claim` MCP tool.
+- **Best-of-N reranker + belief graph + confidence injector (Phase 2)** —
+  `agent/best_of.py` samples N candidates and ranks by the gate (early-exit on the
+  first passing one); `okf.belief(entity)` exposes `effectiveConfidenceRank`
+  (min-over-derivesFrom chain) with a `confidenceLaundered` flag, via the
+  `sophia_belief` MCP tool; `harness._memory_recall` now annotates recalled pages
+  with that effective (laundering-aware) confidence instead of face value.
+- **Hard-negative DPO miner (Phase 3)** — `tools/mine_hard_negatives.py` mines
+  every `doNotAttributeTo` edge into direct / sibling / alias / laundering
+  negatives, each SELF-VALIDATED through `provenance_faithful` (rejected must trip
+  the gate, chosen must pass), emitting the `wiki_to_training` DPO schema. CPU-only
+  data gen; DPO training needs a GPU.
+- **sophia-guard CLI (Phase 4)** — `tools/sophia_guard.py` runs any local model
+  (ollama, llama.cpp, grok, openclaw, …) behind the guarded loop from the command
+  line (`--on-fail`, `--provider`, `--json`).
+- Tests (TDD, offline): `test_discipline_records`, `test_guarded`,
+  `test_mcp_check_claim`, `test_okf_belief`, `test_best_of`,
+  `test_memory_recall_confidence`, `test_mcp_belief`, `test_mine_hard_negatives`,
+  `test_sophia_guard_cli` — all wired into CI.
+
+### Notes
+
+- Builds on the source-discipline gate (v0.7.2) and reuses the existing
+  `doNotAttributeTo` corpus; the runtime paths add no new dependencies and stay
+  3.9-safe in `okf/`. Generated DPO `.jsonl` is regenerable output and not committed.
+
 ## [0.7.2] - 2026-06-20
 
 ### Added

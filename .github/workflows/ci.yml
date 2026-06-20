@@ -37,6 +37,17 @@ jobs:
           python tests/test_model_adapter.py
           python tests/test_model_openclaw.py
           python tests/test_mcp_openclaw.py
+      - name: Discipline layer tests (guarded loop, best-of-N, belief graph, miner)
+        run: |
+          python tests/test_discipline_records.py
+          python tests/test_guarded.py
+          python tests/test_mcp_check_claim.py
+          python tests/test_okf_belief.py
+          python tests/test_best_of.py
+          python tests/test_memory_recall_confidence.py
+          python tests/test_mcp_belief.py
+          python tests/test_mine_hard_negatives.py
+          python tests/test_sophia_guard_cli.py
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats
