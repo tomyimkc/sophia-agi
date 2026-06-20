@@ -19,6 +19,7 @@ Package path: `sophia_mcp/` (avoids name clash with pip `mcp`).
 | `sophia_list_disputes` | List `docs/04-Disputes/` slugs |
 | `sophia_read_dispute` | Read dispute markdown by slug |
 | `sophia_web_evidence_search` | Local RAG plus optional Brave/Tavily/SerpAPI evidence search |
+| `sophia_sector_council` | Convene a law/financial/economy/auto sector council for a query |
 | `sophia_rubric_review` | Deterministic strict-pass review of a draft answer |
 
 ## Install

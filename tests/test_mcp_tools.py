@@ -18,6 +18,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     get_attribution,
     list_disputes,
     rubric_review,
+    sector_council,
     validate_corpus,
     web_evidence_search,
 )
@@ -73,6 +74,25 @@ def test_rubric_review_flags_missing() -> None:
     assert result["missing"]
 
 
+def test_sector_council_law_routes_specialist() -> None:
+    result = sector_council("law", "gacha odds disclosure and refund policy for a Hong Kong game launch")
+    assert result["councilId"] == "law"
+    assert "gaming_monetization_lawyer_seat" in result["seatedSeatIds"]
+    assert "human_review_gatekeeper_seat" in result["seatedSeatIds"]  # guardian
+    assert result["humanBoundary"]
+    assert "not" in result["notAdvice"].lower()
+
+
+def test_sector_council_auto_detects() -> None:
+    result = sector_council("auto", "set up KYC and AML for our Stripe payment processor")
+    assert result["councilId"] == "financial"
+    assert "aml_kyc_seat" in result["seatedSeatIds"]
+
+
+def test_sector_council_rejects_unknown() -> None:
+    assert "error" in sector_council("medical", "diagnose this")
+
+
 def main() -> int:
     test_validate_ok()
     test_get_attribution_ddj()
@@ -82,6 +102,9 @@ def main() -> int:
     test_export_corpus()
     test_web_evidence_search_offline()
     test_rubric_review_flags_missing()
+    test_sector_council_law_routes_specialist()
+    test_sector_council_auto_detects()
+    test_sector_council_rejects_unknown()
     print("test_mcp_tools: OK")
     return 0
 

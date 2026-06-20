@@ -8,6 +8,13 @@ from pathlib import Path
 from agent.benchmark_checks import DOMAIN_BENCH, load_json, score_case
 from agent.gate import check_response
 from agent.rubric_review import build_rubric_review
+from agent.sector_council import (
+    available_councils,
+    detect_council,
+    format_council,
+    load_council,
+    route_council,
+)
 from agent.web_evidence import gather_evidence
 from tools.validate_attribution import run_validation
 
@@ -184,6 +191,32 @@ def rubric_review(
         "scoring": {"mustInclude": must_include, "mustAvoid": must_avoid, "semanticChecks": []},
     }
     return build_rubric_review(case, response, score_result, gate)
+
+
+def sector_council(council_id: str, query: str, *, materials: list | None = None) -> dict:
+    if not query.strip():
+        return {"error": "query is required"}
+    if council_id == "auto":
+        detected = detect_council(query)
+        if not detected:
+            return {
+                "error": "no sector council matched; specify law|financial|economy",
+                "available": available_councils(),
+            }
+        council_id = detected
+    if council_id not in available_councils():
+        return {"error": f"council_id must be one of {available_councils()} or 'auto'"}
+    route = route_council(load_council(council_id), query, materials or [])
+    seated = sorted(seat.get("seatId") for group in route["selected"].values() for seat in group["seats"])
+    return {
+        "councilId": council_id,
+        "displayName": route.get("displayName"),
+        "seatedSeatIds": seated,
+        "humanBoundary": route.get("humanBoundary", []),
+        "decisionContract": route.get("decisionContract", []),
+        "councilPrompt": format_council(route),
+        "notAdvice": "Decision support only — not professional legal/financial advice.",
+    }
 
 
 def export_corpus() -> dict:

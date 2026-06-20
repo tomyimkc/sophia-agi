@@ -26,6 +26,7 @@ from agent.memory import log_decision, recent_decisions
 from agent.prompts import MODE_PROMPTS
 from agent.retrieval import format_context, retrieve
 from agent.rubric_review import build_rubric_review, format_rubric_review
+from agent.sector_council import detect_council, format_council, load_council, route_council
 from agent.tools import catalog_text, parse_tool_requests, run_tools
 from agent.web_evidence import format_evidence_context, gather_evidence
 
@@ -48,10 +49,16 @@ def build_user_prompt(mode: str, question: str, *, online_evidence: bool = False
     extra = ""
     if mode == "repo":
         extra = f"\n\n## Repo tools\n{catalog_text()}\n"
+    council_block = ""
+    council_id = detect_council(question)
+    if council_id:
+        route = route_council(load_council(council_id), question)
+        council_block = f"\n\n{format_council(route)}\n"
     return (
         f"## User question\n{question}\n\n"
         f"## Retrieved sources\n{context}\n\n"
-        f"{evidence_context}\n\n"
+        f"{evidence_context}\n"
+        f"{council_block}\n"
         f"## Recent decisions (memory)\n{memory_text}\n"
         f"{extra}\n"
         "Respond with: Analysis → Recommendation/Decision → cited source paths/web URLs → Rubric Evidence Map → 中文摘要"
@@ -67,6 +74,10 @@ def run_mode(mode: str, question: str, *, approve: bool, execute: bool, online_e
     chunks = retrieve(question, top_k=8)
     for chunk in chunks[:5]:
         print(f"  - {chunk.path} ({chunk.score:.2f})")
+
+    council_id = detect_council(question)
+    if council_id:
+        print(f"[Sophia / {mode}] Convening {council_id} sector council")
 
     print(f"[Sophia / {mode}] Thinking...")
     answer = complete(

@@ -103,6 +103,37 @@ def test_format_council_renders_boundary_and_contract() -> None:
     assert "not financial" in text.lower() or "not advice" in text.lower() or "中文摘要" in text
 
 
+def test_detect_council_picks_right_sector() -> None:
+    assert sc.detect_council("review our contract and tax compliance for the EU") == "law"
+    assert sc.detect_council("model runway, WACC, and AML for our payment processor") == "financial"
+    assert sc.detect_council("simulate the inflation and fiscal-deficit tradeoff") == "economy"
+    # a non-sector question should not convene any council
+    assert sc.detect_council("did Confucius write the Dao De Jing?") is None
+
+
+def test_agent_prompt_injects_council_block() -> None:
+    # the agent build_user_prompt should inject the sector-council block for a
+    # legal question; stub the heavy IO so the test is fast and hermetic
+    from tools import sophia_agent as agent
+
+    class FakeChunk:
+        path = "data/x.json"
+        title = "stub"
+        excerpt = "stub excerpt"
+        score = 0.5
+
+    saved = (agent.retrieve, agent.gather_evidence, agent.recent_decisions)
+    agent.retrieve = lambda q, *, top_k=8: [FakeChunk()]
+    agent.gather_evidence = lambda q, **k: {"web": {"online": False, "sources": []}}
+    agent.recent_decisions = lambda limit=3: []
+    try:
+        prompt = agent.build_user_prompt("advisor", "Review our gacha odds disclosure and refund policy for Hong Kong")
+    finally:
+        agent.retrieve, agent.gather_evidence, agent.recent_decisions = saved
+    assert "Law & Governance Council" in prompt
+    assert "Human authority boundary" in prompt
+
+
 def main() -> int:
     test_three_councils_load()
     test_seat_schema_and_unique_ids()
@@ -113,6 +144,8 @@ def main() -> int:
     test_economy_routes_labor_and_stakeholders()
     test_fallback_when_no_specialist_matches()
     test_format_council_renders_boundary_and_contract()
+    test_detect_council_picks_right_sector()
+    test_agent_prompt_injects_council_block()
     print("test_sector_councils: OK")
     return 0
 

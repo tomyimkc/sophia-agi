@@ -27,6 +27,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     list_disputes,
     read_dispute,
     rubric_review,
+    sector_council,
     validate_corpus,
     web_evidence_search,
 )
@@ -40,7 +41,8 @@ mcp = FastMCP(
     "sophia-agi",
     instructions=(
         "Sophia AGI provenance tools: validate corpus, epistemic gate, benchmarks, "
-        "attribution lookup, dispute notes, and corpus export."
+        "attribution lookup, dispute notes, corpus export, and law/financial/economy "
+        "sector councils."
     ),
 )
 
@@ -131,6 +133,28 @@ def sophia_web_evidence_search(
 ) -> str:
     """Search Sophia local RAG plus optional Brave/Tavily/SerpAPI web evidence."""
     return dumps(web_evidence_search(query, online=online, provider=provider, top_k=top_k, local_top_k=local_top_k))
+
+
+@mcp.tool()
+def sophia_sector_council(
+    council_id: str,
+    query: str,
+    materials_json: str = "[]",
+) -> str:
+    """Convene a Sophia sector council for a query: council_id = law|financial|economy|auto.
+
+    Seats source-inspired specialists plus standing guardians (citation/numbers
+    audit, ethics/equity, plain-language, human-review gate) and returns the
+    council prompt, seated seats, decision contract, and human-authority boundary.
+    Decision support only — not professional legal/financial advice.
+    """
+    try:
+        materials = json.loads(materials_json)
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid materials JSON: {exc}"})
+    if not isinstance(materials, list):
+        return dumps({"error": "materials_json must be a JSON array"})
+    return dumps(sector_council(council_id, query, materials=materials))
 
 
 @mcp.tool()

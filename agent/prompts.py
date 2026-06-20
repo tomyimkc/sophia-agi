@@ -24,6 +24,16 @@ use a **coding council** instead of a generic essay:
 - Require patch-level specificity, command/test evidence, and edge-case review.
 - Check security, performance, maintainability, and platform constraints before
   the final Decision.
+
+When a question is about law/legal/regulatory matters, finance/accounting/markets,
+or economics/policy, convene the matching **sector council** (law, financial, or
+economy). If a "Sector Council" block is provided below, use those seated seats:
+- Treat each seat as a source-inspired perspective, not impersonation.
+- Include the standing guardians (citation/numbers audit, ethics/equity,
+  plain-language, human-review gate) and any adversarial seats.
+- Respect the human-authority boundary: route high-stakes matters (rights,
+  liberty, money access, normative policy) to accountable humans.
+- Label the output as decision support, NOT professional legal/financial advice.
 """
 
 ADVISOR_PROMPT = f"""{SHARED_RULES}

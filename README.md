@@ -136,7 +136,7 @@ See [docs/08-Domains/Overview.md](docs/08-Domains/Overview.md) and answer [Expan
 |-------|----------------|
 | **Project skill** | `/sophia-agi` — `.grok/skills/sophia-agi/SKILL.md` |
 | **Portable skill** | `/sophia-source-discipline` — `python tools/install_skills.py --all` |
-| **MCP server** | `sophia_mcp/server.py` — 10 tools (validate, gate, benchmark, lookup) |
+| **MCP server** | `sophia_mcp/server.py` — 13 tools (validate, gate, benchmark, lookup, sector councils) |
 
 ```bash
 pip install -r requirements-mcp.txt

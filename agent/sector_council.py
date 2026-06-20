@@ -56,6 +56,25 @@ def _score_seat(text: str, seat: dict[str, Any]) -> int:
     return sum(1 for term in seat.get("triggerTerms", []) if _term_matches(text, str(term)))
 
 
+def detect_council(text: str, *, min_score: int = 2) -> str | None:
+    """Pick the sector council whose non-core (specialist) seats best match the
+    text, or None if no council is a clear fit. Guardian seats (no triggerTerms)
+    do not count toward detection."""
+    best_id: str | None = None
+    best_score = 0
+    for council_id in available_councils():
+        council = load_council(council_id)
+        score = 0
+        for group in council.get("seatGroups", {}).values():
+            if group.get("core"):
+                continue
+            for seat in group.get("seats", {}).values():
+                score += _score_seat(text, seat)
+        if score > best_score:
+            best_id, best_score = council_id, score
+    return best_id if best_score >= min_score else None
+
+
 def route_council(
     council: dict[str, Any],
     query: str,
