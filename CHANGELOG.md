@@ -2,6 +2,47 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.4] - 2026-06-21
+
+### Added — The Provenance Delta benchmark (external, non-circular evidence)
+
+The first measurement of what Sophia's provenance gate buys *against the outside
+world*: how often a model asserts a false authorship lineage when used **alone**
+vs **behind the gate**, scored on ground truth that is independent of the gate.
+Targets claim-ladder items 6–7 (external evaluation, replication).
+
+- **External ground truth** — `provenance_bench/data/misattributions.json`
+  (cited FALSE lineage-merges) + `provenance_bench/data/wikidata_snapshot.json`
+  (TRUE attributions, Wikipedia/Wikidata-sourced). Labels live in files
+  physically separate from the gate's `doNotAttributeTo` corpus — the
+  non-circularity guarantee.
+- **Independent judge** — `provenance_bench/judge.py` shares **no code** with the
+  gate (`agent/verifiers.py`); the gate is the runtime treatment, the judge is
+  the referee. Default lexical screen + an optional independent-LLM-judge hook
+  (`provenance_bench/llm_judge.py`).
+- **Alone-vs-gated runner** — `provenance_bench/runner.py` produces a plain model
+  answer and the same model behind `agent/guarded.py`, judging both.
+- **Three honest metrics** — `provenance_bench/score.py`: hallucinated-attribution
+  rate (alone vs gated; the **delta**), false-positive cost (does the gate break
+  correct answers?), coverage/recall (does it name the gate's narrowness?).
+- **Report + CLI** — `provenance_bench/report.py` and `tools/run_provenance_delta.py`
+  (`--models`, `--llm-judge`, `--on-fail`, `--emit-dataset`). Optional Wikidata
+  QID verification via `tools/fetch_wikidata_authors.py`.
+- **Tests (TDD, offline)** — `tests/test_provenance_bench.py` (dataset, judge,
+  runner alone-vs-gated, scoring, report) + a `--models mock` smoke run, both
+  wired into CI.
+- **Docs** — design spec
+  (`docs/superpowers/specs/2026-06-21-provenance-delta-design.md`), platform doc
+  (`docs/11-Platform/Provenance-Delta.md`), and a deliberately staged
+  **what-to-do-next checklist**
+  (`agi-proof/external-benchmarks/PROVENANCE-DELTA-CHECKLIST.md`).
+
+### Notes
+
+- Reuses the gate and guarded loop unchanged; no new runtime dependencies.
+  Generated reports/datasets are git-ignored (regenerable) — only numbers from
+  real, judged, multi-run passes should ever be published.
+
 ## [0.7.3] - 2026-06-21
 
 ### Added — Discipline layer (small-model source discipline, CPU-only)

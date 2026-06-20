@@ -48,6 +48,10 @@ jobs:
           python tests/test_mcp_belief.py
           python tests/test_mine_hard_negatives.py
           python tests/test_sophia_guard_cli.py
+      - name: Provenance Delta benchmark tests
+        run: |
+          python tests/test_provenance_bench.py
+          python tools/run_provenance_delta.py --models mock
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

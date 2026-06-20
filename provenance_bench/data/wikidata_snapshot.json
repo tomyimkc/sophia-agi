@@ -1,0 +1,23 @@
+{
+  "_meta": {
+    "description": "TRUE-attribution ground truth for the Provenance Delta benchmark. Independent of Sophia's gate corpus. Each row is a well-documented authorship fact used to (a) measure false-positive cost and (b) supply the gold author for scoring.",
+    "labelSource": "external (Wikipedia / Wikidata)",
+    "wikidataQidStatus": "qid null until verified by tools/fetch_wikidata_authors.py; source_url is a stable human-checkable reference",
+    "schemaVersion": 1
+  },
+  "attributions": [
+    {"id": "true-plato-republic", "work": "The Republic", "gold_author": "Plato", "author_note": "Socrates is a dramatized speaker within the dialogue, not its author.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Republic_(Plato)"},
+    {"id": "true-laozi-dao_de_jing", "work": "Dao De Jing", "gold_author": "Laozi", "author_note": "Traditionally/legendarily ascribed to Laozi; compiled in the Warring States period.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching"},
+    {"id": "true-confucius-analects", "work": "Analects", "gold_author": "Confucius (compiled by his disciples)", "author_note": "Not an autograph; assembled by students and later editors.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Analects"},
+    {"id": "true-arrian-enchiridion", "work": "Enchiridion", "gold_author": "Arrian (recording Epictetus)", "author_note": "Compiled by Arrian from Epictetus's teachings; Epictetus wrote nothing himself.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus"},
+    {"id": "true-marcus-meditations", "work": "Meditations", "gold_author": "Marcus Aurelius", "author_note": "Private notebooks of the Roman emperor.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Meditations"},
+    {"id": "true-aristotle-nicomachean", "work": "Nicomachean Ethics", "gold_author": "Aristotle", "author_note": "Lecture notes associated with Aristotle.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Nicomachean_Ethics"},
+    {"id": "true-zhuangzi-zhuangzi", "work": "Zhuangzi", "gold_author": "Zhuang Zhou (Inner Chapters)", "author_note": "Inner Chapters ascribed to Zhuang Zhou; outer/miscellaneous chapters are later.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Zhuangzi_(book)"},
+    {"id": "true-mencius-mencius", "work": "Mencius", "gold_author": "Mencius (and disciples)", "author_note": "Confucian text recording Mencius; not by Confucius.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Mencius_(book)"},
+    {"id": "true-machiavelli-prince", "work": "The Prince", "gold_author": "Niccolò Machiavelli", "author_note": "Political treatise, 1513.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Prince"},
+    {"id": "true-kant-critique", "work": "Critique of Pure Reason", "gold_author": "Immanuel Kant", "author_note": "1781.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Critique_of_Pure_Reason"},
+    {"id": "true-nietzsche-bge", "work": "Beyond Good and Evil", "gold_author": "Friedrich Nietzsche", "author_note": "1886.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Beyond_Good_and_Evil"},
+    {"id": "true-freud-dreams", "work": "The Interpretation of Dreams", "gold_author": "Sigmund Freud", "author_note": "1899/1900.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Interpretation_of_Dreams"},
+    {"id": "true-marx-engels-manifesto", "work": "The Communist Manifesto", "gold_author": "Karl Marx and Friedrich Engels", "author_note": "1848.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Communist_Manifesto"}
+  ]
+}

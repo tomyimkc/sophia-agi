@@ -29,6 +29,11 @@ raw/*
 training/wiki_provenance_*.jsonl
 eval/provenance_audit.json
 
+# generated Provenance Delta outputs (regenerable; populate via tools/run_provenance_delta.py)
+provenance_bench/dataset.jsonl
+agi-proof/benchmark-results/provenance-delta.public-report.json
+agi-proof/benchmark-results/provenance-delta.md
+
 # Build artifacts
 *.jsonl.bak
 dist/

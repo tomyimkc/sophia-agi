@@ -1,0 +1,21 @@
+{
+  "_meta": {
+    "description": "KNOWN-FALSE attribution ground truth for the Provenance Delta benchmark. Each row is a lineage merge that is documented as false. The LABEL comes from the cited external source + reason, NOT from Sophia's gate. Authorship-scoped to match what the gate adjudicates.",
+    "labelSource": "external citation + documented reason",
+    "schemaVersion": 1
+  },
+  "misattributions": [
+    {"id": "false-confucius-dao_de_jing", "claimed_author": "Confucius", "work": "Dao De Jing", "gold_author": "Laozi", "reason": "The Dao De Jing is a Daoist text traditionally ascribed to Laozi; Confucius belongs to a distinct (Confucian) tradition and is never credited with it.", "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching"},
+    {"id": "false-socrates-republic", "claimed_author": "Socrates", "work": "The Republic", "gold_author": "Plato", "reason": "Socrates is a character/speaker in the dialogue; Plato is the author. Socrates wrote nothing.", "source_url": "https://en.wikipedia.org/wiki/Republic_(Plato)"},
+    {"id": "false-plato-dao_de_jing", "claimed_author": "Plato", "work": "Dao De Jing", "gold_author": "Laozi", "reason": "A Greek philosopher cannot be the author of a Chinese Daoist classic; different tradition and era.", "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching"},
+    {"id": "false-laozi-analects", "claimed_author": "Laozi", "work": "Analects", "gold_author": "Confucius (compiled by disciples)", "reason": "The Analects records Confucius; Laozi is the Daoist figure, a different lineage.", "source_url": "https://en.wikipedia.org/wiki/Analects"},
+    {"id": "false-confucius-mencius", "claimed_author": "Confucius", "work": "Mencius", "gold_author": "Mencius (and disciples)", "reason": "The Mencius records Mencius, who lived generations after Confucius; same tradition but not the same author.", "source_url": "https://en.wikipedia.org/wiki/Mencius_(book)"},
+    {"id": "false-aristotle-republic", "claimed_author": "Aristotle", "work": "The Republic", "gold_author": "Plato", "reason": "The Republic is Plato's; Aristotle was his student and wrote separate works (e.g. the Nicomachean Ethics, Politics).", "source_url": "https://en.wikipedia.org/wiki/Republic_(Plato)"},
+    {"id": "false-epictetus-meditations", "claimed_author": "Epictetus", "work": "Meditations", "gold_author": "Marcus Aurelius", "reason": "Meditations is by Marcus Aurelius. Epictetus is associated with the Enchiridion (compiled by Arrian).", "source_url": "https://en.wikipedia.org/wiki/Meditations"},
+    {"id": "false-marcus-enchiridion", "claimed_author": "Marcus Aurelius", "work": "Enchiridion", "gold_author": "Arrian (recording Epictetus)", "reason": "The Enchiridion derives from Epictetus via Arrian; Marcus Aurelius wrote the Meditations, a different Stoic work.", "source_url": "https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus"},
+    {"id": "false-nietzsche-manifesto", "claimed_author": "Nietzsche", "work": "The Communist Manifesto", "gold_author": "Karl Marx and Friedrich Engels", "reason": "The Manifesto is by Marx and Engels (1848); Nietzsche was a different thinker with no role in it.", "source_url": "https://en.wikipedia.org/wiki/The_Communist_Manifesto"},
+    {"id": "false-freud-bge", "claimed_author": "Freud", "work": "Beyond Good and Evil", "gold_author": "Friedrich Nietzsche", "reason": "Beyond Good and Evil is Nietzsche's; Freud was a later psychoanalyst, not its author.", "source_url": "https://en.wikipedia.org/wiki/Beyond_Good_and_Evil"},
+    {"id": "false-kant-prince", "claimed_author": "Kant", "work": "The Prince", "gold_author": "Niccolò Machiavelli", "reason": "The Prince is Machiavelli's (1513); Kant is an 18th-century German philosopher.", "source_url": "https://en.wikipedia.org/wiki/The_Prince"},
+    {"id": "false-zhuangzi-dao_de_jing", "claimed_author": "Zhuangzi", "work": "Dao De Jing", "gold_author": "Laozi", "reason": "Though both are Daoist, the Dao De Jing is ascribed to Laozi and the Zhuangzi to Zhuang Zhou; conflating them merges two distinct texts/authors.", "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching"}
+  ]
+}
