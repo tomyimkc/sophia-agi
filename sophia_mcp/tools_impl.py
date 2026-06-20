@@ -74,6 +74,18 @@ def gate_check(
     )
 
 
+def check_claim(text: str) -> dict:
+    """Mode-free source-discipline check: ``{passed, reasons, violations}``.
+
+    Unlike ``gate_check`` (moded, needs a question + style scoring), this is the
+    pure provenance verifier — text in, verdict out — so a caller can gate any
+    claim against Sophia's "don't merge lineages" rule. Read-only, offline.
+    """
+    from agent.guarded import check_claim as _check_claim
+
+    return _check_claim(text)
+
+
 def benchmark_list(domain: str) -> dict:
     if domain not in DOMAINS:
         return {"error": f"domain must be one of {DOMAINS}"}
