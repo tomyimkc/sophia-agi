@@ -122,6 +122,26 @@ def test_retry_then_fallback_to_mock() -> None:
     assert len(glm_attempts) == 2 and all(not a.ok for a in glm_attempts)
 
 
+def test_http_error_body_is_surfaced() -> None:
+    import io
+
+    os.environ["ZHIPUAI_API_KEY"] = "test-key"
+
+    def raise_429(req, timeout=None):
+        body = io.BytesIO(b'{"error":{"code":"1113","message":"Insufficient balance"}}')
+        raise urllib.error.HTTPError("url", 429, "Too Many Requests", {}, body)
+
+    original = m.urllib.request.urlopen
+    m.urllib.request.urlopen = raise_429
+    try:
+        result = m.ModelClient(m.resolve_config("glm"), retries=1).generate("s", "u", sleep=lambda _: None)
+    finally:
+        m.urllib.request.urlopen = original
+        os.environ.pop("ZHIPUAI_API_KEY", None)
+    assert result.ok is False
+    assert "1113" in (result.error or "") and "Insufficient balance" in (result.error or "")
+
+
 def test_complete_backward_compat_and_raises() -> None:
     os.environ["SOPHIA_MODEL_PROVIDER"] = "mock"
     os.environ.pop("SOPHIA_MOCK_RESPONSE", None)
@@ -148,6 +168,7 @@ def main() -> int:
     test_openai_compatible_parses_and_costs()
     test_openai_missing_key_fails()
     test_retry_then_fallback_to_mock()
+    test_http_error_body_is_surfaced()
     test_complete_backward_compat_and_raises()
     print("test_model_adapter: OK")
     return 0

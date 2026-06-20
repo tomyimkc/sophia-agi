@@ -313,10 +313,22 @@ def _call_openai_compatible(
         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json", "Accept": "application/json"},
         method="POST",
     )
-    with urllib.request.urlopen(request, timeout=cfg.timeout_sec) as response:
-        if on_token:
-            return _consume_stream(response, cfg, on_token)
-        raw = json.loads(response.read().decode("utf-8", errors="replace"))
+    try:
+        with urllib.request.urlopen(request, timeout=cfg.timeout_sec) as response:
+            if on_token:
+                return _consume_stream(response, cfg, on_token)
+            raw = json.loads(response.read().decode("utf-8", errors="replace"))
+    except urllib.error.HTTPError as exc:
+        try:
+            body = exc.read().decode("utf-8", errors="replace")[:500]
+        except Exception:
+            body = ""
+        return ModelResult(
+            text="", provider=cfg.label or "openai", model=cfg.model, ok=False,
+            error=f"HTTP {exc.code}: {body}".strip(), finish_reason="error",
+        )
+    except (urllib.error.URLError, TimeoutError) as exc:
+        return ModelResult(text="", provider=cfg.label or "openai", model=cfg.model, ok=False, error=repr(exc))
     choice = (raw.get("choices") or [{}])[0]
     message = choice.get("message", {})
     usage = raw.get("usage", {})
