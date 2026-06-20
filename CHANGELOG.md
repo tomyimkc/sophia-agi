@@ -2,6 +2,30 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.1] - 2026-06-20
+
+### Added
+
+- **OpenClaw model provider** — integrates the local [OpenClaw](https://github.com/openclaw/openclaw)
+  multi-channel AI gateway as a Sophia model backend, behind a clean adapter that mirrors the
+  existing `grok` CLI transport. New `openclaw` preset (default route `xai/grok-4.3`) +
+  `_call_openclaw` transport in `agent/model.py`, shelling to `openclaw infer model run --json`;
+  the `<provider>/<model>` route flows through as data (`openclaw:anthropic/claude-sonnet-4-6`).
+- Read-only audited MCP tool `sophia_openclaw_infer` (`risk="low"`, no approval) in `sophia_mcp/`.
+- `tests/test_model_openclaw.py` + `tests/test_mcp_openclaw.py` — fully offline (the `openclaw`
+  binary is never invoked; `subprocess.run` is stubbed). Wired both, plus the previously-unwired
+  `tests/test_model_adapter.py`, into CI.
+- `docs/11-Platform/OpenClaw.md` design note; `SOPHIA_OPENCLAW_BIN` env override.
+
+### Notes
+
+- Inference plumbing only: stdlib-only, no new dependency, `okf/` untouched; degrades to `ok=False`
+  when OpenClaw is absent so the stack stays offline-testable via the `mock` fallback. OpenClaw is
+  never auto-selected — strictly opt-in. **No** knowledge-write path is added: any OpenClaw output
+  destined for the wiki still passes the source-discipline (provenance) gate unchanged. OpenClaw's
+  side-effecting `agent`/`message send` are deliberately **not** wired. Adds nothing to and makes
+  no claim about the AGI-candidate proof package.
+
 ## [0.7.0] - 2026-06-20
 
 ### Added
