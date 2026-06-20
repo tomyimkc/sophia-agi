@@ -19,6 +19,15 @@ Every record should specify:
 - `confidence` (attributed, compiled, legendary, disputed, …)
 - `doNotAttributeTo` / `doNotMergeWith` where lineage errors are common
 
+## Councils
+
+Hard, contested domains are modeled as a **council of constrained, source-inspired
+seats** rather than one monolithic expert:
+
+- [Coding Council](./Coding-Council.md)
+- [Religion Figure Council](./Religion-Figure-Council.md)
+- [Sector Councils — Law, Finance, Economy](./Sector-Councils.md) (`python tools/sector_council.py <law|financial|economy> "..."`)
+
 ## Next step
 
 Answer the questions in [Expansion-Questionnaire.md](Expansion-Questionnaire.md) so we can populate psychology, history, and religion with the right scope and tone.
