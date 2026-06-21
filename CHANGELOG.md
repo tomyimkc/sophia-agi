@@ -2,6 +2,41 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.32] - 2026-06-22
+
+### Improved — five core gate-logic upgrades (generality, recall, calibration, learning)
+
+Closes the verifier-gate's biggest logic gaps (each was verified against the code
+first). New modules are isolated + tested; integration into shared files is opt-in
+so the deterministic default path is unchanged.
+
+- **Entity-alias resolution** (`agent/entity_aliases.py`, wired into
+  `benchmark_checks.author_markers`): surname-only / name-ordering / transliteration
+  surface forms, so "Tolstoy wrote Crime and Punishment" now fires when the record
+  stores "Leo Tolstoy" (was a silent miss affecting 58% of multi-token records).
+  Guarded against bare over-common surnames; title co-match bounds false positives.
+- **Retrieval-grounded gating** (`agent/grounded_gate.py`, opt-in
+  `check_claim(..., ground=True)`): on a record-miss, resolves the documented
+  author (offline Wikidata snapshot / OKF belief graph) and synthesises a one-off
+  do-not-attribute spec — the gate now catches misattributions for works OUTSIDE
+  the frozen corpus (the cross-entity generality gap cross_entity.py named).
+- **Atomic claim decomposition + routing** (`agent/claim_router.py`, opt-in
+  `gate.check_response(..., route_claims=True)`): splits an answer into atomic
+  claims, classifies each (authorship/citation/arithmetic/legal/other) and routes
+  to the matching verifier — gating any checkable predicate, per-claim.
+- **Calibrated graded abstention** (`agent/graded_decision.py`): maps
+  (gate_passed, confidence) → answer/hedge/abstain on a curve, with
+  answer_confidence from the existing (previously unwired) corroboration log-odds
+  / calibration self-consistency modules.
+- **Active-learning feedback** (`agent/gate_feedback.py`, opt-in
+  `run_cases(..., log_misses=path)`): a judge-caught gate MISS becomes a candidate
+  doNotAttributeTo record in a pending JSONL queue (never mutates frozen records) —
+  the continual-learning loop improvement.py admitted it lacked.
+
+Tests: test_entity_aliases / test_grounded_gate / test_claim_router /
+test_graded_decision / test_gate_feedback; CI wired. No regressions across the
+existing gate/guarded/provenance/uplift suites.
+
 ## [0.7.31] - 2026-06-21
 
 ### Result — FIRST validated small-LLM uplift number (no-overclaim gate cleared)

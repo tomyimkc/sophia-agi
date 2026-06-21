@@ -128,7 +128,17 @@ def tradition_markers(tradition_id: str, traditions: dict) -> list[str]:
 def author_markers(author_id: str) -> list[str]:
     markers = [author_id, author_id.replace("_", " ")]
     markers.extend(AUTHOR_ALIASES.get(author_id, []))
-    return markers
+    # Canonical surface-form expansion (surname-only, name orderings, transliterations)
+    # so "Tolstoy wrote Crime and Punishment" fires when the record stores "Leo
+    # Tolstoy". Guarded against bare over-common surnames; the co-required title
+    # alternation bounds false positives. See agent/entity_aliases.py.
+    try:
+        from agent.entity_aliases import author_surface_forms
+
+        markers += author_surface_forms(author_id)
+    except Exception:  # never let the alias layer break the core matcher
+        pass
+    return list(dict.fromkeys(markers))
 
 
 def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[str]]:

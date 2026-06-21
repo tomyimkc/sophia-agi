@@ -21,8 +21,10 @@
       "perRunDelta": [
         0.0
       ],
+      "falseObs": 6,
       "falsePositiveCost": 0.0,
       "coverageRecall": 0.0,
+      "judgeAgreement": null,
       "validated": false,
       "validatedChecks": {
         "notMock": false,
@@ -43,8 +45,10 @@
       "perRunDelta": [
         0.0
       ],
+      "falseObs": 6,
       "falsePositiveCost": 0.0,
       "coverageRecall": 0.0,
+      "judgeAgreement": null,
       "validated": false,
       "validatedChecks": {
         "notMock": false,
@@ -65,8 +69,10 @@
       "perRunDelta": [
         0.0
       ],
+      "falseObs": 6,
       "falsePositiveCost": 0.0,
       "coverageRecall": 0.0,
+      "judgeAgreement": null,
       "validated": false,
       "validatedChecks": {
         "notMock": false,
@@ -87,8 +93,10 @@
       "perRunDelta": [
         0.0
       ],
+      "falseObs": 6,
       "falsePositiveCost": 0.0,
       "coverageRecall": 0.0,
+      "judgeAgreement": null,
       "validated": false,
       "validatedChecks": {
         "notMock": false,

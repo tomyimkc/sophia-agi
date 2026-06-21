@@ -132,6 +132,13 @@ jobs:
         run: |
           python tests/test_unified_uplift.py
           python tools/run_unified_uplift.py --model mock --limit 8
+      - name: Gate logic upgrades (alias resolution, grounding, routing, graded, feedback)
+        run: |
+          python tests/test_entity_aliases.py
+          python tests/test_grounded_gate.py
+          python tests/test_claim_router.py
+          python tests/test_graded_decision.py
+          python tests/test_gate_feedback.py
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

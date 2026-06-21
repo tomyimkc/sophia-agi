@@ -76,6 +76,7 @@ def run_case(
         "label": case.label,
         "work": case.work,
         "gold_author": case.gold_author,
+        "claimed_author": getattr(case, "claimed_author", None),  # for gate-miss feedback
         "raw_ok": raw_ok,
         "raw_text": raw_text,
         "raw": _judg(raw_judgment),
@@ -93,5 +94,23 @@ def _judg(j) -> dict:
     return d
 
 
-def run_cases(cases, generate, **kw) -> list[dict]:
-    return [run_case(c, generate, **kw) for c in cases]
+def run_cases(cases, generate, *, log_misses: "str | None" = None, **kw) -> list[dict]:
+    """Run all cases. With ``log_misses`` set to a JSONL path, every gate MISS the
+    judge caught (gate passed an answer the judge flagged as a hallucination) is
+    turned into a candidate doNotAttributeTo record and appended to that pending
+    queue — the active-learning loop (agent/gate_feedback.py). Off by default;
+    never mutates the frozen records (a human/promotion step adopts the pending ones)."""
+    results = [run_case(c, generate, **kw) for c in cases]
+    if log_misses:
+        try:
+            from pathlib import Path
+
+            from agent.gate_feedback import append_pending, detect_miss
+
+            for r in results:
+                cand = detect_miss(r)
+                if cand:
+                    append_pending(cand, Path(log_misses))
+        except Exception:  # feedback logging must never break an eval run
+            pass
+    return results

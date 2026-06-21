@@ -70,12 +70,29 @@ class GuardedResult:
         }
 
 
-def check_claim(text: str, *, records: "dict | None" = None) -> dict:
+def check_claim(text: str, *, records: "dict | None" = None, ground: bool = False) -> dict:
     """Mode-free provenance check: ``{passed, reasons, violations}`` for any text.
 
     No question, mode, or style scoring — just Sophia's "don't merge lineages"
     rule. Suitable as a CLI/MCP surface and as the judge inside the loop.
+
+    With ``ground=True`` the gate is retrieval-grounded: for an authorship claim
+    about a work it has NO frozen record for, it resolves the documented author
+    (offline Wikidata snapshot / OKF belief graph) and synthesises a one-off
+    do-not-attribute spec, so the gate can fire on works outside the frozen
+    corpus. Opt-in (default off) so the deterministic frozen-record path is
+    unchanged. See agent/grounded_gate.py.
     """
+    if ground:
+        try:
+            from agent.grounded_gate import synth_records_for_claim
+
+            base = records if records is not None else {}
+            synthesized = synth_records_for_claim(text or "", base_records=base)
+            if synthesized:
+                records = {**base, **synthesized}
+        except Exception:  # grounding is best-effort; never break the core gate
+            pass
     verify = provenance_faithful(records)
     result = verify(text or "", None, {})
     detail = result.get("detail") or {}
