@@ -48,13 +48,33 @@ def test_noisy_or_method_supports_only() -> None:
     assert corroborated_confidence([], method="noisy_or") == 0.5   # prior on no evidence
 
 
+def test_validation_rejects_bad_confidence() -> None:
+    import math
+
+    for bad in (float("nan"), float("inf"), -1.0, 2.0, True):
+        try:
+            Evidence("x", bad)
+            assert False, f"should reject confidence={bad!r}"
+        except ValueError:
+            pass
+    assert math.isfinite(Evidence("x", 0.5).confidence)   # valid still works
+
+
+def test_unknown_method_raises() -> None:
+    try:
+        corroborated_confidence(_indep(0.7), method="noisy-or")   # hyphen typo
+        assert False, "should reject unknown method"
+    except ValueError:
+        pass
+
+
 def test_demo_invariants_hold() -> None:
     res = run_demo(seed=0)
     failed = [k for k, v in res["invariants"].items() if not v]
     assert res["ok"] is True, f"failed: {failed}"
-    # the durable win is discrimination
-    assert res["selectiveRisk"]["corroborated"] < res["selectiveRisk"]["single"]
-    assert res["selectiveRisk"]["corroborated"] < res["selectiveRisk"]["min"]
+    # the robust, gated win: corroboration reflects independent agreement; mean/min don't
+    assert res["curve"]["3src"] > 0.7
+    assert "selectiveRisk" in res and "ece" in res            # discrimination/ECE reported, not gated
 
 
 def main() -> int:
@@ -62,6 +82,8 @@ def main() -> int:
     test_duplicates_do_not_inflate()
     test_dissent_lowers_belief()
     test_noisy_or_method_supports_only()
+    test_validation_rejects_bad_confidence()
+    test_unknown_method_raises()
     test_demo_invariants_hold()
     print("test_corroboration: OK")
     return 0

@@ -2,6 +2,29 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.23] - 2026-06-21
+
+### Fixed — #4 corroboration review findings (soundness + honest baseline)
+
+A 15-agent review confirmed 5 issues; all addressed.
+
+- **(MEDIUM) Input validation** — `Evidence.confidence` now rejects NaN/inf/out-of-range
+  in `__post_init__` (was silently clamped; a NaN previously coerced to confident
+  *dissent* and could nuke a whole independence group).
+- **(LOW) Method dispatch** — an unknown `method` now raises `ValueError` instead of
+  silently falling through to log-odds.
+- **(MEDIUM) Strawman baseline removed** — the gated benchmark no longer compares
+  against `min` (a laundering guard, not a classifier — the module itself called it
+  the wrong tool). Gating is now on **structural, robust** invariants (confidence
+  monotone in independent agreement; rewards independent agreement unlike a flat
+  mean / min baseline; idempotent under duplicates; dissent lowers) — holds across
+  40 seeds. The selective-risk/ECE deltas are **reported, not gated** (decision
+  accuracy ties a mean-of-opinions baseline; the margin is noisy at this N).
+- **(MEDIUM) Docstring honesty** — dropped the false "better-calibrated than a single
+  source" claim (a single source is trivially calibrated); the headline is now the
+  structural win, with discrimination reported.
+- Tests: NaN/range rejection, unknown-method error, structural gating.
+
 ## [0.7.22] - 2026-06-21
 
 ### Added — #4 corroboration-aware confidence (propagation semantics)

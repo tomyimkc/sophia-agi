@@ -27,14 +27,16 @@ sources agree and lowers it on dissent, after collapsing dependent sources
 (same `independence_group`) so duplicates can't inflate. (Log-odds over raw
 Dempster–Shafer to avoid Zadeh's high-conflict paradox.)
 
-- `python tools/run_corroboration.py` — falsifiable invariants: monotone in
-  independent sources, idempotent under duplicates, dissent lowers, and on a
-  labelled benchmark **lower selective risk than a single source (0.11 vs 0.22) and
-  than min-over-chain (0.31)**.
-- **Honest scope:** the durable win is *discrimination* (better decisions), not ECE
-  — a single source is trivially calibrated (stated confidence == accuracy by
-  construction), so ECE is reported, not gated. Independence groups are an input the
-  caller must supply truthfully; the combiner can't detect hidden dependence.
+- `python tools/run_corroboration.py` — the **gated** invariants are structural and
+  robust (across 40 seeds): confidence is monotone in independent agreeing sources,
+  *rewards independent agreement unlike the baselines* (3 indep @0.7 → 0.93 vs mean
+  0.7 / min 0.7), idempotent under duplicates, lowered by dissent. Inputs are
+  validated (NaN/inf/out-of-range rejected); unknown method raises.
+- **Honest scope:** decision accuracy *ties* a mean-of-opinions baseline; the
+  selective-risk delta is favourable but **noisy at this N**, so it (and ECE) are
+  reported, not gated — a single source is trivially calibrated. `min` is shown only
+  for contrast (a laundering guard, not a classifier). Independence groups are a
+  caller-supplied input the combiner cannot verify.
 
 ## M1 — shipped: injection / containment red-team
 
