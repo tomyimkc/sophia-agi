@@ -1,0 +1,45 @@
+{
+  "_meta": {
+    "description": "The ONLY source of publicly published Provenance Delta numbers. RESULTS.md is generated from this file (tools/build_results_page.py). A figure may appear under 'validated' ONLY if it cleared the no-overclaim gate; everything else is 'illustrative' and labelled as such.",
+    "gate": "validated = >=2 independent judges in consensus (judge != subject) + inter-judge agreement reported + >=3 runs + confidence intervals.",
+    "hiddenEvalNote": "Hidden-eval prompts are never published; only aggregates + hashed commitments.",
+    "schemaVersion": 1
+  },
+  "lastUpdated": "2026-06-21",
+  "validated": [],
+  "externalEvals": [
+    {
+      "harness": "agent/external_eval.py — exact-match vs external gold (no LLM judge)",
+      "dataset": "GSM8K test (openai/grade-school-math, MIT)",
+      "model": "deepseek-chat",
+      "n": 100,
+      "accuracy": 0.98,
+      "date": "2026-06-21",
+      "note": "Objective exact-match against external gold. This reports the BASE MODEL's accuracy via Sophia's external-eval harness and validates the harness end-to-end; it is NOT a claim about Sophia's provenance gate or any Sophia-specific capability. N=100 of the 1319-item test split."
+    }
+  ],
+  "illustrative": [
+    {
+      "model": "ollama:dolphin-llama3:8b",
+      "modelNote": "uncensored 8B local tune (the population the gate is for)",
+      "judge": "single LLM-judge: deepseek",
+      "runs": 3,
+      "falseCases": 46,
+      "hallucinationAlone": 0.428,
+      "hallucinationGated": 0.333,
+      "delta": 0.094,
+      "deltaCI": [0.043, 0.152],
+      "falsePositiveCost": 0.0,
+      "coverage": 0.237,
+      "caveat": "Single judge. An independent Claude audit panel re-judged all 46 cases and found this judge OVER-counted (76% agreement, 10 false positives), so the validated alone-rate is ~21.7%, not 42.8%. This row is illustrative ONLY and must not be quoted as a headline."
+    }
+  ],
+  "audit": {
+    "note": "Independent Claude panel vs the DeepSeek judge on 46 false cases: 76% agreement; validated alone-rate 21.7% (10/46) vs 41.3% single-judge. Judge choice dominates the absolute number.",
+    "robustRegardlessOfJudge": [
+      "0% false-positive cost (the gate never broke a correct answer)",
+      "the delta is positive and real",
+      "the effect tracks a model's propensity-to-assert, not its size"
+    ]
+  }
+}

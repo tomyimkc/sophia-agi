@@ -48,6 +48,32 @@ jobs:
           python tests/test_mcp_belief.py
           python tests/test_mine_hard_negatives.py
           python tests/test_sophia_guard_cli.py
+      - name: Provenance Delta benchmark tests
+        run: |
+          python tests/test_provenance_bench.py
+          python tools/run_provenance_delta.py --models mock
+          python tools/build_results_page.py --check
+      - name: Generality tests (verifiers, improvement loop, horizon, external eval)
+        run: |
+          python tests/test_horizon.py
+          python tests/test_external_eval.py
+          python tools/run_improvement_loop.py
+          python tools/run_horizon_curve.py --trials 10
+          python tools/run_external_eval.py
+      - name: Verifier synthesis (synthesise + meta-verify + calibrated abstention)
+        run: |
+          python tests/test_verifier_synthesis.py
+          python tests/test_calibration.py
+          python tools/run_verifier_synthesis.py
+      - name: Runtime policies + model-in-loop + dataset fetcher (offline)
+        run: |
+          python tests/test_policies.py
+          python tests/test_improvement_model_loop.py
+          python tests/test_fetch_eval_dataset.py
+      - name: Cross-entity generalization (the measured limit)
+        run: |
+          python tests/test_cross_entity.py
+          python tools/run_cross_entity.py
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

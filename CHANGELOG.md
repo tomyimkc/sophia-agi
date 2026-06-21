@@ -2,6 +2,286 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.11] - 2026-06-21
+
+### Added — cross-entity generalization benchmark + first real external number
+
+- **Cross-entity generalization** (`provenance_bench/cross_entity.py`,
+  `tools/run_cross_entity.py`): makes the next frontier falsifiable on an
+  **entity-disjoint** split (no author/work shared). Memorized rules score 100%
+  on *seen* entities but **0% on unseen** (precise, zero FP, no transfer); a
+  content-free structural detector scores **100% on unseen but 100% false-positive**
+  (transfers, can't tell true from false). The honest conclusion: low-FP
+  cross-entity generalization needs **external grounding**, not pattern
+  memorization — which is why Sophia's answer is the retrieval-grounded loop. Six
+  invariants gate CI; holds across seeds.
+- **First real external-oracle number:** DeepSeek-chat on **GSM8K test, N=100 →
+  98.0%** exact-match via `agent/external_eval.py`. Recorded in
+  `published-results.json` / `RESULTS.md` with explicit framing: this validates the
+  harness end-to-end and reports the **base model's** accuracy — it is **not** a
+  claim about Sophia's gate. `tools/fetch_eval_dataset.py` produced the data
+  (gitignored; not committed).
+- Docs: `docs/11-Platform/Generality.md` gains the cross-entity section; tests
+  `test_cross_entity.py` wired into CI.
+
+## [0.7.10] - 2026-06-21
+
+### Hardened — round-2 adversarial review (5 confirmed findings fixed)
+
+A 18-agent adversarial review of the 0.7.9 surfaces confirmed 5 real defects
+(9 rejected). All fixed, with regression tests:
+
+- **Sandbox escape (HIGH)** — the model-proposer's `__` *substring* blocklist was
+  bypassable by building a dunder at runtime (`"_"+"_"`) and traversing via
+  `str.format` (reached `object`). Replaced with an **AST allowlist** in
+  `agent/verifier_synthesis._compile_predicate`: no attribute access, imports,
+  lambdas, loops, comprehensions, container literals, `*`/`**`, or non-allowlisted
+  calls; minimal scalar builtins; 2 KB source cap. This also closes the two
+  **MEDIUM** DoS findings (unbounded CPU via infinite loop; allocation bomb) —
+  structurally, no subprocess/signal sandbox needed.
+- **Gate must fail closed (HIGH)** — a custom/synthesised verifier that raised
+  crashed `guarded_complete`. `_judge` now catches and returns `passed=False`
+  (fail closed → repair/abstain), never propagates.
+- **Honest abstention (LOW)** — removed the dead `Policy.abstention_passes` flag;
+  the loop now re-judges the abstention and reports `action="abstained_unverified"`
+  when it cannot clear its own gate (e.g. the code policy).
+- **Latent bug found while fixing** — explicit `policy="provenance"` would have
+  emitted an internal marker string as the abstention; provenance now uses its
+  dynamic cited abstention whether selected by default or by name.
+- `tools/sophia_guard.py` gained `--policy`; tests extended in
+  `test_verifier_synthesis.py` (sandbox payloads) and `test_policies.py`
+  (fail-closed, explicit-provenance, unverified-abstention).
+
+## [0.7.9] - 2026-06-21
+
+### Added — runtime policies, model-proposed checks, real-dataset eval, honest README
+
+Makes the verifier-gated capabilities *usable at runtime* and follows through on
+the standing recommendations.
+
+- **Runtime verifier policies** (`agent/policies.py`, `agent/guarded.py`): the
+  guarded loop's gate is now selectable per call or via `$SOPHIA_POLICY` —
+  `provenance | citation | arithmetic | code`, or any custom/synthesised verifier
+  via `verifier=`. Each policy carries its own repair hint + gate-passing
+  abstention. The provenance default path is byte-for-byte unchanged.
+- **Verifier-synthesis model proposer** (`agent/verifier_synthesis.py`):
+  `propose_predicates` lets a model write candidate predicates (compiled under
+  **restricted builtins** — no import/exec/eval/dunders) that clear the SAME
+  meta-verification floor; a model only *widens* candidates, validation still
+  confers trust. Gated by `$SOPHIA_ALLOW_PROPOSED_PREDICATES`.
+- **External-eval real-dataset fetcher** (`tools/fetch_eval_dataset.py`):
+  downloads + reshapes GSM8K to the eval's `{question, answer}` JSONL so the
+  external-oracle harness yields a *citable* number. Conversion is a pure,
+  unit-tested function; the network fetch is intentionally not run in CI.
+- **Model-in-the-loop improvement** (`provenance_bench/improvement.py`,
+  `tools/run_improvement_loop.py --model`): an injectable `answer_fn` sources
+  TRAIN failures from a model. Fixed a correctness bug in the process: a rule is
+  mined only when the text *actually asserts* the forbidden attribution (clean
+  model text is no longer mis-mined as a failure). Deterministic path unchanged
+  (held-out recall 17%→98%, 0% FP).
+- **README reframed:** leads with verifier-gated provenance reasoning and a
+  plain-scope statement; AGI is demoted to an explicitly *unmet* pre-registered
+  threshold — the project's standing #1 review recommendation.
+- Tests: `test_policies.py`, `test_fetch_eval_dataset.py`,
+  `test_improvement_model_loop.py`, plus proposer cases — wired into CI.
+
+## [0.7.8] - 2026-06-21
+
+### Added — verifier synthesis (the bridge toward generality)
+
+The verifier-gated loop is only as general as its verifiers, and you cannot
+hand-write a verifier for a task you have never seen. This makes the loop write
+and **trust-test its own checks** — and abstain when it cannot — without
+overclaiming (see `docs/11-Platform/Verifier-Synthesis.md`).
+
+- **Verifier synthesis** (`agent/verifier_synthesis.py`): a library of
+  parameterised check templates is *fit* to a few oracle-labelled examples of a
+  novel task to produce candidate verifiers; each candidate is **meta-verified**
+  (precision + recall on a disjoint, independently-labelled validation split)
+  before admission; admitted checks compose into a gate that drops into the
+  harness via `as_verifier`. If nothing clears the floor, it **abstains**.
+- **Calibrated abstention** (`agent/calibration.py`): competence where no verifier
+  exists — ECE, risk–coverage, selective risk, and label-free self-consistency
+  confidence. Falsifiable claim: selective risk < base risk ("knows what it
+  doesn't know"). Demonstrated on a seeded **toy** noisy solver (illustrative, not
+  a capability claim): selective risk 0.30 vs base 0.56 (ECE 0.15), the
+  correlation emergent from the solver, not baked into the data.
+- **Falsifiable ablation** (`agent/synthesis_eval.py`,
+  `tools/run_verifier_synthesis.py`): deterministic suite of in-library vs
+  out-of-library tasks, the latter with **length-matched decoys** so no template
+  can separate them on any split. WITH meta-verification: in-library precision
+  1.00 / recall 1.00 (0 abstentions), abstains on 100% of unverifiable tasks every
+  seed. WITHOUT: false-admission 100% on unverifiable tasks and in-library
+  precision degrades to 0.86 — proving the *meta-verification*, not the template
+  library, earns the trust. Nine invariants gate CI (incl. a "no good-looking
+  wrong gate" guard so a false admission can't hide behind an abstention count).
+- **Honest scope:** not AGI, not unbounded synthesis — a finite library plus a
+  trust contract; tasks that don't reduce to a checkable predicate stay out of
+  reach, where calibrated abstention is the correct behaviour.
+- Tests: `test_verifier_synthesis.py`, `test_calibration.py` — wired into CI.
+
+## [0.7.7] - 2026-06-21
+
+### Added — generality track (verifier-gated reasoning, measured honestly)
+
+Extends the core verifier-gated loop beyond provenance, each piece with a
+falsifiable metric and an honest scope label (see
+`docs/11-Platform/Generality.md`). None of this licenses the word "AGI".
+
+- **More machine-checked verifiers** (`agent/verifiers.py`): `citation_faithful`
+  (RAG support check), `code_tests_pass` (extracts + **executes** answer code,
+  exec-gated), `arithmetic_sound` (recomputes stated equalities); a `VERIFIERS`
+  registry + `check_text`. Honest: more verifier *kinds* is engineering reuse,
+  not a generality claim.
+- **Measured self-improvement loop** (`provenance_bench/improvement.py`,
+  `tools/run_improvement_loop.py`): learns rules from TRAIN failures, scored on a
+  **disjoint-phrasing** held-out split (no contamination). First run: held-out
+  recall 17% → 98% over 6 cycles, monotone, 0% false-positive cost — falsifiable.
+- **Long-horizon autonomy curve** (`agent/horizon.py`,
+  `tools/run_horizon_curve.py`): success-rate vs task length on chained tasks,
+  judged by an **external oracle**; headline = effective horizon (longest length
+  at ≥50%). Complements the single-run logger `tools/run_long_horizon.py`.
+- **External-oracle eval** (`agent/external_eval.py`, `tools/run_external_eval.py`):
+  correctness vs external gold (never the gate); dataset-agnostic JSONL with a
+  committed, clearly-labelled GSM8K-style sample; point `--dataset` at the real
+  set for a citable number.
+- **Harness confound fix** (`agent/harness.py`): `classify_failure` returned
+  `verifier_fail` for unknown-cause failures, over-crediting the verifier in
+  ablation telemetry; now returns an explicit `unknown` class (regression-tested).
+- Tests: `test_horizon.py`, `test_external_eval.py`, plus verifier/loop/harness
+  cases — all wired into CI.
+
+## [0.7.6] - 2026-06-21
+
+### Added — public results, transparently and safely
+
+Makes test/benchmark results public *the right way* — three bright lines:
+publish reproducible code + methodology + audited aggregates; never publish
+secrets or hidden-eval prompts; never headline an un-validated number.
+
+- **No-overclaim gate (consensus judge)** — `provenance_bench/consensus.py`:
+  majority vote over ≥2 independent judges (`--judges a,b,c`), reporting raw
+  pairwise agreement AND chance-corrected **Cohen's κ**. `aggregate.py`'s
+  `validated` flag is a real conjunction (`validatedChecks`): not mock, judges
+  from ≥2 distinct families, **κ ≥ 0.40**, ≥3 runs, and a CI that excludes zero —
+  it refuses to rubber-stamp. A single judge is no longer enough (our audit found
+  one judge ~2× off).
+- **Public results page** — `agi-proof/benchmark-results/published-results.json`
+  (curated; the ONLY source of published numbers) renders `RESULTS.md` via
+  `tools/build_results_page.py`. Validated section is honestly empty for now;
+  illustrative figures carry caveats. `--check` is a CI drift gate.
+- **Publishing CI** — `.github/workflows/publish-results.yml`: offline-only (no
+  secrets, no model calls), runs tests + mock benchmark, verifies the page,
+  stamps commit+run provenance, uploads the results bundle. Drift check also
+  wired into the main CI.
+- **Security boundary** — `SECURITY.md` documents the public/private line and the
+  gate; `.gitignore` hardened (`.env.*`, `*.key`, `*.pem`). Verified: the
+  DeepSeek key pasted earlier never entered git history; `private/hidden-evals/`
+  stays ignored.
+- Tests: consensus majority + inter-judge agreement + aggregate flow added to
+  `tests/test_provenance_bench.py` (CI-wired).
+
+## [0.7.5] - 2026-06-21
+
+### Added / Changed — gate coverage, confidence intervals, independent judge
+
+- **Gate coverage (core `provenance_faithful`, precision preserved)** — the gate
+  now catches three real phrasings it missed in live runs, without lowering
+  precision (dispute-page lint still 0 forbidden; verifier/guarded/source-
+  discipline tests pass): (1) **quoted / "the"-padded titles** (`wrote "The
+  Constitution of the Athenians"`), (2) **`attributed to X`** with a bounded
+  honorific filler (`attributed to the prophet Daniel`), and (3) optional
+  **`altTitlesEn`** on a record, and a bounded **appositive/parenthetical slot**
+  between author and verb ("Enoch, the great-grandson of Adam, wrote …", "Lie
+  Yukou (also known as Liezi) wrote …"). New carve-outs (`traditionally`,
+  `spurious`, `pseudo`, `disputed`, …) keep correctly-hedged attributions passing.
+  Each change independently re-verified: dispute-lint still 0 forbidden, 0 false
+  positives across all 41 true controls.
+- **Benchmark gate rules** — `dataset.build_gate_records()` now reduces honorific
+  author names to salient markers and derives alt-title forms ("the Book of
+  Daniel" → "Daniel", interior-"the" collapse) so the gate fires on natural model
+  phrasings.
+- **Confidence intervals + multi-run** — `provenance_bench/aggregate.py` +
+  `--runs N`: paired bootstrap 95% CI on the delta, per-run deltas surfaced, CI
+  columns in the report.
+- **Independent LLM-judge wired end-to-end** — `--llm-judge <spec>` (judge ≠
+  subject). Model-selection guidance added (the delta tracks propensity-to-assert,
+  not size; pair with a confidently-wrong subject + a frontier judge).
+- **Adversarial judge audit (key finding)** — an independent Claude panel
+  re-judged the DeepSeek LLM-judge's 46 false-case verdicts on `dolphin-llama3:8b`.
+  Agreement was only **76%**: DeepSeek over-counted (10 false positives — scoring
+  correct denials-with-wrong-alternate-author and "traditionally…but disputed"
+  hedges as hallucinations), so the validated alone-rate was **21.7%, not 41.3%**.
+  Robust conclusions hold (0% false-positive cost; positive, real delta; tracks
+  propensity-to-assert), but a **single LLM-judge is unreliable** — the citable
+  headline needs a ≥2-judge consensus. Documented in
+  `docs/11-Platform/Provenance-Delta.md` and the checklist.
+- Tests: gate-coverage cases (incl. appositive/parenthetical), `build_gate_records`
+  markers/alt-titles, and bootstrap-CI aggregation added to
+  `tests/test_provenance_bench.py` (CI-wired).
+
+## [0.7.4] - 2026-06-21
+
+### Added — The Provenance Delta benchmark (external, non-circular evidence)
+
+The first measurement of what Sophia's provenance gate buys *against the outside
+world*: how often a model asserts a false authorship lineage when used **alone**
+vs **behind the gate**, scored on ground truth that is independent of the gate.
+Targets claim-ladder items 6–7 (external evaluation, replication).
+
+- **External ground truth** — `provenance_bench/data/misattributions.json`
+  (cited FALSE lineage-merges) + `provenance_bench/data/wikidata_snapshot.json`
+  (TRUE attributions, Wikipedia/Wikidata-sourced). Labels live in files
+  physically separate from the gate's `doNotAttributeTo` corpus — the
+  non-circularity guarantee.
+- **Independent judge** — `provenance_bench/judge.py` shares **no code** with the
+  gate (`agent/verifiers.py`); the gate is the runtime treatment, the judge is
+  the referee. Default lexical screen + an optional independent-LLM-judge hook
+  (`provenance_bench/llm_judge.py`).
+- **Alone-vs-gated runner** — `provenance_bench/runner.py` produces a plain model
+  answer and the same model behind `agent/guarded.py`, judging both.
+- **Three honest metrics** — `provenance_bench/score.py`: hallucinated-attribution
+  rate (alone vs gated; the **delta**), false-positive cost (does the gate break
+  correct answers?), coverage/recall (does it name the gate's narrowness?).
+- **Report + CLI** — `provenance_bench/report.py` and `tools/run_provenance_delta.py`
+  (`--models`, `--llm-judge`, `--on-fail`, `--emit-dataset`). Optional Wikidata
+  QID verification via `tools/fetch_wikidata_authors.py`.
+- **Hard / obscure cases + gate-rule derivation** — expanded the set to **87
+  externally-cited cases (46 false / 41 true)** with verified spurious /
+  pseudonymous / forged attributions across Greek-Roman (pseudo-Aristotle,
+  pseudo-Plato, the Old Oligarch, Gallic War bk 8, Batrachomyomachia, Corpus
+  Hermeticum, Epistles of Phalaris, Pseudo-Dionysius…), biblical (Mosaic
+  authorship, Deutero-Isaiah, Hebrews, the Pastorals, the Book of Daniel/Enoch,
+  Wisdom of Solomon…), and Chinese (Ten Wings, Liezi, Guanzi) traditions.
+  `dataset.build_gate_records()` derives the gate's do-not-attribute rules from
+  the cited misattributions (the realistic `SOPHIA_DISCIPLINE_RECORDS` path) so
+  the gate fires on the benchmark's works; the judge now handles scholarly-hedge
+  / pseudonymity language and excludes claimed-author tokens when crediting gold
+  (fixes a "Pseudo-Aristotle" name collision).
+- **First real delta (multi-model, illustrative)** — single run each, lexical
+  judge, 46 false cases: frontier `deepseek` 0% alone; an *uncensored*
+  `dolphin-llama3:8b` 15.2% → **6.5%** behind the gate (Δ≈8.7), 0% false-positive
+  cost, 57% coverage; well-aligned `llama3.2:3b` / `qwen2.5:3b` rarely assert
+  false lineages (~2%) so show little delta. Finding: the delta tracks a model's
+  propensity to *assert*, not its size. Run-to-run variance observed (→ Tier-1
+  multi-run averaging). Concrete gate coverage gaps (quoted titles, `attributed
+  to`, multi-word author names) logged in the checklist. See
+  `docs/11-Platform/Provenance-Delta.md`.
+- **Tests (TDD, offline)** — `tests/test_provenance_bench.py` (dataset, derived
+  gate records, judge incl. scholarly hedges, runner alone-vs-gated, scoring,
+  report) + a `--models mock` smoke run, both wired into CI.
+- **Docs** — design spec
+  (`docs/superpowers/specs/2026-06-21-provenance-delta-design.md`), platform doc
+  (`docs/11-Platform/Provenance-Delta.md`), and a deliberately staged
+  **what-to-do-next checklist**
+  (`agi-proof/external-benchmarks/PROVENANCE-DELTA-CHECKLIST.md`).
+
+### Notes
+
+- Reuses the gate and guarded loop unchanged; no new runtime dependencies.
+  Generated reports/datasets are git-ignored (regenerable) — only numbers from
+  real, judged, multi-run passes should ever be published.
+
 ## [0.7.3] - 2026-06-21
 
 ### Added — Discipline layer (small-model source discipline, CPU-only)

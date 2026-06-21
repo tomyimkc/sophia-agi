@@ -1,0 +1,10 @@
+{"id": "s1", "question": "A baker made 24 muffins and sold 9. How many are left?", "answer": "15", "source": "sophia-style-sample (not the official GSM8K set)"}
+{"id": "s2", "question": "Tom has 3 boxes with 7 pens each. How many pens in total?", "answer": "21", "source": "sophia-style-sample"}
+{"id": "s3", "question": "A train travels 60 km in 1 hour. How far does it travel in 4 hours at the same speed?", "answer": "240", "source": "sophia-style-sample"}
+{"id": "s4", "question": "Sara had $50. She spent $18 on a book and $12 on lunch. How much money does she have left?", "answer": "20", "source": "sophia-style-sample"}
+{"id": "s5", "question": "There are 5 rows of 6 chairs. 4 chairs are broken. How many usable chairs are there?", "answer": "26", "source": "sophia-style-sample"}
+{"id": "s6", "question": "A tank holds 100 liters. It loses 8 liters per day. How much remains after 7 days?", "answer": "44", "source": "sophia-style-sample"}
+{"id": "s7", "question": "Liam reads 15 pages a day for 6 days. How many pages does he read?", "answer": "90", "source": "sophia-style-sample"}
+{"id": "s8", "question": "A class of 30 students splits into teams of 5. How many teams are there?", "answer": "6", "source": "sophia-style-sample"}
+{"id": "s9", "question": "Maria buys 4 packs of 12 eggs. She uses 9 eggs. How many eggs are left?", "answer": "39", "source": "sophia-style-sample"}
+{"id": "s10", "question": "A rope is 48 meters long. It is cut into 8 equal pieces. How long is each piece?", "answer": "6", "source": "sophia-style-sample"}

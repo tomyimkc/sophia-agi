@@ -117,12 +117,62 @@ def test_untrusted_wrap_sources() -> None:
     assert "flagged" in out  # the second block trips a detector
 
 
+def test_citation_faithful() -> None:
+    sources = [
+        "Marie Curie discovered polonium and radium and won two Nobel Prizes.",
+        "The Eiffel Tower was completed in 1889 in Paris.",
+    ]
+    cf = v.citation_faithful(sources)
+    # supported citation passes
+    assert cf("Marie Curie discovered polonium and radium [1].", None, {})["passed"] is True
+    # citation to a topically-unrelated source (no lexical support) fails
+    bad = cf("The printing press was invented by Gutenberg around 1440 [1].", None, {})
+    assert bad["passed"] is False
+    # out-of-range citation fails
+    assert cf("Something important happened that year [9].", None, {})["passed"] is False
+
+
+def test_code_tests_pass() -> None:
+    ctp = v.code_tests_pass(timeout_sec=15)
+    ok = "```python\nassert sum(range(5)) == 10\nprint('ok')\n```"
+    assert ctp(ok, None, {})["passed"] is True
+    bad = "```python\nassert 1 == 2\n```"
+    assert ctp(bad, None, {})["passed"] is False
+    assert v.code_tests_pass()("no code here", None, {})["passed"] is False
+    # syntax-only fallback when execution disabled
+    synonly = v.code_tests_pass(allow_execution=False)
+    assert synonly("```python\nx = 1 +\n```", None, {})["passed"] is False
+    assert synonly("```python\nx = 1 + 1\n```", None, {})["passed"] is True
+
+
+def test_arithmetic_sound() -> None:
+    asnd = v.arithmetic_sound()
+    assert asnd("We have 2 + 2 = 4 and 6 * 7 = 42.", None, {})["passed"] is True
+    assert asnd("Clearly 2 + 2 = 5.", None, {})["passed"] is False
+    assert asnd("No math here, just prose.", None, {})["passed"] is True   # nothing to check
+    assert asnd("Then 10 / 2 = 5 so we proceed.", None, {})["passed"] is True
+
+
+def test_verifier_registry() -> None:
+    assert v.check_text("arithmetic_sound", "1 + 1 = 3")["passed"] is False
+    assert v.check_text("arithmetic_sound", "1 + 1 = 2")["passed"] is True
+    try:
+        v.check_text("nope", "x")
+        assert False, "expected KeyError"
+    except KeyError:
+        pass
+
+
 def main() -> int:
     test_exact_and_regex()
     test_keyword_include_avoid()
     test_unit_test_verifier()
     test_score_pack_case_verifier()
     test_citation_present()
+    test_citation_faithful()
+    test_code_tests_pass()
+    test_arithmetic_sound()
+    test_verifier_registry()
     test_combinators()
     test_provenance_faithful()
     test_provenance_faithful_real_corpus_clean()

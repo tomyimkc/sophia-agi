@@ -45,6 +45,7 @@ def run(
     spec: "str | None" = None,
     top_k: int = 8,
     records: "dict | None" = None,
+    policy: "str | None" = None,
     generate: "Callable | None" = None,
     retrieve_fn: Callable = retrieve,
     format_context_fn: Callable = format_context,
@@ -55,6 +56,7 @@ def run(
         on_fail=on_fail,
         generate=generate if generate is not None else _make_generate(spec),
         records=records,
+        policy=policy,
         top_k=top_k,
         retrieve_fn=retrieve_fn,
         format_context_fn=format_context_fn,
@@ -77,6 +79,8 @@ def main() -> int:
     parser.add_argument("--on-fail", choices=["repair", "abstain", "hedge", "passthrough"],
                         help="what to do on a provenance violation (default: $SOPHIA_ON_FAIL or repair)")
     parser.add_argument("--provider", dest="spec", help="model spec, e.g. ollama:llama3.2 (default: environment)")
+    parser.add_argument("--policy", choices=["provenance", "citation", "arithmetic", "code"],
+                        help="machine-checked gate to enforce (default: provenance / $SOPHIA_POLICY)")
     parser.add_argument("--top-k", type=int, default=8, help="sources to retrieve")
     parser.add_argument("--json", action="store_true", help="emit the full result as JSON")
     args = parser.parse_args()
@@ -86,7 +90,7 @@ def main() -> int:
     if not query:
         parser.error("no query given (use --query or pipe text on stdin)")
 
-    result = run(query, on_fail=args.on_fail, spec=args.spec, top_k=args.top_k)
+    result = run(query, on_fail=args.on_fail, spec=args.spec, policy=args.policy, top_k=args.top_k)
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:

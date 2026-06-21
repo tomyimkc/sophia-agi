@@ -40,6 +40,7 @@ FAILURE_CLASSES = (
     "verifier_fail",
     "exception",
     "max_retries_exhausted",
+    "unknown",
 )
 
 # A verifier takes (text, task, step) and returns {"passed", "reasons", "detail"}.
@@ -147,7 +148,7 @@ def classify_failure(*, result: ModelResult | None, gate: dict | None, verifier:
         return "gate_violation"
     if verifier is not None and not verifier.get("passed", True):
         return "verifier_fail"
-    return "verifier_fail"
+    return "unknown"  # cause not identified — do NOT credit it to the verifier (taints ablations)
 
 
 def gate_verifier(text: str, task: "AgentTask", step: dict) -> dict:
