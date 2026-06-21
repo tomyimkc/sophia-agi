@@ -116,14 +116,58 @@ layer* (authoritative live data, document ingestion, Cantonese, measured accurac
 deployable compliance) is absent. It can enforce the **discipline** of legal AI; it
 cannot yet do the **work** of a lawyer.
 
-## Build order to make it real
+## The connector (live HKLII / e-Legislation backend)
 
-1. **Live `legal_citation_exists` backend** — a connector that resolves a citation
-   against HKLII / e-Legislation and fails closed when the authority can't be
-   retrieved. (The verifier interface already exists; only the data source is
-   missing.)
+The live backend now exists in `agent/legal_sources/` — a cache-first, fail-closed
+resolver that turns `legal_citation_exists` from a snapshot tripwire into a real
+citator. Design principles: **fail-closed** (network error/timeout/ambiguous match
+→ UNVERIFIED, never a silent pass), **cache-first** (be a polite consumer of free
+public-interest services; the cache *is* the snapshot and keeps CI deterministic),
+and **send only the citation, never the matter** (the confidentiality rule, enforced
+at the boundary).
+
+```text
+agent/legal_sources/
+  base.py          # LegalSource protocol + Resolution (fail-closed helpers, injectable fetch)
+  cache.py         # ResolutionCache — JSON cache; a miss is None (fail-closed)
+  elegislation.py  # ordinance chapters (Cap. NNN); SOPHIA_ELEGISLATION_BASE
+  hklii.py         # neutral citations ([2025] HKCFI 808); SOPHIA_HKLII_BASE
+  registry.py      # route by court token; SOPHIA_LEGAL_SOURCE = off | cache | live
+tools/refresh_legal_authorities.py   # batch snapshot refresh (strategy A)
+```
+
+```python
+from agent.legal_sources import make_resolver
+from agent.verifiers import legal_citation_exists
+
+verifier = legal_citation_exists(resolver=make_resolver())   # SOPHIA_LEGAL_SOURCE=live
+```
+
+- **Modes:** `off` (static register only), `cache` (default; cache-first, **no
+  network** — a miss is UNVERIFIED), `live` (cache-first, then HKLII/e-Legislation,
+  then cache the result).
+- **Snapshot refresh:** `SOPHIA_LEGAL_SOURCE=live python tools/refresh_legal_authorities.py --existing --write`
+  re-verifies the bundled authorities and stamps each with its source URL +
+  `retrievedAt`.
+- Tests (`tests/test_legal_sources.py`) inject fake fetchers — **no real network in
+  CI**.
+
+> **Honest gaps that remain.** The default URL schemes are best-effort and
+> overridable (`SOPHIA_HKLII_BASE`, `SOPHIA_ELEGISLATION_BASE`) — confirm HKLII's
+> robots/ToS and e-Legislation's open-data path before bulk runs. HKLII covers HK
+> case law only; UK/US neutral citations (e.g. `EWHC`) need their own sources
+> (National Archives Find Case Law, CourtListener) — the registry is built to add
+> them. And existence ≠ holding-supports-proposition: that still needs full-text +
+> a model judge.
+
+## Remaining build order
+
+1. ~~Live `legal_citation_exists` backend~~ — **done** (above).
 2. **A small HK legal benchmark** (real-vs-fabricated authorities) run through the
    no-overclaim gate — the first *measured, gated* anti-hallucination number in
-   this space, which is the white space the assessment identifies.
-3. **Document ingestion** for contracts/filings, so citation checks run over real
+   this space, which is the white space the assessment identifies. (Seeded by
+   `benchmark/legal_citations_hk.json`.)
+3. **Federate other jurisdictions** — add `LegalSource` backends for the UK
+   (National Archives Find Case Law) and US (CourtListener API); route by court token.
+4. **Document ingestion** for contracts/filings, so citation checks run over real
    work product rather than typed strings.
