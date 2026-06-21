@@ -83,7 +83,12 @@ Benchmark: `benchmark/legal_citations.json` (real-vs-fabricated, HK/UK/US). Test
    layout/OCR and e-discovery scale remain out of scope.)*
 3. **No real legal training data or measured legal accuracy.** Nothing in the 518
    examples is law; there is no Sophia analogue to the Stanford 17–33% number.
-4. **No Cantonese (粵語)** — the doc's flagged HK niche. Sophia is EN + written 中文.
+4. **Cantonese (粵語)** — the doc's flagged HK niche. *(Now partially addressed:
+   `agent/cantonese.py` detects written Cantonese by its distinctive particles
+   (嘅/喺/唔係/咗…) — which Standard Written Chinese lacks — and the agent emits a
+   粵語摘要 when the question is Cantonese or `--cantonese` is set. Generation
+   quality is still the underlying model's; this adds detection + prompting, not a
+   Cantonese-tuned model.)*
 5. **Not a deployable, compliant product** — no enterprise confidentiality tier, no
    PDPO/PCPD Model Framework implementation, no audit trail meeting EU AI Act
    high-risk (Annex III) obligations.
@@ -232,6 +237,13 @@ This is the step from "we have the machinery" to "the system uses it": `tools/so
 now passes `legal_resolver` / `legal_judge` into the gate, and `tests/test_gate.py`
 covers fabricated-citation failure, real-citation pass, the non-legal no-op, and
 holding-faithfulness flagging (stub judge).
+
+**Generalized beyond legal.** The same gate now also runs a domain-agnostic
+**arithmetic-soundness** check (`gate["numeric"]`) on every answer — flagging a
+finance/economy answer that claims `100000 / 5000 = 25 months` — and records the
+detected `gate["sector"]` (e.g. `financial`). So the verifier-gating pattern is no
+longer legal-only: any quantitative answer is self-checked, the natural extension
+point for the finance/economy councils.
 
 ## Gated measurement of the semantic tier
 

@@ -62,6 +62,34 @@ def _legal_gate(text: str, *, resolver=None, judge=None) -> "dict | None":
     return {"violations": violations, "checks": checks, "faithfulnessRun": faithfulness_run}
 
 
+def _numeric_gate(text: str) -> "dict | None":
+    """Domain-agnostic arithmetic soundness — flags a stated FALSE equality
+    (e.g. a finance/economy answer claiming '100000 / 5000 = 25 months'). Returns
+    None when the answer states no checkable arithmetic (cheap no-op). This is the
+    verifier-gating pattern generalized beyond legal to every quantitative answer.
+    """
+    from agent.verifiers import arithmetic_sound
+
+    r = arithmetic_sound()(text, None, {})
+    if not r["passed"]:
+        return {"checks": [{"id": "arithmetic_sound", "passed": False, "reasons": r["reasons"]}],
+                "violations": r["reasons"]}
+    if (r.get("detail") or {}).get("checked", 0) > 0:
+        return {"checks": [{"id": "arithmetic_sound", "passed": True, "reasons": []}], "violations": []}
+    return None
+
+
+def _detect_sector(question: "str | None") -> "str | None":
+    if not question:
+        return None
+    try:
+        from agent.sector_council import detect_council
+
+        return detect_council(question)
+    except Exception:  # noqa: BLE001 - sector detection is best-effort metadata
+        return None
+
+
 def check_response(
     text: str,
     *,
@@ -110,10 +138,19 @@ def check_response(
         checks.extend(legal["checks"])
         violations.extend(legal["violations"])
 
+    numeric = _numeric_gate(text)
+    if numeric:
+        checks.extend(numeric["checks"])
+        violations.extend(numeric["violations"])
+
+    sector = _detect_sector(question)
+
     passed = len(warnings) == 0
     if strict_attribution and checks and not attribution_ok:
         passed = False
     if legal_strict and legal and legal["violations"]:
+        passed = False
+    if numeric and numeric["violations"]:
         passed = False
 
     return {
@@ -124,5 +161,7 @@ def check_response(
         "has_discipline": has_discipline,
         "has_zh": has_zh,
         "domain": resolved_domain,
+        "sector": sector,
         "legal": legal,
+        "numeric": numeric,
     }
