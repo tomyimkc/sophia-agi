@@ -53,7 +53,7 @@ def test_real_corpus_zero_false_positives() -> None:
 
 
 def test_filter_drops_unsafe_keeps_safe() -> None:
-    exs = [_ex("clean text about philosophy"), _ex("secret", {"classification": "secret"}), _ex("api_key=XYZ")]
+    exs = [_ex("clean text about philosophy"), _ex("x", {"classification": "secret"}), _ex("api_key=sk-live-ABCDEF")]
     r = filter_examples(exs)
     assert r["nSafe"] == 1 and r["nDropped"] == 2
 
