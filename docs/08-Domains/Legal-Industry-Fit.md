@@ -210,3 +210,25 @@ verifier = legal_citation_exists(resolver=make_resolver())   # SOPHIA_LEGAL_SOUR
    abstaining** (no holding text or no judge → unchecked, never a silent pass); and
    it does not do ratio-vs-obiter reasoning. Tests inject a deterministic stub judge
    to verify wiring without a model call.
+
+## Wired into the agent (self-gating)
+
+The verifiers are no longer standalone — the Sophia agent's epistemic gate
+(`agent/gate.py:check_response`) runs them automatically on **every answer that
+cites a legal authority**, so a legal answer self-checks before it reaches the
+user:
+
+- **Existence** (`legal_citation_exists`) runs always (deterministic, cheap); an
+  unverifiable citation makes the gate **fail** — the *Mata* guardrail.
+- **Faithfulness** (`legal_holding_faithful`) runs when a judge is configured
+  (`SOPHIA_LEGAL_FAITHFULNESS=1`, judge via `SOPHIA_LEGAL_JUDGE`); a misstated
+  authority makes the gate fail — the *Ayinde* guardrail.
+- Non-legal answers (no citations) are a cheap no-op — `gate["legal"]` is `None`.
+- The resolver respects `SOPHIA_LEGAL_SOURCE` (`off|cache|live`), so existence can
+  be checked offline against the register or live against HKLII / e-Legislation /
+  National Archives / CourtListener.
+
+This is the step from "we have the machinery" to "the system uses it": `tools/sophia_agent.py`
+now passes `legal_resolver` / `legal_judge` into the gate, and `tests/test_gate.py`
+covers fabricated-citation failure, real-citation pass, the non-legal no-op, and
+holding-faithfulness flagging (stub judge).
