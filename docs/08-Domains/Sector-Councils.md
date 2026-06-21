@@ -46,6 +46,12 @@ Human boundary: never the final decision-maker on guilt, sentencing, custody,
 immigration/asylum, detention, constitutional rights, or denial of public
 services. High-stakes seats (criminal, immigration) force human escalation.
 
+The citation-auditor seat is backed by a machine-checked verifier,
+`legal_citation_exists` (the *Mata v. Avianca* killer): it flags any cited
+authority not found in a trusted register. See
+[Legal-Industry-Fit.md](./Legal-Industry-Fit.md) for the full capability
+assessment — what Sophia can and cannot tackle in legal AI, including its limits.
+
 ## Finance & Treasury Council
 
 | Group | Seats |

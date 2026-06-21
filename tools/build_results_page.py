@@ -108,6 +108,32 @@ def render(doc: dict) -> str:
                 L += [f"- _{e.get('dataset')}:_ {e['note']}"]
         L.append("")
 
+    verifier_evals = doc.get("verifierEvals") or []
+    if verifier_evals:
+        L += [
+            "## Verifier evals (objective accuracy of a Sophia verifier)",
+            "",
+            "Scored by **exact-match against ground-truth labels** with a "
+            "**deterministic verifier** (no LLM judge). Unlike the provenance-delta "
+            "rows, these measure a **machine-checked gate's** accuracy directly, so "
+            "they need no multi-judge consensus — but they are honestly bounded by "
+            "small, constructed benchmarks and are **not** headline capability claims.",
+            "",
+            "| Verifier | Benchmark | N | Accuracy | Fabrication recall | False-alarm | Date |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for e in verifier_evals:
+            L.append(
+                f"| `{e.get('verifier')}` | {e.get('benchmark')} | {e.get('n')} | "
+                f"{_pct(e.get('accuracy'))} | {_pct(e.get('fabricationDetectionRecall'))} | "
+                f"{_pct(e.get('falseAlarmRate'))} | {e.get('date', '—')} |"
+            )
+        L.append("")
+        for e in verifier_evals:
+            if e.get("note"):
+                L += [f"- _{e.get('verifier')}:_ {e['note']}"]
+        L.append("")
+
     audit = doc.get("audit")
     if audit:
         L += ["## Judge audit (why the gate matters)", "", audit.get("note", ""), ""]

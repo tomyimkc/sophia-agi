@@ -18,6 +18,7 @@ train-error.log
 train-out.txt
 agent/memory/*.jsonl
 agent/memory/agent_runs/
+agent/memory/legal_cache.json
 private/hidden-evals/
 private/agent-grok-cwd/
 

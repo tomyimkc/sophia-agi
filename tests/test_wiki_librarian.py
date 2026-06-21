@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import sys
 import tempfile
 from pathlib import Path
@@ -15,16 +16,29 @@ if str(ROOT) not in sys.path:
 from agent import wiki_librarian, wiki_store  # noqa: E402
 
 
-def _redirect(tmp: Path) -> None:
-    wiki_store.CANONICAL_DIR = tmp / "wiki"
-    wiki_store.MEMORY_DIR = tmp / "memory"
-    wiki_store.DRAFT_DIR = tmp / "wiki" / "drafts"
-    (tmp / "wiki").mkdir(parents=True, exist_ok=True)
+@contextlib.contextmanager
+def _redirect():
+    """Point wiki_store at a temp dir, then RESTORE the originals on exit.
+
+    Restoration matters under a single-process ``pytest tests/`` run: leaving the
+    globals pointed at a deleted temp dir poisoned later tests (e.g. test_wiki_mcp
+    reading dao_de_jing). No pytest dependency so CI can still run this as a script.
+    """
+    saved = (wiki_store.CANONICAL_DIR, wiki_store.MEMORY_DIR, wiki_store.DRAFT_DIR)
+    with tempfile.TemporaryDirectory() as t:
+        tmp = Path(t)
+        wiki_store.CANONICAL_DIR = tmp / "wiki"
+        wiki_store.MEMORY_DIR = tmp / "memory"
+        wiki_store.DRAFT_DIR = tmp / "wiki" / "drafts"
+        (tmp / "wiki").mkdir(parents=True, exist_ok=True)
+        try:
+            yield tmp
+        finally:
+            wiki_store.CANONICAL_DIR, wiki_store.MEMORY_DIR, wiki_store.DRAFT_DIR = saved
 
 
 def test_store_accepts_clean_page() -> None:
-    with tempfile.TemporaryDirectory() as t:
-        _redirect(Path(t))
+    with _redirect():
         res = wiki_store.upsert(
             "test_concept",
             meta={"pageType": "concept", "domain": "psychology"},
@@ -37,8 +51,7 @@ def test_store_accepts_clean_page() -> None:
 
 
 def test_store_rejects_self_merge() -> None:
-    with tempfile.TemporaryDirectory() as t:
-        _redirect(Path(t))
+    with _redirect():
         res = wiki_store.upsert(
             "bad_page",
             meta={"pageType": "text", "attributedAuthor": "confucius", "authorConfidence": "attributed",
@@ -51,8 +64,7 @@ def test_store_rejects_self_merge() -> None:
 
 
 def test_store_rejects_forbidden_attribution_in_body() -> None:
-    with tempfile.TemporaryDirectory() as t:
-        _redirect(Path(t))
+    with _redirect():
         res = wiki_store.upsert(
             "dao_note",
             meta={"pageType": "text"},
@@ -75,8 +87,7 @@ def test_librarian_build_page() -> None:
 
 
 def test_librarian_ingest_accept_and_reject() -> None:
-    with tempfile.TemporaryDirectory() as t:
-        _redirect(Path(t))
+    with _redirect():
         ok = wiki_librarian.ingest_proposal(
             {"id": "new_term", "pageType": "concept", "title": "New Term", "summary": "A clean new term."},
             "src1.txt",
@@ -92,8 +103,7 @@ def test_librarian_ingest_accept_and_reject() -> None:
 
 
 def test_librarian_ingest_text_with_stub_model() -> None:
-    with tempfile.TemporaryDirectory() as t:
-        _redirect(Path(t))
+    with _redirect():
         proposal_json = '{"id": "ren_concept", "pageType": "concept", "title": "Ren", "tradition": "confucian", "summary": "Confucian benevolence."}'
         stub = SimpleNamespace(generate=lambda s, u: SimpleNamespace(
             ok=True, text=f"Here is the page:\n```json\n{proposal_json}\n```", error=None,
