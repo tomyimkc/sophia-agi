@@ -104,48 +104,62 @@ class Interpreter:
         self.approver = approver
         self.profile = profile
 
-    def _resolve(self, ref: Any, env: dict) -> Labeled:
-        """A ref is a var name (use its Labeled value) or a literal (trusted)."""
-        if isinstance(ref, str) and ref in env:
-            return env[ref]
+    def _resolve(self, ref: Any, env: dict, declared: set) -> Labeled:
+        """A ref is a var name (use its Labeled value) or a literal (trusted). A var
+        that the plan DECLARES but never bound (its producing step was blocked) fails
+        CLOSED — returned as untrusted, never as a trusted literal of its own name."""
+        if isinstance(ref, str):
+            if ref in env:
+                return env[ref]
+            if ref in declared:
+                return Labeled(None, taint=UNTRUSTED, origin=f"unbound:{ref}")
         return trusted(ref)
 
     def run(self, plan: list) -> InterpreterResult:
         env: dict = {}
         res = InterpreterResult(env=env)
+        declared = {step.var for step in plan if hasattr(step, "var")}
         for step in plan:
             if isinstance(step, Const):
                 env[step.var] = trusted(step.value, origin="planner")
 
             elif isinstance(step, Retrieve):
-                query = unwrap(self._resolve(step.query, env))
-                # READ tool — firewall allows reads; its OUTPUT is untrusted.
-                guard_call(step.tool, (query,), profile=self.profile)
-                raw = self.tools[step.tool](query)
+                # Defense in depth: a Retrieve must name a READ tool, and the
+                # firewall sees the (Labeled) arg and its decision is honoured.
+                if cap_for(step.tool).effect != Effect.READ:
+                    res.blocked.append((step.tool, "Retrieve must name a READ tool"))
+                    continue
+                qarg = self._resolve(step.query, env, declared)
+                decision = guard_call(step.tool, (qarg,), profile=self.profile)
+                if not decision.allowed:
+                    res.blocked.append((step.tool, decision.reason))
+                    continue
+                raw = self.tools[step.tool](unwrap(qarg))
                 env[step.var] = Labeled(raw, taint=UNTRUSTED, origin=step.tool)
 
             elif isinstance(step, Extract):
-                src = self._resolve(step.src, env)
+                src = self._resolve(step.src, env, declared)
                 out = self.extractor(step.instruction, unwrap(src)) if self.extractor else ""
-                # Q-LLM output is DATA, inheriting the source taint (≥ untrusted).
-                env[step.var] = Labeled(out, taint=combine(src, Labeled(out, UNTRUSTED)), origin="extractor")
+                # Q-LLM output is DATA, always untrusted (it read untrusted content).
+                env[step.var] = Labeled(out, taint=combine(src) | UNTRUSTED, origin="extractor")
 
             elif isinstance(step, Concat):
-                parts = [self._resolve(p, env) for p in step.parts]
+                parts = [self._resolve(p, env, declared) for p in step.parts]
                 text = "".join(str(unwrap(p)) for p in parts)
                 env[step.var] = Labeled(text, taint=combine(*parts), origin="concat")  # taint propagates
 
             elif isinstance(step, Call):
-                args = [self._resolve(a, env) for a in step.args]
+                args = [self._resolve(a, env, declared) for a in step.args]
                 decision = guard_call(step.tool, tuple(args), approver=self.approver, profile=self.profile)
                 if not decision.allowed:
                     res.blocked.append((step.tool, decision.reason))
                     continue
                 result = self.tools[step.tool](*[unwrap(a) for a in args])
-                effect = cap_for(step.tool).effect
-                # A sink's own output is trusted (we produced it); a read's is untrusted.
-                taint = UNTRUSTED if effect == Effect.READ else combine(*args)
-                env[step.var] = Labeled(result, taint=taint, origin=step.tool)
+                # Fail-safe: a tool's OUTPUT reflects external/world state, so it is
+                # untrusted regardless of effect (an EGRESS result is attacker-
+                # controlled web content; a WRITE may echo merged world state). This
+                # closes the egress-fetch-then-store laundering path.
+                env[step.var] = Labeled(result, taint=combine(*args) | UNTRUSTED, origin=step.tool)
                 res.calls.append(step.tool)
 
             else:  # unknown step type — refuse rather than guess (fail closed)

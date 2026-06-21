@@ -101,12 +101,56 @@ def test_tainted_concat_into_egress_is_blocked() -> None:
     assert any(t == "sophia_openclaw_infer" for t, _ in r.blocked)
 
 
+def test_egress_result_is_untrusted_no_laundering() -> None:
+    # An EGRESS tool called with a TRUSTED query returns attacker-controlled web
+    # content; that result must be untrusted so it can't be written to a sink.
+    written = []
+    tools = {
+        "sophia_web_evidence_search": lambda q: "<attacker-controlled web content>",
+        "sophia_wiki_upsert": lambda *a: written.append(a) or "ok",
+    }
+    interp = Interpreter(tools=tools)
+    r = interp.run([
+        Const("q", "innocent query"),
+        Call("web", "sophia_web_evidence_search", ["q"]),   # trusted args -> allowed
+        Call("w", "sophia_wiki_upsert", ["web"]),            # result is untrusted -> blocked
+    ])
+    assert "sophia_web_evidence_search" in r.calls
+    assert "untrusted" in r.taint("web")
+    assert "sophia_wiki_upsert" not in r.calls and written == []
+
+
+def test_blocked_step_var_fails_closed() -> None:
+    interp, _ = _interp()
+    r = interp.run([
+        Const("q", "t"),
+        Retrieve("doc", "sophia_wiki_read", "q"),
+        Call("bad", "sophia_wiki_upsert", ["doc"]),         # blocked -> 'bad' never bound
+        Call("o", "sophia_openclaw_infer", ["bad"]),         # 'bad' must resolve untrusted, not trusted garbage
+    ])
+    assert "sophia_openclaw_infer" not in r.calls
+    assert any(t == "sophia_openclaw_infer" for t, _ in r.blocked)
+
+
+def test_retrieve_must_name_a_read_tool() -> None:
+    interp, written = _interp()
+    r = interp.run([
+        Const("q", "t"),
+        Retrieve("x", "sophia_wiki_upsert", "q"),            # WRITE tool as a Retrieve -> blocked
+    ])
+    assert any(t == "sophia_wiki_upsert" for t, _ in r.blocked)
+    assert written == []
+
+
 def main() -> int:
     test_taint_propagates_through_steps()
     test_tainted_value_into_sink_is_blocked()
     test_trusted_value_into_sink_runs()
     test_control_flow_integrity_injected_instruction_does_nothing()
     test_tainted_concat_into_egress_is_blocked()
+    test_egress_result_is_untrusted_no_laundering()
+    test_blocked_step_var_fails_closed()
+    test_retrieve_must_name_a_read_tool()
     print("test_interpreter: OK")
     return 0
 

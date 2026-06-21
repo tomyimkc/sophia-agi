@@ -2,6 +2,26 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.17] - 2026-06-21
+
+### Fixed — M2.2 interpreter soundness (adversarial review findings)
+
+A 10-agent review of the M2.2 interpreter confirmed 3 real defects; all fixed,
+with regression tests in `tests/test_interpreter.py`.
+
+- **(HIGH) Egress-fetch-then-store laundering** — a `Call` result was tainted by
+  `combine(args)`, so an EGRESS tool (e.g. `web_evidence_search`) invoked with
+  *trusted* args returned *attacker-controlled* web content labelled TRUSTED, which
+  then flowed unblocked into a write sink. Fixed: every tool-call result is now
+  fail-safe **untrusted** (a tool's output reflects external/world state) — the
+  egress→store path is now blocked.
+- **(MEDIUM) Blocked step failed open** — a blocked `Call` left its result var
+  unbound, and `_resolve` treated a later reference to that var *name* as a trusted
+  literal. Fixed: a plan-declared-but-unbound var now resolves **untrusted** (fail
+  closed), distinct from a genuine literal.
+- **(LOW) Retrieve hardening** — a `Retrieve` now must name a READ-effect tool, its
+  arg is firewall-checked as a `Labeled` value, and the decision is honoured.
+
 ## [0.7.16] - 2026-06-21
 
 ### Added — M2.2: dual-LLM constrained interpreter (sound taint propagation)
