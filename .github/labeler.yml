@@ -1,0 +1,50 @@
+# Path-based labels for PRs (actions/labeler@v5). Area labels mirror existing repo
+# labels; domain labels key off the specific data file a PR touches.
+corpus:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "data/**"
+          - "wiki/**"
+          - "training/examples/**"
+          - "docs/04-Disputes/**"
+
+tooling:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "tools/**"
+          - "tests/**"
+          - "scripts/**"
+          - "eval/**"
+          - "okf/**"
+          - "agent/**"
+
+benchmark:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "benchmark/**"
+          - "provenance_bench/**"
+          - "agi-proof/**"
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/**"
+          - "README.md"
+          - "RESULTS.md"
+          - "CHANGELOG.md"
+          - "CONTRIBUTING.md"
+
+psychology:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "data/psychology_concepts.json"
+
+history:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "data/history_events.json"
+
+religion:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "data/religion_concepts.json"

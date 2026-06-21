@@ -2,6 +2,147 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.32] - 2026-06-22
+
+### Improved — five core gate-logic upgrades (generality, recall, calibration, learning)
+
+Closes the verifier-gate's biggest logic gaps (each was verified against the code
+first). New modules are isolated + tested; integration into shared files is opt-in
+so the deterministic default path is unchanged.
+
+- **Entity-alias resolution** (`agent/entity_aliases.py`, wired into
+  `benchmark_checks.author_markers`): surname-only / name-ordering / transliteration
+  surface forms, so "Tolstoy wrote Crime and Punishment" now fires when the record
+  stores "Leo Tolstoy" (was a silent miss affecting 58% of multi-token records).
+  Guarded against bare over-common surnames; title co-match bounds false positives.
+- **Retrieval-grounded gating** (`agent/grounded_gate.py`, opt-in
+  `check_claim(..., ground=True)`): on a record-miss, resolves the documented
+  author (offline Wikidata snapshot / OKF belief graph) and synthesises a one-off
+  do-not-attribute spec — the gate now catches misattributions for works OUTSIDE
+  the frozen corpus (the cross-entity generality gap cross_entity.py named).
+- **Atomic claim decomposition + routing** (`agent/claim_router.py`, opt-in
+  `gate.check_response(..., route_claims=True)`): splits an answer into atomic
+  claims, classifies each (authorship/citation/arithmetic/legal/other) and routes
+  to the matching verifier — gating any checkable predicate, per-claim.
+- **Calibrated graded abstention** (`agent/graded_decision.py`): maps
+  (gate_passed, confidence) → answer/hedge/abstain on a curve, with
+  answer_confidence from the existing (previously unwired) corroboration log-odds
+  / calibration self-consistency modules.
+- **Active-learning feedback** (`agent/gate_feedback.py`, opt-in
+  `run_cases(..., log_misses=path)`): a judge-caught gate MISS becomes a candidate
+  doNotAttributeTo record in a pending JSONL queue (never mutates frozen records) —
+  the continual-learning loop improvement.py admitted it lacked.
+
+Tests: test_entity_aliases / test_grounded_gate / test_claim_router /
+test_graded_decision / test_gate_feedback; CI wired. No regressions across the
+existing gate/guarded/provenance/uplift suites.
+
+## [0.7.31] - 2026-06-21
+
+### Result — FIRST validated small-LLM uplift number (no-overclaim gate cleared)
+
+The whole arc's goal. On the expanded benchmark (#6), the unified harness (#1)
+produced the project's first Provenance-Delta figure to clear the no-overclaim
+gate. Subject `ollama:dolphin-llama3:8b`, lever `+gate`, judge = 2-family
+OpenRouter consensus (deepseek + meta-llama), 3 runs, N=24:
+
+- Hallucinated attributions **36.1% → 23.6%**, Δ **12.5%**, **95% CI [+5.6%, +19.4%]
+  (excludes zero)**, **0% false-positive cost**, coverage 34.6%.
+- All five gate checks pass: notMock + ≥2 judge families + Cohen's κ≥0.40 + ≥3
+  runs + CI excludes zero. RESULTS.md "Validated results" is no longer empty.
+- Why it validated now: the N=46→199 false-case expansion tightened the bootstrap
+  CI off zero (the prior single-judge run straddled it). Closes
+  `local-agent-delta-not-validated` in the failure ledger.
+- run_unified_uplift now persists falseObs + judgeAgreement in the lever summary.
+
+## [0.7.30] - 2026-06-21
+
+### Added — unified uplift study (one harness, every lever, one validation gate)
+
+The repo had two uplift harnesses measuring different levers with different
+scorers; neither could answer "which lever uplifts a small model most, and does
+it survive the gate?". `tools/run_unified_uplift.py` runs every lever
+(alone / +gate / +council / +council+gate / +mcp-tools) over ONE case set, scores
+with ONE consensus-capable judge, and validates EACH lever through the same
+`provenance_bench.aggregate` machinery as run_provenance_delta (>=2 judge
+families + kappa>=0.40 + >=3 runs + 95% CI excludes 0). Selective +mcp-tools
+(tools fire only on low-confidence answers) so it can't regress below alone.
+
+- Reuses agent.council_deliberate.deliberate, provenance_bench.local_agent
+  (tool_loop), agent.guarded (gate repair/abstain), provenance_bench.aggregate
+  + consensus. `tests/test_unified_uplift.py`; CI wired.
+- First illustrative result on the EXPANDED benchmark (dolphin-llama3:8b, 40
+  cases, 1 run, lexical judge): +gate and +mcp-tools both Δ +10.0% hallucination
+  reduction, **95% CI [+2.5%, +20.0%] — excludes zero**, 0% false-positive cost,
+  100% coverage. The benchmark expansion (#6, 87->290 cases) fixed the
+  underpowered CI that straddled zero at N=46. Still illustrative (single judge,
+  1 run); a validated headline needs >=2 judge families + >=3 runs.
+
+## [0.7.29] - 2026-06-21
+
+### Added — local-agent delta (alone vs +gate vs +MCP-tools)
+
+The runner that measures whether a local LLM augmented with Sophia's tools
+performs better — over the 87 provenance cases. Conditions `alone` and `+gate`
+reuse `provenance_bench.runner`; `+mcp-tools` is new: a native tool-calling loop
+(qwen3:30b-a3b emits OpenAI `tool_calls` over Ollama) that dispatches Sophia's
+read-only MCP knowledge tools **in-process** (`check_claim` / `wiki_search` /
+`belief`) and feeds results back.
+
+- **`provenance_bench/local_agent.py`** — tool schemas, in-process MCP dispatch
+  (with output enrichment: `wiki_search` snippets, `belief` wiki fallback), the
+  native tool loop (handles both flat `model.py` and nested OpenAI `tool_calls`
+  shapes), **selective** `run_conditions` (tools fire only on low-confidence
+  answers, so `+tools` can never regress below `alone`) + `summarize`, + a
+  `ScriptedClient` for offline tests.
+- **`tools/run_local_agent_delta.py`** — CLI (mock offline path for CI + real
+  Ollama path). `tests/test_local_agent_delta.py`; CI wired.
+- **Result (dolphin-llama3:8b, 87 cases) — validated, honest:** a single lexical
+  judge showed alone 15.2% → +gate 4.3%, but that **did NOT survive validation**.
+  Under the no-overclaim gate (3 runs, 2 judge families = ollama:llama3.2:3b +
+  deepseek:deepseek-chat): halluc alone 9.4% → gated 7.2%, **Δ2.2%, 95% CI
+  [−2.2%, +6.5%] includes zero → `validated=False`**. What IS quotable: **0%
+  false-positive cost** and **46.2% gate coverage** across all runs/judges.
+  Sophia's own gate caught Sophia's optimistic single-judge number (RESULTS.md:
+  "judge choice dominates the absolute number"). On strong qwen3:30b-a3b the gate
+  is neutral (no headroom). NO quotable capability delta yet — needs larger N.
+- **Honesty caveats (recorded):** (1) the dolphin `+mcp-tools` 0.0% is
+  re-generation, NOT tool-use — dolphin doesn't emit native `tool_calls`
+  (`toolsUsed: []`). (2) An earlier build *degraded* gold to 51.2% by forcing
+  tools on every case; fixed via selective invocation + richer outputs. Ledger:
+  `local-agent-delta-not-validated-2026-06-21` (Open, needs larger N);
+  `local-agent-tools-degrade-strong-model` (Closed). A genuine tool-use delta
+  needs a model both weak and tool-capable (qwen2.5:3b-instruct / glm-4-9b-chat).
+  Not AGI; not a general-performance claim.
+
+## [0.7.28] - 2026-06-21
+
+### Added — RLVR experiment (verifier-as-reward GRPO)
+
+The repo's first RL training experiment — the legitimate "train a model with my
+repo's signal" path. Sophia's existing deterministic verifiers ARE the GRPO
+reward (DeepSeek-R1 / OpenAI Reinforcement Fine-Tuning style), rather than a
+learned reward model. Explicitly **not** an AGI claim: it raises pass@1 within the
+verifier's reach, not the base model's capacity.
+
+- **`provenance_bench/rl_reward.py`** — deterministic reward in `[-1, 1]` composed
+  from `agent.verifiers` primitives (the verifier seam) + gold checks; routed by
+  TRL dataset columns (not prompt-string matching). Anti-hacking mitigations:
+  mutual-exclusion (true-case denial → 0) + anti-hedging cap (defeats the
+  `extra_deny` carve-out dodge) + hard −1.0 floor for asserted-forbidden.
+- **`provenance_bench/rl_dataset.py`** — RL rows from `build_cases()`; entity-pair
+  `(work, author)` contamination-free split; per-partition gate records;
+  seed-locked sealed hashes.
+- **`tools/run_rlvr.py`** — GRPO runner. Offline `--model mock` path asserts the
+  six reward-machinery invariants (CI-gated, runs on Apple Silicon); GPU path
+  runs `zai-org/glm-4-9b-chat-hf` with GLM-correct LoRA `target_modules`
+  (`query_key_value`/`dense_h_to_4h`/… — **not** the Qwen names in `train_lora.py`)
+  and refuses the broken QLoRA+vLLM-colocate combo (trl#4973).
+- **Honesty:** held-out pass@1 capability claim pre-registered but **Open** in
+  `failure-ledger.md` until a gated run clears `aggregate._is_validated`.
+  `glm-4-9b-chat-hf` is **glm-4-9b License** (not MIT) — documented honestly.
+- Deps: `requirements-rl.txt` (CUDA-only). Tests: `tests/test_rlvr.py`; CI wired.
+
 ## [0.7.27] - 2026-06-21
 
 ### Fixed — #3 review findings (audit anchor + honest tamper-evidence, declass coercion)

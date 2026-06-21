@@ -1,6 +1,6 @@
 {
-  "version": "0.7.0",
-  "generated": "2026-06-20T18:55:12",
+  "version": "0.7.32",
+  "generated": "2026-06-22T01:07:19",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "operationalDefinition": {
     "summary": "For this repo, AGI evidence means broad task competence, transfer, tool use, long-horizon autonomy, learning under distribution shift, baseline superiority, and independent reproduction.",
@@ -1499,6 +1499,7 @@
     "long-horizon task logs with intervention counts",
     "learning-under-shift pre/post results with append-only memory records",
     "failure ledger with claim impact",
+    "RLVR held-out pass@1 under the no-overclaim gate (pre-registered; Open until a gated live run)",
     "third-party reproduction on a clean clone"
   ],
   "artifactIndex": {
@@ -1523,6 +1524,22 @@
     "learningShift": "agi-proof/learning-under-shift/README.md",
     "failureLedger": "agi-proof/failure-ledger.md",
     "replication": "agi-proof/third-party-replication/README.md",
+    "rlvrRunner": "tools/run_rlvr.py",
+    "rlvrReward": "provenance_bench/rl_reward.py",
+    "rlvrDataset": "provenance_bench/rl_dataset.py",
+    "rlvrReport": "agi-proof/benchmark-results/rlvr.public-report.json",
+    "rlvrExperiment": "docs/09-Agent/RLVR-Experiment.md",
+    "localAgentDeltaRunner": "tools/run_local_agent_delta.py",
+    "localAgentCore": "provenance_bench/local_agent.py",
+    "localAgentDeltaReport": "agi-proof/benchmark-results/local-agent-delta.public-report.json",
+    "localAgentDeltaValidatedReport": "agi-proof/benchmark-results/provenance-delta-dolphin-validated.public-report.json",
+    "unifiedUpliftRunner": "tools/run_unified_uplift.py",
+    "unifiedUpliftReport": "agi-proof/benchmark-results/unified-uplift.public-report.json",
+    "gateEntityAliases": "agent/entity_aliases.py",
+    "gateRetrievalGrounding": "agent/grounded_gate.py",
+    "gateClaimRouter": "agent/claim_router.py",
+    "gateGradedDecision": "agent/graded_decision.py",
+    "gateActiveLearning": "agent/gate_feedback.py",
     "religionFigureCouncil": "docs/08-Domains/Religion-Figure-Council.md",
     "codingCouncil": "docs/08-Domains/Coding-Council.md"
   }

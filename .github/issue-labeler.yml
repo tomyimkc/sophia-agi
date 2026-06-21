@@ -1,0 +1,21 @@
+# Regex-based labels for issues (github/issue-labeler). A label is applied when any
+# pattern matches the issue title or body (case-insensitive). Labels must already
+# exist in the repo.
+corpus:
+  - "(?i)\\b(attribution|corpus|dataset|provenance|lineage|source discipline)\\b"
+benchmark:
+  - "(?i)\\b(benchmark|leaderboard|score|scorer|eval|uplift|gate)\\b"
+tooling:
+  - "(?i)\\b(tool|tooling|script|validator|ci|workflow|refactor)\\b"
+documentation:
+  - "(?i)\\b(docs?|documentation|readme|wiki|typo)\\b"
+psychology:
+  - "(?i)\\b(psychology|psychological|cognitive|clinical|pop-psych)\\b"
+history:
+  - "(?i)\\b(history|historical|dated event|primary source)\\b"
+religion:
+  - "(?i)\\b(religion|religious|scripture|sect|tradition|theolog)\\b"
+bug:
+  - "(?i)\\b(bug|broken|error|traceback|crash|fails?|regression)\\b"
+enhancement:
+  - "(?i)\\b(feature request|enhancement|add support|proposal|would be nice)\\b"

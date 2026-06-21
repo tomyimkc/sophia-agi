@@ -1,52 +1,738 @@
 {
   "_meta": {
-    "description": "TRUE-attribution ground truth for the Provenance Delta benchmark. Independent of Sophia's gate corpus. Each row is a well-documented authorship fact used to (a) measure false-positive cost and (b) supply the gold author for scoring.",
+    "description": "TRUE-attribution ground truth for the Provenance Delta benchmark. Independent of Sophia's gate corpus. Each row is a well-documented authorship fact used to (a) measure false-positive cost and (b) supply the gold author for scoring. Expanded 2026-06-21 with matched true controls for the new misattribution works (single-author, unambiguous gold only).",
     "labelSource": "external (Wikipedia / Wikidata)",
     "wikidataQidStatus": "qid null until verified by tools/fetch_wikidata_authors.py; source_url is a stable human-checkable reference",
     "schemaVersion": 1
   },
   "attributions": [
-    {"id": "true-plato-republic", "work": "The Republic", "gold_author": "Plato", "author_note": "Socrates is a dramatized speaker within the dialogue, not its author.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Republic_(Plato)"},
-    {"id": "true-laozi-dao_de_jing", "work": "Dao De Jing", "gold_author": "Laozi", "author_note": "Traditionally/legendarily ascribed to Laozi; compiled in the Warring States period.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching"},
-    {"id": "true-confucius-analects", "work": "Analects", "gold_author": "Confucius (compiled by his disciples)", "author_note": "Not an autograph; assembled by students and later editors.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Analects"},
-    {"id": "true-arrian-enchiridion", "work": "Enchiridion", "gold_author": "Arrian (recording Epictetus)", "author_note": "Compiled by Arrian from Epictetus's teachings; Epictetus wrote nothing himself.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus"},
-    {"id": "true-marcus-meditations", "work": "Meditations", "gold_author": "Marcus Aurelius", "author_note": "Private notebooks of the Roman emperor.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Meditations"},
-    {"id": "true-aristotle-nicomachean", "work": "Nicomachean Ethics", "gold_author": "Aristotle", "author_note": "Lecture notes associated with Aristotle.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Nicomachean_Ethics"},
-    {"id": "true-zhuangzi-zhuangzi", "work": "Zhuangzi", "gold_author": "Zhuang Zhou (Inner Chapters)", "author_note": "Inner Chapters ascribed to Zhuang Zhou; outer/miscellaneous chapters are later.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Zhuangzi_(book)"},
-    {"id": "true-mencius-mencius", "work": "Mencius", "gold_author": "Mencius (and disciples)", "author_note": "Confucian text recording Mencius; not by Confucius.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Mencius_(book)"},
-    {"id": "true-machiavelli-prince", "work": "The Prince", "gold_author": "Niccolò Machiavelli", "author_note": "Political treatise, 1513.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Prince"},
-    {"id": "true-kant-critique", "work": "Critique of Pure Reason", "gold_author": "Immanuel Kant", "author_note": "1781.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Critique_of_Pure_Reason"},
-    {"id": "true-nietzsche-bge", "work": "Beyond Good and Evil", "gold_author": "Friedrich Nietzsche", "author_note": "1886.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Beyond_Good_and_Evil"},
-    {"id": "true-freud-dreams", "work": "The Interpretation of Dreams", "gold_author": "Sigmund Freud", "author_note": "1899/1900.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Interpretation_of_Dreams"},
-    {"id": "true-marx-engels-manifesto", "work": "The Communist Manifesto", "gold_author": "Karl Marx and Friedrich Engels", "author_note": "1848.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Communist_Manifesto"},
-    {"id": "true-anaximenes-rhetoric_to_alexander", "work": "Rhetoric to Alexander", "gold_author": "Anaximenes of Lampsacus", "author_note": "Long bundled with Aristotle; attributed to Anaximenes since the Renaissance. A hard true control.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Rhetoric_to_Alexander"},
-    {"id": "true-philip-epinomis", "work": "Epinomis", "gold_author": "Philip of Opus", "author_note": "Pseudo-Platonic; scholarly consensus credits Philip of Opus. A hard true control.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Epinomis"},
-    {"id": "true-hirtius-gallic_war_book_8", "work": "the eighth book of the Gallic War", "gold_author": "Aulus Hirtius", "author_note": "Added after Caesar's death. A hard true control.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Commentarii_de_Bello_Gallico"},
-
-    {"id": "true-augustine-confessions", "work": "the Confessions", "gold_author": "Augustine of Hippo", "author_note": "c. 397-400 CE.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Confessions_(Augustine)"},
-    {"id": "true-augustine-city_of_god", "work": "The City of God", "gold_author": "Augustine of Hippo", "author_note": "early 5th c.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_City_of_God"},
-    {"id": "true-aquinas-summa", "work": "the Summa Theologica", "gold_author": "Thomas Aquinas", "author_note": "13th c.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Summa_Theologica"},
-    {"id": "true-boethius-consolation", "work": "The Consolation of Philosophy", "gold_author": "Boethius", "author_note": "c. 524 CE.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Consolation_of_Philosophy"},
-    {"id": "true-dante-comedy", "work": "the Divine Comedy", "gold_author": "Dante Alighieri", "author_note": "14th c.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Divine_Comedy"},
-    {"id": "true-virgil-aeneid", "work": "the Aeneid", "gold_author": "Virgil", "author_note": "1st c. BCE.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Aeneid"},
-    {"id": "true-ovid-metamorphoses", "work": "the Metamorphoses", "gold_author": "Ovid", "author_note": "8 CE.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Metamorphoses"},
-    {"id": "true-cicero-de_officiis", "work": "On Duties (De Officiis)", "gold_author": "Cicero", "author_note": "44 BCE.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/De_Officiis"},
-    {"id": "true-descartes-meditations", "work": "Meditations on First Philosophy", "gold_author": "René Descartes", "author_note": "1641.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Meditations_on_First_Philosophy"},
-    {"id": "true-hobbes-leviathan", "work": "Leviathan", "gold_author": "Thomas Hobbes", "author_note": "1651.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Leviathan_(Hobbes_book)"},
-    {"id": "true-locke-two_treatises", "work": "the Two Treatises of Government", "gold_author": "John Locke", "author_note": "1689.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Two_Treatises_of_Government"},
-    {"id": "true-spinoza-ethics", "work": "the Ethics", "gold_author": "Baruch Spinoza", "author_note": "1677.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Ethics_(Spinoza_book)"},
-    {"id": "true-hume-treatise", "work": "A Treatise of Human Nature", "gold_author": "David Hume", "author_note": "1739-40.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/A_Treatise_of_Human_Nature"},
-    {"id": "true-rousseau-social_contract", "work": "The Social Contract", "gold_author": "Jean-Jacques Rousseau", "author_note": "1762.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Social_Contract"},
-    {"id": "true-smith-wealth", "work": "The Wealth of Nations", "gold_author": "Adam Smith", "author_note": "1776.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Wealth_of_Nations"},
-    {"id": "true-mill-on_liberty", "work": "On Liberty", "gold_author": "John Stuart Mill", "author_note": "1859.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/On_Liberty"},
-    {"id": "true-darwin-origin", "work": "On the Origin of Species", "gold_author": "Charles Darwin", "author_note": "1859.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/On_the_Origin_of_Species"},
-    {"id": "true-marx-kapital", "work": "Das Kapital", "gold_author": "Karl Marx", "author_note": "vol. 1, 1867.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Das_Kapital"},
-    {"id": "true-newton-principia", "work": "the Principia Mathematica (Philosophiae Naturalis)", "gold_author": "Isaac Newton", "author_note": "1687.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Philosophi%C3%A6_Naturalis_Principia_Mathematica"},
-    {"id": "true-nietzsche-zarathustra", "work": "Thus Spoke Zarathustra", "gold_author": "Friedrich Nietzsche", "author_note": "1883-85.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Thus_Spoke_Zarathustra"},
-    {"id": "true-james-psychology", "work": "The Principles of Psychology", "gold_author": "William James", "author_note": "1890.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Principles_of_Psychology"},
-    {"id": "true-kant-practical", "work": "the Critique of Practical Reason", "gold_author": "Immanuel Kant", "author_note": "1788.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Critique_of_Practical_Reason"},
-    {"id": "true-hegel-phenomenology", "work": "the Phenomenology of Spirit", "gold_author": "G. W. F. Hegel", "author_note": "1807.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Phenomenology_of_Spirit"},
-    {"id": "true-aristotle-politics", "work": "the Politics", "gold_author": "Aristotle", "author_note": "4th c. BCE (genuine Aristotelian work).", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Politics_(Aristotle)"},
-    {"id": "true-plato-symposium", "work": "the Symposium", "gold_author": "Plato", "author_note": "c. 385-370 BCE (genuine).", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Symposium_(Plato)"}
+    {
+      "id": "true-plato-republic",
+      "work": "The Republic",
+      "gold_author": "Plato",
+      "author_note": "Socrates is a dramatized speaker within the dialogue, not its author.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Republic_(Plato)"
+    },
+    {
+      "id": "true-laozi-dao_de_jing",
+      "work": "Dao De Jing",
+      "gold_author": "Laozi",
+      "author_note": "Traditionally/legendarily ascribed to Laozi; compiled in the Warring States period.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching"
+    },
+    {
+      "id": "true-confucius-analects",
+      "work": "Analects",
+      "gold_author": "Confucius (compiled by his disciples)",
+      "author_note": "Not an autograph; assembled by students and later editors.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Analects"
+    },
+    {
+      "id": "true-arrian-enchiridion",
+      "work": "Enchiridion",
+      "gold_author": "Arrian (recording Epictetus)",
+      "author_note": "Compiled by Arrian from Epictetus's teachings; Epictetus wrote nothing himself.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus"
+    },
+    {
+      "id": "true-marcus-meditations",
+      "work": "Meditations",
+      "gold_author": "Marcus Aurelius",
+      "author_note": "Private notebooks of the Roman emperor.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Meditations"
+    },
+    {
+      "id": "true-aristotle-nicomachean",
+      "work": "Nicomachean Ethics",
+      "gold_author": "Aristotle",
+      "author_note": "Lecture notes associated with Aristotle.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Nicomachean_Ethics"
+    },
+    {
+      "id": "true-zhuangzi-zhuangzi",
+      "work": "Zhuangzi",
+      "gold_author": "Zhuang Zhou (Inner Chapters)",
+      "author_note": "Inner Chapters ascribed to Zhuang Zhou; outer/miscellaneous chapters are later.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Zhuangzi_(book)"
+    },
+    {
+      "id": "true-mencius-mencius",
+      "work": "Mencius",
+      "gold_author": "Mencius (and disciples)",
+      "author_note": "Confucian text recording Mencius; not by Confucius.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Mencius_(book)"
+    },
+    {
+      "id": "true-machiavelli-prince",
+      "work": "The Prince",
+      "gold_author": "Niccolò Machiavelli",
+      "author_note": "Political treatise, 1513.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Prince"
+    },
+    {
+      "id": "true-kant-critique",
+      "work": "Critique of Pure Reason",
+      "gold_author": "Immanuel Kant",
+      "author_note": "1781.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Critique_of_Pure_Reason"
+    },
+    {
+      "id": "true-nietzsche-bge",
+      "work": "Beyond Good and Evil",
+      "gold_author": "Friedrich Nietzsche",
+      "author_note": "1886.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Beyond_Good_and_Evil"
+    },
+    {
+      "id": "true-freud-dreams",
+      "work": "The Interpretation of Dreams",
+      "gold_author": "Sigmund Freud",
+      "author_note": "1899/1900.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Interpretation_of_Dreams"
+    },
+    {
+      "id": "true-marx-engels-manifesto",
+      "work": "The Communist Manifesto",
+      "gold_author": "Karl Marx and Friedrich Engels",
+      "author_note": "1848.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Communist_Manifesto"
+    },
+    {
+      "id": "true-anaximenes-rhetoric_to_alexander",
+      "work": "Rhetoric to Alexander",
+      "gold_author": "Anaximenes of Lampsacus",
+      "author_note": "Long bundled with Aristotle; attributed to Anaximenes since the Renaissance. A hard true control.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Rhetoric_to_Alexander"
+    },
+    {
+      "id": "true-philip-epinomis",
+      "work": "Epinomis",
+      "gold_author": "Philip of Opus",
+      "author_note": "Pseudo-Platonic; scholarly consensus credits Philip of Opus. A hard true control.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Epinomis"
+    },
+    {
+      "id": "true-hirtius-gallic_war_book_8",
+      "work": "the eighth book of the Gallic War",
+      "gold_author": "Aulus Hirtius",
+      "author_note": "Added after Caesar's death. A hard true control.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Commentarii_de_Bello_Gallico"
+    },
+    {
+      "id": "true-augustine-confessions",
+      "work": "the Confessions",
+      "gold_author": "Augustine of Hippo",
+      "author_note": "c. 397-400 CE.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Confessions_(Augustine)"
+    },
+    {
+      "id": "true-augustine-city_of_god",
+      "work": "The City of God",
+      "gold_author": "Augustine of Hippo",
+      "author_note": "early 5th c.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_City_of_God"
+    },
+    {
+      "id": "true-aquinas-summa",
+      "work": "the Summa Theologica",
+      "gold_author": "Thomas Aquinas",
+      "author_note": "13th c.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Summa_Theologica"
+    },
+    {
+      "id": "true-boethius-consolation",
+      "work": "The Consolation of Philosophy",
+      "gold_author": "Boethius",
+      "author_note": "c. 524 CE.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Consolation_of_Philosophy"
+    },
+    {
+      "id": "true-dante-comedy",
+      "work": "the Divine Comedy",
+      "gold_author": "Dante Alighieri",
+      "author_note": "14th c.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Divine_Comedy"
+    },
+    {
+      "id": "true-virgil-aeneid",
+      "work": "the Aeneid",
+      "gold_author": "Virgil",
+      "author_note": "1st c. BCE.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Aeneid"
+    },
+    {
+      "id": "true-ovid-metamorphoses",
+      "work": "the Metamorphoses",
+      "gold_author": "Ovid",
+      "author_note": "8 CE.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Metamorphoses"
+    },
+    {
+      "id": "true-cicero-de_officiis",
+      "work": "On Duties (De Officiis)",
+      "gold_author": "Cicero",
+      "author_note": "44 BCE.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/De_Officiis"
+    },
+    {
+      "id": "true-descartes-meditations",
+      "work": "Meditations on First Philosophy",
+      "gold_author": "René Descartes",
+      "author_note": "1641.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Meditations_on_First_Philosophy"
+    },
+    {
+      "id": "true-hobbes-leviathan",
+      "work": "Leviathan",
+      "gold_author": "Thomas Hobbes",
+      "author_note": "1651.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Leviathan_(Hobbes_book)"
+    },
+    {
+      "id": "true-locke-two_treatises",
+      "work": "the Two Treatises of Government",
+      "gold_author": "John Locke",
+      "author_note": "1689.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Two_Treatises_of_Government"
+    },
+    {
+      "id": "true-spinoza-ethics",
+      "work": "the Ethics",
+      "gold_author": "Baruch Spinoza",
+      "author_note": "1677.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Ethics_(Spinoza_book)"
+    },
+    {
+      "id": "true-hume-treatise",
+      "work": "A Treatise of Human Nature",
+      "gold_author": "David Hume",
+      "author_note": "1739-40.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/A_Treatise_of_Human_Nature"
+    },
+    {
+      "id": "true-rousseau-social_contract",
+      "work": "The Social Contract",
+      "gold_author": "Jean-Jacques Rousseau",
+      "author_note": "1762.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Social_Contract"
+    },
+    {
+      "id": "true-smith-wealth",
+      "work": "The Wealth of Nations",
+      "gold_author": "Adam Smith",
+      "author_note": "1776.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Wealth_of_Nations"
+    },
+    {
+      "id": "true-mill-on_liberty",
+      "work": "On Liberty",
+      "gold_author": "John Stuart Mill",
+      "author_note": "1859.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/On_Liberty"
+    },
+    {
+      "id": "true-darwin-origin",
+      "work": "On the Origin of Species",
+      "gold_author": "Charles Darwin",
+      "author_note": "1859.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/On_the_Origin_of_Species"
+    },
+    {
+      "id": "true-marx-kapital",
+      "work": "Das Kapital",
+      "gold_author": "Karl Marx",
+      "author_note": "vol. 1, 1867.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Das_Kapital"
+    },
+    {
+      "id": "true-newton-principia",
+      "work": "the Principia Mathematica (Philosophiae Naturalis)",
+      "gold_author": "Isaac Newton",
+      "author_note": "1687.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Philosophi%C3%A6_Naturalis_Principia_Mathematica"
+    },
+    {
+      "id": "true-nietzsche-zarathustra",
+      "work": "Thus Spoke Zarathustra",
+      "gold_author": "Friedrich Nietzsche",
+      "author_note": "1883-85.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Thus_Spoke_Zarathustra"
+    },
+    {
+      "id": "true-james-psychology",
+      "work": "The Principles of Psychology",
+      "gold_author": "William James",
+      "author_note": "1890.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Principles_of_Psychology"
+    },
+    {
+      "id": "true-kant-practical",
+      "work": "the Critique of Practical Reason",
+      "gold_author": "Immanuel Kant",
+      "author_note": "1788.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Critique_of_Practical_Reason"
+    },
+    {
+      "id": "true-hegel-phenomenology",
+      "work": "the Phenomenology of Spirit",
+      "gold_author": "G. W. F. Hegel",
+      "author_note": "1807.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Phenomenology_of_Spirit"
+    },
+    {
+      "id": "true-aristotle-politics",
+      "work": "the Politics",
+      "gold_author": "Aristotle",
+      "author_note": "4th c. BCE (genuine Aristotelian work).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Politics_(Aristotle)"
+    },
+    {
+      "id": "true-plato-symposium",
+      "work": "the Symposium",
+      "gold_author": "Plato",
+      "author_note": "c. 385-370 BCE (genuine).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Symposium_(Plato)"
+    },
+    {
+      "id": "true-many_authors_over_-the_book_of_psalms",
+      "work": "the Book of Psalms",
+      "gold_author": "many authors over centuries",
+      "author_note": "Documented author of the Book of Psalms; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Psalms"
+    },
+    {
+      "id": "true-moses_de_le_n-zohar",
+      "work": "Zohar",
+      "gold_author": "Moses de León",
+      "author_note": "Documented author of Zohar; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Zohar"
+    },
+    {
+      "id": "true-james_macpherson-the_poems_of_ossian_fingal_tem",
+      "work": "The Poems of Ossian (Fingal, Temora)",
+      "gold_author": "James Macpherson",
+      "author_note": "Documented author of The Poems of Ossian (Fingal, Temora); used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Ossian"
+    },
+    {
+      "id": "true-thomas_chatterton-the_rowley_poems",
+      "work": "The Rowley Poems",
+      "gold_author": "Thomas Chatterton",
+      "author_note": "Documented author of The Rowley Poems; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Thomas_Chatterton"
+    },
+    {
+      "id": "true-thomas_kempis-de_imitatione_christi_the_imit",
+      "work": "De Imitatione Christi (The Imitation of Christ)",
+      "gold_author": "Thomas à Kempis",
+      "author_note": "Documented author of De Imitatione Christi (The Imitation of Christ); used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Imitation_of_Christ"
+    },
+    {
+      "id": "true-william_henry_irel-vortigern_and_rowena",
+      "work": "Vortigern and Rowena",
+      "gold_author": "William Henry Ireland",
+      "author_note": "Documented author of Vortigern and Rowena; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Vortigern_and_Rowena"
+    },
+    {
+      "id": "true-philo_of_byblos-phoenician_history",
+      "work": "Phoenician History",
+      "gold_author": "Philo of Byblos",
+      "author_note": "Documented author of Phoenician History; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Sanchuniathon"
+    },
+    {
+      "id": "true-arthur_schopenhaue-the_world_as_will_and_represen",
+      "work": "The World as Will and Representation",
+      "gold_author": "Arthur Schopenhauer",
+      "author_note": "Documented author of The World as Will and Representation; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_World_as_Will_and_Representation"
+    },
+    {
+      "id": "true-lucretius-on_the_nature_of_things",
+      "work": "On the Nature of Things",
+      "gold_author": "Lucretius",
+      "author_note": "Documented author of On the Nature of Things; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/De_rerum_natura"
+    },
+    {
+      "id": "true-john_locke-an_essay_concerning_human_unde",
+      "work": "An Essay Concerning Human Understanding",
+      "gold_author": "John Locke",
+      "author_note": "Documented author of An Essay Concerning Human Understanding; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/An_Essay_Concerning_Human_Understanding"
+    },
+    {
+      "id": "true-david_hume-an_enquiry_concerning_the_prin",
+      "work": "An Enquiry Concerning the Principles of Morals",
+      "gold_author": "David Hume",
+      "author_note": "Documented author of An Enquiry Concerning the Principles of Morals; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/An_Enquiry_Concerning_the_Principles_of_Morals"
+    },
+    {
+      "id": "true-montesquieu-the_spirit_of_the_laws",
+      "work": "The Spirit of the Laws",
+      "gold_author": "Montesquieu",
+      "author_note": "Documented author of The Spirit of the Laws; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Spirit_of_the_Laws"
+    },
+    {
+      "id": "true-simone_de_beauvoir-the_second_sex",
+      "work": "The Second Sex",
+      "gold_author": "Simone de Beauvoir",
+      "author_note": "Documented author of The Second Sex; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Second_Sex"
+    },
+    {
+      "id": "true-jean_paul_sartre-being_and_nothingness",
+      "work": "Being and Nothingness",
+      "gold_author": "Jean-Paul Sartre",
+      "author_note": "Documented author of Being and Nothingness; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Being_and_Nothingness"
+    },
+    {
+      "id": "true-martin_heidegger-being_and_time",
+      "work": "Being and Time",
+      "gold_author": "Martin Heidegger",
+      "author_note": "Documented author of Being and Time; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Being_and_Time"
+    },
+    {
+      "id": "true-ludwig_wittgenstei-philosophical_investigations",
+      "work": "Philosophical Investigations",
+      "gold_author": "Ludwig Wittgenstein",
+      "author_note": "Documented author of Philosophical Investigations; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Philosophical_Investigations"
+    },
+    {
+      "id": "true-ludwig_wittgenstei-tractatus_logico_philosophicus",
+      "work": "Tractatus Logico-Philosophicus",
+      "gold_author": "Ludwig Wittgenstein",
+      "author_note": "Documented author of Tractatus Logico-Philosophicus; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Tractatus_Logico-Philosophicus"
+    },
+    {
+      "id": "true-francis_bacon-the_new_atlantis",
+      "work": "The New Atlantis",
+      "gold_author": "Francis Bacon",
+      "author_note": "Documented author of The New Atlantis; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/New_Atlantis"
+    },
+    {
+      "id": "true-ren_descartes-discourse_on_method",
+      "work": "Discourse on Method",
+      "gold_author": "René Descartes",
+      "author_note": "Documented author of Discourse on Method; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Discourse_on_the_Method"
+    },
+    {
+      "id": "true-friedrich_nietzsch-the_genealogy_of_morals",
+      "work": "The Genealogy of Morals",
+      "gold_author": "Friedrich Nietzsche",
+      "author_note": "Documented author of The Genealogy of Morals; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/On_the_Genealogy_of_Morality"
+    },
+    {
+      "id": "true-voltaire-candide",
+      "work": "Candide",
+      "gold_author": "Voltaire",
+      "author_note": "Documented author of Candide; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Candide"
+    },
+    {
+      "id": "true-al_ghazali-the_incoherence_of_the_philoso",
+      "work": "The Incoherence of the Philosophers",
+      "gold_author": "Al-Ghazali",
+      "author_note": "Documented author of The Incoherence of the Philosophers; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Incoherence_of_the_Philosophers"
+    },
+    {
+      "id": "true-jean_paul_sartre-nausea",
+      "work": "Nausea",
+      "gold_author": "Jean-Paul Sartre",
+      "author_note": "Documented author of Nausea; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Nausea_(novel)"
+    },
+    {
+      "id": "true-albert_camus-the_stranger",
+      "work": "The Stranger",
+      "gold_author": "Albert Camus",
+      "author_note": "Documented author of The Stranger; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Stranger_(Camus_novel)"
+    },
+    {
+      "id": "true-ernest_hemingway-the_old_man_and_the_sea",
+      "work": "The Old Man and the Sea",
+      "gold_author": "Ernest Hemingway",
+      "author_note": "Documented author of The Old Man and the Sea; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Old_Man_and_the_Sea"
+    },
+    {
+      "id": "true-ernest_hemingway-for_whom_the_bell_tolls",
+      "work": "For Whom the Bell Tolls",
+      "gold_author": "Ernest Hemingway",
+      "author_note": "Documented author of For Whom the Bell Tolls; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/For_Whom_the_Bell_Tolls"
+    },
+    {
+      "id": "true-fyodor_dostoevsky-crime_and_punishment",
+      "work": "Crime and Punishment",
+      "gold_author": "Fyodor Dostoevsky",
+      "author_note": "Documented author of Crime and Punishment; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Crime_and_Punishment"
+    },
+    {
+      "id": "true-leo_tolstoy-anna_karenina",
+      "work": "Anna Karenina",
+      "gold_author": "Leo Tolstoy",
+      "author_note": "Documented author of Anna Karenina; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Anna_Karenina"
+    },
+    {
+      "id": "true-william_makepeace_-vanity_fair",
+      "work": "Vanity Fair",
+      "gold_author": "William Makepeace Thackeray",
+      "author_note": "Documented author of Vanity Fair; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Vanity_Fair_(novel)"
+    },
+    {
+      "id": "true-emily_bront-wuthering_heights",
+      "work": "Wuthering Heights",
+      "gold_author": "Emily Brontë",
+      "author_note": "Documented author of Wuthering Heights; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Wuthering_Heights"
+    },
+    {
+      "id": "true-george_eliot-middlemarch",
+      "work": "Middlemarch",
+      "gold_author": "George Eliot",
+      "author_note": "Documented author of Middlemarch; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Middlemarch"
+    },
+    {
+      "id": "true-jack_london-the_call_of_the_wild",
+      "work": "The Call of the Wild",
+      "gold_author": "Jack London",
+      "author_note": "Documented author of The Call of the Wild; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Call_of_the_Wild"
+    },
+    {
+      "id": "true-ray_bradbury-fahrenheit_451",
+      "work": "Fahrenheit 451",
+      "gold_author": "Ray Bradbury",
+      "author_note": "Documented author of Fahrenheit 451; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Fahrenheit_451"
+    },
+    {
+      "id": "true-anthony_burgess-a_clockwork_orange",
+      "work": "A Clockwork Orange",
+      "gold_author": "Anthony Burgess",
+      "author_note": "Documented author of A Clockwork Orange; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/A_Clockwork_Orange_(novel)"
+    },
+    {
+      "id": "true-c_s_lewis-the_chronicles_of_narnia",
+      "work": "The Chronicles of Narnia",
+      "gold_author": "C.S. Lewis",
+      "author_note": "Documented author of The Chronicles of Narnia; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Chronicles_of_Narnia"
+    },
+    {
+      "id": "true-hermann_hesse-steppenwolf",
+      "work": "Steppenwolf",
+      "gold_author": "Hermann Hesse",
+      "author_note": "Documented author of Steppenwolf; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Steppenwolf_(novel)"
+    },
+    {
+      "id": "true-isabel_allende-the_house_of_the_spirits",
+      "work": "The House of the Spirits",
+      "gold_author": "Isabel Allende",
+      "author_note": "Documented author of The House of the Spirits; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_House_of_the_Spirits"
+    },
+    {
+      "id": "true-evelyn_waugh-brideshead_revisited",
+      "work": "Brideshead Revisited",
+      "gold_author": "Evelyn Waugh",
+      "author_note": "Documented author of Brideshead Revisited; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Brideshead_Revisited"
+    },
+    {
+      "id": "true-virginia_woolf-mrs_dalloway",
+      "work": "Mrs Dalloway",
+      "gold_author": "Virginia Woolf",
+      "author_note": "Documented author of Mrs Dalloway; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Mrs_Dalloway"
+    },
+    {
+      "id": "true-harper_lee-to_kill_a_mockingbird",
+      "work": "To Kill a Mockingbird",
+      "gold_author": "Harper Lee",
+      "author_note": "Documented author of To Kill a Mockingbird; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/To_Kill_a_Mockingbird"
+    },
+    {
+      "id": "true-john_maynard_keyne-the_general_theory_of_employme",
+      "work": "The General Theory of Employment, Interest and Money",
+      "gold_author": "John Maynard Keynes",
+      "author_note": "Documented author of The General Theory of Employment, Interest and Money; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_General_Theory_of_Employment,_Interest_and_Money"
+    },
+    {
+      "id": "true-friedrich_hayek-the_road_to_serfdom",
+      "work": "The Road to Serfdom",
+      "gold_author": "Friedrich Hayek",
+      "author_note": "Documented author of The Road to Serfdom; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Road_to_Serfdom"
+    },
+    {
+      "id": "true-richard_dawkins-the_selfish_gene",
+      "work": "The Selfish Gene",
+      "gold_author": "Richard Dawkins",
+      "author_note": "Documented author of The Selfish Gene; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Selfish_Gene"
+    },
+    {
+      "id": "true-stephen_hawking-a_brief_history_of_time",
+      "work": "A Brief History of Time",
+      "gold_author": "Stephen Hawking",
+      "author_note": "Documented author of A Brief History of Time; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/A_Brief_History_of_Time"
+    },
+    {
+      "id": "true-yuval_noah_harari-sapiens_a_brief_history_of_hum",
+      "work": "Sapiens: A Brief History of Humankind",
+      "gold_author": "Yuval Noah Harari",
+      "author_note": "Documented author of Sapiens: A Brief History of Humankind; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Sapiens:_A_Brief_History_of_Humankind"
+    },
+    {
+      "id": "true-daniel_kahneman-thinking_fast_and_slow",
+      "work": "Thinking, Fast and Slow",
+      "gold_author": "Daniel Kahneman",
+      "author_note": "Documented author of Thinking, Fast and Slow; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow"
+    },
+    {
+      "id": "true-malcolm_gladwell-outliers_the_story_of_success",
+      "work": "Outliers: The Story of Success",
+      "gold_author": "Malcolm Gladwell",
+      "author_note": "Documented author of Outliers: The Story of Success; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Outliers_(book)"
+    },
+    {
+      "id": "true-sigmund_freud-civilization_and_its_disconten",
+      "work": "Civilization and Its Discontents",
+      "gold_author": "Sigmund Freud",
+      "author_note": "Documented author of Civilization and Its Discontents; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Civilization_and_Its_Discontents"
+    },
+    {
+      "id": "true-jean_baudrillard-simulacra_and_simulation",
+      "work": "Simulacra and Simulation",
+      "gold_author": "Jean Baudrillard",
+      "author_note": "Documented author of Simulacra and Simulation; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/Simulacra_and_Simulation"
+    },
+    {
+      "id": "true-elizabeth_kolbert-the_sixth_extinction_an_unnatu",
+      "work": "The Sixth Extinction: An Unnatural History",
+      "gold_author": "Elizabeth Kolbert",
+      "author_note": "Documented author of The Sixth Extinction: An Unnatural History; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/The_Sixth_Extinction:_An_Unnatural_History"
+    }
   ]
 }

@@ -1,0 +1,60 @@
+{
+  "rewards": {
+    "falseGood": {
+      "label": "false",
+      "passed": true,
+      "denies": true,
+      "namesGold": true,
+      "hedges": 0,
+      "reward": 1.0
+    },
+    "falseBad": {
+      "label": "false",
+      "passed": false,
+      "denies": false,
+      "namesGold": false,
+      "hedges": 0,
+      "assertedForbidden": true
+    },
+    "trueGood": {
+      "label": "true",
+      "passed": true,
+      "denies": false,
+      "namesGold": true,
+      "hedges": 0,
+      "reward": 1.0
+    },
+    "trueBad": {
+      "label": "true",
+      "passed": true,
+      "denies": false,
+      "namesGold": false,
+      "hedges": 0,
+      "reward": 0.0
+    }
+  },
+  "checks": {
+    "deterministic": true,
+    "falseMonotone": true,
+    "trueMonotone": true,
+    "forbiddenNegative": true,
+    "verifierSeamInvoked": true,
+    "bounded": true,
+    "contaminationFree": true
+  },
+  "trainCases": 61,
+  "evalCases": 26,
+  "trainSealed": "f0d99b2b787f0a2d",
+  "evalSealed": "cd603c7048568d30",
+  "entityIntersection": [],
+  "gateTargetModules": [
+    "query_key_value",
+    "dense",
+    "dense_h_to_4h",
+    "dense_4to_h"
+  ],
+  "benchmark": "rlvr",
+  "mode": "mock-offline",
+  "claim": "reward-machinery invariants (NOT a capability claim)",
+  "liveClaimStatus": "Open — see agi-proof/failure-ledger.md rlvr-live-run-not-yet-gated-2026-06-21"
+}

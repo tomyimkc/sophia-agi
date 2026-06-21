@@ -125,10 +125,23 @@ def tradition_markers(tradition_id: str, traditions: dict) -> list[str]:
     return markers
 
 
-def author_markers(author_id: str) -> list[str]:
+def author_markers(author_id: str, *, expand_surnames: bool = True) -> list[str]:
     markers = [author_id, author_id.replace("_", " ")]
     markers.extend(AUTHOR_ALIASES.get(author_id, []))
-    return markers
+    # Canonical surface-form expansion (surname-only, name orderings, transliterations)
+    # so "Tolstoy wrote Crime and Punishment" fires when the record stores "Leo
+    # Tolstoy". SAFE ONLY where a co-required title alternation bounds false
+    # positives (provenance_faithful's regex). The substring-only score_case path
+    # has no title co-match, so it passes expand_surnames=False to avoid a bare
+    # surname counting as an author mention on any incidental occurrence.
+    if expand_surnames:
+        try:
+            from agent.entity_aliases import author_surface_forms
+
+            markers += author_surface_forms(author_id)
+        except Exception:  # never let the alias layer break the core matcher
+            pass
+    return list(dict.fromkeys(markers))
 
 
 def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[str]]:
@@ -139,7 +152,7 @@ def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[
     deny = case.get("mustDenyAttribution")
     if deny:
         author = deny["author"]
-        if not any(marker.lower() in text for marker in author_markers(author)):
+        if not any(marker.lower() in text for marker in author_markers(author, expand_surnames=False)):
             ok = False
             reasons.append(f"expected discussion of {author}")
         elif not matches_any(text, DENY_PATTERNS):
@@ -149,7 +162,7 @@ def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[
     affirm = case.get("mustAffirmAuthor")
     if affirm:
         author_id = affirm["author"]
-        if not any(marker.lower() in text for marker in author_markers(author_id)):
+        if not any(marker.lower() in text for marker in author_markers(author_id, expand_surnames=False)):
             ok = False
             reasons.append(f"expected mention of correct author '{author_id}'")
 

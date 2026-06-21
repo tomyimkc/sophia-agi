@@ -74,6 +74,14 @@ jobs:
         run: |
           python tests/test_cross_entity.py
           python tools/run_cross_entity.py
+      - name: RLVR (verifier-as-reward GRPO) offline invariants
+        run: |
+          python tests/test_rlvr.py
+          python tools/run_rlvr.py --model mock --dry-run
+      - name: Local-agent delta (alone vs +gate vs +MCP-tools) offline wiring
+        run: |
+          python tests/test_local_agent_delta.py
+          python tools/run_local_agent_delta.py --model mock
       - name: Corroboration-aware confidence (propagation semantics)
         run: |
           python tests/test_corroboration.py
@@ -120,6 +128,17 @@ jobs:
         run: |
           python tests/test_distill_council.py
           python tools/distill_council_traces.py --teacher mock --limit 4 --out /tmp/council_traces_ci.jsonl
+      - name: Unified uplift study (alone vs +gate/+council/+mcp-tools, one gate)
+        run: |
+          python tests/test_unified_uplift.py
+          python tools/run_unified_uplift.py --model mock --limit 8
+      - name: Gate logic upgrades (alias resolution, grounding, routing, graded, feedback)
+        run: |
+          python tests/test_entity_aliases.py
+          python tests/test_grounded_gate.py
+          python tests/test_claim_router.py
+          python tests/test_graded_decision.py
+          python tests/test_gate_feedback.py
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

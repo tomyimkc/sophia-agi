@@ -34,3 +34,25 @@ Sophia must not be marketed as AGI if any of these occur:
 - reviewers cannot reproduce reported local results;
 - long-horizon tasks require frequent human steering;
 - external benchmark results are absent but described as achieved.
+
+## RLVR experiment (verifier-as-reward GRPO)
+
+A separate, narrower pre-registration for `tools/run_rlvr.py` (RLVR: the
+deterministic provenance verifier IS the GRPO reward). See
+[docs/09-Agent/RLVR-Experiment.md](../docs/09-Agent/RLVR-Experiment.md).
+
+- **Pre-registered claim (LIVE, gated):** on the held-out entity-disjoint split,
+  mean reward / pass@1 rises vs the untrained base adapter at ~0 false-positive
+  regression. Validated only under the no-overclaim gate
+  (`provenance_bench.aggregate._is_validated`: notMock + ≥2 judge families +
+  Cohen's kappa ≥ 0.40 + ≥3 runs + 95% bootstrap CI excludes 0).
+- **Offline invariants (asserted in CI today):** reward is deterministic,
+  monotone in the correct direction, a forbidden-assertion completion scores
+  negative, the `agent.verifiers` seam is actually invoked, the reward is bounded
+  in [-1, 1], and the train/eval split is contamination-free (entity-disjoint).
+  `python tools/run_rlvr.py --model mock` exits non-zero if any fail.
+- **Falsification:** the RLVR claim must not be reported as met if (a) a single
+  run or a `mock` run is the only evidence; (b) train-split numbers are reported
+  as headline; (c) the held-out split is not entity-disjoint; or (d) the gate
+  (`_is_validated`) is not cleared. It is explicitly **not** an AGI claim — RLVR
+  improves pass@1 within the verifier's reach, not the base model's capacity.

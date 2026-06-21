@@ -101,6 +101,7 @@ def check_response(
     legal_resolver=None,
     legal_judge=None,
     legal_strict: bool = True,
+    route_claims: bool = False,
 ) -> dict:
     """Post-generation epistemic gate.
 
@@ -145,12 +146,28 @@ def check_response(
 
     sector = _detect_sector(question)
 
+    # Per-claim routing (opt-in): decompose the answer into atomic claims, classify
+    # each, and run the matching verifier — so a claim type the fixed panel above
+    # didn't target is still gated, and violations are attributed to the claim.
+    routed = None
+    if route_claims:
+        try:
+            from agent.claim_router import route_and_check
+
+            routed = route_and_check(text, records=None, sources=sources, legal_resolver=legal_resolver)
+            checks.extend({"name": "routed", **c} for c in routed.get("perClaim", []))
+            violations.extend(routed.get("violations") or [])
+        except Exception:
+            routed = None
+
     passed = len(warnings) == 0
     if strict_attribution and checks and not attribution_ok:
         passed = False
     if legal_strict and legal and legal["violations"]:
         passed = False
     if numeric and numeric["violations"]:
+        passed = False
+    if routed and routed.get("violations"):
         passed = False
 
     return {
@@ -164,4 +181,5 @@ def check_response(
         "sector": sector,
         "legal": legal,
         "numeric": numeric,
+        "routed": routed,
     }

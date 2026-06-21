@@ -9,7 +9,9 @@ _Last updated: 2026-06-21_
 
 ## Validated results
 
-_None yet._ No run has cleared the gate (multi-judge consensus + agreement + ≥3 runs + CIs). This is intentional and honest: see the illustrative section and the audit below for why a single judge is not enough.
+| Model | Judges | Agreement | Runs | Halluc. alone | Halluc. gated | Δ (95% CI) | FP cost | Coverage |
+|---|---|---|---|---|---|---|---|---|
+| ollama:dolphin-llama3:8b | consensus: openrouter:deepseek/deepseek-chat + openrouter:meta-llama/llama-3.3-70b-instruct (2 families) | — | 3 | 36.1% | 23.6% | 12.5% [5.6%, 19.4%] | 0.0% | 34.6% |
 
 ## Illustrative only (not headline-grade)
 

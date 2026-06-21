@@ -50,3 +50,6 @@ training/lora/checkpoints/
 training/lab/reviews/*.json
 training/lab/judgements/*.json
 training/lab/distill/distill-*.json
+
+# Generated GitHub Wiki staging dir (tools/build_github_wiki.py)
+_wiki_build/
