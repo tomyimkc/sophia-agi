@@ -5,6 +5,10 @@ __pycache__/
 .venv-gpu/
 venv/
 .env
+.env.*
+!.env.example
+*.key
+*.pem
 rag/index/embeddings.npz
 benchmark/model_runs/*.log
 train-error.log

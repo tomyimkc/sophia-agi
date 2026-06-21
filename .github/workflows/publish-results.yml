@@ -1,0 +1,61 @@
+name: publish-results
+
+# Publishes the public benchmark page tamper-evidently: every run is tied to a
+# commit SHA + run URL, uses NO secrets, and makes NO real model calls (offline
+# mock only). Real-model "validated" numbers are produced locally by the
+# maintainer and curated into agi-proof/benchmark-results/published-results.json.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "agi-proof/benchmark-results/published-results.json"
+      - "provenance_bench/**"
+      - "tools/build_results_page.py"
+      - "tools/run_provenance_delta.py"
+      - ".github/workflows/publish-results.yml"
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 6 * * 1" # weekly heartbeat
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Offline benchmark tests (no secrets, no model calls)
+        run: |
+          python tests/test_provenance_bench.py
+          python tests/test_verifiers.py
+
+      - name: Offline mock benchmark (plumbing only)
+        run: python tools/run_provenance_delta.py --models mock --runs 2
+
+      - name: Verify RESULTS.md matches curated results (drift gate)
+        run: python tools/build_results_page.py --check
+
+      - name: Stamp provenance (commit + run link)
+        run: |
+          {
+            echo "commit: ${GITHUB_SHA}";
+            echo "run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}";
+            echo "built: $(date -u +%FT%TZ)";
+          } > results-provenance.txt
+          cat results-provenance.txt
+
+      - name: Upload public results bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: provenance-delta-results
+          path: |
+            RESULTS.md
+            agi-proof/benchmark-results/published-results.json
+            results-provenance.txt
+          retention-days: 90

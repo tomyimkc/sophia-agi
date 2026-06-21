@@ -50,7 +50,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--models", default="mock", help="comma list of model specs (default: mock)")
     ap.add_argument("--on-fail", default="repair", help="guarded loop mode: repair|abstain|hedge|passthrough")
     ap.add_argument("--runs", type=int, default=1, help="runs per model; >1 enables bootstrap CIs")
-    ap.add_argument("--llm-judge", default=None, help="model spec for an independent LLM-judge (else lexical screen)")
+    ap.add_argument("--llm-judge", default=None, help="model spec for a single independent LLM-judge (else lexical screen)")
+    ap.add_argument("--judges", default=None, help="comma list of >=2 judge specs for a CONSENSUS judge (the validated-result gate)")
     ap.add_argument("--limit", type=int, default=0, help="cap number of cases (0 = all)")
     ap.add_argument("--emit-dataset", default=None, help="also write the case set as JSONL to this path")
     ap.add_argument("--out", default=str(OUT_JSON), help="report JSON path")
@@ -65,7 +66,14 @@ def main(argv: list[str] | None = None) -> int:
         print(f"wrote {n} cases -> {args.emit_dataset}")
 
     llm_judge_fn = None
-    if args.llm_judge:
+    judge_specs: list[str] | None = None
+    if args.judges:
+        from provenance_bench.consensus import make_consensus_judge
+
+        judge_specs = [s.strip() for s in args.judges.split(",") if s.strip()]
+        llm_judge_fn = make_consensus_judge(judge_specs)
+        print(f"consensus judge over {len(judge_specs)} models: {', '.join(judge_specs)}")
+    elif args.llm_judge:
         from provenance_bench.llm_judge import make_llm_judge
 
         llm_judge_fn = make_llm_judge(args.llm_judge)
@@ -78,7 +86,10 @@ def main(argv: list[str] | None = None) -> int:
             run_cases(cases, gen, on_fail=args.on_fail, records=gate_records, llm_judge_fn=llm_judge_fn)
             for _ in range(max(1, args.runs))
         ]
-        scores = aggregate.aggregate_runs(runs) if args.runs > 1 else score.score(runs[0])
+        scores = (
+            aggregate.aggregate_runs(runs, model_spec=spec, judges=judge_specs)
+            if args.runs > 1 else score.score(runs[0])
+        )
         per_model[spec] = {
             "scores": scores,
             "model": spec,
@@ -87,10 +98,13 @@ def main(argv: list[str] | None = None) -> int:
             "judgeMethod": runs[0][0]["judge_method"] if runs and runs[0] else "lexical",
         }
         ci = f" CI{scores['ciDelta']}" if "ciDelta" in scores else ""
+        agr = scores.get("judgeAgreement") if isinstance(scores, dict) else None
+        agr_s = f" judge-agree={agr['pairwiseAgreement']:.0%}" if agr and agr.get("pairwiseAgreement") is not None else ""
+        tag = " [VALIDATED]" if scores.get("validated") else " [illustrative]"
         print(
             f"  {spec}: halluc alone={scores['hallucinationRateAlone']:.1%} "
-            f"gated={scores['hallucinationRateGated']:.1%} Δ={scores['delta']:.1%}{ci} "
-            f"FP-cost={scores['falsePositiveCost']:.1%} coverage={scores['coverageRecall']:.1%}"
+            f"gated={scores['hallucinationRateGated']:.1%} Δ={scores['delta']:.1%}{ci}{agr_s} "
+            f"FP-cost={scores['falsePositiveCost']:.1%} coverage={scores['coverageRecall']:.1%}{tag}"
         )
 
     rpt = report.build_report(per_model, run_at=datetime.now(timezone.utc).isoformat(timespec="seconds"))

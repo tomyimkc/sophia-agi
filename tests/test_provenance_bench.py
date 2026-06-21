@@ -203,6 +203,54 @@ def test_aggregate_runs_ci() -> None:
     assert agg["perRunDelta"] == [0.0, 1.0]
 
 
+def test_consensus_majority_and_agreement() -> None:
+    from provenance_bench.consensus import make_consensus_judge, percent_agreement
+    from provenance_bench.judge import Judgment
+
+    j_yes = lambda a, c: Judgment(False, True, False)
+    j_no = lambda a, c: Judgment(False, False, True)
+    cj = make_consensus_judge(judge_fns=[j_yes, j_yes, j_no])
+    v = cj("x", FALSE_CASE)
+    assert v.hallucinated is True and v.method == "consensus:3"
+    assert v.votes and len(v.votes) == 3
+    agr = percent_agreement([v.votes])
+    assert agr["judges"] == 3 and abs(agr["pairwiseAgreement"] - 1 / 3) < 1e-3
+    # requires >= 2 judges
+    try:
+        make_consensus_judge(judge_fns=[j_yes])
+        assert False, "expected ValueError"
+    except ValueError:
+        pass
+
+
+def test_consensus_flows_into_aggregate() -> None:
+    from provenance_bench.consensus import make_consensus_judge
+
+    cj = make_consensus_judge(judge_fns=[
+        lambda a, c: judge_answer(a, c),                 # lexical
+        lambda a, c: judge_answer(a, c),                 # lexical (agrees)
+    ])
+    runs = [
+        run_cases([FALSE_CASE, TRUE_CASE], _gen("Yes, Alice wrote the Project Phoenix Charter."),
+                  on_fail="repair", llm_judge_fn=cj, **_run_kw())
+        for _ in range(3)
+    ]
+    # no real model_spec/judges -> the hardened gate must REFUSE to validate
+    agg = aggregate.aggregate_runs(runs)
+    assert agg["judgeAgreement"] is not None
+    assert agg["judgeAgreement"]["pairwiseAgreement"] == 1.0   # identical judges always agree
+    assert agg["judgeAgreement"]["meanPairwiseKappa"] == 1.0
+    assert agg["validated"] is False                           # mock/no-family judges can't validate
+    assert agg["validatedChecks"]["notMock"] is False
+
+    # a real-looking run (distinct families, kappa=1, 3 runs, CI excludes 0) validates
+    agg2 = aggregate.aggregate_runs(
+        runs, model_spec="ollama:dolphin-llama3:8b", judges=["anthropic:x", "openai:y"]
+    )
+    assert agg2["validated"] is True
+    assert all(agg2["validatedChecks"].values())
+
+
 def test_report_build_and_markdown() -> None:
     per_model = {"mock": {"scores": score.score(
         run_cases([FALSE_CASE, TRUE_CASE], _gen("Yes, Alice wrote the Project Phoenix Charter."),
@@ -231,6 +279,8 @@ def main() -> int:
     test_runner_true_case_no_false_positive()
     test_score_metrics()
     test_aggregate_runs_ci()
+    test_consensus_majority_and_agreement()
+    test_consensus_flows_into_aggregate()
     test_report_build_and_markdown()
     print("test_provenance_bench: OK")
     return 0

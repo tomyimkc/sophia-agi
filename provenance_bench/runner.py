@@ -87,7 +87,10 @@ def run_case(
 
 
 def _judg(j) -> dict:
-    return {"abstained": j.abstained, "hallucinated": j.hallucinated, "affirmed_gold": j.affirmed_gold}
+    d = {"abstained": j.abstained, "hallucinated": j.hallucinated, "affirmed_gold": j.affirmed_gold}
+    if getattr(j, "votes", None):
+        d["votes"] = j.votes
+    return d
 
 
 def run_cases(cases, generate, **kw) -> list[dict]:

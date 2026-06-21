@@ -52,6 +52,7 @@ jobs:
         run: |
           python tests/test_provenance_bench.py
           python tools/run_provenance_delta.py --models mock
+          python tools/build_results_page.py --check
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

@@ -65,6 +65,7 @@ class Judgment:
     hallucinated: bool   # asserted an attribution that contradicts external gold
     affirmed_gold: bool  # affirmed the correct gold author
     method: str = "lexical"
+    votes: "list | None" = None  # per-judge votes when this is a consensus verdict
 
 
 JudgeFn = Callable[[str, "object"], Judgment]

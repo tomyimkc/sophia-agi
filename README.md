@@ -21,6 +21,7 @@ Sophia is **not claimed as proven AGI**. The stronger and more defensible public
 The proof package defines the operational AGI definition, pre-registered thresholds, current benchmark evidence, external benchmark gaps, ablation plan, hidden-reviewer protocol, long-horizon autonomy logs, learning-under-shift protocol, failure ledger, and third-party replication checklist.
 
 - Evidence package: [agi-proof/README.md](agi-proof/README.md)
+- **Public results (honest, gated):** [RESULTS.md](RESULTS.md) — only multi-judge-validated numbers headline; transparency boundary in [SECURITY.md](SECURITY.md)
 - Machine-readable manifest: [agi-proof/evidence-manifest.json](agi-proof/evidence-manifest.json)
 - Religion figure council: [docs/08-Domains/Religion-Figure-Council.md](docs/08-Domains/Religion-Figure-Council.md)
 - Public thesis chapter: https://tomyimkc.github.io/sophia-agi/#agi-proof

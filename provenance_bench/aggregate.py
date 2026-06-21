@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import random
 
-from provenance_bench import score
+from provenance_bench import consensus, score
 
 
 def _ci(xs: list[float], alpha: float = 0.05) -> list[float]:
@@ -21,8 +21,25 @@ def _ci(xs: list[float], alpha: float = 0.05) -> list[float]:
     return [round(lo, 4), round(hi, 4)]
 
 
-def aggregate_runs(runs: list[list[dict]], *, n_boot: int = 2000, seed: int = 0) -> dict:
-    """``runs``: a list of per-run result lists (each from ``runner.run_cases``)."""
+KAPPA_FLOOR = 0.40   # "moderate" agreement, the minimum for a validated headline
+
+
+def _distinct_families(judges: "list[str] | None") -> int:
+    """Count distinct provider families among judge specs ('anthropic:..' -> 'anthropic')."""
+    if not judges:
+        return 0
+    return len({j.split(":", 1)[0].strip().lower() for j in judges if j and j.strip()})
+
+
+def aggregate_runs(
+    runs: list[list[dict]], *, n_boot: int = 2000, seed: int = 0,
+    model_spec: "str | None" = None, judges: "list[str] | None" = None,
+) -> dict:
+    """``runs``: a list of per-run result lists (each from ``runner.run_cases``).
+
+    ``model_spec``/``judges`` let the validated-gate check that the run was a real
+    multi-family-judge run (not mock/lexical/single-judge).
+    """
     per_run = [score.score(r) for r in runs]
 
     # paired false-case observations across all runs (raw vs gated hallucination)
@@ -57,6 +74,10 @@ def aggregate_runs(runs: list[list[dict]], *, n_boot: int = 2000, seed: int = 0)
             boot_a.append(a); boot_g.append(g); boot_d.append(d)
     pt = stat(false_pairs) if n else (0.0, 0.0, 0.0)
 
+    # inter-judge agreement, when a consensus judge attached per-judge votes
+    vote_lists = [res["raw"]["votes"] for r in runs for res in r if res["raw"].get("votes")]
+    agreement = consensus.percent_agreement(vote_lists)
+
     return {
         "runs": len(runs),
         "falseObs": n,
@@ -70,4 +91,22 @@ def aggregate_runs(runs: list[list[dict]], *, n_boot: int = 2000, seed: int = 0)
         "falsePositiveCost": round(broke / correct_alone, 4) if correct_alone else 0.0,
         "coverageRecall": round(fixed / bad_alone, 4) if bad_alone else 0.0,
         "coverageDetail": {"hallucinatedAlone": bad_alone, "fixedByGate": fixed},
+        "judgeAgreement": agreement,
+        "validated": _is_validated(runs, agreement, model_spec, judges, _ci(boot_d) if boot_d else [0.0, 0.0]),
+        "validatedChecks": _validated_checks(runs, agreement, model_spec, judges, _ci(boot_d) if boot_d else [0.0, 0.0]),
     }
+
+
+def _validated_checks(runs, agreement, model_spec, judges, ci_delta) -> dict:
+    kappa = (agreement or {}).get("meanPairwiseKappa")
+    return {
+        "notMock": bool(model_spec) and "mock" not in (model_spec or ""),
+        "multiFamilyJudges": _distinct_families(judges) >= 2,
+        "kappaAboveFloor": kappa is not None and kappa >= KAPPA_FLOOR,
+        "atLeast3Runs": len(runs) >= 3,
+        "ciExcludesZero": bool(ci_delta) and (ci_delta[0] > 0 or ci_delta[1] < 0),
+    }
+
+
+def _is_validated(runs, agreement, model_spec, judges, ci_delta) -> bool:
+    return all(_validated_checks(runs, agreement, model_spec, judges, ci_delta).values())

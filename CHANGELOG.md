@@ -2,6 +2,36 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.6] - 2026-06-21
+
+### Added — public results, transparently and safely
+
+Makes test/benchmark results public *the right way* — three bright lines:
+publish reproducible code + methodology + audited aggregates; never publish
+secrets or hidden-eval prompts; never headline an un-validated number.
+
+- **No-overclaim gate (consensus judge)** — `provenance_bench/consensus.py`:
+  majority vote over ≥2 independent judges (`--judges a,b,c`), reporting raw
+  pairwise agreement AND chance-corrected **Cohen's κ**. `aggregate.py`'s
+  `validated` flag is a real conjunction (`validatedChecks`): not mock, judges
+  from ≥2 distinct families, **κ ≥ 0.40**, ≥3 runs, and a CI that excludes zero —
+  it refuses to rubber-stamp. A single judge is no longer enough (our audit found
+  one judge ~2× off).
+- **Public results page** — `agi-proof/benchmark-results/published-results.json`
+  (curated; the ONLY source of published numbers) renders `RESULTS.md` via
+  `tools/build_results_page.py`. Validated section is honestly empty for now;
+  illustrative figures carry caveats. `--check` is a CI drift gate.
+- **Publishing CI** — `.github/workflows/publish-results.yml`: offline-only (no
+  secrets, no model calls), runs tests + mock benchmark, verifies the page,
+  stamps commit+run provenance, uploads the results bundle. Drift check also
+  wired into the main CI.
+- **Security boundary** — `SECURITY.md` documents the public/private line and the
+  gate; `.gitignore` hardened (`.env.*`, `*.key`, `*.pem`). Verified: the
+  DeepSeek key pasted earlier never entered git history; `private/hidden-evals/`
+  stays ignored.
+- Tests: consensus majority + inter-judge agreement + aggregate flow added to
+  `tests/test_provenance_bench.py` (CI-wired).
+
 ## [0.7.5] - 2026-06-21
 
 ### Added / Changed — gate coverage, confidence intervals, independent judge
