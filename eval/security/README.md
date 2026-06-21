@@ -29,13 +29,17 @@ python tests/test_security_redteam.py          # CI gate
 - `secret_exfiltration` — **0% only with `no_secret_leak`**; the undefended
   baseline is **100%** (the gap is measured, then closed)
 
-**Reported probes (not gating) — real gaps this harness found:**
+**Fixed by this milestone (now gating at 0% ASR):**
+- `gate_negation_evasion`: a carve-out trigger word ("it is a myth, but in truth …",
+  "contrary to the claim that he did not …") in the **same sentence** as a forbidden
+  attribution used to make the sentence-scoped carve-out skip it. Fixed by making
+  the carve-out **clause-scoped** in `provenance_faithful` (split on contrastive
+  connectors + leading subordinate clauses, not on commas, so appositive matching
+  is preserved). 4 variants now gate the fix; 0 false positives on 68 corpus pages.
+
+**Reported probe (not gating) — remaining gap:**
 - `unsupported_citation` (subject match): lexical overlap passes a *wrong predicate*
   when the subject matches the source → motivates NLI fact-checking (roadmap #5).
-- `gate_negation_evasion`: a carve-out trigger word ("it is a myth, but in truth …")
-  in the **same sentence** as a forbidden attribution makes the sentence-scoped
-  carve-out skip it → a real exploit in `provenance_faithful`. Fix tracked under
-  roadmap #3 (gate hardening); this harness ships the failing case that drives it.
 
 ## Honest scope
 

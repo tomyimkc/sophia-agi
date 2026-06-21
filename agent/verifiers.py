@@ -374,6 +374,36 @@ def _load_provenance_records() -> dict:
     return records
 
 
+# Clause boundaries for SCOPING the negation/correction carve-out. We split a
+# sentence into clauses on contrastive connectors and a leading subordinate clause,
+# but NOT on bare commas — commas hold appositives the gate must keep matching
+# ("Enoch, the great-grandson of Adam, wrote ..."). This closes the negation-
+# evasion the red-team found: a correction clause ("it is a myth, but ...") can no
+# longer shield an assertion clause ("... Confucius wrote the Dao De Jing").
+_CLAUSE_SPLIT = re.compile(
+    r"\bbut\b|\bhowever\b|\byet\b|\bnevertheless\b|\bnonetheless\b|\bin truth\b|"
+    r"\bin fact\b|\bin reality\b|\bactually\b|\bindeed\b|\brather\b|\binstead\b|"
+    r"\btruth is\b|;|—|–"
+)
+_LEAD_SUBORD = re.compile(
+    r"^\s*(?:contrary to|despite|although|though|while|whereas|unlike|far from|"
+    r"notwithstanding|regardless of)\b[^,]{0,100},"
+)
+
+
+def _carveout_clauses(low: str) -> list:
+    """Split a lowercased sentence into carve-out scopes: peel a leading
+    subordinate clause (``Contrary to ... that he did not, X wrote Y``) then split
+    on contrastive connectors. Commas inside the body are preserved so appositive
+    author→title patterns still match."""
+    head: list = []
+    m = _LEAD_SUBORD.match(low)
+    if m:
+        head = [low[: m.end()]]
+        low = low[m.end():]
+    return [c for c in (head + _CLAUSE_SPLIT.split(low)) if c and c.strip()]
+
+
 def provenance_faithful(records: "dict | None" = None) -> Verifier:
     """Fail if the text asserts an attribution forbidden by a record's
     doNotAttributeTo — Sophia's core "don't merge lineages" rule, machine-checked.
@@ -458,11 +488,15 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
             low = sentence.lower()
             if not low.strip():
                 continue
-            if matches_any(low, DENY_PATTERNS) or matches_any(low, MYTH_PATTERNS) or matches_any(low, extra_deny):
-                continue  # the correction/negation/instruction case — allowed
-            for rid, author, patterns in specs:
-                if any(p.search(low) for p in patterns):
-                    violations.append(f"{author} -> {rid}")
+            # Carve-out is CLAUSE-scoped: a correction/negation only excuses the
+            # clause it lives in, so it cannot shield an asserting clause in the
+            # same sentence (the negation-evasion the red-team surfaced).
+            for clause in _carveout_clauses(low):
+                if matches_any(clause, DENY_PATTERNS) or matches_any(clause, MYTH_PATTERNS) or matches_any(clause, extra_deny):
+                    continue  # the correction/negation/instruction case — allowed
+                for rid, author, patterns in specs:
+                    if any(p.search(clause) for p in patterns):
+                        violations.append(f"{author} -> {rid}")
         violations = sorted(set(violations))
         if violations:
             return _fail([f"forbidden attribution asserted: {v}" for v in violations], {"violations": violations})

@@ -79,6 +79,29 @@ def test_provenance_faithful() -> None:
     assert ver('Many summaries say "Confucius wrote the Dao De Jing", but that is wrong elsewhere.', None, {})["passed"] is True
 
 
+def test_provenance_negation_evasion_is_clause_scoped() -> None:
+    # The carve-out must be CLAUSE-scoped: a correction/negation in one clause may
+    # not shield an asserting clause in the same sentence (red-team finding).
+    records = {"dao_de_jing": {"canonicalTitleEn": "Dao De Jing", "doNotAttributeTo": ["confucius"]}}
+    ver = v.provenance_faithful(records)
+    # exploits — the assertion clause carries no negation → must FAIL (be caught)
+    for evasion in [
+        "It is a common myth, but in truth Confucius wrote the Dao De Jing.",
+        "Contrary to the claim that he did not, Confucius wrote the Dao De Jing.",
+        "Some say Laozi, but actually Confucius wrote the Dao De Jing.",
+        "Although it is disputed, Confucius wrote the Dao De Jing.",
+    ]:
+        assert ver(evasion, None, {})["passed"] is False, f"evasion not caught: {evasion}"
+    # genuine corrections — the negation is in the SAME clause as the attribution → still pass
+    for ok in [
+        "Confucius did not write the Dao De Jing.",
+        "It is a myth that Confucius wrote the Dao De Jing.",
+        "Confucius did not write the Dao De Jing, but Laozi did.",
+        "The Dao De Jing is traditionally attributed to Laozi, not Confucius.",
+    ]:
+        assert ver(ok, None, {})["passed"] is True, f"false positive on correction: {ok}"
+
+
 def test_provenance_faithful_real_corpus_clean() -> None:
     # zero false positives across the committed wiki + disputes (the #1 risk)
     from okf import frontmatter
@@ -175,6 +198,7 @@ def main() -> int:
     test_verifier_registry()
     test_combinators()
     test_provenance_faithful()
+    test_provenance_negation_evasion_is_clause_scoped()
     test_provenance_faithful_real_corpus_clean()
     test_okf_verifiers()
     test_untrusted_wrap_and_detect()

@@ -29,22 +29,24 @@ arithmetic, topic-mismatch citation. **Secret exfiltration: 100% baseline → 0%
 with the new deterministic `no_secret_leak` tripwire (`agent/verifiers.py`) and the
 `confidentiality` policy (`agent/policies.py`).
 
-**Vulnerabilities the harness found (reported, drive later milestones):**
-1. *Citation subject-match* — lexical overlap passes a wrong predicate when the
-   subject matches the source → **M-#5** (NLI fact-checking).
-2. *Negation-evasion in `provenance_faithful`* — a carve-out trigger word ("it is
-   a myth, but in truth …", "contrary to the claim that he did not …") in the
-   **same sentence** as a forbidden attribution makes the sentence-scoped carve-out
-   skip it → **M-#3** (gate hardening). The failing red-team case is committed and
-   will drive the fix.
+**Vulnerabilities the harness found:**
+1. *Negation-evasion in `provenance_faithful`* — **FIXED**. A carve-out trigger word
+   ("it is a myth, but in truth …", "contrary to the claim that he did not …") in the
+   **same sentence** as a forbidden attribution made the sentence-scoped carve-out
+   skip it. Fix: the carve-out is now **clause-scoped** (split on contrastive
+   connectors + a leading subordinate clause, never on commas, so appositive
+   matching is preserved). 4 variants now gate at 0% ASR; 0 false positives on 68
+   corpus pages; locked by `test_verifiers.py`.
+2. *Citation subject-match* — lexical overlap passes a wrong predicate when the
+   subject matches the source → still open, **M-#5** (NLI fact-checking).
 
 ## Next milestones (not "AGI")
 
-- **M2 — "Prove it, then move it":** harden the carve-out (close the negation-
-  evasion the red-team found), then the CaMeL-style data-flow firewall (#2) with
-  HITL on shell/git/file writes. DoD: red-team ASR <2% incl. the negation probes;
-  utility within ~10 pts; no tainted→write/egress path reachable without an
-  approved capability.
+- **M2 — "Move the boundary out of the prompt":** the CaMeL-style data-flow
+  firewall (#2) with capabilities + taint and HITL on shell/git/file writes (the
+  carve-out negation-evasion is already closed). DoD: red-team ASR <2%; utility
+  within ~10 pts; no tainted→write/egress path reachable without an approved
+  capability.
 - **M3 — "Honest labels":** Biba integrity axis + bounded/logged declassification
   (#3) and corroboration-aware confidence (#4), with a label-creep dashboard and an
   ECE calibration report.

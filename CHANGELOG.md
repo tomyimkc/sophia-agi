@@ -2,6 +2,27 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.13] - 2026-06-21
+
+### Fixed — negation-evasion in the provenance gate (red-team finding)
+
+The M1 red-team found a real exploit in `agent/verifiers.py:provenance_faithful`:
+the negation/correction carve-out was **sentence-scoped**, so a trigger word in
+one clause ("it is a myth, but in truth Confucius wrote the Dao De Jing";
+"contrary to the claim that he did not, …") shielded an asserting clause in the
+same sentence (100% ASR on those probes).
+
+- **Fix:** the carve-out is now **clause-scoped** — `_carveout_clauses` splits a
+  sentence on contrastive connectors (but/however/yet/in truth/actually/…) and a
+  leading subordinate clause (contrary to/despite/although/…), but **not on commas**,
+  so the appositive author→title matching the gate relies on is preserved. A
+  correction only excuses the clause it lives in.
+- **Locked in:** 4 negation-evasion variants are now **gating at 0% ASR** in the
+  red-team; `test_verifiers.py` gains `test_provenance_negation_evasion_is_clause_scoped`
+  (exploits caught, genuine corrections still pass). 0 false positives across the
+  68 committed corpus/dispute pages (`lint_wiki_provenance`).
+- Remaining red-team probe (open): citation subject-match → NLI fact-checking (roadmap M-#5).
+
 ## [0.7.12] - 2026-06-21
 
 ### Added — M1 injection / containment red-team + first confidentiality gate
