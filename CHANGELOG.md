@@ -2,6 +2,28 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.24] - 2026-06-21
+
+### Added — #7 LoRA leakage guard + contamination-controlled splits
+
+The last open original-review item (memorization is a leakage liability).
+
+- **Leakage guard** (`agent/training_safety.py`): a deterministic pre-export filter
+  drops any example that is metadata-flagged (`classification` ∈ confidential/secret/
+  restricted, or `doNotTrain`), matches a PII pattern (email/SSN/card/phone/secret-kv),
+  or contains a known secret value. **Wired into `tools/export_training_jsonl.py`** so
+  the real corpus export is guarded — 0 false positives on the 518-example public
+  corpus, and a planted confidential example is dropped. Plus a **canary harness**
+  (`make_canary`, `canary_extraction_rate`) for a post-train regurgitation test.
+- **Contamination control** (`eval/contamination.py`): word-n-gram shingle containment
+  catches near-duplicate / paraphrased train↔eval overlap that the by-ID holdout misses.
+- Falsifiable invariants (`tools/run_training_safety.py`): real corpus has no unsafe
+  example, confidential example dropped, near-duplicate flagged, disjoint clean. Tests
+  `test_training_safety.py`, `test_contamination.py`; CI wired.
+- **Honest scope:** the canary harness measures extraction but cannot run a real LoRA
+  in CI; membership-inference not implemented; PII regexes are conservative (precision
+  over exhaustive recall).
+
 ## [0.7.23] - 2026-06-21
 
 ### Fixed — #4 corroboration review findings (soundness + honest baseline)

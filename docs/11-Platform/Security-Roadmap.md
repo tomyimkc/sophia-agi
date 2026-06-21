@@ -12,7 +12,7 @@ the *code* contains it. Ranked by leverage (impact ÷ effort).
 | 4 | Corroboration-aware confidence (Dempster–Shafer / log-odds) | Med | S–M | **shipped (#4)** — `agent/corroboration.py`; complements `okf` min-over-chain |
 | 5 | External fact-checking (NLI cross-encoder) as a `claim_supported` verifier | Med-High | M | **shipped (M-#5)** — `agent/verifiers.claim_supported` + `nli` policy; closes the citation subject-match probe (model opt-in) |
 | 6 | Tool least-privilege + dual-LLM (privileged planner / quarantined extractor) | High | M | planned |
-| 7 | LoRA leakage guard + contamination-controlled eval splits | Med | S–M | planned |
+| 7 | LoRA leakage guard + contamination-controlled eval splits | Med | S–M | **shipped (#7)** — `agent/training_safety.py`, `eval/contamination.py`; guard wired into the export |
 
 Trade-offs are real and stated: CaMeL-style enforcement (#2) costs ~7 utility
 points on AgentDojo; Dempster–Shafer misbehaves under high conflict (cap it);
@@ -59,6 +59,27 @@ with the new deterministic `no_secret_leak` tripwire (`agent/verifiers.py`) and 
    corpus pages; locked by `test_verifiers.py`.
 2. *Citation subject-match* — lexical overlap passes a wrong predicate when the
    subject matches the source → still open, **M-#5** (NLI fact-checking).
+
+## #7 — shipped: LoRA leakage guard + contamination control
+
+Anything in a fine-tuned model's weights is extractable, so the rule is: never
+train on confidential data, and never let eval leak into train.
+
+- **Leakage guard** (`agent/training_safety.py`): a deterministic pre-export filter
+  drops any example that is metadata-flagged (`classification` ∈ confidential/
+  secret/restricted, or `doNotTrain`), matches a PII pattern (email/SSN/card/phone/
+  secret-kv), or contains a known secret value — **wired into
+  `tools/export_training_jsonl.py`** so it guards the real corpus. 0 false positives
+  on the 518-example public corpus; a planted confidential example is dropped. Plus
+  a **canary harness** (`make_canary` / `canary_extraction_rate`) for a direct
+  post-train regurgitation test the maintainer runs against the trained LoRA.
+- **Contamination control** (`eval/contamination.py`): word-n-gram **shingle**
+  containment catches *near-duplicate / paraphrased* train↔eval overlap that the
+  existing by-ID holdout (`prepare_lora_dataset.py`) misses; a planted near-dup is
+  flagged, disjoint text is clean.
+- **Honest scope:** the canary harness *measures* extraction but cannot run a real
+  LoRA in CI (the maintainer runs it post-train); membership-inference is not
+  implemented; PII regexes are conservative (high precision, not exhaustive recall).
 
 ## Next milestones (not "AGI")
 
