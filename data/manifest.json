@@ -1,5 +1,5 @@
 {
-  "version": "0.7.32",
+  "version": "0.7.33",
   "trainingExamples": 518,
   "domains": [
     "philosophy",
@@ -285,6 +285,8 @@
       "gateClaimRouter": "agent/claim_router.py",
       "gateGradedDecision": "agent/graded_decision.py",
       "gateActiveLearning": "agent/gate_feedback.py",
+      "gateTemporalVerifier": "agent/temporal_verifier.py",
+      "gateActiveLearningPromotion": "tools/promote_pending.py",
       "religionFigureCouncil": "docs/08-Domains/Religion-Figure-Council.md",
       "codingCouncil": "docs/08-Domains/Coding-Council.md"
     },
