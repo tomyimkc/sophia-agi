@@ -18,14 +18,18 @@ from typing import Callable
 from agent.legal_citations import normalize_citation
 from agent.legal_sources.base import Fetch, Resolution, http_get, unverified
 from agent.legal_sources.cache import ResolutionCache
+from agent.legal_sources.courtlistener import CourtListenerSource
 from agent.legal_sources.elegislation import ELegislationSource
 from agent.legal_sources.hklii import HKLIISource
+from agent.legal_sources.tna import TNASource
 
 MODES = {"off", "cache", "live"}
 
 
 def default_sources() -> list:
-    return [ELegislationSource(), HKLIISource()]
+    # Routed by can_resolve: e-Legislation (HK ordinances), HKLII (HK case law),
+    # TNA Find Case Law (UK case law), CourtListener (US reporter citations).
+    return [ELegislationSource(), HKLIISource(), TNASource(), CourtListenerSource()]
 
 
 class LegalResolver:

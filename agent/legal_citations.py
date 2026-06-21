@@ -12,13 +12,14 @@ Honest scope (read before relying on this):
   right jurisdiction for the matter, that the holding supports the proposition, or
   that the law is current. Those need a real citator + a model judge + a freshness
   check (see ``data/law_council_figures.json`` seats and the doc).
-- The bundled register (``data/legal_authorities_hk.json``) is a tiny illustrative
+- The bundled register (``data/legal_authorities.json``) is a tiny illustrative
   snapshot, **not** a citator. For real use, point ``SOPHIA_LEGAL_AUTHORITIES`` at
   a register derived from an authoritative primary source — Hong Kong e-Legislation
-  (elegislation.gov.hk) for legislation and HKLII (hklii.hk) for case law.
-- Extraction targets common-law **neutral citations** (e.g. ``[2025] HKCFI 808``,
-  ``[2025] EWHC 1383 (Admin)``) and HK **ordinance chapter** refs (``Cap. 614``).
-  US reporter style (``F.3d`` etc.) is out of scope here.
+  (elegislation.gov.hk), HKLII (hklii.hk), the UK National Archives Find Case Law,
+  and CourtListener (US).
+- Extraction targets common-law **neutral citations** (``[2025] HKCFI 808``,
+  ``[2025] EWHC 1383 (Admin)``), HK **ordinance chapter** refs (``Cap. 614``), and
+  **US reporter citations** (``925 F.3d 1339``, ``576 U.S. 644``).
 """
 
 from __future__ import annotations
@@ -35,7 +36,7 @@ from agent.config import DATA_DIR
 # HKLII/e-Legislation-derived snapshot). A directory (its *.json), a glob, a
 # single file, or several joined by the OS path separator.
 LEGAL_AUTHORITIES_ENV = "SOPHIA_LEGAL_AUTHORITIES"
-_BUNDLED_REGISTER = "legal_authorities_hk.json"
+_BUNDLED_REGISTER = "legal_authorities.json"
 
 # Neutral citation: [YYYY] COURT NUMBER, with an optional trailing division
 # marker like "(Admin)" / "(Comm)". COURT is 2-6 uppercase letters
@@ -43,11 +44,41 @@ _BUNDLED_REGISTER = "legal_authorities_hk.json"
 _NEUTRAL = re.compile(r"\[\s*(\d{4})\s*\]\s+([A-Za-z]{2,6})\s+(\d+)(\s*\([A-Za-z]+\))?")
 # HK ordinance chapter reference: "Cap. 614", "Cap 486A", "(Cap. 614)".
 _CAP = re.compile(r"\bCap\.?\s*(\d+[A-Z]?)\b", re.IGNORECASE)
+# US reporter citation: VOLUME REPORTER PAGE, e.g. "925 F.3d 1339", "576 U.S. 644",
+# "678 F. Supp. 3d 443", "143 S. Ct. 1322". Reporter spacing/periods vary in the
+# wild, so the capture is permissive and the reporter is canonicalized below; an
+# unrecognized reporter is NOT extracted (avoids matching stray "12 of 30" text).
+_US = re.compile(
+    r"\b(\d+)\s+("
+    r"U\.?\s?S\.?"
+    r"|S\.?\s?Ct\.?"
+    r"|L\.?\s?Ed\.?(?:\s?2d)?"
+    r"|F\.?\s?Supp\.?(?:\s?[23]d)?"
+    r"|F\.?\s?(?:2d|3d|4th)?"
+    r")\s+(\d+)\b"
+)
+# Canonical reporter forms keyed by the de-spaced, lowercased token.
+_US_REPORTERS = {
+    "u.s.": "U.S.", "us": "U.S.",
+    "s.ct.": "S. Ct.", "sct": "S. Ct.", "s.ct": "S. Ct.",
+    "l.ed.": "L. Ed.", "l.ed.2d": "L. Ed. 2d", "led": "L. Ed.", "led2d": "L. Ed. 2d",
+    "f.": "F.", "f": "F.", "f.2d": "F.2d", "f2d": "F.2d",
+    "f.3d": "F.3d", "f3d": "F.3d", "f.4th": "F.4th", "f4th": "F.4th",
+    "f.supp.": "F. Supp.", "fsupp": "F. Supp.", "f.supp": "F. Supp.",
+    "f.supp.2d": "F. Supp. 2d", "fsupp2d": "F. Supp. 2d",
+    "f.supp.3d": "F. Supp. 3d", "fsupp3d": "F. Supp. 3d",
+}
+
+
+def _canon_us_reporter(raw: str) -> "str | None":
+    key = re.sub(r"\s+", "", raw).lower()
+    return _US_REPORTERS.get(key)
 
 
 def normalize_citation(text: str) -> str:
-    """Canonical form for matching: collapse whitespace, normalize Cap and the
-    neutral-citation shape so ``[2025]  hkcfi 808`` == ``[2025] HKCFI 808``."""
+    """Canonical form for matching: collapse whitespace; normalize Cap, neutral
+    (``[2025]  hkcfi 808`` -> ``[2025] HKCFI 808``) and US reporter citations
+    (``925  f.3d 1339`` -> ``925 F.3d 1339``)."""
     s = re.sub(r"\s+", " ", text).strip()
     m = _NEUTRAL.fullmatch(s) or _NEUTRAL.match(s)
     if m:
@@ -57,6 +88,11 @@ def normalize_citation(text: str) -> str:
     mc = _CAP.fullmatch(s) or _CAP.match(s)
     if mc:
         return f"Cap. {mc.group(1).upper()}"
+    mu = _US.fullmatch(s) or _US.match(s)
+    if mu:
+        reporter = _canon_us_reporter(mu.group(2))
+        if reporter:
+            return f"{mu.group(1)} {reporter} {mu.group(3)}"
     return s
 
 
@@ -68,6 +104,9 @@ def extract_citations(text: str) -> list[str]:
         found.append(normalize_citation(m.group(0)))
     for m in _CAP.finditer(text or ""):
         found.append(normalize_citation(m.group(0)))
+    for m in _US.finditer(text or ""):
+        if _canon_us_reporter(m.group(2)):
+            found.append(normalize_citation(m.group(0)))
     seen: set[str] = set()
     ordered: list[str] = []
     for c in found:
@@ -75,6 +114,25 @@ def extract_citations(text: str) -> list[str]:
             seen.add(c)
             ordered.append(c)
     return ordered
+
+
+# Court tokens by jurisdiction, for routing neutral citations to the right source.
+HK_COURTS = {"HKCFA", "HKCA", "HKCFI", "HKDC", "HKFC", "HKLDT", "HKCT", "HKLT", "HKMAGC", "HKCRC"}
+UK_COURTS = {"EWHC", "EWCA", "UKSC", "UKHL", "UKPC", "EWFC", "EWCOP", "EWCC", "EWCR",
+             "UKUT", "UKFTT", "UKEAT", "EAT"}
+
+
+def neutral_court(citation: str) -> "str | None":
+    """The court token of a neutral citation (``[2025] HKCFI 808`` -> ``HKCFI``)."""
+    m = _NEUTRAL.match(normalize_citation(citation))
+    return m.group(2).upper() if m else None
+
+
+def is_us_reporter(citation: str) -> bool:
+    """True if the citation is a recognized US reporter citation (``925 F.3d 1339``)."""
+    norm = normalize_citation(citation)
+    m = _US.fullmatch(norm) or _US.match(norm)
+    return bool(m and _canon_us_reporter(m.group(2)))
 
 
 def _register_paths() -> list[Path]:

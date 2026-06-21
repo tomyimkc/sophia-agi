@@ -2,7 +2,7 @@
 """Refresh the HK legal-authority snapshot from primary sources (strategy A).
 
 Runs the live resolver over a list of citations and (a) warms the resolution
-cache and (b) updates ``data/legal_authorities_hk.json`` with the verified ones,
+cache and (b) updates ``data/legal_authorities.json`` with the verified ones,
 each stamped with its source URL and ``retrievedAt``. After a refresh, the
 existing ``legal_citation_exists`` verifier works offline against a real,
 provenance-stamped snapshot.
@@ -35,7 +35,7 @@ if str(ROOT) not in sys.path:
 from agent.legal_citations import normalize_citation  # noqa: E402
 from agent.legal_sources import make_resolver, resolver_mode  # noqa: E402
 
-REGISTER = ROOT / "data" / "legal_authorities_hk.json"
+REGISTER = ROOT / "data" / "legal_authorities.json"
 
 
 def _load_register() -> dict:

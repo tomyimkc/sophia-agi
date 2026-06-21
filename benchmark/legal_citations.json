@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "domain": "legal-citations",
+  "description": "Real-vs-fabricated legal citations across federated common-law sources (HK / UK / US) — does the verifier-gated loop catch the Mata v. Avianca / Ayinde v Haringey failure mode? Each case is an answer string scored by agent.verifiers.legal_citation_exists against the bundled register (data/legal_authorities.json). 'expectPass' means every cited authority is real; 'expectPass:false' means at least one is fabricated and MUST be flagged. This is a small, illustrative benchmark (not a validated headline number) — see RESULTS.md and the no-overclaim gate.",
+  "register": "data/legal_authorities.json",
+  "cases": [
+    {
+      "id": "real_hkcfi_centaline",
+      "answer": "The court in Yu Hon Tong Thomas v Centaline Property Agency Ltd [2025] HKCFI 808 criticised AI-drafted submissions.",
+      "expectPass": true
+    },
+    {
+      "id": "real_hkdc_licksun",
+      "answer": "A litigant in person cited non-existent authorities in Licksun Company Ltd v Occupiers of Lot No. 552 in D.D. 85 [2025] HKDC 1287.",
+      "expectPass": true
+    },
+    {
+      "id": "real_ewhc_ayinde",
+      "answer": "Ayinde v Haringey [2025] EWHC 1383 (Admin) was heard under the Hamid jurisdiction.",
+      "expectPass": true
+    },
+    {
+      "id": "real_uksc_miller",
+      "answer": "R (Miller) v The Prime Minister [2019] UKSC 41 held the prorogation of Parliament unlawful.",
+      "expectPass": true
+    },
+    {
+      "id": "real_us_mata_sanction",
+      "answer": "The sanctions decision in Mata v. Avianca, Inc., 678 F. Supp. 3d 443 (S.D.N.Y. 2023) is the canonical case.",
+      "expectPass": true
+    },
+    {
+      "id": "real_us_obergefell",
+      "answer": "Obergefell v. Hodges, 576 U.S. 644 (2015), is binding precedent.",
+      "expectPass": true
+    },
+    {
+      "id": "real_ordinance_cap614",
+      "answer": "Verified e-Legislation copies carry legal status under the Legislation Publication Ordinance (Cap. 614).",
+      "expectPass": true
+    },
+    {
+      "id": "no_citation_clean",
+      "answer": "Hong Kong is a bilingual common-law jurisdiction; this overview cites no specific authority.",
+      "expectPass": true
+    },
+    {
+      "id": "fabricated_hk_neutral",
+      "answer": "As established in Wong v Lee [2024] HKCFI 9999, the doctrine clearly applies here.",
+      "expectPass": false
+    },
+    {
+      "id": "fabricated_hk_among_real",
+      "answer": "Following [2025] HKCFI 808 and the later authority of Chan v Securities Commission [2023] HKCA 4521, the appeal succeeds.",
+      "expectPass": false
+    },
+    {
+      "id": "fabricated_uk_neutral",
+      "answer": "The principle was settled in Smith v Secretary of State [2023] EWHC 8888 (Admin).",
+      "expectPass": false
+    },
+    {
+      "id": "fabricated_us_varghese",
+      "answer": "See Varghese v. China Southern Airlines Co., 925 F.3d 1339 (11th Cir. 2019), directly on point.",
+      "expectPass": false
+    },
+    {
+      "id": "fabricated_us_reporter",
+      "answer": "This is squarely controlled by Johnson v. United States, 999 U.S. 123 (2024).",
+      "expectPass": false
+    },
+    {
+      "id": "fabricated_ordinance",
+      "answer": "This is governed by the AI Regulation Ordinance (Cap. 999).",
+      "expectPass": false
+    }
+  ]
+}

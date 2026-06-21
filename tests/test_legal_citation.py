@@ -73,11 +73,27 @@ def test_registered_parameterless_verifier() -> None:
 
 
 def test_benchmark_cases_match_expectations() -> None:
-    bench = json.loads((ROOT / "benchmark" / "legal_citations_hk.json").read_text(encoding="utf-8"))
+    bench = json.loads((ROOT / "benchmark" / "legal_citations.json").read_text(encoding="utf-8"))
     ver = v.legal_citation_exists(lc.load_known_authorities())
     for case in bench["cases"]:
         got = ver(case["answer"], None, {})["passed"]
         assert got is case["expectPass"], f"{case['id']}: expected {case['expectPass']}, got {got}"
+
+
+def test_us_reporter_extraction() -> None:
+    # the actual Mata v. Avianca fabrication is a US reporter citation
+    cites = lc.extract_citations("See Varghese v. China Southern Airlines, 925 F.3d 1339 (11th Cir. 2019).")
+    assert "925 F.3d 1339" in cites
+    assert lc.normalize_citation("678 F.Supp.3d 443") == "678 F. Supp. 3d 443"
+    assert lc.extract_citations("We met 12 of 30 criteria.") == []  # no false positives
+    assert lc.is_us_reporter("576 U.S. 644") is True
+    assert lc.is_us_reporter("[2025] HKCFI 808") is False
+
+
+def test_court_routing_helpers() -> None:
+    assert lc.neutral_court("[2025] HKCFI 808") == "HKCFI"
+    assert lc.neutral_court("[2025] EWHC 1383 (Admin)") == "EWHC"
+    assert lc.neutral_court("925 F.3d 1339") is None
 
 
 def main() -> int:

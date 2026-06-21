@@ -39,7 +39,7 @@ bridge. It is the one check that would have stopped *Mata* and *Ayinde*. Honest
 scope: it verifies **existence against the supplied register only** — not that the
 authority is in the right jurisdiction, that the holding supports the proposition,
 or that the law is current. Populate the register from an authoritative source via
-`SOPHIA_LEGAL_AUTHORITIES`; the bundled `data/legal_authorities_hk.json` is a tiny
+`SOPHIA_LEGAL_AUTHORITIES`; the bundled `data/legal_authorities.json` is a tiny
 illustrative snapshot, **not** a citator.
 
 ```bash
@@ -48,7 +48,7 @@ python -c "from agent.verifiers import check_text; \
 # -> passed: False  (fabricated citation flagged)
 ```
 
-Benchmark: `benchmark/legal_citations_hk.json` (real-vs-fabricated). Tests:
+Benchmark: `benchmark/legal_citations.json` (real-vs-fabricated, HK/UK/US). Tests:
 `tests/test_legal_citation.py`.
 
 ## ⚠️ Partial — architecture present, substance missing
@@ -128,11 +128,13 @@ at the boundary).
 
 ```text
 agent/legal_sources/
-  base.py          # LegalSource protocol + Resolution (fail-closed helpers, injectable fetch)
-  cache.py         # ResolutionCache — JSON cache; a miss is None (fail-closed)
-  elegislation.py  # ordinance chapters (Cap. NNN); SOPHIA_ELEGISLATION_BASE
-  hklii.py         # neutral citations ([2025] HKCFI 808); SOPHIA_HKLII_BASE
-  registry.py      # route by court token; SOPHIA_LEGAL_SOURCE = off | cache | live
+  base.py           # LegalSource protocol + Resolution (fail-closed helpers, injectable fetch)
+  cache.py          # ResolutionCache — JSON cache; a miss is None (fail-closed)
+  elegislation.py   # HK ordinance chapters (Cap. NNN); SOPHIA_ELEGISLATION_BASE
+  hklii.py          # HK case law ([2025] HKCFI 808); SOPHIA_HKLII_BASE
+  tna.py            # UK case law ([2025] EWHC 1383); SOPHIA_TNA_BASE
+  courtlistener.py  # US reporter citations (925 F.3d 1339); SOPHIA_COURTLISTENER_BASE
+  registry.py       # route by court token; SOPHIA_LEGAL_SOURCE = off | cache | live
 tools/refresh_legal_authorities.py   # batch snapshot refresh (strategy A)
 ```
 
@@ -143,8 +145,12 @@ from agent.verifiers import legal_citation_exists
 verifier = legal_citation_exists(resolver=make_resolver())   # SOPHIA_LEGAL_SOURCE=live
 ```
 
+- **Federation:** the registry routes each citation by **court token** —
+  e-Legislation (HK ordinances), HKLII (HK case law), National Archives Find Case
+  Law (UK), CourtListener (US reporter citations). A US `925 F.3d 1339` and a UK
+  `[2025] EWHC 1383` go to different backends automatically.
 - **Modes:** `off` (static register only), `cache` (default; cache-first, **no
-  network** — a miss is UNVERIFIED), `live` (cache-first, then HKLII/e-Legislation,
+  network** — a miss is UNVERIFIED), `live` (cache-first, then the routed source,
   then cache the result).
 - **Snapshot refresh:** `SOPHIA_LEGAL_SOURCE=live python tools/refresh_legal_authorities.py --existing --write`
   re-verifies the bundled authorities and stamps each with its source URL +
@@ -153,27 +159,29 @@ verifier = legal_citation_exists(resolver=make_resolver())   # SOPHIA_LEGAL_SOUR
   CI**.
 
 > **Honest gaps that remain.** The default URL schemes are best-effort and
-> overridable (`SOPHIA_HKLII_BASE`, `SOPHIA_ELEGISLATION_BASE`) — confirm HKLII's
-> robots/ToS and e-Legislation's open-data path before bulk runs. HKLII covers HK
-> case law only; UK/US neutral citations (e.g. `EWHC`) need their own sources
-> (National Archives Find Case Law, CourtListener) — the registry is built to add
-> them. And existence ≠ holding-supports-proposition: that still needs full-text +
-> a model judge.
+> overridable (`SOPHIA_HKLII_BASE`, `SOPHIA_ELEGISLATION_BASE`, `SOPHIA_TNA_BASE`,
+> `SOPHIA_COURTLISTENER_BASE`) — confirm each source's robots/ToS and API shape
+> (and supply `COURTLISTENER_API_TOKEN` for bulk US use) before production. And
+> existence ≠ holding-supports-proposition: that still needs full-text + a model
+> judge.
 
 ## Remaining build order
 
 1. ~~Live `legal_citation_exists` backend~~ — **done** (above).
-2. ~~A small HK legal benchmark run through the honest measurement path~~ —
+2. ~~A small legal benchmark run through the honest measurement path~~ —
    **done**. `tools/run_legal_citation_bench.py` scores `legal_citation_exists`
-   over `benchmark/legal_citations_hk.json` as an **objective** eval (ground-truth
+   over `benchmark/legal_citations.json` as an **objective** eval (ground-truth
    labels + deterministic verifier, no LLM judge) and publishes it under
-   **verifierEvals** in [RESULTS.md](../../RESULTS.md): **100% accuracy, N=8**
-   (every fabrication flagged, zero false alarms). Honest bounds are published with
-   it — tiny constructed N, capped by the register's completeness; it validates the
-   extraction + fail-closed gate logic end-to-end, **not** a headline capability
-   claim. A drift test (`tests/test_legal_citation_bench.py`) keeps the published
-   number in sync with the runner.
-3. **Federate other jurisdictions** — add `LegalSource` backends for the UK
-   (National Archives Find Case Law) and US (CourtListener API); route by court token.
+   **verifierEvals** in [RESULTS.md](../../RESULTS.md): **100% accuracy, N=14**
+   (every fabrication flagged, zero false alarms — including the actual *Mata*
+   fake, *Varghese v. China Southern Airlines* 925 F.3d 1339). Honest bounds are
+   published with it — tiny constructed N, capped by the register's completeness;
+   it validates the extraction + fail-closed gate logic end-to-end, **not** a
+   headline capability claim. A drift test (`tests/test_legal_citation_bench.py`)
+   keeps the published number in sync with the runner.
+3. ~~Federate other jurisdictions~~ — **done**. UK (National Archives Find Case
+   Law) and US (CourtListener) `LegalSource` backends, routed by court token
+   alongside HKLII / e-Legislation. US reporter citations (`925 F.3d 1339`,
+   `576 U.S. 644`) are now extracted and resolved.
 4. **Document ingestion** for contracts/filings, so citation checks run over real
    work product rather than typed strings.

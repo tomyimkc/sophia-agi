@@ -20,7 +20,7 @@ import re
 import urllib.error
 import urllib.parse
 
-from agent.legal_citations import _NEUTRAL, normalize_citation
+from agent.legal_citations import _NEUTRAL, HK_COURTS, neutral_court, normalize_citation
 from agent.legal_sources.base import Fetch, Resolution, unverified, verified
 
 _DEFAULT_BASE = "https://www.hklii.hk"
@@ -33,7 +33,7 @@ class HKLIISource:
         self.base = (base or os.environ.get("SOPHIA_HKLII_BASE") or _DEFAULT_BASE).rstrip("/")
 
     def can_resolve(self, citation: str) -> bool:
-        return bool(_NEUTRAL.fullmatch(normalize_citation(citation)) or _NEUTRAL.match(normalize_citation(citation)))
+        return neutral_court(citation) in HK_COURTS
 
     def url_for(self, citation: str) -> str:
         return f"{self.base}/search?" + urllib.parse.urlencode({"q": normalize_citation(citation)})

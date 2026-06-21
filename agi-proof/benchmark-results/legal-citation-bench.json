@@ -1,9 +1,9 @@
 {
-  "benchmark": "legal_citations_hk",
-  "n": 8,
+  "benchmark": "legal_citations",
+  "n": 14,
   "confusion": {
-    "tp": 5,
-    "tn": 3,
+    "tp": 8,
+    "tn": 6,
     "fp": 0,
     "fn": 0
   },

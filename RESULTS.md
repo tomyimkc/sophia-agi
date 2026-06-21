@@ -36,9 +36,9 @@ Scored by **exact-match against ground-truth labels** with a **deterministic ver
 
 | Verifier | Benchmark | N | Accuracy | Fabrication recall | False-alarm | Date |
 |---|---|---|---|---|---|---|
-| `legal_citation_exists` | legal_citations_hk (real-vs-fabricated HK/common-law citations) | 8 | 100.0% | 100.0% | 0.0% | 2026-06-21 |
+| `legal_citation_exists` | legal_citations (real-vs-fabricated HK/UK/US common-law citations) | 14 | 100.0% | 100.0% | 0.0% | 2026-06-21 |
 
-- _legal_citation_exists:_ Measures the VERIFIER's accuracy at catching fabricated legal citations (the Mata v. Avianca failure mode), not any model's. Honest bounds: tiny, constructed benchmark (N=8) and the result is capped by the bundled register's completeness, so this validates the extraction + fail-closed gate logic end-to-end — it is NOT a headline capability claim. Reproduce: python tools/run_legal_citation_bench.py.
+- _legal_citation_exists:_ Measures the VERIFIER's accuracy at catching fabricated legal citations (the Mata v. Avianca failure mode) across federated sources (HK e-Legislation/HKLII, UK National Archives, US CourtListener), not any model's. Includes the actual Mata fabrication, Varghese v. China Southern Airlines 925 F.3d 1339, which is flagged. Honest bounds: tiny, constructed benchmark (N=14) and the result is capped by the bundled register's completeness, so this validates the extraction + fail-closed gate logic end-to-end — it is NOT a headline capability claim. Reproduce: python tools/run_legal_citation_bench.py.
 
 ## Judge audit (why the gate matters)
 

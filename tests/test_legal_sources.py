@@ -140,6 +140,49 @@ def test_verifier_resolver_fail_closed_on_error(tmp_path=None) -> None:
     assert ver("See [2099] HKCFI 1.", None, {})["passed"] is False  # broken resolver never passes
 
 
+# ----------------------- federated sources (UK / US) ------------------------ #
+
+def test_tna_verified_and_not_found() -> None:
+    from agent.legal_sources.tna import TNASource
+
+    src = TNASource(base="https://example.test")
+    assert src.can_resolve("[2025] EWHC 1383 (Admin)") is True
+    assert src.can_resolve("[2025] HKCFI 808") is False  # HK routes elsewhere
+    body = "Ayinde v Haringey [2025] EWHC 1383 (Admin)"
+    r = src.resolve("[2025] EWHC 1383 (Admin)", fetch=make_fetch({"search": (200, body)}))
+    assert r.verified and r.court == "EWHC"
+    r2 = src.resolve("[2023] EWHC 8888", fetch=make_fetch({"search": (200, "no results")}))
+    assert not r2.verified and r2.status == "not_found"
+
+
+def test_courtlistener_verified_and_not_found() -> None:
+    from agent.legal_sources.courtlistener import CourtListenerSource
+
+    src = CourtListenerSource(base="https://example.test")
+    assert src.can_resolve("925 F.3d 1339") is True
+    assert src.can_resolve("[2025] HKCFI 808") is False
+    body = '{"count":1,"results":[{"citation":["925 F.3d 1339"]}]}'
+    r = src.resolve("925 F.3d 1339", fetch=make_fetch({"courtlistener": (200, body), "search": (200, body)}))
+    assert r.verified
+    r2 = src.resolve("999 U.S. 123", fetch=make_fetch({"search": (200, '{"count":0,"results":[]}')}))
+    assert not r2.verified and r2.status == "not_found"
+
+
+def test_registry_routes_each_jurisdiction(tmp_path=None) -> None:
+    tmp_path = _tmp(tmp_path)
+    fetch = make_fetch({
+        "elegislation": (200, "<title>ok</title>"),
+        "hklii": (200, "[2025] HKCFI 808"),
+        "nationalarchives": (200, "[2025] EWHC 1383"),
+        "courtlistener": (200, '{"results":[{"citation":["925 F.3d 1339"]}]}'),
+    })
+    r = LegalResolver(mode="live", cache=ResolutionCache(path=tmp_path / "c.json"), fetch=fetch)
+    assert r.resolve("Cap. 614").provider == "elegislation"
+    assert r.resolve("[2025] HKCFI 808").provider == "hklii"
+    assert r.resolve("[2025] EWHC 1383 (Admin)").provider == "tna"
+    assert r.resolve("925 F.3d 1339").provider == "courtlistener"
+
+
 def main() -> int:
     import inspect
     for nm, fn in sorted(globals().items()):

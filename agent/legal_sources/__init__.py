@@ -13,11 +13,14 @@ from __future__ import annotations
 
 from agent.legal_sources.base import LegalSource, Resolution
 from agent.legal_sources.cache import ResolutionCache
+from agent.legal_sources.courtlistener import CourtListenerSource
 from agent.legal_sources.elegislation import ELegislationSource
 from agent.legal_sources.hklii import HKLIISource
 from agent.legal_sources.registry import LegalResolver, make_resolver, resolver_mode
+from agent.legal_sources.tna import TNASource
 
 __all__ = [
     "LegalSource", "Resolution", "ResolutionCache", "ELegislationSource",
-    "HKLIISource", "LegalResolver", "make_resolver", "resolver_mode",
+    "HKLIISource", "TNASource", "CourtListenerSource",
+    "LegalResolver", "make_resolver", "resolver_mode",
 ]

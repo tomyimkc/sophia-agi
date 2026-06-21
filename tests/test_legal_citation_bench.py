@@ -26,7 +26,8 @@ def _load_runner():
 
 def test_runner_clean_sweep() -> None:
     result = _load_runner().run()
-    assert result["n"] == 8
+    bench = json.loads((ROOT / "benchmark" / "legal_citations.json").read_text("utf-8"))
+    assert result["n"] == len(bench["cases"]) >= 14  # federated HK/UK/US cases
     # every fabrication flagged, no false alarms
     assert result["confusion"]["fp"] == 0
     assert result["confusion"]["fn"] == 0

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Score the legal-citation verifier against the real-vs-fabricated benchmark.
 
-This is an **objective** eval: every case in ``benchmark/legal_citations_hk.json``
+This is an **objective** eval: every case in ``benchmark/legal_citations.json``
 carries a ground-truth ``expectPass``, and ``legal_citation_exists`` is
 deterministic — so there is no LLM judge, and the number measures the **verifier's
 accuracy at catching fabricated citations**, not any model's. It validates the
@@ -34,7 +34,7 @@ if str(ROOT) not in sys.path:
 from agent.legal_citations import load_known_authorities  # noqa: E402
 from agent.verifiers import legal_citation_exists  # noqa: E402
 
-BENCH = ROOT / "benchmark" / "legal_citations_hk.json"
+BENCH = ROOT / "benchmark" / "legal_citations.json"
 ARTIFACT = ROOT / "agi-proof" / "benchmark-results" / "legal-citation-bench.json"
 
 
@@ -60,7 +60,7 @@ def run() -> dict:
     fabrications = tn + fp
     clean = tp + fn
     return {
-        "benchmark": "legal_citations_hk",
+        "benchmark": "legal_citations",
         "n": n,
         "confusion": {"tp": tp, "tn": tn, "fp": fp, "fn": fn},
         "accuracy": round((tp + tn) / n, 4) if n else 0.0,
