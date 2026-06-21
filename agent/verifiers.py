@@ -130,6 +130,157 @@ def citation_present(sources: list[str]) -> Verifier:
 
 
 # --------------------------------------------------------------------------- #
+# General machine-checked verifiers — generalize the verifier-gated loop beyond
+# provenance: citation faithfulness, executable code, and arithmetic soundness.
+# Each is deterministic (no model call) so "verified" means verified.
+# --------------------------------------------------------------------------- #
+
+_STOPWORDS = {
+    "the", "a", "an", "and", "or", "of", "to", "in", "on", "is", "was", "were", "are",
+    "be", "by", "for", "with", "that", "this", "it", "as", "at", "from", "his", "her",
+    "their", "its", "which", "who", "whom", "they", "he", "she", "but", "not", "no",
+}
+
+
+def _content_words(text: str) -> set:
+    return {w for w in re.findall(r"[a-z0-9]+", text.lower()) if len(w) >= 3 and w not in _STOPWORDS}
+
+
+def citation_faithful(sources: list[str], *, min_overlap: float = 0.35, require_citation: bool = False) -> Verifier:
+    """Fail if a cited sentence is NOT supported by its source.
+
+    Sources are 1-indexed for ``[1]`` / ``[local 1]`` / ``[web 1]`` markers. For
+    each sentence carrying a citation, the cited source must share at least
+    ``min_overlap`` of the sentence's content words (a deterministic support
+    check, no model). With ``require_citation`` a declarative factual sentence
+    that cites nothing is also flagged. This is RAG citation-faithfulness — the
+    gate against "grounded-looking but unsupported" answers.
+
+    Scope (honest): lexical overlap reliably catches fabricated / topically
+    mismatched / out-of-range citations. It does NOT catch a subtle wrong
+    predicate when the subject still matches the source — that needs a model
+    judge (compose with an LLM-judge for that tier).
+    """
+    src_words = [(_content_words(s), s) for s in sources]
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        violations: list[str] = []
+        for sentence in re.split(r"(?<=[.!?])\s+|\n+", text):
+            s = sentence.strip()
+            if len(s) < 12:
+                continue
+            cites = [int(n) for n in re.findall(r"\[(?:local|web|source)?\s*(\d+)\]", s.lower())]
+            words = _content_words(s)
+            if not words:
+                continue
+            if cites:
+                best = 0.0
+                for idx in cites:
+                    if 1 <= idx <= len(src_words):
+                        sw = src_words[idx - 1][0]
+                        if words:
+                            best = max(best, len(words & sw) / len(words))
+                    else:
+                        violations.append(f"citation [{idx}] out of range")
+                if best < min_overlap:
+                    violations.append(f"unsupported citation (overlap {best:.0%} < {min_overlap:.0%}): {s[:60]}")
+            elif require_citation and re.search(r"\b(?:is|was|were|are|wrote|invented|discovered|founded|caused)\b", s.lower()):
+                violations.append(f"uncited claim: {s[:60]}")
+        if violations:
+            return _fail([f"citation not faithful: {v}" for v in violations], {"violations": violations})
+        return _ok({"sourcesChecked": len(sources)})
+
+    return _verify
+
+
+def _extract_code(text: str, language: str = "python") -> str:
+    """Concatenate fenced code blocks (``` ```), preferring language-tagged ones."""
+    blocks = re.findall(r"```(?:" + re.escape(language) + r"|py)?\s*\n(.*?)```", text, re.DOTALL | re.IGNORECASE)
+    if not blocks:
+        blocks = re.findall(r"```\s*\n(.*?)```", text, re.DOTALL)
+    return "\n\n".join(b.rstrip() for b in blocks)
+
+
+def code_tests_pass(*, timeout_sec: int = 30, allow_execution: bool = True) -> Verifier:
+    """Extract code from the answer and EXECUTE it; pass iff it exits 0.
+
+    The strongest machine check: the produced code (typically asserts / a test
+    harness the model wrote) is run in an isolated temp dir. ``allow_execution``
+    (or env ``SOPHIA_ALLOW_CODE_EXEC=0``) gates running untrusted code; when off,
+    falls back to a safe syntax-only check (``compile``). Times out and never
+    touches the repo tree.
+    """
+    import sys
+    import tempfile
+
+    env_off = os.environ.get("SOPHIA_ALLOW_CODE_EXEC", "1").strip() in ("0", "false", "no")
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        code = _extract_code(text)
+        if not code.strip():
+            return _fail(["no python code block found"])
+        if env_off or not allow_execution:
+            try:
+                compile(code, "<answer>", "exec")
+                return _ok({"mode": "syntax-only", "executed": False})
+            except SyntaxError as exc:
+                return _fail([f"syntax error: {exc}"], {"executed": False})
+        with tempfile.TemporaryDirectory() as tmp:
+            sol = Path(tmp) / "solution.py"
+            sol.write_text(code, encoding="utf-8")
+            try:
+                proc = subprocess.run(
+                    [sys.executable, str(sol)], cwd=tmp, text=True,
+                    capture_output=True, timeout=timeout_sec, check=False,
+                )
+            except subprocess.TimeoutExpired:
+                return _fail([f"code timed out after {timeout_sec}s"], {"executed": True})
+        if proc.returncode == 0:
+            return _ok({"executed": True, "returncode": 0})
+        return _fail([f"code exited {proc.returncode}: {(proc.stderr or proc.stdout)[-300:]}"],
+                     {"executed": True, "returncode": proc.returncode})
+
+    return _verify
+
+
+_ARITH = re.compile(r"(-?\d+(?:\.\d+)?)\s*([+\-*/×x])\s*(-?\d+(?:\.\d+)?)\s*=\s*(-?\d+(?:\.\d+)?)")
+
+
+def arithmetic_sound(*, tol: float = 1e-6) -> Verifier:
+    """Fail if the text states a FALSE arithmetic equality (e.g. '2 + 2 = 5').
+
+    Parses ``a OP b = c`` for + - * / (and × / x), recomputes, and flags any
+    mismatch. No model, no eval of arbitrary expressions — just the stated
+    binary equalities. If the text contains no checkable arithmetic it passes
+    (this is a soundness check, not a presence requirement).
+    """
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        wrong: list[str] = []
+        checked = 0
+        for a, op, b, c in _ARITH.findall(text):
+            x, y, z = float(a), float(b), float(c)
+            if op in ("*", "×", "x"):
+                got = x * y
+            elif op == "/":
+                if y == 0:
+                    continue
+                got = x / y
+            elif op == "+":
+                got = x + y
+            else:
+                got = x - y
+            checked += 1
+            if abs(got - z) > tol:
+                wrong.append(f"{a} {op} {b} = {c} (actual {got:g})")
+        if wrong:
+            return _fail([f"false arithmetic: {w}" for w in wrong], {"wrong": wrong, "checked": checked})
+        return _ok({"checked": checked})
+
+    return _verify
+
+
+# --------------------------------------------------------------------------- #
 # OKF / provenance verifiers — encode "don't merge lineages" as a hard gate.
 # --------------------------------------------------------------------------- #
 
@@ -378,3 +529,19 @@ def any_of(*verifiers: Verifier) -> Verifier:
         return _fail(["none of the alternatives passed", *all_reasons])
 
     return _verify
+
+
+# Parameterless verifiers usable directly by name (CLI / harness registry).
+VERIFIERS: dict[str, Callable[[], Verifier]] = {
+    "arithmetic_sound": arithmetic_sound,
+    "code_tests_pass": code_tests_pass,
+    "provenance_faithful": provenance_faithful,
+    "frontmatter_schema_valid": frontmatter_schema_valid,
+}
+
+
+def check_text(name: str, text: str) -> dict:
+    """Run a registered parameterless verifier over ``text``. CLI/MCP surface."""
+    if name not in VERIFIERS:
+        raise KeyError(f"unknown verifier {name!r}; known: {', '.join(sorted(VERIFIERS))}")
+    return VERIFIERS[name]()(text, None, {})

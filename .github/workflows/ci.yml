@@ -53,6 +53,13 @@ jobs:
           python tests/test_provenance_bench.py
           python tools/run_provenance_delta.py --models mock
           python tools/build_results_page.py --check
+      - name: Generality tests (verifiers, improvement loop, horizon, external eval)
+        run: |
+          python tests/test_horizon.py
+          python tests/test_external_eval.py
+          python tools/run_improvement_loop.py
+          python tools/run_horizon_curve.py --trials 10
+          python tools/run_external_eval.py
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

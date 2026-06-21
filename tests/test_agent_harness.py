@@ -105,6 +105,11 @@ def test_classify_failure_taxonomy() -> None:
     assert h.classify_failure(result=empty, gate=None, verifier=None, tool_results=None) == "empty_output"
     assert h.classify_failure(result=m.ModelResult(text="x", provider="m", model="m"), gate=None, verifier=None, tool_results=[{"ok": False}]) == "tool_error"
     assert h.classify_failure(result=m.ModelResult(text="x", provider="m", model="m"), gate={"passed": False}, verifier=None, tool_results=None) == "gate_violation"
+    okr = m.ModelResult(text="x", provider="m", model="m")
+    assert h.classify_failure(result=okr, gate=None, verifier={"passed": False}, tool_results=None) == "verifier_fail"
+    # unknown-cause failure must NOT be credited to the verifier (would taint ablations)
+    assert h.classify_failure(result=okr, gate={"passed": True}, verifier={"passed": True}, tool_results=None) == "unknown"
+    assert h.classify_failure(result=okr, gate=None, verifier=None, tool_results=None) == "unknown"
 
 
 def main() -> int:

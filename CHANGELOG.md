@@ -2,6 +2,37 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.7] - 2026-06-21
+
+### Added — generality track (verifier-gated reasoning, measured honestly)
+
+Extends the core verifier-gated loop beyond provenance, each piece with a
+falsifiable metric and an honest scope label (see
+`docs/11-Platform/Generality.md`). None of this licenses the word "AGI".
+
+- **More machine-checked verifiers** (`agent/verifiers.py`): `citation_faithful`
+  (RAG support check), `code_tests_pass` (extracts + **executes** answer code,
+  exec-gated), `arithmetic_sound` (recomputes stated equalities); a `VERIFIERS`
+  registry + `check_text`. Honest: more verifier *kinds* is engineering reuse,
+  not a generality claim.
+- **Measured self-improvement loop** (`provenance_bench/improvement.py`,
+  `tools/run_improvement_loop.py`): learns rules from TRAIN failures, scored on a
+  **disjoint-phrasing** held-out split (no contamination). First run: held-out
+  recall 17% → 98% over 6 cycles, monotone, 0% false-positive cost — falsifiable.
+- **Long-horizon autonomy curve** (`agent/horizon.py`,
+  `tools/run_horizon_curve.py`): success-rate vs task length on chained tasks,
+  judged by an **external oracle**; headline = effective horizon (longest length
+  at ≥50%). Complements the single-run logger `tools/run_long_horizon.py`.
+- **External-oracle eval** (`agent/external_eval.py`, `tools/run_external_eval.py`):
+  correctness vs external gold (never the gate); dataset-agnostic JSONL with a
+  committed, clearly-labelled GSM8K-style sample; point `--dataset` at the real
+  set for a citable number.
+- **Harness confound fix** (`agent/harness.py`): `classify_failure` returned
+  `verifier_fail` for unknown-cause failures, over-crediting the verifier in
+  ablation telemetry; now returns an explicit `unknown` class (regression-tested).
+- Tests: `test_horizon.py`, `test_external_eval.py`, plus verifier/loop/harness
+  cases — all wired into CI.
+
 ## [0.7.6] - 2026-06-21
 
 ### Added — public results, transparently and safely

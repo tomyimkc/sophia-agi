@@ -251,6 +251,25 @@ def test_consensus_flows_into_aggregate() -> None:
     assert all(agg2["validatedChecks"].values())
 
 
+def test_improvement_loop_rises_without_contamination() -> None:
+    from provenance_bench import improvement
+
+    pairs = [
+        {"claimed": "Confucius", "work": "Dao De Jing"},
+        {"claimed": "Socrates", "work": "The Republic"},
+        {"claimed": "Nietzsche", "work": "The Communist Manifesto"},
+        {"claimed": "Freud", "work": "Beyond Good and Evil"},
+    ]
+    controls = [{"gold": "Laozi", "work": "Dao De Jing"}, {"gold": "Plato", "work": "The Republic"}]
+    res = improvement.run_loop(pairs, controls, batch=1, cycles=4)
+    assert res["monotoneNonDecreasing"] is True
+    assert res["curve"][0]["heldoutRecall"] < res["finalRecall"]   # it genuinely improves
+    assert res["maxFalsePositive"] == 0.0                          # learning never broke a true case
+    assert res["finalRecall"] == 1.0                               # all rules learned by the end
+    # contamination guard is real: train/held-out templates are disjoint
+    assert not (set(improvement.TRAIN_TEMPLATES) & set(improvement.HELDOUT_TEMPLATES))
+
+
 def test_report_build_and_markdown() -> None:
     per_model = {"mock": {"scores": score.score(
         run_cases([FALSE_CASE, TRUE_CASE], _gen("Yes, Alice wrote the Project Phoenix Charter."),
@@ -281,6 +300,7 @@ def main() -> int:
     test_aggregate_runs_ci()
     test_consensus_majority_and_agreement()
     test_consensus_flows_into_aggregate()
+    test_improvement_loop_rises_without_contamination()
     test_report_build_and_markdown()
     print("test_provenance_bench: OK")
     return 0
