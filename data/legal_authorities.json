@@ -1,0 +1,68 @@
+{
+  "registryId": "legal_authorities",
+  "displayName": "Common-law authority snapshot (HK / UK / US)",
+  "description": "A SMALL, illustrative snapshot of real legal authorities used to demonstrate the legal_citation_exists verifier (the Mata v. Avianca killer) across federated sources. In production this list must be populated from authoritative primary sources via the live resolver: Hong Kong e-Legislation (elegislation.gov.hk) + HKLII (hklii.hk) for HK; the UK National Archives 'Find Case Law' (caselaw.nationalarchives.gov.uk) for UK; and CourtListener (courtlistener.com) for US. This file is a stand-in, NOT a citator. Every entry is a real, publicly reported authority; do not treat the snapshot as exhaustive.",
+  "provenance": {
+    "hkCaseLaw": "HKLII (hklii.hk), Free Access to Law Movement",
+    "hkLegislation": "Hong Kong e-Legislation (elegislation.gov.hk), Department of Justice",
+    "ukCaseLaw": "National Archives Find Case Law (caselaw.nationalarchives.gov.uk)",
+    "usCaseLaw": "CourtListener (courtlistener.com), Free Law Project",
+    "note": "Verified-against-an-official-reporter is the user's non-delegable duty — see docs/08-Domains/Legal-Industry-Fit.md."
+  },
+  "authorities": [
+    {
+      "citation": "[2025] HKCFI 808",
+      "name": "Yu Hon Tong Thomas v Centaline Property Agency Ltd",
+      "court": "Court of First Instance",
+      "jurisdiction": "HK",
+      "note": "Court criticised AI-drafted submissions for making up allegations without evidential basis."
+    },
+    {
+      "citation": "[2025] HKDC 1287",
+      "name": "Licksun Company Ltd v Occupiers of Lot No. 552 in D.D. 85",
+      "court": "District Court",
+      "jurisdiction": "HK",
+      "note": "Court expressed serious concern over non-existent authorities cited by a litigant in person."
+    },
+    {
+      "citation": "[2025] EWHC 1383 (Admin)",
+      "name": "Ayinde v Haringey; Al-Haroun v Qatar National Bank",
+      "court": "High Court (Divisional Court)",
+      "jurisdiction": "UK",
+      "note": "Heard under the Hamid jurisdiction; fabricated and misstated authorities."
+    },
+    {
+      "citation": "[2019] UKSC 41",
+      "name": "R (Miller) v The Prime Minister; Cherry v Advocate General for Scotland",
+      "court": "Supreme Court",
+      "jurisdiction": "UK",
+      "note": "Prorogation of Parliament held unlawful."
+    },
+    {
+      "citation": "678 F. Supp. 3d 443",
+      "name": "Mata v. Avianca, Inc.",
+      "court": "S.D.N.Y.",
+      "jurisdiction": "US",
+      "note": "The canonical hallucinated-citation sanctions decision (2023)."
+    },
+    {
+      "citation": "576 U.S. 644",
+      "name": "Obergefell v. Hodges",
+      "court": "Supreme Court of the United States",
+      "jurisdiction": "US",
+      "note": "Real SCOTUS authority (2015) — a positive control for the US source."
+    },
+    {
+      "citation": "Cap. 614",
+      "name": "Legislation Publication Ordinance",
+      "jurisdiction": "HK",
+      "note": "Gives verified e-Legislation copies legal status."
+    },
+    {
+      "citation": "Cap. 486",
+      "name": "Personal Data (Privacy) Ordinance (PDPO)",
+      "jurisdiction": "HK",
+      "note": "Technology-neutral; six Data Protection Principles. Section 33 not yet in force."
+    }
+  ]
+}

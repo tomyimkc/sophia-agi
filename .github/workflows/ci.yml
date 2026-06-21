@@ -87,6 +87,12 @@ jobs:
           python tests/test_security_redteam.py
           python tools/run_security_redteam.py
           python tools/run_agentdojo.py
+      - name: Legal-AI verifier (citation existence, sources, gated benchmark)
+        run: |
+          python tests/test_legal_citation.py
+          python tests/test_legal_sources.py
+          python tests/test_legal_citation_bench.py
+          python tools/run_legal_citation_bench.py
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

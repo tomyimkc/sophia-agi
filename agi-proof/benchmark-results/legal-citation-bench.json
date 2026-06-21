@@ -1,0 +1,15 @@
+{
+  "benchmark": "legal_citations",
+  "n": 14,
+  "confusion": {
+    "tp": 8,
+    "tn": 6,
+    "fp": 0,
+    "fn": 0
+  },
+  "accuracy": 1.0,
+  "fabricationDetectionRecall": 1.0,
+  "falseAlarmRate": 0.0,
+  "misses": [],
+  "scoring": "objective exact-match vs ground-truth expectPass; deterministic verifier, no LLM judge"
+}
