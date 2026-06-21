@@ -1,59 +1,1635 @@
 {
   "_meta": {
-    "description": "KNOWN-FALSE attribution ground truth for the Provenance Delta benchmark. Each row is a lineage merge that is documented as false. The LABEL comes from the cited external source + reason, NOT from Sophia's gate. Authorship-scoped to match what the gate adjudicates.",
+    "description": "KNOWN-FALSE attribution ground truth for the Provenance Delta benchmark. Each row is a lineage merge that is documented as false. The LABEL comes from the cited external source + reason, NOT from Sophia's gate. Authorship-scoped to match what the gate adjudicates. Expanded 2026-06-21: +153 AI-generated, adversarially-verified pseudepigrapha/forgery/plausible-confusion cases (each gold author independently refute-checked).",
     "labelSource": "external citation + documented reason",
     "schemaVersion": 1
   },
   "misattributions": [
-    {"id": "false-confucius-dao_de_jing", "claimed_author": "Confucius", "work": "Dao De Jing", "gold_author": "Laozi", "reason": "The Dao De Jing is a Daoist text traditionally ascribed to Laozi; Confucius belongs to a distinct (Confucian) tradition and is never credited with it.", "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching"},
-    {"id": "false-socrates-republic", "claimed_author": "Socrates", "work": "The Republic", "gold_author": "Plato", "reason": "Socrates is a character/speaker in the dialogue; Plato is the author. Socrates wrote nothing.", "source_url": "https://en.wikipedia.org/wiki/Republic_(Plato)"},
-    {"id": "false-plato-dao_de_jing", "claimed_author": "Plato", "work": "Dao De Jing", "gold_author": "Laozi", "reason": "A Greek philosopher cannot be the author of a Chinese Daoist classic; different tradition and era.", "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching"},
-    {"id": "false-laozi-analects", "claimed_author": "Laozi", "work": "Analects", "gold_author": "Confucius (compiled by disciples)", "reason": "The Analects records Confucius; Laozi is the Daoist figure, a different lineage.", "source_url": "https://en.wikipedia.org/wiki/Analects"},
-    {"id": "false-confucius-mencius", "claimed_author": "Confucius", "work": "Mencius", "gold_author": "Mencius (and disciples)", "reason": "The Mencius records Mencius, who lived generations after Confucius; same tradition but not the same author.", "source_url": "https://en.wikipedia.org/wiki/Mencius_(book)"},
-    {"id": "false-aristotle-republic", "claimed_author": "Aristotle", "work": "The Republic", "gold_author": "Plato", "reason": "The Republic is Plato's; Aristotle was his student and wrote separate works (e.g. the Nicomachean Ethics, Politics).", "source_url": "https://en.wikipedia.org/wiki/Republic_(Plato)"},
-    {"id": "false-epictetus-meditations", "claimed_author": "Epictetus", "work": "Meditations", "gold_author": "Marcus Aurelius", "reason": "Meditations is by Marcus Aurelius. Epictetus is associated with the Enchiridion (compiled by Arrian).", "source_url": "https://en.wikipedia.org/wiki/Meditations"},
-    {"id": "false-marcus-enchiridion", "claimed_author": "Marcus Aurelius", "work": "Enchiridion", "gold_author": "Arrian (recording Epictetus)", "reason": "The Enchiridion derives from Epictetus via Arrian; Marcus Aurelius wrote the Meditations, a different Stoic work.", "source_url": "https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus"},
-    {"id": "false-nietzsche-manifesto", "claimed_author": "Nietzsche", "work": "The Communist Manifesto", "gold_author": "Karl Marx and Friedrich Engels", "reason": "The Manifesto is by Marx and Engels (1848); Nietzsche was a different thinker with no role in it.", "source_url": "https://en.wikipedia.org/wiki/The_Communist_Manifesto"},
-    {"id": "false-freud-bge", "claimed_author": "Freud", "work": "Beyond Good and Evil", "gold_author": "Friedrich Nietzsche", "reason": "Beyond Good and Evil is Nietzsche's; Freud was a later psychoanalyst, not its author.", "source_url": "https://en.wikipedia.org/wiki/Beyond_Good_and_Evil"},
-    {"id": "false-kant-prince", "claimed_author": "Kant", "work": "The Prince", "gold_author": "Niccolò Machiavelli", "reason": "The Prince is Machiavelli's (1513); Kant is an 18th-century German philosopher.", "source_url": "https://en.wikipedia.org/wiki/The_Prince"},
-    {"id": "false-zhuangzi-dao_de_jing", "claimed_author": "Zhuangzi", "work": "Dao De Jing", "gold_author": "Laozi", "reason": "Though both are Daoist, the Dao De Jing is ascribed to Laozi and the Zhuangzi to Zhuang Zhou; conflating them merges two distinct texts/authors.", "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching"},
-
-    {"id": "false-aristotle-rhetoric_to_alexander", "claimed_author": "Aristotle", "work": "Rhetoric to Alexander", "gold_author": "Anaximenes of Lampsacus", "reason": "Traditionally bundled with Aristotle's corpus and ascribed to him until the Renaissance, but since the 16th c. attributed to Anaximenes of Lampsacus.", "source_url": "https://en.wikipedia.org/wiki/Rhetoric_to_Alexander", "difficulty": "hard"},
-    {"id": "false-plato-epinomis", "claimed_author": "Plato", "work": "Epinomis", "gold_author": "Philip of Opus", "reason": "A pseudo-Platonic appendix to the Laws; scholarly consensus (following Diogenes Laertius) attributes it to Philip of Opus, not Plato.", "source_url": "https://en.wikipedia.org/wiki/Epinomis", "difficulty": "hard"},
-    {"id": "false-xenophon-constitution_athenians", "claimed_author": "Xenophon", "work": "Constitution of the Athenians", "gold_author": "an anonymous author ('the Old Oligarch' / Pseudo-Xenophon)", "reason": "Preserved among Xenophon's works but now taken not to be his; the unknown author is called Pseudo-Xenophon or the Old Oligarch.", "source_url": "https://en.wikipedia.org/wiki/Constitution_of_the_Athenians_(Pseudo-Xenophon)", "difficulty": "hard"},
-    {"id": "false-caesar-gallic_war_book_8", "claimed_author": "Julius Caesar", "work": "the eighth book of the Gallic War", "gold_author": "Aulus Hirtius", "reason": "Caesar wrote Books 1-7; the eighth commentary was added after his death by Aulus Hirtius.", "source_url": "https://en.wikipedia.org/wiki/Commentarii_de_Bello_Gallico", "difficulty": "hard"},
-    {"id": "false-aristotle-de_mundo", "claimed_author": "Aristotle", "work": "On the Universe", "gold_author": "Pseudo-Aristotle (unknown author)", "reason": "De Mundo (On the Universe) is regarded as spurious — a Pseudo-Aristotelian work not by Aristotle himself.", "source_url": "https://en.wikipedia.org/wiki/De_Mundo", "difficulty": "hard"},
-    {"id": "false-confucius-ten_wings", "claimed_author": "Confucius", "work": "the Ten Wings of the I Ching", "gold_author": "anonymous later commentators (not Confucius)", "reason": "The Ten Wings (commentaries on the I Ching) are traditionally credited to Confucius, but modern scholarship holds they were composed by later, anonymous hands.", "source_url": "https://en.wikipedia.org/wiki/I_Ching", "difficulty": "hard"},
-    {"id": "false-constantine-donation", "claimed_author": "Constantine the Great", "work": "the Donation of Constantine", "gold_author": "an 8th-century forger (proven by Lorenzo Valla)", "reason": "The Donation of Constantine is a forged Roman imperial decree; Lorenzo Valla demonstrated it was fabricated centuries after Constantine.", "source_url": "https://en.wikipedia.org/wiki/Donation_of_Constantine", "difficulty": "hard"},
-
-    {"id": "false-aristotle-on_plants", "claimed_author": "Aristotle", "work": "On Plants", "gold_author": "Nicolaus of Damascus (Pseudo-Aristotle)", "reason": "Long included in the Corpus Aristotelicum but recognized as falsely attributed; the work derives from Nicolaus of Damascus.", "source_url": "https://en.wikipedia.org/wiki/On_Plants", "difficulty": "hard"},
-    {"id": "false-aristotle-problemata", "claimed_author": "Aristotle", "work": "the Problems (Problemata)", "gold_author": "the later Peripatetic school (Pseudo-Aristotle)", "reason": "A compilation accreted by Aristotle's school over centuries, not authored by Aristotle himself.", "source_url": "https://en.wikipedia.org/wiki/Problemata", "difficulty": "hard"},
-    {"id": "false-homer-batrachomyomachia", "claimed_author": "Homer", "work": "the Batrachomyomachia", "gold_author": "Pigres of Halicarnassus (per Plutarch)", "reason": "A mock epic the Romans ascribed to Homer; Plutarch credits Pigres, and language dates it long after Homer.", "source_url": "https://en.wikipedia.org/wiki/Batrachomyomachia", "difficulty": "hard"},
-    {"id": "false-homer-homeric_hymns", "claimed_author": "Homer", "work": "the Homeric Hymns", "gold_author": "various anonymous poets", "reason": "Called 'Homeric' for their epic style and meter, but not composed by Homer.", "source_url": "https://en.wikipedia.org/wiki/Homeric_Hymns", "difficulty": "hard"},
-    {"id": "false-hermes-corpus_hermeticum", "claimed_author": "Hermes Trismegistus", "work": "the Corpus Hermeticum", "gold_author": "anonymous Hellenistic Greek authors", "reason": "Casaubon (1614) showed the texts are Hellenistic Greek, not works of an ancient Egyptian sage.", "source_url": "https://en.wikipedia.org/wiki/Corpus_Hermeticum", "difficulty": "hard"},
-    {"id": "false-plato-axiochus", "claimed_author": "Plato", "work": "the Axiochus", "gold_author": "Pseudo-Plato (unknown)", "reason": "A dialogue transmitted under Plato's name but regarded as spurious.", "source_url": "https://en.wikipedia.org/wiki/Axiochus_(dialogue)", "difficulty": "hard"},
-    {"id": "false-plato-second_alcibiades", "claimed_author": "Plato", "work": "the Second Alcibiades", "gold_author": "Pseudo-Plato (unknown)", "reason": "Alcibiades II is generally judged spurious, not by Plato.", "source_url": "https://en.wikipedia.org/wiki/Second_Alcibiades", "difficulty": "hard"},
-    {"id": "false-phalaris-epistles", "claimed_author": "Phalaris", "work": "the Epistles of Phalaris", "gold_author": "a later anonymous forger", "reason": "Richard Bentley famously proved these letters a much later forgery, not by the tyrant Phalaris.", "source_url": "https://en.wikipedia.org/wiki/Epistles_of_Phalaris", "difficulty": "hard"},
-    {"id": "false-dionysius-corpus", "claimed_author": "Dionysius the Areopagite", "work": "the Corpus Areopagiticum", "gold_author": "an anonymous 5th-6th century author (Pseudo-Dionysius)", "reason": "Attributed to Paul's 1st-century convert but actually written centuries later by an unknown Neoplatonist.", "source_url": "https://en.wikipedia.org/wiki/Pseudo-Dionysius_the_Areopagite", "difficulty": "hard"},
-    {"id": "false-caesar-alexandrian_war", "claimed_author": "Julius Caesar", "work": "the Alexandrian War", "gold_author": "not Caesar (Hirtius or another continuator)", "reason": "Part of the Caesarian corpus written by a continuator, not by Caesar himself.", "source_url": "https://en.wikipedia.org/wiki/De_Bello_Alexandrino", "difficulty": "hard"},
-    {"id": "false-virgil-appendix", "claimed_author": "Virgil", "work": "the Appendix Vergiliana", "gold_author": "various anonymous authors (doubtful Virgilian authorship)", "reason": "A collection ascribed to the young Virgil but largely considered not his.", "source_url": "https://en.wikipedia.org/wiki/Appendix_Vergiliana", "difficulty": "hard"},
-    {"id": "false-pythagoras-golden_verses", "claimed_author": "Pythagoras", "work": "the Golden Verses", "gold_author": "later Pythagoreans (anonymous)", "reason": "Pythagoras left no writings; the Golden Verses are a later Pythagorean composition.", "source_url": "https://en.wikipedia.org/wiki/Golden_Verses", "difficulty": "hard"},
-    {"id": "false-aesop-fables", "claimed_author": "Aesop", "work": "Aesop's Fables", "gold_author": "an evolving anonymous tradition", "reason": "The collection accreted over centuries; Aesop may be semi-legendary and did not author the corpus as transmitted.", "source_url": "https://en.wikipedia.org/wiki/Aesop%27s_Fables", "difficulty": "hard"},
-
-    {"id": "false-moses-deuteronomy", "claimed_author": "Moses", "work": "Deuteronomy", "gold_author": "multiple later authors/editors (per modern scholarship)", "reason": "Mosaic authorship of the Pentateuch is rejected by mainstream scholarship (documentary/supplementary hypotheses).", "source_url": "https://en.wikipedia.org/wiki/Mosaic_authorship", "difficulty": "hard"},
-    {"id": "false-solomon-ecclesiastes", "claimed_author": "Solomon", "work": "Ecclesiastes", "gold_author": "an anonymous later (post-exilic) author", "reason": "Traditionally ascribed to Solomon, but its language dates it centuries after him.", "source_url": "https://en.wikipedia.org/wiki/Ecclesiastes", "difficulty": "hard"},
-    {"id": "false-solomon-wisdom", "claimed_author": "Solomon", "work": "the Wisdom of Solomon", "gold_author": "an anonymous Hellenistic Jewish author", "reason": "A Greek pseudepigraphon written under Solomon's name centuries after Solomon.", "source_url": "https://en.wikipedia.org/wiki/Book_of_Wisdom", "difficulty": "hard"},
-    {"id": "false-isaiah-deutero", "claimed_author": "Isaiah", "work": "chapters 40 to 66 of the Book of Isaiah", "gold_author": "Deutero-Isaiah, a later anonymous prophet", "reason": "Scholarly consensus assigns Isaiah 40-66 to one or more later authors, not the 8th-c. Isaiah of Jerusalem.", "source_url": "https://en.wikipedia.org/wiki/Book_of_Isaiah", "difficulty": "hard"},
-    {"id": "false-daniel-book", "claimed_author": "the prophet Daniel", "work": "the Book of Daniel", "gold_author": "an anonymous 2nd-century BCE author", "reason": "Mainstream scholarship dates Daniel to the Maccabean era, not the Babylonian exile.", "source_url": "https://en.wikipedia.org/wiki/Book_of_Daniel", "difficulty": "hard"},
-    {"id": "false-david-psalms", "claimed_author": "King David", "work": "the Book of Psalms", "gold_author": "many authors over centuries", "reason": "The Psalter is an anthology by numerous hands; 'David wrote the Psalms' is an oversimplified tradition.", "source_url": "https://en.wikipedia.org/wiki/Psalms", "difficulty": "hard"},
-    {"id": "false-paul-hebrews", "claimed_author": "Paul", "work": "the Epistle to the Hebrews", "gold_author": "an anonymous author (not Paul)", "reason": "Hebrews is formally anonymous; near-universal scholarship rejects Pauline authorship.", "source_url": "https://en.wikipedia.org/wiki/Epistle_to_the_Hebrews", "difficulty": "hard"},
-    {"id": "false-paul-first_timothy", "claimed_author": "Paul", "work": "the First Epistle to Timothy", "gold_author": "an anonymous later author (pseudonymous)", "reason": "The Pastoral Epistles are widely regarded as pseudonymous, written after Paul's lifetime.", "source_url": "https://en.wikipedia.org/wiki/Pastoral_epistles", "difficulty": "hard"},
-    {"id": "false-paul-titus", "claimed_author": "Paul", "work": "the Epistle to Titus", "gold_author": "an anonymous later author (pseudonymous)", "reason": "Titus is one of the Pastoral Epistles, majority-judged pseudonymous.", "source_url": "https://en.wikipedia.org/wiki/Pastoral_epistles", "difficulty": "hard"},
-    {"id": "false-enoch-book", "claimed_author": "the biblical Enoch", "work": "the Book of Enoch", "gold_author": "anonymous authors (pseudepigraphal)", "reason": "1 Enoch is a pseudepigraphon composed long after the antediluvian figure it names.", "source_url": "https://en.wikipedia.org/wiki/Book_of_Enoch", "difficulty": "hard"},
-    {"id": "false-thomas-gospel", "claimed_author": "the Apostle Thomas", "work": "the Gospel of Thomas", "gold_author": "an anonymous author (not the apostle)", "reason": "A pseudonymous sayings gospel; the apostle Thomas is not its author.", "source_url": "https://en.wikipedia.org/wiki/Gospel_of_Thomas", "difficulty": "hard"},
-
-    {"id": "false-lieyukou-liezi", "claimed_author": "Lie Yukou", "work": "the Liezi", "gold_author": "a later compiler (received text ~4th century CE)", "reason": "The transmitted Liezi is generally held to be a much later compilation, not the work of the semi-legendary Lie Yukou.", "source_url": "https://en.wikipedia.org/wiki/Liezi", "difficulty": "hard"},
-    {"id": "false-guanzhong-guanzi", "claimed_author": "Guan Zhong", "work": "the Guanzi", "gold_author": "many anonymous authors (compiled centuries later)", "reason": "Named for Guan Zhong but compiled over centuries after his death.", "source_url": "https://en.wikipedia.org/wiki/Guanzi_(text)", "difficulty": "hard"},
-    {"id": "false-confucius-spring_autumn", "claimed_author": "Confucius", "work": "the Spring and Autumn Annals", "gold_author": "the state chroniclers of Lu (traditional Confucian authorship disputed)", "reason": "Tradition credits Confucius as compiler/author, but modern scholarship doubts his direct authorship.", "source_url": "https://en.wikipedia.org/wiki/Spring_and_Autumn_Annals", "difficulty": "hard"}
+    {
+      "id": "false-confucius-dao_de_jing",
+      "claimed_author": "Confucius",
+      "work": "Dao De Jing",
+      "gold_author": "Laozi",
+      "reason": "The Dao De Jing is a Daoist text traditionally ascribed to Laozi; Confucius belongs to a distinct (Confucian) tradition and is never credited with it.",
+      "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching"
+    },
+    {
+      "id": "false-socrates-republic",
+      "claimed_author": "Socrates",
+      "work": "The Republic",
+      "gold_author": "Plato",
+      "reason": "Socrates is a character/speaker in the dialogue; Plato is the author. Socrates wrote nothing.",
+      "source_url": "https://en.wikipedia.org/wiki/Republic_(Plato)"
+    },
+    {
+      "id": "false-plato-dao_de_jing",
+      "claimed_author": "Plato",
+      "work": "Dao De Jing",
+      "gold_author": "Laozi",
+      "reason": "A Greek philosopher cannot be the author of a Chinese Daoist classic; different tradition and era.",
+      "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching"
+    },
+    {
+      "id": "false-laozi-analects",
+      "claimed_author": "Laozi",
+      "work": "Analects",
+      "gold_author": "Confucius (compiled by disciples)",
+      "reason": "The Analects records Confucius; Laozi is the Daoist figure, a different lineage.",
+      "source_url": "https://en.wikipedia.org/wiki/Analects"
+    },
+    {
+      "id": "false-confucius-mencius",
+      "claimed_author": "Confucius",
+      "work": "Mencius",
+      "gold_author": "Mencius (and disciples)",
+      "reason": "The Mencius records Mencius, who lived generations after Confucius; same tradition but not the same author.",
+      "source_url": "https://en.wikipedia.org/wiki/Mencius_(book)"
+    },
+    {
+      "id": "false-aristotle-republic",
+      "claimed_author": "Aristotle",
+      "work": "The Republic",
+      "gold_author": "Plato",
+      "reason": "The Republic is Plato's; Aristotle was his student and wrote separate works (e.g. the Nicomachean Ethics, Politics).",
+      "source_url": "https://en.wikipedia.org/wiki/Republic_(Plato)"
+    },
+    {
+      "id": "false-epictetus-meditations",
+      "claimed_author": "Epictetus",
+      "work": "Meditations",
+      "gold_author": "Marcus Aurelius",
+      "reason": "Meditations is by Marcus Aurelius. Epictetus is associated with the Enchiridion (compiled by Arrian).",
+      "source_url": "https://en.wikipedia.org/wiki/Meditations"
+    },
+    {
+      "id": "false-marcus-enchiridion",
+      "claimed_author": "Marcus Aurelius",
+      "work": "Enchiridion",
+      "gold_author": "Arrian (recording Epictetus)",
+      "reason": "The Enchiridion derives from Epictetus via Arrian; Marcus Aurelius wrote the Meditations, a different Stoic work.",
+      "source_url": "https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus"
+    },
+    {
+      "id": "false-nietzsche-manifesto",
+      "claimed_author": "Nietzsche",
+      "work": "The Communist Manifesto",
+      "gold_author": "Karl Marx and Friedrich Engels",
+      "reason": "The Manifesto is by Marx and Engels (1848); Nietzsche was a different thinker with no role in it.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Communist_Manifesto"
+    },
+    {
+      "id": "false-freud-bge",
+      "claimed_author": "Freud",
+      "work": "Beyond Good and Evil",
+      "gold_author": "Friedrich Nietzsche",
+      "reason": "Beyond Good and Evil is Nietzsche's; Freud was a later psychoanalyst, not its author.",
+      "source_url": "https://en.wikipedia.org/wiki/Beyond_Good_and_Evil"
+    },
+    {
+      "id": "false-kant-prince",
+      "claimed_author": "Kant",
+      "work": "The Prince",
+      "gold_author": "Niccolò Machiavelli",
+      "reason": "The Prince is Machiavelli's (1513); Kant is an 18th-century German philosopher.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Prince"
+    },
+    {
+      "id": "false-zhuangzi-dao_de_jing",
+      "claimed_author": "Zhuangzi",
+      "work": "Dao De Jing",
+      "gold_author": "Laozi",
+      "reason": "Though both are Daoist, the Dao De Jing is ascribed to Laozi and the Zhuangzi to Zhuang Zhou; conflating them merges two distinct texts/authors.",
+      "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching"
+    },
+    {
+      "id": "false-aristotle-rhetoric_to_alexander",
+      "claimed_author": "Aristotle",
+      "work": "Rhetoric to Alexander",
+      "gold_author": "Anaximenes of Lampsacus",
+      "reason": "Traditionally bundled with Aristotle's corpus and ascribed to him until the Renaissance, but since the 16th c. attributed to Anaximenes of Lampsacus.",
+      "source_url": "https://en.wikipedia.org/wiki/Rhetoric_to_Alexander",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-plato-epinomis",
+      "claimed_author": "Plato",
+      "work": "Epinomis",
+      "gold_author": "Philip of Opus",
+      "reason": "A pseudo-Platonic appendix to the Laws; scholarly consensus (following Diogenes Laertius) attributes it to Philip of Opus, not Plato.",
+      "source_url": "https://en.wikipedia.org/wiki/Epinomis",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-xenophon-constitution_athenians",
+      "claimed_author": "Xenophon",
+      "work": "Constitution of the Athenians",
+      "gold_author": "an anonymous author ('the Old Oligarch' / Pseudo-Xenophon)",
+      "reason": "Preserved among Xenophon's works but now taken not to be his; the unknown author is called Pseudo-Xenophon or the Old Oligarch.",
+      "source_url": "https://en.wikipedia.org/wiki/Constitution_of_the_Athenians_(Pseudo-Xenophon)",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-caesar-gallic_war_book_8",
+      "claimed_author": "Julius Caesar",
+      "work": "the eighth book of the Gallic War",
+      "gold_author": "Aulus Hirtius",
+      "reason": "Caesar wrote Books 1-7; the eighth commentary was added after his death by Aulus Hirtius.",
+      "source_url": "https://en.wikipedia.org/wiki/Commentarii_de_Bello_Gallico",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-aristotle-de_mundo",
+      "claimed_author": "Aristotle",
+      "work": "On the Universe",
+      "gold_author": "Pseudo-Aristotle (unknown author)",
+      "reason": "De Mundo (On the Universe) is regarded as spurious — a Pseudo-Aristotelian work not by Aristotle himself.",
+      "source_url": "https://en.wikipedia.org/wiki/De_Mundo",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-confucius-ten_wings",
+      "claimed_author": "Confucius",
+      "work": "the Ten Wings of the I Ching",
+      "gold_author": "anonymous later commentators (not Confucius)",
+      "reason": "The Ten Wings (commentaries on the I Ching) are traditionally credited to Confucius, but modern scholarship holds they were composed by later, anonymous hands.",
+      "source_url": "https://en.wikipedia.org/wiki/I_Ching",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-constantine-donation",
+      "claimed_author": "Constantine the Great",
+      "work": "the Donation of Constantine",
+      "gold_author": "an 8th-century forger (proven by Lorenzo Valla)",
+      "reason": "The Donation of Constantine is a forged Roman imperial decree; Lorenzo Valla demonstrated it was fabricated centuries after Constantine.",
+      "source_url": "https://en.wikipedia.org/wiki/Donation_of_Constantine",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-aristotle-on_plants",
+      "claimed_author": "Aristotle",
+      "work": "On Plants",
+      "gold_author": "Nicolaus of Damascus (Pseudo-Aristotle)",
+      "reason": "Long included in the Corpus Aristotelicum but recognized as falsely attributed; the work derives from Nicolaus of Damascus.",
+      "source_url": "https://en.wikipedia.org/wiki/On_Plants",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-aristotle-problemata",
+      "claimed_author": "Aristotle",
+      "work": "the Problems (Problemata)",
+      "gold_author": "the later Peripatetic school (Pseudo-Aristotle)",
+      "reason": "A compilation accreted by Aristotle's school over centuries, not authored by Aristotle himself.",
+      "source_url": "https://en.wikipedia.org/wiki/Problemata",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-homer-batrachomyomachia",
+      "claimed_author": "Homer",
+      "work": "the Batrachomyomachia",
+      "gold_author": "Pigres of Halicarnassus (per Plutarch)",
+      "reason": "A mock epic the Romans ascribed to Homer; Plutarch credits Pigres, and language dates it long after Homer.",
+      "source_url": "https://en.wikipedia.org/wiki/Batrachomyomachia",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-homer-homeric_hymns",
+      "claimed_author": "Homer",
+      "work": "the Homeric Hymns",
+      "gold_author": "various anonymous poets",
+      "reason": "Called 'Homeric' for their epic style and meter, but not composed by Homer.",
+      "source_url": "https://en.wikipedia.org/wiki/Homeric_Hymns",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-hermes-corpus_hermeticum",
+      "claimed_author": "Hermes Trismegistus",
+      "work": "the Corpus Hermeticum",
+      "gold_author": "anonymous Hellenistic Greek authors",
+      "reason": "Casaubon (1614) showed the texts are Hellenistic Greek, not works of an ancient Egyptian sage.",
+      "source_url": "https://en.wikipedia.org/wiki/Corpus_Hermeticum",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-plato-axiochus",
+      "claimed_author": "Plato",
+      "work": "the Axiochus",
+      "gold_author": "Pseudo-Plato (unknown)",
+      "reason": "A dialogue transmitted under Plato's name but regarded as spurious.",
+      "source_url": "https://en.wikipedia.org/wiki/Axiochus_(dialogue)",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-plato-second_alcibiades",
+      "claimed_author": "Plato",
+      "work": "the Second Alcibiades",
+      "gold_author": "Pseudo-Plato (unknown)",
+      "reason": "Alcibiades II is generally judged spurious, not by Plato.",
+      "source_url": "https://en.wikipedia.org/wiki/Second_Alcibiades",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-phalaris-epistles",
+      "claimed_author": "Phalaris",
+      "work": "the Epistles of Phalaris",
+      "gold_author": "a later anonymous forger",
+      "reason": "Richard Bentley famously proved these letters a much later forgery, not by the tyrant Phalaris.",
+      "source_url": "https://en.wikipedia.org/wiki/Epistles_of_Phalaris",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-dionysius-corpus",
+      "claimed_author": "Dionysius the Areopagite",
+      "work": "the Corpus Areopagiticum",
+      "gold_author": "an anonymous 5th-6th century author (Pseudo-Dionysius)",
+      "reason": "Attributed to Paul's 1st-century convert but actually written centuries later by an unknown Neoplatonist.",
+      "source_url": "https://en.wikipedia.org/wiki/Pseudo-Dionysius_the_Areopagite",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-caesar-alexandrian_war",
+      "claimed_author": "Julius Caesar",
+      "work": "the Alexandrian War",
+      "gold_author": "not Caesar (Hirtius or another continuator)",
+      "reason": "Part of the Caesarian corpus written by a continuator, not by Caesar himself.",
+      "source_url": "https://en.wikipedia.org/wiki/De_Bello_Alexandrino",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-virgil-appendix",
+      "claimed_author": "Virgil",
+      "work": "the Appendix Vergiliana",
+      "gold_author": "various anonymous authors (doubtful Virgilian authorship)",
+      "reason": "A collection ascribed to the young Virgil but largely considered not his.",
+      "source_url": "https://en.wikipedia.org/wiki/Appendix_Vergiliana",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-pythagoras-golden_verses",
+      "claimed_author": "Pythagoras",
+      "work": "the Golden Verses",
+      "gold_author": "later Pythagoreans (anonymous)",
+      "reason": "Pythagoras left no writings; the Golden Verses are a later Pythagorean composition.",
+      "source_url": "https://en.wikipedia.org/wiki/Golden_Verses",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-aesop-fables",
+      "claimed_author": "Aesop",
+      "work": "Aesop's Fables",
+      "gold_author": "an evolving anonymous tradition",
+      "reason": "The collection accreted over centuries; Aesop may be semi-legendary and did not author the corpus as transmitted.",
+      "source_url": "https://en.wikipedia.org/wiki/Aesop%27s_Fables",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-moses-deuteronomy",
+      "claimed_author": "Moses",
+      "work": "Deuteronomy",
+      "gold_author": "multiple later authors/editors (per modern scholarship)",
+      "reason": "Mosaic authorship of the Pentateuch is rejected by mainstream scholarship (documentary/supplementary hypotheses).",
+      "source_url": "https://en.wikipedia.org/wiki/Mosaic_authorship",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-solomon-ecclesiastes",
+      "claimed_author": "Solomon",
+      "work": "Ecclesiastes",
+      "gold_author": "an anonymous later (post-exilic) author",
+      "reason": "Traditionally ascribed to Solomon, but its language dates it centuries after him.",
+      "source_url": "https://en.wikipedia.org/wiki/Ecclesiastes",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-solomon-wisdom",
+      "claimed_author": "Solomon",
+      "work": "the Wisdom of Solomon",
+      "gold_author": "an anonymous Hellenistic Jewish author",
+      "reason": "A Greek pseudepigraphon written under Solomon's name centuries after Solomon.",
+      "source_url": "https://en.wikipedia.org/wiki/Book_of_Wisdom",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-isaiah-deutero",
+      "claimed_author": "Isaiah",
+      "work": "chapters 40 to 66 of the Book of Isaiah",
+      "gold_author": "Deutero-Isaiah, a later anonymous prophet",
+      "reason": "Scholarly consensus assigns Isaiah 40-66 to one or more later authors, not the 8th-c. Isaiah of Jerusalem.",
+      "source_url": "https://en.wikipedia.org/wiki/Book_of_Isaiah",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-daniel-book",
+      "claimed_author": "the prophet Daniel",
+      "work": "the Book of Daniel",
+      "gold_author": "an anonymous 2nd-century BCE author",
+      "reason": "Mainstream scholarship dates Daniel to the Maccabean era, not the Babylonian exile.",
+      "source_url": "https://en.wikipedia.org/wiki/Book_of_Daniel",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-david-psalms",
+      "claimed_author": "King David",
+      "work": "the Book of Psalms",
+      "gold_author": "many authors over centuries",
+      "reason": "The Psalter is an anthology by numerous hands; 'David wrote the Psalms' is an oversimplified tradition.",
+      "source_url": "https://en.wikipedia.org/wiki/Psalms",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-paul-hebrews",
+      "claimed_author": "Paul",
+      "work": "the Epistle to the Hebrews",
+      "gold_author": "an anonymous author (not Paul)",
+      "reason": "Hebrews is formally anonymous; near-universal scholarship rejects Pauline authorship.",
+      "source_url": "https://en.wikipedia.org/wiki/Epistle_to_the_Hebrews",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-paul-first_timothy",
+      "claimed_author": "Paul",
+      "work": "the First Epistle to Timothy",
+      "gold_author": "an anonymous later author (pseudonymous)",
+      "reason": "The Pastoral Epistles are widely regarded as pseudonymous, written after Paul's lifetime.",
+      "source_url": "https://en.wikipedia.org/wiki/Pastoral_epistles",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-paul-titus",
+      "claimed_author": "Paul",
+      "work": "the Epistle to Titus",
+      "gold_author": "an anonymous later author (pseudonymous)",
+      "reason": "Titus is one of the Pastoral Epistles, majority-judged pseudonymous.",
+      "source_url": "https://en.wikipedia.org/wiki/Pastoral_epistles",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-enoch-book",
+      "claimed_author": "the biblical Enoch",
+      "work": "the Book of Enoch",
+      "gold_author": "anonymous authors (pseudepigraphal)",
+      "reason": "1 Enoch is a pseudepigraphon composed long after the antediluvian figure it names.",
+      "source_url": "https://en.wikipedia.org/wiki/Book_of_Enoch",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-thomas-gospel",
+      "claimed_author": "the Apostle Thomas",
+      "work": "the Gospel of Thomas",
+      "gold_author": "an anonymous author (not the apostle)",
+      "reason": "A pseudonymous sayings gospel; the apostle Thomas is not its author.",
+      "source_url": "https://en.wikipedia.org/wiki/Gospel_of_Thomas",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-lieyukou-liezi",
+      "claimed_author": "Lie Yukou",
+      "work": "the Liezi",
+      "gold_author": "a later compiler (received text ~4th century CE)",
+      "reason": "The transmitted Liezi is generally held to be a much later compilation, not the work of the semi-legendary Lie Yukou.",
+      "source_url": "https://en.wikipedia.org/wiki/Liezi",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-guanzhong-guanzi",
+      "claimed_author": "Guan Zhong",
+      "work": "the Guanzi",
+      "gold_author": "many anonymous authors (compiled centuries later)",
+      "reason": "Named for Guan Zhong but compiled over centuries after his death.",
+      "source_url": "https://en.wikipedia.org/wiki/Guanzi_(text)",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-confucius-spring_autumn",
+      "claimed_author": "Confucius",
+      "work": "the Spring and Autumn Annals",
+      "gold_author": "the state chroniclers of Lu (traditional Confucian authorship disputed)",
+      "reason": "Tradition credits Confucius as compiler/author, but modern scholarship doubts his direct authorship.",
+      "source_url": "https://en.wikipedia.org/wiki/Spring_and_Autumn_Annals",
+      "difficulty": "hard"
+    },
+    {
+      "id": "false-plato-theages",
+      "claimed_author": "Plato",
+      "work": "Theages",
+      "gold_author": "Anonymous (Pseudo-Plato, Hellenistic spurium)",
+      "reason": "The Theages is broadly judged spurious by modern scholars (regarded as authentic only in antiquity) and has no identified author, so it is correctly an anonymous pseudo-Platonic work, not by Plato; the misattribution to Plato is genuine since it was transmitted in the Platonic corpus.",
+      "source_url": "https://en.wikipedia.org/wiki/Theages"
+    },
+    {
+      "id": "false-plato-minos",
+      "claimed_author": "Plato",
+      "work": "Minos",
+      "gold_author": "Anonymous (Pseudo-Plato)",
+      "reason": "The Minos is broadly regarded by scholars as spurious/pseudo-Platonic, written by an unknown Academic imitator rather than Plato, making the traditional Platonic attribution genuinely false and the confusion plausible since it was transmitted within the Platonic corpus.",
+      "source_url": "https://en.wikipedia.org/wiki/Minos_(dialogue)"
+    },
+    {
+      "id": "false-plato-hipparchus",
+      "claimed_author": "Plato",
+      "work": "Hipparchus",
+      "gold_author": "Anonymous (Pseudo-Plato)",
+      "reason": "The Hipparchus is a real titled dialogue traditionally transmitted in the Platonic corpus but generally regarded by scholars as spurious/pseudo-Platonic (likely composed by an anonymous later author, possibly the same as Minos, after mid-4th century BC), so it is genuinely false that Plato wrote it and the Plato-attribution confusion is real and plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Hipparchus_(dialogue)"
+    },
+    {
+      "id": "false-plato-demodocus",
+      "claimed_author": "Plato",
+      "work": "Demodocus",
+      "gold_author": "Anonymous (Pseudo-Plato)",
+      "reason": "The Demodocus is part of the Appendix Platonica (spuria) and is generally acknowledged by scholars as not written by Plato but by an anonymous late sophist/rhetorician, confirmed via Wikipedia.",
+      "source_url": "https://en.wikipedia.org/wiki/Demodocus_(dialogue)"
+    },
+    {
+      "id": "false-plato-eryxias",
+      "claimed_author": "Plato",
+      "work": "Eryxias",
+      "gold_author": "Anonymous (Pseudo-Plato)",
+      "reason": "The Eryxias is a real Socratic dialogue universally classed among the spuria (Appendix Platonica) by modern scholars, written by an anonymous Platonic imitator rather than Plato, so the misattribution to Plato is genuine and plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Eryxias_(dialogue)"
+    },
+    {
+      "id": "false-plato-on_justice_peri_dikaiou",
+      "claimed_author": "Plato",
+      "work": "On Justice (Peri Dikaiou)",
+      "gold_author": "Anonymous (Pseudo-Plato)",
+      "reason": "\"On Justice\" (Peri Dikaiou) is a Socratic dialogue transmitted under Plato's name but judged spurious since antiquity and written by an unknown author, so the real author is anonymous/pseudo-Plato, not Plato.",
+      "source_url": "https://en.wikipedia.org/wiki/On_Justice"
+    },
+    {
+      "id": "false-plato-on_virtue_peri_aretes",
+      "claimed_author": "Plato",
+      "work": "On Virtue (Peri Aretes)",
+      "gold_author": "Anonymous (Pseudo-Plato)",
+      "reason": "On Virtue (Peri Aretes) is a spurious dialogue transmitted in the Platonic corpus but written by an anonymous later imitator who copied passages from Plato's authentic Meno, so Plato did not write it.",
+      "source_url": "https://en.wikipedia.org/wiki/On_Virtue"
+    },
+    {
+      "id": "false-plato-definitions_horoi",
+      "claimed_author": "Plato",
+      "work": "Definitions (Horoi)",
+      "gold_author": "Anonymous Academy compilers (Pseudo-Plato)",
+      "reason": "Scholarly consensus (Thrasyllus and modern scholarship) holds the Definitions/Horoi is spurious, not written by Plato but compiled by anonymous members of the early Academy; the discredited Speusippus attribution is rejected, so the anonymous Pseudo-Plato attribution is correct and the misattribution to Plato is real since it appears in the Platonic corpus.",
+      "source_url": "https://en.wikipedia.org/wiki/Definitions_(Plato)"
+    },
+    {
+      "id": "false-aristotle-mechanics_mechanica",
+      "claimed_author": "Aristotle",
+      "work": "Mechanics (Mechanica)",
+      "gold_author": "Anonymous Peripatetic (Pseudo-Aristotle), possibly Strato of Lampsacus or Archytas circle",
+      "reason": "The Mechanica is in the Aristotelian corpus but scholarly consensus deems it spurious/pseudo-Aristotelian, written by a later Peripatetic (with Strato of Lampsacus and Archytas as attested minority candidates), so the misattribution to Aristotle is real and the gold author is correct.",
+      "source_url": "https://en.wikipedia.org/wiki/Mechanics_(Aristotle)"
+    },
+    {
+      "id": "false-aristotle-on_colours_de_coloribus",
+      "claimed_author": "Aristotle",
+      "work": "On Colours (De Coloribus)",
+      "gold_author": "Theophrastus or Strato of Lampsacus (Pseudo-Aristotle)",
+      "reason": "De Coloribus is universally regarded as spurious/not by Aristotle; it circulated in the Aristotelian corpus (hence the plausible misattribution) and scholarship ascribes it to Theophrastus or Strato of Lampsacus within the Peripatetic school.",
+      "source_url": "https://en.wikipedia.org/wiki/On_Colors"
+    },
+    {
+      "id": "false-aristotle-on_things_heard_de_audibilibus",
+      "claimed_author": "Aristotle",
+      "work": "On Things Heard (De Audibilibus)",
+      "gold_author": "Strato of Lampsacus (Pseudo-Aristotle)",
+      "reason": "Wikipedia and scholarship (Gottschalk, Hermes 1968) confirm De Audibilibus was formerly attributed to Aristotle but is now generally believed to be by Strato of Lampsacus, a Peripatetic, making the misattribution real, the pairing plausible, and the text genuine.",
+      "source_url": "https://en.wikipedia.org/wiki/On_Things_Heard"
+    },
+    {
+      "id": "false-aristotle-physiognomonics",
+      "claimed_author": "Aristotle",
+      "work": "Physiognomonics",
+      "gold_author": "Pseudo-Aristotle (anonymous Peripatetic author)",
+      "reason": "Physiognomonics is a real pseudo-Aristotelian treatise in the Corpus Aristotelicum written ~300 BC by an anonymous Peripatetic, not by Aristotle; the misattribution to Aristotle is genuine and plausible, and the topic offends no living faith.",
+      "source_url": "https://en.wikipedia.org/wiki/Physiognomonics"
+    },
+    {
+      "id": "false-aristotle-on_indivisible_lines_de_lineis_ins",
+      "claimed_author": "Aristotle",
+      "work": "On Indivisible Lines (De Lineis Insecabilibus)",
+      "gold_author": "Theophrastus or an anonymous Peripatetic (Pseudo-Aristotle)",
+      "reason": "Wikipedia and scholarship confirm De Lineis Insecabilibus is a spurious work in the Corpus Aristotelicum, written by a Peripatetic (ascribed to Theophrastus or an unknown follower), not by Aristotle himself.",
+      "source_url": "https://en.wikipedia.org/wiki/On_Indivisible_Lines"
+    },
+    {
+      "id": "false-aristotle-economics_oeconomica",
+      "claimed_author": "Aristotle",
+      "work": "Economics (Oeconomica)",
+      "gold_author": "Anonymous Peripatetic, partly Theophrastus circle (Pseudo-Aristotle)",
+      "reason": "The Oeconomica circulated in the Aristotelian Corpus under Aristotle's name but is not by him; modern scholarship attributes it to a student of Aristotle or his successor Theophrastus (Pseudo-Aristotle, Peripatetic school), evidenced by Hellenistic style and post-Aristotle anecdotes.",
+      "source_url": "https://en.wikipedia.org/wiki/Economics_(Aristotle)"
+    },
+    {
+      "id": "false-aristotle-on_virtues_and_vices_de_virtutibus",
+      "claimed_author": "Aristotle",
+      "work": "On Virtues and Vices (De Virtutibus et Vitiis)",
+      "gold_author": "Anonymous (Pseudo-Aristotle); the work is spurious, probably by an unknown later member of the Peripatetic school",
+      "reason": "On Virtues and Vices is near-universally regarded as spurious and not by Aristotle; the real author is an anonymous later writer (likely Peripatetic), so the misattribution to Aristotle is real and plausible, with the gold corrected from the overconfident \"Middle Platonic\" framing to the documented anonymous/Peripatetic characterization.",
+      "source_url": "https://en.wikipedia.org/wiki/On_Virtues_and_Vices"
+    },
+    {
+      "id": "false-aristotle-on_marvellous_things_heard_de_mira",
+      "claimed_author": "Aristotle",
+      "work": "On Marvellous Things Heard (De Mirabilibus Auscultationibus)",
+      "gold_author": "Anonymous compilers (Pseudo-Aristotle)",
+      "reason": "Wikipedia and the Oxford translation of Aristotle's complete works confirm the treatise is spurious (never seriously contested), traditionally ascribed to Aristotle but actually an anonymous Pseudo-Aristotle paradoxographical compilation; misattribution is real and plausible since it was transmitted in the Corpus Aristotelicum.",
+      "source_url": "https://en.wikipedia.org/wiki/On_Marvellous_Things_Heard"
+    },
+    {
+      "id": "false-aristotle-on_breath_de_spiritu",
+      "claimed_author": "Aristotle",
+      "work": "On Breath (De Spiritu)",
+      "gold_author": "Anonymous Peripatetic (Pseudo-Aristotle)",
+      "reason": "De Spiritu (On Breath) is in the Corpus Aristotelicum but almost unanimously judged spurious by modern scholarship, attributed to an early anonymous Peripatetic author (possibly Theophrastus/Strato circle) rather than Aristotle, so the misattribution to Aristotle is real and the pairing plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/On_Breath"
+    },
+    {
+      "id": "false-plutarch-placita_philosophorum",
+      "claimed_author": "Plutarch",
+      "work": "Placita Philosophorum",
+      "gold_author": "Aetius (via the doxographer tradition; Pseudo-Plutarch)",
+      "reason": "The De Placitis Philosophorum is a Pseudo-Plutarch epitome of the lost doxographer Aetius (per Diels' Doxographi Graeci); it traveled under Plutarch's name but he did not write it, making the misattribution real, plausible, and non-offensive.",
+      "source_url": "https://en.wikipedia.org/wiki/Aetius_(philosopher)"
+    },
+    {
+      "id": "false-plutarch-on_music_de_musica",
+      "claimed_author": "Plutarch",
+      "work": "On Music (De Musica)",
+      "gold_author": "Anonymous (Pseudo-Plutarch)",
+      "reason": "De Musica was originally anonymous and only later ascribed to Plutarch (name inserted by a later hand in the oldest MSS); scholarly consensus rejects Plutarchan authorship on grounds of style, doxographic compilation, and anachronism, attributing it to an unknown author (Pseudo-Plutarch).",
+      "source_url": "https://en.wikipedia.org/wiki/Pseudo-Plutarch"
+    },
+    {
+      "id": "false-plutarch-on_rivers_de_fluviis",
+      "claimed_author": "Plutarch",
+      "work": "On Rivers (De Fluviis)",
+      "gold_author": "Anonymous (Pseudo-Plutarch)",
+      "reason": "De Fluviis (On Rivers) is a spurious work by an unknown author falsely attributed to Plutarch; Wikipedia's Pseudo-Plutarch article lists it among pseudepigrapha \"now known not to have been written by him,\" and a 9th-century manuscript note already flagged it as pseudepigraphic.",
+      "source_url": "https://en.wikipedia.org/wiki/Pseudo-Plutarch"
+    },
+    {
+      "id": "false-plutarch-lives_of_the_ten_orators",
+      "claimed_author": "Plutarch",
+      "work": "Lives of the Ten Orators",
+      "gold_author": "Anonymous (Pseudo-Plutarch)",
+      "reason": "The Lives of the Ten Orators is a documented pseudepigraphon transmitted within Plutarch's Moralia but written by an unknown later author (Pseudo-Plutarch, c. 3rd-4th c. AD), not by Plutarch, making the misattribution real and the pairing plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Pseudo-Plutarch"
+    },
+    {
+      "id": "false-hippocrates-on_the_sacred_disease",
+      "claimed_author": "Hippocrates",
+      "work": "On the Sacred Disease",
+      "gold_author": "Anonymous Hippocratic author (Pseudo-Hippocrates)",
+      "reason": "Like most of the Hippocratic Corpus, On the Sacred Disease is a real treatise whose attribution to Hippocrates is dubious; scholarship holds it was written by an anonymous physician of the Hippocratic school, making the traditional Hippocrates attribution a genuine and plausible misattribution.",
+      "source_url": "https://en.wikipedia.org/wiki/On_the_Sacred_Disease"
+    },
+    {
+      "id": "false-hippocrates-hippocratic_oath",
+      "claimed_author": "Hippocrates",
+      "work": "Hippocratic Oath",
+      "gold_author": "Anonymous (Hippocratic school), authorship uncertain",
+      "reason": "Per Wikipedia and modern scholarship, the Oath is dated to the 4th-5th century BC and is not securely attributable to Hippocrates; it is the product of the broader Hippocratic tradition with uncertain authorship, so the popular attribution to Hippocrates is genuinely false.",
+      "source_url": "https://en.wikipedia.org/wiki/Hippocratic_Oath"
+    },
+    {
+      "id": "false-orpheus-orphic_hymns",
+      "claimed_author": "Orpheus",
+      "work": "Orphic Hymns",
+      "gold_author": "Anonymous (late Hellenistic/Imperial cult author)",
+      "reason": "The Orphic Hymns are a real corpus of 87 Greek poems pseudepigraphically ascribed to the mythical Orpheus but, per scholarly consensus (Wikipedia confirmed), composed by a single unknown/anonymous author of the Roman Imperial period (2nd-3rd c. AD), so Orpheus demonstrably did not write them.",
+      "source_url": "https://en.wikipedia.org/wiki/Orphic_Hymns"
+    },
+    {
+      "id": "false-orpheus-orphic_argonautica",
+      "claimed_author": "Orpheus",
+      "work": "Orphic Argonautica",
+      "gold_author": "Anonymous (Late Antique poet)",
+      "reason": "Wikipedia and scholarship confirm the real author is unknown/anonymous (4th c. CE late antique), pseudonymously attributed to the mythical Orpheus as a narrative device, so the misattribution is real and the pairing plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Orphic_Argonautica"
+    },
+    {
+      "id": "false-diogenes_of_sinope-cynic_epistles_letters_of_diogenes",
+      "claimed_author": "Diogenes of Sinope",
+      "work": "Cynic Epistles (Letters of Diogenes)",
+      "gold_author": "Anonymous (pseudonymous Cynic forgers)",
+      "reason": "The Letters of Diogenes within the Cynic Epistles are universally agreed by scholarship to be pseudepigrapha written by anonymous later Cynic authors (c. 1st century BCE), not the historical Diogenes of Sinope (d. 323 BCE).",
+      "source_url": "https://en.wikipedia.org/wiki/Cynic_epistles"
+    },
+    {
+      "id": "false-archytas_of_tarentum-on_the_universal_logos_on_categori",
+      "claimed_author": "Archytas of Tarentum",
+      "work": "On the Universal Logos / On Categories (Pythagorean treatises)",
+      "gold_author": "Anonymous Neopythagorean (Pseudo-Archytas)",
+      "reason": "Scholarship (Stanford Encyclopedia, Horky, Zhmud) universally regards the categories treatises under Archytas's name as spurious Neopythagorean pseudepigrapha by anonymous Hellenistic/Imperial-era authors, not the historical Archytas of Tarentum, who left only ~4 authentic fragments.",
+      "source_url": "https://en.wikipedia.org/wiki/Archytas"
+    },
+    {
+      "id": "false-timaeus_of_locri-on_the_nature_of_the_world_and_the",
+      "claimed_author": "Timaeus of Locri",
+      "work": "On the Nature of the World and the Soul",
+      "gold_author": "Anonymous Neopythagorean (Pseudo-Timaeus)",
+      "reason": "Wikipedia and scholarship confirm \"On the Nature of the World and the Soul\" (Timaeus Locrus) is a pseudepigraphon written c. 1st century BC/AD by an anonymous Neopythagorean, derived FROM Plato's Timaeus, not by a historical Timaeus of Locri, making the misattribution real and the pairing plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Timaeus_of_Locri"
+    },
+    {
+      "id": "false-demosthenes-erotic_essay_eroticus_or_61",
+      "claimed_author": "Demosthenes",
+      "work": "Erotic Essay (Eroticus, Or. 61)",
+      "gold_author": "Anonymous (Pseudo-Demosthenes)",
+      "reason": "The Eroticus (Or. 61), transmitted in the Demosthenic corpus, is regarded by scholarly consensus as spurious/pseudo-Demosthenic (anachronisms, no ancient attestation, no Libanius hypothesis), so an unknown author rather than Demosthenes wrote it.",
+      "source_url": "https://en.wikipedia.org/wiki/Works_of_Demosthenes"
+    },
+    {
+      "id": "false-paul_the_apostle-epistle_to_the_ephesians",
+      "claimed_author": "Paul the Apostle",
+      "work": "Epistle to the Ephesians",
+      "gold_author": "An anonymous later follower of Paul (deutero-Pauline pseudepigraphon)",
+      "reason": "Ephesians names Paul as author but ~80% of critical scholars reject Pauline authorship on grounds of non-Pauline vocabulary, long Greek sentences, and developed ecclesiology, judging it a deutero-Pauline pseudepigraphon by an anonymous later follower; all checks pass.",
+      "source_url": "https://en.wikipedia.org/wiki/Epistle_to_the_Ephesians"
+    },
+    {
+      "id": "false-paul_the_apostle-second_epistle_to_timothy",
+      "claimed_author": "Paul the Apostle",
+      "work": "Second Epistle to Timothy",
+      "gold_author": "An anonymous author of the Pastoral Epistles writing in Paul's name",
+      "reason": "2 Timothy is a real New Testament text that internally claims Pauline authorship, but the majority critical-scholarship view (distinctive vocabulary, developed church-office structure, early-2nd-century situation) holds it is a pseudepigraphon written anonymously in Paul's name; the Paul attribution is the genuine documented confusion, and presenting this as a scholarly view is not an attack on faith claims.",
+      "source_url": "https://en.wikipedia.org/wiki/Second_Epistle_to_Timothy"
+    },
+    {
+      "id": "false-james_brother_of_jesus-epistle_of_james",
+      "claimed_author": "James, brother of Jesus",
+      "work": "Epistle of James",
+      "gold_author": "An anonymous Greek-speaking Jewish-Christian author",
+      "reason": "Per prevalent modern scholarship the Epistle of James is pseudonymous (polished Greek, late attestation, possible dependence on 1 Peter), making authorship by the Aramaic-speaking James of Jerusalem doubtful; the text self-attributes to \"James\" so the misattribution is real and the pairing plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Epistle_of_James"
+    },
+    {
+      "id": "false-peter_the_apostle-first_epistle_of_peter",
+      "claimed_author": "Peter the Apostle",
+      "work": "First Epistle of Peter",
+      "gold_author": "An anonymous author (or Petrine circle) writing in Peter's name",
+      "reason": "Wikipedia confirms the letter is self-attributed to Peter the Apostle (traditional) but most scholars regard it as pseudonymous/from a Petrine circle at Rome, citing the cultivated Greek and education unfitting a Galilean fisherman, so the triple is accurate and the misattribution is real.",
+      "source_url": "https://en.wikipedia.org/wiki/First_Epistle_of_Peter"
+    },
+    {
+      "id": "false-peter_the_apostle-second_epistle_of_peter",
+      "claimed_author": "Peter the Apostle",
+      "work": "Second Epistle of Peter",
+      "gold_author": "An anonymous early-2nd-century author writing in Peter's name",
+      "reason": "Mainstream scholarly consensus (e.g., J.N.D. Kelly: \"scarcely anyone nowadays doubts that 2 Peter is pseudonymous\") holds 2 Peter is pseudepigraphic—not by the Apostle Peter—due to its dependence on Jude, post-apostolic outlook (2 Pet 3:4), distinction from the apostles, and very late attestation; the gold_author is correctly framed as anonymous/pseudonymous per scholarship rather than a named individual, the work is a real canonical text, and the pairing is genuinely plausible since the letter itself claims Petrine authorship.",
+      "source_url": "https://en.wikipedia.org/wiki/Second_Epistle_of_Peter"
+    },
+    {
+      "id": "false-jude_brother_of_jesus-epistle_of_jude",
+      "claimed_author": "Jude, brother of Jesus",
+      "work": "Epistle of Jude",
+      "gold_author": "An anonymous Jewish-Christian author",
+      "reason": "The Epistle of Jude is widely regarded by critical scholars as pseudonymous (fluent Greek, 1 Enoch citation, apostles spoken of as past), so it was likely written by a later anonymous Jewish-Christian author rather than Jude the brother of Jesus.",
+      "source_url": "https://en.wikipedia.org/wiki/Epistle_of_Jude"
+    },
+    {
+      "id": "false-matthew_the_apostle-gospel_of_matthew",
+      "claimed_author": "Matthew the Apostle",
+      "work": "Gospel of Matthew",
+      "gold_author": "An anonymous author (the name \"Matthew\" added in the 2nd century)",
+      "reason": "Scholarly consensus (per Wikipedia and biblical scholarship) holds the Gospel of Matthew is an anonymous composition dependent on Greek Mark, with the apostle/tax-collector Matthew attribution being a later 2nd-century tradition from Papias, so the claimed author did not write it; framed neutrally as per scholarship.",
+      "source_url": "https://en.wikipedia.org/wiki/Gospel_of_Matthew"
+    },
+    {
+      "id": "false-mark_the_evangelist-gospel_of_mark",
+      "claimed_author": "Mark the Evangelist",
+      "work": "Gospel of Mark",
+      "gold_author": "An anonymous author (later ascribed to Mark via Papias tradition)",
+      "reason": "Wikipedia confirms the Gospel of Mark is anonymous and the attribution to Mark the Evangelist (Peter's interpreter) stems from the 2nd-century Papias tradition, so the named Mark is not the demonstrable author per mainstream scholarship; the misattribution is real, the work is a real titled text, and the framing addresses human authorship (scholarly consensus) rather than attacking any faith's doctrinal claims.",
+      "source_url": "https://en.wikipedia.org/wiki/Gospel_of_Mark"
+    },
+    {
+      "id": "false-john_the_apostle-gospel_of_john",
+      "claimed_author": "John the Apostle",
+      "work": "Gospel of John",
+      "gold_author": "An anonymous author within the Johannine tradition (not John son of Zebedee)",
+      "reason": "Modern biblical scholarship rejects authorship by John the Apostle (John son of Zebedee); the Gospel is internally anonymous and a product of the Johannine tradition, making the traditional attribution a real, plausible misattribution.",
+      "source_url": "https://en.wikipedia.org/wiki/Gospel_of_John"
+    },
+    {
+      "id": "false-solomon-song_of_songs",
+      "claimed_author": "Solomon",
+      "work": "Song of Songs",
+      "gold_author": "Anonymous author(s), likely post-exilic",
+      "reason": "Wikipedia and mainstream scholarship confirm the Solomonic superscription is honorific/non-historical and that linguistic features (Aramaisms, the Persian loanword pardes, late vocabulary/syntax) point to an anonymous, likely post-exilic composition centuries after Solomon.",
+      "source_url": "https://en.wikipedia.org/wiki/Song_of_Songs"
+    },
+    {
+      "id": "false-solomon-book_of_proverbs",
+      "claimed_author": "Solomon",
+      "work": "Book of Proverbs",
+      "gold_author": "Multiple anonymous authors/collectors over centuries",
+      "reason": "Wikipedia and mainstream scholarship confirm Proverbs is a multi-authored anthology (naming Agur, Lemuel, \"the wise\") compiled over centuries, with Solomonic attribution being traditional/categorical rather than literal authorship.",
+      "source_url": "https://en.wikipedia.org/wiki/Book_of_Proverbs"
+    },
+    {
+      "id": "false-shimon_bar_yochai-zohar",
+      "claimed_author": "Shimon bar Yochai",
+      "work": "Zohar",
+      "gold_author": "Moses de León",
+      "reason": "Modern scholarly consensus from Gershom Scholem onward attributes the Zohar to the 13th-century Castilian kabbalist Moses de León (who promulgated it pseudepigraphically under the name of the 2nd-century sage Shimon bar Yochai), making the misattribution real, plausible, and documented.",
+      "source_url": "https://en.wikipedia.org/wiki/Zohar"
+    },
+    {
+      "id": "false-abraham_the_patriarch-sefer_yetzirah",
+      "claimed_author": "Abraham the Patriarch",
+      "work": "Sefer Yetzirah",
+      "gold_author": "Anonymous author, composed roughly 2nd–6th century CE",
+      "reason": "Scholarly consensus treats the Sefer Yetzirah as anonymous/pseudepigraphic, dated to late antiquity (Talmudic period, ~2nd–6th c. CE); the traditional ascription to Abraham the Patriarch is legendary, so the misattribution pairing is factually correct and plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Sefer_Yetzirah"
+    },
+    {
+      "id": "false-peter_the_apostle-gospel_of_peter",
+      "claimed_author": "Peter the Apostle",
+      "work": "Gospel of Peter",
+      "gold_author": "An anonymous 2nd-century author writing in Peter's name",
+      "reason": "Scholarship (Britannica, Wikipedia citing Blomberg) universally treats the Gospel of Peter as a mid-2nd-century pseudepigraphon, not a genuine work of the apostle Peter; it is a real apocryphal text and being non-canonical, the pseudonymity claim offends no living faith.",
+      "source_url": "https://en.wikipedia.org/wiki/Gospel_of_Peter"
+    },
+    {
+      "id": "false-mary_magdalene-gospel_of_mary",
+      "claimed_author": "Mary Magdalene",
+      "work": "Gospel of Mary",
+      "gold_author": "An anonymous 2nd-century Gnostic-leaning author",
+      "reason": "The Gospel of Mary is a real apocryphal text composed by an unknown early-2nd-century author (per King/Tuckett) with Mary Magdalene as its subject, not its author, so the misattribution is real and plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Gospel_of_Mary"
+    },
+    {
+      "id": "false-judas_iscariot-gospel_of_judas",
+      "claimed_author": "Judas Iscariot",
+      "work": "Gospel of Judas",
+      "gold_author": "An anonymous 2nd-century Sethian Gnostic author",
+      "reason": "The Gospel of Judas is a real 2nd-century Gnostic (Sethian) text composed by an anonymous author and only framed as a revelation involving Judas Iscariot, who did not write it; the misattribution is genuine and plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Gospel_of_Judas"
+    },
+    {
+      "id": "false-philip_the_apostle-gospel_of_philip",
+      "claimed_author": "Philip the Apostle",
+      "work": "Gospel of Philip",
+      "gold_author": "An anonymous Valentinian Gnostic author (c. 3rd century)",
+      "reason": "The Gospel of Philip is a genuine 3rd-century Nag Hammadi (Codex II) text of Valentinian Gnostic theology whose only link to the apostle is its colophon title; scholars agree it was written by an anonymous Valentinian author, not Philip the Apostle, and it is not scripture of any living faith.",
+      "source_url": "https://en.wikipedia.org/wiki/Gospel_of_Philip"
+    },
+    {
+      "id": "false-nicodemus-gospel_of_nicodemus_acts_of_pilate",
+      "claimed_author": "Nicodemus",
+      "work": "Gospel of Nicodemus (Acts of Pilate)",
+      "gold_author": "An anonymous author, c. 4th–5th century",
+      "reason": "The Gospel of Nicodemus (Acts of Pilate) is a pseudonymous late-antique apocryphon by an anonymous author (likely multiple hands) dated c. 4th–5th century, not actually written by the biblical Nicodemus, and the medieval title attribution is pseudonymous per scholarship.",
+      "source_url": "https://en.wikipedia.org/wiki/Gospel_of_Nicodemus"
+    },
+    {
+      "id": "false-paul_the_apostle-acts_of_paul_and_thecla",
+      "claimed_author": "Paul the Apostle",
+      "work": "Acts of Paul and Thecla",
+      "gold_author": "An anonymous 2nd-century presbyter in Asia Minor",
+      "reason": "Tertullian (De Baptismo 17) reports a presbyter in Asia wrote it out of love for Paul and was deposed; scholarship dates it to the late 2nd century as apocryphal, so it is not by Paul the Apostle, and the gold author of an anonymous Asia Minor presbyter is correct, non-absurd, and consistent with all Christian traditions' own canon claims.",
+      "source_url": "https://en.wikipedia.org/wiki/Acts_of_Paul_and_Thecla"
+    },
+    {
+      "id": "false-paul_the_apostle-epistle_to_laodiceans",
+      "claimed_author": "Paul the Apostle",
+      "work": "Epistle to Laodiceans",
+      "gold_author": "An anonymous forger compiling Pauline phrases",
+      "reason": "The surviving Latin Epistle to the Laodiceans is unanimously regarded by scholars as a pseudonymous forgery (a \"cento of Pauline phrases\") created after Paul's death to supply the letter referenced in Colossians 4:16, so Paul did not write it; not offensive since mainstream Christianity itself rejects it as non-canonical.",
+      "source_url": "https://en.wikipedia.org/wiki/Epistle_to_the_Laodiceans"
+    },
+    {
+      "id": "false-barnabas_the_apostle-epistle_of_barnabas",
+      "claimed_author": "Barnabas the Apostle",
+      "work": "Epistle of Barnabas",
+      "gold_author": "An anonymous early-2nd-century Christian author (likely Alexandria)",
+      "reason": "Modern scholarship rejects authorship by Barnabas the Apostle and attributes the Epistle of Barnabas to an unknown early Christian teacher dated c. 70-135 CE, often associated with Alexandria, making this a real and well-documented misattribution.",
+      "source_url": "https://en.wikipedia.org/wiki/Epistle_of_Barnabas"
+    },
+    {
+      "id": "false-wenzi_a_disciple_of_laoz-wenzi",
+      "claimed_author": "Wenzi (文子, a disciple of Laozi)",
+      "work": "Wenzi",
+      "gold_author": "Anonymous Han-dynasty compiler(s); largely a derivative compilation drawing on the Huainanzi",
+      "reason": "The transmitted Wenzi was not written by an ancient Laozi-disciple named Wenzi but is an anonymous later (Han/post-Han) compilation, roughly 80% paralleling the Huainanzi, as confirmed by the 1973 Dingzhou bamboo-strip find and scholarly consensus; pairing is a real, plausible attribution confusion and not offensive to any living faith.",
+      "source_url": "https://en.wikipedia.org/wiki/Wenzi"
+    },
+    {
+      "id": "false-heguanzi_author_pheasant-heguanzi",
+      "claimed_author": "Heguanzi author 'Pheasant Cap Master' as a single early recluse",
+      "work": "Heguanzi (鶡冠子)",
+      "gold_author": "Anonymous; a composite Warring States–to–early Han text by multiple hands",
+      "reason": "Wikipedia confirms the Heguanzi has an anonymous author/compiler and is a composite of multiple sources from the late Warring States to Han period; it was branded a post-Han forgery by Liu Zongyuan (805 CE) and only partially rehabilitated after the 1973 Mawangdui finds, so a single early \"Pheasant Cap Master\" recluse did not author the unified work.",
+      "source_url": "https://en.wikipedia.org/wiki/Heguanzi"
+    },
+    {
+      "id": "false-jiang_ziya_l_shang_taigo-six_secret_teachings_liutao",
+      "claimed_author": "Jiang Ziya (Lü Shang / Taigong)",
+      "work": "Six Secret Teachings (Liutao 六韜)",
+      "gold_author": "Anonymous; a late Warring States period military text (with possible earlier Qi traditions and Han-era revisions), the attribution to Jiang Ziya (Taigong) is legendary",
+      "reason": "The Liutao is a real classical text whose traditional attribution to the 11th-c. BCE strategist Jiang Ziya/Taigong is rejected by modern scholarship, which dates its composition to the Warring States period (c. 475-221 BCE), confirmed by Wikipedia and chinaknowledge.de and Yinqueshan bamboo-slip evidence.",
+      "source_url": "https://en.wikipedia.org/wiki/Six_Secret_Teachings"
+    },
+    {
+      "id": "false-huang_shigong_the_old_ma-three_strategies_of_huang_shigong_",
+      "claimed_author": "Huang Shigong (the 'Old Man of Yellow Stone')",
+      "work": "Three Strategies of Huang Shigong (Huangshigong San Lue 黃石公三略)",
+      "gold_author": "Anonymous (pseudonymous); modern scholarly consensus dates it to the late Western/Former Han, likely by a Huang-Lao school author — the Huang Shigong/Zhang Liang transmission is legendary",
+      "reason": "The text is a genuine Seven Military Classics work whose true author is unknown/pseudonymous (modern consensus: a late Western Han Huang-Lao follower, ~1 AD); the legendary elder \"Huang Shigong\" handing it to Zhang Liang is a pious frame from the Shiji, making the traditional attribution a real, plausible misattribution.",
+      "source_url": "https://en.wikipedia.org/wiki/Three_Strategies_of_Huang_Shigong"
+    },
+    {
+      "id": "false-the_yellow_emperor_huang-huangdi_neijing_inner_canon_of_the",
+      "claimed_author": "The Yellow Emperor (Huangdi)",
+      "work": "Huangdi Neijing (Inner Canon of the Yellow Emperor)",
+      "gold_author": "Anonymous; compiled by multiple authors over the Warring States to Han period",
+      "reason": "Scholarly consensus holds the Huangdi Neijing is an accreted compilation by multiple anonymous authors of the Warring States–Han period, using the legendary Yellow Emperor and Qibo only as a pseudepigraphic dialogue frame, so the mythical Yellow Emperor did not write it.",
+      "source_url": "https://en.wikipedia.org/wiki/Huangdi_Neijing"
+    },
+    {
+      "id": "false-wu_qi_as_sole_author_of_-wuzi",
+      "claimed_author": "Wu Qi (as sole author of a unified treatise)",
+      "work": "Wuzi (吳子)",
+      "gold_author": "Attributed to Wu Qi but the transmitted text is a later, much-reduced and reworked compilation by unknown hands",
+      "reason": "Scholarship confirms the Wuzi is rooted in Wu Qi's reputation but the received text is composite: Han bibliographies record ~48 pian while only ~6 sections survive in the Song-canonized version, with later losses, revisions and accretions, so Wu Qi was not the sole author of an integral unified treatise.",
+      "source_url": "https://en.wikipedia.org/wiki/Wuzi"
+    },
+    {
+      "id": "false-sun_tzu_sunzi_conflated_-sun_bin_s_art_of_war_sun_bin_bingf",
+      "claimed_author": "Sun Tzu (Sunzi) — conflated as author of Sun Bin's text",
+      "work": "Sun Bin's Art of War (Sun Bin Bingfa 孫臏兵法)",
+      "gold_author": "Sun Bin (4th c. BCE), a distinct author from Sun Tzu",
+      "reason": "Sun Bin Bingfa was written by Sun Bin, a separate Warring States strategist; it was long lost and conflated with Sun Tzu's Art of War until the 1972 Yinqueshan tomb finds proved they are distinct treatises by different authors.",
+      "source_url": "https://en.wikipedia.org/wiki/Sun_Bin's_Art_of_War"
+    },
+    {
+      "id": "false-zhuang_zhou_zhuangzi-outer_and_miscellaneous_chapters_o",
+      "claimed_author": "Zhuang Zhou (Zhuangzi)",
+      "work": "Outer and Miscellaneous Chapters of the Zhuangzi (外篇 / 雜篇)",
+      "gold_author": "Later followers of the Zhuangzi school and other hands; only the Inner Chapters are credibly Zhuang Zhou's",
+      "reason": "Scholarly consensus (Wikipedia, SEP, IEP) attributes only the seven Inner Chapters to Zhuang Zhou; the Outer and Miscellaneous Chapters are later accretions by disciples/editors of a \"Master Zhuang\" lineage, so the misattribution to Zhuang Zhou is real and plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Zhuangzi_(book)"
+    },
+    {
+      "id": "false-vyasa_the_legendary_comp-yogabhashya_the_principal_commenta",
+      "claimed_author": "Vyasa (the legendary compiler) as author of the Yogabhashya",
+      "work": "Yogabhashya (the principal commentary on the Yoga Sutras)",
+      "gold_author": "Disputed; traditionally ascribed to \"Vyasa\" but actually by an unknown author, possibly the same as Patanjali (the \"Patanjala-yogashastra\" thesis)",
+      "reason": "Modern scholarship (Maas, Wujastyk; also Bronkhorst) confirms the Yogabhashya's traditional ascription to the mythic Vyasa is a conventional fiction; the bhashya is anonymous and likely Patanjali's own work per the Patanjala-yogashastra thesis, so the legendary Vyasa did not write it.",
+      "source_url": "https://en.wikipedia.org/wiki/Yoga_Sutras_of_Patanjali"
+    },
+    {
+      "id": "false-patanjali_the_grammarian-yoga_sutras_of_patanjali",
+      "claimed_author": "Patanjali the grammarian (author of the Mahabhashya)",
+      "work": "Yoga Sutras of Patanjali",
+      "gold_author": "A different Patanjali (the Yoga compiler), distinct from the 2nd-c.-BCE grammarian",
+      "reason": "Mainstream Indology (Louis Renou's language/grammar/vocabulary analysis; no conflation before Bhoja, 11th c.) holds the Yoga Sutras were composed by a distinct, later Patanjali (c. 2nd-4th c. CE), not the 2nd-c.-BCE grammarian who wrote the Mahabhashya; the conflation is a real traditional confusion and the work is a genuine text.",
+      "source_url": "https://en.wikipedia.org/wiki/Yoga_Sutras_of_Patanjali"
+    },
+    {
+      "id": "false-kautilya_chanakya_as_sol-arthashastra",
+      "claimed_author": "Kautilya (Chanakya) as sole, integral author",
+      "work": "Arthashastra",
+      "gold_author": "A composite text with a Kautilyan core but substantial later interpolations; compiled/redacted over centuries",
+      "reason": "Trautmann's statistical study and Olivelle's three-phase compositional model (rejected sole Kautilya authorship since 1965; \"Canakya\" absent from text, Nanda-overthrow line a later interpolation) confirm a multi-author composite work with a Kautilyan core, making sole integral authorship by the Mauryan minister genuinely false yet a plausible traditional confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Arthashastra"
+    },
+    {
+      "id": "false-hermes_trismegistus-emerald_tablet_tabula_smaragdina",
+      "claimed_author": "Hermes Trismegistus",
+      "work": "Emerald Tablet (Tabula Smaragdina)",
+      "gold_author": "Anonymous (pseudepigraphic); an Arabic Hermetic/alchemical text, earliest attested in the Kitab Sirr al-Khaliqa (Book of the Secret of Creation), attributed to Balinas/pseudo-Apollonius of Tyana, late 8th–9th c. CE; later Latinized from the 12th c.",
+      "reason": "Hermes Trismegistus is a legendary/mythical figure, not the real author; the Emerald Tablet is an anonymous pseudepigraphic text first attested in the Arabic Kitab Sirr al-Khaliqa (Balinas/pseudo-Apollonius, late 8th–9th c. CE); gold tightened since scholarly recensions span 8th–10th c., not 6th c.",
+      "source_url": "https://en.wikipedia.org/wiki/Emerald_Tablet"
+    },
+    {
+      "id": "false-maslama_al_majriti_the_a-picatrix_ghayat_al_hakim_the_aim_o",
+      "claimed_author": "Maslama al-Majriti (the astronomer)",
+      "work": "Picatrix (Ghayat al-Hakim, 'The Aim of the Sage')",
+      "gold_author": "Anonymous; attribution to al-Majriti is now rejected, possibly written by Maslama al-Qurtubi (10th c.)",
+      "reason": "Wikipedia and recent scholarship (Fierro) confirm the Picatrix is anonymous/pseudonymous with the traditional al-Majriti attribution discredited on chronological grounds and Maslama al-Qurtubi (d. 964) the leading proposed author, making the al-Majriti misattribution real and plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Picatrix"
+    },
+    {
+      "id": "false-liezi_the_school_as_reco-yang_zhu_chapter_of_the_liezi",
+      "claimed_author": "Liezi / the school as recorder; or attributed within to a 'Yang Zhu' chapter as Yang Zhu's own",
+      "work": "Yang Zhu chapter of the Liezi (楊朱篇)",
+      "gold_author": "Anonymous later (likely 3rd–4th c. CE) author; not the historical hedonist Yang Zhu",
+      "reason": "Scholarship (A.C. Graham et al.) holds the hedonist \"Yang Zhu\" chapter is a later composition (c. 4th c. CE, with the received Liezi compiled around Zhang Zhan's time), stylistically and philosophically unlike the rest and not by the historical Yang Zhu, so attributing it to him is genuinely false yet a plausible confusion since it bears his name.",
+      "source_url": "https://en.wikipedia.org/wiki/Liezi"
+    },
+    {
+      "id": "false-guiguzi_the_master_of_gh-guiguzi",
+      "claimed_author": "Guiguzi (the 'Master of Ghost Valley', teacher of Su Qin and Zhang Yi)",
+      "work": "Guiguzi (鬼谷子)",
+      "gold_author": "Anonymous; a later compilation, attribution to the legendary Master of Ghost Valley is traditional fiction",
+      "reason": "Scholarly consensus holds the Guiguzi is a composite text compiled between the late Warring States and Han periods, pseudepigraphically attributed to the legendary Master of Ghost Valley rather than written by a single historical teacher of Su Qin and Zhang Yi; the misattribution is the documented traditional one.",
+      "source_url": "https://en.wikipedia.org/wiki/Guiguzi"
+    },
+    {
+      "id": "false-shang_yang_lord_shang-the_book_of_lord_shang_shangjunshu",
+      "claimed_author": "Shang Yang (Lord Shang)",
+      "work": "The Book of Lord Shang (Shangjunshu 商君書)",
+      "gold_author": "Anonymous; a Legalist compilation by Shang Yang's school/followers, only partly (if at all) by Shang Yang himself",
+      "reason": "Scholarly consensus (Duyvendak, Pines) holds the Shangjunshu is a century-long compilation by Shang Yang's school/Qin Legalists, not authored solely by Shang Yang who was executed shortly after leaving office, making the misattribution to Shang Yang a real and plausible confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Book_of_Lord_Shang"
+    },
+    {
+      "id": "false-guan_zhong_as_author_of_-sima_fa_methods_of_the_sima",
+      "claimed_author": "Guan Zhong as author of the Sima Fa",
+      "work": "Sima Fa (司馬法, 'Methods of the Sima')",
+      "gold_author": "Anonymous; attributed to Sima Rangju (Tian Rangju) and compiled by a Qi-state commission in the 4th c. BCE",
+      "reason": "Wikipedia confirms the Sima Fa is an anonymous Qi-state compilation traditionally associated with Sima Rangju (compiled under King Wei of Qi, 4th c. BCE); no source links it to Guan Zhong (who is tied to the Guanzi), so the misattribution is false but a plausible confusion of two famous Qi figures.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Methods_of_the_Sima"
+    },
+    {
+      "id": "false-wei_liao_a_single_histor-wei_liaozi",
+      "claimed_author": "Wei Liao (a single historical Qin statesman)",
+      "work": "Wei Liaozi (尉繚子)",
+      "gold_author": "Anonymous; uncertain authorship, a Warring States military compilation of disputed Wei Liao identity",
+      "reason": "Wikipedia and scholarship confirm the Wei Liaozi's authorship is disputed/anonymous, that Wei Liao's identity is contested (the lone Shiji reference casts him as a Qin advisor while the traditional attribution is unsupported), and that the received text is a later compilation that reached its form around the late 4th century BC, so attributing it to a single named Qin statesman is genuinely false.",
+      "source_url": "https://en.wikipedia.org/wiki/Wei_Liaozi"
+    },
+    {
+      "id": "false-bodhidharma-yijin_jing_muscle_tendon_change_cl",
+      "claimed_author": "Bodhidharma",
+      "work": "Yijin Jing (易筋經, 'Muscle/Tendon Change Classic')",
+      "gold_author": "Taoist priest Zining (Ningzhi/Zi Ning), who composed the text in 1624; falsely backdated to Bodhidharma via forged prefaces",
+      "reason": "The Yijin Jing is a real 1624 Ming text probably composed by the Taoist priest Zining; its Bodhidharma authorship is a documented forgery (exposed via fake prefaces attributing it to Li Jing and Niu Gao), so the misattribution is real and plausible, but the candidate gold_author \"Purna\" is wrong and corrected to Zining.",
+      "source_url": "https://en.wikipedia.org/wiki/Yijin_Jing"
+    },
+    {
+      "id": "false-zhuge_liang-thirty_six_stratagems_san_shi_liu_",
+      "claimed_author": "Zhuge Liang",
+      "work": "Thirty-Six Stratagems (San Shi Liu Ji 三十六計)",
+      "gold_author": "Anonymous; the received text is a late (likely Ming–Qing) compilation, first printed in 1941 from a manuscript of unknown date and author",
+      "reason": "Wikipedia lists the author as \"Unknown\" and confirms it is an anonymous late compilation first printed in 1941; Zhuge Liang is only a popular/commercial misattribution, so the triple is correct, plausible, and a real text.",
+      "source_url": "https://en.wikipedia.org/wiki/Thirty-Six_Stratagems"
+    },
+    {
+      "id": "false-jabir_ibn_hayyan_geber_a-the_jabirian_corpus_e_g_the_books_",
+      "claimed_author": "Jabir ibn Hayyan (Geber) as historical author of the whole Jabirian corpus",
+      "work": "The Jabirian corpus (e.g., the Books of the Balance)",
+      "gold_author": "Anonymous collective; pseudepigrapha written by a later (late 9th–early 10th c.) school of Shi'ite alchemists writing under Jabir's name",
+      "reason": "Per Paul Kraus (1943) and modern consensus reflected on Wikipedia, the Jabirian corpus (incl. Books of the Balance) is pseudepigraphic, written c. 850–950 by an anonymous Shi'ite school under the pseudonym Jabir, not by a single historical 8th-c. Jabir.",
+      "source_url": "https://en.wikipedia.org/wiki/Jabir_ibn_Hayyan"
+    },
+    {
+      "id": "false-aristotle-sirr_al_asrar_secretum_secretorum_",
+      "claimed_author": "Aristotle",
+      "work": "Sirr al-Asrar (Secretum Secretorum, 'Secret of Secrets')",
+      "gold_author": "Anonymous Arabic author (c. 9th–10th c.), pseudo-Aristotelian advice to Alexander",
+      "reason": "The Sirr al-Asrar is a genuine, famous Arabic pseudepigraphon (Kitab Sirr al-Asrar, before the late 10th c.) falsely framed as Aristotle's secret letter to Alexander; scholarly consensus holds it was composed by an anonymous Arabic author with no Aristotelian/Greek original, making the misattribution real and the pairing a plausible classic confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Secretum_Secretorum"
+    },
+    {
+      "id": "false-bharadvaja_maharishi_as_-vaimanika_shastra",
+      "claimed_author": "Bharadvaja (Maharishi) as ancient author of an aeronautics treatise",
+      "work": "Vaimanika Shastra",
+      "gold_author": "Pandit Subbaraya Shastry (dictated c. 1918–1923), recorded by G. Venkatachala Sharma",
+      "reason": "Wikipedia and a 1974 IISc study confirm the Vaimanika Shastra was dictated by Pandit Subbaraya Shastry (1918–1923) and recorded by G.V. Sharma, not authored by the ancient sage Bharadvaja to whom it is traditionally/psychically attributed.",
+      "source_url": "https://en.wikipedia.org/wiki/Vaim%C4%81nika_Sh%C4%81stra"
+    },
+    {
+      "id": "false-valmiki_author_of_the_ra-yoga_vasistha_yogavasishtha",
+      "claimed_author": "Valmiki (author of the Ramayana) as author of the Yoga Vasistha",
+      "work": "Yoga Vasistha (Yogavasishtha)",
+      "gold_author": "Anonymous Kashmiri author(s), c. 10th–14th c. CE (Moksopaya core, Kashmir); ascription to Valmiki is traditional, not historical",
+      "reason": "Scholarship (Slaje, Mainkar) holds the text evolved as the Kashmiri Moksopaya (~10th c.) into the Yogavasistha by the 10th–14th c. by an unknown author; the Ramayana poet Valmiki did not write it, and the work itself frames Valmiki as narrator, making the misattribution real and traditional rather than absurd.",
+      "source_url": "https://en.wikipedia.org/wiki/Yoga_Vasistha"
+    },
+    {
+      "id": "false-ossian_3rd_century_gaeli-the_poems_of_ossian_fingal_temora",
+      "claimed_author": "Ossian (3rd-century Gaelic bard)",
+      "work": "The Poems of Ossian (Fingal, Temora)",
+      "gold_author": "James Macpherson",
+      "reason": "Scholarly consensus confirms James Macpherson (18th c.) composed the Poems of Ossian himself, presenting them as translations of the legendary 3rd-century bard Ossian, who could not have written them as no ancient originals existed; a genuine, famous misattribution.",
+      "source_url": "https://en.wikipedia.org/wiki/Ossian"
+    },
+    {
+      "id": "false-thomas_rowley_15th_centu-the_rowley_poems",
+      "claimed_author": "Thomas Rowley (15th-century Bristol monk)",
+      "work": "The Rowley Poems",
+      "gold_author": "Thomas Chatterton",
+      "reason": "Thomas Chatterton (1752-1770) forged \"The Rowley Poems\" and invented the fictional 15th-century Bristol monk/priest Thomas Rowley, who never existed, as the supposed author — a genuine, famous historical misattribution (the Rowley Controversy).",
+      "source_url": "https://en.wikipedia.org/wiki/Thomas_Chatterton"
+    },
+    {
+      "id": "false-william_shakespeare-locrine",
+      "claimed_author": "William Shakespeare",
+      "work": "Locrine",
+      "gold_author": "Anonymous (falsely ascribed to Shakespeare; possibly George Peele or Robert Greene)",
+      "reason": "Locrine is a real Elizabethan play whose 1595 quarto bore only \"W.S.\"; scholars reject Shakespeare's authorship and treat it as anonymous/falsely ascribed, with Peele (and Greene) as documented candidates, so the misattribution and gold author are both correct.",
+      "source_url": "https://en.wikipedia.org/wiki/Locrine"
+    },
+    {
+      "id": "false-william_shakespeare-the_london_prodigal",
+      "claimed_author": "William Shakespeare",
+      "work": "The London Prodigal",
+      "gold_author": "Anonymous (falsely ascribed)",
+      "reason": "The London Prodigal is a real 1605 quarto bearing Shakespeare's name on its title page, but scholars exclude it from the canon and no single alternative author is accepted, so its true authorship is anonymous/uncertain (falsely ascribed to Shakespeare), making the misattribution genuine and plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/The_London_Prodigal"
+    },
+    {
+      "id": "false-william_shakespeare-a_yorkshire_tragedy",
+      "claimed_author": "William Shakespeare",
+      "work": "A Yorkshire Tragedy",
+      "gold_author": "Thomas Middleton (attributed)",
+      "reason": "The 1608 quarto and Stationers' Register credited William Shakespeare, but modern scholarly consensus (Lake, Jackson) attributes the play to Thomas Middleton, making this a real, documented misattribution.",
+      "source_url": "https://en.wikipedia.org/wiki/A_Yorkshire_Tragedy"
+    },
+    {
+      "id": "false-william_shakespeare-sir_john_oldcastle",
+      "claimed_author": "William Shakespeare",
+      "work": "Sir John Oldcastle",
+      "gold_author": "Anthony Munday, Michael Drayton, Richard Hathwaye and Robert Wilson",
+      "reason": "Henslowe's diary documents the four collaborators as the real authors; Shakespeare did not write it, and the false attribution arose from the 1619 Jaggard \"False Folio\" reprint that bore his name, a plausible confusion reinforced by the Falstaff/Oldcastle connection.",
+      "source_url": "https://en.wikipedia.org/wiki/Sir_John_Oldcastle"
+    },
+    {
+      "id": "false-william_shakespeare-the_puritan_the_puritan_widow",
+      "claimed_author": "William Shakespeare",
+      "work": "The Puritan (The Puritan Widow)",
+      "gold_author": "Thomas Middleton (attributed)",
+      "reason": "The Puritan (The Widow of Watling Street) is a real 1607 Jacobean comedy; its \"W.S.\" title-page initials wrongly drew it into the Shakespeare Apocrypha (Third Folio 1664), but modern scholarly consensus (Lake, Jackson; Oxford 2007 Middleton Collected Works) attributes it to Thomas Middleton, so Shakespeare did not write it and the misattribution is genuine.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Puritan"
+    },
+    {
+      "id": "false-william_shakespeare-thomas_lord_cromwell",
+      "claimed_author": "William Shakespeare",
+      "work": "Thomas Lord Cromwell",
+      "gold_author": "Anonymous (falsely ascribed)",
+      "reason": "The 1602/1613 quartos credit only \"W. S.\" (later identified as Shakespeare in the 1664 Third Folio), but modern scholars reject Shakespeare's authorship; the true author is unknown, so the work is genuinely anonymous within the Shakespeare Apocrypha.",
+      "source_url": "https://en.wikipedia.org/wiki/Thomas_Lord_Cromwell"
+    },
+    {
+      "id": "false-prester_john_legendary_c-the_letter_of_prester_john",
+      "claimed_author": "Prester John (legendary Christian king)",
+      "work": "The Letter of Prester John",
+      "gold_author": "Anonymous medieval forger",
+      "reason": "Scholarly consensus (confirmed via Wikipedia and multiple sources) holds the c.1165 Letter of Prester John is a forgery by an unknown Western European author writing in the voice of the legendary king, who is fictional and could not have authored it; not offensive to a living faith.",
+      "source_url": "https://en.wikipedia.org/wiki/Prester_John"
+    },
+    {
+      "id": "false-isidore_of_seville_early-the_pseudo_isidorian_decretals_fal",
+      "claimed_author": "Isidore of Seville / early popes",
+      "work": "The Pseudo-Isidorian Decretals (False Decretals)",
+      "gold_author": "Anonymous 9th-century Frankish forgers (the \"Pseudo-Isidore\" group)",
+      "reason": "Mainstream scholarship confirms the False Decretals were forged by unknown 9th-century Frankish clerics (Pseudo-Isidore, near Reims/Corbie before 850) and falsely ascribed to Isidore via \"Isidorus Mercator\" and to early popes; a real, documented misattribution and not offensive to living faith.",
+      "source_url": "https://en.wikipedia.org/wiki/Pseudo-Isidore"
+    },
+    {
+      "id": "false-six_separate_authors_ael-historia_augusta",
+      "claimed_author": "Six separate authors (Aelius Spartianus, Julius Capitolinus, et al.)",
+      "work": "Historia Augusta",
+      "gold_author": "A single anonymous late-4th-century author",
+      "reason": "Scholarly consensus (Dessau 1889, championed by Ronald Syme) holds the six named biographers and the Diocletian/Constantine dedications are fictitious personae, with the work actually composed by a single anonymous author in the late 4th (or early 5th) century.",
+      "source_url": "https://en.wikipedia.org/wiki/Historia_Augusta"
+    },
+    {
+      "id": "false-jean_gerson-de_imitatione_christi_the_imitatio",
+      "claimed_author": "Jean Gerson",
+      "work": "De Imitatione Christi (The Imitation of Christ)",
+      "gold_author": "Thomas à Kempis",
+      "reason": "Modern scholarly consensus (incl. stylometric analysis and the 1441 Brussels autograph codex) credits Thomas à Kempis; the Jean Gerson attribution was a real historical misattribution by French scholars, now rejected.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Imitation_of_Christ"
+    },
+    {
+      "id": "false-seneca_the_younger_and_s-epistles_of_paul_and_seneca_corres",
+      "claimed_author": "Seneca the Younger and St Paul (joint correspondents)",
+      "work": "Epistles of Paul and Seneca (Correspondence of Paul and Seneca)",
+      "gold_author": "Anonymous 4th-century Christian forger",
+      "reason": "The 14 letters were not written by Seneca or Paul; scholars almost universally hold them to be a pseudonymous forgery composed in the mid-4th century (c. 320-380 CE), making the anonymous-forger gold author correct and the misattribution a genuine, historically widespread confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Correspondence_of_Paul_and_Seneca"
+    },
+    {
+      "id": "false-william_shakespeare-vortigern_and_rowena",
+      "claimed_author": "William Shakespeare",
+      "work": "Vortigern and Rowena",
+      "gold_author": "William Henry Ireland",
+      "reason": "Vortigern and Rowena was a 1796 hoax play forged by William Henry Ireland and falsely presented as a lost Shakespeare work, a real and documented misattribution confirmed by Wikipedia, Britannica, and the Folger/Huntington libraries.",
+      "source_url": "https://en.wikipedia.org/wiki/Vortigern_and_Rowena"
+    },
+    {
+      "id": "false-abdias_of_babylon_1st_ce-apostolic_histories_pseudo_abdias",
+      "claimed_author": "Abdias of Babylon (1st-century bishop)",
+      "work": "Apostolic Histories (Pseudo-Abdias)",
+      "gold_author": "Anonymous Latin compiler (uncertain date; variously dated 6th to early 10th century)",
+      "reason": "Scholarship (Lazius, Lipsius, and later) agrees the collection is a later pseudonymous Latin compilation falsely attributed to the legendary Abdias of Babylon, so the misattribution is real; the gold author is corrected from the over-specific \"6th-century\" to \"anonymous Latin compiler, uncertain date\" since dating is contested (5th-c. for one book, ~6th c. per Lipsius, ~910 AD per later scholarship).",
+      "source_url": "https://en.wikipedia.org/wiki/Pseudo-Abdias"
+    },
+    {
+      "id": "false-berosus_the_chaldean-antiquitatum_libri_quinque_pseudo_",
+      "claimed_author": "Berosus the Chaldean",
+      "work": "Antiquitatum libri quinque (Pseudo-Berosus)",
+      "gold_author": "Annius of Viterbo (Giovanni Nanni)",
+      "reason": "The Dominican Annius of Viterbo (Giovanni Nanni) himself fabricated the Pseudo-Berosus text in his 1498 Antiquitates, falsely attributing it to Berosus the Chaldean; scholarship is unanimous that Berosus did not write it, making this a genuine, well-documented, non-faith-offensive misattribution.",
+      "source_url": "https://en.wikipedia.org/wiki/Annius_of_Viterbo"
+    },
+    {
+      "id": "false-dictys_cretensis_eyewitn-ephemeris_belli_troiani_journal_of",
+      "claimed_author": "Dictys Cretensis (eyewitness of the Trojan War)",
+      "work": "Ephemeris belli Troiani (Journal of the Trojan War)",
+      "gold_author": "Anonymous (Greek original, surviving in Latin by \"Lucius Septimius\")",
+      "reason": "Dictys Cretensis is a legendary/fictional companion of Idomeneus, not a real eyewitness author; the work is an anonymous Greek romance (a Greek fragment was found among the Tebtunis papyri in 1899-1900) surviving via the 4th-century Latin adaptation of Q./Lucius Septimius, and was falsely taken as a firsthand chronicle in Late Antiquity.",
+      "source_url": "https://en.wikipedia.org/wiki/Dictys_Cretensis"
+    },
+    {
+      "id": "false-dares_phrygius_trojan_ey-de_excidio_troiae_historia_the_fal",
+      "claimed_author": "Dares Phrygius (Trojan eyewitness)",
+      "work": "De excidio Troiae historia (The Fall of Troy)",
+      "gold_author": "Anonymous late-antique author",
+      "reason": "De excidio Troiae historia is a pseudepigraphic Latin text falsely attributed to the mythical Trojan priest Dares Phrygius but actually written by an anonymous late-antique author (c. 5th century AD), confirmed by Wikipedia and Britannica.",
+      "source_url": "https://en.wikipedia.org/wiki/Dares_Phrygius"
+    },
+    {
+      "id": "false-sanchuniathon_ancient_ph-phoenician_history",
+      "claimed_author": "Sanchuniathon (ancient Phoenician sage)",
+      "work": "Phoenician History",
+      "gold_author": "Philo of Byblos",
+      "reason": "The \"Phoenician History\" is traditionally ascribed to the ancient Phoenician sage Sanchuniathon, but modern scholarly consensus holds it was actually composed (and likely fabricated as a pseudepigraphic \"translation\") by Philo of Byblos, whose claimed source Sanchuniathon may never have existed; all checks pass and the work, title, and attribution confusion are real and non-offensive to any living faith.",
+      "source_url": "https://en.wikipedia.org/wiki/Sanchuniathon"
+    },
+    {
+      "id": "false-descartes-critique_of_pure_reason",
+      "claimed_author": "Descartes",
+      "work": "Critique of Pure Reason",
+      "gold_author": "Immanuel Kant",
+      "reason": "The Critique of Pure Reason (1781) was written by Immanuel Kant, not Descartes (who died in 1650 and wrote the Meditations); the confusion between two canonical early-modern philosophers is plausible and the work is real and non-offensive.",
+      "source_url": "https://en.wikipedia.org/wiki/Critique_of_Pure_Reason"
+    },
+    {
+      "id": "false-david_hume-the_social_contract",
+      "claimed_author": "David Hume",
+      "work": "The Social Contract",
+      "gold_author": "Jean-Jacques Rousseau",
+      "reason": "The Social Contract (Du contrat social, 1762) was written by Jean-Jacques Rousseau, not his contemporary David Hume, making the misattribution plausible given their well-known relationship.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Social_Contract"
+    },
+    {
+      "id": "false-spinoza-leviathan",
+      "claimed_author": "Spinoza",
+      "work": "Leviathan",
+      "gold_author": "Thomas Hobbes",
+      "reason": "Leviathan (1651) was written by Thomas Hobbes, not Spinoza (who wrote the Ethics); both are 17th-century rationalist political philosophers, making the misattribution plausible and non-offensive.",
+      "source_url": "https://en.wikipedia.org/wiki/Leviathan_(Hobbes_book)"
+    },
+    {
+      "id": "false-hegel-the_world_as_will_and_representati",
+      "claimed_author": "Hegel",
+      "work": "The World as Will and Representation",
+      "gold_author": "Arthur Schopenhauer",
+      "reason": "The World as Will and Representation (1818) was written by Arthur Schopenhauer, not Hegel (who wrote the Phenomenology of Spirit); the two were real contemporaries and rivals, making the confusion plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/The_World_as_Will_and_Representation"
+    },
+    {
+      "id": "false-augustine_of_hippo-summa_theologica",
+      "claimed_author": "Augustine of Hippo",
+      "work": "Summa Theologica",
+      "gold_author": "Thomas Aquinas",
+      "reason": "The Summa Theologica (1265-1274) was written by Thomas Aquinas, not Augustine of Hippo (354-430), who died ~835 years earlier and wrote Confessions; the two are commonly confused Doctors of the Church, making the misattribution plausible and verified.",
+      "source_url": "https://en.wikipedia.org/wiki/Summa_Theologica"
+    },
+    {
+      "id": "false-seneca_the_younger-on_the_nature_of_things",
+      "claimed_author": "Seneca the Younger",
+      "work": "On the Nature of Things",
+      "gold_author": "Lucretius",
+      "reason": "De rerum natura (On the Nature of Things) was written by the Epicurean poet Lucretius in the 1st century BCE, not by the later Stoic Seneca the Younger; both are Roman philosophical authors, making the misattribution plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/De_rerum_natura"
+    },
+    {
+      "id": "false-john_locke-a_treatise_of_human_nature",
+      "claimed_author": "John Locke",
+      "work": "A Treatise of Human Nature",
+      "gold_author": "David Hume",
+      "reason": "A Treatise of Human Nature (1739-40) was written by David Hume, not Locke (who died in 1704 and wrote the Essay Concerning Human Understanding); the two empiricists and their similar titles are a plausible confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/A_Treatise_of_Human_Nature"
+    },
+    {
+      "id": "false-george_berkeley-an_essay_concerning_human_understa",
+      "claimed_author": "George Berkeley",
+      "work": "An Essay Concerning Human Understanding",
+      "gold_author": "John Locke",
+      "reason": "An Essay Concerning Human Understanding (1689) was written by John Locke, not Berkeley (who wrote A Treatise Concerning the Principles of Human Knowledge), making the empiricist mix-up a plausible real confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/An_Essay_Concerning_Human_Understanding"
+    },
+    {
+      "id": "false-karl_marx-the_wealth_of_nations",
+      "claimed_author": "Karl Marx",
+      "work": "The Wealth of Nations",
+      "gold_author": "Adam Smith",
+      "reason": "The Wealth of Nations (1776) was written by Adam Smith, confirmed via Wikipedia; Karl Marx (author of Das Kapital) did not write it, making the misattribution false and the economist-vs-economist confusion plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Wealth_of_Nations"
+    },
+    {
+      "id": "false-friedrich_engels-das_kapital",
+      "claimed_author": "Friedrich Engels",
+      "work": "Das Kapital",
+      "gold_author": "Karl Marx",
+      "reason": "Wikipedia confirms Karl Marx authored Das Kapital (Vol I, 1867); Engels only edited the posthumous Vols II and III, so attributing authorship to Engels is genuinely false yet a plausible confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Das_Kapital"
+    },
+    {
+      "id": "false-john_stuart_mill-an_enquiry_concerning_the_principl",
+      "claimed_author": "John Stuart Mill",
+      "work": "An Enquiry Concerning the Principles of Morals",
+      "gold_author": "David Hume",
+      "reason": "David Hume wrote An Enquiry Concerning the Principles of Morals (1751); J.S. Mill (utilitarian, wrote Utilitarianism 1861) did not, making this a plausible confusion between two moral philosophers.",
+      "source_url": "https://en.wikipedia.org/wiki/An_Enquiry_Concerning_the_Principles_of_Morals"
+    },
+    {
+      "id": "false-jeremy_bentham-on_liberty",
+      "claimed_author": "Jeremy Bentham",
+      "work": "On Liberty",
+      "gold_author": "John Stuart Mill",
+      "reason": "On Liberty (1859) was written by John Stuart Mill; Jeremy Bentham died in 1832 and could not have written it, but the two utilitarian philosophers are a plausible confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/On_Liberty"
+    },
+    {
+      "id": "false-voltaire-the_spirit_of_the_laws",
+      "claimed_author": "Voltaire",
+      "work": "The Spirit of the Laws",
+      "gold_author": "Montesquieu",
+      "reason": "The Spirit of the Laws (De l'esprit des lois, 1748) was written by Montesquieu, not Voltaire; both were French Enlightenment philosophes, making the confusion plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Spirit_of_the_Laws"
+    },
+    {
+      "id": "false-sartre-the_second_sex",
+      "claimed_author": "Sartre",
+      "work": "The Second Sex",
+      "gold_author": "Simone de Beauvoir",
+      "reason": "The Second Sex (1949) was written by Simone de Beauvoir, not Sartre (who wrote Being and Nothingness); the confusion between the two existentialist partners is plausible and the work is real.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Second_Sex"
+    },
+    {
+      "id": "false-albert_camus-being_and_nothingness",
+      "claimed_author": "Albert Camus",
+      "work": "Being and Nothingness",
+      "gold_author": "Jean-Paul Sartre",
+      "reason": "Being and Nothingness (L'Être et le néant, 1943) was written by Jean-Paul Sartre, not Camus; the Camus/Sartre confusion is a plausible existentialist misattribution and the text is real with no faith concerns.",
+      "source_url": "https://en.wikipedia.org/wiki/Being_and_Nothingness"
+    },
+    {
+      "id": "false-edmund_husserl-being_and_time",
+      "claimed_author": "Edmund Husserl",
+      "work": "Being and Time",
+      "gold_author": "Martin Heidegger",
+      "reason": "Being and Time (Sein und Zeit, 1927) was written by Martin Heidegger, not his mentor Edmund Husserl (author of Logical Investigations); the mentor/student phenomenology link makes the misattribution a plausible real confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Being_and_Time"
+    },
+    {
+      "id": "false-heidegger-philosophical_investigations",
+      "claimed_author": "Heidegger",
+      "work": "Philosophical Investigations",
+      "gold_author": "Ludwig Wittgenstein",
+      "reason": "Philosophical Investigations (1953) was written by Ludwig Wittgenstein, published posthumously, not by Heidegger; both being major German-language philosophers makes the confusion plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Philosophical_Investigations"
+    },
+    {
+      "id": "false-bertrand_russell-tractatus_logico_philosophicus",
+      "claimed_author": "Bertrand Russell",
+      "work": "Tractatus Logico-Philosophicus",
+      "gold_author": "Ludwig Wittgenstein",
+      "reason": "Ludwig Wittgenstein wrote the Tractatus Logico-Philosophicus (1921/1922); Bertrand Russell only contributed the introduction, making the misattribution real and plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Tractatus_Logico-Philosophicus"
+    },
+    {
+      "id": "false-cicero-meditations",
+      "claimed_author": "Cicero",
+      "work": "Meditations",
+      "gold_author": "Marcus Aurelius",
+      "reason": "The Meditations were written by the Stoic emperor Marcus Aurelius (2nd century AD), not Cicero, making the misattribution false and a plausible Roman-philosopher confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Meditations"
+    },
+    {
+      "id": "false-plotinus-the_consolation_of_philosophy",
+      "claimed_author": "Plotinus",
+      "work": "The Consolation of Philosophy",
+      "gold_author": "Boethius",
+      "reason": "The Consolation of Philosophy (c. 524) was written by Boethius while imprisoned, not by Plotinus (d. ~270) who wrote the Enneads; the Neoplatonic flavor of the work makes the confusion plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Consolation_of_Philosophy"
+    },
+    {
+      "id": "false-erasmus-the_prince",
+      "claimed_author": "Erasmus",
+      "work": "The Prince",
+      "gold_author": "Niccolo Machiavelli",
+      "reason": "The Prince (Il Principe, written c.1513, published 1532) is the documented work of Niccolo Machiavelli, not Erasmus (who wrote In Praise of Folly); the two Renaissance contemporaries form a plausible, non-offensive confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Prince"
+    },
+    {
+      "id": "false-thomas_more-the_new_atlantis",
+      "claimed_author": "Thomas More",
+      "work": "The New Atlantis",
+      "gold_author": "Francis Bacon",
+      "reason": "New Atlantis (pub. posthumously 1626/1627) was written by Francis Bacon, not Thomas More (who wrote Utopia, 1516); the More/Bacon mix-up of famous English Renaissance utopias is a plausible non-absurd confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/New_Atlantis"
+    },
+    {
+      "id": "false-pascal-discourse_on_method",
+      "claimed_author": "Pascal",
+      "work": "Discourse on Method",
+      "gold_author": "René Descartes",
+      "reason": "Discourse on the Method (1637) was written by René Descartes; Pascal wrote the Pensées, so the misattribution is real and plausible (two 17th-century French thinkers commonly confused).",
+      "source_url": "https://en.wikipedia.org/wiki/Discourse_on_the_Method"
+    },
+    {
+      "id": "false-leibniz-ethics",
+      "claimed_author": "Leibniz",
+      "work": "Ethics",
+      "gold_author": "Baruch Spinoza",
+      "reason": "The Ethics (Ethica, 1677) was written by Baruch Spinoza and published posthumously; Leibniz, a fellow rationalist who wrote the Monadology, did not write it, making the misattribution a plausible non-absurd confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Spinoza%27s_Ethics"
+    },
+    {
+      "id": "false-friedrich_schelling-the_phenomenology_of_spirit",
+      "claimed_author": "Friedrich Schelling",
+      "work": "The Phenomenology of Spirit",
+      "gold_author": "G.W.F. Hegel",
+      "reason": "The Phenomenology of Spirit (1807) was written by G.W.F. Hegel, not Schelling; the two were Tübingen roommates and fellow German Idealists, making the misattribution a plausible real confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Phenomenology_of_Spirit"
+    },
+    {
+      "id": "false-fichte-critique_of_practical_reason",
+      "claimed_author": "Fichte",
+      "work": "Critique of Practical Reason",
+      "gold_author": "Immanuel Kant",
+      "reason": "The Critique of Practical Reason (1788) was written by Immanuel Kant, not Fichte (his idealist successor), making the misattribution false but plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Critique_of_Practical_Reason"
+    },
+    {
+      "id": "false-soren_kierkegaard-thus_spoke_zarathustra",
+      "claimed_author": "Soren Kierkegaard",
+      "work": "Thus Spoke Zarathustra",
+      "gold_author": "Friedrich Nietzsche",
+      "reason": "Thus Spoke Zarathustra (1883-1885) was written by Friedrich Nietzsche, not Kierkegaard; the two 19th-century existentialist-associated philosophers are a plausible confusion, the work is real, and no living faith is offended.",
+      "source_url": "https://en.wikipedia.org/wiki/Thus_Spoke_Zarathustra"
+    },
+    {
+      "id": "false-auguste_comte-the_genealogy_of_morals",
+      "claimed_author": "Auguste Comte",
+      "work": "The Genealogy of Morals",
+      "gold_author": "Friedrich Nietzsche",
+      "reason": "On the Genealogy of Morality (1887) was written by Friedrich Nietzsche, confirmed via Wikipedia; Auguste Comte did not write it, and the Comte/Nietzsche confusion is plausible as both are 19th-century philosophers.",
+      "source_url": "https://en.wikipedia.org/wiki/On_the_Genealogy_of_Morality"
+    },
+    {
+      "id": "false-diderot-candide",
+      "claimed_author": "Diderot",
+      "work": "Candide",
+      "gold_author": "Voltaire",
+      "reason": "Candide (1759) was written by Voltaire, not Diderot (who wrote Rameau's Nephew); both were French Enlightenment Encyclopédistes, making the confusion plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Candide"
+    },
+    {
+      "id": "false-maimonides-the_incoherence_of_the_philosopher",
+      "claimed_author": "Maimonides",
+      "work": "The Incoherence of the Philosophers",
+      "gold_author": "Al-Ghazali",
+      "reason": "The Incoherence of the Philosophers (Tahafut al-Falasifa, c. 1095) was written by Al-Ghazali; Maimonides (b. 1138) wrote the Guide for the Perplexed, so the misattribution is false but a plausible confusion between two medieval Arabic-writing philosophers.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Incoherence_of_the_Philosophers"
+    },
+    {
+      "id": "false-albert_camus-nausea",
+      "claimed_author": "Albert Camus",
+      "work": "Nausea",
+      "gold_author": "Jean-Paul Sartre",
+      "reason": "Nausea (La Nausée, 1938) was written by Jean-Paul Sartre, not Albert Camus; both were famous French existentialists, making the misattribution a plausible real confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Nausea_(novel)"
+    },
+    {
+      "id": "false-jean_paul_sartre-the_stranger",
+      "claimed_author": "Jean-Paul Sartre",
+      "work": "The Stranger",
+      "gold_author": "Albert Camus",
+      "reason": "The Stranger (L'Étranger, 1942) was written by Albert Camus, not Sartre; the two existentialist/absurdist contemporaries are a genuinely common and plausible confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Stranger_(Camus_novel)"
+    },
+    {
+      "id": "false-william_faulkner-the_old_man_and_the_sea",
+      "claimed_author": "William Faulkner",
+      "work": "The Old Man and the Sea",
+      "gold_author": "Ernest Hemingway",
+      "reason": "The Old Man and the Sea (1952) was written by Ernest Hemingway, not Faulkner; both were Nobel-laureate American contemporaries, making the misattribution plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Old_Man_and_the_Sea"
+    },
+    {
+      "id": "false-f_scott_fitzgerald-for_whom_the_bell_tolls",
+      "claimed_author": "F. Scott Fitzgerald",
+      "work": "For Whom the Bell Tolls",
+      "gold_author": "Ernest Hemingway",
+      "reason": "For Whom the Bell Tolls (1940) was written by Ernest Hemingway, not Fitzgerald, who was a real Lost Generation peer making the misattribution a plausible confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/For_Whom_the_Bell_Tolls"
+    },
+    {
+      "id": "false-leo_tolstoy-crime_and_punishment",
+      "claimed_author": "Leo Tolstoy",
+      "work": "Crime and Punishment",
+      "gold_author": "Fyodor Dostoevsky",
+      "reason": "Crime and Punishment (1866) was written by Fyodor Dostoevsky, not Leo Tolstoy; both are famous 19th-century Russian novelists, making the misattribution a plausible real-world confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Crime_and_Punishment"
+    },
+    {
+      "id": "false-fyodor_dostoevsky-anna_karenina",
+      "claimed_author": "Fyodor Dostoevsky",
+      "work": "Anna Karenina",
+      "gold_author": "Leo Tolstoy",
+      "reason": "Anna Karenina (1875-1877) was written by Leo Tolstoy, not Dostoevsky; the two near-contemporary Russian novelists are a plausible, non-absurd confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Anna_Karenina"
+    },
+    {
+      "id": "false-charles_dickens-vanity_fair",
+      "claimed_author": "Charles Dickens",
+      "work": "Vanity Fair",
+      "gold_author": "William Makepeace Thackeray",
+      "reason": "Vanity Fair (1847-1848) was written by William Makepeace Thackeray, not Dickens; the two were famous Victorian rivals, making the misattribution plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Vanity_Fair_(novel)"
+    },
+    {
+      "id": "false-charlotte_bront-wuthering_heights",
+      "claimed_author": "Charlotte Brontë",
+      "work": "Wuthering Heights",
+      "gold_author": "Emily Brontë",
+      "reason": "Wuthering Heights (1847) was written by Emily Brontë (as \"Ellis Bell\"), not her sister Charlotte who wrote Jane Eyre; the sibling confusion is a real, plausible misattribution.",
+      "source_url": "https://en.wikipedia.org/wiki/Wuthering_Heights"
+    },
+    {
+      "id": "false-jane_austen-middlemarch",
+      "claimed_author": "Jane Austen",
+      "work": "Middlemarch",
+      "gold_author": "George Eliot",
+      "reason": "Middlemarch (1871-72) was written by George Eliot (pen name of Mary Ann Evans), not Jane Austen who died in 1817; the confusion between two famous English novelists is plausible and the work is real.",
+      "source_url": "https://en.wikipedia.org/wiki/Middlemarch"
+    },
+    {
+      "id": "false-mark_twain-the_call_of_the_wild",
+      "claimed_author": "Mark Twain",
+      "work": "The Call of the Wild",
+      "gold_author": "Jack London",
+      "reason": "The Call of the Wild (1903) was written by Jack London, not Mark Twain; both are famous American authors, making the misattribution a plausible, non-absurd confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Call_of_the_Wild"
+    },
+    {
+      "id": "false-aldous_huxley-fahrenheit_451",
+      "claimed_author": "Aldous Huxley",
+      "work": "Fahrenheit 451",
+      "gold_author": "Ray Bradbury",
+      "reason": "Fahrenheit 451 (1953) was written by Ray Bradbury, not Aldous Huxley; the confusion with a fellow dystopian author is plausible and the work is real and non-offensive.",
+      "source_url": "https://en.wikipedia.org/wiki/Fahrenheit_451"
+    },
+    {
+      "id": "false-george_orwell-a_clockwork_orange",
+      "claimed_author": "George Orwell",
+      "work": "A Clockwork Orange",
+      "gold_author": "Anthony Burgess",
+      "reason": "A Clockwork Orange (1962) was written by Anthony Burgess, not George Orwell; both being British dystopian authors makes the misattribution a plausible real confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/A_Clockwork_Orange_(novel)"
+    },
+    {
+      "id": "false-j_r_r_tolkien-the_chronicles_of_narnia",
+      "claimed_author": "J.R.R. Tolkien",
+      "work": "The Chronicles of Narnia",
+      "gold_author": "C.S. Lewis",
+      "reason": "The Chronicles of Narnia was written by C.S. Lewis (not Tolkien), a documented fact; the misattribution to fellow Inkling Tolkien is a plausible, non-absurd confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Chronicles_of_Narnia"
+    },
+    {
+      "id": "false-franz_kafka-steppenwolf",
+      "claimed_author": "Franz Kafka",
+      "work": "Steppenwolf",
+      "gold_author": "Hermann Hesse",
+      "reason": "Steppenwolf (Der Steppenwolf, 1927) was written by Hermann Hesse, not Franz Kafka; both were German-language contemporaries, making the misattribution plausible but genuinely false.",
+      "source_url": "https://en.wikipedia.org/wiki/Steppenwolf_(novel)"
+    },
+    {
+      "id": "false-gabriel_garc_a_m_rquez-the_house_of_the_spirits",
+      "claimed_author": "Gabriel García Márquez",
+      "work": "The House of the Spirits",
+      "gold_author": "Isabel Allende",
+      "reason": "Wikipedia confirms Isabel Allende wrote The House of the Spirits (1982 debut novel), not García Márquez; the confusion between two Latin American magical-realists is plausible and non-offensive.",
+      "source_url": "https://en.wikipedia.org/wiki/The_House_of_the_Spirits"
+    },
+    {
+      "id": "false-virginia_woolf-brideshead_revisited",
+      "claimed_author": "Virginia Woolf",
+      "work": "Brideshead Revisited",
+      "gold_author": "Evelyn Waugh",
+      "reason": "Brideshead Revisited (1945) was written by Evelyn Waugh, not Virginia Woolf; both are real contemporary English novelists so the misattribution is plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Brideshead_Revisited"
+    },
+    {
+      "id": "false-james_joyce-mrs_dalloway",
+      "claimed_author": "James Joyce",
+      "work": "Mrs Dalloway",
+      "gold_author": "Virginia Woolf",
+      "reason": "Mrs Dalloway (1925) was written by Virginia Woolf, not James Joyce; the two are contemporary modernist stream-of-consciousness authors, making the misattribution a plausible, non-absurd confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Mrs_Dalloway"
+    },
+    {
+      "id": "false-john_steinbeck-to_kill_a_mockingbird",
+      "claimed_author": "John Steinbeck",
+      "work": "To Kill a Mockingbird",
+      "gold_author": "Harper Lee",
+      "reason": "To Kill a Mockingbird (1960) was written by Harper Lee, not John Steinbeck; both are American novelists, making the misattribution a plausible confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/To_Kill_a_Mockingbird"
+    },
+    {
+      "id": "false-friedrich_nietzsche-being_and_time",
+      "claimed_author": "Friedrich Nietzsche",
+      "work": "Being and Time",
+      "gold_author": "Martin Heidegger",
+      "reason": "Being and Time (Sein und Zeit, 1927) was written by Martin Heidegger; Nietzsche died in 1900 and did not write it, and the two German philosophers are a plausible confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Being_and_Time"
+    },
+    {
+      "id": "false-adam_smith-the_general_theory_of_employment_i",
+      "claimed_author": "Adam Smith",
+      "work": "The General Theory of Employment, Interest and Money",
+      "gold_author": "John Maynard Keynes",
+      "reason": "The General Theory of Employment, Interest and Money was written by John Maynard Keynes (1936); Adam Smith (d. 1790, author of The Wealth of Nations) could not have written it, making this a real, plausible economist-confusion misattribution.",
+      "source_url": "https://en.wikipedia.org/wiki/The_General_Theory_of_Employment,_Interest_and_Money"
+    },
+    {
+      "id": "false-milton_friedman-the_road_to_serfdom",
+      "claimed_author": "Milton Friedman",
+      "work": "The Road to Serfdom",
+      "gold_author": "Friedrich Hayek",
+      "reason": "The Road to Serfdom (1944) was written by Friedrich Hayek, not Milton Friedman; both being famous free-market economists makes the misattribution a plausible real-world confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Road_to_Serfdom"
+    },
+    {
+      "id": "false-stephen_jay_gould-the_selfish_gene",
+      "claimed_author": "Stephen Jay Gould",
+      "work": "The Selfish Gene",
+      "gold_author": "Richard Dawkins",
+      "reason": "The Selfish Gene (1976) was written by Richard Dawkins, not Stephen Jay Gould, who was a rival evolutionary writer making the misattribution a plausible real-world confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Selfish_Gene"
+    },
+    {
+      "id": "false-carl_sagan-a_brief_history_of_time",
+      "claimed_author": "Carl Sagan",
+      "work": "A Brief History of Time",
+      "gold_author": "Stephen Hawking",
+      "reason": "Stephen Hawking wrote A Brief History of Time (1988); Carl Sagan only authored the introduction to the original edition, making the misattribution real and plausible, and all checks pass.",
+      "source_url": "https://en.wikipedia.org/wiki/A_Brief_History_of_Time"
+    },
+    {
+      "id": "false-niall_ferguson-sapiens_a_brief_history_of_humanki",
+      "claimed_author": "Niall Ferguson",
+      "work": "Sapiens: A Brief History of Humankind",
+      "gold_author": "Yuval Noah Harari",
+      "reason": "Sapiens was written by Yuval Noah Harari (2011 Hebrew, 2014 English), not Niall Ferguson; both are real popular historians making the misattribution a plausible non-absurd confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Sapiens:_A_Brief_History_of_Humankind"
+    },
+    {
+      "id": "false-malcolm_gladwell-thinking_fast_and_slow",
+      "claimed_author": "Malcolm Gladwell",
+      "work": "Thinking, Fast and Slow",
+      "gold_author": "Daniel Kahneman",
+      "reason": "Thinking, Fast and Slow (2011) was written by Nobel laureate Daniel Kahneman, not Malcolm Gladwell, a plausible confusion since both write popular psychology for general audiences.",
+      "source_url": "https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow"
+    },
+    {
+      "id": "false-daniel_kahneman-outliers_the_story_of_success",
+      "claimed_author": "Daniel Kahneman",
+      "work": "Outliers: The Story of Success",
+      "gold_author": "Malcolm Gladwell",
+      "reason": "Outliers: The Story of Success (2008) was written by Malcolm Gladwell, not psychologist Daniel Kahneman (author of Thinking, Fast and Slow); a plausible popular-science confusion.",
+      "source_url": "https://en.wikipedia.org/wiki/Outliers_(book)"
+    },
+    {
+      "id": "false-carl_jung-civilization_and_its_discontents",
+      "claimed_author": "Carl Jung",
+      "work": "Civilization and Its Discontents",
+      "gold_author": "Sigmund Freud",
+      "reason": "Civilization and Its Discontents (Das Unbehagen in der Kultur, 1930) was written by Sigmund Freud, not Carl Jung, his estranged former disciple, making the confusion plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/Civilization_and_Its_Discontents"
+    },
+    {
+      "id": "false-michel_foucault-simulacra_and_simulation",
+      "claimed_author": "Michel Foucault",
+      "work": "Simulacra and Simulation",
+      "gold_author": "Jean Baudrillard",
+      "reason": "Simulacra and Simulation (Simulacres et Simulation, 1981) was written by Jean Baudrillard, not Michel Foucault; both are prominent French theorists, making the misattribution a plausible non-absurd confusion, and the work and Wikipedia page are real.",
+      "source_url": "https://en.wikipedia.org/wiki/Simulacra_and_Simulation"
+    },
+    {
+      "id": "false-jared_diamond-the_sixth_extinction_an_unnatural_",
+      "claimed_author": "Jared Diamond",
+      "work": "The Sixth Extinction: An Unnatural History",
+      "gold_author": "Elizabeth Kolbert",
+      "reason": "Elizabeth Kolbert wrote The Sixth Extinction (Pulitzer Prize 2015); Jared Diamond (Guns, Germs, and Steel) did not, and the confusion between two prominent environmental-nonfiction authors is plausible.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Sixth_Extinction:_An_Unnatural_History"
+    },
+    {
+      "id": "false-thomas_piketty-freakonomics",
+      "claimed_author": "Thomas Piketty",
+      "work": "Freakonomics",
+      "gold_author": "Steven Levitt and Stephen Dubner",
+      "reason": "Freakonomics (2005) was written by economist Steven D. Levitt and journalist Stephen J. Dubner, not Thomas Piketty (author of Capital in the Twenty-First Century); the economist-for-economist confusion is plausible and non-offensive.",
+      "source_url": "https://en.wikipedia.org/wiki/Freakonomics"
+    }
   ]
 }
