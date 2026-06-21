@@ -111,6 +111,11 @@ jobs:
         run: |
           python tests/test_gate.py
           python tests/test_cantonese.py
+      - name: Council deliberation (map-reduce + per-seat gate) + small-LLM uplift
+        run: |
+          python tests/test_council_deliberate.py
+          python tools/council_deliberate.py "Model runway and flag AML for Stripe" --model mock >/dev/null
+          python tools/run_council_uplift.py --model mock
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats
