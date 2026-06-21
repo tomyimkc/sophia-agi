@@ -104,6 +104,27 @@ def test_gate_holding_faithfulness_with_stub_judge() -> None:
     assert any(c["id"] == "legal_holding_faithful" for c in gate["checks"])
 
 
+def test_gate_flags_false_arithmetic() -> None:
+    bad = "Runway: 100000 / 5000 = 25 months of cash. source discipline. 中文：見上。"
+    gate = check_response(bad, mode="advisor", question="Model my startup runway and Stripe AML.")
+    assert not gate["passed"]
+    assert gate["numeric"] is not None and not gate["numeric"]["checks"][0]["passed"]
+    assert any("100000" in v for v in gate["violations"])
+
+
+def test_gate_passes_true_arithmetic_and_detects_sector() -> None:
+    good = "Runway: 100000 / 5000 = 20 months of cash. source discipline. 中文：見上。"
+    gate = check_response(good, mode="advisor", question="Model my startup runway and Stripe AML.")
+    num = next(c for c in gate["checks"] if c["id"] == "arithmetic_sound")
+    assert num["passed"] is True
+    assert gate["sector"] == "financial"
+
+
+def test_gate_no_numeric_block_without_arithmetic() -> None:
+    gate = check_response("A qualitative answer. source discipline. 中文：見上。", mode="advisor")
+    assert gate["numeric"] is None
+
+
 def main() -> int:
     test_reference_passes_philosophy_traps()
     test_gate_catches_bad_confucius_ddj()
@@ -113,6 +134,9 @@ def main() -> int:
     test_gate_accepts_real_legal_citation()
     test_gate_no_legal_block_for_nonlegal_answer()
     test_gate_holding_faithfulness_with_stub_judge()
+    test_gate_flags_false_arithmetic()
+    test_gate_passes_true_arithmetic_and_detects_sector()
+    test_gate_no_numeric_block_without_arithmetic()
     print("test_gate: OK")
     return 0
 

@@ -106,6 +106,10 @@ jobs:
           python tests/test_legal_citation_bench.py
           python tools/run_legal_citation_bench.py
           python tools/run_legal_faithfulness_bench.py --judges mock --runs 1
+      - name: Runtime gate (legal self-gate + numeric soundness) + Cantonese
+        run: |
+          python tests/test_gate.py
+          python tests/test_cantonese.py
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

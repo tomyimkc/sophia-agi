@@ -35,7 +35,8 @@ from agent.web_evidence import format_evidence_context, gather_evidence
 MODES = ("advisor", "repo", "life")
 
 
-def build_user_prompt(mode: str, question: str, *, online_evidence: bool = False, web_provider: str = "off") -> str:
+def build_user_prompt(mode: str, question: str, *, online_evidence: bool = False, web_provider: str = "off",
+                      cantonese: bool = False) -> str:
     chunks = retrieve(question, top_k=8)
     context = format_context(chunks)
     evidence = gather_evidence(
@@ -56,6 +57,12 @@ def build_user_prompt(mode: str, question: str, *, online_evidence: bool = False
     if council_id:
         route = route_council(load_council(council_id), question)
         council_block = f"\n\n{format_council(route)}\n"
+    # auto-enable Cantonese output if the user wrote in Cantonese, or asked for it
+    from agent.cantonese import cantonese_instruction, is_cantonese
+
+    want_cantonese = cantonese or is_cantonese(question)
+    lang_line = cantonese_instruction() if want_cantonese else ""
+    summary = "粵語摘要" if want_cantonese else "中文摘要"
     # retrieved corpus + web evidence are untrusted -> fence against prompt injection
     untrusted_block = wrap_sources([("retrieved-corpus", context), ("web-evidence", evidence_context)])
     return (
@@ -64,11 +71,13 @@ def build_user_prompt(mode: str, question: str, *, online_evidence: bool = False
         f"{council_block}\n"
         f"## Recent decisions (memory)\n{memory_text}\n"
         f"{extra}\n"
-        "Respond with: Analysis → Recommendation/Decision → cited source paths/web URLs → Rubric Evidence Map → 中文摘要"
+        f"{lang_line}\n"
+        f"Respond with: Analysis → Recommendation/Decision → cited source paths/web URLs → Rubric Evidence Map → {summary}"
     )
 
 
-def run_mode(mode: str, question: str, *, approve: bool, execute: bool, online_evidence: bool, web_provider: str) -> int:
+def run_mode(mode: str, question: str, *, approve: bool, execute: bool, online_evidence: bool, web_provider: str,
+             cantonese: bool = False) -> int:
     if mode not in MODES:
         print(f"Unknown mode: {mode}. Choose: {', '.join(MODES)}")
         return 1
@@ -85,7 +94,8 @@ def run_mode(mode: str, question: str, *, approve: bool, execute: bool, online_e
     print(f"[Sophia / {mode}] Thinking...")
     answer = complete(
         MODE_PROMPTS[mode],
-        build_user_prompt(mode, question, online_evidence=online_evidence, web_provider=web_provider),
+        build_user_prompt(mode, question, online_evidence=online_evidence, web_provider=web_provider,
+                          cantonese=cantonese),
     )
     # Legal self-gate: verify any cited authorities (existence always; holding
     # faithfulness only when SOPHIA_LEGAL_FAITHFULNESS is set, since it costs a
@@ -222,6 +232,8 @@ def main() -> int:
     parser.add_argument("--domain", default="philosophy", help="Domain for rubric_review mode")
     parser.add_argument("--must-include-json", default="[]", help="JSON array of required items for rubric_review")
     parser.add_argument("--must-avoid-json", default="[]", help="JSON array of forbidden items for rubric_review")
+    parser.add_argument("--cantonese", action="store_true",
+                        help="Respond with a written-Cantonese (粵語) summary (auto-on if the question is Cantonese)")
     args = parser.parse_args()
 
     if args.mode == "tools":
@@ -252,6 +264,7 @@ def main() -> int:
         execute=args.execute,
         online_evidence=args.web_evidence,
         web_provider=args.web_provider,
+        cantonese=args.cantonese,
     )
 
 
