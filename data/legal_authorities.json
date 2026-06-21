@@ -15,7 +15,8 @@
       "name": "Yu Hon Tong Thomas v Centaline Property Agency Ltd",
       "court": "Court of First Instance",
       "jurisdiction": "HK",
-      "note": "Court criticised AI-drafted submissions for making up allegations without evidential basis."
+      "note": "Court criticised AI-drafted submissions for making up allegations without evidential basis.",
+      "holding": "The court criticised submissions that appeared to be artificially constructed using AI and that made up severe allegations without any evidential basis; it did not endorse those allegations."
     },
     {
       "citation": "[2025] HKDC 1287",
@@ -36,21 +37,24 @@
       "name": "R (Miller) v The Prime Minister; Cherry v Advocate General for Scotland",
       "court": "Supreme Court",
       "jurisdiction": "UK",
-      "note": "Prorogation of Parliament held unlawful."
+      "note": "Prorogation of Parliament held unlawful.",
+      "holding": "The advice to prorogue Parliament was unlawful because it had the effect of frustrating or preventing Parliament's ability to carry out its constitutional functions without reasonable justification; the prorogation was null and of no effect."
     },
     {
       "citation": "678 F. Supp. 3d 443",
       "name": "Mata v. Avianca, Inc.",
       "court": "S.D.N.Y.",
       "jurisdiction": "US",
-      "note": "The canonical hallucinated-citation sanctions decision (2023)."
+      "note": "The canonical hallucinated-citation sanctions decision (2023).",
+      "holding": "The court imposed Rule 11 sanctions on attorneys who submitted a brief citing non-existent, AI-fabricated cases and then stood by them when challenged; it concerns sanctions for fake citations, not aviation liability."
     },
     {
       "citation": "576 U.S. 644",
       "name": "Obergefell v. Hodges",
       "court": "Supreme Court of the United States",
       "jurisdiction": "US",
-      "note": "Real SCOTUS authority (2015) — a positive control for the US source."
+      "note": "Real SCOTUS authority (2015) — a positive control for the US source.",
+      "holding": "The Fourteenth Amendment requires States to license and recognise marriages between two people of the same sex; same-sex couples have a fundamental right to marry."
     },
     {
       "citation": "Cap. 614",

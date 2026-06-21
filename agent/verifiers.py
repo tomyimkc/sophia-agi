@@ -367,6 +367,43 @@ def legal_citation_exists(
     return _verify
 
 
+def legal_holding_faithful(*, holding_for=None, judge=None, require_support: bool = False) -> Verifier:
+    """Fail if a cited authority is MISSTATED — its holding does not support the
+    proposition it is cited for (the *Ayinde* misstated-authority failure).
+
+    This is the semantic tier above ``legal_citation_exists``: it judges support,
+    not mere existence, so it needs an LLM ``judge`` (``agent.legal_faithfulness``).
+    Fail-closed and abstaining — a pair with no authoritative holding text, or that
+    the judge cannot decide, is reported as **abstained** (unchecked), never passed.
+    A ``contradicted`` verdict (real authority, wrong proposition) is the violation.
+
+    By default ``passed`` is True iff nothing is contradicted (it flags affirmative
+    misuse and surfaces what it could not check). With ``require_support`` an
+    abstention is also a hard fail (full fail-closed).
+
+    Honest scope: the support judgment is a model call — measure it under the
+    no-overclaim gate (≥2 independent judges + CIs); a single judge is illustrative,
+    never a headline. Tests inject a deterministic stub judge to verify wiring only.
+    """
+    from agent.legal_faithfulness import assess_text
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        result = assess_text(text, holding_for=holding_for, judge=judge)
+        contradicted = result["contradicted"]
+        abstained = result["abstained"]
+        reasons = [f"misstated authority {c['citation']}: {c.get('reason', '')}".strip() for c in contradicted]
+        if require_support:
+            reasons += [f"unverifiable support for {a['citation']}: {a.get('why', '')}".strip() for a in abstained]
+        detail = {
+            "supported": result["supported"],
+            "contradicted": contradicted,
+            "abstained": abstained,
+        }
+        return _ok(detail) if not reasons else _fail(reasons, detail)
+
+    return _verify
+
+
 # --------------------------------------------------------------------------- #
 # OKF / provenance verifiers — encode "don't merge lineages" as a hard gate.
 # --------------------------------------------------------------------------- #
