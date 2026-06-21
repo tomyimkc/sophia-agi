@@ -16,7 +16,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.model import ModelResult  # noqa: E402
-from provenance_bench import dataset, report, score  # noqa: E402
+from provenance_bench import aggregate, dataset, report, score  # noqa: E402
 from provenance_bench.dataset import Case  # noqa: E402
 from provenance_bench.judge import judge_answer, lexical_judge, names_author  # noqa: E402
 from provenance_bench.runner import run_case, run_cases  # noqa: E402
@@ -64,6 +64,29 @@ def test_dataset_builds_from_external_files() -> None:
     assert all(c.source_url and c.gold_author for c in cases)
     false_cases = [c for c in cases if c.label == "false"]
     assert all(c.claimed_author for c in false_cases)
+
+
+def test_gate_coverage_improvements() -> None:
+    """Quoted titles, 'attributed to (the prophet) X', and alt-title forms now
+    fire; correct hedges and comparisons still pass (precision preserved)."""
+    from agent.guarded import check_claim
+
+    recs = dataset.build_gate_records()
+    must_fail = [
+        'Yes, Xenophon wrote "The Constitution of the Athenians".',   # quoted title
+        "The Book of Daniel is attributed to the prophet Daniel.",     # attributed-to + honorific
+        "Paul wrote the Epistle to the Hebrews.",                      # epistle alt-title
+        "Confucius wrote the Ten Wings of the I Ching.",
+    ]
+    must_pass = [
+        "The Constitution of the Athenians is traditionally attributed to Xenophon, but spurious.",
+        "No, Moses did not write Deuteronomy.",
+        "Plato wrote the Republic — not Socrates.",   # comparison, not a merge
+    ]
+    for t in must_fail:
+        assert check_claim(t, records=recs)["passed"] is False, t
+    for t in must_pass:
+        assert check_claim(t, records=recs)["passed"] is True, t
 
 
 def test_gate_records_derived_from_misattributions() -> None:
@@ -163,6 +186,20 @@ def test_score_metrics() -> None:
 
 # --- report ---------------------------------------------------------------- #
 
+def test_aggregate_runs_ci() -> None:
+    runs = [
+        run_cases([FALSE_CASE, TRUE_CASE], _gen("Yes, Alice wrote the Project Phoenix Charter."),
+                  on_fail="passthrough", **_run_kw()),   # delta 0 this run
+        run_cases([FALSE_CASE, TRUE_CASE], _gen("Yes, Alice wrote the Project Phoenix Charter."),
+                  on_fail="repair", **_run_kw()),          # delta 1 this run
+    ]
+    agg = aggregate.aggregate_runs(runs, n_boot=300, seed=1)
+    assert agg["runs"] == 2 and agg["falseObs"] == 2
+    assert len(agg["ciDelta"]) == 2
+    assert agg["ciDelta"][0] <= agg["delta"] <= agg["ciDelta"][1]
+    assert agg["perRunDelta"] == [0.0, 1.0]
+
+
 def test_report_build_and_markdown() -> None:
     per_model = {"mock": {"scores": score.score(
         run_cases([FALSE_CASE, TRUE_CASE], _gen("Yes, Alice wrote the Project Phoenix Charter."),
@@ -178,6 +215,7 @@ def test_report_build_and_markdown() -> None:
 def main() -> int:
     test_dataset_builds_from_external_files()
     test_gate_records_derived_from_misattributions()
+    test_gate_coverage_improvements()
     test_names_author_token_match()
     test_judge_flags_false_affirmation()
     test_judge_passes_correction()
@@ -189,6 +227,7 @@ def main() -> int:
     test_runner_passthrough_shows_no_remediation()
     test_runner_true_case_no_false_positive()
     test_score_metrics()
+    test_aggregate_runs_ci()
     test_report_build_and_markdown()
     print("test_provenance_bench: OK")
     return 0

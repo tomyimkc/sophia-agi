@@ -36,12 +36,14 @@ Legend: `[ ]` to do · `[~]` partially in place · `[x]` done by the implementat
 - [ ] **Grow the dataset to ≥100 cases** (currently 25). More works, more
       traditions, more decoy authors. Keep every label externally cited. Small N
       = wide confidence intervals = easy to dismiss.
-- [ ] **Report confidence intervals**, not just point rates (bootstrap over
-      cases). A "9% → 0.4%" with N=12 false cases is not yet a claim.
-- [ ] **Run each model ≥3 times** (temperature > 0) and report variance — single
-      runs aren't reproducible evidence.
-- [ ] **Add a second judge** (different model) and report inter-judge agreement.
-      Disagreement is your error bar on the headline.
+- [x] **Report confidence intervals** — `--runs N` enables a paired bootstrap
+      95% CI on the delta (`provenance_bench/aggregate.py`). Still: widen N so the
+      CI is tight.
+- [x] **Run each model ≥3 times** (temperature > 0) and report variance —
+      `--runs 3` records per-run deltas. Still: bump runs for stability.
+- [x] **Independent LLM-judge** — `--llm-judge <spec>` (judge ≠ subject), e.g.
+      `--llm-judge deepseek`. Still: **add a SECOND judge** and report inter-judge
+      agreement as your error bar.
 - [ ] **Pre-register** the protocol and thresholds in
       `agi-proof/preregistered-thresholds.md` *before* the run you'll cite.
 
@@ -63,14 +65,18 @@ The gate's regex is high-precision but missed real hallucinations during the
 multi-model run. Fix these in `agent/verifiers.py:provenance_faithful` *with new
 tests*, without lowering precision (verify the dispute pages still pass):
 
-- [ ] **Quoted / punctuated titles** — `wrote "The Constitution of the Athenians"`
-      isn't spanned because a quote sits between the verb and the title.
-- [ ] **`attributed to X`** phrasing — the gate matches `attributed by`, not the
-      far more common `attributed to`.
-- [ ] **Multi-word / honorific author names** — e.g. "the prophet Daniel",
-      "King David": ensure `author_markers` keys on the salient surname token.
-- [ ] **Title aliases** — let a record carry alternate titles (short forms,
-      Latin/English) so "Psalms" matches "the Book of Psalms".
+- [x] **Quoted / punctuated titles** — gate is now quote/"the"-tolerant before a
+      title (`the_q`). Verified: `wrote "The Constitution of the Athenians"` fails.
+- [x] **`attributed to X`** phrasing — added, with a bounded honorific filler
+      (`attributed to the prophet Daniel`). Hedged "traditionally attributed to…"
+      still passes (new carve-outs).
+- [x] **Multi-word / honorific author names** — `build_gate_records` reduces
+      "the prophet Daniel"/"King David" to a salient marker.
+- [x] **Title aliases** — records accept `altTitlesEn`; `build_gate_records`
+      derives short forms ("Book of Daniel" → "Daniel", interior-"the" collapse).
+- [ ] Still TODO: fold these alt-title/marker helpers into the seeded
+      `data/*.json` corpus so the *production* gate (not just the benchmark) gets
+      the wider coverage, with precision re-verified against the dispute pages.
 
 ## Tier 3 — widen the thesis (capability + adoption goals)
 

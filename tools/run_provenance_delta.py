@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from provenance_bench import dataset, report, score  # noqa: E402
+from provenance_bench import aggregate, dataset, report, score  # noqa: E402
 from provenance_bench.runner import run_cases  # noqa: E402
 
 OUT_JSON = ROOT / "agi-proof" / "benchmark-results" / "provenance-delta.public-report.json"
@@ -49,6 +49,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Provenance Delta benchmark runner")
     ap.add_argument("--models", default="mock", help="comma list of model specs (default: mock)")
     ap.add_argument("--on-fail", default="repair", help="guarded loop mode: repair|abstain|hedge|passthrough")
+    ap.add_argument("--runs", type=int, default=1, help="runs per model; >1 enables bootstrap CIs")
     ap.add_argument("--llm-judge", default=None, help="model spec for an independent LLM-judge (else lexical screen)")
     ap.add_argument("--limit", type=int, default=0, help="cap number of cases (0 = all)")
     ap.add_argument("--emit-dataset", default=None, help="also write the case set as JSONL to this path")
@@ -71,21 +72,24 @@ def main(argv: list[str] | None = None) -> int:
 
     per_model: dict = {}
     for spec in [s.strip() for s in args.models.split(",") if s.strip()]:
-        print(f"running {spec} over {len(cases)} cases ...")
+        print(f"running {spec} over {len(cases)} cases x{args.runs} run(s) ...")
         gen = _generator(spec)
-        results = run_cases(
-            cases, gen, on_fail=args.on_fail, records=gate_records, llm_judge_fn=llm_judge_fn
-        )
-        scores = score.score(results)
+        runs = [
+            run_cases(cases, gen, on_fail=args.on_fail, records=gate_records, llm_judge_fn=llm_judge_fn)
+            for _ in range(max(1, args.runs))
+        ]
+        scores = aggregate.aggregate_runs(runs) if args.runs > 1 else score.score(runs[0])
         per_model[spec] = {
             "scores": scores,
             "model": spec,
             "onFail": args.on_fail,
-            "judgeMethod": results[0]["judge_method"] if results else "lexical",
+            "runs": args.runs,
+            "judgeMethod": runs[0][0]["judge_method"] if runs and runs[0] else "lexical",
         }
+        ci = f" CI{scores['ciDelta']}" if "ciDelta" in scores else ""
         print(
             f"  {spec}: halluc alone={scores['hallucinationRateAlone']:.1%} "
-            f"gated={scores['hallucinationRateGated']:.1%} Δ={scores['delta']:.1%} "
+            f"gated={scores['hallucinationRateGated']:.1%} Δ={scores['delta']:.1%}{ci} "
             f"FP-cost={scores['falsePositiveCost']:.1%} coverage={scores['coverageRecall']:.1%}"
         )
 

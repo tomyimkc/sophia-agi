@@ -211,27 +211,41 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
 
     records = records if records is not None else _load_provenance_records()
     the = r"(?:the\s+)?"
+    q = r"[\"“”'’«»]?"                                     # an optional opening/closing quote
+    the_q = q + r"\s*" + the + q + r"\s*"                  # quote/"the"-tolerant lead-in to a title
     attr = r"(?:wrote|authored|penned|composed)"          # active
     attr_p = r"(?:written|authored|penned|composed)"      # passive participle
+    # Bounded honorific/article lead-in to a name ("to the prophet Daniel").
+    nm = r"(?:(?:the|a|an|prophet|apostle|king|saint|st\.?|emperor|biblical|tyrant)\s+){0,3}"
     # Skip non-assertions: instructions ("do not attribute X to Y"), reported/hedged
-    # speech ("summaries say ...", "often said"), and scare-quoted verbs ("wrote").
+    # speech ("summaries say ...", "often said"), scare-quoted verbs ("wrote"), and
+    # scholarly hedges that *correctly* flag a traditional/spurious attribution.
     extra_deny = [
         r"do not attribut", r"not\s+\w*\s*attribut", r"never\s+\w*\s*attribut",
         r"misattribut", r"wrongly", r"falsely", r"erroneous", r"並非", r"勿",
         r"summaries say", r'say[s]?\s+["“\']', r"often\s+said", r"commonly\s+(said|believed|attributed)",
         r"\bpopular", r"\bmisread", r"\bmistaken", r"\bloosely\b", r"\bas if\b", r"main speaker",
         r'["“\'](?:wrote|written|authored|composed|penned|attributed)["”\']',
+        r"traditionally", r"\bspuri", r"pseudo[\s-]?", r"apocryphal", r"\bforg(?:ed|ery)",
+        r"\bdisputed\b", r"\bdoubtful\b", r"\bdebated\b", r"scholars?\s+(?:doubt|reject|dispute|question)",
     ]
 
     specs: list[tuple] = []
     for rid, record in records.items():
         titles = [
             str(t).lower()
-            for t in (record.get("canonicalTitleEn"), record.get("canonicalTitleZh"), rid.replace("_", " "))
+            for t in (
+                record.get("canonicalTitleEn"),
+                record.get("canonicalTitleZh"),
+                rid.replace("_", " "),
+                *(record.get("altTitlesEn") or []),
+            )
             if t and len(str(t)) >= 3
         ]
         if not titles:
             continue
+        # longest titles first so "constitution of the athenians" wins over a substring
+        titles = sorted(dict.fromkeys(titles), key=len, reverse=True)
         title_alt = "(?:" + "|".join(re.escape(t) for t in titles) + ")"
         for author in record.get("doNotAttributeTo", []):
             a = "(?:" + "|".join(re.escape(m.lower()) for m in author_markers(author)) + r")\b"
@@ -241,11 +255,12 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
             # ("Plato wrote Republic — not Socrates") or a possessive of a different
             # noun ("from Epictetus's teachings") does not cross-match.
             patterns = [
-                re.compile(a + r"\s+" + attr + r"\s+" + the + t),                                        # X wrote (the) Y
-                re.compile(a + r"(?:\s+(?:is|was|being))?\s+" + the + r"(?:author|writer|composer)\s+of\s+" + the + t),  # X is the author of Y
-                re.compile(a + r"\s+(?:is|was)\s+credited\s+with\s+\w+ing\s+" + the + t),                # X is credited with writing Y
-                re.compile(a + r"['’]s\s+" + the + t),                                                   # X's (the) Y
-                re.compile(t + r"(?:\s*,)?(?:\s+(?:was|is|were|been))?\s+(?:" + attr_p + r"|attributed)\s+by\s+" + a),  # Y (was) written by X
+                re.compile(a + r"\s+" + attr + r"\s+" + the_q + t),                                      # X wrote (the) "Y"
+                re.compile(a + r"(?:\s+(?:is|was|being))?\s+" + the + r"(?:author|writer|composer)\s+of\s+" + the_q + t),  # X is the author of Y
+                re.compile(a + r"\s+(?:is|was)\s+credited\s+with\s+\w+ing\s+" + the_q + t),              # X is credited with writing Y
+                re.compile(a + r"['’]s\s+" + the_q + t),                                                 # X's (the) Y
+                re.compile(t + r"(?:\s*,)?(?:\s+(?:was|is|were|been))?\s+(?:" + attr_p + r"|attributed)\s+by\s+" + nm + a),  # Y (was) written by X
+                re.compile(t + r"(?:\s*,)?\s+(?:is|was|are|were|been|being)?\s*attributed\s+to\s+" + nm + a),  # Y is attributed to (the prophet) X
                 re.compile(t + r"(?:\s*,)?\s+(?:a\s+|the\s+)?(?:work|text|book|composition|treatise)\s+(?:by|of)\s+" + a),  # Y, a work by X
                 re.compile(t + r"\s+(?:was\s+|is\s+)?" + a + r"['’]s\s+(?:\w+\s+)?(?:work|text|masterpiece|composition|book|treatise)\b"),  # Y was X's work
                 re.compile(a + r"\s*著\s*" + title_alt),                                                 # X 著 Y

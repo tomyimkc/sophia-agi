@@ -80,6 +80,46 @@ def build_cases(data_dir: Path | None = None) -> list[Case]:
     return cases
 
 
+_HONORIFICS = re.compile(
+    r"^(?:the\s+)?(?:prophet|apostle|king|saint|st\.?|emperor|biblical|tyrant)\s+", re.IGNORECASE
+)
+_GENERIC_TITLE = {"book", "work", "text", "epistle", "gospel", "annals", "letters",
+                  "hymns", "verses", "fables", "war", "universe"}
+
+
+def _author_marker(name: str) -> str:
+    """Strip honorifics/articles so 'the prophet Daniel' -> 'Daniel' (a marker
+    that still matches the full phrase via word-boundary search)."""
+    n = _HONORIFICS.sub("", name).strip()
+    n = re.sub(r"\s+the\s+great$", "", n, flags=re.IGNORECASE).strip()
+    return n or name
+
+
+def _alt_titles(work: str) -> list[str]:
+    """Short/alternate forms so 'the Book of Daniel' also matches 'Daniel'."""
+    w = work.strip()
+    alts: set[str] = set()
+    base = re.sub(r"^the\s+", "", w, flags=re.IGNORECASE)
+    alts.add(base)
+    if m := re.search(r"\((.*?)\)", w):                       # parenthetical alias, e.g. (De Mundo)
+        alts.add(m.group(1).strip())
+    nopar = re.sub(r"\s*\(.*?\)", "", w).strip()
+    alts.update({nopar, re.sub(r"^the\s+", "", nopar, flags=re.IGNORECASE)})
+    if m := re.search(r"\bbook of (?:the\s+)?(.+)$", base, flags=re.IGNORECASE):
+        alts.add(m.group(1).strip())
+    if m := re.search(r"epistle to (?:the\s+)?(.+)$", base, flags=re.IGNORECASE):
+        alts.add(m.group(1).strip())
+    # collapse interior "the" so "Epistle to the Hebrews" also matches "Epistle to Hebrews"
+    for a in list(alts):
+        collapsed = re.sub(r"\s+the\s+", " ", a, flags=re.IGNORECASE)
+        if collapsed != a:
+            alts.add(collapsed)
+    return sorted(
+        a for a in alts
+        if len(a) >= 5 and a.lower() != w.lower() and a.lower() not in _GENERIC_TITLE
+    )
+
+
 def build_gate_records(data_dir: Path | None = None) -> dict:
     """Derive the gate's provenance RULES from the cited misattributions.
 
@@ -88,15 +128,22 @@ def build_gate_records(data_dir: Path | None = None) -> dict:
     Returning them as a records dict lets the benchmark's gate fire on the
     benchmark's works. This is NOT circular: the rule is the treatment; the
     true/false LABEL still comes from the external citation, not the gate.
+
+    Author names are reduced to salient markers and works gain alt-title forms so
+    the gate's regex can actually fire on natural model phrasings.
     """
     data_dir = data_dir or DATA_DIR
     mis = _load(data_dir / "misattributions.json").get("misattributions", [])
     records: dict[str, dict] = {}
     for row in mis:
         rid = re.sub(r"[^a-z0-9]+", "_", row["work"].lower()).strip("_")
-        rec = records.setdefault(rid, {"canonicalTitleEn": row["work"], "doNotAttributeTo": []})
-        if row["claimed_author"] not in rec["doNotAttributeTo"]:
-            rec["doNotAttributeTo"].append(row["claimed_author"])
+        rec = records.setdefault(
+            rid,
+            {"canonicalTitleEn": row["work"], "altTitlesEn": _alt_titles(row["work"]), "doNotAttributeTo": []},
+        )
+        marker = _author_marker(row["claimed_author"])
+        if marker not in rec["doNotAttributeTo"]:
+            rec["doNotAttributeTo"].append(marker)
     return records
 
 

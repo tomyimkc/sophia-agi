@@ -64,16 +64,35 @@ replication) for the provenance niche. See the design spec:
 3. **Coverage / recall** — of false attributions made *alone*, the fraction the
    gate fixes. Names the gate's narrowness instead of hiding it.
 
+## Which models show a delta? (where the gate earns its keep)
+
+The delta tracks a model's **propensity to assert**, not its parameter count.
+Choose subjects accordingly:
+
+- **Big deltas:** uncensored / "uncial" / older / instruction-light models that
+  answer confidently even when wrong (e.g. `dolphin-llama3:8b`). This is the
+  gate's target population.
+- **Small/zero deltas:** well-aligned frontier models (`deepseek`, Claude, GPT)
+  already practice source discipline on these cases, and well-aligned *small*
+  models tend to hedge/abstain rather than confabulate — so there is little for
+  the gate to remove. A near-zero delta here is a *true* result, not a failure.
+
+So the headline is **not** "we beat frontier models"; it is **"Sophia's gate
+makes the models that need it measurably more faithful, at zero cost to correct
+answers."** Pair the benchmark with a confidently-wrong model to show the effect,
+and an independent frontier model as the **judge** (never as both subject and
+judge).
+
 ## Run it
 
 ```bash
 # offline smoke run (deterministic mock; no API cost) — plumbing only
 python tools/run_provenance_delta.py --models mock
 
-# real headline run, independent LLM-judge (judge ≠ models under test)
+# citable run: independent judge (≠ subject) + 3 runs -> bootstrap 95% CIs
 python tools/run_provenance_delta.py \
-    --models anthropic,openai,grok,ollama:qwen2.5-7b \
-    --llm-judge anthropic:claude-opus-4-8
+    --models ollama:dolphin-llama3:8b \
+    --llm-judge deepseek --runs 3
 
 # optionally verify/populate Wikidata QIDs for the true-attribution snapshot
 python tools/fetch_wikidata_authors.py            # dry run

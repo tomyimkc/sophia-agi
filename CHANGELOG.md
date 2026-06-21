@@ -2,6 +2,31 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.5] - 2026-06-21
+
+### Added / Changed — gate coverage, confidence intervals, independent judge
+
+- **Gate coverage (core `provenance_faithful`, precision preserved)** — the gate
+  now catches three real phrasings it missed in live runs, without lowering
+  precision (dispute-page lint still 0 forbidden; verifier/guarded/source-
+  discipline tests pass): (1) **quoted / "the"-padded titles** (`wrote "The
+  Constitution of the Athenians"`), (2) **`attributed to X`** with a bounded
+  honorific filler (`attributed to the prophet Daniel`), and (3) optional
+  **`altTitlesEn`** on a record. New carve-outs (`traditionally`, `spurious`,
+  `pseudo`, `disputed`, …) keep correctly-hedged attributions passing.
+- **Benchmark gate rules** — `dataset.build_gate_records()` now reduces honorific
+  author names to salient markers and derives alt-title forms ("the Book of
+  Daniel" → "Daniel", interior-"the" collapse) so the gate fires on natural model
+  phrasings.
+- **Confidence intervals + multi-run** — `provenance_bench/aggregate.py` +
+  `--runs N`: paired bootstrap 95% CI on the delta, per-run deltas surfaced, CI
+  columns in the report.
+- **Independent LLM-judge wired end-to-end** — `--llm-judge <spec>` (judge ≠
+  subject). Model-selection guidance added (the delta tracks propensity-to-assert,
+  not size; pair with a confidently-wrong subject + a frontier judge).
+- Tests: gate-coverage cases, `build_gate_records` markers/alt-titles, and
+  bootstrap-CI aggregation added to `tests/test_provenance_bench.py` (CI-wired).
+
 ## [0.7.4] - 2026-06-21
 
 ### Added — The Provenance Delta benchmark (external, non-circular evidence)

@@ -22,13 +22,16 @@ def build_report(per_model: dict, *, run_at: str | None = None) -> dict:
                 "model": label,
                 "modelSpec": payload.get("model", label),
                 "onFail": payload.get("onFail", "repair"),
+                "runs": payload.get("runs", 1),
                 "hallucinationRateAlone": s["hallucinationRateAlone"],
                 "hallucinationRateGated": s["hallucinationRateGated"],
                 "delta": s["delta"],
+                "ciDelta": s.get("ciDelta"),
+                "perRunDelta": s.get("perRunDelta"),
                 "falsePositiveCost": s["falsePositiveCost"],
                 "coverageRecall": s["coverageRecall"],
-                "falseCases": s["falseCases"],
-                "trueCases": s["trueCases"],
+                "falseCases": s.get("falseCases"),
+                "trueCases": s.get("trueCases"),
             }
         )
     return {
@@ -47,17 +50,21 @@ def to_markdown(report: dict) -> str:
         "",
         f"_Run: {report.get('runAt') or 'n/a'} · judge: {report.get('judgeMethod')}_",
         "",
-        "| Model | Halluc. alone | Halluc. gated | Δ | False-positive cost | Gate coverage |",
-        "|---|---|---|---|---|---|",
+        "| Model | Runs | Halluc. alone | Halluc. gated | Δ (95% CI) | False-positive cost | Gate coverage |",
+        "|---|---|---|---|---|---|---|",
     ]
 
     def pct(x: float) -> str:
         return f"{x * 100:.1f}%"
 
     for r in report["rows"]:
+        d = pct(r["delta"])
+        if r.get("ciDelta"):
+            d += f" [{pct(r['ciDelta'][0])}, {pct(r['ciDelta'][1])}]"
         lines.append(
-            f"| {r['model']} | {pct(r['hallucinationRateAlone'])} | {pct(r['hallucinationRateGated'])} "
-            f"| {pct(r['delta'])} | {pct(r['falsePositiveCost'])} | {pct(r['coverageRecall'])} |"
+            f"| {r['model']} | {r.get('runs', 1)} | {pct(r['hallucinationRateAlone'])} "
+            f"| {pct(r['hallucinationRateGated'])} | {d} | {pct(r['falsePositiveCost'])} "
+            f"| {pct(r['coverageRecall'])} |"
         )
     lines += ["", f"> {report['nonCircularityContract']}"]
     return "\n".join(lines)
