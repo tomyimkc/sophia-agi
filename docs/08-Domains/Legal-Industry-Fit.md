@@ -163,10 +163,16 @@ verifier = legal_citation_exists(resolver=make_resolver())   # SOPHIA_LEGAL_SOUR
 ## Remaining build order
 
 1. ~~Live `legal_citation_exists` backend~~ — **done** (above).
-2. **A small HK legal benchmark** (real-vs-fabricated authorities) run through the
-   no-overclaim gate — the first *measured, gated* anti-hallucination number in
-   this space, which is the white space the assessment identifies. (Seeded by
-   `benchmark/legal_citations_hk.json`.)
+2. ~~A small HK legal benchmark run through the honest measurement path~~ —
+   **done**. `tools/run_legal_citation_bench.py` scores `legal_citation_exists`
+   over `benchmark/legal_citations_hk.json` as an **objective** eval (ground-truth
+   labels + deterministic verifier, no LLM judge) and publishes it under
+   **verifierEvals** in [RESULTS.md](../../RESULTS.md): **100% accuracy, N=8**
+   (every fabrication flagged, zero false alarms). Honest bounds are published with
+   it — tiny constructed N, capped by the register's completeness; it validates the
+   extraction + fail-closed gate logic end-to-end, **not** a headline capability
+   claim. A drift test (`tests/test_legal_citation_bench.py`) keeps the published
+   number in sync with the runner.
 3. **Federate other jurisdictions** — add `LegalSource` backends for the UK
    (National Archives Find Case Law) and US (CourtListener API); route by court token.
 4. **Document ingestion** for contracts/filings, so citation checks run over real
