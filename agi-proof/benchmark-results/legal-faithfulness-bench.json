@@ -1,0 +1,35 @@
+{
+  "benchmark": "legal_holding_faithful",
+  "judges": [
+    "openrouter:deepseek/deepseek-chat",
+    "openrouter:meta-llama/llama-3.3-70b-instruct",
+    "openrouter:qwen/qwen-2.5-72b-instruct"
+  ],
+  "runs": 3,
+  "n": 8,
+  "consensusAccuracy": 1.0,
+  "ci": [
+    1.0,
+    1.0
+  ],
+  "perRunAccuracy": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "meanPairwiseKappa": 1.0,
+  "perJudgeAccuracy": {
+    "openrouter:deepseek/deepseek-chat": 1.0,
+    "openrouter:meta-llama/llama-3.3-70b-instruct": 1.0,
+    "openrouter:qwen/qwen-2.5-72b-instruct": 1.0
+  },
+  "validated": true,
+  "validatedChecks": {
+    "notMock": true,
+    "multiFamilyJudges": true,
+    "kappaAboveFloor": true,
+    "atLeast3Runs": true,
+    "ciAboveChance": true
+  },
+  "scoring": "model-judged; validated only under the no-overclaim gate (see validatedChecks)."
+}

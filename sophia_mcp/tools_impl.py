@@ -249,6 +249,21 @@ def sector_council(council_id: str, query: str, *, materials: list | None = None
     }
 
 
+def council_deliberate(query: str, *, model: str = "mock", max_seats: int = 4, gate: bool = True) -> dict:
+    """Map-reduce a query across a council's seats (a focused pass per seat + a
+    per-seat gate + synthesis). The small-model uplift: many narrow gated passes
+    beat one shallow pass. Decision support only — not professional advice."""
+    if not query.strip():
+        return {"error": "query is required"}
+    from agent.council_deliberate import deliberate
+    from agent.model import default_client
+
+    d = deliberate(query, client=default_client(model), max_seats=max_seats, gate=gate)
+    out = d.to_dict()
+    out["notAdvice"] = "Decision support only — not professional legal/financial advice."
+    return out
+
+
 @audited("sophia_export_corpus", risk="medium")
 def export_corpus() -> dict:
     examples = sorted(EXAMPLES_DIR.glob("*.json"))

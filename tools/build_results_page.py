@@ -149,9 +149,21 @@ def render(doc: dict) -> str:
             "",
             f"- Benchmark: {semantic.get('benchmark')}",
             f"- Gate: {semantic.get('gate')}",
-            f"- Validated result: {status} {semantic.get('note', '')}",
-            "",
         ]
+        res = semantic.get("result")
+        if _v is True and res:
+            L.append(
+                f"- Validated result: {status} — consensus accuracy "
+                f"**{_pct(res.get('consensusAccuracy'))}** "
+                f"(CI {res.get('ci')}), mean pairwise κ **{res.get('meanPairwiseKappa')}**, "
+                f"N={res.get('n')}, {res.get('runs')} runs, families "
+                f"{', '.join(res.get('families', []))} ({res.get('date', '—')})."
+            )
+        else:
+            L.append(f"- Validated result: {status}")
+        if semantic.get("note"):
+            L.append(f"- {semantic['note']}")
+        L.append("")
 
     audit = doc.get("audit")
     if audit:

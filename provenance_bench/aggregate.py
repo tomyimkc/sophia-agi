@@ -25,10 +25,28 @@ KAPPA_FLOOR = 0.40   # "moderate" agreement, the minimum for a validated headlin
 
 
 def _distinct_families(judges: "list[str] | None") -> int:
-    """Count distinct provider families among judge specs ('anthropic:..' -> 'anthropic')."""
+    """Count distinct provider families among judge specs ('anthropic:..' -> 'anthropic').
+
+    Gateway-aware: a spec routed through an aggregator (e.g. 'openrouter:anthropic/
+    claude-..', or an openai-compatible base with a 'vendor/model' name) counts as
+    the UNDERLYING vendor family ('anthropic'), so two DIFFERENT vendors behind one
+    OpenRouter key are two independent families — while two models from the SAME
+    vendor (e.g. 'openrouter:anthropic/a' and 'openrouter:anthropic/b') collapse to
+    one. The independence the gate cares about is the vendor family, not the gateway.
+    """
     if not judges:
         return 0
-    return len({j.split(":", 1)[0].strip().lower() for j in judges if j and j.strip()})
+    fams = set()
+    for j in judges:
+        if not j or not j.strip():
+            continue
+        prov, _, model = j.partition(":")
+        prov = prov.strip().lower()
+        if prov in ("openrouter", "openai") and "/" in model:
+            fams.add(model.strip().split("/", 1)[0].lower())
+        else:
+            fams.add(prov)
+    return len(fams)
 
 
 def aggregate_runs(

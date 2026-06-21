@@ -114,10 +114,20 @@ jobs:
           python tests/test_legal_citation_bench.py
           python tools/run_legal_citation_bench.py
           python tools/run_legal_faithfulness_bench.py --judges mock --runs 1
+          python tools/run_legal_faithfulness_bench.py --bench benchmark/legal_holding_faithful_hard.json --judges mock --runs 1
       - name: Runtime gate (legal self-gate + numeric soundness) + Cantonese
         run: |
           python tests/test_gate.py
           python tests/test_cantonese.py
+      - name: Council deliberation (map-reduce + per-seat gate) + small-LLM uplift
+        run: |
+          python tests/test_council_deliberate.py
+          python tools/council_deliberate.py "Model runway and flag AML for Stripe" --model mock >/dev/null
+          python tools/run_council_uplift.py --model mock
+      - name: Council distillation (gate-filtered trace generation, offline)
+        run: |
+          python tests/test_distill_council.py
+          python tools/distill_council_traces.py --teacher mock --limit 4 --out /tmp/council_traces_ci.jsonl
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

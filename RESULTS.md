@@ -46,7 +46,8 @@ Judging whether a holding *supports* a proposition is a model call, so these are
 
 - Benchmark: legal_holding_faithful (does a real authority's holding SUPPORT the cited proposition? — the Ayinde misstated-authority failure)
 - Gate: validated = >=2 independent judges (>=2 provider families, no mock) + mean pairwise Cohen's kappa >= 0.40 + >=3 runs + bootstrap 95% CI lower bound above chance (0.5).
-- Validated result: _None yet._ Model-judged, so held to the no-overclaim gate. Machinery: tools/run_legal_faithfulness_bench.py; gate logic tested offline with deterministic scripted judges in tests/test_legal_faithfulness_bench.py. NO validated number yet — a headline requires a local run with >=2 provider families. Reproduce: python tools/run_legal_faithfulness_bench.py --judges <familyA:model>,<familyB:model> --runs 3.
+- Validated result: **VALIDATED** — consensus accuracy **100.0%** (CI [1.0, 1.0]), mean pairwise κ **1.0**, N=8, 3 runs, families deepseek, meta-llama, qwen (2026-06-21).
+- Clears the pre-registered no-overclaim gate (3 independent provider families via OpenRouter, kappa=1.0, 3 runs, CI above chance). HONEST CAVEAT: N=8 and the cases are clear-cut (a clearly-supported vs a clearly-misstated proposition for each real authority), so unanimous agreement (kappa=1.0) and the degenerate CI [1.0,1.0] are expected — this validates the tier + harness end-to-end and shows three frontier-class judges reliably catch blatant misstatement, but it does NOT measure subtle ratio-vs-obiter discrimination or performance on a large, adversarial set. Reproduce: OPENROUTER_API_KEY set; python tools/run_legal_faithfulness_bench.py --judges openrouter:deepseek/deepseek-chat,openrouter:meta-llama/llama-3.3-70b-instruct,openrouter:qwen/qwen-2.5-72b-instruct --runs 3.
 
 ## Judge audit (why the gate matters)
 

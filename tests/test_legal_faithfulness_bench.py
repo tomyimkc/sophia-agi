@@ -97,6 +97,50 @@ def test_disagreement_lowers_kappa_and_blocks_validation() -> None:
     assert result["validated"] is False
 
 
+def test_openrouter_judges_count_as_distinct_families() -> None:
+    from provenance_bench.aggregate import _distinct_families
+
+    # two DIFFERENT vendors behind ONE OpenRouter key are two independent families
+    assert _distinct_families(["openrouter:anthropic/claude-sonnet-4-6",
+                               "openrouter:deepseek/deepseek-chat"]) == 2
+    # two models from the SAME vendor collapse to one family
+    assert _distinct_families(["openrouter:anthropic/a", "openrouter:anthropic/b"]) == 1
+    assert _distinct_families(["anthropic:x", "deepseek:y"]) == 2  # classic specs still work
+
+
+def _hard_cases():
+    return json.loads((ROOT / "benchmark" / "legal_holding_faithful_hard.json").read_text("utf-8"))["cases"]
+
+
+def test_hard_bench_uses_inline_holdings_and_stratifies() -> None:
+    m = _load_runner()
+    cases = _hard_cases()
+    # perfect scripted judge keyed on proposition (no register lookup needed)
+    ans = {c["proposition"]: c["expectFaithful"] for c in cases}
+
+    def perfect(p, _h):
+        return Verdict(supports=bool(ans[p]), abstained=False, reason="scripted")
+
+    # pass an EMPTY register to prove inline `holding` is used (not register lookup)
+    runs = [m.run_once(cases, {}, [perfect, perfect]) for _ in range(3)]
+    result = m.aggregate(runs, judge_specs=["anthropic:a", "deepseek:b"])
+    assert result["consensusAccuracy"] == 1.0  # inline holdings were available
+    assert "overbroad_scope" in result["byDifficulty"]
+    assert "superseded" in result["byFailureType"]
+    # every stratum perfectly scored by the perfect judge
+    assert all(s["accuracy"] == 1.0 for s in result["byDifficulty"].values())
+
+
+def test_hard_bench_is_marked_seed_not_validation_ready() -> None:
+    import json as _json
+    doc = _json.loads((ROOT / "benchmark" / "legal_holding_faithful_hard.json").read_text("utf-8"))
+    assert "SEED" in doc.get("status", "")
+    # every case carries a holding + provenance + needs-verification flag
+    for c in doc["cases"]:
+        assert c.get("holding") and c.get("holdingSource")
+        assert c.get("labelStatus") == "seed-needs-verification"
+
+
 def test_abstention_counts_against_accuracy() -> None:
     m = _load_runner()
     cases = _cases()

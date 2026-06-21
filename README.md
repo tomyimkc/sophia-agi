@@ -12,7 +12,7 @@
 
 **Thesis site:** https://tomyimkc.github.io/sophia-agi/
 
-> *Sophia* (σοφία) = wisdom. Four domains active — philosophy, psychology, history, religion — plus a **three-path agent** (advisor, repo, life).
+> *Sophia* (σοφία) = wisdom. Four humanities domains active — philosophy, psychology, history, religion — plus a **three-path agent** (advisor, repo, life). The same verifier-gated core extends to **sector councils** (law · finance · economy) and to **disciplining small local LLMs** — see [Applied verticals](#applied-verticals--the-same-gate-beyond-the-humanities-corpus).
 
 ## AGI-candidate proof package
 
@@ -133,14 +133,17 @@ Templates: `benchmark/templates/responses-{domain}.template.json`
 
 ```text
 sophia-agi/
-├── data/              # attributions, domains, schema (multi-domain)
-├── docs/              # disputes, growth playbook, domain expansion
-├── training/          # JSONL-ready examples
-├── benchmark/         # responses template + leaderboard
+├── data/              # attributions, domains, schema + sector-council figures
+├── docs/              # disputes, growth playbook, domains, platform/verticals
+├── agent/             # verifier-gated core, council deliberate, gate, model
+│   └── legal_sources/ # federated HK/UK/US live citator (HKLII, e-Leg, TNA, CL)
+├── benchmark/         # responses template + leaderboard + gated harnesses
+├── training/          # JSONL-ready examples + gate-filtered council traces
 ├── agi-proof/         # AGI-candidate proof package and evidence manifest
-├── tools/             # validate, export, score, stats, serve_web
+├── tools/             # validate, export, score, council + uplift + distill
+├── scripts/           # ops helpers (e.g. safe one-way iCloud backup)
 ├── web/               # thesis UI (council-decided; GitHub Pages)
-├── tests/             # attribution benchmark cases
+├── tests/             # attribution + verifier + council + legal cases
 └── huggingface/       # HF dataset card (upload corpus.jsonl)
 ```
 
@@ -155,6 +158,35 @@ sophia-agi/
 
 See [docs/08-Domains/Overview.md](docs/08-Domains/Overview.md) and answer [Expansion-Questionnaire.md](docs/08-Domains/Expansion-Questionnaire.md) to shape the next domains.
 
+## Applied verticals — the same gate, beyond the humanities corpus
+
+The verifier-gated, abstaining core is domain-general, so the same machinery extends
+past the philosophy/psychology/history/religion corpus. These are **applications of
+the core gate**, not a separate project — each reuses the no-overclaim rule (a number
+is "validated" only with multi-judge consensus + CIs; see [RESULTS.md](RESULTS.md)).
+
+- **Sector councils (law · finance · economy)** — hard, contested questions are
+  modelled as constrained, source-inspired *seats* with always-on guardians
+  (citation auditor, jurisdiction/freshness, ethics, human-review gate).
+  `data/{law,financial,economy}_council_figures.json` ·
+  [Sector-Councils.md](docs/08-Domains/Sector-Councils.md).
+- **Council deliberation for small LLMs** — `agent/council_deliberate.py` runs each
+  seat as one focused pass, **gates each**, then synthesises (map-reduce): a weak
+  model becomes a disciplined, tool-checked reasoner. The uplift is *measured*, not
+  assumed (`tools/run_council_uplift.py`) ·
+  [Council-For-Small-LLMs.md](docs/11-Platform/Council-For-Small-LLMs.md).
+- **Legal-AI application** — the gate aimed at the legal industry's defining risk
+  (hallucinated / misstated citations): `legal_citation_exists` (existence,
+  fail-closed) + a federated **HK/UK/US live citator** (`agent/legal_sources/`) +
+  a semantic **holding-faithfulness** tier. Sophia's **first gate-validated number**
+  lives here (RESULTS.md → *Semantic evals*), with honest small-N bounds. Not legal
+  advice · [Legal-Industry-Fit.md](docs/08-Domains/Legal-Industry-Fit.md).
+- **Council distillation** — teach a small student (Qwen2.5-7B) the discipline from
+  **gate-filtered** teacher traces, so it stays disciplined without the scaffold ·
+  [Council-Distillation.md](docs/11-Platform/Council-Distillation.md).
+- **Cantonese (粵語)** — written-Cantonese detection + output (`agent/cantonese.py`),
+  the Hong Kong access-to-justice niche.
+
 ## Roadmap & growth
 
 - [**2026 Year-Top Roadmap**](docs/07-Growth/2026-Year-Top-Roadmap.md) — stars, authority, category ownership
@@ -168,7 +200,7 @@ See [docs/08-Domains/Overview.md](docs/08-Domains/Overview.md) and answer [Expan
 |-------|----------------|
 | **Project skill** | `/sophia-agi` — `.grok/skills/sophia-agi/SKILL.md` |
 | **Portable skill** | `/sophia-source-discipline` — `python tools/install_skills.py --all` |
-| **MCP server** | `sophia_mcp/server.py` — 21 tools (validate, gate, check_claim, belief, benchmark, lookup, sector councils, OKF wiki, OpenClaw infer) |
+| **MCP server** | `sophia_mcp/server.py` — 22 tools (validate, gate, check_claim, belief, benchmark, lookup, sector councils, council deliberate, OKF wiki, OpenClaw infer) |
 
 ```bash
 pip install -r requirements-mcp.txt
