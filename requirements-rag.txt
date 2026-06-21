@@ -1,4 +1,4 @@
-fastapi>=0.115
+fastapi>=0.138.0
 uvicorn[standard]>=0.32
 google-genai>=1.0
 numpy>=1.26
