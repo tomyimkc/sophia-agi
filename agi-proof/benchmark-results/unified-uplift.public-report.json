@@ -1,0 +1,102 @@
+{
+  "benchmark": "unified-uplift",
+  "model": "mock",
+  "visibility": "public-aggregate",
+  "runs": 1,
+  "cases": 6,
+  "judgeFamilies": 0,
+  "judgeSpecs": [
+    "lexical"
+  ],
+  "scopeNote": "Provenance/attribution discipline on checkable cases — NOT general capability or AGI. +mcp-tools is tool-grounded retrieval + self-verification, not model intelligence. A lever is VALIDATED only under the no-overclaim gate (>=2 judge families, kappa>=0.40, >=3 runs, 95% CI excludes 0).",
+  "levers": {
+    "+gate": {
+      "hallucinationAlone": 0.0,
+      "hallucinationLever": 0.0,
+      "delta": 0.0,
+      "ciDelta": [
+        0.0,
+        0.0
+      ],
+      "perRunDelta": [
+        0.0
+      ],
+      "falsePositiveCost": 0.0,
+      "coverageRecall": 0.0,
+      "validated": false,
+      "validatedChecks": {
+        "notMock": false,
+        "multiFamilyJudges": false,
+        "kappaAboveFloor": false,
+        "atLeast3Runs": false,
+        "ciExcludesZero": false
+      }
+    },
+    "+council": {
+      "hallucinationAlone": 0.0,
+      "hallucinationLever": 0.0,
+      "delta": 0.0,
+      "ciDelta": [
+        0.0,
+        0.0
+      ],
+      "perRunDelta": [
+        0.0
+      ],
+      "falsePositiveCost": 0.0,
+      "coverageRecall": 0.0,
+      "validated": false,
+      "validatedChecks": {
+        "notMock": false,
+        "multiFamilyJudges": false,
+        "kappaAboveFloor": false,
+        "atLeast3Runs": false,
+        "ciExcludesZero": false
+      }
+    },
+    "+council+gate": {
+      "hallucinationAlone": 0.0,
+      "hallucinationLever": 0.0,
+      "delta": 0.0,
+      "ciDelta": [
+        0.0,
+        0.0
+      ],
+      "perRunDelta": [
+        0.0
+      ],
+      "falsePositiveCost": 0.0,
+      "coverageRecall": 0.0,
+      "validated": false,
+      "validatedChecks": {
+        "notMock": false,
+        "multiFamilyJudges": false,
+        "kappaAboveFloor": false,
+        "atLeast3Runs": false,
+        "ciExcludesZero": false
+      }
+    },
+    "+mcp-tools": {
+      "hallucinationAlone": 0.0,
+      "hallucinationLever": 0.0,
+      "delta": 0.0,
+      "ciDelta": [
+        0.0,
+        0.0
+      ],
+      "perRunDelta": [
+        0.0
+      ],
+      "falsePositiveCost": 0.0,
+      "coverageRecall": 0.0,
+      "validated": false,
+      "validatedChecks": {
+        "notMock": false,
+        "multiFamilyJudges": false,
+        "kappaAboveFloor": false,
+        "atLeast3Runs": false,
+        "ciExcludesZero": false
+      }
+    }
+  }
+}

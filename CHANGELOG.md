@@ -2,6 +2,29 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.30] - 2026-06-21
+
+### Added — unified uplift study (one harness, every lever, one validation gate)
+
+The repo had two uplift harnesses measuring different levers with different
+scorers; neither could answer "which lever uplifts a small model most, and does
+it survive the gate?". `tools/run_unified_uplift.py` runs every lever
+(alone / +gate / +council / +council+gate / +mcp-tools) over ONE case set, scores
+with ONE consensus-capable judge, and validates EACH lever through the same
+`provenance_bench.aggregate` machinery as run_provenance_delta (>=2 judge
+families + kappa>=0.40 + >=3 runs + 95% CI excludes 0). Selective +mcp-tools
+(tools fire only on low-confidence answers) so it can't regress below alone.
+
+- Reuses agent.council_deliberate.deliberate, provenance_bench.local_agent
+  (tool_loop), agent.guarded (gate repair/abstain), provenance_bench.aggregate
+  + consensus. `tests/test_unified_uplift.py`; CI wired.
+- First illustrative result on the EXPANDED benchmark (dolphin-llama3:8b, 40
+  cases, 1 run, lexical judge): +gate and +mcp-tools both Δ +10.0% hallucination
+  reduction, **95% CI [+2.5%, +20.0%] — excludes zero**, 0% false-positive cost,
+  100% coverage. The benchmark expansion (#6, 87->290 cases) fixed the
+  underpowered CI that straddled zero at N=46. Still illustrative (single judge,
+  1 run); a validated headline needs >=2 judge families + >=3 runs.
+
 ## [0.7.29] - 2026-06-21
 
 ### Added — local-agent delta (alone vs +gate vs +MCP-tools)

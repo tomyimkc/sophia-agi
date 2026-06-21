@@ -248,6 +248,8 @@ def build_manifest() -> dict[str, Any]:
             "localAgentCore": "provenance_bench/local_agent.py",
             "localAgentDeltaReport": "agi-proof/benchmark-results/local-agent-delta.public-report.json",
             "localAgentDeltaValidatedReport": "agi-proof/benchmark-results/provenance-delta-dolphin-validated.public-report.json",
+            "unifiedUpliftRunner": "tools/run_unified_uplift.py",
+            "unifiedUpliftReport": "agi-proof/benchmark-results/unified-uplift.public-report.json",
             "religionFigureCouncil": "docs/08-Domains/Religion-Figure-Council.md",
             "codingCouncil": "docs/08-Domains/Coding-Council.md",
         },
