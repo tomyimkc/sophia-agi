@@ -29,9 +29,10 @@ def _distinct_families(judges: "list[str] | None") -> int:
 
     Gateway-aware: a spec routed through an aggregator (e.g. 'openrouter:anthropic/
     claude-..', or an openai-compatible base with a 'vendor/model' name) counts as
-    the UNDERLYING vendor ('anthropic'), so two models behind one OpenRouter key are
-    correctly two independent families — the judge independence the gate cares about
-    is the model, not the gateway.
+    the UNDERLYING vendor family ('anthropic'), so two DIFFERENT vendors behind one
+    OpenRouter key are two independent families — while two models from the SAME
+    vendor (e.g. 'openrouter:anthropic/a' and 'openrouter:anthropic/b') collapse to
+    one. The independence the gate cares about is the vendor family, not the gateway.
     """
     if not judges:
         return 0

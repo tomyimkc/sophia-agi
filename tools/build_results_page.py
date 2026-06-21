@@ -161,7 +161,9 @@ def render(doc: dict) -> str:
             )
         else:
             L.append(f"- Validated result: {status}")
-        L += [f"- {semantic.get('note', '')}", ""]
+        if semantic.get("note"):
+            L.append(f"- {semantic['note']}")
+        L.append("")
 
     audit = doc.get("audit")
     if audit:
