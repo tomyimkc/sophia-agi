@@ -7,7 +7,7 @@ the *code* contains it. Ranked by leverage (impact ÷ effort).
 | # | Change | Impact | Effort | Status |
 |---|--------|:------:|:------:|--------|
 | 1 | Injection / containment red-team (assume-compromised-model) | High | S | **shipped (M1)** — `eval/security/` |
-| 2 | Out-of-prompt data-flow firewall (CaMeL: capabilities + taint) + HITL on the action path | High | L | **enforcement core shipped (M2 v1)** — `agent/dataflow/`; dual-LLM planner/extractor = M2.2 |
+| 2 | Out-of-prompt data-flow firewall (CaMeL: capabilities + taint) + HITL on the action path | High | L | **engine + live airgap kill-switch shipped (M2 v1)** — `agent/dataflow/`; automatic taint propagation + dual-LLM = M2.2 |
 | 3 | Biba integrity axis + bounded, logged declassification (fights label creep) | High | M | planned |
 | 4 | Corroboration-aware confidence (Dempster–Shafer / log-odds) | Med | S–M | planned |
 | 5 | External fact-checking (NLI cross-encoder) as a `claim_supported` verifier | Med-High | M | planned |
@@ -42,18 +42,27 @@ with the new deterministic `no_secret_leak` tripwire (`agent/verifiers.py`) and 
 
 ## Next milestones (not "AGI")
 
-- **M2 v1 — shipped: enforcement boundary out of the prompt.** `agent/dataflow/`
-  is a deterministic capability + taint firewall: untrusted data carries a taint;
-  every tool is classified READ/WRITE/EGRESS (default-deny for unknown tools); the
-  lethal trifecta (tainted → write/egress sink) is **blocked** or routed to human
-  approval; an **airgap** profile fail-closes all egress (wired into the real
-  `openclaw_infer` / `web_evidence_search`). The red-team scores it: lethal-trifecta
-  **ASR 0%** (baseline 100%), reads not over-blocked. `agent/dataflow/`,
-  `tests/test_dataflow.py`, `eval/security/`.
-- **M2.2 — next:** the dual-LLM split (privileged planner that never sees raw
-  untrusted data + quarantined extractor) and a constrained-AST plan interpreter,
-  built on this boundary. DoD: AgentDojo-style end-to-end ASR <2%; utility within
-  ~10 pts; no tainted→sink path reachable without an approved capability.
+- **M2 v1 — shipped: enforcement engine + live airgap kill-switch.** `agent/dataflow/`
+  is a deterministic capability + taint firewall: tools classified READ/WRITE/EGRESS
+  (default-deny for unknown); the policy blocks a tainted value reaching a write/egress
+  sink (or routes to a fail-closed human approver); `taint_of` recurses into
+  containers. **Live and enforced now:** the **airgap** profile fail-closes egress at
+  every model/network chokepoint — the model adapter (`agent/model.py`), `web_search`,
+  the Google GenAI client, and the MCP egress tools — and the firewall is wired at the
+  live `wiki_upsert` WRITE sink. The red-team scores the engine + airgap (lethal-trifecta
+  **ASR 0%**, reads not over-blocked). `tests/test_dataflow.py`, `eval/security/`.
+- **Honest gap (found by adversarial review, tracked as M2.2):** the engine is not yet
+  fed by automatic taint *propagation* on the live autonomous path — untrusted retrieved
+  content isn't auto-`Labeled` into tool args, and taint does not survive arbitrary
+  Python (f-strings launder). So today the firewall guarantees the **airgap egress
+  kill-switch** and blocks **explicitly-labelled** tainted writes; it does not yet
+  auto-contain a laundered value on the live path.
+- **M2.2 — next:** the dual-LLM split (privileged planner that never sees raw untrusted
+  data + quarantined extractor) and a constrained-AST interpreter that keeps values
+  *Labeled until the sink* — the only sound way to make propagation automatic. Also:
+  per-tool airgap classification for `agent/tools.run_tool`. DoD: AgentDojo-style
+  end-to-end ASR <2%; utility within ~10 pts; no tainted→sink path reachable without an
+  approved capability.
 - **M3 — "Honest labels":** Biba integrity axis + bounded/logged declassification
   (#3) and corroboration-aware confidence (#4), with a label-creep dashboard and an
   ECE calibration report.

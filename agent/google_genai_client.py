@@ -44,6 +44,10 @@ def gemini_embed_model() -> str:
 
 
 def make_genai_client():
+    from agent.dataflow.firewall import egress_blocked
+
+    if egress_blocked():
+        raise RuntimeError("airgap profile blocks egress (Google GenAI client)")
     try:
         from google import genai
     except ImportError as exc:

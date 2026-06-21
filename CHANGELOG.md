@@ -2,6 +2,36 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.15] - 2026-06-21
+
+### Hardened — M2 firewall: live airgap + correctness, honest scope (review findings)
+
+A 20-agent adversarial review of M2 v1 (0.7.14) found it overclaimed: the firewall
+was an isolated component (not wired into any live path), taint laundered through
+ordinary Python, and "airgap blocks all egress" covered only 2 of 5+ egress paths.
+Corrected here — claims are now either true or scoped.
+
+- **Live airgap egress kill-switch** at every model/network chokepoint via a single
+  `egress_blocked()` check: the **model adapter** (`agent/model.py` — the central one;
+  non-local providers refused, mock/localhost still work), `web_search`
+  (`agent/web_evidence.py`), the **Google GenAI client** (`agent/google_genai_client.py`),
+  plus the MCP `openclaw_infer` / `web_evidence_search` tools.
+- **Firewall wired at the live `wiki_upsert` WRITE sink** — the capability policy
+  runs there now; a `Labeled`-tainted payload is refused (not just advisory).
+- **Approver fails closed** — a missing/raising approver or any non-`True` return
+  blocks; only an explicit `True` approves a tainted→sink call.
+- **Nested-container taint caught** — `taint_of` recurses into list/tuple/set/dict,
+  so a tainted value inside a structured arg is no longer invisible.
+- Red-team: added a nested-taint scenario; the firewall section is relabelled as
+  *engine + airgap* validation (not a live-path guarantee). Tests in
+  `test_dataflow.py` lock the airgap kill-switch, nested taint, and fail-closed approver.
+
+**Honest scope — NOT yet (now tracked as M2.2):** the live autonomous path does not
+auto-attach taint to untrusted content (Labeled-until-sink propagation); taint does
+not survive arbitrary Python (f-strings launder — a fundamental limitation that the
+dual-LLM/CaMeL interpreter, not wrappers, will address); `agent/tools.run_tool`
+subprocesses are not yet per-tool airgap-classified.
+
 ## [0.7.14] - 2026-06-21
 
 ### Added — M2 v1: out-of-prompt data-flow firewall (capability + taint)

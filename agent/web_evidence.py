@@ -111,6 +111,16 @@ def web_search(
     timeout_sec: int = 20,
 ) -> dict[str, Any]:
     selected = provider_from_env(provider)
+    from agent.dataflow.firewall import egress_blocked
+
+    if online and egress_blocked():
+        return {
+            "ok": False,
+            "online": True,
+            "provider": selected,
+            "sources": [],
+            "reason": "airgap profile blocks network egress (web_search)",
+        }
     if not online:
         return {
             "ok": False,

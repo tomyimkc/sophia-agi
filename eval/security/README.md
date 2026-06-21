@@ -37,11 +37,15 @@ python tests/test_security_redteam.py          # CI gate
   connectors + leading subordinate clauses, not on commas, so appositive matching
   is preserved). 4 variants now gate the fix; 0 false positives on 68 corpus pages.
 
-**Data-flow firewall (M2) — scored here too:**
-- Lethal trifecta (tainted data → write/egress sink) is blocked in deterministic
-  code (`agent/dataflow/`): **ASR 0%** across exfil-via-egress, write-poisoning,
-  airgap-egress, and unknown-sink scenarios (baseline 100%), while reads are not
-  over-blocked.
+**Data-flow firewall (M2) — engine + airgap scored here:**
+- The firewall ENGINE blocks a labelled-tainted value reaching a write/egress sink:
+  **ASR 0%** across exfil-via-egress, write-poisoning, airgap-egress, unknown-sink,
+  and nested-taint scenarios (baseline 100%), reads not over-blocked.
+- The **airgap egress kill-switch is live** at the model adapter, web search, the
+  GenAI client, and the MCP egress tools.
+- Honest scope: these validate the engine + airgap, not automatic taint propagation
+  on the live autonomous path (Labeled-until-sink = M2.2). See
+  [Security-Roadmap.md](../../docs/11-Platform/Security-Roadmap.md).
 
 **Reported probe (not gating) — remaining gap:**
 - `unsupported_citation` (subject match): lexical overlap passes a *wrong predicate*

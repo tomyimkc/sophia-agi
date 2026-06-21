@@ -459,6 +459,20 @@ def _is_transient(error: str | None) -> bool:
     return False
 
 
+_LOCAL_HOSTS = ("localhost", "127.0.0.1", "0.0.0.0", "::1")
+
+
+def _egress_blocked_for(cfg: "ModelConfig") -> bool:
+    """Under the airgap profile, refuse any model transport that leaves the host.
+    Local providers (ollama / llama.cpp / vLLM on localhost) are still allowed."""
+    from agent.dataflow.firewall import egress_blocked
+
+    if not egress_blocked():
+        return False
+    url = getattr(cfg, "base_url", "") or ""
+    return not any(host in url for host in _LOCAL_HOSTS)
+
+
 # --------------------------------------------------------------------------- #
 # Client with retry + fallback
 # --------------------------------------------------------------------------- #
@@ -486,6 +500,10 @@ class ModelClient:
         configs = [self.primary, *self.fallbacks]
         for index, cfg in enumerate(configs):
             transport = _TRANSPORTS[cfg.kind]
+            if cfg.kind != "mock" and _egress_blocked_for(cfg):
+                err = f"airgap profile blocks egress to model provider '{cfg.label or cfg.kind}'"
+                attempts.append(Attempt(cfg.label or cfg.kind, cfg.model, False, 0.0, err))
+                continue
             for attempt in range(self.retries):
                 started = time.monotonic()
                 try:

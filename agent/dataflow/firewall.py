@@ -24,6 +24,14 @@ def active_profile(profile: "str | None" = None) -> str:
     return (profile or os.environ.get("SOPHIA_PROFILE") or "default").strip().lower()
 
 
+def egress_blocked(profile: "str | None" = None) -> bool:
+    """True when the active profile forbids leaving the trust boundary (airgap).
+
+    The single chokepoint every egress sink (model adapter, web search, GenAI
+    client, MCP egress tools) consults so 'airgap' is enforced uniformly."""
+    return active_profile(profile) == "airgap"
+
+
 def guard_call(tool_name: str, args=(), kwargs=None, *, profile=None, approver=None) -> Decision:
     """Decide whether ``tool_name`` may run with these (possibly tainted) inputs."""
     kwargs = kwargs or {}
@@ -41,7 +49,15 @@ def firewalled(fn: Callable, *, name: "str | None" = None, approver=None, profil
         if decision.action == "block":
             raise FirewallBlocked(f"[{tool_name}] {decision.reason}")
         if decision.action == "require_hitl":
-            if approver is None or not approver(tool_name, args, kwargs, decision):
+            # Fail CLOSED: a missing approver, a raising approver, or any non-True
+            # return all block. Only an explicit True approves a tainted→sink call.
+            granted = False
+            if approver is not None:
+                try:
+                    granted = approver(tool_name, args, kwargs, decision) is True
+                except Exception:
+                    granted = False
+            if not granted:
                 raise FirewallBlocked(f"[{tool_name}] HITL not approved: {decision.reason}")
         real_args = [unwrap(a) for a in args]
         real_kwargs = {k: unwrap(v) for k, v in kwargs.items()}

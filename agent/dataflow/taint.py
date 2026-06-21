@@ -28,9 +28,32 @@ class Labeled:
         return bool(self.taint)
 
 
-def taint_of(x: Any) -> frozenset:
-    """The taint of any value (untracked plain values are TRUSTED by default)."""
-    return x.taint if isinstance(x, Labeled) else TRUSTED
+def taint_of(x: Any, _depth: int = 0) -> frozenset:
+    """The taint of any value — recursively, so a tainted value nested inside a
+    list/tuple/set/dict argument is still seen (untracked plain scalars are
+    TRUSTED). Depth-bounded to stay safe on deep/cyclic structures.
+
+    Note (honest scope): this finds Labeled values that *survive* into the call.
+    It cannot recover taint that was laundered away by ordinary Python (e.g. an
+    f-string over ``labeled.value`` yields a plain str). The design contract is
+    therefore: keep untrusted data Labeled until the sink. Full propagation comes
+    with the M2.2 dual-LLM interpreter, where values never re-enter the planner.
+    """
+    if isinstance(x, Labeled):
+        return x.taint
+    if _depth >= 6:
+        return TRUSTED
+    if isinstance(x, dict):
+        out: set = set()
+        for k, v in x.items():
+            out |= taint_of(k, _depth + 1) | taint_of(v, _depth + 1)
+        return frozenset(out)
+    if isinstance(x, (list, tuple, set, frozenset)):
+        out = set()
+        for v in x:
+            out |= taint_of(v, _depth + 1)
+        return frozenset(out)
+    return TRUSTED
 
 
 def unwrap(x: Any) -> Any:

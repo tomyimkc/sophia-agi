@@ -302,9 +302,15 @@ def wiki_upsert(page_id: str, frontmatter_json: str = "{}", body: str = "", tier
     """Create/update an agent-owned wiki page (gated by provenance verifiers).
 
     Mutating + audited: needs SOPHIA_MCP_APPROVE_WRITES=1. Even when approved, the
-    write only lands if it passes the source-discipline gate.
+    write only lands if it passes the source-discipline gate AND the data-flow
+    firewall (a WRITE sink — a tainted/untrusted-labelled payload is refused).
     """
     from agent import wiki_store
+    from agent.dataflow.firewall import guard_call
+
+    decision = guard_call("sophia_wiki_upsert", (page_id, frontmatter_json, body, tier))
+    if decision.action != "allow":
+        return {"error": f"data-flow firewall blocked write: {decision.reason}"}
 
     try:
         meta = json.loads(frontmatter_json) if frontmatter_json else {}

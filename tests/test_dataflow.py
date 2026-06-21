@@ -99,6 +99,47 @@ def test_guard_call_decisions() -> None:
     assert guard_call("sophia_openclaw_infer", (trusted("p"),), profile="airgap").blocked is True
 
 
+def test_nested_container_taint_is_caught() -> None:
+    # tainted value nested inside a list/dict arg must still be seen (deep walk)
+    assert taint_of([trusted("a"), untrusted("b")]) == frozenset({"untrusted"})
+    assert taint_of({"k": untrusted("v")}) == frozenset({"untrusted"})
+    assert guard_call("sophia_wiki_upsert", ([untrusted("poison")],)).blocked is True
+    assert guard_call("sophia_openclaw_infer", ({"q": untrusted("p")},)).blocked is True
+
+
+def test_approver_fails_closed() -> None:
+    raw = lambda x: "ran"  # noqa: E731
+
+    def raises(*a):
+        raise RuntimeError("boom")
+
+    # a raising approver and a non-True (merely truthy) approver must NOT approve
+    for approver in (raises, lambda *a: "yes", lambda *a: 1):
+        g = firewalled(raw, name="sophia_wiki_upsert", approver=approver)
+        try:
+            g(untrusted("p"))
+            assert False, "approver should have failed closed"
+        except FirewallBlocked:
+            pass
+    # only an explicit True approves
+    assert firewalled(raw, name="sophia_wiki_upsert", approver=lambda *a: True)(untrusted("p")) == "ran"
+
+
+def test_model_adapter_airgap_kill_switch() -> None:
+    import os
+
+    from agent.model import ModelClient, resolve_config
+
+    os.environ["SOPHIA_PROFILE"] = "airgap"
+    try:
+        remote = ModelClient(resolve_config("deepseek")).generate("s", "u")
+        assert remote.ok is False and "airgap" in (remote.error or "")
+        # mock (local, no egress) still works under airgap
+        assert ModelClient(resolve_config("mock")).generate("s", "u").ok is True
+    finally:
+        os.environ.pop("SOPHIA_PROFILE", None)
+
+
 def test_airgap_profile_blocks_real_egress_tools() -> None:
     # The airgap profile is fail-closed on the actual MCP egress tools.
     import os
@@ -124,6 +165,9 @@ def main() -> int:
     test_firewalled_blocks_lethal_trifecta()
     test_firewalled_hitl_approval_path()
     test_guard_call_decisions()
+    test_nested_container_taint_is_caught()
+    test_approver_fails_closed()
+    test_model_adapter_airgap_kill_switch()
     test_airgap_profile_blocks_real_egress_tools()
     print("test_dataflow: OK")
     return 0
