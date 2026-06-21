@@ -2,6 +2,27 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.19] - 2026-06-21
+
+### Fixed — M2.3 review findings (validator robustness + honest claims)
+
+An 8-agent review of M2.3 confirmed 3 issues; all addressed.
+
+- **(MEDIUM) `parse_plan` fail-closed contract** — an unhashable `tool` value
+  (list/dict) raised a raw `TypeError` instead of `PlanError`. Now type-checked:
+  malformed tool fields raise `PlanError` in both the retrieve and call branches.
+- **(MEDIUM) Honest scope of the validator** — corrected the planner docstring's
+  overclaim. `parse_plan` constrains op/tool/shape but does NOT stop a well-formed
+  Call to a legitimate sink with *trusted* Const args; safety against a malicious
+  planner rests on the request/planner being the trust root. Added an opt-in
+  `Interpreter(approve_sinks=True)` so every write/egress call needs explicit
+  approval (defense in depth for attacker-influenceable requests).
+- **(LOW) Load-bearing e2e check** — `run_e2e_redteam` now uses a sink-bearing plan
+  ("save a summary…") so `e2e_planner_contains_injection` actually depends on the
+  firewall blocking the tainted write (would catch a regression), not a no-sink plan
+  that was true by construction.
+- Tests: unhashable-tool fail-closed cases, `approve_sinks` gating.
+
 ## [0.7.18] - 2026-06-21
 
 ### Added — M2.3: planner + fail-closed plan-validator + end-to-end suite

@@ -132,6 +132,19 @@ def test_blocked_step_var_fails_closed() -> None:
     assert any(t == "sophia_openclaw_infer" for t, _ in r.blocked)
 
 
+def test_approve_sinks_gates_even_trusted_writes() -> None:
+    # Defense in depth: with approve_sinks, a trusted-payload write needs approval.
+    written = []
+    tools = {"sophia_wiki_upsert": lambda *a: written.append(a) or "ok"}
+    plan = [Const("p", "trusted note"), Call("w", "sophia_wiki_upsert", ["p"])]
+    # without approval -> blocked even though args are trusted
+    r = Interpreter(tools=tools, approve_sinks=True).run(plan)
+    assert "sophia_wiki_upsert" not in r.calls and written == []
+    # with an approving approver -> runs
+    r2 = Interpreter(tools=tools, approve_sinks=True, approver=lambda *a: True).run(plan)
+    assert "sophia_wiki_upsert" in r2.calls and written
+
+
 def test_retrieve_must_name_a_read_tool() -> None:
     interp, written = _interp()
     r = interp.run([
@@ -150,6 +163,7 @@ def main() -> int:
     test_tainted_concat_into_egress_is_blocked()
     test_egress_result_is_untrusted_no_laundering()
     test_blocked_step_var_fails_closed()
+    test_approve_sinks_gates_even_trusted_writes()
     test_retrieve_must_name_a_read_tool()
     print("test_interpreter: OK")
     return 0

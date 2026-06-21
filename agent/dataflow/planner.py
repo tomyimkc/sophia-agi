@@ -2,11 +2,22 @@
 
 The privileged planner (a deterministic template planner, or a real P-LLM via the
 model adapter) reads ONLY the trusted user request + the tool schemas — never any
-untrusted data — and emits a plan. `parse_plan` is the **trust boundary** for that
-output: it validates the plan into the constrained step set, allowing only known
-ops and manifest tools, and fails CLOSED on anything malformed. So even a buggy or
-adversarial planner can lose *utility* (wrong plan) but cannot produce an *unsafe*
-execution — the interpreter + firewall + this validator enforce safety.
+untrusted data — and emits a plan. `parse_plan` validates the plan into the
+constrained step set, allowing only known ops and manifest tools (a `retrieve` must
+be a READ tool), and fails CLOSED (`PlanError`) on anything malformed.
+
+Scope — what parse_plan does and does NOT guarantee (honest):
+  - It DOES stop an unknown/dangerous tool, an unknown op, a write disguised as a
+    read, and malformed shapes. It cannot be made to admit a non-manifest tool.
+  - It does NOT, by itself, stop a *well-formed* Call to a legitimate WRITE/EGRESS
+    tool whose args are trusted Consts — that is allowed by design (trusted input
+    into a sink is fine under the lethal-trifecta rule). Safety against a *malicious
+    planner* therefore rests on the **request/planner being the trust root**
+    (see interpreter.py). If requests can be attacker-influenced, run the
+    interpreter with ``approve_sinks=True`` so every WRITE/EGRESS call needs
+    explicit human approval regardless of taint.
+  - Untrusted *data* still cannot escalate: it can never become a plan step
+    (control-flow integrity) nor reach a sink untainted (the firewall).
 
 Plan JSON shape (a list of steps), e.g.:
     [{"op": "const",    "var": "q",   "value": "who wrote it"},
@@ -64,7 +75,7 @@ def parse_plan(spec: Any, *, allowed_tools: "set | None" = None) -> list:
             steps.append(Const(var, raw.get("value")))
         elif op == "retrieve":
             tool = raw.get("tool")
-            if tool not in allowed:
+            if not isinstance(tool, str) or tool not in allowed:
                 raise PlanError(f"step {i}: tool {tool!r} not in allowed set")
             if cap_for(tool).effect != Effect.READ:
                 raise PlanError(f"step {i}: retrieve must name a READ tool, not {tool!r}")
@@ -78,7 +89,7 @@ def parse_plan(spec: Any, *, allowed_tools: "set | None" = None) -> list:
             steps.append(Concat(var, [str(p) for p in parts]))
         elif op == "call":
             tool = raw.get("tool")
-            if tool not in allowed:
+            if not isinstance(tool, str) or tool not in allowed:
                 raise PlanError(f"step {i}: tool {tool!r} not in allowed set")
             args = raw.get("args", [])
             if not isinstance(args, list):

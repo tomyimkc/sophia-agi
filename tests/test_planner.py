@@ -44,6 +44,8 @@ def test_parse_plan_fails_closed() -> None:
         [{"op": "retrieve", "var": "d", "tool": "sophia_wiki_upsert", "query": "q"}],  # write as read
         [{"op": "call", "var": "w", "tool": "sophia_wiki_upsert", "args": "notalist"}],  # bad args
         [{"op": "const", "value": "no var"}],                       # missing var
+        [{"op": "call", "var": "w", "tool": ["unhashable"], "args": []}],   # unhashable tool -> PlanError, not TypeError
+        [{"op": "retrieve", "var": "d", "tool": {"x": 1}, "query": "q"}],   # unhashable tool (retrieve)
     ]
     for spec in bad_specs:
         try:
