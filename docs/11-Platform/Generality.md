@@ -59,6 +59,24 @@ Dataset-agnostic JSONL (`{question, answer}`).
   and is only quotable with N, model, and dataset version. The committed sample
   proves the harness, not capability.
 
+## 5. Verifier synthesis — the bridge toward generality (`agent/verifier_synthesis.py`)
+
+The four axes above all *reuse* hand-written verifiers; the loop stays only as
+general as the checks it ships with. [Verifier-Synthesis.md](Verifier-Synthesis.md)
+is the one piece that attacks that ceiling: the loop **synthesises** candidate
+checks for a task it has never seen, **meta-verifies** them against an independent
+oracle before trusting any (admit only measured precision + recall), and
+**abstains** when none qualify — with calibrated confidence as the fallback for
+the genuinely unverifiable (`agent/calibration.py`).
+
+- Falsifiable: WITH meta-verification, in-library precision 1.00 / recall 1.00 and
+  100% abstention on out-of-library tasks; WITHOUT, 100% false-admission — the
+  ablation proves the validation step earns the trust. `python tools/run_verifier_synthesis.py`.
+- **Scope honesty:** a finite template library (a model proposer widens it but
+  never confers trust); tasks that don't reduce to a checkable predicate stay out
+  of reach, where calibrated abstention is the correct behaviour. Still not AGI —
+  but it is the honest direction *toward* it.
+
 ## What this is NOT
 
 - Not "AGI", and not evidence of it. The earned claim is: *a verifier-gated loop,

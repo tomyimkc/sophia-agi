@@ -2,6 +2,41 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.8] - 2026-06-21
+
+### Added — verifier synthesis (the bridge toward generality)
+
+The verifier-gated loop is only as general as its verifiers, and you cannot
+hand-write a verifier for a task you have never seen. This makes the loop write
+and **trust-test its own checks** — and abstain when it cannot — without
+overclaiming (see `docs/11-Platform/Verifier-Synthesis.md`).
+
+- **Verifier synthesis** (`agent/verifier_synthesis.py`): a library of
+  parameterised check templates is *fit* to a few oracle-labelled examples of a
+  novel task to produce candidate verifiers; each candidate is **meta-verified**
+  (precision + recall on a disjoint, independently-labelled validation split)
+  before admission; admitted checks compose into a gate that drops into the
+  harness via `as_verifier`. If nothing clears the floor, it **abstains**.
+- **Calibrated abstention** (`agent/calibration.py`): competence where no verifier
+  exists — ECE, risk–coverage, selective risk, and label-free self-consistency
+  confidence. Falsifiable claim: selective risk < base risk ("knows what it
+  doesn't know"). Demonstrated on a seeded **toy** noisy solver (illustrative, not
+  a capability claim): selective risk 0.30 vs base 0.56 (ECE 0.15), the
+  correlation emergent from the solver, not baked into the data.
+- **Falsifiable ablation** (`agent/synthesis_eval.py`,
+  `tools/run_verifier_synthesis.py`): deterministic suite of in-library vs
+  out-of-library tasks, the latter with **length-matched decoys** so no template
+  can separate them on any split. WITH meta-verification: in-library precision
+  1.00 / recall 1.00 (0 abstentions), abstains on 100% of unverifiable tasks every
+  seed. WITHOUT: false-admission 100% on unverifiable tasks and in-library
+  precision degrades to 0.86 — proving the *meta-verification*, not the template
+  library, earns the trust. Nine invariants gate CI (incl. a "no good-looking
+  wrong gate" guard so a false admission can't hide behind an abstention count).
+- **Honest scope:** not AGI, not unbounded synthesis — a finite library plus a
+  trust contract; tasks that don't reduce to a checkable predicate stay out of
+  reach, where calibrated abstention is the correct behaviour.
+- Tests: `test_verifier_synthesis.py`, `test_calibration.py` — wired into CI.
+
 ## [0.7.7] - 2026-06-21
 
 ### Added — generality track (verifier-gated reasoning, measured honestly)

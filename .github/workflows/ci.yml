@@ -60,6 +60,11 @@ jobs:
           python tools/run_improvement_loop.py
           python tools/run_horizon_curve.py --trials 10
           python tools/run_external_eval.py
+      - name: Verifier synthesis (synthesise + meta-verify + calibrated abstention)
+        run: |
+          python tests/test_verifier_synthesis.py
+          python tests/test_calibration.py
+          python tools/run_verifier_synthesis.py
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats
