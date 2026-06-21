@@ -2,6 +2,32 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.33] - 2026-06-22
+
+### Added — temporal-impossibility verifier + closed active-learning loop
+
+Two structural gate upgrades from the third gap-analysis round.
+
+- **Temporal / date-impossibility verifier** (`agent/temporal_verifier.py`,
+  `data/temporal_facts.json`): catches authorship that is *physically impossible*
+  — an author who DIED before the work existed ("Aristotle wrote the Critique of
+  Pure Reason": d. 322 BCE vs pub. 1781 CE) — by recomputing `created > died`, the
+  way `arithmetic_sound` recomputes equalities. CORPUS-FREE: it fires on works
+  outside any frozen `doNotAttributeTo` record, so it generalizes the gate to
+  unseen pairs. Deterministic, offline, abstains on undated entities (zero false
+  positives). Registered in `verifiers.VERIFIERS` (`temporal_consistent`) and the
+  authorship route of `claim_router` (runs alongside `provenance_faithful`).
+- **Closed the active-learning loop** (`tools/promote_pending.py` +
+  `data/learned_attributions.json` in `_PROVENANCE_FILES`): `gate_feedback` already
+  logged gate misses to a pending queue; this is the missing PROMOTION half. It
+  re-verifies each candidate against independent ground truth (the grounded
+  resolver — so a correct pen name is NOT promoted), dedupes against live records,
+  and on `--apply` writes survivors into the live learned sink the gate reads.
+  Demonstrated end-to-end: a miss the gate let through is caught on the next run
+  after promotion (False -> True). Default is a dry run; never edits seed files.
+
+Tests: `test_temporal_verifier`, `test_promote_pending`; CI wired. No regressions.
+
 ## [0.7.32] - 2026-06-22
 
 ### Improved — five core gate-logic upgrades (generality, recall, calibration, learning)

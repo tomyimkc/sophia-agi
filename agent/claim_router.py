@@ -162,6 +162,15 @@ def route_and_check(text: str, *, records: "dict | None" = None,
     # this the routed legal check is fail-closed and flags valid citations as forged.
     legal = _v.legal_citation_exists(resolver=legal_resolver)
     cite = _v.citation_faithful(sources) if sources else None
+    # Temporal impossibility (author died before the work existed) — a corpus-free
+    # check that catches misattributions outside any frozen record. Built lazily;
+    # a no-op when the author/work aren't in the dated-facts table.
+    try:
+        from agent.temporal_verifier import temporal_consistent
+
+        temporal = temporal_consistent()
+    except Exception:  # pragma: no cover - never let the optional layer break routing
+        temporal = None
 
     per_claim: list[dict] = []
     violations: list[str] = []
@@ -172,6 +181,13 @@ def route_and_check(text: str, *, records: "dict | None" = None,
             result = arith(claim, None, {})
         elif ctype == "authorship":
             result = prov(claim, None, {})
+            # also apply the corpus-free temporal-impossibility check
+            if temporal is not None:
+                tres = temporal(claim, None, {})
+                if not tres["passed"]:
+                    treasons = list(tres.get("reasons", []))
+                    per_claim.append({"claim": claim, "type": "temporal", "passed": False, "reasons": treasons})
+                    violations.extend(f"[temporal] {r}" for r in treasons)
         elif ctype == "legal":
             result = legal(claim, None, {})
         elif ctype == "citation":
