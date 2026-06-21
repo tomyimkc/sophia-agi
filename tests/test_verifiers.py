@@ -155,6 +155,33 @@ def test_citation_faithful() -> None:
     assert cf("Something important happened that year [9].", None, {})["passed"] is False
 
 
+def test_claim_supported_catches_wrong_predicate() -> None:
+    import re as _re
+
+    src = ["Marie Curie was a physicist and chemist who studied radioactivity."]
+
+    def mock_nli(premise, hyp):
+        pw = set(_re.findall(r"[a-z]+", premise.lower()))
+        hw = [w for w in _re.findall(r"[a-z]+", hyp.lower()) if len(w) > 3 and w not in {"marie", "curie"}]
+        return (sum(w in pw for w in hw) / len(hw)) if hw else 1.0
+
+    ver = v.claim_supported(src, nli=mock_nli, threshold=0.5)
+    # the lexical check PASSES a wrong predicate when the subject matches ...
+    assert v.citation_faithful(src)("Marie Curie invented the telephone [1].", None, {})["passed"] is True
+    # ... but the NLI claim_supported catches it
+    assert ver("Marie Curie invented the telephone [1].", None, {})["passed"] is False
+    # a genuinely entailed claim passes
+    assert ver("Marie Curie studied radioactivity [1].", None, {})["passed"] is True
+    # fail-closed when no scorer is available (never silently passes an unchecked claim)
+    orig = v._default_nli
+    v._default_nli = lambda: None
+    try:
+        fc = v.claim_supported(src)
+        assert fc("Marie Curie studied radioactivity [1].", None, {})["passed"] is False
+    finally:
+        v._default_nli = orig
+
+
 def test_code_tests_pass() -> None:
     ctp = v.code_tests_pass(timeout_sec=15)
     ok = "```python\nassert sum(range(5)) == 10\nprint('ok')\n```"
@@ -193,6 +220,7 @@ def main() -> int:
     test_score_pack_case_verifier()
     test_citation_present()
     test_citation_faithful()
+    test_claim_supported_catches_wrong_predicate()
     test_code_tests_pass()
     test_arithmetic_sound()
     test_verifier_registry()

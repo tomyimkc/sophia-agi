@@ -2,6 +2,29 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.20] - 2026-06-21
+
+### Added — M-#5 (NLI fact-checking) + M2.4 (extractor + AgentDojo-style suite)
+
+- **M-#5 — `claim_supported`** (`agent/verifiers.py`) + `nli` policy: a semantic
+  faithfulness verifier that checks each cited sentence is *entailed* by its source
+  (pluggable NLI; cross-encoder opt-in). It catches a **wrong predicate even when
+  the subject matches** — the lexical blind spot the red-team flagged — and **fails
+  closed** when no scorer is available (never silently passes). The red-team's
+  `nli_closes_citation_subject_match` invariant proves it on the probe the lexical
+  citation check misses (deterministic mock NLI; real model opt-in).
+- **M2.4 — quarantined extractor** (`agent/dataflow/extractor.py`): the Q-LLM is a
+  pure-`generate`, no-tools reader of untrusted content; its output is labelled
+  untrusted by the interpreter (a subverted extractor still only produces data).
+- **M2.4 — AgentDojo-style end-to-end suite** (`eval/security/agentdojo.py`,
+  `tools/run_agentdojo.py`): runs planner→interpreter on benign requests with
+  injected, poisoned retrieved content and reports **ASR + utility**. First run:
+  **ASR 0% / utility 100%** (a tainted-write task is safely refused) — attacks
+  contained by construction, offline (real planner/extractor opt-in).
+- **Honest scope:** the template planner + suite cover a handful of task shapes;
+  broad-task P-LLM prompting and the *official* AgentDojo dataset for a citable
+  cross-system number are M2.5.
+
 ## [0.7.19] - 2026-06-21
 
 ### Fixed — M2.3 review findings (validator robustness + honest claims)

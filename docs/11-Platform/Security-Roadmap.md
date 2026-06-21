@@ -10,7 +10,7 @@ the *code* contains it. Ranked by leverage (impact ÷ effort).
 | 2 | Out-of-prompt data-flow firewall (CaMeL: capabilities + taint) + HITL on the action path | High | L | **M2 v1 (engine + live airgap) + M2.2 v1 (interpreter w/ sound taint propagation + control-flow integrity) shipped** — `agent/dataflow/`; real planner LLM = M2.3 |
 | 3 | Biba integrity axis + bounded, logged declassification (fights label creep) | High | M | planned |
 | 4 | Corroboration-aware confidence (Dempster–Shafer / log-odds) | Med | S–M | planned |
-| 5 | External fact-checking (NLI cross-encoder) as a `claim_supported` verifier | Med-High | M | planned |
+| 5 | External fact-checking (NLI cross-encoder) as a `claim_supported` verifier | Med-High | M | **shipped (M-#5)** — `agent/verifiers.claim_supported` + `nli` policy; closes the citation subject-match probe (model opt-in) |
 | 6 | Tool least-privilege + dual-LLM (privileged planner / quarantined extractor) | High | M | planned |
 | 7 | LoRA leakage guard + contamination-controlled eval splits | Med | S–M | planned |
 
@@ -78,11 +78,19 @@ with the new deterministic `no_secret_leak` tripwire (`agent/verifiers.py`) and 
   utility but not safety. End-to-end red-team invariant `e2e_planner_contains_injection`:
   a planner-driven run over attacker-poisoned retrieved content fires no out-of-plan
   tool. `tests/test_planner.py`.
-- **Honest scope (M2.4+):** the template planner covers a few task shapes (the
-  planner's *expressiveness*, not safety, is the limit); a real P-LLM needs prompt
-  engineering for broad tasks; a quarantined-extractor model; per-tool airgap for
-  `agent/tools.run_tool`; an AgentDojo-style external suite (DoD: ASR <2%, utility
-  within ~10 pts).
+- **M2.4 v1 — shipped: quarantined extractor + AgentDojo-style end-to-end suite.**
+  `agent/dataflow/extractor.py` formalises the Q-LLM — a pure-`generate`, no-tools
+  reader of untrusted content whose output the interpreter labels untrusted (even a
+  fully-subverted extractor produces only data). `eval/security/agentdojo.py` +
+  `tools/run_agentdojo.py` run the full planner→interpreter pipeline on benign
+  requests with injected, poisoned retrieved content and report **ASR + utility**:
+  first run **ASR 0% / utility 100%** across the suite (a tainted-write task is
+  safely refused) — attacks are contained by construction, offline (real
+  planner/extractor opt-in).
+- **Honest scope (M2.5+):** the template planner + suite cover a handful of task
+  shapes; a real P-LLM needs prompt engineering for broad tasks; the AgentDojo
+  *official* dataset (not a hand-built analogue) for a citable cross-system number;
+  per-tool airgap classification for `agent/tools.run_tool`.
 - **M3 — "Honest labels":** Biba integrity axis + bounded/logged declassification
   (#3) and corroboration-aware confidence (#4), with a label-creep dashboard and an
   ECE calibration report.

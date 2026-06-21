@@ -28,6 +28,7 @@ from agent.verifiers import (
     all_of,
     arithmetic_sound,
     citation_faithful,
+    claim_supported,
     code_tests_pass,
     no_secret_leak,
     provenance_faithful,
@@ -97,6 +98,17 @@ def _build_arithmetic(*, records=None, sources=None, secrets=None, extra=None) -
     )
 
 
+def _build_nli(*, records=None, sources=None, secrets=None, extra=None) -> Policy:
+    # Semantic faithfulness (entailment of cited claims). Needs an NLI model
+    # (opt-in); without one, claim_supported fails closed — see agent/verifiers.py.
+    return Policy(
+        name="nli",
+        verifier=claim_supported(list(sources or [])),
+        repair_hint="every cited sentence must be ENTAILED by the source it cites; fix the claim or the citation",
+        abstention=_GENERIC_ABSTENTION,
+    )
+
+
 def _build_confidentiality(*, records=None, sources=None, secrets=None, extra=None) -> Policy:
     return Policy(
         name="confidentiality",
@@ -123,6 +135,7 @@ POLICY_BUILDERS: dict[str, Callable[..., Policy]] = {
     "arithmetic": _build_arithmetic,
     "code": _build_code,
     "confidentiality": _build_confidentiality,
+    "nli": _build_nli,
 }
 
 

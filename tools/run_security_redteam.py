@@ -50,6 +50,9 @@ def main(argv: "list[str] | None" = None) -> int:
     it = r["interpreter"]
     print(f"\nDual-LLM interpreter (M2.2):  control-flow integrity = {it['controlFlowIntegrity']}"
           f";  tainted write contained = {it['taintedWriteContained']}")
+    fc = r["factcheck"]
+    print(f"\nNLI fact-check (M-#5):  lexical passes wrong-predicate = {fc['lexicalPasses']}"
+          f";  claim_supported blocks it = {fc['nliBlocks']}")
     print("\nPROBES (reported, not gating — known/suspected gaps):")
     for cat, s in r["probes"]["byCategory"].items():
         flag = "  <-- ATTACK WON (real gap)" if s["asr"] > 0 else ""
