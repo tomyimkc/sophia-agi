@@ -232,3 +232,26 @@ This is the step from "we have the machinery" to "the system uses it": `tools/so
 now passes `legal_resolver` / `legal_judge` into the gate, and `tests/test_gate.py`
 covers fabricated-citation failure, real-citation pass, the non-legal no-op, and
 holding-faithfulness flagging (stub judge).
+
+## Gated measurement of the semantic tier
+
+The faithfulness tier is model-judged, so its accuracy is held to the same
+**no-overclaim gate** as everything else (`tools/run_legal_faithfulness_bench.py`
+over `benchmark/legal_holding_faithful.json`):
+
+> validated = ≥2 independent judges (≥2 provider families, no mock) + mean pairwise
+> Cohen's κ ≥ 0.40 + ≥3 runs + bootstrap 95% CI lower bound above chance (0.5).
+
+The gate logic is tested offline with deterministic scripted judges
+(`tests/test_legal_faithfulness_bench.py`) — it both **validates** a clean
+multi-family run and **refuses** mock / single-family / low-agreement runs.
+**No validated number is published** (RESULTS.md → *Semantic evals*: _None yet_):
+producing one requires a local run with ≥2 real provider families. This is the
+deliberate, honest end-state — the machinery to measure is in place; the headline
+is withheld until it clears the gate.
+
+```bash
+python tools/run_legal_faithfulness_bench.py --judges mock --runs 1            # offline plumbing
+python tools/run_legal_faithfulness_bench.py \
+    --judges anthropic:claude-sonnet-4-6,deepseek:deepseek-chat --runs 3        # validated-grade
+```

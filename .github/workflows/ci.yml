@@ -93,8 +93,10 @@ jobs:
           python tests/test_legal_sources.py
           python tests/test_legal_docs.py
           python tests/test_legal_faithfulness.py
+          python tests/test_legal_faithfulness_bench.py
           python tests/test_legal_citation_bench.py
           python tools/run_legal_citation_bench.py
+          python tools/run_legal_faithfulness_bench.py --judges mock --runs 1
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats
