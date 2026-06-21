@@ -96,6 +96,13 @@ _LEGAL_CASE_RE = re.compile(r"[A-Z][a-z]+ v\.? [A-Z]")
 # the literal word "source".
 _CITATION_RE = re.compile(r"\[(?:local|web|source)?\s*\d+\]|\bsource\b", re.IGNORECASE)
 
+# Code: an EXPLICITLY python-fenced block only. A bare ``` fence matches Markdown /
+# other-language code (JS would then fail a Python compile -> spurious violation),
+# and bare def/class/import lines match prose ("import the dataset..."), so we
+# require the language tag. Code is multi-line -> checked on the WHOLE text in
+# route_and_check (the per-claim sentence split would shatter a block).
+_CODE_RE = re.compile(r"```(?:python|py)\s*\n", re.IGNORECASE)
+
 
 def _has_legal(claim: str) -> bool:
     if _LEGAL_HOLDING_RE.search(claim) or _LEGAL_CASE_RE.search(claim):
@@ -214,6 +221,24 @@ def route_and_check(text: str, *, records: "dict | None" = None,
                 areasons = list(ares.get("reasons", []))
                 per_claim.append({"claim": claim, "type": "arithmetic", "passed": False, "reasons": areasons})
                 violations.extend(f"[arithmetic] {r}" for r in areasons)
+
+    # Code is multi-line — check the WHOLE text once (the per-claim sentence split
+    # would shatter a code block). A fenced/bare Python block must at least be
+    # syntactically valid (the cheap, safe self-check; full test-execution against a
+    # hidden test is the code-uplift benchmark's job, not the free-text gate).
+    if _CODE_RE.search(text or ""):
+        # Only the EXPLICITLY python-tagged blocks (not a language-agnostic extract),
+        # so a JS/other block elsewhere in the answer can't be compiled as Python.
+        py_blocks = re.findall(r"```(?:python|py)\s*\n(.*?)```", text or "", re.DOTALL | re.IGNORECASE)
+        code = "\n\n".join(b.rstrip() for b in py_blocks)
+        if code.strip():
+            try:
+                compile(code, "<answer>", "exec")
+                per_claim.append({"claim": "<code block>", "type": "code", "passed": True, "reasons": []})
+            except SyntaxError as exc:
+                per_claim.append({"claim": "<code block>", "type": "code", "passed": False,
+                                  "reasons": [f"python syntax error: {exc}"]})
+                violations.append(f"[code] python syntax error: {exc}")
 
     return {
         "passed": not violations,
