@@ -44,9 +44,16 @@ def cantonese_markers_found(text: str) -> list[str]:
 
 
 def cantonese_instruction() -> str:
-    """Prompt fragment instructing a Cantonese (written 粵語) response section."""
+    """Prompt fragment instructing a Cantonese (written 粵語) response section.
+
+    Explicitly REPLACES the usual 中文摘要 (Standard Written Chinese) required by the
+    mode prompts, so the model gets one unambiguous instruction rather than two
+    conflicting summary requirements.
+    """
     return (
-        "Provide your summary in written Cantonese (粵語 / 廣東話, e.g. using 嘅、喺、"
-        "唔、係 where natural), not Standard Written Chinese, so Hong Kong readers can "
-        "follow it in their spoken register. Label it 粵語摘要."
+        "For the summary section, write in Cantonese (粵語 / 廣東話, e.g. using 嘅、喺、"
+        "唔、係 where natural), not Standard Written Chinese. Label it 粵語摘要 and use "
+        "it INSTEAD OF (not in addition to) the usual 中文摘要 — provide only one "
+        "summary, in written Cantonese, so Hong Kong readers can follow it in their "
+        "spoken register."
     )

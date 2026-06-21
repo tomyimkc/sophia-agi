@@ -14,8 +14,8 @@ from agent import cantonese as c  # noqa: E402
 
 
 def test_detects_written_cantonese() -> None:
-    assert c.is_cantonese("我唔係好識呢啲法律嘢，點算？") is True   # strong markers 唔係/嘅-register
-    assert c.is_cantonese("租客係咪一定要畀按金？") is True
+    assert c.is_cantonese("我唔係好識呢啲法律嘢，點算？") is True   # strong: 唔係; general: 啲, 嘢
+    assert c.is_cantonese("租客係咪一定要畀按金？") is True        # strong: 係咪; general: 畀
 
 
 def test_standard_written_chinese_is_not_cantonese() -> None:

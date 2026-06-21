@@ -62,7 +62,7 @@ def build_user_prompt(mode: str, question: str, *, online_evidence: bool = False
 
     want_cantonese = cantonese or is_cantonese(question)
     lang_line = cantonese_instruction() if want_cantonese else ""
-    summary = "粵語摘要 (written Cantonese)" if want_cantonese else "中文摘要"
+    summary = "粵語摘要" if want_cantonese else "中文摘要"
     # retrieved corpus + web evidence are untrusted -> fence against prompt injection
     untrusted_block = wrap_sources([("retrieved-corpus", context), ("web-evidence", evidence_context)])
     return (
