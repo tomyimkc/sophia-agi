@@ -56,6 +56,7 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     cases = dataset.build_cases()
+    gate_records = dataset.build_gate_records()  # rules derived from cited misattributions
     if args.limit:
         cases = cases[: args.limit]
     if args.emit_dataset:
@@ -73,7 +74,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"running {spec} over {len(cases)} cases ...")
         gen = _generator(spec)
         results = run_cases(
-            cases, gen, on_fail=args.on_fail, llm_judge_fn=llm_judge_fn
+            cases, gen, on_fail=args.on_fail, records=gate_records, llm_judge_fn=llm_judge_fn
         )
         scores = score.score(results)
         per_model[spec] = {

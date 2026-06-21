@@ -8,6 +8,24 @@ gate* — on ground truth that is independent of the gate.
 > lineage **X%** of the time; behind Sophia's gate that drops to **Z%** —
 > reproducible in one command.
 
+### Illustrative first run (35 cases, single run, lexical judge)
+
+Not a headline claim yet — one run, lexical screen, N=19 false cases. But it
+shows the mechanism working and where the value lives:
+
+| Model | Halluc. alone | Halluc. gated | Δ | False-positive cost | Coverage |
+|---|---|---|---|---|---|
+| `deepseek` (frontier) | 0.0% | 0.0% | 0.0% | 0.0% | – |
+| `dolphin-llama3:8b` (weak, local) | 15.8% | 5.3% | **10.5** | 0.0% | 66.7% |
+
+Reading: a frontier model already practices source discipline on these cases; a
+small local model does not — and behind the gate its false-lineage rate drops
+~3× **at zero cost to correct answers**. The 67% coverage (gate fixed 2 of 3)
+honestly reflects that the gate only fires when the assertion names the work.
+Promote to a headline only after the Tier-1 steps in the
+[checklist](../../agi-proof/external-benchmarks/PROVENANCE-DELTA-CHECKLIST.md)
+(≥100 cases, CIs, multi-run, independent LLM-judge).
+
 This closes claim-ladder items 6–7 (external evaluation, independent
 replication) for the provenance niche. See the design spec:
 [`docs/superpowers/specs/2026-06-21-provenance-delta-design.md`](../superpowers/specs/2026-06-21-provenance-delta-design.md).

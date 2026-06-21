@@ -14,6 +14,7 @@ separate is the non-circularity guarantee.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -77,6 +78,26 @@ def build_cases(data_dir: Path | None = None) -> list[Case]:
         )
 
     return cases
+
+
+def build_gate_records(data_dir: Path | None = None) -> dict:
+    """Derive the gate's provenance RULES from the cited misattributions.
+
+    Each misattribution (claimed_author ✗ work) is itself a "do-not-attribute"
+    rule — exactly what an operator would load via ``SOPHIA_DISCIPLINE_RECORDS``.
+    Returning them as a records dict lets the benchmark's gate fire on the
+    benchmark's works. This is NOT circular: the rule is the treatment; the
+    true/false LABEL still comes from the external citation, not the gate.
+    """
+    data_dir = data_dir or DATA_DIR
+    mis = _load(data_dir / "misattributions.json").get("misattributions", [])
+    records: dict[str, dict] = {}
+    for row in mis:
+        rid = re.sub(r"[^a-z0-9]+", "_", row["work"].lower()).strip("_")
+        rec = records.setdefault(rid, {"canonicalTitleEn": row["work"], "doNotAttributeTo": []})
+        if row["claimed_author"] not in rec["doNotAttributeTo"]:
+            rec["doNotAttributeTo"].append(row["claimed_author"])
+    return records
 
 
 def write_jsonl(cases: list[Case], path: Path) -> int:

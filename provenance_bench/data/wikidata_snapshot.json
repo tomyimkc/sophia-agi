@@ -18,6 +18,9 @@
     {"id": "true-kant-critique", "work": "Critique of Pure Reason", "gold_author": "Immanuel Kant", "author_note": "1781.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Critique_of_Pure_Reason"},
     {"id": "true-nietzsche-bge", "work": "Beyond Good and Evil", "gold_author": "Friedrich Nietzsche", "author_note": "1886.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Beyond_Good_and_Evil"},
     {"id": "true-freud-dreams", "work": "The Interpretation of Dreams", "gold_author": "Sigmund Freud", "author_note": "1899/1900.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Interpretation_of_Dreams"},
-    {"id": "true-marx-engels-manifesto", "work": "The Communist Manifesto", "gold_author": "Karl Marx and Friedrich Engels", "author_note": "1848.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Communist_Manifesto"}
+    {"id": "true-marx-engels-manifesto", "work": "The Communist Manifesto", "gold_author": "Karl Marx and Friedrich Engels", "author_note": "1848.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/The_Communist_Manifesto"},
+    {"id": "true-anaximenes-rhetoric_to_alexander", "work": "Rhetoric to Alexander", "gold_author": "Anaximenes of Lampsacus", "author_note": "Long bundled with Aristotle; attributed to Anaximenes since the Renaissance. A hard true control.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Rhetoric_to_Alexander"},
+    {"id": "true-philip-epinomis", "work": "Epinomis", "gold_author": "Philip of Opus", "author_note": "Pseudo-Platonic; scholarly consensus credits Philip of Opus. A hard true control.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Epinomis"},
+    {"id": "true-hirtius-gallic_war_book_8", "work": "the eighth book of the Gallic War", "gold_author": "Aulus Hirtius", "author_note": "Added after Caesar's death. A hard true control.", "wikidata_qid": null, "source_url": "https://en.wikipedia.org/wiki/Commentarii_de_Bello_Gallico"}
   ]
 }

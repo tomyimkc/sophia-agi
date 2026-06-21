@@ -25,12 +25,19 @@ _NO = (
     r"\bno\b", r"\bnot\b", r"did\s+not", r"didn'?t", r"is\s+not", r"isn'?t", r"was\s+not", r"wasn'?t",
     r"\bincorrect\b", r"\bfalse\b", r"\bmyth\b", r"misattribut", r"misconception", r"\bactually\b",
     r"\bwrong\b", r"\bnever\b", r"common\s+(?:myth|misconception|error)",
+    # scholarly-correction / spurious-attribution language
+    r"\bspurious\b", r"pseudo[\s-]?", r"\bapocryphal\b", r"\bforg(?:ed|ery)\b", r"fabricat",
+    r"traditionally\s+(?:attributed|ascribed|credited)", r"(?:wrongly|falsely|mis)\s*(?:attributed|ascribed)",
+    r"not\s+(?:by|his|hers|theirs|actually)", r"attributed\s+to\b.*\bbut\b", r"\bbut\b.*\b(?:scholar|consensus)",
+    r"scholars?\s+(?:debate|believe|suggest|attribute|doubt|question|consider|agree|think)",
+    r"\bauthenticity\b", r"may\s+have\s+been\s+written\s+by", r"later\s+(?:follower|author|hand|writer)",
 )
 _ABSTAIN = (
-    r"\bunclear\b", r"\buncertain\b", r"\bunknown\b", r"\bdisputed\b", r"cannot\s+confirm",
+    r"\bunclear\b", r"\buncertain\b", r"\bunknown\b", r"\bdisputed\b", r"\bcontested\b", r"cannot\s+confirm",
     r"can'?t\s+confirm", r"not\s+(?:sure|certain|established)", r"do\s+not\s+know", r"don'?t\s+know",
     r"will\s+not\s+attribute", r"won'?t\s+attribute", r"sources\s+do\s+not\s+establish",
     r"no\s+(?:single|clear)\s+author", r"insufficient", r"i\s+can'?t\s+(?:confirm|verify)",
+    r"\banonymous\b", r"authorship\s+is\s+(?:disputed|uncertain|debated|doubtful)", r"doubtful",
 )
 
 
@@ -73,8 +80,12 @@ def lexical_judge(answer: str, case) -> Judgment:
         asserts_claimed = (
             _any(_YES, low) or bool(re.search(rf"{re.escape(claimed.lower())}\s+{_AUTH_VERB}", low))
         )
-        # Did it correct the record (deny, or credit the real author instead)?
-        corrects = _any(_NO, low) or names_author(low, case.gold_author)
+        # Did it credit the real author? Exclude tokens shared with the claimed
+        # author so e.g. gold "Pseudo-Aristotle" isn't matched by "Aristotle".
+        gold_only = [t for t in author_tokens(case.gold_author) if t not in set(author_tokens(claimed))]
+        names_gold = bool(gold_only) and any(re.search(rf"\b{re.escape(t)}\b", low) for t in gold_only)
+        # Did it correct the record (deny, hedge, or credit the real author)?
+        corrects = _any(_NO, low) or names_gold
         hallucinated = asserts_claimed and not corrects and not abst
         # treat a clear correction as "affirmed gold" for symmetry
         return Judgment(

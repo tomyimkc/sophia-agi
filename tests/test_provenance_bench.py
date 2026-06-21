@@ -66,6 +66,16 @@ def test_dataset_builds_from_external_files() -> None:
     assert all(c.claimed_author for c in false_cases)
 
 
+def test_gate_records_derived_from_misattributions() -> None:
+    recs = dataset.build_gate_records()
+    assert recs, "expected non-empty derived gate records"
+    # every record carries a title and a non-empty do-not-attribute list
+    assert all(r.get("canonicalTitleEn") and r.get("doNotAttributeTo") for r in recs.values())
+    # a known hard case maps to a rule the gate can fire on
+    flat = {a for r in recs.values() for a in r["doNotAttributeTo"]}
+    assert "Aristotle" in flat
+
+
 # --- judge (independent of the gate) --------------------------------------- #
 
 def test_names_author_token_match() -> None:
@@ -87,6 +97,16 @@ def test_judge_passes_correction() -> None:
 def test_judge_detects_abstention() -> None:
     j = lexical_judge("That authorship is disputed; I cannot confirm it.", FALSE_CASE)
     assert j.abstained is True and j.hallucinated is False
+
+
+def test_judge_handles_scholarly_hedge() -> None:
+    # appropriately-cautious answers on spurious attributions are NOT hallucinations
+    for ans in (
+        "It is traditionally attributed to Alice, but scholars consider it spurious.",
+        "That work is pseudonymous; the real author is unknown.",
+        "No, it is a later forgery, not actually by Alice.",
+    ):
+        assert lexical_judge(ans, FALSE_CASE).hallucinated is False
 
 
 def test_judge_true_case_correctness() -> None:
@@ -157,10 +177,12 @@ def test_report_build_and_markdown() -> None:
 
 def main() -> int:
     test_dataset_builds_from_external_files()
+    test_gate_records_derived_from_misattributions()
     test_names_author_token_match()
     test_judge_flags_false_affirmation()
     test_judge_passes_correction()
     test_judge_detects_abstention()
+    test_judge_handles_scholarly_hedge()
     test_judge_true_case_correctness()
     test_injected_llm_judge_overrides()
     test_runner_gate_fixes_hallucination()
