@@ -46,7 +46,7 @@ Judging whether a holding *supports* a proposition is a model call, so these are
 
 - Benchmark: legal_holding_faithful (does a real authority's holding SUPPORT the cited proposition? — the Ayinde misstated-authority failure)
 - Gate: validated = >=2 independent judges (>=2 provider families, no mock) + mean pairwise Cohen's kappa >= 0.40 + >=3 runs + bootstrap 95% CI lower bound above chance (0.5).
-- Validated result: _None yet._ Model-judged, so held to the no-overclaim gate. Machinery: tools/run_legal_faithfulness_bench.py; gate logic tested offline with deterministic scripted judges in tests/test_legal_faithfulness_bench.py. NO validated number yet — a headline requires a local run with >=2 provider families. Reproduce: python tools/run_legal_faithfulness_bench.py --judges <familyA:model>,<familyB:model> --runs 3.
+- Validated result: _None yet._ Model-judged, so held to the no-overclaim gate. Machinery: tools/run_legal_faithfulness_bench.py; gate logic tested offline with deterministic scripted judges in tests/test_legal_faithfulness_bench.py. NO validated number yet — a headline requires >=2 independent provider families. Reproduce with two keys (python tools/run_legal_faithfulness_bench.py --judges anthropic:claude-sonnet-4-6,deepseek:deepseek-chat --runs 3) OR a single OpenRouter key (OPENROUTER_API_KEY set; --judges openrouter:anthropic/claude-sonnet-4-6,openrouter:deepseek/deepseek-chat --runs 3) — the gate counts the underlying vendor as the family, so two models behind one OpenRouter key are two independent judges.
 
 ## Judge audit (why the gate matters)
 
