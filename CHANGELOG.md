@@ -2,6 +2,54 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.25] - 2026-06-21
+
+### Fixed — #7 review findings (guard coverage + real contamination measurement)
+
+A 19-agent review confirmed 12 issues; the material ones are fixed.
+
+- **(HIGH) Guard now scans the whole example** — `unsafe_reasons` previously read
+  only `messages[].content` + `text`, so PII/secrets in **metadata** or alternate
+  schemas (prompt/completion, DPO chosen/rejected, instruction/input/output) slipped
+  through. It now scans **every string leaf**, and reads sensitivity from synonym
+  metadata keys (classification/sensitivity/dataClass/visibility/label/pii) and a
+  truthy `doNotTrain` (incl. the string `"true"`). Still 0/518 false positives.
+- **(HIGH) Trainer path guarded** — `tools/prepare_lora_dataset.py` (which feeds
+  `train_lora.py`) now drops unsafe examples; previously only
+  `export_training_jsonl.py` was guarded, so the actual fine-tuning input bypassed it.
+- **(MEDIUM) Contamination is now MEASURED on the real split** — `run_training_safety`
+  runs `overlap_report(train, held-out)` on the actual 439/79 split (rate 0.0), not
+  just synthetic controls; the synthetic controls are relabelled a detector self-test.
+- **(MEDIUM) Honest detector scope** — `eval/contamination.py` is documented as a
+  **near-exact / verbatim-span** detector (not semantic paraphrase, which it does not
+  catch); short-text shingle size now adapts so verbatim subsets are detected.
+- **(MEDIUM/LOW) Regex fixes** — phone now catches `NNN-NNN-NNNN` without
+  false-positiving on long IDs; SSN allows spaces; secret-kv requires a ≥6-char value
+  so prose ("the secret to …") is not flagged.
+- Tests for all of the above; CHANGELOG/roadmap reworded to match.
+
+## [0.7.24] - 2026-06-21
+
+### Added — #7 LoRA leakage guard + contamination-controlled splits
+
+The last open original-review item (memorization is a leakage liability).
+
+- **Leakage guard** (`agent/training_safety.py`): a deterministic pre-export filter
+  drops any example that is metadata-flagged (`classification` ∈ confidential/secret/
+  restricted, or `doNotTrain`), matches a PII pattern (email/SSN/card/phone/secret-kv),
+  or contains a known secret value. **Wired into `tools/export_training_jsonl.py`** so
+  the real corpus export is guarded — 0 false positives on the 518-example public
+  corpus, and a planted confidential example is dropped. Plus a **canary harness**
+  (`make_canary`, `canary_extraction_rate`) for a post-train regurgitation test.
+- **Contamination control** (`eval/contamination.py`): word-n-gram shingle containment
+  catches near-duplicate / paraphrased train↔eval overlap that the by-ID holdout misses.
+- Falsifiable invariants (`tools/run_training_safety.py`): real corpus has no unsafe
+  example, confidential example dropped, near-duplicate flagged, disjoint clean. Tests
+  `test_training_safety.py`, `test_contamination.py`; CI wired.
+- **Honest scope:** the canary harness measures extraction but cannot run a real LoRA
+  in CI; membership-inference not implemented; PII regexes are conservative (precision
+  over exhaustive recall).
+
 ## [0.7.23] - 2026-06-21
 
 ### Fixed — #4 corroboration review findings (soundness + honest baseline)

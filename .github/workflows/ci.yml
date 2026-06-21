@@ -78,6 +78,11 @@ jobs:
         run: |
           python tests/test_corroboration.py
           python tools/run_corroboration.py
+      - name: Training safety — LoRA leakage guard + contamination control (#7)
+        run: |
+          python tests/test_training_safety.py
+          python tests/test_contamination.py
+          python tools/run_training_safety.py
       - name: Injection / containment red-team (M1) + data-flow firewall (M2/M2.2)
         run: |
           python tests/test_dataflow.py

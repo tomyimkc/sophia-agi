@@ -12,7 +12,7 @@ the *code* contains it. Ranked by leverage (impact ÷ effort).
 | 4 | Corroboration-aware confidence (Dempster–Shafer / log-odds) | Med | S–M | **shipped (#4)** — `agent/corroboration.py`; complements `okf` min-over-chain |
 | 5 | External fact-checking (NLI cross-encoder) as a `claim_supported` verifier | Med-High | M | **shipped (M-#5)** — `agent/verifiers.claim_supported` + `nli` policy; closes the citation subject-match probe (model opt-in) |
 | 6 | Tool least-privilege + dual-LLM (privileged planner / quarantined extractor) | High | M | planned |
-| 7 | LoRA leakage guard + contamination-controlled eval splits | Med | S–M | planned |
+| 7 | LoRA leakage guard + contamination-controlled eval splits | Med | S–M | **shipped (#7)** — `agent/training_safety.py`, `eval/contamination.py`; guard wired into the export |
 
 Trade-offs are real and stated: CaMeL-style enforcement (#2) costs ~7 utility
 points on AgentDojo; Dempster–Shafer misbehaves under high conflict (cap it);
@@ -59,6 +59,32 @@ with the new deterministic `no_secret_leak` tripwire (`agent/verifiers.py`) and 
    corpus pages; locked by `test_verifiers.py`.
 2. *Citation subject-match* — lexical overlap passes a wrong predicate when the
    subject matches the source → still open, **M-#5** (NLI fact-checking).
+
+## #7 — shipped: LoRA leakage guard + contamination control
+
+Anything in a fine-tuned model's weights is extractable, so the rule is: never
+train on confidential data, and never let eval leak into train.
+
+- **Leakage guard** (`agent/training_safety.py`): a deterministic filter that scans
+  **every string** in an example (messages, metadata free-text, and alternate
+  schemas like prompt/completion or DPO chosen/rejected) and drops it if it is
+  metadata-flagged (synonym keys classification/sensitivity/dataClass/visibility/
+  label/pii ∈ confidential/secret/restricted, or a truthy `doNotTrain`), matches a
+  PII pattern, or carries a known secret. **Wired into both export paths** —
+  `tools/export_training_jsonl.py` AND `tools/prepare_lora_dataset.py` (the path that
+  actually feeds `train_lora.py`). 0 false positives on the 518-example corpus; a
+  planted confidential example is dropped wherever it hides. Plus a **canary harness**
+  for a post-train regurgitation test.
+- **Contamination control** (`eval/contamination.py`): word-n-gram **shingle
+  containment** catches *near-exact / verbatim-span* train↔eval overlap the by-ID
+  holdout misses (shingle size adapts down for short items). Measured on the **real
+  split** (439 train / 79 held-out) → contamination rate **0.0**; a detector
+  self-test confirms verbatim→flagged, disjoint→clean.
+- **Honest scope:** the contamination detector catches near-exact duplication, NOT
+  semantic paraphrase (a fully reworded item scores ~0). The canary harness
+  *measures* extraction but cannot run a real LoRA in CI (maintainer runs it
+  post-train); membership-inference is not implemented; PII regexes are
+  precision-over-recall.
 
 ## Next milestones (not "AGI")
 
