@@ -1,6 +1,6 @@
 {
-  "version": "0.7.32",
-  "generated": "2026-06-22T01:07:19",
+  "version": "0.7.35",
+  "generated": "2026-06-22T02:44:48",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "operationalDefinition": {
     "summary": "For this repo, AGI evidence means broad task competence, transfer, tool use, long-horizon autonomy, learning under distribution shift, baseline superiority, and independent reproduction.",
@@ -1540,6 +1540,7 @@
     "gateClaimRouter": "agent/claim_router.py",
     "gateGradedDecision": "agent/graded_decision.py",
     "gateActiveLearning": "agent/gate_feedback.py",
+    "councilPanelRunner": "tools/run_council_panel.py",
     "religionFigureCouncil": "docs/08-Domains/Religion-Figure-Council.md",
     "codingCouncil": "docs/08-Domains/Coding-Council.md"
   }

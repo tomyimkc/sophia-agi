@@ -1,0 +1,31 @@
+{
+  "benchmark": "council-panel",
+  "models": [
+    "ollama:dolphin-llama3:8b",
+    "ollama:qwen3:30b-a3b",
+    "ollama:llama3.2:3b"
+  ],
+  "homoN": 3,
+  "heteroN": 3,
+  "scopeNote": "Tests whether a heterogeneous model team beats one model wearing N hats. homo = same model x N (correlated errors, the control); hetero = N different models (independent voters). Deterministic lexical judge; single-run illustrative.",
+  "summary": {
+    "cases": 50,
+    "falseCases": 32,
+    "trueCases": 18,
+    "hallucinationByCondition": {
+      "single": 0.1562,
+      "homo": 0.1875,
+      "hetero": 0.0
+    },
+    "goldAffirmedByCondition": {
+      "single": 0.9444,
+      "homo": 1.0,
+      "hetero": 0.9444
+    },
+    "deltas": {
+      "homoVsSingle": -0.0313,
+      "heteroVsSingle": 0.1562,
+      "heteroVsHomo": 0.1875
+    }
+  }
+}

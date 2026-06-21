@@ -255,6 +255,7 @@ def build_manifest() -> dict[str, Any]:
             "gateClaimRouter": "agent/claim_router.py",
             "gateGradedDecision": "agent/graded_decision.py",
             "gateActiveLearning": "agent/gate_feedback.py",
+            "councilPanelRunner": "tools/run_council_panel.py",
             "religionFigureCouncil": "docs/08-Domains/Religion-Figure-Council.md",
             "codingCouncil": "docs/08-Domains/Coding-Council.md",
         },

@@ -124,6 +124,10 @@ jobs:
           python tests/test_council_deliberate.py
           python tools/council_deliberate.py "Model runway and flag AML for Stripe" --model mock >/dev/null
           python tools/run_council_uplift.py --model mock
+      - name: Council panel (single vs homo vs hetero team) offline wiring
+        run: |
+          python tests/test_council_panel.py
+          python tools/run_council_panel.py --models mock --homo-n 3 --limit 5
       - name: Council distillation (gate-filtered trace generation, offline)
         run: |
           python tests/test_distill_council.py

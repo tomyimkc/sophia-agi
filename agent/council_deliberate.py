@@ -31,6 +31,7 @@ class SeatResult:
     ok: bool
     gatePassed: bool
     violations: list[str] = field(default_factory=list)
+    model: str = ""
 
 
 @dataclass
@@ -78,7 +79,16 @@ def _seat_gate(answer: str, query: str) -> dict:
 
 
 def deliberate(query: str, *, client, council_id: "str | None" = None, max_seats: int = 4,
-               gate: bool = True, materials: "list[str] | None" = None) -> Deliberation:
+               gate: bool = True, materials: "list[str] | None" = None,
+               seat_clients: "list | None" = None) -> Deliberation:
+    """Map-reduce a query across council seats.
+
+    ``client`` runs every seat (homogeneous: one model wearing N hats — its
+    "members" share weights, so their errors are correlated). ``seat_clients``, a
+    list of clients cycled across the substantive seats, makes the panel
+    HETEROGENEOUS: each seat is a *different* model, so the members are genuinely
+    independent voters. The synthesis chair always uses ``client``.
+    """
     cid = council_id or detect_council(query)
     if not cid:
         # No sector matched — single direct pass (still gated), so the API always works.
@@ -94,14 +104,18 @@ def deliberate(query: str, *, client, council_id: "str | None" = None, max_seats
     substantive = _flatten(route, core=False)[:max_seats]
     guardians = _flatten(route, core=True)
 
+    pool = [c for c in (seat_clients or []) if c is not None] or [client]
+
     seats: list[SeatResult] = []
     gated_out: list[str] = []
-    for seat in substantive:
-        ans = _gen(client, _seat_system(seat, council_name), query)
+    for i, seat in enumerate(substantive):
+        seat_client = pool[i % len(pool)]
+        ans = _gen(seat_client, _seat_system(seat, council_name), query)
         ok = bool(ans.strip()) and "insufficient basis" not in ans.lower()
         gres = _seat_gate(ans, query) if gate else {"passed": True, "violations": []}
         seats.append(SeatResult(seatId=seat["seatId"], displayName=seat.get("displayName", seat["seatId"]),
-                                answer=ans, ok=ok, gatePassed=gres["passed"], violations=gres["violations"]))
+                                answer=ans, ok=ok, gatePassed=gres["passed"], violations=gres["violations"],
+                                model=getattr(seat_client, "spec", "") or getattr(seat_client, "model", "")))
         if gate and not gres["passed"]:
             gated_out.append(seat["seatId"])
 
