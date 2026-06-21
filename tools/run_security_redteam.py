@@ -47,6 +47,9 @@ def main(argv: "list[str] | None" = None) -> int:
           f"  (baseline {fw['baselineASR']:.0%}; reads allowed = {fw['readsAllowed']})")
     for s in fw["scenarios"]:
         print(f"  {s['id']:<18} {s['tool']:<28} -> {s['action']}")
+    it = r["interpreter"]
+    print(f"\nDual-LLM interpreter (M2.2):  control-flow integrity = {it['controlFlowIntegrity']}"
+          f";  tainted write contained = {it['taintedWriteContained']}")
     print("\nPROBES (reported, not gating — known/suspected gaps):")
     for cat, s in r["probes"]["byCategory"].items():
         flag = "  <-- ATTACK WON (real gap)" if s["asr"] > 0 else ""
