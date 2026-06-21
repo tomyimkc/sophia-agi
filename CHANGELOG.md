@@ -2,6 +2,30 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.21] - 2026-06-21
+
+### Fixed — M-#5 / M2.4 review findings (NLI correctness, honest AgentDojo metric)
+
+A 16-agent review confirmed 5 issues; all addressed.
+
+- **(HIGH) NLI entailment label** — `_default_nli` hardcoded the entailment index to
+  1, so an alternate `$SOPHIA_NLI_MODEL` (MNLI label order) would silently mis-score
+  in the unsafe direction. Now resolves the entailment index from the model's own
+  `id2label`, and **fails closed** if no "entailment" label exists.
+- **(MEDIUM) AgentDojo metric was partly by-construction** — 2 of 3 tasks had no
+  sink, so ASR=0 didn't exercise the firewall. The suite now has sink-bearing tasks,
+  a **load-bearing control test** (firewall disabled → ASR>0), honest **utility** (a
+  refused tainted write is utility=False, not inflated), and a **live canary** limb.
+  Corrected headline: **ASR 0% / utility 33%** (the 67% is the honest security cost —
+  tainted-derived writes are refused; HITL recovers them).
+- **(MEDIUM, bonus) HITL wiring** — the interpreter passed an `approver` to the
+  firewall but never honored a `require_hitl` decision; now it does, so an approver
+  genuinely recovers a tainted write (tested).
+- **(LOW) Double-counted violation** — an out-of-range citation no longer also emits
+  a spurious "not entailed" reason (`claim_supported` + `citation_faithful`).
+- **(LOW) Honest scope** — added the "only as good as the model/threshold" caveat to
+  `claim_supported`, matching its sibling verifiers.
+
 ## [0.7.20] - 2026-06-21
 
 ### Added — M-#5 (NLI fact-checking) + M2.4 (extractor + AgentDojo-style suite)

@@ -145,6 +145,20 @@ def test_approve_sinks_gates_even_trusted_writes() -> None:
     assert "sophia_wiki_upsert" in r2.calls and written
 
 
+def test_require_hitl_approver_recovers_tainted_write() -> None:
+    # A tainted write is blocked autonomously, but an approver (HITL) recovers it.
+    written = []
+    tools = {
+        "sophia_wiki_read": lambda q: "untrusted content",
+        "sophia_wiki_upsert": lambda *a: written.append(a) or "ok",
+    }
+    plan = [Const("q", "t"), Retrieve("d", "sophia_wiki_read", "q"), Call("w", "sophia_wiki_upsert", ["d"])]
+    r0 = Interpreter(tools=tools).run(plan)                       # no approver -> blocked
+    assert "sophia_wiki_upsert" not in r0.calls and written == []
+    r1 = Interpreter(tools=tools, approver=lambda *a: True).run(plan)   # HITL approves -> runs
+    assert "sophia_wiki_upsert" in r1.calls and written
+
+
 def test_retrieve_must_name_a_read_tool() -> None:
     interp, written = _interp()
     r = interp.run([
@@ -164,6 +178,7 @@ def main() -> int:
     test_egress_result_is_untrusted_no_laundering()
     test_blocked_step_var_fails_closed()
     test_approve_sinks_gates_even_trusted_writes()
+    test_require_hitl_approver_recovers_tainted_write()
     test_retrieve_must_name_a_read_tool()
     print("test_interpreter: OK")
     return 0

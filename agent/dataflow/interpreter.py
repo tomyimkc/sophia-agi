@@ -167,7 +167,17 @@ class Interpreter:
                         res.blocked.append((step.tool, "approve_sinks: write/egress requires approval"))
                         continue
                 decision = guard_call(step.tool, tuple(args), approver=self.approver, profile=self.profile)
-                if not decision.allowed:
+                if decision.action == "require_hitl":
+                    granted = False
+                    if self.approver is not None:
+                        try:
+                            granted = self.approver(step.tool, tuple(args), {}, decision) is True
+                        except Exception:
+                            granted = False
+                    if not granted:
+                        res.blocked.append((step.tool, "HITL not approved: " + decision.reason))
+                        continue
+                elif not decision.allowed:
                     res.blocked.append((step.tool, decision.reason))
                     continue
                 result = self.tools[step.tool](*[unwrap(a) for a in args])

@@ -175,14 +175,16 @@ def citation_faithful(sources: list[str], *, min_overlap: float = 0.35, require_
                 continue
             if cites:
                 best = 0.0
+                scored = False
                 for idx in cites:
                     if 1 <= idx <= len(src_words):
                         sw = src_words[idx - 1][0]
                         if words:
                             best = max(best, len(words & sw) / len(words))
+                        scored = True
                     else:
                         violations.append(f"citation [{idx}] out of range")
-                if best < min_overlap:
+                if scored and best < min_overlap:
                     violations.append(f"unsupported citation (overlap {best:.0%} < {min_overlap:.0%}): {s[:60]}")
             elif require_citation and re.search(r"\b(?:is|was|were|are|wrote|invented|discovered|founded|caused)\b", s.lower()):
                 violations.append(f"uncited claim: {s[:60]}")
@@ -220,14 +222,29 @@ def _default_nli():
     except Exception:
         return None
 
+    # Resolve the entailment index from the model's OWN label map — never assume a
+    # fixed order (MNLI models use {0:contradiction,1:neutral,2:entailment}, deberta
+    # uses {…,1:entailment,…}). If we can't identify it, FAIL CLOSED (return None)
+    # rather than silently mis-score in the unsafe direction.
+    ent_idx = None
+    try:
+        id2label = model.config.id2label
+        for i, label in id2label.items():
+            if str(label).lower().startswith("entail"):
+                ent_idx = int(i)
+                break
+    except Exception:
+        ent_idx = None
+    if ent_idx is None:
+        return None
+
     def score(premise: str, hypothesis: str) -> float:
         try:
             logits = list(model.predict([(premise, hypothesis)])[0])
         except Exception:
             return 0.0
-        # nli-deberta id2label = {0: contradiction, 1: entailment, 2: neutral}
         probs = _softmax([float(x) for x in logits])
-        return float(probs[1]) if len(probs) >= 2 else 0.0
+        return float(probs[ent_idx]) if ent_idx < len(probs) else 0.0
 
     return score
 
@@ -242,6 +259,12 @@ def claim_supported(sources: list[str], *, nli=None, threshold: float = 0.5,
     blind spot the red-team flagged. ``nli(premise, hypothesis) -> float`` in
     ``[0,1]``; defaults to a cross-encoder (opt-in). If no scorer is available the
     verifier FAILS CLOSED (it refuses to vouch) rather than silently passing.
+
+    Scope (honest): entailment detection is only as good as the supplied NLI model
+    and ``threshold`` — a weak model or a mis-set threshold can miss a wrong
+    predicate or false-positive on a valid claim. Compose it as a tier, not a
+    guarantee. The default model is resolved with the correct entailment label;
+    a custom ``$SOPHIA_NLI_MODEL`` must expose an "entailment" label or it fails closed.
     """
     scorer = nli or _default_nli()
 
@@ -257,12 +280,14 @@ def claim_supported(sources: list[str], *, nli=None, threshold: float = 0.5,
             cites = [int(n) for n in re.findall(r"\[(?:local|web|source)?\s*(\d+)\]", s.lower())]
             if cites:
                 best = 0.0
+                scored = False
                 for idx in cites:
                     if 1 <= idx <= len(sources):
                         best = max(best, float(scorer(sources[idx - 1], s)))
+                        scored = True
                     else:
                         violations.append(f"citation [{idx}] out of range")
-                if best < threshold:
+                if scored and best < threshold:
                     violations.append(f"claim not entailed by source (entail {best:.0%} < {threshold:.0%}): {s[:60]}")
             elif require_citation and re.search(r"\b(?:is|was|were|are|wrote|invented|discovered|founded|caused)\b", s.lower()):
                 violations.append(f"uncited claim: {s[:60]}")
