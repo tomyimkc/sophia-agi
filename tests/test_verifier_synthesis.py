@@ -113,6 +113,32 @@ def test_as_verifier_matches_harness_shape() -> None:
     assert "detail" in ok and "detail" in bad
 
 
+def test_model_proposer_widens_then_meta_verification_filters() -> None:
+    # A proposer offers one good predicate (even) and one useless one (always True).
+    # Only the good one should survive meta-verification — trust comes from
+    # validation, not from the proposer.
+    def propose(task, corrects, incorrects):
+        return [
+            "def check(answer):\n    return int(answer) % 2 == 0",   # genuinely discriminating
+            "def check(answer):\n    return True",                   # admits everything → recall 0
+        ]
+
+    res = vs.synthesize(_task("even"), seed=0, propose_fn=propose)
+    names = {c.name for c, _ in res.admitted}
+    assert any(n.startswith("proposed:") for n in names)             # a proposal was admitted
+    # the always-True proposal must NOT be admitted (it catches no errors)
+    for cand, stats in res.admitted:
+        assert stats.recall >= 0.8
+
+
+def test_model_proposer_sandbox_rejects_unsafe_source() -> None:
+    assert vs._compile_predicate("import os\ndef check(a):\n    return True") is None
+    assert vs._compile_predicate("def check(a):\n    return __import__('os')") is None
+    assert vs._compile_predicate("def nope(a):\n    return True") is None      # no check()
+    good = vs._compile_predicate("def check(a):\n    return int(a) > 0")
+    assert callable(good) and good("5") is True and good("-1") is False
+
+
 def test_demo_invariants_hold() -> None:
     res = run_demo(seed=0)
     failed = [k for k, v in res["invariants"].items() if not v]
@@ -129,6 +155,8 @@ def main() -> int:
     test_meta_verification_prevents_false_admission()
     test_score_predicate_metrics()
     test_as_verifier_matches_harness_shape()
+    test_model_proposer_widens_then_meta_verification_filters()
+    test_model_proposer_sandbox_rejects_unsafe_source()
     test_demo_invariants_hold()
     print("test_verifier_synthesis: OK")
     return 0

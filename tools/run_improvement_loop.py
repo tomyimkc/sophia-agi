@@ -43,8 +43,19 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--batch", type=int, default=8)
     ap.add_argument("--cycles", type=int, default=6)
+    ap.add_argument("--model", default=None,
+                    help="source TRAIN text from a model (exploratory; default = deterministic templates)")
     ap.add_argument("--json", default=None, help="write the curve to this path")
     args = ap.parse_args(argv)
+
+    answer_fn = None
+    if args.model:
+        from agent.model import default_client
+
+        client = default_client(args.model)
+        _sys = "Answer the attribution question in one sentence."
+        answer_fn = lambda claimed, work: getattr(  # noqa: E731
+            client.generate(_sys, f"Who wrote {work}?"), "text", "") or ""
 
     pairs, controls = _load()
     # sealed-hash of the held-out probe set (proves the test set didn't change)
@@ -52,7 +63,8 @@ def main(argv: list[str] | None = None) -> int:
         json.dumps([(p["claimed"], p["work"]) for p in pairs], sort_keys=True).encode()
     ).hexdigest()[:16]
 
-    result = improvement.run_loop(pairs, controls, batch=args.batch, cycles=args.cycles)
+    result = improvement.run_loop(pairs, controls, batch=args.batch, cycles=args.cycles, answer_fn=answer_fn)
+    result["trainSource"] = args.model or "deterministic-template"
     result["pairs"] = len(pairs)
     result["trueControls"] = len(controls)
     result["sealedSetHash"] = sealed

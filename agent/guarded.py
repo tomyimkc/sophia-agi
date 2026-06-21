@@ -124,6 +124,19 @@ def _repair_prompt(query: str, context: str, bad_answer: str, violations: list) 
     )
 
 
+def _generic_repair_prompt(query: str, context: str, bad_answer: str, reasons: list, hint: str) -> str:
+    """Policy-agnostic repair prompt: tell the model which checks failed and the
+    policy's targeted hint for fixing them."""
+    note = "; ".join(reasons) if reasons else "the policy's checks"
+    return (
+        f"Your previous answer failed these checks: {note}.\n\n"
+        f"Question:\n{query}\n\n"
+        f"Sources:\n{context}\n\n"
+        f"Previous answer (do NOT repeat the failure):\n{bad_answer}\n\n"
+        f"Rewrite the answer so it passes: {hint}."
+    )
+
+
 def guarded_complete(
     query: str,
     *,
@@ -131,11 +144,21 @@ def guarded_complete(
     on_fail: "str | None" = None,
     generate: "GenerateFn | None" = None,
     records: "dict | None" = None,
+    policy: "str | None" = None,
+    verifier: "Callable | None" = None,
+    sources: "list | None" = None,
     top_k: int = 8,
     retrieve_fn: Callable[..., list] = retrieve,
     format_context_fn: Callable[[list], str] = format_context,
 ) -> GuardedResult:
-    """Generate an answer to ``query`` and enforce the provenance gate on it.
+    """Generate an answer to ``query`` and enforce a machine-checked gate on it.
+
+    The gate is selectable at runtime (default: provenance, unchanged):
+      - ``verifier`` — any ``(text, task, step) -> {passed,...}`` gate (e.g. a
+        synthesised gate from :mod:`agent.verifier_synthesis`); highest priority;
+      - ``policy``   — a named policy (``provenance|citation|arithmetic|code``),
+        else ``$SOPHIA_POLICY``; ``sources`` feeds the citation policy;
+      - neither      — the provenance gate (original behaviour, zero-config).
 
     ``on_fail`` defaults to ``$SOPHIA_ON_FAIL`` then ``"repair"``. ``generate`` is
     a ``(system, user) -> ModelResult`` callable; when omitted, the default model
@@ -144,6 +167,20 @@ def guarded_complete(
     mode = (on_fail or os.environ.get("SOPHIA_ON_FAIL") or "repair").strip().lower()
     if mode not in ON_FAIL_MODES:
         raise ValueError(f"invalid on_fail mode {mode!r}; valid: {', '.join(ON_FAIL_MODES)}")
+
+    # --- resolve the gate (preserve the provenance default path exactly) ----- #
+    from agent import policies as _policies
+
+    env_policy = os.environ.get("SOPHIA_POLICY")
+    if verifier is not None:
+        pol = _policies.from_verifier(verifier)
+        verify_fn = verifier
+    elif policy or env_policy:
+        pol = _policies.get_policy(policy or env_policy, records=records, sources=sources)
+        verify_fn = pol.verifier
+    else:
+        pol = None                                  # provenance default
+        verify_fn = provenance_faithful(records)
 
     if generate is None:
         from agent.model import default_client
@@ -159,7 +196,14 @@ def guarded_complete(
     attempts = 0
 
     def _judge(text: str) -> dict:
-        return check_claim(text, records=records)
+        r = verify_fn(text or "", None, {})
+        detail = r.get("detail") or {}
+        reasons = list(r.get("reasons") or [])
+        return {
+            "passed": bool(r.get("passed")),
+            "reasons": reasons,
+            "violations": list(detail.get("violations") or reasons),
+        }
 
     # --- first generation -------------------------------------------------- #
     first = generate(system, user)
@@ -195,7 +239,11 @@ def guarded_complete(
         )
 
     if mode == "repair":
-        repair = generate(system, _repair_prompt(query, context, text, violations))
+        repair_user = (
+            _repair_prompt(query, context, text, violations) if pol is None
+            else _generic_repair_prompt(query, context, text, reasons, pol.repair_hint)
+        )
+        repair = generate(system, repair_user)
         attempts += 1
         if getattr(repair, "ok", True):
             repaired = getattr(repair, "text", "") or ""
@@ -208,7 +256,7 @@ def guarded_complete(
         # repair did not clear the gate -> fall through to cited abstention.
 
     # mode == "abstain", or repair exhausted.
-    abstention = _cited_abstention(query, context, violations)
+    abstention = _cited_abstention(query, context, violations) if pol is None else pol.abstention
     av = _judge(abstention)
     return GuardedResult(
         text=abstention, ok=True, passed=av["passed"], action="abstained", attempts=attempts,

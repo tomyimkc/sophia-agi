@@ -2,6 +2,39 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.9] - 2026-06-21
+
+### Added — runtime policies, model-proposed checks, real-dataset eval, honest README
+
+Makes the verifier-gated capabilities *usable at runtime* and follows through on
+the standing recommendations.
+
+- **Runtime verifier policies** (`agent/policies.py`, `agent/guarded.py`): the
+  guarded loop's gate is now selectable per call or via `$SOPHIA_POLICY` —
+  `provenance | citation | arithmetic | code`, or any custom/synthesised verifier
+  via `verifier=`. Each policy carries its own repair hint + gate-passing
+  abstention. The provenance default path is byte-for-byte unchanged.
+- **Verifier-synthesis model proposer** (`agent/verifier_synthesis.py`):
+  `propose_predicates` lets a model write candidate predicates (compiled under
+  **restricted builtins** — no import/exec/eval/dunders) that clear the SAME
+  meta-verification floor; a model only *widens* candidates, validation still
+  confers trust. Gated by `$SOPHIA_ALLOW_PROPOSED_PREDICATES`.
+- **External-eval real-dataset fetcher** (`tools/fetch_eval_dataset.py`):
+  downloads + reshapes GSM8K to the eval's `{question, answer}` JSONL so the
+  external-oracle harness yields a *citable* number. Conversion is a pure,
+  unit-tested function; the network fetch is intentionally not run in CI.
+- **Model-in-the-loop improvement** (`provenance_bench/improvement.py`,
+  `tools/run_improvement_loop.py --model`): an injectable `answer_fn` sources
+  TRAIN failures from a model. Fixed a correctness bug in the process: a rule is
+  mined only when the text *actually asserts* the forbidden attribution (clean
+  model text is no longer mis-mined as a failure). Deterministic path unchanged
+  (held-out recall 17%→98%, 0% FP).
+- **README reframed:** leads with verifier-gated provenance reasoning and a
+  plain-scope statement; AGI is demoted to an explicitly *unmet* pre-registered
+  threshold — the project's standing #1 review recommendation.
+- Tests: `test_policies.py`, `test_fetch_eval_dataset.py`,
+  `test_improvement_model_loop.py`, plus proposer cases — wired into CI.
+
 ## [0.7.8] - 2026-06-21
 
 ### Added — verifier synthesis (the bridge toward generality)

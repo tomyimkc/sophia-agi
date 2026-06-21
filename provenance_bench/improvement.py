@@ -55,8 +55,17 @@ def _fires(text: str, rules: dict) -> bool:
     return not check_claim(text, records=rules)["passed"]
 
 
-def run_loop(pairs: list[dict], true_controls: list[dict], *, batch: int = 8, cycles: int = 6) -> dict:
-    """``pairs``: [{claimed, work}]; ``true_controls``: [{gold, work}]."""
+def run_loop(pairs: list[dict], true_controls: list[dict], *, batch: int = 8, cycles: int = 6,
+             answer_fn=None) -> dict:
+    """``pairs``: [{claimed, work}]; ``true_controls``: [{gold, work}].
+
+    ``answer_fn(claimed, work) -> str`` (optional) sources the TRAIN text from a
+    real model instead of the deterministic template, so the loop learns from
+    *actual model failures*. The contract is unchanged: a rule is mined only when
+    the TRAIN text asserts the forbidden attribution and the current gate misses
+    it; scoring is still on the disjoint held-out phrasings. Default (None) keeps
+    the deterministic, reproducible path.
+    """
     if set(TRAIN_TEMPLATES) & set(HELDOUT_TEMPLATES):
         raise AssertionError("contamination: train and held-out templates overlap")
 
@@ -66,8 +75,19 @@ def run_loop(pairs: list[dict], true_controls: list[dict], *, batch: int = 8, cy
     for k in range(1, cycles + 1):
         # --- learn from TRAIN failures only (gate currently misses -> mine rule) ---
         for p in pairs[revealed: revealed + batch]:
-            train_text = TRAIN_TEMPLATES[0].format(a=p["claimed"], w=p["work"])
-            if not _fires(train_text, rules):          # a failure: the gate missed it
+            if answer_fn is not None:
+                train_text = answer_fn(p["claimed"], p["work"]) or ""
+            else:
+                train_text = TRAIN_TEMPLATES[0].format(a=p["claimed"], w=p["work"])
+            # A failure is text that ASSERTS the forbidden attribution yet the
+            # current rules miss it. Checking "asserts" with a one-off rule (not
+            # just "gate passed") is what makes a model answer_fn honest: clean
+            # model text passes the gate but must NOT be mined as a failure.
+            oneoff: dict = {}
+            _learn(oneoff, p["claimed"], p["work"])
+            asserts = _fires(train_text, oneoff)
+            missed_now = not _fires(train_text, rules)
+            if asserts and missed_now:
                 _learn(rules, p["claimed"], p["work"])
         revealed = min(revealed + batch, len(pairs))
 

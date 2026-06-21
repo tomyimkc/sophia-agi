@@ -37,6 +37,7 @@ still comes solely from measured validation.
 from __future__ import annotations
 
 import math
+import os
 import random
 import re
 from dataclasses import dataclass, field
@@ -236,6 +237,69 @@ TEMPLATES: list = [
 
 
 # --------------------------------------------------------------------------- #
+# Model proposer — a model WIDENS candidate generation by writing predicates the
+# template library cannot express. It never confers trust: a proposed predicate
+# is a candidate like any other and must clear the SAME meta-verification floor.
+# --------------------------------------------------------------------------- #
+
+# Builtins a proposed ``check(answer)`` may use. No __import__, open, eval, exec,
+# getattr, etc. — proposed code is model-generated; restrict it to pure data ops.
+_SAFE_BUILTINS = {
+    "len": len, "str": str, "int": int, "float": float, "abs": abs, "bool": bool,
+    "min": min, "max": max, "sum": sum, "all": all, "any": any, "round": round,
+    "sorted": sorted, "set": set, "list": list, "tuple": tuple, "range": range,
+    "map": map, "filter": filter, "enumerate": enumerate, "zip": zip, "divmod": divmod,
+}
+
+ProposeFn = Callable[[dict, list, list], list]   # (task, corrects, incorrects) -> [source]
+
+
+def _compile_predicate(src: str) -> "Predicate | None":
+    """Compile a model-proposed ``def check(answer): ...`` under restricted
+    builtins. Returns the callable, or None if it is unsafe or malformed."""
+    if not isinstance(src, str) or "check" not in src:
+        return None
+    forbidden = ("import", "__", "open(", "eval(", "exec(", "compile(", "globals", "locals")
+    if any(tok in src for tok in forbidden):
+        return None
+    try:
+        code = compile(src, "<proposed-predicate>", "exec")
+    except SyntaxError:
+        return None
+    ns: dict = {}
+    try:
+        exec(code, {"__builtins__": _SAFE_BUILTINS}, ns)   # noqa: S102 — restricted env
+    except Exception:
+        return None
+    fn = ns.get("check")
+    return fn if callable(fn) else None
+
+
+def propose_predicates(task: dict, corrects: list, incorrects: list, *,
+                       propose_fn: ProposeFn, max_candidates: int = 8) -> list:
+    """Turn model-proposed predicate sources into Candidates (sandbox-compiled).
+
+    ``propose_fn(task, corrects, incorrects)`` returns a list of Python sources,
+    each defining ``def check(answer): -> bool``. Unsafe/malformed sources are
+    dropped; the survivors are returned as Candidates to be meta-verified exactly
+    like template-fitted ones. Disabled via ``$SOPHIA_ALLOW_PROPOSED_PREDICATES=0``.
+    """
+    if os.environ.get("SOPHIA_ALLOW_PROPOSED_PREDICATES", "1").strip() in ("0", "false", "no"):
+        return []
+    try:
+        sources = list(propose_fn(task, corrects, incorrects) or [])
+    except Exception:
+        return []
+    out: list = []
+    for i, src in enumerate(sources[:max_candidates]):
+        fn = _compile_predicate(src)
+        if fn is None:
+            continue
+        out.append(Candidate(f"proposed:{i}", {"src": src}, (lambda f: lambda a: bool(f(a)))(fn)))
+    return out
+
+
+# --------------------------------------------------------------------------- #
 # Meta-verification: verify the verifier against an independent oracle's labels.
 # --------------------------------------------------------------------------- #
 
@@ -335,6 +399,7 @@ def synthesize(
     fit_frac: float = 0.4, val_frac: float = 0.3,
     min_precision: float = 0.95, min_recall: float = 0.8,
     seed: int = 0, meta_verify: bool = True, compose_mode: str = "all",
+    propose_fn: "ProposeFn | None" = None,
 ) -> SynthesisResult:
     """Synthesise a verifier for ``task`` from its oracle-labelled ``examples``.
 
@@ -342,6 +407,10 @@ def synthesize(
     AND recall on the disjoint VALIDATION split clear the floors. With
     ``meta_verify=False`` (the ablation) every fitted candidate is admitted
     unchecked — modelling "trust the synthesised check without verifying it".
+
+    ``propose_fn`` (optional) lets a model widen candidate generation with
+    predicates the template library cannot express; proposed candidates clear the
+    SAME meta-verification floor, so trust still comes only from measured validation.
     """
     examples = list(task.get("examples", []))
     res = SynthesisResult(task_id=str(task.get("task_id", "?")), meta_verified=meta_verify)
@@ -363,6 +432,8 @@ def synthesize(
             candidates.extend(tmpl(corrects, incorrects, task))
         except Exception:
             continue
+    if propose_fn is not None:
+        candidates.extend(propose_predicates(task, corrects, incorrects, propose_fn=propose_fn))
 
     judge_split = val or fit
     for cand in candidates:

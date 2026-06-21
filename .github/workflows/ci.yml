@@ -65,6 +65,11 @@ jobs:
           python tests/test_verifier_synthesis.py
           python tests/test_calibration.py
           python tools/run_verifier_synthesis.py
+      - name: Runtime policies + model-in-loop + dataset fetcher (offline)
+        run: |
+          python tests/test_policies.py
+          python tests/test_improvement_model_loop.py
+          python tests/test_fetch_eval_dataset.py
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

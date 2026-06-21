@@ -2,11 +2,13 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.7.0-blue)
+![Version](https://img.shields.io/badge/version-0.7.9-blue)
 ![Training examples](https://img.shields.io/badge/training_examples-518-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
-**Wisdom before intelligence.** Open-source corpus, benchmark, RAG/local-model baseline, and **AGI-candidate proof package** for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea* — before AGI-scale belief propagation.
+**Wisdom before intelligence.** An open corpus, benchmark, and **verifier-gated reasoning loop** for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea*, and **refusing to assert what it cannot machine-check**.
+
+> **Scope, stated plainly.** This is a research program for *grounded, machine-checked* reasoning — **not a claim of AGI**. It pre-registers AGI thresholds and measures itself against them honestly; **those thresholds are not met**. The deliverable is the honest machinery — verifiers, an abstaining loop, and a no-overclaim measurement gate — not the label. Every public number must clear that gate ([SECURITY.md](SECURITY.md), [RESULTS.md](RESULTS.md)).
 
 **Thesis site:** https://tomyimkc.github.io/sophia-agi/
 
@@ -21,6 +23,7 @@ Sophia is **not claimed as proven AGI**. The stronger and more defensible public
 The proof package defines the operational AGI definition, pre-registered thresholds, current benchmark evidence, external benchmark gaps, ablation plan, hidden-reviewer protocol, long-horizon autonomy logs, learning-under-shift protocol, failure ledger, and third-party replication checklist.
 
 - Evidence package: [agi-proof/README.md](agi-proof/README.md)
+- **Generality track + verifier synthesis:** [docs/11-Platform/Generality.md](docs/11-Platform/Generality.md), [docs/11-Platform/Verifier-Synthesis.md](docs/11-Platform/Verifier-Synthesis.md) — the verifier-gated loop reused beyond provenance, plus a loop that **writes and trust-tests its own checks** and **abstains** when it cannot (the honest direction *toward* generality, with falsifiable metrics)
 - **Public results (honest, gated):** [RESULTS.md](RESULTS.md) — only multi-judge-validated numbers headline; transparency boundary in [SECURITY.md](SECURITY.md)
 - Machine-readable manifest: [agi-proof/evidence-manifest.json](agi-proof/evidence-manifest.json)
 - Religion figure council: [docs/08-Domains/Religion-Figure-Council.md](docs/08-Domains/Religion-Figure-Council.md)
