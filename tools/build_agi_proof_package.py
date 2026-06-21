@@ -255,6 +255,8 @@ def build_manifest() -> dict[str, Any]:
             "gateClaimRouter": "agent/claim_router.py",
             "gateGradedDecision": "agent/graded_decision.py",
             "gateActiveLearning": "agent/gate_feedback.py",
+            "gateTemporalVerifier": "agent/temporal_verifier.py",
+            "gateActiveLearningPromotion": "tools/promote_pending.py",
             "codeExecVerifier": "provenance_bench/code_exec.py",
             "codeReward": "provenance_bench/code_reward.py",
             "codeBenchmark": "benchmark/code_tasks.json",

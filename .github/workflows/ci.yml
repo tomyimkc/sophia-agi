@@ -139,6 +139,11 @@ jobs:
           python tests/test_claim_router.py
           python tests/test_graded_decision.py
           python tests/test_gate_feedback.py
+      - name: Temporal verifier + active-learning promotion loop
+        run: |
+          python tests/test_temporal_verifier.py
+          python tests/test_promote_pending.py
+          python tools/promote_pending.py
       - name: Code-uplift (execute-and-repair; interpreter-as-verifier)
         run: |
           python tests/test_code_uplift.py

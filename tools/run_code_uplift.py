@@ -85,7 +85,7 @@ def run(tasks: list, client, *, max_repairs: int) -> dict:
         alone_pass += int(alone_ok)
         sophia_pass += int(sophia["passed"])
         rows.append({
-            "id": task["id"], "aloneePassed": alone_ok,
+            "id": task["id"],
             "alone_passed": alone_ok, "alone_reason": first_result["reason"],
             "sophia_passed": sophia["passed"], "sophia_action": sophia["action"],
             "sophia_attempts": sophia["attempts"],

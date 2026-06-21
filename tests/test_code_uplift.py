@@ -8,9 +8,13 @@ interpreter-as-verifier wiring end to end.
 from __future__ import annotations
 
 import json
+import os
 import sys
 import tempfile
 from pathlib import Path
+
+# Execution is opt-in (default OFF for security); these tests need real execution.
+os.environ["SOPHIA_ALLOW_CODE_EXEC"] = "1"
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -72,6 +76,39 @@ def test_router_flags_syntax_error_passes_valid() -> None:
     bad = route_and_check(SYNTAX_ERR)
     assert not bad["passed"]
     assert any(c["type"] == "code" and not c["passed"] for c in bad["perClaim"])
+
+
+# --- code-review regression fixes ------------------------------------------ #
+
+
+def test_extract_code_rejects_prose() -> None:
+    # review fix: 'return'/'import' as English words must NOT count as code.
+    assert code_exec.extract_code("In return, we get a better answer.") == ""
+    assert code_exec.extract_code("I will import the data and analyze it.") == ""
+    # a real statement-shaped bare answer still extracts.
+    assert "def add" in code_exec.extract_code("def add(a, b):\n    return a + b")
+
+
+def test_exec_opt_in_default_off() -> None:
+    # review fix (CRITICAL): with exec unset, run_solution must NOT execute.
+    saved = os.environ.pop("SOPHIA_ALLOW_CODE_EXEC", None)
+    try:
+        r = code_exec.run_solution("def add(a,b):\n return a+b", "assert add(1,1)==2")
+        assert r["executed"] is False  # syntax-only, did not run untrusted code
+    finally:
+        if saved is not None:
+            os.environ["SOPHIA_ALLOW_CODE_EXEC"] = saved
+
+
+def test_router_ignores_non_python_fence_and_prose() -> None:
+    from agent.claim_router import route_and_check
+
+    # review fix (HIGH): a non-python fenced block must not be compiled as Python.
+    js = "Here is JS:\n```\nfunction foo(){return 1;}\n```"
+    assert route_and_check(js)["passed"] is True, route_and_check(js)
+    # prose containing 'import' must not trip the code route.
+    prose = "To solve this,\nimport the dataset into your tool.\nThen analyze it."
+    assert route_and_check(prose)["passed"] is True, route_and_check(prose)
 
 
 # --- benchmark dataset integrity ------------------------------------------- #

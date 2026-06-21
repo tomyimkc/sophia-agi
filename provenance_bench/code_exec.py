@@ -27,19 +27,30 @@ from typing import Any
 _FENCE = re.compile(r"```(?:python|py)?\s*\n(.*?)```", re.DOTALL | re.IGNORECASE)
 
 
+# A bare answer counts as code only if a LINE looks like a real Python statement —
+# `def`/`class`/`import`/`from ... import`/`@decorator` at line start. The old
+# heuristic matched the English words "return"/"import" anywhere, so ordinary prose
+# ("In return, we...") was treated as code and fed to the executor. Anchored,
+# multiline, statement-shaped only.
+_BARE_CODE = re.compile(r"^\s*(?:def\s+\w+\s*\(|class\s+\w+|import\s+\w+|from\s+\w+\s+import\s|@\w)", re.MULTILINE)
+
+
 def extract_code(text: str) -> str:
-    """Return the Python from a model answer: concatenated fenced blocks, else the
-    raw text (a model may answer with bare code). Deterministic."""
+    """Return the Python from a model answer: concatenated python-fenced blocks,
+    else the raw text only if it is statement-shaped. Deterministic. Prose that
+    merely contains the words 'return'/'import' is NOT treated as code."""
     blocks = _FENCE.findall(text or "")
     if blocks:
         return "\n\n".join(b.rstrip() for b in blocks)
-    # no fence — assume the whole answer is code if it looks like it
     t = (text or "").strip()
-    return t if re.search(r"\bdef\s+\w+\s*\(|\bclass\s+\w+|return\b|import\b", t) else ""
+    return t if _BARE_CODE.search(t) else ""
 
 
-def _exec_off() -> bool:
-    return os.environ.get("SOPHIA_ALLOW_CODE_EXEC", "1").strip() in ("0", "false", "no")
+def _exec_on() -> bool:
+    """Execution is OPT-IN: untrusted model code runs ONLY when SOPHIA_ALLOW_CODE_EXEC
+    is explicitly truthy. Default OFF -> syntax-only (the security default; running
+    arbitrary model output is not sandboxed, so it must never be the implicit path)."""
+    return os.environ.get("SOPHIA_ALLOW_CODE_EXEC", "0").strip().lower() in ("1", "true", "yes", "on")
 
 
 def run_solution(solution_code: str, test_code: str, *, timeout_sec: int = 15) -> dict:
@@ -55,26 +66,39 @@ def run_solution(solution_code: str, test_code: str, *, timeout_sec: int = 15) -
         return {"passed": False, "reason": "no code in answer", "executed": False}
 
     program = solution_code.rstrip() + "\n\n" + test_code.lstrip()
-    if _exec_off():
+    if not _exec_on():
         try:
             compile(program, "<sol>", "exec")
-            return {"passed": True, "reason": "syntax-only (exec disabled)", "executed": False}
+            return {"passed": True, "reason": "syntax-only (exec disabled; set SOPHIA_ALLOW_CODE_EXEC=1)", "executed": False}
         except SyntaxError as exc:
             return {"passed": False, "reason": f"syntax error: {exc}", "executed": False}
+
+    # SECURITY: this runs untrusted, model-generated code. It is NOT a real sandbox
+    # (no container/seccomp); it is opt-in (_exec_on), time-boxed, and runs in its
+    # own process GROUP so a timeout kills any grandchildren the code spawned. For
+    # untrusted models, run the whole harness inside a container/VM.
+    import signal
 
     with tempfile.TemporaryDirectory() as tmp:
         path = Path(tmp) / "prog.py"
         path.write_text(program, encoding="utf-8")
+        proc = subprocess.Popen(
+            [sys.executable, str(path)], cwd=tmp, text=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            start_new_session=True,  # own process group -> killpg on timeout
+        )
         try:
-            proc = subprocess.run(
-                [sys.executable, str(path)], cwd=tmp, text=True,
-                capture_output=True, timeout=timeout_sec, check=False,
-            )
+            out, err = proc.communicate(timeout=timeout_sec)
         except subprocess.TimeoutExpired:
+            try:
+                os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+            except (ProcessLookupError, PermissionError):
+                proc.kill()
+            proc.communicate()
             return {"passed": False, "reason": f"timed out after {timeout_sec}s", "executed": True}
     if proc.returncode == 0:
         return {"passed": True, "reason": "tests passed", "executed": True}
-    tail = (proc.stderr or proc.stdout or "").strip().splitlines()
+    tail = (err or out or "").strip().splitlines()
     return {"passed": False, "reason": (tail[-1] if tail else f"exit {proc.returncode}"), "executed": True}
 
 

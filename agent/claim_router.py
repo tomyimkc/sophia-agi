@@ -96,10 +96,12 @@ _LEGAL_CASE_RE = re.compile(r"[A-Z][a-z]+ v\.? [A-Z]")
 # the literal word "source".
 _CITATION_RE = re.compile(r"\[(?:local|web|source)?\s*\d+\]|\bsource\b", re.IGNORECASE)
 
-# Code: a fenced python block or a bare def/class/import. Code is inherently
-# multi-line, so it is checked on the WHOLE text in route_and_check (the per-claim
-# sentence split would shatter a code block); this regex is the detector.
-_CODE_RE = re.compile(r"```(?:python|py)?\s*\n|^\s*(?:def|class)\s+\w+|^\s*import\s+\w+", re.MULTILINE)
+# Code: an EXPLICITLY python-fenced block only. A bare ``` fence matches Markdown /
+# other-language code (JS would then fail a Python compile -> spurious violation),
+# and bare def/class/import lines match prose ("import the dataset..."), so we
+# require the language tag. Code is multi-line -> checked on the WHOLE text in
+# route_and_check (the per-claim sentence split would shatter a block).
+_CODE_RE = re.compile(r"```(?:python|py)\s*\n", re.IGNORECASE)
 
 
 def _has_legal(claim: str) -> bool:
@@ -167,6 +169,15 @@ def route_and_check(text: str, *, records: "dict | None" = None,
     # this the routed legal check is fail-closed and flags valid citations as forged.
     legal = _v.legal_citation_exists(resolver=legal_resolver)
     cite = _v.citation_faithful(sources) if sources else None
+    # Temporal impossibility (author died before the work existed) — a corpus-free
+    # check that catches misattributions outside any frozen record. Built lazily;
+    # a no-op when the author/work aren't in the dated-facts table.
+    try:
+        from agent.temporal_verifier import temporal_consistent
+
+        temporal = temporal_consistent()
+    except Exception:  # pragma: no cover - never let the optional layer break routing
+        temporal = None
 
     per_claim: list[dict] = []
     violations: list[str] = []
@@ -177,6 +188,13 @@ def route_and_check(text: str, *, records: "dict | None" = None,
             result = arith(claim, None, {})
         elif ctype == "authorship":
             result = prov(claim, None, {})
+            # also apply the corpus-free temporal-impossibility check
+            if temporal is not None:
+                tres = temporal(claim, None, {})
+                if not tres["passed"]:
+                    treasons = list(tres.get("reasons", []))
+                    per_claim.append({"claim": claim, "type": "temporal", "passed": False, "reasons": treasons})
+                    violations.extend(f"[temporal] {r}" for r in treasons)
         elif ctype == "legal":
             result = legal(claim, None, {})
         elif ctype == "citation":
@@ -209,9 +227,10 @@ def route_and_check(text: str, *, records: "dict | None" = None,
     # syntactically valid (the cheap, safe self-check; full test-execution against a
     # hidden test is the code-uplift benchmark's job, not the free-text gate).
     if _CODE_RE.search(text or ""):
-        from provenance_bench.code_exec import extract_code
-
-        code = extract_code(text)
+        # Only the EXPLICITLY python-tagged blocks (not a language-agnostic extract),
+        # so a JS/other block elsewhere in the answer can't be compiled as Python.
+        py_blocks = re.findall(r"```(?:python|py)\s*\n(.*?)```", text or "", re.DOTALL | re.IGNORECASE)
+        code = "\n\n".join(b.rstrip() for b in py_blocks)
         if code.strip():
             try:
                 compile(code, "<answer>", "exec")
