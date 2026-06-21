@@ -130,10 +130,10 @@ def render_footer() -> str:
     )
 
 
-def build(out_dir: Path) -> int:
-    pages = okf_page.load_pages(WIKI_DIR)
+def build(out_dir: Path, wiki_dir: Path = WIKI_DIR) -> int:
+    pages = okf_page.load_pages(wiki_dir)
     if not pages:
-        print(f"no OKF pages under {WIKI_DIR}", file=sys.stderr)
+        print(f"no OKF pages under {wiki_dir}", file=sys.stderr)
         return 1
 
     if out_dir.exists():
@@ -166,8 +166,13 @@ def build(out_dir: Path) -> int:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out", default=str(ROOT / "_wiki_build"), help="output directory")
+    ap.add_argument(
+        "--wiki-dir",
+        default=str(WIKI_DIR),
+        help="source OKF pages dir (point at a main-branch checkout to publish main)",
+    )
     args = ap.parse_args()
-    return build(Path(args.out))
+    return build(Path(args.out), Path(args.wiki_dir))
 
 
 if __name__ == "__main__":

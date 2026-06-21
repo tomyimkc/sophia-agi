@@ -6,14 +6,11 @@ name: Deploy thesis site
 on:
   push:
     branches: [main]
-    paths:
-      - "web/**"
-      - "agi-proof/**"
-      - "tools/build_agi_proof_package.py"
-      - "tools/build_web_data.py"
-      - "benchmark/results/**"
-      - "VERSION"
-      - ".github/workflows/pages.yml"
+    # No path filter on purpose. build_web_data.py / build_agi_proof_package.py read
+    # from many inputs — models/, training/examples/, tests/benchmark-*.json, rag/index,
+    # benchmark/, agi-proof/, VERSION — and an explicit list silently goes stale whenever
+    # a new input is added. The build is ~10s, so rebuilding on every push to main is the
+    # robust choice: the site can never drift from main.
   workflow_dispatch:
 
 permissions:
@@ -37,9 +34,16 @@ jobs:
           python tools/build_web_data.py
       - name: Add .nojekyll for GitHub Pages
         run: touch web/.nojekyll
+      - name: Read site version
+        id: ver
+        run: echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./web
-          force_orphan: true
+          # No force_orphan: keep the gh-pages history so every published version of the
+          # thesis site is its own traceable commit — version control for the deployed page.
+          full_commit_message: "deploy thesis site v${{ steps.ver.outputs.version }} (${{ github.sha }})"
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
