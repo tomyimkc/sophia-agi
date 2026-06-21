@@ -154,7 +154,7 @@ def check_response(
         try:
             from agent.claim_router import route_and_check
 
-            routed = route_and_check(text, records=None, sources=sources)
+            routed = route_and_check(text, records=None, sources=sources, legal_resolver=legal_resolver)
             checks.extend({"name": "routed", **c} for c in routed.get("perClaim", []))
             violations.extend(routed.get("violations") or [])
         except Exception:

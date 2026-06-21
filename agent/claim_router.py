@@ -45,15 +45,24 @@ _CLAUSE_SPLIT = re.compile(
 def split_claims(text: str) -> list[str]:
     """Split an answer into atomic claim strings.
 
-    Sentence split (terminal punctuation / newlines) followed by a light clause
-    split on coordinating connectors, so a compound sentence yields one claim per
-    independent assertion. Whitespace-normalized; empty fragments dropped. Stdlib
-    only, deterministic.
+    Sentence split (terminal punctuation / newlines), then a light clause split on
+    coordinating connectors — BUT only for sentences that are NOT authorship/legal
+    assertions. Authorship and legal sentences are kept whole: clause-splitting on
+    " and " would shatter multi-word titles ("Beyond Good and Evil" -> "Beyond
+    Good") and sever a corrective carve-out ("it is a myth, and X wrote Y") from its
+    assertion — both produce wrong verdicts. The provenance/legal verifiers do their
+    own sentence-internal clause handling, so they need the full sentence. Clause
+    splitting is reserved for arithmetic-style independent assertions. Whitespace-
+    normalized; empty fragments dropped. Stdlib only, deterministic.
     """
     claims: list[str] = []
     for sentence in _SENT_SPLIT.split(text or ""):
-        sentence = sentence.strip()
+        sentence = re.sub(r"\s+", " ", sentence).strip()
         if not sentence:
+            continue
+        # Keep authorship/legal sentences whole (carve-outs + multi-word titles).
+        if _AUTHORSHIP_RE.search(sentence) or _has_legal(sentence):
+            claims.append(sentence.strip(" \t\r\n,.!?。！？"))
             continue
         for clause in _CLAUSE_SPLIT.split(sentence):
             clause = re.sub(r"\s+", " ", clause).strip(" \t\r\n,.!?。！？")
@@ -126,7 +135,8 @@ def classify_claim(claim: str) -> str:
 
 
 def route_and_check(text: str, *, records: "dict | None" = None,
-                    sources: "list[str] | None" = None) -> dict:
+                    sources: "list[str] | None" = None,
+                    legal_resolver=None) -> dict:
     """Split, classify, and run the MATCHING verifier per atomic claim.
 
     Routing (each runs the existing verifier from :mod:`agent.verifiers`):
@@ -147,7 +157,10 @@ def route_and_check(text: str, *, records: "dict | None" = None,
     # cheap to construct; citation depends on sources and is built only if needed.
     arith = _v.arithmetic_sound()
     prov = _v.provenance_faithful(records)
-    legal = _v.legal_citation_exists()
+    # Pass the operator's resolver so a real citation absent from the bundled static
+    # register gets its second-chance lookup (mirrors agent.gate._legal_gate). Without
+    # this the routed legal check is fail-closed and flags valid citations as forged.
+    legal = _v.legal_citation_exists(resolver=legal_resolver)
     cite = _v.citation_faithful(sources) if sources else None
 
     per_claim: list[dict] = []
@@ -174,6 +187,17 @@ def route_and_check(text: str, *, records: "dict | None" = None,
         per_claim.append({"claim": claim, "type": ctype, "passed": passed, "reasons": reasons})
         if not passed:
             violations.extend(f"[{ctype}] {r}" for r in reasons)
+
+        # Arithmetic is self-contained (a OP b = c), so also check it on a claim
+        # whose PRIMARY type isn't arithmetic — e.g. an authorship sentence kept
+        # whole that also bundles a false equality ("X wrote Y and 2 + 2 = 5").
+        # No-op when the claim has no equality.
+        if ctype != "arithmetic" and _ARITH_RE.search(claim):
+            ares = arith(claim, None, {})
+            if not ares["passed"]:
+                areasons = list(ares.get("reasons", []))
+                per_claim.append({"claim": claim, "type": "arithmetic", "passed": False, "reasons": areasons})
+                violations.extend(f"[arithmetic] {r}" for r in areasons)
 
     return {
         "passed": not violations,

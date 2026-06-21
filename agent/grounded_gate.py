@@ -88,6 +88,33 @@ def _snapshot_index(snapshot: dict) -> dict:
     return index
 
 
+def _known_authors(snapshot: dict) -> set:
+    """Normalized set of every author the ground-truth sources recognize as a
+    distinct documented person (snapshot gold authors). Used to disambiguate: we
+    synthesize a forbidden record ONLY when the claimed author is itself a
+    recognized, distinct entity — so a correct PEN NAME / real name ("Mary Ann
+    Evans" for George Eliot, "François-Marie Arouet" for Voltaire) that is NOT a
+    known separate author yields nothing (treated as "cannot confirm"), instead of
+    being wrongly flagged. This is the conservative guard the cardinal "never break
+    a correct answer" rule demands."""
+    known: set = set()
+    try:
+        from agent.entity_aliases import author_surface_forms
+    except Exception:  # pragma: no cover
+        author_surface_forms = None
+    for row in snapshot.get("attributions", []):
+        g = row.get("gold_author")
+        if not g or _AMBIGUOUS_GOLD.search(g):
+            continue
+        known.add(_norm_name(g))
+        # also index surname/ordering forms so a claim using only the surname
+        # ("Hume" for "David Hume") still resolves as a recognized author.
+        if author_surface_forms is not None:
+            for form in author_surface_forms(g):
+                known.add(_norm_name(form))
+    return known
+
+
 def resolve_true_author(
     work: str,
     *,
@@ -205,11 +232,14 @@ def synth_records_for_claim(
     additions: dict[str, dict] = {}
     if not text or not text.strip():
         return additions
+    base_records = base_records or {}
+    # Recognized distinct authors, for the pen-name/variant disambiguation guard.
+    known_authors = _known_authors(_load_snapshot(snapshot))
 
     # Existing coverage: by record id AND by every known title/alt-title form, so
     # we never duplicate a base record under a slightly different surface form.
     covered_titles: set[str] = set()
-    for rid, rec in (base_records or {}).items():
+    for rid, rec in base_records.items():
         covered_titles.add(_norm_work(rid.replace("_", " ")))
         for t in (
             rec.get("canonicalTitleEn"),
@@ -243,6 +273,13 @@ def synth_records_for_claim(
             continue
         # Share a surname token? Treat as the same person, conservatively.
         if set(nclaimed.split()) & set(ntrue.split()):
+            continue
+        # Disambiguation guard (cardinal rule: never break a correct answer): only
+        # synthesize when the claimed author is itself a RECOGNIZED distinct person.
+        # An unrecognized claimed name might be a pen name / real name / variant of
+        # the true author (e.g. "Mary Ann Evans" = George Eliot), so we refuse to
+        # flag it — "cannot confirm a different author" -> synthesize nothing.
+        if nclaimed not in known_authors:
             continue
 
         additions[rid] = _record_for(work, claimed_author)

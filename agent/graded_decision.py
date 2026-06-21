@@ -64,6 +64,8 @@ def decide(
         when ``< lo`` (a low-confidence pass is suspicious — the gate may have
         missed something).
     """
+    if confidence is None:
+        raise ValueError("confidence must be a number in [0,1], got None")
     c = float(confidence)
     if not (0.0 <= c <= 1.0):
         raise ValueError(f"confidence must be in [0,1], got {confidence!r}")

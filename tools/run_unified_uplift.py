@@ -63,21 +63,26 @@ def _judg(j) -> dict:
     return out
 
 
-def _lever_text(lever: str, case, client, *, records, plain_text: str) -> tuple[str, dict]:
-    """Return (answer_text, meta) for one lever. `plain_text` is the shared alone pass."""
+def _lever_text(lever: str, case, client, *, records, plain_text: str, grounded: bool = False) -> tuple[str, dict]:
+    """Return (answer_text, meta) for one lever. `plain_text` is the shared alone pass.
+
+    ``grounded`` routes the +gate lever through the upgraded gate (retrieval-grounded
+    record synthesis for out-of-corpus works); alias resolution is always-on in the
+    gate itself, so it applies regardless.
+    """
     if lever == "alone":
         return plain_text, {}
 
     if lever == "+gate":
         from agent.guarded import _cited_abstention, _repair_prompt, check_claim
 
-        verdict = check_claim(plain_text, records=records)
+        verdict = check_claim(plain_text, records=records, ground=grounded)
         if verdict["passed"]:
             return plain_text, {"action": "clean"}
         violations = verdict["violations"]
         rep = client.generate(NEUTRAL_SYSTEM, _repair_prompt(case.prompt, "", plain_text, violations))
         rep_text = (getattr(rep, "text", "") or "")
-        if getattr(rep, "ok", True) and check_claim(rep_text, records=records)["passed"]:
+        if getattr(rep, "ok", True) and check_claim(rep_text, records=records, ground=grounded)["passed"]:
             return rep_text, {"action": "repaired"}
         return _cited_abstention(case.prompt, "", violations), {"action": "abstained"}
 
@@ -99,7 +104,7 @@ def _lever_text(lever: str, case, client, *, records, plain_text: str) -> tuple[
     raise ValueError(f"unknown lever {lever}")
 
 
-def run_once(cases, client, *, records, levers, llm_judge_fn=None) -> dict:
+def run_once(cases, client, *, records, levers, llm_judge_fn=None, grounded=False) -> dict:
     """One pass over all cases; returns {lever: [result rows shaped for aggregate]}."""
     per_lever: dict[str, list] = {lev: [] for lev in levers}
     for case in cases:
@@ -109,7 +114,7 @@ def run_once(cases, client, *, records, levers, llm_judge_fn=None) -> dict:
         raw_judg = _judg(raw_j)
         for lev in levers:
             try:
-                text, meta = _lever_text(lev, case, client, records=records, plain_text=plain_text)
+                text, meta = _lever_text(lev, case, client, records=records, plain_text=plain_text, grounded=grounded)
             except Exception as exc:  # a lever failing on one case must not abort
                 text, meta = plain_text, {"error": f"{type(exc).__name__}: {exc}"}
             gated_j = raw_judg if lev == "alone" else _judg(judge_answer(text, case, llm_judge_fn=llm_judge_fn))
@@ -131,6 +136,8 @@ def main(argv: "list[str] | None" = None) -> int:
     ap.add_argument("--runs", type=int, default=1, help=">=3 for a validated number")
     ap.add_argument("--limit", type=int, default=0, help="cap cases (0 = all)")
     ap.add_argument("--levers", default=",".join(LEVERS), help="comma subset of levers to run")
+    ap.add_argument("--grounded", action="store_true",
+                    help="route +gate through the upgraded retrieval-grounded gate (catches out-of-corpus works)")
     ap.add_argument("--out", type=Path, default=OUT_JSON)
     args = ap.parse_args(argv)
 
@@ -155,7 +162,7 @@ def main(argv: "list[str] | None" = None) -> int:
     # collect runs per lever
     runs_per_lever: dict[str, list] = {lev: [] for lev in levers}
     for r in range(max(1, args.runs)):
-        one = run_once(cases, client, records=records, levers=levers, llm_judge_fn=llm_judge_fn)
+        one = run_once(cases, client, records=records, levers=levers, llm_judge_fn=llm_judge_fn, grounded=args.grounded)
         for lev in levers:
             runs_per_lever[lev].append(one[lev])
         print(f"run {r + 1}/{args.runs} done ({len(cases)} cases x {len(levers)} levers)", flush=True)
@@ -173,6 +180,7 @@ def main(argv: "list[str] | None" = None) -> int:
     report = {
         "benchmark": "unified-uplift",
         "model": args.model,
+        "grounded": args.grounded,
         "visibility": "public-aggregate",
         "runs": args.runs,
         "cases": len(cases),

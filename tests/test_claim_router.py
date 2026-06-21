@@ -16,9 +16,17 @@ from agent import claim_router as cr  # noqa: E402
 def test_split_claims() -> None:
     claims = cr.split_claims("Plato wrote the Republic. 2 + 2 = 5. The sky is blue.")
     assert claims == ["Plato wrote the Republic", "2 + 2 = 5", "The sky is blue"], claims
-    # compound sentence splits on a coordinating connector
+    # an authorship sentence is kept WHOLE (so multi-word titles like "Beyond Good
+    # and Evil" and corrective carve-outs are not shattered by the " and " split);
+    # a bundled false equality is still caught by route_and_check's arithmetic pass.
     compound = cr.split_claims("Plato wrote the Republic and 2 + 2 = 5.")
-    assert "Plato wrote the Republic" in compound and "2 + 2 = 5" in compound, compound
+    assert compound == ["Plato wrote the Republic and 2 + 2 = 5"], compound
+    routed = cr.route_and_check("Plato wrote the Republic and 2 + 2 = 5.")
+    assert not routed["passed"], routed  # the false equality is still caught
+    assert any(c["type"] == "arithmetic" and not c["passed"] for c in routed["perClaim"]), routed
+    # a NON-authorship compound still splits on coordinating connectors
+    arr = cr.split_claims("The sky is blue and the grass is green.")
+    assert "The sky is blue" in arr and "the grass is green" in arr, arr
     # empty / whitespace yields nothing
     assert cr.split_claims("   \n  ") == []
 
