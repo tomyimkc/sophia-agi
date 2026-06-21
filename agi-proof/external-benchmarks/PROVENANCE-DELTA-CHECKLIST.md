@@ -42,8 +42,13 @@ Legend: `[ ]` to do · `[~]` partially in place · `[x]` done by the implementat
 - [x] **Run each model ≥3 times** (temperature > 0) and report variance —
       `--runs 3` records per-run deltas. Still: bump runs for stability.
 - [x] **Independent LLM-judge** — `--llm-judge <spec>` (judge ≠ subject), e.g.
-      `--llm-judge deepseek`. Still: **add a SECOND judge** and report inter-judge
-      agreement as your error bar.
+      `--llm-judge deepseek`.
+- [~] **Inter-judge agreement (CRITICAL — partially done, key open item).** A
+      Claude audit panel re-judged the DeepSeek verdicts: **76% agreement**, with
+      DeepSeek over-counting (10 false positives) — the validated alone-rate was
+      **21.7%, not 41.3%**. Lesson: a single LLM-judge is unreliable; the headline
+      needs a **≥2-judge consensus over BOTH the alone and gated arms**, reporting
+      agreement. Wire a consensus judge (majority of N) into `aggregate.py` next.
 - [ ] **Pre-register** the protocol and thresholds in
       `agi-proof/preregistered-thresholds.md` *before* the run you'll cite.
 
@@ -74,7 +79,15 @@ tests*, without lowering precision (verify the dispute pages still pass):
       "the prophet Daniel"/"King David" to a salient marker.
 - [x] **Title aliases** — records accept `altTitlesEn`; `build_gate_records`
       derives short forms ("Book of Daniel" → "Daniel", interior-"the" collapse).
-- [ ] Still TODO: fold these alt-title/marker helpers into the seeded
+- [x] **Appositive / parenthetical between author and verb** — "Enoch, the
+      great-grandson of Adam, wrote …", "Lie Yukou (also known as Liezi) wrote …".
+      Added a bounded, contrast-free `app` slot; independently verified **0 false
+      positives on all 41 true controls** and dispute-lint still 0.
+- [ ] **Accepted limitation (precision-first):** a *bare* "X is traditionally
+      attributed as the author of Y" with the doubt only in the *next* sentence is
+      left uncaught — narrowing the `traditionally` carve-out risked false
+      positives on legitimately-hedged text, so we kept the conservative behavior.
+- [ ] Still TODO: fold these alt-title/marker/appositive helpers into the seeded
       `data/*.json` corpus so the *production* gate (not just the benchmark) gets
       the wider coverage, with precision re-verified against the dispute pages.
 

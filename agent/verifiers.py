@@ -217,6 +217,15 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
     attr_p = r"(?:written|authored|penned|composed)"      # passive participle
     # Bounded honorific/article lead-in to a name ("to the prophet Daniel").
     nm = r"(?:(?:the|a|an|prophet|apostle|king|saint|st\.?|emperor|biblical|tyrant)\s+){0,3}"
+    # Optional bounded appositive/parenthetical between an author and the verb:
+    #   "Enoch, the great-grandson of Adam, wrote ...", "Lie Yukou (also known as
+    #   Liezi) wrote ...". Length/punctuation-bounded and contrast-free (no "not"/
+    #   "but") so it never bridges a correction.
+    app = (
+        r"(?:\s*\([^)]{0,50}\)"                                        # ( ... )
+        r"|\s*,(?:(?!,|\bnot\b|\bbut\b)[^.;]){1,60},"                  # , ... ,
+        r"|\s+(?:the|a|an)\s+(?!not\b|but\b)(?:[\w'’-]+\s+){1,5})?"    # the X of Y
+    )
     # Skip non-assertions: instructions ("do not attribute X to Y"), reported/hedged
     # speech ("summaries say ...", "often said"), scare-quoted verbs ("wrote"), and
     # scholarly hedges that *correctly* flag a traditional/spurious attribution.
@@ -255,9 +264,9 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
             # ("Plato wrote Republic — not Socrates") or a possessive of a different
             # noun ("from Epictetus's teachings") does not cross-match.
             patterns = [
-                re.compile(a + r"\s+" + attr + r"\s+" + the_q + t),                                      # X wrote (the) "Y"
+                re.compile(a + app + r"\s*" + attr + r"\s+" + the_q + t),                                # X (the …) wrote (the) "Y"
                 re.compile(a + r"(?:\s+(?:is|was|being))?\s+" + the + r"(?:author|writer|composer)\s+of\s+" + the_q + t),  # X is the author of Y
-                re.compile(a + r"\s+(?:is|was)\s+credited\s+with\s+\w+ing\s+" + the_q + t),              # X is credited with writing Y
+                re.compile(a + app + r"\s*(?:is|was)\s+credited\s+with\s+\w+ing\s+" + the_q + t),        # X (the …) is credited with writing Y
                 re.compile(a + r"['’]s\s+" + the_q + t),                                                 # X's (the) Y
                 re.compile(t + r"(?:\s*,)?(?:\s+(?:was|is|were|been))?\s+(?:" + attr_p + r"|attributed)\s+by\s+" + nm + a),  # Y (was) written by X
                 re.compile(t + r"(?:\s*,)?\s+(?:is|was|are|were|been|being)?\s*attributed\s+to\s+" + nm + a),  # Y is attributed to (the prophet) X

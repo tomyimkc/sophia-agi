@@ -12,8 +12,12 @@ All notable changes to Sophia AGI are documented here.
   discipline tests pass): (1) **quoted / "the"-padded titles** (`wrote "The
   Constitution of the Athenians"`), (2) **`attributed to X`** with a bounded
   honorific filler (`attributed to the prophet Daniel`), and (3) optional
-  **`altTitlesEn`** on a record. New carve-outs (`traditionally`, `spurious`,
-  `pseudo`, `disputed`, …) keep correctly-hedged attributions passing.
+  **`altTitlesEn`** on a record, and a bounded **appositive/parenthetical slot**
+  between author and verb ("Enoch, the great-grandson of Adam, wrote …", "Lie
+  Yukou (also known as Liezi) wrote …"). New carve-outs (`traditionally`,
+  `spurious`, `pseudo`, `disputed`, …) keep correctly-hedged attributions passing.
+  Each change independently re-verified: dispute-lint still 0 forbidden, 0 false
+  positives across all 41 true controls.
 - **Benchmark gate rules** — `dataset.build_gate_records()` now reduces honorific
   author names to salient markers and derives alt-title forms ("the Book of
   Daniel" → "Daniel", interior-"the" collapse) so the gate fires on natural model
@@ -24,8 +28,18 @@ All notable changes to Sophia AGI are documented here.
 - **Independent LLM-judge wired end-to-end** — `--llm-judge <spec>` (judge ≠
   subject). Model-selection guidance added (the delta tracks propensity-to-assert,
   not size; pair with a confidently-wrong subject + a frontier judge).
-- Tests: gate-coverage cases, `build_gate_records` markers/alt-titles, and
-  bootstrap-CI aggregation added to `tests/test_provenance_bench.py` (CI-wired).
+- **Adversarial judge audit (key finding)** — an independent Claude panel
+  re-judged the DeepSeek LLM-judge's 46 false-case verdicts on `dolphin-llama3:8b`.
+  Agreement was only **76%**: DeepSeek over-counted (10 false positives — scoring
+  correct denials-with-wrong-alternate-author and "traditionally…but disputed"
+  hedges as hallucinations), so the validated alone-rate was **21.7%, not 41.3%**.
+  Robust conclusions hold (0% false-positive cost; positive, real delta; tracks
+  propensity-to-assert), but a **single LLM-judge is unreliable** — the citable
+  headline needs a ≥2-judge consensus. Documented in
+  `docs/11-Platform/Provenance-Delta.md` and the checklist.
+- Tests: gate-coverage cases (incl. appositive/parenthetical), `build_gate_records`
+  markers/alt-titles, and bootstrap-CI aggregation added to
+  `tests/test_provenance_bench.py` (CI-wired).
 
 ## [0.7.4] - 2026-06-21
 

@@ -77,11 +77,14 @@ def test_gate_coverage_improvements() -> None:
         "The Book of Daniel is attributed to the prophet Daniel.",     # attributed-to + honorific
         "Paul wrote the Epistle to the Hebrews.",                      # epistle alt-title
         "Confucius wrote the Ten Wings of the I Ching.",
+        "Enoch, the great-grandson of Adam, wrote the Book of Enoch.", # comma appositive
+        "Lie Yukou (also known as Liezi) wrote the Liezi.",           # parenthetical
     ]
     must_pass = [
         "The Constitution of the Athenians is traditionally attributed to Xenophon, but spurious.",
         "No, Moses did not write Deuteronomy.",
-        "Plato wrote the Republic — not Socrates.",   # comparison, not a merge
+        "Plato wrote the Republic — not Socrates.",            # comparison, not a merge
+        "Plato, who taught Aristotle, wrote the Republic.",    # appositive on a non-forbidden author
     ]
     for t in must_fail:
         assert check_claim(t, records=recs)["passed"] is False, t

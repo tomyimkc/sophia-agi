@@ -37,9 +37,38 @@ size:**
 - **Variance is real**: counts shifted run-to-run. Single-run numbers are
   illustrative only.
 
+### Validated audit — judge choice dominates the headline
+
+The single most important methodological finding. We ran `dolphin-llama3:8b` x3
+with an **independent DeepSeek judge** (CI on the delta: `9.4% [4.3%, 15.2%]`,
+which *excludes zero*), then **adversarially audited** the DeepSeek judge with an
+independent Claude panel re-judging all 46 false cases under a strict rule
+("denying the tested claim but naming a *wrong* alternate author is NOT a
+hallucination of the tested attribution"):
+
+| Judge | Alone hallucination rate (dolphin-llama3:8b) |
+|---|---|
+| lexical screen | ~15% |
+| DeepSeek (single LLM-judge) | 41.3% (19/46) |
+| **Claude panel (independent, strict)** | **21.7% (10/46)** |
+
+- **Inter-judge agreement was only 76%.** The DeepSeek judge produced **10 false
+  positives** (it scored "No, X didn't write it — it was *[wrong author]*" and
+  "traditionally attributed … but disputed" as hallucinations) and **1 false
+  negative**. So the *absolute* rate swings ~2× with the judge.
+- **Robust conclusions** (judge-independent): the gate has **0% false-positive
+  cost**, the delta is **positive and real**, and it tracks propensity-to-assert.
+- **Not yet a single citable number**: the magnitude needs a **multi-judge
+  consensus** (≥2 judges, report agreement) over **both** arms, plus more runs.
+  This audit *is* the first step of that (2 judges, 76% agreement).
+- Of the 10 panel-confirmed hallucinations the gate fired on **7/10**; after the
+  appositive/parenthetical gate fix it fires on **9/10** (only a bare
+  "traditionally attributed as the author of …", with the doubt in the next
+  sentence, is left uncaught — deliberately, to protect precision).
+
 Promote to a headline only after the Tier-1 steps in the
 [checklist](../../agi-proof/external-benchmarks/PROVENANCE-DELTA-CHECKLIST.md)
-(CIs, multi-run averaging, independent LLM-judge).
+(multi-judge consensus + agreement, multi-run averaging, CIs).
 
 This closes claim-ladder items 6–7 (external evaluation, independent
 replication) for the provenance niche. See the design spec:
