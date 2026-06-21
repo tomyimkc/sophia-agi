@@ -2,6 +2,32 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.34] - 2026-06-22
+
+### Added — code-uplift: interpreter-as-verifier (the strongest verifiable signal)
+
+Extends the verifier-gated thesis to CODE, where correctness is objective and
+ungameable: a program either passes its tests or it doesn't. No judge.
+
+- **`provenance_bench/code_exec.py`**: runs a model solution + a HIDDEN canonical
+  test in a sandboxed temp dir; pass iff exit 0. Timeout-guarded, gated by
+  `SOPHIA_ALLOW_CODE_EXEC`, never touches the repo tree.
+- **`benchmark/code_tasks.json`**: 20 self-contained Python tasks (HumanEval/MBPP
+  style) with hidden asserts; all 20 verified against reference solutions.
+- **`provenance_bench/code_reward.py`**: code RLVR reward (+1 tests pass / -1 fail),
+  the code analogue of `rl_reward` — the ideal GRPO signal (DeepSeek-R1 code RL).
+  TRL-compatible `make_grpo_reward` routed by a `test` dataset column.
+- **`agent/claim_router.py`**: new `code` claim type — a fenced/bare Python block in
+  an answer is syntax-checked on the whole text (per-claim split would shatter it).
+- **`tools/run_code_uplift.py`**: the benchmark — a LOCAL model writes code; `alone`
+  runs the hidden test once (pass@1), `+sophia` feeds the execution error back and
+  lets the model REPAIR (re-running tests) up to `--max-repairs`. Reports pass@1
+  alone vs after repair + delta. Runs fully on-device via Ollama (model generates,
+  Sophia executes); offline mock path for CI.
+
+Tests: `test_code_uplift.py`; CI wired. Honest scope: a measured coding-reliability
+uplift on a local model, not AGI; single-model runs are illustrative.
+
 ## [0.7.32] - 2026-06-22
 
 ### Improved — five core gate-logic upgrades (generality, recall, calibration, learning)

@@ -1,0 +1,193 @@
+{
+  "n": 20,
+  "alonePass1": 0.9,
+  "sophiaPass1": 0.95,
+  "delta": 0.05,
+  "rows": [
+    {
+      "id": "is-palindrome",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "count-vowels",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "fizzbuzz-list",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "title-case",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "dedupe-preserve-order",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "reverse-words",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "sum-of-digits",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "two-sum",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "word-frequency",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "merge-sorted-lists",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "gcd",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "binary-search",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "roman-to-int",
+      "aloneePassed": false,
+      "alone_passed": false,
+      "alone_reason": "no code in answer",
+      "sophia_passed": true,
+      "sophia_action": "repaired",
+      "sophia_attempts": 2
+    },
+    {
+      "id": "longest-common-prefix",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "valid-parentheses",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "group-anagrams",
+      "aloneePassed": false,
+      "alone_passed": false,
+      "alone_reason": "no code in answer",
+      "sophia_passed": false,
+      "sophia_action": "failed",
+      "sophia_attempts": 3
+    },
+    {
+      "id": "max-subarray-sum",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "fibonacci-memoized",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "climb-stairs",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    },
+    {
+      "id": "flatten-nested-list",
+      "aloneePassed": true,
+      "alone_passed": true,
+      "alone_reason": "tests passed",
+      "sophia_passed": true,
+      "sophia_action": "clean",
+      "sophia_attempts": 1
+    }
+  ],
+  "benchmark": "code-uplift",
+  "model": "ollama:qwen3:30b-a3b",
+  "maxRepairs": 2,
+  "scoring": "deterministic: solution executed against hidden canonical tests (pass@1).",
+  "note": "Sophia = execute-test-and-repair loop with code_exec as the verifier. Single-model run is illustrative; not AGI, a measured coding-reliability uplift on a local model."
+}

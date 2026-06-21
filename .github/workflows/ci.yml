@@ -139,6 +139,10 @@ jobs:
           python tests/test_claim_router.py
           python tests/test_graded_decision.py
           python tests/test_gate_feedback.py
+      - name: Code-uplift (execute-and-repair; interpreter-as-verifier)
+        run: |
+          python tests/test_code_uplift.py
+          python tools/run_code_uplift.py --model mock --limit 3
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

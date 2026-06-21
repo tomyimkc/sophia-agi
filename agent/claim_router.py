@@ -96,6 +96,11 @@ _LEGAL_CASE_RE = re.compile(r"[A-Z][a-z]+ v\.? [A-Z]")
 # the literal word "source".
 _CITATION_RE = re.compile(r"\[(?:local|web|source)?\s*\d+\]|\bsource\b", re.IGNORECASE)
 
+# Code: a fenced python block or a bare def/class/import. Code is inherently
+# multi-line, so it is checked on the WHOLE text in route_and_check (the per-claim
+# sentence split would shatter a code block); this regex is the detector.
+_CODE_RE = re.compile(r"```(?:python|py)?\s*\n|^\s*(?:def|class)\s+\w+|^\s*import\s+\w+", re.MULTILINE)
+
 
 def _has_legal(claim: str) -> bool:
     if _LEGAL_HOLDING_RE.search(claim) or _LEGAL_CASE_RE.search(claim):
@@ -198,6 +203,23 @@ def route_and_check(text: str, *, records: "dict | None" = None,
                 areasons = list(ares.get("reasons", []))
                 per_claim.append({"claim": claim, "type": "arithmetic", "passed": False, "reasons": areasons})
                 violations.extend(f"[arithmetic] {r}" for r in areasons)
+
+    # Code is multi-line — check the WHOLE text once (the per-claim sentence split
+    # would shatter a code block). A fenced/bare Python block must at least be
+    # syntactically valid (the cheap, safe self-check; full test-execution against a
+    # hidden test is the code-uplift benchmark's job, not the free-text gate).
+    if _CODE_RE.search(text or ""):
+        from provenance_bench.code_exec import extract_code
+
+        code = extract_code(text)
+        if code.strip():
+            try:
+                compile(code, "<answer>", "exec")
+                per_claim.append({"claim": "<code block>", "type": "code", "passed": True, "reasons": []})
+            except SyntaxError as exc:
+                per_claim.append({"claim": "<code block>", "type": "code", "passed": False,
+                                  "reasons": [f"python syntax error: {exc}"]})
+                violations.append(f"[code] python syntax error: {exc}")
 
     return {
         "passed": not violations,
