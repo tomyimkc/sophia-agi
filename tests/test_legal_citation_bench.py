@@ -42,3 +42,16 @@ def test_published_results_match_runner() -> None:
     assert row["n"] == result["n"]
     assert row["accuracy"] == result["accuracy"]
     assert row["confusion"] == result["confusion"]
+
+
+def main() -> int:
+    import inspect
+    for nm, fn in sorted(globals().items()):
+        if nm.startswith("test_") and inspect.isfunction(fn):
+            fn()
+    print("test_legal_citation_bench: OK")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

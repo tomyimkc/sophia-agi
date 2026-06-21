@@ -78,3 +78,16 @@ def test_benchmark_cases_match_expectations() -> None:
     for case in bench["cases"]:
         got = ver(case["answer"], None, {})["passed"]
         assert got is case["expectPass"], f"{case['id']}: expected {case['expectPass']}, got {got}"
+
+
+def main() -> int:
+    import inspect
+    for nm, fn in sorted(globals().items()):
+        if nm.startswith("test_") and inspect.isfunction(fn):
+            fn()
+    print("test_legal_citation: OK")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

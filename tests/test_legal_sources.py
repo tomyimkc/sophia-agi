@@ -8,6 +8,7 @@ No test touches the real network: every source/resolver is driven by a fake
 from __future__ import annotations
 
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,6 +32,11 @@ def make_fetch(responses: dict, *, default=(404, "")):
         return default
 
     return _fetch
+
+
+def _tmp(tmp_path=None):
+    """A temp dir under pytest (fixture) or as a plain script (mkdtemp)."""
+    return Path(tmp_path) if tmp_path else Path(tempfile.mkdtemp())
 
 
 # --------------------------- source-level behavior --------------------------- #
@@ -73,7 +79,8 @@ def test_hklii_requires_full_citation_not_just_year() -> None:
 
 # ------------------------------ cache behavior ------------------------------ #
 
-def test_cache_roundtrip_and_miss(tmp_path) -> None:
+def test_cache_roundtrip_and_miss(tmp_path=None) -> None:
+    tmp_path = _tmp(tmp_path)
     cache = ResolutionCache(path=tmp_path / "c.json")
     assert cache.get("[2025] HKCFI 808") is None  # fail-closed miss
     src = HKLIISource(base="https://example.test")
@@ -87,14 +94,16 @@ def test_cache_roundtrip_and_miss(tmp_path) -> None:
 
 # ----------------------------- registry routing ----------------------------- #
 
-def test_registry_cache_mode_is_offline(tmp_path) -> None:
+def test_registry_cache_mode_is_offline(tmp_path=None) -> None:
+    tmp_path = _tmp(tmp_path)
     r = LegalResolver(mode="cache", cache=ResolutionCache(path=tmp_path / "c.json"),
                       fetch=make_fetch({"search": (200, "[2025] HKCFI 808")}))
     out = r.resolve("[2025] HKCFI 808")
     assert out.verified is False and out.status == "offline"  # cache miss, no network
 
 
-def test_registry_live_mode_resolves_and_caches(tmp_path) -> None:
+def test_registry_live_mode_resolves_and_caches(tmp_path=None) -> None:
+    tmp_path = _tmp(tmp_path)
     cache = ResolutionCache(path=tmp_path / "c.json")
     fetch = make_fetch({"search": (200, "[2025] HKCFI 808"), "cap614": (200, "<title>x</title>")})
     r = LegalResolver(mode="live", cache=cache, fetch=fetch)
@@ -104,7 +113,8 @@ def test_registry_live_mode_resolves_and_caches(tmp_path) -> None:
     assert ResolutionCache(path=tmp_path / "c.json").get("[2025] HKCFI 808").verified
 
 
-def test_registry_live_fabricated_fails(tmp_path) -> None:
+def test_registry_live_fabricated_fails(tmp_path=None) -> None:
+    tmp_path = _tmp(tmp_path)
     r = LegalResolver(mode="live", cache=ResolutionCache(path=tmp_path / "c.json"),
                       fetch=make_fetch({"search": (200, "no results")}))
     assert r.resolve("[2024] HKCFI 9999").verified is False
@@ -112,7 +122,8 @@ def test_registry_live_fabricated_fails(tmp_path) -> None:
 
 # -------------------------- verifier integration ---------------------------- #
 
-def test_verifier_with_live_resolver_accepts_real_outside_register(tmp_path) -> None:
+def test_verifier_with_live_resolver_accepts_real_outside_register(tmp_path=None) -> None:
+    tmp_path = _tmp(tmp_path)
     # citation NOT in the static register, but the live source verifies it
     fetch = make_fetch({"search": (200, "Chan v X [2099] HKCFI 1")})
     resolver = LegalResolver(mode="live", cache=ResolutionCache(path=tmp_path / "c.json"), fetch=fetch).resolve
@@ -120,9 +131,23 @@ def test_verifier_with_live_resolver_accepts_real_outside_register(tmp_path) -> 
     assert ver("See Chan v X [2099] HKCFI 1.", None, {})["passed"] is True
 
 
-def test_verifier_resolver_fail_closed_on_error(tmp_path) -> None:
+def test_verifier_resolver_fail_closed_on_error(tmp_path=None) -> None:
+    tmp_path = _tmp(tmp_path)
     def boom(citation):
         raise RuntimeError("resolver broken")
 
     ver = v.legal_citation_exists(set(), resolver=boom)
     assert ver("See [2099] HKCFI 1.", None, {})["passed"] is False  # broken resolver never passes
+
+
+def main() -> int:
+    import inspect
+    for nm, fn in sorted(globals().items()):
+        if nm.startswith("test_") and inspect.isfunction(fn):
+            fn()
+    print("test_legal_sources: OK")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
