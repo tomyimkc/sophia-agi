@@ -2,6 +2,28 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.11] - 2026-06-21
+
+### Added — cross-entity generalization benchmark + first real external number
+
+- **Cross-entity generalization** (`provenance_bench/cross_entity.py`,
+  `tools/run_cross_entity.py`): makes the next frontier falsifiable on an
+  **entity-disjoint** split (no author/work shared). Memorized rules score 100%
+  on *seen* entities but **0% on unseen** (precise, zero FP, no transfer); a
+  content-free structural detector scores **100% on unseen but 100% false-positive**
+  (transfers, can't tell true from false). The honest conclusion: low-FP
+  cross-entity generalization needs **external grounding**, not pattern
+  memorization — which is why Sophia's answer is the retrieval-grounded loop. Six
+  invariants gate CI; holds across seeds.
+- **First real external-oracle number:** DeepSeek-chat on **GSM8K test, N=100 →
+  98.0%** exact-match via `agent/external_eval.py`. Recorded in
+  `published-results.json` / `RESULTS.md` with explicit framing: this validates the
+  harness end-to-end and reports the **base model's** accuracy — it is **not** a
+  claim about Sophia's gate. `tools/fetch_eval_dataset.py` produced the data
+  (gitignored; not committed).
+- Docs: `docs/11-Platform/Generality.md` gains the cross-entity section; tests
+  `test_cross_entity.py` wired into CI.
+
 ## [0.7.10] - 2026-06-21
 
 ### Hardened — round-2 adversarial review (5 confirmed findings fixed)

@@ -70,6 +70,10 @@ jobs:
           python tests/test_policies.py
           python tests/test_improvement_model_loop.py
           python tests/test_fetch_eval_dataset.py
+      - name: Cross-entity generalization (the measured limit)
+        run: |
+          python tests/test_cross_entity.py
+          python tools/run_cross_entity.py
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats

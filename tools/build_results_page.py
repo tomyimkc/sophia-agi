@@ -84,6 +84,30 @@ def render(doc: dict) -> str:
             "",
         ]
 
+    external = doc.get("externalEvals") or []
+    if external:
+        L += [
+            "## External-oracle evals (base-model accuracy via the harness)",
+            "",
+            "Scored by **exact-match against external gold** (no LLM judge). These "
+            "report the **base model's** accuracy through Sophia's external-eval "
+            "harness and validate the harness end-to-end — they are **not** claims "
+            "about Sophia's provenance gate or any Sophia-specific capability.",
+            "",
+            "| Dataset | Model | N | Accuracy | Date |",
+            "|---|---|---|---|---|",
+        ]
+        for e in external:
+            L.append(
+                f"| {e.get('dataset')} | `{e.get('model')}` | {e.get('n')} | "
+                f"{_pct(e.get('accuracy'))} | {e.get('date', '—')} |"
+            )
+        L.append("")
+        for e in external:
+            if e.get("note"):
+                L += [f"- _{e.get('dataset')}:_ {e['note']}"]
+        L.append("")
+
     audit = doc.get("audit")
     if audit:
         L += ["## Judge audit (why the gate matters)", "", audit.get("note", ""), ""]

@@ -20,6 +20,16 @@ _None yet._ No run has cleared the gate (multi-judge consensus + agreement + ≥
 - False-positive cost 0.0% · gate coverage 23.7%
 - ⚠ Single judge. An independent Claude audit panel re-judged all 46 cases and found this judge OVER-counted (76% agreement, 10 false positives), so the validated alone-rate is ~21.7%, not 42.8%. This row is illustrative ONLY and must not be quoted as a headline.
 
+## External-oracle evals (base-model accuracy via the harness)
+
+Scored by **exact-match against external gold** (no LLM judge). These report the **base model's** accuracy through Sophia's external-eval harness and validate the harness end-to-end — they are **not** claims about Sophia's provenance gate or any Sophia-specific capability.
+
+| Dataset | Model | N | Accuracy | Date |
+|---|---|---|---|---|
+| GSM8K test (openai/grade-school-math, MIT) | `deepseek-chat` | 100 | 98.0% | 2026-06-21 |
+
+- _GSM8K test (openai/grade-school-math, MIT):_ Objective exact-match against external gold. This reports the BASE MODEL's accuracy via Sophia's external-eval harness and validates the harness end-to-end; it is NOT a claim about Sophia's provenance gate or any Sophia-specific capability. N=100 of the 1319-item test split.
+
 ## Judge audit (why the gate matters)
 
 Independent Claude panel vs the DeepSeek judge on 46 false cases: 76% agreement; validated alone-rate 21.7% (10/46) vs 41.3% single-judge. Judge choice dominates the absolute number.

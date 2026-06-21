@@ -7,6 +7,17 @@
   },
   "lastUpdated": "2026-06-21",
   "validated": [],
+  "externalEvals": [
+    {
+      "harness": "agent/external_eval.py — exact-match vs external gold (no LLM judge)",
+      "dataset": "GSM8K test (openai/grade-school-math, MIT)",
+      "model": "deepseek-chat",
+      "n": 100,
+      "accuracy": 0.98,
+      "date": "2026-06-21",
+      "note": "Objective exact-match against external gold. This reports the BASE MODEL's accuracy via Sophia's external-eval harness and validates the harness end-to-end; it is NOT a claim about Sophia's provenance gate or any Sophia-specific capability. N=100 of the 1319-item test split."
+    }
+  ],
   "illustrative": [
     {
       "model": "ollama:dolphin-llama3:8b",

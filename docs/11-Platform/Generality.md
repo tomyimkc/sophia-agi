@@ -77,6 +77,26 @@ the genuinely unverifiable (`agent/calibration.py`).
   of reach, where calibrated abstention is the correct behaviour. Still not AGI —
   but it is the honest direction *toward* it.
 
+## 6. Cross-entity generalization — the measured limit (`provenance_bench/cross_entity.py`)
+
+The self-improvement loop generalizes across *phrasing*; this benchmark asks the
+harder question — does it transfer to *unseen entities*? — and answers it honestly
+on an **entity-disjoint** split (no author or work shared between train and test):
+
+| regime | recall on UNSEEN entities | false-positive |
+|---|---|---|
+| memorized rules | **0%** (no transfer) | 0% (precise) |
+| structural detector | 100% (transfers) | **100%** (can't tell true from false) |
+| *(memorized, on SEEN entities)* | *100%* | *—* |
+
+- `python tools/run_cross_entity.py` — six falsifiable invariants, holds across seeds.
+- **The honest conclusion:** neither pattern memorization (precise, no transfer)
+  nor structural detection (transfers, imprecise) gives low-false-positive
+  cross-entity generalization. That requires **external grounding** (retrieval / a
+  knowledge base) — which is exactly why Sophia's answer is the retrieval-grounded
+  verifier-gated loop, not a learned per-pair classifier. This benchmark names the
+  next real frontier precisely instead of papering over it.
+
 ## What this is NOT
 
 - Not "AGI", and not evidence of it. The earned claim is: *a verifier-gated loop,
