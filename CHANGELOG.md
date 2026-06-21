@@ -2,6 +2,34 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.10] - 2026-06-21
+
+### Hardened — round-2 adversarial review (5 confirmed findings fixed)
+
+A 18-agent adversarial review of the 0.7.9 surfaces confirmed 5 real defects
+(9 rejected). All fixed, with regression tests:
+
+- **Sandbox escape (HIGH)** — the model-proposer's `__` *substring* blocklist was
+  bypassable by building a dunder at runtime (`"_"+"_"`) and traversing via
+  `str.format` (reached `object`). Replaced with an **AST allowlist** in
+  `agent/verifier_synthesis._compile_predicate`: no attribute access, imports,
+  lambdas, loops, comprehensions, container literals, `*`/`**`, or non-allowlisted
+  calls; minimal scalar builtins; 2 KB source cap. This also closes the two
+  **MEDIUM** DoS findings (unbounded CPU via infinite loop; allocation bomb) —
+  structurally, no subprocess/signal sandbox needed.
+- **Gate must fail closed (HIGH)** — a custom/synthesised verifier that raised
+  crashed `guarded_complete`. `_judge` now catches and returns `passed=False`
+  (fail closed → repair/abstain), never propagates.
+- **Honest abstention (LOW)** — removed the dead `Policy.abstention_passes` flag;
+  the loop now re-judges the abstention and reports `action="abstained_unverified"`
+  when it cannot clear its own gate (e.g. the code policy).
+- **Latent bug found while fixing** — explicit `policy="provenance"` would have
+  emitted an internal marker string as the abstention; provenance now uses its
+  dynamic cited abstention whether selected by default or by name.
+- `tools/sophia_guard.py` gained `--policy`; tests extended in
+  `test_verifier_synthesis.py` (sandbox payloads) and `test_policies.py`
+  (fail-closed, explicit-provenance, unverified-abstention).
+
 ## [0.7.9] - 2026-06-21
 
 ### Added — runtime policies, model-proposed checks, real-dataset eval, honest README

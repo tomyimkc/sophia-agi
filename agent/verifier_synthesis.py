@@ -36,6 +36,7 @@ still comes solely from measured validation.
 
 from __future__ import annotations
 
+import ast
 import math
 import os
 import random
@@ -242,33 +243,68 @@ TEMPLATES: list = [
 # is a candidate like any other and must clear the SAME meta-verification floor.
 # --------------------------------------------------------------------------- #
 
-# Builtins a proposed ``check(answer)`` may use. No __import__, open, eval, exec,
-# getattr, etc. — proposed code is model-generated; restrict it to pure data ops.
+# Builtins a proposed ``check(answer)`` may use — pure SCALAR ops only. No
+# range/list/set/sorted/map/filter (allocation), no getattr/type/__import__
+# (traversal): a proposed predicate classifies one answer value, nothing more.
 _SAFE_BUILTINS = {
     "len": len, "str": str, "int": int, "float": float, "abs": abs, "bool": bool,
-    "min": min, "max": max, "sum": sum, "all": all, "any": any, "round": round,
-    "sorted": sorted, "set": set, "list": list, "tuple": tuple, "range": range,
-    "map": map, "filter": filter, "enumerate": enumerate, "zip": zip, "divmod": divmod,
+    "min": min, "max": max, "round": round,
 }
+_ALLOWED_CALLS = set(_SAFE_BUILTINS)
+_MAX_PREDICATE_SOURCE = 2000
+
+# AST allowlist for a proposed predicate. This REPLACES a substring blocklist
+# (which a runtime-built dunder + ``str.format`` could bypass, per adversarial
+# review). Only scalar arithmetic / comparison / boolean logic and calls to the
+# safe builtins are permitted. Everything else is rejected by construction:
+#   - ast.Attribute absent  -> no dunder traversal ('().__class__...'), no '.format'
+#   - For/While/comprehensions absent -> no unbounded CPU (infinite loop)
+#   - range/containers/Mult(*)/Pow(**) absent -> no allocation bomb
+#   - Import/Lambda absent -> no code loading / indirection
+_ALLOWED_NODES = (
+    ast.Module, ast.FunctionDef, ast.arguments, ast.arg, ast.Return, ast.Expr,
+    ast.BoolOp, ast.BinOp, ast.UnaryOp, ast.Compare, ast.Call, ast.Name, ast.Load,
+    ast.Constant, ast.IfExp, ast.And, ast.Or, ast.Not, ast.USub, ast.UAdd,
+    ast.Add, ast.Sub, ast.Mod, ast.FloorDiv, ast.Div,        # NOT Mult / Pow
+    ast.Eq, ast.NotEq, ast.Lt, ast.LtE, ast.Gt, ast.GtE, ast.In, ast.NotIn,
+)
 
 ProposeFn = Callable[[dict, list, list], list]   # (task, corrects, incorrects) -> [source]
 
 
+def _ast_predicate_is_safe(tree: ast.AST) -> bool:
+    """Pass iff the tree is a single ``def check(...)`` using only allowlisted
+    nodes and calling only the safe builtins (no attribute access, loops,
+    comprehensions, imports, lambdas, multiplication or power)."""
+    body = getattr(tree, "body", [])
+    funcs = [n for n in body if isinstance(n, ast.FunctionDef)]
+    if len(body) != 1 or not funcs or funcs[0].name != "check" or funcs[0].decorator_list:
+        return False
+    for node in ast.walk(tree):
+        if not isinstance(node, _ALLOWED_NODES):
+            return False
+        if isinstance(node, ast.Call) and (
+            not isinstance(node.func, ast.Name) or node.func.id not in _ALLOWED_CALLS
+        ):
+            return False
+    return True
+
+
 def _compile_predicate(src: str) -> "Predicate | None":
-    """Compile a model-proposed ``def check(answer): ...`` under restricted
-    builtins. Returns the callable, or None if it is unsafe or malformed."""
-    if not isinstance(src, str) or "check" not in src:
-        return None
-    forbidden = ("import", "__", "open(", "eval(", "exec(", "compile(", "globals", "locals")
-    if any(tok in src for tok in forbidden):
+    """Compile a model-proposed ``def check(answer): ...`` under an AST allowlist
+    and restricted builtins. Returns the callable, or None if unsafe/malformed."""
+    if not isinstance(src, str) or "check" not in src or len(src) > _MAX_PREDICATE_SOURCE:
         return None
     try:
-        code = compile(src, "<proposed-predicate>", "exec")
+        tree = ast.parse(src, "<proposed-predicate>", "exec")
     except SyntaxError:
+        return None
+    if not _ast_predicate_is_safe(tree):
         return None
     ns: dict = {}
     try:
-        exec(code, {"__builtins__": _SAFE_BUILTINS}, ns)   # noqa: S102 — restricted env
+        exec(compile(tree, "<proposed-predicate>", "exec"),   # noqa: S102 — AST-allowlisted, restricted env
+             {"__builtins__": _SAFE_BUILTINS}, ns)
     except Exception:
         return None
     fn = ns.get("check")

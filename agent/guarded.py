@@ -53,7 +53,7 @@ class GuardedResult:
     text: str
     ok: bool                       # safe to surface (clean / repaired / abstained / hedged)
     passed: bool                   # did the FINAL text pass the provenance gate
-    action: str                    # clean | repaired | abstained | hedged | passthrough | model_error
+    action: str                    # clean | repaired | abstained | abstained_unverified | hedged | passthrough | model_error
     attempts: int = 0              # number of model generations performed
     violations: list = field(default_factory=list)
     reasons: list = field(default_factory=list)
@@ -182,6 +182,10 @@ def guarded_complete(
         pol = None                                  # provenance default
         verify_fn = provenance_faithful(records)
 
+    # Provenance — selected by default OR explicitly — uses the original dynamic
+    # cited-abstention/repair wording so the two routes behave identically.
+    is_provenance = pol is None or getattr(pol, "name", "") == "provenance"
+
     if generate is None:
         from agent.model import default_client
 
@@ -196,7 +200,14 @@ def guarded_complete(
     attempts = 0
 
     def _judge(text: str) -> dict:
-        r = verify_fn(text or "", None, {})
+        # A gate is a safety boundary: if a custom/synthesised verifier raises, it
+        # must FAIL CLOSED (passed=False) and let the loop repair/abstain, never
+        # crash the loop.
+        try:
+            r = verify_fn(text or "", None, {})
+        except Exception as exc:                       # noqa: BLE001 — fail closed on any gate error
+            reason = f"gate raised: {type(exc).__name__}: {exc}"
+            return {"passed": False, "reasons": [reason], "violations": [reason]}
         detail = r.get("detail") or {}
         reasons = list(r.get("reasons") or [])
         return {
@@ -240,7 +251,7 @@ def guarded_complete(
 
     if mode == "repair":
         repair_user = (
-            _repair_prompt(query, context, text, violations) if pol is None
+            _repair_prompt(query, context, text, violations) if is_provenance
             else _generic_repair_prompt(query, context, text, reasons, pol.repair_hint)
         )
         repair = generate(system, repair_user)
@@ -256,9 +267,12 @@ def guarded_complete(
         # repair did not clear the gate -> fall through to cited abstention.
 
     # mode == "abstain", or repair exhausted.
-    abstention = _cited_abstention(query, context, violations) if pol is None else pol.abstention
+    abstention = _cited_abstention(query, context, violations) if is_provenance else pol.abstention
     av = _judge(abstention)
+    # Honesty: distinguish an abstention that itself clears the gate from one that
+    # cannot (e.g. a "must run code" gate has no passing no-op answer).
+    action = "abstained" if av["passed"] else "abstained_unverified"
     return GuardedResult(
-        text=abstention, ok=True, passed=av["passed"], action="abstained", attempts=attempts,
+        text=abstention, ok=True, passed=av["passed"], action=action, attempts=attempts,
         violations=violations, reasons=reasons, context_used=context_used,
     )

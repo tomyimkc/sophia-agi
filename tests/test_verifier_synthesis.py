@@ -132,11 +132,23 @@ def test_model_proposer_widens_then_meta_verification_filters() -> None:
 
 
 def test_model_proposer_sandbox_rejects_unsafe_source() -> None:
-    assert vs._compile_predicate("import os\ndef check(a):\n    return True") is None
-    assert vs._compile_predicate("def check(a):\n    return __import__('os')") is None
-    assert vs._compile_predicate("def nope(a):\n    return True") is None      # no check()
-    good = vs._compile_predicate("def check(a):\n    return int(a) > 0")
-    assert callable(good) and good("5") is True and good("-1") is False
+    bad = [
+        "import os\ndef check(a):\n    return True",                       # import
+        "def check(a):\n    return __import__('os')",                      # dunder/import
+        "def nope(a):\n    return True",                                   # no check()
+        # runtime-built dunder + attribute traversal (the substring-blocklist bypass)
+        "def check(a):\n    u='_'+'_'\n    return ('{0.'+u+'class'+u+'}').format(a)",
+        "def check(a):\n    return a.__class__",                           # attribute access
+        "def check(a):\n    while True:\n        pass",                    # infinite loop
+        "def check(a):\n    return len([0]*10**9)",                        # allocation bomb (Mult/Pow/List)
+        "def check(a):\n    return any(x for x in range(10**9))",          # comprehension + range
+        "def check(a):\n    return (lambda: 1)()",                         # lambda
+    ]
+    for src in bad:
+        assert vs._compile_predicate(src) is None, f"should reject: {src!r}"
+    # safe scalar predicates still compile and run
+    good = vs._compile_predicate("def check(a):\n    return int(a) % 2 == 0 and int(a) > 0")
+    assert callable(good) and good("4") is True and good("3") is False and good("-2") is False
 
 
 def test_demo_invariants_hold() -> None:

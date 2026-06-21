@@ -45,25 +45,24 @@ _GENERIC_ABSTENTION = (
 
 @dataclass
 class Policy:
-    """A named gate + the repair/abstention behaviour that fits it."""
+    """A named gate + the repair/abstention behaviour that fits it.
+
+    Whether the abstention text actually clears the gate is not declared here (a
+    static flag would drift); the guarded loop re-judges the abstention and
+    surfaces the truth via ``action`` (``abstained`` vs ``abstained_unverified``).
+    """
 
     name: str
     verifier: Verifier
     repair_hint: str
     abstention: str
-    # Whether the abstention text is expected to pass this gate. For code-exec
-    # policies it cannot (no code block), and the loop surfaces that truthfully.
-    abstention_passes: bool = True
-
-
-def _provenance_abstention() -> str:
-    # Kept as a constant marker; the loop uses its own cited-abstention builder
-    # for the provenance policy to preserve the original, gate-passing wording.
-    return "__PROVENANCE_CITED_ABSTENTION__"
 
 
 #: name -> builder. Each builder takes the same kwargs and ignores what it doesn't need.
 def _build_provenance(*, records=None, sources=None, extra=None) -> Policy:
+    # The guarded loop builds provenance's gate-passing *cited* abstention
+    # dynamically (it needs the query/violations), keyed on name == "provenance",
+    # so this static abstention is only a fallback for direct use of the policy.
     return Policy(
         name="provenance",
         verifier=provenance_faithful(records),
@@ -71,7 +70,7 @@ def _build_provenance(*, records=None, sources=None, extra=None) -> Policy:
             "do NOT assert any authorship/origin the sources do not establish, and do not "
             "merge distinct lineages"
         ),
-        abstention=_provenance_abstention(),
+        abstention=_GENERIC_ABSTENTION,
     )
 
 
@@ -98,12 +97,13 @@ def _build_arithmetic(*, records=None, sources=None, extra=None) -> Policy:
 
 
 def _build_code(*, records=None, sources=None, extra=None) -> Policy:
+    # Note: a no-code abstention cannot pass a "run the code" gate; the loop
+    # reports that honestly as action="abstained_unverified".
     return Policy(
         name="code",
         verifier=code_tests_pass(),
         repair_hint="the code block must run to completion and exit 0; fix the error and include the corrected, self-checking code",
         abstention=_GENERIC_ABSTENTION,
-        abstention_passes=False,   # a no-code abstention cannot pass a "run the code" gate
     )
 
 
@@ -125,11 +125,11 @@ def get_policy(name: str, *, records=None, sources=None, extra=None) -> Policy:
 
 
 def from_verifier(verifier: Verifier, *, name: str = "custom",
-                  repair_hint: str = "satisfy the stated checks", abstention_passes: bool = True) -> Policy:
+                  repair_hint: str = "satisfy the stated checks") -> Policy:
     """Wrap any verifier (e.g. a synthesised gate from agent.verifier_synthesis)
     as a runtime policy for the guarded loop."""
     return Policy(name=name, verifier=verifier, repair_hint=repair_hint,
-                  abstention=_GENERIC_ABSTENTION, abstention_passes=abstention_passes)
+                  abstention=_GENERIC_ABSTENTION)
 
 
 def compose_policies(*policies: Policy, name: str = "composite") -> Policy:
@@ -139,8 +139,4 @@ def compose_policies(*policies: Policy, name: str = "composite") -> Policy:
         raise ValueError("compose_policies needs at least one policy")
     verifier = all_of(*(p.verifier for p in policies))
     hint = "; ".join(p.repair_hint for p in policies)
-    return Policy(
-        name=name, verifier=verifier, repair_hint=hint,
-        abstention=_GENERIC_ABSTENTION,
-        abstention_passes=all(p.abstention_passes for p in policies),
-    )
+    return Policy(name=name, verifier=verifier, repair_hint=hint, abstention=_GENERIC_ABSTENTION)

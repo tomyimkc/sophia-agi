@@ -107,6 +107,33 @@ def test_provenance_default_unchanged() -> None:
     assert res.passed is False and res.action == "passthrough"
 
 
+def test_explicit_provenance_policy_matches_default() -> None:
+    # Selecting provenance explicitly must behave like the default path, incl. its
+    # dynamic cited abstention (not a static marker string).
+    bad = "Confucius wrote the Dao De Jing."
+    res = _complete("who wrote it", policy="provenance", on_fail="abstain",
+                    generate=_scripted_generate([bad]))
+    assert res.action == "abstained" and res.passed is True
+    assert "__PROVENANCE" not in res.text          # never leaks the internal marker
+
+
+def test_raising_verifier_fails_closed() -> None:
+    # A gate that raises must NOT crash the loop — it fails closed (passed=False).
+    def boom(text, task, step):
+        raise RuntimeError("gate exploded")
+
+    res = _complete("anything", verifier=boom, on_fail="passthrough",
+                    generate=_scripted_generate(["some answer"]))
+    assert res.passed is False and res.action == "passthrough"
+
+
+def test_code_policy_abstention_is_marked_unverified() -> None:
+    # The no-code abstention cannot pass a "run the code" gate; the loop says so.
+    res = _complete("write code", policy="code", on_fail="abstain",
+                    generate=_scripted_generate(["just prose, no code block"]))
+    assert res.action == "abstained_unverified" and res.passed is False and res.ok is True
+
+
 def main() -> int:
     test_get_policy_known_and_unknown()
     test_arithmetic_policy_clean_pass()
@@ -114,6 +141,9 @@ def main() -> int:
     test_arithmetic_policy_abstains_with_passing_abstention()
     test_synthesized_gate_as_policy()
     test_provenance_default_unchanged()
+    test_explicit_provenance_policy_matches_default()
+    test_raising_verifier_fails_closed()
+    test_code_policy_abstention_is_marked_unverified()
     print("test_policies: OK")
     return 0
 
