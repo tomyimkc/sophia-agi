@@ -9,7 +9,7 @@ the *code* contains it. Ranked by leverage (impact ÷ effort).
 | 1 | Injection / containment red-team (assume-compromised-model) | High | S | **shipped (M1)** — `eval/security/` |
 | 2 | Out-of-prompt data-flow firewall (CaMeL: capabilities + taint) + HITL on the action path | High | L | **M2 v1 (engine + live airgap) + M2.2 v1 (interpreter w/ sound taint propagation + control-flow integrity) shipped** — `agent/dataflow/`; real planner LLM = M2.3 |
 | 3 | Biba integrity axis + bounded, logged declassification (fights label creep) | High | M | planned |
-| 4 | Corroboration-aware confidence (Dempster–Shafer / log-odds) | Med | S–M | planned |
+| 4 | Corroboration-aware confidence (Dempster–Shafer / log-odds) | Med | S–M | **shipped (#4)** — `agent/corroboration.py`; complements `okf` min-over-chain |
 | 5 | External fact-checking (NLI cross-encoder) as a `claim_supported` verifier | Med-High | M | **shipped (M-#5)** — `agent/verifiers.claim_supported` + `nli` policy; closes the citation subject-match probe (model opt-in) |
 | 6 | Tool least-privilege + dual-LLM (privileged planner / quarantined extractor) | High | M | planned |
 | 7 | LoRA leakage guard + contamination-controlled eval splits | Med | S–M | planned |
@@ -17,6 +17,24 @@ the *code* contains it. Ranked by leverage (impact ÷ effort).
 Trade-offs are real and stated: CaMeL-style enforcement (#2) costs ~7 utility
 points on AgentDojo; Dempster–Shafer misbehaves under high conflict (cap it);
 `no_secret_leak` is a verbatim tripwire, not a guarantee.
+
+## #4 — shipped: corroboration-aware confidence (`agent/corroboration.py`)
+
+The OKF graph's min-over-chain (`okf/graph.py`) correctly stops confidence
+*laundering* through a weak ancestor, but it ignores *corroboration*. This adds the
+missing axis: a Bayesian **log-odds pool** that raises belief when **independent**
+sources agree and lowers it on dissent, after collapsing dependent sources
+(same `independence_group`) so duplicates can't inflate. (Log-odds over raw
+Dempster–Shafer to avoid Zadeh's high-conflict paradox.)
+
+- `python tools/run_corroboration.py` — falsifiable invariants: monotone in
+  independent sources, idempotent under duplicates, dissent lowers, and on a
+  labelled benchmark **lower selective risk than a single source (0.11 vs 0.22) and
+  than min-over-chain (0.31)**.
+- **Honest scope:** the durable win is *discrimination* (better decisions), not ECE
+  — a single source is trivially calibrated (stated confidence == accuracy by
+  construction), so ECE is reported, not gated. Independence groups are an input the
+  caller must supply truthfully; the combiner can't detect hidden dependence.
 
 ## M1 — shipped: injection / containment red-team
 

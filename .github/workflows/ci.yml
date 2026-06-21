@@ -74,6 +74,10 @@ jobs:
         run: |
           python tests/test_cross_entity.py
           python tools/run_cross_entity.py
+      - name: Corroboration-aware confidence (propagation semantics)
+        run: |
+          python tests/test_corroboration.py
+          python tools/run_corroboration.py
       - name: Injection / containment red-team (M1) + data-flow firewall (M2/M2.2)
         run: |
           python tests/test_dataflow.py

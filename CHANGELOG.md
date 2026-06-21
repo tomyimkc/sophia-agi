@@ -2,6 +2,27 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.22] - 2026-06-21
+
+### Added — #4 corroboration-aware confidence (propagation semantics)
+
+Fixes the review's "min-over-chain ignores corroboration" finding. The OKF graph's
+min-over-chain (`okf/graph.py`) correctly stops confidence *laundering*; this adds
+the missing axis — independent agreement should *raise* belief.
+
+- **`agent/corroboration.py`** — a Bayesian **log-odds pool** that raises belief
+  when **independent** sources agree and lowers it on dissent, after collapsing
+  dependent sources (same `independence_group`) so duplicates can't inflate. Log-odds
+  over raw Dempster–Shafer to avoid Zadeh's high-conflict paradox; a support-only
+  `noisy_or` method is also provided.
+- **Falsifiable** (`tools/run_corroboration.py`, `tests/test_corroboration.py`):
+  monotone in independent sources, idempotent under duplicates, dissent lowers, and
+  on a labelled benchmark **lower selective risk than a single source (0.11 vs 0.22)
+  and than min-over-chain (0.31)** — holds across 30 seeds.
+- **Honest scope:** the durable win is *discrimination* (better decisions), not ECE
+  — a single source is trivially calibrated, so ECE is reported, not gated;
+  independence groups are a caller-supplied input the combiner can't verify.
+
 ## [0.7.21] - 2026-06-21
 
 ### Fixed — M-#5 / M2.4 review findings (NLI correctness, honest AgentDojo metric)
