@@ -84,6 +84,7 @@ jobs:
         run: |
           python tests/test_legal_citation.py
           python tests/test_legal_sources.py
+          python tests/test_legal_docs.py
           python tests/test_legal_citation_bench.py
           python tools/run_legal_citation_bench.py
       - name: Export corpus JSONL

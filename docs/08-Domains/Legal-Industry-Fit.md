@@ -70,9 +70,13 @@ Benchmark: `benchmark/legal_citations.json` (real-vs-fabricated, HK/UK/US). Test
 1. **No live connection to an authoritative legal source.** The verifier checks a
    *snapshot*; it does **not** query HKLII or e-Legislation. Without a live citator
    backend it abstains from ignorance, not from verification against ground truth.
+   *(Subsequently addressed — a live federated resolver now exists; see the
+   connector + build-order sections below.)*
 2. **No document ingestion for real legal work** — no PDF/DOCX/email parsing, so
    contract review, due diligence and e-discovery (the doc's biggest use cases) are
-   out of scope. Ingest handles structured JSON + Markdown only.
+   out of scope. *(Subsequently addressed for TXT/MD/DOCX/HTML, and PDF with an
+   optional parser, via `agent/legal_docs.py` — see build-order item 4. Full
+   layout/OCR and e-discovery scale remain out of scope.)*
 3. **No real legal training data or measured legal accuracy.** Nothing in the 518
    examples is law; there is no Sophia analogue to the Stanford 17–33% number.
 4. **No Cantonese (粵語)** — the doc's flagged HK niche. Sophia is EN + written 中文.
@@ -183,5 +187,10 @@ verifier = legal_citation_exists(resolver=make_resolver())   # SOPHIA_LEGAL_SOUR
    Law) and US (CourtListener) `LegalSource` backends, routed by court token
    alongside HKLII / e-Legislation. US reporter citations (`925 F.3d 1339`,
    `576 U.S. 644`) are now extracted and resolved.
-4. **Document ingestion** for contracts/filings, so citation checks run over real
-   work product rather than typed strings.
+4. ~~Document ingestion~~ — **done**. `agent/legal_docs.py` extracts text from
+   TXT/MD, DOCX (stdlib zip+XML), and HTML — plus PDF when an optional parser
+   (`pypdf` / `pdfminer.six`) is installed — and runs the fail-closed citation
+   scan over it. `tools/scan_legal_document.py` is a pre-filing gate: it exits
+   non-zero if any cited authority is unverified (catches the *Mata* fake
+   `925 F.3d 1339` in a real `.docx`/free text). Honest bound: extraction is
+   citation-grade, not full layout/OCR — scanned-image PDFs need OCR first.
