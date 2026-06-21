@@ -8,7 +8,7 @@ the *code* contains it. Ranked by leverage (impact ÷ effort).
 |---|--------|:------:|:------:|--------|
 | 1 | Injection / containment red-team (assume-compromised-model) | High | S | **shipped (M1)** — `eval/security/` |
 | 2 | Out-of-prompt data-flow firewall (CaMeL: capabilities + taint) + HITL on the action path | High | L | **M2 v1 (engine + live airgap) + M2.2 v1 (interpreter w/ sound taint propagation + control-flow integrity) shipped** — `agent/dataflow/`; real planner LLM = M2.3 |
-| 3 | Biba integrity axis + bounded, logged declassification (fights label creep) | High | M | planned |
+| 3 | Biba integrity axis + bounded, logged declassification (fights label creep) | High | M | **shipped (#3)** — `agent/security/` (labels, declassify, audit) |
 | 4 | Corroboration-aware confidence (Dempster–Shafer / log-odds) | Med | S–M | **shipped (#4)** — `agent/corroboration.py`; complements `okf` min-over-chain |
 | 5 | External fact-checking (NLI cross-encoder) as a `claim_supported` verifier | Med-High | M | **shipped (M-#5)** — `agent/verifiers.claim_supported` + `nli` policy; closes the citation subject-match probe (model opt-in) |
 | 6 | Tool least-privilege + dual-LLM (privileged planner / quarantined extractor) | High | M | planned |
@@ -59,6 +59,35 @@ with the new deterministic `no_secret_leak` tripwire (`agent/verifiers.py`) and 
    corpus pages; locked by `test_verifiers.py`.
 2. *Citation subject-match* — lexical overlap passes a wrong predicate when the
    subject matches the source → still open, **M-#5** (NLI fact-checking).
+
+## #3 — shipped: classification lattice (Bell-LaPadula + Biba) + declassification
+
+Closes the original review's propagation/integrity gap: confidentiality-only,
+max-over-chain creep, no integrity axis, no declassification.
+
+- **Lattice** (`agent/security/labels.py`): a `Label{conf, integ, compartments}` over
+  **Bell-LaPadula** confidentiality (PUBLIC<INTERNAL<CONFIDENTIAL<SECRET, *no write
+  down*) and a **Biba** integrity axis (UNTRUSTED<COMMUNITY<CURATED<AUTHORITATIVE,
+  *no write up*), plus need-to-know compartments. `combine` propagates conf=max
+  (creep), integ=min, compartments=union; `can_flow(data, sink)` enforces all three.
+  The dataflow taint axis is the 2-level projection of this integrity axis.
+- **Bounded, logged declassification** (`agent/security/declassify.py`): the only
+  sanctioned downgrade — may *only lower* confidentiality, gated on a deterministic
+  predicate (e.g. redaction) AND an approver (fail-closed on missing/raising/non-True),
+  with every outcome (granted or denied) written to a **hash-chained** audit log
+  (`agent/security/audit.py`).
+- **Falsifiable** (`tools/run_classification_lattice.py`, 11 invariants): BLP/Biba
+  truth table, need-to-know, combine→creep, Biba catches what BLP allows,
+  declassification relieves creep under approval, fail-closed refusal, bounded rules,
+  audit chain intact + tamper-evident, all declassifications audited.
+- **Honest scope:** this is the labelling + flow + declassification *model* with an
+  auditable downgrade; wiring labels onto live data sources and into the guarded loop
+  at runtime is the next step (the dataflow firewall already enforces the 2-level
+  integrity projection). Integrity *endorsement* (raising integrity) is intentionally
+  not implemented in v1. The audit chain catches edits/reorders/front-deletion on its
+  own; **tail-truncation and forged-append are caught only with a persisted
+  (count, head) anchor** passed to `verify()` (an unanchored hash chain cannot detect
+  them) — and the log is in-memory until persistence is wired.
 
 ## #7 — shipped: LoRA leakage guard + contamination control
 
