@@ -34,6 +34,13 @@ def test_partial_paraphrase_below_threshold() -> None:
     assert rep["contaminationRate"] == 0.0
 
 
+def test_short_text_subset_is_detected() -> None:
+    # a SHORT verbatim subset of a longer train item must still be flagged
+    train = ["the dao de jing is a classic daoist text traditionally attributed to laozi"]
+    rep = overlap_report(train, ["the dao de jing"], n=8, threshold=0.6)
+    assert rep["contaminationRate"] == 1.0
+
+
 def test_assert_clean_flag() -> None:
     clean = assert_clean(_TRAIN, ["a totally different unrelated example about quantum widgets and gadgets"], max_rate=0.0)
     assert clean["ok"] is True
@@ -45,6 +52,7 @@ def main() -> int:
     test_near_duplicate_is_flagged()
     test_disjoint_is_clean()
     test_partial_paraphrase_below_threshold()
+    test_short_text_subset_is_detected()
     test_assert_clean_flag()
     print("test_contamination: OK")
     return 0

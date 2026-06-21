@@ -13,9 +13,12 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 EXAMPLES = ROOT / "training" / "examples"
 BENCH_DIR = ROOT / "tests"
 OUT_DIR = ROOT / "training" / "lora"
@@ -68,12 +71,18 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
+    from agent.training_safety import unsafe_reasons  # LoRA leakage guard (#7)
+
     bench_ids, bench_questions = load_benchmark_ids()
     train_rows: list[dict] = []
     holdout_rows: list[dict] = []
+    dropped_unsafe = 0
 
     for path in sorted(EXAMPLES.glob("*.json")):
         payload = json.loads(path.read_text(encoding="utf-8"))
+        if unsafe_reasons(payload):           # never let confidential/PII reach the trainer
+            dropped_unsafe += 1
+            continue
         reason = is_holdout(payload, bench_ids, bench_questions)
         row = {
             "id": path.stem,
@@ -92,6 +101,7 @@ def main() -> int:
         "trainCount": len(train_rows),
         "holdoutCount": len(holdout_rows),
         "benchmarkCaseCount": len(bench_ids),
+        "droppedUnsafe": dropped_unsafe,
         "holdoutReasons": {},
     }
     for row in holdout_rows:

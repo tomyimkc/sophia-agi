@@ -1,14 +1,15 @@
-"""Contamination control — catch train↔eval overlap beyond exact-ID holdout.
+"""Contamination control — catch NEAR-EXACT train↔eval overlap beyond exact-ID holdout.
 
-`tools/prepare_lora_dataset.py` already holds out eval items by ID/trap, but that
-misses **paraphrased / near-duplicate** leakage (the same content reworded slips
-into training). This module measures near-duplicate overlap with word-n-gram
-**shingles**: for each eval item, the maximum *containment* of its shingles within
-any single train item. A high containment means the eval item is substantially
-present in training — contamination — even if the surface text differs.
+`tools/prepare_lora_dataset.py` holds out eval items by ID/trap; that misses an eval
+item being copied near-verbatim into training under a different file. This measures
+that with word-n-gram **shingle containment**: for each eval item, the maximum
+fraction of its n-word shingles found in any single train item.
 
-Falsifiable: a planted near-duplicate is flagged (positive control); a genuinely
-held-out split is below threshold. Deterministic, no model.
+Honest scope: this detects **near-exact / verbatim-span** duplication (≈``n``
+consecutive identical words), NOT semantic paraphrase — a fully reworded item with
+no shared n-gram run scores ~0. It is a precise near-dup detector, not a
+semantic-overlap model. For short eval items the shingle size adapts down so a short
+verbatim subset is still detected. Deterministic, no model.
 """
 
 from __future__ import annotations
@@ -16,11 +17,16 @@ from __future__ import annotations
 import re
 
 
-def _shingles(text: str, n: int = 8) -> set:
-    words = re.findall(r"[a-z0-9]+", str(text).lower())
-    if len(words) < n:
-        return {tuple(words)} if words else set()
-    return {tuple(words[i:i + n]) for i in range(len(words) - n + 1)}
+def _words(text: str) -> list:
+    return re.findall(r"[a-z0-9]+", str(text).lower())
+
+
+def _shingles(words: list, k: int) -> set:
+    if not words:
+        return set()
+    if len(words) <= k:
+        return {tuple(words)}
+    return {tuple(words[i:i + k]) for i in range(len(words) - k + 1)}
 
 
 def _containment(a: set, b: set) -> float:
@@ -29,12 +35,16 @@ def _containment(a: set, b: set) -> float:
 
 
 def overlap_report(train_texts: list, eval_texts: list, *, n: int = 8, threshold: float = 0.6) -> dict:
-    """Max near-duplicate containment of each eval item against the train set."""
-    train_sh = [_shingles(t, n) for t in train_texts]
+    """Max near-duplicate containment of each eval item against the train set. The
+    shingle size adapts to ``min(n, eval-length)`` per item so a short verbatim
+    subset is detected (both sides are shingled at the same size for comparison)."""
+    train_words = [_words(t) for t in train_texts]
     rows = []
     for et in eval_texts:
-        es = _shingles(et, n)
-        mc = max((_containment(es, ts) for ts in train_sh), default=0.0)
+        ew = _words(et)
+        k = min(n, len(ew)) or 1
+        es = _shingles(ew, k)
+        mc = max((_containment(es, _shingles(tw, k)) for tw in train_words), default=0.0)
         rows.append({"containment": round(mc, 4), "contaminated": mc >= threshold})
     n_eval = len(eval_texts) or 1
     return {

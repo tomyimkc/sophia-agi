@@ -58,6 +58,22 @@ def test_filter_drops_unsafe_keeps_safe() -> None:
     assert r["nSafe"] == 1 and r["nDropped"] == 2
 
 
+def test_scans_metadata_and_alt_fields() -> None:
+    # PII hidden in metadata free-text is caught (not just messages)
+    assert unsafe_reasons({"messages": [{"content": "hi"}], "metadata": {"source": "x SSN 123-45-6789"}})
+    # alternate row schemas (DPO chosen/rejected, prompt/completion, instruction/io) are scanned
+    assert unsafe_reasons({"prompt": "q", "chosen": "api_key=sk-live-ABCDEF", "rejected": "r"})
+    assert unsafe_reasons({"instruction": "do", "input": "email me at bob@example.com", "output": "ok"})
+
+
+def test_alt_classification_keys_and_string_flags() -> None:
+    assert unsafe_reasons({"messages": [{"content": "q"}], "metadata": {"sensitivity": "confidential"}})
+    assert unsafe_reasons({"messages": [{"content": "q"}], "metadata": {"doNotTrain": "true"}})   # stringified bool
+    assert unsafe_reasons({"messages": [{"content": "q"}], "metadata": {"pii": True}})
+    # a benign classification value is NOT flagged
+    assert not unsafe_reasons({"messages": [{"content": "q"}], "metadata": {"classification": "public"}})
+
+
 def test_canary_harness() -> None:
     c = make_canary("seed1")
     assert c.startswith("CANARY-") and c == make_canary("seed1")    # deterministic
@@ -74,6 +90,8 @@ def main() -> int:
     test_flags_confidential_pii_and_secrets()
     test_ordinary_prose_is_safe()
     test_real_corpus_zero_false_positives()
+    test_scans_metadata_and_alt_fields()
+    test_alt_classification_keys_and_string_flags()
     test_filter_drops_unsafe_keeps_safe()
     test_canary_harness()
     test_secret_value_match()

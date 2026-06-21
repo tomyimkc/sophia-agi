@@ -65,21 +65,26 @@ with the new deterministic `no_secret_leak` tripwire (`agent/verifiers.py`) and 
 Anything in a fine-tuned model's weights is extractable, so the rule is: never
 train on confidential data, and never let eval leak into train.
 
-- **Leakage guard** (`agent/training_safety.py`): a deterministic pre-export filter
-  drops any example that is metadata-flagged (`classification` ∈ confidential/
-  secret/restricted, or `doNotTrain`), matches a PII pattern (email/SSN/card/phone/
-  secret-kv), or contains a known secret value — **wired into
-  `tools/export_training_jsonl.py`** so it guards the real corpus. 0 false positives
-  on the 518-example public corpus; a planted confidential example is dropped. Plus
-  a **canary harness** (`make_canary` / `canary_extraction_rate`) for a direct
-  post-train regurgitation test the maintainer runs against the trained LoRA.
-- **Contamination control** (`eval/contamination.py`): word-n-gram **shingle**
-  containment catches *near-duplicate / paraphrased* train↔eval overlap that the
-  existing by-ID holdout (`prepare_lora_dataset.py`) misses; a planted near-dup is
-  flagged, disjoint text is clean.
-- **Honest scope:** the canary harness *measures* extraction but cannot run a real
-  LoRA in CI (the maintainer runs it post-train); membership-inference is not
-  implemented; PII regexes are conservative (high precision, not exhaustive recall).
+- **Leakage guard** (`agent/training_safety.py`): a deterministic filter that scans
+  **every string** in an example (messages, metadata free-text, and alternate
+  schemas like prompt/completion or DPO chosen/rejected) and drops it if it is
+  metadata-flagged (synonym keys classification/sensitivity/dataClass/visibility/
+  label/pii ∈ confidential/secret/restricted, or a truthy `doNotTrain`), matches a
+  PII pattern, or carries a known secret. **Wired into both export paths** —
+  `tools/export_training_jsonl.py` AND `tools/prepare_lora_dataset.py` (the path that
+  actually feeds `train_lora.py`). 0 false positives on the 518-example corpus; a
+  planted confidential example is dropped wherever it hides. Plus a **canary harness**
+  for a post-train regurgitation test.
+- **Contamination control** (`eval/contamination.py`): word-n-gram **shingle
+  containment** catches *near-exact / verbatim-span* train↔eval overlap the by-ID
+  holdout misses (shingle size adapts down for short items). Measured on the **real
+  split** (439 train / 79 held-out) → contamination rate **0.0**; a detector
+  self-test confirms verbatim→flagged, disjoint→clean.
+- **Honest scope:** the contamination detector catches near-exact duplication, NOT
+  semantic paraphrase (a fully reworded item scores ~0). The canary harness
+  *measures* extraction but cannot run a real LoRA in CI (maintainer runs it
+  post-train); membership-inference is not implemented; PII regexes are
+  precision-over-recall.
 
 ## Next milestones (not "AGI")
 
