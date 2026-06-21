@@ -54,10 +54,36 @@ calibration on **held-out** tasks. Pre-registered criteria and guardrails are in
 spec. Single-run numbers are **illustrative**; a validated number needs ≥2
 eval families + runs + CIs (repo no-overclaim policy).
 
+## v1 dataset (generated)
+
+`training/council/traces.jsonl` — generated here with `teacher=deepseek/deepseek-chat`
+over the 36 seed tasks:
+
+| metric | value |
+|---|---|
+| kept | 35 / 36 |
+| dropped by gate-filter | **1** (a real DeepSeek output with a gate violation — the firewall working on live data) |
+| abstentions | 7 (capped) |
+| substantive traces | 28 |
+
+**Honest findings (worth acting on, not hiding):**
+- **Law is abstention-heavy (6/12).** The bundled legal register flags most real
+  citations as unverifiable, so the gate conservatively abstains. That teaches the
+  student *safe abstention on legal* — correct given no live citator — but yields few
+  rich legal traces. Wiring the live citator (`SOPHIA_LEGAL_SOURCE=live`) before
+  generation would convert many of these into substantive cited traces.
+- **15/36 tasks did not trigger a council** (`detect_council` needs ≥2 trigger
+  terms) → disciplined *single-pass* traces, not council-decomposed. Still valid
+  training data, but tuning trigger terms / lowering `min_score` would raise the
+  share of true council traces.
+- Finance/economy traces are substantive and gate-clean (e.g. runway = 20 months,
+  arithmetic-gate passed).
+
 ## Honest status
 
 - **v0 (offline plumbing):** done — generator + gate-filter + tests + CI.
-- **v1 dataset:** generated here via OpenRouter (gate-filtered).
-- **v1 training + distilled-uplift:** the **GPU step** — validated by `--dry-run`
-  here; the actual fine-tune and distilled eval run on a GPU box. No GPU = no
-  trained adapter committed (weights are gitignored anyway).
+- **v1 dataset:** done — 35 gate-filtered traces generated via OpenRouter; pipeline
+  validated with `train_lora.py --dry-run` on Qwen2.5-7B.
+- **v1 training + distilled-uplift:** the **GPU step** — this sandbox has no
+  GPU/torch, so the actual fine-tune and distilled eval run on a GPU box / Colab.
+  No trained weights committed (gitignored regardless).
