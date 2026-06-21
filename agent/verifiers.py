@@ -280,6 +280,31 @@ def arithmetic_sound(*, tol: float = 1e-6) -> Verifier:
     return _verify
 
 
+def no_secret_leak(secrets: "list[str]", *, mask: bool = True) -> Verifier:
+    """Fail if any classified/canary value appears verbatim in the text.
+
+    A deterministic confidentiality tripwire: exact-substring match against a list
+    of secret values/canaries — no model, no heuristics, so "blocked" means
+    blocked. This is the minimal egress check the injection red-team motivates.
+
+    Scope (honest): it catches *verbatim* leakage only. It does NOT understand
+    paraphrase, partial disclosure, or encoding — which is exactly why the roadmap
+    pairs it with out-of-prompt taint tracking (CaMeL-style). Use it as a tripwire
+    in depth, not as a standalone guarantee. The detail never echoes the secret.
+    """
+    toks = [s for s in (secrets or []) if s]
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        body = text or ""
+        leaked = [s for s in toks if s in body]
+        if leaked:
+            shown = [(s[:4] + "…") if mask else s for s in leaked]
+            return _fail([f"secret value leaked: {m}" for m in shown], {"leakedCount": len(leaked)})
+        return _ok({"secretsChecked": len(toks)})
+
+    return _verify
+
+
 # --------------------------------------------------------------------------- #
 # OKF / provenance verifiers — encode "don't merge lineages" as a hard gate.
 # --------------------------------------------------------------------------- #

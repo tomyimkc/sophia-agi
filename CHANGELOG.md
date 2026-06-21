@@ -2,6 +2,30 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.12] - 2026-06-21
+
+### Added — M1 injection / containment red-team + first confidentiality gate
+
+The first security-roadmap milestone (`docs/11-Platform/Security-Roadmap.md`).
+
+- **Injection red-team** (`eval/security/`, `tools/run_security_redteam.py`):
+  deterministic, offline harness under an **assume-compromised-model** threat model
+  — it measures whether the gate/policy verifiers (outside the model) contain an
+  attacker-controlled LLM. Gating attacks contained at **0% ASR**: forbidden
+  attribution, false arithmetic, topic-mismatch citation. Success judged by code,
+  never by an LLM. CI-gated.
+- **`no_secret_leak` verifier** (`agent/verifiers.py`) + **`confidentiality`
+  policy** (`agent/policies.py`, with `secrets=` plumbed through `guarded_complete`):
+  a deterministic verbatim-secret tripwire. Secret-exfiltration ASR **100%
+  baseline → 0%** with it — the harness measured the hole and proved the fix.
+- **Two real gaps the harness surfaced** (reported, drive later milestones):
+  citation subject-match (lexical overlap passes a wrong predicate → motivates NLI
+  fact-checking); and a **negation-evasion in `provenance_faithful`** — a carve-out
+  trigger word in the same sentence as a forbidden attribution skips the
+  sentence-scoped carve-out. The failing case is committed to drive the gate-hardening fix.
+- Tests: `test_security_redteam.py` (gates containment, not the bug existence, so a
+  future fix won't break it); wired into CI. Docs: `eval/security/README.md`.
+
 ## [0.7.11] - 2026-06-21
 
 ### Added — cross-entity generalization benchmark + first real external number
