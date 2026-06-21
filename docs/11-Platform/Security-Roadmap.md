@@ -7,7 +7,7 @@ the *code* contains it. Ranked by leverage (impact ÷ effort).
 | # | Change | Impact | Effort | Status |
 |---|--------|:------:|:------:|--------|
 | 1 | Injection / containment red-team (assume-compromised-model) | High | S | **shipped (M1)** — `eval/security/` |
-| 2 | Out-of-prompt data-flow firewall (CaMeL: capabilities + taint) + HITL on the action path | High | L | **engine + live airgap kill-switch shipped (M2 v1)** — `agent/dataflow/`; automatic taint propagation + dual-LLM = M2.2 |
+| 2 | Out-of-prompt data-flow firewall (CaMeL: capabilities + taint) + HITL on the action path | High | L | **M2 v1 (engine + live airgap) + M2.2 v1 (interpreter w/ sound taint propagation + control-flow integrity) shipped** — `agent/dataflow/`; real planner LLM = M2.3 |
 | 3 | Biba integrity axis + bounded, logged declassification (fights label creep) | High | M | planned |
 | 4 | Corroboration-aware confidence (Dempster–Shafer / log-odds) | Med | S–M | planned |
 | 5 | External fact-checking (NLI cross-encoder) as a `claim_supported` verifier | Med-High | M | planned |
@@ -57,12 +57,23 @@ with the new deterministic `no_secret_leak` tripwire (`agent/verifiers.py`) and 
   Python (f-strings launder). So today the firewall guarantees the **airgap egress
   kill-switch** and blocks **explicitly-labelled** tainted writes; it does not yet
   auto-contain a laundered value on the live path.
-- **M2.2 — next:** the dual-LLM split (privileged planner that never sees raw untrusted
-  data + quarantined extractor) and a constrained-AST interpreter that keeps values
-  *Labeled until the sink* — the only sound way to make propagation automatic. Also:
-  per-tool airgap classification for `agent/tools.run_tool`. DoD: AgentDojo-style
-  end-to-end ASR <2%; utility within ~10 pts; no tainted→sink path reachable without an
-  approved capability.
+- **M2.2 v1 — shipped: constrained interpreter (dual-LLM execution model).**
+  `agent/dataflow/interpreter.py` removes the model from the data path: a trusted
+  PLAN (Const/Retrieve/Extract/Concat/Call over symbolic vars) is the only control
+  flow; variables hold `Labeled` values and **every step propagates taint via
+  `combine`**, so a value derived from untrusted input stays untrusted however it is
+  transformed (the laundering hole, closed soundly — the interpreter, not the model,
+  does the transform). Three falsifiable properties, scored by the red-team and
+  `tests/test_interpreter.py`: (1) taint propagates through every step; (2)
+  **control-flow integrity** — an injection in retrieved content cannot cause a tool
+  call not in the plan; (3) a tainted value into a write/egress sink is blocked. The
+  planner/extractor are injectable (mocked in CI) — security lives in the
+  deterministic interpreter.
+- **Honest scope (M2.3+):** a real privileged-planner LLM that generates plans for
+  open-ended tasks (the instruction set here is small — the planner's *expressiveness*
+  is the limit, not the safety); a quarantined-extractor model; per-tool airgap
+  classification for `agent/tools.run_tool`; an AgentDojo-style end-to-end suite
+  (DoD: ASR <2%, utility within ~10 pts) once a planner is wired.
 - **M3 — "Honest labels":** Biba integrity axis + bounded/logged declassification
   (#3) and corroboration-aware confidence (#4), with a label-creep dashboard and an
   ECE calibration report.

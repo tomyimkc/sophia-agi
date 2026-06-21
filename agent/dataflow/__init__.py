@@ -14,7 +14,21 @@ quarantined-extractor split (M2.2) builds *on top* of this boundary.
 """
 
 from agent.dataflow.capabilities import Decision, Effect, ToolCap, decide  # noqa: F401
-from agent.dataflow.firewall import FirewallBlocked, firewalled, guard_call  # noqa: F401
+from agent.dataflow.firewall import (  # noqa: F401
+    FirewallBlocked,
+    egress_blocked,
+    firewalled,
+    guard_call,
+)
+from agent.dataflow.interpreter import (  # noqa: F401
+    Call,
+    Concat,
+    Const,
+    Extract,
+    Interpreter,
+    InterpreterResult,
+    Retrieve,
+)
 from agent.dataflow.manifest import TOOL_CAPS, cap_for  # noqa: F401
 from agent.dataflow.taint import (  # noqa: F401
     TRUSTED,

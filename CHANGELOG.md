@@ -2,6 +2,51 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.17] - 2026-06-21
+
+### Fixed — M2.2 interpreter soundness (adversarial review findings)
+
+A 10-agent review of the M2.2 interpreter confirmed 3 real defects; all fixed,
+with regression tests in `tests/test_interpreter.py`.
+
+- **(HIGH) Egress-fetch-then-store laundering** — a `Call` result was tainted by
+  `combine(args)`, so an EGRESS tool (e.g. `web_evidence_search`) invoked with
+  *trusted* args returned *attacker-controlled* web content labelled TRUSTED, which
+  then flowed unblocked into a write sink. Fixed: every tool-call result is now
+  fail-safe **untrusted** (a tool's output reflects external/world state) — the
+  egress→store path is now blocked.
+- **(MEDIUM) Blocked step failed open** — a blocked `Call` left its result var
+  unbound, and `_resolve` treated a later reference to that var *name* as a trusted
+  literal. Fixed: a plan-declared-but-unbound var now resolves **untrusted** (fail
+  closed), distinct from a genuine literal.
+- **(LOW) Retrieve hardening** — a `Retrieve` now must name a READ-effect tool, its
+  arg is firewall-checked as a `Labeled` value, and the decision is honoured.
+
+## [0.7.16] - 2026-06-21
+
+### Added — M2.2: dual-LLM constrained interpreter (sound taint propagation)
+
+Closes the two holes M2's review flagged by removing the model from the data path
+(the CaMeL execution model). See `docs/11-Platform/Security-Roadmap.md`.
+
+- **`agent/dataflow/interpreter.py`** — a trusted PLAN (`Const`/`Retrieve`/`Extract`/
+  `Concat`/`Call` over symbolic variables) is the only control flow; the privileged
+  planner never sees untrusted data values, the quarantined extractor's output is
+  treated as data, and the interpreter executes deterministically with `Labeled`
+  variables. **Every step propagates taint via `combine`**, so a value derived from
+  untrusted input stays untrusted however it is transformed — soundly, because the
+  interpreter (not the model) does the transform. Tool calls are firewall-gated.
+- **Three falsifiable properties** (CI-gated via `tests/test_interpreter.py` and the
+  red-team): (1) taint propagates through every step (no laundering); (2)
+  **control-flow integrity** — an injection inside retrieved content cannot trigger a
+  tool call not in the plan; (3) a tainted value into a write/egress sink is blocked.
+- Red-team gains two interpreter invariants (`interpreter_control_flow_integrity`,
+  `interpreter_contains_tainted_write`); planner/extractor are injectable (mocked).
+- **Honest scope:** the instruction set is small — the planner's *expressiveness*,
+  not the safety, is the limit. A real privileged-planner LLM, a quarantined
+  extractor, per-tool airgap for `run_tool`, and an AgentDojo-style end-to-end suite
+  are M2.3.
+
 ## [0.7.15] - 2026-06-21
 
 ### Hardened — M2 firewall: live airgap + correctness, honest scope (review findings)
