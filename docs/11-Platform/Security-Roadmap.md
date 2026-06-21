@@ -69,11 +69,20 @@ with the new deterministic `no_secret_leak` tripwire (`agent/verifiers.py`) and 
   call not in the plan; (3) a tainted value into a write/egress sink is blocked. The
   planner/extractor are injectable (mocked in CI) — security lives in the
   deterministic interpreter.
-- **Honest scope (M2.3+):** a real privileged-planner LLM that generates plans for
-  open-ended tasks (the instruction set here is small — the planner's *expressiveness*
-  is the limit, not the safety); a quarantined-extractor model; per-tool airgap
-  classification for `agent/tools.run_tool`; an AgentDojo-style end-to-end suite
-  (DoD: ASR <2%, utility within ~10 pts) once a planner is wired.
+- **M2.3 v1 — shipped: planner + fail-closed plan-validator + end-to-end suite.**
+  `agent/dataflow/planner.py`: a `template_planner` (deterministic, offline) and a
+  `model_planner` (real P-LLM via the adapter, mockable) turn a TRUSTED request into
+  a plan — never reading untrusted data. `parse_plan` is the **trust boundary**: it
+  admits only known ops + manifest tools, forces `retrieve` to a READ tool, and
+  **fails closed** on anything malformed, so even an adversarial planner can lose
+  utility but not safety. End-to-end red-team invariant `e2e_planner_contains_injection`:
+  a planner-driven run over attacker-poisoned retrieved content fires no out-of-plan
+  tool. `tests/test_planner.py`.
+- **Honest scope (M2.4+):** the template planner covers a few task shapes (the
+  planner's *expressiveness*, not safety, is the limit); a real P-LLM needs prompt
+  engineering for broad tasks; a quarantined-extractor model; per-tool airgap for
+  `agent/tools.run_tool`; an AgentDojo-style external suite (DoD: ASR <2%, utility
+  within ~10 pts).
 - **M3 — "Honest labels":** Biba integrity axis + bounded/logged declassification
   (#3) and corroboration-aware confidence (#4), with a label-creep dashboard and an
   ECE calibration report.

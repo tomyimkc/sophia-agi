@@ -2,6 +2,30 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.18] - 2026-06-21
+
+### Added — M2.3: planner + fail-closed plan-validator + end-to-end suite
+
+Completes the dual-LLM loop: a planner turns a trusted request into a plan the
+interpreter runs, with the plan-validator as a new, hardened trust boundary.
+
+- **`agent/dataflow/planner.py`** — `template_planner` (deterministic, offline) and
+  `model_planner` (real privileged-planner LLM via the adapter, mockable). Both read
+  ONLY the trusted request + allowed tools (never untrusted data), and route output
+  through `parse_plan`.
+- **`parse_plan` — the trust boundary**: admits only known ops + manifest tools,
+  forces `retrieve` to a READ-effect tool, requires well-formed steps, and **fails
+  closed** (`PlanError`) on anything malformed. A buggy/adversarial planner can lose
+  *utility* but cannot smuggle an unknown tool, an unknown op, or a write disguised
+  as a read.
+- **End-to-end red-team** invariant `e2e_planner_contains_injection`: a planner-driven
+  run over attacker-poisoned retrieved content fires no out-of-plan tool and exfiltrates
+  nothing. `tests/test_planner.py` (validator fail-closed cases, template + model
+  planner, end-to-end CFI, tainted-save blocked).
+- **Honest scope:** the template planner covers a few task shapes; broad-task P-LLM
+  prompting, a quarantined extractor, per-tool airgap for `run_tool`, and an
+  AgentDojo-style external suite are M2.4.
+
 ## [0.7.17] - 2026-06-21
 
 ### Fixed — M2.2 interpreter soundness (adversarial review findings)

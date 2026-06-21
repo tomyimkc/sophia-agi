@@ -30,6 +30,12 @@ from agent.dataflow.interpreter import (  # noqa: F401
     Retrieve,
 )
 from agent.dataflow.manifest import TOOL_CAPS, cap_for  # noqa: F401
+from agent.dataflow.planner import (  # noqa: F401
+    PlanError,
+    model_planner,
+    parse_plan,
+    template_planner,
+)
 from agent.dataflow.taint import (  # noqa: F401
     TRUSTED,
     UNTRUSTED,
