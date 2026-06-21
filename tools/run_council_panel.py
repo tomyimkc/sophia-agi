@@ -31,7 +31,6 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -73,10 +72,17 @@ def _panel_verdict(answers: list, case) -> dict:
 def run(cases, *, single_client, homo_clients, hetero_clients) -> dict:
     rows = []
     for case in cases:
-        # one answer per distinct client, reused across conditions where possible
+        # Each condition issues its own generate() call. When the single baseline IS
+        # hetero seat 0 (same object), reuse that one answer as the first hetero vote
+        # to avoid a duplicate paid/non-deterministic call against the same model.
         single_ans = _answer(single_client, case.prompt)
         homo_ans = [_answer(c, case.prompt) for c in homo_clients]
-        hetero_ans = [_answer(c, case.prompt) for c in hetero_clients]
+        hetero_ans = []
+        for j, c in enumerate(hetero_clients):
+            if j == 0 and c is single_client:
+                hetero_ans.append(single_ans)
+            else:
+                hetero_ans.append(_answer(c, case.prompt))
         rows.append({
             "case_id": case.id, "label": case.label,
             "single": _verdict(single_ans, case),

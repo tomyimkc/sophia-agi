@@ -2,7 +2,7 @@
 
 All notable changes to Sophia AGI are documented here.
 
-## [0.7.35] - 2026-06-22
+## [0.7.37] - 2026-06-22
 
 ### Added — heterogeneous council panel (team-of-models) + head-to-head benchmark
 
@@ -29,6 +29,59 @@ mixed shuffled slice via new `--offset`/`--shuffle`.) Not AGI; a measured
 deliberation uplift that needs HETEROGENEOUS members, not personas of one model.
 
 Tests: `test_council_panel.py`; CI wired.
+
+## [0.7.36] - 2026-06-22
+
+### Added — code-uplift: interpreter-as-verifier (the strongest verifiable signal)
+
+Extends the verifier-gated thesis to CODE, where correctness is objective and
+ungameable: a program either passes its tests or it doesn't. No judge.
+(Code-review-hardened — see the security fixes below.)
+
+- **`provenance_bench/code_exec.py`**: runs a model solution + a HIDDEN canonical
+  test in a temp dir; pass iff exit 0. Timeout-guarded (kills the process group),
+  execution OPT-IN via `SOPHIA_ALLOW_CODE_EXEC=1` (default OFF → syntax-only).
+- **`benchmark/code_tasks.json`**: 20 self-contained Python tasks (HumanEval/MBPP
+  style) with hidden asserts; all 20 verified against reference solutions.
+- **`provenance_bench/code_reward.py`**: code RLVR reward (+1 tests pass / -1 fail),
+  the code analogue of `rl_reward` — the ideal GRPO signal (DeepSeek-R1 code RL).
+  TRL-compatible `make_grpo_reward` routed by a `test` dataset column.
+- **`agent/claim_router.py`**: new `code` claim type — a fenced/bare Python block in
+  an answer is syntax-checked on the whole text (per-claim split would shatter it).
+- **`tools/run_code_uplift.py`**: the benchmark — a LOCAL model writes code; `alone`
+  runs the hidden test once (pass@1), `+sophia` feeds the execution error back and
+  lets the model REPAIR (re-running tests) up to `--max-repairs`. Reports pass@1
+  alone vs after repair + delta. Runs fully on-device via Ollama (model generates,
+  Sophia executes); offline mock path for CI.
+
+Tests: `test_code_uplift.py`; CI wired. Honest scope: a measured coding-reliability
+uplift on a local model, not AGI; single-model runs are illustrative.
+
+## [0.7.33] - 2026-06-22
+
+### Added — temporal-impossibility verifier + closed active-learning loop
+
+Two structural gate upgrades from the third gap-analysis round.
+
+- **Temporal / date-impossibility verifier** (`agent/temporal_verifier.py`,
+  `data/temporal_facts.json`): catches authorship that is *physically impossible*
+  — an author who DIED before the work existed ("Aristotle wrote the Critique of
+  Pure Reason": d. 322 BCE vs pub. 1781 CE) — by recomputing `created > died`, the
+  way `arithmetic_sound` recomputes equalities. CORPUS-FREE: it fires on works
+  outside any frozen `doNotAttributeTo` record, so it generalizes the gate to
+  unseen pairs. Deterministic, offline, abstains on undated entities (zero false
+  positives). Registered in `verifiers.VERIFIERS` (`temporal_consistent`) and the
+  authorship route of `claim_router` (runs alongside `provenance_faithful`).
+- **Closed the active-learning loop** (`tools/promote_pending.py` +
+  `data/learned_attributions.json` in `_PROVENANCE_FILES`): `gate_feedback` already
+  logged gate misses to a pending queue; this is the missing PROMOTION half. It
+  re-verifies each candidate against independent ground truth (the grounded
+  resolver — so a correct pen name is NOT promoted), dedupes against live records,
+  and on `--apply` writes survivors into the live learned sink the gate reads.
+  Demonstrated end-to-end: a miss the gate let through is caught on the next run
+  after promotion (False -> True). Default is a dry run; never edits seed files.
+
+Tests: `test_temporal_verifier`, `test_promote_pending`; CI wired. No regressions.
 
 ## [0.7.32] - 2026-06-22
 

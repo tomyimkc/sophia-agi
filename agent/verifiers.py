@@ -26,12 +26,16 @@ _ATTR_VERBS = [
     r"\bwrote\b", r"\bwritten\b", r"\bauthored?\b", r"\bauthor of\b", r"\bpenned\b",
     r"\bcomposed\b", r"\battribut", r"\bby\b", r"'s\b", r"’s\b", r"著", r"作者", r"撰", r"所著",
 ]
-# Domain files whose records carry doNotAttributeTo lists.
+# Domain files whose records carry doNotAttributeTo lists. The last entry is the
+# active-learning sink: records promoted from verified gate misses
+# (tools/promote_pending.py) land here, so the live gate fires on them on the next
+# run — closing the feedback loop without hand-editing the seed domain files.
 _PROVENANCE_FILES = (
     "attributions.json",
     "psychology_concepts.json",
     "religion_concepts.json",
     "history_events.json",
+    "learned_attributions.json",
 )
 
 
@@ -794,11 +798,21 @@ def any_of(*verifiers: Verifier) -> Verifier:
     return _verify
 
 
+def _temporal_consistent() -> Verifier:
+    """Lazy wrapper so the registry stays import-cheap (loads the dated-facts table
+    only when used). Catches author-died-before-work impossibilities. See
+    agent/temporal_verifier.py."""
+    from agent.temporal_verifier import temporal_consistent
+
+    return temporal_consistent()
+
+
 # Parameterless verifiers usable directly by name (CLI / harness registry).
 VERIFIERS: dict[str, Callable[[], Verifier]] = {
     "arithmetic_sound": arithmetic_sound,
     "code_tests_pass": code_tests_pass,
     "provenance_faithful": provenance_faithful,
+    "temporal_consistent": _temporal_consistent,
     "frontmatter_schema_valid": frontmatter_schema_valid,
     "legal_citation_exists": legal_citation_exists,
 }
