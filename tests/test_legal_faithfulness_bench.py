@@ -97,6 +97,17 @@ def test_disagreement_lowers_kappa_and_blocks_validation() -> None:
     assert result["validated"] is False
 
 
+def test_openrouter_judges_count_as_distinct_families() -> None:
+    from provenance_bench.aggregate import _distinct_families
+
+    # two DIFFERENT vendors behind ONE OpenRouter key are two independent families
+    assert _distinct_families(["openrouter:anthropic/claude-sonnet-4-6",
+                               "openrouter:deepseek/deepseek-chat"]) == 2
+    # two models from the SAME vendor collapse to one family
+    assert _distinct_families(["openrouter:anthropic/a", "openrouter:anthropic/b"]) == 1
+    assert _distinct_families(["anthropic:x", "deepseek:y"]) == 2  # classic specs still work
+
+
 def test_abstention_counts_against_accuracy() -> None:
     m = _load_runner()
     cases = _cases()

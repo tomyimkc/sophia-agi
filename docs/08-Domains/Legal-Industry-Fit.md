@@ -264,6 +264,13 @@ is withheld until it clears the gate.
 
 ```bash
 python tools/run_legal_faithfulness_bench.py --judges mock --runs 1            # offline plumbing
+
+# validated-grade — two separate provider keys:
 python tools/run_legal_faithfulness_bench.py \
-    --judges anthropic:claude-sonnet-4-6,deepseek:deepseek-chat --runs 3        # validated-grade
+    --judges anthropic:claude-sonnet-4-6,deepseek:deepseek-chat --runs 3
+
+# …or a SINGLE OpenRouter key (OPENROUTER_API_KEY) routing two vendors — the gate
+# counts the underlying vendor as the family, so these are two independent judges:
+python tools/run_legal_faithfulness_bench.py \
+    --judges openrouter:anthropic/claude-sonnet-4-6,openrouter:deepseek/deepseek-chat --runs 3
 ```

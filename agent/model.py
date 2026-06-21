@@ -71,6 +71,7 @@ PRESETS: dict[str, dict[str, Any]] = {
     "openai": {"kind": "openai", "base_url": "https://api.openai.com/v1", "api_key_env": "OPENAI_API_KEY", "model": "gpt-4o-mini"},
     "glm": {"kind": "openai", "base_url": "https://open.bigmodel.cn/api/paas/v4", "api_key_env": "ZHIPUAI_API_KEY", "model": "glm-4.6"},
     "deepseek": {"kind": "openai", "base_url": "https://api.deepseek.com", "api_key_env": "DEEPSEEK_API_KEY", "model": "deepseek-chat"},
+    "openrouter": {"kind": "openai", "base_url": "https://openrouter.ai/api/v1", "api_key_env": "OPENROUTER_API_KEY", "model": "openai/gpt-4o-mini"},
     "ollama": {"kind": "openai", "base_url": "http://localhost:11434/v1", "api_key_env": "OLLAMA_API_KEY", "model": "llama3.1", "api_key_default": "ollama"},
     "vllm": {"kind": "openai", "base_url": "http://localhost:8000/v1", "api_key_env": "VLLM_API_KEY", "model": "local", "api_key_default": "EMPTY"},
     "sglang": {"kind": "openai", "base_url": "http://localhost:30000/v1", "api_key_env": "SGLANG_API_KEY", "model": "local", "api_key_default": "EMPTY"},
