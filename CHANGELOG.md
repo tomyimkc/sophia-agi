@@ -2,6 +2,71 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.29] - 2026-06-21
+
+### Added — local-agent delta (alone vs +gate vs +MCP-tools)
+
+The runner that measures whether a local LLM augmented with Sophia's tools
+performs better — over the 87 provenance cases. Conditions `alone` and `+gate`
+reuse `provenance_bench.runner`; `+mcp-tools` is new: a native tool-calling loop
+(qwen3:30b-a3b emits OpenAI `tool_calls` over Ollama) that dispatches Sophia's
+read-only MCP knowledge tools **in-process** (`check_claim` / `wiki_search` /
+`belief`) and feeds results back.
+
+- **`provenance_bench/local_agent.py`** — tool schemas, in-process MCP dispatch
+  (with output enrichment: `wiki_search` snippets, `belief` wiki fallback), the
+  native tool loop (handles both flat `model.py` and nested OpenAI `tool_calls`
+  shapes), **selective** `run_conditions` (tools fire only on low-confidence
+  answers, so `+tools` can never regress below `alone`) + `summarize`, + a
+  `ScriptedClient` for offline tests.
+- **`tools/run_local_agent_delta.py`** — CLI (mock offline path for CI + real
+  Ollama path). `tests/test_local_agent_delta.py`; CI wired.
+- **Result (dolphin-llama3:8b, 87 cases) — validated, honest:** a single lexical
+  judge showed alone 15.2% → +gate 4.3%, but that **did NOT survive validation**.
+  Under the no-overclaim gate (3 runs, 2 judge families = ollama:llama3.2:3b +
+  deepseek:deepseek-chat): halluc alone 9.4% → gated 7.2%, **Δ2.2%, 95% CI
+  [−2.2%, +6.5%] includes zero → `validated=False`**. What IS quotable: **0%
+  false-positive cost** and **46.2% gate coverage** across all runs/judges.
+  Sophia's own gate caught Sophia's optimistic single-judge number (RESULTS.md:
+  "judge choice dominates the absolute number"). On strong qwen3:30b-a3b the gate
+  is neutral (no headroom). NO quotable capability delta yet — needs larger N.
+- **Honesty caveats (recorded):** (1) the dolphin `+mcp-tools` 0.0% is
+  re-generation, NOT tool-use — dolphin doesn't emit native `tool_calls`
+  (`toolsUsed: []`). (2) An earlier build *degraded* gold to 51.2% by forcing
+  tools on every case; fixed via selective invocation + richer outputs. Ledger:
+  `local-agent-delta-not-validated-2026-06-21` (Open, needs larger N);
+  `local-agent-tools-degrade-strong-model` (Closed). A genuine tool-use delta
+  needs a model both weak and tool-capable (qwen2.5:3b-instruct / glm-4-9b-chat).
+  Not AGI; not a general-performance claim.
+
+## [0.7.28] - 2026-06-21
+
+### Added — RLVR experiment (verifier-as-reward GRPO)
+
+The repo's first RL training experiment — the legitimate "train a model with my
+repo's signal" path. Sophia's existing deterministic verifiers ARE the GRPO
+reward (DeepSeek-R1 / OpenAI Reinforcement Fine-Tuning style), rather than a
+learned reward model. Explicitly **not** an AGI claim: it raises pass@1 within the
+verifier's reach, not the base model's capacity.
+
+- **`provenance_bench/rl_reward.py`** — deterministic reward in `[-1, 1]` composed
+  from `agent.verifiers` primitives (the verifier seam) + gold checks; routed by
+  TRL dataset columns (not prompt-string matching). Anti-hacking mitigations:
+  mutual-exclusion (true-case denial → 0) + anti-hedging cap (defeats the
+  `extra_deny` carve-out dodge) + hard −1.0 floor for asserted-forbidden.
+- **`provenance_bench/rl_dataset.py`** — RL rows from `build_cases()`; entity-pair
+  `(work, author)` contamination-free split; per-partition gate records;
+  seed-locked sealed hashes.
+- **`tools/run_rlvr.py`** — GRPO runner. Offline `--model mock` path asserts the
+  six reward-machinery invariants (CI-gated, runs on Apple Silicon); GPU path
+  runs `zai-org/glm-4-9b-chat-hf` with GLM-correct LoRA `target_modules`
+  (`query_key_value`/`dense_h_to_4h`/… — **not** the Qwen names in `train_lora.py`)
+  and refuses the broken QLoRA+vLLM-colocate combo (trl#4973).
+- **Honesty:** held-out pass@1 capability claim pre-registered but **Open** in
+  `failure-ledger.md` until a gated run clears `aggregate._is_validated`.
+  `glm-4-9b-chat-hf` is **glm-4-9b License** (not MIT) — documented honestly.
+- Deps: `requirements-rl.txt` (CUDA-only). Tests: `tests/test_rlvr.py`; CI wired.
+
 ## [0.7.27] - 2026-06-21
 
 ### Fixed — #3 review findings (audit anchor + honest tamper-evidence, declass coercion)

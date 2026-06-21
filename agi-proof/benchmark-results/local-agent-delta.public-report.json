@@ -1,0 +1,92 @@
+{
+  "summary": {
+    "cases": 2,
+    "falseCases": 1,
+    "trueCases": 1,
+    "hallucinationByCondition": {
+      "alone": 1.0,
+      "gated": 0.0,
+      "tooled": 0.0
+    },
+    "abstentionByCondition": {
+      "alone": 0.0,
+      "gated": 0.0,
+      "tooled": 0.0
+    },
+    "goldAffirmedByCondition": {
+      "alone": 0.0,
+      "gated": 0.0,
+      "tooled": 1.0
+    },
+    "falsePositiveByCondition": {
+      "alone": 1.0,
+      "gated": 1.0,
+      "tooled": 0.0
+    },
+    "deltas": {
+      "aloneToGated": 1.0,
+      "aloneToTooled": 1.0
+    },
+    "toolsUsed": [
+      "check_claim"
+    ]
+  },
+  "rows": [
+    {
+      "case_id": "false-alice-phoenix",
+      "label": "false",
+      "work": "Project Phoenix Charter",
+      "gold_author": "the founding committee",
+      "alone": {
+        "abstained": false,
+        "hallucinated": true,
+        "affirmed_gold": false
+      },
+      "gated": {
+        "abstained": false,
+        "hallucinated": false,
+        "affirmed_gold": true
+      },
+      "gated_action": "abstained",
+      "tooled": {
+        "abstained": false,
+        "hallucinated": false,
+        "affirmed_gold": true
+      },
+      "tool_log": [
+        "check_claim"
+      ],
+      "tooled_why": "tool-repaired"
+    },
+    {
+      "case_id": "true-committee-phoenix",
+      "label": "true",
+      "work": "Project Phoenix Charter",
+      "gold_author": "the founding committee",
+      "alone": {
+        "abstained": true,
+        "hallucinated": false,
+        "affirmed_gold": false
+      },
+      "gated": {
+        "abstained": true,
+        "hallucinated": false,
+        "affirmed_gold": false
+      },
+      "gated_action": "clean",
+      "tooled": {
+        "abstained": false,
+        "hallucinated": false,
+        "affirmed_gold": true
+      },
+      "tool_log": [
+        "check_claim"
+      ],
+      "tooled_why": "tool-repaired"
+    }
+  ],
+  "benchmark": "local-agent-delta",
+  "model": "mock",
+  "mode": "mock-offline",
+  "claimStatus": "wiring check (NOT a capability claim)"
+}

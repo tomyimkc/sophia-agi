@@ -74,6 +74,14 @@ jobs:
         run: |
           python tests/test_cross_entity.py
           python tools/run_cross_entity.py
+      - name: RLVR (verifier-as-reward GRPO) offline invariants
+        run: |
+          python tests/test_rlvr.py
+          python tools/run_rlvr.py --model mock --dry-run
+      - name: Local-agent delta (alone vs +gate vs +MCP-tools) offline wiring
+        run: |
+          python tests/test_local_agent_delta.py
+          python tools/run_local_agent_delta.py --model mock
       - name: Corroboration-aware confidence (propagation semantics)
         run: |
           python tests/test_corroboration.py

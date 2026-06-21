@@ -1,0 +1,31 @@
+{
+  "benchmark": "provenance-delta",
+  "runAt": "2026-06-21T13:59:12+00:00",
+  "visibility": "public-aggregate",
+  "nonCircularityContract": "Labels are external (Wikipedia/Wikidata + cited misattributions); the gate is the runtime treatment only; the judge shares no code with the gate. The default lexical judge is a screen — use an independent LLM-judge for headline claims.",
+  "judgeMethod": "consensus:2",
+  "rows": [
+    {
+      "model": "ollama:dolphin-llama3:8b",
+      "modelSpec": "ollama:dolphin-llama3:8b",
+      "onFail": "repair",
+      "runs": 3,
+      "hallucinationRateAlone": 0.0942,
+      "hallucinationRateGated": 0.0725,
+      "delta": 0.0217,
+      "ciDelta": [
+        -0.0217,
+        0.0652
+      ],
+      "perRunDelta": [
+        0.0,
+        0.0435,
+        0.0217
+      ],
+      "falsePositiveCost": 0.0,
+      "coverageRecall": 0.4615,
+      "falseCases": null,
+      "trueCases": null
+    }
+  ]
+}
