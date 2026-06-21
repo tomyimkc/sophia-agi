@@ -65,11 +65,54 @@ def test_match_traps_substring() -> None:
     assert "socrates_republic" in ids
 
 
+def test_gate_flags_fabricated_legal_citation() -> None:
+    bad = ("The court held in Wong v Lee [2024] HKCFI 9999 that the rule applies. "
+           "source discipline. 中文：見上。")
+    gate = check_response(bad, mode="advisor", question="Does the rule apply?")
+    assert not gate["passed"]
+    assert gate["legal"] is not None
+    assert any("9999" in v for v in gate["violations"])
+    assert any(c["id"] == "legal_citation_exists" for c in gate["checks"])
+
+
+def test_gate_accepts_real_legal_citation() -> None:
+    good = ("Per [2025] HKCFI 808 the AI-drafted submissions were criticised. "
+            "source discipline. 中文：見上。")
+    gate = check_response(good, mode="advisor", question="What happened?")
+    legal = next(c for c in gate["checks"] if c["id"] == "legal_citation_exists")
+    assert legal["passed"] is True
+
+
+def test_gate_no_legal_block_for_nonlegal_answer() -> None:
+    text = ("Laozi is traditionally linked to the Dao De Jing; attribution is legendary. "
+            "source discipline. 中文：見上。")
+    gate = check_response(text, mode="advisor", question="Who wrote it?")
+    assert gate["legal"] is None  # no citations -> cheap no-op
+
+
+def test_gate_holding_faithfulness_with_stub_judge() -> None:
+    from agent.legal_faithfulness import Verdict
+
+    # stub judge always says "not supported" -> a real citation is flagged as misstated
+    def deny(_p, _h):
+        return Verdict(supports=False, abstained=False, reason="stub: not supported")
+
+    text = "Obergefell v. Hodges, 576 U.S. 644, bars all immigration appeals. 中文：見上。 source discipline."
+    gate = check_response(text, mode="advisor", question="Does it bar appeals?", legal_judge=deny)
+    assert not gate["passed"]
+    assert any("576 U.S. 644" in v for v in gate["violations"])
+    assert any(c["id"] == "legal_holding_faithful" for c in gate["checks"])
+
+
 def main() -> int:
     test_reference_passes_philosophy_traps()
     test_gate_catches_bad_confucius_ddj()
     test_gate_passes_good_confucius_ddj()
     test_match_traps_substring()
+    test_gate_flags_fabricated_legal_citation()
+    test_gate_accepts_real_legal_citation()
+    test_gate_no_legal_block_for_nonlegal_answer()
+    test_gate_holding_faithfulness_with_stub_judge()
     print("test_gate: OK")
     return 0
 

@@ -30,6 +30,38 @@ UNCERTAINTY_MARKERS = [
 ]
 
 
+def _legal_gate(text: str, *, resolver=None, judge=None) -> "dict | None":
+    """Self-check any legal citations in an agent answer. Returns None when the
+    answer cites no legal authority (cheap no-op for non-legal answers).
+
+    - Existence (deterministic, always): every cited authority must be verifiable
+      against the register / live resolver — the *Mata* guardrail, fail-closed.
+    - Faithfulness (only when a ``judge`` is supplied): flag a real authority cited
+      for a proposition its holding does not support — the *Ayinde* guardrail.
+    """
+    from agent.legal_citations import extract_citations
+    from agent.verifiers import legal_citation_exists, legal_holding_faithful
+
+    if not extract_citations(text):
+        return None
+    violations: list[str] = []
+    checks: list[dict] = []
+
+    exist = legal_citation_exists(resolver=resolver)(text, None, {})
+    checks.append({"id": "legal_citation_exists", "passed": exist["passed"], "reasons": exist["reasons"]})
+    if not exist["passed"]:
+        violations.extend(exist["reasons"])
+
+    faithfulness_run = judge is not None
+    if faithfulness_run:
+        faith = legal_holding_faithful(judge=judge)(text, None, {})
+        checks.append({"id": "legal_holding_faithful", "passed": faith["passed"], "reasons": faith["reasons"]})
+        if not faith["passed"]:
+            violations.extend(faith["reasons"])
+
+    return {"violations": violations, "checks": checks, "faithfulnessRun": faithfulness_run}
+
+
 def check_response(
     text: str,
     *,
@@ -38,10 +70,15 @@ def check_response(
     sources: list[str] | None = None,
     domain: str | None = None,
     strict_attribution: bool = True,
+    legal_resolver=None,
+    legal_judge=None,
+    legal_strict: bool = True,
 ) -> dict:
     """Post-generation epistemic gate.
 
-    Style warnings (discipline, 中文) plus attribution trap checks when a question is provided.
+    Style warnings (discipline, 中文), attribution trap checks when a question is
+    provided, plus a legal self-check (citation existence; holding faithfulness when
+    a ``legal_judge`` is supplied) whenever the answer cites a legal authority.
     """
     lowered = text.lower()
     has_discipline = any(re.search(p, lowered, re.IGNORECASE) for p in DISCIPLINE_MARKERS)
@@ -68,8 +105,15 @@ def check_response(
             if not check["passed"]:
                 violations.extend(check["reasons"])
 
+    legal = _legal_gate(text, resolver=legal_resolver, judge=legal_judge)
+    if legal:
+        checks.extend(legal["checks"])
+        violations.extend(legal["violations"])
+
     passed = len(warnings) == 0
     if strict_attribution and checks and not attribution_ok:
+        passed = False
+    if legal_strict and legal and legal["violations"]:
         passed = False
 
     return {
@@ -80,4 +124,5 @@ def check_response(
         "has_discipline": has_discipline,
         "has_zh": has_zh,
         "domain": resolved_domain,
+        "legal": legal,
     }

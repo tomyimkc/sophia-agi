@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -86,11 +87,23 @@ def run_mode(mode: str, question: str, *, approve: bool, execute: bool, online_e
         MODE_PROMPTS[mode],
         build_user_prompt(mode, question, online_evidence=online_evidence, web_provider=web_provider),
     )
+    # Legal self-gate: verify any cited authorities (existence always; holding
+    # faithfulness only when SOPHIA_LEGAL_FAITHFULNESS is set, since it costs a
+    # model call). The resolver respects SOPHIA_LEGAL_SOURCE (off|cache|live).
+    from agent.legal_sources import make_resolver
+
+    legal_judge = None
+    if os.environ.get("SOPHIA_LEGAL_FAITHFULNESS"):
+        from agent.legal_faithfulness import make_llm_judge
+
+        legal_judge = make_llm_judge(os.environ.get("SOPHIA_LEGAL_JUDGE"))
     gate = check_response(
         answer,
         mode=mode,
         question=question,
         sources=[c.path for c in chunks],
+        legal_resolver=make_resolver(),
+        legal_judge=legal_judge,
     )
 
     print("\n" + "=" * 60 + "\n")
