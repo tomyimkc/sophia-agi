@@ -147,6 +147,7 @@ def guarded_complete(
     policy: "str | None" = None,
     verifier: "Callable | None" = None,
     sources: "list | None" = None,
+    secrets: "list | None" = None,
     top_k: int = 8,
     retrieve_fn: Callable[..., list] = retrieve,
     format_context_fn: Callable[[list], str] = format_context,
@@ -176,7 +177,7 @@ def guarded_complete(
         pol = _policies.from_verifier(verifier)
         verify_fn = verifier
     elif policy or env_policy:
-        pol = _policies.get_policy(policy or env_policy, records=records, sources=sources)
+        pol = _policies.get_policy(policy or env_policy, records=records, sources=sources, secrets=secrets)
         verify_fn = pol.verifier
     else:
         pol = None                                  # provenance default

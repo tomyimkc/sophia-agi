@@ -29,6 +29,7 @@ from agent.verifiers import (
     arithmetic_sound,
     citation_faithful,
     code_tests_pass,
+    no_secret_leak,
     provenance_faithful,
 )
 
@@ -59,7 +60,7 @@ class Policy:
 
 
 #: name -> builder. Each builder takes the same kwargs and ignores what it doesn't need.
-def _build_provenance(*, records=None, sources=None, extra=None) -> Policy:
+def _build_provenance(*, records=None, sources=None, secrets=None, extra=None) -> Policy:
     # The guarded loop builds provenance's gate-passing *cited* abstention
     # dynamically (it needs the query/violations), keyed on name == "provenance",
     # so this static abstention is only a fallback for direct use of the policy.
@@ -74,7 +75,7 @@ def _build_provenance(*, records=None, sources=None, extra=None) -> Policy:
     )
 
 
-def _build_citation(*, records=None, sources=None, extra=None) -> Policy:
+def _build_citation(*, records=None, sources=None, secrets=None, extra=None) -> Policy:
     srcs = list(sources or [])
     return Policy(
         name="citation",
@@ -87,7 +88,7 @@ def _build_citation(*, records=None, sources=None, extra=None) -> Policy:
     )
 
 
-def _build_arithmetic(*, records=None, sources=None, extra=None) -> Policy:
+def _build_arithmetic(*, records=None, sources=None, secrets=None, extra=None) -> Policy:
     return Policy(
         name="arithmetic",
         verifier=arithmetic_sound(),
@@ -96,7 +97,16 @@ def _build_arithmetic(*, records=None, sources=None, extra=None) -> Policy:
     )
 
 
-def _build_code(*, records=None, sources=None, extra=None) -> Policy:
+def _build_confidentiality(*, records=None, sources=None, secrets=None, extra=None) -> Policy:
+    return Policy(
+        name="confidentiality",
+        verifier=no_secret_leak(secrets or []),
+        repair_hint="remove any classified/secret value from the answer; never echo a value the sources marked secret",
+        abstention=_GENERIC_ABSTENTION,
+    )
+
+
+def _build_code(*, records=None, sources=None, secrets=None, extra=None) -> Policy:
     # Note: a no-code abstention cannot pass a "run the code" gate; the loop
     # reports that honestly as action="abstained_unverified".
     return Policy(
@@ -112,16 +122,17 @@ POLICY_BUILDERS: dict[str, Callable[..., Policy]] = {
     "citation": _build_citation,
     "arithmetic": _build_arithmetic,
     "code": _build_code,
+    "confidentiality": _build_confidentiality,
 }
 
 
-def get_policy(name: str, *, records=None, sources=None, extra=None) -> Policy:
-    """Build a named policy. ``records`` (provenance) and ``sources`` (citation)
-    are forwarded to the verifiers that use them."""
+def get_policy(name: str, *, records=None, sources=None, secrets=None, extra=None) -> Policy:
+    """Build a named policy. ``records`` (provenance), ``sources`` (citation), and
+    ``secrets`` (confidentiality) are forwarded to the verifiers that use them."""
     key = (name or "provenance").strip().lower()
     if key not in POLICY_BUILDERS:
         raise KeyError(f"unknown policy {name!r}; known: {', '.join(sorted(POLICY_BUILDERS))} (or pass a verifier)")
-    return POLICY_BUILDERS[key](records=records, sources=sources, extra=extra)
+    return POLICY_BUILDERS[key](records=records, sources=sources, secrets=secrets, extra=extra)
 
 
 def from_verifier(verifier: Verifier, *, name: str = "custom",

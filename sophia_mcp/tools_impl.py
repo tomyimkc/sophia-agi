@@ -175,6 +175,10 @@ def web_evidence_search(
 ) -> dict:
     if not query.strip():
         return {"error": "query is required"}
+    from agent.dataflow.firewall import active_profile
+
+    if online and active_profile() == "airgap":
+        return {"error": "airgap profile blocks network egress (web_evidence_search)", "results": []}
     return gather_evidence(
         query,
         local_top_k=local_top_k,
@@ -298,9 +302,15 @@ def wiki_upsert(page_id: str, frontmatter_json: str = "{}", body: str = "", tier
     """Create/update an agent-owned wiki page (gated by provenance verifiers).
 
     Mutating + audited: needs SOPHIA_MCP_APPROVE_WRITES=1. Even when approved, the
-    write only lands if it passes the source-discipline gate.
+    write only lands if it passes the source-discipline gate AND the data-flow
+    firewall (a WRITE sink — a tainted/untrusted-labelled payload is refused).
     """
     from agent import wiki_store
+    from agent.dataflow.firewall import guard_call
+
+    decision = guard_call("sophia_wiki_upsert", (page_id, frontmatter_json, body, tier))
+    if decision.action != "allow":
+        return {"error": f"data-flow firewall blocked write: {decision.reason}"}
 
     try:
         meta = json.loads(frontmatter_json) if frontmatter_json else {}
@@ -355,6 +365,10 @@ def openclaw_infer(model: str = "xai/grok-4.3", prompt: str = "") -> dict:
     sophia_wiki_upsert -> wiki_store.upsert -> the source-discipline gate, which
     independently rejects lineage merges even when writes are approved.
     """
+    from agent.dataflow.firewall import active_profile
+
+    if active_profile() == "airgap":
+        return {"ok": False, "error": "airgap profile blocks egress (openclaw_infer)"}
     return _openclaw_infer(model, prompt)
 
 

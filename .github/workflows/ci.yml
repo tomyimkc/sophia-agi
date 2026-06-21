@@ -74,6 +74,11 @@ jobs:
         run: |
           python tests/test_cross_entity.py
           python tools/run_cross_entity.py
+      - name: Injection / containment red-team (M1) + data-flow firewall (M2)
+        run: |
+          python tests/test_dataflow.py
+          python tests/test_security_redteam.py
+          python tools/run_security_redteam.py
       - name: Export corpus JSONL
         run: python tools/export_training_jsonl.py
       - name: Corpus stats
