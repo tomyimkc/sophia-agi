@@ -92,3 +92,25 @@ ratio-vs-obiter." Report that; don't bury it.
 - **Label leakage** — the `holding` must not state the verdict ("this does not support…").
 - **Class imbalance** — keep faithful/unfaithful roughly balanced.
 - **Provenance rot** — always store `holdingSource`.
+
+## Grounding / prior work
+
+The file *shape* (the JSON schema) is an engineering convention, not an official
+standard — but each methodological choice traces to citable authority, and we cite
+it here so the format carries its own provenance (verified June 2026):
+
+| Element of this benchmark | Authority |
+|---|---|
+| "Faithful" = a **real** authority cited for something it does not support (the `overbroad_scope` / `wrong_proposition_right_case` cases) | The Stanford legal-AI study defines **"misgrounded"** responses — *"the facts are correct but do not apply in the context of the legal case being discussed"*: Magesh, Surani, Dahl, Suzgun, Manning & Ho, *Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools*, **Journal of Empirical Legal Studies (2025)**. |
+| Expert-curated legal benchmark as input→output cases, incl. *entailment* / *rule-conclusion* ("does X support Y") tasks | **LegalBench** — Guha et al., *A Collaboratively Built Benchmark for Measuring Legal Reasoning in LLMs*, **NeurIPS 2023** (Datasets & Benchmarks). |
+| LLM-as-judge with **multiple** judges and **Cohen's κ** inter-rater agreement (the no-overclaim gate) | **Zheng et al.**, *Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena*, **2023** (arXiv:2306.05685); κ is the standard inter-rater reliability metric and multiple judges improve human-alignment. |
+| `ratio_vs_obiter` failure type | Black-letter common-law doctrine: binding *ratio decidendi* vs non-binding *obiter dicta* (any legal-method text). |
+
+What is **ours, not a standard**: the exact JSON schema and the specific
+`failureType` enumeration — each bucket maps onto the Stanford "misgrounding"
+concept or common-law doctrine, but the list itself is a synthesis, not a decree.
+
+**Sources**
+- Stanford / *JELS* 2025: https://law.stanford.edu/publications/hallucination-free-assessing-the-reliability-of-leading-ai-legal-research-tools/ · full text https://onlinelibrary.wiley.com/doi/full/10.1111/jels.12413
+- LegalBench (NeurIPS 2023): https://proceedings.neurips.cc/paper_files/paper/2023/hash/89e44582fd28ddfea1ea4dcb0ebbf4b0-Abstract-Datasets_and_Benchmarks.html · arXiv https://arxiv.org/abs/2308.11462
+- Zheng et al., MT-Bench (2023): https://arxiv.org/abs/2306.05685
