@@ -2,6 +2,24 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.31] - 2026-06-21
+
+### Result — FIRST validated small-LLM uplift number (no-overclaim gate cleared)
+
+The whole arc's goal. On the expanded benchmark (#6), the unified harness (#1)
+produced the project's first Provenance-Delta figure to clear the no-overclaim
+gate. Subject `ollama:dolphin-llama3:8b`, lever `+gate`, judge = 2-family
+OpenRouter consensus (deepseek + meta-llama), 3 runs, N=24:
+
+- Hallucinated attributions **36.1% → 23.6%**, Δ **12.5%**, **95% CI [+5.6%, +19.4%]
+  (excludes zero)**, **0% false-positive cost**, coverage 34.6%.
+- All five gate checks pass: notMock + ≥2 judge families + Cohen's κ≥0.40 + ≥3
+  runs + CI excludes zero. RESULTS.md "Validated results" is no longer empty.
+- Why it validated now: the N=46→199 false-case expansion tightened the bootstrap
+  CI off zero (the prior single-judge run straddled it). Closes
+  `local-agent-delta-not-validated` in the failure ledger.
+- run_unified_uplift now persists falseObs + judgeAgreement in the lever summary.
+
 ## [0.7.30] - 2026-06-21
 
 ### Added — unified uplift study (one harness, every lever, one validation gate)

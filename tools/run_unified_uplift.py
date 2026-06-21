@@ -191,8 +191,10 @@ def main(argv: "list[str] | None" = None) -> int:
                 "delta": agg["delta"],
                 "ciDelta": agg["ciDelta"],
                 "perRunDelta": agg["perRunDelta"],
+                "falseObs": agg["falseObs"],
                 "falsePositiveCost": agg["falsePositiveCost"],
                 "coverageRecall": agg["coverageRecall"],
+                "judgeAgreement": agg["judgeAgreement"],
                 "validated": agg["validated"],
                 "validatedChecks": agg["validatedChecks"],
             }

@@ -6,7 +6,32 @@
     "schemaVersion": 1
   },
   "lastUpdated": "2026-06-21",
-  "validated": [],
+  "validated": [
+    {
+      "model": "ollama:dolphin-llama3:8b",
+      "modelNote": "uncensored 8B local tune (the population the gate is for); lever = +gate, via tools/run_unified_uplift.py",
+      "judge": "consensus: openrouter:deepseek/deepseek-chat + openrouter:meta-llama/llama-3.3-70b-instruct (2 families)",
+      "runs": 3,
+      "falseCases": 24,
+      "hallucinationAlone": 0.3611,
+      "hallucinationGated": 0.2361,
+      "delta": 0.125,
+      "deltaCI": [
+        0.0556,
+        0.1944
+      ],
+      "falsePositiveCost": 0.0,
+      "coverage": 0.3462,
+      "validatedChecks": {
+        "notMock": true,
+        "multiFamilyJudges": true,
+        "kappaAboveFloor": true,
+        "atLeast3Runs": true,
+        "ciExcludesZero": true
+      },
+      "note": "First number to clear the no-overclaim gate: notMock + 2 judge families + Cohen's kappa>=0.40 + 3 runs + 95% bootstrap CI excludes 0. N=24 cases on the expanded benchmark; the prior N=46 single-judge run's CI straddled zero. The +gate lever cuts dolphin's hallucinated attributions 36.1%->23.6% at 0% false-positive cost."
+    }
+  ],
   "externalEvals": [
     {
       "harness": "agent/external_eval.py — exact-match vs external gold (no LLM judge)",
@@ -26,7 +51,12 @@
       "accuracy": 1.0,
       "fabricationDetectionRecall": 1.0,
       "falseAlarmRate": 0.0,
-      "confusion": {"tp": 8, "tn": 6, "fp": 0, "fn": 0},
+      "confusion": {
+        "tp": 8,
+        "tn": 6,
+        "fp": 0,
+        "fn": 0
+      },
       "date": "2026-06-21",
       "scoring": "objective exact-match vs ground-truth expectPass; deterministic verifier, no LLM judge.",
       "note": "Measures the VERIFIER's accuracy at catching fabricated legal citations (the Mata v. Avianca failure mode) across federated sources (HK e-Legislation/HKLII, UK National Archives, US CourtListener), not any model's. Includes the actual Mata fabrication, Varghese v. China Southern Airlines 925 F.3d 1339, which is flagged. Honest bounds: tiny, constructed benchmark (N=14) and the result is capped by the bundled register's completeness, so this validates the extraction + fail-closed gate logic end-to-end — it is NOT a headline capability claim. Reproduce: python tools/run_legal_citation_bench.py."
@@ -37,12 +67,23 @@
     "gate": "validated = >=2 independent judges (>=2 provider families, no mock) + mean pairwise Cohen's kappa >= 0.40 + >=3 runs + bootstrap 95% CI lower bound above chance (0.5).",
     "validated": true,
     "result": {
-      "judges": ["openrouter:deepseek/deepseek-chat", "openrouter:meta-llama/llama-3.3-70b-instruct", "openrouter:qwen/qwen-2.5-72b-instruct"],
-      "families": ["deepseek", "meta-llama", "qwen"],
+      "judges": [
+        "openrouter:deepseek/deepseek-chat",
+        "openrouter:meta-llama/llama-3.3-70b-instruct",
+        "openrouter:qwen/qwen-2.5-72b-instruct"
+      ],
+      "families": [
+        "deepseek",
+        "meta-llama",
+        "qwen"
+      ],
       "n": 8,
       "runs": 3,
       "consensusAccuracy": 1.0,
-      "ci": [1.0, 1.0],
+      "ci": [
+        1.0,
+        1.0
+      ],
       "meanPairwiseKappa": 1.0,
       "date": "2026-06-21"
     },
@@ -58,7 +99,10 @@
       "hallucinationAlone": 0.428,
       "hallucinationGated": 0.333,
       "delta": 0.094,
-      "deltaCI": [0.043, 0.152],
+      "deltaCI": [
+        0.043,
+        0.152
+      ],
       "falsePositiveCost": 0.0,
       "coverage": 0.237,
       "caveat": "Single judge. An independent Claude audit panel re-judged all 46 cases and found this judge OVER-counted (76% agreement, 10 false positives), so the validated alone-rate is ~21.7%, not 42.8%. This row is illustrative ONLY and must not be quoted as a headline."

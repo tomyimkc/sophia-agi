@@ -1,0 +1,39 @@
+{
+  "benchmark": "unified-uplift",
+  "model": "ollama:dolphin-llama3:8b",
+  "visibility": "public-aggregate",
+  "runs": 3,
+  "cases": 24,
+  "judgeFamilies": 2,
+  "judgeSpecs": [
+    "openrouter:deepseek/deepseek-chat",
+    "openrouter:meta-llama/llama-3.3-70b-instruct"
+  ],
+  "scopeNote": "Provenance/attribution discipline on checkable cases — NOT general capability or AGI. +mcp-tools is tool-grounded retrieval + self-verification, not model intelligence. A lever is VALIDATED only under the no-overclaim gate (>=2 judge families, kappa>=0.40, >=3 runs, 95% CI excludes 0).",
+  "levers": {
+    "+gate": {
+      "hallucinationAlone": 0.3611,
+      "hallucinationLever": 0.2361,
+      "delta": 0.125,
+      "ciDelta": [
+        0.0556,
+        0.1944
+      ],
+      "perRunDelta": [
+        0.125,
+        0.125,
+        0.125
+      ],
+      "falsePositiveCost": 0.0,
+      "coverageRecall": 0.3462,
+      "validated": true,
+      "validatedChecks": {
+        "notMock": true,
+        "multiFamilyJudges": true,
+        "kappaAboveFloor": true,
+        "atLeast3Runs": true,
+        "ciExcludesZero": true
+      }
+    }
+  }
+}
