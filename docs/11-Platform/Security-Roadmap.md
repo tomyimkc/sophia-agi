@@ -9,14 +9,34 @@ the *code* contains it. Ranked by leverage (impact ÷ effort).
 | 1 | Injection / containment red-team (assume-compromised-model) | High | S | **shipped (M1)** — `eval/security/` |
 | 2 | Out-of-prompt data-flow firewall (CaMeL: capabilities + taint) + HITL on the action path | High | L | **M2 v1 (engine + live airgap) + M2.2 v1 (interpreter w/ sound taint propagation + control-flow integrity) shipped** — `agent/dataflow/`; real planner LLM = M2.3 |
 | 3 | Biba integrity axis + bounded, logged declassification (fights label creep) | High | M | planned |
-| 4 | Corroboration-aware confidence (Dempster–Shafer / log-odds) | Med | S–M | planned |
-| 5 | External fact-checking (NLI cross-encoder) as a `claim_supported` verifier | Med-High | M | planned |
+| 4 | Corroboration-aware confidence (Dempster–Shafer / log-odds) | Med | S–M | **shipped (#4)** — `agent/corroboration.py`; complements `okf` min-over-chain |
+| 5 | External fact-checking (NLI cross-encoder) as a `claim_supported` verifier | Med-High | M | **shipped (M-#5)** — `agent/verifiers.claim_supported` + `nli` policy; closes the citation subject-match probe (model opt-in) |
 | 6 | Tool least-privilege + dual-LLM (privileged planner / quarantined extractor) | High | M | planned |
 | 7 | LoRA leakage guard + contamination-controlled eval splits | Med | S–M | planned |
 
 Trade-offs are real and stated: CaMeL-style enforcement (#2) costs ~7 utility
 points on AgentDojo; Dempster–Shafer misbehaves under high conflict (cap it);
 `no_secret_leak` is a verbatim tripwire, not a guarantee.
+
+## #4 — shipped: corroboration-aware confidence (`agent/corroboration.py`)
+
+The OKF graph's min-over-chain (`okf/graph.py`) correctly stops confidence
+*laundering* through a weak ancestor, but it ignores *corroboration*. This adds the
+missing axis: a Bayesian **log-odds pool** that raises belief when **independent**
+sources agree and lowers it on dissent, after collapsing dependent sources
+(same `independence_group`) so duplicates can't inflate. (Log-odds over raw
+Dempster–Shafer to avoid Zadeh's high-conflict paradox.)
+
+- `python tools/run_corroboration.py` — the **gated** invariants are structural and
+  robust (across 40 seeds): confidence is monotone in independent agreeing sources,
+  *rewards independent agreement unlike the baselines* (3 indep @0.7 → 0.93 vs mean
+  0.7 / min 0.7), idempotent under duplicates, lowered by dissent. Inputs are
+  validated (NaN/inf/out-of-range rejected); unknown method raises.
+- **Honest scope:** decision accuracy *ties* a mean-of-opinions baseline; the
+  selective-risk delta is favourable but **noisy at this N**, so it (and ECE) are
+  reported, not gated — a single source is trivially calibrated. `min` is shown only
+  for contrast (a laundering guard, not a classifier). Independence groups are a
+  caller-supplied input the combiner cannot verify.
 
 ## M1 — shipped: injection / containment red-team
 
@@ -69,11 +89,28 @@ with the new deterministic `no_secret_leak` tripwire (`agent/verifiers.py`) and 
   call not in the plan; (3) a tainted value into a write/egress sink is blocked. The
   planner/extractor are injectable (mocked in CI) — security lives in the
   deterministic interpreter.
-- **Honest scope (M2.3+):** a real privileged-planner LLM that generates plans for
-  open-ended tasks (the instruction set here is small — the planner's *expressiveness*
-  is the limit, not the safety); a quarantined-extractor model; per-tool airgap
-  classification for `agent/tools.run_tool`; an AgentDojo-style end-to-end suite
-  (DoD: ASR <2%, utility within ~10 pts) once a planner is wired.
+- **M2.3 v1 — shipped: planner + fail-closed plan-validator + end-to-end suite.**
+  `agent/dataflow/planner.py`: a `template_planner` (deterministic, offline) and a
+  `model_planner` (real P-LLM via the adapter, mockable) turn a TRUSTED request into
+  a plan — never reading untrusted data. `parse_plan` is the **trust boundary**: it
+  admits only known ops + manifest tools, forces `retrieve` to a READ tool, and
+  **fails closed** on anything malformed, so even an adversarial planner can lose
+  utility but not safety. End-to-end red-team invariant `e2e_planner_contains_injection`:
+  a planner-driven run over attacker-poisoned retrieved content fires no out-of-plan
+  tool. `tests/test_planner.py`.
+- **M2.4 v1 — shipped: quarantined extractor + AgentDojo-style end-to-end suite.**
+  `agent/dataflow/extractor.py` formalises the Q-LLM — a pure-`generate`, no-tools
+  reader of untrusted content whose output the interpreter labels untrusted (even a
+  fully-subverted extractor produces only data). `eval/security/agentdojo.py` +
+  `tools/run_agentdojo.py` run the full planner→interpreter pipeline on benign
+  requests with injected, poisoned retrieved content and report **ASR + utility**:
+  first run **ASR 0% / utility 100%** across the suite (a tainted-write task is
+  safely refused) — attacks are contained by construction, offline (real
+  planner/extractor opt-in).
+- **Honest scope (M2.5+):** the template planner + suite cover a handful of task
+  shapes; a real P-LLM needs prompt engineering for broad tasks; the AgentDojo
+  *official* dataset (not a hand-built analogue) for a citable cross-system number;
+  per-tool airgap classification for `agent/tools.run_tool`.
 - **M3 — "Honest labels":** Biba integrity axis + bounded/logged declassification
   (#3) and corroboration-aware confidence (#4), with a label-creep dashboard and an
   ECE calibration report.

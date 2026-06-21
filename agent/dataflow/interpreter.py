@@ -98,11 +98,15 @@ class Interpreter:
     """Execute a plan with taint-tracked variables and firewall-gated tool calls."""
 
     def __init__(self, *, tools: dict, extractor: "Callable | None" = None,
-                 approver=None, profile=None):
+                 approver=None, profile=None, approve_sinks: bool = False):
         self.tools = tools                 # name -> callable(*plain_args) -> result
         self.extractor = extractor         # (instruction, src_text) -> str  (Q-LLM)
         self.approver = approver
         self.profile = profile
+        # Defense in depth for attacker-influenceable requests: require explicit
+        # approval for EVERY write/egress call, even with trusted args (so a
+        # malicious planner alone cannot trigger an unapproved side effect).
+        self.approve_sinks = approve_sinks
 
     def _resolve(self, ref: Any, env: dict, declared: set) -> Labeled:
         """A ref is a var name (use its Labeled value) or a literal (trusted). A var
@@ -150,8 +154,30 @@ class Interpreter:
 
             elif isinstance(step, Call):
                 args = [self._resolve(a, env, declared) for a in step.args]
+                # Defense in depth: when enabled, every write/egress sink needs
+                # explicit approval even if its args are trusted.
+                if self.approve_sinks and cap_for(step.tool).effect != Effect.READ:
+                    granted = False
+                    if self.approver is not None:
+                        try:
+                            granted = self.approver(step.tool, tuple(args), {}, None) is True
+                        except Exception:
+                            granted = False
+                    if not granted:
+                        res.blocked.append((step.tool, "approve_sinks: write/egress requires approval"))
+                        continue
                 decision = guard_call(step.tool, tuple(args), approver=self.approver, profile=self.profile)
-                if not decision.allowed:
+                if decision.action == "require_hitl":
+                    granted = False
+                    if self.approver is not None:
+                        try:
+                            granted = self.approver(step.tool, tuple(args), {}, decision) is True
+                        except Exception:
+                            granted = False
+                    if not granted:
+                        res.blocked.append((step.tool, "HITL not approved: " + decision.reason))
+                        continue
+                elif not decision.allowed:
                     res.blocked.append((step.tool, decision.reason))
                     continue
                 result = self.tools[step.tool](*[unwrap(a) for a in args])

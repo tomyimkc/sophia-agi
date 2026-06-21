@@ -2,6 +2,142 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.23] - 2026-06-21
+
+### Fixed — #4 corroboration review findings (soundness + honest baseline)
+
+A 15-agent review confirmed 5 issues; all addressed.
+
+- **(MEDIUM) Input validation** — `Evidence.confidence` now rejects NaN/inf/out-of-range
+  in `__post_init__` (was silently clamped; a NaN previously coerced to confident
+  *dissent* and could nuke a whole independence group).
+- **(LOW) Method dispatch** — an unknown `method` now raises `ValueError` instead of
+  silently falling through to log-odds.
+- **(MEDIUM) Strawman baseline removed** — the gated benchmark no longer compares
+  against `min` (a laundering guard, not a classifier — the module itself called it
+  the wrong tool). Gating is now on **structural, robust** invariants (confidence
+  monotone in independent agreement; rewards independent agreement unlike a flat
+  mean / min baseline; idempotent under duplicates; dissent lowers) — holds across
+  40 seeds. The selective-risk/ECE deltas are **reported, not gated** (decision
+  accuracy ties a mean-of-opinions baseline; the margin is noisy at this N).
+- **(MEDIUM) Docstring honesty** — dropped the false "better-calibrated than a single
+  source" claim (a single source is trivially calibrated); the headline is now the
+  structural win, with discrimination reported.
+- Tests: NaN/range rejection, unknown-method error, structural gating.
+
+## [0.7.22] - 2026-06-21
+
+### Added — #4 corroboration-aware confidence (propagation semantics)
+
+Fixes the review's "min-over-chain ignores corroboration" finding. The OKF graph's
+min-over-chain (`okf/graph.py`) correctly stops confidence *laundering*; this adds
+the missing axis — independent agreement should *raise* belief.
+
+- **`agent/corroboration.py`** — a Bayesian **log-odds pool** that raises belief
+  when **independent** sources agree and lowers it on dissent, after collapsing
+  dependent sources (same `independence_group`) so duplicates can't inflate. Log-odds
+  over raw Dempster–Shafer to avoid Zadeh's high-conflict paradox; a support-only
+  `noisy_or` method is also provided.
+- **Falsifiable** (`tools/run_corroboration.py`, `tests/test_corroboration.py`):
+  monotone in independent sources, idempotent under duplicates, dissent lowers, and
+  on a labelled benchmark **lower selective risk than a single source (0.11 vs 0.22)
+  and than min-over-chain (0.31)** — holds across 30 seeds.
+- **Honest scope:** the durable win is *discrimination* (better decisions), not ECE
+  — a single source is trivially calibrated, so ECE is reported, not gated;
+  independence groups are a caller-supplied input the combiner can't verify.
+
+## [0.7.21] - 2026-06-21
+
+### Fixed — M-#5 / M2.4 review findings (NLI correctness, honest AgentDojo metric)
+
+A 16-agent review confirmed 5 issues; all addressed.
+
+- **(HIGH) NLI entailment label** — `_default_nli` hardcoded the entailment index to
+  1, so an alternate `$SOPHIA_NLI_MODEL` (MNLI label order) would silently mis-score
+  in the unsafe direction. Now resolves the entailment index from the model's own
+  `id2label`, and **fails closed** if no "entailment" label exists.
+- **(MEDIUM) AgentDojo metric was partly by-construction** — 2 of 3 tasks had no
+  sink, so ASR=0 didn't exercise the firewall. The suite now has sink-bearing tasks,
+  a **load-bearing control test** (firewall disabled → ASR>0), honest **utility** (a
+  refused tainted write is utility=False, not inflated), and a **live canary** limb.
+  Corrected headline: **ASR 0% / utility 33%** (the 67% is the honest security cost —
+  tainted-derived writes are refused; HITL recovers them).
+- **(MEDIUM, bonus) HITL wiring** — the interpreter passed an `approver` to the
+  firewall but never honored a `require_hitl` decision; now it does, so an approver
+  genuinely recovers a tainted write (tested).
+- **(LOW) Double-counted violation** — an out-of-range citation no longer also emits
+  a spurious "not entailed" reason (`claim_supported` + `citation_faithful`).
+- **(LOW) Honest scope** — added the "only as good as the model/threshold" caveat to
+  `claim_supported`, matching its sibling verifiers.
+
+## [0.7.20] - 2026-06-21
+
+### Added — M-#5 (NLI fact-checking) + M2.4 (extractor + AgentDojo-style suite)
+
+- **M-#5 — `claim_supported`** (`agent/verifiers.py`) + `nli` policy: a semantic
+  faithfulness verifier that checks each cited sentence is *entailed* by its source
+  (pluggable NLI; cross-encoder opt-in). It catches a **wrong predicate even when
+  the subject matches** — the lexical blind spot the red-team flagged — and **fails
+  closed** when no scorer is available (never silently passes). The red-team's
+  `nli_closes_citation_subject_match` invariant proves it on the probe the lexical
+  citation check misses (deterministic mock NLI; real model opt-in).
+- **M2.4 — quarantined extractor** (`agent/dataflow/extractor.py`): the Q-LLM is a
+  pure-`generate`, no-tools reader of untrusted content; its output is labelled
+  untrusted by the interpreter (a subverted extractor still only produces data).
+- **M2.4 — AgentDojo-style end-to-end suite** (`eval/security/agentdojo.py`,
+  `tools/run_agentdojo.py`): runs planner→interpreter on benign requests with
+  injected, poisoned retrieved content and reports **ASR + utility**. First run:
+  **ASR 0% / utility 100%** (a tainted-write task is safely refused) — attacks
+  contained by construction, offline (real planner/extractor opt-in).
+- **Honest scope:** the template planner + suite cover a handful of task shapes;
+  broad-task P-LLM prompting and the *official* AgentDojo dataset for a citable
+  cross-system number are M2.5.
+
+## [0.7.19] - 2026-06-21
+
+### Fixed — M2.3 review findings (validator robustness + honest claims)
+
+An 8-agent review of M2.3 confirmed 3 issues; all addressed.
+
+- **(MEDIUM) `parse_plan` fail-closed contract** — an unhashable `tool` value
+  (list/dict) raised a raw `TypeError` instead of `PlanError`. Now type-checked:
+  malformed tool fields raise `PlanError` in both the retrieve and call branches.
+- **(MEDIUM) Honest scope of the validator** — corrected the planner docstring's
+  overclaim. `parse_plan` constrains op/tool/shape but does NOT stop a well-formed
+  Call to a legitimate sink with *trusted* Const args; safety against a malicious
+  planner rests on the request/planner being the trust root. Added an opt-in
+  `Interpreter(approve_sinks=True)` so every write/egress call needs explicit
+  approval (defense in depth for attacker-influenceable requests).
+- **(LOW) Load-bearing e2e check** — `run_e2e_redteam` now uses a sink-bearing plan
+  ("save a summary…") so `e2e_planner_contains_injection` actually depends on the
+  firewall blocking the tainted write (would catch a regression), not a no-sink plan
+  that was true by construction.
+- Tests: unhashable-tool fail-closed cases, `approve_sinks` gating.
+
+## [0.7.18] - 2026-06-21
+
+### Added — M2.3: planner + fail-closed plan-validator + end-to-end suite
+
+Completes the dual-LLM loop: a planner turns a trusted request into a plan the
+interpreter runs, with the plan-validator as a new, hardened trust boundary.
+
+- **`agent/dataflow/planner.py`** — `template_planner` (deterministic, offline) and
+  `model_planner` (real privileged-planner LLM via the adapter, mockable). Both read
+  ONLY the trusted request + allowed tools (never untrusted data), and route output
+  through `parse_plan`.
+- **`parse_plan` — the trust boundary**: admits only known ops + manifest tools,
+  forces `retrieve` to a READ-effect tool, requires well-formed steps, and **fails
+  closed** (`PlanError`) on anything malformed. A buggy/adversarial planner can lose
+  *utility* but cannot smuggle an unknown tool, an unknown op, or a write disguised
+  as a read.
+- **End-to-end red-team** invariant `e2e_planner_contains_injection`: a planner-driven
+  run over attacker-poisoned retrieved content fires no out-of-plan tool and exfiltrates
+  nothing. `tests/test_planner.py` (validator fail-closed cases, template + model
+  planner, end-to-end CFI, tainted-save blocked).
+- **Honest scope:** the template planner covers a few task shapes; broad-task P-LLM
+  prompting, a quarantined extractor, per-tool airgap for `run_tool`, and an
+  AgentDojo-style external suite are M2.4.
+
 ## [0.7.17] - 2026-06-21
 
 ### Fixed — M2.2 interpreter soundness (adversarial review findings)

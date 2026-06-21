@@ -175,19 +175,124 @@ def citation_faithful(sources: list[str], *, min_overlap: float = 0.35, require_
                 continue
             if cites:
                 best = 0.0
+                scored = False
                 for idx in cites:
                     if 1 <= idx <= len(src_words):
                         sw = src_words[idx - 1][0]
                         if words:
                             best = max(best, len(words & sw) / len(words))
+                        scored = True
                     else:
                         violations.append(f"citation [{idx}] out of range")
-                if best < min_overlap:
+                if scored and best < min_overlap:
                     violations.append(f"unsupported citation (overlap {best:.0%} < {min_overlap:.0%}): {s[:60]}")
             elif require_citation and re.search(r"\b(?:is|was|were|are|wrote|invented|discovered|founded|caused)\b", s.lower()):
                 violations.append(f"uncited claim: {s[:60]}")
         if violations:
             return _fail([f"citation not faithful: {v}" for v in violations], {"violations": violations})
+        return _ok({"sourcesChecked": len(sources)})
+
+    return _verify
+
+
+def _softmax(xs: list) -> list:
+    import math
+
+    m = max(xs)
+    exps = [math.exp(x - m) for x in xs]
+    s = sum(exps) or 1.0
+    return [e / s for e in exps]
+
+
+def _default_nli():
+    """A lazy cross-encoder NLI scorer ``(premise, hypothesis) -> entailment prob``.
+
+    Opt-in: needs ``sentence-transformers`` + a model (``$SOPHIA_NLI_MODEL``,
+    default ``cross-encoder/nli-deberta-v3-small``). Returns None when unavailable
+    so callers FAIL CLOSED rather than silently pass an unchecked claim. Not run in
+    CI (no model); the unit tests inject a mock scorer.
+    """
+    name = os.environ.get("SOPHIA_NLI_MODEL", "cross-encoder/nli-deberta-v3-small")
+    try:
+        from sentence_transformers import CrossEncoder
+    except Exception:
+        return None
+    try:
+        model = CrossEncoder(name)
+    except Exception:
+        return None
+
+    # Resolve the entailment index from the model's OWN label map — never assume a
+    # fixed order (MNLI models use {0:contradiction,1:neutral,2:entailment}, deberta
+    # uses {…,1:entailment,…}). If we can't identify it, FAIL CLOSED (return None)
+    # rather than silently mis-score in the unsafe direction.
+    ent_idx = None
+    try:
+        id2label = model.config.id2label
+        for i, label in id2label.items():
+            if str(label).lower().startswith("entail"):
+                ent_idx = int(i)
+                break
+    except Exception:
+        ent_idx = None
+    if ent_idx is None:
+        return None
+
+    def score(premise: str, hypothesis: str) -> float:
+        try:
+            logits = list(model.predict([(premise, hypothesis)])[0])
+        except Exception:
+            return 0.0
+        probs = _softmax([float(x) for x in logits])
+        return float(probs[ent_idx]) if ent_idx < len(probs) else 0.0
+
+    return score
+
+
+def claim_supported(sources: list[str], *, nli=None, threshold: float = 0.5,
+                    require_citation: bool = False) -> Verifier:
+    """Fail if a cited sentence is not ENTAILED by its cited source.
+
+    The semantic tier above :func:`citation_faithful`: it catches a *wrong
+    predicate even when the subject matches the source* (e.g. "Marie Curie invented
+    the telephone [1]" against a source about her radioactivity work) — the lexical
+    blind spot the red-team flagged. ``nli(premise, hypothesis) -> float`` in
+    ``[0,1]``; defaults to a cross-encoder (opt-in). If no scorer is available the
+    verifier FAILS CLOSED (it refuses to vouch) rather than silently passing.
+
+    Scope (honest): entailment detection is only as good as the supplied NLI model
+    and ``threshold`` — a weak model or a mis-set threshold can miss a wrong
+    predicate or false-positive on a valid claim. Compose it as a tier, not a
+    guarantee. The default model is resolved with the correct entailment label;
+    a custom ``$SOPHIA_NLI_MODEL`` must expose an "entailment" label or it fails closed.
+    """
+    scorer = nli or _default_nli()
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        if scorer is None:
+            return _fail(["NLI scorer unavailable — semantic faithfulness not checked"],
+                         {"nli": "unavailable"})
+        violations: list[str] = []
+        for sentence in re.split(r"(?<=[.!?])\s+|\n+", text):
+            s = sentence.strip()
+            if len(s) < 12:
+                continue
+            cites = [int(n) for n in re.findall(r"\[(?:local|web|source)?\s*(\d+)\]", s.lower())]
+            if cites:
+                best = 0.0
+                scored = False
+                for idx in cites:
+                    if 1 <= idx <= len(sources):
+                        best = max(best, float(scorer(sources[idx - 1], s)))
+                        scored = True
+                    else:
+                        violations.append(f"citation [{idx}] out of range")
+                if scored and best < threshold:
+                    violations.append(f"claim not entailed by source (entail {best:.0%} < {threshold:.0%}): {s[:60]}")
+            elif require_citation and re.search(r"\b(?:is|was|were|are|wrote|invented|discovered|founded|caused)\b", s.lower()):
+                violations.append(f"uncited claim: {s[:60]}")
+        if violations:
+            return _fail([f"claim unsupported: {v}" for v in violations], {"violations": violations})
         return _ok({"sourcesChecked": len(sources)})
 
     return _verify

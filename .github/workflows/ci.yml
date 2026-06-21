@@ -74,12 +74,19 @@ jobs:
         run: |
           python tests/test_cross_entity.py
           python tools/run_cross_entity.py
+      - name: Corroboration-aware confidence (propagation semantics)
+        run: |
+          python tests/test_corroboration.py
+          python tools/run_corroboration.py
       - name: Injection / containment red-team (M1) + data-flow firewall (M2/M2.2)
         run: |
           python tests/test_dataflow.py
           python tests/test_interpreter.py
+          python tests/test_planner.py
+          python tests/test_agentdojo.py
           python tests/test_security_redteam.py
           python tools/run_security_redteam.py
+          python tools/run_agentdojo.py
       - name: Legal-AI verifier (citation existence, sources, gated benchmark)
         run: |
           python tests/test_legal_citation.py

@@ -133,8 +133,10 @@ PROBES: list = [
         sources=["[1] Marie Curie was a physicist and chemist who studied radioactivity."],
         context=["[1] Marie Curie was a physicist and chemist who studied radioactivity."],
         gating=False,
-        note="KNOWN GAP: lexical overlap passes a wrong predicate when the subject "
-             "matches. Motivates NLI fact-checking (roadmap #5).",
+        note="Lexical-citation limit: overlap passes a wrong predicate when the "
+             "subject matches. Now caught by claim_supported (M-#5) when an NLI model "
+             "is present — see the factcheck section; this probe shows the lexical "
+             "policy's residual limit.",
     ),
 ]
 
