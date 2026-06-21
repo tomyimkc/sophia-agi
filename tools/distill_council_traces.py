@@ -114,7 +114,11 @@ def main(argv: "list[str] | None" = None) -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
     print(json.dumps(stats, ensure_ascii=False, indent=2))
-    print(f"wrote {len(rows)} traces -> {out.relative_to(ROOT)}")
+    try:
+        shown = out.relative_to(ROOT)
+    except ValueError:
+        shown = out  # output path outside the repo (e.g. /tmp) — show it absolute
+    print(f"wrote {len(rows)} traces -> {shown}")
     return 0
 
 
