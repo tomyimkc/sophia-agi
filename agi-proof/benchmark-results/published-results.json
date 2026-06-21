@@ -32,6 +32,12 @@
       "note": "Measures the VERIFIER's accuracy at catching fabricated legal citations (the Mata v. Avianca failure mode) across federated sources (HK e-Legislation/HKLII, UK National Archives, US CourtListener), not any model's. Includes the actual Mata fabrication, Varghese v. China Southern Airlines 925 F.3d 1339, which is flagged. Honest bounds: tiny, constructed benchmark (N=14) and the result is capped by the bundled register's completeness, so this validates the extraction + fail-closed gate logic end-to-end — it is NOT a headline capability claim. Reproduce: python tools/run_legal_citation_bench.py."
     }
   ],
+  "semanticEvals": {
+    "benchmark": "legal_holding_faithful (does a real authority's holding SUPPORT the cited proposition? — the Ayinde misstated-authority failure)",
+    "gate": "validated = >=2 independent judges (>=2 provider families, no mock) + mean pairwise Cohen's kappa >= 0.40 + >=3 runs + bootstrap 95% CI lower bound above chance (0.5).",
+    "validated": null,
+    "note": "Model-judged, so held to the no-overclaim gate. Machinery: tools/run_legal_faithfulness_bench.py; gate logic tested offline with deterministic scripted judges in tests/test_legal_faithfulness_bench.py. NO validated number yet — a headline requires a local run with >=2 provider families. Reproduce: python tools/run_legal_faithfulness_bench.py --judges <familyA:model>,<familyB:model> --runs 3."
+  },
   "illustrative": [
     {
       "model": "ollama:dolphin-llama3:8b",

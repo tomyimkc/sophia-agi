@@ -40,6 +40,14 @@ Scored by **exact-match against ground-truth labels** with a **deterministic ver
 
 - _legal_citation_exists:_ Measures the VERIFIER's accuracy at catching fabricated legal citations (the Mata v. Avianca failure mode) across federated sources (HK e-Legislation/HKLII, UK National Archives, US CourtListener), not any model's. Includes the actual Mata fabrication, Varghese v. China Southern Airlines 925 F.3d 1339, which is flagged. Honest bounds: tiny, constructed benchmark (N=14) and the result is capped by the bundled register's completeness, so this validates the extraction + fail-closed gate logic end-to-end — it is NOT a headline capability claim. Reproduce: python tools/run_legal_citation_bench.py.
 
+## Semantic evals (model-judged, gated)
+
+Judging whether a holding *supports* a proposition is a model call, so these are held to the no-overclaim gate (multi-judge + agreement + runs + CIs). A single judge is illustrative, never a headline.
+
+- Benchmark: legal_holding_faithful (does a real authority's holding SUPPORT the cited proposition? — the Ayinde misstated-authority failure)
+- Gate: validated = >=2 independent judges (>=2 provider families, no mock) + mean pairwise Cohen's kappa >= 0.40 + >=3 runs + bootstrap 95% CI lower bound above chance (0.5).
+- Validated result: _None yet._ Model-judged, so held to the no-overclaim gate. Machinery: tools/run_legal_faithfulness_bench.py; gate logic tested offline with deterministic scripted judges in tests/test_legal_faithfulness_bench.py. NO validated number yet — a headline requires a local run with >=2 provider families. Reproduce: python tools/run_legal_faithfulness_bench.py --judges <familyA:model>,<familyB:model> --runs 3.
+
 ## Judge audit (why the gate matters)
 
 Independent Claude panel vs the DeepSeek judge on 46 false cases: 76% agreement; validated alone-rate 21.7% (10/46) vs 41.3% single-judge. Judge choice dominates the absolute number.

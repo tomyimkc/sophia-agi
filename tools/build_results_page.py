@@ -134,6 +134,25 @@ def render(doc: dict) -> str:
                 L += [f"- _{e.get('verifier')}:_ {e['note']}"]
         L.append("")
 
+    semantic = doc.get("semanticEvals")
+    if semantic:
+        _v = semantic.get("validated")
+        status = ("**VALIDATED**" if _v is True
+                  else "recorded but **not validated**" if _v is False
+                  else "_None yet._")
+        L += [
+            "## Semantic evals (model-judged, gated)",
+            "",
+            "Judging whether a holding *supports* a proposition is a model call, so "
+            "these are held to the no-overclaim gate (multi-judge + agreement + runs "
+            "+ CIs). A single judge is illustrative, never a headline.",
+            "",
+            f"- Benchmark: {semantic.get('benchmark')}",
+            f"- Gate: {semantic.get('gate')}",
+            f"- Validated result: {status} {semantic.get('note', '')}",
+            "",
+        ]
+
     audit = doc.get("audit")
     if audit:
         L += ["## Judge audit (why the gate matters)", "", audit.get("note", ""), ""]

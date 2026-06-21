@@ -13,6 +13,7 @@ only to signal a skip when running under pytest.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -25,15 +26,16 @@ _REASON = "LoRA adapter checkpoint not built (training artifact, gitignored)"
 
 
 def _missing_adapter() -> bool:
-    """True if the checkpoint is absent. Skips under pytest; no-ops as a script."""
+    """True if the checkpoint is absent. Skips only under an active pytest run;
+    prints a note and returns otherwise (so importing+calling these outside pytest,
+    even where pytest happens to be installed, never raises Skipped)."""
     if (ADAPTER / "adapter_config.json").exists():
         return False
-    try:
+    if os.environ.get("PYTEST_CURRENT_TEST"):
         import pytest
-    except ImportError:
-        print(f"SKIP: {_REASON}")
-    else:
+
         pytest.skip(_REASON)
+    print(f"SKIP: {_REASON}")
     return True
 
 

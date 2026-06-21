@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "domain": "legal-holding-faithfulness",
+  "description": "Does a cited authority's holding SUPPORT the proposition it is cited for? (the Ayinde misstated-authority failure). Each case pairs a proposition with a REAL authority (holding looked up from data/legal_authorities.json) and a ground-truth expectFaithful. Scored by agent.legal_faithfulness with one or more LLM judges; a VALIDATED number requires the no-overclaim gate (>=2 independent judges, kappa>=0.40, >=3 runs, CI lower bound above chance). Unlike the objective citation-existence benchmark, this is a model-judged task — a single judge is illustrative only.",
+  "register": "data/legal_authorities.json",
+  "cases": [
+    {"id": "uksc41_faithful", "citation": "[2019] UKSC 41", "proposition": "The prorogation of Parliament was unlawful.", "expectFaithful": true},
+    {"id": "uksc41_misstated", "citation": "[2019] UKSC 41", "proposition": "The court held that prorogation was lawful and within the prerogative.", "expectFaithful": false},
+    {"id": "obergefell_faithful", "citation": "576 U.S. 644", "proposition": "Same-sex couples have a fundamental right to marry under the Fourteenth Amendment.", "expectFaithful": true},
+    {"id": "obergefell_misstated", "citation": "576 U.S. 644", "proposition": "This authority bars all immigration appeals.", "expectFaithful": false},
+    {"id": "mata_faithful", "citation": "678 F. Supp. 3d 443", "proposition": "Sanctions were imposed for submitting fabricated, AI-generated case citations.", "expectFaithful": true},
+    {"id": "mata_misstated", "citation": "678 F. Supp. 3d 443", "proposition": "The court established the standard for airline liability for delayed baggage.", "expectFaithful": false},
+    {"id": "centaline_faithful", "citation": "[2025] HKCFI 808", "proposition": "The court criticised AI-drafted submissions for making allegations without an evidential basis.", "expectFaithful": true},
+    {"id": "centaline_misstated", "citation": "[2025] HKCFI 808", "proposition": "The court endorsed the severe allegations as proven on the evidence.", "expectFaithful": false}
+  ]
+}
