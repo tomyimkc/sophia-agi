@@ -57,6 +57,21 @@ Legend: `[ ]` to do · `[~]` partially in place · `[x]` done by the implementat
 - [ ] **Wire the headline number into the README and thesis site** only *after*
       Tier 1 — never publish the mock numbers.
 
+## Known gate coverage gaps (observed in real runs — scoped fixes)
+
+The gate's regex is high-precision but missed real hallucinations during the
+multi-model run. Fix these in `agent/verifiers.py:provenance_faithful` *with new
+tests*, without lowering precision (verify the dispute pages still pass):
+
+- [ ] **Quoted / punctuated titles** — `wrote "The Constitution of the Athenians"`
+      isn't spanned because a quote sits between the verb and the title.
+- [ ] **`attributed to X`** phrasing — the gate matches `attributed by`, not the
+      far more common `attributed to`.
+- [ ] **Multi-word / honorific author names** — e.g. "the prophet Daniel",
+      "King David": ensure `author_markers` keys on the salient surname token.
+- [ ] **Title aliases** — let a record carry alternate titles (short forms,
+      Latin/English) so "Psalms" matches "the Book of Psalms".
+
 ## Tier 3 — widen the thesis (capability + adoption goals)
 
 - [ ] **Second provenance type** beyond ancient texts — pick one: RAG

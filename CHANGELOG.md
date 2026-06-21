@@ -28,19 +28,27 @@ Targets claim-ladder items 6–7 (external evaluation, replication).
 - **Report + CLI** — `provenance_bench/report.py` and `tools/run_provenance_delta.py`
   (`--models`, `--llm-judge`, `--on-fail`, `--emit-dataset`). Optional Wikidata
   QID verification via `tools/fetch_wikidata_authors.py`.
-- **Hard / obscure cases + gate-rule derivation** — added 7 verified
-  spurious-attribution probes (Rhetoric to Alexander→Anaximenes, Epinomis→Philip
-  of Opus, the Old Oligarch, Gallic War bk 8→Hirtius, De Mundo, the I Ching Ten
-  Wings, the Donation of Constantine) plus hard true controls.
+- **Hard / obscure cases + gate-rule derivation** — expanded the set to **87
+  externally-cited cases (46 false / 41 true)** with verified spurious /
+  pseudonymous / forged attributions across Greek-Roman (pseudo-Aristotle,
+  pseudo-Plato, the Old Oligarch, Gallic War bk 8, Batrachomyomachia, Corpus
+  Hermeticum, Epistles of Phalaris, Pseudo-Dionysius…), biblical (Mosaic
+  authorship, Deutero-Isaiah, Hebrews, the Pastorals, the Book of Daniel/Enoch,
+  Wisdom of Solomon…), and Chinese (Ten Wings, Liezi, Guanzi) traditions.
   `dataset.build_gate_records()` derives the gate's do-not-attribute rules from
   the cited misattributions (the realistic `SOPHIA_DISCIPLINE_RECORDS` path) so
-  the gate can fire on the benchmark's works; the judge now handles
-  scholarly-hedge / pseudonymity language and excludes claimed-author tokens when
-  crediting gold (fixes a "Pseudo-Aristotle" name collision).
-- **First real delta** — illustrative single run (lexical judge, 19 false cases):
-  `deepseek` 0% alone (frontier models already faithful here) vs a weak local
-  `dolphin-llama3:8b` 15.8% → **5.3%** behind the gate (Δ≈10.5), 0% false-positive
-  cost, 67% coverage. See `docs/11-Platform/Provenance-Delta.md`.
+  the gate fires on the benchmark's works; the judge now handles scholarly-hedge
+  / pseudonymity language and excludes claimed-author tokens when crediting gold
+  (fixes a "Pseudo-Aristotle" name collision).
+- **First real delta (multi-model, illustrative)** — single run each, lexical
+  judge, 46 false cases: frontier `deepseek` 0% alone; an *uncensored*
+  `dolphin-llama3:8b` 15.2% → **6.5%** behind the gate (Δ≈8.7), 0% false-positive
+  cost, 57% coverage; well-aligned `llama3.2:3b` / `qwen2.5:3b` rarely assert
+  false lineages (~2%) so show little delta. Finding: the delta tracks a model's
+  propensity to *assert*, not its size. Run-to-run variance observed (→ Tier-1
+  multi-run averaging). Concrete gate coverage gaps (quoted titles, `attributed
+  to`, multi-word author names) logged in the checklist. See
+  `docs/11-Platform/Provenance-Delta.md`.
 - **Tests (TDD, offline)** — `tests/test_provenance_bench.py` (dataset, derived
   gate records, judge incl. scholarly hedges, runner alone-vs-gated, scoring,
   report) + a `--models mock` smoke run, both wired into CI.
