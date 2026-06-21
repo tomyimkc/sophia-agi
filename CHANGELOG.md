@@ -2,6 +2,37 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.26] - 2026-06-21
+
+### Added — #3 classification lattice (Bell-LaPadula + Biba) + bounded declassification
+
+The last open original-review item: confidentiality-only + max-over-chain creep, no
+integrity axis, no declassification.
+
+- **Lattice** (`agent/security/labels.py`): `Label{conf, integ, compartments}` over
+  Bell-LaPadula confidentiality (*no write down*) and a **Biba integrity axis**
+  (*no write up*) plus need-to-know. `combine` = conf-max (creep) / integ-min /
+  compartments-union; `can_flow(data, sink)` enforces all three. (The dataflow taint
+  axis is the 2-level projection of this integrity axis.)
+- **Bounded, logged declassification** (`agent/security/declassify.py` +
+  `agent/security/audit.py`): the only sanctioned downgrade — lowers confidentiality
+  only, gated on a deterministic predicate AND an approver (fail-closed), with every
+  outcome written to a **tamper-evident hash-chained** audit log.
+- **Falsifiable** (`tools/run_classification_lattice.py`, 11 invariants): BLP/Biba
+  rules, need-to-know, combine→creep, Biba catching what BLP allows, declassification
+  relieving creep under approval, fail-closed refusal, bounded rules, audit chain
+  intact + tamper-evident. Tests: `test_classification_lattice.py`; CI wired.
+- **Honest scope:** the labelling + flow + declassification *model* with an auditable
+  downgrade; wiring labels onto live sources/runtime is next; integrity endorsement
+  (raising integrity) not implemented in v1.
+
+### Completes the security/verification roadmap
+With #3, the original brainstorm's seven-point roadmap is fully shipped (#1 injection
+red-team, #2 out-of-prompt CaMeL firewall, #3 BLP+Biba+declassification, #4
+corroboration-aware confidence, #5 NLI fact-checking, #6 least-privilege/dual-LLM,
+#7 LoRA leakage guard) — each adversarially reviewed and corrected. Framing
+throughout: provenance-aware, verifiable, fail-closed local reasoning — not AGI.
+
 ## [0.7.25] - 2026-06-21
 
 ### Fixed — #7 review findings (guard coverage + real contamination measurement)
