@@ -48,14 +48,23 @@ def _vote(judge, proposition: str, holding: str) -> "int | None":
 
 
 def run_once(cases: list[dict], holdings: dict, judges: list) -> dict:
-    """One run over all cases for each judge; returns per-judge label vectors."""
+    """One run over all cases for each judge; returns per-judge label vectors.
+
+    Holding text is taken from the case itself (``holding``) when present — so a
+    larger benchmark can be self-contained with provenance — falling back to the
+    register by citation. Per-case strata (difficulty / failureType) are carried so
+    aggregate() can report where judges drop and disagree.
+    """
     per_judge: list[list[int | None]] = [[] for _ in judges]
     gold: list[int] = []
+    strata: list[dict] = []
     consensus_correct = 0
     for case in cases:
-        holding = holdings.get(case["citation"], "")
+        holding = case.get("holding") or holdings.get(case["citation"], "")
         gold_label = 1 if case["expectFaithful"] else 0
         gold.append(gold_label)
+        strata.append({"difficulty": case.get("difficulty", "unspecified"),
+                       "failureType": case.get("failureType", "none" if case["expectFaithful"] else "unspecified")})
         votes = [_vote(j, case["proposition"], holding) for j in judges]
         for i, v in enumerate(votes):
             per_judge[i].append(v)
@@ -63,7 +72,8 @@ def run_once(cases: list[dict], holdings: dict, judges: list) -> dict:
         # consensus = majority "supports"; ties / all-abstain -> not-supports (fail-closed)
         cons = 1 if cast and sum(cast) > len(cast) / 2 else 0
         consensus_correct += int(cons == gold_label)
-    return {"perJudge": per_judge, "gold": gold, "consensusCorrect": consensus_correct, "n": len(cases)}
+    return {"perJudge": per_judge, "gold": gold, "strata": strata,
+            "consensusCorrect": consensus_correct, "n": len(cases)}
 
 
 def _accuracy(labels: list, gold: list[int]) -> float:
@@ -126,10 +136,53 @@ def aggregate(runs: list[dict], *, judge_specs: list[str], seed: int = 0, n_boot
         "perRunAccuracy": [round(a, 4) for a in per_run_acc],
         "meanPairwiseKappa": mean_kappa,
         "perJudgeAccuracy": _per_judge_acc(runs, gold, judge_specs),
+        "byDifficulty": _stratified(runs, "difficulty"),
+        "byFailureType": _stratified(runs, "failureType"),
         "validated": all(checks.values()),
         "validatedChecks": checks,
         "scoring": "model-judged; validated only under the no-overclaim gate (see validatedChecks).",
     }
+
+
+def _stratified(runs: list[dict], key: str) -> dict:
+    """Per-stratum consensus accuracy (+ mean pairwise kappa) — where do judges drop
+    and disagree? The honest signal a larger, harder benchmark exists to surface."""
+    out: dict = {}
+    strata = runs[0].get("strata") or []
+    labels = {v.get(key, "unspecified") for v in strata}
+    for lab in sorted(labels):
+        idxs = [i for i, v in enumerate(strata) if v.get(key, "unspecified") == lab]
+        if not idxs:
+            continue
+        correct = total = 0
+        kappas: list[float] = []
+        for r in runs:
+            cons = _consensus_labels(r)
+            for i in idxs:
+                correct += int(cons[i] == r["gold"][i])
+                total += 1
+            kappas += _kappa_over(r, idxs)
+        out[lab] = {
+            "n": len(idxs),
+            "accuracy": round(correct / total, 4) if total else None,
+            "meanPairwiseKappa": round(sum(kappas) / len(kappas), 4) if kappas else None,
+        }
+    return out
+
+
+def _kappa_over(run: dict, idxs: list[int]) -> list[float]:
+    judges = run["perJudge"]
+    ks: list[float] = []
+    for a in range(len(judges)):
+        for b in range(a + 1, len(judges)):
+            pairs = [(judges[a][i], judges[b][i]) for i in idxs
+                     if judges[a][i] is not None and judges[b][i] is not None]
+            if not pairs:
+                continue
+            kk = consensus.cohen_kappa([p[0] for p in pairs], [p[1] for p in pairs])
+            if kk is not None:
+                ks.append(kk)
+    return ks
 
 
 def _consensus_labels(run: dict) -> list[int]:
@@ -156,11 +209,12 @@ def main(argv: "list[str] | None" = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--judges", default="mock", help="comma-separated judge specs (e.g. anthropic:..,deepseek:..)")
     ap.add_argument("--runs", type=int, default=1)
+    ap.add_argument("--bench", default=str(BENCH), help="benchmark file (default: the validated 8-case set)")
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--write", action="store_true", help="write run artifact under agi-proof/")
     args = ap.parse_args(argv)
 
-    bench = json.loads(BENCH.read_text(encoding="utf-8"))
+    bench = json.loads(Path(args.bench).read_text(encoding="utf-8"))
     holdings = register_holdings()
     specs = [s.strip() for s in args.judges.split(",") if s.strip()]
     judges = build_judges(specs)
@@ -176,6 +230,11 @@ def main(argv: "list[str] | None" = None) -> int:
         print(f"  mean pairwise kappa {result['meanPairwiseKappa']}")
         for spec, a in result["perJudgeAccuracy"].items():
             print(f"    {spec}: {a * 100:.1f}%")
+        if len(result.get("byDifficulty", {})) > 1:
+            print("  by difficulty (accuracy | κ):")
+            for lab, s in result["byDifficulty"].items():
+                acc = f"{s['accuracy'] * 100:.0f}%" if s["accuracy"] is not None else "—"
+                print(f"    {lab:18} n={s['n']:<3} {acc:>5} | κ={s['meanPairwiseKappa']}")
         for k, ok in result["validatedChecks"].items():
             print(f"  [{'x' if ok else ' '}] {k}")
     if args.write:
