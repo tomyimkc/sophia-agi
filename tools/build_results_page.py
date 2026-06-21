@@ -136,7 +136,10 @@ def render(doc: dict) -> str:
 
     semantic = doc.get("semanticEvals")
     if semantic:
-        status = "**VALIDATED**" if semantic.get("validated") else "_None yet._"
+        _v = semantic.get("validated")
+        status = ("**VALIDATED**" if _v is True
+                  else "recorded but **not validated**" if _v is False
+                  else "_None yet._")
         L += [
             "## Semantic evals (model-judged, gated)",
             "",

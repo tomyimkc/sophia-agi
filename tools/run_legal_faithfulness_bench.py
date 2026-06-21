@@ -78,9 +78,16 @@ def _mean_pairwise_kappa(run: dict) -> "float | None":
     kappas = []
     for i in range(len(judges)):
         for k in range(i + 1, len(judges)):
-            a = [v if v is not None else -1 for v in judges[i]]
-            b = [v if v is not None else -1 for v in judges[k]]
-            kk = consensus.cohen_kappa(a, b)
+            # cohen_kappa is strictly binary {0,1}; only score items where BOTH
+            # judges cast a non-abstaining vote (abstentions are not a third label).
+            pairs = [
+                (judges[i][x], judges[k][x])
+                for x in range(len(judges[i]))
+                if judges[i][x] is not None and judges[k][x] is not None
+            ]
+            if not pairs:
+                continue
+            kk = consensus.cohen_kappa([p[0] for p in pairs], [p[1] for p in pairs])
             if kk is not None:
                 kappas.append(kk)
     return round(sum(kappas) / len(kappas), 4) if kappas else None
