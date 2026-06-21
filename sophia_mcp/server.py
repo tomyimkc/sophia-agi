@@ -21,6 +21,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     benchmark_score,
     check_claim,
     corpus_stats,
+    council_deliberate,
     dumps,
     export_corpus,
     gate_check,
@@ -178,6 +179,22 @@ def sophia_sector_council(
     if not isinstance(materials, list):
         return dumps({"error": "materials_json must be a JSON array"})
     return dumps(sector_council(council_id, query, materials=materials))
+
+
+@mcp.tool()
+def sophia_council_deliberate(
+    query: str,
+    model: str = "mock",
+    max_seats: int = 4,
+    gate: bool = True,
+) -> str:
+    """Deliberate a query across a council: a focused pass per seat, a per-seat gate,
+    then synthesis (map-reduce). The small-LLM uplift — narrow gated passes beat one
+    shallow pass. `model` is a Sophia model spec (mock|ollama:..|openrouter:..|..).
+    Returns per-seat answers, which seats were gated out, and the synthesised
+    decision. Decision support only — not professional advice.
+    """
+    return dumps(council_deliberate(query, model=model, max_seats=max_seats, gate=gate))
 
 
 @mcp.tool()
