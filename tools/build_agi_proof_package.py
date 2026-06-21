@@ -261,6 +261,7 @@ def build_manifest() -> dict[str, Any]:
             "codeReward": "provenance_bench/code_reward.py",
             "codeBenchmark": "benchmark/code_tasks.json",
             "codeUpliftRunner": "tools/run_code_uplift.py",
+            "councilPanelRunner": "tools/run_council_panel.py",
             "religionFigureCouncil": "docs/08-Domains/Religion-Figure-Council.md",
             "codingCouncil": "docs/08-Domains/Coding-Council.md",
         },

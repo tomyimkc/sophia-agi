@@ -2,6 +2,34 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.37] - 2026-06-22
+
+### Added — heterogeneous council panel (team-of-models) + head-to-head benchmark
+
+Tests the original "council members decide" intent empirically: does a team of
+DIFFERENT models beat one model wearing N hats? (The latter has correlated errors
+— shared weights — so a vote can't aggregate independent judgement.)
+
+- **`agent/council_deliberate.py`**: `deliberate(..., seat_clients=[...])` cycles a
+  pool of clients across seats, so each seat can be a different model (a real team).
+  Backward-compatible: default = the single `client` (unchanged). `SeatResult.model`
+  records which model ran each seat.
+- **`tools/run_council_panel.py`**: three-way head-to-head over the gold-labelled
+  provenance cases — `single` (baseline) vs `homo` (same model ×N, the control for
+  "more votes") vs `hetero` (N different models, majority vote). Reports the
+  diversity effect (`hetero` vs `homo`).
+
+REAL RESULT (weak dolphin baseline, 50 cases / 32 false + 18 true, illustrative):
+hallucination single 15.6% -> homo 18.8% (WORSE: correlated errors compound) ->
+hetero **0.0%**. Diversity effect **+18.8pp**. A homogeneous panel did not help (it
+hurt); a heterogeneous team eliminated the hallucination — the strong model
+outvotes the weak model's misses. (An earlier run on an all-easy, all-false slice
+was inconclusive — single scored 0%, no headroom; fixed with a weak baseline +
+mixed shuffled slice via new `--offset`/`--shuffle`.) Not AGI; a measured
+deliberation uplift that needs HETEROGENEOUS members, not personas of one model.
+
+Tests: `test_council_panel.py`; CI wired.
+
 ## [0.7.36] - 2026-06-22
 
 ### Added — code-uplift: interpreter-as-verifier (the strongest verifiable signal)
