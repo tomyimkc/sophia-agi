@@ -175,6 +175,10 @@ def web_evidence_search(
 ) -> dict:
     if not query.strip():
         return {"error": "query is required"}
+    from agent.dataflow.firewall import active_profile
+
+    if online and active_profile() == "airgap":
+        return {"error": "airgap profile blocks network egress (web_evidence_search)", "results": []}
     return gather_evidence(
         query,
         local_top_k=local_top_k,
@@ -355,6 +359,10 @@ def openclaw_infer(model: str = "xai/grok-4.3", prompt: str = "") -> dict:
     sophia_wiki_upsert -> wiki_store.upsert -> the source-discipline gate, which
     independently rejects lineage merges even when writes are approved.
     """
+    from agent.dataflow.firewall import active_profile
+
+    if active_profile() == "airgap":
+        return {"ok": False, "error": "airgap profile blocks egress (openclaw_infer)"}
     return _openclaw_infer(model, prompt)
 
 

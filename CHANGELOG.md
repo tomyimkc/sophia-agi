@@ -2,6 +2,30 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.14] - 2026-06-21
+
+### Added — M2 v1: out-of-prompt data-flow firewall (capability + taint)
+
+Moves the security boundary into deterministic code (CaMeL principle): the model
+can be fully compromised, but it cannot drive untrusted data into a side-effecting
+sink. See `docs/11-Platform/Security-Roadmap.md`.
+
+- **`agent/dataflow/`** — dependency-free enforcement core: taint labels
+  (`untrusted`/`trusted`, propagated via `combine`); per-tool capabilities
+  (`READ`/`WRITE`/`EGRESS`) with a default-deny manifest for the real `sophia_*`
+  tools; a deterministic policy (`decide`) and `firewalled()` wrapper that **blocks
+  the lethal trifecta** (tainted → write/egress sink) or routes it to human
+  approval, and an **airgap** profile that fail-closes all egress.
+- **Live airgap wiring**: `openclaw_infer` and online `web_evidence_search` return
+  a blocked result under `SOPHIA_PROFILE=airgap` (no behavior change otherwise).
+- **Red-team scores the firewall** (`eval/security/`): lethal-trifecta **ASR 0%**
+  (exfil-via-egress, write-poisoning, airgap-egress, unknown-sink; baseline 100%),
+  reads not over-blocked — two new gating invariants.
+- Tests: `tests/test_dataflow.py` (taint propagation, policy matrix, lethal-trifecta
+  block, HITL path, default-deny unknown tool, live airgap); wired into CI.
+- **Honest scope:** this is the enforcement boundary. The dual-LLM privileged-
+  planner / quarantined-extractor split + constrained-AST interpreter is M2.2.
+
 ## [0.7.13] - 2026-06-21
 
 ### Fixed — negation-evasion in the provenance gate (red-team finding)

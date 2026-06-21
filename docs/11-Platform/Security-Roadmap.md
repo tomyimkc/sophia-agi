@@ -7,7 +7,7 @@ the *code* contains it. Ranked by leverage (impact ÷ effort).
 | # | Change | Impact | Effort | Status |
 |---|--------|:------:|:------:|--------|
 | 1 | Injection / containment red-team (assume-compromised-model) | High | S | **shipped (M1)** — `eval/security/` |
-| 2 | Out-of-prompt data-flow firewall (CaMeL: capabilities + taint) + HITL on the action path | High | L | planned (M-next) |
+| 2 | Out-of-prompt data-flow firewall (CaMeL: capabilities + taint) + HITL on the action path | High | L | **enforcement core shipped (M2 v1)** — `agent/dataflow/`; dual-LLM planner/extractor = M2.2 |
 | 3 | Biba integrity axis + bounded, logged declassification (fights label creep) | High | M | planned |
 | 4 | Corroboration-aware confidence (Dempster–Shafer / log-odds) | Med | S–M | planned |
 | 5 | External fact-checking (NLI cross-encoder) as a `claim_supported` verifier | Med-High | M | planned |
@@ -42,11 +42,18 @@ with the new deterministic `no_secret_leak` tripwire (`agent/verifiers.py`) and 
 
 ## Next milestones (not "AGI")
 
-- **M2 — "Move the boundary out of the prompt":** the CaMeL-style data-flow
-  firewall (#2) with capabilities + taint and HITL on shell/git/file writes (the
-  carve-out negation-evasion is already closed). DoD: red-team ASR <2%; utility
-  within ~10 pts; no tainted→write/egress path reachable without an approved
-  capability.
+- **M2 v1 — shipped: enforcement boundary out of the prompt.** `agent/dataflow/`
+  is a deterministic capability + taint firewall: untrusted data carries a taint;
+  every tool is classified READ/WRITE/EGRESS (default-deny for unknown tools); the
+  lethal trifecta (tainted → write/egress sink) is **blocked** or routed to human
+  approval; an **airgap** profile fail-closes all egress (wired into the real
+  `openclaw_infer` / `web_evidence_search`). The red-team scores it: lethal-trifecta
+  **ASR 0%** (baseline 100%), reads not over-blocked. `agent/dataflow/`,
+  `tests/test_dataflow.py`, `eval/security/`.
+- **M2.2 — next:** the dual-LLM split (privileged planner that never sees raw
+  untrusted data + quarantined extractor) and a constrained-AST plan interpreter,
+  built on this boundary. DoD: AgentDojo-style end-to-end ASR <2%; utility within
+  ~10 pts; no tainted→sink path reachable without an approved capability.
 - **M3 — "Honest labels":** Biba integrity axis + bounded/logged declassification
   (#3) and corroboration-aware confidence (#4), with a label-creep dashboard and an
   ECE calibration report.

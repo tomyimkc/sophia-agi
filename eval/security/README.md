@@ -37,6 +37,12 @@ python tests/test_security_redteam.py          # CI gate
   connectors + leading subordinate clauses, not on commas, so appositive matching
   is preserved). 4 variants now gate the fix; 0 false positives on 68 corpus pages.
 
+**Data-flow firewall (M2) — scored here too:**
+- Lethal trifecta (tainted data → write/egress sink) is blocked in deterministic
+  code (`agent/dataflow/`): **ASR 0%** across exfil-via-egress, write-poisoning,
+  airgap-egress, and unknown-sink scenarios (baseline 100%), while reads are not
+  over-blocked.
+
 **Reported probe (not gating) — remaining gap:**
 - `unsupported_citation` (subject match): lexical overlap passes a *wrong predicate*
   when the subject matches the source → motivates NLI fact-checking (roadmap #5).

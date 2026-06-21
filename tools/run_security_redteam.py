@@ -42,6 +42,11 @@ def main(argv: "list[str] | None" = None) -> int:
     print(f"\nExfiltration:  baseline ASR = {r['exfiltration']['baselineASR']:.0%}"
           f"  ->  with no_secret_leak = {r['exfiltration']['defendedASR']:.0%}"
           f"  (n={r['exfiltration']['n']})")
+    fw = r["firewall"]
+    print(f"\nData-flow firewall (M2):  lethal-trifecta ASR = {fw['firewalledASR']:.0%}"
+          f"  (baseline {fw['baselineASR']:.0%}; reads allowed = {fw['readsAllowed']})")
+    for s in fw["scenarios"]:
+        print(f"  {s['id']:<18} {s['tool']:<28} -> {s['action']}")
     print("\nPROBES (reported, not gating — known/suspected gaps):")
     for cat, s in r["probes"]["byCategory"].items():
         flag = "  <-- ATTACK WON (real gap)" if s["asr"] > 0 else ""
