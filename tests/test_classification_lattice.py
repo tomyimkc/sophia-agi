@@ -75,7 +75,30 @@ def test_audit_tamper_evident() -> None:
     log.append("declassify_denied", {"b": 2})
     assert log.verify() is True
     log.entries[0].detail["a"] = 999
-    assert log.verify() is False
+    assert log.verify() is False                                  # in-place edit caught
+
+
+def test_audit_anchor_catches_truncation_and_forge() -> None:
+    log = AuditLog()
+    log.append("a", {})
+    log.append("declassify_denied", {})                           # the incriminating last record
+    cnt, head = log.count, log.head()
+    del log.entries[-1]
+    assert log.verify() is True                                   # unanchored: tail truncation MISSED (known limit)
+    assert log.verify(expected_count=cnt, expected_head=head) is False   # anchor catches it
+    log2 = AuditLog()
+    log2.append("a", {})
+    c, h = log2.count, log2.head()
+    log2.append("forged", {})
+    assert log2.verify(expected_count=c, expected_head=h) is False       # anchor catches forged append
+
+
+def test_declassrule_coerces_levels() -> None:
+    r = DeclassRule("r", Conf.SECRET, 0, predicate=lambda v: True)        # raw int 0 -> PUBLIC
+    assert r.to_conf == Conf.PUBLIC and r.from_conf == Conf.SECRET
+    log = AuditLog()
+    out = declassify(Label(Conf.SECRET), "x", r, approver=lambda *a: True, audit=log)
+    assert out is not None and out.conf == Conf.PUBLIC and log.verify()
 
 
 def test_demo_invariants_hold() -> None:
@@ -93,6 +116,8 @@ def main() -> int:
     test_declassify_fail_closed()
     test_declassify_is_bounded()
     test_audit_tamper_evident()
+    test_audit_anchor_catches_truncation_and_forge()
+    test_declassrule_coerces_levels()
     test_demo_invariants_hold()
     print("test_classification_lattice: OK")
     return 0

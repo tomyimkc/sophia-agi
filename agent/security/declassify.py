@@ -10,8 +10,9 @@ is the *only* sanctioned way to lower a label — and it is deliberately narrow:
     confirms the secret content was removed);
   - **approval-gated:** an approver must explicitly return True (fail closed on a
     missing, raising, or non-True approver);
-  - **audited:** every outcome — granted OR denied — is written to a tamper-evident
-    :class:`~agent.security.audit.AuditLog`.
+  - **audited:** every outcome — granted OR denied — is written to a hash-chained
+    :class:`~agent.security.audit.AuditLog` (tamper-evident for edits/reorders; add a
+    persisted (count, head) anchor to also catch tail-truncation/forged-append).
 
 Integrity is never silently raised here either; "endorsement" (raising integrity)
 would be a separate, equally-audited operation — not implemented in v1.
@@ -39,6 +40,10 @@ class DeclassRule:
     justification: str = ""
 
     def __post_init__(self):
+        # Normalise to Conf enums first (mirror Label) so bool/int levels can't
+        # bypass the lower-only guard or crash the audited path with a raw value.
+        object.__setattr__(self, "from_conf", Conf(int(self.from_conf)))
+        object.__setattr__(self, "to_conf", Conf(int(self.to_conf)))
         if int(self.to_conf) >= int(self.from_conf):
             raise DeclassError(f"{self.name}: declassification must LOWER confidentiality "
                                f"({self.from_conf.name} -> {self.to_conf.name})")

@@ -74,8 +74,8 @@ max-over-chain creep, no integrity axis, no declassification.
 - **Bounded, logged declassification** (`agent/security/declassify.py`): the only
   sanctioned downgrade — may *only lower* confidentiality, gated on a deterministic
   predicate (e.g. redaction) AND an approver (fail-closed on missing/raising/non-True),
-  with every outcome (granted or denied) written to a **tamper-evident hash-chained**
-  audit log (`agent/security/audit.py`).
+  with every outcome (granted or denied) written to a **hash-chained** audit log
+  (`agent/security/audit.py`).
 - **Falsifiable** (`tools/run_classification_lattice.py`, 11 invariants): BLP/Biba
   truth table, need-to-know, combine→creep, Biba catches what BLP allows,
   declassification relieves creep under approval, fail-closed refusal, bounded rules,
@@ -84,7 +84,10 @@ max-over-chain creep, no integrity axis, no declassification.
   auditable downgrade; wiring labels onto live data sources and into the guarded loop
   at runtime is the next step (the dataflow firewall already enforces the 2-level
   integrity projection). Integrity *endorsement* (raising integrity) is intentionally
-  not implemented in v1.
+  not implemented in v1. The audit chain catches edits/reorders/front-deletion on its
+  own; **tail-truncation and forged-append are caught only with a persisted
+  (count, head) anchor** passed to `verify()` (an unanchored hash chain cannot detect
+  them) — and the log is in-memory until persistence is wired.
 
 ## #7 — shipped: LoRA leakage guard + contamination control
 

@@ -2,6 +2,27 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.27] - 2026-06-21
+
+### Fixed — #3 review findings (audit anchor + honest tamper-evidence, declass coercion)
+
+A 14-agent review confirmed 5 issues (lattice rules themselves verified correct);
+fixed:
+
+- **(HIGH) Audit tamper-evidence boundary** — a hash chain alone cannot detect
+  **tail-truncation** (dropping the latest, e.g. incriminating, record) or a
+  **forged append/rebuild**; my docstring wrongly claimed "deleting any past entry
+  breaks the chain." Added an **external anchor**: `AuditLog.head()` + `count`, and
+  `verify(expected_count=…, expected_head=…)` which now catches truncation and
+  forged-append. Docstrings/roadmap/CHANGELOG corrected to state the exact guarantee.
+- **(HIGH) Honest test boundary** — the tamper-evidence invariants now assert what
+  the chain catches alone (edit/reorder) AND that the anchor catches truncation/forge,
+  AND explicitly document that *unanchored* truncation is missed.
+- **(LOW) DeclassRule level coercion** — `from_conf`/`to_conf` are now normalised to
+  `Conf` (like `Label`), so bool/int levels can't bypass the lower-only guard or crash
+  the audited path unaudited.
+- Docs no longer say "tamper-evident" unqualified; "auditable" scoped to the model.
+
 ## [0.7.26] - 2026-06-21
 
 ### Added — #3 classification lattice (Bell-LaPadula + Biba) + bounded declassification
@@ -17,7 +38,7 @@ integrity axis, no declassification.
 - **Bounded, logged declassification** (`agent/security/declassify.py` +
   `agent/security/audit.py`): the only sanctioned downgrade — lowers confidentiality
   only, gated on a deterministic predicate AND an approver (fail-closed), with every
-  outcome written to a **tamper-evident hash-chained** audit log.
+  outcome written to a **hash-chained** audit log (anchor-verifiable — see 0.7.27).
 - **Falsifiable** (`tools/run_classification_lattice.py`, 11 invariants): BLP/Biba
   rules, need-to-know, combine→creep, Biba catching what BLP allows, declassification
   relieving creep under approval, fail-closed refusal, bounded rules, audit chain

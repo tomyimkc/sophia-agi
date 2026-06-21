@@ -67,10 +67,25 @@ def run_demo() -> dict:
         bounded = True
 
     audit_intact = log.verify()
-    tampered = AuditLog()
-    tampered.append("declassify", {"x": 1})
-    tampered.entries[0].detail["x"] = 999          # mutate a past entry
-    tamper_evident = not tampered.verify()
+    # in-place edit + reorder are caught by the chain alone
+    t1 = AuditLog(); t1.append("declassify", {"x": 1}); t1.append("declassify", {"y": 2})
+    t1.entries[0].detail["x"] = 999
+    edit_caught = not t1.verify()
+    t2 = AuditLog(); t2.append("a", {"i": 0}); t2.append("b", {"i": 1})
+    t2.entries[0], t2.entries[1] = t2.entries[1], t2.entries[0]
+    reorder_caught = not t2.verify()
+    # tail truncation (drop the incriminating last record): MISSED without an anchor,
+    # CAUGHT with the persisted (count, head) anchor.
+    t3 = AuditLog(); t3.append("a", {}); t3.append("declassify_denied", {})
+    a_count, a_head = t3.count, t3.head()
+    del t3.entries[-1]
+    trunc_missed_unanchored = t3.verify()
+    trunc_caught_anchored = not t3.verify(expected_count=a_count, expected_head=a_head)
+    # forged append / rebuild: caught with the anchor
+    t4 = AuditLog(); t4.append("a", {})
+    f_count, f_head = t4.count, t4.head()
+    t4.append("forged", {"z": 1})
+    forged_caught_anchored = not t4.verify(expected_count=f_count, expected_head=f_head)
 
     invariants = {
         "blp_no_write_down": blp,
@@ -82,7 +97,9 @@ def run_demo() -> dict:
         "declassification_fail_closed": denied_no_approver and denied_predicate,
         "declassification_is_bounded": bounded,
         "audit_chain_intact": audit_intact,
-        "audit_is_tamper_evident": tamper_evident,
+        "audit_catches_edit_and_reorder": edit_caught and reorder_caught,
+        "audit_anchor_catches_truncation_and_forge": trunc_caught_anchored and forged_caught_anchored,
+        "audit_unanchored_misses_tail_truncation": trunc_missed_unanchored,   # honest, documented limitation
         "all_declassifications_audited": len(log.records("declassify")) == 1 and len(log.records("declassify_denied")) == 2,
     }
     return {"invariants": invariants, "ok": all(invariants.values()), "auditEntries": len(log.entries)}
