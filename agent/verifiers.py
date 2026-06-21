@@ -305,6 +305,48 @@ def no_secret_leak(secrets: "list[str]", *, mask: bool = True) -> Verifier:
     return _verify
 
 
+def legal_citation_exists(known_authorities: "set | None" = None, *, require_citation: bool = False) -> Verifier:
+    """Fail if the answer cites a legal authority that is NOT in a trusted register.
+
+    This is the *Mata v. Avianca* / *Ayinde v Haringey* killer: every common-law
+    **neutral citation** (``[2025] HKCFI 808``) and HK **ordinance** ref
+    (``Cap. 614``) in the text is checked against a register of authorities that
+    actually exist. An unrecognized citation is treated as fabricated and fails —
+    **fail-closed**, so an empty/missing register flags every citation rather than
+    waving fabrications through.
+
+    With ``require_citation`` an answer that makes a case-law-style assertion
+    ("the court held ...") while citing nothing is also flagged.
+
+    Scope (honest, mirrors the legal-AI literature): this verifies *existence
+    against the supplied register only*. It does NOT confirm the authority is in
+    the right jurisdiction, that the holding supports the proposition, or that the
+    law is current — the three-part check a human must still perform. Populate the
+    register from an authoritative primary source (Hong Kong e-Legislation, HKLII)
+    via ``SOPHIA_LEGAL_AUTHORITIES``; the bundled snapshot is illustrative only.
+    """
+    from agent.legal_citations import extract_citations, load_known_authorities
+
+    known = known_authorities if known_authorities is not None else load_known_authorities()
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        cites = extract_citations(text or "")
+        violations = [c for c in cites if c not in known]
+        if require_citation and not cites and (
+            re.search(r"\b(?:the court (?:held|found|ruled)|it was held)\b", text or "", re.IGNORECASE)
+            or re.search(r"[A-Z][a-z]+ v\.? [A-Z]", text or "")
+        ):
+            violations.append("legal assertion with no citation")
+        if violations:
+            return _fail(
+                [f"unverified/fabricated legal citation: {v}" for v in violations],
+                {"violations": violations, "checked": len(cites), "registerSize": len(known)},
+            )
+        return _ok({"checked": len(cites), "registerSize": len(known)})
+
+    return _verify
+
+
 # --------------------------------------------------------------------------- #
 # OKF / provenance verifiers — encode "don't merge lineages" as a hard gate.
 # --------------------------------------------------------------------------- #
@@ -596,6 +638,7 @@ VERIFIERS: dict[str, Callable[[], Verifier]] = {
     "code_tests_pass": code_tests_pass,
     "provenance_faithful": provenance_faithful,
     "frontmatter_schema_valid": frontmatter_schema_valid,
+    "legal_citation_exists": legal_citation_exists,
 }
 
 
