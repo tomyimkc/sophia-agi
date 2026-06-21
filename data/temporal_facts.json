@@ -81,7 +81,7 @@
     "New Atlantis": {"created": 1626},
     "Discourse on the Method": {"created": 1637},
     "Leviathan": {"created": 1651},
-    "Ethics": {"created": 1677, "aliases": ["Spinoza's Ethics"]},
+    "Spinoza's Ethics": {"created": 1677, "aliases": ["the Ethics of Spinoza"]},
     "Two Treatises of Government": {"created": 1689},
     "An Essay Concerning Human Understanding": {"created": 1689},
     "A Treatise of Human Nature": {"created": 1739},

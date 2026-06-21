@@ -86,10 +86,14 @@ def _year_str(y: int) -> str:
     return f"{abs(y)} {'BCE' if y < 0 else 'CE'}"
 
 
-# A small grace window: an author can write a work in their lifetime, and dating is
-# coarse, so we only flag when the death year is clearly before creation by more
-# than this many years (avoids edge false positives on same-era estimates).
-_GRACE_YEARS = 1
+# Posthumous publication is normal — a work written near the end of life can appear
+# years later (Wittgenstein d.1951 / Philosophical Investigations pub.1953). A real
+# temporal IMPOSSIBILITY is century-scale (Aristotle d.322 BCE vs a 1781 CE work),
+# so we use a wide posthumous window: only flag when creation is more than this many
+# years after death. This trades a sliver of recall (a work fabricated 30y after an
+# author's death slips) for zero false positives on genuine posthumous works — the
+# right call for a gate whose cardinal rule is "never break a correct answer".
+_GRACE_YEARS = 50
 
 
 def temporal_consistent(facts: "Optional[dict]" = None) -> "Any":
@@ -103,17 +107,15 @@ def temporal_consistent(facts: "Optional[dict]" = None) -> "Any":
     authors, works = _index(_load_facts(facts))
 
     def _resolve_work(work: str) -> "Optional[int]":
-        """Resolve a captured (possibly over-captured) title to a creation year.
+        """Resolve a captured title to a creation year — EXACT full-title match only.
 
-        Tries the full normalized title, then progressively shorter leading
-        prefixes, so "Critique of Pure Reason yesterday" still matches the known
-        "critique of pure reason". Returns the year or None."""
-        toks = _norm(work).split()
-        for end in range(len(toks), 0, -1):
-            hit = works.get(" ".join(toks[:end]))
-            if hit is not None:
-                return hit
-        return None
+        A progressive leading-prefix walk was unsafe: it resolved an over-captured
+        "Ethics for his students" down to the ambiguous bare "ethics" (a different
+        author's work), firing a false positive. Requiring the full normalized title
+        means an over-capture simply MISSES (abstains) instead of mis-resolving to a
+        shorter, ambiguous title. Titles whose creation we know are multi-word and
+        unambiguous; the regex captures them whole."""
+        return works.get(_norm(work))
 
     def _check_pair(author: str, work: str, violations: list) -> None:
         died = authors.get(_norm(author))
@@ -121,9 +123,11 @@ def temporal_consistent(facts: "Optional[dict]" = None) -> "Any":
         if died is None or created is None:
             return
         if created - died > _GRACE_YEARS:
+            a = author.strip().strip(" .,;:'\"")
+            w = work.strip().strip(" .,;:'\"")
             violations.append(
-                f"{author.strip()} (d. {_year_str(died)}) could not have written "
-                f"{work.strip()} (created {_year_str(created)})"
+                f"{a} (d. {_year_str(died)}) could not have written "
+                f"{w} (created {_year_str(created)})"
             )
 
     def _verify(text: str, task: Any, step: dict) -> dict:

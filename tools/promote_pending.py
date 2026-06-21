@@ -109,7 +109,10 @@ def promote(pending_path: Path, sink_path: Path, *, apply: bool) -> dict:
     for candidate in pending:
         if not isinstance(candidate, dict) or len(candidate) != 1:
             continue
-        (rid, rec), = candidate.items()
+        (topkey, rec), = candidate.items()
+        # Match how _merge_records keys live records (recordId > textId > topkey), so
+        # dedup is consistent even if a candidate carries an explicit recordId/textId.
+        rid = rec.get("recordId") or rec.get("textId") or topkey
         markers = frozenset(_norm(m) for m in rec.get("doNotAttributeTo", []))
         key = (rid, markers)
         if key in live_keys or key in sink_keys or key in seen_this_run:
