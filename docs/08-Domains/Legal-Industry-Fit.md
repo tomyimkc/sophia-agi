@@ -274,3 +274,16 @@ python tools/run_legal_faithfulness_bench.py \
 python tools/run_legal_faithfulness_bench.py \
     --judges openrouter:anthropic/claude-sonnet-4-6,openrouter:deepseek/deepseek-chat --runs 3
 ```
+
+## Growing the semantic benchmark (harder set)
+
+The validated semantic number is small-N on clear-cut cases. The path to a real
+stress test — subtle misstatement, ratio-vs-obiter, superseded authority, hard
+faithful controls — is a curation effort, not new code: the runner already
+supports self-contained cases (inline `holding` + provenance) and reports
+**per-difficulty / per-failureType accuracy and κ**, so you can see exactly where
+judges drop and disagree. A hard **seed** lives in
+`benchmark/legal_holding_faithful_hard.json` (16 cases, AI-seeded and flagged
+`seed-needs-verification` — holdings must be human-verified against their source
+before any result is published). Full method, taxonomy, sourcing and pitfalls:
+[Legal-Faithfulness-Benchmark.md](./Legal-Faithfulness-Benchmark.md).
