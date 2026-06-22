@@ -14,6 +14,12 @@ Public API:
 
 from __future__ import annotations
 
+from okf.counterfactual import (
+    Retraction,
+    counterfactual_remove,
+    is_grounded,
+    retract,
+)
 from okf.frontmatter import dump_block, parse, serialize, strip
 from okf.graph import belief
 from okf.graph import build as build_graph
@@ -40,6 +46,10 @@ __all__ = [
     "belief",
     "contradiction_ledger",
     "propagate_confidence",
+    "counterfactual_remove",
+    "retract",
+    "is_grounded",
+    "Retraction",
     "link_report",
     "validate_meta",
     "confidence_rank",
