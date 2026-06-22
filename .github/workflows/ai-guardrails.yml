@@ -1,0 +1,24 @@
+name: ai-guardrails
+# Hard-fails an AI-authored PR that touches protected paths.
+on: pull_request
+permissions: { contents: read, pull-requests: write }
+jobs:
+  guard:
+    if: github.actor == 'copilot-swe-agent[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - id: diff
+        run: |
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      - name: Fail on protected paths
+        run: |
+          if echo "${{ steps.diff.outputs.files }}" | grep -E \
+            'src/auth/|migrations/|\.github/workflows/|infra/|LICENSE'; then
+            echo "::error::AI PR touched a protected path. A human must take this over."
+            exit 1
+          fi
