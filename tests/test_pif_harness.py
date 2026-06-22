@@ -9,6 +9,7 @@ if str(ROOT) not in sys.path:
 from agent.steering import stats  # noqa: E402
 from agent.steering import pif_harness as pif  # noqa: E402
 from provenance_bench import heldout_split as hos  # noqa: E402
+from agent.steering import anti_gaming as ag  # noqa: E402
 
 
 def test_holm_bonferroni_hand_computed() -> None:
@@ -117,12 +118,31 @@ def test_grep_gate_no_plaintext_heldout_answer() -> None:
         assert '"salt"' not in txt
 
 
+def test_ship_steering_promote_and_abstain() -> None:
+    good = ag.ship_steering(fit_shift=0.6, held_shift=0.55, heldout_off_target_rate=0.0,
+                            target_moved_on_heldout=True, axis="E")
+    assert good["ship"] is True and all(good["invariants"].values())
+    # gamed: big seen-vs-held gap → ABSTAIN
+    gamed = ag.ship_steering(fit_shift=0.9, held_shift=0.1, heldout_off_target_rate=0.0,
+                             target_moved_on_heldout=True, axis="E")
+    assert gamed["ship"] is False and gamed["reason"] == "steering_gamed"
+    # off-target dirty → ABSTAIN
+    dirty = ag.ship_steering(fit_shift=0.6, held_shift=0.55, heldout_off_target_rate=0.3,
+                             target_moved_on_heldout=True, axis="O")
+    assert dirty["ship"] is False and dirty["reason"] == "steering_off_target"
+    # target didn't move on held-out → ABSTAIN (fail-closed)
+    nomove = ag.ship_steering(fit_shift=0.6, held_shift=0.55, heldout_off_target_rate=0.0,
+                              target_moved_on_heldout=False, axis="C")
+    assert nomove["ship"] is False and nomove["reason"] == "target_not_moved"
+
+
 def main() -> int:
     tests = [test_holm_bonferroni_hand_computed, test_benjamini_hochberg_hand_computed,
              test_residualized_d_removes_offtarget, test_bootstrap_diff_p_separates,
              test_build_cells_enacts_and_abstains, test_headline_bh_kills_borderline,
              test_is_mock_forces_abstain, test_held_out_disjoint,
-             test_sealing_reproduces_and_hides_salt, test_grep_gate_no_plaintext_heldout_answer]
+             test_sealing_reproduces_and_hides_salt, test_grep_gate_no_plaintext_heldout_answer,
+             test_ship_steering_promote_and_abstain]
     for t in tests:
         t(); print(f"ok {t.__name__}")
     print(f"PASS {len(tests)} pif tests")
