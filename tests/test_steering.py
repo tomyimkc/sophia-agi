@@ -8,6 +8,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.steering import vectors as vec  # noqa: E402
+from agent.steering import compose  # noqa: E402
 
 
 def test_normalize_unit_length() -> None:
@@ -36,6 +37,33 @@ def test_mock_vector_deterministic_unit() -> None:
     assert vec.mock_vector(16, seed=4) != a
 
 
+def test_gram_schmidt_orthogonal() -> None:
+    vs = {"E": [1.0, 0.0, 0.0], "O": [1.0, 1.0, 0.0], "C": [1.0, 1.0, 1.0]}
+    ortho = compose.gram_schmidt(vs)
+    keys = sorted(ortho)
+    for i in range(len(keys)):
+        for j in range(i + 1, len(keys)):
+            assert abs(vec.dot(ortho[keys[i]], ortho[keys[j]])) < 1e-6
+
+
+def test_soft_project_reduces_overlap() -> None:
+    vs = {"E": vec.normalize([1.0, 0.0]), "O": vec.normalize([1.0, 1.0])}
+    before = abs(vec.cosine(vs["E"], vs["O"]))
+    sp = compose.soft_project(vs, beta=0.5)
+    after = abs(vec.cosine(sp["E"], sp["O"]))
+    assert after < before  # soft projection reduces (not necessarily zeroes) overlap
+
+
+def test_compose_sums_normalized_axes() -> None:
+    vs = {"E": [2.0, 0.0], "O": [0.0, 3.0]}  # already orthogonal
+    alphas = {"E": 1.0, "O": 1.0}
+    composed, manifest = compose.compose_vectors(vs, alphas, scheme="soft_proj")
+    # orthogonal inputs → normalized axes are unit; sum is (1,1)
+    assert abs(composed[0] - 1.0) < 1e-6 and abs(composed[1] - 1.0) < 1e-6
+    assert manifest["scheme"] == "soft_proj" and manifest["normalized"] is True
+    assert "E|O" in manifest["gram"]
+
+
 class _Rng:
     """Tiny deterministic LCG so the test needs no numpy."""
     def __init__(self, seed: int) -> None:
@@ -50,6 +78,9 @@ def main() -> int:
         test_normalize_unit_length,
         test_diff_of_means_recovers_direction,
         test_mock_vector_deterministic_unit,
+        test_gram_schmidt_orthogonal,
+        test_soft_project_reduces_overlap,
+        test_compose_sums_normalized_axes,
     ]
     for t in tests:
         t()
