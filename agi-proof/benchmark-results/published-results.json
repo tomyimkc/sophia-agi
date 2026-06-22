@@ -134,21 +134,33 @@
       },
       "methodFabricationRate": 0.0,
       "date": "2026-06-22",
-      "note": "DeepSeek. sophia-full fabricates 0% on the unknown-author/quote cases in all 3 runs; raw-model fabricates 16.7-25%. Keyword/regex scoring is blind to this (raw ties/beats under keyword scoring); the calibration scorer reveals it. vs raw-model-plus-tools the gap is larger: calibration Δ 28.3% [24.5%, 32.2%], fabrication reduction 25.0% [15.6%, 34.4%]. Deterministic scorer + self-authored pack => internally valid; third-party audit of labels/markers + human semantic review would harden to headline grade. An independent LLM-judge re-score (deepseek) corroborates the DIRECTION (sophia-full lowest fabrication) but kappa=0.28 (<0.40) and same judge family -> still requires a distinct judge family + human review for headline grade.",
+      "note": "DeepSeek subject. sophia-full fabricates 0% (deterministic scorer) on the unknown-author/quote cases in all 3 runs; raw-model 16.7-25%. Keyword/regex scoring is blind to this; the calibration scorer reveals it. vs raw-model-plus-tools the gap is larger (calibration Δ 28.3% [24.5%, 32.2%]). CORROBORATED by two INDEPENDENT judge families (gpt-4o + claude-sonnet, distinct from the deepseek subject): all three methods rank sophia-full lowest fabrication; inter-judge κ=0.74, scorer-vs-judge κ=0.48/0.40 (both ≥0.40). Meets the multi-judge bar. Residual caveat: the pack is self-authored — a third-party pack + human review remain for full independence.",
       "judgeCorroboration": {
-        "method": "independent LLM judge (deepseek:deepseek-chat) re-scoring the same 108 abstain answers",
-        "scorerFabricationRate": {
-          "sophia-full": 0.0,
-          "raw-model": 0.1945,
-          "raw-model-plus-tools": 0.25
+        "method": "two INDEPENDENT judge families (openai:gpt-4o + openai:claude-sonnet-4-6) re-scoring the same 108 abstain answers across 3 runs; subject is deepseek-chat (distinct families)",
+        "fabricationRate": {
+          "scorer": {
+            "sophia-full": 0.0,
+            "raw-model": 0.1945,
+            "raw-model-plus-tools": 0.25
+          },
+          "gpt-4o": {
+            "sophia-full": 0.0,
+            "raw-model": 0.1945,
+            "raw-model-plus-tools": 0.1667
+          },
+          "claude-sonnet-4-6": {
+            "sophia-full": 0.0833,
+            "raw-model": 0.1111,
+            "raw-model-plus-tools": 0.1667
+          }
         },
-        "judgeFabricationRate": {
-          "sophia-full": 0.0833,
-          "raw-model": 0.1667,
-          "raw-model-plus-tools": 0.1667
+        "kappa": {
+          "scorer_vs_gpt-4o": 0.4831,
+          "scorer_vs_claude": 0.4035,
+          "gpt-4o_vs_claude": 0.7377,
+          "scorer_vs_consensus": 0.4791
         },
-        "kappa": 0.2845,
-        "verdict": "directional corroboration (sophia-full lowest fabrication by both methods); kappa 0.28 is FAIR but below the 0.40 bar, and judge family matches subject -> NOT yet multi-judge headline grade."
+        "verdict": "All three methods rank sophia-full LOWEST fabrication. Two distinct judge families agree with each other (kappa 0.74, substantial) and each with the deterministic scorer (kappa 0.48 / 0.40, both >=0.40). Meets the multi-judge + inter-judge-agreement + >=3-runs bar. Residual: the PACK is self-authored -> a third-party pack + human review remain for full independence."
       }
     }
   ]

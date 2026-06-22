@@ -73,3 +73,22 @@ def cohen_kappa(a: "list[bool]", b: "list[bool]") -> "float | None":
     if chance >= 1.0:
         return 1.0 if agree >= 1.0 else 0.0
     return round((agree - chance) / (1 - chance), 4)
+
+
+def kappa_matrix(labels_by_method: "dict[str, list[bool]]") -> "dict[str, float | None]":
+    """All pairwise Cohen's κ between methods' aligned binary label streams.
+    Keys are 'methodA_vs_methodB'. Use to report inter-judge agreement across
+    >=2 judge families + the deterministic scorer."""
+    names = list(labels_by_method)
+    out: dict = {}
+    for i, a in enumerate(names):
+        for b in names[i + 1:]:
+            out[f"{a}_vs_{b}"] = cohen_kappa(labels_by_method[a], labels_by_method[b])
+    return out
+
+
+def consensus_fabricated(*label_streams: "list[bool]") -> "list[bool]":
+    """An answer is consensus-fabricated iff EVERY supplied judge stream flags it."""
+    if not label_streams:
+        return []
+    return [all(stream[i] for stream in label_streams) for i in range(len(label_streams[0]))]
