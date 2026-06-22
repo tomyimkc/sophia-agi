@@ -8,6 +8,7 @@ if str(ROOT) not in sys.path:
 
 from agent.steering import stats  # noqa: E402
 from agent.steering import pif_harness as pif  # noqa: E402
+from provenance_bench import heldout_split as hos  # noqa: E402
 
 
 def test_holm_bonferroni_hand_computed() -> None:
@@ -86,11 +87,20 @@ def test_is_mock_forces_abstain() -> None:
     assert cells[0]["verdict"]["reason"] == "mock_subject"
 
 
+def test_held_out_disjoint() -> None:
+    r = hos.held_out_disjoint()
+    assert r["ipip_intersection"] == []            # no shared item ids
+    assert r["ngram_overlaps"] == []               # no shared content 3-gram
+    assert r["fit_reads_heldout"] is False         # fit module never imports held-out paths
+    assert r["seen_sealed"] != r["heldout_sealed"]
+    assert r["nearest_neighbour_sim"] < 0.5        # construct-disjoint, not paraphrase
+
+
 def main() -> int:
     tests = [test_holm_bonferroni_hand_computed, test_benjamini_hochberg_hand_computed,
              test_residualized_d_removes_offtarget, test_bootstrap_diff_p_separates,
              test_build_cells_enacts_and_abstains, test_headline_bh_kills_borderline,
-             test_is_mock_forces_abstain]
+             test_is_mock_forces_abstain, test_held_out_disjoint]
     for t in tests:
         t(); print(f"ok {t.__name__}")
     print(f"PASS {len(tests)} pif tests")
