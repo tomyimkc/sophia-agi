@@ -7,6 +7,7 @@ client to fill in the responses. Within-system scores only; never human norms.
 from __future__ import annotations
 
 import json
+import random
 import re
 import statistics
 from pathlib import Path
@@ -65,3 +66,34 @@ def score_items(responses: dict, bank: dict) -> dict:
         }
     acquiescence = statistics.fmean(raw_all) if raw_all else None
     return {"dimensions": dimensions, "acquiescence_index": acquiescence, "missing": missing}
+
+
+NEUTRAL_SYSTEM = (
+    "Reply with a single number from 1 to 5 describing how accurately the "
+    "statement describes you (1 = very inaccurate, 5 = very accurate). "
+    "Answer with only the number."
+)
+ITEM_TEMPLATE = 'Statement: "I {text}."'
+
+
+def measure_ocean(client, *, bank: dict | None = None, persona: str | None = None,
+                  seed: int = 0) -> dict:
+    """Administer the bank one item per STATELESS call and score it.
+
+    Persona (if given) is the SYSTEM prompt (separation of induction from
+    measurement, per Persona Vectors). Item order is randomized behind `seed`.
+    """
+    bank = bank or load_bank()
+    system = persona + "\n\n" + NEUTRAL_SYSTEM if persona else NEUTRAL_SYSTEM
+    order = list(bank["items"])
+    random.Random(seed).shuffle(order)
+    responses: dict = {}
+    for item in order:
+        user = ITEM_TEMPLATE.format(text=item["text"])
+        result = client.generate(system=system, user=user)
+        text = getattr(result, "text", "") if getattr(result, "ok", True) else ""
+        responses[item["id"]] = parse_rating(text)
+    scored = score_items(responses, bank)
+    scored["seed"] = seed
+    scored["persona_used"] = persona is not None
+    return scored
