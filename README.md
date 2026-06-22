@@ -14,6 +14,22 @@
 
 > *Sophia* (σοφία) = wisdom. Four humanities domains active — philosophy, psychology, history, religion — plus a **three-path agent** (advisor, repo, life). The same verifier-gated core extends to **sector councils** (law · finance · economy) and to **disciplining small local LLMs** — see [Applied verticals](#applied-verticals--the-same-gate-beyond-the-humanities-corpus).
 
+## What it does (main usage)
+
+**Sophia is the provenance gate that makes AI safe to ship:** it verifies every AI claim against its sources, **abstains instead of fabricating**, and only lets *accepted* output through — so a solo operator can run AI services without babysitting.
+
+> **Validated proof point:** on unknown-answer questions Sophia fabricates **0%** where the raw model fabricates **17–25%** — corroborated by two independent judge families (GPT-4o + Claude, inter-judge κ=0.74), measured on DeepSeek across 3 runs ([RESULTS.md](RESULTS.md)).
+
+**Use it three ways:**
+
+- **As a governance gate for any AI pipeline** — a versioned MCP/Python contract your code pins against: `record_claim → verify_claim` returns `accepted | rejected | superseded | held`; **only `accepted` may be published** (fail-closed), with Bell-LaPadula classification, budget caps, and a kill switch. Drop it into LangGraph, the Claude Agent SDK, or n8n. → [CONTRACT.md](CONTRACT.md)
+- **As the spine of a one-person AI company** — 9 least-privilege role pipelines, an Obsidian vault that only publishes *accepted* notes, a durable task queue, an approve-by-exception review queue, and Langfuse traces. → `sophia_contract/`
+- **As an honest reasoning corpus + benchmark** — provenance-aware QA across philosophy, psychology, history, religion, under a no-overclaim measurement gate (≥2 judge families, κ, ≥3 runs, CI). → [RESULTS.md](RESULTS.md)
+
+```bash
+python scripts/demo_gate.py     # Sophia in 30s: verify → classify → abstain → publish-only-if-accepted (offline, no key)
+```
+
 ## AGI-candidate proof package
 
 Sophia is **not claimed as proven AGI**. The stronger and more defensible public claim is:
