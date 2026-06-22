@@ -197,3 +197,19 @@ jobs:
         run: |
           python tools/build_agi_proof_package.py
           python tools/build_web_data.py
+
+  # Full pytest sweep — runs EVERY tests/test_*.py (incl. files the curated
+  # `validate` job does not hand-list), so a new test file can never silently
+  # go unrun. The only third-party deps the suite needs are numpy + pytest;
+  # heavy deps (torch/transformers/…) are lazy-imported and their tests skip.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install test dependencies
+        run: python -m pip install --upgrade pip numpy pytest
+      - name: Full pytest suite
+        run: python -m pytest -q
