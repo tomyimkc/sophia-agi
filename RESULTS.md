@@ -50,7 +50,7 @@ Scored by a **deterministic marker-based scorer** (no LLM judge) that rewards ho
 |---|---|---|---|---|---|---|
 | sophia-full | raw-model (deepseek-chat) | abstain-calibration-2026-06-22 (18 cases: 12 abstain / 6 definite) (3) | 22.0% [14.5%, 29.6%] | 19.4% [14.0%, 24.9%] | 0.0% | 2026-06-22 |
 
-- _sophia-full vs raw-model (deepseek-chat):_ DeepSeek. sophia-full fabricates 0% on the unknown-author/quote cases in all 3 runs; raw-model fabricates 16.7-25%. Keyword/regex scoring is blind to this (raw ties/beats under keyword scoring); the calibration scorer reveals it. vs raw-model-plus-tools the gap is larger: calibration Δ 28.3% [24.5%, 32.2%], fabrication reduction 25.0% [15.6%, 34.4%]. Deterministic scorer + self-authored pack => internally valid; third-party audit of labels/markers + human semantic review would harden to headline grade.
+- _sophia-full vs raw-model (deepseek-chat):_ DeepSeek. sophia-full fabricates 0% on the unknown-author/quote cases in all 3 runs; raw-model fabricates 16.7-25%. Keyword/regex scoring is blind to this (raw ties/beats under keyword scoring); the calibration scorer reveals it. vs raw-model-plus-tools the gap is larger: calibration Δ 28.3% [24.5%, 32.2%], fabrication reduction 25.0% [15.6%, 34.4%]. Deterministic scorer + self-authored pack => internally valid; third-party audit of labels/markers + human semantic review would harden to headline grade. An independent LLM-judge re-score (deepseek) corroborates the DIRECTION (sophia-full lowest fabrication) but kappa=0.28 (<0.40) and same judge family -> still requires a distinct judge family + human review for headline grade.
 
 ## Semantic evals (model-judged, gated)
 

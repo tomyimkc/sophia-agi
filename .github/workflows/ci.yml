@@ -37,6 +37,7 @@ jobs:
           python tests/test_contract_conformance.py
           python tests/test_contract_guardrails.py
           python tests/test_contract_adapters.py
+          python tests/test_role_pipeline.py
       - name: Model adapter + OpenClaw provider tests
         run: |
           python tests/test_model_adapter.py
