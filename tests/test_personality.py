@@ -151,6 +151,32 @@ def test_mcp_personality_faithful_score() -> None:
     assert out["passed"] is False  # framework merge -> contradicted
 
 
+def test_verifier_corpus_merge_cases() -> None:
+    import json as _json
+    corpus = _json.loads((ROOT / "benchmark" / "personality_faithful.json").read_text(encoding="utf-8"))
+    ver = pm_ver()
+    for case in corpus["cases"]:
+        if case["kind"] != "merge":
+            continue  # Spec A deterministically checks the merge/myth cases only
+        verdict = ver(case["proposition"], None, {})
+        expect_pass = case["expectFaithful"]
+        assert verdict["passed"] == expect_pass, (case["id"], verdict)
+
+
+def pm_ver():
+    from agent.verifiers import personality_faithful
+    return personality_faithful()
+
+
+def test_skill_frontmatter_valid() -> None:
+    md = (ROOT / "skills" / "portable" / "sophia-personality-faithful" / "SKILL.md").read_text(encoding="utf-8")
+    assert md.startswith("---")
+    head = md.split("---", 2)[1].lower()
+    assert "name:" in head and "description:" in head
+    assert "claude" not in head and "anthropic" not in head  # naming rule
+    assert "<" not in head and ">" not in head  # no angle brackets in frontmatter
+
+
 def main() -> int:
     tests = [
         test_mbti_to_ocean_all_types,
@@ -168,6 +194,8 @@ def main() -> int:
         test_mcp_mbti_type_record,
         test_mcp_personality_target_mock,
         test_mcp_personality_faithful_score,
+        test_verifier_corpus_merge_cases,
+        test_skill_frontmatter_valid,
     ]
     for t in tests:
         t()
