@@ -53,3 +53,6 @@ training/lab/distill/distill-*.json
 
 # Generated GitHub Wiki staging dir (tools/build_github_wiki.py)
 _wiki_build/
+
+# Scratch run-only drivers (root-level _*.py; e.g. evidence campaign helpers)
+/_*.py
