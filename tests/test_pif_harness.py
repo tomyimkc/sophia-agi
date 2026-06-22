@@ -96,11 +96,33 @@ def test_held_out_disjoint() -> None:
     assert r["nearest_neighbour_sim"] < 0.5        # construct-disjoint, not paraphrase
 
 
+def test_sealing_reproduces_and_hides_salt() -> None:
+    from tools.seal_personality_heldout import build_private_pack
+    from tools.hidden_eval_commitments import build_commitments, case_digest
+    pack = build_private_pack(salt="cafe" * 16)               # fixed salt for the test
+    com = build_commitments(pack)
+    assert com["saltStatus"] == "withheld until reveal"
+    assert "salt" not in com
+    # every committed sha256 re-verifies from the private pack + salt
+    for c, pub in zip(pack["cases"], com["cases"]):
+        assert case_digest(c, pack["salt"]) == pub["sha256"]
+
+
+def test_grep_gate_no_plaintext_heldout_answer() -> None:
+    # the public commitments file must contain only hashes, not held-out prompts
+    com_path = ROOT / "agi-proof" / "hidden-reviewer-packs" / "personality-heldout-2026-06-23.commitments.json"
+    if com_path.exists():
+        txt = com_path.read_text(encoding="utf-8")
+        assert "love to think up new ways" not in txt   # a held-out IPIP item must NOT leak
+        assert '"salt"' not in txt
+
+
 def main() -> int:
     tests = [test_holm_bonferroni_hand_computed, test_benjamini_hochberg_hand_computed,
              test_residualized_d_removes_offtarget, test_bootstrap_diff_p_separates,
              test_build_cells_enacts_and_abstains, test_headline_bh_kills_borderline,
-             test_is_mock_forces_abstain, test_held_out_disjoint]
+             test_is_mock_forces_abstain, test_held_out_disjoint,
+             test_sealing_reproduces_and_hides_salt, test_grep_gate_no_plaintext_heldout_answer]
     for t in tests:
         t(); print(f"ok {t.__name__}")
     print(f"PASS {len(tests)} pif tests")
