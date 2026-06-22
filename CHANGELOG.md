@@ -2,6 +2,26 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.40] - 2026-06-22
+
+### Added — GPT-4o external benchmark run (#6, second leg)
+
+- **`tools/run_external_models.py`**: the `gpt-4o` provider now uses the urllib
+  OpenAI-compatible path (`ask_gpt_native`) — no `openai` package needed — honouring
+  `OPENAI_BASE_URL` for gateways. `run_label` records a non-OpenAI gateway host so the
+  leaderboard entry is traceable (e.g. `gpt-4o (api.llmhub.com.cn)`).
+- **`benchmark/model_runs/gpt-4o-*.json` + `.report.json`**: GPT-4o run across all four
+  domains (via an OpenAI-compatible gateway), scored against the full benchmark.
+
+RESULT (gpt-4o-2024-08-06): philosophy **9/9**, psychology **7/9**, history **5/8**,
+religion **1/6** — notably *below* DeepSeek (9/9/8/3). Both external models miss the
+religion **council-panel format**; GPT-4o additionally misses two new psychology traps
+(10%-brain myth, PTSD clinical boundary) and three history myth-labels (pasta, Magna
+Carta, Boston Tea Party). Teacher reference remains 100% across all domains — the
+source-discipline + council training is what closes the gap.
+
+Remaining #6 leg: Grok (`XAI_API_KEY`).
+
 ## [0.7.39] - 2026-06-22
 
 ### Added — DeepSeek external benchmark run (closes #6, partial) + provider support

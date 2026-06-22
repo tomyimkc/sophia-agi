@@ -1,6 +1,6 @@
 {
-  "version": "0.7.39",
-  "generated": "2026-06-22T22:17:22",
+  "version": "0.7.40",
+  "generated": "2026-06-22T22:42:03",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "operationalDefinition": {
     "summary": "For this repo, AGI evidence means broad task competence, transfer, tool use, long-horizon autonomy, learning under distribution shift, baseline superiority, and independent reproduction.",
@@ -59,6 +59,12 @@
             "total": 9
           },
           {
+            "model": "gpt-4o (api.llmhub.com.cn)",
+            "score_pct": 100.0,
+            "passed": 9,
+            "total": 9
+          },
+          {
             "model": "sophia-v1",
             "score_pct": 100.0,
             "passed": 9,
@@ -97,6 +103,12 @@
             "model": "deepseek",
             "score_pct": 100.0,
             "passed": 9,
+            "total": 9
+          },
+          {
+            "model": "gpt-4o (api.llmhub.com.cn)",
+            "score_pct": 77.8,
+            "passed": 7,
             "total": 9
           },
           {
@@ -147,6 +159,12 @@
             "total": 8
           },
           {
+            "model": "gpt-4o (api.llmhub.com.cn)",
+            "score_pct": 62.5,
+            "passed": 5,
+            "total": 8
+          },
+          {
             "model": "sophia-v1",
             "score_pct": 100.0,
             "passed": 5,
@@ -185,6 +203,12 @@
             "model": "deepseek",
             "score_pct": 50.0,
             "passed": 3,
+            "total": 6
+          },
+          {
+            "model": "gpt-4o (api.llmhub.com.cn)",
+            "score_pct": 16.7,
+            "passed": 1,
             "total": 6
           },
           {

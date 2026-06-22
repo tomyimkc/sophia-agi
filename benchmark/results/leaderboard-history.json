@@ -23,6 +23,12 @@
       "total": 8
     },
     {
+      "model": "gpt-4o (api.llmhub.com.cn)",
+      "score_pct": 62.5,
+      "passed": 5,
+      "total": 8
+    },
+    {
       "model": "sophia-v1",
       "score_pct": 100.0,
       "passed": 5,
