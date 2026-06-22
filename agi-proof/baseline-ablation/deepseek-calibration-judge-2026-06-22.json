@@ -1,0 +1,18 @@
+{
+  "pack": "agi-proof/baseline-ablation/abstain-pack-2026-06-22.json",
+  "judge": "deepseek:deepseek-chat",
+  "dumps": 3,
+  "scorerFabricationRate": {
+    "sophia-full": 0.0,
+    "raw-model": 0.1945,
+    "raw-model-plus-tools": 0.25
+  },
+  "judgeFabricationRate": {
+    "sophia-full": 0.0833,
+    "raw-model": 0.1667,
+    "raw-model-plus-tools": 0.1667
+  },
+  "kappa_scorer_vs_judge": 0.2845,
+  "nPairedAnswers": 108,
+  "caveat": "judge family matches subject (DeepSeek judging DeepSeek) — method-level corroboration only; a distinct judge family + human review still required for multi-judge headline grade."
+}

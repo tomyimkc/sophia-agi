@@ -134,7 +134,22 @@
       },
       "methodFabricationRate": 0.0,
       "date": "2026-06-22",
-      "note": "DeepSeek. sophia-full fabricates 0% on the unknown-author/quote cases in all 3 runs; raw-model fabricates 16.7-25%. Keyword/regex scoring is blind to this (raw ties/beats under keyword scoring); the calibration scorer reveals it. vs raw-model-plus-tools the gap is larger: calibration Δ 28.3% [24.5%, 32.2%], fabrication reduction 25.0% [15.6%, 34.4%]. Deterministic scorer + self-authored pack => internally valid; third-party audit of labels/markers + human semantic review would harden to headline grade."
+      "note": "DeepSeek. sophia-full fabricates 0% on the unknown-author/quote cases in all 3 runs; raw-model fabricates 16.7-25%. Keyword/regex scoring is blind to this (raw ties/beats under keyword scoring); the calibration scorer reveals it. vs raw-model-plus-tools the gap is larger: calibration Δ 28.3% [24.5%, 32.2%], fabrication reduction 25.0% [15.6%, 34.4%]. Deterministic scorer + self-authored pack => internally valid; third-party audit of labels/markers + human semantic review would harden to headline grade. An independent LLM-judge re-score (deepseek) corroborates the DIRECTION (sophia-full lowest fabrication) but kappa=0.28 (<0.40) and same judge family -> still requires a distinct judge family + human review for headline grade.",
+      "judgeCorroboration": {
+        "method": "independent LLM judge (deepseek:deepseek-chat) re-scoring the same 108 abstain answers",
+        "scorerFabricationRate": {
+          "sophia-full": 0.0,
+          "raw-model": 0.1945,
+          "raw-model-plus-tools": 0.25
+        },
+        "judgeFabricationRate": {
+          "sophia-full": 0.0833,
+          "raw-model": 0.1667,
+          "raw-model-plus-tools": 0.1667
+        },
+        "kappa": 0.2845,
+        "verdict": "directional corroboration (sophia-full lowest fabrication by both methods); kappa 0.28 is FAIR but below the 0.40 bar, and judge family matches subject -> NOT yet multi-judge headline grade."
+      }
     }
   ]
 }
