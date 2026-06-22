@@ -27,10 +27,11 @@ from selfextend.transfer import run_transfer
 from selfextend.env_verifier import verify_by_execution
 from selfextend.verified_reward import reward_is_hackable, verified_reward
 from selfextend.long_horizon import run_long_horizon
+from selfextend.loop import close_loop
 
 __all__ = [
     "AbstentionLedger", "Rule", "synthesize_verifier", "propose_and_validate",
     "run_flywheel", "expected_calibration_error", "brier_score", "CompetenceMap",
     "CausalGraph", "run_transfer", "verify_by_execution", "verified_reward",
-    "reward_is_hackable", "run_long_horizon",
+    "reward_is_hackable", "run_long_horizon", "close_loop",
 ]

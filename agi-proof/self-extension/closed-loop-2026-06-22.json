@@ -1,0 +1,23 @@
+{
+  "domain": "danger_intent (held-out)",
+  "loop_closed": true,
+  "promoted": true,
+  "heldoutAccuracy": 1.0,
+  "preAccuracy": 0.5,
+  "postAccuracy": 1.0,
+  "improvement": 0.5,
+  "evalCalibrationECE": 0.0,
+  "routeBefore": "abstain",
+  "routeAfter": "answer",
+  "rule": {
+    "feature": "delete",
+    "present": true
+  },
+  "invariants": {
+    "verifier_promoted_on_heldout": true,
+    "policy_improved_on_eval": true,
+    "generalizes_not_gamed": true,
+    "competence_flips_abstain_to_answer": true
+  },
+  "interpretation": "The system started abstaining on this domain, synthesized and validated its own verifier, used it as verified reward to improve a policy by selection, and the gain held on an independent eval split \u2014 the loop closed without a human writing the check and without gaming. (Selection-based; a live-RL weight update needs a GPU.)"
+}

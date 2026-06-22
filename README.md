@@ -35,8 +35,11 @@ python scripts/demo_gate.py     # Sophia in 30s: verify → classify → abstain
 `selfextend/` connects Sophia's static pieces into a loop that **grows its own competence**: *abstain → localize the gap → synthesize a verifier → validate it on held-out data → promote only if it clears the bar (else stay abstained) → coverage rises → repeat* — no human writing the new checks, no reward-hacking. Plus the components that loop needs: calibrated uncertainty (ECE/Brier), a competence self-model, a **causal world model** (do-operator, beyond provenance), cross-domain transfer, environment-as-verifier (verify by executing), the verified-reward signal with an anti-gaming held-out check, and a long-horizon runner with recovery. Deterministic, offline, falsifiable.
 
 ```bash
-python tools/run_selfextend.py     # coverage 0%→100% (0% held-out false-accept), transfer, causal vs correlational, long-horizon
+python tools/run_selfextend.py        # coverage 0%→100% (0% held-out false-accept), transfer, causal vs correlational, long-horizon
+python tools/run_selfextend_loop.py   # the loop CLOSED on a held-out domain: abstain→synthesize→validate→improve→answer
 ```
+
+**The loop closes (offline, deterministic):** on a held-out domain the system abstains, synthesizes + validates its own verifier, uses it as verified reward to lift policy accuracy **0.5 → 1.0** on an independent eval split, and flips competence abstain→answer — no human writing the check, fail-closed on unlearnable data ([agi-proof/self-extension](agi-proof/self-extension/README.md)). The remaining rung is a live-RL weight update (GPU) on a third-party domain.
 
 > Honest scope: this is the **machinery and its falsifiable metrics**, not an AGI claim. Live self-improvement (RLVR, needs GPU) and live grounding (needs network) consume these interfaces but are out of scope to *run* here. The defensible AGI signature is the full loop closing on a **held-out domain** with the no-overclaim gate clearing.
 
