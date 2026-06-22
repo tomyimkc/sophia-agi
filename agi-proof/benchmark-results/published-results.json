@@ -5,7 +5,7 @@
     "hiddenEvalNote": "Hidden-eval prompts are never published; only aggregates + hashed commitments.",
     "schemaVersion": 1
   },
-  "lastUpdated": "2026-06-21",
+  "lastUpdated": "2026-06-22",
   "validated": [
     {
       "model": "ollama:dolphin-llama3:8b",
@@ -115,5 +115,26 @@
       "the delta is positive and real",
       "the effect tracks a model's propensity-to-assert, not its size"
     ]
-  }
+  },
+  "calibrationEvals": [
+    {
+      "method": "sophia-full",
+      "baseline": "raw-model (deepseek-chat)",
+      "pack": "abstain-calibration-2026-06-22 (18 cases: 12 abstain / 6 definite)",
+      "runs": 3,
+      "calibrationDelta": {
+        "mean": 0.2204,
+        "ciLow": 0.1446,
+        "ciHigh": 0.2961
+      },
+      "fabricationReduction": {
+        "mean": 0.1945,
+        "ciLow": 0.14,
+        "ciHigh": 0.2489
+      },
+      "methodFabricationRate": 0.0,
+      "date": "2026-06-22",
+      "note": "DeepSeek. sophia-full fabricates 0% on the unknown-author/quote cases in all 3 runs; raw-model fabricates 16.7-25%. Keyword/regex scoring is blind to this (raw ties/beats under keyword scoring); the calibration scorer reveals it. vs raw-model-plus-tools the gap is larger: calibration Δ 28.3% [24.5%, 32.2%], fabrication reduction 25.0% [15.6%, 34.4%]. Deterministic scorer + self-authored pack => internally valid; third-party audit of labels/markers + human semantic review would harden to headline grade."
+    }
+  ]
 }

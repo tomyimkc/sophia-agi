@@ -52,6 +52,24 @@ finally measured.**
 > and mechanistically clear, but **not yet validated** (needs ≥3 captures; ideally a
 > larger abstain set). Tracked in the failure ledger.
 
+### 2a. VALIDATED — 18-case abstain pack, 3 runs ([artifact](deepseek-calibration-VALIDATED-2026-06-22.json))
+
+Re-ran on a purpose-built 18-case pack (12 genuinely-unknown-authorship / unverifiable-quote /
+unsolved-identity cases + 6 definite controls), 3 captures, calibration-scored.
+
+| metric (sophia-full vs raw-model) | mean | 95% CI | excludes 0 |
+|---|---|---|---|
+| calibration Δ | **+22.0%** | [14.5%, 29.6%] | ✅ |
+| fabrication reduction | **+19.4%** | [14.0%, 24.9%] | ✅ |
+| sophia-full fabrication rate | **0.0%** | [0, 0] (3/3 runs) | — |
+
+vs raw-model+tools: calibration Δ **+28.3%** [24.5%, 32.2%], fabrication reduction **+25.0%**
+[15.6%, 34.4%]. **sophia-full never fabricates on the unknown cases across all 3 runs; raw
+DeepSeek fabricates 17–25%.** This clears the no-overclaim gate (≥3 runs, CI excludes zero)
+under the deterministic calibration scorer — recorded in `RESULTS.md` (Calibration evals).
+Residual caveat: deterministic scorer + self-authored pack (internally valid; third-party
+audit of labels/markers + human semantic review would harden to multi-judge headline grade).
+
 ## 3. Learning-under-shift ([artifact](../learning-under-shift/shift-result-2026-06-22.public-report.json))
 
 The **mechanism works**: promotion gate promoted 1/2 candidate records and rejected 1;
