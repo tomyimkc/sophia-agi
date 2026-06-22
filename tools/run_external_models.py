@@ -214,6 +214,19 @@ def ask_deepseek_native(question: str, model: str) -> str:
     )
 
 
+def ask_gpt_native(question: str, model: str) -> str:
+    """GPT via any OpenAI-compatible endpoint (default api.openai.com, or OPENAI_BASE_URL
+    for a gateway). urllib only — no `openai` package dependency."""
+    base = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
+    return ask_openai_compatible_native(
+        question,
+        model,
+        url=f"{base}/chat/completions",
+        api_key=os.environ["OPENAI_API_KEY"],
+        provider_label="OpenAI",
+    )
+
+
 def ask_xai_native(question: str, model: str) -> str:
     body = json.dumps(
         {
@@ -250,8 +263,7 @@ def ask_provider(provider: str, question: str) -> str:
     direct = direct_api_key(provider)
     if direct:
         if provider == "gpt-4o":
-            base = os.environ.get("OPENAI_BASE_URL")
-            return ask_openai_compatible(question, model, api_key=direct, base_url=base)
+            return ask_gpt_native(question, model)
         if provider == "claude-sonnet":
             return ask_anthropic_native(question, model)
         if provider == "gemini":
@@ -287,6 +299,11 @@ def run_label(provider: str) -> str:
         if provider == "claude-sonnet" and anthropic_base_url():
             host = anthropic_base_url().replace("https://", "").replace("http://", "")
             return f"{provider} ({host})"
+        if provider == "gpt-4o":
+            base = os.environ.get("OPENAI_BASE_URL", "").strip()
+            if base and "api.openai.com" not in base:
+                host = base.replace("https://", "").replace("http://", "").split("/")[0]
+                return f"{provider} ({host})"
         return provider
     if monica_api_key():
         return f"{provider} (monica)"

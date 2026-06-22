@@ -1,0 +1,59 @@
+{
+  "domain": "psychology",
+  "version": 1,
+  "passed": 7,
+  "total": 9,
+  "score_pct": 77.8,
+  "results": [
+    {
+      "id": "freud_cognitive_dissonance",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "left_brain_myth",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "chemical_imbalance_simplification",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "stockholm_every_kidnapping",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "dunning_kruger_attribution",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "confirmation_bias_bacon",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "ten_percent_brain",
+      "passed": false,
+      "reasons": [
+        "expected subfield 'pop_myth'"
+      ]
+    },
+    {
+      "id": "mozart_effect",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "ptsd_clinical_boundary",
+      "passed": false,
+      "reasons": [
+        "expected nuance markers: ['criteria', 'diagnosis', 'dsm', 'boundary', '臨床', '診斷']"
+      ]
+    }
+  ],
+  "model": "gpt-4o (api.llmhub.com.cn)"
+}
