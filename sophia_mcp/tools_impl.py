@@ -97,6 +97,31 @@ def belief(entity: str) -> dict:
     return okf.belief(graph, entity)
 
 
+def counterfactual(source: str, query: str | None = None) -> dict:
+    """Counterfactual belief-graph query: what would change if ``source`` were
+    removed? Returns affected claims with grounding before/after and a
+    ``supportLost`` list (the claims that lose their only provenance ground —
+    fail-closed, confidence collapses to 0). Optional ``query`` isolates one
+    entity's before/after belief. Read-only, offline, non-destructive."""
+    import okf
+    from agent import wiki_store
+
+    graph = okf.build_graph(wiki_store.load_all_pages())
+    return okf.counterfactual_remove(graph, source, query=query)
+
+
+def retract(target: str, reason: str, by: str = "system") -> dict:
+    """Retract a claim from the belief set: a named, auditable decision that
+    computes downstream impact (which claims lose support) and returns an
+    append-only audit entry. Non-destructive — no page is deleted; persistence
+    is the caller's choice, made with the impact in hand. Offline."""
+    import okf
+    from agent import wiki_store
+
+    graph = okf.build_graph(wiki_store.load_all_pages())
+    return okf.retract(graph, target, reason=reason, by=by).to_dict()
+
+
 def benchmark_list(domain: str) -> dict:
     if domain not in DOMAINS:
         return {"error": f"domain must be one of {DOMAINS}"}

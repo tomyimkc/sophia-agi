@@ -3,6 +3,7 @@ id: liezi_laozi_attribution
 pageType: dispute
 domain: philosophy
 links: [liezi, dao_de_jing, zhuangzi]
+derivesFrom: [liezi]
 sources: [data/attributions.json]
 contradicts: []
 ---

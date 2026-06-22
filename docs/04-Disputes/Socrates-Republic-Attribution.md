@@ -3,6 +3,7 @@ id: socrates_republic_attribution
 pageType: dispute
 domain: philosophy
 links: [socrates_corpus, republic]
+derivesFrom: [socrates_corpus, republic]
 sources: [data/attributions.json]
 contradicts: []
 ---
