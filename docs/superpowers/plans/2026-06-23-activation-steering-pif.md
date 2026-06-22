@@ -4,7 +4,7 @@
 
 **Goal:** Build a Level-3 activation-steering engine (CAA difference-of-means axis vectors → `register_forward_hook` on a local Phi-3.5-mini on MPS) + a behavioral PIF channel judged by local Ollama, and answer one falsifiable question — does steering beat Spec A's Level-1 persona baseline (SSA)?
 
-**Architecture:** Two tiers, mirroring `tools/run_rlvr.py`. A **deterministic CI core** in **pure stdlib** (vector math, composition, Cohen's d, bootstrap CI, κ, the SSA verdict — `list[float]`, `math`, `statistics`, and the existing stdlib `provenance_bench` helpers) needs no torch/numpy and runs in bare CI. **torch is isolated to `agent/steering/hooks.py`** (the real path) and lazy-imported. Real Phi-3.5 runs are opt-in (`--model phi3.5`), never a CI assertion. Reuses Spec A's `score_items` / `measure_ocean` / `personality_faithful` / `personality` benchmark domain verbatim.
+**Architecture:** Two tiers, mirroring `tools/run_rlvr.py`. A **deterministic CI core** in **pure stdlib** (vector math, composition, Cohen's d, bootstrap CI, κ, the SSA verdict — `list[float]`, `math`, `statistics`, and the existing stdlib `provenance_bench` helpers) needs no torch/numpy and runs in bare CI. **torch is isolated to `agent/steering/hooks.py`** (the real path) and lazy-imported. Real Phi-3.5 runs are opt-in (`--model phi3.5`), never a CI assertion. Reuses Spec A's `score_items` / `measure_ocean` / `personality` benchmark domain verbatim. Note: `personality_faithful` is NOT used by the behavioral channel — `agent/personality_behavioral.py` is a pure independent LLM-judge panel; `personality_faithful` is available as a future optional pre-filter but is not wired in Spec B.
 
 **Tech Stack:** Python 3.12 (CI) / 3.10.6 (local). Stdlib for the CI core. `torch>=2.3` + `transformers>=4.46.2` (installed local env: torch 2.4.0, transformers 5.5.3) for the real path only. Ollama (`qwen2.5:3b`, `llama3.2:3b`) for judges via `agent/model.py`.
 
@@ -19,7 +19,7 @@ Every task's requirements implicitly include these (copied from the spec):
 - **Neuroticism:** `mbti_to_ocean` returns `N: None` always — **never steer N from an MBTI code.** N axis steering requires an explicit OCEAN sign.
 - **Normalize each axis vector, steer `h ← h + alpha·v̂`** (the corrected convention). Record `normalized: true` in vector provenance.
 - **`SSA = 0/N` is a legitimate result.** All SSA thresholds are **pre-registered, fixed before any run**: N=8 personas, K=20 seeds, steered residualized `d > 0.5`, superiority `Δd` point ≥ **+0.3** with bootstrap 95% CI lower bound > 0, off-target `|d| < 0.2`, `κ ≥ 0.40` (= `KAPPA_FLOOR`), capability ε = 5% relative + coherence floor 75. Within-system deltas only — never human-norm percentiles, never "MBTI type achieved".
-- **Reuse, don't fork:** `provenance_bench/consensus.py:cohen_kappa(a,b)->float|None`, `provenance_bench/aggregate.py:_ci(xs,alpha=0.05)->[lo,hi]` (percentile — caller bootstraps), `KAPPA_FLOOR=0.40`; Spec A's `score_items`, `measure_ocean`, `personality_faithful`, `load_bank`.
+- **Reuse, don't fork:** `provenance_bench/consensus.py:cohen_kappa(a,b)->float|None`, `provenance_bench/aggregate.py:_ci(xs,alpha=0.05)->[lo,hi]` (percentile — caller bootstraps), `KAPPA_FLOOR=0.40`; Spec A's `score_items`, `measure_ocean`, `load_bank`. (`personality_faithful` is available but is NOT called by the behavioral channel in Spec B — the behavioral channel is a pure LLM-judge panel.)
 - **Security:** the OpenRouter key lives only in gitignored `.env` (`OPENROUTER_API_KEY`); never in code, spec, report, manifest, or CI. Missing key → that judge channel ABSTAINS (no error, no silent local fallback).
 - Branch is `feat/activation-steering-pif` (worktree `/Users/tom/Documents/GitHub/sophia-agi-spec-b`, stacked on Spec A / PR #64). Commit after every task.
 
@@ -845,7 +845,7 @@ git commit -m "feat(steering): register_forward_hook apply + SteeredClient + toy
 - Modify: `tests/test_steering.py` (append stub-judge + veneer-invariance tests)
 
 **Interfaces:**
-- Consumes: `agent.model.complete` (judges, real path), `agent.steering.stats` (cohen_d, binarize_moved, cohen_kappa), `agent.verifiers.personality_faithful`.
+- Consumes: `agent.model.complete` (judges, real path), `agent.steering.stats` (cohen_d, binarize_moved, cohen_kappa). Note: does NOT consume `agent.verifiers.personality_faithful` — the behavioral channel is a pure independent LLM-judge panel; `personality_faithful` is available as a future optional pre-filter but is not wired in Spec B.
 - Produces:
   - `load_battery(path=None) -> dict` — open-ended prompts per OCEAN axis.
   - `JUDGE_RUBRIC: str`, `judge_score(response: str, axis: str, *, judge_spec: str, complete_fn=complete) -> dict` — returns `{"trait_score": float, "coherence": float}` (parsed strict JSON; out-of-format → `{"trait_score": None, "coherence": 0.0}`).

@@ -181,7 +181,7 @@ def _run_real(args) -> int:
         report = {"benchmark": "steering", "model": model_id, "mode": "real-demo",
                   "status": "abstained", "reason": "model failed load-and-smoke on mps",
                   "fallbackChain": FALLBACK_CHAIN}
-        _write_report(report, OUT_DEMO)
+        _write_report(report, args.out if args.out != OUT_JSON else OUT_DEMO)
         print("STEERING DEMO ABSTAINED (model load failed) ✗")
         return 1
     model, tok, model_id, L = probe
@@ -230,7 +230,7 @@ def _run_real(args) -> int:
         delta_d = b_steer["trait_d"] - b_base["trait_d"]
         off_axis = "O" if axis == "E" else "E"
         cell = {
-            "delta_ci": [delta_d - 0.5, delta_d + 0.5],  # crude (no bootstrap at K=2)
+            "delta_ci": [delta_d, delta_d],  # degenerate (no bootstrap CI at K=2; honest non-fabricated)
             "delta_point": delta_d,
             "steered_d": b_steer["trait_d"],
             "off_target_d": {off_axis: 0.0},  # not separately measured in the demo
@@ -255,16 +255,30 @@ def _run_real(args) -> int:
               f"→ {verdict['status']} ({verdict['reason']})")
 
     enacted = sum(1 for r in rows if r["verdict"] == "enacted")
+    all_self_report_none = all(
+        v is None
+        for r in rows
+        for v in (r["selfReport"]["steered"], r["selfReport"]["level1"], r["selfReport"]["neutral"])
+    )
     report = {
         "benchmark": "steering", "model": model_id, "mode": "real-demo",
         "visibility": "public-aggregate",
-        "claimStatus": "Illustrative — reduced-scope demo (2 axes, K=2 seeds, no "
-                       "capability slice); headline SSA requires the gated N>=8/K>=20 run",
+        "claimStatus": (
+            "Illustrative — reduced-scope demo (2 axes, K=2 seeds, no capability slice); "
+            "headline SSA requires the gated N>=8/K>=20 run. "
+            "At K=2 the off-target orthogonality check and the bootstrap CI are NOT "
+            "evaluated (both stubbed at K=2): the delta_ci is degenerate [point, point] "
+            "and off_target_d is 0.0, so a cell can only ever ABSTAIN, never enact."
+        ),
+        "selfReportStatus": (
+            "no parseable ratings (small model did not comply with the terse Likert format)"
+            if all_self_report_none else "ok"
+        ),
         "subjectModel": model_id, "judges": JUDGES, "layer": L, "alphaCoef": coef,
         "ssaThresholds": stats.SSA_THRESHOLDS, "fallbackChain": FALLBACK_CHAIN,
         "deltaTable": rows, "illustrativeSSA": f"{enacted}/{len(rows)}",
     }
-    _write_report(report, OUT_DEMO)
+    _write_report(report, args.out if args.out != OUT_JSON else OUT_DEMO)
     _emit_leaderboard_artifact(model_id, rows)
     print(f"Illustrative SSA (reduced-scope, NOT headline): {enacted}/{len(rows)} axes enacted.")
     return 0

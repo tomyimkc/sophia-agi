@@ -60,8 +60,18 @@ def score_behavioral(steered_responses: "list[str]", neutral_responses: "list[st
         fam = _family(spec)
         s = [judge_score(r, axis, judge_spec=spec, complete_fn=complete_fn) for r in steered_responses]
         n = [judge_score(r, axis, judge_spec=spec, complete_fn=complete_fn) for r in neutral_responses]
-        per_judge_steered[fam] = [x["trait_score"] for x in s if x["trait_score"] is not None]
-        per_judge_neutral[fam] = [x["trait_score"] for x in n if x["trait_score"] is not None]
+        # Keep only ALIGNED pairs where BOTH s[i] and n[i] have a valid score;
+        # independent filtering would misalign indices and corrupt κ.
+        aligned_s, aligned_n = zip(
+            *[(si["trait_score"], ni["trait_score"])
+              for si, ni in zip(s, n)
+              if si["trait_score"] is not None and ni["trait_score"] is not None]
+        ) if any(
+            si["trait_score"] is not None and ni["trait_score"] is not None
+            for si, ni in zip(s, n)
+        ) else ([], [])
+        per_judge_steered[fam] = list(aligned_s)
+        per_judge_neutral[fam] = list(aligned_n)
         coher += [x["coherence"] for x in s if x["coherence"] is not None]
     fams = list(per_judge_steered)
     # behavioral effect size: pool judge means per condition
