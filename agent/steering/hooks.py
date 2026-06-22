@@ -109,12 +109,16 @@ class SteeredClient:
     def _run(self, system: str, user: str) -> str:
         import torch
         msgs = [{"role": "system", "content": system}, {"role": "user", "content": user}]
-        inputs = self.tokenizer.apply_chat_template(
+        enc = self.tokenizer.apply_chat_template(
             msgs, add_generation_prompt=True, return_tensors="pt"
-        ).to(self.model.device)
+        )
+        # apply_chat_template returns a bare tensor on some transformers/tokenizer
+        # versions and a BatchEncoding (dict-like) on others; normalize to an
+        # input_ids tensor either way (a BatchEncoding raises on `.shape`).
+        input_ids = (enc if hasattr(enc, "shape") else enc["input_ids"]).to(self.model.device)
         with torch.no_grad():
-            out = self.model.generate(inputs, max_new_tokens=self.max_new_tokens, do_sample=False)
-        return self.tokenizer.decode(out[0][inputs.shape[1]:], skip_special_tokens=True)
+            out = self.model.generate(input_ids, max_new_tokens=self.max_new_tokens, do_sample=False)
+        return self.tokenizer.decode(out[0][input_ids.shape[1]:], skip_special_tokens=True)
 
     def generate(self, system: str, user: str):
         try:
