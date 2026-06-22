@@ -1,0 +1,63 @@
+{
+  "runs": 3,
+  "pack": "agi-proof/baseline-ablation/example-pack.json",
+  "backend": "deepseek",
+  "model": "deepseek-chat",
+  "runAt": "2026-06-22T07:14:33",
+  "sophiaFullScore": {
+    "values": [
+      7.58,
+      6.83,
+      7.58
+    ],
+    "mean": 7.33,
+    "ci95": [
+      6.84,
+      7.82
+    ]
+  },
+  "rawModelScore": {
+    "values": [
+      6.25,
+      6.25,
+      5.5
+    ],
+    "mean": 6.0,
+    "ci95": [
+      5.51,
+      6.49
+    ]
+  },
+  "deltaFullMinusRaw": {
+    "values": [
+      1.33,
+      0.58,
+      2.08
+    ],
+    "mean": 1.33,
+    "ci95": [
+      0.481,
+      2.179
+    ],
+    "ciExcludesZero": true
+  },
+  "deltaFullMinusRawTools": {
+    "values": [
+      0.0,
+      -0.75,
+      0.0
+    ],
+    "mean": -0.25,
+    "ci95": [
+      -0.74,
+      0.24
+    ],
+    "ciExcludesZero": false
+  },
+  "falsificationTriggeredAnyRun": true,
+  "perRunFalsification": [
+    true,
+    true,
+    true
+  ]
+}

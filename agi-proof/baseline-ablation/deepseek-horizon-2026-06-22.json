@@ -1,0 +1,4 @@
+{"model":"deepseek:deepseek-chat","trials":8,"lengths":[1,2,4,8,16],
+ "successRate":{"1":0.625,"2":0.375,"4":0.875,"8":1.0,"16":1.0},
+ "effectiveHorizonSteps":16,"threshold":0.5,
+ "caveat":"8 trials -> noisy, non-monotonic; this is the effective-horizon CURVE metric (chained arithmetic), NOT a long-horizon autonomy run."}
