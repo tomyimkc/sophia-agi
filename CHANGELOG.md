@@ -2,6 +2,29 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.39] - 2026-06-22
+
+### Added — DeepSeek external benchmark run (closes #6, partial) + provider support
+
+- **`tools/run_external_models.py`**: new `deepseek` provider (OpenAI-compatible,
+  `DEEPSEEK_API_KEY`, default model `deepseek-chat`, `DEEPSEEK_BASE_URL` override)
+  via a urllib call — no `openai` package needed. Wired into `--providers`/`--all`
+  auto-detection, `describe_backend`, and `model_override` (`DEEPSEEK_MODEL`).
+- **`benchmark/model_runs/deepseek-*.json` + `.report.json`**: first DeepSeek run
+  across all four domains, scored against the full v0.7.38 benchmark (incl. the new
+  GF-10/20/30/40 traps), and folded into the leaderboards.
+
+RESULT (deepseek-chat, system prompt = Sophia source discipline): philosophy
+**9/9**, psychology **9/9**, history **8/8**, religion **3/6 (50%)**. DeepSeek
+nails source-discipline attribution but does not adopt the religion **council-panel
+debate format** unprompted — all three religion misses are `expected council/panel
+debate format` (ancestor-veneration split, nirvana pop-myth, hadith sect boundary).
+A clean illustration of the format/behaviour gap the council training targets.
+
+Note: prior `claude-sonnet` / `sophia-v1` leaderboard entries predate the new traps,
+so their totals differ from DeepSeek's until those models are re-run (needs their
+own keys). External GPT-4o / Grok runs (#6) still need `OPENAI_API_KEY` / `XAI_API_KEY`.
+
 ## [0.7.38] - 2026-06-22
 
 ### Added — good-first-issue corpus expansion (GF-10/20/30/40) + multilingual scorer

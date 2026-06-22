@@ -17,6 +17,12 @@
       "total": 5
     },
     {
+      "model": "deepseek",
+      "score_pct": 50.0,
+      "passed": 3,
+      "total": 6
+    },
+    {
       "model": "sophia-v1",
       "score_pct": 60.0,
       "passed": 3,
