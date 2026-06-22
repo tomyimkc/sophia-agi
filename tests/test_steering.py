@@ -171,6 +171,26 @@ def test_steering_split_is_contamination_free() -> None:
     assert again["extract_sealed"] == split["extract_sealed"]
 
 
+import importlib  # noqa: E402
+
+
+def test_run_steering_offline_invariants() -> None:
+    rs = importlib.import_module("tools.run_steering")
+    ok, detail = rs._offline_invariants()
+    assert ok is True
+    c = detail["checks"]
+    assert c["mockExtractDeterministic"] and c["composeOrthogonalReduces"]
+    assert c["verdictEnactsWhenStrong"] and c["verdictAbstainsWhenWeak"]
+    assert c["contaminationFree"]
+
+
+def test_run_steering_main_mock_writes_report() -> None:
+    rs = importlib.import_module("tools.run_steering")
+    rc = rs.main(["--model", "mock", "--dry-run"])
+    assert rc == 0
+    assert rs.OUT_JSON.exists()
+
+
 def main() -> int:
     tests = [
         test_normalize_unit_length,
@@ -187,6 +207,8 @@ def main() -> int:
         test_score_behavioral_distinguishes_steered,
         test_behavioral_veneer_invariant,
         test_steering_split_is_contamination_free,
+        test_run_steering_offline_invariants,
+        test_run_steering_main_mock_writes_report,
     ]
     for t in tests:
         t()
