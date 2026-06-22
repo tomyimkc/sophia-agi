@@ -9,8 +9,9 @@
 > **One-line positioning:** *"The governance gateway that makes any AI skill or MCP
 > server safe, verifiable, and self-improving."*
 
-Status: **design spec** (not yet implemented). This document is the durable plan; the
-decision menu at the end says what to build first.
+Status: **design spec + P0 MVP shipped.** The `gateway/` package implements P0 (federate
+in-process tools + the fail-closed intercept pipeline); `tools/run_gateway_demo.py` +
+`tests/test_gateway.py` (12 acceptance checks) run it in CI. P1–P5 below remain the plan.
 
 ---
 
@@ -201,7 +202,7 @@ Reuses unchanged: `record_claim`, `verify_claim`, `health`, `enqueue_task`, `nex
 
 | Phase | Scope | Falsifiable acceptance (offline, deterministic) |
 |---|---|---|
-| **P0 — Gateway MVP** | registry + interceptor + dispatcher over ONE mock downstream MCP; stages 1,3,4,6,7,8 | a low-risk read → `accepted` + provenance_id + audit entry; an unsourced/ungrounded output → `held`, **raw output withheld**; unknown role → `UNAUTHENTICATED`; kill switch → `UNAVAILABLE` |
+| **P0 — Gateway MVP** ✅ **DONE** | registry + interceptor + dispatcher + verify-router over in-process tools; stages 1,3,4,5,6,7,8,9 | ✅ low-risk grounded read → `accepted` + provenance_id; ungrounded → `held(no_source)`, **raw withheld**; env-verify pass/fail → accepted/rejected; SECRET tool → `held(blp_violation)`; out-of-scope role → `UNAUTHENTICATED`; kill switch → `UNAVAILABLE`; budget → `held(over_budget)`; dry-run write → `held(needs_human)` (not executed) — all in `tests/test_gateway.py` |
 | **P1 — Firewall + risk tiers** | stage 2 + `risk_tier` auto/escalate | a tool description with an injection marker → quarantined (`high`, blocked); a clean call passes; high-risk tool → `held(needs_human)` |
 | **P2 — Provenance-stamp + Universal Verify + Verifiable Skill** | stages 7/9 full; `verify()`; skill format | tool output re-entering context carries `provenance_id`; `verify()` routes arithmetic→env, claim→grounding; a skill whose verifier rejects does not ship |
 | **P3 — Reliability registry + Knowledge MCP** | competence/calibration/ROI per tool; OKF KB exposed | `list_tools` ranks by measured reliability; a flaky tool's reliability drops and routing avoids it |

@@ -38,6 +38,10 @@ jobs:
           python tests/test_contract_guardrails.py
           python tests/test_contract_adapters.py
           python tests/test_role_pipeline.py
+      - name: Sophia Gateway P0 (federate + fail-closed intercept pipeline)
+        run: |
+          python tests/test_gateway.py
+          python tools/run_gateway_demo.py
       - name: Model adapter + OpenClaw provider tests
         run: |
           python tests/test_model_adapter.py
