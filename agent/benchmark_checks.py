@@ -27,6 +27,14 @@ DENY_PATTERNS = [
     r"沒有",
     r"不是",
     r"並非",
+    # GF-40: 中文 denial markers seen in failed model runs but missed above.
+    # Compound (>=2 char) negations only, so a bare 不/沒 never counts.
+    r"並無",
+    r"並不",
+    r"不曾",
+    r"從未",
+    r"不準確",
+    r"錯誤",
 ]
 MYTH_PATTERNS = [
     r"\bmyth\b",
@@ -40,6 +48,13 @@ MYTH_PATTERNS = [
     r"誤解",
     r"並非",
     r"不正確",
+    # GF-40: 中文 myth / fabrication markers from failed model runs.
+    r"訛傳",
+    r"謠傳",
+    r"杜撰",
+    r"無稽",
+    r"子虛烏有",
+    r"誇大",
 ]
 COUNCIL_PATTERNS = [
     r"\bcouncil\b",
@@ -97,7 +112,9 @@ DOMAIN_BENCH: dict[str, Path] = {
 CONFIDENCE_PATTERNS: dict[str, list[str]] = {
     "compiled": [r"compiled", r"assembled", r"students", r"editors", r"彙編", r"編纂", r"弟子"],
     "legendary": [r"uncertain", r"disputed", r"legendary", r"debated", r"存疑", r"不確定"],
-    "attributed": [r"attributed", r"traditionally", r"傳統上", r"歸屬"],
+    "attributed": [r"attributed", r"traditionally", r"傳統上", r"歸屬",
+                   # GF-40: 中文 affirmation markers ("proposed by" / "originates from")
+                   r"提出", r"出自", r"由.{0,12}提出"],
     "none_extant": [r"no extant", r"wrote no", r"沒有著作", r"未留下"],
 }
 

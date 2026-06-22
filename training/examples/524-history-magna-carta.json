@@ -1,0 +1,22 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Was Magna Carta (1215) the origin of modern democracy and universal human rights?"
+    },
+    {
+      "role": "assistant",
+      "content": "Not in the way it is popularly mythologized. Sealed on 15 June 1215, Magna Carta was a feudal settlement between King John and rebel barons, and most clauses were soon annulled or repealed. Calling it the origin of modern democracy or universal human rights is a myth — its constitutional symbolism was largely a later reinterpretation. Primary source: the surviving 1215 exemplifications.\n\n中文：這是一種迷思。1215年的大憲章是英王約翰與封建貴族之間的協議，多數條款很快被廢除或撤銷；說它是現代民主與普世人權的起源屬後世重塑。"
+    }
+  ],
+  "metadata": {
+    "source": "gf-20-expansion",
+    "project": "sophia-agi",
+    "domain": "history",
+    "recordIds": ["magna_carta_1215"]
+  }
+}

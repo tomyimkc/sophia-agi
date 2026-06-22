@@ -1,8 +1,8 @@
 {
   "domain": "psychology",
   "version": 1,
-  "passed": 4,
-  "total": 4,
+  "passed": 9,
+  "total": 9,
   "score_pct": 100.0,
   "results": [
     {
@@ -22,6 +22,31 @@
     },
     {
       "id": "stockholm_every_kidnapping",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "dunning_kruger_attribution",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "confirmation_bias_bacon",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "ten_percent_brain",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "mozart_effect",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "ptsd_clinical_boundary",
       "passed": true,
       "reasons": []
     }

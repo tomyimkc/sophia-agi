@@ -1,6 +1,6 @@
 {
-  "version": "0.7.37",
-  "generated": "2026-06-22T03:31:52",
+  "version": "0.7.38",
+  "generated": "2026-06-22T21:48:38",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "operationalDefinition": {
     "summary": "For this repo, AGI evidence means broad task competence, transfer, tool use, long-horizon autonomy, learning under distribution shift, baseline superiority, and independent reproduction.",
@@ -28,14 +28,14 @@
     ]
   },
   "currentEvidence": {
-    "trainingExamples": 518,
+    "trainingExamples": 527,
     "domains": [
       "philosophy",
       "psychology",
       "history",
       "religion"
     ],
-    "benchmarkCases": 23,
+    "benchmarkCases": 32,
     "leaderboards": {
       "philosophy": {
         "cases": 9,
@@ -43,8 +43,8 @@
           {
             "model": "sophia-teacher-reference",
             "score_pct": 100.0,
-            "passed": 4,
-            "total": 4
+            "passed": 9,
+            "total": 9
           },
           {
             "model": "claude-sonnet (api.llmhub.com.cn)",
@@ -68,18 +68,18 @@
         "best": {
           "model": "sophia-teacher-reference",
           "score_pct": 100.0,
-          "passed": 4,
-          "total": 4
+          "passed": 9,
+          "total": 9
         }
       },
       "psychology": {
-        "cases": 4,
+        "cases": 9,
         "entries": [
           {
             "model": "sophia-teacher-reference",
             "score_pct": 100.0,
-            "passed": 4,
-            "total": 4
+            "passed": 9,
+            "total": 9
           },
           {
             "model": "claude-sonnet (api.llmhub.com.cn)",
@@ -109,18 +109,18 @@
         "best": {
           "model": "sophia-teacher-reference",
           "score_pct": 100.0,
-          "passed": 4,
-          "total": 4
+          "passed": 9,
+          "total": 9
         }
       },
       "history": {
-        "cases": 5,
+        "cases": 8,
         "entries": [
           {
             "model": "sophia-teacher-reference",
             "score_pct": 100.0,
-            "passed": 5,
-            "total": 5
+            "passed": 8,
+            "total": 8
           },
           {
             "model": "claude-sonnet (api.llmhub.com.cn)",
@@ -144,18 +144,18 @@
         "best": {
           "model": "sophia-teacher-reference",
           "score_pct": 100.0,
-          "passed": 5,
-          "total": 5
+          "passed": 8,
+          "total": 8
         }
       },
       "religion": {
-        "cases": 5,
+        "cases": 6,
         "entries": [
           {
             "model": "sophia-teacher-reference",
             "score_pct": 100.0,
-            "passed": 5,
-            "total": 5
+            "passed": 6,
+            "total": 6
           },
           {
             "model": "claude-sonnet (api.llmhub.com.cn)",
@@ -185,8 +185,8 @@
         "best": {
           "model": "sophia-teacher-reference",
           "score_pct": 100.0,
-          "passed": 5,
-          "total": 5
+          "passed": 6,
+          "total": 6
         }
       }
     },

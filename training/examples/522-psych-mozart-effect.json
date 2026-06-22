@@ -1,0 +1,22 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Does listening to Mozart permanently raise a baby's IQ?"
+    },
+    {
+      "role": "assistant",
+      "content": "Listening to Mozart does not permanently raise a baby's IQ — that is an overstated pop myth. Rauscher et al. (1993) reported only a small, temporary spatial-reasoning effect in adults, which the media inflated into 'Mozart makes babies smarter'.\n\n中文：聽莫札特並不會永久提升嬰兒智商，這是被誇大的通俗迷思；Rauscher 等（1993）只在成人身上發現短暫的空間推理效應。"
+    }
+  ],
+  "metadata": {
+    "source": "gf-10-expansion",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "recordIds": ["mozart_effect_myth"]
+  }
+}

@@ -14,30 +14,30 @@ Starter tasks for new contributors. Comment on an issue or open a PR referencing
 
 Next philosophy tasks: GF-06+ attributions for *Xunzi*, *Mozi*, *Aristotle Nicomachean Ethics* — open an issue from template.
 
-## Psychology (planned — waiting on scope answers)
+## Psychology
 
-| ID | Task | Files |
-|----|------|-------|
-| GF-10 | Define first 5 psychology concepts (e.g. cognitive dissonance) | `data/psychology_concepts.json` |
-| GF-11 | Document pop-psych vs clinical boundary | `docs/08-Domains/Psychology/` |
+| ID | Task | Status |
+|----|------|--------|
+| GF-10 | Add 5 more psychology concepts with subfield tags | ✅ v0.7.38 (`dunning_kruger_effect`, `confirmation_bias`, `ten_percent_brain_myth`, `mozart_effect_myth`, `ptsd_clinical_vs_pop` + 5 benchmark traps) |
+| GF-11 | Document pop-psych vs clinical boundary | `docs/08-Domains/Psychology/` (open) |
 
-## History (planned)
+## History
 
-| ID | Task | Files |
-|----|------|-------|
-| GF-20 | Add 3 dated events with primary source field | `data/history_events.json` |
-| GF-21 | Write dispute: common mythologized event | `docs/08-Domains/History/` |
+| ID | Task | Status |
+|----|------|--------|
+| GF-20 | Add 3 dated events with primary source field | ✅ v0.7.38 (`magna_carta_1215`, `boston_tea_party_1773`, `first_powered_flight_1903` + 3 benchmark traps + dispute note) |
+| GF-21 | Write dispute: common mythologized event | ✅ `docs/04-Disputes/Boston-Tea-Party-Tax-Myth.md` |
 
-## Religion (planned)
+## Religion
 
-| ID | Task | Files |
-|----|------|-------|
-| GF-30 | Add scripture attribution record (sect boundaries) | `data/religion_concepts.json` |
-| GF-31 | Document theological vs historical claim types | `docs/08-Domains/Religion/` |
+| ID | Task | Status |
+|----|------|--------|
+| GF-30 | Add scripture attribution record (sect boundaries) | ✅ v0.7.38 (`hadith_canonical_collections` — Sunni/Shia sect boundaries) |
+| GF-31 | Document theological vs historical claim types | `docs/08-Domains/Religion/` (open) |
 
 ## Tooling
 
-| ID | Task | Files |
-|----|------|-------|
-| GF-40 | Improve benchmark scorer for multilingual markers | `tools/score_benchmark.py` |
-| GF-41 | Add Colab quickstart notebook | `notebooks/` |
+| ID | Task | Status |
+|----|------|--------|
+| GF-40 | Improve benchmark scorer for multilingual markers | ✅ v0.7.38 (`agent/benchmark_checks.py` 中文 deny/myth/affirm markers + regression test, CI-wired) |
+| GF-41 | Add Colab quickstart notebook | `notebooks/` (open) |

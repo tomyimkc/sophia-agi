@@ -1,6 +1,6 @@
 {
-  "version": "0.7.0",
-  "trainingExamples": 518,
+  "version": "0.7.38",
+  "trainingExamples": 527,
   "domains": [
     "philosophy",
     "psychology",
@@ -17,8 +17,8 @@
         {
           "model": "sophia-teacher-reference",
           "score_pct": 100.0,
-          "passed": 4,
-          "total": 4
+          "passed": 9,
+          "total": 9
         },
         {
           "model": "claude-sonnet (api.llmhub.com.cn)",
@@ -44,13 +44,13 @@
       "domain": "psychology",
       "benchmark": "sophia-psychology-v1",
       "updated": "2026-06-18",
-      "cases": 4,
+      "cases": 9,
       "entries": [
         {
           "model": "sophia-teacher-reference",
           "score_pct": 100.0,
-          "passed": 4,
-          "total": 4
+          "passed": 9,
+          "total": 9
         },
         {
           "model": "claude-sonnet (api.llmhub.com.cn)",
@@ -82,13 +82,13 @@
       "domain": "history",
       "benchmark": "sophia-history-v1",
       "updated": "2026-06-18",
-      "cases": 5,
+      "cases": 8,
       "entries": [
         {
           "model": "sophia-teacher-reference",
           "score_pct": 100.0,
-          "passed": 5,
-          "total": 5
+          "passed": 8,
+          "total": 8
         },
         {
           "model": "claude-sonnet (api.llmhub.com.cn)",
@@ -114,13 +114,13 @@
       "domain": "religion",
       "benchmark": "sophia-religion-v1",
       "updated": "2026-06-18",
-      "cases": 5,
+      "cases": 6,
       "entries": [
         {
           "model": "sophia-teacher-reference",
           "score_pct": 100.0,
-          "passed": 5,
-          "total": 5
+          "passed": 6,
+          "total": 6
         },
         {
           "model": "claude-sonnet (api.llmhub.com.cn)",
@@ -244,6 +244,7 @@
       "long-horizon task logs with intervention counts",
       "learning-under-shift pre/post results with append-only memory records",
       "failure ledger with claim impact",
+      "RLVR held-out pass@1 under the no-overclaim gate (pre-registered; Open until a gated live run)",
       "third-party reproduction on a clean clone"
     ],
     "artifactIndex": {
@@ -268,6 +269,29 @@
       "learningShift": "agi-proof/learning-under-shift/README.md",
       "failureLedger": "agi-proof/failure-ledger.md",
       "replication": "agi-proof/third-party-replication/README.md",
+      "rlvrRunner": "tools/run_rlvr.py",
+      "rlvrReward": "provenance_bench/rl_reward.py",
+      "rlvrDataset": "provenance_bench/rl_dataset.py",
+      "rlvrReport": "agi-proof/benchmark-results/rlvr.public-report.json",
+      "rlvrExperiment": "docs/09-Agent/RLVR-Experiment.md",
+      "localAgentDeltaRunner": "tools/run_local_agent_delta.py",
+      "localAgentCore": "provenance_bench/local_agent.py",
+      "localAgentDeltaReport": "agi-proof/benchmark-results/local-agent-delta.public-report.json",
+      "localAgentDeltaValidatedReport": "agi-proof/benchmark-results/provenance-delta-dolphin-validated.public-report.json",
+      "unifiedUpliftRunner": "tools/run_unified_uplift.py",
+      "unifiedUpliftReport": "agi-proof/benchmark-results/unified-uplift.public-report.json",
+      "gateEntityAliases": "agent/entity_aliases.py",
+      "gateRetrievalGrounding": "agent/grounded_gate.py",
+      "gateClaimRouter": "agent/claim_router.py",
+      "gateGradedDecision": "agent/graded_decision.py",
+      "gateActiveLearning": "agent/gate_feedback.py",
+      "gateTemporalVerifier": "agent/temporal_verifier.py",
+      "gateActiveLearningPromotion": "tools/promote_pending.py",
+      "codeExecVerifier": "provenance_bench/code_exec.py",
+      "codeReward": "provenance_bench/code_reward.py",
+      "codeBenchmark": "benchmark/code_tasks.json",
+      "codeUpliftRunner": "tools/run_code_uplift.py",
+      "councilPanelRunner": "tools/run_council_panel.py",
       "religionFigureCouncil": "docs/08-Domains/Religion-Figure-Council.md",
       "codingCouncil": "docs/08-Domains/Coding-Council.md"
     },

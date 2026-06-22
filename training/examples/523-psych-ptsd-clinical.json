@@ -1,0 +1,22 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Is calling a tough week 'PTSD' the same as the clinical disorder?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. Calling a tough week 'PTSD' is not the same as the clinical disorder. PTSD is a clinical diagnosis defined by DSM-5 criteria (trauma exposure, intrusion, avoidance, hyperarousal). Keep the boundary between everyday 'trauma' talk and the clinical diagnosis.\n\n中文：把辛苦的一週稱為「創傷後壓力症」並不等同臨床診斷；PTSD 是依 DSM-5 準則定義的臨床診斷，應與通俗用語區分。"
+    }
+  ],
+  "metadata": {
+    "source": "gf-10-expansion",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "recordIds": ["ptsd_clinical_vs_pop"]
+  }
+}

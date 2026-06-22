@@ -2,13 +2,13 @@
   "domain": "history",
   "benchmark": "sophia-history-v1",
   "updated": "2026-06-18",
-  "cases": 5,
+  "cases": 8,
   "entries": [
     {
       "model": "sophia-teacher-reference",
       "score_pct": 100.0,
-      "passed": 5,
-      "total": 5
+      "passed": 8,
+      "total": 8
     },
     {
       "model": "claude-sonnet (api.llmhub.com.cn)",

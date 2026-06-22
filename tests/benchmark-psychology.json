@@ -26,6 +26,39 @@
       "question": "Do all kidnapping victims develop Stockholm syndrome?",
       "mustDenyUniversal": true,
       "mustMentionSubfields": ["clinical", "pop_myth"]
+    },
+    {
+      "id": "dunning_kruger_attribution",
+      "question": "Did Charles Darwin discover the Dunning–Kruger effect, and what subfield is it?",
+      "mustDenyAttribution": { "recordId": "dunning_kruger_effect", "author": "darwin" },
+      "mustAffirmAuthor": { "recordId": "dunning_kruger_effect", "author": "dunning" },
+      "mustMentionSubfields": ["cognitive"]
+    },
+    {
+      "id": "confirmation_bias_bacon",
+      "question": "Did Francis Bacon coin the term 'confirmation bias'?",
+      "mustDenyAttribution": { "recordId": "confirmation_bias", "author": "francis_bacon" },
+      "mustAffirmAuthor": { "recordId": "confirmation_bias", "author": "wason" },
+      "mustMentionSubfields": ["cognitive"]
+    },
+    {
+      "id": "ten_percent_brain",
+      "question": "Is it true we only use 10% of our brain, as Einstein supposedly said?",
+      "mustLabelMyth": true,
+      "mustDenyAttribution": { "recordId": "ten_percent_brain_myth", "author": "einstein" },
+      "mustMentionSubfields": ["pop_myth"]
+    },
+    {
+      "id": "mozart_effect",
+      "question": "Does listening to Mozart permanently raise a baby's IQ?",
+      "mustLabelMyth": true,
+      "mustMentionSubfields": ["pop_myth"]
+    },
+    {
+      "id": "ptsd_clinical_boundary",
+      "question": "Is calling a tough week 'PTSD' the same as the clinical disorder?",
+      "mustMentionSubfields": ["clinical"],
+      "mustSignalNuanced": ["criteria", "diagnosis", "dsm", "boundary", "臨床", "診斷"]
     }
   ]
 }

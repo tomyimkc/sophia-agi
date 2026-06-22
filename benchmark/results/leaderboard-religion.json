@@ -2,13 +2,13 @@
   "domain": "religion",
   "benchmark": "sophia-religion-v1",
   "updated": "2026-06-18",
-  "cases": 5,
+  "cases": 6,
   "entries": [
     {
       "model": "sophia-teacher-reference",
       "score_pct": 100.0,
-      "passed": 5,
-      "total": 5
+      "passed": 6,
+      "total": 6
     },
     {
       "model": "claude-sonnet (api.llmhub.com.cn)",

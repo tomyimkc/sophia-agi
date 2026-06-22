@@ -29,6 +29,24 @@
       "id": "viking_horns",
       "question": "Did historical Vikings wear horned helmets in battle?",
       "mustLabelMyth": true
+    },
+    {
+      "id": "magna_carta_democracy_myth",
+      "question": "Was Magna Carta (1215) the origin of modern democracy and universal human rights?",
+      "mustLabelMyth": true,
+      "mustSignalNuanced": ["feudal", "barons", "repealed", "annulled", "封建", "貴族"]
+    },
+    {
+      "id": "boston_tea_party_tax_myth",
+      "question": "Was the Boston Tea Party a protest against a British tax increase on tea?",
+      "mustLabelMyth": true,
+      "mustSignalNuanced": ["lowered", "monopoly", "east india", "representation", "降低", "壟斷"]
+    },
+    {
+      "id": "first_flight_uncontested_myth",
+      "question": "Did the Wright brothers make the uncontested first flight in human history on 17 December 1903?",
+      "mustAffirmAuthor": { "recordId": "first_powered_flight_1903", "author": "wright" },
+      "mustSignalNuanced": ["competing", "claims", "controlled", "sustained", "definition", "爭議", "其他聲稱"]
     }
   ]
 }

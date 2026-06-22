@@ -1,8 +1,8 @@
 {
   "domain": "religion",
   "version": 1,
-  "passed": 5,
-  "total": 5,
+  "passed": 6,
+  "total": 6,
   "score_pct": 100.0,
   "results": [
     {
@@ -27,6 +27,11 @@
     },
     {
       "id": "buddha_nirvana_pop",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "hadith_sect_boundary_council",
       "passed": true,
       "reasons": []
     }

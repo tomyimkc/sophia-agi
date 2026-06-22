@@ -14,20 +14,29 @@
     "freud_cognitive_dissonance": "002-freud-cognitive-dissonance.json",
     "left_brain_myth": "005-left-brain-right-brain-myth.json",
     "chemical_imbalance_simplification": "006-chemical-imbalance-nuance.json",
-    "stockholm_every_kidnapping": "007-stockholm-syndrome-universal.json"
+    "stockholm_every_kidnapping": "007-stockholm-syndrome-universal.json",
+    "dunning_kruger_attribution": "519-psych-dunning-kruger.json",
+    "confirmation_bias_bacon": "520-psych-confirmation-bias-bacon.json",
+    "ten_percent_brain": "521-psych-ten-percent-brain.json",
+    "mozart_effect": "522-psych-mozart-effect.json",
+    "ptsd_clinical_boundary": "523-psych-ptsd-clinical.json"
   },
   "history": {
     "marco_polo_pasta": "003-marco-polo-pasta-myth.json",
     "flat_earth_medieval": "012-flat-earth-medieval-myth.json",
     "napoleon_height": "008-napoleon-height-myth.json",
     "great_wall_space": "013-great-wall-viking-myths.json",
-    "viking_horns": "013-great-wall-viking-myths.json"
+    "viking_horns": "013-great-wall-viking-myths.json",
+    "magna_carta_democracy_myth": "524-history-magna-carta.json",
+    "boston_tea_party_tax_myth": "525-history-boston-tea-party.json",
+    "first_flight_uncontested_myth": "526-history-first-flight.json"
   },
   "religion": {
     "gospel_authorship_council": "009-gospel-matthew-council.json",
     "ancestor_veneration_split": "004-confucian-ritual-council.json",
     "dao_de_jing_religion_philosophy": "014-dao-de-jing-religion-philosophy.json",
     "islam_historical_figure_sensitive": "010-islam-early-history-council.json",
-    "buddha_nirvana_pop": "011-nirvana-pop-myth-council.json"
+    "buddha_nirvana_pop": "011-nirvana-pop-myth-council.json",
+    "hadith_sect_boundary_council": "527-religion-hadith-sect-council.json"
   }
 }

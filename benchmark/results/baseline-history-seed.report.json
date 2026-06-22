@@ -2,8 +2,8 @@
   "domain": "history",
   "version": 1,
   "passed": 4,
-  "total": 5,
-  "score_pct": 80.0,
+  "total": 8,
+  "score_pct": 50.0,
   "results": [
     {
       "id": "marco_polo_pasta",
@@ -31,6 +31,28 @@
       "id": "viking_horns",
       "passed": true,
       "reasons": []
+    },
+    {
+      "id": "magna_carta_democracy_myth",
+      "passed": false,
+      "reasons": [
+        "expected nuance markers: ['feudal', 'barons', 'repealed', 'annulled', '封建', '貴族']"
+      ]
+    },
+    {
+      "id": "boston_tea_party_tax_myth",
+      "passed": false,
+      "reasons": [
+        "expected nuance markers: ['lowered', 'monopoly', 'east india', 'representation', '降低', '壟斷']"
+      ]
+    },
+    {
+      "id": "first_flight_uncontested_myth",
+      "passed": false,
+      "reasons": [
+        "expected mention of correct author 'wright'",
+        "expected nuance markers: ['competing', 'claims', 'controlled', 'sustained', 'definition', '爭議', '其他聲稱']"
+      ]
     }
   ]
 }

@@ -2,6 +2,37 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.38] - 2026-06-22
+
+### Added — good-first-issue corpus expansion (GF-10/20/30/40) + multilingual scorer
+
+Closes the four open good-first issues by extending the corpus *and* its
+measurement, keeping every record a trained, benchmarked, provenance-checked unit
+(data record → wiki page → training example → benchmark trap → teacher reference).
+The teacher reference stays at **100%** in all four domains.
+
+- **GF-10 — psychology (`data/psychology_concepts.json`):** five new concepts with
+  explicit `subfield` tags — `dunning_kruger_effect` (cognitive), `confirmation_bias`
+  (cognitive; `doNotAttributeTo` Francis Bacon for the *term*), `ten_percent_brain_myth`
+  (pop_myth; `doNotAttributeTo` Einstein / William James), `mozart_effect_myth`
+  (pop_myth), `ptsd_clinical_vs_pop` (clinical). Five new psychology benchmark traps.
+- **GF-20 — history (`data/history_events.json`):** three dated events with
+  `primarySource` + myth-trap notes — `magna_carta_1215`, `boston_tea_party_1773`,
+  `first_powered_flight_1903`. Three new history benchmark traps + a linked dispute
+  note (`docs/04-Disputes/Boston-Tea-Party-Tax-Myth.md`).
+- **GF-30 — religion (`data/religion_concepts.json`):** `hadith_canonical_collections`
+  — scripture attribution with explicit Sunni/Shia `sectBoundaries` and
+  `doNotMergeWith` edges; council-format training example + sensitive-topic handling
+  documented in `docs/08-Domains/Religion.md`.
+- **GF-40 — scorer (`agent/benchmark_checks.py`):** additional 中文 denial markers
+  (並無, 並不, 不曾, 從未, 不準確, 錯誤), myth/fabrication markers (訛傳, 謠傳, 杜撰,
+  無稽, 子虛烏有, 誇大), and affirmation markers (提出, 出自). Compound (≥2-char)
+  negations only, so a bare 不/沒 never counts. Regression tests in
+  `test_benchmark_scorer.py` (before/after + a teacher-reference 100% no-false-positive
+  guard); the test is now wired into CI.
+
+Corpus: 518 → **527** training examples. Tests: `test_benchmark_scorer.py` (CI wired).
+
 ## [0.7.37] - 2026-06-22
 
 ### Added — heterogeneous council panel (team-of-models) + head-to-head benchmark
