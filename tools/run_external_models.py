@@ -17,8 +17,11 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
+import shutil
 import subprocess
 import sys
+import tempfile
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -48,6 +51,9 @@ PROVIDERS: dict[str, tuple[str, str]] = {
     "grok": ("x-ai/grok-3-beta", "XAI_API_KEY"),
     "gemini": ("gemini-2.0-flash", "GOOGLE_API_KEY"),
     "deepseek": ("deepseek-chat", "DEEPSEEK_API_KEY"),
+    # Local Grok CLI (grok.com login) — no API key; uses GROK_BIN/GROK_MODEL, not a
+    # secret. Never auto-detected; request explicitly with --providers grok-cli.
+    "grok-cli": ("grok-composer-2.5-fast", "GROK_BIN"),
 }
 
 
@@ -123,6 +129,7 @@ def model_override(provider: str, default: str) -> str:
         "grok": "XAI_MODEL",
         "gemini": "GEMINI_MODEL",
         "deepseek": "DEEPSEEK_MODEL",
+        "grok-cli": "GROK_MODEL",
     }
     return os.environ.get(env_map.get(provider, ""), default)
 
@@ -214,6 +221,72 @@ def ask_deepseek_native(question: str, model: str) -> str:
     )
 
 
+def _usable_binary(path: Path) -> bool:
+    """A runnable file: exists, is a regular file, and is executable."""
+    return path.is_file() and os.access(path, os.X_OK)
+
+
+def grok_cli_bin() -> str | None:
+    """Locate a runnable Grok CLI: $GROK_BIN, then PATH, then ~/.grok/bin/grok.
+
+    Requires an executable file (not just an existing path) so a misconfigured
+    GROK_BIN fails here with a clear message instead of deep inside subprocess.
+    """
+    explicit = os.environ.get("GROK_BIN", "").strip()
+    if explicit:
+        candidate = Path(explicit).expanduser()
+        return str(candidate) if _usable_binary(candidate) else None
+    found = shutil.which("grok")
+    if found:
+        return found
+    fallback = Path.home() / ".grok" / "bin" / "grok"
+    return str(fallback) if _usable_binary(fallback) else None
+
+
+def ask_grok_cli(question: str, model: str) -> str:
+    """Answer via the local Grok CLI (single-turn, no tools, neutral cwd) so the run
+    is comparable to the keyed API providers — model knowledge only, no repo access."""
+    binary = grok_cli_bin()
+    if not binary:
+        raise RuntimeError("Grok CLI not found (set GROK_BIN or install `grok`)")
+    # grok-composer is agentic: with too few turns it emits only a "let me check
+    # sources" preamble and never answers. Forbid tools + preamble and give it room
+    # to produce the final answer from its own knowledge (fair, no repo/web access).
+    system = (
+        SYSTEM
+        + "\n\nYou are answering a sealed benchmark from your OWN knowledge only. "
+        "Do NOT use tools, web search, file reads, or shell. Do NOT say you will "
+        "'check', 'look up', or 'verify' anything. Output the complete final answer "
+        "immediately in this message."
+    )
+    command = [
+        binary,
+        "-p",
+        question,
+        "--model",
+        model,
+        "--output-format",
+        "plain",
+        "--max-turns",
+        "8",
+        "--no-plan",
+        "--no-subagents",
+        "--disable-web-search",
+        "--cwd",
+        tempfile.gettempdir(),  # neutral, cross-platform dir: no repo files to read
+        "--system-prompt-override",
+        system,
+    ]
+    proc = subprocess.run(command, text=True, capture_output=True, timeout=420, check=False)
+    answer = re.sub(r"\x1b\[[0-9;]*m", "", proc.stdout).strip()
+    # Fail fast on a non-zero exit so a CLI error never gets saved as a "response".
+    if proc.returncode != 0:
+        raise RuntimeError(f"Grok CLI exited {proc.returncode}: {proc.stderr.strip()[-300:]}")
+    if not answer:
+        raise RuntimeError(f"Grok CLI returned no text (rc={proc.returncode}): {proc.stderr.strip()[-300:]}")
+    return answer
+
+
 def ask_gpt_native(question: str, model: str) -> str:
     """GPT via any OpenAI-compatible endpoint (default api.openai.com, or OPENAI_BASE_URL
     for a gateway). urllib only — no `openai` package dependency."""
@@ -260,6 +333,9 @@ def ask_provider(provider: str, question: str) -> str:
     gateway_model, _ = PROVIDERS[provider]
     model = model_override(provider, gateway_model)
 
+    if provider == "grok-cli":
+        return ask_grok_cli(question, model)
+
     direct = direct_api_key(provider)
     if direct:
         if provider == "gpt-4o":
@@ -289,12 +365,16 @@ def ask_provider(provider: str, question: str) -> str:
 
 
 def provider_available(provider: str) -> bool:
+    if provider == "grok-cli":
+        return grok_cli_bin() is not None
     if provider == "gemini":
         return bool(google_api_key())
     return bool(direct_api_key(provider) or monica_api_key())
 
 
 def run_label(provider: str) -> str:
+    if provider == "grok-cli":
+        return f"{model_override(provider, PROVIDERS[provider][0])} (grok-cli)"
     if direct_api_key(provider):
         if provider == "claude-sonnet" and anthropic_base_url():
             host = anthropic_base_url().replace("https://", "").replace("http://", "")
@@ -311,7 +391,8 @@ def run_label(provider: str) -> str:
 
 
 def detect_providers() -> list[str]:
-    return [name for name in PROVIDERS if provider_available(name)]
+    # grok-cli is local + tool-driven; never auto-run from --all, request it explicitly.
+    return [name for name in PROVIDERS if name != "grok-cli" and provider_available(name)]
 
 
 def describe_backend() -> str:
@@ -340,6 +421,9 @@ def run_provider(provider: str, domain: str) -> Path | None:
         print(f"  skip unknown provider: {provider}")
         return None
     if not provider_available(provider):
+        if provider == "grok-cli":
+            print("  skip grok-cli: Grok CLI not found (set GROK_BIN or install `grok`)")
+            return None
         _, env_name = PROVIDERS[provider]
         alias = " or CLAUDE_API_KEY" if env_name == "ANTHROPIC_API_KEY" else ""
         print(f"  skip {provider}: set {env_name}{alias} or MONICA_API_KEY in .env")

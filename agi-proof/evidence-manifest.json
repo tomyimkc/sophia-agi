@@ -1,6 +1,6 @@
 {
-  "version": "0.7.40",
-  "generated": "2026-06-22T22:42:03",
+  "version": "0.7.41",
+  "generated": "2026-06-22T23:51:38",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "operationalDefinition": {
     "summary": "For this repo, AGI evidence means broad task competence, transfer, tool use, long-horizon autonomy, learning under distribution shift, baseline superiority, and independent reproduction.",
@@ -65,6 +65,12 @@
             "total": 9
           },
           {
+            "model": "grok-composer-2.5-fast (grok-cli)",
+            "score_pct": 100.0,
+            "passed": 9,
+            "total": 9
+          },
+          {
             "model": "sophia-v1",
             "score_pct": 100.0,
             "passed": 9,
@@ -109,6 +115,12 @@
             "model": "gpt-4o (api.llmhub.com.cn)",
             "score_pct": 77.8,
             "passed": 7,
+            "total": 9
+          },
+          {
+            "model": "grok-composer-2.5-fast (grok-cli)",
+            "score_pct": 100.0,
+            "passed": 9,
             "total": 9
           },
           {
@@ -165,6 +177,12 @@
             "total": 8
           },
           {
+            "model": "grok-composer-2.5-fast (grok-cli)",
+            "score_pct": 100.0,
+            "passed": 8,
+            "total": 8
+          },
+          {
             "model": "sophia-v1",
             "score_pct": 100.0,
             "passed": 5,
@@ -209,6 +227,12 @@
             "model": "gpt-4o (api.llmhub.com.cn)",
             "score_pct": 16.7,
             "passed": 1,
+            "total": 6
+          },
+          {
+            "model": "grok-composer-2.5-fast (grok-cli)",
+            "score_pct": 100.0,
+            "passed": 6,
             "total": 6
           },
           {

@@ -29,6 +29,12 @@
       "total": 6
     },
     {
+      "model": "grok-composer-2.5-fast (grok-cli)",
+      "score_pct": 100.0,
+      "passed": 6,
+      "total": 6
+    },
+    {
       "model": "sophia-v1",
       "score_pct": 60.0,
       "passed": 3,

@@ -2,6 +2,34 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.41] - 2026-06-22
+
+### Added — Grok external benchmark run via local Grok CLI (closes #6)
+
+- **`tools/run_external_models.py`**: new `grok-cli` provider that drives the local
+  Grok CLI (`grok -p … --output-format plain`) instead of the XAI HTTP API — useful
+  when you have a grok.com login but no `XAI_API_KEY`. Runs single-model, **no tools /
+  no web / neutral `/tmp` cwd** so it answers from model knowledge only (fair vs the
+  keyed API runs). Never auto-detected by `--all`; request with `--providers grok-cli`.
+  Locates the binary via `$GROK_BIN` → PATH → `~/.grok/bin/grok`; model via `GROK_MODEL`.
+- **`benchmark/model_runs/grok-cli-*.json` + `.report.json`**: Grok run across all four
+  domains, folded into the leaderboards.
+
+RESULT (**grok-composer-2.5-fast** via grok-cli — note: the coding-composer model the
+CLI exposes, not grok-3/4): philosophy **9/9**, psychology **9/9**, history **8/8**,
+religion **6/6** — a clean **100%**, matching the teacher reference and beating both
+DeepSeek (9/9/8/3) and GPT-4o (9/7/5/1) on this benchmark, including full council-panel
+religion answers with named Sunni/Shia seats.
+
+Methodology note: grok-composer is agentic, so its `grok-cli` system prompt adds a
+"answer from your own knowledge, no tools, no 'let me check' preamble, output the full
+answer now" instruction (format compliance only — no content hints) and `--max-turns 8`;
+without it the model emitted tool-call preambles and scored artificially low. The
+underlying benchmark instructor prompt is identical to the DeepSeek/GPT-4o runs. Scores
+reflect the lenient marker-based scorer plus a verbose, compliant model.
+
+#6 now has GPT-4o, Grok, DeepSeek, claude-sonnet, and local sophia-v1 on the leaderboards.
+
 ## [0.7.40] - 2026-06-22
 
 ### Added — GPT-4o external benchmark run (#6, second leg)
