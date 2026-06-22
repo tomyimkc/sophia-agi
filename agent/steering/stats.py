@@ -73,3 +73,76 @@ def ssa_verdict(cell: dict) -> dict:
         if not checks[key]:
             return {"status": "abstained", "reason": reason_for[key], "checks": checks}
     return {"status": "enacted", "reason": None, "checks": checks}
+
+
+def residualized_d(target_per_seed, offtarget_per_seed_by_axis):
+    y = list(target_per_seed); n = len(y)
+    if n < 2:
+        return 0.0
+    axes = [k for k, v in offtarget_per_seed_by_axis.items() if len(v) == n]
+    X = [[1.0] + [offtarget_per_seed_by_axis[k][i] for k in axes] for i in range(n)]
+    p = 1 + len(axes)
+    A = [[sum(X[i][r] * X[i][s] for i in range(n)) for s in range(p)] for r in range(p)]
+    c = [sum(X[i][r] * y[i] for i in range(n)) for r in range(p)]
+    beta = _solve_linear(A, c)
+    if beta is None:
+        sd = statistics.pstdev(y) if n > 1 else 0.0
+        return 0.0 if sd == 0.0 else statistics.fmean(y) / sd
+    resid = [y[i] - sum(beta[r] * X[i][r] for r in range(1, p)) for i in range(n)]
+    sd = statistics.pstdev(resid)
+    return 0.0 if sd == 0.0 else statistics.fmean(resid) / sd
+
+
+def _solve_linear(A, c):
+    n = len(A)
+    M = [list(A[i]) + [c[i]] for i in range(n)]
+    for col in range(n):
+        piv = max(range(col, n), key=lambda r: abs(M[r][col]))
+        if abs(M[piv][col]) < 1e-12:
+            return None
+        M[col], M[piv] = M[piv], M[col]
+        pv = M[col][col]; M[col] = [v / pv for v in M[col]]
+        for r in range(n):
+            if r != col and M[r][col] != 0.0:
+                f = M[r][col]; M[r] = [M[r][k] - f * M[col][k] for k in range(n + 1)]
+    return [M[i][n] for i in range(n)]
+
+
+def holm_bonferroni(pvalues):
+    m = len(pvalues)
+    if m == 0:
+        return []
+    order = sorted(range(m), key=lambda i: pvalues[i])
+    adj = [0.0] * m; running = 0.0
+    for rank, idx in enumerate(order):
+        running = max(running, (m - rank) * pvalues[idx])
+        adj[idx] = min(1.0, running)
+    return adj
+
+
+def benjamini_hochberg(pvalues, q):
+    m = len(pvalues)
+    if m == 0:
+        return []
+    order = sorted(range(m), key=lambda i: pvalues[i])
+    k_max = 0
+    for rank, idx in enumerate(order, start=1):
+        if pvalues[idx] <= (rank / m) * q:
+            k_max = rank
+    sig = [False] * m
+    for rank, idx in enumerate(order, start=1):
+        if rank <= k_max:
+            sig[idx] = True
+    return sig
+
+
+def bootstrap_diff_p(steer, base, *, n_boot=2000, seed=0):
+    diffs = [s - b for s, b in zip(steer, base)]; n = len(diffs)
+    if n == 0:
+        return 1.0
+    rng = random.Random(seed)
+    boot = [statistics.fmean([diffs[rng.randrange(n)] for _ in range(n)]) for _ in range(n_boot)]
+    frac_lt = sum(1 for m in boot if m < 0.0) / n_boot
+    frac_le = sum(1 for m in boot if m <= 0.0) / n_boot
+    frac = (frac_lt + frac_le) / 2.0
+    return min(1.0, max(1.0 / n_boot, 2.0 * min(frac, 1.0 - frac)))
