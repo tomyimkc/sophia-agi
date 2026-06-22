@@ -57,16 +57,31 @@ def _print_remove(cf: dict) -> None:
 
 def main(argv: "list[str] | None" = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("action", choices=["remove", "retract"])
+    ap.add_argument("action", choices=["remove", "retract", "revise"])
     ap.add_argument("source", help="page id, alias, or [[wikilink]] target")
+    ap.add_argument("--also", action="append", dest="also", default=[],
+                    help="(revise) additional target(s) to retract together (repeatable)")
     ap.add_argument("--query", help="(remove) isolate the before/after belief for this entity")
-    ap.add_argument("--reason", default="(unspecified)", help="(retract) why the claim is being retracted")
-    ap.add_argument("--by", default="cli", help="(retract) actor recorded in the audit entry")
+    ap.add_argument("--reason", default="(unspecified)", help="(retract/revise) why the claim(s) are retracted")
+    ap.add_argument("--by", default="cli", help="(retract/revise) actor recorded in the audit entry")
     ap.add_argument("--root", action="append", dest="roots", help="page root (repeatable); default: wiki + disputes")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
 
     graph, n = _build_graph(args.roots)
+
+    if args.action == "revise":
+        from okf.revision import revise as _revise
+        rev = _revise(graph, [(t, args.reason) for t in [args.source, *args.also]], by=args.by)
+        if args.json:
+            print(json.dumps(rev.to_dict(), ensure_ascii=False, indent=2))
+        else:
+            print(f"(loaded {n} pages)")
+            print(f"revision: retracted {rev.retracted or '(none)'}"
+                  + (f" · not found {rev.notFound}" if rev.notFound else ""))
+            print(f"  cascade (lost support): {[c['page'] for c in rev.cascade] or '(none)'}")
+            print(f"  abstain set: {rev.abstain}")
+        return 0
 
     if args.action == "remove":
         cf = counterfactual_remove(graph, args.source, query=args.query)
