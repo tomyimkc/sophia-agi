@@ -87,6 +87,12 @@ def _reduced(graph: Graph, removed: "set[str]") -> Graph:
     return Graph(nodes=nodes, alias_index=aliases)
 
 
+def reduced_without(graph: Graph, removed: "set[str] | list[str]") -> Graph:
+    """Public: a graph view with the given node ids struck out (for multi-removal
+    counterfactuals and belief revision)."""
+    return _reduced(graph, set(removed))
+
+
 def counterfactual_remove(graph: Graph, source: str, *, query: "str | None" = None) -> "dict":
     """What would change if ``source`` were removed from the belief graph?
 

@@ -86,15 +86,21 @@ def check_claim(text: str) -> dict:
     return _check_claim(text)
 
 
+def _belief_graph():
+    """Build the belief graph from the store tiers + dispute lineage pages."""
+    import okf
+    from agent import wiki_store
+
+    return okf.build_graph(wiki_store.belief_graph_pages())
+
+
 def belief(entity: str) -> dict:
     """Belief-graph lookup for one entity: effectiveConfidenceRank (min over the
     derivesFrom chain), declared confidence, attribution, contradictions, and a
     confidenceLaundered flag. Read-only, offline."""
     import okf
-    from agent import wiki_store
 
-    graph = okf.build_graph(wiki_store.load_all_pages())
-    return okf.belief(graph, entity)
+    return okf.belief(_belief_graph(), entity)
 
 
 def counterfactual(source: str, query: str | None = None) -> dict:
@@ -104,10 +110,8 @@ def counterfactual(source: str, query: str | None = None) -> dict:
     fail-closed, confidence collapses to 0). Optional ``query`` isolates one
     entity's before/after belief. Read-only, offline, non-destructive."""
     import okf
-    from agent import wiki_store
 
-    graph = okf.build_graph(wiki_store.load_all_pages())
-    return okf.counterfactual_remove(graph, source, query=query)
+    return okf.counterfactual_remove(_belief_graph(), source, query=query)
 
 
 def retract(target: str, reason: str, by: str = "system") -> dict:
@@ -116,10 +120,19 @@ def retract(target: str, reason: str, by: str = "system") -> dict:
     append-only audit entry. Non-destructive — no page is deleted; persistence
     is the caller's choice, made with the impact in hand. Offline."""
     import okf
-    from agent import wiki_store
 
-    graph = okf.build_graph(wiki_store.load_all_pages())
-    return okf.retract(graph, target, reason=reason, by=by).to_dict()
+    return okf.retract(_belief_graph(), target, reason=reason, by=by).to_dict()
+
+
+def revise(targets: list[str], reason: str = "(unspecified)", by: str = "system") -> dict:
+    """Belief revision: apply one or more retractions and propagate the support
+    cascade transitively. Returns the retracted ids, the cascade of claims that
+    lose support, the abstain set (what a gate must now refuse), and an audit log.
+    Non-destructive. Offline."""
+    import okf
+
+    pairs = [(t, reason) for t in targets]
+    return okf.revise(_belief_graph(), pairs, by=by).to_dict()
 
 
 def benchmark_list(domain: str) -> dict:

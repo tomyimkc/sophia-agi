@@ -32,6 +32,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     openclaw_infer,
     read_dispute,
     retract,
+    revise,
     rubric_review,
     sector_council,
     validate_corpus,
@@ -118,6 +119,15 @@ def sophia_retract(target: str, reason: str, by: str = "system") -> str:
     impact (which claims lose support) and returns an append-only audit entry.
     Non-destructive — no page is deleted. Read-only over the live graph."""
     return dumps(retract(target, reason, by=by))
+
+
+@mcp.tool()
+def sophia_revise(targets: list[str], reason: str = "(unspecified)", by: str = "system") -> str:
+    """Belief revision: apply one or more retractions and propagate the support
+    cascade transitively. Returns retracted ids, the cascade of claims that lose
+    support, the abstain set (what a gate must now refuse), and an audit log.
+    Non-destructive, read-only over the live graph."""
+    return dumps(revise(targets, reason, by=by))
 
 
 @mcp.tool()

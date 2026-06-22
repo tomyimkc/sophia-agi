@@ -64,10 +64,31 @@ def test_retract_returns_audit_and_downstream() -> None:
     assert out["reason"] == "forged" and out["by"] == "curator"
 
 
+def test_revise_propagates_cascade() -> None:
+    original = _patch()
+    try:
+        out = tools_impl.revise(["primary"], reason="discredited", by="curator")
+    finally:
+        wiki_store.load_all_pages = original
+    assert out["retracted"] == ["primary"]
+    assert "derived_solo" in [c["page"] for c in out["cascade"]]
+    assert "primary" in out["abstain"] and "derived_solo" in out["abstain"]
+
+
+def test_belief_graph_includes_disputes() -> None:
+    # belief_graph_pages must add the dispute lineage pages the store omits, so the
+    # live MCP counterfactual sees real derivesFrom edges (regression for the
+    # store-vs-CLI page-set mismatch).
+    ids = {p.id for p in wiki_store.belief_graph_pages()}
+    assert "analects_compiled_not_autograph" in ids   # a dispute page with derivesFrom
+
+
 def main() -> int:
     test_counterfactual_reports_support_loss()
     test_counterfactual_unknown_source()
     test_retract_returns_audit_and_downstream()
+    test_revise_propagates_cascade()
+    test_belief_graph_includes_disputes()
     print("test_mcp_counterfactual: OK")
     return 0
 

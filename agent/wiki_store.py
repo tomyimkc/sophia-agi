@@ -13,6 +13,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from pathlib import Path
 
+from agent.config import DISPUTES_DIR as _DISPUTES_DIR
 from agent.config import WIKI_DIR, WIKI_MEMORY_DIR
 from agent.verifiers import provenance_faithful
 from okf import frontmatter, graph as okf_graph, page as okf_page, schema
@@ -21,6 +22,7 @@ from okf import frontmatter, graph as okf_graph, page as okf_page, schema
 CANONICAL_DIR = WIKI_DIR
 MEMORY_DIR = WIKI_MEMORY_DIR
 DRAFT_DIR = WIKI_DIR / "drafts"
+DISPUTES_DIR = _DISPUTES_DIR
 
 
 def _tier_dir(tier: str) -> "Path | None":
@@ -38,6 +40,23 @@ def _now() -> str:
 def load_all_pages() -> "list":
     """All OKF pages across canonical, memory, and draft tiers."""
     return okf_page.load_pages(*_read_roots())
+
+
+def belief_graph_pages() -> "list":
+    """Pages for belief-graph queries (belief / counterfactual / retract / revise):
+    the store tiers PLUS the hand-curated dispute pages, which carry the
+    ``derivesFrom`` lineage edges. The store tiers win on any id collision (the
+    canonical record outranks a dispute note that reuses its id), so this never
+    shadows a generated page — it only *adds* the dispute lineage the store omits.
+    """
+    pages = load_all_pages()
+    seen = {p.id for p in pages}
+    if Path(DISPUTES_DIR).exists():
+        for page in okf_page.load_pages(DISPUTES_DIR):
+            if page.id not in seen:
+                pages.append(page)
+                seen.add(page.id)
+    return pages
 
 
 def index_by_id() -> dict:

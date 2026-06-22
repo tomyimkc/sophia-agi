@@ -20,6 +20,7 @@ from okf.counterfactual import (
     is_grounded,
     retract,
 )
+from okf.revision import Revision, claims_to_abstain, revise
 from okf.frontmatter import dump_block, parse, serialize, strip
 from okf.graph import belief
 from okf.graph import build as build_graph
@@ -48,6 +49,9 @@ __all__ = [
     "propagate_confidence",
     "counterfactual_remove",
     "retract",
+    "revise",
+    "claims_to_abstain",
+    "Revision",
     "is_grounded",
     "Retraction",
     "link_report",
