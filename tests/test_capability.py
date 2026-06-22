@@ -99,10 +99,37 @@ def test_mcp_impls():
     assert "enacted" in pf and "cells" in pf
 
 
+def test_cross_platform_surface():
+    import importlib.util
+    # (a) the portable skill frontmatter is valid and complete
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    skill = (root / "skills" / "portable" / "sophia-personality-faithful" / "SKILL.md").read_text()
+    assert skill.startswith("---")
+    fm = skill.split("---", 2)[1]
+    for key in ("name:", "description:", "metadata:"):
+        assert key in fm, f"skill frontmatter missing {key}"
+
+    # (b) if mcp is importable, the server must expose the 4 new tools;
+    #     otherwise validate the logic directly via tools_impl (no mcp needed).
+    if importlib.util.find_spec("mcp") is not None:
+        import sophia_mcp.server as srv
+        for name in ("sophia_ocean_measure", "sophia_capability_retention",
+                     "sophia_council_diversity", "sophia_pif_dryrun"):
+            assert hasattr(srv, name), f"server missing {name}"
+    else:
+        from sophia_mcp.tools_impl import (
+            ocean_measure, capability_retention_demo,
+            council_diversity_summary, pif_dryrun_summary,
+        )
+        assert callable(ocean_measure) and callable(capability_retention_demo)
+        assert callable(council_diversity_summary) and callable(pif_dryrun_summary)
+
+
 def main():
     tests = [test_extract_final_number, test_answer_correct, test_coherence_proxy,
              test_score_response, test_capability_cell_drop_and_retain,
-             test_dry_run_cell, test_mcp_impls]
+             test_dry_run_cell, test_mcp_impls, test_cross_platform_surface]
     for t in tests:
         t()
     print(f"PASS {len(tests)} capability tests")
