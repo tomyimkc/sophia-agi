@@ -31,6 +31,7 @@ jobs:
           python tests/test_personality_steering.py
           python tests/test_council_diversity.py
           python tests/test_pif_harness.py
+          python tests/test_capability.py
           python tests/test_source_discipline_cli.py
           python tests/test_wiki_librarian.py
           python tests/test_wiki_mcp.py

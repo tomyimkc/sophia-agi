@@ -63,3 +63,16 @@ fixed in `agent/steering/stats.py:SSA_THRESHOLDS` before any run. Anti-gaming
 contract enforced: `(fit_shift − held_shift) ≤ 0.20` and
 `heldoutOffTargetRate ≤ 0.10` must both hold on the sealed held-out split
 before any vector ships.
+
+## capability-cell-not-yet-in-live-ssa-2026-06-23
+
+**Status:** OPEN
+
+Spec D D1 ships the deterministic capability-retention guardrail
+(`agent/steering/capability.py`, `tools/run_capability.py`) that produces the
+`capability_drop`/`coherence` inputs `agent/steering/stats.py::ssa_verdict`
+requires (`SSA_THRESHOLDS["capability_eps"]=0.05`, `["coherence_floor"]=75.0`).
+The reduced real run (`--model granite`) demonstrates the drop, but a real
+capability cell is **not yet wired into a live headline SSA run**, and coherence
+is a deterministic proxy rather than an LLM-judge channel. Closing this requires
+the full N≥8/K≥20 PIF headline run (also OPEN) with real capability cells.
