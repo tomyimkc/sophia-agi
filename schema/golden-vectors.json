@@ -1,0 +1,104 @@
+{
+  "contract_version": "1.0.0",
+  "note": "Fixed claims -> expected verdicts. Run on every release (tests/test_contract_conformance.py). claim_id is derived deterministically from idempotency_key, so vectors reference claims by their key.",
+  "vectors": [
+    {
+      "name": "auto_accept_low_risk_cited",
+      "setup": [{"op": "record", "request": {"idempotency_key": "v-accept-1", "content": "The Dao De Jing is attributed to Laozi.", "sources": ["https://en.wikipedia.org/wiki/Tao_Te_Ching"], "blp_level": "UNCLASSIFIED"}}],
+      "action": {"op": "verify", "key": "v-accept-1"},
+      "expect": {"kind": "verdict", "verdict": "accepted", "confidence": 0.75, "reasons_include": "auto-accepted"}
+    },
+    {
+      "name": "corroborated_higher_confidence",
+      "setup": [{"op": "record", "request": {"idempotency_key": "v-accept-2", "content": "Pasta predates Marco Polo in Italy.", "sources": ["src-a", "src-b"], "blp_level": "UNCLASSIFIED"}}],
+      "action": {"op": "verify", "key": "v-accept-2"},
+      "expect": {"kind": "verdict", "verdict": "accepted", "confidence": 0.9, "reasons_include": "corroborated"}
+    },
+    {
+      "name": "no_source_held",
+      "setup": [{"op": "record", "request": {"idempotency_key": "v-nosrc", "content": "An unsupported assertion.", "sources": [], "blp_level": "UNCLASSIFIED"}}],
+      "action": {"op": "verify", "key": "v-nosrc"},
+      "expect": {"kind": "verdict", "verdict": "held", "held_reason": "no_source"}
+    },
+    {
+      "name": "refuted_source_rejected",
+      "setup": [{"op": "record", "request": {"idempotency_key": "v-refuted", "content": "A claim backed only by a debunked source.", "sources": [{"id": "bad-src", "status": "refuted"}], "blp_level": "UNCLASSIFIED"}}],
+      "action": {"op": "verify", "key": "v-refuted"},
+      "expect": {"kind": "verdict", "verdict": "rejected", "reasons_include": "refuted"}
+    },
+    {
+      "name": "stale_source_held",
+      "setup": [{"op": "record", "request": {"idempotency_key": "v-stale", "content": "A claim whose only source is stale.", "sources": [{"id": "old-src", "status": "stale"}], "blp_level": "UNCLASSIFIED"}}],
+      "action": {"op": "verify", "key": "v-stale"},
+      "expect": {"kind": "verdict", "verdict": "held", "held_reason": "stale_source"}
+    },
+    {
+      "name": "classified_escalates_to_human",
+      "setup": [{"op": "record", "request": {"idempotency_key": "v-conf", "content": "A well-sourced but CONFIDENTIAL claim.", "sources": ["s1", "s2"], "blp_level": "CONFIDENTIAL"}}],
+      "action": {"op": "verify", "key": "v-conf", "clearance": "TOP_SECRET"},
+      "expect": {"kind": "verdict", "verdict": "held", "held_reason": "needs_human", "reasons_include": "higher-risk"}
+    },
+    {
+      "name": "blp_no_read_up_held",
+      "setup": [{"op": "record", "request": {"idempotency_key": "v-secret", "content": "A SECRET claim.", "sources": ["s1"], "blp_level": "SECRET"}}],
+      "action": {"op": "verify", "key": "v-secret", "clearance": "UNCLASSIFIED"},
+      "expect": {"kind": "verdict", "verdict": "held", "held_reason": "blp_violation", "reasons_include": "no-read-up"}
+    },
+    {
+      "name": "blp_no_write_down_error",
+      "setup": [{"op": "record", "request": {"idempotency_key": "v-parent-secret", "content": "A SECRET parent.", "sources": ["s1"], "blp_level": "SECRET"}}],
+      "action": {"op": "record", "request": {"idempotency_key": "v-child-down", "content": "An UNCLASSIFIED child of a SECRET parent.", "sources": ["s2"], "parents": ["__key__:v-parent-secret"], "blp_level": "UNCLASSIFIED"}},
+      "expect": {"kind": "error", "code": "BLP_VIOLATION"}
+    },
+    {
+      "name": "superseded_verdict",
+      "setup": [
+        {"op": "record", "request": {"idempotency_key": "v-old", "content": "An outdated claim.", "sources": ["s1"], "blp_level": "UNCLASSIFIED"}},
+        {"op": "record", "request": {"idempotency_key": "v-new", "content": "The corrected claim.", "sources": ["s1"], "blp_level": "UNCLASSIFIED"}},
+        {"op": "supersede", "old_key": "v-old", "new_key": "v-new"}
+      ],
+      "action": {"op": "verify", "key": "v-old"},
+      "expect": {"kind": "verdict", "verdict": "superseded", "supersedes_key": "v-new"}
+    },
+    {
+      "name": "feedback_loop_human_accept_shortcircuits",
+      "setup": [
+        {"op": "record", "request": {"idempotency_key": "v-human", "content": "A CONFIDENTIAL claim a human approved once.", "sources": ["s1"], "blp_level": "CONFIDENTIAL"}},
+        {"op": "human_verdict", "key": "v-human", "verdict": "accepted", "note": "approved by founder"}
+      ],
+      "action": {"op": "verify", "key": "v-human", "clearance": "TOP_SECRET"},
+      "expect": {"kind": "verdict", "verdict": "accepted", "reasons_include": "human-reviewed"}
+    },
+    {
+      "name": "over_budget_held",
+      "service": {"verify_budget": 0},
+      "setup": [{"op": "record", "request": {"idempotency_key": "v-budget", "content": "A claim verified past the budget.", "sources": ["s1"], "blp_level": "UNCLASSIFIED"}}],
+      "action": {"op": "verify", "key": "v-budget"},
+      "expect": {"kind": "verdict", "verdict": "held", "held_reason": "over_budget"}
+    },
+    {
+      "name": "unknown_claim_bad_request",
+      "setup": [],
+      "action": {"op": "verify_id", "claim_id": "clm_does_not_exist"},
+      "expect": {"kind": "error", "code": "BAD_REQUEST"}
+    },
+    {
+      "name": "missing_content_bad_request",
+      "setup": [],
+      "action": {"op": "record", "request": {"idempotency_key": "v-bad", "sources": ["s1"], "blp_level": "UNCLASSIFIED"}},
+      "expect": {"kind": "error", "code": "BAD_REQUEST"}
+    },
+    {
+      "name": "idempotent_same_key_same_id",
+      "setup": [{"op": "record", "request": {"idempotency_key": "v-idem", "content": "Recorded twice.", "sources": ["s1"], "blp_level": "UNCLASSIFIED"}}],
+      "action": {"op": "record", "request": {"idempotency_key": "v-idem", "content": "Recorded twice.", "sources": ["s1"], "blp_level": "UNCLASSIFIED"}},
+      "expect": {"kind": "claim", "same_id_as_key": "v-idem"}
+    },
+    {
+      "name": "idempotency_key_reuse_conflict_fails_closed",
+      "setup": [{"op": "record", "request": {"idempotency_key": "v-conflict", "content": "Original content.", "sources": ["s1"], "blp_level": "UNCLASSIFIED"}}],
+      "action": {"op": "record", "request": {"idempotency_key": "v-conflict", "content": "DIFFERENT content under the same key.", "sources": ["s1"], "blp_level": "UNCLASSIFIED"}},
+      "expect": {"kind": "error", "code": "BAD_REQUEST"}
+    }
+  ]
+}

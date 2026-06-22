@@ -32,6 +32,9 @@ jobs:
           python tests/test_memory_consolidation.py
           python tests/test_wiki_proof.py
           python tests/test_agent_harness.py
+      - name: Governance contract conformance (golden vectors + schema)
+        run: |
+          python tests/test_contract_conformance.py
       - name: Model adapter + OpenClaw provider tests
         run: |
           python tests/test_model_adapter.py
