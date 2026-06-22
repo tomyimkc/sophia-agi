@@ -1,0 +1,55 @@
+{
+  "domain": "philosophy",
+  "version": 1,
+  "passed": 9,
+  "total": 9,
+  "score_pct": 100.0,
+  "results": [
+    {
+      "id": "trap_confucius_ddj",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "socrates_republic",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "analects_compiled",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "laozi_uncertainty",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "trap_confucius_mencius",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "trap_laozi_zhuangzi",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "socrates_symposium",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "zhuangzi_analects_boundary",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "symposium_dialogue_not_autograph",
+      "passed": true,
+      "reasons": []
+    }
+  ],
+  "model": "deepseek"
+}

@@ -47,6 +47,7 @@ PROVIDERS: dict[str, tuple[str, str]] = {
     "claude-sonnet": ("claude-sonnet-4-6", "ANTHROPIC_API_KEY"),
     "grok": ("x-ai/grok-3-beta", "XAI_API_KEY"),
     "gemini": ("gemini-2.0-flash", "GOOGLE_API_KEY"),
+    "deepseek": ("deepseek-chat", "DEEPSEEK_API_KEY"),
 }
 
 
@@ -121,6 +122,7 @@ def model_override(provider: str, default: str) -> str:
         "claude-sonnet": "ANTHROPIC_MODEL",
         "grok": "XAI_MODEL",
         "gemini": "GEMINI_MODEL",
+        "deepseek": "DEEPSEEK_MODEL",
     }
     return os.environ.get(env_map.get(provider, ""), default)
 
@@ -169,6 +171,49 @@ def ask_anthropic_native(question: str, model: str) -> str:
     return "".join(block.text for block in response.content if block.type == "text")
 
 
+def ask_openai_compatible_native(
+    question: str, model: str, *, url: str, api_key: str, provider_label: str, timeout: int = 180
+) -> str:
+    """Minimal OpenAI-compatible /chat/completions call via urllib (no openai pkg)."""
+    body = json.dumps(
+        {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": SYSTEM},
+                {"role": "user", "content": question},
+            ],
+            "temperature": 0.2,
+        }
+    ).encode()
+    request = urllib.request.Request(
+        url,
+        data=body,
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as resp:
+            data = json.loads(resp.read().decode())
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode(errors="replace")
+        raise RuntimeError(f"{provider_label} HTTP {exc.code}: {detail}") from exc
+    return data["choices"][0]["message"]["content"]
+
+
+def ask_deepseek_native(question: str, model: str) -> str:
+    base = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1").rstrip("/")
+    return ask_openai_compatible_native(
+        question,
+        model,
+        url=f"{base}/chat/completions",
+        api_key=os.environ["DEEPSEEK_API_KEY"],
+        provider_label="DeepSeek",
+    )
+
+
 def ask_xai_native(question: str, model: str) -> str:
     body = json.dumps(
         {
@@ -211,6 +256,8 @@ def ask_provider(provider: str, question: str) -> str:
             return ask_anthropic_native(question, model)
         if provider == "gemini":
             return ask_gemini(question, model)
+        if provider == "deepseek":
+            return ask_deepseek_native(question, model)
         return ask_xai_native(question, model)
 
     if provider == "gemini":
@@ -262,6 +309,8 @@ def describe_backend() -> str:
         parts.append("GPT (direct OpenAI API)")
     if os.environ.get("XAI_API_KEY", "").strip():
         parts.append("Grok (direct xAI API)")
+    if os.environ.get("DEEPSEEK_API_KEY", "").strip():
+        parts.append("DeepSeek (direct DeepSeek API)")
     if google_api_key():
         parts.append("Gemini (Google API + curated RAG)")
     if monica_api_key():

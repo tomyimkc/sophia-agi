@@ -1,6 +1,6 @@
 {
-  "version": "0.7.38",
-  "generated": "2026-06-22T21:48:38",
+  "version": "0.7.39",
+  "generated": "2026-06-22T22:17:22",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "operationalDefinition": {
     "summary": "For this repo, AGI evidence means broad task competence, transfer, tool use, long-horizon autonomy, learning under distribution shift, baseline superiority, and independent reproduction.",
@@ -53,6 +53,12 @@
             "total": 9
           },
           {
+            "model": "deepseek",
+            "score_pct": 100.0,
+            "passed": 9,
+            "total": 9
+          },
+          {
             "model": "sophia-v1",
             "score_pct": 100.0,
             "passed": 9,
@@ -86,6 +92,12 @@
             "score_pct": 100.0,
             "passed": 4,
             "total": 4
+          },
+          {
+            "model": "deepseek",
+            "score_pct": 100.0,
+            "passed": 9,
+            "total": 9
           },
           {
             "model": "sophia-v1",
@@ -129,6 +141,12 @@
             "total": 5
           },
           {
+            "model": "deepseek",
+            "score_pct": 100.0,
+            "passed": 8,
+            "total": 8
+          },
+          {
             "model": "sophia-v1",
             "score_pct": 100.0,
             "passed": 5,
@@ -162,6 +180,12 @@
             "score_pct": 100.0,
             "passed": 5,
             "total": 5
+          },
+          {
+            "model": "deepseek",
+            "score_pct": 50.0,
+            "passed": 3,
+            "total": 6
           },
           {
             "model": "sophia-v1",
