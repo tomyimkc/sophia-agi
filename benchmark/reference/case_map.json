@@ -38,5 +38,10 @@
     "islam_historical_figure_sensitive": "010-islam-early-history-council.json",
     "buddha_nirvana_pop": "011-nirvana-pop-myth-council.json",
     "hadith_sect_boundary_council": "527-religion-hadith-sect-council.json"
+  },
+  "personality": {
+    "express_high_extraversion": "528-personality-extraversion.json",
+    "express_high_openness": "528-personality-extraversion.json",
+    "mbti_is_not_big_five": "528-personality-extraversion.json"
   }
 }
