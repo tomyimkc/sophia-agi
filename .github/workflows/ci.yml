@@ -76,10 +76,12 @@ jobs:
           python tests/test_policies.py
           python tests/test_improvement_model_loop.py
           python tests/test_fetch_eval_dataset.py
-      - name: Cross-entity generalization (the measured limit)
+      - name: Cross-entity generalization (the measured limit) + grounding gate
         run: |
           python tests/test_cross_entity.py
           python tools/run_cross_entity.py
+          python tests/test_grounding_gate.py
+          python tools/run_grounding_gate.py
       - name: RLVR (verifier-as-reward GRPO) offline invariants
         run: |
           python tests/test_rlvr.py
