@@ -1,73 +1,52 @@
 {
+  "benchmark": "council-diversity",
+  "model": "ollama:qwen2.5:3b",
   "domain": "philosophy",
-  "single": {
-    "passrate": 0.0,
-    "n": 9,
-    "per_case": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-    "seat_families": [
-      "<homogeneous>"
-    ]
-  },
-  "homogeneous": {
-    "passrate": 0.0,
-    "n": 9,
-    "per_case": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-    "seat_families": [
-      "persona:O+C-"
-    ]
-  },
-  "diverse": {
-    "passrate": 0.0,
-    "n": 9,
-    "per_case": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-    "seat_families": [
-      "persona:E+A-",
-      "persona:E-A+",
-      "persona:O+C-",
-      "persona:O-C+"
-    ]
-  },
-  "dq": 0.0,
-  "dq_ci": [
-    0.0,
+  "nCases": 9,
+  "nRuns": 3,
+  "mode": "real-illustrative",
+  "claimStatus": "ILLUSTRATIVE, NOT VALIDATED. A single run showed ΔQ=+0.33 (CI excludes 0, 'diversity helps'), but it did NOT replicate: across 3 non-deterministic generation runs ΔQ = [+0.333, +0.111, +0.000] (mean +0.148, sign-unstable, two of three NULL). At N=9 this is consistent with NULL/weak-at-best — the apparent lift was run-to-run noise. A HEADLINE claim requires the _is_validated gate (>=2 judge families, kappa>=0.40, >=3 runs, CI excludes 0 on a larger pre-registered slice), which is DEFERRED.",
+  "runs": [
+    {
+      "single": 0.4444,
+      "homogeneous": 0.3333,
+      "diverse": 0.6667,
+      "dq": 0.3333,
+      "dq_ci": [
+        0.1111,
+        0.6667
+      ]
+    },
+    {
+      "single": 0.6667,
+      "homogeneous": 0.5556,
+      "diverse": 0.6667,
+      "dq": 0.1111,
+      "dq_ci": [
+        0.0,
+        0.3333
+      ]
+    },
+    {
+      "single": 0.5556,
+      "homogeneous": 0.4444,
+      "diverse": 0.4444,
+      "dq": 0.0,
+      "dq_ci": [
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "dqValues": [
+    0.3333,
+    0.1111,
     0.0
   ],
-  "profiles": [
-    "O+C-",
-    "O-C+",
-    "E+A-",
-    "E-A+"
-  ],
-  "model": "mock",
-  "headline": "NULL: trait diversity does not improve council quality on this slice"
+  "dqMean": 0.1481,
+  "dqMin": 0.0,
+  "dqMax": 0.3333,
+  "replicates": false,
+  "headline": "NULL/inconclusive at N=9: trait diversity does NOT reliably improve council quality (single-run lift did not replicate).",
+  "note": "The deterministic score_case judge is reproducible; the council GENERATION (ollama 3B) is not, which is exactly why >=3 runs are required. This run vindicates the >=3-run validation discipline: a single run would have over-claimed."
 }
