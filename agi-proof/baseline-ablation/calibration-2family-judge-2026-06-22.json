@@ -1,0 +1,37 @@
+{
+  "pack": "agi-proof/baseline-ablation/abstain-pack-2026-06-22.json",
+  "judges": [
+    "openai:gpt-4o",
+    "openai:claude-sonnet-4-6"
+  ],
+  "dumps": 3,
+  "nPairedAnswers": 108,
+  "fabricationRate": {
+    "scorer": {
+      "sophia-full": 0.0,
+      "raw-model": 0.1945,
+      "raw-model-plus-tools": 0.25
+    },
+    "openai:gpt-4o": {
+      "sophia-full": 0.0,
+      "raw-model": 0.1945,
+      "raw-model-plus-tools": 0.1667
+    },
+    "openai:claude-sonnet-4-6": {
+      "sophia-full": 0.0833,
+      "raw-model": 0.1111,
+      "raw-model-plus-tools": 0.1667
+    }
+  },
+  "kappa": {
+    "scorer_vs_openai:gpt-4o": 0.4831,
+    "scorer_vs_openai:claude-sonnet-4-6": 0.4035,
+    "openai:gpt-4o_vs_openai:claude-sonnet-4-6": 0.7377,
+    "scorer_vs_consensus": 0.4791
+  },
+  "consensusFabricatedCount": 10,
+  "caveats": [
+    "judge 'openai:gpt-4o' is a distinct family from the subject",
+    "judge 'openai:claude-sonnet-4-6' is a distinct family from the subject"
+  ]
+}

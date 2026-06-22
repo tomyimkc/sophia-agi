@@ -129,6 +129,16 @@ def test_cohen_kappa() -> None:
     assert cohen_kappa([], []) is None
 
 
+def test_kappa_matrix_and_consensus() -> None:
+    from provenance_bench.calibration_judge import consensus_fabricated, kappa_matrix
+    km = kappa_matrix({"scorer": [True, False, True], "j1": [True, False, True],
+                       "j2": [True, False, False]})
+    assert set(km) == {"scorer_vs_j1", "scorer_vs_j2", "j1_vs_j2"}
+    assert km["scorer_vs_j1"] == 1.0
+    # consensus = fabricated only when ALL judge streams agree
+    assert consensus_fabricated([True, True, False], [True, False, False]) == [True, False, False]
+
+
 def main() -> int:
     import inspect
     for nm, fn in sorted(globals().items()):
