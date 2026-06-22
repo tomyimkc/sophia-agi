@@ -1,5 +1,5 @@
 {
-  "version": "0.7.38",
+  "version": "0.7.39",
   "trainingExamples": 527,
   "domains": [
     "philosophy",
@@ -22,6 +22,12 @@
         },
         {
           "model": "claude-sonnet (api.llmhub.com.cn)",
+          "score_pct": 100.0,
+          "passed": 9,
+          "total": 9
+        },
+        {
+          "model": "deepseek",
           "score_pct": 100.0,
           "passed": 9,
           "total": 9
@@ -57,6 +63,12 @@
           "score_pct": 100.0,
           "passed": 4,
           "total": 4
+        },
+        {
+          "model": "deepseek",
+          "score_pct": 100.0,
+          "passed": 9,
+          "total": 9
         },
         {
           "model": "sophia-v1",
@@ -97,6 +109,12 @@
           "total": 5
         },
         {
+          "model": "deepseek",
+          "score_pct": 100.0,
+          "passed": 8,
+          "total": 8
+        },
+        {
           "model": "sophia-v1",
           "score_pct": 100.0,
           "passed": 5,
@@ -127,6 +145,12 @@
           "score_pct": 100.0,
           "passed": 5,
           "total": 5
+        },
+        {
+          "model": "deepseek",
+          "score_pct": 50.0,
+          "passed": 3,
+          "total": 6
         },
         {
           "model": "sophia-v1",
