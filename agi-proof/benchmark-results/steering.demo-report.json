@@ -1,0 +1,67 @@
+{
+  "benchmark": "steering",
+  "model": "ibm-granite/granite-3.1-2b-instruct",
+  "mode": "real-demo",
+  "visibility": "public-aggregate",
+  "claimStatus": "Illustrative — reduced-scope demo (2 axes, K=2 seeds, no capability slice); headline SSA requires the gated N>=8/K>=20 run",
+  "subjectModel": "ibm-granite/granite-3.1-2b-instruct",
+  "judges": [
+    "ollama:qwen2.5:3b",
+    "ollama:llama3.2:3b"
+  ],
+  "layer": 21,
+  "alphaCoef": 0.6,
+  "ssaThresholds": {
+    "delta_point_min": 0.3,
+    "steered_d_min": 0.5,
+    "off_target_max": 0.2,
+    "kappa_floor": 0.4,
+    "capability_eps": 0.05,
+    "coherence_floor": 75.0
+  },
+  "fallbackChain": [
+    "microsoft/Phi-3.5-mini-instruct",
+    "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "ibm-granite/granite-3.1-2b-instruct",
+    "stabilityai/stablelm-2-1_6b-chat"
+  ],
+  "deltaTable": [
+    {
+      "axis": "E",
+      "alpha": 414.229,
+      "selfReport": {
+        "steered": null,
+        "level1": null,
+        "neutral": null
+      },
+      "behavioral": {
+        "d_steer_vs_neutral": 0.056,
+        "d_level1_vs_neutral": 0.056,
+        "deltaD": 0.0,
+        "kappa": 0.0,
+        "coherence": 77.5
+      },
+      "verdict": "abstained",
+      "reason": "steer_not_beats_baseline"
+    },
+    {
+      "axis": "O",
+      "alpha": 414.229,
+      "selfReport": {
+        "steered": null,
+        "level1": null,
+        "neutral": null
+      },
+      "behavioral": {
+        "d_steer_vs_neutral": -0.656,
+        "d_level1_vs_neutral": -0.085,
+        "deltaD": -0.571,
+        "kappa": 0.0,
+        "coherence": 84.2
+      },
+      "verdict": "abstained",
+      "reason": "steer_not_beats_baseline"
+    }
+  ],
+  "illustrativeSSA": "0/2"
+}
