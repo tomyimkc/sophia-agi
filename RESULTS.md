@@ -3,7 +3,7 @@
 <!-- GENERATED from agi-proof/benchmark-results/published-results.json by
      tools/build_results_page.py — do not edit by hand. -->
 
-_Last updated: 2026-06-21_
+_Last updated: 2026-06-22_
 
 **No-overclaim gate.** A number is **VALIDATED** only with ≥2 independent judges in consensus (judge ≠ subject), reported inter-judge agreement, ≥3 runs, and confidence intervals. Everything else is **illustrative** and labelled. Hidden-eval prompts are never published — only aggregates. See [SECURITY.md](SECURITY.md) and [methodology](docs/11-Platform/Provenance-Delta.md).
 
@@ -41,6 +41,16 @@ Scored by **exact-match against ground-truth labels** with a **deterministic ver
 | `legal_citation_exists` | legal_citations (real-vs-fabricated HK/UK/US common-law citations) | 14 | 100.0% | 100.0% | 0.0% | 2026-06-21 |
 
 - _legal_citation_exists:_ Measures the VERIFIER's accuracy at catching fabricated legal citations (the Mata v. Avianca failure mode) across federated sources (HK e-Legislation/HKLII, UK National Archives, US CourtListener), not any model's. Includes the actual Mata fabrication, Varghese v. China Southern Airlines 925 F.3d 1339, which is flagged. Honest bounds: tiny, constructed benchmark (N=14) and the result is capped by the bundled register's completeness, so this validates the extraction + fail-closed gate logic end-to-end — it is NOT a headline capability claim. Reproduce: python tools/run_legal_citation_bench.py.
+
+## Calibration evals (abstention vs fabrication, deterministic)
+
+Scored by a **deterministic marker-based scorer** (no LLM judge) that rewards honest abstention on genuinely-unknown questions and scores a confident fabricated specific 0. Validated by **≥3 runs with a 95% CI excluding zero**. Honestly bounded: the scorer and pack are **self-authored** (internally valid cross-mode deltas; a third-party audit of the labels/markers — and human semantic review — would harden these to headline grade).
+
+| Method | Baseline | Pack (runs) | Calibration Δ (95% CI) | Fabrication reduction (95% CI) | Method fab-rate | Date |
+|---|---|---|---|---|---|---|
+| sophia-full | raw-model (deepseek-chat) | abstain-calibration-2026-06-22 (18 cases: 12 abstain / 6 definite) (3) | 22.0% [14.5%, 29.6%] | 19.4% [14.0%, 24.9%] | 0.0% | 2026-06-22 |
+
+- _sophia-full vs raw-model (deepseek-chat):_ DeepSeek. sophia-full fabricates 0% on the unknown-author/quote cases in all 3 runs; raw-model fabricates 16.7-25%. Keyword/regex scoring is blind to this (raw ties/beats under keyword scoring); the calibration scorer reveals it. vs raw-model-plus-tools the gap is larger: calibration Δ 28.3% [24.5%, 32.2%], fabrication reduction 25.0% [15.6%, 34.4%]. Deterministic scorer + self-authored pack => internally valid; third-party audit of labels/markers + human semantic review would harden to headline grade.
 
 ## Semantic evals (model-judged, gated)
 

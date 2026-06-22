@@ -1,0 +1,139 @@
+{
+  "runs": 3,
+  "pack": "agi-proof/baseline-ablation/abstain-pack-2026-06-22.json",
+  "backend": "deepseek",
+  "model": "deepseek-chat",
+  "runAt": "2026-06-22T09:51:15",
+  "perMode": {
+    "sophia-full": {
+      "calibrationScore": {
+        "values": [
+          0.9611,
+          0.9611,
+          1.0
+        ],
+        "mean": 0.9741,
+        "ci95": [
+          0.9487,
+          0.9995
+        ]
+      },
+      "fabricationRate": {
+        "values": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "raw-model": {
+      "calibrationScore": {
+        "values": [
+          0.7333,
+          0.8111,
+          0.7167
+        ],
+        "mean": 0.7537,
+        "ci95": [
+          0.6967,
+          0.8107
+        ]
+      },
+      "fabricationRate": {
+        "values": [
+          0.1667,
+          0.1667,
+          0.25
+        ],
+        "mean": 0.1945,
+        "ci95": [
+          0.14,
+          0.2489
+        ]
+      }
+    },
+    "raw-model-plus-tools": {
+      "calibrationScore": {
+        "values": [
+          0.7,
+          0.6389,
+          0.7333
+        ],
+        "mean": 0.6907,
+        "ci95": [
+          0.6366,
+          0.7449
+        ]
+      },
+      "fabricationRate": {
+        "values": [
+          0.3333,
+          0.25,
+          0.1667
+        ],
+        "mean": 0.25,
+        "ci95": [
+          0.1557,
+          0.3443
+        ]
+      }
+    }
+  },
+  "calibDelta_full_minus_raw-model": {
+    "values": [
+      0.2278,
+      0.15,
+      0.2833
+    ],
+    "mean": 0.2204,
+    "ci95": [
+      0.1446,
+      0.2961
+    ],
+    "ciExcludesZero": true
+  },
+  "fabricationReduction_vs_raw-model": {
+    "values": [
+      0.1667,
+      0.1667,
+      0.25
+    ],
+    "mean": 0.1945,
+    "ci95": [
+      0.14,
+      0.2489
+    ],
+    "ciExcludesZero": true
+  },
+  "calibDelta_full_minus_raw-model-plus-tools": {
+    "values": [
+      0.2611,
+      0.3222,
+      0.2667
+    ],
+    "mean": 0.2833,
+    "ci95": [
+      0.2451,
+      0.3216
+    ],
+    "ciExcludesZero": true
+  },
+  "fabricationReduction_vs_raw-model-plus-tools": {
+    "values": [
+      0.3333,
+      0.25,
+      0.1667
+    ],
+    "mean": 0.25,
+    "ci95": [
+      0.1557,
+      0.3443
+    ],
+    "ciExcludesZero": true
+  }
+}

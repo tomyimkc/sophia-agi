@@ -134,6 +134,35 @@ def render(doc: dict) -> str:
                 L += [f"- _{e.get('verifier')}:_ {e['note']}"]
         L.append("")
 
+    calibration_evals = doc.get("calibrationEvals") or []
+    if calibration_evals:
+        L += [
+            "## Calibration evals (abstention vs fabrication, deterministic)",
+            "",
+            "Scored by a **deterministic marker-based scorer** (no LLM judge) that rewards "
+            "honest abstention on genuinely-unknown questions and scores a confident "
+            "fabricated specific 0. Validated by **≥3 runs with a 95% CI excluding zero**. "
+            "Honestly bounded: the scorer and pack are **self-authored** (internally valid "
+            "cross-mode deltas; a third-party audit of the labels/markers — and human "
+            "semantic review — would harden these to headline grade).",
+            "",
+            "| Method | Baseline | Pack (runs) | Calibration Δ (95% CI) | Fabrication reduction (95% CI) | Method fab-rate | Date |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for e in calibration_evals:
+            cd, fr = e.get("calibrationDelta", {}), e.get("fabricationReduction", {})
+            L.append(
+                f"| {e.get('method')} | {e.get('baseline')} | {e.get('pack')} ({e.get('runs')}) | "
+                f"{_pct(cd.get('mean'))} [{_pct(cd.get('ciLow'))}, {_pct(cd.get('ciHigh'))}] | "
+                f"{_pct(fr.get('mean'))} [{_pct(fr.get('ciLow'))}, {_pct(fr.get('ciHigh'))}] | "
+                f"{_pct(e.get('methodFabricationRate'))} | {e.get('date', '—')} |"
+            )
+        L.append("")
+        for e in calibration_evals:
+            if e.get("note"):
+                L += [f"- _{e.get('method')} vs {e.get('baseline')}:_ {e['note']}"]
+        L.append("")
+
     semantic = doc.get("semanticEvals")
     if semantic:
         _v = semantic.get("validated")
