@@ -30,6 +30,16 @@
 python scripts/demo_gate.py     # Sophia in 30s: verify → classify → abstain → publish-only-if-accepted (offline, no key)
 ```
 
+## Self-extending verification flywheel (the path-to-AGI engine)
+
+`selfextend/` connects Sophia's static pieces into a loop that **grows its own competence**: *abstain → localize the gap → synthesize a verifier → validate it on held-out data → promote only if it clears the bar (else stay abstained) → coverage rises → repeat* — no human writing the new checks, no reward-hacking. Plus the components that loop needs: calibrated uncertainty (ECE/Brier), a competence self-model, a **causal world model** (do-operator, beyond provenance), cross-domain transfer, environment-as-verifier (verify by executing), the verified-reward signal with an anti-gaming held-out check, and a long-horizon runner with recovery. Deterministic, offline, falsifiable.
+
+```bash
+python tools/run_selfextend.py     # coverage 0%→100% (0% held-out false-accept), transfer, causal vs correlational, long-horizon
+```
+
+> Honest scope: this is the **machinery and its falsifiable metrics**, not an AGI claim. Live self-improvement (RLVR, needs GPU) and live grounding (needs network) consume these interfaces but are out of scope to *run* here. The defensible AGI signature is the full loop closing on a **held-out domain** with the no-overclaim gate clearing.
+
 ## AGI-candidate proof package
 
 Sophia is **not claimed as proven AGI**. The stronger and more defensible public claim is:

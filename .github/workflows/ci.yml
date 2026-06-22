@@ -77,6 +77,10 @@ jobs:
           python tests/test_verifier_synthesis.py
           python tests/test_calibration.py
           python tools/run_verifier_synthesis.py
+      - name: Self-extending verification flywheel (synthesize→validate→cover, causal, transfer, long-horizon)
+        run: |
+          python tests/test_selfextend.py
+          python tools/run_selfextend.py
       - name: Runtime policies + model-in-loop + dataset fetcher (offline)
         run: |
           python tests/test_policies.py
