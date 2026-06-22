@@ -53,6 +53,7 @@ jobs:
         run: |
           python tests/test_discipline_records.py
           python tests/test_guarded.py
+          python tests/test_guarded_graded.py
           python tests/test_mcp_check_claim.py
           python tests/test_okf_belief.py
           python tests/test_okf_counterfactual.py
@@ -168,6 +169,8 @@ jobs:
           python tests/test_grounded_gate.py
           python tests/test_claim_router.py
           python tests/test_graded_decision.py
+          python tests/test_calibrate_thresholds.py
+          python tools/calibrate_thresholds.py --demo >/dev/null
           python tests/test_gate_feedback.py
       - name: Temporal verifier + active-learning promotion loop
         run: |
