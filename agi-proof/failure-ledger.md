@@ -38,3 +38,14 @@ Likely cause:
 Fix or next experiment:
 Claim impact:
 ```
+
+## steering-live-run-not-yet-gated-2026-06-23
+
+**Status:** OPEN. The Spec B activation-steering engine is built and its machinery
+invariants pass offline (`python tools/run_steering.py --model mock --dry-run` →
+`STEERING WIRING VERIFIED ✓`; `tests/test_steering.py` green in CI). The live SSA
+claim — that Level-3 steering beats Spec A's Level-1 persona baseline,
+behavior-corroborated and capability-preserving — is **pre-registered and OPEN**:
+it requires a gated real run (Phi-3.5 on MPS + the Ollama-judged battery at
+N≥8/K≥20). `SSA = 0/N` would be a legitimate honest result. Thresholds are fixed
+in `agent/steering/stats.py:SSA_THRESHOLDS` before any run.
