@@ -203,7 +203,7 @@ is "validated" only with multi-judge consensus + CIs; see [RESULTS.md](RESULTS.m
 |-------|----------------|
 | **Project skill** | `/sophia-agi` — `.grok/skills/sophia-agi/SKILL.md` |
 | **Portable skill** | `/sophia-source-discipline` — `python tools/install_skills.py --all` |
-| **MCP server** | `sophia_mcp/server.py` — 25 tools (validate, gate, check_claim, belief, counterfactual, retract, revise, benchmark, lookup, sector councils, council deliberate, OKF wiki, OpenClaw infer) |
+| **MCP server** | `sophia_mcp/server.py` — 32 tools (validate, gate, check_claim, belief, counterfactual, retract, revise, benchmark, lookup, sector councils, council deliberate, OKF wiki, OpenClaw infer, governance contract: record_claim/verify_claim/explain_verdict/describe/health/enqueue_task/next_task) |
 
 ```bash
 pip install -r requirements-mcp.txt

@@ -138,6 +138,28 @@ release and cross-checks that the schema enums match the implementation.
 - **Per-task ROI** — every Verdict carries `roi_estimate {founder_minutes_saved, basis}`
   (auto-accept and auto-resolve save founder minutes; a `held` saves none).
 
+## Integration adapters (the aihk-os / solo-ai-co wiring)
+
+Ship-ready glue so a consumer repo imports rather than re-implements:
+
+- **Contract over MCP** — `sophia_mcp/server.py` exposes `sophia_record_claim`,
+  `sophia_verify_claim`, `sophia_explain_verdict`, `sophia_contract_describe`,
+  `sophia_contract_health`, `sophia_enqueue_task`, `sophia_next_task`. Register the
+  Sophia MCP server in LangGraph nodes, the Claude Agent SDK (`mcp_servers={…}`), or
+  n8n's MCP node and the gate is a callable tool.
+- **Vault bridge** — `sophia_contract.vault.VaultGate`: read an Obsidian/Markdown
+  note's frontmatter → `record_claim` → `verify_claim` → stamp `provenance_id` /
+  `gate_status` / `gate_held_reason` back. `is_publishable()` is true only when
+  `gate_status == accepted`; `publish_if_accepted()` is the single choke point.
+  Dependency-free (uses the repo's own `okf.frontmatter`). Idempotency is
+  content-versioned, so editing a note is a new claim version, not a conflict.
+- **9-role scopes** — `sophia_contract.roles.ROLES_9`: a `ScopeRegistry` for the nine
+  service pipelines (least privilege; `role_06_content_marketing` capped at
+  `UNCLASSIFIED`; `role_09_agents` cleared to `TOP_SECRET`). Pass `role=` to enforce.
+- **Langfuse export** — `sophia_contract.langfuse_export` (+ `tools/langfuse_export.py`):
+  ship the contract's Langfuse-compatible spans (`traces.jsonl`) to a live Langfuse
+  via its ingestion API. Offline-safe (dry-run / no-creds builds the batch, sends nothing).
+
 ## Compatibility promise
 
 Do not rename or remove a v1 field without a MAJOR bump. Additive changes (new optional

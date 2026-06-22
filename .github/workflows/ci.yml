@@ -36,6 +36,7 @@ jobs:
         run: |
           python tests/test_contract_conformance.py
           python tests/test_contract_guardrails.py
+          python tests/test_contract_adapters.py
       - name: Model adapter + OpenClaw provider tests
         run: |
           python tests/test_model_adapter.py

@@ -20,22 +20,29 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     benchmark_list,
     benchmark_score,
     check_claim,
+    contract_describe,
+    contract_health,
     corpus_stats,
     council_deliberate,
     counterfactual,
     dumps,
+    enqueue_task,
+    explain_verdict,
     export_corpus,
     gate_check,
     get_attribution,
     get_record,
     list_disputes,
+    next_task,
     openclaw_infer,
     read_dispute,
+    record_claim,
     retract,
     revise,
     rubric_review,
     sector_council,
     validate_corpus,
+    verify_claim,
     web_evidence_search,
     wiki_contradictions,
     wiki_read,
@@ -296,6 +303,64 @@ def sophia_openclaw_infer(prompt: str, model: str = "xai/grok-4.3") -> str:
     via sophia_wiki_upsert and the source-discipline gate (no lineage merge can be written).
     """
     return dumps(openclaw_infer(model=model, prompt=prompt))
+
+
+# --------------------------------------------------------------------------- #
+# Governance contract (the aihk-os seam) — record/verify/gate over MCP.
+# --------------------------------------------------------------------------- #
+
+
+@mcp.tool()
+def sophia_contract_describe() -> str:
+    """Handshake the governance contract: version (semver), capabilities, schema_url,
+    deprecations. Pin against `version`; it fails closed on a MAJOR bump."""
+    return dumps(contract_describe())
+
+
+@mcp.tool()
+def sophia_record_claim(idempotency_key: str, content: str, sources_json: str = "[]",
+                        parents_json: str = "[]", blp_level: str = "UNCLASSIFIED",
+                        role: str = "", dry_run: bool = False) -> str:
+    """Record a provenance claim. Same idempotency_key returns the same claim_id;
+    BLP no-write-down is enforced at record time. `sources_json`/`parents_json` are
+    JSON arrays; `role` (one of the 9 pipelines) activates capability scopes."""
+    return dumps(record_claim(idempotency_key, content,
+                              sources=json.loads(sources_json or "[]"),
+                              parents=json.loads(parents_json or "[]"),
+                              blp_level=blp_level, role=role or None, dry_run=dry_run))
+
+
+@mcp.tool()
+def sophia_verify_claim(claim_id: str, clearance: str = "UNCLASSIFIED", role: str = "") -> str:
+    """Verify a claim -> Verdict {verdict, confidence, reasons[], cited_evidence[],
+    held_reason?, ...}. ONLY 'accepted' may be published (fail-closed)."""
+    return dumps(verify_claim(claim_id, clearance=clearance, role=role or None))
+
+
+@mcp.tool()
+def sophia_explain_verdict(claim_id: str, clearance: str = "UNCLASSIFIED") -> str:
+    """Verify a claim and return the verdict plus a one-line trace of the rule path."""
+    return dumps(explain_verdict(claim_id, clearance=clearance))
+
+
+@mcp.tool()
+def sophia_contract_health() -> str:
+    """Contract liveness + self-diagnostics: kill-switch state, pending tasks, budget."""
+    return dumps(contract_health())
+
+
+@mcp.tool()
+def sophia_enqueue_task(idempotency_key: str, kind: str, payload_json: str = "{}",
+                        role: str = "") -> str:
+    """Durably + idempotently enqueue work for an unattended pipeline (n8n-friendly)."""
+    return dumps(enqueue_task(idempotency_key, kind, payload=json.loads(payload_json or "{}"),
+                              role=role or None))
+
+
+@mcp.tool()
+def sophia_next_task(lease_by: str = "worker") -> str:
+    """Lease the oldest pending task ({task: null} when the queue is empty)."""
+    return dumps(next_task(lease_by=lease_by))
 
 
 if __name__ == "__main__":
