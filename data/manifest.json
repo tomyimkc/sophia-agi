@@ -1,6 +1,6 @@
 {
-  "version": "0.7.37",
-  "trainingExamples": 518,
+  "version": "0.7.38",
+  "trainingExamples": 527,
   "domains": [
     "philosophy",
     "psychology",
@@ -17,8 +17,8 @@
         {
           "model": "sophia-teacher-reference",
           "score_pct": 100.0,
-          "passed": 4,
-          "total": 4
+          "passed": 9,
+          "total": 9
         },
         {
           "model": "claude-sonnet (api.llmhub.com.cn)",
@@ -44,13 +44,13 @@
       "domain": "psychology",
       "benchmark": "sophia-psychology-v1",
       "updated": "2026-06-18",
-      "cases": 4,
+      "cases": 9,
       "entries": [
         {
           "model": "sophia-teacher-reference",
           "score_pct": 100.0,
-          "passed": 4,
-          "total": 4
+          "passed": 9,
+          "total": 9
         },
         {
           "model": "claude-sonnet (api.llmhub.com.cn)",
@@ -82,13 +82,13 @@
       "domain": "history",
       "benchmark": "sophia-history-v1",
       "updated": "2026-06-18",
-      "cases": 5,
+      "cases": 8,
       "entries": [
         {
           "model": "sophia-teacher-reference",
           "score_pct": 100.0,
-          "passed": 5,
-          "total": 5
+          "passed": 8,
+          "total": 8
         },
         {
           "model": "claude-sonnet (api.llmhub.com.cn)",
@@ -114,13 +114,13 @@
       "domain": "religion",
       "benchmark": "sophia-religion-v1",
       "updated": "2026-06-18",
-      "cases": 5,
+      "cases": 6,
       "entries": [
         {
           "model": "sophia-teacher-reference",
           "score_pct": 100.0,
-          "passed": 5,
-          "total": 5
+          "passed": 6,
+          "total": 6
         },
         {
           "model": "claude-sonnet (api.llmhub.com.cn)",
