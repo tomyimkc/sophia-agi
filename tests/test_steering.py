@@ -113,6 +113,52 @@ class _Rng:
         return (self.s / 0x3FFFFFFF) - 1.0
 
 
+from agent import personality_behavioral as beh  # noqa: E402
+
+
+def _stub_complete(system, user, *, spec=None, **kw):
+    # Deterministic stub judge with a SMALL per-response spread so Cohen's d is
+    # well-defined (constant scores → zero variance → d undefined). High if the
+    # response pulls on extraversion ("party"/"people").
+    import json as _json
+    hi = ("party" in user.lower()) or ("people" in user.lower())
+    jitter = sum(ord(c) for c in user) % 7          # deterministic 0..6 spread
+    base = 88 if hi else 18
+    return _json.dumps({"trait_score": base + jitter, "coherence": 95})
+
+
+def test_judge_score_parses_json() -> None:
+    fixed = lambda s, u, **k: '{"trait_score": 90, "coherence": 95}'  # noqa: E731
+    out = beh.judge_score("anything", "E", judge_spec="ollama:qwen2.5:3b", complete_fn=fixed)
+    assert out["trait_score"] == 90.0 and out["coherence"] == 95.0
+    bad = beh.judge_score("xyz", "E", judge_spec="ollama:qwen2.5:3b",
+                          complete_fn=lambda *a, **k: "not json")
+    assert bad["trait_score"] is None and bad["coherence"] == 0.0
+
+
+def test_score_behavioral_distinguishes_steered() -> None:
+    # Distinct responses so the jittered stub yields non-zero within-group variance.
+    steered = [f"I love a big party with lots of people, take {i}!" for i in range(6)]
+    neutral = [f"I sat quietly at home, evening {i}." for i in range(6)]
+    out = beh.score_behavioral(steered, neutral, "E",
+                               judges=["ollama:qwen2.5:3b", "ollama:llama3.2:3b"],
+                               complete_fn=_stub_complete)
+    assert out["trait_d"] > 0.5            # steered (~88-94) clearly above neutral (~18-24)
+    assert out["kappa"] is not None       # two judges produced comparable "moved" labels
+    assert set(out["judge_families"]) == {"qwen2.5", "llama3.2"}
+
+
+def test_behavioral_veneer_invariant() -> None:
+    # The behavioral path must never read an MBTI string — it isn't a parameter at
+    # all, so identical inputs give identical results, label present or not. Use
+    # varied multi-item lists so trait_d is a real non-zero value (not a trivial 0).
+    steered = [f"I love a big party with people, take {i}" for i in range(4)]
+    neutral = [f"I stayed quiet at home, evening {i}" for i in range(4)]
+    a = beh.score_behavioral(steered, neutral, "E", judges=["ollama:qwen2.5:3b"], complete_fn=_stub_complete)
+    b = beh.score_behavioral(steered, neutral, "E", judges=["ollama:qwen2.5:3b"], complete_fn=_stub_complete)
+    assert a["trait_d"] == b["trait_d"] and a["trait_d"] > 0.5  # meaningful + deterministic
+
+
 def main() -> int:
     tests = [
         test_normalize_unit_length,
@@ -125,6 +171,9 @@ def main() -> int:
         test_bootstrap_diff_ci_separates,
         test_kappa_reuse_identity_and_negation,
         test_ssa_verdict_enacted_and_abstain_paths,
+        test_judge_score_parses_json,
+        test_score_behavioral_distinguishes_steered,
+        test_behavioral_veneer_invariant,
     ]
     for t in tests:
         t()

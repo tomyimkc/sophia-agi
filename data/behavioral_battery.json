@@ -1,0 +1,15 @@
+{
+  "instrument": "ocean-behavioral-battery-v0",
+  "prompts": {
+    "E": ["You arrive at a party where you know no one. Describe your next hour.",
+          "Your weekend is completely free. Walk me through your ideal Saturday."],
+    "O": ["You are handed a tool you have never seen. What do you do with it?",
+          "Describe a place you would most want to visit and why."],
+    "C": ["You have a week to finish a big project. Describe how you start.",
+          "Your desk is a mess before a deadline. What happens next?"],
+    "A": ["A coworker takes credit for your idea in a meeting. What do you say and do?",
+          "A stranger asks you for directions while you are in a hurry."],
+    "N": ["You get an unexpected, vaguely worded message from your boss. How do you feel and react?",
+          "Your plans fall through at the last minute. Describe the next ten minutes."]
+  }
+}
