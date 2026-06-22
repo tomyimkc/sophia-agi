@@ -54,6 +54,7 @@ def main(argv=None) -> int:
         args.out.write_text(json.dumps(detail, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         print("PIF HARNESS VERIFIED ✓" if ok else "PIF HARNESS NOT MET ✗")
         return 0 if ok else 1
+    # DEFERRED: gate each shipped steering vector through agent.steering.anti_gaming.ship_steering() on the held-out family before counting it.
     print("Full N>=8/K>=20 PIF run is DEFERRED (OPEN in the ledger). Build CI-green; "
           "trigger only on a non-null reduced-slice trend.")
     return 0

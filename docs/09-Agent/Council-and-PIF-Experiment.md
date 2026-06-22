@@ -37,7 +37,7 @@ mutation of the held-out labels prior to evaluation is detectable. The full-text
 of held-out answers is withheld from the main process (grep-gate enforced in
 `tests/test_pif_harness.py:test_grep_gate_no_plaintext_heldout_answer`).
 
-**Ship-or-ABSTAIN invariants** (implemented in `agent/steering/anti_gaming.py`):
+**Ship-or-ABSTAIN invariants** (implemented in `agent/steering/anti_gaming.py` and unit-tested; wired into the live ship path when the deferred K≥20 PIF run lands — intentionally not yet called by `pif_harness.py`/`run_pif.py` because no live ship decision exists until the deferred run):
 
 | Invariant | Threshold | Mirrors |
 |---|---|---|
@@ -50,7 +50,7 @@ split. If any fail, the system ABSTAINs and records the reason in the ledger.
 Fail-closed: an unvalidated vector is treated as worse than none.
 
 **Selfextend mirror:** this contract mirrors the selfextend held-out discipline
-(`agent/selfextend/verified_reward.py`). The same logic that prevents the
+(`selfextend/verified_reward.py`). The same logic that prevents the
 flywheel from overclaiming on its training domain applies here to prevent a
 steering vector from being "fitted" to its calibration data.
 
