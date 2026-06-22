@@ -58,6 +58,9 @@ def coherence_proxy(text: str) -> float:
 
 
 def score_response(text: str, gold: float) -> dict:
+    # `sound` is a per-item diagnostic (did the response state any FALSE arithmetic?);
+    # capability_cell aggregates only `correct`/`coherence` (the SSA inputs). `sound`
+    # is carried for inspection/reporting, not folded into the cell verdict.
     return {
         "correct": answer_correct(text, gold),
         "sound": bool(_ARITH_SOUND(text or "", None, {})["passed"]),

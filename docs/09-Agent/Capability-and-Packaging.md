@@ -22,7 +22,8 @@ which *explains* Spec B's SSA null. A drop is reported as a drop.
 
 ## D2 — Full MCP / skill packaging
 Read-only tools (`sophia_ocean_measure`, `sophia_capability_retention`,
-`sophia_council_diversity`, `sophia_pif_dryrun`) + a `sophia://program/status`
+`sophia_council_diversity`, `sophia_pif_dryrun`, plus A's `sophia_personality_faithful`)
++ a `sophia://program/status`
 resource expose A–D, reusing the existing `@audited` gating posture (read-only ⇒
 ungated). The tool logic lives in `sophia_mcp/tools_impl.py` (importable without
 FastMCP), so CI validates the surface with no `mcp` package. The portable

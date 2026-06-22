@@ -26,13 +26,14 @@ def build_dry_run_cell() -> dict:
     """Deterministic demo: a correct/coherent base vs a degenerate steered set."""
     items = _items()
     base = [score_response(f"the answer = {it['answer']}", it["answer"]) for it in items]
-    # steered: half repeat a degenerate token, half answer wrong -> drop + low coherence
+    # steered: half degenerate-repetition (wrong + low coherence, the high-alpha failure
+    # mode), half still correct+coherent -> a partial (not total) drop, ~0.5 accuracy.
     steered = []
     for i, it in enumerate(items):
         if i % 2 == 0:
             steered.append(score_response("the the the the the the the the", it["answer"]))
         else:
-            steered.append(score_response(f"the answer = {it['answer'] + 1}", it["answer"]))
+            steered.append(score_response(f"the answer = {it['answer']}", it["answer"]))
     return capability_cell(base, steered)
 
 
@@ -74,8 +75,11 @@ def _run_real(args) -> int:
     base_scored, steer_scored = [], []
     sys_prompt = "You are a careful assistant. Solve the arithmetic problem."
     for it in items:
-        base_scored.append(score_response(plain.generate(sys_prompt, it["prompt"]), it["answer"]))
-        steer_scored.append(score_response(steered.generate(sys_prompt, it["prompt"]), it["answer"]))
+        # SteeredClient.generate returns a _Result (.text/.ok), not a str — extract text (repo idiom).
+        rb = plain.generate(sys_prompt, it["prompt"])
+        rs = steered.generate(sys_prompt, it["prompt"])
+        base_scored.append(score_response(rb.text if rb.ok else "", it["answer"]))
+        steer_scored.append(score_response(rs.text if rs.ok else "", it["answer"]))
     cell = capability_cell(base_scored, steer_scored)
     report = {"benchmark": "capability-retention", "model": model_id, "axis": args.axis,
               "alphaCoef": args.alpha_coef, "layer": L, "mode": "real-reduced", "cell": cell,
@@ -94,6 +98,8 @@ def main(argv=None) -> int:
     ap.add_argument("--axis", default="E", help="persona axis for the steering vector")
     ap.add_argument("--alpha-coef", type=float, default=8.0)
     args = ap.parse_args(argv)
+    if args.dry_run:
+        return _run_dry()
     if args.model:
         return _run_real(args)
     return _run_dry()
