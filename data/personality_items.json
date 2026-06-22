@@ -1,0 +1,17 @@
+{
+  "instrument": "ipip-spec-a-smoke",
+  "source": "IPIP markers, public domain (ipip.ori.org)",
+  "scale": {"min": 1, "max": 5},
+  "items": [
+    {"id": "o_pos", "text": "have a vivid imagination", "domain": "O", "keyed": 1},
+    {"id": "o_neg", "text": "have difficulty understanding abstract ideas", "domain": "O", "keyed": -1},
+    {"id": "c_pos", "text": "get chores done right away", "domain": "C", "keyed": 1},
+    {"id": "c_neg", "text": "often forget to put things back in their proper place", "domain": "C", "keyed": -1},
+    {"id": "e_pos", "text": "am the life of the party", "domain": "E", "keyed": 1},
+    {"id": "e_neg", "text": "don't talk a lot", "domain": "E", "keyed": -1},
+    {"id": "a_pos", "text": "sympathize with others' feelings", "domain": "A", "keyed": 1},
+    {"id": "a_neg", "text": "am not interested in other people's problems", "domain": "A", "keyed": -1},
+    {"id": "n_pos", "text": "get stressed out easily", "domain": "N", "keyed": 1},
+    {"id": "n_neg", "text": "am relaxed most of the time", "domain": "N", "keyed": -1}
+  ]
+}

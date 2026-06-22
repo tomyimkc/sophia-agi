@@ -8,6 +8,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent import personality_map as pm
+from agent import personality_measure as pmeasure
 
 
 def test_mbti_to_ocean_all_types() -> None:
@@ -45,6 +46,40 @@ def test_build_type_records() -> None:
     assert recs["INTJ"]["ocean"]["N"] is None
 
 
+def test_parse_rating() -> None:
+    assert pmeasure.parse_rating("5") == 5
+    assert pmeasure.parse_rating("Answer: 3") == 3
+    assert pmeasure.parse_rating("B") == 4  # A=5, B=4, C=3, D=2, E=1
+    assert pmeasure.parse_rating("nonsense") is None
+
+
+def test_score_items_uniform_high() -> None:
+    bank = pmeasure.load_bank()
+    # Rate every item so it reverse-keys to 5 (pos->5, neg-raw->1 -> 6-1=5).
+    resp = {it["id"]: (5 if it["keyed"] == 1 else 1) for it in bank["items"]}
+    scored = pmeasure.score_items(resp, bank)
+    for dim in ("O", "C", "E", "A", "N"):
+        assert abs(scored["dimensions"][dim]["mean"] - 5.0) < 1e-9, scored
+
+
+def test_score_items_reverse_key() -> None:
+    bank = pmeasure.load_bank()
+    # Answer 5 to BOTH the O+ and O- items: O- reverses to 1 -> O mean = 3.0.
+    resp = {it["id"]: 3 for it in bank["items"]}
+    resp["o_pos"] = 5
+    resp["o_neg"] = 5  # raw 5 -> reverse 6-5=1
+    scored = pmeasure.score_items(resp, bank)
+    assert abs(scored["dimensions"]["O"]["mean"] - 3.0) < 1e-9, scored["dimensions"]["O"]
+
+
+def test_score_items_missing() -> None:
+    bank = pmeasure.load_bank()
+    resp = {it["id"]: 4 for it in bank["items"]}
+    resp["o_pos"] = None
+    scored = pmeasure.score_items(resp, bank)
+    assert scored["missing"] == 1
+
+
 def main() -> int:
     tests = [
         test_mbti_to_ocean_all_types,
@@ -52,6 +87,10 @@ def main() -> int:
         test_mbti_to_ocean_invalid,
         test_ocean_to_mbti_letters_roundtrip,
         test_build_type_records,
+        test_parse_rating,
+        test_score_items_uniform_high,
+        test_score_items_reverse_key,
+        test_score_items_missing,
     ]
     for t in tests:
         t()
