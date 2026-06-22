@@ -1,0 +1,59 @@
+{
+  "experimentId": "learning-shift-example-visible-2026-06-20",
+  "runAt": "2026-06-22T08:34:38",
+  "backend": "deepseek",
+  "visibility": "public-aggregate-no-prompts",
+  "preTest": {
+    "passed": 0,
+    "totalCases": 1,
+    "score": 0.0,
+    "maxScore": 2.0,
+    "scorePct": 0.0
+  },
+  "postTest": {
+    "passed": 0,
+    "totalCases": 1,
+    "score": 0.0,
+    "maxScore": 2.0,
+    "scorePct": 0.0
+  },
+  "improvementDeltaPct": 0.0,
+  "oldBenchmarkStability": {
+    "passed": 0,
+    "totalCases": 1,
+    "score": 1.0,
+    "maxScore": 2.0,
+    "scorePct": 50.0
+  },
+  "oldBenchmarkDeltaPct": -40.0,
+  "stabilityEvaluable": "evaluated",
+  "memoryDiff": {
+    "memoryFile": "agent/memory/learning_shift.jsonl",
+    "appended": true,
+    "appendedRecordIds": [
+      "shift_learn_001"
+    ],
+    "protectedKnowledgeUnchanged": true
+  },
+  "promotionGate": {
+    "candidateCount": 2,
+    "promotedCount": 1,
+    "rejectedCount": 1,
+    "rejectedRecordIds": [
+      "shift_learn_002"
+    ]
+  },
+  "contaminationAudit": {
+    "clean": true,
+    "issues": [],
+    "preCaseCount": 1,
+    "postCaseCount": 1,
+    "method": "id-overlap + 8-word prompt shingles vs records/corpus + answer-token vs training corpus"
+  },
+  "passingSignal": false,
+  "passingSignalRule": "post>pre improvement AND protected knowledge unchanged AND clean contamination audit AND old-benchmark stability within 5 points.",
+  "notes": [
+    "Scores are auto keyword/regex screens; two-pass manual semantic review still required before strong per-case quality claims.",
+    "A flat or negative improvement is reported honestly per the failure ledger."
+  ]
+}

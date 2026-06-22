@@ -32,6 +32,10 @@ jobs:
           python tests/test_memory_consolidation.py
           python tests/test_wiki_proof.py
           python tests/test_agent_harness.py
+      - name: Governance contract conformance (golden vectors + schema)
+        run: |
+          python tests/test_contract_conformance.py
+          python tests/test_contract_guardrails.py
       - name: Model adapter + OpenClaw provider tests
         run: |
           python tests/test_model_adapter.py
@@ -82,6 +86,7 @@ jobs:
           python tools/run_cross_entity.py
           python tests/test_grounding_gate.py
           python tools/run_grounding_gate.py
+          python tests/test_calibration_score.py
       - name: RLVR (verifier-as-reward GRPO) offline invariants
         run: |
           python tests/test_rlvr.py

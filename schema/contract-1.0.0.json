@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sophia.aihk/schema/contract-1.0.0.json",
+  "title": "Sophia Governance Contract",
+  "description": "Machine-readable wire shapes for the Sophia governance service consumed by aihk-os. Version 1.0.0 (semver). Field names are the contract: MAJOR=breaking, MINOR=additive-only, PATCH=bugfix. A field may be deprecated for one full MAJOR before removal.",
+  "x-contract-version": "1.0.0",
+  "$defs": {
+    "blp_level": {
+      "type": "string",
+      "enum": ["UNCLASSIFIED", "CONFIDENTIAL", "SECRET", "TOP_SECRET"],
+      "description": "Bell-LaPadula confidentiality level, ascending. no-write-down at record, no-read-up at verify; a BLP_VIOLATION is never silently downgraded."
+    },
+    "verdict_value": {
+      "type": "string",
+      "enum": ["accepted", "rejected", "superseded", "held"],
+      "description": "Only 'accepted' may be published."
+    },
+    "held_reason": {
+      "type": "string",
+      "enum": ["no_source", "stale_source", "needs_human", "over_budget", "blp_violation"]
+    },
+    "error_code": {
+      "type": "string",
+      "enum": ["BAD_REQUEST", "UNAUTHENTICATED", "BLP_VIOLATION", "OVER_BUDGET", "UNAVAILABLE", "INTERNAL"]
+    },
+    "source": {
+      "description": "A source is a bare string id/url, or an object with an explicit status.",
+      "oneOf": [
+        {"type": "string", "minLength": 1},
+        {
+          "type": "object",
+          "required": ["id"],
+          "properties": {
+            "id": {"type": "string", "minLength": 1},
+            "status": {"type": "string", "enum": ["ok", "stale", "refuted", "invalid"]},
+            "date": {"type": "string"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "cited_evidence_item": {
+      "type": "object",
+      "required": ["id", "status"],
+      "properties": {
+        "id": {"type": "string"},
+        "status": {"type": "string", "enum": ["ok", "stale", "refuted", "invalid"]},
+        "date": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "required": ["error"],
+      "properties": {
+        "error": {
+          "type": "object",
+          "required": ["code", "message", "retryable"],
+          "properties": {
+            "code": {"$ref": "#/$defs/error_code"},
+            "message": {"type": "string"},
+            "retryable": {"type": "boolean"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "describe_response": {
+      "type": "object",
+      "required": ["version", "capabilities", "schema_url", "deprecations"],
+      "properties": {
+        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "capabilities": {"type": "array", "items": {"type": "string"}},
+        "schema_url": {"type": "string"},
+        "deprecations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["field", "since", "remove_in"],
+            "properties": {
+              "field": {"type": "string"},
+              "since": {"type": "string"},
+              "remove_in": {"type": "string"},
+              "note": {"type": "string"}
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "record_claim_request": {
+      "type": "object",
+      "required": ["idempotency_key", "content"],
+      "properties": {
+        "idempotency_key": {"type": "string", "minLength": 1},
+        "content": {"type": "string", "minLength": 1},
+        "sources": {"type": "array", "items": {"$ref": "#/$defs/source"}},
+        "parents": {"type": "array", "items": {"type": "string"}},
+        "blp_level": {"$ref": "#/$defs/blp_level"}
+      },
+      "additionalProperties": false
+    },
+    "claim": {
+      "type": "object",
+      "required": ["claim_id", "content", "sources", "parents", "blp_level", "created_at"],
+      "properties": {
+        "claim_id": {"type": "string"},
+        "content": {"type": "string"},
+        "sources": {"type": "array", "items": {"$ref": "#/$defs/cited_evidence_item"}},
+        "parents": {"type": "array", "items": {"type": "string"}},
+        "blp_level": {"$ref": "#/$defs/blp_level"},
+        "created_at": {"type": "string"},
+        "signature": {"type": "string", "description": "Optional integrity signature over the claim body."}
+      },
+      "additionalProperties": false
+    },
+    "verify_claim_request": {
+      "type": "object",
+      "required": ["claim_id"],
+      "properties": {"claim_id": {"type": "string"}},
+      "additionalProperties": false
+    },
+    "verdict": {
+      "type": "object",
+      "required": ["verdict", "confidence", "reasons", "cited_evidence"],
+      "properties": {
+        "verdict": {"$ref": "#/$defs/verdict_value"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "reasons": {"type": "array", "items": {"type": "string"}},
+        "cited_evidence": {"type": "array", "items": {"$ref": "#/$defs/cited_evidence_item"}},
+        "suggested_fix": {"type": "string"},
+        "supersedes": {"type": "string"},
+        "held_reason": {"$ref": "#/$defs/held_reason"}
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {"properties": {"verdict": {"const": "held"}}},
+          "then": {"required": ["held_reason"]}
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {"$ref": "#/$defs/describe_response"},
+    {"$ref": "#/$defs/claim"},
+    {"$ref": "#/$defs/verdict"},
+    {"$ref": "#/$defs/error"}
+  ]
+}
