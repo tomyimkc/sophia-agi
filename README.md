@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.7.27-blue)
+![Version](https://img.shields.io/badge/version-0.7.41-blue)
 ![Training examples](https://img.shields.io/badge/training_examples-518-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
@@ -18,7 +18,7 @@
 
 **Sophia is the provenance gate that makes AI safe to ship:** it verifies every AI claim against its sources, **abstains instead of fabricating**, and only lets *accepted* output through — so a solo operator can run AI services without babysitting.
 
-> **Validated proof point:** on unknown-answer questions Sophia fabricates **0%** where the raw model fabricates **17–25%** — corroborated by two independent judge families (GPT-4o + Claude, inter-judge κ=0.74), measured on DeepSeek across 3 runs ([RESULTS.md](RESULTS.md)).
+> **Validated proof point:** the one result that clears the no-overclaim gate — on a local 8B model (`dolphin-llama3`) Sophia cuts hallucinated attributions **36.1% → 23.6%** (Δ **12.5%**, 95% CI [5.6%, 19.4%], N=24) at **0% false-positive cost**, judged by **two independent families** (DeepSeek + Llama-3.3-70B) across 3 runs ([RESULTS.md](RESULTS.md)). A separate **self-authored** 18-case calibration pack shows 0% fabrication vs 17–25% raw (corroborated by GPT-4o + Claude, κ=0.74) — reported as *calibration evidence, not the headline*, until a third-party pack lands.
 
 **Use it three ways:**
 

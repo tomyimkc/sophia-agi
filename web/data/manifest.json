@@ -349,7 +349,7 @@
       "localAgentDeltaRunner": "tools/run_local_agent_delta.py",
       "localAgentCore": "provenance_bench/local_agent.py",
       "localAgentDeltaReport": "agi-proof/benchmark-results/local-agent-delta.public-report.json",
-      "localAgentDeltaValidatedReport": "agi-proof/benchmark-results/provenance-delta-dolphin-validated.public-report.json",
+      "localAgentDeltaScreenNullReport": "agi-proof/benchmark-results/provenance-delta-dolphin-lexical-screen-null.public-report.json",
       "unifiedUpliftRunner": "tools/run_unified_uplift.py",
       "unifiedUpliftReport": "agi-proof/benchmark-results/unified-uplift.public-report.json",
       "gateEntityAliases": "agent/entity_aliases.py",

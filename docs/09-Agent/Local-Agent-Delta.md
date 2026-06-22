@@ -97,8 +97,11 @@ python tools/run_local_agent_delta.py --model ollama:dolphin-llama3:8b   # the v
 python tools/run_local_agent_delta.py --model ollama:qwen3:30b-a3b       # strong model (small delta)
 # validated gate delta (>=2 judge families, >=3 runs, kappa + bootstrap CI):
 # uses run_provenance_delta.py — it has the full _is_validated machinery.
+# NOTE: with the DEFAULT lexical judge this produces only a SCREEN (illustrative,
+# null — its CI straddled zero); pass independent LLM-judges for a headline-grade run.
+# The curated validated number lives in agi-proof/benchmark-results/published-results.json.
 DEEPSEEK_API_KEY=... python tools/run_provenance_delta.py \
     --models ollama:dolphin-llama3:8b \
     --judges ollama:llama3.2:3b,deepseek:deepseek-chat --runs 3 \
-    --out agi-proof/benchmark-results/provenance-delta-dolphin-validated.public-report.json
+    --out agi-proof/benchmark-results/provenance-delta-dolphin-lexical-screen-null.public-report.json
 ```

@@ -19,7 +19,8 @@ train-out.txt
 agent/memory/*.jsonl
 agent/memory/agent_runs/
 agent/memory/legal_cache.json
-agent/memory/contract/         # live governance-contract stores (claims/decisions/tasks/traces)
+# live governance-contract stores (claims/decisions/tasks/traces) — runtime, not source
+agent/memory/contract/
 private/hidden-evals/
 private/agent-grok-cwd/
 
