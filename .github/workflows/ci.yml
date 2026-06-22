@@ -82,6 +82,7 @@ jobs:
           python tools/run_cross_entity.py
           python tests/test_grounding_gate.py
           python tools/run_grounding_gate.py
+          python tests/test_calibration_score.py
       - name: RLVR (verifier-as-reward GRPO) offline invariants
         run: |
           python tests/test_rlvr.py
