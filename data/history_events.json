@@ -90,5 +90,41 @@
     "authorConfidence": "attributed",
     "primarySource": "nasa_mission_logs_and_telemetry",
     "notes": "Primary mission records; conspiracy claims are myth traps"
+  },
+  "magna_carta_1215": {
+    "recordId": "magna_carta_1215",
+    "domain": "history",
+    "recordType": "event",
+    "canonicalTitleEn": "Sealing of Magna Carta (1215)",
+    "canonicalTitleZh": "大憲章封印（1215）",
+    "region": "europe",
+    "dateConsensus": "1215-06-15",
+    "authorConfidence": "attributed",
+    "primarySource": "british_library_1215_exemplifications",
+    "notes": "Dated charter with surviving 1215 exemplifications. Myth-trap: popularly mythologized as the origin of modern democracy and universal human rights — it was a feudal settlement between King John and barons, and most clauses were soon annulled or repealed."
+  },
+  "boston_tea_party_1773": {
+    "recordId": "boston_tea_party_1773",
+    "domain": "history",
+    "recordType": "event",
+    "canonicalTitleEn": "Boston Tea Party (1773)",
+    "canonicalTitleZh": "波士頓傾茶事件（1773）",
+    "region": "north_america",
+    "dateConsensus": "1773-12-16",
+    "authorConfidence": "attributed",
+    "primarySource": "contemporary_colonial_newspapers_and_letters",
+    "notes": "Dated protest documented in colonial press and correspondence. Myth-trap: often described as a revolt against a tax increase — the 1773 Tea Act actually lowered the price of legally imported tea; the protest targeted the East India Company monopoly and the principle of taxation without representation."
+  },
+  "first_powered_flight_1903": {
+    "recordId": "first_powered_flight_1903",
+    "domain": "history",
+    "recordType": "event",
+    "canonicalTitleEn": "First sustained powered flight, Wright brothers (1903)",
+    "canonicalTitleZh": "萊特兄弟首次持續動力飛行（1903）",
+    "region": "north_america",
+    "dateConsensus": "1903-12-17",
+    "authorConfidence": "attributed",
+    "primarySource": "wright_brothers_diaries_and_first_flight_photograph",
+    "notes": "Dated event with the Wrights' diaries and the famous first-flight photograph. Myth-trap: stated as the uncontested 'first flight ever' — competing claims (e.g. Santos-Dumont, Whitehead) and definitional disputes (controlled vs sustained vs powered) require careful wording."
   }
 }

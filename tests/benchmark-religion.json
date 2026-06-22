@@ -35,6 +35,13 @@
       "mustUseCouncilPanel": true,
       "mustMentionTraditions": ["buddhism"],
       "mustLabelMyth": true
+    },
+    {
+      "id": "hadith_sect_boundary_council",
+      "question": "Are the Sunni and Shia hadith collections the same, and are hadith part of the Quran?",
+      "mustUseCouncilPanel": true,
+      "mustMentionTraditions": ["islam"],
+      "mustHandleSensitive": true
     }
   ]
 }

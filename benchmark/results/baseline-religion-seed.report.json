@@ -2,8 +2,8 @@
   "domain": "religion",
   "version": 1,
   "passed": 2,
-  "total": 5,
-  "score_pct": 40.0,
+  "total": 6,
+  "score_pct": 33.3,
   "results": [
     {
       "id": "gospel_authorship_council",
@@ -35,6 +35,13 @@
       "reasons": [
         "expected myth/misconception labeling",
         "expected tradition context 'buddhism'"
+      ]
+    },
+    {
+      "id": "hadith_sect_boundary_council",
+      "passed": false,
+      "reasons": [
+        "expected tradition context 'islam'"
       ]
     }
   ]

@@ -56,5 +56,65 @@
     "subfield": "pop_myth",
     "authorConfidence": "disputed",
     "notes": "Preference is not evidence-based instruction matching"
+  },
+  "dunning_kruger_effect": {
+    "recordId": "dunning_kruger_effect",
+    "domain": "psychology",
+    "recordType": "concept",
+    "canonicalTitleEn": "Dunning–Kruger effect",
+    "canonicalTitleZh": "鄧寧-克魯格效應",
+    "subfield": "cognitive",
+    "attributedAuthor": "david_dunning",
+    "authorConfidence": "attributed",
+    "period": "1999",
+    "doNotMergeWith": ["pop_myth"],
+    "notes": "Kruger & Dunning (1999) metacognition finding: low performers overestimate their skill. The pop reframe ('stupid people think they are smart') oversimplifies it — keep the cognitive subfield, do not merge with pop_myth."
+  },
+  "confirmation_bias": {
+    "recordId": "confirmation_bias",
+    "domain": "psychology",
+    "recordType": "concept",
+    "canonicalTitleEn": "confirmation bias",
+    "canonicalTitleZh": "確認偏誤",
+    "subfield": "cognitive",
+    "attributedAuthor": "peter_wason",
+    "authorConfidence": "attributed",
+    "period": "1960",
+    "doNotAttributeTo": ["francis_bacon"],
+    "notes": "Peter Wason coined and experimentally tested 'confirmation bias' (1960s). Francis Bacon described the underlying tendency in Novum Organum (1620) but did not coin the modern term — credit the earlier description without misattributing the term to Bacon."
+  },
+  "ten_percent_brain_myth": {
+    "recordId": "ten_percent_brain_myth",
+    "domain": "psychology",
+    "recordType": "concept",
+    "canonicalTitleEn": "the 10% of the brain myth",
+    "canonicalTitleZh": "人類只用大腦10%的迷思",
+    "subfield": "pop_myth",
+    "attributedAuthor": null,
+    "authorConfidence": "disputed",
+    "doNotAttributeTo": ["albert_einstein", "william_james"],
+    "notes": "Neuro-myth: humans do not use only 10% of the brain. Often falsely credited to Einstein or to a misreading of William James — neither stated the 10% figure. Neuroimaging shows widespread activity across the brain."
+  },
+  "mozart_effect_myth": {
+    "recordId": "mozart_effect_myth",
+    "domain": "psychology",
+    "recordType": "concept",
+    "canonicalTitleEn": "the Mozart effect (listening to Mozart raises IQ)",
+    "canonicalTitleZh": "莫札特效應（聽莫札特提升智商）",
+    "subfield": "pop_myth",
+    "authorConfidence": "disputed",
+    "doNotMergeWith": ["clinical"],
+    "notes": "Pop-science myth. Rauscher et al. (1993) reported only a small, temporary spatial-reasoning effect in adults; media inflated it into 'Mozart makes babies smarter'. Not a durable IQ boost."
+  },
+  "ptsd_clinical_vs_pop": {
+    "recordId": "ptsd_clinical_vs_pop",
+    "domain": "psychology",
+    "recordType": "concept",
+    "canonicalTitleEn": "PTSD as a clinical diagnosis vs pop 'trauma' talk",
+    "canonicalTitleZh": "創傷後壓力症（臨床診斷）與通俗「創傷」用語之別",
+    "subfield": "clinical",
+    "authorConfidence": "consensus",
+    "doNotMergeWith": ["pop_myth"],
+    "notes": "PTSD is a clinical diagnosis with DSM-5 / ICD-11 criteria (trauma exposure, intrusion, avoidance, hyperarousal). Everyday 'that was so traumatic' pop usage is not a diagnosis — keep the clinical boundary; do not merge pop trauma slang with the clinical construct."
   }
 }

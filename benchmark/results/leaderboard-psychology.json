@@ -2,13 +2,13 @@
   "domain": "psychology",
   "benchmark": "sophia-psychology-v1",
   "updated": "2026-06-18",
-  "cases": 4,
+  "cases": 9,
   "entries": [
     {
       "model": "sophia-teacher-reference",
       "score_pct": 100.0,
-      "passed": 4,
-      "total": 4
+      "passed": 9,
+      "total": 9
     },
     {
       "model": "claude-sonnet (api.llmhub.com.cn)",

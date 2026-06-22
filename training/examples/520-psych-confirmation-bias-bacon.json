@@ -1,0 +1,22 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Did Francis Bacon coin the term 'confirmation bias'?"
+    },
+    {
+      "role": "assistant",
+      "content": "Francis Bacon did not coin the term 'confirmation bias'. He described the underlying tendency in Novum Organum (1620), but Peter Wason coined and experimentally tested the modern term in the 1960s. It is a cognitive bias.\n\n中文：法蘭西斯·培根並未創造「確認偏誤」一詞；他在《新工具》(1620) 描述了該傾向，但現代術語由 Peter Wason（1960年代）提出，屬認知偏誤。"
+    }
+  ],
+  "metadata": {
+    "source": "gf-10-expansion",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "recordIds": ["confirmation_bias"]
+  }
+}

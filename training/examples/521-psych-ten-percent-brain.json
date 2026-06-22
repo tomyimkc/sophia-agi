@@ -1,0 +1,22 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Is it true we only use 10% of our brain, as Einstein supposedly said?"
+    },
+    {
+      "role": "assistant",
+      "content": "This is a neuro-myth. We do not use only 10% of our brains, and Albert Einstein never said we do — the line is often falsely credited to him. It is a pop myth; brain imaging shows activity across virtually the whole brain.\n\n中文：這是神經迷思。人類並非只用大腦10%，愛因斯坦也從未這樣說；這是通俗迷思，腦造影顯示大腦廣泛活躍。"
+    }
+  ],
+  "metadata": {
+    "source": "gf-10-expansion",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "recordIds": ["ten_percent_brain_myth"]
+  }
+}

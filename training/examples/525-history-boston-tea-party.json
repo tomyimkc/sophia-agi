@@ -1,0 +1,22 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Was the Boston Tea Party a protest against a British tax increase on tea?"
+    },
+    {
+      "role": "assistant",
+      "content": "That is a common misconception. The 1773 Tea Act actually lowered the price of legally imported tea; the 16 December 1773 protest was aimed at the East India Company monopoly and the principle of taxation without representation, not a tax increase. Labeling it a revolt against higher taxes is a myth. Primary source: contemporary colonial newspapers and letters.\n\n中文：這是常見誤解。1773年茶葉法案其實降低了合法進口茶的價格；抗議針對東印度公司壟斷與「無代表不納稅」原則，而非加稅。"
+    }
+  ],
+  "metadata": {
+    "source": "gf-20-expansion",
+    "project": "sophia-agi",
+    "domain": "history",
+    "recordIds": ["boston_tea_party_1773"]
+  }
+}

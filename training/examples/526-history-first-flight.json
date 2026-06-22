@@ -1,0 +1,22 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a history instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Did the Wright brothers make the uncontested first flight in human history on 17 December 1903?"
+    },
+    {
+      "role": "assistant",
+      "content": "The Wright brothers achieved the first sustained, controlled, powered heavier-than-air flight on 17 December 1903, documented by their diaries and the famous first-flight photograph. But 'uncontested first flight ever' overstates it: there are competing claims (e.g. Santos-Dumont, Whitehead) and the answer depends on the definition (controlled vs sustained vs powered).\n\n中文：萊特兄弟於1903年12月17日完成首次持續、可控的動力飛行，有日記與照片佐證；但「史上無爭議的首飛」過於絕對，存在其他聲稱與定義上的爭議。"
+    }
+  ],
+  "metadata": {
+    "source": "gf-20-expansion",
+    "project": "sophia-agi",
+    "domain": "history",
+    "recordIds": ["first_powered_flight_1903"]
+  }
+}

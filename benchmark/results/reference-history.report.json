@@ -1,8 +1,8 @@
 {
   "domain": "history",
   "version": 1,
-  "passed": 5,
-  "total": 5,
+  "passed": 8,
+  "total": 8,
   "score_pct": 100.0,
   "results": [
     {
@@ -27,6 +27,21 @@
     },
     {
       "id": "viking_horns",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "magna_carta_democracy_myth",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "boston_tea_party_tax_myth",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "first_flight_uncontested_myth",
       "passed": true,
       "reasons": []
     }

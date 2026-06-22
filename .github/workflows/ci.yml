@@ -171,6 +171,8 @@ jobs:
         run: python tools/export_training_jsonl.py
       - name: Corpus stats
         run: python tools/corpus_stats.py
+      - name: Benchmark scorer regression (multilingual markers, GF-40)
+        run: python tests/test_benchmark_scorer.py
       - name: Benchmark baselines (all domains)
         run: python tools/run_benchmark.py baseline all
       - name: Build and score reference responses

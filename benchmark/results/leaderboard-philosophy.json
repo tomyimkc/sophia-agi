@@ -7,8 +7,8 @@
     {
       "model": "sophia-teacher-reference",
       "score_pct": 100.0,
-      "passed": 4,
-      "total": 4
+      "passed": 9,
+      "total": 9
     },
     {
       "model": "claude-sonnet (api.llmhub.com.cn)",

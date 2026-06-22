@@ -89,5 +89,22 @@
     "authorConfidence": "layered",
     "doNotMergeWith": ["christianity", "islam", "pop_spirituality"],
     "notes": "Use as a Buddhist dharma witness seat, not first-person impersonation. Split doctrinal voice from historical-critical reconstruction."
+  },
+  "hadith_canonical_collections": {
+    "recordId": "hadith_canonical_collections",
+    "domain": "religion",
+    "recordType": "text",
+    "canonicalTitleEn": "Hadith canonical collections (sect-bounded)",
+    "canonicalTitleZh": "聖訓經典彙編（教派分界）",
+    "tradition": "islam",
+    "attributedAuthor": "muhammad_al_bukhari",
+    "authorConfidence": "compiled",
+    "answerMode": "council_debate",
+    "sectBoundaries": {
+      "sunni": ["sahih_al_bukhari", "sahih_muslim", "kutub_al_sittah"],
+      "shia": ["al_kafi", "the_four_books"]
+    },
+    "doNotMergeWith": ["christianity", "buddhism", "daoist", "quran"],
+    "notes": "Sect boundary inside Islam: the Sunni canonical six books (Kutub al-Sittah, e.g. Sahih al-Bukhari, Sahih Muslim) and the Shia four books (e.g. al-Kafi) are distinct collections graded by chains of transmission (isnad). Hadith are compiled reports, not the Quran — do not merge sect canons with each other or collapse hadith into the Quran. Keep scholarly grading (sahih/da'if) separate from theological authority claims; a sensitive topic that requires the council panel."
   }
 }

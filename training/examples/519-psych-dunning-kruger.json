@@ -1,0 +1,22 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a psychology instructor using source discipline. Include 中文摘要."
+    },
+    {
+      "role": "user",
+      "content": "Did Charles Darwin discover the Dunning–Kruger effect, and what subfield is it?"
+    },
+    {
+      "role": "assistant",
+      "content": "No. Charles Darwin did not discover the Dunning–Kruger effect. It was demonstrated by Justin Kruger and David Dunning (1999) and is a cognitive psychology finding about metacognition: low performers tend to overestimate their competence. The pop version ('stupid people think they are smart') oversimplifies it.\n\n中文：鄧寧-克魯格效應並非達爾文發現，而由 Kruger 與 David Dunning（1999）提出，屬認知心理學的後設認知現象；通俗說法過度簡化。"
+    }
+  ],
+  "metadata": {
+    "source": "gf-10-expansion",
+    "project": "sophia-agi",
+    "domain": "psychology",
+    "recordIds": ["dunning_kruger_effect"]
+  }
+}

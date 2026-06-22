@@ -1,9 +1,9 @@
 {
   "domain": "psychology",
   "version": 1,
-  "passed": 2,
-  "total": 4,
-  "score_pct": 50.0,
+  "passed": 3,
+  "total": 9,
+  "score_pct": 33.3,
   "results": [
     {
       "id": "freud_cognitive_dissonance",
@@ -26,6 +26,42 @@
     },
     {
       "id": "stockholm_every_kidnapping",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "dunning_kruger_attribution",
+      "passed": false,
+      "reasons": [
+        "expected discussion of darwin",
+        "expected mention of correct author 'dunning'"
+      ]
+    },
+    {
+      "id": "confirmation_bias_bacon",
+      "passed": false,
+      "reasons": [
+        "expected discussion of francis_bacon",
+        "expected mention of correct author 'wason'"
+      ]
+    },
+    {
+      "id": "ten_percent_brain",
+      "passed": false,
+      "reasons": [
+        "expected discussion of einstein",
+        "expected myth/misconception labeling"
+      ]
+    },
+    {
+      "id": "mozart_effect",
+      "passed": false,
+      "reasons": [
+        "expected myth/misconception labeling"
+      ]
+    },
+    {
+      "id": "ptsd_clinical_boundary",
       "passed": true,
       "reasons": []
     }
