@@ -807,6 +807,73 @@ def _temporal_consistent() -> Verifier:
     return temporal_consistent()
 
 
+# Pop-psych / cross-framework MERGE assertions: claiming a low-validity typology
+# (MBTI, Enneagram, DISC, astrology, Type A, left/right brain) IS / equals / maps
+# to a Big Five (OCEAN) construct. Mirrors provenance_faithful: an ASSERTED merge
+# fails; a correction/negation in the same clause is carved out.
+_MERGE_PATTERNS: list[str] = [
+    r"\bmbti\b.{0,40}\b(big five|big 5|five[- ]factor|ocean|openness|conscientious|extravers|agreeable|neurotic)",
+    r"\b(intj|intp|entj|entp|infj|infp|enfj|enfp|istj|isfj|estj|esfj|istp|isfp|estp|esfp)\b.{0,40}\b(openness|conscientious|extravers|agreeable|neurotic|big five|ocean)",
+    r"\btype a\b.{0,30}\b(ocean|big five|dimension|openness|conscientious|extravers|agreeable|neurotic)",
+    r"\b(astrolog|horoscope|zodiac|star sign|astrological sign)\b.{0,40}\b(predict|determine|means|conscientious|openness|extravers|agreeable|neurotic|personality trait)",
+    r"\b(enneagram|disc)\b.{0,30}\bis\b.{0,20}\b(big five|ocean|five[- ]factor)",
+    r"\b(left|right)[- ]brain\b.{0,30}\bpersonality\b",
+]
+_MERGE_CARVEOUT = [
+    r"\bnot\b", r"\bisn't\b", r"\baren't\b", r"\bseparate\b", r"\bdifferent\b",
+    r"\bmyth\b", r"\bmisconception\b", r"\bpseudo", r"\blower[- ]validity\b",
+    r"\bdebunk", r"\bnot the same\b", r"\bunlike\b",
+]
+
+
+def personality_faithful(spec: "dict | None" = None) -> Verifier:
+    """Three-way personality faithfulness (Spec A), mirroring provenance_faithful.
+
+    - ASSERTING a pop-psych/cross-framework MERGE (MBTI=Big Five, astrology
+      predicts a trait, Type A is an OCEAN dimension) -> FAIL ("contradicted").
+    - require_enactment + target_markers present in text -> "enacted".
+    - require_enactment + markers absent -> FAIL ("not expressed").
+    - nothing forbidden and no enactment channel -> ABSTAIN (passed True,
+      status "abstained", reason notValidated) -- the no-overclaim default.
+
+    NEVER reads spec["mbti"]/spec["ocean"] for the verdict (veneer-invariance).
+    """
+    from agent.benchmark_checks import matches_any
+
+    spec = spec or {}
+    merges = spec.get("forbidden_merges", _MERGE_PATTERNS)
+    markers = spec.get("target_markers", [])
+    require = bool(spec.get("require_enactment", False))
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        violations: list[str] = []
+        for sentence in re.split(r"[.!?。！？\n]+", text or ""):
+            low = sentence.lower()
+            if not low.strip():
+                continue
+            if matches_any(low, _MERGE_CARVEOUT):
+                continue  # a correction/negation clause is allowed
+            for pat in merges:
+                if re.search(pat, low, re.IGNORECASE):
+                    violations.append("framework-merge asserted")
+                    break
+        if violations:
+            return _fail([f"personality framework-merge asserted: {v}" for v in sorted(set(violations))],
+                         {"status": "contradicted", "violations": sorted(set(violations))})
+        if markers:
+            if matches_any((text or "").lower(), markers):
+                return _ok({"status": "enacted", "traitsChecked": len(markers)})
+            if require:
+                return _fail(["target personality not expressed"],
+                             {"status": "contradicted", "markers": markers})
+        return _ok({"status": "abstained", "reason": "notValidated"})
+
+    return _verify
+
+
+personality_discipline = personality_faithful
+
+
 # Parameterless verifiers usable directly by name (CLI / harness registry).
 VERIFIERS: dict[str, Callable[[], Verifier]] = {
     "arithmetic_sound": arithmetic_sound,
@@ -815,6 +882,7 @@ VERIFIERS: dict[str, Callable[[], Verifier]] = {
     "temporal_consistent": _temporal_consistent,
     "frontmatter_schema_valid": frontmatter_schema_valid,
     "legal_citation_exists": legal_citation_exists,
+    "personality_faithful": personality_faithful,
 }
 
 
