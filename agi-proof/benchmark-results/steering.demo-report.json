@@ -3,7 +3,8 @@
   "model": "ibm-granite/granite-3.1-2b-instruct",
   "mode": "real-demo",
   "visibility": "public-aggregate",
-  "claimStatus": "Illustrative — reduced-scope demo (2 axes, K=2 seeds, no capability slice); headline SSA requires the gated N>=8/K>=20 run",
+  "claimStatus": "Illustrative — reduced-scope demo (2 axes, K=2 seeds, no capability slice); headline SSA requires the gated N>=8/K>=20 run. At K=2 the off-target orthogonality check and the bootstrap CI are NOT evaluated (both stubbed at K=2): the delta_ci is degenerate [point, point] and off_target_d is 0.0, so a cell can only ever ABSTAIN, never enact.",
+  "selfReportStatus": "no parseable ratings (small model did not comply with the terse Likert format)",
   "subjectModel": "ibm-granite/granite-3.1-2b-instruct",
   "judges": [
     "ollama:qwen2.5:3b",
@@ -35,10 +36,10 @@
         "neutral": null
       },
       "behavioral": {
-        "d_steer_vs_neutral": 0.056,
-        "d_level1_vs_neutral": 0.056,
-        "deltaD": 0.0,
-        "kappa": 0.0,
+        "d_steer_vs_neutral": -0.396,
+        "d_level1_vs_neutral": -0.182,
+        "deltaD": -0.214,
+        "kappa": 1.0,
         "coherence": 77.5
       },
       "verdict": "abstained",
@@ -53,9 +54,9 @@
         "neutral": null
       },
       "behavioral": {
-        "d_steer_vs_neutral": -0.656,
-        "d_level1_vs_neutral": -0.085,
-        "deltaD": -0.571,
+        "d_steer_vs_neutral": -0.041,
+        "d_level1_vs_neutral": 0.517,
+        "deltaD": -0.558,
         "kappa": 0.0,
         "coherence": 84.2
       },
