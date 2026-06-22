@@ -1,0 +1,530 @@
+{
+  "ESTJ": {
+    "code": "ESTJ",
+    "ocean": {
+      "O": "low",
+      "C": "high",
+      "E": "high",
+      "A": "low",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "E",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "S",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "T",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "J",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "ESTP": {
+    "code": "ESTP",
+    "ocean": {
+      "O": "low",
+      "C": "low",
+      "E": "high",
+      "A": "low",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "E",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "S",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "T",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "P",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "ESFJ": {
+    "code": "ESFJ",
+    "ocean": {
+      "O": "low",
+      "C": "high",
+      "E": "high",
+      "A": "high",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "E",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "S",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "F",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "J",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "ESFP": {
+    "code": "ESFP",
+    "ocean": {
+      "O": "low",
+      "C": "low",
+      "E": "high",
+      "A": "high",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "E",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "S",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "F",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "P",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "ENTJ": {
+    "code": "ENTJ",
+    "ocean": {
+      "O": "high",
+      "C": "high",
+      "E": "high",
+      "A": "low",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "E",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "N",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "T",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "J",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "ENTP": {
+    "code": "ENTP",
+    "ocean": {
+      "O": "high",
+      "C": "low",
+      "E": "high",
+      "A": "low",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "E",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "N",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "T",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "P",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "ENFJ": {
+    "code": "ENFJ",
+    "ocean": {
+      "O": "high",
+      "C": "high",
+      "E": "high",
+      "A": "high",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "E",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "N",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "F",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "J",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "ENFP": {
+    "code": "ENFP",
+    "ocean": {
+      "O": "high",
+      "C": "low",
+      "E": "high",
+      "A": "high",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "E",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "N",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "F",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "P",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "ISTJ": {
+    "code": "ISTJ",
+    "ocean": {
+      "O": "low",
+      "C": "high",
+      "E": "low",
+      "A": "low",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "I",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "S",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "T",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "J",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "ISTP": {
+    "code": "ISTP",
+    "ocean": {
+      "O": "low",
+      "C": "low",
+      "E": "low",
+      "A": "low",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "I",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "S",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "T",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "P",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "ISFJ": {
+    "code": "ISFJ",
+    "ocean": {
+      "O": "low",
+      "C": "high",
+      "E": "low",
+      "A": "high",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "I",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "S",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "F",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "J",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "ISFP": {
+    "code": "ISFP",
+    "ocean": {
+      "O": "low",
+      "C": "low",
+      "E": "low",
+      "A": "high",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "I",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "S",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "F",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "P",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "INTJ": {
+    "code": "INTJ",
+    "ocean": {
+      "O": "high",
+      "C": "high",
+      "E": "low",
+      "A": "low",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "I",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "N",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "T",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "J",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "INTP": {
+    "code": "INTP",
+    "ocean": {
+      "O": "high",
+      "C": "low",
+      "E": "low",
+      "A": "low",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "I",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "N",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "T",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "P",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "INFJ": {
+    "code": "INFJ",
+    "ocean": {
+      "O": "high",
+      "C": "high",
+      "E": "low",
+      "A": "high",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "I",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "N",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "F",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "J",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  },
+  "INFP": {
+    "code": "INFP",
+    "ocean": {
+      "O": "high",
+      "C": "low",
+      "E": "low",
+      "A": "high",
+      "N": null
+    },
+    "substrate": "Big Five (OCEAN) is the measured substrate; this MBTI code is a display veneer. Neuroticism is undetermined.",
+    "axes": {
+      "E/I": {
+        "letter": "I",
+        "factor": "E",
+        "r": -0.74
+      },
+      "S/N": {
+        "letter": "N",
+        "factor": "O",
+        "r": 0.72
+      },
+      "T/F": {
+        "letter": "F",
+        "factor": "A",
+        "r": 0.44
+      },
+      "J/P": {
+        "letter": "P",
+        "factor": "C",
+        "r": -0.485
+      }
+    }
+  }
+}

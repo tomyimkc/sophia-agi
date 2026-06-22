@@ -130,6 +130,27 @@ def test_measure_ocean_persona_in_system() -> None:
     assert all("very extraverted" in sys for sys, _ in client.calls)
 
 
+def test_mcp_mbti_type_record() -> None:
+    from sophia_mcp.tools_impl import mbti_type_record
+    rec = mbti_type_record("intj")
+    assert rec["code"] == "INTJ" and rec["ocean"]["N"] is None
+    bad = mbti_type_record("ZZZZ")
+    assert "error" in bad and len(bad["sampleIds"]) == 16
+
+
+def test_mcp_personality_target_mock() -> None:
+    from sophia_mcp.tools_impl import personality_target
+    out = personality_target("ENFP", {"E": "high"}, "Say hello.", model="mock", gate=False)
+    assert out["mbti"] == "ENFP" and out["response"]
+    assert "error" not in out
+
+
+def test_mcp_personality_faithful_score() -> None:
+    from sophia_mcp.tools_impl import personality_faithful_score
+    out = personality_faithful_score("MBTI is just the Big Five renamed.", "INTJ", {}, model="mock")
+    assert out["passed"] is False  # framework merge -> contradicted
+
+
 def main() -> int:
     tests = [
         test_mbti_to_ocean_all_types,
@@ -144,6 +165,9 @@ def main() -> int:
         test_measure_ocean_with_stub,
         test_measure_ocean_mock_smoke,
         test_measure_ocean_persona_in_system,
+        test_mcp_mbti_type_record,
+        test_mcp_personality_target_mock,
+        test_mcp_personality_faithful_score,
     ]
     for t in tests:
         t()

@@ -22,6 +22,7 @@ from sophia_mcp.audit import audited
 from tools.validate_attribution import run_validation
 
 ROOT = Path(__file__).resolve().parents[1]
+PERSONALITY_TYPES = ROOT / "data" / "personality_types.json"
 DOMAIN_DATA = {
     "philosophy": ROOT / "data" / "attributions.json",
     "psychology": ROOT / "data" / "psychology_concepts.json",
@@ -498,6 +499,60 @@ def enqueue_task(idempotency_key: str, kind: str, payload=None, role=None) -> di
 def next_task(lease_by: str = "worker") -> dict:
     """Lease the oldest pending task ({task: null} when the queue is empty)."""
     return _contract().next_task({"lease_by": lease_by})
+
+
+def mbti_type_record(type: str) -> dict:
+    """Lookup an MBTI type record from data/personality_types.json (read-only)."""
+    code = (type or "").strip().upper()
+    records = load_json(PERSONALITY_TYPES)
+    if code not in records:
+        return {"error": f"unknown MBTI type: {type!r}", "sampleIds": sorted(records.keys())[:16]}
+    return records[code]
+
+
+def personality_target(mbti: str, ocean: dict, prompt: str, *, model: str = "mock",
+                       gate: bool = True) -> dict:
+    """Generate a response steered toward a target personality (MBTI veneer +
+    OCEAN substrate). Level-1 persona prompting only (Spec A). Read-only."""
+    if not (prompt or "").strip():
+        return {"error": "prompt is required"}
+    code = (mbti or "").strip().upper()
+    from agent.personality_map import mbti_to_ocean, SIXTEEN_TYPES
+    if code and code not in SIXTEEN_TYPES:
+        return {"error": f"unknown MBTI type: {mbti!r}", "available": list(SIXTEEN_TYPES)}
+    target = dict(mbti_to_ocean(code)) if code else {}
+    target.pop("_meta", None)
+    target.update(ocean or {})  # explicit OCEAN overrides the veneer-derived signs
+    from agent.model import complete
+    system = ("Adopt this Big Five (OCEAN) profile in your voice "
+              f"(high/low per axis; Neuroticism unspecified unless given): {json.dumps(target, ensure_ascii=False)}.")
+    try:
+        response = complete(system, prompt, spec=model).strip()
+    except Exception as exc:  # offline/credential failure -> structured error
+        return {"error": f"generation failed: {exc!r}"}
+    out = {"mbti": code, "oceanTarget": target, "model": model, "response": response, "gated": bool(gate)}
+    if gate:
+        from agent.gate import check_response
+        verdict = check_response(response, mode="advisor", question=prompt)
+        out["gate"] = verdict
+        out["passed"] = bool(verdict.get("passed", True))
+    return out
+
+
+def personality_faithful_score(text: str, mbti: str, ocean: dict, *, model: str = "mock") -> dict:
+    """Score how faithfully `text` expresses a target personality. Deterministic
+    (no model call in Spec A); `model` reserved for the behavioral channel (Spec B)."""
+    if not (text or "").strip():
+        return {"error": "text is required"}
+    from agent.verifiers import personality_faithful
+    verdict = personality_faithful({"mbti": (mbti or "").strip().upper(), "ocean": ocean or {}})(text, None, {})
+    return {
+        "mbti": (mbti or "").strip().upper(),
+        "ocean": ocean or {},
+        "passed": verdict["passed"],
+        "status": verdict["detail"].get("status"),
+        "reasons": verdict["reasons"],
+    }
 
 
 def dumps(payload: dict) -> str:
