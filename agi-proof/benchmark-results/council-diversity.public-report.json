@@ -1,0 +1,73 @@
+{
+  "domain": "philosophy",
+  "single": {
+    "passrate": 0.0,
+    "n": 9,
+    "per_case": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "seat_families": [
+      "<homogeneous>"
+    ]
+  },
+  "homogeneous": {
+    "passrate": 0.0,
+    "n": 9,
+    "per_case": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "seat_families": [
+      "persona:O+C-"
+    ]
+  },
+  "diverse": {
+    "passrate": 0.0,
+    "n": 9,
+    "per_case": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "seat_families": [
+      "persona:E+A-",
+      "persona:E-A+",
+      "persona:O+C-",
+      "persona:O-C+"
+    ]
+  },
+  "dq": 0.0,
+  "dq_ci": [
+    0.0,
+    0.0
+  ],
+  "profiles": [
+    "O+C-",
+    "O-C+",
+    "E+A-",
+    "E-A+"
+  ],
+  "model": "mock",
+  "headline": "NULL: trait diversity does not improve council quality on this slice"
+}

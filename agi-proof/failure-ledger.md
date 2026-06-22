@@ -49,3 +49,17 @@ behavior-corroborated and capability-preserving — is **pre-registered and OPEN
 it requires a gated real run (Phi-3.5 on MPS + the Ollama-judged battery at
 N≥8/K≥20). `SSA = 0/N` would be a legitimate honest result. Thresholds are fixed
 in `agent/steering/stats.py:SSA_THRESHOLDS` before any run.
+
+## pif-headline-run-not-yet-gated-2026-06-23
+
+**Status:** OPEN. The Spec C PIF/SSA headline harness is built and its statistics
+invariants pass offline (`python tools/run_pif.py --dry-run` → `PIF HARNESS
+VERIFIED ✓`; `tests/test_pif_harness.py` green in CI, PASS 11). The live PIF
+headline claim — that at least one steering axis produces a BH-significant enacted
+cell (SSA enacted/total > 0/N) under the pre-registered grid N≥8/K≥20 — is
+**pre-registered and OPEN**: it requires a gated real run (Phi-3.5 on MPS + the
+Ollama-judged battery). `SSA = 0/N` is a legitimate honest result. Thresholds are
+fixed in `agent/steering/stats.py:SSA_THRESHOLDS` before any run. Anti-gaming
+contract enforced: `(fit_shift − held_shift) ≤ 0.20` and
+`heldoutOffTargetRate ≤ 0.10` must both hold on the sealed held-out split
+before any vector ships.
