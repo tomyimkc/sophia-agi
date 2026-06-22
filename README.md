@@ -22,7 +22,7 @@
 
 **Use it three ways:**
 
-- **As a governance gate for any AI pipeline** — a versioned MCP/Python contract your code pins against: `record_claim → verify_claim` returns `accepted | rejected | superseded | held`; **only `accepted` may be published** (fail-closed), with Bell-LaPadula classification, budget caps, and a kill switch. Drop it into LangGraph, the Claude Agent SDK, or n8n. → [CONTRACT.md](CONTRACT.md)
+- **As a governance gate for any AI pipeline** — a versioned MCP/Python contract your code pins against: `record_claim → verify_claim` returns `accepted | rejected | superseded | held`; **only `accepted` may be published** (fail-closed), with Bell-LaPadula classification, budget caps, and a kill switch. Drop it into LangGraph, the Claude Agent SDK, or n8n. → [CONTRACT.md](CONTRACT.md). Roadmap: the **super-MCP / super-skills** gateway that gates *any* tool → [docs/11-Platform/Sophia-Gateway.md](docs/11-Platform/Sophia-Gateway.md)
 - **As the spine of a one-person AI company** — 9 least-privilege role pipelines, an Obsidian vault that only publishes *accepted* notes, a durable task queue, an approve-by-exception review queue, and Langfuse traces. → `sophia_contract/`
 - **As an honest reasoning corpus + benchmark** — provenance-aware QA across philosophy, psychology, history, religion, under a no-overclaim measurement gate (≥2 judge families, κ, ≥3 runs, CI). → [RESULTS.md](RESULTS.md)
 
