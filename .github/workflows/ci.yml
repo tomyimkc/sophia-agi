@@ -26,6 +26,7 @@ jobs:
           python tests/test_okf.py
           python tests/test_wiki_tools.py
           python tests/test_verifiers.py
+          python tests/test_personality.py
           python tests/test_source_discipline_cli.py
           python tests/test_wiki_librarian.py
           python tests/test_wiki_mcp.py
