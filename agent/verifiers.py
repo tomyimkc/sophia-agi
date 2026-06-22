@@ -855,7 +855,7 @@ def personality_faithful(spec: "dict | None" = None) -> Verifier:
                 continue  # a correction/negation clause is allowed
             for pat in merges:
                 if re.search(pat, low, re.IGNORECASE):
-                    violations.append("framework-merge asserted")
+                    violations.append("pop-psych/cross-framework merge")
                     break
         if violations:
             return _fail([f"personality framework-merge asserted: {v}" for v in sorted(set(violations))],

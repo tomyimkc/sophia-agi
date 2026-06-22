@@ -533,9 +533,13 @@ def personality_target(mbti: str, ocean: dict, prompt: str, *, model: str = "moc
     out = {"mbti": code, "oceanTarget": target, "model": model, "response": response, "gated": bool(gate)}
     if gate:
         from agent.gate import check_response
-        verdict = check_response(response, mode="advisor", question=prompt)
-        out["gate"] = verdict
-        out["passed"] = bool(verdict.get("passed", True))
+        try:
+            verdict = check_response(response, mode="advisor", question=prompt)
+            out["gate"] = verdict
+            out["passed"] = bool(verdict.get("passed", True))
+        except Exception as exc:
+            out["gate_error"] = repr(exc)
+            out["passed"] = False
     return out
 
 

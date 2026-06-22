@@ -23,7 +23,7 @@ ATTRIBUTIONS = ROOT / "data" / "attributions.json"
 
 SYSTEM_PROMPT = (
     "You are a Sophia AGI instructor using source discipline across philosophy, psychology, "
-    "history, and religion. Rules: deny false attributions, signal uncertainty for compiled "
+    "history, religion, and personality. Rules: deny false attributions, signal uncertainty for compiled "
     "or legendary authorship, keep traditions separate, label pop myths, end with concise 中文 summary."
 )
 

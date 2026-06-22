@@ -393,8 +393,10 @@ def sophia_personality_faithful(
     ocean_json: str,
     model: str = "mock",
 ) -> str:
-    """Score how faithfully `text` expresses a target personality. Three-way:
-    enacted | contradicted | abstained. Read-only, deterministic."""
+    """Score how faithfully `text` expresses a target personality.
+    Returns contradicted (a pop-psych/cross-framework merge was asserted) or
+    abstained (no measured enactment channel). The 'enacted' verdict requires
+    target markers (deferred to Spec B). Read-only, deterministic."""
     try:
         ocean = json.loads(ocean_json) if ocean_json else {}
     except json.JSONDecodeError as exc:
