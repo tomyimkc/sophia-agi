@@ -22,8 +22,10 @@ def _offline_invariants() -> "tuple[bool, dict]":
         neu = [0.0] * K
         s = {"E": {"steer": steer, "base": base, "neutral": neu}}
         for ax in ("O", "C", "A"):
-            off_arr = [0.02 * rng.gauss(0, 1) for _ in range(K)]
-            s[ax] = {"steer": off_arr, "base": off_arr, "neutral": neu}
+            off_steer = [0.02 * rng.gauss(0, 1) for _ in range(K)]
+            off_base = [0.02 * rng.gauss(0, 1) for _ in range(K)]
+            off_neutral = list(off_steer)   # separate copy; cohen_d(steer, neutral)=0 by construction
+            s[ax] = {"steer": off_steer, "base": off_base, "neutral": off_neutral}
         s["kappa"], s["coherence"], s["capability_drop"] = 0.6, 90.0, 0.02
         return s
     grid = [{"cell_id": "strong", "target_axis": "E", "off_target_axes": ["O", "C", "A"], "is_mock": False, "seed": 1},

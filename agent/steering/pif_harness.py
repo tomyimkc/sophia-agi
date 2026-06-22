@@ -20,7 +20,7 @@ def build_cells_from_scores(scores: dict, grid: "list[dict]") -> "list[dict]":
         delta_point = statistics.fmean([a - b for a, b in zip(steer_t, base_t)]) if steer_t else 0.0
         p_raw = bootstrap_diff_p(steer_t, base_t, seed=seed)
         steered_d = abs(residualized_d(steer_t, {ax: s[ax]["steer"] for ax in g["off_target_axes"]}))
-        off_target_d = {ax: cohen_d(s[ax]["steer"], s[ax]["base"]) for ax in g["off_target_axes"]}
+        off_target_d = {ax: cohen_d(s[ax]["steer"], s[ax]["neutral"]) for ax in g["off_target_axes"]}
         cell = {"cell_id": cid, "delta_ci": delta_ci, "delta_point": delta_point,
                 "steered_d": steered_d, "off_target_d": off_target_d, "kappa": s["kappa"],
                 "capability_drop": s["capability_drop"], "coherence": s["coherence"],

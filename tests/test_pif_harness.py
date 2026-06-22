@@ -52,10 +52,12 @@ def _planted(kind):
         steer = [0.2 + 0.05 * rng.gauss(0, 1) for _ in range(K)]
         base = [0.2 + 0.05 * rng.gauss(0, 1) for _ in range(K)]
     neutral = [0.0 for _ in range(K)]
-    off = {ax: [0.02 * rng.gauss(0, 1) for _ in range(K)] for ax in ("O", "C", "A")}
     s = {"E": {"steer": steer, "base": base, "neutral": neutral}}
-    for ax, arr in off.items():
-        s[ax] = {"steer": arr, "base": arr, "neutral": neutral}
+    for ax in ("O", "C", "A"):
+        off_steer = [0.02 * rng.gauss(0, 1) for _ in range(K)]
+        off_base = [0.02 * rng.gauss(0, 1) for _ in range(K)]
+        off_neutral = list(off_steer)   # separate copy; cohen_d(steer, neutral)=0 by construction
+        s[ax] = {"steer": off_steer, "base": off_base, "neutral": off_neutral}
     s["kappa"] = 0.6; s["coherence"] = 90.0; s["capability_drop"] = 0.02
     return s
 
@@ -74,7 +76,7 @@ def test_headline_bh_kills_borderline() -> None:
     cells = [{"cell_id": "a", "p_raw": 0.04, "verdict": {"status": "enacted"}},
              {"cell_id": "b", "p_raw": 0.9, "verdict": {"status": "enacted"}}]
     h = pif.headline(cells, q=0.05)
-    assert h["total"] == 2 and 0 <= h["enacted"] <= 2
+    assert h["total"] == 2 and h["enacted"] == 0
     assert "enacted_over_total" in h
 
 
