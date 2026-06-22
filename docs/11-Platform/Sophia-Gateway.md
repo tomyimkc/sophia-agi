@@ -9,9 +9,11 @@
 > **One-line positioning:** *"The governance gateway that makes any AI skill or MCP
 > server safe, verifiable, and self-improving."*
 
-Status: **design spec + P0 MVP shipped.** The `gateway/` package implements P0 (federate
-in-process tools + the fail-closed intercept pipeline); `tools/run_gateway_demo.py` +
-`tests/test_gateway.py` (12 acceptance checks) run it in CI. P1–P5 below remain the plan.
+Status: **design spec + P0–P5 shipped.** The `gateway/` package implements the full
+roadmap: the fail-closed intercept pipeline + firewall, downstream-MCP federation,
+verifiable skills + Universal Verify, the Knowledge MCP + reliability registry,
+self-improving/synthesized skills, and verified consensus. `tools/run_gateway_demo.py` +
+`tests/test_gateway.py` (12 P0 checks) + `tests/test_gateway_roadmap.py` (P1–P5) run in CI.
 
 ---
 
@@ -203,11 +205,11 @@ Reuses unchanged: `record_claim`, `verify_claim`, `health`, `enqueue_task`, `nex
 | Phase | Scope | Falsifiable acceptance (offline, deterministic) |
 |---|---|---|
 | **P0 — Gateway MVP** ✅ **DONE** | registry + interceptor + dispatcher + verify-router over in-process tools; stages 1,3,4,5,6,7,8,9 | ✅ low-risk grounded read → `accepted` + provenance_id; ungrounded → `held(no_source)`, **raw withheld**; env-verify pass/fail → accepted/rejected; SECRET tool → `held(blp_violation)`; out-of-scope role → `UNAUTHENTICATED`; kill switch → `UNAVAILABLE`; budget → `held(over_budget)`; dry-run write → `held(needs_human)` (not executed) — all in `tests/test_gateway.py` |
-| **P1 — Firewall + risk tiers** | stage 2 + `risk_tier` auto/escalate | a tool description with an injection marker → quarantined (`high`, blocked); a clean call passes; high-risk tool → `held(needs_human)` |
-| **P2 — Provenance-stamp + Universal Verify + Verifiable Skill** | stages 7/9 full; `verify()`; skill format | tool output re-entering context carries `provenance_id`; `verify()` routes arithmetic→env, claim→grounding; a skill whose verifier rejects does not ship |
-| **P3 — Reliability registry + Knowledge MCP** | competence/calibration/ROI per tool; OKF KB exposed | `list_tools` ranks by measured reliability; a flaky tool's reliability drops and routing avoids it |
-| **P4 — Self-improving + synthesized skills** | flywheel per skill; synth-on-demand | a skill's coverage rises run-over-run (false-accept ≤ bound); an unservable task yields a validated new skill or stays abstained |
-| **P5 — Verified-consensus MCP** | councils as a service | a contested output is adjudicated by verifier with κ reported, not majority vote |
+| **P1 — Firewall + risk tiers** ✅ **DONE** | stage 2 + `risk_tier` auto/escalate | a tool description with an injection marker → quarantined (`high`, blocked); a clean call passes; high-risk tool → `held(needs_human)` |
+| **P2 — Provenance-stamp + Universal Verify + Verifiable Skill** ✅ **DONE** | stages 7/9 full; `verify()`; skill format | tool output re-entering context carries `provenance_id`; `verify()` routes arithmetic→env, claim→grounding; a skill whose verifier rejects does not ship |
+| **P3 — Reliability registry + Knowledge MCP** ✅ **DONE** | competence/calibration/ROI per tool; OKF KB exposed | `list_tools` ranks by measured reliability; a flaky tool's reliability drops and routing avoids it |
+| **P4 — Self-improving + synthesized skills** ✅ **DONE** | flywheel per skill; synth-on-demand | a skill's coverage rises run-over-run (false-accept ≤ bound); an unservable task yields a validated new skill or stays abstained |
+| **P5 — Verified-consensus MCP** ✅ **DONE** | councils as a service | a contested output is adjudicated by verifier with κ reported, not majority vote |
 
 ---
 

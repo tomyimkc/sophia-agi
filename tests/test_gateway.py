@@ -116,7 +116,7 @@ def test_competence_and_list_tools() -> None:
     gw.call_tool("kb.lookup", {"q": "dao"})               # accepted -> reliability up
     tools = {t["tool_id"]: t for t in gw.list_tools()}
     assert "kb.lookup" in tools and tools["kb.lookup"]["reliability"] >= 0.5
-    assert gw.describe()["capabilities"] == ["gateway_describe", "list_tools", "call_tool"]
+    assert {"gateway_describe", "list_tools", "call_tool"}.issubset(set(gw.describe()["capabilities"]))
 
 
 def main() -> int:
