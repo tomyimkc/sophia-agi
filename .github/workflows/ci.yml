@@ -81,6 +81,7 @@ jobs:
         run: |
           python tests/test_selfextend.py
           python tools/run_selfextend.py
+          python tools/run_selfextend_loop.py
       - name: Runtime policies + model-in-loop + dataset fetcher (offline)
         run: |
           python tests/test_policies.py

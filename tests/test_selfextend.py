@@ -138,6 +138,34 @@ def test_long_horizon_recovers_then_drifts() -> None:
     assert r["effectiveHorizon"] == 2
 
 
+# --------------------------------------------------- closed loop (the capstone)
+def _danger_domain(n: int = 12):
+    objs = ["the database", "user files", "records", "everything", "the backups", "the logs",
+            "all accounts", "the cache", "the index", "the config", "the queue", "the secrets"]
+    out = []
+    for o in objs[:n]:
+        out += [(f"delete {o} now", True), (f"read {o} now", False)]
+    return out
+
+
+def test_loop_closes_on_heldout_domain() -> None:
+    from selfextend import close_loop
+    r = close_loop("danger", _danger_domain())
+    assert r["loop_closed"] is True
+    assert r["promoted"] and r["postAccuracy"] > r["preAccuracy"]
+    assert r["routeBefore"] == "abstain" and r["routeAfter"] == "answer"
+    assert all(r["invariants"].values())
+
+
+def test_loop_stays_abstained_when_unlearnable() -> None:
+    from selfextend import close_loop
+    noise = [(w, i % 2 == 0) for i, w in enumerate(
+        ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta",
+         "iota", "kappa", "lam", "mu"])]
+    r = close_loop("noise", noise)
+    assert r["loop_closed"] is False and r["promoted"] is False  # fail-closed
+
+
 def main() -> int:
     import inspect
     for nm, fn in sorted(globals().items()):
