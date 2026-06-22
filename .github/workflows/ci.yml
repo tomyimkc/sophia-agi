@@ -43,6 +43,8 @@ jobs:
           python tests/test_guarded.py
           python tests/test_mcp_check_claim.py
           python tests/test_okf_belief.py
+          python tests/test_okf_counterfactual.py
+          python tools/belief_counterfactual.py remove chemical_imbalance_slogan >/dev/null
           python tests/test_best_of.py
           python tests/test_memory_recall_confidence.py
           python tests/test_mcp_belief.py

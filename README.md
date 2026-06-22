@@ -8,7 +8,7 @@
 
 **Wisdom before intelligence.** An open corpus, benchmark, and **verifier-gated reasoning loop** for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea*, and **refusing to assert what it cannot machine-check**.
 
-> **Scope, stated plainly.** This is a research program for *grounded, machine-checked* reasoning — **not a claim of AGI**. It pre-registers AGI thresholds and measures itself against them honestly; **those thresholds are not met**. The deliverable is the honest machinery — verifiers, an abstaining loop, and a no-overclaim measurement gate — not the label. Every public number must clear that gate ([SECURITY.md](SECURITY.md), [RESULTS.md](RESULTS.md)).
+> **Scope, stated plainly.** This is a research program for *grounded, machine-checked* reasoning — **not a claim of AGI**. It pre-registers AGI thresholds and measures itself against them honestly; **those thresholds are not met**. The deliverable is the honest machinery — verifiers, an abstaining loop, and a no-overclaim measurement gate — not the label. Every public number must clear that gate ([SECURITY.md](SECURITY.md), [RESULTS.md](RESULTS.md)). The mission and design commitments are stated in [VISION.md](VISION.md).
 
 **Thesis site:** https://tomyimkc.github.io/sophia-agi/
 
@@ -42,7 +42,10 @@ belief graph** — because Sophia's differentiator, *source discipline*, literal
 frontmatter (`authorConfidence`, `doNotAttributeTo`, `doNotMergeWith`, `tradition`).
 
 - **`okf/`** — dependency-free package: frontmatter codec, schema, wikilinks, a belief
-  **graph** with contradiction detection + min-over-chain confidence propagation.
+  **graph** with contradiction detection + min-over-chain confidence propagation, plus
+  **counterfactual queries** (*"what would I conclude if this source were removed?"*) and
+  first-class, auditable **retraction** (`okf/counterfactual.py`,
+  `tools/belief_counterfactual.py`).
 - **Provenance gate** (`agent/verifiers.py:provenance_faithful`) — encodes "never merge
   lineages" as a hard, machine-checked verifier (catches "Confucius wrote the Dao De Jing"
   across many phrasings; passes the dispute pages that *correctly debunk* such merges).
