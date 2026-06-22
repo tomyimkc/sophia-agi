@@ -1,5 +1,5 @@
 {
-  "version": "0.7.39",
+  "version": "0.7.40",
   "trainingExamples": 527,
   "domains": [
     "philosophy",
@@ -28,6 +28,12 @@
         },
         {
           "model": "deepseek",
+          "score_pct": 100.0,
+          "passed": 9,
+          "total": 9
+        },
+        {
+          "model": "gpt-4o (api.llmhub.com.cn)",
           "score_pct": 100.0,
           "passed": 9,
           "total": 9
@@ -68,6 +74,12 @@
           "model": "deepseek",
           "score_pct": 100.0,
           "passed": 9,
+          "total": 9
+        },
+        {
+          "model": "gpt-4o (api.llmhub.com.cn)",
+          "score_pct": 77.8,
+          "passed": 7,
           "total": 9
         },
         {
@@ -115,6 +127,12 @@
           "total": 8
         },
         {
+          "model": "gpt-4o (api.llmhub.com.cn)",
+          "score_pct": 62.5,
+          "passed": 5,
+          "total": 8
+        },
+        {
           "model": "sophia-v1",
           "score_pct": 100.0,
           "passed": 5,
@@ -150,6 +168,12 @@
           "model": "deepseek",
           "score_pct": 50.0,
           "passed": 3,
+          "total": 6
+        },
+        {
+          "model": "gpt-4o (api.llmhub.com.cn)",
+          "score_pct": 16.7,
+          "passed": 1,
           "total": 6
         },
         {
