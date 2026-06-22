@@ -114,6 +114,7 @@ class _Rng:
 
 
 from agent import personality_behavioral as beh  # noqa: E402
+from provenance_bench import steering_dataset as sds  # noqa: E402
 
 
 def _stub_complete(system, user, *, spec=None, **kw):
@@ -159,6 +160,17 @@ def test_behavioral_veneer_invariant() -> None:
     assert a["trait_d"] == b["trait_d"] and a["trait_d"] > 0.5  # meaningful + deterministic
 
 
+def test_steering_split_is_contamination_free() -> None:
+    split = sds.build_steering_split(eval_frac=0.4, seed=0)
+    assert split["item_intersection"] == []          # no item on both sides
+    ex = {it["id"] for it in split["extract_items"]}
+    me = {it["id"] for it in split["measure_items"]}
+    assert ex and me and ex.isdisjoint(me)
+    # deterministic + drift-sealed
+    again = sds.build_steering_split(eval_frac=0.4, seed=0)
+    assert again["extract_sealed"] == split["extract_sealed"]
+
+
 def main() -> int:
     tests = [
         test_normalize_unit_length,
@@ -174,6 +186,7 @@ def main() -> int:
         test_judge_score_parses_json,
         test_score_behavioral_distinguishes_steered,
         test_behavioral_veneer_invariant,
+        test_steering_split_is_contamination_free,
     ]
     for t in tests:
         t()
