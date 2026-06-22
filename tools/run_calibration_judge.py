@@ -42,7 +42,7 @@ MODES = ("sophia-full", "raw-model", "raw-model-plus-tools")
 def _judge_fn(spec: str):
     from agent.model import complete
 
-    return lambda prompt: complete("You are a strict evaluator.", prompt, spec=spec, max_tokens=8)
+    return lambda prompt: complete("You are a strict evaluator.", prompt, spec=spec, max_tokens=24)
 
 
 def main(argv: "list[str] | None" = None) -> int:
