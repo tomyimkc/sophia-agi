@@ -76,10 +76,33 @@ def test_dry_run_cell():
                          "capability_drop", "coherence", "retains"}
 
 
+def test_mcp_impls():
+    from sophia_mcp.tools_impl import (
+        ocean_measure, capability_retention_demo,
+        council_diversity_summary, pif_dryrun_summary,
+    )
+    # ocean_measure: a full set of mid answers returns 5 OCEAN domains
+    from agent.personality_measure import load_bank
+    bank = load_bank()
+    answers = {it["id"]: 3 for it in bank["items"]}
+    om = ocean_measure(answers)
+    # score_items returns {acquiescence_index, dimensions, missing}; OCEAN is under dimensions
+    assert set(om["ocean"]["dimensions"]) == {"O", "C", "E", "A", "N"}
+
+    cr = capability_retention_demo()
+    assert "capability_drop" in cr and cr["retains"] is False
+
+    cd = council_diversity_summary()
+    assert "dqValues" in cd or "dq" in cd       # the committed C report
+
+    pf = pif_dryrun_summary()
+    assert "enacted" in pf and "cells" in pf
+
+
 def main():
     tests = [test_extract_final_number, test_answer_correct, test_coherence_proxy,
              test_score_response, test_capability_cell_drop_and_retain,
-             test_dry_run_cell]
+             test_dry_run_cell, test_mcp_impls]
     for t in tests:
         t()
     print(f"PASS {len(tests)} capability tests")
