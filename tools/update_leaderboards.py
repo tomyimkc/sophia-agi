@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "benchmark" / "results"
 REF = ROOT / "benchmark" / "reference"
 RUNS = ROOT / "benchmark" / "model_runs"
-DOMAINS = ("philosophy", "psychology", "history", "religion")
+DOMAINS = ("philosophy", "psychology", "history", "religion", "personality")
 
 
 def load_report(path: Path) -> dict | None:

@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB_DATA = ROOT / "web" / "data" / "manifest.json"
-DOMAINS = ("philosophy", "psychology", "history", "religion")
+DOMAINS = ("philosophy", "psychology", "history", "religion", "personality")
 
 
 def _rag_chunk_count() -> int:

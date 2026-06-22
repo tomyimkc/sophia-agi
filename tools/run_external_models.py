@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 OUT_DIR = ROOT / "benchmark" / "model_runs"
-DOMAINS = ("philosophy", "psychology", "history", "religion")
+DOMAINS = ("philosophy", "psychology", "history", "religion", "personality")
 
 MONICA_BASE_URL = "https://openapi.monica.im/v1"
 

@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNS = ROOT / "benchmark" / "model_runs"
-DOMAINS = ("philosophy", "psychology", "history", "religion")
+DOMAINS = ("philosophy", "psychology", "history", "religion", "personality")
 SCORE = ROOT / "tools" / "score_benchmark.py"
 
 

@@ -27,7 +27,7 @@ SYSTEM_PROMPT = (
     "or legendary authorship, keep traditions separate, label pop myths, end with concise 中文 summary."
 )
 
-DOMAINS = ("philosophy", "psychology", "history", "religion")
+DOMAINS = ("philosophy", "psychology", "history", "religion", "personality")
 
 
 def load_json(path: Path) -> dict:

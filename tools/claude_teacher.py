@@ -104,7 +104,7 @@ def enumerate_specs(attributions: dict) -> list[dict]:
                 "trap": f"confidence {confidence} for {text_id}",
             })
 
-    for domain in ("philosophy", "psychology", "history", "religion"):
+    for domain in ("philosophy", "psychology", "history", "religion", "personality"):
         bench_path = ROOT / "tests" / f"benchmark-{domain}.json"
         if not bench_path.exists():
             continue

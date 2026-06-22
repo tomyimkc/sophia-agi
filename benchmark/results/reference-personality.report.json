@@ -1,0 +1,25 @@
+{
+  "domain": "personality",
+  "version": 1,
+  "passed": 3,
+  "total": 3,
+  "score_pct": 100.0,
+  "results": [
+    {
+      "id": "express_high_extraversion",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "express_high_openness",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "mbti_is_not_big_five",
+      "passed": true,
+      "reasons": []
+    }
+  ],
+  "model": "sophia-teacher-reference"
+}

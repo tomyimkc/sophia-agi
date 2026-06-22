@@ -22,7 +22,7 @@ if str(ROOT) not in sys.path:
 EXAMPLES = ROOT / "training" / "examples"
 BENCH_DIR = ROOT / "tests"
 OUT_DIR = ROOT / "training" / "lora"
-DOMAINS = ("philosophy", "psychology", "history", "religion")
+DOMAINS = ("philosophy", "psychology", "history", "religion", "personality")
 
 
 def load_benchmark_ids() -> set[str]:
