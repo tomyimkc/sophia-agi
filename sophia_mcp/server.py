@@ -22,6 +22,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     check_claim,
     corpus_stats,
     council_deliberate,
+    counterfactual,
     dumps,
     export_corpus,
     gate_check,
@@ -30,6 +31,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     list_disputes,
     openclaw_infer,
     read_dispute,
+    retract,
     rubric_review,
     sector_council,
     validate_corpus,
@@ -99,6 +101,23 @@ def sophia_belief(entity: str) -> str:
     (min over the derivesFrom chain), declared confidence, attribution, and a
     confidenceLaundered flag. Read-only."""
     return dumps(belief(entity))
+
+
+@mcp.tool()
+def sophia_counterfactual(source: str, query: str | None = None) -> str:
+    """Counterfactual belief-graph query: "what would I conclude if this source
+    were removed?" Returns affected claims with grounding before/after and a
+    supportLost list (claims that lose their only ground — fail-closed). Optional
+    query isolates one entity's before/after belief. Read-only, non-destructive."""
+    return dumps(counterfactual(source, query=query))
+
+
+@mcp.tool()
+def sophia_retract(target: str, reason: str, by: str = "system") -> str:
+    """Retract a claim: a named, auditable decision that computes downstream
+    impact (which claims lose support) and returns an append-only audit entry.
+    Non-destructive — no page is deleted. Read-only over the live graph."""
+    return dumps(retract(target, reason, by=by))
 
 
 @mcp.tool()

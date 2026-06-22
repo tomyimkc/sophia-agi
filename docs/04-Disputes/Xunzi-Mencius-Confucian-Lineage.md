@@ -3,6 +3,7 @@ id: xunzi_mencius_confucian_lineage
 pageType: dispute
 domain: philosophy
 links: [xunzi, mencius, analects]
+derivesFrom: [xunzi, mencius]
 sources: [data/attributions.json]
 contradicts: []
 ---

@@ -3,6 +3,7 @@ id: laozi_dao_de_jing_attribution
 pageType: dispute
 domain: philosophy
 links: [dao_de_jing, analects, republic]
+derivesFrom: [dao_de_jing]
 sources: [data/attributions.json]
 contradicts: []
 ---

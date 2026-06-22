@@ -3,6 +3,7 @@ id: analects_compiled_not_autograph
 pageType: dispute
 domain: philosophy
 links: [analects]
+derivesFrom: [analects]
 sources: [data/attributions.json]
 contradicts: []
 ---

@@ -3,6 +3,7 @@ id: aristotle_plato_corpus_boundary
 pageType: dispute
 domain: philosophy
 links: [metaphysics, nicomachean_ethics, republic, symposium]
+derivesFrom: [metaphysics, nicomachean_ethics]
 sources: [data/attributions.json]
 contradicts: []
 ---

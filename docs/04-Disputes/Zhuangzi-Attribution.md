@@ -3,6 +3,7 @@ id: zhuangzi_attribution
 pageType: dispute
 domain: philosophy
 links: [zhuangzi, dao_de_jing]
+derivesFrom: [zhuangzi]
 sources: [data/attributions.json]
 contradicts: []
 ---

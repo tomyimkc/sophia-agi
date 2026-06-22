@@ -3,6 +3,7 @@ id: mencius_attribution
 pageType: dispute
 domain: philosophy
 links: [mencius, analects]
+derivesFrom: [mencius]
 sources: [data/attributions.json]
 contradicts: []
 ---

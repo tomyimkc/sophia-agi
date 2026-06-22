@@ -3,6 +3,7 @@ id: stoic_enchiridion_authorship
 pageType: dispute
 domain: philosophy
 links: [enchiridion, meditations]
+derivesFrom: [enchiridion]
 sources: [data/attributions.json]
 contradicts: []
 ---
