@@ -50,6 +50,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     wiki_upsert,
     wiki_validate_tool,
 )
+from sophia_mcp import boundary, gateway_wiring  # noqa: E402
 
 try:
     from mcp.server.fastmcp import FastMCP
@@ -81,6 +82,8 @@ def sophia_corpus_stats() -> str:
 @mcp.tool()
 def sophia_export_corpus() -> str:
     """Export training/examples/*.json to training/corpus.jsonl."""
+    if boundary.gateway_enabled():
+        return dumps(gateway_wiring.governed("sophia_export_corpus", {}))
     return dumps(export_corpus())
 
 
@@ -192,7 +195,10 @@ def sophia_web_evidence_search(
     local_top_k: int = 3,
 ) -> str:
     """Search Sophia local RAG plus optional Brave/Tavily/SerpAPI web evidence."""
-    return dumps(web_evidence_search(query, online=online, provider=provider, top_k=top_k, local_top_k=local_top_k))
+    args = {"query": query, "online": online, "provider": provider, "top_k": top_k, "local_top_k": local_top_k}
+    if boundary.gateway_enabled():
+        return dumps(gateway_wiring.governed("sophia_web_evidence_search", args))
+    return dumps(web_evidence_search(**args))
 
 
 @mcp.tool()
@@ -221,16 +227,27 @@ def sophia_sector_council(
 def sophia_council_deliberate(
     query: str,
     model: str = "mock",
+    models_json: str = "[]",
     max_seats: int = 4,
     gate: bool = True,
 ) -> str:
     """Deliberate a query across a council: a focused pass per seat, a per-seat gate,
     then synthesis (map-reduce). The small-LLM uplift — narrow gated passes beat one
     shallow pass. `model` is a Sophia model spec (mock|ollama:..|openrouter:..|..).
-    Returns per-seat answers, which seats were gated out, and the synthesised
-    decision. Decision support only — not professional advice.
+
+    `models_json` is an optional JSON array of model specs; when given, the seats are
+    seated as a HETEROGENEOUS panel (different model per seat = independent voters)
+    instead of one model wearing N hats. Returns per-seat answers, which seats were
+    gated out, and the synthesised decision. Decision support only — not advice.
     """
-    return dumps(council_deliberate(query, model=model, max_seats=max_seats, gate=gate))
+    try:
+        models = json.loads(models_json or "[]")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid models_json: {exc}"})
+    if not isinstance(models, list):
+        return dumps({"error": "models_json must be a JSON array"})
+    return dumps(council_deliberate(query, model=model, models=models or None,
+                                    max_seats=max_seats, gate=gate))
 
 
 @mcp.tool()
@@ -290,8 +307,13 @@ def sophia_wiki_upsert(page_id: str, frontmatter_json: str = "{}", body: str = "
 
     Mutating: needs SOPHIA_MCP_APPROVE_WRITES=1. The write only lands if it passes
     the source-discipline gate (schema-valid + no forbidden attribution/lineage merge).
+    With SOPHIA_MCP_GATEWAY=1 the call is additionally routed through the fail-closed
+    gateway (authz/BLP/firewall/kill-switch) before any write is attempted.
     """
-    return dumps(wiki_upsert(page_id, frontmatter_json=frontmatter_json, body=body, tier=tier))
+    args = {"page_id": page_id, "frontmatter_json": frontmatter_json, "body": body, "tier": tier}
+    if boundary.gateway_enabled():
+        return dumps(gateway_wiring.governed("sophia_wiki_upsert", args))
+    return dumps(wiki_upsert(**args))
 
 
 @mcp.tool()
@@ -302,7 +324,10 @@ def sophia_openclaw_infer(prompt: str, model: str = "xai/grok-4.3") -> str:
     pure inference and NOT a knowledge-write path — OpenClaw output only enters the wiki
     via sophia_wiki_upsert and the source-discipline gate (no lineage merge can be written).
     """
-    return dumps(openclaw_infer(model=model, prompt=prompt))
+    args = {"model": model, "prompt": prompt}
+    if boundary.gateway_enabled():
+        return dumps(gateway_wiring.governed("sophia_openclaw_infer", args))
+    return dumps(openclaw_infer(**args))
 
 
 # --------------------------------------------------------------------------- #
