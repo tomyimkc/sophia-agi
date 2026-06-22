@@ -21,6 +21,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -50,8 +51,9 @@ PROVIDERS: dict[str, tuple[str, str]] = {
     "grok": ("x-ai/grok-3-beta", "XAI_API_KEY"),
     "gemini": ("gemini-2.0-flash", "GOOGLE_API_KEY"),
     "deepseek": ("deepseek-chat", "DEEPSEEK_API_KEY"),
-    # Local Grok CLI (grok.com login) — no API key; never auto-detected, request explicitly.
-    "grok-cli": ("grok-composer-2.5-fast", "GROK_CLI"),
+    # Local Grok CLI (grok.com login) — no API key; uses GROK_BIN/GROK_MODEL, not a
+    # secret. Never auto-detected; request explicitly with --providers grok-cli.
+    "grok-cli": ("grok-composer-2.5-fast", "GROK_BIN"),
 }
 
 
@@ -219,16 +221,26 @@ def ask_deepseek_native(question: str, model: str) -> str:
     )
 
 
+def _usable_binary(path: Path) -> bool:
+    """A runnable file: exists, is a regular file, and is executable."""
+    return path.is_file() and os.access(path, os.X_OK)
+
+
 def grok_cli_bin() -> str | None:
-    """Locate the Grok CLI: $GROK_BIN, then PATH, then ~/.grok/bin/grok."""
+    """Locate a runnable Grok CLI: $GROK_BIN, then PATH, then ~/.grok/bin/grok.
+
+    Requires an executable file (not just an existing path) so a misconfigured
+    GROK_BIN fails here with a clear message instead of deep inside subprocess.
+    """
     explicit = os.environ.get("GROK_BIN", "").strip()
-    if explicit and Path(explicit).exists():
-        return explicit
+    if explicit:
+        candidate = Path(explicit).expanduser()
+        return str(candidate) if _usable_binary(candidate) else None
     found = shutil.which("grok")
     if found:
         return found
     fallback = Path.home() / ".grok" / "bin" / "grok"
-    return str(fallback) if fallback.exists() else None
+    return str(fallback) if _usable_binary(fallback) else None
 
 
 def ask_grok_cli(question: str, model: str) -> str:
@@ -261,14 +273,17 @@ def ask_grok_cli(question: str, model: str) -> str:
         "--no-subagents",
         "--disable-web-search",
         "--cwd",
-        "/tmp",  # neutral dir: no repo files to read (fair external-model comparison)
+        tempfile.gettempdir(),  # neutral, cross-platform dir: no repo files to read
         "--system-prompt-override",
         system,
     ]
     proc = subprocess.run(command, text=True, capture_output=True, timeout=420, check=False)
     answer = re.sub(r"\x1b\[[0-9;]*m", "", proc.stdout).strip()
+    # Fail fast on a non-zero exit so a CLI error never gets saved as a "response".
+    if proc.returncode != 0:
+        raise RuntimeError(f"Grok CLI exited {proc.returncode}: {proc.stderr.strip()[-300:]}")
     if not answer:
-        raise RuntimeError(f"Grok CLI returned no text (rc={proc.returncode}): {proc.stderr[-300:]}")
+        raise RuntimeError(f"Grok CLI returned no text (rc={proc.returncode}): {proc.stderr.strip()[-300:]}")
     return answer
 
 
@@ -406,6 +421,9 @@ def run_provider(provider: str, domain: str) -> Path | None:
         print(f"  skip unknown provider: {provider}")
         return None
     if not provider_available(provider):
+        if provider == "grok-cli":
+            print("  skip grok-cli: Grok CLI not found (set GROK_BIN or install `grok`)")
+            return None
         _, env_name = PROVIDERS[provider]
         alias = " or CLAUDE_API_KEY" if env_name == "ANTHROPIC_API_KEY" else ""
         print(f"  skip {provider}: set {env_name}{alias} or MONICA_API_KEY in .env")
