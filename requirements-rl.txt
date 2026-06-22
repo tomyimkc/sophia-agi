@@ -6,7 +6,7 @@ transformers>=4.46.2
 trl>=0.16
 peft>=0.19.1
 datasets>=2.18
-accelerate>=0.28
+accelerate>=1.14.0
 bitsandbytes>=0.43; platform_system != "Darwin"
 # vLLM is an optional extra (fast generation). Required for --vllm server|colocate;
 # NOT supported on macOS. Omit for --vllm none (slow native generation).
