@@ -17,6 +17,8 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
+import shutil
 import subprocess
 import sys
 import urllib.error
@@ -48,6 +50,8 @@ PROVIDERS: dict[str, tuple[str, str]] = {
     "grok": ("x-ai/grok-3-beta", "XAI_API_KEY"),
     "gemini": ("gemini-2.0-flash", "GOOGLE_API_KEY"),
     "deepseek": ("deepseek-chat", "DEEPSEEK_API_KEY"),
+    # Local Grok CLI (grok.com login) — no API key; never auto-detected, request explicitly.
+    "grok-cli": ("grok-composer-2.5-fast", "GROK_CLI"),
 }
 
 
@@ -123,6 +127,7 @@ def model_override(provider: str, default: str) -> str:
         "grok": "XAI_MODEL",
         "gemini": "GEMINI_MODEL",
         "deepseek": "DEEPSEEK_MODEL",
+        "grok-cli": "GROK_MODEL",
     }
     return os.environ.get(env_map.get(provider, ""), default)
 
@@ -214,6 +219,59 @@ def ask_deepseek_native(question: str, model: str) -> str:
     )
 
 
+def grok_cli_bin() -> str | None:
+    """Locate the Grok CLI: $GROK_BIN, then PATH, then ~/.grok/bin/grok."""
+    explicit = os.environ.get("GROK_BIN", "").strip()
+    if explicit and Path(explicit).exists():
+        return explicit
+    found = shutil.which("grok")
+    if found:
+        return found
+    fallback = Path.home() / ".grok" / "bin" / "grok"
+    return str(fallback) if fallback.exists() else None
+
+
+def ask_grok_cli(question: str, model: str) -> str:
+    """Answer via the local Grok CLI (single-turn, no tools, neutral cwd) so the run
+    is comparable to the keyed API providers — model knowledge only, no repo access."""
+    binary = grok_cli_bin()
+    if not binary:
+        raise RuntimeError("Grok CLI not found (set GROK_BIN or install `grok`)")
+    # grok-composer is agentic: with too few turns it emits only a "let me check
+    # sources" preamble and never answers. Forbid tools + preamble and give it room
+    # to produce the final answer from its own knowledge (fair, no repo/web access).
+    system = (
+        SYSTEM
+        + "\n\nYou are answering a sealed benchmark from your OWN knowledge only. "
+        "Do NOT use tools, web search, file reads, or shell. Do NOT say you will "
+        "'check', 'look up', or 'verify' anything. Output the complete final answer "
+        "immediately in this message."
+    )
+    command = [
+        binary,
+        "-p",
+        question,
+        "--model",
+        model,
+        "--output-format",
+        "plain",
+        "--max-turns",
+        "8",
+        "--no-plan",
+        "--no-subagents",
+        "--disable-web-search",
+        "--cwd",
+        "/tmp",  # neutral dir: no repo files to read (fair external-model comparison)
+        "--system-prompt-override",
+        system,
+    ]
+    proc = subprocess.run(command, text=True, capture_output=True, timeout=420, check=False)
+    answer = re.sub(r"\x1b\[[0-9;]*m", "", proc.stdout).strip()
+    if not answer:
+        raise RuntimeError(f"Grok CLI returned no text (rc={proc.returncode}): {proc.stderr[-300:]}")
+    return answer
+
+
 def ask_gpt_native(question: str, model: str) -> str:
     """GPT via any OpenAI-compatible endpoint (default api.openai.com, or OPENAI_BASE_URL
     for a gateway). urllib only — no `openai` package dependency."""
@@ -260,6 +318,9 @@ def ask_provider(provider: str, question: str) -> str:
     gateway_model, _ = PROVIDERS[provider]
     model = model_override(provider, gateway_model)
 
+    if provider == "grok-cli":
+        return ask_grok_cli(question, model)
+
     direct = direct_api_key(provider)
     if direct:
         if provider == "gpt-4o":
@@ -289,12 +350,16 @@ def ask_provider(provider: str, question: str) -> str:
 
 
 def provider_available(provider: str) -> bool:
+    if provider == "grok-cli":
+        return grok_cli_bin() is not None
     if provider == "gemini":
         return bool(google_api_key())
     return bool(direct_api_key(provider) or monica_api_key())
 
 
 def run_label(provider: str) -> str:
+    if provider == "grok-cli":
+        return f"{model_override(provider, PROVIDERS[provider][0])} (grok-cli)"
     if direct_api_key(provider):
         if provider == "claude-sonnet" and anthropic_base_url():
             host = anthropic_base_url().replace("https://", "").replace("http://", "")
@@ -311,7 +376,8 @@ def run_label(provider: str) -> str:
 
 
 def detect_providers() -> list[str]:
-    return [name for name in PROVIDERS if provider_available(name)]
+    # grok-cli is local + tool-driven; never auto-run from --all, request it explicitly.
+    return [name for name in PROVIDERS if name != "grok-cli" and provider_available(name)]
 
 
 def describe_backend() -> str:
