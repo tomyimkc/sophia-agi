@@ -434,5 +434,71 @@ def _plain_match_missing(response: str, item: object) -> bool:
     return not any(option and option.lower() in text for option in options)
 
 
+# --------------------------------------------------------------------------- #
+# Governance contract over MCP (sophia_contract) — the aihk-os seam as tools.
+# --------------------------------------------------------------------------- #
+
+_CONTRACT = None  # lazily built singleton; tests may set this to an in-memory instance
+
+
+def _contract():
+    global _CONTRACT
+    if _CONTRACT is None:
+        from agent.config import MEMORY_DIR
+        from sophia_contract import SophiaContract
+        from sophia_contract.roles import ROLES_9
+
+        _CONTRACT = SophiaContract(store_dir=MEMORY_DIR / "contract", scopes=ROLES_9, tracing=True)
+    return _CONTRACT
+
+
+def contract_describe() -> dict:
+    """Handshake the governance contract: version, capabilities, schema_url, deprecations."""
+    return _contract().describe()
+
+
+def record_claim(idempotency_key: str, content: str, sources=None, parents=None,
+                 blp_level: str = "UNCLASSIFIED", role=None, dry_run: bool = False) -> dict:
+    """Record a provenance claim (idempotent; BLP no-write-down at record time)."""
+    req = {"idempotency_key": idempotency_key, "content": content,
+           "sources": sources or [], "parents": parents or [], "blp_level": blp_level}
+    if role:
+        req["role"] = role
+    if dry_run:
+        req["dry_run"] = True
+    return _contract().record_claim(req)
+
+
+def verify_claim(claim_id: str, clearance: str = "UNCLASSIFIED", role=None) -> dict:
+    """Verify a claim -> Verdict. Only 'accepted' may be published (fail-closed)."""
+    req = {"claim_id": claim_id}
+    if role:
+        req["role"] = role
+    return _contract().verify_claim(req, clearance=clearance)
+
+
+def explain_verdict(claim_id: str, clearance: str = "UNCLASSIFIED") -> dict:
+    """Verify a claim and return the verdict plus a one-line rule-path trace."""
+    return _contract().explain_verdict({"claim_id": claim_id}, clearance=clearance)
+
+
+def contract_health() -> dict:
+    """Liveness + self-diagnostics (kill switch, pending tasks, budget)."""
+    return _contract().health()
+
+
+def enqueue_task(idempotency_key: str, kind: str, payload=None, role=None) -> dict:
+    """Durably + idempotently enqueue work for an unattended pipeline."""
+    req = {"idempotency_key": idempotency_key, "kind": kind, "payload": payload or {}}
+    if role:
+        req["role"] = role
+    return _contract().enqueue_task(req)
+
+
+def next_task(lease_by: str = "worker") -> dict:
+    """Lease the oldest pending task ({task: null} when the queue is empty)."""
+    return _contract().next_task({"lease_by": lease_by})
+
+
 def dumps(payload: dict) -> str:
     return json.dumps(payload, ensure_ascii=False, indent=2)
