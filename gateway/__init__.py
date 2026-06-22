@@ -15,5 +15,14 @@ Spec: docs/11-Platform/Sophia-Gateway.md.
 
 from gateway.registry import Registry, ToolEntry
 from gateway.interceptor import Gateway
+from gateway.skills import SkillEntry, eval_skill
+from gateway.federation import HttpMcpTransport, StubTransport, register_mcp_server
+from gateway.knowledge import register_knowledge_tools
+from gateway.skill_flywheel import improve_skill, synthesize_skill
+from gateway.consensus import verified_consensus
 
-__all__ = ["Gateway", "Registry", "ToolEntry"]
+__all__ = [
+    "Gateway", "Registry", "ToolEntry", "SkillEntry", "eval_skill",
+    "register_mcp_server", "StubTransport", "HttpMcpTransport",
+    "register_knowledge_tools", "improve_skill", "synthesize_skill", "verified_consensus",
+]

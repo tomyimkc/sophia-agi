@@ -30,6 +30,7 @@ class ToolEntry:
     dry_run_supported: bool = True
     verifier_ref: str = "none"
     description: str = ""
+    injection_flags: "list" = field(default_factory=list)
 
     def __post_init__(self):
         if not blp.is_level(self.blp_level):
