@@ -76,3 +76,31 @@ The reduced real run (`--model granite`) demonstrates the drop, but a real
 capability cell is **not yet wired into a live headline SSA run**, and coherence
 is a deterministic proxy rather than an LLM-judge channel. Closing this requires
 the full N≥8/K≥20 PIF headline run (also OPEN) with real capability cells.
+
+## steering-harness-chat-template-bug-found-and-fixed-2026-06-23
+
+**Status:** RESOLVED (bug fixed), with a RE-VALIDATION note.
+
+Spec D's final review + reduced real capability run uncovered a real bug in the
+SHARED steering harness `agent/steering/hooks.py::SteeredClient._run`: it chained
+`.to(device)` onto `apply_chat_template(..., return_tensors="pt")` and passed the
+result to `model.generate`, but under the current `transformers` that result is a
+`BatchEncoding` (dict-like), so `generate()` raised and was silently swallowed by
+`generate()`'s `except` into `_Result("", ok=False)` — **every real generation
+came back EMPTY**. Fixed (commit on `feat/capability-retention-mcp`) by normalizing
+to an `input_ids` tensor for both the bare-tensor and `BatchEncoding` cases.
+
+**Implication for Spec B (PR #66):** B's "illustrative SSA = 0/2" real granite run
+used this same `_run`, so its generations were almost certainly empty too — its
+0/2 was reached vacuously (nothing moved anything), and the reported "self-report
+channel returned null" is consistent with degenerate output. **Re-validated** here
+with the fixed harness: SSA is STILL 0/2, but now meaningfully — the Level-1 persona
+prompt moves the trait (behavioral `d_level1` ≈ 2.41 for E, 5.20 for O) while
+activation steering does not (`d_steer` ≈ -1.74, 0.28; Δd ≈ -4.16, -4.92). Spec D's
+capability guardrail explains the mechanism: steering at the required alpha collapses
+capability (`capability_drop = 1.0`, `coherence = 0`), so the steered output is too
+degenerate to express the trait. The program's central claim — **activation steering
+does not beat a persona prompt** — survives re-validation on real generations.
+
+**OPEN remainder:** the full N≥8/K≥20 headline PIF run (still OPEN) should use the
+fixed harness; any prior steering artifacts generated before this fix are suspect.
