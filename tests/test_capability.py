@@ -64,9 +64,22 @@ def test_capability_cell_drop_and_retain():
     assert zero["base_accuracy"] == 0.0 and zero["capability_drop"] == 0.0
 
 
+def test_dry_run_cell():
+    from tools.run_capability import build_dry_run_cell
+    cell = build_dry_run_cell()
+    # base answers are correct+coherent; steered answers are degenerate -> a drop
+    assert cell["base_accuracy"] == 1.0
+    assert cell["steered_accuracy"] < 1.0
+    assert cell["capability_drop"] > 0.05
+    assert cell["retains"] is False
+    assert set(cell) >= {"n", "base_accuracy", "steered_accuracy",
+                         "capability_drop", "coherence", "retains"}
+
+
 def main():
     tests = [test_extract_final_number, test_answer_correct, test_coherence_proxy,
-             test_score_response, test_capability_cell_drop_and_retain]
+             test_score_response, test_capability_cell_drop_and_retain,
+             test_dry_run_cell]
     for t in tests:
         t()
     print(f"PASS {len(tests)} capability tests")
