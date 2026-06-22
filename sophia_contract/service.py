@@ -25,16 +25,24 @@ from sophia_contract.models import (
     content_fingerprint,
     validate_record_request,
 )
+from sophia_contract.queue import TaskQueue
+from sophia_contract.scopes import ScopeRegistry
 from sophia_contract.stores import ClaimStore, DecisionLog, PreferenceStore, Supersessions
+from sophia_contract.trace import Tracer
 
-CONTRACT_VERSION = "1.0.0"
-SCHEMA_URL = "schema/contract-1.0.0.json"
+CONTRACT_VERSION = "1.1.0"
+SCHEMA_URL = "schema/contract-1.1.0.json"
 
 AUTO_ACCEPT_CONFIDENCE = 0.75
 LOW_RISK_LEVELS = ("UNCLASSIFIED",)  # only low-risk claims are eligible for auto-accept
 
-# Optional capabilities advertised in describe() — all implemented in v1.0.0.
-OPTIONAL_CAPABILITIES = ("explain_verdict", "batch_verify", "health")
+# Founder-minutes a given outcome saves vs. doing it by hand — the per-task ROI basis.
+REVIEW_MINUTES_SAVED = 5.0   # an answer that did not need human review
+TRIAGE_MINUTES_SAVED = 3.0   # an auto-resolved reject/supersede that skipped manual triage
+
+# Optional capabilities advertised in describe() — all implemented.
+OPTIONAL_CAPABILITIES = ("explain_verdict", "batch_verify", "health",
+                         "enqueue_task", "next_task", "trace")  # trace/queue added in 1.1.0
 REQUIRED_METHODS = ("describe", "record_claim", "verify_claim")
 
 
@@ -64,16 +72,23 @@ class SophiaContract:
         clock: Callable[[], str] = _utc_now,
         signing_key: "str | None" = None,
         verify_budget: "int | None" = None,
+        scopes: "ScopeRegistry | None" = None,
+        tracing: bool = True,
     ):
         d = Path(store_dir) if store_dir else None
         self.clock = clock
         self.signing_key = signing_key
         self.verify_budget = verify_budget
         self._verify_count = 0
+        self.scopes = scopes or ScopeRegistry()  # empty == unrestricted (opt-in)
         self.claims = ClaimStore(d / "claims.jsonl" if d else None)
         self.decisions = DecisionLog(d / "decisions.jsonl" if d else None)
         self.preferences = PreferenceStore(d / "preferences.jsonl" if d else None)
         self.supersessions = Supersessions(d / "supersessions.jsonl" if d else None)
+        self.tasks = TaskQueue(d / "tasks.jsonl" if d else None, clock=clock)
+        self.tracer = Tracer(d / "traces.jsonl" if d else None, clock=clock, enabled=tracing)
+        self._killswitch_path = (d / "killswitch.json") if d else None
+        self._killswitch = self._load_killswitch()
 
     # ----------------------------------------------------------------- handshake
     @_wire
@@ -87,13 +102,53 @@ class SophiaContract:
             "deprecations": [],  # none in 1.0.0; a field lives one full MAJOR before removal
         }
 
+    # ------------------------------------------------------- kill switch (admin)
+    def _load_killswitch(self) -> dict:
+        if self._killswitch_path and self._killswitch_path.exists():
+            import json
+            try:
+                return json.loads(self._killswitch_path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                return {"engaged": False}
+        return {"engaged": False}
+
+    def _persist_killswitch(self) -> None:
+        if self._killswitch_path:
+            import json
+            self._killswitch_path.parent.mkdir(parents=True, exist_ok=True)
+            self._killswitch_path.write_text(json.dumps(self._killswitch), encoding="utf-8")
+
+    def engage_kill_switch(self, reason: str = "manual", by: str = "founder") -> dict:
+        """Halt all record/verify; calls return UNAVAILABLE (retryable). Durable."""
+        self._killswitch = {"engaged": True, "reason": reason, "by": by, "at": self.clock()}
+        self._persist_killswitch()
+        return dict(self._killswitch)
+
+    def release_kill_switch(self, by: str = "founder") -> dict:
+        self._killswitch = {"engaged": False, "by": by, "at": self.clock()}
+        self._persist_killswitch()
+        return dict(self._killswitch)
+
+    def _guard_kill_switch(self) -> None:
+        if self._killswitch.get("engaged"):
+            raise ContractError("UNAVAILABLE",
+                                f"kill switch engaged: {self._killswitch.get('reason', 'halted')}",
+                                retryable=True)
+
     # -------------------------------------------------------------- record_claim
     @_wire
     def record_claim(self, request: dict) -> dict:
         """Idempotently record a claim. Enforces BLP no-write-down at record time:
         a derived claim must be at least as classified as its parents, else
-        BLP_VIOLATION (never silently downgraded)."""
+        BLP_VIOLATION (never silently downgraded).
+
+        Optional (1.1.0, additive): ``role`` (capability-scope enforcement) and
+        ``dry_run`` (validate + compute claim_id WITHOUT persisting)."""
+        self._guard_kill_switch()
         fields = validate_record_request(request)
+        role = request.get("role")
+        dry_run = bool(request.get("dry_run"))
+        self.scopes.check(role, "record_claim", blp_level=fields["blp_level"], dry_run=dry_run)
 
         parent_levels = []
         for pid in fields["parents"]:
@@ -105,30 +160,62 @@ class SophiaContract:
             raise ContractError("BLP_VIOLATION", wd)
 
         claim = build_claim(fields, created_at=self.clock(), signing_key=self.signing_key)
+        if dry_run:
+            self.tracer.span("record_claim", input={"idempotency_key": fields["idempotency_key"],
+                             "dry_run": True}, output={"claim_id": claim["claim_id"]},
+                             metadata={"role": role})
+            return {**claim, "dry_run": True}
         stored, _created = self.claims.record(claim, fields["idempotency_key"])
+        self.tracer.span("record_claim", input={"idempotency_key": fields["idempotency_key"]},
+                         output={"claim_id": stored["claim_id"]}, metadata={"role": role})
         return stored
 
     # -------------------------------------------------------------- verify_claim
     @_wire
     def verify_claim(self, request: dict, *, clearance: str = "UNCLASSIFIED") -> dict:
         """Verify a recorded claim and return an explainable Verdict. Only
-        ``accepted`` may be published; everything else fails closed."""
+        ``accepted`` may be published; everything else fails closed.
+
+        Optional (1.1.0, additive): ``role`` in the request enforces capability
+        scopes; every Verdict carries a ``roi_estimate`` of founder-minutes saved."""
+        self._guard_kill_switch()
         if not isinstance(request, dict) or not request.get("claim_id"):
             raise ContractError("BAD_REQUEST", "claim_id is required")
         if not blp.is_level(clearance):
             raise ContractError("BAD_REQUEST", f"clearance must be one of {blp.BLP_LEVELS}")
+        self.scopes.check(request.get("role"), "verify_claim", blp_level=clearance)
         claim_id = request["claim_id"]
         claim = self.claims.get_by_id(claim_id)
         if claim is None:
             raise ContractError("BAD_REQUEST", f"unknown claim_id {claim_id!r}")
 
         verdict = self._decide(claim, clearance)
+        verdict["roi_estimate"] = self._roi(verdict)
         self.decisions.append({
             "at": self.clock(), "claim_id": claim_id, "clearance": clearance,
             "verdict": verdict["verdict"], "confidence": verdict["confidence"],
             "held_reason": verdict.get("held_reason"),
+            "founder_minutes_saved": verdict["roi_estimate"]["founder_minutes_saved"],
         })
+        self.tracer.span("verify_claim", input={"claim_id": claim_id, "clearance": clearance},
+                         output={"verdict": verdict["verdict"], "confidence": verdict["confidence"],
+                                 "held_reason": verdict.get("held_reason")},
+                         level=("WARNING" if verdict["verdict"] != "accepted" else "DEFAULT"),
+                         metadata={"role": request.get("role")})
         return verdict
+
+    @staticmethod
+    def _roi(verdict: dict) -> dict:
+        """Founder-minutes saved by this outcome vs. handling it by hand."""
+        v = verdict["verdict"]
+        human = any("human-reviewed" in r for r in verdict["reasons"])
+        if v == "accepted":
+            return {"founder_minutes_saved": REVIEW_MINUTES_SAVED,
+                    "basis": "reused prior human ruling" if human else "auto-accepted without review"}
+        if v in ("rejected", "superseded"):
+            return {"founder_minutes_saved": TRIAGE_MINUTES_SAVED,
+                    "basis": f"auto-{v}; skipped manual triage"}
+        return {"founder_minutes_saved": 0.0, "basis": "held for human review"}
 
     def _decide(self, claim: dict, clearance: str) -> dict:
         claim_id = claim["claim_id"]
@@ -244,16 +331,47 @@ class SophiaContract:
         ]}
 
     @_wire
+    def enqueue_task(self, request: dict) -> dict:
+        """Capability (1.1.0): durably + idempotently enqueue work. Same
+        idempotency_key returns the same task_id. Blocked by the kill switch."""
+        self._guard_kill_switch()
+        self.scopes.check(request.get("role"), "enqueue_task")
+        return self.tasks.enqueue(request)
+
+    @_wire
+    def next_task(self, request: "dict | None" = None) -> dict:
+        """Capability (1.1.0): lease the oldest pending task, or {task: null}."""
+        self._guard_kill_switch()
+        lease_by = (request or {}).get("lease_by", "worker")
+        task = self.tasks.next_task(lease_by=lease_by)
+        return {"task": task}
+
+    def complete_task(self, task_id: str, *, result=None, state: str = "done") -> dict:
+        return self.tasks.complete(task_id, result=result, state=state)
+
+    def task_status(self, task_id: str) -> dict:
+        return self.tasks.status(task_id)
+
+    @_wire
+    def trace(self, request: "dict | None" = None) -> dict:
+        """Capability (1.1.0): the Langfuse-compatible trace events recorded so far."""
+        return {"events": self.tracer.events()}
+
+    @_wire
     def health(self) -> dict:
         """Capability: liveness + self-diagnostics for unattended operation."""
         checks = {
             "claims_store": True,
             "decision_log": True,
             "preference_store": True,
+            "kill_switch_engaged": bool(self._killswitch.get("engaged")),
+            "pending_tasks": self.tasks.pending_count(),
+            "tracing_enabled": self.tracer.enabled,
             "budget_remaining": (None if self.verify_budget is None
                                  else max(0, self.verify_budget - self._verify_count)),
         }
-        return {"status": "ok", "version": CONTRACT_VERSION, "checks": checks}
+        status = "degraded" if self._killswitch.get("engaged") else "ok"
+        return {"status": status, "version": CONTRACT_VERSION, "checks": checks}
 
     # ----------------------------------------------------- feedback loop (admin)
     def record_human_verdict(self, *, claim_id: str, verdict: str, note: str = "",

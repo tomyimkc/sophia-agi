@@ -118,7 +118,7 @@ def test_describe_handshake_shape() -> None:
     d = SophiaContract().describe()
     assert d["version"] == CONTRACT_VERSION
     assert set(("describe", "record_claim", "verify_claim")).issubset(set(d["capabilities"]))
-    assert d["schema_url"].endswith("contract-1.0.0.json")
+    assert d["schema_url"].endswith("contract-1.1.0.json")
     assert isinstance(d["deprecations"], list)
 
 
@@ -126,7 +126,7 @@ def test_schema_enums_match_code() -> None:
     """The published schema must not drift from the implementation's enums."""
     from sophia_contract import BLP_LEVELS, ERROR_CODES, HELD_REASONS, VERDICTS
 
-    schema = json.loads((ROOT / "schema" / "contract-1.0.0.json").read_text("utf-8"))
+    schema = json.loads((ROOT / "schema" / "contract-1.1.0.json").read_text("utf-8"))
     defs = schema["$defs"]
     assert schema["x-contract-version"] == CONTRACT_VERSION
     assert defs["blp_level"]["enum"] == list(BLP_LEVELS)
@@ -142,7 +142,7 @@ def test_live_outputs_validate_against_schema_if_available() -> None:
         return  # dependency-free environments rely on the enum cross-check above
     from jsonschema import Draft202012Validator
 
-    schema = json.loads((ROOT / "schema" / "contract-1.0.0.json").read_text("utf-8"))
+    schema = json.loads((ROOT / "schema" / "contract-1.1.0.json").read_text("utf-8"))
 
     def val(defname, instance):
         sub = {"$schema": schema["$schema"], "$defs": schema["$defs"], "$ref": f"#/$defs/{defname}"}

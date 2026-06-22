@@ -35,6 +35,7 @@ jobs:
       - name: Governance contract conformance (golden vectors + schema)
         run: |
           python tests/test_contract_conformance.py
+          python tests/test_contract_guardrails.py
       - name: Model adapter + OpenClaw provider tests
         run: |
           python tests/test_model_adapter.py

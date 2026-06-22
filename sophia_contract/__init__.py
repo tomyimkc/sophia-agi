@@ -15,6 +15,7 @@ from sophia_contract.errors import ERROR_CODES, ContractError
 from sophia_contract.models import HELD_REASONS, VERDICTS
 from sophia_contract.service import CONTRACT_VERSION, SCHEMA_URL, SophiaContract
 from sophia_contract.blp import BLP_LEVELS
+from sophia_contract.scopes import Scope, ScopeRegistry
 
 __all__ = [
     "SophiaContract",
@@ -25,4 +26,6 @@ __all__ = [
     "VERDICTS",
     "HELD_REASONS",
     "BLP_LEVELS",
+    "Scope",
+    "ScopeRegistry",
 ]

@@ -1,4 +1,4 @@
-# Sophia Governance Contract — v1.0.0
+# Sophia Governance Contract — v1.1.0
 
 The stable, versioned seam between **Sophia** (the governance brain / control plane)
 and **aihk-os** (the control plane + 9 role pipelines that consume Sophia).
@@ -7,10 +7,10 @@ Sophia exists to be a *trustworthy, legible, low-maintenance* governance service
 solo founder: **no team to catch errors → fail closed; scarce founder attention →
 approve-by-exception; trust → everything provenance-tracked and explainable.**
 
-- **Machine-readable schema:** [`schema/contract-1.0.0.json`](schema/contract-1.0.0.json)
-- **Golden vectors (conformance):** [`schema/golden-vectors.json`](schema/golden-vectors.json) — run by `tests/test_contract_conformance.py` on every release.
+- **Machine-readable schema:** [`schema/contract-1.1.0.json`](schema/contract-1.1.0.json) (1.0.0 retained at [`schema/contract-1.0.0.json`](schema/contract-1.0.0.json))
+- **Golden vectors (conformance):** [`schema/golden-vectors.json`](schema/golden-vectors.json) — run by `tests/test_contract_conformance.py`; guardrail features by `tests/test_contract_guardrails.py`.
 - **Changelog:** [`sophia_contract/CHANGELOG.md`](sophia_contract/CHANGELOG.md)
-- **Version:** `1.0.0` (the contract version, independent of the repo `VERSION`).
+- **Version:** `1.1.0` (the contract version, independent of the repo `VERSION`). 1.0.0 → 1.1.0 is a **MINOR, additive-only** bump: every 1.0.0 verdict is unchanged.
 
 ```python
 from sophia_contract import SophiaContract
@@ -26,9 +26,9 @@ svc.describe()
 
 ```json
 {
-  "version": "1.0.0",
-  "capabilities": ["describe", "record_claim", "verify_claim", "explain_verdict", "batch_verify", "health"],
-  "schema_url": "schema/contract-1.0.0.json",
+  "version": "1.1.0",
+  "capabilities": ["describe", "record_claim", "verify_claim", "explain_verdict", "batch_verify", "health", "enqueue_task", "next_task", "trace"],
+  "schema_url": "schema/contract-1.1.0.json",
   "deprecations": []
 }
 ```
@@ -86,6 +86,9 @@ Returns a **Verdict** — `{ verdict, confidence, reasons[], cited_evidence[], s
 - `explain_verdict({claim_id}) -> Verdict + { explanation }` — the verdict plus a one-line rule-path trace.
 - `batch_verify({claim_ids[]}) -> { results[] }` — independent verdicts; one bad id never fails the batch.
 - `health() -> { status, version, checks{} }` — liveness + self-diagnostics for unattended operation.
+- `enqueue_task({idempotency_key, kind, payload?}) -> Task` *(1.1.0)* — durable, idempotent work intake.
+- `next_task({lease_by?}) -> { task }` *(1.1.0)* — lease the oldest pending task.
+- `trace({}) -> { events[] }` *(1.1.0)* — the Langfuse-compatible trace events.
 
 ## 5. Error model
 
@@ -110,12 +113,30 @@ release and cross-checks that the schema enums match the implementation.
 ## Guardrails & memory (behind the seam)
 
 - **Durable decision log** — every verdict appended to `decisions.jsonl`.
-- **Idempotency everywhere** — deterministic ids; safe retries.
+- **Idempotency everywhere** — deterministic claim/task ids; safe retries.
 - **Budget caps** — `verify_budget` triggers stop-and-report (`over_budget`), not a crash.
 - **Preference feedback loop** — `record_human_verdict(...)` writes to an inspectable,
   hand-editable `preferences.jsonl`; future verifies of the same claim/content return the
   human's decision, so review burden shrinks over time.
 - **Provenance** — claims carry `sources[]` and `parents[]`; verdicts cite the evidence used.
+
+### Added in 1.1.0 (additive)
+
+- **Capability scopes per role** — configure a `ScopeRegistry` (ops + `max_blp` +
+  `dry_run_only`) for the 9 role pipelines; requests carrying a `role` are enforced
+  least-privilege. No registry / no role ⇒ unrestricted (opt-in); an unknown role
+  fails closed (`UNAUTHENTICATED`).
+- **Dry-run** — `record_claim({..., dry_run: true})` validates and returns the would-be
+  claim **without persisting**.
+- **Kill switch** — `engage_kill_switch(reason)` / `release_kill_switch()`; while engaged,
+  `record_claim` / `verify_claim` / task intake return `UNAVAILABLE` (retryable) and
+  `health().status == "degraded"`. Durable.
+- **Durable task queue** — `enqueue_task` / `next_task` / `complete_task` / `task_status`,
+  JSONL-backed, idempotent, restart-safe, at-least-once.
+- **Structured traces** — every call emits a Langfuse-compatible span
+  (`id, name, startTime, endTime, input, output, level, metadata`) to `traces.jsonl`.
+- **Per-task ROI** — every Verdict carries `roi_estimate {founder_minutes_saved, basis}`
+  (auto-accept and auto-resolve save founder minutes; a `held` saves none).
 
 ## Compatibility promise
 

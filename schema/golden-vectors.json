@@ -1,6 +1,6 @@
 {
-  "contract_version": "1.0.0",
-  "note": "Fixed claims -> expected verdicts. Run on every release (tests/test_contract_conformance.py). claim_id is derived deterministically from idempotency_key, so vectors reference claims by their key.",
+  "contract_version": "1.1.0",
+  "note": "Fixed claims -> expected verdicts. Run on every release (tests/test_contract_conformance.py). claim_id is derived deterministically from idempotency_key, so vectors reference claims by their key. The 1.0.0 verdicts are unchanged under 1.1.0 (additive bump); 1.1.0 guardrail features are covered in tests/test_contract_guardrails.py.",
   "vectors": [
     {
       "name": "auto_accept_low_risk_cited",

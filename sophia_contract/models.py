@@ -110,8 +110,12 @@ def build_verdict(
     suggested_fix: "str | None" = None,
     supersedes: "str | None" = None,
     held_reason: "str | None" = None,
+    roi_estimate: "dict | None" = None,
 ) -> dict:
-    """Assemble the Verdict wire object; optional fields appear only when set."""
+    """Assemble the Verdict wire object; optional fields appear only when set.
+
+    ``roi_estimate`` (added in 1.1.0, optional) is ``{founder_minutes_saved, basis}``.
+    """
     if verdict not in VERDICTS:
         raise ContractError("INTERNAL", f"bad verdict {verdict!r}")
     if held_reason is not None and held_reason not in HELD_REASONS:
@@ -128,4 +132,6 @@ def build_verdict(
         out["supersedes"] = supersedes
     if held_reason is not None:
         out["held_reason"] = held_reason
+    if roi_estimate is not None:
+        out["roi_estimate"] = roi_estimate
     return out
