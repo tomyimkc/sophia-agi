@@ -129,6 +129,10 @@ jobs:
           python tests/test_formal_verifier.py
           python tests/test_structured_output.py
           python tests/test_level3_candidate_benchmark.py
+          python tests/test_fact_check_gate.py
+          python tests/test_openrouter_hidden_eval.py
+          python tests/test_econ_political_shift_pack.py
+          python tools/run_fact_check_gate.py "2 + 2 = 4." >/tmp/fact_check_gate.json
           python -c "import json; json.load(open('config/inference.local.example.json'))"
       - name: Injection / containment red-team (M1) + data-flow firewall (M2/M2.2)
         run: |

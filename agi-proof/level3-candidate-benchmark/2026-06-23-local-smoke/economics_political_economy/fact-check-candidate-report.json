@@ -1,0 +1,309 @@
+{
+  "schema": "sophia.econ_political_fact_check_candidate.v1",
+  "runAt": "2026-06-23T16:53:30",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "domain": "Economics & Political Economy with AGI-incentive meta layer",
+  "claimBoundary": "Offline fixture demo of out-of-wiki active verification; not real Level-3 evidence.",
+  "decisions": [
+    {
+      "verdict": "accepted",
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "Inflation rose because energy prices increased in 2022",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "accepted",
+          "reason": "3 independent sources entail claim (required 3)",
+          "confidence": 0.82,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_17f482338b9c8a28",
+            "claim": "Inflation rose because energy prices increased in 2022",
+            "type": "econ_causal",
+            "risk": "high",
+            "verifiedBy": "external_grounding",
+            "confidence": 0.82,
+            "evidence": [
+              {
+                "id": "econ-src-1",
+                "url": "https://imf.org/fixture",
+                "title": "Inflation rose because energy prices increased in 2022",
+                "publisher": "imf.org",
+                "domain": "imf.org",
+                "relation": "entails"
+              },
+              {
+                "id": "econ-src-2",
+                "url": "https://worldbank.org/fixture",
+                "title": "Inflation rose because energy prices increased in 2022",
+                "publisher": "worldbank.org",
+                "domain": "worldbank.org",
+                "relation": "entails"
+              },
+              {
+                "id": "econ-src-3",
+                "url": "https://oecd.org/fixture",
+                "title": "Inflation rose because energy prices increased in 2022",
+                "publisher": "oecd.org",
+                "domain": "oecd.org",
+                "relation": "entails"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "accepted",
+              "reason": "3 independent sources entail claim (required 3)",
+              "confidence": 0.82,
+              "evidence": [
+                {
+                  "id": "econ-src-1",
+                  "url": "https://imf.org/fixture",
+                  "title": "Inflation rose because energy prices increased in 2022",
+                  "publisher": "imf.org",
+                  "domain": "imf.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "econ-src-2",
+                  "url": "https://worldbank.org/fixture",
+                  "title": "Inflation rose because energy prices increased in 2022",
+                  "publisher": "worldbank.org",
+                  "domain": "worldbank.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "econ-src-3",
+                  "url": "https://oecd.org/fixture",
+                  "title": "Inflation rose because energy prices increased in 2022",
+                  "publisher": "oecd.org",
+                  "domain": "oecd.org",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "independentDomains": [
+                  "imf.org",
+                  "oecd.org",
+                  "worldbank.org"
+                ],
+                "requiredSources": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "verdict": "accepted",
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "AGI deployment incentives can create pressure to deploy before safety evidence is complete",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "3 independent sources entail claim (required 2)",
+          "confidence": 0.86,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_1c440e3cb7f050dd",
+            "claim": "AGI deployment incentives can create pressure to deploy before safety evidence is complete",
+            "type": "open_empirical",
+            "risk": "normal",
+            "verifiedBy": "external_grounding",
+            "confidence": 0.86,
+            "evidence": [
+              {
+                "id": "agi-inc-1",
+                "url": "https://nber.org/fixture",
+                "title": "AGI deployment incentives can create pressure to deploy before safety evidence is complete",
+                "publisher": "nber.org",
+                "domain": "nber.org",
+                "relation": "entails"
+              },
+              {
+                "id": "agi-inc-2",
+                "url": "https://oecd.org/fixture",
+                "title": "AGI deployment incentives can create pressure to deploy before safety evidence is complete",
+                "publisher": "oecd.org",
+                "domain": "oecd.org",
+                "relation": "entails"
+              },
+              {
+                "id": "agi-inc-3",
+                "url": "https://brookings.edu/fixture",
+                "title": "AGI deployment incentives can create pressure to deploy before safety evidence is complete",
+                "publisher": "brookings.edu",
+                "domain": "brookings.edu",
+                "relation": "entails"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "accepted",
+              "reason": "3 independent sources entail claim (required 2)",
+              "confidence": 0.86,
+              "evidence": [
+                {
+                  "id": "agi-inc-1",
+                  "url": "https://nber.org/fixture",
+                  "title": "AGI deployment incentives can create pressure to deploy before safety evidence is complete",
+                  "publisher": "nber.org",
+                  "domain": "nber.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "agi-inc-2",
+                  "url": "https://oecd.org/fixture",
+                  "title": "AGI deployment incentives can create pressure to deploy before safety evidence is complete",
+                  "publisher": "oecd.org",
+                  "domain": "oecd.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "agi-inc-3",
+                  "url": "https://brookings.edu/fixture",
+                  "title": "AGI deployment incentives can create pressure to deploy before safety evidence is complete",
+                  "publisher": "brookings.edu",
+                  "domain": "brookings.edu",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "independentDomains": [
+                  "brookings.edu",
+                  "nber.org",
+                  "oecd.org"
+                ],
+                "requiredSources": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "verdict": "accepted",
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "2 + 2 = 4",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "arithmetic equality verified by computation",
+          "confidence": 1.0,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_e93dff0d1076b537",
+            "claim": "2 + 2 = 4",
+            "type": "math",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 1.0,
+            "evidence": [],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "arithmetic equality verified by computation",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "verdict": "held",
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "GDP increased in 2020",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "accepted": 3,
+    "held": 1,
+    "rejected": 0
+  }
+}

@@ -386,3 +386,51 @@ Before real Level-3 runs, decide:
 中文摘要: 本文件把 Level 3 三個剩餘證據 lane 的實際操作流程、artifact 條件、命令、
 API key 需求、升級標準與禁止誇大聲明全部列清楚。候選/煙測 benchmark 只用來演練,
 不能當作真正 Level 3 證據。
+
+---
+
+# Optional OpenRouter response generation
+
+OpenRouter can generate the five response files for hidden full comparison. The API key must stay outside git:
+
+```bash
+mkdir -p private/secrets
+printf '<OPENROUTER_API_KEY>' > private/secrets/openrouter_api_key
+chmod 600 private/secrets/openrouter_api_key
+```
+
+Generate one mode:
+
+```bash
+python tools/run_hidden_eval_openrouter.py \
+  --pack private/hidden-evals/level3-<date>/PACK.json \
+  --mode sophia_full \
+  --model <openrouter-model-id> \
+  --api-key-file private/secrets/openrouter_api_key \
+  --out private/hidden-evals/level3-<date>/responses.sophia_full.json
+```
+
+Repeat for:
+
+```text
+raw
+raw_tools
+rag_only
+gate_only
+sophia_full
+```
+
+Then score with Sophia's deterministic harness:
+
+```bash
+python tools/run_hidden_eval_full.py \
+  --pack private/hidden-evals/level3-<date>/PACK.json \
+  --mode raw=private/hidden-evals/level3-<date>/responses.raw.json \
+  --mode raw_tools=private/hidden-evals/level3-<date>/responses.raw_tools.json \
+  --mode rag_only=private/hidden-evals/level3-<date>/responses.rag_only.json \
+  --mode gate_only=private/hidden-evals/level3-<date>/responses.gate_only.json \
+  --mode sophia_full=private/hidden-evals/level3-<date>/responses.sophia_full.json \
+  --out agi-proof/hidden-reviewer-packs/results/level3-full-aggregate-<date>.json
+```
+
+OpenRouter is transport only. It is not the judge.
