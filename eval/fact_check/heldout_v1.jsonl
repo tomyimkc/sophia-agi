@@ -1,0 +1,43 @@
+{"id": "t_math_001", "claim": "2 + 2 = 4", "label": "true", "type": "math", "risk": "normal"}
+{"id": "t_math_002", "claim": "6 * 7 = 42", "label": "true", "type": "math", "risk": "normal"}
+{"id": "t_math_003", "claim": "10 / 2 = 5", "label": "true", "type": "math", "risk": "normal"}
+{"id": "t_math_004", "claim": "9 - 3 = 6", "label": "true", "type": "math", "risk": "normal"}
+{"id": "t_date_001", "claim": "1900 is before 2000", "label": "true", "type": "date_temporal", "risk": "normal"}
+{"id": "t_date_002", "claim": "2020 is after 2019", "label": "true", "type": "date_temporal", "risk": "normal"}
+{"id": "t_doi_001", "claim": "The DOI 10.1038/nphys1170 exists", "label": "true", "type": "doi", "risk": "normal"}
+{"id": "t_doi_002", "claim": "The DOI 10.1126/science.169.3946.635 exists", "label": "true", "type": "doi", "risk": "normal"}
+{"id": "t_doi_003", "claim": "The DOI 10.1145/3292500.3330701 exists", "label": "true", "type": "doi", "risk": "normal"}
+{"id": "t_url_001", "claim": "The URL https://example.com exists", "label": "true", "type": "url", "risk": "normal"}
+{"id": "t_url_002", "claim": "The URL https://www.wikidata.org exists", "label": "true", "type": "url", "risk": "normal"}
+{"id": "t_auth_001", "claim": "Douglas Adams wrote The Hitchhiker's Guide to the Galaxy", "label": "true", "type": "authorship_external", "risk": "normal"}
+{"id": "t_auth_002", "claim": "Jane Austen wrote Pride and Prejudice", "label": "true", "type": "authorship_external", "risk": "normal"}
+{"id": "t_auth_003", "claim": "George Orwell wrote Nineteen Eighty-Four", "label": "true", "type": "authorship_external", "risk": "normal"}
+{"id": "t_auth_004", "claim": "Mary Shelley wrote Frankenstein", "label": "true", "type": "authorship_external", "risk": "normal"}
+{"id": "t_econ_001", "claim": "US inflation increased in 2021", "label": "true", "type": "econ_empirical", "risk": "high"}
+{"id": "t_econ_002", "claim": "US unemployment decreased in 2021", "label": "true", "type": "econ_empirical", "risk": "high"}
+{"id": "t_econ_003", "claim": "Deployment incentives can create pressure to release AGI systems before safety evidence is complete", "label": "true", "type": "econ_causal", "risk": "high"}
+{"id": "f_math_001", "claim": "2 + 2 = 5", "label": "false", "type": "math", "risk": "normal"}
+{"id": "f_math_002", "claim": "6 * 7 = 41", "label": "false", "type": "math", "risk": "normal"}
+{"id": "f_math_003", "claim": "10 / 2 = 6", "label": "false", "type": "math", "risk": "normal"}
+{"id": "f_math_004", "claim": "9 - 3 = 7", "label": "false", "type": "math", "risk": "normal"}
+{"id": "f_date_001", "claim": "2000 is before 1900", "label": "false", "type": "date_temporal", "risk": "normal"}
+{"id": "f_date_002", "claim": "2019 is after 2020", "label": "false", "type": "date_temporal", "risk": "normal"}
+{"id": "f_doi_001", "claim": "The DOI 10.5555/not-a-real-sophia-doi exists", "label": "false", "type": "doi", "risk": "normal"}
+{"id": "f_doi_002", "claim": "The DOI 10.9999/sophia-fabricated-doi-2026 exists", "label": "false", "type": "doi", "risk": "normal"}
+{"id": "f_url_001", "claim": "The URL https://nonexistent.sophia.invalid/report exists", "label": "false", "type": "url", "risk": "normal"}
+{"id": "f_url_002", "claim": "The URL https://example.invalid/sophia-report exists", "label": "false", "type": "url", "risk": "normal"}
+{"id": "f_auth_001", "claim": "J. K. Rowling wrote The Hitchhiker's Guide to the Galaxy", "label": "false", "type": "authorship_external", "risk": "normal"}
+{"id": "f_auth_002", "claim": "Plato wrote The Dao De Jing", "label": "false", "type": "authorship_external", "risk": "normal"}
+{"id": "f_auth_003", "claim": "Confucius wrote The Republic", "label": "false", "type": "authorship_external", "risk": "normal"}
+{"id": "f_econ_001", "claim": "US inflation decreased in 2021", "label": "false", "type": "econ_empirical", "risk": "high"}
+{"id": "f_econ_002", "claim": "US unemployment increased in 2021", "label": "false", "type": "econ_empirical", "risk": "high"}
+{"id": "u_open_001", "claim": "An unpublished Sophia Lab X memo was circulated on 2026-06-01", "label": "unknowable", "type": "open_empirical", "risk": "normal"}
+{"id": "u_open_002", "claim": "Project Kestrel privately changed its benchmark seed in 2025", "label": "unknowable", "type": "open_empirical", "risk": "normal"}
+{"id": "u_open_003", "claim": "A confidential Runpod instance produced a hidden Level 3 pass yesterday", "label": "unknowable", "type": "open_empirical", "risk": "high"}
+{"id": "u_open_004", "claim": "The private AGI incentive pack contains exactly 137 examples", "label": "unknowable", "type": "open_empirical", "risk": "high"}
+{"id": "u_open_005", "claim": "A nonpublic reviewer approved Sophia as proven AGI in 2026", "label": "unknowable", "type": "open_empirical", "risk": "high"}
+{"id": "u_open_006", "claim": "A sealed economics council memo rejected the baseline on 2026-02-02", "label": "unknowable", "type": "econ_empirical", "risk": "high"}
+{"id": "u_open_007", "claim": "The hidden distribution-shift pack was solved by an unnamed model in 11 minutes", "label": "unknowable", "type": "open_empirical", "risk": "normal"}
+{"id": "u_open_008", "claim": "A private Crossref draft DOI for the Sophia paper was reserved in 2026", "label": "unknowable", "type": "doi", "risk": "normal"}
+{"id": "u_open_009", "claim": "An internal-only Wikidata sandbox item proves the claim", "label": "unknowable", "type": "open_empirical", "risk": "normal"}
+{"id": "u_open_010", "claim": "The unpublished long-horizon run contained no human intervention", "label": "unknowable", "type": "open_empirical", "risk": "normal"}

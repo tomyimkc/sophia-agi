@@ -1,0 +1,2239 @@
+{
+  "schema": "sophia.reflexive_self_gate.v1",
+  "verdict": "accepted",
+  "reason": "all scanned AGI self-claims respect candidate/no-overclaim boundary",
+  "canClaimAGI": false,
+  "claims": [
+    {
+      "path": "README.md",
+      "line": 1,
+      "text": "# Sophia AGI",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "README.md",
+      "line": 4,
+      "text": "[![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "README.md",
+      "line": 11,
+      "text": "> **Scope, stated plainly.** This is a research program for *grounded, machine-checked* reasoning — **not a claim of AGI**. It pre-registers AGI thresholds and measures itself against them honestly; **those thresholds are not met**. The deliverable is the honest machinery — verifiers, an abstaining loop, and a no-overclaim measurement gate — not the label. Every public number must clear that gate ([SECURITY.md](SECURITY.md), [RESULTS.md](RESULTS.md)). The mission and design commitments are stated in [VISION.md](VISION.md).",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "README.md",
+      "line": 13,
+      "text": "**Thesis site:** https://tomyimkc.github.io/sophia-agi/",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "README.md",
+      "line": 15,
+      "text": "⭐ **Star if you want LLMs that actually know who wrote what** — the foundation for the world's first wise AGI.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "README.md",
+      "line": 17,
+      "text": "**Live links:** [Thesis + leaderboards + Ask Sophia](https://tomyimkc.github.io/sophia-agi/) • [HF Dataset (527 examples)](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) • Try gate: `python scripts/demo_gate.py`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "README.md",
+      "line": 41,
+      "text": "## Self-extending verification flywheel (the path-to-AGI engine)",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "README.md",
+      "line": 50,
+      "text": "**The loop closes (offline, deterministic):** on a held-out domain the system abstains, synthesizes + validates its own verifier, uses it as verified reward to lift policy accuracy **0.5 → 1.0** on an independent eval split, and flips competence abstain→answer — no human writing the check, fail-closed on unlearnable data ([agi-proof/self-extension](agi-proof/self-extension/README.md)). The remaining rung is a live-RL weight update (GPU) on a third-party domain.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "README.md",
+      "line": 52,
+      "text": "> Honest scope: this is the **machinery and its falsifiable metrics**, not an AGI claim. Live self-improvement (RLVR, needs GPU) and live grounding (needs network) consume these interfaces but are out of scope to *run* here. The defensible AGI signature is the full loop closing on a **held-out domain** with the no-overclaim gate clearing.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "README.md",
+      "line": 54,
+      "text": "## AGI-candidate proof package",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "README.md",
+      "line": 56,
+      "text": "Sophia is **not claimed as proven AGI**. The stronger and more defensible public claim is:",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "README.md",
+      "line": 58,
+      "text": "> Sophia AGI is an AGI-candidate proof package for provenance-aware reasoning.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "README.md",
+      "line": 60,
+      "text": "The proof package defines the operational AGI definition, pre-registered thresholds, current benchmark evidence, external benchmark gaps, ablation plan, hidden-reviewer protocol, long-horizon autonomy logs, learning-under-shift protocol, failure ledger, and third-party replication checklist.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "README.md",
+      "line": 62,
+      "text": "- Evidence package: [agi-proof/README.md](agi-proof/README.md)",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "README.md",
+      "line": 65,
+      "text": "- Machine-readable manifest: [agi-proof/evidence-manifest.json](agi-proof/evidence-manifest.json)",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "README.md",
+      "line": 67,
+      "text": "- Public thesis chapter: https://tomyimkc.github.io/sophia-agi/#agi-proof",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "README.md",
+      "line": 112,
+      "text": "git clone https://github.com/tomyimkc/sophia-agi.git",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "README.md",
+      "line": 113,
+      "text": "cd sophia-agi",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "README.md",
+      "line": 152,
+      "text": "- **Live site:** https://tomyimkc.github.io/sophia-agi/ (leaderboards + thesis; agent panel falls back to CLI hints).",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "README.md",
+      "line": 175,
+      "text": "sophia-agi/",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "README.md",
+      "line": 182,
+      "text": "├── agi-proof/         # AGI-candidate proof package and evidence manifest",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "README.md",
+      "line": 241,
+      "text": "| **Project skill** | `/sophia-agi` — `.grok/skills/sophia-agi/SKILL.md` |",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "README.md",
+      "line": 277,
+      "text": "Dataset: [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) (**527** examples, synced from `training/corpus.jsonl`).",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "RESULTS.md",
+      "line": 3,
+      "text": "<!-- GENERATED from agi-proof/benchmark-results/published-results.json by",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "RESULTS.md",
+      "line": 81,
+      "text": "Offline tests run in CI on every commit. Real-model numbers are produced locally by the maintainer and curated into `agi-proof/benchmark-results/published-results.json`.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/PRE-REGISTRATION.md",
+      "line": 8,
+      "text": "Sophia is an **AGI-candidate**: a provenance-aware, verifier-gated reasoner that abstains",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/PRE-REGISTRATION.md",
+      "line": 9,
+      "text": "rather than fabricate. We do **not** claim AGI. We claim measurable, falsifiable progress",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/PRE-REGISTRATION.md",
+      "line": 39,
+      "text": "`agi-proof/benchmark-results/published-results.json`). Open gaps and negative results live",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/PRE-REGISTRATION.md",
+      "line": 40,
+      "text": "in `agi-proof/failure-ledger.md`. This document is the contract those are measured against.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/README.md",
+      "line": 1,
+      "text": "# Sophia AGI-Candidate Proof Package",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/README.md",
+      "line": 3,
+      "text": "Sophia AGI is not presented as proven AGI. This folder is the public evidence",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/README.md",
+      "line": 6,
+      "text": "> Sophia is an AGI-candidate provenance system with reproducible source-discipline",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/README.md",
+      "line": 19,
+      "text": "still required before any stronger AGI claim.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/README.md",
+      "line": 27,
+      "text": "Output: `agi-proof/evidence-manifest.json`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/README.md",
+      "line": 55,
+      "text": "6. **Not yet run**: ARC-AGI/GAIA/SWE-bench/METR-style external evaluations.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/README.md",
+      "line": 62,
+      "text": "> Sophia AGI is an AGI-candidate proof package for provenance-aware reasoning.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/README.md",
+      "line": 66,
+      "text": "> Sophia is proven AGI.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/REPLICATION.md",
+      "line": 8,
+      "text": "git clone <repo> && cd sophia-agi",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/REPLICATION.md",
+      "line": 21,
+      "text": "Expected outputs are documented in `RESULTS.md`, `agi-proof/self-extension/`, and the",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/REPLICATION.md",
+      "line": 28,
+      "text": "agi-proof/baseline-ablation/abstain-pack-2026-06-22.json /tmp/calib-runs/private-*.json \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/REPLICATION.md",
+      "line": 46,
+      "text": "See `agi-proof/PRE-REGISTRATION.md` for the thresholds and `agi-proof/failure-ledger.md`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 1,
+      "text": "# Sophia AGI-Candidate Proof TODO",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 5,
+      "text": "that Sophia is proven AGI.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 9,
+      "text": "- [x] Sophia is documented as an AGI-candidate architecture.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 10,
+      "text": "Evidence: `agi-proof/definition.md`, `agi-proof/README.md`, `docs/09-Agent/Sophia-Agent.md`.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 13,
+      "text": "Evidence: `sophia_mcp/`, `benchmarks/`, `agent/`, `docs/08-Domains/`, `agi-proof/evidence-manifest.json`.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 24,
+      "text": "Evidence: `agi-proof/hidden-reviewer-packs/schema.json`, `tools/hidden_eval_protocol.py`.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 35,
+      "text": "Evidence: `agi-proof/baseline-ablation/README.md`.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 39,
+      "text": "`agi-proof/baseline-ablation/example-pack.json`.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 53,
+      "text": "Evidence: `agi-proof/learning-under-shift/README.md`.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 62,
+      "text": "`agi-proof/learning-under-shift/example-spec.json`.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 71,
+      "text": "Evidence: `agi-proof/long-horizon-runs/README.md`.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 76,
+      "text": "`agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json`.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 85,
+      "text": "Evidence: `agi-proof/external-benchmarks/README.md`.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 86,
+      "text": "- [ ] Run ARC-AGI / ARC-AGI-3 for novel reasoning.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 95,
+      "text": "Evidence: `agi-proof/third-party-replication/README.md`.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 99,
+      "text": "`agi-proof/third-party-replication/replication-check-2026-06-20.json`.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 108,
+      "text": "- [x] `agi-proof/definition.md`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 109,
+      "text": "- [x] `agi-proof/preregistered-thresholds.md`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 110,
+      "text": "- [x] `agi-proof/benchmark-results/`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 111,
+      "text": "- [x] `agi-proof/baseline-ablation/`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 112,
+      "text": "- [x] `agi-proof/hidden-reviewer-packs/`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 113,
+      "text": "- [x] `agi-proof/long-horizon-runs/`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 114,
+      "text": "- [x] `agi-proof/learning-under-shift/`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 115,
+      "text": "- [x] `agi-proof/failure-ledger.md`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 116,
+      "text": "- [x] `agi-proof/third-party-replication/`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 117,
+      "text": "- [x] `agi-proof/evidence-manifest.json`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 118,
+      "text": "- [x] `agi-proof/TODO.md`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 140,
+      "text": "> Sophia is an AGI-candidate proof package for provenance-aware reasoning.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/TODO.md",
+      "line": 144,
+      "text": "> Sophia is proven AGI.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 7,
+      "text": "\"claimBoundary\": \"No non-human gate can philosophically prove AGI. This matrix verifies machine-checkable evidence required before any AGI-candidate or AGI-language claim is considered.\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 8,
+      "text": "\"recommendedPublicWording\": \"Sophia is an AGI-candidate verifier-gated epistemic agent framework. Do not claim proven AGI unless external scientific review accepts the evidence.\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 36,
+      "text": "\"agi-proof/benchmark-results/published-results.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 75,
+      "text": "\"agi-proof/benchmark-results/published-results.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 76,
+      "text": "\"agi-proof/baseline-ablation/calibration-2family-judge-2026-06-22.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 118,
+      "text": "\"cases\": \"/Users/tom/Documents/GitHub/sophia-agi/eval/coding/smoke.jsonl\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 206,
+      "text": "\"agi-proof/self-extension/closed-loop-2026-06-22.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 284,
+      "text": "\"agi-proof/learning-under-shift/shift-result-2026-06-22.public-report.json\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 297,
+      "text": "\"agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 310,
+      "text": "\"agi-proof/benchmark-results/rlvr.public-report.json\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 311,
+      "text": "\"agi-proof/benchmark-results/runpod-rlvr/vl16kbwfexrngj.train.log\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 312,
+      "text": "\"agi-proof/benchmark-results/runpod-rlvr/xcu45skyjv32rv.train.log\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 313,
+      "text": "\"agi-proof/benchmark-results/runpod-rlvr/zw2upm7sl4nbbr.train.log\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 375,
+      "text": "\"agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 389,
+      "text": "\"agi-proof/third-party-replication/replication-check-2026-06-20.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 416,
+      "text": "\"agi-proof/learning-under-shift/shift-result-2026-06-22.public-report.json\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/agi-verification/agi-verification-report.json",
+      "line": 429,
+      "text": "\"agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/agi-verification/criteria.json",
+      "line": 3,
+      "text": "\"claimBoundary\": \"No non-human gate can philosophically prove AGI. This matrix verifies machine-checkable evidence required before any AGI-candidate or AGI-language claim is considered.\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/agi-verification/criteria.json",
+      "line": 5,
+      "text": "\"level2\": \"AGI-candidate architecture: core gates, harnesses, smoke checks, and proof artifacts exist.\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/agi-verification/criteria.json",
+      "line": 6,
+      "text": "\"level3\": \"Strong AGI-candidate evidence: hidden comparisons, self-extension, grounding, memory, coding, long-horizon short run, and distribution-shift evidence pass machine gates.\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/agi-verification/criteria.json",
+      "line": 7,
+      "text": "\"level4\": \"Expert-reviewable AGI evidence: external benchmarks, 2h/1d autonomy, replicated clean-clone evidence, and RLVR held-out adapter improvement pass machine gates.\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/agi-verification/criteria.json",
+      "line": 8,
+      "text": "\"level5\": \"Proven AGI: not machine-assertable by this repository; requires external scientific/social consensus beyond non-human checks.\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/baseline-ablation/README.md",
+      "line": 42,
+      "text": "python3.12 tools/run_ablation_sophia.py agi-proof/baseline-ablation/example-pack.json \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/baseline-ablation/README.md",
+      "line": 44,
+      "text": "--out agi-proof/baseline-ablation/ablation-deltas-EXAMPLE.public-report.json",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/baseline-ablation/ablation-deltas-2026-06-20.public-report.json",
+      "line": 25,
+      "text": "\"scoreMethod\": \"Same pack and same alias/regex keyword scorer for every mode; operational tool/memory checks included. Two-pass manual semantic review (agi-proof/hidden-reviewer-packs/MANUAL-SEMANTIC-REVIEW.md) remains required before promoting any delta to a quality claim.\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/baseline-ablation/ablation-deltas-2026-06-20.public-report.json",
+      "line": 852,
+      "text": "\"rule\": \"agi-proof/preregistered-thresholds.md line 32: Sophia must not be marketed as AGI if raw model baselines match or beat Sophia-full.\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/baseline-ablation/calibration-2family-judge-2026-06-22.json",
+      "line": 2,
+      "text": "\"pack\": \"agi-proof/baseline-ablation/abstain-pack-2026-06-22.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/baseline-ablation/calibration-3family-judge-2026-06-22.json",
+      "line": 2,
+      "text": "\"pack\": \"agi-proof/baseline-ablation/abstain-pack-2026-06-22.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/baseline-ablation/deepseek-ablation-5case-2026-06-22.json",
+      "line": 3,
+      "text": "\"pack\": \"agi-proof/baseline-ablation/example-pack.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/baseline-ablation/deepseek-ablation-hard-2026-06-22.json",
+      "line": 3,
+      "text": "\"pack\": \"agi-proof/baseline-ablation/hard-pack-2026-06-22.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/baseline-ablation/deepseek-calibration-VALIDATED-2026-06-22.json",
+      "line": 3,
+      "text": "\"pack\": \"agi-proof/baseline-ablation/abstain-pack-2026-06-22.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/baseline-ablation/deepseek-calibration-hard-2026-06-22.json",
+      "line": 2,
+      "text": "\"pack\": \"agi-proof/baseline-ablation/hard-pack-2026-06-22.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/baseline-ablation/deepseek-calibration-judge-2026-06-22.json",
+      "line": 2,
+      "text": "\"pack\": \"agi-proof/baseline-ablation/abstain-pack-2026-06-22.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/baseline-ablation/example-pack.json",
+      "line": 7,
+      "text": "\"note\": \"VISIBLE EXAMPLE PACK for smoke-testing the ablation/hidden/learning runners. This is NOT hidden evidence. A real Level-3 run requires a private, reviewer-authored, unspent pack per agi-proof/hidden-reviewer-packs/.\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/benchmark-results/README.md",
+      "line": 10,
+      "text": "--out agi-proof/benchmark-results/religion-visible-reference-2026-06-19.report.json",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/benchmark-results/README.md",
+      "line": 39,
+      "text": "--public-report-out agi-proof/benchmark-results/hidden-<pack>-sophia.public-report.json \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/benchmark-results/code-uplift-dolphin.public-report.json",
+      "line": 192,
+      "text": "\"note\": \"Sophia = execute-test-and-repair loop with code_exec as the verifier. Single-model run is illustrative; not AGI, a measured coding-reliability uplift on a local model.\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/code-uplift.public-report.json",
+      "line": 192,
+      "text": "\"note\": \"Sophia = execute-test-and-repair loop with code_exec as the verifier. Single-model run is illustrative; not AGI, a measured coding-reliability uplift on a local model.\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-prepared-pack-2026-06-19-diagnosis.md",
+      "line": 10,
+      "text": "This run is a preliminary hidden benchmark, not AGI proof.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-prepared-pack-2026-06-19-grok-cli.public-report.json",
+      "line": 159,
+      "text": "\"Use a new third-party hidden pack for stronger AGI-candidate claims.\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/published-results.json",
+      "line": 168,
+      "text": "\"artifact\": \"agi-proof/baseline-ablation/calibration-3family-judge-2026-06-22.json\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/3h39uu9fzo08j3.rlvr.offline-report.json",
+      "line": 59,
+      "text": "\"liveClaimStatus\": \"Open — see agi-proof/failure-ledger.md rlvr-live-run-not-yet-gated-2026-06-21\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/3h39uu9fzo08j3.rlvr.public-report.json",
+      "line": 59,
+      "text": "\"liveClaimStatus\": \"Open — see agi-proof/failure-ledger.md rlvr-live-run-not-yet-gated-2026-06-21\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/8x742vmn3nnzom.rlvr.offline-report.json",
+      "line": 61,
+      "text": "\"liveClaimStatus\": \"Open — see agi-proof/failure-ledger.md rlvr-live-run-not-yet-gated-2026-06-21\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/krjk0y6q092qt6.rlvr.offline-report.json",
+      "line": 59,
+      "text": "\"liveClaimStatus\": \"Open — see agi-proof/failure-ledger.md rlvr-live-run-not-yet-gated-2026-06-21\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/xcu45skyjv32rv.rlvr.offline-report.json",
+      "line": 59,
+      "text": "\"liveClaimStatus\": \"Open — see agi-proof/failure-ledger.md rlvr-live-run-not-yet-gated-2026-06-21\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/unified-uplift-dolphin-v0.7.32-grounded.public-report.json",
+      "line": 13,
+      "text": "\"scopeNote\": \"Provenance/attribution discipline on checkable cases — NOT general capability or AGI. +mcp-tools is tool-grounded retrieval + self-verification, not model intelligence. A lever is VALIDATED only under the no-overclaim gate (>=2 judge families, kappa>=0.40, >=3 runs, 95% CI excludes 0).\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/unified-uplift-dolphin-validated.public-report.json",
+      "line": 12,
+      "text": "\"scopeNote\": \"Provenance/attribution discipline on checkable cases — NOT general capability or AGI. +mcp-tools is tool-grounded retrieval + self-verification, not model intelligence. A lever is VALIDATED only under the no-overclaim gate (>=2 judge families, kappa>=0.40, >=3 runs, 95% CI excludes 0).\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/unified-uplift.public-report.json",
+      "line": 12,
+      "text": "\"scopeNote\": \"Provenance/attribution discipline on checkable cases — NOT general capability or AGI. +mcp-tools is tool-grounded retrieval + self-verification, not model intelligence. A lever is VALIDATED only under the no-overclaim gate (>=2 judge families, kappa>=0.40, >=3 runs, 95% CI excludes 0).\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/definition.md",
+      "line": 1,
+      "text": "# Operational AGI Definition For Sophia",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/definition.md",
+      "line": 3,
+      "text": "There is no single universal AGI definition. This project uses a conservative",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/definition.md",
+      "line": 4,
+      "text": "operational definition drawn from recurring themes in major AGI discussions.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/definition.md",
+      "line": 8,
+      "text": "An AGI-capable system should demonstrate:",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/definition.md",
+      "line": 24,
+      "text": "| Google DeepMind Levels of AGI | Generality, performance, and autonomy | Proof ladder with explicit levels |",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/definition.md",
+      "line": 30,
+      "text": "For this repository, Sophia reaches a credible AGI-candidate threshold only if it",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 4,
+      "text": "\"claimBoundary\": \"Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 6,
+      "text": "\"summary\": \"For this repo, AGI evidence means broad task competence, transfer, tool use, long-horizon autonomy, learning under distribution shift, baseline superiority, and independent reproduction.\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 14,
+      "text": "\"name\": \"Google DeepMind Levels of AGI\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 504,
+      "text": "\"artifact\": \"agi-proof/benchmark-results/hidden-fresh-reviewer-pack-2026-06-19-sophia-deepseek-coding-council-repair3.public-report.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 733,
+      "text": "\"artifact\": \"agi-proof/benchmark-results/hidden-fresh-reviewer-pack-2026-06-19-sophia-deepseek-coding-council-repair3.public-report.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1059,
+      "text": "\"artifact\": \"agi-proof/benchmark-results/hidden-fresh-reviewer-pack-2026-06-19-sophia-deepseek.public-report.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1297,
+      "text": "\"artifact\": \"agi-proof/benchmark-results/hidden-fresh-reviewer-pack-2026-06-19-sophia-grok.public-report.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1502,
+      "text": "\"artifact\": \"agi-proof/benchmark-results/hidden-fresh-reviewer-pack-2026-06-19-sophia-deepseek.public-report.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1547,
+      "text": "\"name\": \"ARC-AGI / ARC-AGI-3\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1568,
+      "text": "\"pre-registered AGI definition and thresholds\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1578,
+      "text": "\"todo\": \"agi-proof/TODO.md\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1579,
+      "text": "\"definition\": \"agi-proof/definition.md\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1580,
+      "text": "\"thresholds\": \"agi-proof/preregistered-thresholds.md\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1581,
+      "text": "\"benchmarkResults\": \"agi-proof/benchmark-results/README.md\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1582,
+      "text": "\"externalBenchmarks\": \"agi-proof/external-benchmarks/README.md\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1583,
+      "text": "\"baselineAblation\": \"agi-proof/baseline-ablation/README.md\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1589,
+      "text": "\"hiddenReview\": \"agi-proof/hidden-reviewer-packs/README.md\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1590,
+      "text": "\"manualSemanticReview\": \"agi-proof/hidden-reviewer-packs/MANUAL-SEMANTIC-REVIEW.md\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1593,
+      "text": "\"hiddenPackCommitments\": \"agi-proof/hidden-reviewer-packs/prepared-pack-2026-06-19.commitments.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1594,
+      "text": "\"freshHiddenPackCommitments\": \"agi-proof/hidden-reviewer-packs/fresh-reviewer-pack-2026-06-19.commitments.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1595,
+      "text": "\"longHorizon\": \"agi-proof/long-horizon-runs/README.md\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1596,
+      "text": "\"learningShift\": \"agi-proof/learning-under-shift/README.md\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1597,
+      "text": "\"failureLedger\": \"agi-proof/failure-ledger.md\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1598,
+      "text": "\"replication\": \"agi-proof/third-party-replication/README.md\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1602,
+      "text": "\"rlvrReport\": \"agi-proof/benchmark-results/rlvr.public-report.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1606,
+      "text": "\"localAgentDeltaReport\": \"agi-proof/benchmark-results/local-agent-delta.public-report.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1607,
+      "text": "\"localAgentDeltaValidatedReport\": \"agi-proof/benchmark-results/provenance-delta-dolphin-validated.public-report.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1609,
+      "text": "\"unifiedUpliftReport\": \"agi-proof/benchmark-results/unified-uplift.public-report.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1626,
+      "text": "\"factCheckLiveEvalReport\": \"agi-proof/fact-check-live/fact-check-live-eval.public-report.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/evidence-manifest.json",
+      "line": 1629,
+      "text": "\"reflexiveSelfGateReport\": \"agi-proof/self-gate/reflexive-self-gate.public-report.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/external-benchmarks/PROVENANCE-DELTA-CHECKLIST.md",
+      "line": 24,
+      "text": "- [ ] **Eyeball the report** (`agi-proof/benchmark-results/provenance-delta.md`).",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/external-benchmarks/PROVENANCE-DELTA-CHECKLIST.md",
+      "line": 53,
+      "text": "`agi-proof/preregistered-thresholds.md` *before* the run you'll cite.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/external-benchmarks/PROVENANCE-DELTA-CHECKLIST.md",
+      "line": 59,
+      "text": "`agi-proof/third-party-replication/`.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/external-benchmarks/PROVENANCE-DELTA-CHECKLIST.md",
+      "line": 109,
+      "text": "(a mini \"ARC-AGI for attribution\"). Hold out a private test split.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/external-benchmarks/PROVENANCE-DELTA-CHECKLIST.md",
+      "line": 126,
+      "text": "- [ ] Update `agi-proof/failure-ledger.md` with cases the gate misses — the",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/external-benchmarks/README.md",
+      "line": 3,
+      "text": "External benchmarks are required before any stronger AGI claim. Current status:",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/external-benchmarks/README.md",
+      "line": 8,
+      "text": "| ARC-AGI / ARC-AGI-3 | Novel reasoning and skill-acquisition efficiency | official or reproducible score, solver config, per-task logs |",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/failure-ledger.md",
+      "line": 3,
+      "text": "Failures are claim evidence. They show where the system is not AGI.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/failure-ledger.md",
+      "line": 7,
+      "text": "| external-benchmarks-not-run | Open | Blocks expert AGI claim | Keep wording at AGI-candidate |",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/failure-ledger.md",
+      "line": 15,
+      "text": "| baseline-ablation-missing | Closed | RAN (DeepSeek, 2026-06-22, 3 runs each; agi-proof/baseline-ablation/TRACK2-DEEPSEEK-2026-06-22.md). Keyword/regex scoring shows NO net method advantage on a capable base model: 5-case full−raw +1.33 [0.48,2.18] (beats bare model) but full−raw+tools ties; 17-case hard full−raw −1.11 [−2.23,0.01] (raw slightly beats). Superseded by the calibration finding below. | — |",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/failure-ledger.md",
+      "line": 17,
+      "text": "| calibration-multijudge-corroborated-2026-06-22 | Closed | MULTI-JUDGE CORROBORATED: two INDEPENDENT judge families (openai:gpt-4o + openai:claude-sonnet-4-6, distinct from the deepseek subject) re-scored the 108 abstain answers across 3 runs (tools/run_calibration_judge.py). All three methods rank sophia-full LOWEST fabrication; inter-judge κ=0.74 (substantial), scorer-vs-judge κ=0.48/0.40 (both ≥0.40). Meets the multi-judge + inter-judge-agreement + ≥3-runs bar. Artifact: agi-proof/baseline-ablation/calibration-2family-judge-2026-06-22.json. | — |",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/failure-ledger.md",
+      "line": 19,
+      "text": "| self-extending-loop-closes-offline-2026-06-22 | Partial | The full loop CLOSES offline on a held-out domain (selfextend/loop.py): abstain→synthesize verifier→validate on held-out→verified-reward SELECTION→policy acc 0.5→1.0 on an independent eval split→competence flips abstain→answer; all 4 invariants pass; fail-closed on unlearnable data. agi-proof/self-extension/. | (a) run on a THIRD-PARTY domain, (b) replace selection with a live RL update (GPU), (c) clear the no-overclaim gate — then it becomes a capability claim |",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/hidden-reviewer-packs/HIDDEN-EVAL-OPERATING-PROTOCOL.md",
+      "line": 62,
+      "text": "--public-report-out agi-proof/benchmark-results/hidden-<pack>-sophia.public-report.json \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/hidden-reviewer-packs/MANUAL-SEMANTIC-REVIEW.md",
+      "line": 43,
+      "text": "--public-report-out agi-proof/benchmark-results/hidden-<pack>-sophia.public-report.json \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/learning-under-shift/README.md",
+      "line": 41,
+      "text": "python3.12 tools/run_learning_shift.py agi-proof/learning-under-shift/example-spec.json \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/learning-under-shift/README.md",
+      "line": 43,
+      "text": "--out agi-proof/learning-under-shift/shift-result-EXAMPLE.public-report.json",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/distribution_shift/distribution-shift.candidate.json",
+      "line": 8,
+      "text": "\"stored outside agi-proof/learning-under-shift gate-scanned result path\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/distribution_shift/distribution-shift.candidate.json",
+      "line": 13,
+      "text": "\"specPath\": \"agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/distribution_shift/spec.candidate.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 6,
+      "text": "\"domain\": \"Economics & Political Economy with AGI-incentive meta layer\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 80,
+      "text": "\"claim\": \"AGI deployment incentives can create pressure to deploy before safety evidence is complete\",",
+      "verdict": "accepted",
+      "reason": "benchmark/example claim, not public self-assertion"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 89,
+      "text": "\"claim\": \"AGI deployment incentives can create pressure to deploy before safety evidence is complete\",",
+      "verdict": "accepted",
+      "reason": "benchmark/example claim, not public self-assertion"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 96,
+      "text": "\"id\": \"agi-inc-1\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 98,
+      "text": "\"title\": \"AGI deployment incentives can create pressure to deploy before safety evidence is complete\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 104,
+      "text": "\"id\": \"agi-inc-2\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 106,
+      "text": "\"title\": \"AGI deployment incentives can create pressure to deploy before safety evidence is complete\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 112,
+      "text": "\"id\": \"agi-inc-3\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 114,
+      "text": "\"title\": \"AGI deployment incentives can create pressure to deploy before safety evidence is complete\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 144,
+      "text": "\"id\": \"agi-inc-1\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 146,
+      "text": "\"title\": \"AGI deployment incentives can create pressure to deploy before safety evidence is complete\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 152,
+      "text": "\"id\": \"agi-inc-2\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 154,
+      "text": "\"title\": \"AGI deployment incentives can create pressure to deploy before safety evidence is complete\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 160,
+      "text": "\"id\": \"agi-inc-3\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/economics_political_economy/fact-check-candidate-report.json",
+      "line": 162,
+      "text": "\"title\": \"AGI deployment incentives can create pressure to deploy before safety evidence is complete\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/level3-candidate-summary.json",
+      "line": 4,
+      "text": "\"outDir\": \"agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/level3-candidate-summary.json",
+      "line": 7,
+      "text": "\"claimBoundary\": \"This local benchmark rehearses the Level-3 workflows but is not private, not independent, and not promotable as AGI Level-3 evidence.\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/level3-candidate-summary.json",
+      "line": 13,
+      "text": "\"artifact\": \"agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/hidden_full_comparison/full-aggregate.candidate.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/level3-candidate-summary.json",
+      "line": 14,
+      "text": "\"manualReview\": \"agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/hidden_full_comparison/manual-review.candidate.md\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/level3-candidate-summary.json",
+      "line": 25,
+      "text": "\"artifact\": \"agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/distribution_shift/distribution-shift.candidate.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/level3-candidate-summary.json",
+      "line": 33,
+      "text": "\"artifact\": \"agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/long_horizon_30m/long-horizon-self-test.candidate.public-report.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/level3-candidate-summary.json",
+      "line": 34,
+      "text": "\"log\": \"agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/long_horizon_30m/long-horizon-self-test.candidate.log.jsonl\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/level3-candidate-summary.json",
+      "line": 35,
+      "text": "\"sidecar\": \"agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/long_horizon_30m/candidate-note.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/level3-candidate-summary.json",
+      "line": 42,
+      "text": "\"note\": \"Runs shorter than the 30-minute Short tier (and under 10 tool calls) are labelled demos, not autonomy claims. Runs with frequent human steering are reported as partial autonomy, per agi-proof/long-horizon-runs/README.md.\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/level3-candidate-summary.json",
+      "line": 49,
+      "text": "\"python tools/run_distribution_shift.py private/shift/SPEC.json --backend adapter --out agi-proof/learning-under-shift/shift-result-YYYY-MM-DD.public-report.json\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/level3-candidate-summary.json",
+      "line": 50,
+      "text": "\"python tools/run_long_horizon.py --spec private/long-horizon/30min-YYYY-MM-DD.json --log agi-proof/long-horizon-runs/level3-30min-YYYY-MM-DD.log.jsonl --report-out agi-proof/long-horizon-runs/level3-30min-YYYY-MM-DD.public-report.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/long_horizon_30m/candidate-note.json",
+      "line": 6,
+      "text": "\"stored outside agi-proof/long-horizon-runs gate-scanned path\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/long_horizon_30m/candidate-note.json",
+      "line": 10,
+      "text": "\"stdoutTail\": \"fail then self-correct\\\"\\n  ],\\n  \\\"startedAt\\\": \\\"2026-06-23T07:46:20.666032+00:00\\\",\\n  \\\"durationSec\\\": 0.09,\\n  \\\"tier\\\": \\\"below-short-demo\\\",\\n  \\\"eventCounts\\\": {\\n    \\\"artifact\\\": 0,\\n    \\\"failed_attempt\\\": 1,\\n    \\\"goal\\\": 1,\\n    \\\"human_intervention\\\": 0,\\n    \\\"note\\\": 0,\\n    \\\"plan\\\": 1,\\n    \\\"self_correction\\\": 1,\\n    \\\"state_transition\\\": 10,\\n    \\\"tool_call\\\": 5,\\n    \\\"verification\\\": 1\\n  },\\n  \\\"toolCalls\\\": 5,\\n  \\\"failedAttempts\\\": 1,\\n  \\\"selfCorrections\\\": 1,\\n  \\\"humanInterventionCount\\\": 0,\\n  \\\"autonomy\\\": {\\n    \\\"level\\\": \\\"no-intervention-demo\\\",\\n    \\\"substantive\\\": false,\\n    \\\"humanInterventionCount\\\": 0,\\n    \\\"note\\\": \\\"Runs shorter than the 30-minute Short tier (and under 10 tool calls) are labelled demos, not autonomy claims. Runs with frequent human steering are reported as partial autonomy, per agi-proof/long-horizon-runs/README.md.\\\"\\n  },\\n  \\\"finalArtifacts\\\": [\\n    {\\n      \\\"message\\\": \\\"verification for: validate-manifest\\\",\\n      \\\"verificationCommand\\\": \\\"python3 -m json.tool agi-proof/evidence-manifest.json\\\"\\n    }\\n  ]\\n}\\n\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/long_horizon_30m/long-horizon-self-test.candidate.public-report.json",
+      "line": 3,
+      "text": "\"logPath\": \"agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/long_horizon_30m/long-horizon-self-test.candidate.log.jsonl\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/long_horizon_30m/long-horizon-self-test.candidate.public-report.json",
+      "line": 37,
+      "text": "\"note\": \"Runs shorter than the 30-minute Short tier (and under 10 tool calls) are labelled demos, not autonomy claims. Runs with frequent human steering are reported as partial autonomy, per agi-proof/long-horizon-runs/README.md.\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/long_horizon_30m/long-horizon-self-test.candidate.public-report.json",
+      "line": 42,
+      "text": "\"verificationCommand\": \"python3 -m json.tool agi-proof/evidence-manifest.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/long-horizon-runs/README.md",
+      "line": 40,
+      "text": "python3.12 tools/run_long_horizon.py --resume agi-proof/long-horizon-runs/<run>.log.jsonl \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json",
+      "line": 3,
+      "text": "\"logPath\": \"agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.log.jsonl\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json",
+      "line": 37,
+      "text": "\"note\": \"Runs shorter than the 30-minute Short tier (and under 10 tool calls) are labelled demos, not autonomy claims. Runs with frequent human steering are reported as partial autonomy, per agi-proof/long-horizon-runs/README.md.\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json",
+      "line": 42,
+      "text": "\"verificationCommand\": \"python3 -m json.tool agi-proof/evidence-manifest.json\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/preregistered-thresholds.md",
+      "line": 11,
+      "text": "| 2 | AGI-candidate architecture | Agent/RAG/local-model paths plus gate and memory |",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/preregistered-thresholds.md",
+      "line": 12,
+      "text": "| 3 | Strong AGI-candidate evidence | Hidden reviewer tasks, ablations, long-horizon logs |",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/preregistered-thresholds.md",
+      "line": 13,
+      "text": "| 4 | Expert-reviewable AGI evidence | External benchmark results and clean-clone replication |",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/preregistered-thresholds.md",
+      "line": 14,
+      "text": "| 5 | Proven AGI | Not claimed by this repository |",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/preregistered-thresholds.md",
+      "line": 29,
+      "text": "Sophia must not be marketed as AGI if any of these occur:",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/preregistered-thresholds.md",
+      "line": 57,
+      "text": "(`_is_validated`) is not cleared. It is explicitly **not** an AGI claim — RLVR",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/self-extension/README.md",
+      "line": 36,
+      "text": "- **Isn't:** an AGI claim. The domain + labels are self-authored toy data; a headline",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/third-party-replication/README.md",
+      "line": 3,
+      "text": "Independent reproduction is mandatory for any expert-facing AGI claim.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/third-party-replication/README.md",
+      "line": 8,
+      "text": "git clone https://github.com/tomyimkc/sophia-agi.git",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/third-party-replication/README.md",
+      "line": 9,
+      "text": "cd sophia-agi",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/third-party-replication/replication-check-2026-06-20.json",
+      "line": 26,
+      "text": "\"name\": \"build-agi-proof\",",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "agi-proof/third-party-replication/replication-check-2026-06-20.json",
+      "line": 102,
+      "text": "\"stderrTail\": \" IndexedChunk, save_index, load_index, search  # noqa: E402\\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/Users/tom/Documents/GitHub/sophia-agi/agent/vector_store.py\\\", line 10, in <module>\\n    import numpy as np\\nModuleNotFoundError: No module named 'numpy'\\n\"",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 1,
+      "text": "# Sophia AGI — Level 3 Execution Protocol",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 23,
+      "text": "| `hidden_full_comparison` | an aggregate JSON under `agi-proof/hidden-reviewer-packs/**` with `sophiaDelta.scorePctVsRaw > 0`, `strictPassVsRaw >= 0`, `visibility == \"private-hidden\"`, and pack id not containing `smoke` |",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 24,
+      "text": "| `distribution_shift` | a `*result*.json` under `agi-proof/learning-under-shift/` with `passingSignal == true` and `postTest.totalCases >= 10` |",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 25,
+      "text": "| `long_horizon_30m` | a `*public-report.json` under `agi-proof/long-horizon-runs/` with `durationSec >= 1800`, `autonomy.substantive == true`, and `humanInterventionCount <= 2` |",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 43,
+      "text": "agi-proof/level3-candidate-benchmark/<date>-local-smoke/",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 181,
+      "text": "--out agi-proof/hidden-reviewer-packs/results/level3-full-aggregate-YYYY-MM-DD.json \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 182,
+      "text": "--manual-review-out agi-proof/hidden-reviewer-packs/results/level3-manual-review-YYYY-MM-DD.md",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 242,
+      "text": "--out agi-proof/learning-under-shift/shift-result-YYYY-MM-DD.public-report.json",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 284,
+      "text": "agi-proof/long-horizon-runs/templates/30min-repo-repair.json",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 290,
+      "text": "cp agi-proof/long-horizon-runs/templates/30min-repo-repair.json \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 309,
+      "text": "--log agi-proof/long-horizon-runs/level3-30min-YYYY-MM-DD.log.jsonl \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 310,
+      "text": "--report-out agi-proof/long-horizon-runs/level3-30min-YYYY-MM-DD.public-report.json \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 318,
+      "text": "--resume agi-proof/long-horizon-runs/level3-30min-YYYY-MM-DD.log.jsonl \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 319,
+      "text": "--report-out agi-proof/long-horizon-runs/level3-30min-YYYY-MM-DD.public-report.json",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 326,
+      "text": "--resume agi-proof/long-horizon-runs/level3-30min-YYYY-MM-DD.log.jsonl \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 365,
+      "text": "Even then, correct public wording is **\"strong AGI-candidate evidence\"**, not",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 366,
+      "text": "\"Sophia is proven AGI\".",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 383,
+      "text": "artifacts stay in `agi-proof/level3-candidate-benchmark/`; real artifacts must be",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Execution-Protocol.md",
+      "line": 433,
+      "text": "--out agi-proof/hidden-reviewer-packs/results/level3-full-aggregate-<date>.json",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Items.md",
+      "line": 1,
+      "text": "# Sophia AGI — Level 3 implementation items (machine-verified)",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Items.md",
+      "line": 3,
+      "text": "Source: `tools/run_agi_verification_gate.py` (criteria: `agi-proof/agi-verification/criteria.json`).",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Items.md",
+      "line": 4,
+      "text": "Level 3 = \"Strong AGI-candidate evidence\". Mark each item done only when the gate reports `pass`.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Items.md",
+      "line": 6,
+      "text": "> Claim boundary: passing every item below makes Sophia a strong AGI-candidate under a",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Items.md",
+      "line": 7,
+      "text": "> non-human verification gate. It does NOT make Sophia \"proven AGI\"; that requires external",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Items.md",
+      "line": 39,
+      "text": "--out agi-proof/hidden-reviewer-packs/results/full-aggregate.json \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Items.md",
+      "line": 40,
+      "text": "--manual-review-out agi-proof/hidden-reviewer-packs/results/manual-review.md",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Items.md",
+      "line": 53,
+      "text": "--spec agi-proof/long-horizon-runs/templates/30min-repo-repair.json \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level3-Items.md",
+      "line": 54,
+      "text": "--out-dir agi-proof/long-horizon-runs/<date>-30min",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level4-Items.md",
+      "line": 1,
+      "text": "# Sophia AGI — Level 4 implementation items (machine-verified)",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level4-Items.md",
+      "line": 3,
+      "text": "Source: `tools/run_agi_verification_gate.py` (criteria: `agi-proof/agi-verification/criteria.json`).",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level4-Items.md",
+      "line": 4,
+      "text": "Level 4 = \"Expert-reviewable AGI evidence\". Requires all Level 3 items PLUS the four below.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level4-Items.md",
+      "line": 7,
+      "text": "> \"Sophia has expert-reviewable AGI evidence\", NOT \"Sophia is proven AGI\". Reviewer",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level4-Items.md",
+      "line": 25,
+      "text": "--out agi-proof/benchmark-results/rlvr.adapter-eval.real.json",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level4-Items.md",
+      "line": 30,
+      "text": "`agi-proof/external-benchmarks/results/` with `system: sophia-full`.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level4-Items.md",
+      "line": 34,
+      "text": "python tools/run_long_horizon.py --spec agi-proof/long-horizon-runs/templates/2h-skill-forge.json --out-dir agi-proof/long-horizon-runs/<date>-2h",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level4-Items.md",
+      "line": 35,
+      "text": "python tools/run_long_horizon.py --spec agi-proof/long-horizon-runs/templates/1day-wiki-maintenance.json --out-dir agi-proof/long-horizon-runs/<date>-1day",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/AGI-Level4-Items.md",
+      "line": 44,
+      "text": "`level5` (\"Proven AGI\") is intentionally **not** machine-assertable. The gate keeps",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/Open-Intelligence-Plan.md",
+      "line": 1,
+      "text": "# Sophia AGI Roadmap",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/Open-Intelligence-Plan.md",
+      "line": 3,
+      "text": "Step-by-step plan to grow this repository into a general **provenance gate** for AGI-shaped systems.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/Open-Intelligence-Plan.md",
+      "line": 7,
+      "text": "- [x] Public repo: **Sophia AGI**",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/Open-Intelligence-Plan.md",
+      "line": 32,
+      "text": "- [x] LoRA sophia-v1 local eval **20/23 (87%)**; HF adapter `tomyimkc/sophia-agi-lora-v1`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/Open-Intelligence-Plan.md",
+      "line": 44,
+      "text": "## Phase 5 — AGI-shaped milestones",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/Open-Intelligence-Plan.md",
+      "line": 54,
+      "text": "## AGI-Candidate Proof Package",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/Open-Intelligence-Plan.md",
+      "line": 56,
+      "text": "The proof package now lives in `agi-proof/`. It keeps the claim boundary explicit:",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/Open-Intelligence-Plan.md",
+      "line": 57,
+      "text": "Sophia is an AGI-candidate proof package, not proven AGI.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/06-Roadmap/Publish-Checklist.md",
+      "line": 22,
+      "text": "- [ ] Mirror `agi-proof/PRE-REGISTRATION.md` to **OSF** for a timestamp/DOI.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/06-Roadmap/Publish-Checklist.md",
+      "line": 28,
+      "text": "- [ ] **LessWrong / AlignmentForum** for the no-overclaim / AGI-claims-discipline angle.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/AGI-Infrastructure-Plan.md",
+      "line": 1,
+      "text": "# Sophia AGI-candidate infrastructure plan",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/AGI-Infrastructure-Plan.md",
+      "line": 18,
+      "text": "## AGI verification gate",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/AGI-Infrastructure-Plan.md",
+      "line": 30,
+      "text": "agi-proof/agi-verification/agi-verification-report.json",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/AGI-Infrastructure-Plan.md",
+      "line": 33,
+      "text": "It intentionally keeps `canClaimAGI=false`; the repo can machine-check evidence lanes, but it cannot philosophically self-certify AGI. Stronger wording is blocked until the gate reports the relevant level as passed and external review accepts the evidence.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/AGI-Infrastructure-Plan.md",
+      "line": 37,
+      "text": "The gate maps each capability in `agi-proof/definition.md` to a machine-checkable",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/AGI-Infrastructure-Plan.md",
+      "line": 38,
+      "text": "lane (criteria: `agi-proof/agi-verification/criteria.json`):",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/AGI-Infrastructure-Plan.md",
+      "line": 106,
+      "text": "--out agi-proof/benchmark-results/rlvr.adapter-eval.real.json",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/AGI-Infrastructure-Plan.md",
+      "line": 124,
+      "text": "--out agi-proof/hidden-reviewer-packs/results/full-aggregate.json \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/AGI-Infrastructure-Plan.md",
+      "line": 125,
+      "text": "--manual-review-out agi-proof/hidden-reviewer-packs/results/manual-review.md",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/AGI-Infrastructure-Plan.md",
+      "line": 150,
+      "text": "agi-proof/long-horizon-runs/YYYY-MM-DD-<duration>/",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/AGI-Infrastructure-Plan.md",
+      "line": 181,
+      "text": "## What blocks stronger AGI language",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/AGI-Infrastructure-Plan.md",
+      "line": 190,
+      "text": "Until those close, use: **AGI-candidate verifier-gated epistemic agent framework**.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/AGI-Platform.md",
+      "line": 1,
+      "text": "# Sophia AGI Platform",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Discipline-Layer.md",
+      "line": 86,
+      "text": "AGI-candidate proof package.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Fact-Check-Reality-Gap.md",
+      "line": 3,
+      "text": "Status: implemented as an **offline deterministic candidate eval** plus optional keyless live backends. It is not Level-3 AGI evidence and is not a hidden-reviewer run.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Fact-Check-Reality-Gap.md",
+      "line": 26,
+      "text": "| Reflexive AGI self-gate | `agent/reflexive_self_gate.py`, `tools/run_reflexive_self_gate.py` |",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Fact-Check-Reality-Gap.md",
+      "line": 27,
+      "text": "| Candidate artifacts | `agi-proof/fact-check-live/`, `agi-proof/self-gate/` |",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Fact-Check-Reality-Gap.md",
+      "line": 41,
+      "text": "--out agi-proof/fact-check-live/fact-check-live-eval.live.local.json",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Fact-Check-Reality-Gap.md",
+      "line": 58,
+      "text": "From `agi-proof/fact-check-live/fact-check-live-eval.public-report.json`:",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Fact-Check-Reality-Gap.md",
+      "line": 70,
+      "text": "Boundary: this is a **candidate/offline fixture run** (`candidateOnly=true`, `level3Evidence=false`). It proves wiring, metrics, and fail-closed behavior; it does not prove open-world AGI.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Fact-Check-Reality-Gap.md",
+      "line": 78,
+      "text": "- High-risk economics / AGI-incentive claims require at least 3 independent entailing source families and confidence above the high-risk floor.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Fact-Check-Reality-Gap.md",
+      "line": 90,
+      "text": "`tools/run_reflexive_self_gate.py` scans Sophia's own README/results/AGI-proof docs for status overclaims. It accepts candidate/no-overclaim wording and rejects unqualified \"Sophia is proven AGI\"-style claims. Current report keeps `canClaimAGI=false`.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Fact-Check-Reality-Gap.md",
+      "line": 92,
+      "text": "中文摘要：Reality Gap v1 已把 out-of-wiki claim 連到 deterministic verifier、keyless Wikidata/Crossref/URL backend、N=43 held-out eval、ECE/Brier/derived floor、quarantine flywheel、以及 Sophia 自我 no-overclaim gate。現階段是 candidate/offline wiring，不是 Level-3 AGI 證據。",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Generality.md",
+      "line": 6,
+      "text": "label** — none of this licenses the word \"AGI\"; it is engineering toward broader,",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Generality.md",
+      "line": 77,
+      "text": "of reach, where calibrated abstention is the correct behaviour. Still not AGI —",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Generality.md",
+      "line": 102,
+      "text": "- Not \"AGI\", and not evidence of it. The earned claim is: *a verifier-gated loop,",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Local-Hybrid-Inference.md",
+      "line": 8,
+      "text": "> Claim boundary: this is *infrastructure* for an AGI-candidate framework. It does",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Local-Hybrid-Inference.md",
+      "line": 9,
+      "text": "> not change the verification gate or any AGI claim. The gate",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Methodology.md",
+      "line": 14,
+      "text": "claim of AGI; we pre-register thresholds, measure against them honestly, and report every",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Methodology.md",
+      "line": 54,
+      "text": "- These gaps are tracked, openly, in `agi-proof/failure-ledger.md`.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Methodology.md",
+      "line": 62,
+      "text": "python tools/run_calibration_judge.py agi-proof/baseline-ablation/abstain-pack-2026-06-22.json \\",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Methodology.md",
+      "line": 70,
+      "text": "See `agi-proof/REPLICATION.md` for the third-party replication checklist, the OSF-style",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Methodology.md",
+      "line": 71,
+      "text": "pre-registration (`agi-proof/PRE-REGISTRATION.md`), and the data/code locations.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/OKF-Wiki.md",
+      "line": 32,
+      "text": "AGI-proof: compounding curve · wiki_health · provenance lint (falsifier)",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/OKF-Wiki.md",
+      "line": 76,
+      "text": "| `python tools/run_compounding_curve.py` | answerable-coverage vs wiki size (AGI-proof) |",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/OKF-Wiki.md",
+      "line": 128,
+      "text": "This is the bridge from \"AGI-candidate proof package\" toward an auditable,",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/OKF-Wiki.md",
+      "line": 130,
+      "text": "See [AGI-Platform.md](./AGI-Platform.md) and [Roadmap.md](./Roadmap.md).",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/OpenClaw.md",
+      "line": 94,
+      "text": "- **This integration adds nothing to, and makes no claim about, the AGI-candidate proof package.**",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Out-of-Wiki-Fact-Check-Gate.md",
+      "line": 108,
+      "text": "| high-risk/economics/policy/finance/AGI incentive | 3 independent domains |",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Provenance-Delta.md",
+      "line": 70,
+      "text": "[checklist](../../agi-proof/external-benchmarks/PROVENANCE-DELTA-CHECKLIST.md)",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Provenance-Delta.md",
+      "line": 131,
+      "text": "Outputs (git-ignored, regenerable): `agi-proof/benchmark-results/provenance-delta.public-report.json`",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Provenance-Delta.md",
+      "line": 152,
+      "text": "[checklist](../../agi-proof/external-benchmarks/PROVENANCE-DELTA-CHECKLIST.md).",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Roadmap.md",
+      "line": 1,
+      "text": "# AGI Platform Roadmap",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Roadmap.md",
+      "line": 3,
+      "text": "Status of the 12-point AGI-platform mandate after the **Stage 1 vertical slice**",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Roadmap.md",
+      "line": 5,
+      "text": "the repo audit in `agi-proof/` and the platform build.",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Roadmap.md",
+      "line": 22,
+      "text": "| 12 | Developer experience | ✅ | `docs/11-Platform/` (AGI-Platform + Inference + Roadmap), `.env.example`, per-module tests |",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Security-Roadmap.md",
+      "line": 118,
+      "text": "## Next milestones (not \"AGI\")",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Source-Discipline-Gate.md",
+      "line": 49,
+      "text": "and claims nothing about, the AGI-candidate proof package.",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Verifier-Synthesis.md",
+      "line": 13,
+      "text": "generality gap (see [Generality.md](Generality.md) and the AGI framing: intelligence",
+      "verdict": "accepted",
+      "reason": "AGI mention without status overclaim"
+    },
+    {
+      "path": "docs/11-Platform/Verifier-Synthesis.md",
+      "line": 18,
+      "text": "AGI-complete). It claims something smaller and falsifiable: a system that can",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "docs/11-Platform/Verifier-Synthesis.md",
+      "line": 87,
+      "text": "- It is **not** AGI and not unbounded verifier synthesis. The template library is",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    }
+  ],
+  "summary": {
+    "accepted": 318,
+    "held": 0,
+    "rejected": 0
+  }
+}

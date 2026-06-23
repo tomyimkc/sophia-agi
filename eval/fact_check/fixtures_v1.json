@@ -1,0 +1,262 @@
+{
+  "schema": "sophia.fact_check.fixtures.v1",
+  "doiExists": {
+    "10.1038/nphys1170": true,
+    "10.1126/science.169.3946.635": true,
+    "10.1145/3292500.3330701": true,
+    "10.5555/not-a-real-sophia-doi": false,
+    "10.9999/sophia-fabricated-doi-2026": false
+  },
+  "urlExists": {
+    "https://example.com": true,
+    "https://www.wikidata.org": true,
+    "https://nonexistent.sophia.invalid/report": false,
+    "https://example.invalid/sophia-report": false
+  },
+  "claims": {
+    "Douglas Adams wrote The Hitchhiker's Guide to the Galaxy": [
+      {
+        "id": "wd_q42",
+        "url": "https://www.wikidata.org/wiki/Q25169",
+        "title": "Wikidata authorship record",
+        "snippet": "[ENTAILS] Wikidata records The Hitchhiker's Guide to the Galaxy author(s): Douglas Adams.",
+        "publisher": "Wikidata",
+        "relation": "entails",
+        "source_type": "wikidata",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "openlib_hhg",
+        "url": "https://openlibrary.org/works/OL2163649W",
+        "title": "Open Library authorship record",
+        "snippet": "[ENTAILS] Open Library records The Hitchhiker's Guide to the Galaxy author(s): Douglas Adams.",
+        "publisher": "Open Library",
+        "relation": "entails",
+        "source_type": "scholarly",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "Jane Austen wrote Pride and Prejudice": [
+      {
+        "id": "wd_austen",
+        "url": "https://www.wikidata.org/wiki/Q170583",
+        "title": "Wikidata authorship record",
+        "snippet": "[ENTAILS] Wikidata records Pride and Prejudice author(s): Jane Austen.",
+        "publisher": "Wikidata",
+        "relation": "entails",
+        "source_type": "wikidata",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "openlib_pp",
+        "url": "https://openlibrary.org/works/OL66554W",
+        "title": "Open Library authorship record",
+        "snippet": "[ENTAILS] Open Library records Pride and Prejudice author(s): Jane Austen.",
+        "publisher": "Open Library",
+        "relation": "entails",
+        "source_type": "scholarly",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "George Orwell wrote Nineteen Eighty-Four": [
+      {
+        "id": "wd_1984",
+        "url": "https://www.wikidata.org/wiki/Q208460",
+        "title": "Wikidata authorship record",
+        "snippet": "[ENTAILS] Wikidata records Nineteen Eighty-Four author(s): George Orwell.",
+        "publisher": "Wikidata",
+        "relation": "entails",
+        "source_type": "wikidata",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "openlib_1984",
+        "url": "https://openlibrary.org/works/OL1168007W",
+        "title": "Open Library authorship record",
+        "snippet": "[ENTAILS] Open Library records Nineteen Eighty-Four author(s): George Orwell.",
+        "publisher": "Open Library",
+        "relation": "entails",
+        "source_type": "scholarly",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "Mary Shelley wrote Frankenstein": [
+      {
+        "id": "wd_frank",
+        "url": "https://www.wikidata.org/wiki/Q8261",
+        "title": "Wikidata authorship record",
+        "snippet": "[ENTAILS] Wikidata records Frankenstein author(s): Mary Shelley.",
+        "publisher": "Wikidata",
+        "relation": "entails",
+        "source_type": "wikidata",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "openlib_frank",
+        "url": "https://openlibrary.org/works/OL450842W",
+        "title": "Open Library authorship record",
+        "snippet": "[ENTAILS] Open Library records Frankenstein author(s): Mary Shelley.",
+        "publisher": "Open Library",
+        "relation": "entails",
+        "source_type": "scholarly",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "US inflation increased in 2021": [
+      {
+        "id": "bls_cpi_2021",
+        "url": "https://www.bls.gov/cpi/",
+        "title": "BLS CPI data",
+        "snippet": "[ENTAILS] US inflation increased in 2021 as CPI inflation rose over the year.",
+        "publisher": "BLS",
+        "relation": "entails",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "fred_cpi_2021",
+        "url": "https://fred.stlouisfed.org/",
+        "title": "FRED CPI series",
+        "snippet": "[ENTAILS] US inflation increased in 2021 in the CPI data series.",
+        "publisher": "FRED",
+        "relation": "entails",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "worldbank_inf_2021",
+        "url": "https://data.worldbank.org/",
+        "title": "World Bank inflation data",
+        "snippet": "[ENTAILS] US inflation increased in 2021 in annual inflation data.",
+        "publisher": "World Bank",
+        "relation": "entails",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "US unemployment decreased in 2021": [
+      {
+        "id": "bls_unemp_2021",
+        "url": "https://www.bls.gov/cps/",
+        "title": "BLS unemployment data",
+        "snippet": "[ENTAILS] US unemployment decreased in 2021 as the unemployment rate fell.",
+        "publisher": "BLS",
+        "relation": "entails",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "fred_unemp_2021",
+        "url": "https://fred.stlouisfed.org/series/UNRATE",
+        "title": "FRED unemployment series",
+        "snippet": "[ENTAILS] US unemployment decreased in 2021 in the UNRATE series.",
+        "publisher": "FRED",
+        "relation": "entails",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "oecd_unemp_2021",
+        "url": "https://data.oecd.org/unemp/",
+        "title": "OECD unemployment data",
+        "snippet": "[ENTAILS] US unemployment decreased in 2021 in unemployment data.",
+        "publisher": "OECD",
+        "relation": "entails",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "Deployment incentives can create pressure to release AGI systems before safety evidence is complete": [
+      {
+        "id": "ai_governance_incentives",
+        "url": "https://www.nist.gov/artificial-intelligence",
+        "title": "AI governance incentive-risk source",
+        "snippet": "[ENTAILS] Deployment incentives can create pressure to release AGI systems before safety evidence is complete.",
+        "publisher": "NIST",
+        "relation": "entails",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "ai_policy_incentives",
+        "url": "https://oecd.ai/",
+        "title": "AI policy incentive-risk source",
+        "snippet": "[ENTAILS] Deployment incentives can create pressure to release AGI systems before safety evidence is complete.",
+        "publisher": "OECD AI",
+        "relation": "entails",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "ai_safety_incentives",
+        "url": "https://www.nber.org/",
+        "title": "AI economics incentive-risk source",
+        "snippet": "[ENTAILS] Deployment incentives can create pressure to release AGI systems before safety evidence is complete.",
+        "publisher": "NBER",
+        "relation": "entails",
+        "source_type": "scholarly",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "J. K. Rowling wrote The Hitchhiker's Guide to the Galaxy": [
+      {
+        "id": "wd_hhg_contra",
+        "url": "https://www.wikidata.org/wiki/Q25169",
+        "title": "Wikidata authorship record",
+        "snippet": "[CONTRADICTS] Wikidata records The Hitchhiker's Guide to the Galaxy author(s): Douglas Adams, not J. K. Rowling.",
+        "publisher": "Wikidata",
+        "relation": "contradicts",
+        "source_type": "wikidata",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "Plato wrote The Dao De Jing": [
+      {
+        "id": "wd_ddj_contra",
+        "url": "https://www.wikidata.org/wiki/Q181510",
+        "title": "Wikidata authorship record",
+        "snippet": "[CONTRADICTS] Wikidata records Dao De Jing author(s): Laozi, not Plato.",
+        "publisher": "Wikidata",
+        "relation": "contradicts",
+        "source_type": "wikidata",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "Confucius wrote The Republic": [
+      {
+        "id": "wd_rep_contra",
+        "url": "https://www.wikidata.org/wiki/Q131608",
+        "title": "Wikidata authorship record",
+        "snippet": "[CONTRADICTS] Wikidata records Republic author(s): Plato, not Confucius.",
+        "publisher": "Wikidata",
+        "relation": "contradicts",
+        "source_type": "wikidata",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "US inflation decreased in 2021": [
+      {
+        "id": "bls_cpi_2021_contra",
+        "url": "https://www.bls.gov/cpi/",
+        "title": "BLS CPI data",
+        "snippet": "[CONTRADICTS] US inflation increased in 2021; it did not decrease.",
+        "publisher": "BLS",
+        "relation": "contradicts",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "US unemployment increased in 2021": [
+      {
+        "id": "bls_unemp_2021_contra",
+        "url": "https://www.bls.gov/cps/",
+        "title": "BLS unemployment data",
+        "snippet": "[CONTRADICTS] US unemployment decreased in 2021; it did not increase.",
+        "publisher": "BLS",
+        "relation": "contradicts",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      }
+    ]
+  }
+}

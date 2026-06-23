@@ -264,6 +264,12 @@ def build_manifest() -> dict[str, Any]:
             "councilPanelRunner": "tools/run_council_panel.py",
             "religionFigureCouncil": "docs/08-Domains/Religion-Figure-Council.md",
             "codingCouncil": "docs/08-Domains/Coding-Council.md",
+            "factCheckRealityGapDoc": "docs/11-Platform/Fact-Check-Reality-Gap.md",
+            "factCheckLiveEvalRunner": "tools/run_fact_check_live_eval.py",
+            "factCheckLiveEvalReport": "agi-proof/fact-check-live/fact-check-live-eval.public-report.json",
+            "factCheckFlywheelRunner": "tools/run_fact_check_flywheel.py",
+            "reflexiveSelfGateRunner": "tools/run_reflexive_self_gate.py",
+            "reflexiveSelfGateReport": "agi-proof/self-gate/reflexive-self-gate.public-report.json",
         },
     }
 

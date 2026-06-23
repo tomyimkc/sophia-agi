@@ -83,6 +83,9 @@ class LayerResult:
     details: dict[str, Any] = field(default_factory=dict)
 
 
+SynthVerifier = Callable[[AtomicClaim], "LayerResult | None"]
+
+
 @dataclass(frozen=True)
 class ClaimDecision:
     claim: AtomicClaim
@@ -410,6 +413,33 @@ def _src_dict(s: EvidenceSource, relation: str) -> dict[str, Any]:
     return {"id": s.id, "url": s.url, "title": s.title, "publisher": s.publisher, "domain": s.domain, "relation": relation}
 
 
+
+
+# --------------------------------------------------------------------------- #
+# Optional layer: admitted synthesized verifier
+# --------------------------------------------------------------------------- #
+def synthesis_verify(claim: AtomicClaim, synthesized_verifier: SynthVerifier | None = None) -> LayerResult:
+    """Run a caller-supplied, meta-verified synthesized verifier.
+
+    This is deliberately opt-in. The synthesizer that produced the verifier must
+    already have passed AST sandboxing + held-out validation (see
+    :mod:`agent.verifier_synthesis`). This adapter only gives such admitted
+    verifiers a safe slot in the fact-check flow; absent/errored/untrusted
+    synthesis returns ``held`` and active grounding continues.
+    """
+    if synthesized_verifier is None:
+        return LayerResult("synthesized_verifier", "held", "no admitted synthesized verifier configured", confidence=0.0)
+    try:
+        result = synthesized_verifier(claim)
+    except Exception as exc:  # fail-closed: synthesized check cannot crash the gate
+        return LayerResult("synthesized_verifier", "held", f"synthesized verifier errored: {exc}", confidence=0.0)
+    if result is None:
+        return LayerResult("synthesized_verifier", "held", "synthesized verifier did not apply", confidence=0.0)
+    if result.layer != "synthesized_verifier":
+        return LayerResult("synthesized_verifier", result.verdict, result.reason, result.evidence, result.confidence, result.details)
+    return result
+
+
 # --------------------------------------------------------------------------- #
 # Layer 3: consensus by verification (not vote)
 # --------------------------------------------------------------------------- #
@@ -467,6 +497,7 @@ def fact_check_claim(
     retriever: Retriever | None = None,
     entailment: EntailmentFn | None = None,
     judges: list[JudgeFn] | None = None,
+    synthesized_verifier: SynthVerifier | None = None,
     url_resolver: Callable[[str], bool] | None = None,
     doi_resolver: Callable[[str], bool] | None = None,
     learn: bool = True,
@@ -488,6 +519,11 @@ def fact_check_claim(
     layers.append(det)
     if det.verdict in {"accepted", "rejected"}:
         return _finalize(det.verdict, det.reason, det.confidence, layers, det)
+
+    synth = synthesis_verify(claim, synthesized_verifier)
+    layers.append(synth)
+    if synth.verdict in {"accepted", "rejected"}:
+        return _finalize(synth.verdict, synth.reason, synth.confidence, layers, synth)
 
     ext = external_ground(claim, retriever, entailment)
     layers.append(ext)
@@ -581,6 +617,6 @@ def decision_to_dict(decision: GateDecision) -> dict[str, Any]:
 __all__ = [
     "AtomicClaim", "EvidenceSource", "LayerResult", "ClaimDecision", "GateDecision",
     "decompose_and_type", "classify_claim", "deterministic_verify", "external_ground",
-    "lexical_entailment", "consensus_by_verification", "fact_check_claim", "fact_check_text",
+    "lexical_entailment", "synthesis_verify", "consensus_by_verification", "fact_check_claim", "fact_check_text",
     "decision_to_dict",
 ]

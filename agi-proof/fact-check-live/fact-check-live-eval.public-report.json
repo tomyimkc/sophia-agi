@@ -1,0 +1,2929 @@
+{
+  "schema": "sophia.fact_check.live_eval.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "liveBackendUsed": false,
+  "n": 43,
+  "labelCounts": {
+    "true": 18,
+    "false": 15,
+    "unknowable": 10
+  },
+  "metrics": {
+    "fabricationRate": 0.0,
+    "overAbstentionRate": 0.0,
+    "falseRejectRateOnTrue": 0.0,
+    "correctAbstentionRateOnUnknowable": 1.0,
+    "resolvedAnswerableAccuracy": 0.9697,
+    "overallDecisionAccuracy": 1.0,
+    "calibrationNResolved": 32,
+    "ece": 0.0856,
+    "brier": 0.0113
+  },
+  "confidenceIntervals": {
+    "fabricationRateWilson95": {
+      "k": 0,
+      "n": 25,
+      "low": 0.0,
+      "high": 0.1332
+    },
+    "overAbstentionRateWilson95": {
+      "k": 0,
+      "n": 18,
+      "low": 0.0,
+      "high": 0.1759
+    }
+  },
+  "derivedFloors": {
+    "targetFabricationRate": 0.01,
+    "byRisk": {
+      "high": {
+        "floor": 0.84,
+        "measuredFabricationRate": 0.0,
+        "trueAcceptCoverage": 1.0,
+        "nAcceptedAtFloor": 3
+      },
+      "normal": {
+        "floor": 0.8,
+        "measuredFabricationRate": 0.0,
+        "trueAcceptCoverage": 1.0,
+        "nAcceptedAtFloor": 15
+      }
+    }
+  },
+  "riskCoverage": [
+    {
+      "coverage": 0.0233,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.0465,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.0698,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.093,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.1163,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.1395,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.1628,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.186,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.2093,
+      "risk": 0.0,
+      "threshold": 0.96
+    },
+    {
+      "coverage": 0.2326,
+      "risk": 0.0,
+      "threshold": 0.96
+    },
+    {
+      "coverage": 0.2558,
+      "risk": 0.0,
+      "threshold": 0.96
+    },
+    {
+      "coverage": 0.2791,
+      "risk": 0.0,
+      "threshold": 0.95
+    },
+    {
+      "coverage": 0.3023,
+      "risk": 0.0,
+      "threshold": 0.95
+    },
+    {
+      "coverage": 0.3256,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3488,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3721,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3953,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4186,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4419,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4651,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.4884,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.5116,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.5349,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.5581,
+      "risk": 0.0,
+      "threshold": 0.86
+    },
+    {
+      "coverage": 0.5814,
+      "risk": 0.0,
+      "threshold": 0.86
+    },
+    {
+      "coverage": 0.6047,
+      "risk": 0.0,
+      "threshold": 0.86
+    },
+    {
+      "coverage": 0.6279,
+      "risk": 0.0,
+      "threshold": 0.86
+    },
+    {
+      "coverage": 0.6512,
+      "risk": 0.0,
+      "threshold": 0.84
+    },
+    {
+      "coverage": 0.6744,
+      "risk": 0.0,
+      "threshold": 0.84
+    },
+    {
+      "coverage": 0.6977,
+      "risk": 0.0,
+      "threshold": 0.84
+    },
+    {
+      "coverage": 0.7209,
+      "risk": 0.0,
+      "threshold": 0.8
+    },
+    {
+      "coverage": 0.7442,
+      "risk": 0.0,
+      "threshold": 0.8
+    },
+    {
+      "coverage": 0.7674,
+      "risk": 0.0,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.7907,
+      "risk": 0.0,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.814,
+      "risk": 0.0,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.8372,
+      "risk": 0.0,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.8605,
+      "risk": 0.0,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.8837,
+      "risk": 0.0,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.907,
+      "risk": 0.0,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9302,
+      "risk": 0.0,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9535,
+      "risk": 0.0,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9767,
+      "risk": 0.0,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 1.0,
+      "risk": 0.0,
+      "threshold": 0.0
+    }
+  ],
+  "cases": [
+    {
+      "id": "t_math_001",
+      "claim": "2 + 2 = 4",
+      "label": "true",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "2 + 2 = 4",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "arithmetic equality verified by computation",
+          "confidence": 1.0,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_e93dff0d1076b537",
+            "claim": "2 + 2 = 4",
+            "type": "math",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 1.0,
+            "evidence": [],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "arithmetic equality verified by computation",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_math_002",
+      "claim": "6 * 7 = 42",
+      "label": "true",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "6 * 7 = 42",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "arithmetic equality verified by computation",
+          "confidence": 1.0,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_98e74ebac310e889",
+            "claim": "6 * 7 = 42",
+            "type": "math",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 1.0,
+            "evidence": [],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "arithmetic equality verified by computation",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_math_003",
+      "claim": "10 / 2 = 5",
+      "label": "true",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "10 / 2 = 5",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "arithmetic equality verified by computation",
+          "confidence": 1.0,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_8ef3297102f589a2",
+            "claim": "10 / 2 = 5",
+            "type": "math",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 1.0,
+            "evidence": [],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "arithmetic equality verified by computation",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_math_004",
+      "claim": "9 - 3 = 6",
+      "label": "true",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "9 - 3 = 6",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "arithmetic equality verified by computation",
+          "confidence": 1.0,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_89b52b46f3e33825",
+            "claim": "9 - 3 = 6",
+            "type": "math",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 1.0,
+            "evidence": [],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "arithmetic equality verified by computation",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_date_001",
+      "claim": "1900 is before 2000",
+      "label": "true",
+      "type": "date_temporal",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.8,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "1900 is before 2000",
+          "type": "date_temporal",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "explicit year ordering is internally consistent",
+          "confidence": 0.8,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_b50db075774bf023",
+            "claim": "1900 is before 2000",
+            "type": "date_temporal",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.8,
+            "evidence": [],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "explicit year ordering is internally consistent",
+              "confidence": 0.8,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_date_002",
+      "claim": "2020 is after 2019",
+      "label": "true",
+      "type": "date_temporal",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.8,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "2020 is after 2019",
+          "type": "date_temporal",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "explicit year ordering is internally consistent",
+          "confidence": 0.8,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_bf3102bd271eb1a3",
+            "claim": "2020 is after 2019",
+            "type": "date_temporal",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.8,
+            "evidence": [],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "explicit year ordering is internally consistent",
+              "confidence": 0.8,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_doi_001",
+      "claim": "The DOI 10.1038/nphys1170 exists",
+      "label": "true",
+      "type": "doi",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.96,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "The DOI 10.1038/nphys1170 exists",
+          "type": "doi",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "all DOIs resolved",
+          "confidence": 0.96,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_9c9419984d4d5695",
+            "claim": "The DOI 10.1038/nphys1170 exists",
+            "type": "doi",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.96,
+            "evidence": [
+              {
+                "id": "doi:10.1038/nphys1170",
+                "url": "https://doi.org/10.1038/nphys1170",
+                "kind": "doi-exists"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "all DOIs resolved",
+              "confidence": 0.96,
+              "evidence": [
+                {
+                  "id": "doi:10.1038/nphys1170",
+                  "url": "https://doi.org/10.1038/nphys1170",
+                  "kind": "doi-exists"
+                }
+              ],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_doi_002",
+      "claim": "The DOI 10.1126/science.169.3946.635 exists",
+      "label": "true",
+      "type": "doi",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.96,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "The DOI 10.1126/science.169.3946.635 exists",
+          "type": "doi",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "all DOIs resolved",
+          "confidence": 0.96,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_2bada75c2d30baad",
+            "claim": "The DOI 10.1126/science.169.3946.635 exists",
+            "type": "doi",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.96,
+            "evidence": [
+              {
+                "id": "doi:10.1126/science.169.3946.635",
+                "url": "https://doi.org/10.1126/science.169.3946.635",
+                "kind": "doi-exists"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "all DOIs resolved",
+              "confidence": 0.96,
+              "evidence": [
+                {
+                  "id": "doi:10.1126/science.169.3946.635",
+                  "url": "https://doi.org/10.1126/science.169.3946.635",
+                  "kind": "doi-exists"
+                }
+              ],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_doi_003",
+      "claim": "The DOI 10.1145/3292500.3330701 exists",
+      "label": "true",
+      "type": "doi",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.96,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "The DOI 10.1145/3292500.3330701 exists",
+          "type": "doi",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "all DOIs resolved",
+          "confidence": 0.96,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_306061eb945b3f17",
+            "claim": "The DOI 10.1145/3292500.3330701 exists",
+            "type": "doi",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.96,
+            "evidence": [
+              {
+                "id": "doi:10.1145/3292500.3330701",
+                "url": "https://doi.org/10.1145/3292500.3330701",
+                "kind": "doi-exists"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "all DOIs resolved",
+              "confidence": 0.96,
+              "evidence": [
+                {
+                  "id": "doi:10.1145/3292500.3330701",
+                  "url": "https://doi.org/10.1145/3292500.3330701",
+                  "kind": "doi-exists"
+                }
+              ],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_url_001",
+      "claim": "The URL https://example.com exists",
+      "label": "true",
+      "type": "url",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.95,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "The URL https://example.com exists",
+          "type": "url",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "all URLs resolved",
+          "confidence": 0.95,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_2612b8135b510e7d",
+            "claim": "The URL https://example.com exists",
+            "type": "url",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.95,
+            "evidence": [
+              {
+                "id": "https://example.com",
+                "url": "https://example.com",
+                "kind": "url-exists"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "all URLs resolved",
+              "confidence": 0.95,
+              "evidence": [
+                {
+                  "id": "https://example.com",
+                  "url": "https://example.com",
+                  "kind": "url-exists"
+                }
+              ],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_url_002",
+      "claim": "The URL https://www.wikidata.org exists",
+      "label": "true",
+      "type": "url",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.95,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "The URL https://www.wikidata.org exists",
+          "type": "url",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "all URLs resolved",
+          "confidence": 0.95,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_2d856d3aefb13a37",
+            "claim": "The URL https://www.wikidata.org exists",
+            "type": "url",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.95,
+            "evidence": [
+              {
+                "id": "https://www.wikidata.org",
+                "url": "https://www.wikidata.org",
+                "kind": "url-exists"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "all URLs resolved",
+              "confidence": 0.95,
+              "evidence": [
+                {
+                  "id": "https://www.wikidata.org",
+                  "url": "https://www.wikidata.org",
+                  "kind": "url-exists"
+                }
+              ],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_auth_001",
+      "claim": "Douglas Adams wrote The Hitchhiker's Guide to the Galaxy",
+      "label": "true",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.86,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "Douglas Adams wrote The Hitchhiker's Guide to the Galaxy",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "2 independent sources entail claim (required 2; entailment backend)",
+          "confidence": 0.86,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_661cbdf7c7b9a856",
+            "claim": "Douglas Adams wrote The Hitchhiker's Guide to the Galaxy",
+            "type": "open_empirical",
+            "risk": "normal",
+            "verifiedBy": "external_grounding",
+            "confidence": 0.86,
+            "evidence": [
+              {
+                "id": "wd_q42#rel=entails",
+                "url": "https://www.wikidata.org/wiki/Q25169",
+                "title": "Wikidata authorship record",
+                "publisher": "Wikidata",
+                "domain": "wikidata.org",
+                "relation": "entails"
+              },
+              {
+                "id": "openlib_hhg#rel=entails",
+                "url": "https://openlibrary.org/works/OL2163649W",
+                "title": "Open Library authorship record",
+                "publisher": "Open Library",
+                "domain": "openlibrary.org",
+                "relation": "entails"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "accepted",
+              "reason": "2 independent sources entail claim (required 2; entailment backend)",
+              "confidence": 0.86,
+              "evidence": [
+                {
+                  "id": "wd_q42#rel=entails",
+                  "url": "https://www.wikidata.org/wiki/Q25169",
+                  "title": "Wikidata authorship record",
+                  "publisher": "Wikidata",
+                  "domain": "wikidata.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "openlib_hhg#rel=entails",
+                  "url": "https://openlibrary.org/works/OL2163649W",
+                  "title": "Open Library authorship record",
+                  "publisher": "Open Library",
+                  "domain": "openlibrary.org",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "independentDomains": [
+                  "openlibrary.org",
+                  "wikidata.org"
+                ],
+                "requiredSources": 2,
+                "entailmentBasis": "entailment backend"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_auth_002",
+      "claim": "Jane Austen wrote Pride and Prejudice",
+      "label": "true",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.86,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "Jane Austen wrote Pride and Prejudice",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "2 independent sources entail claim (required 2; entailment backend)",
+          "confidence": 0.86,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_e4cd09dedd71af37",
+            "claim": "Jane Austen wrote Pride and Prejudice",
+            "type": "open_empirical",
+            "risk": "normal",
+            "verifiedBy": "external_grounding",
+            "confidence": 0.86,
+            "evidence": [
+              {
+                "id": "wd_austen#rel=entails",
+                "url": "https://www.wikidata.org/wiki/Q170583",
+                "title": "Wikidata authorship record",
+                "publisher": "Wikidata",
+                "domain": "wikidata.org",
+                "relation": "entails"
+              },
+              {
+                "id": "openlib_pp#rel=entails",
+                "url": "https://openlibrary.org/works/OL66554W",
+                "title": "Open Library authorship record",
+                "publisher": "Open Library",
+                "domain": "openlibrary.org",
+                "relation": "entails"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "accepted",
+              "reason": "2 independent sources entail claim (required 2; entailment backend)",
+              "confidence": 0.86,
+              "evidence": [
+                {
+                  "id": "wd_austen#rel=entails",
+                  "url": "https://www.wikidata.org/wiki/Q170583",
+                  "title": "Wikidata authorship record",
+                  "publisher": "Wikidata",
+                  "domain": "wikidata.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "openlib_pp#rel=entails",
+                  "url": "https://openlibrary.org/works/OL66554W",
+                  "title": "Open Library authorship record",
+                  "publisher": "Open Library",
+                  "domain": "openlibrary.org",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "independentDomains": [
+                  "openlibrary.org",
+                  "wikidata.org"
+                ],
+                "requiredSources": 2,
+                "entailmentBasis": "entailment backend"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_auth_003",
+      "claim": "George Orwell wrote Nineteen Eighty-Four",
+      "label": "true",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.86,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "George Orwell wrote Nineteen Eighty-Four",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "2 independent sources entail claim (required 2; entailment backend)",
+          "confidence": 0.86,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_e7673c7a1c20e83c",
+            "claim": "George Orwell wrote Nineteen Eighty-Four",
+            "type": "open_empirical",
+            "risk": "normal",
+            "verifiedBy": "external_grounding",
+            "confidence": 0.86,
+            "evidence": [
+              {
+                "id": "wd_1984#rel=entails",
+                "url": "https://www.wikidata.org/wiki/Q208460",
+                "title": "Wikidata authorship record",
+                "publisher": "Wikidata",
+                "domain": "wikidata.org",
+                "relation": "entails"
+              },
+              {
+                "id": "openlib_1984#rel=entails",
+                "url": "https://openlibrary.org/works/OL1168007W",
+                "title": "Open Library authorship record",
+                "publisher": "Open Library",
+                "domain": "openlibrary.org",
+                "relation": "entails"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "accepted",
+              "reason": "2 independent sources entail claim (required 2; entailment backend)",
+              "confidence": 0.86,
+              "evidence": [
+                {
+                  "id": "wd_1984#rel=entails",
+                  "url": "https://www.wikidata.org/wiki/Q208460",
+                  "title": "Wikidata authorship record",
+                  "publisher": "Wikidata",
+                  "domain": "wikidata.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "openlib_1984#rel=entails",
+                  "url": "https://openlibrary.org/works/OL1168007W",
+                  "title": "Open Library authorship record",
+                  "publisher": "Open Library",
+                  "domain": "openlibrary.org",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "independentDomains": [
+                  "openlibrary.org",
+                  "wikidata.org"
+                ],
+                "requiredSources": 2,
+                "entailmentBasis": "entailment backend"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_auth_004",
+      "claim": "Mary Shelley wrote Frankenstein",
+      "label": "true",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.86,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "Mary Shelley wrote Frankenstein",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "2 independent sources entail claim (required 2; entailment backend)",
+          "confidence": 0.86,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_c7536ea7da023dea",
+            "claim": "Mary Shelley wrote Frankenstein",
+            "type": "open_empirical",
+            "risk": "normal",
+            "verifiedBy": "external_grounding",
+            "confidence": 0.86,
+            "evidence": [
+              {
+                "id": "wd_frank#rel=entails",
+                "url": "https://www.wikidata.org/wiki/Q8261",
+                "title": "Wikidata authorship record",
+                "publisher": "Wikidata",
+                "domain": "wikidata.org",
+                "relation": "entails"
+              },
+              {
+                "id": "openlib_frank#rel=entails",
+                "url": "https://openlibrary.org/works/OL450842W",
+                "title": "Open Library authorship record",
+                "publisher": "Open Library",
+                "domain": "openlibrary.org",
+                "relation": "entails"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "accepted",
+              "reason": "2 independent sources entail claim (required 2; entailment backend)",
+              "confidence": 0.86,
+              "evidence": [
+                {
+                  "id": "wd_frank#rel=entails",
+                  "url": "https://www.wikidata.org/wiki/Q8261",
+                  "title": "Wikidata authorship record",
+                  "publisher": "Wikidata",
+                  "domain": "wikidata.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "openlib_frank#rel=entails",
+                  "url": "https://openlibrary.org/works/OL450842W",
+                  "title": "Open Library authorship record",
+                  "publisher": "Open Library",
+                  "domain": "openlibrary.org",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "independentDomains": [
+                  "openlibrary.org",
+                  "wikidata.org"
+                ],
+                "requiredSources": 2,
+                "entailmentBasis": "entailment backend"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_econ_001",
+      "claim": "US inflation increased in 2021",
+      "label": "true",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "accepted",
+      "confidence": 0.84,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "US inflation increased in 2021",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "accepted",
+          "reason": "3 independent sources entail claim (required 3; entailment backend)",
+          "confidence": 0.84,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_53ce4c19f7273745",
+            "claim": "US inflation increased in 2021",
+            "type": "econ_causal",
+            "risk": "high",
+            "verifiedBy": "external_grounding",
+            "confidence": 0.84,
+            "evidence": [
+              {
+                "id": "worldbank_inf_2021#rel=entails",
+                "url": "https://data.worldbank.org/",
+                "title": "World Bank inflation data",
+                "publisher": "World Bank",
+                "domain": "data.worldbank.org",
+                "relation": "entails"
+              },
+              {
+                "id": "bls_cpi_2021#rel=entails",
+                "url": "https://www.bls.gov/cpi/",
+                "title": "BLS CPI data",
+                "publisher": "BLS",
+                "domain": "bls.gov",
+                "relation": "entails"
+              },
+              {
+                "id": "fred_cpi_2021#rel=entails",
+                "url": "https://fred.stlouisfed.org/",
+                "title": "FRED CPI series",
+                "publisher": "FRED",
+                "domain": "fred.stlouisfed.org",
+                "relation": "entails"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "accepted",
+              "reason": "3 independent sources entail claim (required 3; entailment backend)",
+              "confidence": 0.84,
+              "evidence": [
+                {
+                  "id": "worldbank_inf_2021#rel=entails",
+                  "url": "https://data.worldbank.org/",
+                  "title": "World Bank inflation data",
+                  "publisher": "World Bank",
+                  "domain": "data.worldbank.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "bls_cpi_2021#rel=entails",
+                  "url": "https://www.bls.gov/cpi/",
+                  "title": "BLS CPI data",
+                  "publisher": "BLS",
+                  "domain": "bls.gov",
+                  "relation": "entails"
+                },
+                {
+                  "id": "fred_cpi_2021#rel=entails",
+                  "url": "https://fred.stlouisfed.org/",
+                  "title": "FRED CPI series",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "independentDomains": [
+                  "bls.gov",
+                  "data.worldbank.org",
+                  "fred.stlouisfed.org"
+                ],
+                "requiredSources": 3,
+                "entailmentBasis": "entailment backend"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_econ_002",
+      "claim": "US unemployment decreased in 2021",
+      "label": "true",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "accepted",
+      "confidence": 0.84,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "US unemployment decreased in 2021",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "accepted",
+          "reason": "3 independent sources entail claim (required 3; entailment backend)",
+          "confidence": 0.84,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_c011c2375455fe3c",
+            "claim": "US unemployment decreased in 2021",
+            "type": "econ_causal",
+            "risk": "high",
+            "verifiedBy": "external_grounding",
+            "confidence": 0.84,
+            "evidence": [
+              {
+                "id": "bls_unemp_2021#rel=entails",
+                "url": "https://www.bls.gov/cps/",
+                "title": "BLS unemployment data",
+                "publisher": "BLS",
+                "domain": "bls.gov",
+                "relation": "entails"
+              },
+              {
+                "id": "fred_unemp_2021#rel=entails",
+                "url": "https://fred.stlouisfed.org/series/UNRATE",
+                "title": "FRED unemployment series",
+                "publisher": "FRED",
+                "domain": "fred.stlouisfed.org",
+                "relation": "entails"
+              },
+              {
+                "id": "oecd_unemp_2021#rel=entails",
+                "url": "https://data.oecd.org/unemp/",
+                "title": "OECD unemployment data",
+                "publisher": "OECD",
+                "domain": "data.oecd.org",
+                "relation": "entails"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "accepted",
+              "reason": "3 independent sources entail claim (required 3; entailment backend)",
+              "confidence": 0.84,
+              "evidence": [
+                {
+                  "id": "bls_unemp_2021#rel=entails",
+                  "url": "https://www.bls.gov/cps/",
+                  "title": "BLS unemployment data",
+                  "publisher": "BLS",
+                  "domain": "bls.gov",
+                  "relation": "entails"
+                },
+                {
+                  "id": "fred_unemp_2021#rel=entails",
+                  "url": "https://fred.stlouisfed.org/series/UNRATE",
+                  "title": "FRED unemployment series",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "oecd_unemp_2021#rel=entails",
+                  "url": "https://data.oecd.org/unemp/",
+                  "title": "OECD unemployment data",
+                  "publisher": "OECD",
+                  "domain": "data.oecd.org",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "independentDomains": [
+                  "bls.gov",
+                  "data.oecd.org",
+                  "fred.stlouisfed.org"
+                ],
+                "requiredSources": 3,
+                "entailmentBasis": "entailment backend"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_econ_003",
+      "claim": "Deployment incentives can create pressure to release AGI systems before safety evidence is complete",
+      "label": "true",
+      "type": "econ_causal",
+      "risk": "high",
+      "verdict": "accepted",
+      "confidence": 0.84,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "Deployment incentives can create pressure to release AGI systems before safety evidence is complete",
+          "type": "econ_empirical",
+          "risk": "high",
+          "verdict": "accepted",
+          "reason": "3 independent sources entail claim (required 3; entailment backend)",
+          "confidence": 0.84,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_f09bd822856f1670",
+            "claim": "Deployment incentives can create pressure to release AGI systems before safety evidence is complete",
+            "type": "econ_empirical",
+            "risk": "high",
+            "verifiedBy": "external_grounding",
+            "confidence": 0.84,
+            "evidence": [
+              {
+                "id": "ai_safety_incentives#rel=entails",
+                "url": "https://www.nber.org/",
+                "title": "AI economics incentive-risk source",
+                "publisher": "NBER",
+                "domain": "nber.org",
+                "relation": "entails"
+              },
+              {
+                "id": "ai_governance_incentives#rel=entails",
+                "url": "https://www.nist.gov/artificial-intelligence",
+                "title": "AI governance incentive-risk source",
+                "publisher": "NIST",
+                "domain": "nist.gov",
+                "relation": "entails"
+              },
+              {
+                "id": "ai_policy_incentives#rel=entails",
+                "url": "https://oecd.ai/",
+                "title": "AI policy incentive-risk source",
+                "publisher": "OECD AI",
+                "domain": "oecd.ai",
+                "relation": "entails"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "accepted",
+              "reason": "3 independent sources entail claim (required 3; entailment backend)",
+              "confidence": 0.84,
+              "evidence": [
+                {
+                  "id": "ai_safety_incentives#rel=entails",
+                  "url": "https://www.nber.org/",
+                  "title": "AI economics incentive-risk source",
+                  "publisher": "NBER",
+                  "domain": "nber.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "ai_governance_incentives#rel=entails",
+                  "url": "https://www.nist.gov/artificial-intelligence",
+                  "title": "AI governance incentive-risk source",
+                  "publisher": "NIST",
+                  "domain": "nist.gov",
+                  "relation": "entails"
+                },
+                {
+                  "id": "ai_policy_incentives#rel=entails",
+                  "url": "https://oecd.ai/",
+                  "title": "AI policy incentive-risk source",
+                  "publisher": "OECD AI",
+                  "domain": "oecd.ai",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "independentDomains": [
+                  "nber.org",
+                  "nist.gov",
+                  "oecd.ai"
+                ],
+                "requiredSources": 3,
+                "entailmentBasis": "entailment backend"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_math_001",
+      "claim": "2 + 2 = 5",
+      "label": "false",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "2 + 2 = 5",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "2 + 2 = 5 is false; computed 4",
+          "confidence": 1.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "2 + 2 = 5 is false; computed 4",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_math_002",
+      "claim": "6 * 7 = 41",
+      "label": "false",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "6 * 7 = 41",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "6 * 7 = 41 is false; computed 42",
+          "confidence": 1.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "6 * 7 = 41 is false; computed 42",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_math_003",
+      "claim": "10 / 2 = 6",
+      "label": "false",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "10 / 2 = 6",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "10 / 2 = 6 is false; computed 5",
+          "confidence": 1.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "10 / 2 = 6 is false; computed 5",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_math_004",
+      "claim": "9 - 3 = 7",
+      "label": "false",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "9 - 3 = 7",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "9 - 3 = 7 is false; computed 6",
+          "confidence": 1.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "9 - 3 = 7 is false; computed 6",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_date_001",
+      "claim": "2000 is before 1900",
+      "label": "false",
+      "type": "date_temporal",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "2000 is before 1900",
+          "type": "date_temporal",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "temporal order false: 2000 is not before 1900",
+          "confidence": 0.9,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "temporal order false: 2000 is not before 1900",
+              "confidence": 0.9,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_date_002",
+      "claim": "2019 is after 2020",
+      "label": "false",
+      "type": "date_temporal",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "2019 is after 2020",
+          "type": "date_temporal",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "temporal order false: 2019 is not after 2020",
+          "confidence": 0.9,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "temporal order false: 2019 is not after 2020",
+              "confidence": 0.9,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_doi_001",
+      "claim": "The DOI 10.5555/not-a-real-sophia-doi exists",
+      "label": "false",
+      "type": "doi",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "The DOI 10.5555/not-a-real-sophia-doi exists",
+          "type": "doi",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more DOIs do not resolve",
+          "confidence": 0.9,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "one or more DOIs do not resolve",
+              "confidence": 0.9,
+              "evidence": [],
+              "details": {
+                "dois": [
+                  "10.5555/not-a-real-sophia-doi"
+                ],
+                "resolved": []
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_doi_002",
+      "claim": "The DOI 10.9999/sophia-fabricated-doi-2026 exists",
+      "label": "false",
+      "type": "doi",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "The DOI 10.9999/sophia-fabricated-doi-2026 exists",
+          "type": "doi",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more DOIs do not resolve",
+          "confidence": 0.9,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "one or more DOIs do not resolve",
+              "confidence": 0.9,
+              "evidence": [],
+              "details": {
+                "dois": [
+                  "10.9999/sophia-fabricated-doi-2026"
+                ],
+                "resolved": []
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_url_001",
+      "claim": "The URL https://nonexistent.sophia.invalid/report exists",
+      "label": "false",
+      "type": "url",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "The URL https://nonexistent.sophia.invalid/report exists",
+          "type": "url",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more URLs do not resolve",
+          "confidence": 0.9,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "one or more URLs do not resolve",
+              "confidence": 0.9,
+              "evidence": [],
+              "details": {
+                "urls": [
+                  "https://nonexistent.sophia.invalid/report"
+                ],
+                "resolved": []
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_url_002",
+      "claim": "The URL https://example.invalid/sophia-report exists",
+      "label": "false",
+      "type": "url",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "The URL https://example.invalid/sophia-report exists",
+          "type": "url",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more URLs do not resolve",
+          "confidence": 0.9,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "one or more URLs do not resolve",
+              "confidence": 0.9,
+              "evidence": [],
+              "details": {
+                "urls": [
+                  "https://example.invalid/sophia-report"
+                ],
+                "resolved": []
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_auth_001",
+      "claim": "J. K. Rowling wrote The Hitchhiker's Guide to the Galaxy",
+      "label": "false",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "J",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        },
+        {
+          "claim": "K",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        },
+        {
+          "claim": "Rowling wrote The Hitchhiker's Guide to the Galaxy",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_auth_002",
+      "claim": "Plato wrote The Dao De Jing",
+      "label": "false",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "Plato wrote The Dao De Jing",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "wd_ddj_contra#rel=contradicts",
+                  "url": "https://www.wikidata.org/wiki/Q181510",
+                  "title": "Wikidata authorship record",
+                  "publisher": "Wikidata",
+                  "domain": "wikidata.org",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_auth_003",
+      "claim": "Confucius wrote The Republic",
+      "label": "false",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "Confucius wrote The Republic",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "wd_rep_contra#rel=contradicts",
+                  "url": "https://www.wikidata.org/wiki/Q131608",
+                  "title": "Wikidata authorship record",
+                  "publisher": "Wikidata",
+                  "domain": "wikidata.org",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_econ_001",
+      "claim": "US inflation decreased in 2021",
+      "label": "false",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "US inflation decreased in 2021",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "bls_cpi_2021_contra#rel=contradicts",
+                  "url": "https://www.bls.gov/cpi/",
+                  "title": "BLS CPI data",
+                  "publisher": "BLS",
+                  "domain": "bls.gov",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_econ_002",
+      "claim": "US unemployment increased in 2021",
+      "label": "false",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "US unemployment increased in 2021",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "bls_unemp_2021_contra#rel=contradicts",
+                  "url": "https://www.bls.gov/cps/",
+                  "title": "BLS unemployment data",
+                  "publisher": "BLS",
+                  "domain": "bls.gov",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_001",
+      "claim": "An unpublished Sophia Lab X memo was circulated on 2026-06-01",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "An unpublished Sophia Lab X memo was circulated on 2026-06-01",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_002",
+      "claim": "Project Kestrel privately changed its benchmark seed in 2025",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Project Kestrel privately changed its benchmark seed in 2025",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_003",
+      "claim": "A confidential Runpod instance produced a hidden Level 3 pass yesterday",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "A confidential Runpod instance produced a hidden Level 3 pass yesterday",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_004",
+      "claim": "The private AGI incentive pack contains exactly 137 examples",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "The private AGI incentive pack contains exactly 137 examples",
+          "type": "econ_empirical",
+          "risk": "high",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_005",
+      "claim": "A nonpublic reviewer approved Sophia as proven AGI in 2026",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "A nonpublic reviewer approved Sophia as proven AGI in 2026",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_006",
+      "claim": "A sealed economics council memo rejected the baseline on 2026-02-02",
+      "label": "unknowable",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "A sealed economics council memo rejected the baseline on 2026-02-02",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_007",
+      "claim": "The hidden distribution-shift pack was solved by an unnamed model in 11 minutes",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "The hidden distribution-shift pack was solved by an unnamed model in 11 minutes",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_008",
+      "claim": "A private Crossref draft DOI for the Sophia paper was reserved in 2026",
+      "label": "unknowable",
+      "type": "doi",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "A private Crossref draft DOI for the Sophia paper was reserved in 2026",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_009",
+      "claim": "An internal-only Wikidata sandbox item proves the claim",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "An internal-only Wikidata sandbox item proves the claim",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_010",
+      "claim": "The unpublished long-horizon run contained no human intervention",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "The unpublished long-horizon run contained no human intervention",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

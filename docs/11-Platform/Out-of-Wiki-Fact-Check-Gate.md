@@ -2,6 +2,8 @@
 
 Status: implemented as candidate module `agent/fact_check_gate.py` with deterministic tests in `tests/test_fact_check_gate.py`.
 
+Reality Gap v1 adds keyless/fixture external source adapters, a held-out N≥40 eval, empirical calibration floors, a synthesized-verifier slot, a quarantine/recheck flywheel, and a reflexive no-overclaim gate. See [Fact-Check-Reality-Gap.md](Fact-Check-Reality-Gap.md).
+
 Problem: the internal wiki/OKF grounding gate can only verify claims it already covers. For out-of-wiki claims, Sophia should attempt active verification before abstaining, while preserving fail-closed behavior: **never surface an unverified factual claim**.
 
 ## Decision flow
@@ -93,8 +95,9 @@ What it verifies: factual empirical claims outside the wiki via independent sour
 
 Retrieval backends: optional/pluggable.
 
-- Offline fixture retriever for CI.
-- Future live adapters: web search, Wikipedia, Wikidata, Crossref/DOI, Semantic Scholar/OpenAlex, FRED/World Bank/IMF/OECD for economics.
+- Offline fixture retriever for CI (`eval/fact_check/fixtures_v1.json`).
+- Implemented keyless adapters: Wikidata authorship retrieval, Crossref DOI resolver, URL resolver (`agent/live_sources.py`).
+- Future live adapters: web search, Wikipedia, Semantic Scholar/OpenAlex, FRED/World Bank/IMF/OECD for economics.
 - OpenRouter can be used only as a model/NLI transport, not as source of truth.
 
 Source threshold:

@@ -130,9 +130,16 @@ jobs:
           python tests/test_structured_output.py
           python tests/test_level3_candidate_benchmark.py
           python tests/test_fact_check_gate.py
+          python tests/test_live_sources.py
+          python tests/test_fact_check_live_eval.py
+          python tests/test_fact_check_synthesis_layer.py
+          python tests/test_fact_check_flywheel.py
+          python tests/test_reflexive_self_gate.py
           python tests/test_openrouter_hidden_eval.py
           python tests/test_econ_political_shift_pack.py
           python tools/run_fact_check_gate.py "2 + 2 = 4." >/tmp/fact_check_gate.json
+          python tools/run_fact_check_live_eval.py --out /tmp/fact_check_live_eval.json
+          python tools/run_reflexive_self_gate.py README.md RESULTS.md agi-proof/agi-verification --out /tmp/reflexive_self_gate.json
           python -c "import json; json.load(open('config/inference.local.example.json'))"
       - name: Injection / containment red-team (M1) + data-flow firewall (M2/M2.2)
         run: |
