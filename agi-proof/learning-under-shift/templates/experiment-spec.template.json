@@ -1,0 +1,26 @@
+{
+  "experimentId": "third-party-new-domain-YYYY-MM-DD",
+  "oldBenchmarkBaselineScorePct": null,
+  "learningRecords": [
+    {
+      "recordId": "new_domain_record_001",
+      "domain": "new_domain",
+      "text": "Verified source-grounded fact to learn.",
+      "source": "source-pack://...",
+      "confidence": "reviewed",
+      "reviewerNote": "Human/domain reviewer approved.",
+      "promoted": true
+    }
+  ],
+  "preTestPack": {
+    "packId": "pre-new-domain",
+    "visibility": "private-hidden",
+    "cases": []
+  },
+  "postTestPack": {
+    "packId": "post-new-domain-fresh",
+    "visibility": "private-hidden",
+    "cases": []
+  },
+  "oldBenchmarkPack": null
+}

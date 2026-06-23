@@ -1,0 +1,18 @@
+{
+  "runId": "30min-repo-repair-YYYY-MM-DD",
+  "goal": "Autonomously fix one small repo issue, run focused validation, and produce a patch/postmortem with minimal human intervention.",
+  "plan": [
+    "inspect working tree and failure ledger",
+    "choose one bounded issue",
+    "make a minimal patch",
+    "run focused tests",
+    "write postmortem and verification evidence"
+  ],
+  "steps": [
+    {"name": "status", "cmd": ["git", "status", "--short"], "purpose": "establish initial repo state"},
+    {"name": "validate-attribution", "cmd": ["python3", "tools/validate_attribution.py"], "purpose": "protected provenance sanity", "verification": true},
+    {"name": "rlvr-offline", "cmd": ["python3", "tools/run_rlvr.py", "--model", "mock", "--dry-run", "--out", "/tmp/long-horizon-rlvr.json"], "purpose": "reward harness sanity", "verification": true},
+    {"name": "coding-eval", "cmd": ["python3", "tools/run_coding_eval.py", "--out", "/tmp/long-horizon-coding.json"], "purpose": "objective code verifier lane", "verification": true},
+    {"name": "memory-eval", "cmd": ["python3", "tools/run_memory_eval.py", "--out", "/tmp/long-horizon-memory.json"], "purpose": "append-only memory invariant", "verification": true}
+  ]
+}

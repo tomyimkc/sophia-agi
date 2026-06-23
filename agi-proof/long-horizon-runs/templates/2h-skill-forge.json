@@ -1,0 +1,16 @@
+{
+  "runId": "2h-skill-forge-YYYY-MM-DD",
+  "goal": "Create or improve one verifier-backed skill, promote it only if held-out validation passes, and register evidence.",
+  "plan": [
+    "select task spec",
+    "forge verifier and skill",
+    "run eval suite",
+    "update forge registry",
+    "run gateway smoke tests"
+  ],
+  "steps": [
+    {"name": "validate-attribution", "cmd": ["python3", "tools/validate_attribution.py"], "verification": true},
+    {"name": "skill-forge-smoke", "cmd": ["python3", "tests/test_skill_forge.py"], "verification": true},
+    {"name": "gateway-tests", "cmd": ["python3", "tests/test_gateway.py"], "verification": true}
+  ]
+}

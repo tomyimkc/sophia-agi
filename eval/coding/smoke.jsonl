@@ -1,0 +1,2 @@
+{"id":"python-addition-smoke","prompt":"Return Python code that asserts 2 + 2 == 4.","response":"```python\nassert 2 + 2 == 4\n```","verifier":"code_tests_pass","timeoutSec":5}
+{"id":"python-function-smoke","prompt":"Return Python code defining add(a,b) and testing add(3, 5) == 8.","response":"```python\ndef add(a, b):\n    return a + b\nassert add(3, 5) == 8\n```","verifier":"code_tests_pass","timeoutSec":5}

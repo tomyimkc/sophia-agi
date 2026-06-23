@@ -1,0 +1,29 @@
+{
+  "schema": "sophia.agi_verification.criteria.v1",
+  "claimBoundary": "No non-human gate can philosophically prove AGI. This matrix verifies machine-checkable evidence required before any AGI-candidate or AGI-language claim is considered.",
+  "levels": {
+    "level2": "AGI-candidate architecture: core gates, harnesses, smoke checks, and proof artifacts exist.",
+    "level3": "Strong AGI-candidate evidence: hidden comparisons, self-extension, grounding, memory, coding, long-horizon short run, and distribution-shift evidence pass machine gates.",
+    "level4": "Expert-reviewable AGI evidence: external benchmarks, 2h/1d autonomy, replicated clean-clone evidence, and RLVR held-out adapter improvement pass machine gates.",
+    "level5": "Proven AGI: not machine-assertable by this repository; requires external scientific/social consensus beyond non-human checks."
+  },
+  "methods": [
+    {"id": "provenance_validation", "requiredFor": "level2", "kind": "deterministic-command", "description": "Core attribution/training data validation."},
+    {"id": "published_provenance_delta", "requiredFor": "level2", "kind": "artifact", "description": "Validated no-overclaim provenance delta exists."},
+    {"id": "calibration_abstention", "requiredFor": "level2", "kind": "artifact", "description": "Validated/corroborated abstention-vs-fabrication improvement."},
+    {"id": "grounded_gate", "requiredFor": "level3", "kind": "deterministic-command", "description": "Grounding/source-ranking gate passes N>=40 rerun."},
+    {"id": "coding_eval", "requiredFor": "level3", "kind": "deterministic-command", "description": "Executable code-verifier lane passes."},
+    {"id": "memory_eval", "requiredFor": "level3", "kind": "deterministic-command", "description": "Append-only gated memory safety passes."},
+    {"id": "hidden_full_comparison", "requiredFor": "level3", "kind": "artifact", "description": "Sophia-full beats raw/tools/RAG/gate-only on hidden pack auto-scoring."},
+    {"id": "self_extension_loop", "requiredFor": "level3", "kind": "artifact", "description": "Self-extension loop closes on held-out/eval split."},
+    {"id": "verifier_synthesis_integrity", "requiredFor": "level3", "kind": "deterministic-command", "description": "Verifier-synthesis meta-verification admits only validated checks and abstains otherwise; the WITHOUT-meta ablation proves the validation step earns trust (non-circular self-extension)."},
+    {"id": "cross_domain_transfer", "requiredFor": "level3", "kind": "deterministic-command", "description": "Cross-entity generalization invariants hold: memorized rules do not transfer to unseen entities and grounding (not pattern memorization) is required for low-false-positive transfer."},
+    {"id": "distribution_shift", "requiredFor": "level3", "kind": "artifact", "description": "Learning-under-shift improves fresh post-test without old-knowledge regression."},
+    {"id": "long_horizon_30m", "requiredFor": "level3", "kind": "artifact", "description": "At least one substantive 30-minute autonomy run passes machine verification."},
+    {"id": "rlvr_live_training", "requiredFor": "level3", "kind": "artifact", "description": "Live RLVR training artifact exists; not a capability claim."},
+    {"id": "rlvr_adapter_eval", "requiredFor": "level4", "kind": "artifact", "description": "Base-vs-adapter held-out eval passes without false-positive regression."},
+    {"id": "external_benchmarks", "requiredFor": "level4", "kind": "artifact", "description": "Sophia-full has external benchmark results, not just base-model harness results."},
+    {"id": "long_horizon_2h_1d", "requiredFor": "level4", "kind": "artifact", "description": "Substantive 2-hour and 1-day autonomy runs pass machine verification."},
+    {"id": "third_party_machine_replication", "requiredFor": "level4", "kind": "artifact", "description": "Clean-clone machine checklist passes; human identity/signature remains outside non-human verification."}
+  ]
+}

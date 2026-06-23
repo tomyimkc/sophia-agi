@@ -1,0 +1,48 @@
+{
+  "skill_id": "skill.forge-mcp-demo",
+  "task_id": "forge-mcp-demo",
+  "description": "detect delete intent",
+  "verifier_ref": "grounding",
+  "source": "skillforge",
+  "threshold": 0.8,
+  "seed": 1,
+  "rules": [
+    {
+      "name": "contains:delete",
+      "params": {
+        "token": "delete"
+      },
+      "validation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "accuracy": 1.0,
+        "n": 2
+      }
+    }
+  ],
+  "promotion": {
+    "promoted": true,
+    "taskId": "forge-mcp-demo",
+    "abstained": false,
+    "metaVerified": true,
+    "admitted": [
+      {
+        "name": "contains:delete",
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    ],
+    "rejectedCount": 3,
+    "splits": {
+      "fit": 4,
+      "val": 2,
+      "test": 2
+    },
+    "testStats": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "accuracy": 1.0,
+      "n": 2
+    }
+  }
+}

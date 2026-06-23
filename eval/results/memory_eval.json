@@ -1,0 +1,29 @@
+{
+  "benchmark": "memory-append-only-safety",
+  "mode": "temp-memory",
+  "claimStatus": "Harness invariant evidence; not a long-horizon memory capability claim.",
+  "checks": {
+    "safeConsolidated": true,
+    "recallFindsSafeMemory": true,
+    "unsafeRejected": true,
+    "canonicalWikiUnchanged": true
+  },
+  "safe": {
+    "ok": true,
+    "id": "mem_memory_eval_safe",
+    "path": "/var/folders/4h/nzfg6lh153s9c_728t7j63jm0000gn/T/sophia-memory-eval-q_xidvc0/memory/mem_memory_eval_safe.md",
+    "tier": "memory",
+    "revisions": 1
+  },
+  "unsafe": {
+    "ok": false,
+    "rejected": true,
+    "reasons": [
+      "forbidden attribution asserted: confucius -> dao_de_jing"
+    ],
+    "id": "mem_memory_eval_unsafe"
+  },
+  "canonicalHashBefore": "987c982b375a3ce1",
+  "canonicalHashAfter": "987c982b375a3ce1",
+  "passed": true
+}

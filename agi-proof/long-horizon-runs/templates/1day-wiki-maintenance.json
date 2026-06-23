@@ -1,0 +1,18 @@
+{
+  "runId": "1day-wiki-maintenance-YYYY-MM-DD",
+  "goal": "Perform a full OKF/wiki maintenance cycle: sync, validate, lint provenance, consolidate safe memory, and produce a failure-ledger update.",
+  "plan": [
+    "sync wiki from data",
+    "validate OKF schema and links",
+    "lint forbidden provenance merges",
+    "run memory consolidation/eval",
+    "record contradictions/failures",
+    "write postmortem"
+  ],
+  "steps": [
+    {"name": "wiki-sync-check", "cmd": ["python3", "tools/wiki_sync.py", "check"], "verification": true},
+    {"name": "wiki-validate", "cmd": ["python3", "tools/wiki_validate.py"], "verification": true},
+    {"name": "provenance-lint", "cmd": ["python3", "tools/lint_wiki_provenance.py"], "verification": true},
+    {"name": "memory-eval", "cmd": ["python3", "tools/run_memory_eval.py", "--out", "/tmp/long-horizon-memory.json"], "verification": true}
+  ]
+}

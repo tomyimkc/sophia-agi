@@ -11,6 +11,7 @@ even a low-trust pass is provenance-stamped.
 
 from __future__ import annotations
 
+from agent.source_ranking import rank_sources
 from selfextend.env_verifier import verify_by_execution
 from sophia_contract.models import build_verdict
 
@@ -47,8 +48,17 @@ def verify_output(contract, *, verifier_ref: str, output, tool_id: str, args: di
         return verdict, cid
 
     # Source/grounding paths: route through the contract's own verify pipeline.
+    ranking = None
     if verifier_ref == "grounding":
-        sources = _sources_from(output)               # require real sources -> fail-closed
+        raw_sources = _sources_from(output)           # require real sources -> fail-closed
+        min_rank = 0.5
+        if isinstance(args, dict):
+            try:
+                min_rank = float(args.get("source_rank_min", min_rank))
+            except (TypeError, ValueError):
+                min_rank = 0.5
+        ranking = rank_sources(raw_sources, min_rank=min_rank)
+        sources = ranking["accepted"]
     else:                                              # deterministic / none: tool as source
         sources = [tool_id]
     req = {"idempotency_key": idempotency_key, "content": _content(output),
@@ -62,6 +72,13 @@ def verify_output(contract, *, verifier_ref: str, output, tool_id: str, args: di
                  "suggested_fix": "fix the recorded claim", "_error": claim["error"]}, None)
     verdict = contract.verify_claim({"claim_id": claim["claim_id"], **({"role": role} if role else {})},
                                     clearance=clearance)
+    if ranking is not None:
+        verdict.setdefault("reasons", []).append(
+            f"source ranking: top={ranking['topRank']:.2f}, min={ranking['minRank']:.2f}, "
+            f"accepted={len(ranking['accepted'])}, rejected={len(ranking['rejected'])}"
+        )
+        if ranking["rejected"]:
+            verdict["source_ranking"] = ranking
     if verifier_ref == "none" and verdict.get("verdict") == "accepted":
         verdict.setdefault("reasons", []).append("no output verifier (low trust)")
     return verdict, claim.get("claim_id")

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 """Validate, template, and score Sophia hidden evaluation packs.
 
 The hidden pack itself should stay outside git. Public repos should contain only

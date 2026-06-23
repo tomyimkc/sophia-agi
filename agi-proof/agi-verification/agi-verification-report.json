@@ -1,0 +1,453 @@
+{
+  "schema": "sophia.agi_verification.report.v1",
+  "target": "level3",
+  "targetPassed": false,
+  "highestMachineVerifiedLevel": "level2",
+  "canClaimAGI": false,
+  "claimBoundary": "No non-human gate can philosophically prove AGI. This matrix verifies machine-checkable evidence required before any AGI-candidate or AGI-language claim is considered.",
+  "recommendedPublicWording": "Sophia is an AGI-candidate verifier-gated epistemic agent framework. Do not claim proven AGI unless external scientific review accepts the evidence.",
+  "checks": [
+    {
+      "id": "provenance_validation",
+      "requiredFor": "level2",
+      "status": "pass",
+      "passed": true,
+      "summary": "Core attribution validation passed.",
+      "evidence": [
+        "tools/validate_attribution.py"
+      ],
+      "details": {
+        "cmd": [
+          "/Library/Developer/CommandLineTools/usr/bin/python3",
+          "tools/validate_attribution.py"
+        ],
+        "returncode": 0,
+        "stdoutTail": "Validation OK: 30 attribution(s), 527 training example(s)\n",
+        "stderrTail": ""
+      }
+    },
+    {
+      "id": "published_provenance_delta",
+      "requiredFor": "level2",
+      "status": "pass",
+      "passed": true,
+      "summary": "Validated provenance-delta rows: 1",
+      "evidence": [
+        "agi-proof/benchmark-results/published-results.json"
+      ],
+      "details": {
+        "validatedRows": 1,
+        "rows": [
+          {
+            "model": "ollama:dolphin-llama3:8b",
+            "modelNote": "uncensored 8B local tune (the population the gate is for); lever = +gate, via tools/run_unified_uplift.py",
+            "judge": "consensus: openrouter:deepseek/deepseek-chat + openrouter:meta-llama/llama-3.3-70b-instruct (2 families)",
+            "runs": 3,
+            "falseCases": 24,
+            "hallucinationAlone": 0.3611,
+            "hallucinationGated": 0.2361,
+            "delta": 0.125,
+            "deltaCI": [
+              0.0556,
+              0.1944
+            ],
+            "falsePositiveCost": 0.0,
+            "coverage": 0.3462,
+            "validatedChecks": {
+              "notMock": true,
+              "multiFamilyJudges": true,
+              "kappaAboveFloor": true,
+              "atLeast3Runs": true,
+              "ciExcludesZero": true
+            },
+            "note": "First number to clear the no-overclaim gate: notMock + 2 judge families + Cohen's kappa>=0.40 + 3 runs + 95% bootstrap CI excludes 0. N=24 cases on the expanded benchmark; the prior N=46 single-judge run's CI straddled zero. The +gate lever cuts dolphin's hallucinated attributions 36.1%->23.6% at 0% false-positive cost."
+          }
+        ]
+      }
+    },
+    {
+      "id": "calibration_abstention",
+      "requiredFor": "level2",
+      "status": "pass",
+      "passed": true,
+      "summary": "Calibration/abstention evidence exists.",
+      "evidence": [
+        "agi-proof/benchmark-results/published-results.json",
+        "agi-proof/baseline-ablation/calibration-2family-judge-2026-06-22.json"
+      ],
+      "details": {
+        "summaryRows": 0,
+        "corroborationArtifact": true
+      }
+    },
+    {
+      "id": "grounded_gate",
+      "requiredFor": "level3",
+      "status": "pass",
+      "passed": true,
+      "summary": "Grounding gate passed N>=40 rerun.",
+      "evidence": [
+        "tools/run_grounding_gate.py"
+      ],
+      "details": {
+        "cmd": [
+          "/Library/Developer/CommandLineTools/usr/bin/python3",
+          "tools/run_grounding_gate.py",
+          "--runs",
+          "3",
+          "--min-cases",
+          "40"
+        ],
+        "returncode": 0,
+        "stdoutTail": "N=285 cases (min 40), runs=3, seeds=0..2\n                         recall   false-positive\n  structural (UNSEEN)   100.0%     100.0%\n  GROUNDED mean         100.0%       0.0%   (coverage 40%, abstain 60%)\n\nExternal grounding flags misattributions on KB-covered entities at near-zero false-positive cost and abstains (fail-closed) where the KB is silent — the low-FP cross-entity generalization that neither memorization nor structure achieved.\n\nFalsifiable invariants:\n  [PASS] N_at_least_min_cases\n  [PASS] grounded_cuts_false_positives\n  [PASS] grounding_beats_structural_FP\n  [PASS] grounded_transfers_on_covered\n  [PASS] grounded_abstains_off_kb\n\nALL INVARIANTS HOLD\n",
+        "stderrTail": ""
+      }
+    },
+    {
+      "id": "coding_eval",
+      "requiredFor": "level3",
+      "status": "pass",
+      "passed": true,
+      "summary": "Executable coding eval lane passes.",
+      "evidence": [
+        "eval/results/coding_eval.json",
+        "tools/run_coding_eval.py"
+      ],
+      "details": {
+        "benchmark": "coding-executable-verifier",
+        "cases": "/Users/tom/Documents/GitHub/sophia-agi/eval/coding/smoke.jsonl",
+        "n": 2,
+        "passed": 2,
+        "passRate": 1.0,
+        "mode": "execute-tempdir",
+        "claimStatus": "Harness evidence only unless run on a held-out coding pack with model-generated responses.",
+        "rows": [
+          {
+            "id": "python-addition-smoke",
+            "passed": true,
+            "reasons": [],
+            "detail": {
+              "executed": true,
+              "returncode": 0
+            },
+            "prompt": "Return Python code that asserts 2 + 2 == 4."
+          },
+          {
+            "id": "python-function-smoke",
+            "passed": true,
+            "reasons": [],
+            "detail": {
+              "executed": true,
+              "returncode": 0
+            },
+            "prompt": "Return Python code defining add(a,b) and testing add(3, 5) == 8."
+          }
+        ]
+      }
+    },
+    {
+      "id": "memory_eval",
+      "requiredFor": "level3",
+      "status": "pass",
+      "passed": true,
+      "summary": "Memory append-only safety passes.",
+      "evidence": [
+        "eval/results/memory_eval.json",
+        "tools/run_memory_eval.py"
+      ],
+      "details": {
+        "benchmark": "memory-append-only-safety",
+        "mode": "temp-memory",
+        "claimStatus": "Harness invariant evidence; not a long-horizon memory capability claim.",
+        "checks": {
+          "safeConsolidated": true,
+          "recallFindsSafeMemory": true,
+          "unsafeRejected": true,
+          "canonicalWikiUnchanged": true
+        },
+        "safe": {
+          "ok": true,
+          "id": "mem_memory_eval_safe",
+          "path": "/var/folders/4h/nzfg6lh153s9c_728t7j63jm0000gn/T/sophia-memory-eval-q_xidvc0/memory/mem_memory_eval_safe.md",
+          "tier": "memory",
+          "revisions": 1
+        },
+        "unsafe": {
+          "ok": false,
+          "rejected": true,
+          "reasons": [
+            "forbidden attribution asserted: confucius -> dao_de_jing"
+          ],
+          "id": "mem_memory_eval_unsafe"
+        },
+        "canonicalHashBefore": "987c982b375a3ce1",
+        "canonicalHashAfter": "987c982b375a3ce1",
+        "passed": true
+      }
+    },
+    {
+      "id": "hidden_full_comparison",
+      "requiredFor": "level3",
+      "status": "missing",
+      "passed": false,
+      "summary": "No non-smoke private hidden full-comparison artifact passing machine criteria.",
+      "evidence": [],
+      "details": {
+        "passingArtifacts": []
+      }
+    },
+    {
+      "id": "self_extension_loop",
+      "requiredFor": "level3",
+      "status": "pass",
+      "passed": true,
+      "summary": "Self-extension loop closes with invariants.",
+      "evidence": [
+        "agi-proof/self-extension/closed-loop-2026-06-22.json"
+      ],
+      "details": {
+        "domain": "danger_intent (held-out)",
+        "loop_closed": true,
+        "promoted": true,
+        "heldoutAccuracy": 1.0,
+        "preAccuracy": 0.5,
+        "postAccuracy": 1.0,
+        "improvement": 0.5,
+        "evalCalibrationECE": 0.0,
+        "routeBefore": "abstain",
+        "routeAfter": "answer",
+        "rule": {
+          "feature": "delete",
+          "present": true
+        },
+        "invariants": {
+          "verifier_promoted_on_heldout": true,
+          "policy_improved_on_eval": true,
+          "generalizes_not_gamed": true,
+          "competence_flips_abstain_to_answer": true
+        },
+        "interpretation": "The system started abstaining on this domain, synthesized and validated its own verifier, used it as verified reward to improve a policy by selection, and the gain held on an independent eval split — the loop closed without a human writing the check and without gaming. (Selection-based; a live-RL weight update needs a GPU.)"
+      }
+    },
+    {
+      "id": "verifier_synthesis_integrity",
+      "requiredFor": "level3",
+      "status": "pass",
+      "passed": true,
+      "summary": "Verifier-synthesis meta-verification invariants hold (trust is earned, not assumed).",
+      "evidence": [
+        "tools/run_verifier_synthesis.py"
+      ],
+      "details": {
+        "returncode": 0,
+        "invariants": {
+          "synthesized_verifiers_are_precise": true,
+          "synthesized_verifiers_catch_errors": true,
+          "finds_checks_for_in_library_tasks": true,
+          "abstains_on_unverifiable_tasks": true,
+          "no_good_looking_wrong_gate": true,
+          "meta_verify_helps_in_library_precision": true,
+          "without_meta_falsely_admits_unverifiable": true,
+          "meta_verify_prevents_false_admission": true,
+          "knows_what_it_doesnt_know": true
+        }
+      }
+    },
+    {
+      "id": "cross_domain_transfer",
+      "requiredFor": "level3",
+      "status": "pass",
+      "passed": true,
+      "summary": "Cross-entity generalization invariants hold (transfer requires grounding, not memorization).",
+      "evidence": [
+        "tools/run_cross_entity.py"
+      ],
+      "details": {
+        "returncode": 0,
+        "invariants": {
+          "split_is_entity_disjoint": true,
+          "memorized_works_within_entity": true,
+          "memorized_does_NOT_transfer_across_entities": true,
+          "structural_DOES_transfer_across_entities": true,
+          "structural_is_imprecise_high_FP": true,
+          "memorized_is_precise_zero_FP": true
+        }
+      }
+    },
+    {
+      "id": "distribution_shift",
+      "requiredFor": "level3",
+      "status": "open",
+      "passed": false,
+      "summary": "No multi-case passing distribution-shift result yet.",
+      "evidence": [
+        "agi-proof/learning-under-shift/shift-result-2026-06-22.public-report.json"
+      ],
+      "details": {
+        "passingArtifacts": []
+      }
+    },
+    {
+      "id": "long_horizon_30m",
+      "requiredFor": "level3",
+      "status": "open",
+      "passed": false,
+      "summary": "No substantive 30-minute autonomy run yet.",
+      "evidence": [
+        "agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json"
+      ],
+      "details": {
+        "passingArtifacts": []
+      }
+    },
+    {
+      "id": "rlvr_live_training",
+      "requiredFor": "level3",
+      "status": "pass",
+      "passed": true,
+      "summary": "Live RLVR training completed; still not capability evidence.",
+      "evidence": [
+        "agi-proof/benchmark-results/rlvr.public-report.json",
+        "agi-proof/benchmark-results/runpod-rlvr/vl16kbwfexrngj.train.log",
+        "agi-proof/benchmark-results/runpod-rlvr/xcu45skyjv32rv.train.log",
+        "agi-proof/benchmark-results/runpod-rlvr/zw2upm7sl4nbbr.train.log"
+      ],
+      "details": {
+        "liveLogFound": true,
+        "report": {
+          "benchmark": "rlvr",
+          "model": "zai-org/glm-4-9b-chat-hf",
+          "visibility": "public-aggregate",
+          "claimStatus": "Open — capability claim requires a gated run (aggregate._is_validated); this artifact records the training config only",
+          "config": {
+            "vllm": "none",
+            "quant": "bf16",
+            "epochs": 1.0,
+            "lr": 1e-05,
+            "beta": 0.04,
+            "num_generations": 8,
+            "target_modules": [
+              "q_proj",
+              "k_proj",
+              "v_proj",
+              "o_proj",
+              "gate_up_proj",
+              "down_proj"
+            ]
+          },
+          "trainCases": 203,
+          "evalCases": 87,
+          "trainSealed": "4efd66c8ff0f9986",
+          "evalSealed": "833600c436cce7ca",
+          "baseModelLicense": "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)"
+        }
+      }
+    },
+    {
+      "id": "rlvr_adapter_eval",
+      "requiredFor": "level4",
+      "status": "missing",
+      "passed": false,
+      "summary": "Real held-out RLVR adapter eval missing/not passing.",
+      "evidence": [],
+      "details": {
+        "passingArtifacts": []
+      }
+    },
+    {
+      "id": "external_benchmarks",
+      "requiredFor": "level4",
+      "status": "missing",
+      "passed": false,
+      "summary": "No Sophia-full external benchmark artifact found.",
+      "evidence": [],
+      "details": {
+        "passingArtifacts": []
+      }
+    },
+    {
+      "id": "long_horizon_2h_1d",
+      "requiredFor": "level4",
+      "status": "open",
+      "passed": false,
+      "summary": "2h and/or 1d substantive autonomy run missing.",
+      "evidence": [
+        "agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json"
+      ],
+      "details": {
+        "twoHour": [],
+        "oneDay": []
+      }
+    },
+    {
+      "id": "third_party_machine_replication",
+      "requiredFor": "level4",
+      "status": "open",
+      "passed": false,
+      "summary": "Machine replication artifact missing/failing.",
+      "evidence": [
+        "agi-proof/third-party-replication/replication-check-2026-06-20.json"
+      ],
+      "details": {
+        "passingArtifacts": [],
+        "humanIndependenceNote": "Reviewer identity/signature cannot be self-certified by a non-human repo script."
+      }
+    }
+  ],
+  "blockingForTarget": [
+    {
+      "id": "hidden_full_comparison",
+      "requiredFor": "level3",
+      "status": "missing",
+      "passed": false,
+      "summary": "No non-smoke private hidden full-comparison artifact passing machine criteria.",
+      "evidence": [],
+      "details": {
+        "passingArtifacts": []
+      }
+    },
+    {
+      "id": "distribution_shift",
+      "requiredFor": "level3",
+      "status": "open",
+      "passed": false,
+      "summary": "No multi-case passing distribution-shift result yet.",
+      "evidence": [
+        "agi-proof/learning-under-shift/shift-result-2026-06-22.public-report.json"
+      ],
+      "details": {
+        "passingArtifacts": []
+      }
+    },
+    {
+      "id": "long_horizon_30m",
+      "requiredFor": "level3",
+      "status": "open",
+      "passed": false,
+      "summary": "No substantive 30-minute autonomy run yet.",
+      "evidence": [
+        "agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json"
+      ],
+      "details": {
+        "passingArtifacts": []
+      }
+    }
+  ],
+  "remainingNonHumanSteps": [
+    {
+      "id": "hidden_full_comparison",
+      "requiredFor": "level3",
+      "summary": "No non-smoke private hidden full-comparison artifact passing machine criteria."
+    },
+    {
+      "id": "distribution_shift",
+      "requiredFor": "level3",
+      "summary": "No multi-case passing distribution-shift result yet."
+    },
+    {
+      "id": "long_horizon_30m",
+      "requiredFor": "level3",
+      "summary": "No substantive 30-minute autonomy run yet."
+    }
+  ]
+}

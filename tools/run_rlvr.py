@@ -50,9 +50,11 @@ OUT_JSON = ROOT / "agi-proof" / "benchmark-results" / "rlvr.public-report.json"
 # commercial use needs Zhipu registration; NOT MIT (unlike GLM-5.2 / GLM-4.5+).
 DEFAULT_MODEL = "zai-org/glm-4-9b-chat-hf"
 
-# GLM uses a fused-QKV layout. The Qwen target_modules in tools/train_lora.py
-# (q_proj/k_proj/...) are WRONG here and raise ValueError at adapter build.
-GLM_TARGET_MODULES = ["query_key_value", "dense", "dense_h_to_4h", "dense_4to_h"]
+# GLM-4-9B-Chat in current Transformers exposes split attention projections
+# plus a fused gate/up MLP projection. Older notes claimed fused-QKV names
+# (query_key_value/dense/...), but the published HF weights use these suffixes:
+#   self_attn.{q,k,v,o}_proj, mlp.gate_up_proj, mlp.down_proj
+GLM_TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_up_proj", "down_proj"]
 
 # Synthetic case set for the offline reward-machinery check (decoupled from any
 # corpus quirks, so the invariants are about the code, not the data).

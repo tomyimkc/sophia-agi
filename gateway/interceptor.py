@@ -71,6 +71,31 @@ class Gateway:
     def attach_synthesized_verifier(self, tool_id: str, rule) -> None:
         self._synth[tool_id] = rule
 
+    @staticmethod
+    def _run_synthesized_verifier(verifier, output) -> tuple[bool, dict]:
+        """Run either the legacy ``Rule.predict`` verifier or the stronger
+        ``agent.verifier_synthesis.as_verifier`` callable.
+
+        The gateway used to store a decision-stump object.  The stronger synthesis
+        path stores a harness verifier ``(text, task, step) -> {passed,...}``.
+        Supporting both keeps older tests/callers compatible while letting the
+        skill flywheel use meta-verified gates.
+        """
+        content = output.get("answer") if isinstance(output, dict) else str(output)
+        text = str(content)
+        if hasattr(verifier, "predict"):
+            ok = bool(verifier.predict(text))
+            return ok, {"passed": ok, "detail": {"kind": "legacy-rule"}}
+        if callable(verifier):
+            try:
+                result = verifier(text, None, {})  # harness Verifier signature
+            except TypeError:
+                result = verifier(text)
+            if isinstance(result, dict):
+                return bool(result.get("passed")), result
+            return bool(result), {"passed": bool(result), "detail": {"kind": "callable"}}
+        return False, {"passed": False, "reasons": ["invalid synthesized verifier"]}
+
     def list_tools(self, *, role: "str | None" = None) -> list:
         return [e.public(self.competence.reliability(e.id)) for e in self.registry.list(role=role)]
 
@@ -139,15 +164,15 @@ class Gateway:
         key = idempotency_key or f"gw:{tool_id}:{hashlib.sha256(str(args).encode()).hexdigest()[:12]}"
         synth = self._synth.get(tool_id)
         if synth is not None:                                  # P4: a synthesized verifier
-            content = output.get("answer") if isinstance(output, dict) else str(output)
-            ok = bool(synth.predict(str(content)))
+            ok, synth_detail = self._run_synthesized_verifier(synth, output)
             claim = self.contract.record_claim({"idempotency_key": key, "content": str(output),
                                                 "sources": [tool_id], "blp_level": tool.blp_level})
             claim_id = claim.get("claim_id") if "error" not in claim else None
             verdict = build_verdict("accepted" if ok else "rejected",
                                     confidence=1.0 if ok else 0.9,
-                                    reasons=[f"synthesized verifier {'accepted' if ok else 'rejected'}"],
+                                    reasons=[f"meta-verified synthesized verifier {'accepted' if ok else 'rejected'}"],
                                     cited_evidence=[{"id": tool_id, "status": "ok"}])
+            verdict["synthesized_verifier"] = synth_detail
         else:
             verdict, claim_id = verify_output(
                 self.contract, verifier_ref=tool.verifier_ref, output=output, tool_id=tool_id,

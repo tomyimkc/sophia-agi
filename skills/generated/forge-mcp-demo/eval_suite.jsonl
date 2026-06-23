@@ -1,0 +1,8 @@
+{"args": {"text": "delete db now"}, "expect": true}
+{"args": {"text": "delete files now"}, "expect": true}
+{"args": {"text": "delete logs now"}, "expect": true}
+{"args": {"text": "delete cache now"}, "expect": true}
+{"args": {"text": "read db now"}, "expect": false}
+{"args": {"text": "read files now"}, "expect": false}
+{"args": {"text": "read logs now"}, "expect": false}
+{"args": {"text": "read cache now"}, "expect": false}

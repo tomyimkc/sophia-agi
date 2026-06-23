@@ -1,0 +1,132 @@
+Warning: Permanently added '[87.120.211.211]:10448' (ED25519) to the list of known hosts.
+Cloning into 'sophia-agi'...
+Updating files:  19% (245/1263)
+Updating files:  20% (253/1263)
+Updating files:  21% (266/1263)
+Updating files:  22% (278/1263)
+Updating files:  23% (291/1263)
+Updating files:  24% (304/1263)
+Updating files:  25% (316/1263)
+Updating files:  26% (329/1263)
+Updating files:  27% (342/1263)
+Updating files:  28% (354/1263)
+Updating files:  29% (367/1263)
+Updating files:  30% (379/1263)
+Updating files:  31% (392/1263)
+Updating files:  32% (405/1263)
+Updating files:  33% (417/1263)
+Updating files:  34% (430/1263)
+Updating files:  35% (443/1263)
+Updating files:  36% (455/1263)
+Updating files:  37% (468/1263)
+Updating files:  38% (480/1263)
+Updating files:  39% (493/1263)
+Updating files:  39% (499/1263)
+Updating files:  40% (506/1263)
+Updating files:  41% (518/1263)
+Updating files:  42% (531/1263)
+Updating files:  43% (544/1263)
+Updating files:  44% (556/1263)
+Updating files:  45% (569/1263)
+Updating files:  46% (581/1263)
+Updating files:  47% (594/1263)
+Updating files:  48% (607/1263)
+Updating files:  49% (619/1263)
+Updating files:  50% (632/1263)
+Updating files:  51% (645/1263)
+Updating files:  52% (657/1263)
+Updating files:  53% (670/1263)
+Updating files:  54% (683/1263)
+Updating files:  55% (695/1263)
+Updating files:  56% (708/1263)
+Updating files:  57% (720/1263)
+Updating files:  58% (733/1263)
+Updating files:  59% (746/1263)
+Updating files:  60% (758/1263)
+Updating files:  61% (771/1263)
+Updating files:  62% (784/1263)
+Updating files:  63% (796/1263)
+Updating files:  64% (809/1263)
+Updating files:  65% (821/1263)
+Updating files:  66% (834/1263)
+Updating files:  67% (847/1263)
+Updating files:  68% (859/1263)
+Updating files:  69% (872/1263)
+Updating files:  70% (885/1263)
+Updating files:  71% (897/1263)
+Updating files:  72% (910/1263)
+Updating files:  73% (922/1263)
+Updating files:  74% (935/1263)
+Updating files:  75% (948/1263)
+Updating files:  76% (960/1263)
+Updating files:  77% (973/1263)
+Updating files:  78% (986/1263)
+Updating files:  79% (998/1263)
+Updating files:  80% (1011/1263)
+Updating files:  81% (1024/1263)
+Updating files:  82% (1036/1263)
+Updating files:  83% (1049/1263)
+Updating files:  84% (1061/1263)
+Updating files:  84% (1067/1263)
+Updating files:  85% (1074/1263)
+Updating files:  86% (1087/1263)
+Updating files:  87% (1099/1263)
+Updating files:  88% (1112/1263)
+Updating files:  89% (1125/1263)
+Updating files:  90% (1137/1263)
+Updating files:  91% (1150/1263)
+Updating files:  92% (1162/1263)
+Updating files:  93% (1175/1263)
+Updating files:  94% (1188/1263)
+Updating files:  95% (1200/1263)
+Updating files:  96% (1213/1263)
+Updating files:  97% (1226/1263)
+Updating files:  98% (1238/1263)
+Updating files:  99% (1251/1263)
+Updating files: 100% (1263/1263)
+Updating files: 100% (1263/1263), done.
+84e9f80bea4bacdb7667761944921e04682bb415
+Requirement already satisfied: pip in /usr/local/lib/python3.10/dist-packages (23.3.1)
+Collecting pip
+  Downloading pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.10/dist-packages (68.2.2)
+Collecting setuptools
+  Downloading setuptools-82.0.1-py3-none-any.whl.metadata (6.5 kB)
+Requirement already satisfied: wheel in /usr/local/lib/python3.10/dist-packages (0.41.3)
+Collecting wheel
+  Downloading wheel-0.47.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting packaging>=24.0 (from wheel)
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 19.8 MB/s eta 0:00:00
+Downloading setuptools-82.0.1-py3-none-any.whl (1.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 33.0 MB/s eta 0:00:00
+Downloading wheel-0.47.0-py3-none-any.whl (32 kB)
+Downloading packaging-26.2-py3-none-any.whl (100 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.2/100.2 kB 5.2 MB/s eta 0:00:00
+Installing collected packages: setuptools, pip, packaging, wheel
+  Attempting uninstall: setuptools
+    Found existing installation: setuptools 68.2.2
+    Uninstalling setuptools-68.2.2:
+      Successfully uninstalled setuptools-68.2.2
+  Attempting uninstall: pip
+    Found existing installation: pip 23.3.1
+    Uninstalling pip-23.3.1:
+      Successfully uninstalled pip-23.3.1
+  Attempting uninstall: packaging
+    Found existing installation: packaging 23.2
+    Uninstalling packaging-23.2:
+      Successfully uninstalled packaging-23.2
+  Attempting uninstall: wheel
+    Found existing installation: wheel 0.41.3
+    Uninstalling wheel-0.41.3:
+      Successfully uninstalled wheel-0.41.3
+Successfully installed packaging-26.2 pip-26.1.2 setuptools-82.0.1 wheel-0.47.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+Validation OK: 30 attribution(s), 527 training example(s)
+wrote /workspace/sophia-runpod/rlvr.offline-report.json
+RLVR REWARD WIRING VERIFIED ✓
+Sophia RunPod remote-mode=offline smoke test complete; skipped live GRPO.
+Sophia RLVR remote run complete.
+-rw-r--r-- 1 root root 1.4K Jun 23 01:56 /workspace/sophia-runpod/rlvr.offline-report.json
+-rw-r--r-- 1 root root 1.4K Jun 23 01:56 /workspace/sophia-runpod/rlvr.public-report.json

@@ -2,8 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.7.27-blue)
-![Training examples](https://img.shields.io/badge/training_examples-518-green)
+![Version](https://img.shields.io/badge/version-0.7.41-blue)
+![Training examples](https://img.shields.io/badge/training_examples-527-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
 **Wisdom before intelligence.** An open corpus, benchmark, and **verifier-gated reasoning loop** for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea*, and **refusing to assert what it cannot machine-check**.
@@ -233,10 +233,12 @@ is "validated" only with multi-judge consensus + CIs; see [RESULTS.md](RESULTS.m
 | **Project skill** | `/sophia-agi` — `.grok/skills/sophia-agi/SKILL.md` |
 | **Portable skill** | `/sophia-source-discipline` — `python tools/install_skills.py --all` |
 | **MCP server** | `sophia_mcp/server.py` — 32 tools (validate, gate, check_claim, belief, counterfactual, retract, revise, benchmark, lookup, sector councils, council deliberate, OKF wiki, OpenClaw infer, governance contract: record_claim/verify_claim/explain_verdict/describe/health/enqueue_task/next_task) |
+| **Gateway MCP** | `gateway/server.py` — super-MCP front door (`gateway_call_tool`, `gateway_verify`, downstream HTTP-MCP federation, verified consensus, Skill Forge) |
 
 ```bash
 pip install -r requirements-mcp.txt
 python tools/install_skills.py --all --cursor
+python gateway/server.py  # standalone fail-closed Sophia Gateway MCP
 ```
 
 See [Skills-Install.md](docs/09-Agent/Skills-Install.md) and [MCP-Server.md](docs/09-Agent/MCP-Server.md).
@@ -264,7 +266,7 @@ See [Model-Lab.md](docs/09-Agent/Model-Lab.md) and [LoRA-Experiment.md](docs/09-
 
 ## Hugging Face
 
-Dataset: [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) (**518** examples, synced from `training/corpus.jsonl`).
+Dataset: [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) (**527** examples, synced from `training/corpus.jsonl`).
 
 ## Contributing
 

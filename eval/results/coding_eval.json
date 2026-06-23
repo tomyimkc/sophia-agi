@@ -1,0 +1,31 @@
+{
+  "benchmark": "coding-executable-verifier",
+  "cases": "/Users/tom/Documents/GitHub/sophia-agi/eval/coding/smoke.jsonl",
+  "n": 2,
+  "passed": 2,
+  "passRate": 1.0,
+  "mode": "execute-tempdir",
+  "claimStatus": "Harness evidence only unless run on a held-out coding pack with model-generated responses.",
+  "rows": [
+    {
+      "id": "python-addition-smoke",
+      "passed": true,
+      "reasons": [],
+      "detail": {
+        "executed": true,
+        "returncode": 0
+      },
+      "prompt": "Return Python code that asserts 2 + 2 == 4."
+    },
+    {
+      "id": "python-function-smoke",
+      "passed": true,
+      "reasons": [],
+      "detail": {
+        "executed": true,
+        "returncode": 0
+      },
+      "prompt": "Return Python code defining add(a,b) and testing add(3, 5) == 8."
+    }
+  ]
+}

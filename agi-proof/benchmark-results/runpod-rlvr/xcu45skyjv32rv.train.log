@@ -1,0 +1,282 @@
+Warning: Permanently added '[87.120.211.205]:17649' (ED25519) to the list of known hosts.
+Cloning into 'sophia-agi'...
+Updating files:  25% (327/1263)
+Updating files:  26% (329/1263)
+Updating files:  27% (342/1263)
+Updating files:  28% (354/1263)
+Updating files:  29% (367/1263)
+Updating files:  30% (379/1263)
+Updating files:  31% (392/1263)
+Updating files:  32% (405/1263)
+Updating files:  33% (417/1263)
+Updating files:  34% (430/1263)
+Updating files:  35% (443/1263)
+Updating files:  36% (455/1263)
+Updating files:  37% (468/1263)
+Updating files:  38% (480/1263)
+Updating files:  39% (493/1263)
+Updating files:  40% (506/1263)
+Updating files:  41% (518/1263)
+Updating files:  42% (531/1263)
+Updating files:  43% (544/1263)
+Updating files:  44% (556/1263)
+Updating files:  45% (569/1263)
+Updating files:  46% (581/1263)
+Updating files:  47% (594/1263)
+Updating files:  48% (607/1263)
+Updating files:  48% (612/1263)
+Updating files:  49% (619/1263)
+Updating files:  50% (632/1263)
+Updating files:  51% (645/1263)
+Updating files:  52% (657/1263)
+Updating files:  53% (670/1263)
+Updating files:  54% (683/1263)
+Updating files:  55% (695/1263)
+Updating files:  56% (708/1263)
+Updating files:  57% (720/1263)
+Updating files:  58% (733/1263)
+Updating files:  59% (746/1263)
+Updating files:  60% (758/1263)
+Updating files:  61% (771/1263)
+Updating files:  62% (784/1263)
+Updating files:  63% (796/1263)
+Updating files:  64% (809/1263)
+Updating files:  65% (821/1263)
+Updating files:  66% (834/1263)
+Updating files:  66% (844/1263)
+Updating files:  67% (847/1263)
+Updating files:  68% (859/1263)
+Updating files:  69% (872/1263)
+Updating files:  70% (885/1263)
+Updating files:  71% (897/1263)
+Updating files:  72% (910/1263)
+Updating files:  73% (922/1263)
+Updating files:  74% (935/1263)
+Updating files:  75% (948/1263)
+Updating files:  76% (960/1263)
+Updating files:  77% (973/1263)
+Updating files:  78% (986/1263)
+Updating files:  79% (998/1263)
+Updating files:  80% (1011/1263)
+Updating files:  81% (1024/1263)
+Updating files:  82% (1036/1263)
+Updating files:  83% (1049/1263)
+Updating files:  84% (1061/1263)
+Updating files:  85% (1074/1263)
+Updating files:  86% (1087/1263)
+Updating files:  87% (1099/1263)
+Updating files:  88% (1112/1263)
+Updating files:  89% (1125/1263)
+84e9f80bea4bacdb7667761944921e04682bb415
+Tue Jun 23 02:04:54 2026       
+Updating files:  90% (1137/1263)
+Updating files:  91% (1150/1263)
+Updating files:  92% (1162/1263)
+Updating files:  93% (1175/1263)
+Updating files:  93% (1181/1263)
+Updating files:  94% (1188/1263)
+Updating files:  95% (1200/1263)
+Updating files:  96% (1213/1263)
+Updating files:  97% (1226/1263)
+Updating files:  98% (1238/1263)
+Updating files:  99% (1251/1263)
+Updating files: 100% (1263/1263)
+Updating files: 100% (1263/1263), done.
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.126.09             Driver Version: 580.126.09     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:2F:00.0 Off |                    0 |
+| N/A   29C    P0             69W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+/usr/local/lib/python3.12/dist-packages/torch/_subclasses/functional_tensor.py:279: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:84.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+torch preinstalled: 2.9.1+cu128 cuda: 12.8 available: True
+Requirement already satisfied: pip in /usr/local/lib/python3.12/dist-packages (26.1.2)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.12/dist-packages (82.0.1)
+Collecting wheel
+  Downloading wheel-0.47.0-py3-none-any.whl.metadata (2.3 kB)
+Requirement already satisfied: packaging>=24.0 in /usr/local/lib/python3.12/dist-packages (from wheel) (26.2)
+Downloading wheel-0.47.0-py3-none-any.whl (32 kB)
+Installing collected packages: wheel
+Successfully installed wheel-0.47.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+Requirement already satisfied: torch>=2.3 in /usr/local/lib/python3.12/dist-packages (from -r /tmp/requirements-rl.sophia.txt (line 4)) (2.9.1+cu128)
+Collecting transformers>=4.46.2 (from -r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading transformers-5.12.1-py3-none-any.whl.metadata (33 kB)
+Collecting trl>=0.16 (from -r /tmp/requirements-rl.sophia.txt (line 6))
+  Downloading trl-1.6.0-py3-none-any.whl.metadata (11 kB)
+Collecting peft>=0.19.1 (from -r /tmp/requirements-rl.sophia.txt (line 7))
+  Downloading peft-0.19.1-py3-none-any.whl.metadata (15 kB)
+Collecting datasets>=2.18 (from -r /tmp/requirements-rl.sophia.txt (line 8))
+  Downloading datasets-5.0.0-py3-none-any.whl.metadata (23 kB)
+Collecting accelerate>=1.14.0 (from -r /tmp/requirements-rl.sophia.txt (line 9))
+  Downloading accelerate-1.14.0-py3-none-any.whl.metadata (19 kB)
+Requirement already satisfied: filelock in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (3.29.4)
+Requirement already satisfied: typing-extensions>=4.10.0 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (4.15.0)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (82.0.1)
+Requirement already satisfied: sympy>=1.13.3 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (3.6.1)
+Requirement already satisfied: jinja2 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (2026.4.0)
+Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.8.93 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (12.8.93)
+Requirement already satisfied: nvidia-cuda-runtime-cu12==12.8.90 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (12.8.90)
+Requirement already satisfied: nvidia-cuda-cupti-cu12==12.8.90 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (12.8.90)
+Requirement already satisfied: nvidia-cudnn-cu12==9.10.2.21 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (9.10.2.21)
+Requirement already satisfied: nvidia-cublas-cu12==12.8.4.1 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (12.8.4.1)
+Requirement already satisfied: nvidia-cufft-cu12==11.3.3.83 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (11.3.3.83)
+Requirement already satisfied: nvidia-curand-cu12==10.3.9.90 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (10.3.9.90)
+Requirement already satisfied: nvidia-cusolver-cu12==11.7.3.90 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (11.7.3.90)
+Requirement already satisfied: nvidia-cusparse-cu12==12.5.8.93 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (12.5.8.93)
+Requirement already satisfied: nvidia-cusparselt-cu12==0.7.1 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (0.7.1)
+Requirement already satisfied: nvidia-nccl-cu12==2.27.5 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (2.27.5)
+Requirement already satisfied: nvidia-nvshmem-cu12==3.3.20 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (3.3.20)
+Requirement already satisfied: nvidia-nvtx-cu12==12.8.90 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (12.8.90)
+Requirement already satisfied: nvidia-nvjitlink-cu12==12.8.93 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (12.8.93)
+Requirement already satisfied: nvidia-cufile-cu12==1.13.1.3 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (1.13.1.3)
+Requirement already satisfied: triton==3.5.1 in /usr/local/lib/python3.12/dist-packages (from torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (3.5.1)
+Collecting huggingface-hub<2.0,>=1.5.0 (from transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading huggingface_hub-1.20.1-py3-none-any.whl.metadata (14 kB)
+Collecting numpy>=1.17 (from transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading numpy-2.5.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Requirement already satisfied: packaging>=20.0 in /usr/local/lib/python3.12/dist-packages (from transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5)) (26.2)
+Requirement already satisfied: pyyaml>=5.1 in /usr/local/lib/python3.12/dist-packages (from transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5)) (6.0.3)
+Collecting regex>=2025.10.22 (from transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading regex-2026.5.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+Collecting tokenizers<=0.23.0,>=0.22.0 (from transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)
+Collecting typer (from transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading typer-0.26.7-py3-none-any.whl.metadata (16 kB)
+Collecting safetensors>=0.4.3 (from transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.2 kB)
+Collecting tqdm>=4.60 (from transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading tqdm-4.68.3-py3-none-any.whl.metadata (57 kB)
+Collecting click>=8.4.0 (from huggingface-hub<2.0,>=1.5.0->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading click-8.4.1-py3-none-any.whl.metadata (2.6 kB)
+Collecting hf-xet<2.0.0,>=1.5.1 (from huggingface-hub<2.0,>=1.5.0->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading hf_xet-1.5.1-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+Requirement already satisfied: httpx<1,>=0.23.0 in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<2.0,>=1.5.0->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5)) (0.28.1)
+Collecting typer (from transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading typer-0.25.1-py3-none-any.whl.metadata (15 kB)
+Requirement already satisfied: anyio in /usr/local/lib/python3.12/dist-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5)) (4.14.0)
+Requirement already satisfied: certifi in /usr/local/lib/python3.12/dist-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5)) (2026.6.17)
+Requirement already satisfied: httpcore==1.* in /usr/local/lib/python3.12/dist-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5)) (1.0.9)
+Requirement already satisfied: idna in /usr/local/lib/python3.12/dist-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5)) (3.18)
+Requirement already satisfied: h11>=0.16 in /usr/local/lib/python3.12/dist-packages (from httpcore==1.*->httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5)) (0.16.0)
+Collecting shellingham>=1.3.0 (from typer->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+Collecting rich>=13.8.0 (from typer->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+Collecting annotated-doc>=0.0.2 (from typer->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading annotated_doc-0.0.4-py3-none-any.whl.metadata (6.6 kB)
+Requirement already satisfied: psutil in /usr/local/lib/python3.12/dist-packages (from peft>=0.19.1->-r /tmp/requirements-rl.sophia.txt (line 7)) (7.2.2)
+Collecting pyarrow>=21.0.0 (from datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8))
+  Downloading pyarrow-24.0.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (3.0 kB)
+Collecting dill<0.4.2,>=0.3.0 (from datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8))
+  Downloading dill-0.4.1-py3-none-any.whl.metadata (10 kB)
+Collecting pandas (from datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8))
+  Downloading pandas-3.0.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+Requirement already satisfied: requests>=2.32.2 in /usr/local/lib/python3.12/dist-packages (from datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8)) (2.34.2)
+Collecting xxhash (from datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8))
+  Downloading xxhash-3.7.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (13 kB)
+Collecting multiprocess<0.70.20 (from datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8))
+  Downloading multiprocess-0.70.19-py312-none-any.whl.metadata (7.5 kB)
+Collecting aiohttp!=4.0.0a0,!=4.0.0a1 (from fsspec[http]<=2026.4.0,>=2023.1.0->datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8))
+  Downloading aiohttp-3.14.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (8.3 kB)
+Collecting aiohappyeyeballs>=2.5.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8))
+  Downloading aiohappyeyeballs-2.6.2-py3-none-any.whl.metadata (5.9 kB)
+Collecting aiosignal>=1.4.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8))
+  Downloading aiosignal-1.4.0-py3-none-any.whl.metadata (3.7 kB)
+Requirement already satisfied: attrs>=17.3.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8)) (26.1.0)
+Collecting frozenlist>=1.1.1 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8))
+  Downloading frozenlist-1.8.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (20 kB)
+Collecting multidict<7.0,>=4.5 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8))
+  Downloading multidict-6.7.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (5.3 kB)
+Collecting propcache>=0.2.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8))
+  Downloading propcache-0.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (16 kB)
+Collecting yarl<2.0,>=1.17.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8))
+  Downloading yarl-1.24.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (94 kB)
+Requirement already satisfied: charset_normalizer<4,>=2 in /usr/local/lib/python3.12/dist-packages (from requests>=2.32.2->datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8)) (3.4.7)
+Requirement already satisfied: urllib3<3,>=1.26 in /usr/local/lib/python3.12/dist-packages (from requests>=2.32.2->datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8)) (2.7.0)
+Collecting markdown-it-py>=2.2.0 (from rich>=13.8.0->typer->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /usr/local/lib/python3.12/dist-packages (from rich>=13.8.0->typer->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5)) (2.20.0)
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.8.0->typer->transformers>=4.46.2->-r /tmp/requirements-rl.sophia.txt (line 5))
+  Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /usr/local/lib/python3.12/dist-packages (from sympy>=1.13.3->torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.12/dist-packages (from jinja2->torch>=2.3->-r /tmp/requirements-rl.sophia.txt (line 4)) (3.0.3)
+Requirement already satisfied: python-dateutil>=2.8.2 in /usr/local/lib/python3.12/dist-packages (from pandas->datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8)) (2.9.0.post0)
+Requirement already satisfied: six>=1.5 in /usr/lib/python3/dist-packages (from python-dateutil>=2.8.2->pandas->datasets>=2.18->-r /tmp/requirements-rl.sophia.txt (line 8)) (1.16.0)
+Downloading transformers-5.12.1-py3-none-any.whl (11.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.2/11.2 MB 73.1 MB/s  0:00:00
+Downloading huggingface_hub-1.20.1-py3-none-any.whl (719 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 719.8/719.8 kB 18.3 MB/s  0:00:00
+Downloading hf_xet-1.5.1-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 45.2 MB/s  0:00:00
+Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 45.7 MB/s  0:00:00
+Downloading typer-0.25.1-py3-none-any.whl (58 kB)
+Downloading trl-1.6.0-py3-none-any.whl (825 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 825.1/825.1 kB 26.5 MB/s  0:00:00
+Downloading peft-0.19.1-py3-none-any.whl (680 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 680.7/680.7 kB 22.5 MB/s  0:00:00
+Downloading datasets-5.0.0-py3-none-any.whl (555 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 555.1/555.1 kB 19.5 MB/s  0:00:00
+Downloading dill-0.4.1-py3-none-any.whl (120 kB)
+Downloading multiprocess-0.70.19-py312-none-any.whl (150 kB)
+Downloading accelerate-1.14.0-py3-none-any.whl (389 kB)
+Downloading aiohttp-3.14.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 72.9 MB/s  0:00:00
+Downloading multidict-6.7.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (256 kB)
+Downloading yarl-1.24.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (105 kB)
+Downloading aiohappyeyeballs-2.6.2-py3-none-any.whl (15 kB)
+Downloading aiosignal-1.4.0-py3-none-any.whl (7.5 kB)
+Downloading annotated_doc-0.0.4-py3-none-any.whl (5.3 kB)
+Downloading click-8.4.1-py3-none-any.whl (116 kB)
+Downloading frozenlist-1.8.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (242 kB)
+Downloading numpy-2.5.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 42.9 MB/s  0:00:00
+Downloading propcache-0.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (61 kB)
+Downloading pyarrow-24.0.0-cp312-cp312-manylinux_2_28_x86_64.whl (48.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 48.9/48.9 MB 82.8 MB/s  0:00:00
+Downloading regex-2026.5.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (801 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 801.2/801.2 kB 30.5 MB/s  0:00:00
+Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (516 kB)
+Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+Downloading tqdm-4.68.3-py3-none-any.whl (78 kB)
+Downloading pandas-3.0.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (10.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.9/10.9 MB 194.6 MB/s  0:00:00
+Downloading xxhash-3.7.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (193 kB)
+Installing collected packages: xxhash, tqdm, shellingham, safetensors, regex, pyarrow, propcache, numpy, multidict, mdurl, hf-xet, frozenlist, dill, click, annotated-doc, aiohappyeyeballs, yarl, pandas, multiprocess, markdown-it-py, aiosignal, rich, aiohttp, typer, huggingface-hub, tokenizers, datasets, accelerate, transformers, trl, peft
+
+Successfully installed accelerate-1.14.0 aiohappyeyeballs-2.6.2 aiohttp-3.14.1 aiosignal-1.4.0 annotated-doc-0.0.4 click-8.4.1 datasets-5.0.0 dill-0.4.1 frozenlist-1.8.0 hf-xet-1.5.1 huggingface-hub-1.20.1 markdown-it-py-4.2.0 mdurl-0.1.2 multidict-6.7.1 multiprocess-0.70.19 numpy-2.5.0 pandas-3.0.3 peft-0.19.1 propcache-0.5.2 pyarrow-24.0.0 regex-2026.5.9 rich-15.0.0 safetensors-0.8.0 shellingham-1.5.4 tokenizers-0.22.2 tqdm-4.68.3 transformers-5.12.1 trl-1.6.0 typer-0.25.1 xxhash-3.7.0 yarl-1.24.2
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+Validation OK: 30 attribution(s), 527 training example(s)
+wrote /workspace/sophia-runpod/rlvr.offline-report.json
+RLVR REWARD WIRING VERIFIED ✓
+Traceback (most recent call last):
+  File "/workspace/sophia-runpod/sophia-agi/tools/run_rlvr.py", line 277, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/workspace/sophia-runpod/sophia-agi/tools/run_rlvr.py", line 272, in main
+    return _run_gpu(args)
+           ^^^^^^^^^^^^^^
+  File "/workspace/sophia-runpod/sophia-agi/tools/run_rlvr.py", line 194, in _run_gpu
+    cfg = GRPOConfig(**grpo_kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GRPOConfig.__init__() got an unexpected keyword argument 'max_prompt_length'

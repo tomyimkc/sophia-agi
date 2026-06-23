@@ -9,7 +9,7 @@ recognised, contradictions are flagged, and off-KB works ABSTAIN (fail-closed).
 Deterministic + offline (uses the local KB snapshot). Exits non-zero if the
 grounding invariants fail.
 
-    python tools/run_grounding_gate.py [--seed N] [--json]
+    python tools/run_grounding_gate.py [--seed N] [--runs 3] [--min-cases 40] [--json]
 """
 
 from __future__ import annotations
@@ -44,36 +44,62 @@ def _load() -> tuple:
 def main(argv: "list[str] | None" = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--runs", type=int, default=1, help="repeat over sequential seeds for a rerun summary")
+    ap.add_argument("--min-cases", type=int, default=40, help="fail unless each run covers at least this many cases")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
 
     pairs, controls, true = _load()
     kb = build_kb(true)
-    _, test = entity_disjoint_split(pairs, seed=args.seed)
-    structural_recall = _structural_recall(test)         # fast: regex over test split
+    case_count = len(pairs) + len(controls)
+    if case_count < args.min_cases:
+        msg = f"grounding rerun needs N>={args.min_cases}, only N={case_count}"
+        if args.json:
+            print(json.dumps({"ok": False, "error": msg, "n": case_count}, indent=2))
+        else:
+            print(msg)
+        return 1
+
+    runs = []
+    for offset in range(max(1, args.runs)):
+        seed = args.seed + offset
+        _, test = entity_disjoint_split(pairs, seed=seed)
+        structural_recall = _structural_recall(test)     # fast: regex over test split
+        g = run_grounded(pairs, controls, kb, seed=seed)
+        runs.append({"seed": seed, "structuralRecall": structural_recall, "grounded": g})
+
     structural_fp = _structural_fp(controls)             # fast: regex over true controls
-    g = run_grounded(pairs, controls, kb, seed=args.seed)
+    g = runs[0]["grounded"]
+    mean = {
+        "groundedRecall_covered": round(sum(r["grounded"]["groundedRecall_covered"] for r in runs) / len(runs), 4),
+        "groundedFalsePositive": round(sum(r["grounded"]["groundedFalsePositive"] for r in runs) / len(runs), 4),
+        "kbCoverage": round(sum(r["grounded"]["kbCoverage"] for r in runs) / len(runs), 4),
+        "abstainRate": round(sum(r["grounded"]["abstainRate"] for r in runs) / len(runs), 4),
+    }
 
     invariants = {
         # grounding cuts the structural detector's false positives toward zero
-        "grounded_cuts_false_positives": g["groundedFalsePositive"] <= 0.1,
-        "grounding_beats_structural_FP": g["groundedFalsePositive"] < structural_fp,
+        "N_at_least_min_cases": case_count >= args.min_cases,
+        "grounded_cuts_false_positives": mean["groundedFalsePositive"] <= 0.1,
+        "grounding_beats_structural_FP": mean["groundedFalsePositive"] < structural_fp,
         # and still transfers across UNSEEN entities the KB covers
-        "grounded_transfers_on_covered": g["groundedRecall_covered"] >= 0.8,
+        "grounded_transfers_on_covered": mean["groundedRecall_covered"] >= 0.8,
         # off-KB works abstain (fail-closed), so coverage is honestly bounded
-        "grounded_abstains_off_kb": g["abstainRate"] > 0.0,
+        "grounded_abstains_off_kb": mean["abstainRate"] > 0.0,
     }
     ok = all(invariants.values())
 
     if args.json:
         base = {"structuralRecall": structural_recall, "structuralFalsePositive": structural_fp}
-        print(json.dumps({"structural": base, "grounded": g, "invariants": invariants, "ok": ok}, indent=2))
+        print(json.dumps({"n": case_count, "runs": runs, "structural": base,
+                          "grounded": g, "mean": mean, "invariants": invariants, "ok": ok}, indent=2))
         return 0 if ok else 1
 
+    print(f"N={case_count} cases (min {args.min_cases}), runs={len(runs)}, seeds={args.seed}..{args.seed + len(runs) - 1}")
     print("                         recall   false-positive")
     print(f"  structural (UNSEEN)   {structural_recall:>6.1%}     {structural_fp:>6.1%}")
-    print(f"  GROUNDED (covered)    {g['groundedRecall_covered']:>6.1%}     {g['groundedFalsePositive']:>6.1%}"
-          f"   (coverage {g['kbCoverage']:.0%}, abstain {g['abstainRate']:.0%})")
+    print(f"  GROUNDED mean         {mean['groundedRecall_covered']:>6.1%}     {mean['groundedFalsePositive']:>6.1%}"
+          f"   (coverage {mean['kbCoverage']:.0%}, abstain {mean['abstainRate']:.0%})")
     print(f"\n{g['interpretation']}")
     print("\nFalsifiable invariants:")
     for name, passed in invariants.items():
