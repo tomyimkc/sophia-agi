@@ -288,17 +288,32 @@ def sector_council(council_id: str, query: str, *, materials: list | None = None
     }
 
 
-def council_deliberate(query: str, *, model: str = "mock", max_seats: int = 4, gate: bool = True) -> dict:
+def council_deliberate(query: str, *, model: str = "mock", models: list | None = None,
+                       max_seats: int = 4, gate: bool = True) -> dict:
     """Map-reduce a query across a council's seats (a focused pass per seat + a
     per-seat gate + synthesis). The small-model uplift: many narrow gated passes
-    beat one shallow pass. Decision support only — not professional advice."""
+    beat one shallow pass. Decision support only — not professional advice.
+
+    ``model`` runs every seat homogeneously (one model wearing N hats — correlated
+    errors). Pass ``models`` (a list of model specs) to seat a HETEROGENEOUS panel:
+    the substantive seats are cycled across genuinely different models, so the
+    voters are independent. The synthesis chair always uses ``model``.
+    """
     if not query.strip():
         return {"error": "query is required"}
     from agent.council_deliberate import deliberate
     from agent.model import default_client
 
-    d = deliberate(query, client=default_client(model), max_seats=max_seats, gate=gate)
+    seat_clients = [default_client(m) for m in models] if models else None
+    d = deliberate(
+        query,
+        client=default_client(model),
+        seat_clients=seat_clients,
+        max_seats=max_seats,
+        gate=gate,
+    )
     out = d.to_dict()
+    out["heterogeneous"] = bool(seat_clients)
     out["notAdvice"] = "Decision support only — not professional legal/financial advice."
     return out
 
@@ -557,6 +572,55 @@ def personality_faithful_score(text: str, mbti: str, ocean: dict, *, model: str 
         "status": verdict["detail"].get("status"),
         "reasons": verdict["reasons"],
     }
+
+
+def ocean_measure(answers: dict) -> dict:
+    """Score a {item_id: 1..5} IPIP answer map into OCEAN domain scores.
+    Read-only, deterministic, no model. Reuses A's score_items/load_bank."""
+    from agent.personality_measure import score_items, load_bank
+    bank = load_bank()
+    return {"ocean": score_items(answers, bank), "nItems": len(answers)}
+
+
+def capability_retention_demo() -> dict:
+    """The Spec D deterministic capability cell on the bundled arithmetic slice
+    (base correct vs degenerate steered). Read-only, no model."""
+    from tools.run_capability import build_dry_run_cell
+    return build_dry_run_cell()
+
+
+def council_diversity_summary() -> dict:
+    """The committed Spec C council A/B result (ΔQ does-not-replicate null)."""
+    from pathlib import Path
+    p = (Path(__file__).resolve().parents[1]
+         / "agi-proof" / "benchmark-results" / "council-diversity.public-report.json")
+    if not p.exists():
+        return {"available": False, "reason": "council-diversity report not generated"}
+    return json.loads(p.read_text())
+
+
+def pif_dryrun_summary() -> dict:
+    """Spec C PIF/SSA harness invariants on a synthetic (is_mock) fixture — the
+    real build_cells_from_scores + headline code path, CI-green core. Read-only."""
+    import random
+    from agent.steering.pif_harness import build_cells_from_scores, headline
+    rng = random.Random(1)
+    K = 24
+    steer = [1.0 + 0.05 * rng.gauss(0, 1) for _ in range(K)]
+    base = [0.1 + 0.05 * rng.gauss(0, 1) for _ in range(K)]
+    neutral = [0.0 for _ in range(K)]
+    s = {"E": {"steer": steer, "base": base, "neutral": neutral}}
+    for ax in ("O", "C", "A"):
+        off_steer = [0.02 * rng.gauss(0, 1) for _ in range(K)]
+        off_base = [0.02 * rng.gauss(0, 1) for _ in range(K)]
+        s[ax] = {"steer": off_steer, "base": off_base, "neutral": list(off_steer)}
+    s["kappa"] = 0.6
+    s["coherence"] = 90.0
+    s["capability_drop"] = 0.02
+    grid = [{"cell_id": "c1", "target_axis": "E", "off_target_axes": ["O", "C", "A"],
+             "is_mock": True, "seed": 1}]
+    cells = build_cells_from_scores({"c1": s}, grid)
+    return {"cells": cells, **headline(cells)}
 
 
 def dumps(payload: dict) -> str:

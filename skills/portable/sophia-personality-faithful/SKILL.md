@@ -42,3 +42,22 @@ See `references/trap-patterns.md`.
 
 Prefer `sophia_personality_faithful` (deterministic merge/abstain verdict) and
 `sophia_personality_target` over guessing.
+
+## The MBTI-Vector-Agents program (Specs A–D)
+
+When the `sophia-agi` MCP server is connected, these read-only tools expose the
+whole program. Big Five (OCEAN) is the measured substrate; MBTI is a one-way
+display veneer no tool reads for a decision.
+
+- `sophia_ocean_measure(answers)` — score a `{item_id: 1..5}` IPIP map into OCEAN.
+- `sophia_personality_faithful(text, mbti, ocean)` — is a trait claim faithfully enacted, contradicted, or abstained?
+- `sophia_capability_retention()` — does steering degrade reasoning? Returns `capability_drop` + `coherence` + `retains` on a deterministic arithmetic slice.
+- `sophia_council_diversity()` — does a trait-diverse council deliberate better? (The honest finding: ΔQ did not replicate.)
+- `sophia_pif_dryrun()` — the personality-injection / steering-superiority harness invariants.
+- Resource `sophia://program/status` — what shipped and the honest nulls.
+
+**No-overclaim posture:** the program ships its machinery and its honest results.
+Two headline findings are NULL — activation steering did not beat a persona
+prompt (SSA 0/2), and personality diversity did not reliably improve a council
+(ΔQ did not replicate). A capability *drop* under steering is expected and
+reported as such. SSA=0/N, ΔQ≤0, and a measured capability drop are legitimate.

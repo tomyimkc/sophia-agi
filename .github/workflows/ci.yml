@@ -27,6 +27,11 @@ jobs:
           python tests/test_wiki_tools.py
           python tests/test_verifiers.py
           python tests/test_personality.py
+          python tests/test_steering.py
+          python tests/test_personality_steering.py
+          python tests/test_council_diversity.py
+          python tests/test_pif_harness.py
+          python tests/test_capability.py
           python tests/test_source_discipline_cli.py
           python tests/test_wiki_librarian.py
           python tests/test_wiki_mcp.py
@@ -54,6 +59,7 @@ jobs:
         run: |
           python tests/test_discipline_records.py
           python tests/test_guarded.py
+          python tests/test_guarded_graded.py
           python tests/test_mcp_check_claim.py
           python tests/test_okf_belief.py
           python tests/test_okf_counterfactual.py
@@ -189,6 +195,8 @@ jobs:
           python tests/test_grounded_gate.py
           python tests/test_claim_router.py
           python tests/test_graded_decision.py
+          python tests/test_calibrate_thresholds.py
+          python tools/calibrate_thresholds.py --demo >/dev/null
           python tests/test_gate_feedback.py
       - name: Temporal verifier + active-learning promotion loop
         run: |
@@ -215,3 +223,19 @@ jobs:
         run: |
           python tools/build_agi_proof_package.py
           python tools/build_web_data.py
+
+  # Full pytest sweep — runs EVERY tests/test_*.py (incl. files the curated
+  # `validate` job does not hand-list), so a new test file can never silently
+  # go unrun. The only third-party deps the suite needs are numpy + pytest;
+  # heavy deps (torch/transformers/…) are lazy-imported and their tests skip.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install test dependencies
+        run: python -m pip install --upgrade pip numpy pytest
+      - name: Full pytest suite
+        run: python -m pytest -q

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import math
 from dataclasses import dataclass
 from pathlib import Path
@@ -15,6 +16,9 @@ from agent.retrieval import SourceChunk, _score, _tokenize
 DEFAULT_INDEX_DIR = ROOT / "rag" / "index"
 CHUNKS_FILE = "chunks.jsonl"
 EMBEDDINGS_FILE = "embeddings.npz"
+
+_LOG = logging.getLogger("sophia.rag")
+_warned_no_embeddings: set[str] = set()
 
 
 @dataclass
@@ -90,6 +94,20 @@ def load_index(index_path: Path | None = None) -> list[IndexedChunk]:
     matrix = None
     if embed_path.exists():
         matrix = np.load(embed_path)["embeddings"]
+    elif rows:
+        # Non-silent fallback: chunks exist but there are no embeddings, so search()
+        # will degrade to keyword-only scoring. Warn once per index dir so this
+        # capability loss is visible rather than silent (see RESULTS.md retrieval notes).
+        key = str(root)
+        if key not in _warned_no_embeddings:
+            _warned_no_embeddings.add(key)
+            _LOG.warning(
+                "RAG index at %s has no %s — semantic search UNAVAILABLE; retrieval is "
+                "keyword-only. Build embeddings with `python tools/build_rag_index.py "
+                "--embed` (requires GOOGLE_API_KEY or Vertex).",
+                root,
+                EMBEDDINGS_FILE,
+            )
 
     loaded: list[IndexedChunk] = []
     for i, row in enumerate(rows):

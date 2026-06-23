@@ -1,0 +1,18 @@
+{
+  "instrument": "capability-arithmetic-v0",
+  "source": "bundled deterministic capability-retention slice (Spec D)",
+  "items": [
+    {"id": "ca1",  "prompt": "A train travels 60 miles in 2 hours. What is its speed in miles per hour? End with 'answer = <number>'.", "answer": 30},
+    {"id": "ca2",  "prompt": "You buy 3 notebooks at 4 dollars each. What is the total cost in dollars? End with 'answer = <number>'.", "answer": 12},
+    {"id": "ca3",  "prompt": "What is 17 plus 25? End with 'answer = <number>'.", "answer": 42},
+    {"id": "ca4",  "prompt": "A rectangle is 5 by 6. What is its area? End with 'answer = <number>'.", "answer": 30},
+    {"id": "ca5",  "prompt": "Half of 48 is what number? End with 'answer = <number>'.", "answer": 24},
+    {"id": "ca6",  "prompt": "There are 7 days in a week. How many days are in 4 weeks? End with 'answer = <number>'.", "answer": 28},
+    {"id": "ca7",  "prompt": "A shirt costs 20 dollars with a 5 dollar discount. What do you pay in dollars? End with 'answer = <number>'.", "answer": 15},
+    {"id": "ca8",  "prompt": "What is 9 times 6? End with 'answer = <number>'.", "answer": 54},
+    {"id": "ca9",  "prompt": "A jar has 50 marbles; you remove 18. How many remain? End with 'answer = <number>'.", "answer": 32},
+    {"id": "ca10", "prompt": "If 1 box holds 8 cans, how many cans are in 9 boxes? End with 'answer = <number>'.", "answer": 72},
+    {"id": "ca11", "prompt": "What is 100 divided by 4? End with 'answer = <number>'.", "answer": 25},
+    {"id": "ca12", "prompt": "You walk 3 km, then 4 km. How far in total in km? End with 'answer = <number>'.", "answer": 7}
+  ]
+}

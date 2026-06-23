@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sophia-agi": {
+      "command": "python3",
+      "args": ["sophia_mcp/server.py"],
+      "env": {
+        "PYTHONPATH": "."
+      }
+    }
+  }
+}

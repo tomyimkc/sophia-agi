@@ -1,0 +1,31 @@
+{
+  "checks": {
+    "strongEnacts": true,
+    "nullAbstains": true,
+    "headlineCounts": true
+  },
+  "headline": {
+    "enacted": 1,
+    "total": 2,
+    "enacted_over_total": "1/2",
+    "bh_significant": [
+      true,
+      false
+    ]
+  },
+  "cells": [
+    {
+      "cell_id": "strong",
+      "verdict": "enacted",
+      "reason": null
+    },
+    {
+      "cell_id": "null",
+      "verdict": "abstained",
+      "reason": "steer_not_beats_baseline"
+    }
+  ],
+  "benchmark": "pif",
+  "mode": "mock-offline",
+  "liveClaimStatus": "Open — see agi-proof/failure-ledger.md pif-headline-run-not-yet-gated-2026-06-23"
+}

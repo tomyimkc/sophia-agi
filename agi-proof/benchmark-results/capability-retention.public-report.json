@@ -1,0 +1,21 @@
+{
+  "benchmark": "capability-retention",
+  "model": "ibm-granite/granite-3.1-2b-instruct",
+  "axis": "E",
+  "alphaCoef": 8.0,
+  "layer": 21,
+  "mode": "real-reduced",
+  "cell": {
+    "n": 12,
+    "base_accuracy": 0.6667,
+    "steered_accuracy": 0.0,
+    "capability_drop": 1.0,
+    "coherence": 0.0,
+    "base_coherence": 100.0,
+    "retains": false
+  },
+  "note": "A capability drop under steering is the expected honest result: steering strong enough to move a trait degrades reasoning, explaining Spec B's SSA null. retains=True only if drop<0.05 and coherence>=75.",
+  "nItems": 12,
+  "headline": "Steering at alphaCoef=8.0 COLLAPSES granite-2b's arithmetic: base_accuracy 0.6667 (coherent, base_coherence 100.0) -> steered_accuracy 0.0 with coherence 0.0 (fully degenerate). capability_drop=1.0 (relative), retains=False -> this vector would be REJECTED by Spec B's SSA capability gate (needs drop<0.05 and coherence>=75). The guardrail is non-vacuous: the unsteered base genuinely solves the slice, so the drop is a real capability loss, not a floor effect. This mechanistically explains Spec B's SSA null \u2014 steering strong enough to move a trait destroys reasoning.",
+  "harnessProvenance": "Run with the fixed SteeredClient._run (Spec D corrected a chat-template BatchEncoding bug that silently returned empty generations). An earlier pre-fix run produced an all-zeros (vacuous) cell; this is the post-fix honest measurement."
+}
