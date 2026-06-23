@@ -1,10 +1,21 @@
 """Spec B — toy-decoder steering-hook tests (skip-guarded; torch-only)."""
+import importlib.util
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+
+# Skip the whole module under pytest when torch is unavailable (the dependency-free
+# CI `validate` job runs this file as a plain script, where main() guards instead).
+if importlib.util.find_spec("torch") is None:
+    try:
+        import pytest
+
+        pytestmark = pytest.mark.skip(reason="torch unavailable (Spec B hook tests)")
+    except ModuleNotFoundError:  # script run without pytest installed
+        pytestmark = []
 
 
 def _build():
