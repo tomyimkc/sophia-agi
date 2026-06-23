@@ -97,6 +97,56 @@ def test_consensus_accepts_two_competent_families_with_evidence() -> None:
     assert res.verdict == "accepted"
 
 
+def test_subjective_meta_does_not_over_abstain() -> None:
+    # Opinion/meta/question sentences are non-factual; they must not force a hold.
+    d = fact_check_text("Let's think about this carefully. I recommend a cautious approach.")
+    assert d.verdict == "accepted"
+    assert all(c.claim.type == "subjective" for c in d.claims)
+    q = fact_check_text("What should we do next?")
+    assert q.verdict == "accepted"
+
+
+def test_code_block_is_not_shattered() -> None:
+    # Fence markers and code lines must not become bogus open_empirical claims.
+    d = fact_check_text("Here is code:\n```python\nx = 1\ny = 2\nprint(x + y)\n```\n")
+    types = [c.claim.type for c in d.claims]
+    assert "code_python" in types
+    assert not any(c.claim.text.strip().startswith("```") for c in d.claims)
+    assert not any(c.claim.text.strip() in {"x = 1", "y = 2"} for c in d.claims)
+    code = [c for c in d.claims if c.claim.type == "code_python"][0]
+    assert code.verdict == "accepted"
+
+
+def test_high_risk_lexical_screen_holds_below_floor() -> None:
+    # Lexical overlap alone cannot pass a high-risk claim (entailment vs overlap).
+    claim = AtomicClaim("Inflation rose because energy prices increased in 2022", "econ_causal", risk="high")
+
+    def retr(_c):
+        return [EvidenceSource(id=f"s{i}", url=f"https://{h}/x",
+                               title="Inflation rose because energy prices increased in 2022")
+                for i, h in enumerate(["imf.org", "worldbank.org", "oecd.org"], 1)]
+
+    from agent.fact_check_gate import fact_check_claim
+    dec = fact_check_claim(claim, retriever=retr)
+    assert dec.verdict == "held"  # 0.78 lexical < 0.82 high-risk floor
+
+    # A real entailment backend lifts it over the floor.
+    dec2 = fact_check_claim(claim, retriever=retr, entailment=lambda c, s: "entails")
+    assert dec2.verdict == "accepted"
+
+
+def test_normal_risk_low_stakes_passes_on_lexical_screen() -> None:
+    from agent.fact_check_gate import fact_check_claim
+    claim = AtomicClaim("The library opened in 1998 according to records", "open_empirical", risk="normal")
+
+    def retr(_c):
+        return [EvidenceSource(id="a", url="https://a.org/x", title="The library opened in 1998 according to records"),
+                EvidenceSource(id="b", url="https://b.org/y", title="records show the library opened in 1998")]
+
+    dec = fact_check_claim(claim, retriever=retr)
+    assert dec.verdict == "accepted"  # 0.78 >= 0.70 normal floor
+
+
 def main() -> int:
     test_decomposes_and_types_economic_claims()
     test_deterministic_math_accepts_and_rejects()
@@ -105,6 +155,10 @@ def main() -> int:
     test_external_grounding_rejects_contradiction()
     test_consensus_is_not_vote_without_evidence_or_competence()
     test_consensus_accepts_two_competent_families_with_evidence()
+    test_subjective_meta_does_not_over_abstain()
+    test_code_block_is_not_shattered()
+    test_high_risk_lexical_screen_holds_below_floor()
+    test_normal_risk_low_stakes_passes_on_lexical_screen()
     print("test_fact_check_gate: OK")
     return 0
 

@@ -167,6 +167,17 @@ Offline: yes with mock judges; live model judges optional.
 
 ## Layer 4 — Calibrated abstention
 
+> Enforcement note (refined): the confidence floors below are now **enforced in
+> code**, not just documented. `agent.fact_check_gate.fact_check_claim` demotes any
+> `accepted` whose confidence `< 0.70` (normal) or `< 0.82` (high-risk) to `held`.
+> Deterministic certainties (math/code/DOI/URL) and `subjective` (opinion / meta /
+> question) sit above the floor and surface normally. A lexical-only entailment
+> screen is capped at `0.78`, so high-risk claims **hold** until a real NLI/model
+> entailment backend confirms them — this operationalizes "entailment vs. mere
+> keyword overlap." Non-factual `subjective` claims are exempt from the fail-closed
+> factual rule (passing an opinion is not surfacing an unverified fact), which is
+> the over-abstention fix.
+
 Abstain/hold when any of these is true:
 
 - deterministic layer cannot resolve;

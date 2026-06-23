@@ -113,13 +113,31 @@ def offline_econ_retriever(claim):
 
 
 def build_candidate_report(date: str) -> dict:
+    # A mock NLI/entailment backend (stands in for a real model entailment check).
+    # It only confirms entailment when the source title actually states the claim's
+    # relationship — demonstrating "entailment vs. keyword overlap". With it,
+    # high-risk claims may pass the calibrated-abstention floor; without it they
+    # HOLD on the lexical screen (over-confidence guard).
+    def mock_entailment(claim, src):
+        ct = claim.text.lower().rstrip(". ")
+        title = (src.title or "").lower()
+        if ct and ct in title:
+            return "entails"
+        return "irrelevant"
+
+    # claim text, whether a real entailment backend is available for it
     claims = [
-        "Inflation rose because energy prices increased in 2022.",
-        "AGI deployment incentives can create pressure to deploy before safety evidence is complete.",
-        "2 + 2 = 4.",
-        "GDP increased in 2020.",  # should hold without evidence rather than pass
+        ("Inflation rose because energy prices increased in 2022.", False),  # lexical-only -> high-risk HOLD
+        ("AGI deployment incentives can create pressure to deploy before safety evidence is complete.", True),  # NLI -> ACCEPT
+        ("2 + 2 = 4.", False),  # deterministic -> ACCEPT
+        ("GDP increased in 2020.", False),  # no evidence -> HOLD
     ]
-    decisions = [decision_to_dict(fact_check_text(c, retriever=offline_econ_retriever)) for c in claims]
+    decisions = []
+    for text, use_nli in claims:
+        kwargs = {"retriever": offline_econ_retriever}
+        if use_nli:
+            kwargs["entailment"] = mock_entailment
+        decisions.append(decision_to_dict(fact_check_text(text, **kwargs)))
     return {
         "schema": "sophia.econ_political_fact_check_candidate.v1",
         "runAt": datetime.now().isoformat(timespec="seconds"),

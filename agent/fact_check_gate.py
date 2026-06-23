@@ -37,6 +37,18 @@ from agent.claim_router import split_claims
 
 Verdict = str  # accepted | held | rejected
 
+# Calibrated-abstention floors (documented and ENFORCED). An ``accepted`` whose
+# confidence falls below the floor is demoted to ``held`` — this is the precise
+# condition that prevents over-confidence (passing a plausible-but-weak specific)
+# while deterministic certainties (math/code/DOI/URL, confidence ~1.0/0.85+) and
+# subjective passes stay above the floor and surface normally.
+CONF_FLOOR_NORMAL = 0.70
+CONF_FLOOR_HIGH = 0.82
+
+
+def _floor_for(risk: str) -> float:
+    return CONF_FLOOR_HIGH if risk == "high" else CONF_FLOOR_NORMAL
+
 
 @dataclass(frozen=True)
 class AtomicClaim:
@@ -106,11 +118,44 @@ _ARITH_RE = re.compile(r"(-?\d+(?:\.\d+)?)\s*([+\-*/])\s*(-?\d+(?:\.\d+)?)\s*=\s
 _CODE_RE = re.compile(r"```(?:python|py)\s*\n(.*?)```", re.I | re.S)
 _ECON_RE = re.compile(
     r"\b(?:gdp|inflation|cpi|interest rate|central bank|unemployment|tariff|subsidy|"
-    r"rent[- ]seeking|regulatory capture|monopoly|productivity|wage|median income|"
-    r"political economy|incentive|principal-agent|agi lab|deployment incentive)\b",
+    r"rent[- ]seeking|regulatory capture|monopoly|productivit\w*|wages?|median income|"
+    r"political economy|incentives?|principal-agent|agi\s+labs?|agi\s+deployment|"
+    r"deployment incentives?|narrative capture|monopoly rents?)\b",
     re.I,
 )
 _CAUSAL_RE = re.compile(r"\b(?:caused|causes|because|led to|increased|decreased|driven by|due to)\b", re.I)
+
+# Non-checkable / subjective / meta text. These are NOT factual claims, so the
+# fail-closed rule does not apply to them: passing an opinion is not the same as
+# surfacing an unverified fact. Restoring the original claim_router principle
+# ("a soundness gate, not a presence requirement") is what stops the gate from
+# going silent on every answer that contains a hedge, a question, a transition
+# sentence, or a code-fence artifact. Conservative by construction: a sentence is
+# only treated as subjective when it carries an opinion/meta marker AND has no
+# checkable signal (no number/year/DOI/URL/econ term/causal cue/authorship verb).
+_SUBJECTIVE_RE = re.compile(
+    r"\b(?:i\s+(?:think|believe|recommend|suggest|feel|would)|in\s+my\s+opinion|"
+    r"we\s+should|you\s+should|you\s+could|let'?s|let\s+us|consider|it\s+depends|"
+    r"here\s+is|here'?s|as\s+follows|the\s+following|for\s+example|note\s+that|"
+    r"in\s+summary|to\s+summari[sz]e|overall|arguably|it\s+seems|perhaps|maybe)\b",
+    re.I,
+)
+# A code-fence artifact line (``` or ```lang) left over after fenced blocks are
+# extracted; must never be treated as an open factual claim.
+_FENCE_ARTIFACT_RE = re.compile(r"^\s*`{3,}\s*[a-z0-9_+-]*\s*$", re.I)
+_AUTHORSHIP_VERB_RE = re.compile(r"\b(?:wrote|authored|penned|composed|author of)\b", re.I)
+# Interrogative opener (sentence splitting strips the trailing '?', so detect the
+# leading question word instead). A question asserts nothing factual.
+_QUESTION_RE = re.compile(r"^\s*(?:who|what|when|where|why|how|which|should|can|could|would|do|does|is|are)\b", re.I)
+
+
+def _has_checkable_signal(claim: str) -> bool:
+    """True if the sentence carries any signal a non-wiki verifier can act on."""
+    return bool(
+        _ARITH_RE.search(claim) or _DOI_RE.search(claim) or _URL_RE.search(claim)
+        or _YEAR_RE.search(claim) or _ECON_RE.search(claim) or _CAUSAL_RE.search(claim)
+        or _AUTHORSHIP_VERB_RE.search(claim) or re.search(r"\d", claim)
+    )
 
 
 def decompose_and_type(text: str) -> list[AtomicClaim]:
@@ -120,9 +165,19 @@ def decompose_and_type(text: str) -> list[AtomicClaim]:
     atom to the most specific non-wiki verifier type. Code blocks are kept as a
     separate atom because sentence splitting would shatter them.
     """
-    claims = [AtomicClaim(c, classify_claim(c), risk=risk_for(c)) for c in split_claims(text)]
-    for block in _CODE_RE.findall(text or ""):
-        claims.append(AtomicClaim(block.strip(), "code_python", risk="normal"))
+    # Pull fenced Python blocks out FIRST and verify them as single atoms; remove
+    # them from the prose so their lines (``x = 1``) and fence markers (backticks)
+    # are never shattered into bogus held ``open_empirical`` claims.
+    code_blocks = _CODE_RE.findall(text or "")
+    prose = _CODE_RE.sub(" ", text or "")
+    claims = [
+        AtomicClaim(c, classify_claim(c), risk=risk_for(c))
+        for c in split_claims(prose)
+        if c.strip() and not _FENCE_ARTIFACT_RE.match(c.strip())
+    ]
+    for block in code_blocks:
+        if block.strip():
+            claims.append(AtomicClaim(block.strip(), "code_python", risk="normal"))
     return [c for c in claims if c.text.strip()]
 
 
@@ -143,11 +198,20 @@ def classify_claim(claim: str) -> str:
         return "econ_empirical"
     if _CAUSAL_RE.search(claim):
         return "causal_empirical"
+    # Pure opinion/meta/question with no checkable signal: non-factual, so it
+    # passes (does not force a hold). This is the over-abstention fix.
+    if not _has_checkable_signal(claim) and (
+        _SUBJECTIVE_RE.search(claim) or claim.strip().endswith("?") or _QUESTION_RE.match(claim)
+    ):
+        return "subjective"
     return "open_empirical"
 
 
 def risk_for(claim: str) -> str:
-    if _ECON_RE.search(claim) or re.search(r"\b(?:medical|legal|financial|election|war|AGI safety|AGI risk)\b", claim, re.I):
+    if _ECON_RE.search(claim) or re.search(
+        r"\b(?:medical|legal|financial|election|war|agi\s+(?:safety|risk|deployment|lab)|incentives?)\b",
+        claim, re.I,
+    ):
         return "high"
     return "normal"
 
@@ -170,6 +234,10 @@ def deterministic_verify(
     text = claim.text
     if claim.type == "math":
         return _verify_math(text)
+    if claim.type == "subjective":
+        # Non-factual (opinion/meta/question): not subject to the fail-closed
+        # factual rule. Passes WITHOUT manufacturing evidence.
+        return LayerResult("deterministic", "accepted", "non-factual/subjective; no factual claim to verify", confidence=1.0)
     if claim.type == "code_python":
         return _verify_python_syntax(text)
     if claim.type == "date_temporal":
@@ -252,6 +320,13 @@ def external_ground(
     sources = retriever(claim) or []
     if not sources:
         return LayerResult("external_grounding", "held", "active retrieval returned no evidence; abstain/defer", confidence=0.0)
+    # When no real entailment backend (NLI / model) is injected, we fall back to a
+    # LEXICAL SCREEN. A lexical screen can detect overlap and obvious contradiction
+    # but CANNOT prove entailment (the user's "vs mere keyword overlap" concern).
+    # So lexical-only support is capped below the high-risk floor: high-risk claims
+    # then HOLD until a real entailment backend confirms them, while low-stakes
+    # claims may pass. This is the precise over-confidence guard for Layer 2.
+    is_lexical_screen = entailment is None
     entailment = entailment or lexical_entailment
     entailed: list[EvidenceSource] = []
     contradicted: list[EvidenceSource] = []
@@ -271,10 +346,21 @@ def external_ground(
     independent = _independent_domains(entailed)
     required = min_sources_high if claim.risk == "high" else min_sources_normal
     if len(independent) >= required:
-        return LayerResult("external_grounding", "accepted", f"{len(independent)} independent sources entail claim (required {required})",
-                           confidence=0.86 if claim.risk == "normal" else 0.82,
+        # Real entailment backend → full confidence. Lexical screen → capped at
+        # 0.78 so the high-risk floor (0.82) demotes it to HOLD; normal-risk
+        # (floor 0.70) may still pass on a lexical screen for low-stakes claims.
+        if is_lexical_screen:
+            confidence = 0.78
+            basis = "lexical screen (not proven entailment)"
+        else:
+            confidence = 0.86 if claim.risk == "normal" else 0.84
+            basis = "entailment backend"
+        return LayerResult("external_grounding", "accepted",
+                           f"{len(independent)} independent sources entail claim (required {required}; {basis})",
+                           confidence=confidence,
                            evidence=tuple(_src_dict(s, "entails") for s in entailed),
-                           details={"independentDomains": sorted(independent), "requiredSources": required})
+                           details={"independentDomains": sorted(independent), "requiredSources": required,
+                                    "entailmentBasis": basis})
     return LayerResult("external_grounding", "held", f"insufficient independent entailing sources: {len(independent)}/{required}", confidence=0.35,
                        evidence=tuple(_src_dict(s, "entails") for s in entailed),
                        details={"irrelevant": len(irrelevant), "requiredSources": required})
@@ -385,18 +471,28 @@ def fact_check_claim(
     doi_resolver: Callable[[str], bool] | None = None,
     learn: bool = True,
 ) -> ClaimDecision:
+    def _finalize(verdict: str, reason: str, confidence: float, layers: list[LayerResult], src_layer: LayerResult) -> ClaimDecision:
+        # Enforce the calibrated-abstention floor: an accept below the risk floor
+        # is demoted to held (over-confidence guard). Reject is never demoted.
+        if verdict == "accepted" and confidence < _floor_for(claim.risk):
+            return ClaimDecision(
+                claim, "held",
+                f"below calibrated-abstention floor ({confidence:.2f} < {_floor_for(claim.risk):.2f} for {claim.risk}-risk); abstain",
+                confidence, tuple(layers), None,
+            )
+        learning = _learning_candidate(claim, src_layer) if (learn and verdict == "accepted") else None
+        return ClaimDecision(claim, verdict, reason, confidence, tuple(layers), learning)
+
     layers: list[LayerResult] = []
     det = deterministic_verify(claim, url_resolver=url_resolver, doi_resolver=doi_resolver)
     layers.append(det)
     if det.verdict in {"accepted", "rejected"}:
-        learning = _learning_candidate(claim, det) if learn and det.verdict == "accepted" else None
-        return ClaimDecision(claim, det.verdict, det.reason, det.confidence, tuple(layers), learning)
+        return _finalize(det.verdict, det.reason, det.confidence, layers, det)
 
     ext = external_ground(claim, retriever, entailment)
     layers.append(ext)
     if ext.verdict in {"accepted", "rejected"}:
-        learning = _learning_candidate(claim, ext) if learn and ext.verdict == "accepted" else None
-        return ClaimDecision(claim, ext.verdict, ext.reason, ext.confidence, tuple(layers), learning)
+        return _finalize(ext.verdict, ext.reason, ext.confidence, layers, ext)
 
     # Judges may only use the evidence already retrieved; if no evidence exists,
     # they cannot create support by vote.
@@ -414,8 +510,7 @@ def fact_check_claim(
     judge = consensus_by_verification(claim, judges, judge_evidence)
     layers.append(judge)
     if judge.verdict in {"accepted", "rejected"}:
-        learning = _learning_candidate(claim, judge) if learn and judge.verdict == "accepted" else None
-        return ClaimDecision(claim, judge.verdict, judge.reason, judge.confidence, tuple(layers), learning)
+        return _finalize(judge.verdict, judge.reason, judge.confidence, layers, judge)
 
     return ClaimDecision(
         claim,
