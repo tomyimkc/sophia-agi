@@ -3,8 +3,8 @@
   "model": "ibm-granite/granite-3.1-2b-instruct",
   "mode": "real-demo",
   "visibility": "public-aggregate",
-  "claimStatus": "Illustrative — reduced-scope demo (2 axes, K=2 seeds, no capability slice); headline SSA requires the gated N>=8/K>=20 run. At K=2 the off-target orthogonality check and the bootstrap CI are NOT evaluated (both stubbed at K=2): the delta_ci is degenerate [point, point] and off_target_d is 0.0, so a cell can only ever ABSTAIN, never enact.",
-  "selfReportStatus": "no parseable ratings (small model did not comply with the terse Likert format)",
+  "claimStatus": "Illustrative \u2014 reduced-scope demo (2 axes, K=2 seeds, no capability slice); headline SSA requires the gated N>=8/K>=20 run. At K=2 the off-target orthogonality check and the bootstrap CI are NOT evaluated (both stubbed at K=2): the delta_ci is degenerate [point, point] and off_target_d is 0.0, so a cell can only ever ABSTAIN, never enact.",
+  "selfReportStatus": "ok",
   "subjectModel": "ibm-granite/granite-3.1-2b-instruct",
   "judges": [
     "ollama:qwen2.5:3b",
@@ -32,15 +32,15 @@
       "alpha": 414.229,
       "selfReport": {
         "steered": null,
-        "level1": null,
-        "neutral": null
+        "level1": 5.0,
+        "neutral": 1.0
       },
       "behavioral": {
-        "d_steer_vs_neutral": -0.396,
-        "d_level1_vs_neutral": -0.182,
-        "deltaD": -0.214,
+        "d_steer_vs_neutral": -1.744,
+        "d_level1_vs_neutral": 2.412,
+        "deltaD": -4.156,
         "kappa": 1.0,
-        "coherence": 77.5
+        "coherence": 50.0
       },
       "verdict": "abstained",
       "reason": "steer_not_beats_baseline"
@@ -50,19 +50,20 @@
       "alpha": 414.229,
       "selfReport": {
         "steered": null,
-        "level1": null,
-        "neutral": null
+        "level1": 5.0,
+        "neutral": 5.0
       },
       "behavioral": {
-        "d_steer_vs_neutral": -0.041,
-        "d_level1_vs_neutral": 0.517,
-        "deltaD": -0.558,
+        "d_steer_vs_neutral": 0.284,
+        "d_level1_vs_neutral": 5.203,
+        "deltaD": -4.919,
         "kappa": 0.0,
-        "coherence": 84.2
+        "coherence": 50.0
       },
       "verdict": "abstained",
       "reason": "steer_not_beats_baseline"
     }
   ],
-  "illustrativeSSA": "0/2"
+  "illustrativeSSA": "0/2",
+  "_revalidationProvenance": "RE-RUN under Spec D with the FIXED SteeredClient._run (the apply_chat_template BatchEncoding bug that silently emptied all real generations is corrected). This supersedes the pre-fix run, whose generations were empty (artifact). With REAL generations the Level-1 persona prompt clearly moves the trait (behavioral d_level1 \u2248 2.4 for E, 5.2 for O) while activation steering does NOT (d_steer \u2248 -1.7, 0.3) \u2014 so SSA = 0/2 STILL holds, but now for the honest reason: steering at the required alpha collapses the model (Spec D capability_drop=1.0, coherence=0), so the steered output is too degenerate to express the trait. The program's central claim (activation steering does not beat a persona prompt) survives re-validation on real data."
 }

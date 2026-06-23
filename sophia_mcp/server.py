@@ -19,11 +19,13 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     belief,
     benchmark_list,
     benchmark_score,
+    capability_retention_demo,
     check_claim,
     contract_describe,
     contract_health,
     corpus_stats,
     council_deliberate,
+    council_diversity_summary,
     counterfactual,
     dumps,
     enqueue_task,
@@ -35,9 +37,11 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     list_disputes,
     mbti_type_record,
     next_task,
+    ocean_measure,
     openclaw_infer,
     personality_faithful_score,
     personality_target,
+    pif_dryrun_summary,
     read_dispute,
     record_claim,
     retract,
@@ -411,6 +415,57 @@ def mbti_type(type: str) -> str:
     """MBTI type record (e.g. mbti://types/INTJ): OCEAN correlates + substrate
     note, from data/personality_types.json. Read-only."""
     return dumps(mbti_type_record(type))
+
+
+# --------------------------------------------------------------------------- #
+# Spec D — capability-retention surface (D2)
+# --------------------------------------------------------------------------- #
+
+
+@mcp.tool()
+def sophia_ocean_measure(answers: dict) -> str:
+    """Score a {item_id: 1..5} IPIP answer map into OCEAN domain scores. Read-only."""
+    return dumps(ocean_measure(answers))
+
+
+@mcp.tool()
+def sophia_capability_retention() -> str:
+    """Spec D deterministic capability-retention cell on the bundled arithmetic
+    slice (base vs degenerate-steered): capability_drop + coherence + retains. Read-only."""
+    return dumps(capability_retention_demo())
+
+
+@mcp.tool()
+def sophia_council_diversity() -> str:
+    """Spec C personality-diverse council A/B result (ΔQ; the does-not-replicate null). Read-only."""
+    return dumps(council_diversity_summary())
+
+
+@mcp.tool()
+def sophia_pif_dryrun() -> str:
+    """Spec C PIF/SSA harness invariants on synthetic fixtures (CI-green core). Read-only."""
+    return dumps(pif_dryrun_summary())
+
+
+@mcp.resource("sophia://program/status")
+def sophia_program_status() -> str:
+    """MBTI-Vector-Agents program status (Specs A-D): what shipped, the honest
+    nulls (steering SSA 0/2; council ΔQ does-not-replicate), and the OPEN frontier."""
+    return dumps({
+        "program": "MBTI Vector Agents",
+        "specs": {
+            "A": "personality measurement gate + Level-1 persona (PR #64)",
+            "B": "activation-steering engine + SSA; real demo null SSA 0/2 (PR #66)",
+            "C": "personality council + held-out anti-gaming + PIF harness; council ΔQ null (PR #67)",
+            "D": "capability-retention guardrail + full MCP/skill packaging",
+        },
+        "honestNulls": ["steering did not beat the persona prompt (SSA 0/2)",
+                        "trait diversity did not reliably help the council (ΔQ did not replicate)"],
+        "openFrontier": ["full N>=8/K>=20 PIF headline run", "real capability cell in a live SSA run",
+                         "LLM-judge coherence", "validated Level-3 steered council seats",
+                         "true external sealing", "model x trait crossover", "live GRPO", "calibration"],
+        "substrate": "Big Five (OCEAN) is measured; MBTI is a one-way display veneer.",
+    })
 
 
 if __name__ == "__main__":
