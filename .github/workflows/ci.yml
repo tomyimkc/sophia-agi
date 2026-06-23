@@ -100,7 +100,7 @@ jobs:
           python tests/test_layered_memory.py
           python tests/test_agi_missing_pillars_bundle.py
           python tools/run_agi_missing_pillars.py
-      - name: Conscience kernel (seven paths: metacognition, constitution, deontic, moral, classifier, deception, MCP)
+      - name: "Conscience kernel (seven paths: metacognition, constitution, deontic, moral, classifier, deception, MCP)"
         run: |
           python tests/test_conscience.py
           python tests/test_mcp_conscience.py
