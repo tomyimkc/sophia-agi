@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.7.41-blue)
+![Version](https://img.shields.io/badge/version-0.7.42-blue)
 ![Training examples](https://img.shields.io/badge/training_examples-527-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
@@ -11,6 +11,14 @@
 > **Scope, stated plainly.** This is a research program for *grounded, machine-checked* reasoning — **not a claim of AGI**. It pre-registers AGI thresholds and measures itself against them honestly; **those thresholds are not met**. The deliverable is the honest machinery — verifiers, an abstaining loop, and a no-overclaim measurement gate — not the label. Every public number must clear that gate ([SECURITY.md](SECURITY.md), [RESULTS.md](RESULTS.md)). The mission and design commitments are stated in [VISION.md](VISION.md).
 
 **Thesis site:** https://tomyimkc.github.io/sophia-agi/
+
+⭐ **Star if you want LLMs that actually know who wrote what** — the foundation for the world's first wise AGI.
+
+**Live links:** [Thesis + leaderboards + Ask Sophia](https://tomyimkc.github.io/sophia-agi/) • [HF Dataset (527 examples)](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) • Try gate: `python scripts/demo_gate.py`
+
+**Proof (validated):** Sophia gate fabricates **0%** on unknown-answer questions where raw models fabricate **17–25%** (DeepSeek subject, 3 runs, 2-judge families κ=0.74). Teacher/Grok-CLI: 100% on domain leaderboards. See [RESULTS.md](RESULTS.md).
+
+> **10-sec demo GIF idea:** Run `python scripts/demo_gate.py` (or `python tools/serve_web.py` + agent query on "Did Confucius write the Dao De Jing?") and record the abstain + provenance verdict. Place in README / social preview assets.
 
 > *Sophia* (σοφία) = wisdom. Four humanities domains active — philosophy, psychology, history, religion — plus a **three-path agent** (advisor, repo, life). The same verifier-gated core extends to **sector councils** (law · finance · economy) and to **disciplining small local LLMs** — see [Applied verticals](#applied-verticals--the-same-gate-beyond-the-humanities-corpus).
 

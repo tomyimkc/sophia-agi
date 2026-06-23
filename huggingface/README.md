@@ -16,6 +16,11 @@ tags:
 - attribution
 - source-discipline
 - bilingual
+- llm-safety
+- ai-alignment
+- knowledge-graph
+- rag
+- huggingface
 pretty_name: Sophia AGI Corpus
 size_categories:
 - n<1K
@@ -23,9 +28,13 @@ size_categories:
 
 # Sophia AGI Corpus
 
-**Wisdom before intelligence.** Bilingual training data for provenance-aware reasoning across philosophy, psychology, history, and religion (**500** examples, v0.5.3).
+**Wisdom before intelligence.** Bilingual (EN + 中文) training data for provenance-aware reasoning across philosophy, psychology, history, and religion (**527** examples, v0.7+).
 
-Includes Claude-teacher pairs with attribution traps across four domains. Pair with the [Sophia MCP server](https://github.com/tomyimkc/sophia-agi/blob/main/docs/09-Agent/MCP-Server.md) and portable `/sophia-source-discipline` skill for eval.
+Includes teacher pairs + gate-filtered traces with attribution traps across four domains + OKF provenance wiki. The corpus powers the epistemic gate that drives 0% fabrication on unknown-answer cases (vs raw models 17-25%).
+
+Pair with the [Sophia MCP server](https://github.com/tomyimkc/sophia-agi/blob/main/docs/09-Agent/MCP-Server.md), portable `/sophia-source-discipline` skill, self-extend flywheel, and verifier-gated contract for any pipeline. Live thesis + benchmarks: https://tomyimkc.github.io/sophia-agi/  Repo: https://github.com/tomyimkc/sophia-agi
+
+**Key proof:** Sophia gate: 0% fabrication on held-out traps (deterministic scorer + multi-judge corroboration). Teacher/Grok-CLI: 100% on domain benchmarks.
 
 ## Dataset description
 

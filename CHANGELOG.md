@@ -2,6 +2,21 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.42] - 2026-06-23
+
+### Added — GitHub + exposure optimization (max visibility push)
+
+- Updated GitHub About description (SEO-optimized short version) + 15+ high-signal topics for AI search dominance.
+- README hero upgrades: star CTA, live links row, 0% fabrication proof highlight, 10-sec demo GIF recording instructions (Dao De Jing trap + gate abstain).
+- Social preview banner prompt + generated asset (bronze/ivory φ + 智 + neural provenance chains).
+- HF dataset card refreshed (527 ex, current proof points, keywords).
+- Thesis site meta description upgraded for Google.
+- Consolidated viral launch copies (Show HN, Reddit, X thread, etc.) in `docs/07-Growth/launch/MAX-EXPOSURE-COPIES.md`.
+- GitHub launch about file and playbook notes synced.
+- Prepped for v0.7.42 release tagging "OKF wiki + exposure polish + 0% fab gate proof".
+
+Run `python tools/create_github_release.py` (or GitHub UI) after review. See playbook in docs/07-Growth/launch/.
+
 ## [0.7.41] - 2026-06-22
 
 ### Added — Grok external benchmark run via local Grok CLI (closes #6)
