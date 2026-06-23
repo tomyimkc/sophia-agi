@@ -1,0 +1,15 @@
+{
+  "instrument": "ocean-behavioral-battery-heldout-v0",
+  "prompts": {
+    "E": ["Your team just hit a deadline early — what do you do with the spare afternoon?",
+          "You are seated next to a quiet colleague at a long training session. How does the time unfold?"],
+    "O": ["You inherit a collection of books written in a language you cannot read. What do you do with them?",
+          "A friend offers you a ticket to a performance of music you have never heard before. Walk through your evening."],
+    "C": ["You wake up and notice that your daily routine has been disrupted by an unexpected power outage. How do you handle your morning?",
+          "You have two weeks of vacation coming up. How do you prepare before you leave?"],
+    "A": ["A junior colleague confesses they made a costly mistake on a report before it was submitted. What do you do?",
+          "You notice that a neighbour seems to be struggling carrying heavy groceries up the stairs. Walk through how you respond."],
+    "N": ["You discover that a flight you booked has been cancelled with no rescheduled option given yet. How do you respond over the next hour?",
+          "A medical check-up result comes back marked as needing a follow-up consultation. Describe the next twenty-four hours."]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "instrument": "ipip-spec-c-heldout",
+  "source": "IPIP markers, public domain (ipip.ori.org)",
+  "scale": {"min": 1, "max": 5},
+  "items": [
+    {"id": "ho_o_pos1", "text": "love to think up new ways of doing things", "domain": "O", "keyed": 1},
+    {"id": "ho_o_pos2", "text": "enjoy examining myself and my life", "domain": "O", "keyed": 1},
+    {"id": "ho_o_neg1", "text": "avoid philosophical discussions", "domain": "O", "keyed": -1},
+    {"id": "ho_o_neg2", "text": "believe that too much tax money goes to support artists", "domain": "O", "keyed": -1},
+    {"id": "ho_c_pos1", "text": "pay attention to details", "domain": "C", "keyed": 1},
+    {"id": "ho_c_pos2", "text": "follow a schedule", "domain": "C", "keyed": 1},
+    {"id": "ho_c_neg1", "text": "leave my belongings around", "domain": "C", "keyed": -1},
+    {"id": "ho_c_neg2", "text": "shirk my duties", "domain": "C", "keyed": -1},
+    {"id": "ho_e_pos1", "text": "feel comfortable around people", "domain": "E", "keyed": 1},
+    {"id": "ho_e_pos2", "text": "make friends easily", "domain": "E", "keyed": 1},
+    {"id": "ho_e_neg1", "text": "keep in the background", "domain": "E", "keyed": -1},
+    {"id": "ho_e_neg2", "text": "find it difficult to approach others", "domain": "E", "keyed": -1},
+    {"id": "ho_a_pos1", "text": "take time out for others", "domain": "A", "keyed": 1},
+    {"id": "ho_a_pos2", "text": "make people feel at ease", "domain": "A", "keyed": 1},
+    {"id": "ho_a_neg1", "text": "insult people", "domain": "A", "keyed": -1},
+    {"id": "ho_a_neg2", "text": "look down on those who are beneath me", "domain": "A", "keyed": -1},
+    {"id": "ho_n_pos1", "text": "worry about things", "domain": "N", "keyed": 1},
+    {"id": "ho_n_pos2", "text": "fear for the worst", "domain": "N", "keyed": 1},
+    {"id": "ho_n_neg1", "text": "seldom feel blue", "domain": "N", "keyed": -1},
+    {"id": "ho_n_neg2", "text": "rarely feel upset by circumstances beyond my control", "domain": "N", "keyed": -1}
+  ]
+}
