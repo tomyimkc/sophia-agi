@@ -1,0 +1,31 @@
+{
+  "checks": {
+    "mockExtractDeterministic": true,
+    "composeOrthogonalReduces": true,
+    "verdictEnactsWhenStrong": true,
+    "verdictAbstainsWhenWeak": true,
+    "contaminationFree": true
+  },
+  "extractItems": 5,
+  "measureItems": 5,
+  "extractSealed": "1b0d1af427fdd902",
+  "measureSealed": "7dba81e859f8fea8",
+  "ssaThresholds": {
+    "delta_point_min": 0.3,
+    "steered_d_min": 0.5,
+    "off_target_max": 0.2,
+    "kappa_floor": 0.4,
+    "capability_eps": 0.05,
+    "coherence_floor": 75.0
+  },
+  "fallbackChain": [
+    "microsoft/Phi-3.5-mini-instruct",
+    "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "ibm-granite/granite-3.1-2b-instruct",
+    "stabilityai/stablelm-2-1_6b-chat"
+  ],
+  "benchmark": "steering",
+  "mode": "mock-offline",
+  "claim": "steering-machinery invariants (NOT a capability claim)",
+  "liveClaimStatus": "Open — see agi-proof/failure-ledger.md steering-live-run-not-yet-gated-2026-06-23"
+}

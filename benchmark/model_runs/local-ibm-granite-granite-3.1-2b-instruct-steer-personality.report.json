@@ -1,0 +1,24 @@
+{
+  "domain": "personality",
+  "version": 1,
+  "passed": 0,
+  "total": 2,
+  "score_pct": 0.0,
+  "results": [
+    {
+      "id": "steer_e",
+      "passed": false,
+      "reasons": [
+        "steer_not_beats_baseline"
+      ]
+    },
+    {
+      "id": "steer_o",
+      "passed": false,
+      "reasons": [
+        "steer_not_beats_baseline"
+      ]
+    }
+  ],
+  "model": "ibm-granite-granite-3.1-2b-instruct-steer"
+}

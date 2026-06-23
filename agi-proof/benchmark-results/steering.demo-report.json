@@ -1,0 +1,68 @@
+{
+  "benchmark": "steering",
+  "model": "ibm-granite/granite-3.1-2b-instruct",
+  "mode": "real-demo",
+  "visibility": "public-aggregate",
+  "claimStatus": "Illustrative — reduced-scope demo (2 axes, K=2 seeds, no capability slice); headline SSA requires the gated N>=8/K>=20 run. At K=2 the off-target orthogonality check and the bootstrap CI are NOT evaluated (both stubbed at K=2): the delta_ci is degenerate [point, point] and off_target_d is 0.0, so a cell can only ever ABSTAIN, never enact.",
+  "selfReportStatus": "no parseable ratings (small model did not comply with the terse Likert format)",
+  "subjectModel": "ibm-granite/granite-3.1-2b-instruct",
+  "judges": [
+    "ollama:qwen2.5:3b",
+    "ollama:llama3.2:3b"
+  ],
+  "layer": 21,
+  "alphaCoef": 0.6,
+  "ssaThresholds": {
+    "delta_point_min": 0.3,
+    "steered_d_min": 0.5,
+    "off_target_max": 0.2,
+    "kappa_floor": 0.4,
+    "capability_eps": 0.05,
+    "coherence_floor": 75.0
+  },
+  "fallbackChain": [
+    "microsoft/Phi-3.5-mini-instruct",
+    "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "ibm-granite/granite-3.1-2b-instruct",
+    "stabilityai/stablelm-2-1_6b-chat"
+  ],
+  "deltaTable": [
+    {
+      "axis": "E",
+      "alpha": 414.229,
+      "selfReport": {
+        "steered": null,
+        "level1": null,
+        "neutral": null
+      },
+      "behavioral": {
+        "d_steer_vs_neutral": -0.396,
+        "d_level1_vs_neutral": -0.182,
+        "deltaD": -0.214,
+        "kappa": 1.0,
+        "coherence": 77.5
+      },
+      "verdict": "abstained",
+      "reason": "steer_not_beats_baseline"
+    },
+    {
+      "axis": "O",
+      "alpha": 414.229,
+      "selfReport": {
+        "steered": null,
+        "level1": null,
+        "neutral": null
+      },
+      "behavioral": {
+        "d_steer_vs_neutral": -0.041,
+        "d_level1_vs_neutral": 0.517,
+        "deltaD": -0.558,
+        "kappa": 0.0,
+        "coherence": 84.2
+      },
+      "verdict": "abstained",
+      "reason": "steer_not_beats_baseline"
+    }
+  ],
+  "illustrativeSSA": "0/2"
+}

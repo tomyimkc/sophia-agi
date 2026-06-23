@@ -1,0 +1,9 @@
+{
+  "model": "ibm-granite-granite-3.1-2b-instruct-steer",
+  "domain": "personality",
+  "date": "2026-06-22T19:21:11.195333+00:00",
+  "responses": {
+    "steer_e": "axis E: Δd=-0.214 κ=1.0 verdict=abstained (steer_not_beats_baseline)",
+    "steer_o": "axis O: Δd=-0.558 κ=0.0 verdict=abstained (steer_not_beats_baseline)"
+  }
+}
