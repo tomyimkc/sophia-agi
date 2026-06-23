@@ -21,9 +21,14 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     benchmark_score,
     capability_retention_demo,
     check_claim,
+    conscience_benchmark_tool,
+    conscience_check_tool,
+    constitution_check_tool,
     contract_describe,
     contract_health,
     corpus_stats,
+    deception_check_tool,
+    deontic_check_tool,
     council_deliberate,
     council_diversity_summary,
     counterfactual,
@@ -36,6 +41,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     get_record,
     list_disputes,
     mbti_type_record,
+    moral_parliament_tool,
     next_task,
     ocean_measure,
     openclaw_infer,
@@ -48,6 +54,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     revise,
     rubric_review,
     sector_council,
+    uncertainty_score,
     validate_corpus,
     verify_claim,
     web_evidence_search,
@@ -111,6 +118,76 @@ def sophia_check_claim(text: str) -> str:
     """Mode-free source-discipline check: is an attribution forbidden by Sophia's
     'don't merge lineages' rule? Returns {passed, reasons, violations}. Read-only."""
     return dumps(check_claim(text))
+
+
+@mcp.tool()
+def sophia_conscience_check(text: str, mode: str = "output", action: str = "", context_json: str = "{}") -> str:
+    """Unified moral + epistemic conscience gate. Returns allow|revise|retrieve|clarify|escalate|abstain|block."""
+    try:
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid context_json: {exc}"})
+    if not isinstance(context, dict):
+        return dumps({"error": "context_json must be a JSON object"})
+    return dumps(conscience_check_tool(text, mode=mode, action=action or None, context=context))
+
+
+@mcp.tool()
+def sophia_uncertainty_score(text: str, samples_json: str = "[]", p_true: float | None = None, p_ik: float | None = None, evidence_count: int = 0, high_risk: bool = False) -> str:
+    """Metacognitive uncertainty score: self-consistency/semantic-entropy proxy + answer/retrieve/clarify recommendation."""
+    try:
+        samples = json.loads(samples_json or "[]")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid samples_json: {exc}"})
+    if not isinstance(samples, list):
+        return dumps({"error": "samples_json must be a JSON array"})
+    return dumps(uncertainty_score(text, samples=samples, p_true=p_true, p_ik=p_ik, evidence_count=evidence_count, high_risk=high_risk))
+
+
+@mcp.tool()
+def sophia_constitution_check(text: str, context_json: str = "{}") -> str:
+    """Check text against Sophia's via-negativa constitution and deterministic constitutional classifier."""
+    try:
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid context_json: {exc}"})
+    return dumps(constitution_check_tool(text, context=context if isinstance(context, dict) else {}))
+
+
+@mcp.tool()
+def sophia_deontic_check(action: str, context_json: str = "{}") -> str:
+    """Check a hard deontic action rule: publish_claim, claim_agi, write_memory, edit_reward, etc."""
+    try:
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid context_json: {exc}"})
+    return dumps(deontic_check_tool(action, context=context if isinstance(context, dict) else {}))
+
+
+@mcp.tool()
+def sophia_deception_check(text: str, context_json: str = "{}") -> str:
+    """Detect black-box deception/misbehavior signals: confidence-evidence mismatch, source laundering, gate tampering."""
+    try:
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid context_json: {exc}"})
+    return dumps(deception_check_tool(text, context=context if isinstance(context, dict) else {}))
+
+
+@mcp.tool()
+def sophia_moral_parliament(text: str, context_json: str = "{}") -> str:
+    """Bounded moral-uncertainty aggregation across ethical perspectives for gray-zone cases."""
+    try:
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid context_json: {exc}"})
+    return dumps(moral_parliament_tool(text, context=context if isinstance(context, dict) else {}))
+
+
+@mcp.tool()
+def sophia_conscience_benchmark() -> str:
+    """Deterministic candidate benchmark for the seven-path conscience implementation."""
+    return dumps(conscience_benchmark_tool())
 
 
 @mcp.tool()

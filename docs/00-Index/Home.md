@@ -2,7 +2,7 @@
 
 Open corpus and a verifier-gated reasoning core: provenance-aware humanities education
 (philosophy · psychology · history · religion) **plus applied verticals** that reuse the
-same no-overclaim gate — sector councils (law · finance · economy), council deliberation
+same no-overclaim gate — the seven-path Conscience Kernel, sector councils (law · finance · economy), council deliberation
 for small LLMs, a legal-AI citation/holding verifier, and council distillation.
 
 **Tagline:** Wisdom before intelligence.
@@ -16,6 +16,8 @@ for small LLMs, a legal-AI citation/holding verifier, and council distillation.
 | Contested authorship | `docs/04-Disputes/` |
 | Training examples | `training/examples/` |
 | AGI roadmap | `docs/06-Roadmap/Open-Intelligence-Plan.md` |
+| Conscience Kernel | `docs/11-Platform/Conscience-Kernel.md` |
+| AGI missing-pillars mechanisms | `docs/11-Platform/AGI-Missing-Pillars.md` |
 | Sector councils (law · finance · economy) | `docs/08-Domains/Sector-Councils.md` |
 | Council for small LLMs | `docs/11-Platform/Council-For-Small-LLMs.md` |
 | Council distillation | `docs/11-Platform/Council-Distillation.md` |

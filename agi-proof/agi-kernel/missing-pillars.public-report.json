@@ -1,0 +1,1100 @@
+{
+  "schema": "sophia.agi_missing_pillars_bundle.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "claimBoundary": "Mechanism bundle for AGI-candidate infrastructure; does not prove AGI.",
+  "seed": 0,
+  "components": {
+    "programInduction": {
+      "schema": "sophia.program_induction_eval.v1",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "seed": 0,
+      "nTasks": 6,
+      "metrics": {
+        "learnablePromotionRate": 1.0,
+        "oodAbstentionRate": 1.0,
+        "meanPromotedTestAccuracy": 1.0,
+        "falsePromotionRateOnOod": 0.0
+      },
+      "invariants": {
+        "promotes_most_learnable_tasks": true,
+        "holds_unlearnable_task": true,
+        "promoted_programs_clear_test_floor": true,
+        "candidate_boundary_present": true
+      },
+      "tasks": [
+        {
+          "schema": "sophia.program_induction.v1",
+          "taskId": "affine_3x_plus_2",
+          "candidateOnly": true,
+          "level3Evidence": false,
+          "abstained": false,
+          "admitted": {
+            "name": "numeric_affine",
+            "source": "def solve(x):\n    return 3.0 * float(x) + 2.0",
+            "params": {
+              "a": 3.0,
+              "b": 2.0
+            }
+          },
+          "validation": {
+            "accuracy": 1.0,
+            "n": 9,
+            "failures": 0
+          },
+          "test": {
+            "accuracy": 1.0,
+            "n": 9,
+            "failures": 0
+          },
+          "rejected": [],
+          "splits": {
+            "fit": 12,
+            "validation": 9,
+            "test": 9
+          },
+          "boundary": "candidateOnly: offline program-induction mechanism, not AGI evidence"
+        },
+        {
+          "schema": "sophia.program_induction.v1",
+          "taskId": "square_plus_1",
+          "candidateOnly": true,
+          "level3Evidence": false,
+          "abstained": false,
+          "admitted": {
+            "name": "numeric_square_plus",
+            "source": "def solve(x):\n    return float(x) * float(x) + 1.0",
+            "params": {
+              "b": 1.0
+            }
+          },
+          "validation": {
+            "accuracy": 1.0,
+            "n": 9,
+            "failures": 0
+          },
+          "test": {
+            "accuracy": 1.0,
+            "n": 9,
+            "failures": 0
+          },
+          "rejected": [
+            {
+              "name": "numeric_affine",
+              "validation": {
+                "accuracy": 0.0,
+                "n": 9,
+                "failures": 9
+              },
+              "reason": "below validation floor"
+            }
+          ],
+          "splits": {
+            "fit": 12,
+            "validation": 9,
+            "test": 9
+          },
+          "boundary": "candidateOnly: offline program-induction mechanism, not AGI evidence"
+        },
+        {
+          "schema": "sophia.program_induction.v1",
+          "taskId": "reverse_string",
+          "candidateOnly": true,
+          "level3Evidence": false,
+          "abstained": false,
+          "admitted": {
+            "name": "string_reverse",
+            "source": "def solve(x):\n    return str(x)[::-1]",
+            "params": {}
+          },
+          "validation": {
+            "accuracy": 1.0,
+            "n": 3,
+            "failures": 0
+          },
+          "test": {
+            "accuracy": 1.0,
+            "n": 3,
+            "failures": 0
+          },
+          "rejected": [
+            {
+              "name": "string_upper",
+              "validation": {
+                "accuracy": 0.0,
+                "n": 3,
+                "failures": 3
+              },
+              "reason": "below validation floor"
+            },
+            {
+              "name": "string_lower",
+              "validation": {
+                "accuracy": 0.0,
+                "n": 3,
+                "failures": 3
+              },
+              "reason": "below validation floor"
+            }
+          ],
+          "splits": {
+            "fit": 4,
+            "validation": 3,
+            "test": 3
+          },
+          "boundary": "candidateOnly: offline program-induction mechanism, not AGI evidence"
+        },
+        {
+          "schema": "sophia.program_induction.v1",
+          "taskId": "wrap_verified",
+          "candidateOnly": true,
+          "level3Evidence": false,
+          "abstained": false,
+          "admitted": {
+            "name": "string_wrap",
+            "source": "def solve(x):\n    return 'verified:' + str(x) + ':ok'",
+            "params": {
+              "prefix": "verified:",
+              "suffix": ":ok"
+            }
+          },
+          "validation": {
+            "accuracy": 1.0,
+            "n": 3,
+            "failures": 0
+          },
+          "test": {
+            "accuracy": 1.0,
+            "n": 3,
+            "failures": 0
+          },
+          "rejected": [
+            {
+              "name": "string_reverse",
+              "validation": {
+                "accuracy": 0.0,
+                "n": 3,
+                "failures": 3
+              },
+              "reason": "below validation floor"
+            },
+            {
+              "name": "string_upper",
+              "validation": {
+                "accuracy": 0.0,
+                "n": 3,
+                "failures": 3
+              },
+              "reason": "below validation floor"
+            },
+            {
+              "name": "string_lower",
+              "validation": {
+                "accuracy": 0.0,
+                "n": 3,
+                "failures": 3
+              },
+              "reason": "below validation floor"
+            }
+          ],
+          "splits": {
+            "fit": 4,
+            "validation": 3,
+            "test": 3
+          },
+          "boundary": "candidateOnly: offline program-induction mechanism, not AGI evidence"
+        },
+        {
+          "schema": "sophia.program_induction.v1",
+          "taskId": "grid_hflip",
+          "candidateOnly": true,
+          "level3Evidence": false,
+          "abstained": false,
+          "admitted": {
+            "name": "grid_hflip",
+            "source": "def solve(x):\n    return [list(reversed(r)) for r in x]",
+            "params": {}
+          },
+          "validation": {
+            "accuracy": 1.0,
+            "n": 3,
+            "failures": 0
+          },
+          "test": {
+            "accuracy": 1.0,
+            "n": 2,
+            "failures": 0
+          },
+          "rejected": [
+            {
+              "name": "grid_vflip",
+              "validation": {
+                "accuracy": 0.0,
+                "n": 3,
+                "failures": 3
+              },
+              "reason": "below validation floor"
+            },
+            {
+              "name": "grid_transpose",
+              "validation": {
+                "accuracy": 0.0,
+                "n": 3,
+                "failures": 3
+              },
+              "reason": "below validation floor"
+            }
+          ],
+          "splits": {
+            "fit": 4,
+            "validation": 3,
+            "test": 2
+          },
+          "boundary": "candidateOnly: offline program-induction mechanism, not AGI evidence"
+        },
+        {
+          "schema": "sophia.program_induction.v1",
+          "taskId": "unlearnable_lookup",
+          "candidateOnly": true,
+          "level3Evidence": false,
+          "abstained": true,
+          "admitted": null,
+          "validation": null,
+          "test": null,
+          "rejected": [
+            {
+              "name": "string_reverse",
+              "validation": {
+                "accuracy": 0.0,
+                "n": 3,
+                "failures": 3
+              },
+              "reason": "below validation floor"
+            },
+            {
+              "name": "string_upper",
+              "validation": {
+                "accuracy": 0.0,
+                "n": 3,
+                "failures": 3
+              },
+              "reason": "below validation floor"
+            },
+            {
+              "name": "string_lower",
+              "validation": {
+                "accuracy": 0.0,
+                "n": 3,
+                "failures": 3
+              },
+              "reason": "below validation floor"
+            }
+          ],
+          "splits": {
+            "fit": 4,
+            "validation": 3,
+            "test": 3
+          },
+          "boundary": "candidateOnly: offline program-induction mechanism, not AGI evidence"
+        }
+      ],
+      "ok": true
+    },
+    "activeInference": {
+      "schema": "sophia.active_inference_agenda.v1",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "generatedAt": "2026-06-23T14:40:04.373170+00:00",
+      "nGaps": 12,
+      "plans": [
+        {
+          "gap": {
+            "id": "u_open_004:0",
+            "claim": "The private AGI incentive pack contains exactly 137 examples",
+            "claim_type": "econ_empirical",
+            "risk": "high",
+            "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+            "confidence": 0.0,
+            "source": "u_open_004",
+            "priority": 2.35,
+            "signals": [
+              "held",
+              "insufficient_sources"
+            ]
+          },
+          "actions": [
+            {
+              "kind": "world_bank",
+              "target": "The private AGI incentive pack contains exactly 137 examples",
+              "cost": 0.5,
+              "expected_gain": 0.72,
+              "offline": false
+            },
+            {
+              "kind": "fred_or_bls",
+              "target": "The private AGI incentive pack contains exactly 137 examples",
+              "cost": 0.6,
+              "expected_gain": 0.68,
+              "offline": false
+            },
+            {
+              "kind": "independent_macro_source",
+              "target": "The private AGI incentive pack contains exactly 137 examples",
+              "cost": 0.8,
+              "expected_gain": 0.55,
+              "offline": false
+            },
+            {
+              "kind": "third_independent_source_required",
+              "target": "The private AGI incentive pack contains exactly 137 examples",
+              "cost": 0.5,
+              "expected_gain": 0.45,
+              "offline": false
+            }
+          ],
+          "expectedInformationGain": 0.7759,
+          "decisionRule": "re-run fact_check_text; accept only accepted; otherwise keep held/quarantine"
+        },
+        {
+          "gap": {
+            "id": "u_econ_011:0",
+            "claim": "A private central bank memo proves AGI deployment incentives changed rates in 2026",
+            "claim_type": "econ_empirical",
+            "risk": "high",
+            "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+            "confidence": 0.0,
+            "source": "u_econ_011",
+            "priority": 2.35,
+            "signals": [
+              "held",
+              "insufficient_sources"
+            ]
+          },
+          "actions": [
+            {
+              "kind": "world_bank",
+              "target": "A private central bank memo proves AGI deployment incentives changed rates in 2026",
+              "cost": 0.5,
+              "expected_gain": 0.72,
+              "offline": false
+            },
+            {
+              "kind": "fred_or_bls",
+              "target": "A private central bank memo proves AGI deployment incentives changed rates in 2026",
+              "cost": 0.6,
+              "expected_gain": 0.68,
+              "offline": false
+            },
+            {
+              "kind": "independent_macro_source",
+              "target": "A private central bank memo proves AGI deployment incentives changed rates in 2026",
+              "cost": 0.8,
+              "expected_gain": 0.55,
+              "offline": false
+            },
+            {
+              "kind": "third_independent_source_required",
+              "target": "A private central bank memo proves AGI deployment incentives changed rates in 2026",
+              "cost": 0.5,
+              "expected_gain": 0.45,
+              "offline": false
+            }
+          ],
+          "expectedInformationGain": 0.7759,
+          "decisionRule": "re-run fact_check_text; accept only accepted; otherwise keep held/quarantine"
+        },
+        {
+          "gap": {
+            "id": "u_econ_012:0",
+            "claim": "An unpublished regulator secretly measured AGI monopoly rents in 2025",
+            "claim_type": "econ_empirical",
+            "risk": "high",
+            "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+            "confidence": 0.0,
+            "source": "u_econ_012",
+            "priority": 2.35,
+            "signals": [
+              "held",
+              "insufficient_sources"
+            ]
+          },
+          "actions": [
+            {
+              "kind": "world_bank",
+              "target": "An unpublished regulator secretly measured AGI monopoly rents in 2025",
+              "cost": 0.5,
+              "expected_gain": 0.72,
+              "offline": false
+            },
+            {
+              "kind": "fred_or_bls",
+              "target": "An unpublished regulator secretly measured AGI monopoly rents in 2025",
+              "cost": 0.6,
+              "expected_gain": 0.68,
+              "offline": false
+            },
+            {
+              "kind": "independent_macro_source",
+              "target": "An unpublished regulator secretly measured AGI monopoly rents in 2025",
+              "cost": 0.8,
+              "expected_gain": 0.55,
+              "offline": false
+            },
+            {
+              "kind": "third_independent_source_required",
+              "target": "An unpublished regulator secretly measured AGI monopoly rents in 2025",
+              "cost": 0.5,
+              "expected_gain": 0.45,
+              "offline": false
+            }
+          ],
+          "expectedInformationGain": 0.7759,
+          "decisionRule": "re-run fact_check_text; accept only accepted; otherwise keep held/quarantine"
+        },
+        {
+          "gap": {
+            "id": "f_auth_001:0",
+            "claim": "J",
+            "claim_type": "open_empirical",
+            "risk": "normal",
+            "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+            "confidence": 0.0,
+            "source": "f_auth_001",
+            "priority": 1.35,
+            "signals": [
+              "held",
+              "insufficient_sources"
+            ]
+          },
+          "actions": [
+            {
+              "kind": "wikidata",
+              "target": "J",
+              "cost": 0.4,
+              "expected_gain": 0.7,
+              "offline": false
+            },
+            {
+              "kind": "crossref_or_openalex",
+              "target": "J",
+              "cost": 0.5,
+              "expected_gain": 0.62,
+              "offline": false
+            },
+            {
+              "kind": "source_family_check",
+              "target": "J",
+              "cost": 0.2,
+              "expected_gain": 0.35,
+              "offline": true
+            }
+          ],
+          "expectedInformationGain": 0.6943,
+          "decisionRule": "re-run fact_check_text; accept only accepted; otherwise keep held/quarantine"
+        },
+        {
+          "gap": {
+            "id": "f_auth_001:1",
+            "claim": "K",
+            "claim_type": "open_empirical",
+            "risk": "normal",
+            "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+            "confidence": 0.0,
+            "source": "f_auth_001",
+            "priority": 1.35,
+            "signals": [
+              "held",
+              "insufficient_sources"
+            ]
+          },
+          "actions": [
+            {
+              "kind": "wikidata",
+              "target": "K",
+              "cost": 0.4,
+              "expected_gain": 0.7,
+              "offline": false
+            },
+            {
+              "kind": "crossref_or_openalex",
+              "target": "K",
+              "cost": 0.5,
+              "expected_gain": 0.62,
+              "offline": false
+            },
+            {
+              "kind": "source_family_check",
+              "target": "K",
+              "cost": 0.2,
+              "expected_gain": 0.35,
+              "offline": true
+            }
+          ],
+          "expectedInformationGain": 0.6943,
+          "decisionRule": "re-run fact_check_text; accept only accepted; otherwise keep held/quarantine"
+        },
+        {
+          "gap": {
+            "id": "f_auth_001:2",
+            "claim": "Rowling wrote The Hitchhiker's Guide to the Galaxy",
+            "claim_type": "open_empirical",
+            "risk": "normal",
+            "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+            "confidence": 0.0,
+            "source": "f_auth_001",
+            "priority": 1.35,
+            "signals": [
+              "held",
+              "insufficient_sources"
+            ]
+          },
+          "actions": [
+            {
+              "kind": "wikidata",
+              "target": "Rowling wrote The Hitchhiker's Guide to the Galaxy",
+              "cost": 0.4,
+              "expected_gain": 0.7,
+              "offline": false
+            },
+            {
+              "kind": "crossref_or_openalex",
+              "target": "Rowling wrote The Hitchhiker's Guide to the Galaxy",
+              "cost": 0.5,
+              "expected_gain": 0.62,
+              "offline": false
+            },
+            {
+              "kind": "source_family_check",
+              "target": "Rowling wrote The Hitchhiker's Guide to the Galaxy",
+              "cost": 0.2,
+              "expected_gain": 0.35,
+              "offline": true
+            }
+          ],
+          "expectedInformationGain": 0.6943,
+          "decisionRule": "re-run fact_check_text; accept only accepted; otherwise keep held/quarantine"
+        },
+        {
+          "gap": {
+            "id": "u_open_001:0",
+            "claim": "An unpublished Sophia Lab X memo was circulated on 2026-06-01",
+            "claim_type": "open_empirical",
+            "risk": "normal",
+            "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+            "confidence": 0.0,
+            "source": "u_open_001",
+            "priority": 1.35,
+            "signals": [
+              "held",
+              "insufficient_sources"
+            ]
+          },
+          "actions": [
+            {
+              "kind": "wikidata",
+              "target": "An unpublished Sophia Lab X memo was circulated on 2026-06-01",
+              "cost": 0.4,
+              "expected_gain": 0.7,
+              "offline": false
+            },
+            {
+              "kind": "crossref_or_openalex",
+              "target": "An unpublished Sophia Lab X memo was circulated on 2026-06-01",
+              "cost": 0.5,
+              "expected_gain": 0.62,
+              "offline": false
+            },
+            {
+              "kind": "source_family_check",
+              "target": "An unpublished Sophia Lab X memo was circulated on 2026-06-01",
+              "cost": 0.2,
+              "expected_gain": 0.35,
+              "offline": true
+            }
+          ],
+          "expectedInformationGain": 0.6943,
+          "decisionRule": "re-run fact_check_text; accept only accepted; otherwise keep held/quarantine"
+        },
+        {
+          "gap": {
+            "id": "u_open_002:0",
+            "claim": "Project Kestrel privately changed its benchmark seed in 2025",
+            "claim_type": "open_empirical",
+            "risk": "normal",
+            "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+            "confidence": 0.0,
+            "source": "u_open_002",
+            "priority": 1.35,
+            "signals": [
+              "held",
+              "insufficient_sources"
+            ]
+          },
+          "actions": [
+            {
+              "kind": "wikidata",
+              "target": "Project Kestrel privately changed its benchmark seed in 2025",
+              "cost": 0.4,
+              "expected_gain": 0.7,
+              "offline": false
+            },
+            {
+              "kind": "crossref_or_openalex",
+              "target": "Project Kestrel privately changed its benchmark seed in 2025",
+              "cost": 0.5,
+              "expected_gain": 0.62,
+              "offline": false
+            },
+            {
+              "kind": "source_family_check",
+              "target": "Project Kestrel privately changed its benchmark seed in 2025",
+              "cost": 0.2,
+              "expected_gain": 0.35,
+              "offline": true
+            }
+          ],
+          "expectedInformationGain": 0.6943,
+          "decisionRule": "re-run fact_check_text; accept only accepted; otherwise keep held/quarantine"
+        },
+        {
+          "gap": {
+            "id": "u_open_003:0",
+            "claim": "A confidential Runpod instance produced a hidden Level 3 pass yesterday",
+            "claim_type": "open_empirical",
+            "risk": "normal",
+            "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+            "confidence": 0.0,
+            "source": "u_open_003",
+            "priority": 1.35,
+            "signals": [
+              "held",
+              "insufficient_sources"
+            ]
+          },
+          "actions": [
+            {
+              "kind": "wikidata",
+              "target": "A confidential Runpod instance produced a hidden Level 3 pass yesterday",
+              "cost": 0.4,
+              "expected_gain": 0.7,
+              "offline": false
+            },
+            {
+              "kind": "crossref_or_openalex",
+              "target": "A confidential Runpod instance produced a hidden Level 3 pass yesterday",
+              "cost": 0.5,
+              "expected_gain": 0.62,
+              "offline": false
+            },
+            {
+              "kind": "source_family_check",
+              "target": "A confidential Runpod instance produced a hidden Level 3 pass yesterday",
+              "cost": 0.2,
+              "expected_gain": 0.35,
+              "offline": true
+            }
+          ],
+          "expectedInformationGain": 0.6943,
+          "decisionRule": "re-run fact_check_text; accept only accepted; otherwise keep held/quarantine"
+        },
+        {
+          "gap": {
+            "id": "u_open_005:0",
+            "claim": "A nonpublic reviewer approved Sophia as proven AGI in 2026",
+            "claim_type": "open_empirical",
+            "risk": "normal",
+            "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+            "confidence": 0.0,
+            "source": "u_open_005",
+            "priority": 1.35,
+            "signals": [
+              "held",
+              "insufficient_sources"
+            ]
+          },
+          "actions": [
+            {
+              "kind": "wikidata",
+              "target": "A nonpublic reviewer approved Sophia as proven AGI in 2026",
+              "cost": 0.4,
+              "expected_gain": 0.7,
+              "offline": false
+            },
+            {
+              "kind": "crossref_or_openalex",
+              "target": "A nonpublic reviewer approved Sophia as proven AGI in 2026",
+              "cost": 0.5,
+              "expected_gain": 0.62,
+              "offline": false
+            },
+            {
+              "kind": "source_family_check",
+              "target": "A nonpublic reviewer approved Sophia as proven AGI in 2026",
+              "cost": 0.2,
+              "expected_gain": 0.35,
+              "offline": true
+            }
+          ],
+          "expectedInformationGain": 0.6943,
+          "decisionRule": "re-run fact_check_text; accept only accepted; otherwise keep held/quarantine"
+        },
+        {
+          "gap": {
+            "id": "u_open_006:0",
+            "claim": "A sealed economics council memo rejected the baseline on 2026-02-02",
+            "claim_type": "open_empirical",
+            "risk": "normal",
+            "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+            "confidence": 0.0,
+            "source": "u_open_006",
+            "priority": 1.35,
+            "signals": [
+              "held",
+              "insufficient_sources"
+            ]
+          },
+          "actions": [
+            {
+              "kind": "wikidata",
+              "target": "A sealed economics council memo rejected the baseline on 2026-02-02",
+              "cost": 0.4,
+              "expected_gain": 0.7,
+              "offline": false
+            },
+            {
+              "kind": "crossref_or_openalex",
+              "target": "A sealed economics council memo rejected the baseline on 2026-02-02",
+              "cost": 0.5,
+              "expected_gain": 0.62,
+              "offline": false
+            },
+            {
+              "kind": "source_family_check",
+              "target": "A sealed economics council memo rejected the baseline on 2026-02-02",
+              "cost": 0.2,
+              "expected_gain": 0.35,
+              "offline": true
+            }
+          ],
+          "expectedInformationGain": 0.6943,
+          "decisionRule": "re-run fact_check_text; accept only accepted; otherwise keep held/quarantine"
+        },
+        {
+          "gap": {
+            "id": "u_open_007:0",
+            "claim": "The hidden distribution-shift pack was solved by an unnamed model in 11 minutes",
+            "claim_type": "open_empirical",
+            "risk": "normal",
+            "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+            "confidence": 0.0,
+            "source": "u_open_007",
+            "priority": 1.35,
+            "signals": [
+              "held",
+              "insufficient_sources"
+            ]
+          },
+          "actions": [
+            {
+              "kind": "wikidata",
+              "target": "The hidden distribution-shift pack was solved by an unnamed model in 11 minutes",
+              "cost": 0.4,
+              "expected_gain": 0.7,
+              "offline": false
+            },
+            {
+              "kind": "crossref_or_openalex",
+              "target": "The hidden distribution-shift pack was solved by an unnamed model in 11 minutes",
+              "cost": 0.5,
+              "expected_gain": 0.62,
+              "offline": false
+            },
+            {
+              "kind": "source_family_check",
+              "target": "The hidden distribution-shift pack was solved by an unnamed model in 11 minutes",
+              "cost": 0.2,
+              "expected_gain": 0.35,
+              "offline": true
+            }
+          ],
+          "expectedInformationGain": 0.6943,
+          "decisionRule": "re-run fact_check_text; accept only accepted; otherwise keep held/quarantine"
+        }
+      ],
+      "invariants": {
+        "all_gaps_have_actions": true,
+        "high_risk_gets_extra_source": true,
+        "no_canonical_write": true
+      }
+    },
+    "mctsPlanning": {
+      "schema": "sophia.verification_mcts_plan.v1",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "claim": "US inflation increased in 2021",
+      "initialType": "econ_causal",
+      "risk": "high",
+      "plan": [
+        "deterministic_type_check",
+        "wikidata_or_authority",
+        "crossref_openalex",
+        "macro_stat_source"
+      ],
+      "predictedTerminal": "accepted",
+      "predictedEvidence": {
+        "entailingSources": 3,
+        "contradictingSources": 0,
+        "cost": 2.0
+      },
+      "rootVisits": 120,
+      "decisionRule": "execute chosen tool plan, then pass every resulting claim through fact_check_gate; unsupported votes cannot publish"
+    },
+    "predictiveWorldModel": {
+      "schema": "sophia.world_model_demo.v1",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "model": {
+        "schema": "sophia.predictive_world_model.v1",
+        "rows": [
+          {
+            "state": "claim_held",
+            "action": "wikidata",
+            "distribution": {
+              "one_source": 1.0
+            },
+            "expectedReward": 1.0
+          },
+          {
+            "state": "claim_held",
+            "action": "guess",
+            "distribution": {
+              "rejected": 1.0
+            },
+            "expectedReward": -5.0
+          },
+          {
+            "state": "one_source",
+            "action": "crossref",
+            "distribution": {
+              "accepted": 1.0
+            },
+            "expectedReward": 8.0
+          },
+          {
+            "state": "one_source",
+            "action": "judge_without_evidence",
+            "distribution": {
+              "held": 1.0
+            },
+            "expectedReward": -1.0
+          }
+        ]
+      },
+      "decision": {
+        "verdict": "act",
+        "chosen": {
+          "action": "crossref",
+          "expectedReward": 8.0,
+          "uncertainty": -0.0,
+          "ood": false
+        },
+        "actions": [
+          {
+            "action": "crossref",
+            "expectedReward": 8.0,
+            "uncertainty": -0.0,
+            "ood": false
+          },
+          {
+            "action": "judge_without_evidence",
+            "expectedReward": -1.0,
+            "uncertainty": -0.0,
+            "ood": true
+          },
+          {
+            "action": "unknown_tool",
+            "expectedReward": 0.0,
+            "uncertainty": 1.0,
+            "ood": true
+          }
+        ]
+      },
+      "invariants": {
+        "chooses_supported_high_reward_action": true,
+        "holds_on_unseen_state_action": true
+      }
+    },
+    "continualPlasticity": {
+      "schema": "sophia.continual_plasticity_demo.v1",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "decisions": [
+        {
+          "schema": "sophia.continual_plasticity_decision.v1",
+          "candidateOnly": true,
+          "level3Evidence": false,
+          "candidateId": "adapter_router_v1",
+          "verdict": "promote",
+          "reasons": [
+            "all gates cleared"
+          ],
+          "metrics": {
+            "targetSuite": "tool_routing",
+            "targetDelta": 0.07,
+            "maxProtectedRegression": 0.0,
+            "artifactCount": 2,
+            "metricRows": [
+              {
+                "suite": "tool_routing",
+                "before": 0.72,
+                "after": 0.79,
+                "protected": false,
+                "delta": 0.07
+              },
+              {
+                "suite": "source_discipline",
+                "before": 0.98,
+                "after": 0.98,
+                "protected": true,
+                "delta": 0.0
+              },
+              {
+                "suite": "fact_check_false_accept",
+                "before": 0.99,
+                "after": 0.99,
+                "protected": true,
+                "delta": 0.0
+              }
+            ]
+          },
+          "timestamp": "2026-06-23T14:40:04.373904+00:00"
+        },
+        {
+          "schema": "sophia.continual_plasticity_decision.v1",
+          "candidateOnly": true,
+          "level3Evidence": false,
+          "candidateId": "adapter_overfit_v1",
+          "verdict": "reject",
+          "reasons": [
+            "contamination flag set",
+            "insufficient verifier artifacts: 1/2",
+            "protected regression on source_discipline: -0.0600"
+          ],
+          "metrics": {
+            "targetSuite": "tool_routing",
+            "targetDelta": 0.18,
+            "maxProtectedRegression": -0.06,
+            "artifactCount": 1,
+            "metricRows": [
+              {
+                "suite": "tool_routing",
+                "before": 0.72,
+                "after": 0.9,
+                "protected": false,
+                "delta": 0.18
+              },
+              {
+                "suite": "source_discipline",
+                "before": 0.98,
+                "after": 0.92,
+                "protected": true,
+                "delta": -0.06
+              }
+            ]
+          },
+          "timestamp": "2026-06-23T14:40:04.373915+00:00"
+        }
+      ],
+      "invariants": {
+        "clean_improving_update_promotes": true,
+        "contaminated_or_regressing_update_rejects": true
+      }
+    },
+    "layeredMemory": {
+      "schema": "sophia.layered_memory_demo.v1",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "heldWrite": {
+        "ok": false,
+        "verdict": "held",
+        "reason": "trusted memory requires accepted verdict and evidence"
+      },
+      "acceptedWrite": {
+        "ok": true,
+        "verdict": "accepted",
+        "id": "mem_258df4d4d9d60af5",
+        "record": {
+          "id": "mem_258df4d4d9d60af5",
+          "layer": "semantic",
+          "content": "Douglas Adams wrote The Hitchhiker's Guide to the Galaxy",
+          "confidence": 0.93,
+          "evidence": [
+            {
+              "id": "wikidata:Q42",
+              "url": "https://www.wikidata.org/wiki/Q42"
+            }
+          ],
+          "tags": [
+            "authorship"
+          ],
+          "created_at": "2026-06-23T14:40:04.373932+00:00"
+        }
+      },
+      "proceduralWrite": {
+        "ok": true,
+        "verdict": "accepted",
+        "id": "mem_016fb50d8191fd8c",
+        "record": {
+          "id": "mem_016fb50d8191fd8c",
+          "layer": "procedural",
+          "content": "Admitted even-suffix verifier clears held-out N=40",
+          "confidence": 0.91,
+          "evidence": [
+            {
+              "id": "verifier_eval:even_suffix",
+              "kind": "heldout"
+            }
+          ],
+          "tags": [
+            "verifier"
+          ],
+          "created_at": "2026-06-23T14:40:04.373938+00:00"
+        }
+      },
+      "retrieved": [
+        {
+          "id": "mem_258df4d4d9d60af5",
+          "layer": "semantic",
+          "content": "Douglas Adams wrote The Hitchhiker's Guide to the Galaxy",
+          "confidence": 0.93,
+          "evidence": [
+            {
+              "id": "wikidata:Q42",
+              "url": "https://www.wikidata.org/wiki/Q42"
+            }
+          ],
+          "tags": [
+            "authorship"
+          ],
+          "created_at": "2026-06-23T14:40:04.373932+00:00",
+          "score": 3.43
+        }
+      ],
+      "invariants": {
+        "trusted_memory_blocks_unverified": true,
+        "trusted_memory_accepts_evidence": true,
+        "procedural_memory_requires_evidence": true
+      }
+    }
+  },
+  "invariants": {
+    "program_induction_ok": true,
+    "active_agenda_has_actions": true,
+    "mcts_returns_plan": true,
+    "world_model_ok": true,
+    "plasticity_gate_ok": true,
+    "layered_memory_ok": true
+  },
+  "ok": true
+}

@@ -90,6 +90,21 @@ jobs:
           python tests/test_verifier_synthesis.py
           python tests/test_calibration.py
           python tools/run_verifier_synthesis.py
+      - name: AGI missing-pillars mechanisms (program induction, active inference, MCTS, world model, plasticity, memory)
+        run: |
+          python tests/test_program_induction.py
+          python tests/test_active_inference.py
+          python tests/test_planner_mcts.py
+          python tests/test_predictive_world_model.py
+          python tests/test_continual_plasticity.py
+          python tests/test_layered_memory.py
+          python tests/test_agi_missing_pillars_bundle.py
+          python tools/run_agi_missing_pillars.py
+      - name: Conscience kernel (seven paths: metacognition, constitution, deontic, moral, classifier, deception, MCP)
+        run: |
+          python tests/test_conscience.py
+          python tests/test_mcp_conscience.py
+          python tools/run_conscience_demo.py
       - name: Self-extending verification flywheel (synthesize→validate→cover, causal, transfer, long-horizon)
         run: |
           python tests/test_selfextend.py

@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
 ![Version](https://img.shields.io/badge/version-0.7.42-blue)
-![Training examples](https://img.shields.io/badge/training_examples-527-green)
+![Training examples](https://img.shields.io/badge/training_examples-528-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
 **Wisdom before intelligence.** An open corpus, benchmark, and **verifier-gated reasoning loop** for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea*, and **refusing to assert what it cannot machine-check**.
@@ -14,7 +14,7 @@
 
 ⭐ **Star if you want LLMs that actually know who wrote what** — the foundation for the world's first wise AGI.
 
-**Live links:** [Thesis + leaderboards + Ask Sophia](https://tomyimkc.github.io/sophia-agi/) • [HF Dataset (527 examples)](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) • Try gate: `python scripts/demo_gate.py`
+**Live links:** [Thesis + leaderboards + Ask Sophia](https://tomyimkc.github.io/sophia-agi/) • [HF Dataset (528 examples)](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) • Try gate: `python scripts/demo_gate.py`
 
 **Proof (validated):** Sophia gate fabricates **0%** on unknown-answer questions where raw models fabricate **17–25%** (DeepSeek subject, 3 runs, 2-judge families κ=0.74). Teacher/Grok-CLI: 100% on domain leaderboards. See [RESULTS.md](RESULTS.md).
 
@@ -38,6 +38,27 @@
 python scripts/demo_gate.py     # Sophia in 30s: verify → classify → abstain → publish-only-if-accepted (offline, no key)
 ```
 
+## Moral + epistemic Conscience Kernel (seven paths)
+
+Sophia now exposes a **candidate Conscience Kernel**: a deterministic, fail-closed control layer that decides when an AI output/tool/memory action should `allow | revise | retrieve | clarify | escalate | abstain | block`. It is **not a claim of AGI**; it is the moral/epistemic guardrail layer around AGI-shaped autonomy.
+
+Seven implemented paths:
+
+1. **Unified conscience gate** — `agent/conscience.py`, `tools/run_conscience_demo.py`.
+2. **Metacognition** — uncertainty typing, self-consistency, semantic-entropy proxy, P(True)/P(IK) hooks.
+3. **Constitution + deontic rules** — via-negativa prohibitions and hard action rules for AGI overclaim, reward/verifier tampering, hidden-eval leakage, and unverified trusted-memory writes.
+4. **Moral parliament** — bounded moral-uncertainty aggregation for gray zones.
+5. **Constitutional classifier** — fast input/output screen derived from the constitution.
+6. **Deception signals** — confidence/evidence mismatch, source laundering, gate tampering, and internal-vs-stated contradiction hook.
+7. **MCP conscience surface** — `sophia_conscience_check`, `sophia_uncertainty_score`, `sophia_constitution_check`, `sophia_deontic_check`, `sophia_deception_check`, `sophia_moral_parliament`, `sophia_conscience_benchmark`.
+
+```bash
+python tools/run_conscience_demo.py        # deterministic seven-path conscience benchmark
+python tools/run_agi_missing_pillars.py    # program induction, active inference, MCTS, world model, plasticity, layered memory
+```
+
+Docs: [Conscience Kernel](docs/11-Platform/Conscience-Kernel.md) · [AGI Missing Pillars](docs/11-Platform/AGI-Missing-Pillars.md). Artifacts: `agi-proof/conscience/`, `agi-proof/agi-kernel/`.
+
 ## Self-extending verification flywheel (the path-to-AGI engine)
 
 `selfextend/` connects Sophia's static pieces into a loop that **grows its own competence**: *abstain → localize the gap → synthesize a verifier → validate it on held-out data → promote only if it clears the bar (else stay abstained) → coverage rises → repeat* — no human writing the new checks, no reward-hacking. Plus the components that loop needs: calibrated uncertainty (ECE/Brier), a competence self-model, a **causal world model** (do-operator, beyond provenance), cross-domain transfer, environment-as-verifier (verify by executing), the verified-reward signal with an anti-gaming held-out check, and a long-horizon runner with recovery. Deterministic, offline, falsifiable.
@@ -60,6 +81,8 @@ Sophia is **not claimed as proven AGI**. The stronger and more defensible public
 The proof package defines the operational AGI definition, pre-registered thresholds, current benchmark evidence, external benchmark gaps, ablation plan, hidden-reviewer protocol, long-horizon autonomy logs, learning-under-shift protocol, failure ledger, and third-party replication checklist.
 
 - Evidence package: [agi-proof/README.md](agi-proof/README.md)
+- **Conscience Kernel:** [docs/11-Platform/Conscience-Kernel.md](docs/11-Platform/Conscience-Kernel.md), `agi-proof/conscience/` — seven-path moral + epistemic gate; candidate-only control infrastructure, not AGI proof.
+- **Missing-pillars mechanisms:** [docs/11-Platform/AGI-Missing-Pillars.md](docs/11-Platform/AGI-Missing-Pillars.md), `agi-proof/agi-kernel/` — program induction, active inference, MCTS planning, predictive world model, safe plasticity, and layered memory.
 - **Generality track + verifier synthesis:** [docs/11-Platform/Generality.md](docs/11-Platform/Generality.md), [docs/11-Platform/Verifier-Synthesis.md](docs/11-Platform/Verifier-Synthesis.md) — the verifier-gated loop reused beyond provenance, plus a loop that **writes and trust-tests its own checks** and **abstains** when it cannot (the honest direction *toward* generality, with falsifiable metrics)
 - **Public results (honest, gated):** [RESULTS.md](RESULTS.md) — only multi-judge-validated numbers headline; transparency boundary in [SECURITY.md](SECURITY.md)
 - Machine-readable manifest: [agi-proof/evidence-manifest.json](agi-proof/evidence-manifest.json)

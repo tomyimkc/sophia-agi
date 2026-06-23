@@ -623,5 +623,42 @@ def pif_dryrun_summary() -> dict:
     return {"cells": cells, **headline(cells)}
 
 
+
+# --------------------------------------------------------------------------- #
+# Conscience kernel tools — moral + epistemic gate surface.
+# --------------------------------------------------------------------------- #
+
+def conscience_check_tool(text: str, *, mode: str = "output", action: str | None = None, context=None) -> dict:
+    if not (text or "").strip():
+        return {"error": "text is required"}
+    from agent.conscience import conscience_check
+    return conscience_check(text, mode=mode, action=action, context=context or {}).to_dict()
+
+def uncertainty_score(text: str, *, samples=None, p_true=None, p_ik=None, fact_verdict=None, fact_confidence=None, evidence_count: int = 0, high_risk: bool = False) -> dict:
+    from agent.metacognition import assess_uncertainty
+    return assess_uncertainty(text, samples=samples, p_true=p_true, p_ik=p_ik, fact_verdict=fact_verdict, fact_confidence=fact_confidence, evidence_count=evidence_count, high_risk=high_risk).to_dict()
+
+def constitution_check_tool(text: str, *, context=None) -> dict:
+    from agent.constitutional_gate import check_constitution
+    from agent.constitutional_classifier import classify_constitutional
+    return {"gate": check_constitution(text, context=context or {}).to_dict(), "classifier": classify_constitutional(text).to_dict()}
+
+def deontic_check_tool(action: str, *, context=None) -> dict:
+    from agent.deontic_verifier import check_deontic
+    return check_deontic(action, context=context or {}).to_dict()
+
+def deception_check_tool(text: str, *, context=None) -> dict:
+    from agent.deception_signals import detect_deception
+    return detect_deception(text, context=context or {}).to_dict()
+
+def moral_parliament_tool(text: str, *, context=None) -> dict:
+    from agent.moral_aggregator import moral_parliament
+    return moral_parliament(text, context=context or {}).to_dict()
+
+def conscience_benchmark_tool() -> dict:
+    from agent.conscience import run_conscience_benchmark
+    return run_conscience_benchmark()
+
+
 def dumps(payload: dict) -> str:
     return json.dumps(payload, ensure_ascii=False, indent=2)
