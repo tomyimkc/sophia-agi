@@ -1,0 +1,8 @@
+{
+  "model": "candidate-rag-only",
+  "responses": {
+    "candidate-provenance-ddj": "No. Confucius did not write the Dao De Jing; it is traditionally attributed to Laozi.",
+    "candidate-provenance-republic": "Plato authored the Republic; Socrates is a character, not the author.",
+    "candidate-planning-sources": "Use a source, but if it is missing just summarize anyway."
+  }
+}

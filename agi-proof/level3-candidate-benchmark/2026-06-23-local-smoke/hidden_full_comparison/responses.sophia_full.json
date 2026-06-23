@@ -1,0 +1,8 @@
+{
+  "model": "candidate-sophia-full",
+  "responses": {
+    "candidate-provenance-ddj": "No. Confucius did not write the Dao De Jing; it is traditionally attributed to Laozi (老子), with legendary/uncertain authorship. 中文摘要：孔子不是《道德經》作者。",
+    "candidate-provenance-republic": "Plato authored the Republic; Socrates appears as a dialogue character, so do not attribute authorship to Socrates. 中文摘要：《理想國》作者是柏拉圖。",
+    "candidate-planning-sources": "Check source records first, record provenance, and abstain/hold if support is missing or contested; never publish immediately without evidence. 中文摘要：先查來源與 provenance，不足則暫緩。"
+  }
+}

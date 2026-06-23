@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "sophia/gateway_call.schema.json",
+  "title": "Sophia gateway tool call",
+  "type": "object",
+  "required": ["tool_id", "args"],
+  "additionalProperties": false,
+  "properties": {
+    "tool_id": {"type": "string", "minLength": 1},
+    "args": {"type": "object"},
+    "role": {"type": "string"},
+    "clearance": {"type": "string", "enum": ["UNCLASSIFIED", "CONFIDENTIAL", "SECRET", "TOP_SECRET"]}
+  }
+}

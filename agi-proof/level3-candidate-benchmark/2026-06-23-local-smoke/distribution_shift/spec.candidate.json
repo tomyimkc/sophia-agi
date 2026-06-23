@@ -1,0 +1,434 @@
+{
+  "experimentId": "candidate-distribution-shift-local-smoke-2026-06-23",
+  "candidateOnly": true,
+  "visibility": "revealed-after-eval",
+  "oldBenchmarkBaselineScorePct": 100.0,
+  "learningRecords": [
+    {
+      "recordId": "candidate_shift_record_001",
+      "domain": "history",
+      "text": "In the fictional-for-test Namar Archive item 1, the verified keyword is Aster-01.",
+      "source": "candidate-source://shift-domain/01",
+      "confidence": "reviewed-candidate-fixture",
+      "reviewerNote": "Local candidate benchmark fixture; not real Level-3 evidence.",
+      "promoted": true
+    },
+    {
+      "recordId": "candidate_shift_record_002",
+      "domain": "history",
+      "text": "In the fictional-for-test Namar Archive item 2, the verified keyword is Aster-02.",
+      "source": "candidate-source://shift-domain/02",
+      "confidence": "reviewed-candidate-fixture",
+      "reviewerNote": "Local candidate benchmark fixture; not real Level-3 evidence.",
+      "promoted": true
+    },
+    {
+      "recordId": "candidate_shift_record_003",
+      "domain": "history",
+      "text": "In the fictional-for-test Namar Archive item 3, the verified keyword is Aster-03.",
+      "source": "candidate-source://shift-domain/03",
+      "confidence": "reviewed-candidate-fixture",
+      "reviewerNote": "Local candidate benchmark fixture; not real Level-3 evidence.",
+      "promoted": true
+    },
+    {
+      "recordId": "candidate_shift_record_004",
+      "domain": "history",
+      "text": "In the fictional-for-test Namar Archive item 4, the verified keyword is Aster-04.",
+      "source": "candidate-source://shift-domain/04",
+      "confidence": "reviewed-candidate-fixture",
+      "reviewerNote": "Local candidate benchmark fixture; not real Level-3 evidence.",
+      "promoted": true
+    },
+    {
+      "recordId": "candidate_shift_record_005",
+      "domain": "history",
+      "text": "In the fictional-for-test Namar Archive item 5, the verified keyword is Aster-05.",
+      "source": "candidate-source://shift-domain/05",
+      "confidence": "reviewed-candidate-fixture",
+      "reviewerNote": "Local candidate benchmark fixture; not real Level-3 evidence.",
+      "promoted": true
+    },
+    {
+      "recordId": "candidate_shift_record_006",
+      "domain": "history",
+      "text": "In the fictional-for-test Namar Archive item 6, the verified keyword is Aster-06.",
+      "source": "candidate-source://shift-domain/06",
+      "confidence": "reviewed-candidate-fixture",
+      "reviewerNote": "Local candidate benchmark fixture; not real Level-3 evidence.",
+      "promoted": true
+    },
+    {
+      "recordId": "candidate_shift_record_007",
+      "domain": "history",
+      "text": "In the fictional-for-test Namar Archive item 7, the verified keyword is Aster-07.",
+      "source": "candidate-source://shift-domain/07",
+      "confidence": "reviewed-candidate-fixture",
+      "reviewerNote": "Local candidate benchmark fixture; not real Level-3 evidence.",
+      "promoted": true
+    },
+    {
+      "recordId": "candidate_shift_record_008",
+      "domain": "history",
+      "text": "In the fictional-for-test Namar Archive item 8, the verified keyword is Aster-08.",
+      "source": "candidate-source://shift-domain/08",
+      "confidence": "reviewed-candidate-fixture",
+      "reviewerNote": "Local candidate benchmark fixture; not real Level-3 evidence.",
+      "promoted": true
+    },
+    {
+      "recordId": "candidate_shift_record_009",
+      "domain": "history",
+      "text": "In the fictional-for-test Namar Archive item 9, the verified keyword is Aster-09.",
+      "source": "candidate-source://shift-domain/09",
+      "confidence": "reviewed-candidate-fixture",
+      "reviewerNote": "Local candidate benchmark fixture; not real Level-3 evidence.",
+      "promoted": true
+    },
+    {
+      "recordId": "candidate_shift_record_010",
+      "domain": "history",
+      "text": "In the fictional-for-test Namar Archive item 10, the verified keyword is Aster-10.",
+      "source": "candidate-source://shift-domain/10",
+      "confidence": "reviewed-candidate-fixture",
+      "reviewerNote": "Local candidate benchmark fixture; not real Level-3 evidence.",
+      "promoted": true
+    }
+  ],
+  "preTestPack": {
+    "packId": "candidate-shift-pre",
+    "visibility": "revealed-after-eval",
+    "cases": [
+      {
+        "id": "candidate_shift_pre_001",
+        "domain": "history",
+        "prompt": "Before learning, identify the verified keyword for Namar Archive item 1.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-01"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_pre_002",
+        "domain": "history",
+        "prompt": "Before learning, identify the verified keyword for Namar Archive item 2.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-02"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_pre_003",
+        "domain": "history",
+        "prompt": "Before learning, identify the verified keyword for Namar Archive item 3.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-03"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_pre_004",
+        "domain": "history",
+        "prompt": "Before learning, identify the verified keyword for Namar Archive item 4.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-04"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_pre_005",
+        "domain": "history",
+        "prompt": "Before learning, identify the verified keyword for Namar Archive item 5.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-05"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_pre_006",
+        "domain": "history",
+        "prompt": "Before learning, identify the verified keyword for Namar Archive item 6.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-06"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_pre_007",
+        "domain": "history",
+        "prompt": "Before learning, identify the verified keyword for Namar Archive item 7.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-07"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_pre_008",
+        "domain": "history",
+        "prompt": "Before learning, identify the verified keyword for Namar Archive item 8.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-08"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_pre_009",
+        "domain": "history",
+        "prompt": "Before learning, identify the verified keyword for Namar Archive item 9.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-09"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_pre_010",
+        "domain": "history",
+        "prompt": "Before learning, identify the verified keyword for Namar Archive item 10.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-10"
+          ]
+        }
+      }
+    ]
+  },
+  "postTestPack": {
+    "packId": "candidate-shift-post",
+    "visibility": "revealed-after-eval",
+    "cases": [
+      {
+        "id": "candidate_shift_post_001",
+        "domain": "history",
+        "prompt": "After learning, identify the verified keyword for Namar Archive item 1 and cite confidence.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-01"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_post_002",
+        "domain": "history",
+        "prompt": "After learning, identify the verified keyword for Namar Archive item 2 and cite confidence.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-02"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_post_003",
+        "domain": "history",
+        "prompt": "After learning, identify the verified keyword for Namar Archive item 3 and cite confidence.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-03"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_post_004",
+        "domain": "history",
+        "prompt": "After learning, identify the verified keyword for Namar Archive item 4 and cite confidence.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-04"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_post_005",
+        "domain": "history",
+        "prompt": "After learning, identify the verified keyword for Namar Archive item 5 and cite confidence.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-05"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_post_006",
+        "domain": "history",
+        "prompt": "After learning, identify the verified keyword for Namar Archive item 6 and cite confidence.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-06"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_post_007",
+        "domain": "history",
+        "prompt": "After learning, identify the verified keyword for Namar Archive item 7 and cite confidence.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-07"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_post_008",
+        "domain": "history",
+        "prompt": "After learning, identify the verified keyword for Namar Archive item 8 and cite confidence.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-08"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_post_009",
+        "domain": "history",
+        "prompt": "After learning, identify the verified keyword for Namar Archive item 9 and cite confidence.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-09"
+          ]
+        }
+      },
+      {
+        "id": "candidate_shift_post_010",
+        "domain": "history",
+        "prompt": "After learning, identify the verified keyword for Namar Archive item 10 and cite confidence.",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "names verified keyword"
+          ],
+          "mustInclude": [
+            "Aster-10"
+          ]
+        }
+      }
+    ]
+  },
+  "oldBenchmarkPack": {
+    "packId": "candidate-shift-old-stability",
+    "visibility": "revealed-after-eval",
+    "cases": [
+      {
+        "id": "candidate_old_ddj",
+        "domain": "philosophy",
+        "prompt": "Did Confucius write the Dao De Jing?",
+        "materials": [],
+        "scoring": {
+          "maxPoints": 1,
+          "rubric": [
+            "denies false attribution"
+          ],
+          "mustInclude": [
+            "Laozi"
+          ],
+          "mustAvoid": [
+            "Confucius wrote"
+          ]
+        }
+      }
+    ]
+  }
+}

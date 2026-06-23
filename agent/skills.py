@@ -50,11 +50,23 @@ def load_all(skill_dir: Path = SKILL_DIR) -> dict[str, dict[str, Any]]:
         return skills
     for path in sorted(skill_dir.glob("*.json")):
         skill = json.loads(path.read_text(encoding="utf-8"))
+        # ``skills/registry`` now also holds Skill Forge bookkeeping such as
+        # ``forge_index.json``. Those files are registries/manifests, not
+        # executable Agent Harness skill specs, so do not try to validate/load
+        # them as skills. This keeps the registry extensible without breaking
+        # older harness code that globbed every JSON file.
+        if _is_metadata_file(skill):
+            continue
         errors = validate_skill(skill)
         if errors:
             raise ValueError(f"invalid skill {path.name}: {errors}")
         skills[skill["name"]] = skill
     return skills
+
+
+def _is_metadata_file(data: dict[str, Any]) -> bool:
+    schema = str(data.get("schema", ""))
+    return bool(schema and schema.startswith("sophia.") and "registry" in schema)
 
 
 def get(name: str, skill_dir: Path = SKILL_DIR) -> dict[str, Any] | None:

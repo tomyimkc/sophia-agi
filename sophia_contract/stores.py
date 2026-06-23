@@ -61,6 +61,12 @@ class ClaimStore:
         c = self._by_id.get(claim_id)
         return {k: v for k, v in c.items() if not k.startswith("_")} if c else None
 
+    def all_claims(self) -> "list[dict]":
+        """Return every stored claim (public fields only), insertion order. Used by
+        lineage/PROV export; never exposes internal underscore-prefixed bookkeeping."""
+        return [{k: v for k, v in c.items() if not k.startswith("_")}
+                for c in self._by_id.values()]
+
     def record(self, claim: dict, idempotency_key: str) -> "tuple[dict, bool]":
         """Store a claim idempotently. Returns (claim, created). A repeat key with
         the SAME content returns the stored claim (created=False); a repeat key with

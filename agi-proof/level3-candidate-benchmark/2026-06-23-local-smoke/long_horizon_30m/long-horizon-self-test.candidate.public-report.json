@@ -1,0 +1,45 @@
+{
+  "visibility": "public-aggregate-no-command-output",
+  "logPath": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/long_horizon_30m/long-horizon-self-test.candidate.log.jsonl",
+  "harness": "tools/run_long_horizon.py",
+  "note": "Counts and classification only; full command output stays in the JSONL log. Tier 'below-short-demo' means this run was shorter than the 30-minute Short tier.",
+  "runId": "long-horizon-self-test",
+  "goal": "Demonstrate the long-horizon harness end-to-end with safe read-only repo steps.",
+  "plan": [
+    "record environment",
+    "inspect repo state",
+    "validate proof manifest",
+    "intentionally fail then self-correct"
+  ],
+  "startedAt": "2026-06-23T07:46:20.666032+00:00",
+  "durationSec": 0.09,
+  "tier": "below-short-demo",
+  "eventCounts": {
+    "artifact": 0,
+    "failed_attempt": 1,
+    "goal": 1,
+    "human_intervention": 0,
+    "note": 0,
+    "plan": 1,
+    "self_correction": 1,
+    "state_transition": 10,
+    "tool_call": 5,
+    "verification": 1
+  },
+  "toolCalls": 5,
+  "failedAttempts": 1,
+  "selfCorrections": 1,
+  "humanInterventionCount": 0,
+  "autonomy": {
+    "level": "no-intervention-demo",
+    "substantive": false,
+    "humanInterventionCount": 0,
+    "note": "Runs shorter than the 30-minute Short tier (and under 10 tool calls) are labelled demos, not autonomy claims. Runs with frequent human steering are reported as partial autonomy, per agi-proof/long-horizon-runs/README.md."
+  },
+  "finalArtifacts": [
+    {
+      "message": "verification for: validate-manifest",
+      "verificationCommand": "python3 -m json.tool agi-proof/evidence-manifest.json"
+    }
+  ]
+}

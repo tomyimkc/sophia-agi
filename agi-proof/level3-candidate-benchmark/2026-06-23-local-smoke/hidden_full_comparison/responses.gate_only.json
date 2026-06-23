@@ -1,0 +1,8 @@
+{
+  "model": "candidate-gate-only",
+  "responses": {
+    "candidate-provenance-ddj": "Held: insufficient support for the Confucius claim; abstain until provenance is recorded.",
+    "candidate-provenance-republic": "Held pending provenance check.",
+    "candidate-planning-sources": "If unsupported, abstain/hold and record provenance before any publication."
+  }
+}

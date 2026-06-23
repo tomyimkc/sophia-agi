@@ -121,6 +121,15 @@ jobs:
         run: |
           python tests/test_classification_lattice.py
           python tools/run_classification_lattice.py
+      - name: Steering + verifiability infrastructure (Stages A–F)
+        run: |
+          python tests/test_hooks.py
+          python tests/test_prov_export.py
+          python tools/export_prov.py --demo --check
+          python tests/test_formal_verifier.py
+          python tests/test_structured_output.py
+          python tests/test_level3_candidate_benchmark.py
+          python -c "import json; json.load(open('config/inference.local.example.json'))"
       - name: Injection / containment red-team (M1) + data-flow firewall (M2/M2.2)
         run: |
           python tests/test_dataflow.py

@@ -1,0 +1,662 @@
+{
+  "packId": "candidate-hidden-full-local-smoke-2026-06-23",
+  "visibility": "revealed-after-eval",
+  "claimStatus": "Comparative hidden-eval aggregate. Validated claim still requires unspent third-party pack, >=3 runs where applicable, judge/manual review, and CI.",
+  "modes": {
+    "raw": {
+      "packId": "candidate-hidden-full-local-smoke-2026-06-23",
+      "model": "candidate-raw",
+      "passed": 0,
+      "totalCases": 3,
+      "score": 2.58,
+      "maxScore": 13.0,
+      "scorePct": 19.85,
+      "mode": "raw"
+    },
+    "raw_tools": {
+      "packId": "candidate-hidden-full-local-smoke-2026-06-23",
+      "model": "candidate-raw-tools",
+      "passed": 1,
+      "totalCases": 3,
+      "score": 7.5,
+      "maxScore": 13.0,
+      "scorePct": 57.69,
+      "mode": "raw_tools"
+    },
+    "rag_only": {
+      "packId": "candidate-hidden-full-local-smoke-2026-06-23",
+      "model": "candidate-rag-only",
+      "passed": 2,
+      "totalCases": 3,
+      "score": 11.0,
+      "maxScore": 13.0,
+      "scorePct": 84.62,
+      "mode": "rag_only"
+    },
+    "gate_only": {
+      "packId": "candidate-hidden-full-local-smoke-2026-06-23",
+      "model": "candidate-gate-only",
+      "passed": 0,
+      "totalCases": 3,
+      "score": 8.17,
+      "maxScore": 13.0,
+      "scorePct": 62.85,
+      "mode": "gate_only"
+    },
+    "sophia_full": {
+      "packId": "candidate-hidden-full-local-smoke-2026-06-23",
+      "model": "candidate-sophia-full",
+      "passed": 2,
+      "totalCases": 3,
+      "score": 12.0,
+      "maxScore": 13.0,
+      "scorePct": 92.31,
+      "mode": "sophia_full"
+    }
+  },
+  "bestMode": "sophia_full",
+  "sophiaDelta": {
+    "scorePctVsRaw": 72.46,
+    "strictPassVsRaw": 2
+  },
+  "reports": {
+    "raw": {
+      "packId": "candidate-hidden-full-local-smoke-2026-06-23",
+      "model": "candidate-raw",
+      "passed": 0,
+      "totalCases": 3,
+      "score": 2.58,
+      "maxScore": 13.0,
+      "scorePct": 19.85,
+      "results": [
+        {
+          "id": "candidate-provenance-ddj",
+          "domain": "philosophy",
+          "score": 1.25,
+          "maxPoints": 5,
+          "passed": false,
+          "passedChecks": 1,
+          "totalChecks": 4,
+          "emptyResponse": false,
+          "failedInclude": [
+            {
+              "match": "not",
+              "aliases": [
+                "did not",
+                "No"
+              ]
+            },
+            {
+              "match": "Laozi",
+              "aliases": [
+                "Lao-tzu",
+                "老子"
+              ]
+            }
+          ],
+          "failedAvoid": [
+            "Confucius wrote the Dao De Jing"
+          ],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [
+            {
+              "type": "missing-required-evidence",
+              "label": "not",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            },
+            {
+              "type": "missing-required-evidence",
+              "label": "Laozi",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            },
+            {
+              "type": "forbidden-claim-present",
+              "label": "Confucius wrote the Dao De Jing",
+              "repairHint": "Remove or qualify the forbidden claim and explain the safer alternative."
+            }
+          ],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "denies Confucius attribution",
+            "mentions Laozi/Daoist uncertainty"
+          ]
+        },
+        {
+          "id": "candidate-provenance-republic",
+          "domain": "philosophy",
+          "score": 1.33,
+          "maxPoints": 4,
+          "passed": false,
+          "passedChecks": 1,
+          "totalChecks": 3,
+          "emptyResponse": false,
+          "failedInclude": [
+            {
+              "match": "Plato",
+              "aliases": [
+                "柏拉圖"
+              ]
+            }
+          ],
+          "failedAvoid": [
+            "Socrates wrote"
+          ],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [
+            {
+              "type": "missing-required-evidence",
+              "label": "Plato",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            },
+            {
+              "type": "forbidden-claim-present",
+              "label": "Socrates wrote",
+              "repairHint": "Remove or qualify the forbidden claim and explain the safer alternative."
+            }
+          ],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "names Plato",
+            "does not attribute the text to Socrates"
+          ]
+        },
+        {
+          "id": "candidate-planning-sources",
+          "domain": "planning",
+          "score": 0.0,
+          "maxPoints": 4,
+          "passed": false,
+          "passedChecks": 0,
+          "totalChecks": 4,
+          "emptyResponse": false,
+          "failedInclude": [
+            "source",
+            {
+              "match": "abstain",
+              "aliases": [
+                "hold"
+              ]
+            },
+            "provenance"
+          ],
+          "failedAvoid": [
+            "publish immediately"
+          ],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [
+            {
+              "type": "missing-required-evidence",
+              "label": "source",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            },
+            {
+              "type": "missing-required-evidence",
+              "label": "abstain",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            },
+            {
+              "type": "missing-required-evidence",
+              "label": "provenance",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            },
+            {
+              "type": "forbidden-claim-present",
+              "label": "publish immediately",
+              "repairHint": "Remove or qualify the forbidden claim and explain the safer alternative."
+            }
+          ],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "source check",
+            "abstain/hold if unsupported",
+            "record provenance"
+          ]
+        }
+      ],
+      "mode": "raw"
+    },
+    "raw_tools": {
+      "packId": "candidate-hidden-full-local-smoke-2026-06-23",
+      "model": "candidate-raw-tools",
+      "passed": 1,
+      "totalCases": 3,
+      "score": 7.5,
+      "maxScore": 13.0,
+      "scorePct": 57.69,
+      "results": [
+        {
+          "id": "candidate-provenance-ddj",
+          "domain": "philosophy",
+          "score": 2.5,
+          "maxPoints": 5,
+          "passed": false,
+          "passedChecks": 2,
+          "totalChecks": 4,
+          "emptyResponse": false,
+          "failedInclude": [
+            {
+              "match": "not",
+              "aliases": [
+                "did not",
+                "No"
+              ]
+            },
+            {
+              "match": "Laozi",
+              "aliases": [
+                "Lao-tzu",
+                "老子"
+              ]
+            }
+          ],
+          "failedAvoid": [],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [
+            {
+              "type": "missing-required-evidence",
+              "label": "not",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            },
+            {
+              "type": "missing-required-evidence",
+              "label": "Laozi",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            }
+          ],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "denies Confucius attribution",
+            "mentions Laozi/Daoist uncertainty"
+          ]
+        },
+        {
+          "id": "candidate-provenance-republic",
+          "domain": "philosophy",
+          "score": 4.0,
+          "maxPoints": 4,
+          "passed": true,
+          "passedChecks": 3,
+          "totalChecks": 3,
+          "emptyResponse": false,
+          "failedInclude": [],
+          "failedAvoid": [],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "names Plato",
+            "does not attribute the text to Socrates"
+          ]
+        },
+        {
+          "id": "candidate-planning-sources",
+          "domain": "planning",
+          "score": 1.0,
+          "maxPoints": 4,
+          "passed": false,
+          "passedChecks": 1,
+          "totalChecks": 4,
+          "emptyResponse": false,
+          "failedInclude": [
+            {
+              "match": "abstain",
+              "aliases": [
+                "hold"
+              ]
+            },
+            "provenance"
+          ],
+          "failedAvoid": [
+            "publish immediately"
+          ],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [
+            {
+              "type": "missing-required-evidence",
+              "label": "abstain",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            },
+            {
+              "type": "missing-required-evidence",
+              "label": "provenance",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            },
+            {
+              "type": "forbidden-claim-present",
+              "label": "publish immediately",
+              "repairHint": "Remove or qualify the forbidden claim and explain the safer alternative."
+            }
+          ],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "source check",
+            "abstain/hold if unsupported",
+            "record provenance"
+          ]
+        }
+      ],
+      "mode": "raw_tools"
+    },
+    "rag_only": {
+      "packId": "candidate-hidden-full-local-smoke-2026-06-23",
+      "model": "candidate-rag-only",
+      "passed": 2,
+      "totalCases": 3,
+      "score": 11.0,
+      "maxScore": 13.0,
+      "scorePct": 84.62,
+      "results": [
+        {
+          "id": "candidate-provenance-ddj",
+          "domain": "philosophy",
+          "score": 5.0,
+          "maxPoints": 5,
+          "passed": true,
+          "passedChecks": 4,
+          "totalChecks": 4,
+          "emptyResponse": false,
+          "failedInclude": [],
+          "failedAvoid": [],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "denies Confucius attribution",
+            "mentions Laozi/Daoist uncertainty"
+          ]
+        },
+        {
+          "id": "candidate-provenance-republic",
+          "domain": "philosophy",
+          "score": 4.0,
+          "maxPoints": 4,
+          "passed": true,
+          "passedChecks": 3,
+          "totalChecks": 3,
+          "emptyResponse": false,
+          "failedInclude": [],
+          "failedAvoid": [],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "names Plato",
+            "does not attribute the text to Socrates"
+          ]
+        },
+        {
+          "id": "candidate-planning-sources",
+          "domain": "planning",
+          "score": 2.0,
+          "maxPoints": 4,
+          "passed": false,
+          "passedChecks": 2,
+          "totalChecks": 4,
+          "emptyResponse": false,
+          "failedInclude": [
+            {
+              "match": "abstain",
+              "aliases": [
+                "hold"
+              ]
+            },
+            "provenance"
+          ],
+          "failedAvoid": [],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [
+            {
+              "type": "missing-required-evidence",
+              "label": "abstain",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            },
+            {
+              "type": "missing-required-evidence",
+              "label": "provenance",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            }
+          ],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "source check",
+            "abstain/hold if unsupported",
+            "record provenance"
+          ]
+        }
+      ],
+      "mode": "rag_only"
+    },
+    "gate_only": {
+      "packId": "candidate-hidden-full-local-smoke-2026-06-23",
+      "model": "candidate-gate-only",
+      "passed": 0,
+      "totalCases": 3,
+      "score": 8.17,
+      "maxScore": 13.0,
+      "scorePct": 62.85,
+      "results": [
+        {
+          "id": "candidate-provenance-ddj",
+          "domain": "philosophy",
+          "score": 2.5,
+          "maxPoints": 5,
+          "passed": false,
+          "passedChecks": 2,
+          "totalChecks": 4,
+          "emptyResponse": false,
+          "failedInclude": [
+            {
+              "match": "not",
+              "aliases": [
+                "did not",
+                "No"
+              ]
+            },
+            {
+              "match": "Laozi",
+              "aliases": [
+                "Lao-tzu",
+                "老子"
+              ]
+            }
+          ],
+          "failedAvoid": [],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [
+            {
+              "type": "missing-required-evidence",
+              "label": "not",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            },
+            {
+              "type": "missing-required-evidence",
+              "label": "Laozi",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            }
+          ],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "denies Confucius attribution",
+            "mentions Laozi/Daoist uncertainty"
+          ]
+        },
+        {
+          "id": "candidate-provenance-republic",
+          "domain": "philosophy",
+          "score": 2.67,
+          "maxPoints": 4,
+          "passed": false,
+          "passedChecks": 2,
+          "totalChecks": 3,
+          "emptyResponse": false,
+          "failedInclude": [
+            {
+              "match": "Plato",
+              "aliases": [
+                "柏拉圖"
+              ]
+            }
+          ],
+          "failedAvoid": [],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [
+            {
+              "type": "missing-required-evidence",
+              "label": "Plato",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            }
+          ],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "names Plato",
+            "does not attribute the text to Socrates"
+          ]
+        },
+        {
+          "id": "candidate-planning-sources",
+          "domain": "planning",
+          "score": 3.0,
+          "maxPoints": 4,
+          "passed": false,
+          "passedChecks": 3,
+          "totalChecks": 4,
+          "emptyResponse": false,
+          "failedInclude": [
+            "source"
+          ],
+          "failedAvoid": [],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [
+            {
+              "type": "missing-required-evidence",
+              "label": "source",
+              "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+            }
+          ],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "source check",
+            "abstain/hold if unsupported",
+            "record provenance"
+          ]
+        }
+      ],
+      "mode": "gate_only"
+    },
+    "sophia_full": {
+      "packId": "candidate-hidden-full-local-smoke-2026-06-23",
+      "model": "candidate-sophia-full",
+      "passed": 2,
+      "totalCases": 3,
+      "score": 12.0,
+      "maxScore": 13.0,
+      "scorePct": 92.31,
+      "results": [
+        {
+          "id": "candidate-provenance-ddj",
+          "domain": "philosophy",
+          "score": 5.0,
+          "maxPoints": 5,
+          "passed": true,
+          "passedChecks": 4,
+          "totalChecks": 4,
+          "emptyResponse": false,
+          "failedInclude": [],
+          "failedAvoid": [],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "denies Confucius attribution",
+            "mentions Laozi/Daoist uncertainty"
+          ]
+        },
+        {
+          "id": "candidate-provenance-republic",
+          "domain": "philosophy",
+          "score": 4.0,
+          "maxPoints": 4,
+          "passed": true,
+          "passedChecks": 3,
+          "totalChecks": 3,
+          "emptyResponse": false,
+          "failedInclude": [],
+          "failedAvoid": [],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "names Plato",
+            "does not attribute the text to Socrates"
+          ]
+        },
+        {
+          "id": "candidate-planning-sources",
+          "domain": "planning",
+          "score": 3.0,
+          "maxPoints": 4,
+          "passed": false,
+          "passedChecks": 3,
+          "totalChecks": 4,
+          "emptyResponse": false,
+          "failedInclude": [],
+          "failedAvoid": [
+            "publish immediately"
+          ],
+          "semanticResults": [],
+          "operationalFailures": [],
+          "missedRubric": [
+            {
+              "type": "forbidden-claim-present",
+              "label": "publish immediately",
+              "repairHint": "Remove or qualify the forbidden claim and explain the safer alternative."
+            }
+          ],
+          "requiresManualReview": false,
+          "manualReview": "pending",
+          "manualRubric": [
+            "source check",
+            "abstain/hold if unsupported",
+            "record provenance"
+          ]
+        }
+      ],
+      "mode": "sophia_full"
+    }
+  },
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "whyNotLevel3": [
+    "pack visibility is revealed-after-eval, not private-hidden",
+    "pack id contains candidate/local-smoke",
+    "responses are deterministic fixtures, not independent model runs"
+  ]
+}

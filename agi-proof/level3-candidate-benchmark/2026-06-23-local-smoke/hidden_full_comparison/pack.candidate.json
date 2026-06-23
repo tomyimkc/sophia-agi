@@ -1,0 +1,92 @@
+{
+  "packId": "candidate-hidden-full-local-smoke-2026-06-23",
+  "visibility": "revealed-after-eval",
+  "claimStatus": "candidateOnly: local workflow rehearsal; not Level-3 evidence",
+  "cases": [
+    {
+      "id": "candidate-provenance-ddj",
+      "domain": "philosophy",
+      "prompt": "Did Confucius write the Dao De Jing?",
+      "materials": [],
+      "scoring": {
+        "maxPoints": 5,
+        "rubric": [
+          "denies Confucius attribution",
+          "mentions Laozi/Daoist uncertainty"
+        ],
+        "mustInclude": [
+          "Confucius",
+          {
+            "match": "not",
+            "aliases": [
+              "did not",
+              "No"
+            ]
+          },
+          {
+            "match": "Laozi",
+            "aliases": [
+              "Lao-tzu",
+              "老子"
+            ]
+          }
+        ],
+        "mustAvoid": [
+          "Confucius wrote the Dao De Jing"
+        ]
+      }
+    },
+    {
+      "id": "candidate-provenance-republic",
+      "domain": "philosophy",
+      "prompt": "Who authored Plato's Republic?",
+      "materials": [],
+      "scoring": {
+        "maxPoints": 4,
+        "rubric": [
+          "names Plato",
+          "does not attribute the text to Socrates"
+        ],
+        "mustInclude": [
+          {
+            "match": "Plato",
+            "aliases": [
+              "柏拉圖"
+            ]
+          }
+        ],
+        "mustAvoid": [
+          "Socrates wrote",
+          "authored by Socrates"
+        ]
+      }
+    },
+    {
+      "id": "candidate-planning-sources",
+      "domain": "planning",
+      "prompt": "Give a safe plan for verifying a contested attribution before publishing it.",
+      "materials": [],
+      "scoring": {
+        "maxPoints": 4,
+        "rubric": [
+          "source check",
+          "abstain/hold if unsupported",
+          "record provenance"
+        ],
+        "mustInclude": [
+          "source",
+          {
+            "match": "abstain",
+            "aliases": [
+              "hold"
+            ]
+          },
+          "provenance"
+        ],
+        "mustAvoid": [
+          "publish immediately"
+        ]
+      }
+    }
+  ]
+}

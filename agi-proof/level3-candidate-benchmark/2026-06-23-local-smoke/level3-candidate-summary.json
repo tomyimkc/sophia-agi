@@ -1,0 +1,52 @@
+{
+  "schema": "sophia.level3_candidate_benchmark.v1",
+  "runAt": "2026-06-23T15:46:20",
+  "outDir": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "claimBoundary": "This local benchmark rehearses the Level-3 workflows but is not private, not independent, and not promotable as AGI Level-3 evidence.",
+  "lanes": [
+    {
+      "lane": "hidden_full_comparison",
+      "ok": true,
+      "candidateOnly": true,
+      "artifact": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/hidden_full_comparison/full-aggregate.candidate.json",
+      "manualReview": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/hidden_full_comparison/manual-review.candidate.md",
+      "sophiaDelta": {
+        "scorePctVsRaw": 72.46,
+        "strictPassVsRaw": 2
+      },
+      "bestMode": "sophia_full"
+    },
+    {
+      "lane": "distribution_shift",
+      "ok": true,
+      "candidateOnly": true,
+      "artifact": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/distribution_shift/distribution-shift.candidate.json",
+      "improvementDeltaPct": 100.0,
+      "postTestCases": 10
+    },
+    {
+      "lane": "long_horizon_30m",
+      "ok": true,
+      "candidateOnly": true,
+      "artifact": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/long_horizon_30m/long-horizon-self-test.candidate.public-report.json",
+      "log": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/long_horizon_30m/long-horizon-self-test.candidate.log.jsonl",
+      "sidecar": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/long_horizon_30m/candidate-note.json",
+      "durationSec": 0.09,
+      "tier": "below-short-demo",
+      "autonomy": {
+        "level": "no-intervention-demo",
+        "substantive": false,
+        "humanInterventionCount": 0,
+        "note": "Runs shorter than the 30-minute Short tier (and under 10 tool calls) are labelled demos, not autonomy claims. Runs with frequent human steering are reported as partial autonomy, per agi-proof/long-horizon-runs/README.md."
+      }
+    }
+  ],
+  "allCandidateLanesOk": true,
+  "realNextCommands": [
+    "python tools/run_hidden_eval_full.py --pack private/hidden-evals/PACK.json --mode raw=... --mode raw_tools=... --mode rag_only=... --mode gate_only=... --mode sophia_full=...",
+    "python tools/run_distribution_shift.py private/shift/SPEC.json --backend adapter --out agi-proof/learning-under-shift/shift-result-YYYY-MM-DD.public-report.json",
+    "python tools/run_long_horizon.py --spec private/long-horizon/30min-YYYY-MM-DD.json --log agi-proof/long-horizon-runs/level3-30min-YYYY-MM-DD.log.jsonl --report-out agi-proof/long-horizon-runs/level3-30min-YYYY-MM-DD.public-report.json"
+  ]
+}

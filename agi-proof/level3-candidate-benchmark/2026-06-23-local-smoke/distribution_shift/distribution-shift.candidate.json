@@ -1,0 +1,69 @@
+{
+  "experimentId": "candidate-distribution-shift-local-smoke-2026-06-23",
+  "runAt": "2026-06-23T15:46:20",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "whyNotLevel3": [
+    "deterministic fixture, not a real model/backend run",
+    "stored outside agi-proof/learning-under-shift gate-scanned result path",
+    "domain is fictional local smoke data, not third-party hidden shift data"
+  ],
+  "backend": "deterministic-candidate-fixture",
+  "visibility": "revealed-after-eval",
+  "specPath": "agi-proof/level3-candidate-benchmark/2026-06-23-local-smoke/distribution_shift/spec.candidate.json",
+  "preTest": {
+    "passed": 0,
+    "totalCases": 10,
+    "score": 0,
+    "maxScore": 10,
+    "scorePct": 0.0
+  },
+  "postTest": {
+    "passed": 10,
+    "totalCases": 10,
+    "score": 10,
+    "maxScore": 10,
+    "scorePct": 100.0
+  },
+  "improvementDeltaPct": 100.0,
+  "oldBenchmarkStability": {
+    "passed": 1,
+    "totalCases": 1,
+    "score": 1,
+    "maxScore": 1,
+    "scorePct": 100.0
+  },
+  "oldBenchmarkDeltaPct": 0.0,
+  "stabilityEvaluable": "candidate-fixture",
+  "memoryDiff": {
+    "appended": true,
+    "appendedRecordIds": [
+      "candidate_shift_record_001",
+      "candidate_shift_record_002",
+      "candidate_shift_record_003",
+      "candidate_shift_record_004",
+      "candidate_shift_record_005",
+      "candidate_shift_record_006",
+      "candidate_shift_record_007",
+      "candidate_shift_record_008",
+      "candidate_shift_record_009",
+      "candidate_shift_record_010"
+    ],
+    "protectedKnowledgeUnchanged": true
+  },
+  "promotionGate": {
+    "candidateCount": 10,
+    "promotedCount": 10,
+    "rejectedCount": 0,
+    "rejectedRecordIds": []
+  },
+  "contaminationAudit": {
+    "clean": true,
+    "issues": [],
+    "preCaseCount": 10,
+    "postCaseCount": 10,
+    "method": "candidate fixture audit"
+  },
+  "passingSignal": true,
+  "passingSignalRule": "candidate rehearsal only; do not promote"
+}

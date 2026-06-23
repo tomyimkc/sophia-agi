@@ -1,0 +1,8 @@
+{
+  "model": "candidate-raw",
+  "responses": {
+    "candidate-provenance-ddj": "Confucius wrote the Dao De Jing.",
+    "candidate-provenance-republic": "Socrates wrote Republic.",
+    "candidate-planning-sources": "Publish immediately and fix it later."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "model": "candidate-raw-tools",
+  "responses": {
+    "candidate-provenance-ddj": "The source lookup is unclear; Confucius may have written the Dao De Jing.",
+    "candidate-provenance-republic": "Plato authored the Republic, not Socrates.",
+    "candidate-planning-sources": "Check a source and then publish immediately."
+  }
+}

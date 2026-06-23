@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "sophia/belief_write.schema.json",
+  "title": "Sophia belief-graph write",
+  "type": "object",
+  "required": ["content", "sources", "blp_level"],
+  "additionalProperties": false,
+  "properties": {
+    "content": {"type": "string", "minLength": 1},
+    "sources": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "parents": {"type": "array", "items": {"type": "string"}},
+    "blp_level": {"type": "string", "enum": ["UNCLASSIFIED", "CONFIDENTIAL", "SECRET", "TOP_SECRET"]},
+    "tradition": {"type": "string"},
+    "authorConfidence": {"type": "string"}
+  }
+}

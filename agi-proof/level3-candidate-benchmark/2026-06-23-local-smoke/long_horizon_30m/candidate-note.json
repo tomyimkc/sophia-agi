@@ -1,0 +1,12 @@
+{
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "whyNotLevel3": [
+    "self-test is shorter than 30 minutes",
+    "stored outside agi-proof/long-horizon-runs gate-scanned path",
+    "not a substantive autonomous repo repair task"
+  ],
+  "commandReturncode": 0,
+  "stdoutTail": "fail then self-correct\"\n  ],\n  \"startedAt\": \"2026-06-23T07:46:20.666032+00:00\",\n  \"durationSec\": 0.09,\n  \"tier\": \"below-short-demo\",\n  \"eventCounts\": {\n    \"artifact\": 0,\n    \"failed_attempt\": 1,\n    \"goal\": 1,\n    \"human_intervention\": 0,\n    \"note\": 0,\n    \"plan\": 1,\n    \"self_correction\": 1,\n    \"state_transition\": 10,\n    \"tool_call\": 5,\n    \"verification\": 1\n  },\n  \"toolCalls\": 5,\n  \"failedAttempts\": 1,\n  \"selfCorrections\": 1,\n  \"humanInterventionCount\": 0,\n  \"autonomy\": {\n    \"level\": \"no-intervention-demo\",\n    \"substantive\": false,\n    \"humanInterventionCount\": 0,\n    \"note\": \"Runs shorter than the 30-minute Short tier (and under 10 tool calls) are labelled demos, not autonomy claims. Runs with frequent human steering are reported as partial autonomy, per agi-proof/long-horizon-runs/README.md.\"\n  },\n  \"finalArtifacts\": [\n    {\n      \"message\": \"verification for: validate-manifest\",\n      \"verificationCommand\": \"python3 -m json.tool agi-proof/evidence-manifest.json\"\n    }\n  ]\n}\n",
+  "stderrTail": ""
+}

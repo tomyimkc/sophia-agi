@@ -24,7 +24,7 @@ from sophia_contract.service import SophiaContract
 class Gateway:
     def __init__(self, *, contract: "SophiaContract | None" = None,
                  registry: "Registry | None" = None, scopes=ROLES_9,
-                 call_budget: "int | None" = None):
+                 call_budget: "int | None" = None, hook_bus=None):
         self.contract = contract or SophiaContract()
         self.registry = registry or Registry()
         self.scopes = scopes
@@ -32,6 +32,11 @@ class Gateway:
         self._calls = 0
         self.competence = CompetenceMap()
         self._synth: dict = {}   # tool_id -> synthesized Rule (P4)
+        # Optional, non-breaking lifecycle hook bus (Stage A). When present,
+        # PRE_TOOL_USE fires before dispatch (a handler may block, fail-closed)
+        # and POST_TOOL_USE fires after verification (observe-only). The
+        # interceptor's own gates remain authoritative; hooks are additive.
+        self.hook_bus = hook_bus
 
     def register(self, entry: "ToolEntry") -> "ToolEntry":
         # P1 firewall: a tool DESCRIPTION is untrusted; quarantine on injection.
@@ -109,6 +114,30 @@ class Gateway:
             "schema_url": "docs/11-Platform/Sophia-Gateway.md",
         }
 
+    # ---- Stage A: lifecycle hook bus helpers ------------------------------------
+    def _dispatch_hook(self, event_name: str, tool_id, args, *, payload):
+        """Dispatch a lifecycle event through the optional hook bus.
+
+        Returns the ``DispatchResult`` or ``None`` when no bus is attached. Imports
+        are local so the gateway has no hard dependency on ``agent.hooks``.
+        """
+        if self.hook_bus is None:
+            return None
+        from agent.hooks import HookContext, HookEvent
+        ctx = HookContext(event=HookEvent[event_name], tool_id=tool_id,
+                          args=dict(args or {}), payload=payload or {})
+        return self.hook_bus.dispatch(ctx)
+
+    def precompact_snapshot(self, payload: "dict | None" = None) -> "object | None":
+        """Fire PRE_COMPACT so handlers persist a durable audit snapshot before
+        context compaction. Returns the dispatch result (or None if no bus)."""
+        return self._dispatch_hook("PRE_COMPACT", None, {}, payload=payload or {})
+
+    def session_start(self, payload: "dict | None" = None) -> "object | None":
+        return self._dispatch_hook("SESSION_START", None, {}, payload=payload or {})
+
+    def session_end(self, payload: "dict | None" = None) -> "object | None":
+        return self._dispatch_hook("SESSION_END", None, {}, payload=payload or {})
     def call_tool(self, tool_id: str, args: "dict | None" = None, *, role: "str | None" = None,
                   clearance: str = "UNCLASSIFIED", dry_run: bool = False,
                   idempotency_key: "str | None" = None) -> dict:
@@ -154,6 +183,19 @@ class Gateway:
             return {"tool_id": tool_id, "verdict": "held", "held_reason": "needs_human",
                     "dry_run": True, "result": None,
                     "suggested_fix": "approve to execute a side-effecting tool"}
+        # Stage A — PRE_TOOL_USE lifecycle hook (fail-closed). Additive: the
+        # interceptor gates above already passed; a registered guard may still
+        # block (e.g. an extra provenance/clearance policy) before any side effect.
+        if self.hook_bus is not None:
+            pre = self._dispatch_hook("PRE_TOOL_USE", tool_id, args,
+                                      payload={"role": role, "clearance": clearance,
+                                               "side_effects": tool.side_effects,
+                                               "blp_level": tool.blp_level})
+            if pre is not None and pre.blocked:
+                self.competence.update(tool_id, False)
+                return {"tool_id": tool_id, "verdict": "held", "held_reason": "needs_human",
+                        "reasons": [pre.reason], "blocked_by": pre.blocked_by, "result": None,
+                        "suggested_fix": "satisfy the blocking PreToolUse hook policy"}
         try:
             output = tool.handler(args)
         except Exception as exc:  # transport / tool failure
@@ -185,6 +227,12 @@ class Gateway:
             output={"verdict": verdict.get("verdict"), "held_reason": verdict.get("held_reason")},
             level=("DEFAULT" if accepted else "WARNING"), metadata={"provenance_id": claim_id})
         self.competence.update(tool_id, accepted)
+
+        # Stage A — POST_TOOL_USE lifecycle hook (observe-only; never blocks).
+        if self.hook_bus is not None:
+            self._dispatch_hook("POST_TOOL_USE", tool_id, args,
+                                payload={"verdict": verdict.get("verdict"),
+                                         "provenance_id": claim_id, "accepted": accepted})
 
         resp = {
             "tool_id": tool_id, "verdict": verdict.get("verdict"),

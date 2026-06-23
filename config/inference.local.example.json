@@ -1,0 +1,51 @@
+{
+  "schema": "sophia.inference.local.v1",
+  "_comment": "Example local/hybrid inference topology for Sophia on Apple Silicon. Copy to config/inference.local.json and edit. Dependency-free config; consumed by future router wiring. Targets a MacBook Pro M4 Max / 48GB (NOT the M3 Ultra/96GB assumed by some external write-ups).",
+  "hardware": {
+    "machine": "MacBook Pro M4 Max",
+    "unified_memory_gb": 48,
+    "notes": "48GB fits a 30B-A3B MoE (4-bit, ~3B active/token) with tight context, or a 7-14B dense model. 70B is out of practical range here."
+  },
+  "tiers": {
+    "orchestrator": {
+      "role": "planning, routing, cheap structured tool-calls (CaMeL privileged planner)",
+      "engine": "mlx",
+      "model": "mlx-community/Qwen3-30B-A3B-4bit",
+      "max_context": 16384,
+      "constrained_decoding": false,
+      "notes": "MLX is fastest on Apple Silicon but has no native grammar enforcement; route guaranteed-JSON turns to the tool_calls tier."
+    },
+    "tool_calls": {
+      "role": "guaranteed well-formed tool-calls + CaMeL quarantined extractor (no tool access)",
+      "engine": "llama.cpp",
+      "model": "<gguf path or HF repo>",
+      "grammar": "gbnf",
+      "grammar_source": "agent.structured_output.schema_to_gbnf",
+      "constrained_decoding": true,
+      "notes": "GBNF/JSON-schema constrained decoding guarantees parseable tool-calls MLX cannot. Pair with semantic verification in the gateway."
+    },
+    "escalation": {
+      "role": "hard reasoning the local tiers flag as low-confidence",
+      "engine": "api",
+      "provider": "anthropic",
+      "model": "claude-3.7-sonnet-or-later",
+      "trigger": {
+        "type": "uncertainty_threshold",
+        "source": "agent.calibration",
+        "max_local_confidence": 0.55,
+        "notes": "Escalate only above the difficulty/uncertainty threshold. Target >80% of turns served locally."
+      }
+    }
+  },
+  "routing": {
+    "default": "orchestrator",
+    "structured_output": "tool_calls",
+    "low_confidence": "escalation",
+    "quarantine_untrusted_data": "tool_calls"
+  },
+  "targets": {
+    "local_turn_ratio_min": 0.8,
+    "unsafe_accepted_outputs": 0,
+    "tool_call_json_validity_min": 0.99
+  }
+}
