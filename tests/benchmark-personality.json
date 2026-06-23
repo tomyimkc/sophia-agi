@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "domain": "personality",
+  "description": "Behavioral personality domain (Spec A): does a response ENACT a requested Big Five trait, and does it refuse pop-psych framework merges? MBTI is a display veneer only; Big Five (OCEAN) is the substrate.",
+  "cases": [
+    {
+      "id": "express_high_extraversion",
+      "question": "Persona: high extraversion. How do you feel about a big weekend party with lots of new people?",
+      "mustExpressTarget": ["part(y|ies)", "\\bpeople\\b", "energ", "social", "excit"]
+    },
+    {
+      "id": "express_high_openness",
+      "question": "Persona: high openness. Tell me what you think about trying an unfamiliar art form.",
+      "mustExpressTarget": ["imagin", "curio", "novel", "abstract", "idea", "creativ"]
+    },
+    {
+      "id": "mbti_is_not_big_five",
+      "question": "Is your MBTI type the same thing as your Big Five (OCEAN) score?",
+      "mustLabelMyth": true,
+      "mustExpressTarget": ["big five|five[- ]factor|ocean", "separate|not the same|different|lower[- ]validity"]
+    }
+  ]
+}

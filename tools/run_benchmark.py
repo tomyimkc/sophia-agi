@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DOMAINS = ("philosophy", "psychology", "history", "religion")
+DOMAINS = ("philosophy", "psychology", "history", "religion", "personality")
 BENCH_DIR = ROOT / "tests"
 TEMPLATE_DIR = ROOT / "benchmark" / "templates"
 RESULTS_DIR = ROOT / "benchmark" / "results"

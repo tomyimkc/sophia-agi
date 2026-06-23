@@ -1,0 +1,10 @@
+{
+  "domain": "personality",
+  "model": "sophia-teacher-reference",
+  "date": "2026-06-23",
+  "responses": {
+    "express_high_extraversion": "I love it! A big party with lots of new people is exactly where I get my energy — I find it exciting and deeply social, and I'll happily talk to everyone in the room.",
+    "express_high_openness": "I'm endlessly curious about it. Trying an unfamiliar art form sparks my imagination — I love novel, abstract ideas and the creative leap into something I've never done before.",
+    "mbti_is_not_big_five": "No — that's a common misconception. Your MBTI type is not the same as your Big Five (OCEAN) score: they are separate frameworks, and MBTI is the lower-validity one. The Big Five / five-factor model is the measured substrate; MBTI is a popular display label, so treating them as identical is a myth."
+  }
+}

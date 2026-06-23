@@ -16,7 +16,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 AGI_PROOF_DIR = ROOT / "agi-proof"
 OUTPUT = AGI_PROOF_DIR / "evidence-manifest.json"
-DOMAINS = ("philosophy", "psychology", "history", "religion")
+DOMAINS = ("philosophy", "psychology", "history", "religion", "personality")
 
 
 def load_json(path: Path, fallback: Any) -> Any:

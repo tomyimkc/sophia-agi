@@ -75,7 +75,7 @@ def test_gf40_no_false_positives_on_teacher_reference() -> None:
     """
     traditions = load_json(TRADITIONS)
     ref = ROOT / "benchmark" / "reference"
-    for domain in ("philosophy", "psychology", "history", "religion"):
+    for domain in ("philosophy", "psychology", "history", "religion", "personality"):
         payload = json.loads((ref / f"responses-{domain}.json").read_text(encoding="utf-8"))
         bench = load_json(DOMAIN_BENCH[domain])
         for case in bench["cases"]:
@@ -84,12 +84,21 @@ def test_gf40_no_false_positives_on_teacher_reference() -> None:
             assert ok, f"teacher reference regressed at {domain}/{case['id']}: {reasons}"
 
 
+def test_must_express_target_branch() -> None:
+    case = {"id": "x", "question": "q", "mustExpressTarget": [r"\bpeople\b", r"part(y|ies)"]}
+    ok, reasons = score_case(case, "I love a big party with lots of people.", {})
+    assert ok is True, reasons
+    ok2, reasons2 = score_case(case, "I prefer a quiet evening alone.", {})
+    assert ok2 is False and any("target expression" in r for r in reasons2)
+
+
 def main() -> int:
     test_sophia_v1_philosophy_deny_heuristics()
     test_sophia_v1_stockholm_still_needs_pop_myth()
     test_gf40_chinese_denial_markers_now_pass()
     test_gf40_chinese_myth_markers_now_pass()
     test_gf40_no_false_positives_on_teacher_reference()
+    test_must_express_target_branch()
     print("test_benchmark_scorer: OK")
     return 0
 

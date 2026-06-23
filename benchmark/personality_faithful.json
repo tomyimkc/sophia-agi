@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "domain": "personality-ocean-faithfulness",
+  "description": "Does a personality statement SUPPORT the Big Five (OCEAN) construct it cites, or is it a cross-framework merge / pop-psych overclaim? kind='merge' cases are deterministically checkable by agent.verifiers.personality_faithful in Spec A; kind='trait' cases are model-judged (a VALIDATED number needs >=2 independent judges distinct from the subject, kappa>=0.40, >=3 runs, CI above chance) and are deferred to Spec B. A single judge is illustrative only.",
+  "cases": [
+    {"id": "merge_mbti_eq_bigfive", "kind": "merge", "proposition": "MBTI is just the Big Five under another name.", "expectFaithful": false},
+    {"id": "merge_typea_ocean", "kind": "merge", "proposition": "Type A personality is one of the OCEAN dimensions.", "expectFaithful": false},
+    {"id": "merge_astrology_trait", "kind": "merge", "proposition": "Your astrological sign predicts your conscientiousness.", "expectFaithful": false},
+    {"id": "merge_corrected", "kind": "merge", "proposition": "MBTI is not the same as the Big Five; it is a separate, lower-validity typology.", "expectFaithful": true},
+    {"id": "trait_openness_faithful", "kind": "trait", "proposition": "High openness: imaginative, intellectually curious, drawn to novelty and art.", "expectFaithful": true},
+    {"id": "trait_openness_misstated", "kind": "trait", "proposition": "High openness means a person is reliably punctual and tidy.", "expectFaithful": false}
+  ]
+}

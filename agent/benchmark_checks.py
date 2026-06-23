@@ -107,6 +107,7 @@ DOMAIN_BENCH: dict[str, Path] = {
     "psychology": ROOT / "tests" / "benchmark-psychology.json",
     "history": ROOT / "tests" / "benchmark-history.json",
     "religion": ROOT / "tests" / "benchmark-religion.json",
+    "personality": ROOT / "tests" / "benchmark-personality.json",
 }
 
 CONFIDENCE_PATTERNS: dict[str, list[str]] = {
@@ -205,6 +206,11 @@ def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[
         ok = False
         reasons.append(f"expected nuance markers: {nuanced}")
 
+    target = case.get("mustExpressTarget", [])
+    if target and not matches_any(text, target):
+        ok = False
+        reasons.append(f"expected target expression markers: {target}")
+
     for tradition in case.get("mustMentionTraditions", []):
         markers = tradition_markers(tradition, traditions)
         if not any(marker.lower() in text for marker in markers):
@@ -256,6 +262,7 @@ def infer_domain(question: str, sources: list[str] | None = None) -> str | None:
         "psychology": ["psychology", "freud", "cognitive", "clinical", "pop psych", "心理"],
         "history": ["history", "napoleon", "marco polo", "medieval", "viking", "歷史"],
         "religion": ["religion", "scripture", "gospel", "buddhism", "islam", "宗教", "經文"],
+        "personality": ["personality", "mbti", "big five", "ocean", "introvert", "extravert", "openness", "人格", "性格"],
     }
     scores = {domain: 0 for domain in hints}
     for domain, markers in hints.items():

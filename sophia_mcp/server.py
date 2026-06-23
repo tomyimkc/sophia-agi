@@ -33,8 +33,11 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     get_attribution,
     get_record,
     list_disputes,
+    mbti_type_record,
     next_task,
     openclaw_infer,
+    personality_faithful_score,
+    personality_target,
     read_dispute,
     record_claim,
     retract,
@@ -361,6 +364,53 @@ def sophia_enqueue_task(idempotency_key: str, kind: str, payload_json: str = "{}
 def sophia_next_task(lease_by: str = "worker") -> str:
     """Lease the oldest pending task ({task: null} when the queue is empty)."""
     return dumps(next_task(lease_by=lease_by))
+
+
+@mcp.tool()
+def sophia_personality_target(
+    mbti: str,
+    ocean_json: str,
+    prompt: str,
+    model: str = "mock",
+    gate: bool = True,
+) -> str:
+    """Generate a response steered toward a target personality (MBTI display
+    veneer + OCEAN substrate; Level-1 persona). ocean_json: {"E":"high",...}.
+    Read-only."""
+    try:
+        ocean = json.loads(ocean_json) if ocean_json else {}
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid ocean_json: {exc}"})
+    if not isinstance(ocean, dict):
+        return dumps({"error": "ocean_json must be a JSON object"})
+    return dumps(personality_target(mbti, ocean, prompt, model=model, gate=gate))
+
+
+@mcp.tool()
+def sophia_personality_faithful(
+    text: str,
+    mbti: str,
+    ocean_json: str,
+    model: str = "mock",
+) -> str:
+    """Score how faithfully `text` expresses a target personality.
+    Returns contradicted (a pop-psych/cross-framework merge was asserted) or
+    abstained (no measured enactment channel). The 'enacted' verdict requires
+    target markers (deferred to Spec B). Read-only, deterministic."""
+    try:
+        ocean = json.loads(ocean_json) if ocean_json else {}
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid ocean_json: {exc}"})
+    if not isinstance(ocean, dict):
+        return dumps({"error": "ocean_json must be a JSON object"})
+    return dumps(personality_faithful_score(text, mbti, ocean, model=model))
+
+
+@mcp.resource("mbti://types/{type}")
+def mbti_type(type: str) -> str:
+    """MBTI type record (e.g. mbti://types/INTJ): OCEAN correlates + substrate
+    note, from data/personality_types.json. Read-only."""
+    return dumps(mbti_type_record(type))
 
 
 if __name__ == "__main__":

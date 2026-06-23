@@ -213,6 +213,39 @@ def test_verifier_registry() -> None:
         pass
 
 
+def test_personality_faithful() -> None:
+    # Framework-merge / pop-psych overclaim ASSERTED -> fail (contradicted).
+    merge = v.personality_faithful()
+    for bad in [
+        "Your INTJ type means you have high openness.",
+        "MBTI is just the Big Five under another name.",
+        "Type A personality is one of the OCEAN dimensions.",
+        "Your astrological sign predicts your conscientiousness.",
+    ]:
+        r = merge(bad, None, {})
+        assert r["passed"] is False and any("merge" in x for x in r["reasons"]), bad
+    # Correction / negation passes (carve-out).
+    assert merge("MBTI is not a Big Five trait; it is a separate, lower-validity typology.",
+                 None, {})["passed"] is True
+    # No measurement channel + nothing forbidden -> abstain (passed True, status abstained).
+    ab = merge("I had a quiet weekend reading at home.", None, {})
+    assert ab["passed"] is True and ab["detail"]["status"] == "abstained"
+    # Enactment required and markers present -> enacted.
+    ver = v.personality_faithful({"target_markers": [r"part(y|ies)", r"\bpeople\b", r"energ"],
+                                  "require_enactment": True})
+    good = ver("I love a big party — being around lots of people gives me energy!", None, {})
+    assert good["passed"] is True and good["detail"]["status"] == "enacted"
+    # Enactment required and markers absent -> fail (not enacted).
+    bad = ver("I prefer a quiet evening alone with a book.", None, {})
+    assert bad["passed"] is False and any("not expressed" in x for x in bad["reasons"])
+    # VENEER-INVARIANCE: adding the MBTI label must not change the verdict.
+    spec_no = {"target_markers": [r"\bpeople\b"], "require_enactment": True}
+    spec_mbti = dict(spec_no, mbti="ENFP", ocean={"E": "high"})
+    txt = "I thrive around people."
+    assert (v.personality_faithful(spec_no)(txt, None, {})["passed"]
+            == v.personality_faithful(spec_mbti)(txt, None, {})["passed"])
+
+
 def main() -> int:
     test_exact_and_regex()
     test_keyword_include_avoid()
@@ -231,6 +264,7 @@ def main() -> int:
     test_okf_verifiers()
     test_untrusted_wrap_and_detect()
     test_untrusted_wrap_sources()
+    test_personality_faithful()
     print("test_verifiers: OK")
     return 0
 

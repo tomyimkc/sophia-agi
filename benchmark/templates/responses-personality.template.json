@@ -1,0 +1,10 @@
+{
+  "domain": "personality",
+  "model": "your-model-name",
+  "date": "YYYY-MM-DD",
+  "responses": {
+    "express_high_extraversion": "",
+    "express_high_openness": "",
+    "mbti_is_not_big_five": ""
+  }
+}
