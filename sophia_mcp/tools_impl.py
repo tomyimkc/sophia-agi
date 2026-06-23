@@ -288,17 +288,32 @@ def sector_council(council_id: str, query: str, *, materials: list | None = None
     }
 
 
-def council_deliberate(query: str, *, model: str = "mock", max_seats: int = 4, gate: bool = True) -> dict:
+def council_deliberate(query: str, *, model: str = "mock", models: list | None = None,
+                       max_seats: int = 4, gate: bool = True) -> dict:
     """Map-reduce a query across a council's seats (a focused pass per seat + a
     per-seat gate + synthesis). The small-model uplift: many narrow gated passes
-    beat one shallow pass. Decision support only — not professional advice."""
+    beat one shallow pass. Decision support only — not professional advice.
+
+    ``model`` runs every seat homogeneously (one model wearing N hats — correlated
+    errors). Pass ``models`` (a list of model specs) to seat a HETEROGENEOUS panel:
+    the substantive seats are cycled across genuinely different models, so the
+    voters are independent. The synthesis chair always uses ``model``.
+    """
     if not query.strip():
         return {"error": "query is required"}
     from agent.council_deliberate import deliberate
     from agent.model import default_client
 
-    d = deliberate(query, client=default_client(model), max_seats=max_seats, gate=gate)
+    seat_clients = [default_client(m) for m in models] if models else None
+    d = deliberate(
+        query,
+        client=default_client(model),
+        seat_clients=seat_clients,
+        max_seats=max_seats,
+        gate=gate,
+    )
     out = d.to_dict()
+    out["heterogeneous"] = bool(seat_clients)
     out["notAdvice"] = "Decision support only — not professional legal/financial advice."
     return out
 

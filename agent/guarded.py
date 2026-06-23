@@ -35,7 +35,9 @@ from agent.retrieval import format_context, retrieve
 from agent.verifiers import provenance_faithful
 
 # Generation strategies when the gate fails. "repair" is the default spine.
-ON_FAIL_MODES = ("repair", "abstain", "hedge", "passthrough")
+# "graded" routes hedge-vs-abstain on a calibrated confidence curve (see
+# agent/graded_decision.py) using bounded self-consistency sampling.
+ON_FAIL_MODES = ("repair", "abstain", "hedge", "passthrough", "graded")
 
 DEFAULT_SYSTEM = (
     "You answer strictly from the provided sources and practice source discipline: "
@@ -166,6 +168,8 @@ def guarded_complete(
     sources: "list | None" = None,
     secrets: "list | None" = None,
     top_k: int = 8,
+    samples: int = 3,
+    thresholds: "dict | None" = None,
     retrieve_fn: Callable[..., list] = retrieve,
     format_context_fn: Callable[[list], str] = format_context,
 ) -> GuardedResult:
@@ -181,6 +185,13 @@ def guarded_complete(
     ``on_fail`` defaults to ``$SOPHIA_ON_FAIL`` then ``"repair"``. ``generate`` is
     a ``(system, user) -> ModelResult`` callable; when omitted, the default model
     client is used.
+
+    ``on_fail="graded"`` routes the failure on a calibrated confidence curve
+    (:func:`agent.graded_decision.decide`): it draws up to ``samples`` generations,
+    measures self-consistency, and **hedges** a high-confidence near-miss but
+    **abstains** otherwise (``thresholds`` overrides the ``hi``/``lo`` cut points).
+    With fewer than two generations self-consistency is undefined, so it abstains
+    (fail-closed). The default ``repair`` path is unchanged.
     """
     mode = (on_fail or os.environ.get("SOPHIA_ON_FAIL") or "repair").strip().lower()
     if mode not in ON_FAIL_MODES:
@@ -253,6 +264,39 @@ def guarded_complete(
 
     violations = verdict["violations"]
     reasons = verdict["reasons"]
+
+    # --- gate failed: graded route (calibrated hedge-vs-abstain) ----------- #
+    if mode == "graded":
+        from agent.graded_decision import answer_confidence, decide
+
+        sample_texts = [text]
+        for _ in range(max(0, samples - 1)):
+            extra = generate(system, user)
+            attempts += 1
+            if getattr(extra, "ok", True):
+                sample_texts.append(getattr(extra, "text", "") or "")
+        # Self-consistency needs >=2 generations to mean anything; with fewer,
+        # fall back to neutral confidence so the curve abstains (fail-closed).
+        confidence = (
+            answer_confidence(self_consistency_samples=sample_texts)
+            if len(sample_texts) >= 2 else answer_confidence()
+        )
+        graded = decide(gate_passed=False, confidence=confidence, violations=violations,
+                        thresholds=thresholds)
+        note = f"graded confidence={confidence:.3f} -> {graded['action']} ({graded['reason']})"
+        if graded["action"] == "hedge":
+            return GuardedResult(
+                text=_hedged(text, violations), ok=True, passed=False, action="hedged",
+                attempts=attempts, violations=violations, reasons=reasons + [note],
+                context_used=context_used,
+            )
+        abstention = _cited_abstention(query, context, violations) if is_provenance else pol.abstention
+        av = _judge(abstention)
+        action = "abstained" if av["passed"] else "abstained_unverified"
+        return GuardedResult(
+            text=abstention, ok=True, passed=av["passed"], action=action, attempts=attempts,
+            violations=violations, reasons=reasons + [note], context_used=context_used,
+        )
 
     # --- gate failed: branch on mode -------------------------------------- #
     if mode == "passthrough":

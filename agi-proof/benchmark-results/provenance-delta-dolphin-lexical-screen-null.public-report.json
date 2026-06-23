@@ -1,5 +1,7 @@
 {
   "benchmark": "provenance-delta",
+  "status": "ILLUSTRATIVE — NULL RESULT (do not cite as validated)",
+  "caveat": "Δ=0.0217 with 95% CI [-0.0217, 0.0652] STRADDLES ZERO, and this run used the default LEXICAL judge (a screen, not an independent LLM-judge), so it does NOT clear the no-overclaim gate. The validated headline lives in agi-proof/benchmark-results/published-results.json (dolphin Δ12.5% [5.6%, 19.4%], 2 judge families, 3 runs). Renamed from the misleading *-validated* filename 2026-06-23.",
   "runAt": "2026-06-21T13:59:12+00:00",
   "visibility": "public-aggregate",
   "nonCircularityContract": "Labels are external (Wikipedia/Wikidata + cited misattributions); the gate is the runtime treatment only; the judge shares no code with the gate. The default lexical judge is a screen — use an independent LLM-judge for headline claims.",

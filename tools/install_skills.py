@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Install Sophia skills to user-level Grok and optional Cursor directories.
+"""Install Sophia skills to user-level Grok, Cursor, and Claude Code directories.
 
 Usage:
   python tools/install_skills.py --portable
   python tools/install_skills.py --all
-  python tools/install_skills.py --all --cursor
+  python tools/install_skills.py --all --cursor --claude
 """
 
 from __future__ import annotations
@@ -33,6 +33,7 @@ def main() -> int:
     parser.add_argument("--project", action="store_true", help="Copy project skill to ~/.grok/skills/sophia-agi")
     parser.add_argument("--all", action="store_true", help="Install portable + project skills")
     parser.add_argument("--cursor", action="store_true", help="Also copy portable skill to ~/.cursor/skills/")
+    parser.add_argument("--claude", action="store_true", help="Also copy portable skill to ~/.claude/skills/")
     args = parser.parse_args()
 
     if not any((args.portable, args.project, args.all)):
@@ -41,6 +42,7 @@ def main() -> int:
     home = Path.home()
     grok_skills = home / ".grok" / "skills"
     cursor_skills = home / ".cursor" / "skills"
+    claude_skills = home / ".claude" / "skills"
     grok_skills.mkdir(parents=True, exist_ok=True)
 
     if args.all or args.portable:
@@ -48,6 +50,9 @@ def main() -> int:
         if args.cursor:
             cursor_skills.mkdir(parents=True, exist_ok=True)
             copy_skill(PORTABLE_SRC, cursor_skills / "sophia-source-discipline")
+        if args.claude:
+            claude_skills.mkdir(parents=True, exist_ok=True)
+            copy_skill(PORTABLE_SRC, claude_skills / "sophia-source-discipline")
 
     if args.all or args.project:
         if PROJECT_SKILL.exists():

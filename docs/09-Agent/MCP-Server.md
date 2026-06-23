@@ -48,6 +48,37 @@ Edit `sophia-agi/.cursor/mcp.json`:
 
 See `.cursor/mcp.json.example`. Reload MCP after edits.
 
+## Claude Code wiring
+
+A repo-root `.mcp.json` is committed, so opening the repo in Claude Code loads the
+server natively:
+
+```bash
+claude mcp add sophia python sophia_mcp/server.py   # or rely on the committed .mcp.json
+python tools/install_skills.py --all --claude        # also installs the portable skill to ~/.claude/skills
+```
+
+The project skill is mirrored at `.claude/skills/sophia-agi/`.
+
+## Gateway governance (opt-in)
+
+By default the server's tools run directly. Set `SOPHIA_MCP_GATEWAY=1` to route the
+four side-effecting / external tools (`sophia_wiki_upsert`, `sophia_export_corpus`,
+`sophia_web_evidence_search`, `sophia_openclaw_infer`) through the fail-closed
+gateway, which enforces, **before any dispatch**: per-tool authz → injection
+firewall on args → kill-switch → Bell-LaPadula no-read-up, then taint-labels
+external output as `untrusted`. Identity comes from the environment, never tool args.
+
+| Env var | Effect |
+|---------|--------|
+| `SOPHIA_MCP_GATEWAY=1` | Enable gateway routing for side-effecting tools |
+| `SOPHIA_MCP_ROLE` | Caller role (one of the 9 pipelines); default anonymous |
+| `SOPHIA_MCP_CLEARANCE` | Caller BLP clearance (default `UNCLASSIFIED`) |
+| `SOPHIA_MCP_KILL_SWITCH=1` | Operator kill switch — every gated call returns `UNAVAILABLE` |
+| `SOPHIA_MCP_KILL_SWITCH_FILE` | Path to a sentinel file; its presence engages the kill switch |
+
+Red-team coverage: `tests/test_server_gateway_live.py`.
+
 ## Colab MCP (browser training)
 
 For GPU training on Google Colab from the agent, add `colab-mcp` to the same `mcp.json` and keep a Colab tab open. Full setup: [Colab-MCP.md](Colab-MCP.md).
