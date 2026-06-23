@@ -19,7 +19,8 @@ train-out.txt
 agent/memory/*.jsonl
 agent/memory/agent_runs/
 agent/memory/legal_cache.json
-agent/memory/contract/         # live governance-contract stores (claims/decisions/tasks/traces)
+# live governance-contract stores (claims/decisions/tasks/traces)
+agent/memory/contract/
 private/
 # (the whole private/ tree is ignored: hidden eval packs, shift specs, and
 # long-horizon specs referenced by docs/06-Roadmap/AGI-Level3-Execution-Protocol.md
