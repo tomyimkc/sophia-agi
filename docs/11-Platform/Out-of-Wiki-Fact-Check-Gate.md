@@ -96,7 +96,7 @@ What it verifies: factual empirical claims outside the wiki via independent sour
 Retrieval backends: optional/pluggable.
 
 - Offline fixture retriever for CI (`eval/fact_check/fixtures_v1.json`).
-- Implemented keyless adapters: Wikidata authorship retrieval, Crossref DOI resolver, URL resolver (`agent/live_sources.py`).
+- Implemented keyless adapters: Wikidata authorship retrieval, Crossref DOI resolver/search, URL resolver, World Bank macro data, FRED CSV macro data, BLS macro data, and OpenAlex scholarly search (`agent/live_sources.py`).
 - Future live adapters: web search, Wikipedia, Semantic Scholar/OpenAlex, FRED/World Bank/IMF/OECD for economics.
 - OpenRouter can be used only as a model/NLI transport, not as source of truth.
 

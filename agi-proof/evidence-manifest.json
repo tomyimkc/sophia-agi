@@ -1,6 +1,6 @@
 {
   "version": "0.7.42",
-  "generated": "2026-06-23T18:14:08",
+  "generated": "2026-06-23T21:30:08",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "operationalDefinition": {
     "summary": "For this repo, AGI evidence means broad task competence, transfer, tool use, long-horizon autonomy, learning under distribution shift, baseline superiority, and independent reproduction.",
@@ -28,14 +28,15 @@
     ]
   },
   "currentEvidence": {
-    "trainingExamples": 527,
+    "trainingExamples": 528,
     "domains": [
       "philosophy",
       "psychology",
       "history",
-      "religion"
+      "religion",
+      "personality"
     ],
-    "benchmarkCases": 32,
+    "benchmarkCases": 35,
     "leaderboards": {
       "philosophy": {
         "cases": 9,
@@ -259,6 +260,29 @@
           "score_pct": 100.0,
           "passed": 6,
           "total": 6
+        }
+      },
+      "personality": {
+        "cases": 3,
+        "entries": [
+          {
+            "model": "sophia-teacher-reference",
+            "score_pct": 100.0,
+            "passed": 3,
+            "total": 3
+          },
+          {
+            "model": "ibm-granite-granite-3.1-2b-instruct-steer",
+            "score_pct": 0.0,
+            "passed": 0,
+            "total": 2
+          }
+        ],
+        "best": {
+          "model": "sophia-teacher-reference",
+          "score_pct": 100.0,
+          "passed": 3,
+          "total": 3
         }
       }
     },

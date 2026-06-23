@@ -2,7 +2,7 @@
 """Run the measured out-of-wiki fact-check evaluation.
 
 Default mode is deterministic/offline: it uses committed held-out claims plus
-committed source fixtures. ``--live`` switches DOI/URL/Wikidata adapters to
+committed source fixtures. ``--live`` switches DOI/URL/Wikidata/macro/scholarly adapters to
 keyless network backends; live results are still NOT Level-3 AGI evidence unless
 run under the hidden-reviewer protocol.
 """
@@ -30,7 +30,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--pack", default=str(DEFAULT_PACK), help="held-out JSONL pack")
     ap.add_argument("--fixtures", default=str(DEFAULT_FIXTURES), help="offline fixture JSON")
     ap.add_argument("--out", default=str(DEFAULT_OUT), help="report output path")
-    ap.add_argument("--live", action="store_true", help="use keyless live Wikidata/Crossref/URL backend")
+    ap.add_argument("--live", action="store_true", help="use keyless live Wikidata/Crossref/URL/macro/scholarly backend")
     ap.add_argument("--target-fabrication-rate", type=float, default=0.01)
     args = ap.parse_args(argv)
 

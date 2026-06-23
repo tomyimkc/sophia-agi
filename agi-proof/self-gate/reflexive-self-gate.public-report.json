@@ -775,6 +775,20 @@
       "reason": "explicit candidate/no-overclaim wording"
     },
     {
+      "path": "agi-proof/benchmark-results/pif.public-report.json",
+      "line": 30,
+      "text": "\"liveClaimStatus\": \"Open — see agi-proof/failure-ledger.md pif-headline-run-not-yet-gated-2026-06-23\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/provenance-delta-dolphin-lexical-screen-null.public-report.json",
+      "line": 4,
+      "text": "\"caveat\": \"Δ=0.0217 with 95% CI [-0.0217, 0.0652] STRADDLES ZERO, and this run used the default LEXICAL judge (a screen, not an independent LLM-judge), so it does NOT clear the no-overclaim gate. The validated headline lives in agi-proof/benchmark-results/published-results.json (dolphin Δ12.5% [5.6%, 19.4%], 2 judge families, 3 runs). Renamed from the misleading *-validated* filename 2026-06-23.\",",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
       "path": "agi-proof/benchmark-results/published-results.json",
       "line": 168,
       "text": "\"artifact\": \"agi-proof/baseline-ablation/calibration-3family-judge-2026-06-22.json\"",
@@ -813,6 +827,13 @@
       "path": "agi-proof/benchmark-results/runpod-rlvr/xcu45skyjv32rv.rlvr.offline-report.json",
       "line": 59,
       "text": "\"liveClaimStatus\": \"Open — see agi-proof/failure-ledger.md rlvr-live-run-not-yet-gated-2026-06-21\"",
+      "verdict": "accepted",
+      "reason": "explicit candidate/no-overclaim wording"
+    },
+    {
+      "path": "agi-proof/benchmark-results/steering.public-report.json",
+      "line": 30,
+      "text": "\"liveClaimStatus\": \"Open — see agi-proof/failure-ledger.md steering-live-run-not-yet-gated-2026-06-23\"",
       "verdict": "accepted",
       "reason": "explicit candidate/no-overclaim wording"
     },
@@ -1064,7 +1085,7 @@
     {
       "path": "agi-proof/evidence-manifest.json",
       "line": 1607,
-      "text": "\"localAgentDeltaValidatedReport\": \"agi-proof/benchmark-results/provenance-delta-dolphin-validated.public-report.json\",",
+      "text": "\"localAgentDeltaScreenNullReport\": \"agi-proof/benchmark-results/provenance-delta-dolphin-lexical-screen-null.public-report.json\",",
       "verdict": "accepted",
       "reason": "AGI mention without status overclaim"
     },
@@ -2008,29 +2029,29 @@
     },
     {
       "path": "docs/11-Platform/Fact-Check-Reality-Gap.md",
-      "line": 70,
+      "line": 72,
       "text": "Boundary: this is a **candidate/offline fixture run** (`candidateOnly=true`, `level3Evidence=false`). It proves wiring, metrics, and fail-closed behavior; it does not prove open-world AGI.",
       "verdict": "accepted",
       "reason": "explicit candidate/no-overclaim wording"
     },
     {
       "path": "docs/11-Platform/Fact-Check-Reality-Gap.md",
-      "line": 78,
+      "line": 80,
       "text": "- High-risk economics / AGI-incentive claims require at least 3 independent entailing source families and confidence above the high-risk floor.",
       "verdict": "accepted",
       "reason": "explicit candidate/no-overclaim wording"
     },
     {
       "path": "docs/11-Platform/Fact-Check-Reality-Gap.md",
-      "line": 90,
+      "line": 92,
       "text": "`tools/run_reflexive_self_gate.py` scans Sophia's own README/results/AGI-proof docs for status overclaims. It accepts candidate/no-overclaim wording and rejects unqualified \"Sophia is proven AGI\"-style claims. Current report keeps `canClaimAGI=false`.",
       "verdict": "accepted",
       "reason": "explicit candidate/no-overclaim wording"
     },
     {
       "path": "docs/11-Platform/Fact-Check-Reality-Gap.md",
-      "line": 92,
-      "text": "中文摘要：Reality Gap v1 已把 out-of-wiki claim 連到 deterministic verifier、keyless Wikidata/Crossref/URL backend、N=43 held-out eval、ECE/Brier/derived floor、quarantine flywheel、以及 Sophia 自我 no-overclaim gate。現階段是 candidate/offline wiring，不是 Level-3 AGI 證據。",
+      "line": 94,
+      "text": "中文摘要：Reality Gap v1 已把 out-of-wiki claim 連到 deterministic verifier、keyless Wikidata/Crossref/URL backend、N=53 held-out eval、ECE/Brier/derived floor、quarantine flywheel、以及 Sophia 自我 no-overclaim gate。現階段是 candidate/offline wiring，不是 Level-3 AGI 證據。",
       "verdict": "accepted",
       "reason": "explicit candidate/no-overclaim wording"
     },
@@ -2232,7 +2253,7 @@
     }
   ],
   "summary": {
-    "accepted": 318,
+    "accepted": 321,
     "held": 0,
     "rejected": 0
   }

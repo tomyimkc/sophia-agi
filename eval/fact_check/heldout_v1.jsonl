@@ -41,3 +41,13 @@
 {"id": "u_open_008", "claim": "A private Crossref draft DOI for the Sophia paper was reserved in 2026", "label": "unknowable", "type": "doi", "risk": "normal"}
 {"id": "u_open_009", "claim": "An internal-only Wikidata sandbox item proves the claim", "label": "unknowable", "type": "open_empirical", "risk": "normal"}
 {"id": "u_open_010", "claim": "The unpublished long-horizon run contained no human intervention", "label": "unknowable", "type": "open_empirical", "risk": "normal"}
+{"id": "t_econ_004", "claim": "US GDP increased in 2021", "label": "true", "type": "econ_empirical", "risk": "high"}
+{"id": "t_econ_005", "claim": "US GDP decreased in 2020", "label": "true", "type": "econ_empirical", "risk": "high"}
+{"id": "t_econ_006", "claim": "US unemployment increased in 2020", "label": "true", "type": "econ_empirical", "risk": "high"}
+{"id": "t_econ_007", "claim": "US inflation decreased in 2020", "label": "true", "type": "econ_empirical", "risk": "high"}
+{"id": "f_econ_003", "claim": "US GDP decreased in 2021", "label": "false", "type": "econ_empirical", "risk": "high"}
+{"id": "f_econ_004", "claim": "US GDP increased in 2020", "label": "false", "type": "econ_empirical", "risk": "high"}
+{"id": "f_econ_005", "claim": "US unemployment decreased in 2020", "label": "false", "type": "econ_empirical", "risk": "high"}
+{"id": "f_econ_006", "claim": "US inflation increased in 2020", "label": "false", "type": "econ_empirical", "risk": "high"}
+{"id": "u_econ_011", "claim": "A private central bank memo proves AGI deployment incentives changed rates in 2026", "label": "unknowable", "type": "econ_causal", "risk": "high"}
+{"id": "u_econ_012", "claim": "An unpublished regulator secretly measured AGI monopoly rents in 2025", "label": "unknowable", "type": "econ_empirical", "risk": "high"}

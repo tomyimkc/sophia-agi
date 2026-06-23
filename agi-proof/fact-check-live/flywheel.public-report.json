@@ -1,8 +1,8 @@
 {
   "schema": "sophia.fact_check.flywheel.v1",
   "canonicalWikiWrite": false,
-  "nCandidates": 18,
-  "nPromotedProvisional": 18,
+  "nCandidates": 22,
+  "nPromotedProvisional": 22,
   "nStillQuarantined": 0,
   "candidates": [
     {
@@ -575,6 +575,198 @@
           "title": "AI policy incentive-risk source",
           "publisher": "OECD AI",
           "domain": "oecd.ai",
+          "relation": "entails"
+        }
+      ],
+      "promotionState": "promoted_provisional",
+      "promotionRules": [
+        "never use this candidate as evidence for itself",
+        "require source freshness TTL before reuse",
+        "require independent recheck before promotion to curated wiki",
+        "store as external/provisional, not canonical, until review"
+      ],
+      "independentRecheck": {
+        "verdict": "accepted",
+        "reason": "all atomic claims verified",
+        "accepted": true
+      },
+      "canonicalWikiWrite": false
+    },
+    {
+      "schema": "sophia.fact_check.learning_candidate.v1",
+      "claimId": "fc_4f6a70453db53a2d",
+      "claim": "US GDP increased in 2021",
+      "type": "econ_causal",
+      "risk": "high",
+      "verifiedBy": "external_grounding",
+      "confidence": 0.84,
+      "evidence": [
+        {
+          "id": "world_bank:USA:gdp:2021#rel=entails",
+          "url": "https://api.worldbank.org/",
+          "title": "World Bank macro record for United States gdp in 2021",
+          "publisher": "World Bank",
+          "domain": "api.worldbank.org",
+          "relation": "entails"
+        },
+        {
+          "id": "fred:USA:gdp:2021#rel=entails",
+          "url": "https://fred.stlouisfed.org/",
+          "title": "FRED macro record for United States gdp in 2021",
+          "publisher": "FRED",
+          "domain": "fred.stlouisfed.org",
+          "relation": "entails"
+        },
+        {
+          "id": "bea:USA:gdp:2021#rel=entails",
+          "url": "https://www.bea.gov/",
+          "title": "BEA macro record for United States gdp in 2021",
+          "publisher": "BEA",
+          "domain": "bea.gov",
+          "relation": "entails"
+        }
+      ],
+      "promotionState": "promoted_provisional",
+      "promotionRules": [
+        "never use this candidate as evidence for itself",
+        "require source freshness TTL before reuse",
+        "require independent recheck before promotion to curated wiki",
+        "store as external/provisional, not canonical, until review"
+      ],
+      "independentRecheck": {
+        "verdict": "accepted",
+        "reason": "all atomic claims verified",
+        "accepted": true
+      },
+      "canonicalWikiWrite": false
+    },
+    {
+      "schema": "sophia.fact_check.learning_candidate.v1",
+      "claimId": "fc_fe8f7ce23baa4fe2",
+      "claim": "US GDP decreased in 2020",
+      "type": "econ_causal",
+      "risk": "high",
+      "verifiedBy": "external_grounding",
+      "confidence": 0.84,
+      "evidence": [
+        {
+          "id": "world_bank:USA:gdp:2020#rel=entails",
+          "url": "https://api.worldbank.org/",
+          "title": "World Bank macro record for United States gdp in 2020",
+          "publisher": "World Bank",
+          "domain": "api.worldbank.org",
+          "relation": "entails"
+        },
+        {
+          "id": "fred:USA:gdp:2020#rel=entails",
+          "url": "https://fred.stlouisfed.org/",
+          "title": "FRED macro record for United States gdp in 2020",
+          "publisher": "FRED",
+          "domain": "fred.stlouisfed.org",
+          "relation": "entails"
+        },
+        {
+          "id": "bea:USA:gdp:2020#rel=entails",
+          "url": "https://www.bea.gov/",
+          "title": "BEA macro record for United States gdp in 2020",
+          "publisher": "BEA",
+          "domain": "bea.gov",
+          "relation": "entails"
+        }
+      ],
+      "promotionState": "promoted_provisional",
+      "promotionRules": [
+        "never use this candidate as evidence for itself",
+        "require source freshness TTL before reuse",
+        "require independent recheck before promotion to curated wiki",
+        "store as external/provisional, not canonical, until review"
+      ],
+      "independentRecheck": {
+        "verdict": "accepted",
+        "reason": "all atomic claims verified",
+        "accepted": true
+      },
+      "canonicalWikiWrite": false
+    },
+    {
+      "schema": "sophia.fact_check.learning_candidate.v1",
+      "claimId": "fc_e10bc52ac1ba893e",
+      "claim": "US unemployment increased in 2020",
+      "type": "econ_causal",
+      "risk": "high",
+      "verifiedBy": "external_grounding",
+      "confidence": 0.84,
+      "evidence": [
+        {
+          "id": "world_bank:USA:unemployment:2020#rel=entails",
+          "url": "https://api.worldbank.org/",
+          "title": "World Bank macro record for United States unemployment in 2020",
+          "publisher": "World Bank",
+          "domain": "api.worldbank.org",
+          "relation": "entails"
+        },
+        {
+          "id": "fred:USA:unemployment:2020#rel=entails",
+          "url": "https://fred.stlouisfed.org/",
+          "title": "FRED macro record for United States unemployment in 2020",
+          "publisher": "FRED",
+          "domain": "fred.stlouisfed.org",
+          "relation": "entails"
+        },
+        {
+          "id": "bls:USA:unemployment:2020#rel=entails",
+          "url": "https://api.bls.gov/",
+          "title": "BLS macro record for United States unemployment in 2020",
+          "publisher": "BLS",
+          "domain": "api.bls.gov",
+          "relation": "entails"
+        }
+      ],
+      "promotionState": "promoted_provisional",
+      "promotionRules": [
+        "never use this candidate as evidence for itself",
+        "require source freshness TTL before reuse",
+        "require independent recheck before promotion to curated wiki",
+        "store as external/provisional, not canonical, until review"
+      ],
+      "independentRecheck": {
+        "verdict": "accepted",
+        "reason": "all atomic claims verified",
+        "accepted": true
+      },
+      "canonicalWikiWrite": false
+    },
+    {
+      "schema": "sophia.fact_check.learning_candidate.v1",
+      "claimId": "fc_ebe5a24b4c113065",
+      "claim": "US inflation decreased in 2020",
+      "type": "econ_causal",
+      "risk": "high",
+      "verifiedBy": "external_grounding",
+      "confidence": 0.84,
+      "evidence": [
+        {
+          "id": "world_bank:USA:inflation:2020#rel=entails",
+          "url": "https://api.worldbank.org/",
+          "title": "World Bank macro record for United States inflation in 2020",
+          "publisher": "World Bank",
+          "domain": "api.worldbank.org",
+          "relation": "entails"
+        },
+        {
+          "id": "fred:USA:inflation:2020#rel=entails",
+          "url": "https://fred.stlouisfed.org/",
+          "title": "FRED macro record for United States inflation in 2020",
+          "publisher": "FRED",
+          "domain": "fred.stlouisfed.org",
+          "relation": "entails"
+        },
+        {
+          "id": "bls:USA:inflation:2020#rel=entails",
+          "url": "https://api.bls.gov/",
+          "title": "BLS macro record for United States inflation in 2020",
+          "publisher": "BLS",
+          "domain": "api.bls.gov",
           "relation": "entails"
         }
       ],

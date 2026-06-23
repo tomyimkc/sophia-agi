@@ -17,9 +17,9 @@ Sophia's out-of-wiki gate no longer has to choose between "found in internal wik
 
 | Purpose | Path |
 |---|---|
-| Keyless/fixture source adapters | `agent/live_sources.py` |
+| Keyless/fixture source adapters: Wikidata, Crossref, World Bank, FRED CSV, BLS, OpenAlex | `agent/live_sources.py` |
 | Eval metrics, ECE/Brier, Wilson CI, empirical floors | `agent/fact_check_eval.py` |
-| Held-out labeled pack (N=43; true/false/unknowable) | `eval/fact_check/heldout_v1.jsonl` |
+| Held-out labeled pack (N=53; true/false/unknowable) | `eval/fact_check/heldout_v1.jsonl` |
 | Offline source fixtures | `eval/fact_check/fixtures_v1.json` |
 | Eval CLI | `tools/run_fact_check_live_eval.py` |
 | Quarantine/recheck flywheel | `agent/fact_check_flywheel.py`, `tools/run_fact_check_flywheel.py` |
@@ -57,23 +57,25 @@ python tools/run_reflexive_self_gate.py
 
 From `agi-proof/fact-check-live/fact-check-live-eval.public-report.json`:
 
-- N = 43 held-out labeled cases.
+- N = 53 held-out labeled cases.
 - Fabrication rate = 0.0 on false/unknowable cases.
 - Over-abstention on true cases = 0.0 in the fixture run.
 - Correct abstention on unknowable cases = 1.0.
-- Resolved-answerable accuracy = 0.9697.
-- Resolved-only calibration: ECE = 0.0856, Brier = 0.0113.
+- Resolved-answerable accuracy = 0.9756.
+- Resolved-only calibration: ECE = 0.0965, Brier = 0.0131.
 - Empirical floors derived for ≤1% target fabrication:
   - normal risk: 0.80
   - high risk: 0.84
+
+Optional live smoke after adding macro adapters (`--live`, local run): fabrication rate 0.0, over-abstention 0.3182, false-reject-on-true 0.0, resolved-answerable accuracy 0.7805. This is useful engineering signal, but still not Level-3 evidence.
 
 Boundary: this is a **candidate/offline fixture run** (`candidateOnly=true`, `level3Evidence=false`). It proves wiring, metrics, and fail-closed behavior; it does not prove open-world AGI.
 
 ## Source rules
 
-- Wikidata/Crossref are external keyless backends, not Sophia-internal evidence.
+- Wikidata/Crossref/World Bank/FRED/BLS/OpenAlex are external keyless backends, not Sophia-internal evidence.
 - Crossref verifies DOI existence, not the truth of a paper's claims.
-- Wikidata authorship retrieval is narrow and structured; non-authorship claims need other adapters.
+- Wikidata authorship retrieval is narrow and structured. Macro direction claims use World Bank/FRED/BLS structured records. Generic scholarly OpenAlex/Crossref snippets are evidence discovery only unless a later NLI/judge layer proves entailment.
 - Fixture entailment is an offline cached annotation for deterministic CI, not model consensus.
 - High-risk economics / AGI-incentive claims require at least 3 independent entailing source families and confidence above the high-risk floor.
 
@@ -89,4 +91,4 @@ Boundary: this is a **candidate/offline fixture run** (`candidateOnly=true`, `le
 
 `tools/run_reflexive_self_gate.py` scans Sophia's own README/results/AGI-proof docs for status overclaims. It accepts candidate/no-overclaim wording and rejects unqualified "Sophia is proven AGI"-style claims. Current report keeps `canClaimAGI=false`.
 
-中文摘要：Reality Gap v1 已把 out-of-wiki claim 連到 deterministic verifier、keyless Wikidata/Crossref/URL backend、N=43 held-out eval、ECE/Brier/derived floor、quarantine flywheel、以及 Sophia 自我 no-overclaim gate。現階段是 candidate/offline wiring，不是 Level-3 AGI 證據。
+中文摘要：Reality Gap v1 已把 out-of-wiki claim 連到 deterministic verifier、keyless Wikidata/Crossref/URL backend、N=53 held-out eval、ECE/Brier/derived floor、quarantine flywheel、以及 Sophia 自我 no-overclaim gate。現階段是 candidate/offline wiring，不是 Level-3 AGI 證據。

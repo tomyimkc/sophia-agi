@@ -7,6 +7,8 @@ This module supplies both sides of that contract:
 - fixture adapters for committed/offline held-out evaluation;
 - keyless Crossref DOI resolution;
 - keyless Wikidata authorship retrieval for simple ``author wrote work`` claims;
+- keyless macro/economics retrieval from World Bank, FRED CSV, and BLS;
+- keyless scholarly search from Crossref/OpenAlex for evidence discovery;
 - source ranking + structured fixture/Wikidata entailment helpers.
 
 No source here is treated as Sophia-internal wiki evidence. Live and fixture
@@ -15,6 +17,8 @@ independence, entailment, confidence-floor, and learning-candidate rules.
 """
 from __future__ import annotations
 
+import csv
+import io
 import json
 import re
 import time
@@ -38,6 +42,23 @@ _WORK_BY_AUTHOR_RE = re.compile(
     r"^(?P<work>.+?)\s+(?:was|is)\s+(?:written|authored|penned|composed)\s+by\s+(?P<author>.+)$",
     re.I,
 )
+
+_YEAR_RE = re.compile(r"\b(19\d{2}|20\d{2})\b")
+_DIRECTION_RE = re.compile(r"\b(?P<dir>increased|rose|rising|grew|decreased|declined|fell|falling|dropped)\b", re.I)
+_COUNTRIES = {
+    "united states": {"aliases": {"us", "u.s", "u.s.", "usa", "united states", "america"}, "wb": "USA", "name": "United States"},
+    "china": {"aliases": {"china", "prc", "people s republic of china"}, "wb": "CHN", "name": "China"},
+    "hong kong": {"aliases": {"hong kong", "hong kong sar"}, "wb": "HKG", "name": "Hong Kong SAR, China"},
+    "united kingdom": {"aliases": {"uk", "u.k", "u.k.", "britain", "united kingdom"}, "wb": "GBR", "name": "United Kingdom"},
+}
+_INDICATORS = {
+    "inflation": {"aliases": {"inflation", "cpi", "consumer price"}, "wb": "FP.CPI.TOTL.ZG", "fred": "CPIAUCSL", "bls": "CUUR0000SA0", "name": "inflation"},
+    "unemployment": {"aliases": {"unemployment", "jobless"}, "wb": "SL.UEM.TOTL.ZS", "fred": "UNRATE", "bls": "LNS14000000", "name": "unemployment"},
+    "gdp": {"aliases": {"gdp", "gross domestic product"}, "wb": "NY.GDP.MKTP.CD", "fred": "GDP", "bls": None, "name": "gdp"},
+}
+_POSITIVE_DIRS = {"increased", "rose", "rising", "grew"}
+_NEGATIVE_DIRS = {"decreased", "declined", "fell", "falling", "dropped"}
+_SCHOLARLY_RE = re.compile(r"\b(?:paper|study|doi|journal|research|scholarly|arxiv|economics|political economy|agi|deployment incentives?|safety evidence|regulatory capture|rent seeking)\b", re.I)
 
 
 def normalize_text(value: str) -> str:
@@ -68,8 +89,12 @@ def ranked_sources(sources: list[EvidenceSource]) -> list[EvidenceSource]:
         "wikidata": 100,
         "crossref": 95,
         "doi": 92,
+        "world_bank": 91,
+        "fred": 90,
+        "bls": 89,
         "scholarly": 88,
         "official_data": 86,
+        "openalex": 84,
         "wikipedia": 75,
         "web": 40,
         "fixture": 30,
@@ -177,10 +202,19 @@ class LiveFactBackend:
     def retriever(self, claim: AtomicClaim) -> list[EvidenceSource]:
         out: list[EvidenceSource] = []
         out.extend(self.wikidata_authorship(claim))
+        out.extend(self.macro_economics(claim))
+        out.extend(self.crossref_scholarly(claim))
+        out.extend(self.openalex_scholarly(claim))
         return ranked_sources(out)
 
     def entailment(self, claim: AtomicClaim, source: EvidenceSource) -> str:
-        return structured_entailment(claim, source)
+        # Structured source records can decide entail/contradict deterministically.
+        # Generic scholarly snippets remain evidence for later NLI/judge layers,
+        # but are not accepted from keyword overlap alone.
+        label = structured_entailment(claim, source)
+        if label != "irrelevant":
+            return label
+        return macro_structured_entailment(claim, source)
 
     def wikidata_authorship(self, claim: AtomicClaim) -> list[EvidenceSource]:
         parsed = extract_authorship_claim(claim.text)
@@ -215,6 +249,135 @@ class LiveFactBackend:
             ))
             time.sleep(self.sleep_s)
         return sources
+
+    def macro_economics(self, claim: AtomicClaim) -> list[EvidenceSource]:
+        parsed = extract_macro_claim(claim.text)
+        if not parsed:
+            return []
+        sources: list[EvidenceSource] = []
+        for fn in (self.world_bank_macro, self.fred_macro, self.bls_macro):
+            try:
+                src = fn(parsed)
+            except Exception:
+                src = None
+            if src is not None:
+                sources.append(src)
+                time.sleep(self.sleep_s)
+        return sources
+
+    def world_bank_macro(self, parsed: dict[str, Any]) -> EvidenceSource | None:
+        ind = _INDICATORS[parsed["indicator"]]["wb"]
+        code = parsed["country"]["wb"]
+        year = int(parsed["year"])
+        url = f"https://api.worldbank.org/v2/country/{code}/indicator/{ind}?{urlencode({'format': 'json', 'date': f'{year-1}:{year}', 'per_page': '1000'})}"
+        data = _get_json(url, timeout=self.timeout)
+        rows = data[1] if isinstance(data, list) and len(data) > 1 else []
+        values = {int(r["date"]): float(r["value"]) for r in rows if r.get("value") is not None and str(r.get("date", "")).isdigit()}
+        if year not in values or (year - 1) not in values:
+            return None
+        return _macro_source("World Bank", "world_bank", url, parsed, values[year - 1], values[year])
+
+    def fred_macro(self, parsed: dict[str, Any]) -> EvidenceSource | None:
+        # FRED graph CSV is keyless and stable for public series downloads.
+        series = _INDICATORS[parsed["indicator"]].get("fred")
+        if not series or parsed["country_key"] != "united states":
+            return None
+        url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"
+        req = Request(url, headers={"User-Agent": USER_AGENT})
+        with urlopen(req, timeout=self.timeout) as resp:  # noqa: S310 - fixed public FRED CSV endpoint
+            raw = resp.read().decode("utf-8")
+        year = int(parsed["year"])
+        values = _annual_averages_from_fred_csv(raw, series)
+        if parsed["indicator"] == "inflation":
+            rates = _annual_percent_change(values)
+            if year not in rates or (year - 1) not in rates:
+                return None
+            return _macro_source("FRED", "fred", f"https://fred.stlouisfed.org/series/{series}", parsed, rates[year - 1], rates[year])
+        if year not in values or (year - 1) not in values:
+            return None
+        return _macro_source("FRED", "fred", f"https://fred.stlouisfed.org/series/{series}", parsed, values[year - 1], values[year])
+
+    def bls_macro(self, parsed: dict[str, Any]) -> EvidenceSource | None:
+        series = _INDICATORS[parsed["indicator"]].get("bls")
+        if not series or parsed["country_key"] != "united states":
+            return None
+        year = int(parsed["year"])
+        start_year = year - 2 if parsed["indicator"] == "inflation" else year - 1
+        params = urlencode({"startyear": str(start_year), "endyear": str(year)})
+        url = f"https://api.bls.gov/publicAPI/v2/timeseries/data/{series}?{params}"
+        data = _get_json(url, timeout=self.timeout)
+        series_rows = (((data.get("Results") or {}).get("series") or [{}])[0].get("data") or [])
+        values_by_year: dict[int, list[float]] = {}
+        for row in series_rows:
+            period = str(row.get("period", ""))
+            if period == "M13":
+                continue
+            try:
+                y = int(row.get("year"))
+                v = float(row.get("value"))
+            except (TypeError, ValueError):
+                continue
+            values_by_year.setdefault(y, []).append(v)
+        values = {y: sum(vs) / len(vs) for y, vs in values_by_year.items() if vs}
+        if parsed["indicator"] == "inflation":
+            rates = _annual_percent_change(values)
+            if year not in rates or (year - 1) not in rates:
+                return None
+            return _macro_source("BLS", "bls", url, parsed, rates[year - 1], rates[year])
+        if year not in values or (year - 1) not in values:
+            return None
+        return _macro_source("BLS", "bls", url, parsed, values[year - 1], values[year])
+
+    def crossref_scholarly(self, claim: AtomicClaim) -> list[EvidenceSource]:
+        if not _SCHOLARLY_RE.search(claim.text):
+            return []
+        query = claim.text[:220]
+        params = urlencode({"query.bibliographic": query, "rows": "3"})
+        try:
+            data = _get_json(f"https://api.crossref.org/works?{params}", timeout=self.timeout)
+        except Exception:
+            return []
+        out: list[EvidenceSource] = []
+        for item in (data.get("message", {}).get("items") or [])[:3]:
+            title = " ".join(item.get("title") or [])
+            doi = item.get("DOI", "")
+            if not title:
+                continue
+            out.append(EvidenceSource(
+                id=f"crossref:{doi or normalize_text(title)[:32]}",
+                url=f"https://doi.org/{doi}" if doi else str(item.get("URL", "")),
+                title=f"Crossref work: {title}",
+                snippet=f"Crossref bibliographic record title={title}; DOI={doi}; published={item.get('published-print') or item.get('published-online') or item.get('published') or {}}.",
+                publisher="Crossref",
+                retrieved_at=_utc_now(),
+                source_type="crossref",
+            ))
+        return out
+
+    def openalex_scholarly(self, claim: AtomicClaim) -> list[EvidenceSource]:
+        if not _SCHOLARLY_RE.search(claim.text):
+            return []
+        params = urlencode({"search": claim.text[:220], "per-page": "3"})
+        try:
+            data = _get_json(f"https://api.openalex.org/works?{params}", timeout=self.timeout)
+        except Exception:
+            return []
+        out: list[EvidenceSource] = []
+        for item in (data.get("results") or [])[:3]:
+            title = item.get("display_name") or ""
+            if not title:
+                continue
+            abstract = _openalex_abstract(item.get("abstract_inverted_index") or {})
+            out.append(EvidenceSource(
+                id=f"openalex:{item.get('id', normalize_text(title)[:32])}",
+                url=str(item.get("doi") or item.get("id") or ""),
+                title=f"OpenAlex work: {title}",
+                snippet=f"OpenAlex scholarly record title={title}. {abstract[:600]}",
+                publisher="OpenAlex",
+                retrieved_at=_utc_now(),
+                source_type="openalex",
+            ))
+        return out
 
     def _wikidata_search(self, query: str, *, limit: int = 3) -> list[str]:
         params = urlencode({
@@ -258,6 +421,113 @@ class LiveFactBackend:
             label = qid
         self._label_cache[qid] = label
         return label
+
+
+def extract_macro_claim(text: str) -> dict[str, Any] | None:
+    """Parse simple macro-direction claims, e.g. ``US inflation increased in 2021``."""
+    cleaned = normalize_text(text)
+    year_match = _YEAR_RE.search(text or "")
+    dir_match = _DIRECTION_RE.search(text or "")
+    if not year_match or not dir_match:
+        return None
+    direction_word = dir_match.group("dir").lower()
+    direction = "increased" if direction_word in _POSITIVE_DIRS else "decreased"
+    country_key = None
+    for key, meta in _COUNTRIES.items():
+        if any(alias in cleaned for alias in meta["aliases"]):
+            country_key = key
+            break
+    if country_key is None:
+        # Default to US only when the claim explicitly starts with US/U.S./USA.
+        return None
+    indicator_key = None
+    for key, meta in _INDICATORS.items():
+        if any(alias in cleaned for alias in meta["aliases"]):
+            indicator_key = key
+            break
+    if indicator_key is None:
+        return None
+    return {
+        "country_key": country_key,
+        "country": _COUNTRIES[country_key],
+        "indicator": indicator_key,
+        "indicator_name": _INDICATORS[indicator_key]["name"],
+        "year": int(year_match.group(1)),
+        "direction": direction,
+    }
+
+
+def macro_structured_entailment(claim: AtomicClaim, source: EvidenceSource) -> str:
+    parsed = extract_macro_claim(claim.text)
+    if not parsed:
+        return "irrelevant"
+    text = f"{source.title} {source.snippet}"
+    m = re.search(
+        r"macro record:\s*country=(?P<country>[^;]+);\s*indicator=(?P<indicator>[^;]+);\s*year=(?P<year>\d{4});.*?direction=(?P<direction>increased|decreased)",
+        text, re.I,
+    )
+    if not m:
+        return "irrelevant"
+    country_ok = normalize_text(parsed["country"]["name"]) == normalize_text(m.group("country"))
+    indicator_ok = parsed["indicator"] == normalize_text(m.group("indicator"))
+    year_ok = int(parsed["year"]) == int(m.group("year"))
+    if not (country_ok and indicator_ok and year_ok):
+        return "irrelevant"
+    observed = m.group("direction").lower()
+    return "entails" if observed == parsed["direction"] else "contradicts"
+
+
+def _macro_source(publisher: str, source_type: str, url: str, parsed: dict[str, Any], prev: float, cur: float) -> EvidenceSource:
+    observed = "increased" if cur > prev else "decreased" if cur < prev else "unchanged"
+    year = int(parsed["year"])
+    country = parsed["country"]["name"]
+    indicator = parsed["indicator"]
+    return EvidenceSource(
+        id=f"{source_type}:{parsed['country']['wb']}:{indicator}:{year}",
+        url=url,
+        title=f"{publisher} macro record for {country} {indicator} in {year}",
+        snippet=(
+            f"{publisher} macro record: country={country}; indicator={indicator}; year={year}; "
+            f"previousYear={year - 1}; previousValue={prev:.6g}; currentValue={cur:.6g}; "
+            f"direction={observed}."
+        ),
+        publisher=publisher,
+        retrieved_at=_utc_now(),
+        source_type=source_type,
+    )
+
+
+def _annual_averages_from_fred_csv(raw: str, series: str) -> dict[int, float]:
+    reader = csv.DictReader(io.StringIO(raw))
+    buckets: dict[int, list[float]] = {}
+    for row in reader:
+        date = row.get("observation_date") or row.get("DATE") or ""
+        try:
+            year = int(date[:4])
+            value = float(row.get(series, ""))
+        except (TypeError, ValueError):
+            continue
+        buckets.setdefault(year, []).append(value)
+    return {year: sum(values) / len(values) for year, values in buckets.items() if values}
+
+
+def _annual_percent_change(values: dict[int, float]) -> dict[int, float]:
+    rates: dict[int, float] = {}
+    for year, value in values.items():
+        prev = values.get(year - 1)
+        if prev not in (None, 0):
+            rates[year] = ((value - prev) / prev) * 100.0
+    return rates
+
+
+def _openalex_abstract(index: dict[str, list[int]]) -> str:
+    if not isinstance(index, dict) or not index:
+        return ""
+    positions: dict[int, str] = {}
+    for word, idxs in index.items():
+        for idx in idxs:
+            positions[int(idx)] = word
+    return " ".join(positions[i] for i in sorted(positions))
 
 
 def structured_entailment(claim: AtomicClaim, source: EvidenceSource) -> str:
@@ -308,6 +578,6 @@ def _utc_now() -> str:
 
 
 __all__ = [
-    "FixtureFactBackend", "LiveFactBackend", "extract_authorship_claim", "normalize_text",
-    "ranked_sources", "structured_entailment",
+    "FixtureFactBackend", "LiveFactBackend", "extract_authorship_claim", "extract_macro_claim",
+    "macro_structured_entailment", "normalize_text", "ranked_sources", "structured_entailment",
 ]

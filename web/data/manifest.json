@@ -1,11 +1,12 @@
 {
   "version": "0.7.42",
-  "trainingExamples": 527,
+  "trainingExamples": 528,
   "domains": [
     "philosophy",
     "psychology",
     "history",
-    "religion"
+    "religion",
+    "personality"
   ],
   "leaderboards": {
     "philosophy": {
@@ -217,6 +218,26 @@
           "score_pct": 80.0,
           "passed": 4,
           "total": 5
+        }
+      ]
+    },
+    "personality": {
+      "domain": "personality",
+      "benchmark": "sophia-personality-v1",
+      "updated": "2026-06-18",
+      "cases": 3,
+      "entries": [
+        {
+          "model": "sophia-teacher-reference",
+          "score_pct": 100.0,
+          "passed": 3,
+          "total": 3
+        },
+        {
+          "model": "ibm-granite-granite-3.1-2b-instruct-steer",
+          "score_pct": 0.0,
+          "passed": 0,
+          "total": 2
         }
       ]
     }

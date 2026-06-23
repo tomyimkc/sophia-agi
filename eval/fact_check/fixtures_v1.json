@@ -257,6 +257,262 @@
         "source_type": "official_data",
         "retrieved_at": "fixture"
       }
+    ],
+    "US GDP increased in 2021": [
+      {
+        "id": "world_bank:USA:gdp:2021",
+        "url": "https://api.worldbank.org/",
+        "title": "World Bank macro record for United States gdp in 2021",
+        "snippet": "World Bank macro record: country=United States; indicator=gdp; year=2021; previousYear=2020; previousValue=21354105000000; currentValue=23681171000000; direction=increased.",
+        "publisher": "World Bank",
+        "relation": "entails",
+        "source_type": "world_bank",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "fred:USA:gdp:2021",
+        "url": "https://fred.stlouisfed.org/",
+        "title": "FRED macro record for United States gdp in 2021",
+        "snippet": "FRED macro record: country=United States; indicator=gdp; year=2021; previousYear=2020; previousValue=21354105000000; currentValue=23681171000000; direction=increased.",
+        "publisher": "FRED",
+        "relation": "entails",
+        "source_type": "fred",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "bea:USA:gdp:2021",
+        "url": "https://www.bea.gov/",
+        "title": "BEA macro record for United States gdp in 2021",
+        "snippet": "BEA macro record: country=United States; indicator=gdp; year=2021; previousYear=2020; previousValue=21354105000000; currentValue=23681171000000; direction=increased.",
+        "publisher": "BEA",
+        "relation": "entails",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "US GDP decreased in 2020": [
+      {
+        "id": "world_bank:USA:gdp:2020",
+        "url": "https://api.worldbank.org/",
+        "title": "World Bank macro record for United States gdp in 2020",
+        "snippet": "World Bank macro record: country=United States; indicator=gdp; year=2020; previousYear=2019; previousValue=21521395000000; currentValue=21354105000000; direction=decreased.",
+        "publisher": "World Bank",
+        "relation": "entails",
+        "source_type": "world_bank",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "fred:USA:gdp:2020",
+        "url": "https://fred.stlouisfed.org/",
+        "title": "FRED macro record for United States gdp in 2020",
+        "snippet": "FRED macro record: country=United States; indicator=gdp; year=2020; previousYear=2019; previousValue=21521395000000; currentValue=21354105000000; direction=decreased.",
+        "publisher": "FRED",
+        "relation": "entails",
+        "source_type": "fred",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "bea:USA:gdp:2020",
+        "url": "https://www.bea.gov/",
+        "title": "BEA macro record for United States gdp in 2020",
+        "snippet": "BEA macro record: country=United States; indicator=gdp; year=2020; previousYear=2019; previousValue=21521395000000; currentValue=21354105000000; direction=decreased.",
+        "publisher": "BEA",
+        "relation": "entails",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "US unemployment increased in 2020": [
+      {
+        "id": "world_bank:USA:unemployment:2020",
+        "url": "https://api.worldbank.org/",
+        "title": "World Bank macro record for United States unemployment in 2020",
+        "snippet": "World Bank macro record: country=United States; indicator=unemployment; year=2020; previousYear=2019; previousValue=3.7; currentValue=8.1; direction=increased.",
+        "publisher": "World Bank",
+        "relation": "entails",
+        "source_type": "world_bank",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "fred:USA:unemployment:2020",
+        "url": "https://fred.stlouisfed.org/",
+        "title": "FRED macro record for United States unemployment in 2020",
+        "snippet": "FRED macro record: country=United States; indicator=unemployment; year=2020; previousYear=2019; previousValue=3.7; currentValue=8.1; direction=increased.",
+        "publisher": "FRED",
+        "relation": "entails",
+        "source_type": "fred",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "bls:USA:unemployment:2020",
+        "url": "https://api.bls.gov/",
+        "title": "BLS macro record for United States unemployment in 2020",
+        "snippet": "BLS macro record: country=United States; indicator=unemployment; year=2020; previousYear=2019; previousValue=3.7; currentValue=8.1; direction=increased.",
+        "publisher": "BLS",
+        "relation": "entails",
+        "source_type": "bls",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "US inflation decreased in 2020": [
+      {
+        "id": "world_bank:USA:inflation:2020",
+        "url": "https://api.worldbank.org/",
+        "title": "World Bank macro record for United States inflation in 2020",
+        "snippet": "World Bank macro record: country=United States; indicator=inflation; year=2020; previousYear=2019; previousValue=1.8; currentValue=1.2; direction=decreased.",
+        "publisher": "World Bank",
+        "relation": "entails",
+        "source_type": "world_bank",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "fred:USA:inflation:2020",
+        "url": "https://fred.stlouisfed.org/",
+        "title": "FRED macro record for United States inflation in 2020",
+        "snippet": "FRED macro record: country=United States; indicator=inflation; year=2020; previousYear=2019; previousValue=1.8; currentValue=1.2; direction=decreased.",
+        "publisher": "FRED",
+        "relation": "entails",
+        "source_type": "fred",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "bls:USA:inflation:2020",
+        "url": "https://api.bls.gov/",
+        "title": "BLS macro record for United States inflation in 2020",
+        "snippet": "BLS macro record: country=United States; indicator=inflation; year=2020; previousYear=2019; previousValue=1.8; currentValue=1.2; direction=decreased.",
+        "publisher": "BLS",
+        "relation": "entails",
+        "source_type": "bls",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "US GDP decreased in 2021": [
+      {
+        "id": "world_bank:USA:gdp:2021",
+        "url": "https://api.worldbank.org/",
+        "title": "World Bank macro record for United States gdp in 2021",
+        "snippet": "World Bank macro record: country=United States; indicator=gdp; year=2021; previousYear=2020; previousValue=21354105000000; currentValue=23681171000000; direction=increased.",
+        "publisher": "World Bank",
+        "relation": "contradicts",
+        "source_type": "world_bank",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "fred:USA:gdp:2021",
+        "url": "https://fred.stlouisfed.org/",
+        "title": "FRED macro record for United States gdp in 2021",
+        "snippet": "FRED macro record: country=United States; indicator=gdp; year=2021; previousYear=2020; previousValue=21354105000000; currentValue=23681171000000; direction=increased.",
+        "publisher": "FRED",
+        "relation": "contradicts",
+        "source_type": "fred",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "bea:USA:gdp:2021",
+        "url": "https://www.bea.gov/",
+        "title": "BEA macro record for United States gdp in 2021",
+        "snippet": "BEA macro record: country=United States; indicator=gdp; year=2021; previousYear=2020; previousValue=21354105000000; currentValue=23681171000000; direction=increased.",
+        "publisher": "BEA",
+        "relation": "contradicts",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "US GDP increased in 2020": [
+      {
+        "id": "world_bank:USA:gdp:2020",
+        "url": "https://api.worldbank.org/",
+        "title": "World Bank macro record for United States gdp in 2020",
+        "snippet": "World Bank macro record: country=United States; indicator=gdp; year=2020; previousYear=2019; previousValue=21521395000000; currentValue=21354105000000; direction=decreased.",
+        "publisher": "World Bank",
+        "relation": "contradicts",
+        "source_type": "world_bank",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "fred:USA:gdp:2020",
+        "url": "https://fred.stlouisfed.org/",
+        "title": "FRED macro record for United States gdp in 2020",
+        "snippet": "FRED macro record: country=United States; indicator=gdp; year=2020; previousYear=2019; previousValue=21521395000000; currentValue=21354105000000; direction=decreased.",
+        "publisher": "FRED",
+        "relation": "contradicts",
+        "source_type": "fred",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "bea:USA:gdp:2020",
+        "url": "https://www.bea.gov/",
+        "title": "BEA macro record for United States gdp in 2020",
+        "snippet": "BEA macro record: country=United States; indicator=gdp; year=2020; previousYear=2019; previousValue=21521395000000; currentValue=21354105000000; direction=decreased.",
+        "publisher": "BEA",
+        "relation": "contradicts",
+        "source_type": "official_data",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "US unemployment decreased in 2020": [
+      {
+        "id": "world_bank:USA:unemployment:2020",
+        "url": "https://api.worldbank.org/",
+        "title": "World Bank macro record for United States unemployment in 2020",
+        "snippet": "World Bank macro record: country=United States; indicator=unemployment; year=2020; previousYear=2019; previousValue=3.7; currentValue=8.1; direction=increased.",
+        "publisher": "World Bank",
+        "relation": "contradicts",
+        "source_type": "world_bank",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "fred:USA:unemployment:2020",
+        "url": "https://fred.stlouisfed.org/",
+        "title": "FRED macro record for United States unemployment in 2020",
+        "snippet": "FRED macro record: country=United States; indicator=unemployment; year=2020; previousYear=2019; previousValue=3.7; currentValue=8.1; direction=increased.",
+        "publisher": "FRED",
+        "relation": "contradicts",
+        "source_type": "fred",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "bls:USA:unemployment:2020",
+        "url": "https://api.bls.gov/",
+        "title": "BLS macro record for United States unemployment in 2020",
+        "snippet": "BLS macro record: country=United States; indicator=unemployment; year=2020; previousYear=2019; previousValue=3.7; currentValue=8.1; direction=increased.",
+        "publisher": "BLS",
+        "relation": "contradicts",
+        "source_type": "bls",
+        "retrieved_at": "fixture"
+      }
+    ],
+    "US inflation increased in 2020": [
+      {
+        "id": "world_bank:USA:inflation:2020",
+        "url": "https://api.worldbank.org/",
+        "title": "World Bank macro record for United States inflation in 2020",
+        "snippet": "World Bank macro record: country=United States; indicator=inflation; year=2020; previousYear=2019; previousValue=1.8; currentValue=1.2; direction=decreased.",
+        "publisher": "World Bank",
+        "relation": "contradicts",
+        "source_type": "world_bank",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "fred:USA:inflation:2020",
+        "url": "https://fred.stlouisfed.org/",
+        "title": "FRED macro record for United States inflation in 2020",
+        "snippet": "FRED macro record: country=United States; indicator=inflation; year=2020; previousYear=2019; previousValue=1.8; currentValue=1.2; direction=decreased.",
+        "publisher": "FRED",
+        "relation": "contradicts",
+        "source_type": "fred",
+        "retrieved_at": "fixture"
+      },
+      {
+        "id": "bls:USA:inflation:2020",
+        "url": "https://api.bls.gov/",
+        "title": "BLS macro record for United States inflation in 2020",
+        "snippet": "BLS macro record: country=United States; indicator=inflation; year=2020; previousYear=2019; previousValue=1.8; currentValue=1.2; direction=decreased.",
+        "publisher": "BLS",
+        "relation": "contradicts",
+        "source_type": "bls",
+        "retrieved_at": "fixture"
+      }
     ]
   }
 }
