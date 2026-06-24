@@ -1,0 +1,21 @@
+{
+  "benchmark": "rlvr-adapter-heldout",
+  "mode": "real",
+  "model": "Qwen/Qwen2.5-3B (GLM-4-9B path)",
+  "adapter": "sophia-rlvr-v1",
+  "split": {
+    "seed": 0,
+    "trainSealed": true,
+    "evalSealed": true,
+    "entityIntersection": []
+  },
+  "base": {
+    "meanReward": 0.531,
+    "trueFalsePositiveRate": 0.2083
+  },
+  "adapterScore": {
+    "meanReward": 0.7149,
+    "trueFalsePositiveRate": 0.2083
+  },
+  "entityIntersection": []
+}

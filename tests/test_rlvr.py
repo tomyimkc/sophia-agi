@@ -75,12 +75,15 @@ def test_reward_true_monotone() -> None:
     assert r_bad == 0.0
 
 
-def test_reward_true_case_denial_scores_zero() -> None:
-    """Mutual-exclusion: a true-case denial can't earn gold credit (anti universal-hedge)."""
+def test_reward_true_case_denial_penalized() -> None:
+    """A true-case denial (over-refusal) is the false-positive the integrity metric
+    tracks, so it is penalized below a wrong-author answer (which scores 0.0) — folding
+    false-positive integrity into the reward so training can't gain by over-refusing."""
     gate = _gate()
     denial = "No, the founding committee did not write the Project Phoenix Charter."
     r, detail = rl_reward.reward_for_case(TRUE_CASE, denial, gate=gate)
-    assert r == 0.0
+    assert r < 0.0
+    assert r == rl_reward._TRUE_CASE_DENIAL_PENALTY
     assert detail.get("deniedOnTrueCase") is True
 
 
@@ -183,7 +186,7 @@ def main() -> int:
     test_reward_is_deterministic()
     test_reward_false_monotone_and_forbidden_negative()
     test_reward_true_monotone()
-    test_reward_true_case_denial_scores_zero()
+    test_reward_true_case_denial_penalized()
     test_reward_invokes_verifier_seam()
     test_reward_is_bounded()
     test_reward_anti_hedging_cap()

@@ -116,19 +116,27 @@ class AdapterAggregate:
                          "canClaimAGI=false."),
         }
 
-    def record_to_registry(self, registry: Registry) -> dict[str, Any]:
-        """Record each seed run; the config (seed-independent) canonicalizes after N
-        independent replications. Returns canonical status + the baseline-to-beat."""
+    def record_to_registry(self, registry: Registry, *, baseline_after: float | None = None) -> dict[str, Any]:
+        """Record each seed run with its real per-seed verdict; the config canonicalizes
+        only if it BOTH replicated N times AND cleared the no-overclaim bar
+        (capabilityClaimReady = all seeds promote, no regression/contamination). A 2/3
+        result is recorded for provenance but does NOT become canonical — the loop must
+        not build the next generation on a foundation the gate rejected on some seeds."""
+        summary = self.summary(baseline_after=baseline_after)
+        per_verdict = {p["seed"]: p["verdict"] for p in summary["perSeed"]}
         for r in self.runs:
             registry.record(entry_id=f"{self.adapter_id}-seed{r.seed}", round_idx=r.seed,
                             spec=self.config, metric=r.after, parent=None,
-                            gate_verdicts={"layer1": "promote"})
-        is_canon = registry.is_canonical(self.config)
+                            gate_verdicts={"layer1": per_verdict.get(r.seed, "reject")})
+        replications = registry.replication_count(self.config)
+        claim_ready = summary["capabilityClaimReady"]
+        is_canon = bool(claim_ready and replications >= registry.canonical_n)
         afters = [r.after for r in self.runs]
-        canonical_mean_after = round(statistics.mean(afters), 4) if (is_canon and afters) else None
+        canonical_mean_after = round(statistics.mean(afters), 4) if is_canon else None
         return {
             "adapterId": self.adapter_id,
-            "replications": registry.replication_count(self.config),
+            "replications": replications,
+            "capabilityClaimReady": claim_ready,
             "canonical": is_canon,
             "canonicalMeanAfter": canonical_mean_after,
             "nextAdapterMustBeat": canonical_mean_after,

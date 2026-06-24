@@ -73,6 +73,19 @@ def test_registry_canonical_after_n_and_baseline_to_beat() -> None:
     assert rec["nextAdapterMustBeat"] is not None  # the canonical mean after
 
 
+def test_registry_not_canonical_when_not_claim_ready() -> None:
+    # 2 promote + 1 reject (protected regression) -> replicated 3x but NOT claim-ready,
+    # so it must NOT become canonical (the real seed-1 finding).
+    runs = list(_three_good())
+    runs[1] = SeedRun(1, before=0.69, after=0.80, protected_before=0.91, protected_after=0.88)  # integrity regressed
+    reg = Registry(path=None, canonical_n=3)
+    rec = AdapterAggregate("sophia-rlvr-v1", CONFIG, runs, canonical_n=3).record_to_registry(reg)
+    assert rec["replications"] == 3
+    assert rec["capabilityClaimReady"] is False
+    assert rec["canonical"] is False
+    assert rec["nextAdapterMustBeat"] is None
+
+
 def main() -> int:
     test_harden_promotes_clean_gain()
     test_harden_rejects_small_gain()
@@ -82,6 +95,7 @@ def main() -> int:
     test_aggregate_claim_ready()
     test_aggregate_not_ready_with_two_seeds()
     test_registry_canonical_after_n_and_baseline_to_beat()
+    test_registry_not_canonical_when_not_claim_ready()
     print("test_ssil_aggregate: OK")
     return 0
 
