@@ -86,6 +86,28 @@ The bundled benchmark includes:
 
 The artifact is candidate-only and must not be promoted as AGI evidence.
 
+
+## Seven priority hardening pass
+
+The latest implementation extends the initial seven-path kernel with seven hardening priorities:
+
+1. **Mandatory enforcement** — `agent/conscience_enforcement.py` and hook/MCP/memory/plasticity adapters make high-impact actions fail closed.
+2. **Conformal gate** — `agent/conformal_gate.py`, `eval/conscience/calibration_v1.jsonl`, and `tools/run_conformal_conscience_eval.py` derive abstention thresholds from calibration rows.
+3. **Semantic entropy upgrade** — `agent/semantic_entropy.py` and `agent/semantic_entropy_probe.py` provide N-sample clustering and a single-pass probe contract.
+4. **Constitution benchmark** — `eval/constitutional/constitution_v1.jsonl` and `tools/run_constitutional_eval.py` measure block/over-refusal behavior.
+5. **Deception benchmark** — `eval/deception/deception_v1.jsonl` and `tools/run_deception_eval.py` measure black-box misbehavior detection.
+6. **Activation probe path** — `agent/activation_probes.py` and `tools/run_probe_eval.py` define the future residual-stream probe contract using deterministic features in CI.
+7. **Proof package** — `agi-proof/conscience/README.md`, `failure-ledger.md`, and `conscience-eval.public-report.json` aggregate candidate evidence while keeping `canClaimAGI=false`.
+
+Run all seven priority checks:
+
+```bash
+python tests/test_conscience_priorities.py
+python tests/test_conscience_eval_tools.py
+python tests/test_conscience_proof_package.py
+python tools/build_conscience_proof_package.py
+```
+
 ## English / 中文 boundary
 
 EN: Sophia is an AGI-candidate verifier-gated epistemic framework, not proven AGI. The conscience kernel is control infrastructure for humility, provenance, moral prohibitions, and deception detection.

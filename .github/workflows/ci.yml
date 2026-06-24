@@ -100,11 +100,15 @@ jobs:
           python tests/test_layered_memory.py
           python tests/test_agi_missing_pillars_bundle.py
           python tools/run_agi_missing_pillars.py
-      - name: "Conscience kernel (seven paths: metacognition, constitution, deontic, moral, classifier, deception, MCP)"
+      - name: "Conscience kernel (seven paths + seven hardening priorities)"
         run: |
           python tests/test_conscience.py
           python tests/test_mcp_conscience.py
+          python tests/test_conscience_priorities.py
+          python tests/test_conscience_eval_tools.py
+          python tests/test_conscience_proof_package.py
           python tools/run_conscience_demo.py
+          python tools/build_conscience_proof_package.py
       - name: Self-extending verification flywheel (synthesize→validate→cover, causal, transfer, long-horizon)
         run: |
           python tests/test_selfextend.py

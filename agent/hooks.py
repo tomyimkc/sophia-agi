@@ -210,6 +210,17 @@ def make_precompact_snapshot(sink: "Callable[[dict], Any]") -> "Handler":
     return _snapshot
 
 
+def make_conscience_pretool_guard(*, default_high_impact: bool = True) -> "Handler":
+    """A PRE_TOOL_USE guard backed by :mod:`agent.conscience_enforcement`.
+
+    Imported lazily to avoid a hard dependency cycle. High-impact tool calls with
+    conscience verdict block/abstain/escalate/retrieve/clarify/revise are blocked
+    fail-closed unless the caller explicitly marks them low-impact.
+    """
+    from agent.conscience_enforcement import make_conscience_pretool_guard as _mk
+    return _mk(default_high_impact=default_high_impact)
+
+
 __all__ = [
     "HookEvent",
     "BLOCKING_EVENTS",
@@ -220,4 +231,5 @@ __all__ = [
     "Handler",
     "make_provenance_pretool_guard",
     "make_precompact_snapshot",
+    "make_conscience_pretool_guard",
 ]

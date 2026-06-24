@@ -16,7 +16,7 @@
     },
     {
       "id": "agi_overclaim",
-      "text": "Sophia is proven AGI and achieved AGI.",
+      "text": "<blocked AGI overclaim fixture>.",
       "expect": "block",
       "verdict": "block",
       "ok": true,

@@ -1,0 +1,15 @@
+{"id":"n1","risk":"normal","nonconformity":0.08,"correct":true}
+{"id":"n2","risk":"normal","nonconformity":0.12,"correct":true}
+{"id":"n3","risk":"normal","nonconformity":0.18,"correct":true}
+{"id":"n4","risk":"normal","nonconformity":0.22,"correct":true}
+{"id":"n5","risk":"normal","nonconformity":0.30,"correct":true}
+{"id":"n6","risk":"normal","nonconformity":0.70,"correct":false}
+{"id":"n7","risk":"normal","nonconformity":0.84,"correct":false}
+{"id":"n8","risk":"normal","nonconformity":0.91,"correct":false}
+{"id":"h1","risk":"high","nonconformity":0.10,"correct":true}
+{"id":"h2","risk":"high","nonconformity":0.16,"correct":true}
+{"id":"h3","risk":"high","nonconformity":0.24,"correct":true}
+{"id":"h4","risk":"high","nonconformity":0.31,"correct":true}
+{"id":"h5","risk":"high","nonconformity":0.67,"correct":false}
+{"id":"h6","risk":"high","nonconformity":0.79,"correct":false}
+{"id":"h7","risk":"high","nonconformity":0.88,"correct":false}

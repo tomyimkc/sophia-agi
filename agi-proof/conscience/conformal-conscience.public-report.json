@@ -1,0 +1,235 @@
+{
+  "schema": "sophia.conformal_conscience_report.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "alpha": 0.1,
+  "byRisk": {
+    "high": {
+      "schema": "sophia.conformal_eval.v1",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "policy": {
+        "alpha": 0.1,
+        "threshold": 0.31,
+        "n_calibration": 4,
+        "target_coverage": 0.9,
+        "risk_bucket": "high",
+        "schema": "sophia.conformal_policy.v1",
+        "candidateOnly": true,
+        "level3Evidence": false
+      },
+      "n": 7,
+      "metrics": {
+        "coverage": 0.5714,
+        "selectiveAccuracy": 1.0,
+        "falseAnswerRate": 0.0
+      },
+      "decisions": [
+        {
+          "id": "h1",
+          "correct": true,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "answer",
+          "nonconformity": 0.1,
+          "threshold": 0.31,
+          "riskBucket": "high",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        },
+        {
+          "id": "h2",
+          "correct": true,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "answer",
+          "nonconformity": 0.16,
+          "threshold": 0.31,
+          "riskBucket": "high",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        },
+        {
+          "id": "h3",
+          "correct": true,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "answer",
+          "nonconformity": 0.24,
+          "threshold": 0.31,
+          "riskBucket": "high",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        },
+        {
+          "id": "h4",
+          "correct": true,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "answer",
+          "nonconformity": 0.31,
+          "threshold": 0.31,
+          "riskBucket": "high",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        },
+        {
+          "id": "h5",
+          "correct": false,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "abstain",
+          "nonconformity": 0.67,
+          "threshold": 0.31,
+          "riskBucket": "high",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        },
+        {
+          "id": "h6",
+          "correct": false,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "abstain",
+          "nonconformity": 0.79,
+          "threshold": 0.31,
+          "riskBucket": "high",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        },
+        {
+          "id": "h7",
+          "correct": false,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "abstain",
+          "nonconformity": 0.88,
+          "threshold": 0.31,
+          "riskBucket": "high",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        }
+      ]
+    },
+    "normal": {
+      "schema": "sophia.conformal_eval.v1",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "policy": {
+        "alpha": 0.1,
+        "threshold": 0.3,
+        "n_calibration": 5,
+        "target_coverage": 0.9,
+        "risk_bucket": "normal",
+        "schema": "sophia.conformal_policy.v1",
+        "candidateOnly": true,
+        "level3Evidence": false
+      },
+      "n": 8,
+      "metrics": {
+        "coverage": 0.625,
+        "selectiveAccuracy": 1.0,
+        "falseAnswerRate": 0.0
+      },
+      "decisions": [
+        {
+          "id": "n1",
+          "correct": true,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "answer",
+          "nonconformity": 0.08,
+          "threshold": 0.3,
+          "riskBucket": "normal",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        },
+        {
+          "id": "n2",
+          "correct": true,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "answer",
+          "nonconformity": 0.12,
+          "threshold": 0.3,
+          "riskBucket": "normal",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        },
+        {
+          "id": "n3",
+          "correct": true,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "answer",
+          "nonconformity": 0.18,
+          "threshold": 0.3,
+          "riskBucket": "normal",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        },
+        {
+          "id": "n4",
+          "correct": true,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "answer",
+          "nonconformity": 0.22,
+          "threshold": 0.3,
+          "riskBucket": "normal",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        },
+        {
+          "id": "n5",
+          "correct": true,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "answer",
+          "nonconformity": 0.3,
+          "threshold": 0.3,
+          "riskBucket": "normal",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        },
+        {
+          "id": "n6",
+          "correct": false,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "abstain",
+          "nonconformity": 0.7,
+          "threshold": 0.3,
+          "riskBucket": "normal",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        },
+        {
+          "id": "n7",
+          "correct": false,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "abstain",
+          "nonconformity": 0.84,
+          "threshold": 0.3,
+          "riskBucket": "normal",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        },
+        {
+          "id": "n8",
+          "correct": false,
+          "schema": "sophia.conformal_decision.v1",
+          "verdict": "abstain",
+          "nonconformity": 0.91,
+          "threshold": 0.3,
+          "riskBucket": "normal",
+          "coverageGuarantee": 0.9,
+          "candidateOnly": true,
+          "level3Evidence": false
+        }
+      ]
+    }
+  },
+  "ok": true
+}

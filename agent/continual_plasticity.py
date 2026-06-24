@@ -14,6 +14,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from agent.conscience_enforcement import enforce_conscience
+
 
 @dataclass(frozen=True)
 class EvalMetric:
@@ -60,6 +62,14 @@ class PromotionDecision:
 
 def evaluate_update(candidate: UpdateCandidate, *, target_suite: str, min_target_delta: float = 0.03, max_protected_regression: float = 0.01, require_artifacts: int = 2) -> PromotionDecision:
     reasons: list[str] = []
+    conscience = enforce_conscience(
+        action="train_or_update_adapter",
+        text=f"{candidate.kind} {candidate.id} {candidate.notes}",
+        context={"externalApproval": False, "allowCautionVerdicts": True},
+        high_impact=True,
+    )
+    if not conscience.allowed and conscience.verdict == "block":
+        reasons.append(f"conscience blocked update: {conscience.reason}")
     if candidate.contaminated:
         reasons.append("contamination flag set")
     if len(candidate.verifier_artifacts) < require_artifacts:

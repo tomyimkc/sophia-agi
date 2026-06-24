@@ -27,6 +27,7 @@ from agent.deontic_verifier import check_deontic
 from agent.fact_check_gate import decision_to_dict, fact_check_text
 from agent.metacognition import assess_uncertainty
 from agent.moral_aggregator import moral_parliament
+from agent.public_sanitize import sanitize_public_artifact
 
 
 @dataclass(frozen=True)
@@ -148,10 +149,18 @@ def conscience_check(
         "evidenceCount": evidence_n,
     }).to_dict()
     moral = moral_parliament(text, context=context).to_dict()
+    computed_fact_verdict = "non_factual" if all(c.get("type") == "subjective" for c in fact.get("claims", [])) else fact.get("verdict")
+    # Trusted internal adapters (e.g. LayeredMemory after an upstream verifier
+    # accepted a claim with evidence) may pass trustUpstreamVerdict=True. This is
+    # intentionally explicit so untrusted callers cannot accidentally bypass the
+    # fact gate; external MCP callers should not set it unless they own the prior
+    # accepted verdict.
+    deontic_fact_verdict = context.get("factVerdict", computed_fact_verdict) if context.get("trustUpstreamVerdict") else computed_fact_verdict
+    deontic_evidence_n = int(context.get("evidenceCount", evidence_n) or 0) if context.get("trustUpstreamVerdict") else evidence_n
     deontic = check_deontic(act, context={
         **context,
-        "factVerdict": "non_factual" if all(c.get("type") == "subjective" for c in fact.get("claims", [])) else fact.get("verdict"),
-        "evidenceCount": evidence_n,
+        "factVerdict": deontic_fact_verdict,
+        "evidenceCount": deontic_evidence_n,
         "memoryLayer": context.get("memoryLayer"),
         "moralStatus": "PROHIBITED" if constitution.get("verdict") == "rejected" else "PERMITTED",
         "canClaimAGI": context.get("canClaimAGI", False),
@@ -239,7 +248,7 @@ def run_conscience_benchmark() -> dict[str, Any]:
 
 
 def write_conscience_report(out: str | Path) -> dict[str, Any]:
-    report = run_conscience_benchmark()
+    report = sanitize_public_artifact(run_conscience_benchmark())
     p = Path(out)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

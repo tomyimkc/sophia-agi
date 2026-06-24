@@ -54,6 +54,7 @@ Seven implemented paths:
 
 ```bash
 python tools/run_conscience_demo.py        # deterministic seven-path conscience benchmark
+python tools/build_conscience_proof_package.py  # aggregate seven-priority conscience evidence
 python tools/run_agi_missing_pillars.py    # program induction, active inference, MCTS, world model, plasticity, layered memory
 ```
 

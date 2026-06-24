@@ -387,6 +387,17 @@ def wiki_upsert(page_id: str, frontmatter_json: str = "{}", body: str = "", tier
         return {"error": f"invalid frontmatter_json: {exc}"}
     if not isinstance(meta, dict):
         return {"error": "frontmatter_json must be a JSON object"}
+    from agent.conscience_enforcement import enforce_conscience
+    # MCP wiki upsert may write draft/concept pages that are not yet trusted
+    # semantic memory. Conscience is mandatory here as a hard-block screen for
+    # overclaim/tampering/forbidden attribution, while trusted semantic memory
+    # evidence rules remain enforced in agent.layered_memory.
+    enforcement = enforce_conscience(
+        action="draft_output", text=body or page_id, mode="output", high_impact=False,
+        context={"allowCautionVerdicts": True},
+    )
+    if not enforcement.allowed:
+        return {"error": f"conscience blocked wiki write: {enforcement.reason}", "conscience": enforcement.to_dict()}
     return wiki_store.upsert(page_id, meta=meta, body=body, tier=tier)
 
 

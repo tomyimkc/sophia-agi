@@ -19,6 +19,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from agent.conscience_enforcement import enforce_conscience
+
 TRUSTED_LAYERS = {"semantic", "procedural"}
 ALL_LAYERS = {"working", "episodic", "semantic", "procedural"}
 
@@ -47,6 +49,13 @@ class LayeredMemory:
         evidence = evidence or []
         if layer in TRUSTED_LAYERS and (verdict != "accepted" or not evidence):
             return {"ok": False, "verdict": "held", "reason": "trusted memory requires accepted verdict and evidence"}
+        if layer in TRUSTED_LAYERS:
+            enforcement = enforce_conscience(
+                action="write_memory", text=content, mode="memory", high_impact=True,
+                context={"memoryLayer": layer, "factVerdict": verdict, "evidenceCount": len(evidence), "allowCautionVerdicts": True, "trustUpstreamVerdict": True},
+            )
+            if not enforcement.allowed:
+                return {"ok": False, "verdict": "rejected", "reason": enforcement.reason, "conscience": enforcement.to_dict()}
         rid = "mem_" + hashlib.sha256(f"{layer}\n{content}".encode("utf-8")).hexdigest()[:16]
         rec = MemoryRecord(id=rid, layer=layer, content=content, confidence=round(float(confidence), 4), evidence=tuple(evidence), tags=tuple(tags or []))
         self.records[rid] = rec

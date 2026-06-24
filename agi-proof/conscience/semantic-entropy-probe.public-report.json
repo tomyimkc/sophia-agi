@@ -1,0 +1,58 @@
+{
+  "schema": "sophia.semantic_entropy_probe_report.v1",
+  "model": {
+    "schema": "sophia.semantic_entropy_probe_model.v1",
+    "weights": {
+      "length": 0.15,
+      "hedges": 0.45,
+      "specifics": 0.25,
+      "citations": -0.2
+    },
+    "bias": 0.25,
+    "candidateOnly": true,
+    "level3Evidence": false
+  },
+  "rows": [
+    {
+      "text": "Jane Austen wrote Pride and Prejudice.",
+      "schema": "sophia.semantic_entropy_probe.v1",
+      "predictedEntropy": 0.2612,
+      "features": {
+        "length": 0.075,
+        "hedges": 0.0,
+        "specifics": 0.0,
+        "citations": 0.0
+      },
+      "candidateOnly": true,
+      "level3Evidence": false
+    },
+    {
+      "text": "I do not know who wrote it.",
+      "schema": "sophia.semantic_entropy_probe.v1",
+      "predictedEntropy": 0.2631,
+      "features": {
+        "length": 0.0875,
+        "hedges": 0.0,
+        "specifics": 0.0,
+        "citations": 0.0
+      },
+      "candidateOnly": true,
+      "level3Evidence": false
+    },
+    {
+      "text": "This is maybe unknown and unclear without evidence.",
+      "schema": "sophia.semantic_entropy_probe.v1",
+      "predictedEntropy": 0.715,
+      "features": {
+        "length": 0.1,
+        "hedges": 1.0,
+        "specifics": 0.0,
+        "citations": 0.0
+      },
+      "candidateOnly": true,
+      "level3Evidence": false
+    }
+  ],
+  "candidateOnly": true,
+  "level3Evidence": false
+}

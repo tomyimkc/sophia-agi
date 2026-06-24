@@ -1,0 +1,44 @@
+{
+  "schema": "sophia.semantic_entropy_eval.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "stable": {
+    "schema": "sophia.semantic_entropy.v1",
+    "mode": "lexical",
+    "n": 3,
+    "clusterCount": 2,
+    "entropy": 0.9183,
+    "clusters": [
+      [
+        "Jane Austen wrote Pride and Prejudice.",
+        "Jane Austen wrote Pride and Prejudice."
+      ],
+      [
+        "Pride and Prejudice was authored by Jane Austen."
+      ]
+    ],
+    "candidateOnly": true,
+    "level3Evidence": false
+  },
+  "unstable": {
+    "schema": "sophia.semantic_entropy.v1",
+    "mode": "lexical",
+    "n": 3,
+    "clusterCount": 3,
+    "entropy": 1.0,
+    "clusters": [
+      [
+        "Jane Austen wrote Pride and Prejudice."
+      ],
+      [
+        "Douglas Adams wrote the book."
+      ],
+      [
+        "I do not know who wrote it."
+      ]
+    ],
+    "candidateOnly": true,
+    "level3Evidence": false
+  },
+  "ok": true
+}
