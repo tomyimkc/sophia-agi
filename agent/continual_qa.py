@@ -71,10 +71,11 @@ def build_vocab(episodes) -> "dict[str, str]":
                 parts.append(str(title))
             for alias in p.meta.get("aliases", []) or []:
                 parts.append(str(alias).replace("_", " "))
-            # Type/domain disambiguate near-duplicate entries (e.g. the dao_de_jing *text*
-            # vs the dao_de_jing_daoist_scripture *figure_source_seat*) for the controller.
-            tag = " ".join(str(p.meta.get(k)) for k in ("pageType", "domain") if p.meta.get(k))
-            vocab[p.id] = " ".join(parts) + (f" [{tag}]" if tag else "")
+            # NOTE: tagging entries with pageType/domain was tried to disambiguate
+            # near-duplicates (dao_de_jing text vs dao_de_jing_daoist_scripture) but it
+            # *regressed* LLM routing (gap 0.011 -> 0.033: extra tokens made socrates_corpus
+            # / socratic confusable). Reverted — kept id + title + aliases only.
+            vocab[p.id] = " ".join(parts)
     return vocab
 
 
