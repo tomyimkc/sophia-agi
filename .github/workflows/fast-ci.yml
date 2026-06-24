@@ -1,0 +1,49 @@
+name: fast-ci
+
+# Always-on fast lane: sub-2-minute feedback on EVERY PR (especially docs / lint /
+# skills changes). It runs the cheap-but-critical gates only — syntax, the
+# no-overclaim claims linter, attribution validation, and a handful of
+# dependency-free unit tests. The heavy rigorous suite lives in ci.yml and runs
+# (in parallel) whenever code/data changes or a PR is labelled 'full-ci'.
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: fast-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  fast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Syntax check (compile all Python)
+        run: >-
+          python -m compileall -q
+          agent tools tests sophia_mcp sophia_contract gateway selfextend
+          provenance_bench skills okf scripts
+
+      - name: Claims linter (no-overclaim copy gate)
+        run: python tools/lint_claims.py
+
+      - name: Attribution + training-example validation
+        run: python tools/validate_attribution.py
+
+      - name: Core unit tests (fast, dependency-free)
+        run: |
+          python tests/test_skills.py
+          python tests/test_skills_layer.py
+          python tests/test_metacognition.py
+          python tests/test_verifiers.py
+          python tests/test_contract_conformance.py
+          python tests/test_gateway.py
+          python tests/test_fact_check_gate.py
