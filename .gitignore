@@ -60,3 +60,8 @@ _wiki_build/
 
 # Scratch run-only drivers (root-level _*.py; e.g. evidence campaign helpers)
 /_*.py
+
+# Local-Sophia generated training packs (reproducible via tools/build_local_sophia_dataset.py)
+training/hard_negatives_dpo.jsonl
+training/wiki_provenance_*.jsonl
+training/local_sophia_v2/*.jsonl

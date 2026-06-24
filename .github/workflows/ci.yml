@@ -80,6 +80,8 @@ jobs:
           python tests/test_okf.py
           python tests/test_wiki_tools.py
           python tests/test_verifiers.py
+          python tests/test_local_sophia_dataset.py
+          python tools/build_local_sophia_dataset.py --check
           python tests/test_personality.py
           python tests/test_steering.py
           python tests/test_personality_steering.py
