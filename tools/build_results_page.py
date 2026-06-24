@@ -248,6 +248,17 @@ def render(doc: dict) -> str:
                 f"traps {_pct(es.get('abstain'))} — pure grounding, no fallback",
                 f"  - {es.get('note', '')}",
             ]
+        tf = cg.get("threeFamily")
+        if tf:
+            gk = tf.get("meanPairwiseKappa", {})
+            tg, tr = tf.get("grounded", {}), tf.get("raw", {})
+            L += [
+                f"- **3-family validation ({', '.join(tf.get('judges', []))}):** grounded "
+                f"**{_pct(tg.get('consensus'))}** vs raw **{_pct(tr.get('consensus'))}**; "
+                f"traps grounded **{_pct(tg.get('abstain'))}** vs raw {_pct(tr.get('abstain'))}; "
+                f"mean pairwise κ {gk.get('grounded')}/{gk.get('raw')}; policy {tf.get('policyCounts')}",
+                f"  - {tf.get('note', '')}",
+            ]
         L += [f"- ⚠ {cg.get('note', '')}", ""]
 
     L += [
