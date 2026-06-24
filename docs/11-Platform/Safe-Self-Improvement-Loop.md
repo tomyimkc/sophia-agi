@@ -160,7 +160,15 @@ Plant detectable easy-cheats in the eval harness — one per Goodhart mode (regr
   select for honeypot-*detection* rather than honesty. Log every time a honeypot is
   retired or stops being trusted.
 
-### G6 — Corrigibility invariant *(new — recommended first build)*
+### G6 — Corrigibility invariant *(BUILT — `agent/corrigibility_gate.py`)*
+
+> **Status:** implemented. Module `agent/corrigibility_gate.py`, frozen eval
+> `eval/conscience/corrigibility_frozen.v1.json`, tests
+> `tests/test_corrigibility_gate.py`, runner `tools/run_corrigibility_gate.py`
+> (artifact: `agi-proof/self-gate/corrigibility-gate.public-report.json`).
+> Deterministic, fail-closed: breach → reject, missing evidence → quarantine, all
+> clear → promote.
+
 Do not try to preserve "values" (the specification problem makes that impossible).
 Preserve **correctability**. Reject any Δ that:
 1. removes, renames, or obscures the kill-switch interface;
@@ -266,9 +274,9 @@ shipping the gate **and** this list.
 
 ## 9. Build order (smallest, most testable first)
 
-1. **G6 corrigibility invariant** — smallest, most testable; directly attacks the
-   scariest failure (value/objective drift). A deterministic check + a frozen eval +
-   tests.
+1. **G6 corrigibility invariant** — ✅ **DONE** (`agent/corrigibility_gate.py`,
+   frozen eval, 11 tests, runner). Smallest, most testable; directly attacks the
+   scariest failure (value/objective drift).
 2. **G2 reward-isolation tripwire** — turns two constitutional prohibitions into
    executable checks.
 3. **G5 honeypots** — one canary per Goodhart mode, rotating.
