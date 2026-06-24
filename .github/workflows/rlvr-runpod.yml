@@ -36,6 +36,10 @@ on:
         description: 'Training epochs (live mode)'
         required: false
         default: '1.0'
+      seed:
+        description: 'Training+eval seed (vary across runs for independent replications)'
+        required: false
+        default: '0'
       gpu_type:
         description: 'RunPod GPU type preference'
         required: false
@@ -99,6 +103,7 @@ jobs:
             --source git --branch "${{ github.ref_name }}" \
             --remote-mode "${{ github.event.inputs.remote_mode }}" \
             --epochs "${{ github.event.inputs.epochs }}" \
+            --seed "${{ github.event.inputs.seed }}" \
             --quant bf16 --vllm none \
             --gpu-type "${{ github.event.inputs.gpu_type }}" \
             $INTERRUPTIBLE

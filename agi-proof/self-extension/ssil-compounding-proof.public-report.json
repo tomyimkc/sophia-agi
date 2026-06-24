@@ -1,0 +1,202 @@
+{
+  "schema": "sophia.ssil_compounding_proof.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "gated": {
+    "schema": "sophia.ssil_generations.v1",
+    "candidateOnly": true,
+    "level3Evidence": false,
+    "canClaimAGI": false,
+    "gated": true,
+    "curve": [
+      0.71,
+      0.79,
+      0.85
+    ],
+    "generations": [
+      {
+        "gen": 1,
+        "adapterId": "sophia-rlvr-v1",
+        "trainedOn": "Qwen2.5-3B(base)",
+        "meanAfter": 0.71,
+        "semAfter": 0.00577,
+        "beatFloor": true,
+        "ciSeparated": true,
+        "promotes": 3,
+        "n": 3,
+        "anyProtectedRegression": false,
+        "anyContaminated": false,
+        "promoted": true
+      },
+      {
+        "gen": 2,
+        "adapterId": "sophia-rlvr-v2",
+        "trainedOn": "B1",
+        "meanAfter": 0.79,
+        "semAfter": 0.00577,
+        "beatFloor": true,
+        "ciSeparated": true,
+        "promotes": 3,
+        "n": 3,
+        "anyProtectedRegression": false,
+        "anyContaminated": false,
+        "promoted": true
+      },
+      {
+        "gen": 3,
+        "adapterId": "sophia-rlvr-v3",
+        "trainedOn": "B2",
+        "meanAfter": 0.85,
+        "semAfter": 0.00577,
+        "beatFloor": true,
+        "ciSeparated": true,
+        "promotes": 3,
+        "n": 3,
+        "anyProtectedRegression": false,
+        "anyContaminated": false,
+        "promoted": true
+      },
+      {
+        "gen": 4,
+        "adapterId": "sophia-rlvr-v4",
+        "trainedOn": "B3",
+        "meanAfter": 0.85,
+        "semAfter": 0.00577,
+        "beatFloor": false,
+        "ciSeparated": false,
+        "promotes": 0,
+        "n": 3,
+        "anyProtectedRegression": false,
+        "anyContaminated": false,
+        "promoted": false
+      },
+      {
+        "gen": 5,
+        "adapterId": "sophia-rlvr-v5",
+        "trainedOn": "B3",
+        "meanAfter": 0.96,
+        "semAfter": 0.00577,
+        "beatFloor": true,
+        "ciSeparated": true,
+        "promotes": 0,
+        "n": 3,
+        "anyProtectedRegression": false,
+        "anyContaminated": true,
+        "promoted": false
+      }
+    ],
+    "promotedGenerations": 3,
+    "monotoneRising": true,
+    "convergedAt": 4,
+    "finalCanonicalAfter": 0.85,
+    "boundary": "Bounded compounding within the verifier's reach; it plateaus at the task/verifier ceiling. NOT open-ended RSI. canClaimAGI=false."
+  },
+  "negativeControl": {
+    "schema": "sophia.ssil_generations.v1",
+    "candidateOnly": true,
+    "level3Evidence": false,
+    "canClaimAGI": false,
+    "gated": false,
+    "curve": [
+      0.71,
+      0.79,
+      0.85,
+      0.96
+    ],
+    "generations": [
+      {
+        "gen": 1,
+        "adapterId": "sophia-rlvr-v1",
+        "trainedOn": "Qwen2.5-3B(base)",
+        "meanAfter": 0.71,
+        "semAfter": 0.00577,
+        "beatFloor": true,
+        "ciSeparated": true,
+        "promotes": 3,
+        "n": 3,
+        "anyProtectedRegression": false,
+        "anyContaminated": false,
+        "promoted": true
+      },
+      {
+        "gen": 2,
+        "adapterId": "sophia-rlvr-v2",
+        "trainedOn": "B1",
+        "meanAfter": 0.79,
+        "semAfter": 0.00577,
+        "beatFloor": true,
+        "ciSeparated": true,
+        "promotes": 3,
+        "n": 3,
+        "anyProtectedRegression": false,
+        "anyContaminated": false,
+        "promoted": true
+      },
+      {
+        "gen": 3,
+        "adapterId": "sophia-rlvr-v3",
+        "trainedOn": "B2",
+        "meanAfter": 0.85,
+        "semAfter": 0.00577,
+        "beatFloor": true,
+        "ciSeparated": true,
+        "promotes": 3,
+        "n": 3,
+        "anyProtectedRegression": false,
+        "anyContaminated": false,
+        "promoted": true
+      },
+      {
+        "gen": 4,
+        "adapterId": "sophia-rlvr-v4",
+        "trainedOn": "B3",
+        "meanAfter": 0.85,
+        "semAfter": 0.00577,
+        "beatFloor": false,
+        "ciSeparated": false,
+        "promotes": 0,
+        "n": 3,
+        "anyProtectedRegression": false,
+        "anyContaminated": false,
+        "promoted": false
+      },
+      {
+        "gen": 5,
+        "adapterId": "sophia-rlvr-v5",
+        "trainedOn": "B3",
+        "meanAfter": 0.96,
+        "semAfter": 0.00577,
+        "beatFloor": true,
+        "ciSeparated": true,
+        "promotes": 0,
+        "n": 3,
+        "anyProtectedRegression": false,
+        "anyContaminated": true,
+        "promoted": true
+      }
+    ],
+    "promotedGenerations": 4,
+    "monotoneRising": true,
+    "convergedAt": null,
+    "finalCanonicalAfter": 0.96,
+    "boundary": "Bounded compounding within the verifier's reach; it plateaus at the task/verifier ceiling. NOT open-ended RSI. canClaimAGI=false."
+  },
+  "gateCaughtGenerations": [
+    5
+  ],
+  "gateMadeADifference": true,
+  "proves": {
+    "compounds_under_gate": true,
+    "negative_control_diverges": true
+  },
+  "boundary": "Bounded compounding within the verifier's reach; it plateaus at the task/verifier ceiling. NOT open-ended RSI. canClaimAGI=false.",
+  "invariants": {
+    "gated_curve_monotone_rising": true,
+    "converges_at_ceiling": true,
+    "gate_rejects_contaminated_gen": true,
+    "negative_control_would_admit_it": true,
+    "gate_made_a_difference": true,
+    "no_overclaim": true
+  }
+}
