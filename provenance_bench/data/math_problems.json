@@ -1,160 +1,1593 @@
 {
   "_meta": {
-    "description": "Symbolic-math RLVR problem set. Reward = math_equivalent(gold) (sympy), a deterministic verifier, no LLM judge — the math analogue of code tests-pass. Split is FAMILY-disjoint (train families never appear in eval) so 'generalized' means a new problem TYPE, not a memorized instance. Golds are sympy-parseable.",
-    "schemaVersion": 1,
-    "families": [
-      "derivative",
-      "expand",
-      "factor",
-      "integrate",
-      "simplify",
+    "description": "Symbolic-math RLVR pack (sympy-generated, self-verified golds). Families chosen so the answer != the question (derivative/integral/solution/evaluation), making math_equivalent a non-gameable reward. Split is by FIXED held-out families (identical across seeds) so seeds are comparable; eval families are genuine generalizations (chain rule, function antiderivatives, second derivative) never seen in training. Regenerate with tools/gen_math_pack.py.",
+    "schemaVersion": 2,
+    "trainFamilies": [
+      "definite_integral",
+      "derivative_func",
+      "derivative_poly",
+      "derivative_product",
+      "evaluate_poly",
       "solve_linear"
-    ]
+    ],
+    "evalFamilies": [
+      "derivative_chain",
+      "integrate_func",
+      "second_derivative"
+    ],
+    "counts": {
+      "train": 164,
+      "eval": 60
+    }
   },
   "problems": [
     {
-      "id": "factor-x2-1",
-      "family": "factor",
-      "prompt": "Factor completely: x**2 - 1. Put the final answer in \\boxed{}.",
-      "gold": "(x-1)*(x+1)"
+      "id": "dpoly-5-4-2-2",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 5*x**2 + 4*x + 2. Put the final answer in \\boxed{}.",
+      "gold": "10*x + 4"
     },
     {
-      "id": "factor-x2-4",
-      "family": "factor",
-      "prompt": "Factor completely: x**2 - 4. Put the final answer in \\boxed{}.",
-      "gold": "(x-2)*(x+2)"
+      "id": "dpoly-1-2-4-2",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: x**2 + 2*x + 4. Put the final answer in \\boxed{}.",
+      "gold": "2*x + 2"
     },
     {
-      "id": "factor-x2-5x-6",
-      "family": "factor",
-      "prompt": "Factor completely: x**2 + 5*x + 6. Put the final answer in \\boxed{}.",
-      "gold": "(x+2)*(x+3)"
+      "id": "dpoly-6-4-2-3",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 6*x**3 + 4*x + 2. Put the final answer in \\boxed{}.",
+      "gold": "18*x**2 + 4"
     },
     {
-      "id": "factor-x2-9",
-      "family": "factor",
-      "prompt": "Factor completely: x**2 - 9. Put the final answer in \\boxed{}.",
-      "gold": "(x-3)*(x+3)"
+      "id": "dpoly-4-3-1-2",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*x**2 + 3*x + 1. Put the final answer in \\boxed{}.",
+      "gold": "8*x + 3"
     },
     {
-      "id": "expand-xp1-sq",
-      "family": "expand",
-      "prompt": "Expand: (x+1)**2. Put the final answer in \\boxed{}.",
-      "gold": "x**2 + 2*x + 1"
+      "id": "dpoly-4-2-2-2",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*x**2 + 2*x + 2. Put the final answer in \\boxed{}.",
+      "gold": "8*x + 2"
     },
     {
-      "id": "expand-xp2-xm2",
-      "family": "expand",
-      "prompt": "Expand: (x+2)*(x-2). Put the final answer in \\boxed{}.",
-      "gold": "x**2 - 4"
+      "id": "dpoly-3-6-6-3",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*x**3 + 6*x + 6. Put the final answer in \\boxed{}.",
+      "gold": "9*x**2 + 6"
     },
     {
-      "id": "expand-xp3-sq",
-      "family": "expand",
-      "prompt": "Expand: (x+3)**2. Put the final answer in \\boxed{}.",
-      "gold": "x**2 + 6*x + 9"
+      "id": "dpoly-3-1-5-4",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*x**4 + x + 5. Put the final answer in \\boxed{}.",
+      "gold": "12*x**3 + 1"
     },
     {
-      "id": "expand-2xp1-xm1",
-      "family": "expand",
-      "prompt": "Expand: (2*x+1)*(x-1). Put the final answer in \\boxed{}.",
-      "gold": "2*x**2 - x - 1"
+      "id": "dpoly-1-1-2-4",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: x**4 + x + 2. Put the final answer in \\boxed{}.",
+      "gold": "4*x**3 + 1"
     },
     {
-      "id": "deriv-x3",
-      "family": "derivative",
-      "prompt": "Differentiate with respect to x: x**3. Put the final answer in \\boxed{}.",
-      "gold": "3*x**2"
+      "id": "dpoly-3-1-3-4",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*x**4 + x + 3. Put the final answer in \\boxed{}.",
+      "gold": "12*x**3 + 1"
     },
     {
-      "id": "deriv-x2-3x",
-      "family": "derivative",
-      "prompt": "Differentiate with respect to x: x**2 + 3*x. Put the final answer in \\boxed{}.",
+      "id": "dpoly-1-5-4-2",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: x**2 + 5*x + 4. Put the final answer in \\boxed{}.",
+      "gold": "2*x + 5"
+    },
+    {
+      "id": "dpoly-1-6-0-4",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: x**4 + 6*x. Put the final answer in \\boxed{}.",
+      "gold": "4*x**3 + 6"
+    },
+    {
+      "id": "dpoly-6-2-1-3",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 6*x**3 + 2*x + 1. Put the final answer in \\boxed{}.",
+      "gold": "18*x**2 + 2"
+    },
+    {
+      "id": "dpoly-5-5-0-2",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 5*x**2 + 5*x. Put the final answer in \\boxed{}.",
+      "gold": "10*x + 5"
+    },
+    {
+      "id": "dpoly-1-6-1-3",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: x**3 + 6*x + 1. Put the final answer in \\boxed{}.",
+      "gold": "3*x**2 + 6"
+    },
+    {
+      "id": "dpoly-1-3-2-2",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: x**2 + 3*x + 2. Put the final answer in \\boxed{}.",
       "gold": "2*x + 3"
     },
     {
-      "id": "deriv-sin",
-      "family": "derivative",
+      "id": "dpoly-4-6-6-2",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*x**2 + 6*x + 6. Put the final answer in \\boxed{}.",
+      "gold": "8*x + 6"
+    },
+    {
+      "id": "dpoly-5-1-6-4",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 5*x**4 + x + 6. Put the final answer in \\boxed{}.",
+      "gold": "20*x**3 + 1"
+    },
+    {
+      "id": "dpoly-4-5-4-3",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*x**3 + 5*x + 4. Put the final answer in \\boxed{}.",
+      "gold": "12*x**2 + 5"
+    },
+    {
+      "id": "dpoly-5-3-6-3",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 5*x**3 + 3*x + 6. Put the final answer in \\boxed{}.",
+      "gold": "15*x**2 + 3"
+    },
+    {
+      "id": "dpoly-5-1-2-2",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 5*x**2 + x + 2. Put the final answer in \\boxed{}.",
+      "gold": "10*x + 1"
+    },
+    {
+      "id": "dpoly-4-4-1-3",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*x**3 + 4*x + 1. Put the final answer in \\boxed{}.",
+      "gold": "12*x**2 + 4"
+    },
+    {
+      "id": "dpoly-3-1-5-3",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*x**3 + x + 5. Put the final answer in \\boxed{}.",
+      "gold": "9*x**2 + 1"
+    },
+    {
+      "id": "dpoly-2-3-3-3",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*x**3 + 3*x + 3. Put the final answer in \\boxed{}.",
+      "gold": "6*x**2 + 3"
+    },
+    {
+      "id": "dpoly-5-1-0-4",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 5*x**4 + x. Put the final answer in \\boxed{}.",
+      "gold": "20*x**3 + 1"
+    },
+    {
+      "id": "dpoly-2-1-5-4",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*x**4 + x + 5. Put the final answer in \\boxed{}.",
+      "gold": "8*x**3 + 1"
+    },
+    {
+      "id": "dpoly-3-5-5-2",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*x**2 + 5*x + 5. Put the final answer in \\boxed{}.",
+      "gold": "6*x + 5"
+    },
+    {
+      "id": "dpoly-6-4-2-2",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 6*x**2 + 4*x + 2. Put the final answer in \\boxed{}.",
+      "gold": "12*x + 4"
+    },
+    {
+      "id": "dpoly-2-2-5-2",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*x**2 + 2*x + 5. Put the final answer in \\boxed{}.",
+      "gold": "4*x + 2"
+    },
+    {
+      "id": "dpoly-2-1-6-3",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*x**3 + x + 6. Put the final answer in \\boxed{}.",
+      "gold": "6*x**2 + 1"
+    },
+    {
+      "id": "dpoly-3-4-2-4",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*x**4 + 4*x + 2. Put the final answer in \\boxed{}.",
+      "gold": "12*x**3 + 4"
+    },
+    {
+      "id": "dpoly-4-6-1-3",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*x**3 + 6*x + 1. Put the final answer in \\boxed{}.",
+      "gold": "12*x**2 + 6"
+    },
+    {
+      "id": "dpoly-5-2-2-3",
+      "family": "derivative_poly",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 5*x**3 + 2*x + 2. Put the final answer in \\boxed{}.",
+      "gold": "15*x**2 + 2"
+    },
+    {
+      "id": "dfunc-0",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: exp(3*x). Put the final answer in \\boxed{}.",
+      "gold": "3*exp(3*x)"
+    },
+    {
+      "id": "dfunc-1",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*sin(x). Put the final answer in \\boxed{}.",
+      "gold": "2*cos(x)"
+    },
+    {
+      "id": "dfunc-2",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*exp(2*x). Put the final answer in \\boxed{}.",
+      "gold": "4*exp(2*x)"
+    },
+    {
+      "id": "dfunc-3",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*exp(3*x). Put the final answer in \\boxed{}.",
+      "gold": "6*exp(3*x)"
+    },
+    {
+      "id": "dfunc-4",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*exp(2*x). Put the final answer in \\boxed{}.",
+      "gold": "8*exp(2*x)"
+    },
+    {
+      "id": "dfunc-5",
+      "family": "derivative_func",
+      "split": "train",
       "prompt": "Differentiate with respect to x: sin(x). Put the final answer in \\boxed{}.",
       "gold": "cos(x)"
     },
     {
-      "id": "deriv-exp2x",
-      "family": "derivative",
+      "id": "dfunc-6",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*exp(x). Put the final answer in \\boxed{}.",
+      "gold": "2*exp(x)"
+    },
+    {
+      "id": "dfunc-7",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*log(x). Put the final answer in \\boxed{}.",
+      "gold": "4/x"
+    },
+    {
+      "id": "dfunc-8",
+      "family": "derivative_func",
+      "split": "train",
       "prompt": "Differentiate with respect to x: exp(2*x). Put the final answer in \\boxed{}.",
       "gold": "2*exp(2*x)"
     },
     {
-      "id": "simp-x2m1-over-xm1",
-      "family": "simplify",
-      "prompt": "Simplify: (x**2 - 1)/(x - 1). Put the final answer in \\boxed{}.",
-      "gold": "x + 1"
+      "id": "dfunc-9",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*log(x). Put the final answer in \\boxed{}.",
+      "gold": "2/x"
     },
     {
-      "id": "simp-pythag",
-      "family": "simplify",
-      "prompt": "Simplify: sin(x)**2 + cos(x)**2. Put the final answer in \\boxed{}.",
+      "id": "dfunc-10",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*sin(x). Put the final answer in \\boxed{}.",
+      "gold": "3*cos(x)"
+    },
+    {
+      "id": "dfunc-11",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: exp(x). Put the final answer in \\boxed{}.",
+      "gold": "exp(x)"
+    },
+    {
+      "id": "dfunc-12",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*exp(3*x). Put the final answer in \\boxed{}.",
+      "gold": "9*exp(3*x)"
+    },
+    {
+      "id": "dfunc-13",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*exp(2*x). Put the final answer in \\boxed{}.",
+      "gold": "6*exp(2*x)"
+    },
+    {
+      "id": "dfunc-14",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*cos(x). Put the final answer in \\boxed{}.",
+      "gold": "-3*sin(x)"
+    },
+    {
+      "id": "dfunc-15",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*cos(x). Put the final answer in \\boxed{}.",
+      "gold": "-4*sin(x)"
+    },
+    {
+      "id": "dfunc-16",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*sin(x). Put the final answer in \\boxed{}.",
+      "gold": "4*cos(x)"
+    },
+    {
+      "id": "dfunc-17",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*log(x). Put the final answer in \\boxed{}.",
+      "gold": "3/x"
+    },
+    {
+      "id": "dfunc-18",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*cos(x). Put the final answer in \\boxed{}.",
+      "gold": "-2*sin(x)"
+    },
+    {
+      "id": "dfunc-19",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*exp(x). Put the final answer in \\boxed{}.",
+      "gold": "3*exp(x)"
+    },
+    {
+      "id": "dfunc-20",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: log(x). Put the final answer in \\boxed{}.",
+      "gold": "1/x"
+    },
+    {
+      "id": "dfunc-21",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*exp(x). Put the final answer in \\boxed{}.",
+      "gold": "4*exp(x)"
+    },
+    {
+      "id": "dfunc-22",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: cos(x). Put the final answer in \\boxed{}.",
+      "gold": "-sin(x)"
+    },
+    {
+      "id": "dfunc-23",
+      "family": "derivative_func",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*exp(3*x). Put the final answer in \\boxed{}.",
+      "gold": "12*exp(3*x)"
+    },
+    {
+      "id": "dprod-0",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: x*sin(x). Put the final answer in \\boxed{}.",
+      "gold": "x*cos(x) + sin(x)"
+    },
+    {
+      "id": "dprod-1",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: x*cos(x). Put the final answer in \\boxed{}.",
+      "gold": "-x*sin(x) + cos(x)"
+    },
+    {
+      "id": "dprod-2",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: x*exp(x). Put the final answer in \\boxed{}.",
+      "gold": "(x + 1)*exp(x)"
+    },
+    {
+      "id": "dprod-3",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: x**3. Put the final answer in \\boxed{}.",
+      "gold": "3*x**2"
+    },
+    {
+      "id": "dprod-4",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: x*log(x). Put the final answer in \\boxed{}.",
+      "gold": "log(x) + 1"
+    },
+    {
+      "id": "dprod-5",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*x*sin(x). Put the final answer in \\boxed{}.",
+      "gold": "2*x*cos(x) + 2*sin(x)"
+    },
+    {
+      "id": "dprod-6",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*x*cos(x). Put the final answer in \\boxed{}.",
+      "gold": "-2*x*sin(x) + 2*cos(x)"
+    },
+    {
+      "id": "dprod-7",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*x*exp(x). Put the final answer in \\boxed{}.",
+      "gold": "2*(x + 1)*exp(x)"
+    },
+    {
+      "id": "dprod-8",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*x**3. Put the final answer in \\boxed{}.",
+      "gold": "6*x**2"
+    },
+    {
+      "id": "dprod-9",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 2*x*log(x). Put the final answer in \\boxed{}.",
+      "gold": "2*log(x) + 2"
+    },
+    {
+      "id": "dprod-10",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*x*sin(x). Put the final answer in \\boxed{}.",
+      "gold": "3*x*cos(x) + 3*sin(x)"
+    },
+    {
+      "id": "dprod-11",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*x*cos(x). Put the final answer in \\boxed{}.",
+      "gold": "-3*x*sin(x) + 3*cos(x)"
+    },
+    {
+      "id": "dprod-12",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*x*exp(x). Put the final answer in \\boxed{}.",
+      "gold": "3*(x + 1)*exp(x)"
+    },
+    {
+      "id": "dprod-13",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*x**3. Put the final answer in \\boxed{}.",
+      "gold": "9*x**2"
+    },
+    {
+      "id": "dprod-14",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 3*x*log(x). Put the final answer in \\boxed{}.",
+      "gold": "3*log(x) + 3"
+    },
+    {
+      "id": "dprod-15",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*x*sin(x). Put the final answer in \\boxed{}.",
+      "gold": "4*x*cos(x) + 4*sin(x)"
+    },
+    {
+      "id": "dprod-16",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*x*cos(x). Put the final answer in \\boxed{}.",
+      "gold": "-4*x*sin(x) + 4*cos(x)"
+    },
+    {
+      "id": "dprod-17",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*x*exp(x). Put the final answer in \\boxed{}.",
+      "gold": "4*(x + 1)*exp(x)"
+    },
+    {
+      "id": "dprod-18",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*x**3. Put the final answer in \\boxed{}.",
+      "gold": "12*x**2"
+    },
+    {
+      "id": "dprod-19",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 4*x*log(x). Put the final answer in \\boxed{}.",
+      "gold": "4*log(x) + 4"
+    },
+    {
+      "id": "dprod-20",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 5*x*sin(x). Put the final answer in \\boxed{}.",
+      "gold": "5*x*cos(x) + 5*sin(x)"
+    },
+    {
+      "id": "dprod-21",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 5*x*cos(x). Put the final answer in \\boxed{}.",
+      "gold": "-5*x*sin(x) + 5*cos(x)"
+    },
+    {
+      "id": "dprod-22",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 5*x*exp(x). Put the final answer in \\boxed{}.",
+      "gold": "5*(x + 1)*exp(x)"
+    },
+    {
+      "id": "dprod-23",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 5*x**3. Put the final answer in \\boxed{}.",
+      "gold": "15*x**2"
+    },
+    {
+      "id": "dprod-24",
+      "family": "derivative_product",
+      "split": "train",
+      "prompt": "Differentiate with respect to x: 5*x*log(x). Put the final answer in \\boxed{}.",
+      "gold": "5*log(x) + 5"
+    },
+    {
+      "id": "slin-4--5-13",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 4*x - 5 = 13. Put the final answer in \\boxed{}.",
+      "gold": "9/2"
+    },
+    {
+      "id": "slin-4-8-6",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 4*x + 8 = 6. Put the final answer in \\boxed{}.",
+      "gold": "-1/2"
+    },
+    {
+      "id": "slin-7-2-8",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 7*x + 2 = 8. Put the final answer in \\boxed{}.",
+      "gold": "6/7"
+    },
+    {
+      "id": "slin-7-2-5",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 7*x + 2 = 5. Put the final answer in \\boxed{}.",
+      "gold": "3/7"
+    },
+    {
+      "id": "slin-3--7-9",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 3*x - 7 = 9. Put the final answer in \\boxed{}.",
+      "gold": "16/3"
+    },
+    {
+      "id": "slin-5--8-7",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 5*x - 8 = 7. Put the final answer in \\boxed{}.",
+      "gold": "3"
+    },
+    {
+      "id": "slin-8-0-1",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 8*x = 1. Put the final answer in \\boxed{}.",
+      "gold": "1/8"
+    },
+    {
+      "id": "slin-9-8-14",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 9*x + 8 = 14. Put the final answer in \\boxed{}.",
+      "gold": "2/3"
+    },
+    {
+      "id": "slin-7--5-1",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 7*x - 5 = 1. Put the final answer in \\boxed{}.",
+      "gold": "6/7"
+    },
+    {
+      "id": "slin-3--4-11",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 3*x - 4 = 11. Put the final answer in \\boxed{}.",
+      "gold": "5"
+    },
+    {
+      "id": "slin-9-8--4",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 9*x + 8 = -4. Put the final answer in \\boxed{}.",
+      "gold": "-4/3"
+    },
+    {
+      "id": "slin-5-8-13",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 5*x + 8 = 13. Put the final answer in \\boxed{}.",
       "gold": "1"
     },
     {
-      "id": "simp-2xp4-over-2",
-      "family": "simplify",
-      "prompt": "Simplify: (2*x + 4)/2. Put the final answer in \\boxed{}.",
-      "gold": "x + 2"
-    },
-    {
-      "id": "simp-xxx",
-      "family": "simplify",
-      "prompt": "Simplify: x*x*x. Put the final answer in \\boxed{}.",
-      "gold": "x**3"
-    },
-    {
-      "id": "solve-2xp3-7",
+      "id": "slin-4-0-17",
       "family": "solve_linear",
-      "prompt": "Solve for x: 2*x + 3 = 7. Put the final answer in \\boxed{}.",
-      "gold": "2"
+      "split": "train",
+      "prompt": "Solve for x: 4*x = 17. Put the final answer in \\boxed{}.",
+      "gold": "17/4"
     },
     {
-      "id": "solve-3xm6-0",
+      "id": "slin-3-0-18",
       "family": "solve_linear",
-      "prompt": "Solve for x: 3*x - 6 = 0. Put the final answer in \\boxed{}.",
-      "gold": "2"
-    },
-    {
-      "id": "solve-5x-20",
-      "family": "solve_linear",
-      "prompt": "Solve for x: 5*x = 20. Put the final answer in \\boxed{}.",
-      "gold": "4"
-    },
-    {
-      "id": "solve-xover2p1-4",
-      "family": "solve_linear",
-      "prompt": "Solve for x: x/2 + 1 = 4. Put the final answer in \\boxed{}.",
+      "split": "train",
+      "prompt": "Solve for x: 3*x = 18. Put the final answer in \\boxed{}.",
       "gold": "6"
     },
     {
-      "id": "int-2x",
-      "family": "integrate",
-      "prompt": "Integrate with respect to x (omit the constant): 2*x. Put the final answer in \\boxed{}.",
-      "gold": "x**2"
+      "id": "slin-5-0-12",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 5*x = 12. Put the final answer in \\boxed{}.",
+      "gold": "12/5"
     },
     {
-      "id": "int-3x2",
-      "family": "integrate",
-      "prompt": "Integrate with respect to x (omit the constant): 3*x**2. Put the final answer in \\boxed{}.",
-      "gold": "x**3"
+      "id": "slin-6--9--7",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 6*x - 9 = -7. Put the final answer in \\boxed{}.",
+      "gold": "1/3"
     },
     {
-      "id": "int-cos",
-      "family": "integrate",
-      "prompt": "Integrate with respect to x (omit the constant): cos(x). Put the final answer in \\boxed{}.",
+      "id": "slin-2-8-5",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 2*x + 8 = 5. Put the final answer in \\boxed{}.",
+      "gold": "-3/2"
+    },
+    {
+      "id": "slin-7-9--4",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 7*x + 9 = -4. Put the final answer in \\boxed{}.",
+      "gold": "-13/7"
+    },
+    {
+      "id": "slin-7--2-14",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 7*x - 2 = 14. Put the final answer in \\boxed{}.",
+      "gold": "16/7"
+    },
+    {
+      "id": "slin-4-5--5",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 4*x + 5 = -5. Put the final answer in \\boxed{}.",
+      "gold": "-5/2"
+    },
+    {
+      "id": "slin-8--2--3",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 8*x - 2 = -3. Put the final answer in \\boxed{}.",
+      "gold": "-1/8"
+    },
+    {
+      "id": "slin-5--5--6",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 5*x - 5 = -6. Put the final answer in \\boxed{}.",
+      "gold": "-1/5"
+    },
+    {
+      "id": "slin-7--7--4",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 7*x - 7 = -4. Put the final answer in \\boxed{}.",
+      "gold": "3/7"
+    },
+    {
+      "id": "slin-8--9-1",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 8*x - 9 = 1. Put the final answer in \\boxed{}.",
+      "gold": "5/4"
+    },
+    {
+      "id": "slin-8-5-13",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 8*x + 5 = 13. Put the final answer in \\boxed{}.",
+      "gold": "1"
+    },
+    {
+      "id": "slin-3--6-17",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 3*x - 6 = 17. Put the final answer in \\boxed{}.",
+      "gold": "23/3"
+    },
+    {
+      "id": "slin-5--8-16",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 5*x - 8 = 16. Put the final answer in \\boxed{}.",
+      "gold": "24/5"
+    },
+    {
+      "id": "slin-6-7--4",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 6*x + 7 = -4. Put the final answer in \\boxed{}.",
+      "gold": "-11/6"
+    },
+    {
+      "id": "slin-2--4--2",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 2*x - 4 = -2. Put the final answer in \\boxed{}.",
+      "gold": "1"
+    },
+    {
+      "id": "slin-6-5-6",
+      "family": "solve_linear",
+      "split": "train",
+      "prompt": "Solve for x: 6*x + 5 = 6. Put the final answer in \\boxed{}.",
+      "gold": "1/6"
+    },
+    {
+      "id": "eval-4-4--1--2",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 4*x**2 + 4*x - 1 at x = -2. Put the final answer in \\boxed{}.",
+      "gold": "7"
+    },
+    {
+      "id": "eval-2--5--1--2",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 2*x**2 - 5*x - 1 at x = -2. Put the final answer in \\boxed{}.",
+      "gold": "17"
+    },
+    {
+      "id": "eval-4-5--1--2",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 4*x**2 + 5*x - 1 at x = -2. Put the final answer in \\boxed{}.",
+      "gold": "5"
+    },
+    {
+      "id": "eval-1-3-4-4",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate x**2 + 3*x + 4 at x = 4. Put the final answer in \\boxed{}.",
+      "gold": "32"
+    },
+    {
+      "id": "eval-6-0--5-3",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 6*x**2 - 5 at x = 3. Put the final answer in \\boxed{}.",
+      "gold": "49"
+    },
+    {
+      "id": "eval-3--4-6--2",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 3*x**2 - 4*x + 6 at x = -2. Put the final answer in \\boxed{}.",
+      "gold": "26"
+    },
+    {
+      "id": "eval-2-6--1-1",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 2*x**2 + 6*x - 1 at x = 1. Put the final answer in \\boxed{}.",
+      "gold": "7"
+    },
+    {
+      "id": "eval-1--5--4--2",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate x**2 - 5*x - 4 at x = -2. Put the final answer in \\boxed{}.",
+      "gold": "10"
+    },
+    {
+      "id": "eval-6--1-0-0",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 6*x**2 - x at x = 0. Put the final answer in \\boxed{}.",
+      "gold": "0"
+    },
+    {
+      "id": "eval-3-2-4-1",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 3*x**2 + 2*x + 4 at x = 1. Put the final answer in \\boxed{}.",
+      "gold": "9"
+    },
+    {
+      "id": "eval-6--2--5--1",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 6*x**2 - 2*x - 5 at x = -1. Put the final answer in \\boxed{}.",
+      "gold": "3"
+    },
+    {
+      "id": "eval-6-5-6--2",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 6*x**2 + 5*x + 6 at x = -2. Put the final answer in \\boxed{}.",
+      "gold": "20"
+    },
+    {
+      "id": "eval-1-6--2--3",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate x**2 + 6*x - 2 at x = -3. Put the final answer in \\boxed{}.",
+      "gold": "-11"
+    },
+    {
+      "id": "eval-1-5--1-4",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate x**2 + 5*x - 1 at x = 4. Put the final answer in \\boxed{}.",
+      "gold": "35"
+    },
+    {
+      "id": "eval-1--6--5-2",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate x**2 - 6*x - 5 at x = 2. Put the final answer in \\boxed{}.",
+      "gold": "-13"
+    },
+    {
+      "id": "eval-2-2--2-2",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 2*x**2 + 2*x - 2 at x = 2. Put the final answer in \\boxed{}.",
+      "gold": "10"
+    },
+    {
+      "id": "eval-4--6-3--3",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 4*x**2 - 6*x + 3 at x = -3. Put the final answer in \\boxed{}.",
+      "gold": "57"
+    },
+    {
+      "id": "eval-2-5--3-4",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 2*x**2 + 5*x - 3 at x = 4. Put the final answer in \\boxed{}.",
+      "gold": "49"
+    },
+    {
+      "id": "eval-2--2--2-4",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 2*x**2 - 2*x - 2 at x = 4. Put the final answer in \\boxed{}.",
+      "gold": "22"
+    },
+    {
+      "id": "eval-1-1-2-3",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate x**2 + x + 2 at x = 3. Put the final answer in \\boxed{}.",
+      "gold": "14"
+    },
+    {
+      "id": "eval-2--2--3--2",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 2*x**2 - 2*x - 3 at x = -2. Put the final answer in \\boxed{}.",
+      "gold": "9"
+    },
+    {
+      "id": "eval-6-1-6--1",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 6*x**2 + x + 6 at x = -1. Put the final answer in \\boxed{}.",
+      "gold": "11"
+    },
+    {
+      "id": "eval-1-1-0-4",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate x**2 + x at x = 4. Put the final answer in \\boxed{}.",
+      "gold": "20"
+    },
+    {
+      "id": "eval-1--4-6--1",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate x**2 - 4*x + 6 at x = -1. Put the final answer in \\boxed{}.",
+      "gold": "11"
+    },
+    {
+      "id": "eval-3-0--3-4",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 3*x**2 - 3 at x = 4. Put the final answer in \\boxed{}.",
+      "gold": "45"
+    },
+    {
+      "id": "eval-2-2-1-2",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 2*x**2 + 2*x + 1 at x = 2. Put the final answer in \\boxed{}.",
+      "gold": "13"
+    },
+    {
+      "id": "eval-6-5--3-2",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 6*x**2 + 5*x - 3 at x = 2. Put the final answer in \\boxed{}.",
+      "gold": "31"
+    },
+    {
+      "id": "eval-6-5--5-2",
+      "family": "evaluate_poly",
+      "split": "train",
+      "prompt": "Evaluate 6*x**2 + 5*x - 5 at x = 2. Put the final answer in \\boxed{}.",
+      "gold": "29"
+    },
+    {
+      "id": "defint-1-1-3",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of x with respect to x from 0 to 3. Put the final answer in \\boxed{}.",
+      "gold": "9/2"
+    },
+    {
+      "id": "defint-5-4-3",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 5*x**4 with respect to x from 0 to 3. Put the final answer in \\boxed{}.",
+      "gold": "243"
+    },
+    {
+      "id": "defint-4-3-3",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 4*x**3 with respect to x from 0 to 3. Put the final answer in \\boxed{}.",
+      "gold": "81"
+    },
+    {
+      "id": "defint-5-1-1",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 5*x with respect to x from 0 to 1. Put the final answer in \\boxed{}.",
+      "gold": "5/2"
+    },
+    {
+      "id": "defint-6-4-4",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 6*x**4 with respect to x from 0 to 4. Put the final answer in \\boxed{}.",
+      "gold": "6144/5"
+    },
+    {
+      "id": "defint-4-3-4",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 4*x**3 with respect to x from 0 to 4. Put the final answer in \\boxed{}.",
+      "gold": "256"
+    },
+    {
+      "id": "defint-4-2-3",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 4*x**2 with respect to x from 0 to 3. Put the final answer in \\boxed{}.",
+      "gold": "36"
+    },
+    {
+      "id": "defint-3-2-1",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 3*x**2 with respect to x from 0 to 1. Put the final answer in \\boxed{}.",
+      "gold": "1"
+    },
+    {
+      "id": "defint-2-2-4",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 2*x**2 with respect to x from 0 to 4. Put the final answer in \\boxed{}.",
+      "gold": "128/3"
+    },
+    {
+      "id": "defint-4-3-2",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 4*x**3 with respect to x from 0 to 2. Put the final answer in \\boxed{}.",
+      "gold": "16"
+    },
+    {
+      "id": "defint-3-2-3",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 3*x**2 with respect to x from 0 to 3. Put the final answer in \\boxed{}.",
+      "gold": "27"
+    },
+    {
+      "id": "defint-5-4-1",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 5*x**4 with respect to x from 0 to 1. Put the final answer in \\boxed{}.",
+      "gold": "1"
+    },
+    {
+      "id": "defint-1-2-4",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of x**2 with respect to x from 0 to 4. Put the final answer in \\boxed{}.",
+      "gold": "64/3"
+    },
+    {
+      "id": "defint-6-4-3",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 6*x**4 with respect to x from 0 to 3. Put the final answer in \\boxed{}.",
+      "gold": "1458/5"
+    },
+    {
+      "id": "defint-1-1-4",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of x with respect to x from 0 to 4. Put the final answer in \\boxed{}.",
+      "gold": "8"
+    },
+    {
+      "id": "defint-2-4-2",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 2*x**4 with respect to x from 0 to 2. Put the final answer in \\boxed{}.",
+      "gold": "64/5"
+    },
+    {
+      "id": "defint-2-2-1",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 2*x**2 with respect to x from 0 to 1. Put the final answer in \\boxed{}.",
+      "gold": "2/3"
+    },
+    {
+      "id": "defint-4-4-3",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 4*x**4 with respect to x from 0 to 3. Put the final answer in \\boxed{}.",
+      "gold": "972/5"
+    },
+    {
+      "id": "defint-6-2-1",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 6*x**2 with respect to x from 0 to 1. Put the final answer in \\boxed{}.",
+      "gold": "2"
+    },
+    {
+      "id": "defint-3-4-4",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 3*x**4 with respect to x from 0 to 4. Put the final answer in \\boxed{}.",
+      "gold": "3072/5"
+    },
+    {
+      "id": "defint-1-3-1",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of x**3 with respect to x from 0 to 1. Put the final answer in \\boxed{}.",
+      "gold": "1/4"
+    },
+    {
+      "id": "defint-3-4-1",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 3*x**4 with respect to x from 0 to 1. Put the final answer in \\boxed{}.",
+      "gold": "3/5"
+    },
+    {
+      "id": "defint-5-3-4",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 5*x**3 with respect to x from 0 to 4. Put the final answer in \\boxed{}.",
+      "gold": "320"
+    },
+    {
+      "id": "defint-2-2-2",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of 2*x**2 with respect to x from 0 to 2. Put the final answer in \\boxed{}.",
+      "gold": "16/3"
+    },
+    {
+      "id": "defint-1-2-1",
+      "family": "definite_integral",
+      "split": "train",
+      "prompt": "Compute the definite integral of x**2 with respect to x from 0 to 1. Put the final answer in \\boxed{}.",
+      "gold": "1/3"
+    },
+    {
+      "id": "dchain-0",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: cos(x**2). Put the final answer in \\boxed{}.",
+      "gold": "-2*x*sin(x**2)"
+    },
+    {
+      "id": "dchain-1",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: (3*x + 1)**3. Put the final answer in \\boxed{}.",
+      "gold": "9*(3*x + 1)**2"
+    },
+    {
+      "id": "dchain-2",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: (3*x + 1)**2. Put the final answer in \\boxed{}.",
+      "gold": "18*x + 6"
+    },
+    {
+      "id": "dchain-3",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: (2*x + 1)**2. Put the final answer in \\boxed{}.",
+      "gold": "8*x + 4"
+    },
+    {
+      "id": "dchain-4",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: sin(x**2). Put the final answer in \\boxed{}.",
+      "gold": "2*x*cos(x**2)"
+    },
+    {
+      "id": "dchain-5",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: (x + 1)**3. Put the final answer in \\boxed{}.",
+      "gold": "3*(x + 1)**2"
+    },
+    {
+      "id": "dchain-6",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: (2*x + 1)**3. Put the final answer in \\boxed{}.",
+      "gold": "6*(2*x + 1)**2"
+    },
+    {
+      "id": "dchain-7",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: exp(3*x**2). Put the final answer in \\boxed{}.",
+      "gold": "6*x*exp(3*x**2)"
+    },
+    {
+      "id": "dchain-8",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: (2*x + 2)**2. Put the final answer in \\boxed{}.",
+      "gold": "8*x + 8"
+    },
+    {
+      "id": "dchain-9",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: cos(3*x**2). Put the final answer in \\boxed{}.",
+      "gold": "-6*x*sin(3*x**2)"
+    },
+    {
+      "id": "dchain-10",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: (2*x + 2)**3. Put the final answer in \\boxed{}.",
+      "gold": "24*(x + 1)**2"
+    },
+    {
+      "id": "dchain-11",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: (3*x + 2)**3. Put the final answer in \\boxed{}.",
+      "gold": "9*(3*x + 2)**2"
+    },
+    {
+      "id": "dchain-12",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: cos(2*x**2). Put the final answer in \\boxed{}.",
+      "gold": "-4*x*sin(2*x**2)"
+    },
+    {
+      "id": "dchain-13",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: sin(2*x**2). Put the final answer in \\boxed{}.",
+      "gold": "4*x*cos(2*x**2)"
+    },
+    {
+      "id": "dchain-14",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: exp(x**2). Put the final answer in \\boxed{}.",
+      "gold": "2*x*exp(x**2)"
+    },
+    {
+      "id": "dchain-15",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: (x + 2)**3. Put the final answer in \\boxed{}.",
+      "gold": "3*(x + 2)**2"
+    },
+    {
+      "id": "dchain-16",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: exp(2*x**2). Put the final answer in \\boxed{}.",
+      "gold": "4*x*exp(2*x**2)"
+    },
+    {
+      "id": "dchain-17",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: (x + 1)**2. Put the final answer in \\boxed{}.",
+      "gold": "2*x + 2"
+    },
+    {
+      "id": "dchain-18",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: sin(3*x**2). Put the final answer in \\boxed{}.",
+      "gold": "6*x*cos(3*x**2)"
+    },
+    {
+      "id": "dchain-19",
+      "family": "derivative_chain",
+      "split": "eval",
+      "prompt": "Differentiate with respect to x: (x + 2)**2. Put the final answer in \\boxed{}.",
+      "gold": "2*x + 4"
+    },
+    {
+      "id": "ifunc-0",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 2*exp(x). Put the final answer in \\boxed{}.",
+      "gold": "2*exp(x)"
+    },
+    {
+      "id": "ifunc-1",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 2*sin(x). Put the final answer in \\boxed{}.",
+      "gold": "-2*cos(x)"
+    },
+    {
+      "id": "ifunc-2",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 3*sin(x). Put the final answer in \\boxed{}.",
+      "gold": "-3*cos(x)"
+    },
+    {
+      "id": "ifunc-3",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 2*exp(3*x). Put the final answer in \\boxed{}.",
+      "gold": "2*exp(3*x)/3"
+    },
+    {
+      "id": "ifunc-4",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 4*sin(x). Put the final answer in \\boxed{}.",
+      "gold": "-4*cos(x)"
+    },
+    {
+      "id": "ifunc-5",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): exp(x). Put the final answer in \\boxed{}.",
+      "gold": "exp(x)"
+    },
+    {
+      "id": "ifunc-6",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 2*cos(x). Put the final answer in \\boxed{}.",
+      "gold": "2*sin(x)"
+    },
+    {
+      "id": "ifunc-7",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): cos(x). Put the final answer in \\boxed{}.",
       "gold": "sin(x)"
     },
     {
-      "id": "int-1overx",
-      "family": "integrate",
-      "prompt": "Integrate with respect to x (omit the constant), x>0: 1/x. Put the final answer in \\boxed{}.",
-      "gold": "log(x)"
+      "id": "ifunc-8",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 4*cos(x). Put the final answer in \\boxed{}.",
+      "gold": "4*sin(x)"
+    },
+    {
+      "id": "ifunc-9",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 4*exp(x). Put the final answer in \\boxed{}.",
+      "gold": "4*exp(x)"
+    },
+    {
+      "id": "ifunc-10",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 4*exp(2*x). Put the final answer in \\boxed{}.",
+      "gold": "2*exp(2*x)"
+    },
+    {
+      "id": "ifunc-11",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): exp(2*x). Put the final answer in \\boxed{}.",
+      "gold": "exp(2*x)/2"
+    },
+    {
+      "id": "ifunc-12",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 3*exp(x). Put the final answer in \\boxed{}.",
+      "gold": "3*exp(x)"
+    },
+    {
+      "id": "ifunc-13",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 3*exp(2*x). Put the final answer in \\boxed{}.",
+      "gold": "3*exp(2*x)/2"
+    },
+    {
+      "id": "ifunc-14",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): sin(x). Put the final answer in \\boxed{}.",
+      "gold": "-cos(x)"
+    },
+    {
+      "id": "ifunc-15",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 3*exp(3*x). Put the final answer in \\boxed{}.",
+      "gold": "exp(3*x)"
+    },
+    {
+      "id": "ifunc-16",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 3*cos(x). Put the final answer in \\boxed{}.",
+      "gold": "3*sin(x)"
+    },
+    {
+      "id": "ifunc-17",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): exp(3*x). Put the final answer in \\boxed{}.",
+      "gold": "exp(3*x)/3"
+    },
+    {
+      "id": "ifunc-18",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 4*exp(3*x). Put the final answer in \\boxed{}.",
+      "gold": "4*exp(3*x)/3"
+    },
+    {
+      "id": "ifunc-19",
+      "family": "integrate_func",
+      "split": "eval",
+      "prompt": "Find the antiderivative with respect to x (omit the constant): 2*exp(2*x). Put the final answer in \\boxed{}.",
+      "gold": "exp(2*x)"
+    },
+    {
+      "id": "d2-4-6-0-2",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 10*x**2. Put the final answer in \\boxed{}.",
+      "gold": "20"
+    },
+    {
+      "id": "d2-5-1-3-3",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 5*x**3 + x**2 + 3. Put the final answer in \\boxed{}.",
+      "gold": "30*x + 2"
+    },
+    {
+      "id": "d2-6-2-6-5",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 6*x**5 + 2*x**2 + 6. Put the final answer in \\boxed{}.",
+      "gold": "120*x**3 + 4"
+    },
+    {
+      "id": "d2-1-3-2-5",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: x**5 + 3*x**2 + 2. Put the final answer in \\boxed{}.",
+      "gold": "20*x**3 + 6"
+    },
+    {
+      "id": "d2-2-3-5-5",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 2*x**5 + 3*x**2 + 5. Put the final answer in \\boxed{}.",
+      "gold": "40*x**3 + 6"
+    },
+    {
+      "id": "d2-6-2-0-5",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 6*x**5 + 2*x**2. Put the final answer in \\boxed{}.",
+      "gold": "120*x**3 + 4"
+    },
+    {
+      "id": "d2-6-4-1-2",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 10*x**2 + 1. Put the final answer in \\boxed{}.",
+      "gold": "20"
+    },
+    {
+      "id": "d2-5-4-3-4",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 5*x**4 + 4*x**2 + 3. Put the final answer in \\boxed{}.",
+      "gold": "60*x**2 + 8"
+    },
+    {
+      "id": "d2-2-1-6-5",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 2*x**5 + x**2 + 6. Put the final answer in \\boxed{}.",
+      "gold": "40*x**3 + 2"
+    },
+    {
+      "id": "d2-5-1-2-4",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 5*x**4 + x**2 + 2. Put the final answer in \\boxed{}.",
+      "gold": "60*x**2 + 2"
+    },
+    {
+      "id": "d2-3-4-6-4",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 3*x**4 + 4*x**2 + 6. Put the final answer in \\boxed{}.",
+      "gold": "36*x**2 + 8"
+    },
+    {
+      "id": "d2-5-2-3-5",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 5*x**5 + 2*x**2 + 3. Put the final answer in \\boxed{}.",
+      "gold": "100*x**3 + 4"
+    },
+    {
+      "id": "d2-5-2-6-5",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 5*x**5 + 2*x**2 + 6. Put the final answer in \\boxed{}.",
+      "gold": "100*x**3 + 4"
+    },
+    {
+      "id": "d2-2-2-2-4",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 2*x**4 + 2*x**2 + 2. Put the final answer in \\boxed{}.",
+      "gold": "24*x**2 + 4"
+    },
+    {
+      "id": "d2-5-3-3-3",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 5*x**3 + 3*x**2 + 3. Put the final answer in \\boxed{}.",
+      "gold": "30*x + 6"
+    },
+    {
+      "id": "d2-1-5-5-2",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 6*x**2 + 5. Put the final answer in \\boxed{}.",
+      "gold": "12"
+    },
+    {
+      "id": "d2-4-1-4-5",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 4*x**5 + x**2 + 4. Put the final answer in \\boxed{}.",
+      "gold": "80*x**3 + 2"
+    },
+    {
+      "id": "d2-2-4-5-5",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 2*x**5 + 4*x**2 + 5. Put the final answer in \\boxed{}.",
+      "gold": "40*x**3 + 8"
+    },
+    {
+      "id": "d2-1-6-3-2",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 7*x**2 + 3. Put the final answer in \\boxed{}.",
+      "gold": "14"
+    },
+    {
+      "id": "d2-2-5-5-4",
+      "family": "second_derivative",
+      "split": "eval",
+      "prompt": "Find the second derivative with respect to x: 2*x**4 + 5*x**2 + 5. Put the final answer in \\boxed{}.",
+      "gold": "24*x**2 + 10"
     }
   ]
 }

@@ -156,15 +156,25 @@ self-extension rung wants (see the roadmap in
 | Artifact | Path |
 |---|---|
 | Reward core (no torch) | `provenance_bench/math_reward.py` |
-| Problem set (24, 6 families) | `provenance_bench/data/math_problems.json` |
-| Family-disjoint split | `provenance_bench/math_dataset.py` |
+| Problem set (224: 164 train / 60 held-out) | `provenance_bench/data/math_problems.json` |
+| Pack generator (sympy-verified golds) | `tools/gen_math_pack.py` |
+| Fixed-split dataset | `provenance_bench/math_dataset.py` |
 | Offline invariants | `provenance_bench.math_reward.offline_invariants()` |
 | Tests | `tests/test_math_rlvr.py` |
 | Deps | `requirements-math.txt` (sympy) |
 
-The split is **family-disjoint**: whole problem families (e.g. `factor`,
-`simplify`) are held out of training, so a passing eval problem is a *new kind* of
-problem, not a memorized instance — the stronger generalization test.
+Two properties make this an honest, gate-worthy eval:
+
+- **Non-gameable reward.** Families are chosen so the answer is a *different
+  object* than the question (derivative / integral / solution value / evaluation),
+  so `math_equivalent` cannot be satisfied by restating the prompt. (Restating a
+  "factor/expand/simplify" question *is* equivalent to its answer — those families
+  are excluded for exactly this reason.)
+- **Fixed family-disjoint holdout.** The 3 held-out families (`derivative_chain`,
+  `integrate_func`, `second_derivative`) are genuine generalizations of the 6 train
+  families and are **identical across seeds** (a `split` field, not a seeded draw),
+  so the per-seed held-out pass@1 numbers are directly comparable. Held-out N = 60,
+  large enough for a bootstrap CI to exclude 0 if a real effect exists.
 
 ```bash
 # Offline reward-wiring check (any machine; needs sympy, no torch/GPU):

@@ -2,11 +2,12 @@
 # Copyright (c) 2026 tomyimkc
 """Math RLVR dataset + contamination-free split (the math analogue of rl_dataset).
 
-Loads ``data/math_problems.json`` and splits FAMILY-disjoint: a problem family
-(``factor``, ``derivative``, ``integrate``, …) lands entirely on one side of the
-train/eval boundary, so an eval problem is always a *type* unseen at train time.
-That is a stronger generalization test than row-level holdout — "generalized"
-means "a new kind of problem", never "memorized this instance".
+Loads ``data/math_problems.json`` and splits train/eval FAMILY-disjoint. Modern
+packs (``tools/gen_math_pack.py``) carry an explicit ``split`` field so the held-out
+families are FIXED and identical across seeds (comparable per-seed numbers); older
+packs fall back to a seeded random family holdout. Either way an eval problem is a
+*type* unseen at train time — "generalized" means "a new kind of problem", never
+"memorized this instance".
 
 The reward (``math_reward``) is the sympy verifier ``math_equivalent(gold)`` — a
 deterministic, judge-free signal, exactly the RLVR setup that works for code/math.
@@ -54,7 +55,17 @@ def split_problems(
     eval_frac: float = 0.34,
     seed: int = 0,
 ) -> tuple[list[dict], list[dict]]:
-    """Family-disjoint split: whole families move together, none shared."""
+    """Train/eval split, family-disjoint.
+
+    Preferred: an explicit, FIXED ``split`` field on each problem ("train"/"eval")
+    — held-out families are then identical across seeds, so seeds are comparable
+    and the held-out N is whatever the pack author chose. Falls back to a seeded
+    random family holdout for older packs that carry no ``split`` field.
+    """
+    if any(p.get("split") for p in problems):
+        train = [p for p in problems if p.get("split") != "eval"]
+        eval_ = [p for p in problems if p.get("split") == "eval"]
+        return train, eval_
     families = sorted({family_key(p) for p in problems})
     rng = random.Random(seed)
     rng.shuffle(families)
