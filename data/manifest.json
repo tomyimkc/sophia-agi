@@ -419,8 +419,8 @@
       "sophia_mcp/server.py"
     ],
     "docs": "docs/11-Platform/Conscience-Kernel.md",
-    "artifact": "agi-proof/conscience/conscience.public-report.json",
-    "benchmark": "python tools/run_conscience_demo.py"
+    "artifact": "agi-proof/conscience/conscience-eval.public-report.json",
+    "benchmark": "python tools/build_conscience_proof_package.py"
   },
   "agiKernel": {
     "claimBoundary": "Missing-pillars mechanisms are candidate infrastructure, not Level-3 AGI evidence.",
