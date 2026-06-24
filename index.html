@@ -3,52 +3,109 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sophia AGI — Wisdom Before Intelligence</title>
-  <meta name="description" content="Sophia AGI — open provenance corpus + verifier gate. Stops LLMs fabricating attributions. 0% fabrication on unknown-answer traps (vs 17-25% raw). Validated 12.5pt hallucination reduction at 0% false-positive cost. Wisdom before intelligence." />
+  <title>Sophia — the Wisdom Gate · Provenance-aware reasoning that abstains instead of fabricating</title>
+  <meta name="description" content="Sophia is an open, provenance-aware reasoning layer that abstains instead of fabricating — it stops LLMs from inventing attributions and merging distinct traditions. Measured: 0% fabrication on unknown-answer traps (vs 17–25% raw); −12.5 points hallucinated attributions at 0% false-positive cost. Honest scope: an AGI-candidate proof package, not proven AGI." />
+  <meta name="author" content="tomyimkc" />
+  <meta property="og:title" content="Sophia — the Wisdom Gate" />
+  <meta property="og:description" content="A provenance-aware reasoning layer that abstains instead of fabricating. Open corpus + verifier gate. Measured, fail-closed, honest about its limits." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tomyimkc.github.io/sophia-agi/" />
+  <meta name="theme-color" content="#9a7b4f" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&family=Noto+Sans+SC:wght@400;600&family=Noto+Serif+SC:wght@400;600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;600&family=Noto+Serif+SC:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to thesis</a>
+
+  <!-- ===========================================================  HERO  -->
+  <header class="hero">
+    <div class="hero-glyph" aria-hidden="true">σ</div>
+    <div class="hero-inner">
+      <p class="eyebrow"><span class="dot" aria-hidden="true"></span> Provenance-aware reasoning · σοφία = wisdom</p>
+      <h1>Wisdom before intelligence.</h1>
+      <p class="lede">
+        Sophia is an open, <strong>provenance-aware reasoning layer that abstains instead of fabricating</strong> —
+        a corpus + verifier gate that stops language models from inventing attributions and merging
+        distinct intellectual traditions, then reasoning on top of the error.
+      </p>
+
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/tomyimkc/sophia-agi" target="_blank" rel="noopener">★ Star on GitHub</a>
+        <a class="btn btn-ghost" href="#try">Ask Sophia</a>
+        <a class="btn btn-ghost" href="https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus" target="_blank" rel="noopener">Dataset (528 examples)</a>
+        <a class="btn btn-ghost" href="#results">Benchmarks</a>
+      </div>
+
+      <!-- the gate, in one line -->
+      <div class="gate-flow" aria-label="The gate: a claim is verified, then accepted, held, or blocked">
+        <span class="gate-node">claim</span>
+        <span class="gate-arrow">→</span>
+        <span class="gate-node verify">verify against sources</span>
+        <span class="gate-arrow">→</span>
+        <span class="gate-node v-accept">accept</span>
+        <span class="gate-node v-abstain">abstain</span>
+        <span class="gate-node v-block">block</span>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat"><b>0%</b><span>fabrication on “I don’t know” traps (raw: 17–25%)</span></div>
+        <div class="hero-stat"><b>−12.5pt</b><span>hallucinated attributions · 95% CI [5.6, 19.4]</span></div>
+        <div class="hero-stat"><b>0%</b><span>false-positive cost</span></div>
+        <div class="hero-stat"><b>528</b><span>bilingual corpus examples</span></div>
+      </div>
+
+      <p class="scope-note">
+        <strong>Scope, stated plainly.</strong> This is a research program for grounded, machine-checked reasoning —
+        <strong>not a claim of AGI</strong>. Pre-registered thresholds are honestly not yet met. The deliverable is the
+        honest machinery (verifiers, abstaining gate, governance contract) and the measured data, with a public ledger
+        of what is <em>not</em> yet proven.
+      </p>
+    </div>
+  </header>
+
   <div class="layout">
     <nav class="toc" aria-label="Table of contents">
-      <div class="brand">Sophia AGI · σοφία</div>
-      <h1>Wisdom Before Intelligence</h1>
-      <p class="tagline">AGI-candidate proof package for provenance-aware reasoning</p>
-      <a href="#abstract">Abstract</a>
-      <a href="#problem">I. The Problem</a>
-      <a href="#framework">II. Source Discipline</a>
-      <a href="#method">III. Methodology</a>
-      <a href="#council-ui">IV. UI Council</a>
-      <a href="#results">V. Benchmark Results</a>
-      <a href="#agent">VI. Agent Architecture</a>
-      <a href="#online-rag">VII. Online RAG</a>
-      <a href="#agi-proof">VIII. AGI Proof Package</a>
-      <a href="#conscience">IX. Conscience Kernel</a>
-      <a href="#try">X. Ask Sophia</a>
-      <a href="#references">References</a>
-      <p class="links" style="margin-top:2rem">
+      <div class="brand">Sophia · the Wisdom Gate</div>
+      <p class="brand-sub">An AGI-candidate proof package for provenance-aware reasoning</p>
+      <div class="nav-label">Thesis</div>
+      <div class="nav-links">
+        <a href="#abstract">Abstract</a>
+        <a href="#problem">I. The Problem</a>
+        <a href="#framework">II. Source Discipline</a>
+        <a href="#method">III. Methodology</a>
+        <a href="#council-ui">IV. UI Council</a>
+        <a href="#results">V. Benchmark Results</a>
+        <a href="#agent">VI. Agent Architecture</a>
+        <a href="#online-rag">VII. Online RAG</a>
+        <a href="#agi-proof">VIII. AGI Proof Package</a>
+        <a href="#conscience">IX. Conscience Kernel</a>
+        <a href="#try">X. Ask Sophia</a>
+        <a href="#references">References</a>
+      </div>
+      <div class="links">
         <a href="https://github.com/tomyimkc/sophia-agi" target="_blank" rel="noopener">GitHub</a>
         <a href="https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus" target="_blank" rel="noopener">Dataset</a>
-      </p>
+        <a href="https://github.com/tomyimkc/sophia-agi/blob/main/RESULTS.md" target="_blank" rel="noopener">Results</a>
+      </div>
     </nav>
 
     <main id="main">
       <section id="abstract" class="chapter">
         <div class="chapter-label">Abstract</div>
-        <h2>Provenance as prerequisite to AGI-scale belief</h2>
+        <h2>Provenance as prerequisite to trustworthy belief</h2>
         <p class="abstract">
           Large language models propagate ideas without lineage: Confucius is said to have written the <em>Dao De Jing</em>;
-          Socrates is treated as author of Plato's <em>Republic</em>; Freud is credited with cognitive dissonance; nirvana becomes
-          "eternal heaven." <strong>Sophia AGI</strong> (σοφία, wisdom) is the open provenance corpus + <strong>verifier gate</strong>
-          that enforces <em>source discipline</em> before reasoning — and <strong>abstains</strong> rather than fabricate.
-          Validated results: 0% fabrication on genuine "I don't know" traps (raw models 17–25%); 12.5 percentage point reduction in hallucinated attributions on an 8B local model at 0% false-positive cost.
-          This is the thesis site for the project. Current public claim: AGI-candidate proof package, not proven AGI.
+          Socrates is treated as author of Plato’s <em>Republic</em>; Freud is credited with cognitive dissonance; nirvana
+          becomes “eternal heaven.” <strong>Sophia</strong> (σοφία, wisdom) is an open provenance corpus + a
+          <strong>verifier gate</strong> that enforces <em>source discipline</em> before reasoning — and <strong>abstains</strong>
+          rather than fabricate. Validated: 0% fabrication on genuine “I don’t know” traps (raw models 17–25%); a 12.5-point
+          reduction in hallucinated attributions on an 8B local model at 0% false-positive cost. Current public claim: an
+          <strong>AGI-candidate proof package</strong>, not proven AGI.
         </p>
         <div class="zh-block">
-          <strong>中文摘要：</strong>大型語言模型常混淆思想系譜。Sophia AGI 是開源來源紀律語料庫 + 驗證閘道。陷阱問題 0% 虛構（原始模型 17–25%）；8B 模型幻覺歸因降低 12.5 個百分點（0% 假陽性）。這是專案論文網站。目前公開主張：AGI 候選證明包，而非已證明 AGI。
+          <strong>中文摘要：</strong>大型語言模型常混淆思想系譜。Sophia 是開源的「來源紀律」語料庫 + 驗證閘道：寧可<strong>棄答</strong>，也不虛構。陷阱問題 0% 虛構（原始模型 17–25%）；8B 模型幻覺歸因降低 12.5 個百分點（0% 假陽性）。目前公開主張：AGI 候選證明包，而非已證明 AGI。
         </div>
         <div id="stats" class="stats"></div>
       </section>
@@ -57,39 +114,42 @@
         <div class="chapter-label">Chapter I</div>
         <h2>The lineage-merge failure mode</h2>
         <p>
-          Epistemic harm in LLM outputs is not only factual error but <strong>attribution collapse</strong>: distinct intellectual
-          traditions are merged into a single undifferentiated voice. The failure is structural. When a model answers "Did Confucius
-          write the <em>Dao De Jing</em>?" without denying the trap, it licenses centuries of conflation between 儒家 and 道家 registers.
+          Epistemic harm in LLM output is not only factual error but <strong>attribution collapse</strong>: distinct intellectual
+          traditions are merged into a single undifferentiated voice. The failure is structural. When a model answers
+          “Did Confucius write the <em>Dao De Jing</em>?” without denying the trap, it licenses centuries of conflation between
+          儒家 (Confucian) and 道家 (Daoist) registers — and then builds “reasoning” on top of the error.
         </p>
         <p>
-          Sophia treats each trap as measurable. Validated: the gate fabricates 0% on genuine unknown-answer questions where raw models fabricate 17–25%. On real 8B local models it cuts hallucinated attributions 36.1% → 23.6% (Δ 12.5%, 95% CI [5.6%, 19.4%]) at 0% false-positive cost.
+          Sophia treats each trap as measurable. Validated: the gate fabricates <strong>0%</strong> on genuine unknown-answer
+          questions where raw models fabricate 17–25%. On a real 8B local model it cuts hallucinated attributions
+          <strong>36.1% → 23.6%</strong> (Δ 12.5%, 95% CI [5.6%, 19.4%]) at 0% false-positive cost. It is a filter that reduces
+          harm — <em>not</em> a guarantee, and not a substitute for human oversight.
         </p>
         <table>
           <tr><th>Domain</th><th>Exemplar trap</th><th>Correct discipline</th></tr>
-          <tr><td>Philosophy</td><td>Confucius → 《道德經》</td><td>Deny; Laozi legendary attribution</td></tr>
+          <tr><td>Philosophy</td><td>Confucius → 《道德經》</td><td>Deny; Laozi a legendary attribution</td></tr>
           <tr><td>Psychology</td><td>Freud → cognitive dissonance</td><td>Affirm Festinger (1957)</td></tr>
           <tr><td>History</td><td>Marco Polo → pasta</td><td>Label myth; prior Italian evidence</td></tr>
-          <tr><td>Religion</td><td>Nirvana → eternal heaven</td><td>Council + Buddhism doctrine</td></tr>
+          <tr><td>Religion</td><td>Nirvana → eternal heaven</td><td>Council + Buddhist doctrine</td></tr>
         </table>
       </section>
 
       <section id="framework" class="chapter">
         <div class="chapter-label">Chapter II</div>
-        <h2>Source discipline as theoretical framework</h2>
+        <h2>Source discipline as a framework</h2>
         <p>
-          <strong>Source discipline</strong> is the project's core construct (see <code>docs/08-Domains/Source-Discipline-Methodology.md</code>).
-          It requires five operations on every answer:
+          <strong>Source discipline</strong> is the project’s core construct. It requires five operations on every answer:
         </p>
         <ol>
-          <li><strong>Named attribution</strong> — <code>attributedAuthor</code>, <code>doNotAttributeTo</code> in data records</li>
-          <li><strong>Confidence signaling</strong> — compiled, legendary, disputed, consensus</li>
-          <li><strong>Boundary maintenance</strong> — traditions and subfields must not merge</li>
-          <li><strong>Bilingual anchoring</strong> — canonical 中文 terms + 中文摘要</li>
-          <li><strong>Hub examples</strong> — one training pair may cover multiple benchmark traps (e.g. example 001 → four philosophy cases)</li>
+          <li><strong>Named attribution</strong> — <code>attributedAuthor</code>, <code>doNotAttributeTo</code> in each data record</li>
+          <li><strong>Confidence signaling</strong> — compiled, legendary, disputed, or consensus</li>
+          <li><strong>Boundary maintenance</strong> — traditions and subfields must not silently merge</li>
+          <li><strong>Bilingual anchoring</strong> — canonical 中文 terms + a 中文摘要</li>
+          <li><strong>Hub examples</strong> — one training pair may cover several benchmark traps (example 001 → four philosophy cases)</li>
         </ol>
         <p>
-          The framework generalizes from philosophy to psychology and religion centers without changing the epistemic contract:
-          retrieval of records precedes generation; a gate checks discipline markers before release.
+          The framework generalizes from philosophy to psychology, history, and religion without changing the epistemic
+          contract: retrieval of records precedes generation, and a gate checks discipline markers before release.
         </p>
       </section>
 
@@ -104,62 +164,47 @@
         </p>
         <h3>3.2 Benchmark layer</h3>
         <p>
-          Per-domain cases in <code>tests/benchmark-{domain}.json</code>. Scoring via <code>tools/score_benchmark.py</code>
-          uses explicit markers: denial patterns, myth labels, council format, tradition ids, subfield tags.
-          Reference teacher responses score 100% on all domains; external models are compared on the same harness.
+          Per-domain cases in <code>tests/benchmark-{domain}.json</code>, scored by <code>tools/run_benchmark.py</code> against
+          explicit markers: denial patterns, myth labels, council format, tradition ids, subfield tags. Reference teacher
+          responses score 100% on all domains; external models run on the same harness. Every <em>headline</em> number must
+          clear the no-overclaim gate (≥2 judge families, κ ≥ 0.40, ≥3 runs, confidence intervals).
         </p>
-        <h3>3.3 Agent layer (v0.6.0)</h3>
+        <h3>3.3 Agent layer</h3>
         <p>
-          Three paths — <em>advisor</em>, <em>repo</em>, <em>life</em> — share curated RAG (<code>rag/index</code>), Claude or Gemini via configured API,
-          epistemic self-check, and decision memory (<code>agent/memory/decisions.jsonl</code>).
-          Local LoRA <strong>sophia-v1</strong> (Qwen2.5-3B) scores <strong>20/23 (87%)</strong>; curated <strong>RAG + Claude</strong> scores <strong>22/23 (96%)</strong> on the same harness.
+          Three paths — <em>advisor</em>, <em>repo</em>, <em>life</em> — share a curated RAG index, a configured LLM backend
+          (Anthropic / OpenAI-compatible / local), an epistemic self-check, and provenance-gated decision memory. Local LoRA
+          <strong>sophia-v1</strong> (Qwen2.5-3B) scores <strong>20/23 (87%)</strong>; curated <strong>RAG + Claude</strong>
+          scores <strong>22/23 (96%)</strong> on the same harness.
         </p>
       </section>
 
       <section id="council-ui" class="chapter">
         <div class="chapter-label">Chapter IV</div>
-        <h2>UI Council: how this website was decided</h2>
+        <h2>UI Council: how this site was decided</h2>
         <p>
-          Following religion council mode, <strong>all design voices sit on one panel</strong>. No single aesthetic wins by default;
-          tensions are named. Full record: <code>docs/10-Web/UI-Council-Decisions.md</code>.
+          Following the religion-council mode, <strong>all design voices sit on one panel</strong>. No single aesthetic wins by
+          default; tensions are named. Full record: <code>docs/10-Web/UI-Council-Decisions.md</code>.
         </p>
         <div class="council-panel">
           <div class="council-header">Council panel (all seated): UX Research · Design Systems · Accessibility · Engineering · Philosophy lineage</div>
-          <div class="seat">
-            <div class="seat-name">UX Research voice</div>
-            Thesis-first information architecture: Abstract through Agent, not marketing funnel. Table of contents persistent; chapters scannable.
-          </div>
-          <div class="seat">
-            <div class="seat-name">Design Systems voice</div>
-            Scholarly monograph aesthetic: ivory paper, ink type, bronze accent. Serif body, sans chrome. Council panels visually echo religion answer format.
-          </div>
-          <div class="seat">
-            <div class="seat-name">Accessibility voice</div>
-            18px base, 1.65 leading, skip link, focus states, text labels on all scores. CJK-friendly font stack.
-          </div>
-          <div class="seat">
-            <div class="seat-name">Engineering voice</div>
-            Static <code>web/</code> for GitHub Pages; <code>tools/serve_web.py</code> adds <code>/api/ask</code> for live agent. Manifest regenerated by <code>build_web_data.py</code>.
-          </div>
-          <div class="seat">
-            <div class="seat-name">Philosophy lineage voice</div>
-            Site must practice source discipline: cite paths, show benchmark evidence, tagline <em>Wisdom before intelligence</em> without hype.
-          </div>
-          <div class="debate">
-            <strong>Debate / tension:</strong> Thesis depth vs. mobile brevity → progressive disclosure: full chapters on desktop; collapsed nav on small screens; agent panel optional.
-          </div>
+          <div class="seat"><div class="seat-name">UX Research</div>Thesis-first information architecture: Abstract through References, not a marketing funnel. Persistent table of contents; scannable chapters.</div>
+          <div class="seat"><div class="seat-name">Design Systems</div>Scholarly-monograph aesthetic: ivory paper, ink type, bronze accent, and a three-state verdict palette (accept / abstain / block) that mirrors the gate itself. Serif body, sans chrome.</div>
+          <div class="seat"><div class="seat-name">Accessibility</div>17–18px base, generous leading, skip link, visible focus, text labels on every score, light/dark by system preference, CJK-friendly font stack.</div>
+          <div class="seat"><div class="seat-name">Engineering</div>Static <code>web/</code> on GitHub Pages; <code>tools/serve_web.py</code> adds <code>/api/ask</code> for the live agent. The manifest is regenerated by <code>build_web_data.py</code> so the page can’t drift from <code>main</code>.</div>
+          <div class="seat"><div class="seat-name">Philosophy lineage</div>The site must itself practice source discipline: cite paths, show benchmark evidence, and carry the scope disclaimer — <em>wisdom before intelligence</em>, without hype.</div>
+          <div class="debate"><strong>Debate / tension:</strong> thesis depth vs. mobile brevity → progressive disclosure: full chapters and a sticky contents rail on desktop; a collapsed nav on small screens; the agent panel is optional.</div>
         </div>
-        <div class="zh-block">
-          <strong>中文：</strong>本網站設計經<strong>理事會</strong>五席表決——論文式章節、學術視覺、無障礙、靜態部署加可選代理 API；體現「智慧優先於智能」。
-        </div>
+        <div class="zh-block"><strong>中文：</strong>本網站設計經<strong>理事會</strong>五席表決——論文式章節、學術視覺、無障礙、靜態部署加可選代理 API；體現「智慧優先於智能」。</div>
       </section>
 
       <section id="results" class="chapter">
         <div class="chapter-label">Chapter V</div>
         <h2>Empirical results: per-domain leaderboards</h2>
         <p>
-          Leaderboards updated from <code>benchmark/results/leaderboard-*.json</code>. A model passes when heuristic markers
-          match domain-specific discipline rules — the same contract applied to reference teacher and external runs.
+          Leaderboards are generated from <code>benchmark/results/leaderboard-*.json</code>. A model passes when heuristic
+          markers match domain-specific discipline rules — the same contract applied to the reference teacher and to external
+          runs. These are <em>marker-based</em> harness scores; the headline-grade, multi-judge results live in
+          <a href="https://github.com/tomyimkc/sophia-agi/blob/main/RESULTS.md" target="_blank" rel="noopener">RESULTS.md</a>.
         </p>
         <div id="leaderboards"></div>
       </section>
@@ -174,8 +219,8 @@
           <tr><td><strong>Life</strong></td><td>General decisions + guardrails</td><td><code>sophia_agent.py life</code></td></tr>
         </table>
         <p>
-          Pipeline: <strong>Question → curated RAG (<code>rag/index</code>) → LLM → epistemic gate → memory</strong>.
-          Repo tools (validate, export, benchmark, HF upload) execute only with explicit <code>--approve</code>.
+          Pipeline: <strong>question → curated RAG → LLM → epistemic gate → provenance-gated memory</strong>. Repo tools
+          (validate, export, benchmark, HF upload) execute only with an explicit <code>--approve</code>.
         </p>
       </section>
 
@@ -183,37 +228,34 @@
         <div class="chapter-label">Chapter VII</div>
         <h2>Online RAG: Gemini API &amp; Vertex AI</h2>
         <p>
-          v0.6.0 adds <strong>curated online RAG</strong> — no open-web grounding. Retrieval uses a pre-built index
-          (<code>rag/index/chunks.jsonl</code>, benchmark holdouts excluded) over data, disputes, domain docs, reference answers,
-          and teacher examples. Generation runs on <strong>Gemini API</strong> (local MVP) or <strong>Vertex AI</strong> (Cloud Run production),
-          with Claude fallback and the same epistemic gate as the agent CLI.
+          Curated online RAG — <em>no open-web grounding</em>. Retrieval uses a pre-built index (benchmark holdouts excluded)
+          over data, disputes, domain docs, reference answers, and teacher examples. Generation runs on Gemini (local MVP) or
+          Vertex AI (Cloud Run), with a Claude fallback and the same epistemic gate as the agent CLI.
         </p>
         <table>
           <tr><th>Component</th><th>Path</th></tr>
           <tr><td>Build index</td><td><code>python tools/build_rag_index.py</code></td></tr>
           <tr><td>CLI + gate</td><td><code>python tools/sophia_rag.py "…"</code></td></tr>
           <tr><td>HTTP API</td><td><code>services/rag_api/</code> — <code>POST /ask</code></td></tr>
-          <tr><td>Deploy</td><td><code>tools/deploy_rag_api.ps1</code></td></tr>
           <tr><td>LoRA adapter</td><td><a href="https://huggingface.co/tomyimkc/sophia-agi-lora-v1" target="_blank" rel="noopener">tomyimkc/sophia-agi-lora-v1</a></td></tr>
         </table>
-        <div class="zh-block">
-          <strong>中文：</strong>線上 RAG 僅檢索審定語料（非開放網路），經 Gemini 或 Vertex 生成後再過史源關卡；本地 LoRA 模型 sophia-v1 評測 20/23。
-        </div>
+        <div class="zh-block"><strong>中文：</strong>線上 RAG 僅檢索審定語料（非開放網路），經 Gemini 或 Vertex 生成後再過史源關卡；本地 LoRA 模型 sophia-v1 評測 20/23。</div>
       </section>
 
       <section id="agi-proof" class="chapter">
         <div class="chapter-label">Chapter VIII</div>
         <h2>AGI-candidate proof package</h2>
         <p>
-          Sophia does not claim proven AGI. It publishes a stricter, auditable proof package:
-          pre-registered thresholds, reproducible local benchmarks under a no-overclaim gate (multi-judge + CIs),
-          self-extending verifier flywheel that closes on held-out data, hidden-reviewer packs, long-horizon logs,
-          failure ledger, and third-party replication checklist.
+          Sophia does not claim proven AGI. It publishes a stricter, auditable proof package: pre-registered thresholds,
+          reproducible local benchmarks under a no-overclaim gate (multi-judge + CIs), a self-extending verifier flywheel that
+          closes on held-out data, hidden-reviewer packs, long-horizon logs, a failure ledger, and a third-party replication
+          checklist.
         </p>
         <div class="proof-boundary" id="proof-boundary">
           AGI not proven. Sophia is an <strong>AGI-candidate proof package for provenance-aware reasoning</strong>.
-          Validated: 0% fabrication on traps; 12.5pt hallucination reduction at 0% FP cost.
+          Validated: 0% fabrication on traps; 12.5-point hallucination reduction at 0% false-positive cost.
         </div>
+        <h3>Proof ladder</h3>
         <div id="proof-ladder" class="proof-grid"></div>
         <h3>Required data before stronger AGI claims</h3>
         <ul id="proof-required" class="proof-list"></ul>
@@ -221,33 +263,30 @@
         <div id="proof-external"></div>
         <p class="links">
           <a href="https://github.com/tomyimkc/sophia-agi/tree/main/agi-proof" target="_blank" rel="noopener">Proof package</a>
+          <a href="https://github.com/tomyimkc/sophia-agi/blob/main/agi-proof/failure-ledger.md" target="_blank" rel="noopener">Failure ledger</a>
           <a href="data/manifest.json" target="_blank" rel="noopener">Web evidence manifest</a>
         </p>
-        <div class="zh-block">
-          <strong>中文：</strong>Sophia 目前是 AGI 候選證明包，而不是已證明的 AGI。下一步需要盲測、消融、長時程任務、外部基準與第三方復現。
-        </div>
+        <div class="zh-block"><strong>中文：</strong>Sophia 目前是 AGI 候選證明包，而非已證明的 AGI。下一步需要盲測、消融、長時程任務、外部基準與第三方復現。</div>
       </section>
 
       <section id="conscience" class="chapter">
         <div class="chapter-label">Chapter IX</div>
         <h2>Moral + epistemic Conscience Kernel</h2>
         <p>
-          Sophia now includes a deterministic, fail-closed <strong>candidate Conscience Kernel</strong>
-          that governs AI outputs, tool calls, and trusted-memory writes. It returns
-          <code>allow</code>, <code>revise</code>, <code>retrieve</code>, <code>clarify</code>,
-          <code>escalate</code>, <code>abstain</code>, or <code>block</code> by composing
-          fact-checking, metacognition, constitutional prohibitions, deontic hard rules,
-          moral-uncertainty aggregation, constitutional-classifier screening, and deception signals.
+          Sophia includes a deterministic, fail-closed <strong>candidate Conscience Kernel</strong> that governs AI output, tool
+          calls, and trusted-memory writes. It returns <code>allow</code>, <code>revise</code>, <code>retrieve</code>,
+          <code>clarify</code>, <code>escalate</code>, <code>abstain</code>, or <code>block</code> by composing fact-checking,
+          metacognition, constitutional prohibitions, deontic hard rules, moral-uncertainty aggregation, a constitutional
+          classifier, and deception signals.
         </p>
         <div class="proof-boundary">
-          Boundary: this is moral and epistemic control infrastructure for an AGI-candidate system;
-          it is not proof of AGI and does not change <code>canClaimAGI=false</code>.
+          Boundary: this is moral + epistemic control infrastructure for an AGI-candidate system; it is not proof of AGI and does
+          not change <code>canClaimAGI = false</code>.
         </div>
         <table>
           <tr><th>Layer</th><th>Repo path</th></tr>
           <tr><td>Conscience benchmark</td><td><code>python tools/run_conscience_demo.py</code></td></tr>
           <tr><td>Seven-path docs</td><td><code>docs/11-Platform/Conscience-Kernel.md</code></td></tr>
-          <tr><td>Missing-pillars bundle</td><td><code>docs/11-Platform/AGI-Missing-Pillars.md</code></td></tr>
           <tr><td>MCP tools</td><td><code>sophia_conscience_check</code>, <code>sophia_deontic_check</code>, <code>sophia_deception_check</code></td></tr>
           <tr><td>Candidate artifacts</td><td><code>agi-proof/conscience/</code>, <code>agi-proof/agi-kernel/</code></td></tr>
         </table>
@@ -255,15 +294,13 @@
           <a href="https://github.com/tomyimkc/sophia-agi/blob/main/docs/11-Platform/Conscience-Kernel.md" target="_blank" rel="noopener">Conscience docs</a>
           <a href="https://github.com/tomyimkc/sophia-agi/tree/main/agi-proof/conscience" target="_blank" rel="noopener">Conscience artifact</a>
         </p>
-        <div class="zh-block">
-          <strong>中文：</strong>新增的 Conscience Kernel 是七路徑的道德與認知控制層：能決定允許、修改、查證、澄清、升級、拒答或封鎖；它是 AGI-candidate 基礎設施，不是已證明 AGI。
-        </div>
+        <div class="zh-block"><strong>中文：</strong>Conscience Kernel 是七路徑的道德與認知控制層：能決定允許、修改、查證、澄清、升級、棄答或封鎖；它是 AGI-candidate 基礎設施，不是已證明 AGI。</div>
       </section>
 
       <section id="try" class="chapter">
         <div class="chapter-label">Chapter X</div>
         <h2>Ask Sophia (live council)</h2>
-        <p>Query the agent through this panel when <code>tools/serve_web.py</code> is running. Otherwise the CLI path is shown.</p>
+        <p>Query the agent through this panel when <code>tools/serve_web.py</code> is running. Otherwise the equivalent CLI command is shown for you to copy.</p>
         <div class="agent-panel">
           <div class="agent-tabs" role="tablist">
             <button class="agent-tab active" data-mode="advisor" type="button">Advisor</button>
@@ -286,15 +323,16 @@
         <p class="links">
           <a href="https://github.com/tomyimkc/sophia-agi" target="_blank" rel="noopener">github.com/tomyimkc/sophia-agi</a>
           <a href="https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus" target="_blank" rel="noopener">Hugging Face dataset</a>
+          <a href="https://github.com/tomyimkc/sophia-agi/blob/main/RESULTS.md" target="_blank" rel="noopener">RESULTS.md</a>
         </p>
-        <pre style="font-family:var(--mono);font-size:0.8rem;background:var(--seat-bg);padding:1rem;border:1px solid var(--border);overflow-x:auto">@misc{sophiaagi2026,
-  title={Sophia AGI: Provenance-Aware Reasoning Corpus},
-  author={Sophia AGI contributors},
-  year={2026},
-  url={https://github.com/tomyimkc/sophia-agi}
+        <pre class="cite">@misc{sophia2026,
+  title  = {Sophia — the Wisdom Gate: Provenance-Aware Reasoning Corpus},
+  author = {tomyimkc and Sophia contributors},
+  year   = {2026},
+  url    = {https://github.com/tomyimkc/sophia-agi}
 }</pre>
-        <footer>
-          Sophia AGI v0.7.42 · MIT License · UI decided by council panel · Wisdom before intelligence.
+        <footer id="site-footer">
+          Sophia · the Wisdom Gate · MIT License · UI decided by council panel · Wisdom before intelligence.
         </footer>
       </section>
     </main>
