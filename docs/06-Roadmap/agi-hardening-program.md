@@ -27,16 +27,28 @@ no-overclaim gate.
 
 ---
 
-## Phase 0 — Foundations
+## Phase 0 — Foundations  ✅ delivered (candidate)
 **#7 Symbol grounding / stable identity** — canonical entity+sense layer with **versioned IDs**,
 so "the same fact" is stably addressable across contradictions and time. Pairs with the
 existing temporal-validity layer. *Done when:* entity resolution is deterministic + tested, and
 a fact's identity survives revision/retraction/restore round-trips.
+→ **`agent/symbol_identity.py`** (`canonical_id`/`resolve_all`/`is_ambiguous`, `build_sense_index`,
+`lineage`/`current_version`/`stable_identity`/`version_tag`, `identity_round_trip_report`);
+tests in `tests/test_symbol_identity.py` (CI `validate-core`). Resolution is deterministic
+(sorted, hash-seed-independent); `stable_identity` is shared across a supersession chain and
+proven invariant under a `forget`+`restore` round-trip; `version_tag` is content-addressable and
+reproducible across processes.
 
 **#3 Calibrated metacognition** — a per-domain **empirically-calibrated** competence model over
 the graph (build on `semantic_entropy`, `conformal_gate`, `calibration`) feeding the gap-loop.
 *Done when:* abstention is calibrated (reliability diagram), and "what to learn next" is driven
 by measured weakness, not heuristics.
+→ **`agent/competence_model.py`** (`reliability_diagram`, `build_competence_model` →
+`CompetenceModel.competence`/`threshold`, `learning_priorities`, `competence_gap_worklist`);
+tests in `tests/test_competence_model.py` (CI `validate-core`). Per-domain ECE/AURC/selective-vs-base
+risk reuse `agent.calibration`; the conformal answer threshold reuses `agent.conformal_gate`;
+unseen domains fail closed (competence 0.0, threshold 0.0); `learning_priorities` ranks
+weakest-first by **measured** deficit, bridging into `agent.knowledge_gap_log`.
 
 ## Phase 1 — Trust
 **#2 Verified compositional reasoning** — adopt the **[VeriCoT](https://arxiv.org/abs/2511.04662)**
