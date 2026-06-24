@@ -30,7 +30,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent import deepseek_llm, llmhub_llm  # noqa: E402
+from agent import deepseek_llm, llmhub_llm, openrouter_client  # noqa: E402
 from agent.continual_qa import GraphBackedSystem, load_episodes  # noqa: E402
 from agent.continual_qa_answer import (  # noqa: E402
     build_source_map, cohen_kappa, generate_grounded, generate_raw, judge_answer,
@@ -45,17 +45,21 @@ DEFAULT_OUT = ROOT / "agi-proof" / "benchmark-results" / "continual-qa.judged.js
 # Coarse provider family per model id, for the distinct-families check.
 def _family(model: str) -> str:
     m = model.lower()
-    for fam in ("claude", "gemini", "gpt", "deepseek", "qwen", "grok", "doubao", "kimi"):
+    canon = {"claude": "anthropic", "gemini": "google", "gpt": "openai",
+             "llama": "meta", "mistral": "mistral"}
+    for fam in ("claude", "gemini", "gpt", "deepseek", "llama", "mistral", "qwen", "grok", "doubao", "kimi"):
         if fam in m:
-            return "anthropic" if fam == "claude" else "google" if fam == "gemini" else \
-                   "openai" if fam == "gpt" else fam
+            return canon.get(fam, fam)
     return model
 
 
 def _complete_for(spec: str, *, max_tokens: int):
-    """spec = 'provider:model'. provider in {llmhub, deepseek}."""
+    """spec = 'provider:model'. provider in {llmhub, deepseek, openrouter}.
+
+    Model ids may contain ':' (e.g. openrouter:meta-llama/llama-3.3-70b-instruct:free),
+    so split only on the first ':'."""
     provider, _, model = spec.partition(":")
-    module = {"llmhub": llmhub_llm, "deepseek": deepseek_llm}[provider]
+    module = {"llmhub": llmhub_llm, "deepseek": deepseek_llm, "openrouter": openrouter_client}[provider]
     return model, module.make_complete(model=model, max_tokens=max_tokens)
 
 

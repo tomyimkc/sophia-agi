@@ -70,4 +70,33 @@ def extract_text(response: dict[str, Any]) -> str:
         raise RuntimeError(f"OpenRouter response missing choices[0].message.content: {response}") from exc
 
 
-__all__ = ["OPENROUTER_URL", "load_api_key", "chat_completion", "extract_text"]
+def make_complete(*, model: str, api_key: str | None = None, api_key_file=None,
+                  temperature: float = 0.0, max_tokens: int = 256, retries: int = 4):
+    """Return a ``complete(system, user)`` callable for CPQA, with backoff retries.
+
+    Lets OpenRouter serve as an independent judge/answer gateway behind the same
+    interface as agent.deepseek_llm / agent.llmhub_llm.
+    """
+    import ssl
+    import time
+    import urllib.error
+
+    def complete(system: str, user: str, *, max_tokens: int = max_tokens) -> str:
+        messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
+        for attempt in range(retries):
+            try:
+                resp = chat_completion(model=model, messages=messages, api_key=api_key,
+                                       api_key_file=api_key_file, temperature=temperature,
+                                       max_tokens=max_tokens)
+                return extract_text(resp)
+            except (urllib.error.URLError, ssl.SSLError, TimeoutError, ConnectionError) as exc:
+                code = getattr(exc, "code", None)
+                if attempt == retries - 1 or (code is not None and code < 500 and code != 429):
+                    raise
+                time.sleep(2 ** attempt)
+        raise RuntimeError("unreachable")
+
+    return complete
+
+
+__all__ = ["OPENROUTER_URL", "load_api_key", "chat_completion", "extract_text", "make_complete"]
