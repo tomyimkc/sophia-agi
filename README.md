@@ -16,6 +16,12 @@
 
 Sophia is a **provenance-aware, verifier-gated reasoning layer that abstains instead of fabricating** — an open corpus + gate that stops LLMs from inventing attributions and merging distinct intellectual traditions. It is a research program *toward* grounded AI; **not a claim of AGI** (see scope below).
 
+The gate, in one line:
+
+```text
+claim  →  verify against sources  →  accept · abstain · block
+```
+
 **One-sentence problem it solves:** Modern AI confidently merges Confucius with the *Dao De Jing*, credits Freud for ideas from the 1950s, and treats legendary figures as literal authors — then uses those errors as premises for further reasoning.
 
 **Validated proof (clears the no-overclaim gate):**

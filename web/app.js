@@ -9,9 +9,10 @@ async function loadManifest() {
     renderStats();
     renderLeaderboards();
     renderProofPackage();
+    renderFooter();
   } catch {
     document.getElementById("stats").innerHTML =
-      "<p class='agent-hint'>Run <code>python tools/build_web_data.py</code> and serve via <code>python tools/serve_web.py</code>.</p>";
+      "<p class='agent-hint'>Run <code>python tools/build_web_data.py</code>, then serve via <code>python tools/serve_web.py</code> to populate live stats.</p>";
   }
 }
 
@@ -20,17 +21,24 @@ function renderStats() {
   const ragChunks = manifest.rag?.indexChunks ?? 0;
   const loraScore = manifest.localModel?.benchmark;
   const loraPct = loraScore?.scorePct != null ? `${loraScore.scorePct}%` : "—";
+  const domains = (manifest.domains || []).length || 4;
   document.getElementById("stats").innerHTML = `
     <div class="stat-card"><div class="stat-value">v${manifest.version}</div><div class="stat-label">Release</div></div>
-    <div class="stat-card"><div class="stat-value">${manifest.trainingExamples}</div><div class="stat-label">Training examples</div></div>
+    <div class="stat-card"><div class="stat-value">${manifest.trainingExamples}</div><div class="stat-label">Bilingual examples</div></div>
     <div class="stat-card"><div class="stat-value">${ragChunks || "—"}</div><div class="stat-label">RAG index chunks</div></div>
     <div class="stat-card"><div class="stat-value">${loraPct}</div><div class="stat-label">sophia-v1 LoRA</div></div>
-    <div class="stat-card"><div class="stat-value">4</div><div class="stat-label">Active domains</div></div>`;
+    <div class="stat-card"><div class="stat-value">${domains}</div><div class="stat-label">Active domains</div></div>`;
+}
+
+function barClass(pct) {
+  if (pct >= 100) return "full";
+  if (pct < 50) return "low";
+  return "";
 }
 
 function renderLeaderboards() {
   const root = document.getElementById("leaderboards");
-  if (!manifest?.leaderboards) return;
+  if (!manifest?.leaderboards || !root) return;
   root.innerHTML = "";
   for (const [domain, board] of Object.entries(manifest.leaderboards)) {
     const section = document.createElement("div");
@@ -43,7 +51,7 @@ function renderLeaderboards() {
         <td>${entry.model}</td>
         <td>
           <div>${entry.score_pct}%</div>
-          <div class="score-bar"><div class="score-fill" style="width:${entry.score_pct}%"></div></div>
+          <div class="score-bar"><div class="score-fill ${barClass(entry.score_pct)}" style="width:${entry.score_pct}%"></div></div>
         </td>
         <td>${entry.passed}/${entry.total}</td>`;
       table.appendChild(tr);
@@ -51,6 +59,13 @@ function renderLeaderboards() {
     section.appendChild(table);
     root.appendChild(section);
   }
+}
+
+function statusClass(status) {
+  const s = (status || "").toLowerCase();
+  if (s.includes("implement") || s === "done") return "is-done";
+  if (s.includes("not_run") || s.includes("not run")) return "is-open";
+  return "is-partial"; // protocol-ready, awaiting-live-run, etc.
 }
 
 function renderProofPackage() {
@@ -68,7 +83,7 @@ function renderProofPackage() {
       card.innerHTML = `
         <div class="proof-level">Level ${item.level}</div>
         <h3>${item.name}</h3>
-        <span class="proof-status">${item.status}</span>`;
+        <span class="proof-status ${statusClass(item.status)}">${item.status}</span>`;
       ladder.appendChild(card);
     }
   }
@@ -89,10 +104,17 @@ function renderProofPackage() {
     table.innerHTML = "<tr><th>Benchmark</th><th>Status</th><th>Purpose</th></tr>";
     for (const item of proof.externalBenchmarks || []) {
       const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${item.name}</td><td>${item.status}</td><td>${item.purpose}</td>`;
+      tr.innerHTML = `<td>${item.name}</td><td><span class="proof-status ${statusClass(item.status)}">${item.status}</span></td><td>${item.purpose}</td>`;
       table.appendChild(tr);
     }
     external.replaceChildren(table);
+  }
+}
+
+function renderFooter() {
+  const footer = document.getElementById("site-footer");
+  if (footer && manifest?.version) {
+    footer.textContent = `Sophia · the Wisdom Gate · v${manifest.version} · MIT License · UI decided by council panel · Wisdom before intelligence.`;
   }
 }
 
@@ -104,7 +126,7 @@ function setupTabs() {
       tabs.forEach((t) => t.classList.toggle("active", t.dataset.mode === activeMode));
       document.getElementById("agent-hint").textContent =
         activeMode === "repo"
-          ? "Repo mode may suggest tools; server-side execution requires API + approval on CLI."
+          ? "Repo mode may suggest tools; server-side execution requires API + approval on the CLI."
           : activeMode === "life"
             ? "Not a substitute for licensed medical, legal, or financial advice."
             : "Project, corpus, benchmark, and growth decisions.";
@@ -145,7 +167,7 @@ async function askAgent() {
     out.textContent = text;
   } catch (e) {
     out.textContent =
-      `Live agent unavailable (${e.message}).\n\nRun locally:\npython tools/serve_web.py\n\nOr CLI:\npython tools/sophia_agent.py ${activeMode} "${q.replace(/"/g, '\\"')}"`;
+      `Live agent unavailable (${e.message}).\n\nRun locally:\npython tools/serve_web.py\n\nOr via CLI:\npython tools/sophia_agent.py ${activeMode} "${q.replace(/"/g, '\\"')}"`;
   }
   btn.disabled = false;
 }
