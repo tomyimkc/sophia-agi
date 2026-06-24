@@ -15,6 +15,8 @@ links: []
 
 # the 10% of the brain myth (人類只用大腦10%的迷思)
 
+The 10% of the brain myth (人類只用大腦10%的迷思) is a psychology concept, in the pop_myth subfield.
+
 - **Domain:** psychology
 
 Neuro-myth: humans do not use only 10% of the brain. Often falsely credited to Einstein or to a misreading of William James — neither stated the 10% figure. Neuroimaging shows widespread activity across the brain.

@@ -15,6 +15,8 @@ links: []
 
 # Gutenberg movable-type printing (~1440s) (古騰堡活字印刷（約1440年代）)
 
+Gutenberg movable-type printing (~1440s) (古騰堡活字印刷（約1440年代）) is a history event, dated to circa_1440.
+
 - **Domain:** history
 
 Dated innovation with documentary and material evidence

@@ -10,6 +10,8 @@ links: []
 
 # Confucian (儒家)
 
+Confucian (儒家) is a tradition.
+
 
 > **Do not merge with:** daoist, confucian_ritual.
 

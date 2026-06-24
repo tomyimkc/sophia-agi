@@ -15,6 +15,8 @@ links: []
 
 # Marco Polo introduced pasta to Italy (馬可波羅將麵食傳入意大利)
 
+Marco Polo introduced pasta to Italy (馬可波羅將麵食傳入意大利) is a history event, dated to mythologized_modern.
+
 - **Domain:** history
 
 Popular myth; Mediterranean pasta-like foods predate Polo

@@ -16,6 +16,8 @@ links: []
 
 # Book of Songs (詩經)
 
+Book of Songs (詩經) is a philosophy text, in the zhou_classics tradition, attributed to multiple (authorship confidence: compiled).
+
 - **Attributed author:** multiple (confidence: `compiled`)
 - **Tradition:** zhou_classics
 - **Domain:** philosophy

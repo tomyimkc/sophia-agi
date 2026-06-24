@@ -17,6 +17,8 @@ links: []
 
 # Metaphysics (形而上學)
 
+Metaphysics (形而上學) is a philosophy text, in the peripatetic tradition, attributed to aristotle (authorship confidence: attributed), dated to classical_greece.
+
 - **Attributed author:** aristotle (confidence: `attributed`)
 - **Tradition:** peripatetic
 - **Domain:** philosophy

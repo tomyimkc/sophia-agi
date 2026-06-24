@@ -15,6 +15,8 @@ links: []
 
 # Fall of the Western Roman Empire (476 CE) (西羅馬帝國滅亡（476年）)
 
+Fall of the Western Roman Empire (476 CE) (西羅馬帝國滅亡（476年）) is a history event, dated to 476-09-04.
+
 - **Domain:** history
 
 Traditional end-date marker; historiography disputes continuity vs transformation

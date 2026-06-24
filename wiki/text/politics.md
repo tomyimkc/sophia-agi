@@ -16,6 +16,8 @@ links: []
 
 # Politics (政治學)
 
+Politics (政治學) is a philosophy text, in the peripatetic tradition, attributed to aristotle (authorship confidence: attributed).
+
 - **Attributed author:** aristotle (confidence: `attributed`)
 - **Tradition:** peripatetic
 - **Domain:** philosophy

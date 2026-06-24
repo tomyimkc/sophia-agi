@@ -16,6 +16,8 @@ links: [confucian]
 
 # Great Learning (大學)
 
+Great Learning (大學) is a philosophy text, in the confucian tradition, attributed to confucian_school (authorship confidence: compiled).
+
 - **Attributed author:** confucian_school (confidence: `compiled`)
 - **Tradition:** confucian
 - **Domain:** philosophy

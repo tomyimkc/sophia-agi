@@ -17,6 +17,8 @@ links: []
 
 # confirmation bias (確認偏誤)
 
+Confirmation bias (確認偏誤) is a psychology concept, in the cognitive subfield, attributed to peter_wason (authorship confidence: attributed), dated to 1960.
+
 - **Attributed author:** peter_wason (confidence: `attributed`)
 - **Domain:** psychology
 

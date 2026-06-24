@@ -14,6 +14,8 @@ links: []
 
 # Napoleon was unusually short (拿破崙特別矮小)
 
+Napoleon was unusually short (拿破崙特別矮小) is a history event.
+
 - **Domain:** history
 
 British propaganda + unit confusion myth

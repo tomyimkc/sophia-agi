@@ -17,6 +17,8 @@ links: []
 
 # Nicomachean Ethics (尼各馬可倫理學)
 
+Nicomachean Ethics (尼各馬可倫理學) is a philosophy text, in the peripatetic tradition, attributed to aristotle (authorship confidence: attributed), dated to classical_greece.
+
 - **Attributed author:** aristotle (confidence: `attributed`)
 - **Tradition:** peripatetic
 - **Domain:** philosophy

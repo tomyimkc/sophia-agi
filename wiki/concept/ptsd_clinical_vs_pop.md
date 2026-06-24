@@ -15,6 +15,8 @@ links: []
 
 # PTSD as a clinical diagnosis vs pop 'trauma' talk (創傷後壓力症（臨床診斷）與通俗「創傷」用語之別)
 
+PTSD as a clinical diagnosis vs pop 'trauma' talk (創傷後壓力症（臨床診斷）與通俗「創傷」用語之別) is a psychology concept, in the clinical subfield.
+
 - **Domain:** psychology
 
 PTSD is a clinical diagnosis with DSM-5 / ICD-11 criteria (trauma exposure, intrusion, avoidance, hyperarousal). Everyday 'that was so traumatic' pop usage is not a diagnosis — keep the clinical boundary; do not merge pop trauma slang with the clinical construct.

@@ -17,6 +17,8 @@ links: [daoist]
 
 # Dao De Jing (道德經)
 
+Dao De Jing (道德經) is a philosophy text, in the daoist tradition, attributed to laozi (authorship confidence: legendary), dated to warring_states.
+
 - **Attributed author:** laozi (confidence: `legendary`)
 - **Tradition:** daoist
 - **Domain:** philosophy

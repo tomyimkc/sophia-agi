@@ -119,11 +119,38 @@ def _tradition_meta(tid: str, record: dict, *, source_ref: str) -> dict:
     return _ordered({k: v for k, v in meta.items() if v is not None or k in ("doNotMergeWith", "links")})
 
 
+def _summary_sentence(meta: dict) -> str:
+    """A single answer-bearing prose sentence composed ONLY from already-sourced provenance
+    fields (Step 5 enrichment). Authors no new facts — it just surfaces title / domain /
+    recordType / subfield / tradition / attributedAuthor+confidence / period as prose the
+    grounded model can answer who/when/what-domain questions from, instead of leaving them
+    as bullet scaffold a reader (and the source-sufficiency audit) skips."""
+    title = meta.get("canonicalTitleEn") or meta.get("id")
+    zh = meta.get("canonicalTitleZh")
+    name = f"{title}" + (f" ({zh})" if zh else "")
+    record_type = meta.get("recordType") or meta.get("pageType") or "record"
+    domain = meta.get("domain")
+    kind = f"{domain} {record_type}" if domain else str(record_type)
+    clauses = [f"{name} is a {kind}"]
+    if meta.get("subfield"):
+        clauses.append(f"in the {meta['subfield']} subfield")
+    if meta.get("tradition"):
+        clauses.append(f"in the {meta['tradition']} tradition")
+    if meta.get("attributedAuthor"):
+        clauses.append(f"attributed to {meta['attributedAuthor']} "
+                       f"(authorship confidence: {meta.get('authorConfidence', 'unknown')})")
+    if meta.get("period"):
+        clauses.append(f"dated to {meta['period']}")
+    sentence = ", ".join(clauses) + "."
+    return sentence[0].upper() + sentence[1:]
+
+
 def _render_body(meta: dict, notes: str) -> str:
     title = meta.get("canonicalTitleEn") or meta.get("id")
     zh = meta.get("canonicalTitleZh")
     head = f"# {title}" + (f" ({zh})" if zh else "")
-    lines = [head, ""]
+    # Lead with an answer-bearing prose summary (sourced fields only), then the bullets.
+    lines = [head, "", _summary_sentence(meta), ""]
     if meta.get("attributedAuthor"):
         lines.append(f"- **Attributed author:** {meta['attributedAuthor']} "
                      f"(confidence: `{meta.get('authorConfidence', 'unknown')}`)")

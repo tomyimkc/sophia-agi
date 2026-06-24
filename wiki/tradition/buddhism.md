@@ -10,5 +10,7 @@ links: []
 
 # Buddhism (佛教)
 
+Buddhism (佛教) is a tradition.
+
 
 _Provenance frontmatter is authoritative; generated from `data/traditions.json#buddhism` by `tools/wiki_sync.py`._
