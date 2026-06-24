@@ -43,6 +43,16 @@ by construction.
 > for `tools/eval_rlvr_adapter.py` output and Layer 1 is real. Run:
 > `tools/run_ssil_layer1.py`.
 >
+> **Real-adapter ingestion (one command).** `tools/ingest_rlvr_eval.py` reads a real
+> `eval_rlvr_adapter.py` report (`base.meanReward`/`adapterScore.meanReward`,
+> `trueFalsePositiveRate`, `entityIntersection`) and runs it through the IDENTICAL
+> Layer-1 gate: capability → G4 headline, `1 − falsePositiveRate` → protected
+> integrity (an FP rise becomes a protected regression), contamination → reject. It
+> fails loudly if the report lacks a before/after pair rather than inventing numbers.
+> The RunPod GPU job itself must be launched from a host with SSH + a valid
+> `RUNPOD_API_KEY` (`tools/runpod_rlvr.py`); once the eval JSON is back,
+> `python3 tools/ingest_rlvr_eval.py <report>.json` is the whole Layer-1 step.
+>
 > **Harder task.** `agent/ssil_microtask_transform.py` adds an ARC-like string-transform
 > task (executable op pipeline, protected non-identity metric) to show the loop
 > generalizes beyond a single threshold task.
