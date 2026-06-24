@@ -36,6 +36,12 @@ from agent.ssil_layer1 import adapter_candidate, run_layer1  # noqa: E402
 
 DEFAULT_OUT = ROOT / "agi-proof" / "self-extension" / "ssil-layer1-real.public-report.json"
 
+# The durable, committed evidence archive. Re-gating a file from here would decouple the
+# gate from the actual training (a fresh run could "promote" by re-reading stale numbers).
+# Defense-in-depth: refuse it structurally, so even a broad glob upstream cannot reintroduce
+# the stale-promote bug. Only freshly copied-back pod reports (runpod-rlvr/) may be gated.
+ARCHIVE_DIR_NAME = "rlvr-replication"
+
 
 def _dig(report: dict[str, Any], *paths: tuple[str, ...]) -> Any:
     """Return the first present value among dotted key paths; None if none found."""
@@ -87,7 +93,15 @@ def map_report(report: dict[str, Any], *, adapter_id: str | None = None) -> dict
 
 
 def ingest(report_path: str | Path, *, adapter_id: str | None = None) -> dict[str, Any]:
-    report = json.loads(Path(report_path).read_text(encoding="utf-8"))
+    p = Path(report_path)
+    if ARCHIVE_DIR_NAME in p.parts:
+        raise SystemExit(
+            f"ERROR: refusing to gate a file under {ARCHIVE_DIR_NAME}/ — that is the durable, "
+            "committed evidence archive, not a fresh pod result. Re-gating it would decouple the "
+            "gate from the actual training (stale-promote). Point this at the fresh "
+            "runpod-rlvr/ report produced by tools/eval_rlvr_adapter.py."
+        )
+    report = json.loads(p.read_text(encoding="utf-8"))
     m = map_report(report, adapter_id=adapter_id)
     candidate = adapter_candidate(
         m["id"], before=m["before"], after=m["after"],
