@@ -6,43 +6,74 @@
 ![Training examples](https://img.shields.io/badge/training_examples-528-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
-**Wisdom before intelligence.** An open corpus, benchmark, and **verifier-gated reasoning loop** for **provenance-aware** reasoning — knowing *who wrote what*, *what happened when*, and *which tradition owns which idea*, and **refusing to assert what it cannot machine-check**.
+**Wisdom before intelligence.**
 
-> **Scope, stated plainly.** This is a research program for *grounded, machine-checked* reasoning — **not a claim of AGI**. It pre-registers AGI thresholds and measures itself against them honestly; **those thresholds are not met**. The deliverable is the honest machinery — verifiers, an abstaining loop, and a no-overclaim measurement gate — not the label. Every public number must clear that gate ([SECURITY.md](SECURITY.md), [RESULTS.md](RESULTS.md)). The mission and design commitments are stated in [VISION.md](VISION.md).
+Sophia AGI is the open provenance corpus + **verifier gate** that stops LLMs from fabricating attributions and merging distinct intellectual traditions.
+
+**One-sentence problem it solves:** Modern AI confidently merges Confucius with the *Dao De Jing*, credits Freud for ideas from the 1950s, and treats legendary figures as literal authors — then uses those errors as premises for further reasoning.
+
+**Validated proof (clears the no-overclaim gate):**
+- On an 8B local model, Sophia cuts hallucinated attributions from **36.1% → 23.6%** (Δ **12.5%**, 95% CI [5.6%, 19.4%]) at **0% false-positive cost**.
+- On genuine "I don't know" traps, Sophia fabricates **0%** while raw models fabricate 17–25%.
+- Every public number requires ≥2 judge families, κ ≥ 0.40, ≥3 runs, and confidence intervals. See [RESULTS.md](RESULTS.md).
+
+> **Scope, stated plainly.** This is a research program for *grounded, machine-checked* reasoning — **not a claim of AGI**. Thresholds are pre-registered and honestly not yet met. The deliverable is the honest machinery (verifiers, abstaining gate, governance contract) and the measured data. Full commitments: [VISION.md](VISION.md) · [SECURITY.md](SECURITY.md).
 
 **Thesis site:** https://tomyimkc.github.io/sophia-agi/
 
-⭐ **Star if you want LLMs that actually know who wrote what** — the foundation for the world's first wise AGI.
+**⭐ Star the repo** — support the only open project shipping *measured*, fail-closed source discipline for AI.
 
-**Live links:** [Thesis + leaderboards + Ask Sophia](https://tomyimkc.github.io/sophia-agi/) • [HF Dataset (528 examples)](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) • Try gate: `python scripts/demo_gate.py`
+**Live & ready today**
+- [Thesis + leaderboards + Ask Sophia](https://tomyimkc.github.io/sophia-agi/)
+- [HF Dataset (528 bilingual examples)](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus)
+- Instant gate demo: `python scripts/demo_gate.py` (offline, no keys)
 
-**Proof (validated):** Sophia gate fabricates **0%** on unknown-answer questions where raw models fabricate **17–25%** (DeepSeek subject, 3 runs, 2-judge families κ=0.74). Teacher/Grok-CLI: 100% on domain leaderboards. See [RESULTS.md](RESULTS.md).
+> *Sophia* (σοφία) = wisdom. Active in four humanities domains (philosophy, psychology, history, religion) plus applied sector councils. The same gate powers a three-path agent and extends to small LLMs and legal tooling.
 
-> **10-sec demo GIF idea:** Run `python scripts/demo_gate.py` (or `python tools/serve_web.py` + agent query on "Did Confucius write the Dao De Jing?") and record the abstain + provenance verdict. Place in README / social preview assets.
-
-> *Sophia* (σοφία) = wisdom. Four humanities domains active — philosophy, psychology, history, religion — plus a **three-path agent** (advisor, repo, life). The same verifier-gated core extends to **sector councils** (law · finance · economy) and to **disciplining small local LLMs** — see [Applied verticals](#applied-verticals--the-same-gate-beyond-the-humanities-corpus).
+Try the gate right now: `python scripts/demo_gate.py` (abstain + provenance verdict in seconds).
 
 ## What it does (main usage)
 
-**Sophia is the provenance gate that makes AI safe to ship:** it verifies every AI claim against its sources, **abstains instead of fabricating**, and only lets *accepted* output through — so a solo operator can run AI services without babysitting.
+**Sophia is the provenance gate that makes AI safe to ship.** It verifies every claim against real sources, **abstains instead of fabricating**, and only lets *accepted* output through — the difference between "AI that sounds right" and "AI you can trust in production without constant oversight."
 
-> **Validated proof point:** the one result that clears the no-overclaim gate — on a local 8B model (`dolphin-llama3`) Sophia cuts hallucinated attributions **36.1% → 23.6%** (Δ **12.5%**, 95% CI [5.6%, 19.4%], N=24) at **0% false-positive cost**, judged by **two independent families** (DeepSeek + Llama-3.3-70B) across 3 runs ([RESULTS.md](RESULTS.md)). A separate **self-authored** 18-case calibration pack shows 0% fabrication vs 17–25% raw (corroborated by GPT-4o + Claude, κ=0.74) — reported as *calibration evidence, not the headline*, until a third-party pack lands.
+The validated delta above is the one headline that has cleared the full no-overclaim gate.
 
-**Use it three ways:**
+**Use it three ways (today):**
 
-- **As a governance gate for any AI pipeline** — a versioned MCP/Python contract your code pins against: `record_claim → verify_claim` returns `accepted | rejected | superseded | held`; **only `accepted` may be published** (fail-closed), with Bell-LaPadula classification, budget caps, and a kill switch. Drop it into LangGraph, the Claude Agent SDK, or n8n. → [CONTRACT.md](CONTRACT.md). Roadmap: the **super-MCP / super-skills** gateway that gates *any* tool → [docs/11-Platform/Sophia-Gateway.md](docs/11-Platform/Sophia-Gateway.md)
-- **As the spine of a one-person AI company** — 9 least-privilege role pipelines, an Obsidian vault that only publishes *accepted* notes, a durable task queue, an approve-by-exception review queue, and Langfuse traces. → `sophia_contract/`
-- **As an honest reasoning corpus + benchmark** — provenance-aware QA across philosophy, psychology, history, religion, under a no-overclaim measurement gate (≥2 judge families, κ, ≥3 runs, CI). → [RESULTS.md](RESULTS.md)
+- **Governance gate for any AI pipeline** — `record_claim → verify_claim`. Only `accepted` verdicts may publish. Fail-closed + auditable. Drop into LangGraph, Claude SDK, n8n, or any MCP host.  
+  → `python scripts/demo_gate.py` | [CONTRACT.md](CONTRACT.md)
+- **Spine for a solo-founder AI company** — 9 least-privilege roles, vault gate, durable queue, approve-by-exception. Everything you ship has passed the provenance gate.
+- **Honest corpus + benchmark** — 528 bilingual examples + per-domain leaderboards under the strict no-overclaim gate.  
+  → [HF Dataset](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) · [RESULTS.md](RESULTS.md)
 
 ```bash
-python scripts/demo_gate.py     # Sophia in 30s: verify → classify → abstain → publish-only-if-accepted (offline, no key)
+python scripts/demo_gate.py
+pip install -r requirements-mcp.txt && python sophia_mcp/server.py
 ```
+
+**Who this is for**
+- **Agent & AI builders** who want a real gate before anything is published
+- **Legal tech & high-stakes domains** needing citation faithfulness
+- **Researchers** wanting reproducible, multi-judge provenance benchmarks
+- **Solo founders & sovereign AI** teams who must trust their own stack
+- **Contributors** expanding accurate attribution data in the humanities
+
+**What makes this different**
+- **Measured, not claimed** — only numbers that pass ≥2 judge families + CIs headline
+- **Fail-closed by default** — never fabricates to look capable
+- **Governance-ready** — stable contract + MCP you can ship behind today
+- **Self-improving honesty** — flywheel writes + validates its own verifiers on held-out data
+- Full open corpus + replication package
 
 ## Moral + epistemic Conscience Kernel (seven paths)
 
-Sophia now exposes a **candidate Conscience Kernel**: a deterministic, fail-closed control layer that decides when an AI output/tool/memory action should `allow | revise | retrieve | clarify | escalate | abstain | block`. It is **not a claim of AGI**; it is the moral/epistemic guardrail layer around AGI-shaped autonomy.
+A deterministic, **fail-closed control layer** for AI outputs, tool use, and memory writes.
 
-Seven implemented paths:
+It returns one of: `allow | revise | retrieve | clarify | escalate | abstain | block`.
+
+This is **not AGI**. It is the verifiable moral + epistemic guardrail layer any serious AGI-shaped system will eventually need.
+
+Seven implemented paths (fact-check + metacognition + constitution + moral parliament + classifier + deception signals + MCP surface):
 
 1. **Unified conscience gate** — `agent/conscience.py`, `tools/run_conscience_demo.py`.
 2. **Metacognition** — uncertainty typing, self-consistency, semantic-entropy proxy, P(True)/P(IK) hooks.
@@ -60,9 +91,13 @@ python tools/run_agi_missing_pillars.py    # program induction, active inference
 
 Docs: [Conscience Kernel](docs/11-Platform/Conscience-Kernel.md) · [AGI Missing Pillars](docs/11-Platform/AGI-Missing-Pillars.md). Artifacts: `agi-proof/conscience/`, `agi-proof/agi-kernel/`.
 
-## Self-extending verification flywheel (the path-to-AGI engine)
+## Self-extending verification flywheel (honest path toward generality)
 
-`selfextend/` connects Sophia's static pieces into a loop that **grows its own competence**: *abstain → localize the gap → synthesize a verifier → validate it on held-out data → promote only if it clears the bar (else stay abstained) → coverage rises → repeat* — no human writing the new checks, no reward-hacking. Plus the components that loop needs: calibrated uncertainty (ECE/Brier), a competence self-model, a **causal world model** (do-operator, beyond provenance), cross-domain transfer, environment-as-verifier (verify by executing), the verified-reward signal with an anti-gaming held-out check, and a long-horizon runner with recovery. Deterministic, offline, falsifiable.
+The missing piece for real progress: a loop that **discovers its own gaps and writes + validates its own verifiers** — all fail-closed, all on held-out data.
+
+Abstain → find gap → synthesize verifier → prove it on held-out → promote or stay abstained → repeat.
+
+Fully deterministic and auditable today. This is how competence grows without hallucinated capability claims. See `agi-proof/self-extension/`.
 
 ```bash
 python tools/run_selfextend.py        # coverage 0%→100% (0% held-out false-accept), transfer, causal vs correlational, long-horizon
@@ -128,18 +163,25 @@ See [docs/11-Platform/OKF-Wiki.md](docs/11-Platform/OKF-Wiki.md).
 
 ## Why it matters
 
-LLMs merge lineages: Confucius → 《道德經》, Socrates → *Republic*, pop psych → clinical science. **Source discipline** is our fix — evidence first, then reasoning.
+Every time an LLM confidently attributes the *Dao De Jing* to Confucius (or any other lineage merge), it quietly erases centuries of distinct thought — then builds "reasoning" on top of the error.
 
-## Quick start
+**Source discipline** (named attribution + boundary maintenance + calibrated abstention) is the prerequisite for any system that deserves to be called wise. Sophia makes it machine-checkable and enforceable.
+
+## Quick start (clone + try in <1 min)
 
 ```bash
 git clone https://github.com/tomyimkc/sophia-agi.git
 cd sophia-agi
-python tools/validate_attribution.py
-python tools/export_training_jsonl.py
-python tools/run_benchmark.py template    # create model response template
-python tools/run_benchmark.py score benchmark/responses.template.json
+python scripts/demo_gate.py
 ```
+
+**Next steps**
+- Visit the live thesis + leaderboards + Ask Sophia: https://tomyimkc.github.io/sophia-agi/
+- Grab the dataset: https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus
+- Run the full contract/MCP: see [CONTRACT.md](CONTRACT.md) and `sophia_mcp/`
+- Explore the proof package: [agi-proof/README.md](agi-proof/README.md)
+
+**⭐ Star this repo** to support provenance-aware, honest AI infrastructure.
 
 ## Sophia Agent (3 paths)
 
@@ -166,16 +208,16 @@ Cloud Run API: `services/rag_api/` — see [docs/09-Agent/Online-RAG.md](docs/09
 
 ## Thesis web UI (council-decided)
 
-Scholarly single-page site with chapter nav, UI council panel, live leaderboards, and optional agent API.
+The public face of the project: scholarly thesis with persistent chapter navigation, per-domain leaderboards, council panel explanation, and (when running locally) a live "Ask Sophia" agent panel.
+
+**Visit now:** https://tomyimkc.github.io/sophia-agi/
 
 ```bash
-python tools/build_web_data.py   # refresh web/data/manifest.json
-python tools/serve_web.py        # http://127.0.0.1:8765
+python tools/build_web_data.py
+python tools/serve_web.py        # local + /api/ask
 ```
 
-- **Live site:** https://tomyimkc.github.io/sophia-agi/ (leaderboards + thesis; agent panel falls back to CLI hints).
-- **Live agent:** `POST /api/ask` with `{ "mode": "advisor|repo|life", "question": "..." }` when `serve_web.py` runs (requires `ANTHROPIC_API_KEY` in `.env`).
-- **Design record:** [docs/10-Web/UI-Council-Decisions.md](docs/10-Web/UI-Council-Decisions.md)
+- Full design record (why the site looks and behaves this way): [docs/10-Web/UI-Council-Decisions.md](docs/10-Web/UI-Council-Decisions.md)
 
 ## Benchmarks (per-domain leaderboards)
 
@@ -258,22 +300,23 @@ is "validated" only with multi-judge consensus + CIs; see [RESULTS.md](RESULTS.m
 - [90-Day Launch Playbook](docs/07-Growth/90-Day-Launch.md)
 - [Good first issues](GOOD_FIRST_ISSUES.md)
 
-## AI skills + MCP
+## AI skills + MCP (plug into any agent stack)
 
-| Layer | Command / path |
-|-------|----------------|
-| **Project skill** | `/sophia-agi` — `.grok/skills/sophia-agi/SKILL.md` |
-| **Portable skill** | `/sophia-source-discipline` — `python tools/install_skills.py --all` |
-| **MCP server** | `sophia_mcp/server.py` — 32 tools (validate, gate, check_claim, belief, counterfactual, retract, revise, benchmark, lookup, sector councils, council deliberate, OKF wiki, OpenClaw infer, governance contract: record_claim/verify_claim/explain_verdict/describe/health/enqueue_task/next_task) |
-| **Gateway MCP** | `gateway/server.py` — super-MCP front door (`gateway_call_tool`, `gateway_verify`, downstream HTTP-MCP federation, verified consensus, Skill Forge) |
+Use Sophia's gate and tools **directly inside** Claude, Cursor, LangGraph, n8n, or any MCP client.
+
+| Layer | What you get |
+|-------|--------------|
+| **MCP Server** | 40+ tools: `sophia_gate_check`, `sophia_verify_claim`, `sophia_conscience_check`, council deliberation, OKF wiki, belief counterfactuals, contract governance |
+| **Gateway** | Fail-closed front door that can wrap *any* downstream tool |
+| **Portable skill** | `/sophia-source-discipline` — works in any project |
+| **Contract** | Stable `record_claim` / `verify_claim` API for production pipelines |
 
 ```bash
 pip install -r requirements-mcp.txt
-python tools/install_skills.py --all --cursor
-python gateway/server.py  # standalone fail-closed Sophia Gateway MCP
+python sophia_mcp/server.py
 ```
 
-See [Skills-Install.md](docs/09-Agent/Skills-Install.md) and [MCP-Server.md](docs/09-Agent/MCP-Server.md).
+See [MCP-Server.md](docs/09-Agent/MCP-Server.md) and [CONTRACT.md](CONTRACT.md). Drop the gate in front of anything you ship.
 
 **Model providers.** The unified adapter (`agent/model.py`) speaks Anthropic, any OpenAI-compatible
 server (GLM / vLLM / SGLang / Ollama / llama.cpp / DeepSeek), `grok`, **`openclaw`** (the local
@@ -298,12 +341,22 @@ See [Model-Lab.md](docs/09-Agent/Model-Lab.md) and [LoRA-Experiment.md](docs/09-
 
 ## Hugging Face
 
-Dataset: [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) (**527** examples, synced from `training/corpus.jsonl`).
+**Dataset:** [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) — 528 bilingual training examples (philosophy · psychology · history · religion).
+
+Use it for SFT, DPO, or as a clean reference set for provenance research.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Changelog: [CHANGELOG.md](CHANGELOG.md).
+- Add attribution records or dispute pages (see [CONTRIBUTING.md](CONTRIBUTING.md))
+- Good first issues: [GOOD_FIRST_ISSUES.md](GOOD_FIRST_ISSUES.md)
+- Run validations locally: `python tools/validate_attribution.py`
 
-## License
+Changelog: [CHANGELOG.md](CHANGELOG.md)
 
-MIT — see [LICENSE](LICENSE).
+---
+
+**⭐ Star • Visit the thesis • Try the gate • Grab the dataset**
+
+Every star and every contribution helps build the open foundation for AI that knows its sources.
+
+**License:** MIT — see [LICENSE](LICENSE).

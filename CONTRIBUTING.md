@@ -1,6 +1,8 @@
 # Contributing to Sophia AGI
 
-Thank you for helping build provenance-aware philosophy training data toward AGI-shaped reasoning.
+Thank you for helping build the open foundation for **source discipline** in AI.
+
+Every record and dispute you contribute makes the gate stricter and the benchmarks more trustworthy. "Wisdom before intelligence."
 
 ## What we accept
 

@@ -1,9 +1,18 @@
 # Sophia AGI — Documentation Home
 
-Open corpus and a verifier-gated reasoning core: provenance-aware humanities education
-(philosophy · psychology · history · religion) **plus applied verticals** that reuse the
-same no-overclaim gate — the seven-path Conscience Kernel, sector councils (law · finance · economy), council deliberation
-for small LLMs, a legal-AI citation/holding verifier, and council distillation.
+**Wisdom before intelligence.**
+
+Open provenance corpus + verifier-gated core for source discipline.
+
+Sophia gives AI systems the ability to know *who wrote what* before they reason — and to **abstain** rather than fabricate.
+
+- 4 humanities domains + sector councils (law, finance, economy)
+- Fail-closed gate + measurable provenance deltas (validated)
+- MCP + governance contract you can drop into any pipeline
+- Self-extending verifier flywheel
+- Full proof package under strict no-overclaim rules
+
+**Live:** [Thesis site + leaderboards](https://tomyimkc.github.io/sophia-agi/) • [GitHub](https://github.com/tomyimkc/sophia-agi) • [HF Dataset](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus)
 
 **Tagline:** Wisdom before intelligence.
 
@@ -26,8 +35,11 @@ for small LLMs, a legal-AI citation/holding verifier, and council distillation.
 
 ## Core method: source discipline
 
-Follow evidence about **who wrote what** before using an idea in argument, comparison, or
-synthesis. This is the epistemic foundation layer for Sophia AGI. The same discipline —
-fail-closed verification, calibrated abstention, and "no number is *validated* without
-multi-judge consensus and confidence intervals" — is exactly what the applied verticals
-above reuse; they are applications of the core gate, not a separate project.
+**Evidence before assertion.**
+
+Every belief, claim, and conclusion carries traceable lineage. Sophia enforces this at the gate:
+- Retrieval and verification before generation
+- Fail-closed abstention when support is missing or conflicted
+- All public results require multi-judge consensus + confidence intervals
+
+The exact same discipline powers the applied verticals (councils, legal verifier, small-LLM distillation). It is not a separate project — it is the gate applied everywhere.

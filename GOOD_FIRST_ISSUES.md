@@ -1,6 +1,10 @@
 # Good First Issues
 
-Starter tasks for new contributors. Comment on an issue or open a PR referencing the ID.
+**Help build the foundation for AI that respects its sources.**
+
+Starter tasks for new contributors. Every attribution or dispute you add makes the gate stronger. Comment on an issue or open a PR referencing the ID.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the required workflow (validate before PR).
 
 ## Philosophy (active)
 

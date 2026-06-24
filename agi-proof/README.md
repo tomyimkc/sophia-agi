@@ -1,22 +1,20 @@
 # Sophia AGI-Candidate Proof Package
 
-Sophia AGI is not presented as proven AGI. This folder is the public evidence
-package for a narrower and testable claim:
+**This is not a claim of AGI.**
 
-> Sophia is an AGI-candidate provenance system with reproducible source-discipline
-> benchmarks, RAG/local-model baselines, and a pre-registered path toward hidden
-> evaluation, ablation, long-horizon autonomy, learning-under-shift, and
-> third-party replication.
+This folder is the public, auditable evidence package for a precise claim:
 
-## Current Evidence
+> Sophia is an AGI-candidate provenance system with reproducible source-discipline benchmarks, fail-closed gates, and a pre-registered path to third-party replication.
 
-- 518 training examples across philosophy, psychology, history, and religion.
-- 23 visible benchmark cases across four domains.
-- `sophia-v1` local LoRA baseline: 20/23 visible benchmark cases.
-- `rag-claude` curated RAG baseline: 22/23 visible benchmark cases.
-- Claude Sonnet/reference runs are tracked in per-domain leaderboards.
-- Public failure boundary: external benchmarks and independent replication are
-  still required before any stronger AGI claim.
+## Current Evidence (gated)
+
+- 528 bilingual training examples (philosophy, psychology, history, religion)
+- Per-domain leaderboards + validated provenance deltas (see main [RESULTS.md](../RESULTS.md))
+- Strong baselines (local LoRA and curated RAG)
+- Full self-extension flywheel closing on held-out domains
+- Pre-registered thresholds, hidden-reviewer packs, failure ledger, and replication checklist
+
+External benchmarks and clean third-party replication remain the next required rung.
 
 Machine-readable summary:
 

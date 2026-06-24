@@ -2,11 +2,11 @@
 
 **A provenance-aware, verifiable, fail-closed reasoning platform.**
 
-Sophia's mission is *not* to claim artificial general intelligence or machine
-consciousness. It is to be the most trustworthy, verifiable, and provenance-aware
-local reasoning system we can build — one that reasons transparently, knows the
-boundaries of its own knowledge, refuses to fabricate, and can prove *why* it
-believes what it outputs.
+**Wisdom before intelligence.**
+
+Sophia's mission is *not* to claim AGI or machine consciousness. 
+
+It exists to build the most trustworthy, verifiable, provenance-aware reasoning system possible — one that traces every claim to its sources, knows when it must abstain, and can prove *why* it believes what it outputs.
 
 > **Guiding principle.** A reasoning system earns trust by being *checkable*, not
 > by being *confident*. Every advance should move Sophia from "probabilistic

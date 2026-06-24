@@ -17,8 +17,18 @@ pretty_name: Sophia Provenance & Calibration Benchmark
 
 # Sophia Provenance & Calibration Benchmark
 
-Datasets and packs behind Sophia's provenance-aware, verifier-gated reasoning — for
-independent replication of the published results.
+**The open dataset for source discipline in AI.**
+
+Bilingual (EN + 中文) training examples, abstain packs, legal citation/holding faithfulness tests, and misattribution gold labels — all under a strict no-overclaim gate.
+
+Used by the Sophia gate to drive hallucinated attributions **36% → 23%** (validated) with 0% false positives on 8B models.
+
+- 528 training examples across philosophy, psychology, history, religion
+- Multiple held-out calibration and verifier packs
+- Legal citation existence + holding faithfulness benchmarks
+- OKF provenance wiki + belief graph
+
+For researchers, agent builders, and anyone who needs AI that knows *who wrote what*.
 
 ## Contents
 - **Misattributions / gold attributions** (`data/misattributions.json`,
@@ -40,5 +50,9 @@ See `agi-proof/REPLICATION.md` for the exact commands and `docs/11-Platform/Meth
 for the method. Hidden-eval prompts are not published — only aggregates (see `SECURITY.md`).
 
 ## Honest scope
-Packs/labels are currently self-authored; a fully independent claim needs a third-party
-pack + human review (tracked in `agi-proof/failure-ledger.md`). Not an AGI claim.
+All public numbers are gated (≥2 judge families + CIs). Packs are currently maintainer-authored; third-party replication tracked in `agi-proof/`. 
+
+**Not an AGI claim.** This is the measurement and training substrate for provenance-aware reasoning.
+
+GitHub: https://github.com/tomyimkc/sophia-agi
+Thesis: https://tomyimkc.github.io/sophia-agi/

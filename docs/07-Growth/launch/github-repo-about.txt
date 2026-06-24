@@ -1,7 +1,7 @@
 Copy into GitHub → sophia-agi → ⚙️ About (right sidebar)
 
 Description (SEO-optimized, <120 chars recommended):
-Sophia AGI: Provenance-aware corpus + agents for verifiable reasoning. Wisdom before intelligence. Fixes LLM hallucinations on philosophy/history/religion → safe AGI foundation. HF dataset + live demo.
+Sophia AGI: Provenance gate + open corpus that stops LLMs fabricating sources. "Wisdom before intelligence." Validated hallucination reduction + MCP governance. HF dataset.
 
 Website:
 https://tomyimkc.github.io/sophia-agi/
@@ -12,4 +12,4 @@ artificial-intelligence, ai-safety, ai-alignment, trustworthy-ai, verifiable-ai,
 Existing strong topics (do not remove): llm, benchmark, rag, philosophy, machine-learning, dataset, chinese, attribution, open-source, nlp, agi, agents, provenance, knowledge-graph, okf, llm-wiki, source-discipline
 
 Full About section ready text for paste:
-Sophia AGI: Provenance-aware corpus + agents for verifiable reasoning. Wisdom before intelligence. Fixes LLM hallucinations on philosophy/history/religion → safe AGI foundation. HF dataset + live demo + LoRA.
+Sophia AGI: Open provenance corpus + verifier gate for source discipline. Stops AI from merging lineages or fabricating attributions. Validated results. MCP + contract for safe deployment. HF dataset + thesis site.
