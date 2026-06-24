@@ -55,6 +55,25 @@ All notable changes to Sophia AGI are documented here.
   clean adapter promotes, protected-suite regression is rejected (anti-forgetting
   invariant), consolidation waits when nothing is stable yet. Wired into `ci.yml`.
 
+### Added — Continual Provenance QA (CPQA): integrated dual-store benchmark
+
+- `agent/continual_qa.py` + `tools/run_continual_qa_benchmark.py` +
+  `eval/continual_qa/episodes_v1.jsonl` — integrates Experiments 1–4 into one
+  benchmarkable artifact. Streams episodes (learn / retract / query) through two
+  systems: `graph_backed` (knowledge in the OKF graph; learns by page write, revises
+  conflicts, unlearns on demand, answers only from the grounded belief state) vs
+  `parametric_baseline` (knowledge frozen after episode 0 — a weight model without
+  retraining). Scores accuracy, fabrication rate, miss rate, and separates
+  **catastrophic (unintended) forgetting** from **deliberate unlearning/revision**.
+- Result on the 15-query v1 episodes: graph_backed **accuracy 1.0, fabrication 0,
+  unintended forgetting 0**; parametric_baseline **accuracy 0.27, fabrication 0.20,
+  miss 0.53** (3 removals correctly counted as deliberate). Report at
+  `agi-proof/benchmark-results/continual-qa.public-report.json`
+  (`candidateOnly:true`, `validated:false`, `level3Evidence:false`).
+- `tests/test_continual_qa.py` — perfect/non-fabricating graph_backed, zero
+  catastrophic forgetting with deliberate unlearning recorded, baseline forgets +
+  fabricates, retraction/cascade/revision force correct abstention. Wired into `ci.yml`.
+
 ## [0.7.47] - 2026-06-24
 
 ### Added — SEIB real API/local priority runs + LLM judge support
