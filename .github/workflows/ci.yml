@@ -178,6 +178,7 @@ jobs:
           python tests/test_predictive_world_model.py
           python tests/test_continual_plasticity.py
           python tests/test_promote_adapter.py
+          python tests/test_external_validation.py
           python tests/test_layered_memory.py
           python tests/test_agi_missing_pillars_bundle.py
           python tools/run_agi_missing_pillars.py

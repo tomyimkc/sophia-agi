@@ -80,3 +80,7 @@ training/feedback/*.jsonl
 
 # SSIL runtime registry (mutable append log)
 agi-proof/self-extension/ssil-registry.jsonl
+
+# external-validation: generated per-run outputs (reviewers run their own)
+agi-proof/external-validation/seib-uplift.validation-report.json
+agi-proof/external-validation/_seib-live.raw.json

@@ -1,0 +1,35 @@
+{
+  "schema": "sophia.external_validation.preregistration.v1",
+  "id": "seib-uplift-v1",
+  "registeredBy": "tomyimkc",
+  "registeredAt": "2026-06-24",
+  "claim": "Sophia's source-discipline pipeline (sophia_full) reduces false attribution and contested fabrication versus the raw base model, at bounded false-positive cost, on the held-out external-labeled SEIB-100 provenance set.",
+  "evalPack": {
+    "path": "eval/seib/seib_100_v1.jsonl",
+    "nCases": 100,
+    "sha256": "5e997178b08b05e2892bd494ffd51899e60b2f24b77e590f82eecc28d8b28b3a"
+  },
+  "conditions": ["raw", "sophia_full"],
+  "scorer": "deterministic_seib_scorer; labels are external (provenance_bench external-citation / Wikidata snapshot); the scorer is independent of agent.verifiers, and the gate is treatment only (non-circular).",
+  "acceptance": {
+    "minCases": 100,
+    "minRuns": 3,
+    "requireRealModel": true,
+    "maxFalseAttributionRate": 0.0,
+    "maxFabricationRateOnContested": 0.0,
+    "minAccuracyDelta": 0.0,
+    "requireAccuracyDeltaCIExcludesZero": true,
+    "maxFalsePositiveCost": 0.10,
+    "maxTrainingOverlap": 0
+  },
+  "falsification": [
+    "raw model matches or beats sophia_full on provenance accuracy (raw_to_full_accuracy_delta <= 0, or its 95% bootstrap CI includes 0)",
+    "sophia_full asserts any false attribution (falseAttributionRate > 0) or fabricates on any contested case (fabricationRateOnContested > 0)",
+    "the gate erases correct gold attributions beyond tolerance (falsePositiveCost > 0.10)",
+    "any eval prompt is found in the training corpus (training overlap > 0)",
+    "the eval pack sha256 does not match the value recorded here",
+    "the only evidence is a single run or a mock run"
+  ],
+  "claimBoundary": "A PASS confirms the gate's provenance uplift ON THIS PACK ONLY, recomputed live by a third party. It is NOT an AGI claim, NOT external generalization beyond this pack, and NOT a hallucination guarantee. A FAIL refutes the uplift claim on this pack.",
+  "immutabilityNote": "Thresholds live in this version-controlled file, not in the runner. tools/run_external_validation.py prints this file's sha256 at run time so a reviewer can confirm the registration predates the result it judges, and recomputes the verdict from the live per-case rows rather than trusting any committed result artifact."
+}

@@ -5,7 +5,7 @@ Failures are claim evidence. They show where the system is not AGI.
 | Failure ID | Status | Claim impact | Required response |
 |---|---|---|---|
 | external-benchmarks-not-run | Open | Blocks expert AGI claim | Keep wording at AGI-candidate |
-| hidden-review-third-party-not-run | Open | Blocks independent hidden generalization claim | Run third-party packs |
+| hidden-review-third-party-not-run | Open | Blocks independent hidden generalization claim | Run third-party packs. A self-serve reproducer now exists for the SEIB-100 provenance claim (`tools/run_external_validation.py` + `agi-proof/external-validation/`): a reviewer recomputes PASS/FAIL live against a hash-pinned pre-registration, trusting no committed artifact. Still needs an actual third party to run it. |
 | hidden-prepared-pack-grok-cli-2026-06-19 | Open | Preliminary hidden run only: 28.75/40 auto score, 2/8 strict pass | Improve strict pass rate; run fresh third-party hidden pack |
 | hidden-fresh-pack-sophia-grok-2026-06-19 | Open | Full hidden-run artifact exists, but backend produced 0/8 nonempty answers; not valid evidence of reasoning competence | Fix Grok/session/network execution and run a new unspent hidden pack |
 | hidden-fresh-pack-sophia-deepseek-2026-06-19 | Open | Diagnostic spent-pack run reached 27.5/40 auto score, 8/8 nonempty answers, and 0 backend failures, but 0/8 strict pass; not independent proof evidence | Complete manual semantic review, improve missed rubric/coding/tool-use behavior, then run a new unspent reviewer-controlled pack |
