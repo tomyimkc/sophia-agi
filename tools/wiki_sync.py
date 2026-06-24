@@ -35,6 +35,7 @@ DOMAIN_FILES = {
     "psychology": "psychology_concepts.json",
     "history": "history_events.json",
     "religion": "religion_concepts.json",
+    "science": "science.json",
 }
 
 # Canonical frontmatter key order for generated pages.

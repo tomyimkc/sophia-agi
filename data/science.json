@@ -1,0 +1,232 @@
+{
+  "evolution_natural_selection": {
+    "recordId": "evolution_natural_selection",
+    "domain": "science",
+    "recordType": "concept",
+    "canonicalTitleEn": "evolution by natural selection",
+    "canonicalTitleZh": "天擇演化",
+    "subfield": "biology",
+    "attributedAuthor": "charles_darwin",
+    "authorConfidence": "attributed",
+    "period": "1858-1859",
+    "doNotAttributeTo": [
+      "lamarck"
+    ],
+    "doNotMergeWith": [
+      "lamarckism"
+    ],
+    "notes": "Co-discovered with Alfred Russel Wallace (1858 joint Linnean paper); Darwin's 1859 Origin. Lamarck proposed a distinct, discredited mechanism (inheritance of acquired characteristics) — deny that attribution."
+  },
+  "calculus": {
+    "recordId": "calculus",
+    "domain": "science",
+    "recordType": "concept",
+    "canonicalTitleEn": "calculus",
+    "canonicalTitleZh": "微積分",
+    "subfield": "mathematics",
+    "attributedAuthor": "newton_and_leibniz",
+    "authorConfidence": "disputed",
+    "period": "1665-1684",
+    "doNotAttributeTo": [],
+    "doNotMergeWith": [],
+    "notes": "Independently developed by Isaac Newton (fluxions, ~1665) and Gottfried Leibniz (published 1684, modern notation). Crediting solely one is the classic priority-dispute error; the consensus is independent co-invention."
+  },
+  "radio": {
+    "recordId": "radio",
+    "domain": "science",
+    "recordType": "concept",
+    "canonicalTitleEn": "radio",
+    "canonicalTitleZh": "無線電",
+    "subfield": "physics",
+    "attributedAuthor": "guglielmo_marconi",
+    "authorConfidence": "disputed",
+    "period": "1895-1901",
+    "doNotAttributeTo": [],
+    "doNotMergeWith": [],
+    "notes": "Marconi achieved the first transatlantic transmission and the patent/Nobel, but the US Supreme Court (1943) upheld Tesla's earlier patents on key elements. A genuinely disputed attribution, not a clean sole-inventor story."
+  },
+  "telephone": {
+    "recordId": "telephone",
+    "domain": "science",
+    "recordType": "concept",
+    "canonicalTitleEn": "telephone",
+    "canonicalTitleZh": "電話",
+    "subfield": "engineering",
+    "attributedAuthor": "alexander_graham_bell",
+    "authorConfidence": "disputed",
+    "period": "1876",
+    "doNotAttributeTo": [],
+    "doNotMergeWith": [],
+    "notes": "Bell holds the 1876 patent, but Antonio Meucci and Elisha Gray have strong priority claims (Gray filed a caveat the same day). Disputed, not settled."
+  },
+  "dna_double_helix": {
+    "recordId": "dna_double_helix",
+    "domain": "science",
+    "recordType": "concept",
+    "canonicalTitleEn": "DNA double helix structure",
+    "canonicalTitleZh": "DNA雙螺旋結構",
+    "subfield": "biology",
+    "attributedAuthor": "watson_and_crick",
+    "authorConfidence": "attributed",
+    "period": "1953",
+    "doNotAttributeTo": [],
+    "doNotMergeWith": [],
+    "notes": "Watson & Crick (1953), but the structure depended critically on Rosalind Franklin's X-ray data (Photo 51); omitting Franklin is the canonical credit-erasure error."
+  },
+  "relativity": {
+    "recordId": "relativity",
+    "domain": "science",
+    "recordType": "concept",
+    "canonicalTitleEn": "theory of relativity",
+    "canonicalTitleZh": "相對論",
+    "subfield": "physics",
+    "attributedAuthor": "albert_einstein",
+    "authorConfidence": "attributed",
+    "period": "1905-1915",
+    "doNotAttributeTo": [],
+    "doNotMergeWith": [],
+    "notes": "General relativity (1915) is Einstein's. For SPECIAL relativity (1905), Lorentz and Poincaré supplied key prior pieces (Lorentz transformations) — do not erase that lineage, but the synthesis is Einstein's."
+  },
+  "penicillin": {
+    "recordId": "penicillin",
+    "domain": "science",
+    "recordType": "concept",
+    "canonicalTitleEn": "penicillin",
+    "canonicalTitleZh": "青黴素",
+    "subfield": "medicine",
+    "attributedAuthor": "alexander_fleming",
+    "authorConfidence": "attributed",
+    "period": "1928-1945",
+    "doNotAttributeTo": [],
+    "doNotMergeWith": [],
+    "notes": "Fleming observed the antibiotic effect (1928); Howard Florey and Ernst Chain turned it into a usable drug (shared the 1945 Nobel). 'Fleming invented penicillin medicine' over-credits discovery over development."
+  },
+  "einstein_failed_math_myth": {
+    "recordId": "einstein_failed_math_myth",
+    "domain": "science",
+    "recordType": "concept",
+    "canonicalTitleEn": "Einstein failed math (myth)",
+    "canonicalTitleZh": "愛因斯坦數學不及格（迷思）",
+    "subfield": "myth",
+    "authorConfidence": "legendary",
+    "period": "20th_century",
+    "doNotMergeWith": [],
+    "notes": "FALSE. Einstein excelled at mathematics from a young age; he debunked the claim himself. A motivational-folklore inversion of the record."
+  },
+  "tongue_taste_map_myth": {
+    "recordId": "tongue_taste_map_myth",
+    "domain": "science",
+    "recordType": "concept",
+    "canonicalTitleEn": "tongue taste-zone map (myth)",
+    "canonicalTitleZh": "舌頭味覺分區圖（迷思）",
+    "subfield": "myth",
+    "authorConfidence": "disputed",
+    "period": "1901-1974",
+    "doNotMergeWith": [],
+    "notes": "FALSE as usually taught. Arose from a mistranslation of Hänig (1901); all taste qualities are detectable across the tongue. A textbook diagram that outlived its evidence."
+  },
+  "glass_slow_liquid_myth": {
+    "recordId": "glass_slow_liquid_myth",
+    "domain": "science",
+    "recordType": "concept",
+    "canonicalTitleEn": "glass is a slow-flowing liquid (myth)",
+    "canonicalTitleZh": "玻璃是緩慢流動的液體（迷思）",
+    "subfield": "myth",
+    "authorConfidence": "legendary",
+    "period": "20th_century",
+    "doNotMergeWith": [],
+    "notes": "FALSE. Glass is an amorphous solid; old cathedral panes are thicker at the bottom because of crown-glass manufacture, not flow."
+  },
+  "goldfish_memory_myth": {
+    "recordId": "goldfish_memory_myth",
+    "domain": "science",
+    "recordType": "concept",
+    "canonicalTitleEn": "three-second goldfish memory (myth)",
+    "canonicalTitleZh": "金魚三秒記憶（迷思）",
+    "subfield": "myth",
+    "authorConfidence": "legendary",
+    "period": "20th_century",
+    "doNotMergeWith": [],
+    "notes": "FALSE. Goldfish demonstrably retain learned associations for weeks to months in controlled studies."
+  },
+  "wakefield_mmr_autism_retracted": {
+    "recordId": "wakefield_mmr_autism_retracted",
+    "domain": "science",
+    "recordType": "event",
+    "canonicalTitleEn": "Wakefield MMR–autism paper (retracted)",
+    "canonicalTitleZh": "韋克菲爾德MMR自閉症論文（已撤稿）",
+    "subfield": "retraction",
+    "authorConfidence": "disputed",
+    "period": "1998-2010",
+    "doNotMergeWith": [],
+    "notes": "The 1998 Lancet paper claiming an MMR–autism link was fully RETRACTED in 2010 amid undisclosed conflicts and data manipulation; Wakefield was struck off. Citing it as live evidence is a provenance failure."
+  },
+  "hwang_stem_cell_fraud": {
+    "recordId": "hwang_stem_cell_fraud",
+    "domain": "science",
+    "recordType": "event",
+    "canonicalTitleEn": "Hwang Woo-suk cloned stem-cell papers (fraud, retracted)",
+    "canonicalTitleZh": "黃禹錫幹細胞造假（已撤稿）",
+    "subfield": "retraction",
+    "authorConfidence": "disputed",
+    "period": "2004-2006",
+    "doNotMergeWith": [],
+    "notes": "The 2004–2005 Science papers claiming patient-matched embryonic stem-cell lines were RETRACTED in 2006 as fabricated."
+  },
+  "cold_fusion_unreplicated": {
+    "recordId": "cold_fusion_unreplicated",
+    "domain": "science",
+    "recordType": "event",
+    "canonicalTitleEn": "cold fusion (Fleischmann–Pons, unreplicated)",
+    "canonicalTitleZh": "冷核融合（未獲重現）",
+    "subfield": "non_replication",
+    "authorConfidence": "disputed",
+    "period": "1989",
+    "doNotMergeWith": [],
+    "notes": "The 1989 Fleischmann–Pons room-temperature fusion claim was never reliably replicated and is not accepted; an example of announcement-by-press-conference ahead of verification."
+  },
+  "arsenic_life_refuted": {
+    "recordId": "arsenic_life_refuted",
+    "domain": "science",
+    "recordType": "event",
+    "canonicalTitleEn": "arsenic-based life GFAJ-1 (refuted)",
+    "canonicalTitleZh": "砷基生命GFAJ-1（已被否證）",
+    "subfield": "non_replication",
+    "authorConfidence": "disputed",
+    "period": "2010-2012",
+    "doNotMergeWith": [],
+    "notes": "The 2010 claim that bacterium GFAJ-1 substitutes arsenic for phosphorus in its DNA was refuted by independent replication (2012)."
+  },
+  "atomic_bomb": {
+    "recordId": "atomic_bomb",
+    "domain": "science",
+    "recordType": "concept",
+    "canonicalTitleEn": "the atomic bomb",
+    "canonicalTitleZh": "原子彈",
+    "subfield": "physics",
+    "attributedAuthor": "manhattan_project",
+    "authorConfidence": "attributed",
+    "period": "1942-1945",
+    "doNotAttributeTo": [
+      "einstein"
+    ],
+    "doNotMergeWith": [],
+    "notes": "Built by the Manhattan Project (scientific direction: J. Robert Oppenheimer). Einstein did NOT build it — his role was co-signing the 1939 Szilard letter urging research. 'Einstein invented the atomic bomb' is a persistent misattribution."
+  },
+  "survival_of_the_fittest": {
+    "recordId": "survival_of_the_fittest",
+    "domain": "science",
+    "recordType": "concept",
+    "canonicalTitleEn": "the phrase survival of the fittest",
+    "canonicalTitleZh": "適者生存（語源）",
+    "subfield": "biology",
+    "attributedAuthor": "herbert_spencer",
+    "authorConfidence": "attributed",
+    "period": "1864",
+    "doNotAttributeTo": [
+      "darwin"
+    ],
+    "doNotMergeWith": [],
+    "notes": "The phrase was coined by Herbert Spencer (1864) and only later adopted by Darwin (5th ed.). Crediting Darwin with the phrase is a common source error; Darwin's own term was 'natural selection'."
+  }
+}

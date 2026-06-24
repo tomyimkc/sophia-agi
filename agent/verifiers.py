@@ -37,6 +37,7 @@ _PROVENANCE_FILES = (
     "psychology_concepts.json",
     "religion_concepts.json",
     "history_events.json",
+    "science.json",
     "learned_attributions.json",
 )
 
@@ -879,9 +880,17 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
     records = records if records is not None else _load_provenance_records()
     the = r"(?:the\s+)?"
     q = r"[\"“”'’«»]?"                                     # an optional opening/closing quote
-    the_q = q + r"\s*" + the + q + r"\s*"                  # quote/"the"-tolerant lead-in to a title
-    attr = r"(?:wrote|authored|penned|composed)"          # active
-    attr_p = r"(?:written|authored|penned|composed)"      # passive participle
+    # Bounded "theory/phrase/law of …" connector so a DISCOVERY can sit behind it
+    # ("invented the theory of X", "coined the phrase Y"). Optional, so authorship
+    # titles ("wrote the Republic") are unaffected.
+    conn = r"(?:(?:the\s+)?(?:theor(?:y|em)|phrase|concept|idea|principle|law|notion|term|model)\s+of\s+)?"
+    the_q = q + r"\s*" + the + q + r"\s*" + conn           # quote/"the"/connector-tolerant lead-in to a title
+    # Authorship verbs PLUS discovery/coinage verbs, so the gate adjudicates "who
+    # discovered/invented/coined X", not only "who wrote X" — the science domain's
+    # attribution shape. Discovery verbs are conservative (no generic "made/created").
+    _disc = r"|invented|discovered|coined|formulated|devised|originated|conceived|proposed"
+    attr = r"(?:wrote|authored|penned|composed" + _disc + r")"          # active
+    attr_p = r"(?:written|authored|penned|composed|invented|discovered|coined|formulated|devised|originated|conceived|proposed)"  # passive participle
     # Bounded honorific/article lead-in to a name ("to the prophet Daniel").
     nm = r"(?:(?:the|a|an|prophet|apostle|king|saint|st\.?|emperor|biblical|tyrant)\s+){0,3}"
     # Optional bounded appositive/parenthetical between an author and the verb:
@@ -935,8 +944,8 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
                 re.compile(a + r"(?:\s+(?:is|was|being))?\s+" + the + r"(?:author|writer|composer)\s+of\s+" + the_q + t),  # X is the author of Y
                 re.compile(a + app + r"\s*(?:is|was)\s+credited\s+with\s+\w+ing\s+" + the_q + t),        # X (the …) is credited with writing Y
                 re.compile(a + r"['’]s\s+" + the_q + t),                                                 # X's (the) Y
-                re.compile(t + r"(?:\s*,)?(?:\s+(?:was|is|were|been))?\s+(?:" + attr_p + r"|attributed)\s+by\s+" + nm + a),  # Y (was) written by X
-                re.compile(t + r"(?:\s*,)?\s+(?:is|was|are|were|been|being)?\s*attributed\s+to\s+" + nm + a),  # Y is attributed to (the prophet) X
+                re.compile(conn + t + r"(?:\s*,)?(?:\s+(?:was|is|were|been))?\s+(?:" + attr_p + r"|attributed)\s+by\s+" + nm + a),  # Y (was) written/discovered by X
+                re.compile(conn + t + r"(?:\s*,)?\s+(?:is|was|are|were|been|being)?\s*attributed\s+to\s+" + nm + a),  # Y is attributed to (the prophet) X
                 re.compile(t + r"(?:\s*,)?\s+(?:a\s+|the\s+)?(?:work|text|book|composition|treatise)\s+(?:by|of)\s+" + a),  # Y, a work by X
                 re.compile(t + r"\s+(?:was\s+|is\s+)?" + a + r"['’]s\s+(?:\w+\s+)?(?:work|text|masterpiece|composition|book|treatise)\b"),  # Y was X's work
                 re.compile(a + r"\s*著\s*" + title_alt),                                                 # X 著 Y
