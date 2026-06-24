@@ -1,0 +1,277 @@
+{
+  "benchmark": "rlvr-adapter-heldout",
+  "task": "math",
+  "mode": "real",
+  "model": "zai-org/glm-4-9b-chat-hf",
+  "adapter": "/workspace/sophia-runpod/checkpoints/sophia-rlvr-v1",
+  "claimStatus": "Open — per-run held-out comparison on UNSEEN problem families. Capability claim requires >=3 seeds and no-overclaim aggregation (CI excludes 0).",
+  "split": {
+    "evalProblems": 8,
+    "seed": 0,
+    "evalFrac": 0.3,
+    "evalFamilies": [
+      "factor",
+      "simplify"
+    ],
+    "trainSealed": "12b5377ebb71fa23",
+    "evalSealed": "9df78432084015de",
+    "familyIntersection": []
+  },
+  "base": {
+    "n": 8,
+    "meanReward": -0.5,
+    "passAt1": 0.25,
+    "passAt1ByFamily": {
+      "factor": 0.0,
+      "simplify": 0.5
+    }
+  },
+  "adapterScore": {
+    "n": 8,
+    "meanReward": -0.5,
+    "passAt1": 0.25,
+    "passAt1ByFamily": {
+      "factor": 0.0,
+      "simplify": 0.5
+    }
+  },
+  "delta": {
+    "passAt1": 0.0
+  },
+  "checks": {
+    "contaminationFree": true,
+    "adapterImprovesPassAt1": false,
+    "noPassAt1Regression": true
+  },
+  "rows": {
+    "base": [
+      {
+        "problem_id": "factor-x2-1",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x-1)*(x+1)', got '\\\\[')",
+          "sympy": true,
+          "gold": "(x-1)*(x+1)",
+          "got": "\\[",
+          "reward": -1.0
+        },
+        "completion": "To factor completely the expression \\( x^2 - 1 \\), we can recognize that this is a difference of squares, which can be factored using the formula:\n\n\\[ a^2 - b^2 = (a + b)(a - b)) \\]\n\nIn our case, \\( a = x \\) and \\( b = 1 \\). Plugging these values into the difference of squares formula, we get:\n\n\\[ x^2 - 1^2 = (x + 1)(x - 1)) \\]\n\nSo the completely factored form of \\( x^2 - 1 \\) is:\n\n\\["
+      },
+      {
+        "problem_id": "factor-x2-4",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x-2)*(x+2)', got 'So the completely factored form of \\\\( x^2 -')",
+          "sympy": true,
+          "gold": "(x-2)*(x+2)",
+          "got": "So the completely factored form of \\( x^2 -",
+          "reward": -1.0
+        },
+        "completion": "To factor completely the expression \\( x^2 - 4 \\), we can recognize that this is a difference of squares, which can be factored using the formula:\n\n\\[ a^2 - b^2 = (a + b)(a - b)) \\]\n\nIn our case, \\( a = x \\) and \\( b = 2 \\) because \\( 4 = 2^2 \\).\n\nApplying the difference of squares formula, we get:\n\n\\[ x^2 - 4 = (x + 2)(x - 2)) \\]\n\nSo the completely factored form of \\( x^2 -"
+      },
+      {
+        "problem_id": "factor-x2-5x-6",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x+2)*(x+3)', got '\\\\( x^2 + 5x + 6 = (x +')",
+          "sympy": true,
+          "gold": "(x+2)*(x+3)",
+          "got": "\\( x^2 + 5x + 6 = (x +",
+          "reward": -1.0
+        },
+        "completion": "To factor the quadratic expression \\( x^2 + 5x + 6 \\), we need to find two numbers that multiply to the constant term (6) and add up to the coefficient of the linear term (5).\n\nThe two numbers that satisfy these conditions are 2 and 3, because:\n\n- \\( 2 \\times 3 = 6 \\) (the constant term)\n- \\( 2 + 3 = 5 \\) (the coefficient of the linear term)\n\nNow we can write the factored form of the quadratic expression:\n\n\\( x^2 + 5x + 6 = (x +"
+      },
+      {
+        "problem_id": "factor-x2-9",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x-3)*(x+3)', got 'Now we can apply the difference of squares')",
+          "sympy": true,
+          "gold": "(x-3)*(x+3)",
+          "got": "Now we can apply the difference of squares",
+          "reward": -1.0
+        },
+        "completion": "To factor completely the expression \\( x^2 - 9 \\), we recognize that this is a difference of squares. The general form of a difference of squares is \\( a^2 - b^2 = (a + b)(a - b)) \\).\n\nIn our case, \\( a^2 \\) corresponds to \\( x^2 \\), and \\( b^2 \\) corresponds to \\( 9 \\), which is \\( 3^2 \\).\n\nSo we can write \\( x^2 - 9 \\) as \\( (x)^2 - (3)^2 \\).\n\nNow we can apply the difference of squares"
+      },
+      {
+        "problem_id": "simp-x2m1-over-xm1",
+        "family": "simplify",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected 'x + 1', got '\\\\(\\\\frac{(x +')",
+          "sympy": true,
+          "gold": "x + 1",
+          "got": "\\(\\frac{(x +",
+          "reward": -1.0
+        },
+        "completion": "To simplify the expression \\(\\frac{x^2 - 1}{x - 1}\\), we can recognize that the numerator is a difference of squares, which can be factored as follows:\n\n\\(x^2 - 1 = (x + 1)(x - 1))\\)\n\nNow, we can rewrite the original expression with the factored numerator:\n\n\\(\\frac{(x + 1)(x - 1))}{x - 1}\\)\n\nNow, we can cancel out the common factor \\((x - 1)}\\) from both the numerator and the denominator:\n\n\\(\\frac{(x +"
+      },
+      {
+        "problem_id": "simp-pythag",
+        "family": "simplify",
+        "reward": 1.0,
+        "detail": {
+          "passed": true,
+          "reason": "equivalent",
+          "sympy": true,
+          "gold": "1",
+          "got": "1",
+          "reward": 1.0
+        },
+        "completion": "We can use the Pythagorean identity, which states that sin^2(x) + cos^2(x) = 1.\n\nTherefore, sin(x)**2 + cos(x)**2 = 1.\n####\nThe answer is \\boxed{1}"
+      },
+      {
+        "problem_id": "simp-2xp4-over-2",
+        "family": "simplify",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected 'x + 2', got '3. Simplify the expression further')",
+          "sympy": true,
+          "gold": "x + 2",
+          "got": "3. Simplify the expression further",
+          "reward": -1.0
+        },
+        "completion": "To simplify the expression \\(\\frac{2x + 4}{2}\\), we can follow these steps:\n\n1. Distribute the 2 in the numerator to both terms inside the parentheses:\n   \\(\\frac{2x + 4}{2} = \\frac{2x}{2} + \\frac{4}{2}}\\)\n\n2. Simplify each term by dividing the coefficients by 2:\n   \\(\\frac{2x}{2} + \\frac{4}{2}} = \\frac{x}{1} + \\frac{2}{1}}\\)\n\n3. Simplify the expression further"
+      },
+      {
+        "problem_id": "simp-xxx",
+        "family": "simplify",
+        "reward": 1.0,
+        "detail": {
+          "passed": true,
+          "reason": "equivalent",
+          "sympy": true,
+          "gold": "x**3",
+          "got": "x^3",
+          "reward": 1.0
+        },
+        "completion": "To simplify the expression \\( x \\times x \\times x \\), we recognize that this is the same as \\( x \\) raised to the power of 3.\n\nSo, the simplified expression is:\n\n\\[ x^3 \\]\n\nPutting the final answer in \\(\\boxed{\\text{}}}}\\), we get:\n\n\\[\\boxed{x^3}}\\]"
+      }
+    ],
+    "adapter": [
+      {
+        "problem_id": "factor-x2-1",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x-1)*(x+1)', got '\\\\[')",
+          "sympy": true,
+          "gold": "(x-1)*(x+1)",
+          "got": "\\[",
+          "reward": -1.0
+        },
+        "completion": "To factor completely the expression \\( x^2 - 1 \\), we can recognize that this is a difference of squares, which can be factored using the formula:\n\n\\[ a^2 - b^2 = (a + b)(a - b)) \\]\n\nIn our case, \\( a = x \\) and \\( b = 1 \\). Plugging these values into the difference of squares formula, we get:\n\n\\[ x^2 - 1^2 = (x + 1)(x - 1)) \\]\n\nSo the completely factored form of \\( x^2 - 1 \\) is:\n\n\\["
+      },
+      {
+        "problem_id": "factor-x2-4",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x-2)*(x+2)', got 'So the completely factored form of \\\\( x^2 -')",
+          "sympy": true,
+          "gold": "(x-2)*(x+2)",
+          "got": "So the completely factored form of \\( x^2 -",
+          "reward": -1.0
+        },
+        "completion": "To factor completely the expression \\( x^2 - 4 \\), we can recognize that this is a difference of squares, which can be factored using the formula:\n\n\\[ a^2 - b^2 = (a + b)(a - b)) \\]\n\nIn our case, \\( a = x \\) and \\( b = 2 \\) because \\( 4 = 2^2 \\).\n\nApplying the difference of squares formula, we get:\n\n\\[ x^2 - 4 = (x + 2)(x - 2)) \\]\n\nSo the completely factored form of \\( x^2 -"
+      },
+      {
+        "problem_id": "factor-x2-5x-6",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x+2)*(x+3)', got '\\\\( 2 + 3 =')",
+          "sympy": true,
+          "gold": "(x+2)*(x+3)",
+          "got": "\\( 2 + 3 =",
+          "reward": -1.0
+        },
+        "completion": "To factor completely the quadratic expression \\( x^2 + 5x + 6 \\), we need to find two binomials whose product is the original quadratic expression.\n\nThe quadratic expression can be factored as follows:\n\n\\( x^2 + 5x + 6 \\)\n\nWe are looking for two numbers that multiply to the constant term (6), and add up to the coefficient of the linear term (5).\n\nThe numbers that satisfy these conditions are 2 and 3, because:\n\n\\( 2 \\times 3 = 6 \\) (product of the constant term)\n\\( 2 + 3 ="
+      },
+      {
+        "problem_id": "factor-x2-9",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x-3)*(x+3)', got 'Now we can apply the difference of squares')",
+          "sympy": true,
+          "gold": "(x-3)*(x+3)",
+          "got": "Now we can apply the difference of squares",
+          "reward": -1.0
+        },
+        "completion": "To factor completely the expression \\( x^2 - 9 \\), we recognize that this is a difference of squares. The general form of a difference of squares is \\( a^2 - b^2 = (a + b)(a - b)) \\).\n\nIn our case, \\( a^2 \\) corresponds to \\( x^2 \\), and \\( b^2 \\) corresponds to \\( 9 \\), which is \\( 3^2 \\).\n\nSo we can write \\( x^2 - 9 \\) as \\( (x)^2 - (3)^2 \\).\n\nNow we can apply the difference of squares"
+      },
+      {
+        "problem_id": "simp-x2m1-over-xm1",
+        "family": "simplify",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected 'x + 1', got '\\\\(\\\\frac{(x +')",
+          "sympy": true,
+          "gold": "x + 1",
+          "got": "\\(\\frac{(x +",
+          "reward": -1.0
+        },
+        "completion": "To simplify the expression \\(\\frac{x^2 - 1}{x - 1}\\), we can recognize that the numerator is a difference of squares, which can be factored as follows:\n\n\\(x^2 - 1 = (x + 1)(x - 1))\\)\n\nNow, we can rewrite the original expression with the factored numerator:\n\n\\(\\frac{(x + 1)(x - 1))}{x - 1}\\)\n\nNow, we can cancel out the common factor \\((x - 1)}\\) from both the numerator and the denominator:\n\n\\(\\frac{(x +"
+      },
+      {
+        "problem_id": "simp-pythag",
+        "family": "simplify",
+        "reward": 1.0,
+        "detail": {
+          "passed": true,
+          "reason": "equivalent",
+          "sympy": true,
+          "gold": "1",
+          "got": "1",
+          "reward": 1.0
+        },
+        "completion": "We can use the Pythagorean identity, which states that sin^2(x) + cos^2(x) = 1.\n\nTherefore, sin(x)**2 + cos(x)**2 = 1.\n####\nThe answer is \\boxed{1}"
+      },
+      {
+        "problem_id": "simp-2xp4-over-2",
+        "family": "simplify",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected 'x + 2', got '3. Simplify the expression further')",
+          "sympy": true,
+          "gold": "x + 2",
+          "got": "3. Simplify the expression further",
+          "reward": -1.0
+        },
+        "completion": "To simplify the expression \\(\\frac{2x + 4}{2}\\), we can follow these steps:\n\n1. Distribute the 2 in the numerator to both terms inside the parentheses:\n   \\(\\frac{2x + 4}{2} = \\frac{2x}{2} + \\frac{4}{2}}\\)\n\n2. Simplify each term by dividing the coefficients by 2:\n   \\(\\frac{2x}{2} + \\frac{4}{2}} = \\frac{x}{1} + \\frac{2}{1}}\\)\n\n3. Simplify the expression further"
+      },
+      {
+        "problem_id": "simp-xxx",
+        "family": "simplify",
+        "reward": 1.0,
+        "detail": {
+          "passed": true,
+          "reason": "equivalent",
+          "sympy": true,
+          "gold": "x**3",
+          "got": "x^3",
+          "reward": 1.0
+        },
+        "completion": "To simplify the expression \\( x \\times x \\times x \\), we need to understand that this is the same as raising \\( x \\) to the power of 3.\n\nSo, the expression simplifies to:\n\n\\[ x^3 \\]\n\nTherefore, the final answer, put in the box, is:\n\n\\[ \\boxed{x^3} \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\] \\]"
+      }
+    ]
+  },
+  "passed": false
+}

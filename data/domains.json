@@ -4,7 +4,11 @@
     "labelEn": "Philosophy",
     "labelZh": "哲學",
     "status": "active",
-    "recordTypes": ["text", "figure", "school"],
+    "recordTypes": [
+      "text",
+      "figure",
+      "school"
+    ],
     "dataFile": "attributions.json",
     "disputeDir": "docs/04-Disputes",
     "description": "Authorship, compilation, and tradition boundaries for philosophical texts."
@@ -14,7 +18,11 @@
     "labelEn": "Psychology",
     "labelZh": "心理學",
     "status": "active",
-    "recordTypes": ["concept", "figure", "school"],
+    "recordTypes": [
+      "concept",
+      "figure",
+      "school"
+    ],
     "dataFile": "psychology_concepts.json",
     "disputeDir": "docs/08-Domains/Psychology",
     "description": "Concept provenance: who coined a term, clinical vs pop-psych misuse, replication status."
@@ -24,7 +32,10 @@
     "labelEn": "History",
     "labelZh": "歷史",
     "status": "active",
-    "recordTypes": ["event", "figure"],
+    "recordTypes": [
+      "event",
+      "figure"
+    ],
     "dataFile": "history_events.json",
     "disputeDir": "docs/08-Domains/History",
     "description": "Dated events, primary vs secondary sources, anachronism and mythologized past."
@@ -34,9 +45,27 @@
     "labelEn": "Religion",
     "labelZh": "宗教",
     "status": "active",
-    "recordTypes": ["text", "concept", "school"],
+    "recordTypes": [
+      "text",
+      "concept",
+      "school"
+    ],
     "dataFile": "religion_concepts.json",
     "disputeDir": "docs/08-Domains/Religion",
     "description": "Scripture attribution, sect boundaries, theological vs historical claims."
+  },
+  "science": {
+    "id": "science",
+    "labelEn": "Science",
+    "labelZh": "科學",
+    "status": "active",
+    "recordTypes": [
+      "concept",
+      "event",
+      "figure"
+    ],
+    "dataFile": "science.json",
+    "disputeDir": "docs/08-Domains/Science",
+    "description": "Discovery provenance (co-discovery, priority disputes, credit erasure), persistent science myths, and the citation-provenance of retracted/non-replicated claims."
   }
 }

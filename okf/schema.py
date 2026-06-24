@@ -27,7 +27,7 @@ PAGE_TYPES = (
     "memory",
 )
 
-DOMAINS = ("philosophy", "psychology", "history", "religion")
+DOMAINS = ("philosophy", "psychology", "history", "religion", "science")
 
 # authorConfidence enum — copied from data/schema.json so a drift is a test failure.
 AUTHOR_CONFIDENCE = (

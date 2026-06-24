@@ -32,6 +32,12 @@ on:
         default: 'offline'
         type: choice
         options: [offline, live]
+      task:
+        description: 'RLVR reward task: provenance (provenance_faithful) or math (sympy math_equivalent)'
+        required: true
+        default: 'provenance'
+        type: choice
+        options: [provenance, math]
       epochs:
         description: 'Training epochs (live mode)'
         required: false
@@ -54,8 +60,14 @@ on:
 permissions:
   contents: read
 
+# Concurrency key is per (task, seed, mode) so DIFFERENT runs go in PARALLEL
+# (e.g. a 3-seed sweep, or provenance + math at once) — each rents its own pod —
+# while an identical re-dispatch (same task+seed+mode) still queues, preventing
+# accidental double-spend on the exact same run. Use distinct --seed per parallel
+# run. NOTE: parallel pods = parallel paid GPUs (same total GPU-hours, higher peak
+# spend); your RunPod account must have the quota/credit/GPU availability.
 concurrency:
-  group: rlvr-runpod
+  group: rlvr-runpod-${{ github.event.inputs.task }}-${{ github.event.inputs.seed }}-${{ github.event.inputs.remote_mode }}
   cancel-in-progress: false
 
 jobs:
@@ -91,6 +103,7 @@ jobs:
           python tools/runpod_rlvr.py --dry-run \
             --source git --branch "${{ github.ref_name }}" \
             --remote-mode "${{ github.event.inputs.remote_mode }}" \
+            --task "${{ github.event.inputs.task }}" \
             --gpu-type "${{ github.event.inputs.gpu_type }}"
 
       - name: Launch RunPod RLVR (rents GPU, runs over SSH, deletes pod)
@@ -102,9 +115,10 @@ jobs:
           python tools/runpod_rlvr.py --yes \
             --source git --branch "${{ github.ref_name }}" \
             --remote-mode "${{ github.event.inputs.remote_mode }}" \
+            --task "${{ github.event.inputs.task }}" \
             --epochs "${{ github.event.inputs.epochs }}" \
             --seed "${{ github.event.inputs.seed }}" \
-            --quant bf16 --vllm none \
+            --quant bf16 --vllm colocate \
             --gpu-type "${{ github.event.inputs.gpu_type }}" \
             $INTERRUPTIBLE
 

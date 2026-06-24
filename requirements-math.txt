@@ -1,0 +1,4 @@
+# Symbolic-math verifier backend (optional, fail-closed).
+# agent.verifiers.math_equivalent / math_sound use sympy when present and abstain
+# (held verdict) when absent — installing this enables the algebraic checks.
+sympy>=1.12

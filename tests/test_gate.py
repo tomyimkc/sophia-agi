@@ -117,7 +117,7 @@ def test_gate_flags_false_arithmetic() -> None:
 def test_gate_passes_true_arithmetic_and_detects_sector() -> None:
     good = "Runway: 100000 / 5000 = 20 months of cash. source discipline. 中文：見上。"
     gate = check_response(good, mode="advisor", question="Model my startup runway and Stripe AML.")
-    num = next(c for c in gate["checks"] if c["id"] == "arithmetic_sound")
+    num = next(c for c in gate["checks"] if c["id"] == "math_sound")
     assert num["passed"] is True
     assert gate["sector"] == "financial"
 

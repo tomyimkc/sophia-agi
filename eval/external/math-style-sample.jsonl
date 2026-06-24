@@ -1,0 +1,12 @@
+{"id": "m1", "question": "Factor completely: x**2 - 16.", "answer": "(x-4)*(x+4)", "source": "sophia-style-sample (MATH-style symbolic; NOT the official MATH set)"}
+{"id": "m2", "question": "Factor completely: x**2 + 7*x + 12.", "answer": "(x+3)*(x+4)", "source": "sophia-style-sample (MATH-style symbolic; NOT the official MATH set)"}
+{"id": "m3", "question": "Expand: (x+5)**2.", "answer": "x**2 + 10*x + 25", "source": "sophia-style-sample (MATH-style symbolic; NOT the official MATH set)"}
+{"id": "m4", "question": "Expand: (2*x-3)*(x+4).", "answer": "2*x**2 + 5*x - 12", "source": "sophia-style-sample (MATH-style symbolic; NOT the official MATH set)"}
+{"id": "m5", "question": "Differentiate with respect to x: x**4.", "answer": "4*x**3", "source": "sophia-style-sample (MATH-style symbolic; NOT the official MATH set)"}
+{"id": "m6", "question": "Differentiate with respect to x: 3*x**2 - 5*x + 2.", "answer": "6*x - 5", "source": "sophia-style-sample (MATH-style symbolic; NOT the official MATH set)"}
+{"id": "m7", "question": "Differentiate with respect to x: cos(x).", "answer": "-sin(x)", "source": "sophia-style-sample (MATH-style symbolic; NOT the official MATH set)"}
+{"id": "m8", "question": "Simplify: (x**2 - 9)/(x - 3).", "answer": "x + 3", "source": "sophia-style-sample (MATH-style symbolic; NOT the official MATH set)"}
+{"id": "m9", "question": "Simplify: (6*x + 9)/3.", "answer": "2*x + 3", "source": "sophia-style-sample (MATH-style symbolic; NOT the official MATH set)"}
+{"id": "m10", "question": "Solve for x: 4*x - 8 = 0.", "answer": "2", "source": "sophia-style-sample (MATH-style symbolic; NOT the official MATH set)"}
+{"id": "m11", "question": "Solve for x: x/3 + 2 = 5.", "answer": "9", "source": "sophia-style-sample (MATH-style symbolic; NOT the official MATH set)"}
+{"id": "m12", "question": "Integrate with respect to x (omit the constant): 4*x**3.", "answer": "x**4", "source": "sophia-style-sample (MATH-style symbolic; NOT the official MATH set)"}

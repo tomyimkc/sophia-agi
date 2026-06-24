@@ -205,9 +205,56 @@ def test_arithmetic_sound() -> None:
     assert asnd("Then 10 / 2 = 5 so we proceed.", None, {})["passed"] is True
 
 
+def _has_sympy() -> bool:
+    try:
+        import sympy  # noqa: F401
+        return True
+    except Exception:
+        return False
+
+
+def test_math_sound_degrades_without_sympy() -> None:
+    # math_sound subsumes arithmetic_sound regardless of sympy.
+    ms = v.math_sound()
+    assert ms("We have 2 + 2 = 4 and 6 * 7 = 42.", None, {})["passed"] is True
+    assert ms("Clearly 2 + 2 = 5.", None, {})["passed"] is False
+    assert ms("No math here, just prose.", None, {})["passed"] is True
+    # An algebraic claim with prose on BOTH sides of the math (exercises the math-
+    # core extraction): verified iff sympy present, otherwise held (not blocked).
+    r = ms("In general, (x+1)**2 = x**2 + 1 always holds.", None, {})
+    if _has_sympy():
+        assert r["passed"] is False  # not an identity -> flagged
+    else:
+        assert r["passed"] is True and r["detail"]["heldClaims"] >= 1
+    # Prose that merely contains '=' must never be read as a math identity.
+    for benign in ["The total y = the answer we want.", "So profit = 100 apples sold."]:
+        assert ms(benign, None, {})["passed"] is True
+
+
+def test_math_sound_accepts_true_identity() -> None:
+    ms = v.math_sound()
+    r = ms("By factoring we see x**2 - 1 = (x - 1)*(x + 1) holds.", None, {})
+    assert r["passed"] is True  # true identity (or held without sympy)
+
+
+def test_math_equivalent_failclosed_and_algebra() -> None:
+    me = v.math_equivalent("x**2 - 1")
+    if not _has_sympy():
+        out = me("The answer is (x-1)(x+1)", None, {})
+        assert out["passed"] is False and "sympy_unavailable" in out["reasons"][0]
+        return
+    assert me("After factoring, the answer is (x-1)*(x+1).", None, {})["passed"] is True
+    assert me("The answer is \\boxed{(x-1)(x+1)}", None, {})["passed"] is True
+    assert me("The answer is x**2 + 1", None, {})["passed"] is False
+    # numeric equivalence modulo form
+    half = v.math_equivalent("1/2")
+    assert half("So the result is 0.5", None, {})["passed"] is True
+
+
 def test_verifier_registry() -> None:
     assert v.check_text("arithmetic_sound", "1 + 1 = 3")["passed"] is False
     assert v.check_text("arithmetic_sound", "1 + 1 = 2")["passed"] is True
+    assert v.check_text("math_sound", "2 + 2 = 5")["passed"] is False
     try:
         v.check_text("nope", "x")
         assert False, "expected KeyError"

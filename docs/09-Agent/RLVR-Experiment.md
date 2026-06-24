@@ -144,6 +144,66 @@ python tools/run_rlvr.py --model zai-org/glm-4-9b-chat-hf --vllm server   # 2x24
 python tools/run_rlvr.py --model zai-org/glm-4-9b-chat-hf --quant bf16   # 1x80GB
 ```
 
+## Math task (`--task math`) — the cleanest held-out domain
+
+The same runner trains on a second, fully objective reward: **symbolic-math
+equivalence**. The reward is `agent.verifiers.math_equivalent` (sympy) — like the
+interpreter for code, the CAS is ground truth, so there is **no LLM judge** and the
+signal is ungameable. This is the contamination-safe, judge-free held-out domain the
+self-extension rung wants (see the roadmap in
+[Corpus-MathCode-Capability-Roadmap.md](../06-Roadmap/Corpus-MathCode-Capability-Roadmap.md)).
+
+| Artifact | Path |
+|---|---|
+| Reward core (no torch) | `provenance_bench/math_reward.py` |
+| Problem set (224: 164 train / 60 held-out) | `provenance_bench/data/math_problems.json` |
+| Pack generator (sympy-verified golds) | `tools/gen_math_pack.py` |
+| Fixed-split dataset | `provenance_bench/math_dataset.py` |
+| Offline invariants | `provenance_bench.math_reward.offline_invariants()` |
+| Tests | `tests/test_math_rlvr.py` |
+| Deps | `requirements-math.txt` (sympy) |
+
+Two properties make this an honest, gate-worthy eval:
+
+- **Non-gameable reward.** Families are chosen so the answer is a *different
+  object* than the question (derivative / integral / solution value / evaluation),
+  so `math_equivalent` cannot be satisfied by restating the prompt. (Restating a
+  "factor/expand/simplify" question *is* equivalent to its answer — those families
+  are excluded for exactly this reason.)
+- **Fixed family-disjoint holdout.** The 3 held-out families (`derivative_chain`,
+  `integrate_func`, `second_derivative`) are genuine generalizations of the 6 train
+  families and are **identical across seeds** (a `split` field, not a seeded draw),
+  so the per-seed held-out pass@1 numbers are directly comparable. Held-out N = 60,
+  large enough for a bootstrap CI to exclude 0 if a real effect exists.
+
+```bash
+# Offline reward-wiring check (any machine; needs sympy, no torch/GPU):
+pip install -r requirements-math.txt
+python tests/test_math_rlvr.py
+python tools/run_rlvr.py --task math --model mock         # full offline invariants
+
+# Live GRPO on the math reward (rented CUDA GPU), everything below the line is the
+# same GPU stack as the provenance task — only --task changes:
+pip install -r requirements-rl.txt -r requirements-math.txt
+python tools/run_rlvr.py --task math --model zai-org/glm-4-9b-chat-hf --vllm server   # 2x24GB
+python tools/run_rlvr.py --task math --model zai-org/glm-4-9b-chat-hf --quant bf16    # 1x80GB
+```
+
+> **Performance / dependency note (2026-06-24).** The RunPod launcher
+> (`.github/workflows/rlvr-runpod.yml`) runs `--vllm none` because the pinned
+> RLVR stack (`tools/runpod_rlvr.py`: trl 0.16.1) predates trl's `vllm_mode`
+> selector (added in trl ≥ 0.17). `--vllm none` is generation-bound: a 3-seed,
+> epochs=3 sweep over the 164-train/60-held-out pack is ~1.5 h per pod. To get
+> vLLM-accelerated generation (~10×, single A100 80GB) bump the pod's pinned set
+> to a mutually-compatible **trl ≥ 0.17 + vllm + torch + transformers**, then
+> switch the workflow launch to `--vllm colocate`. `run_rlvr` already field-gates
+> `vllm_mode`, so it is correct on either trl; the blocker is purely the dep pin.
+
+After training, the live capability claim is **held-out pass@1 on the eval families
+rises vs the base adapter**, scored deterministically by `math_equivalent`
+(no judge needed) — but it remains **Open** until a gated run (≥3 seeds, CI excludes
+0) per `agi-proof/failure-ledger.md`. This run does not assert that claim.
+
 ## Budget (live run, rented GPU)
 
 ~60 train prompts, `num_generations=8`, ~50–100 GRPO steps, short completions →

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "description": "TRUE-attribution ground truth for the Provenance Delta benchmark. Independent of Sophia's gate corpus. Each row is a well-documented authorship fact used to (a) measure false-positive cost and (b) supply the gold author for scoring. Expanded 2026-06-21 with matched true controls for the new misattribution works (single-author, unambiguous gold only).",
+    "description": "TRUE-attribution ground truth for the Provenance Delta benchmark. Independent of Sophia's gate corpus. Each row is a well-documented authorship fact used to (a) measure false-positive cost and (b) supply the gold author for scoring. Expanded 2026-06-21 with matched true controls for the new misattribution works (single-author, unambiguous gold only). Hardening 2026-06-24: +9 tricky true controls (works whose correct author looks superficially like a trap: Marcus/Meditations, Epictetus/Enchiridion, Plotinus/Enneads) — pack hardening-2026-06-24.",
     "labelSource": "external (Wikipedia / Wikidata)",
     "wikidataQidStatus": "qid null until verified by tools/fetch_wikidata_authors.py; source_url is a stable human-checkable reference",
     "schemaVersion": 1
@@ -733,6 +733,87 @@
       "author_note": "Documented author of The Sixth Extinction: An Unnatural History; used as a true control (the misattribution benchmark pairs it with a plausible wrong author).",
       "wikidata_qid": null,
       "source_url": "https://en.wikipedia.org/wiki/The_Sixth_Extinction:_An_Unnatural_History"
+    },
+    {
+      "id": "true-hard-xenophon-memorabilia",
+      "work": "Memorabilia",
+      "gold_author": "Xenophon",
+      "author_note": "Correctly Xenophon's; a Socratic work, not Plato's.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/memorabilia",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "true-hard-marcus_aurelius-meditations",
+      "work": "Meditations",
+      "gold_author": "Marcus Aurelius",
+      "author_note": "Correctly Marcus Aurelius's private Stoic notebooks.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/meditations",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "true-hard-epictetus-enchiridion",
+      "work": "Enchiridion",
+      "gold_author": "Epictetus",
+      "author_note": "Correctly Epictetus's, even though Arrian compiled it from his teaching.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/enchiridion",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "true-hard-plotinus-enneads",
+      "work": "Enneads",
+      "gold_author": "Plotinus",
+      "author_note": "Correctly Plotinus's, even though Porphyry edited and arranged them.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/enneads",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "true-hard-aristotle-nicomachean_ethics",
+      "work": "Nicomachean Ethics",
+      "gold_author": "Aristotle",
+      "author_note": "Correctly Aristotle's.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/nicomachean_ethics",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "true-hard-aristotle-politics",
+      "work": "Politics",
+      "gold_author": "Aristotle",
+      "author_note": "Correctly Aristotle's.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/politics",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "true-hard-zhuangzi-zhuangzi",
+      "work": "Zhuangzi",
+      "gold_author": "Zhuangzi",
+      "author_note": "Correctly the work of Zhuang Zhou.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/zhuangzi",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "true-hard-xunzi-xunzi",
+      "work": "Xunzi",
+      "gold_author": "Xunzi",
+      "author_note": "Correctly Xun Kuang's, the opposing Confucian to Mencius.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/xunzi",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "true-hard-sun_tzu-the_art_of_war",
+      "work": "The Art of War",
+      "gold_author": "Sun Tzu",
+      "author_note": "Correctly ascribed to Sun Tzu.",
+      "wikidata_qid": null,
+      "source_url": "https://en.wikipedia.org/wiki/the_art_of_war",
+      "pack": "hardening-2026-06-24"
     }
   ]
 }
