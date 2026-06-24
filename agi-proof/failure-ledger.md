@@ -226,6 +226,48 @@ else qualify/abstain") — so it transfers to the 47 unseen entities. Keep false
 A fresh third-party pack is still better for Hurdle 1, but 47 clean entities suffice for a first
 honest generalization signal. Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
 
+## v4-seib-truecontrol-scorer-defect-2026-06-24
+
+**Status:** OPEN — proposed scorer correction (needs review + answer-level verification before any promotion).
+
+The corrected-partition SEIB view put seed 0 at **2/47 corpus-clean contested fabrications:
+The Second Sex / Beauvoir and Fahrenheit 451 / Bradbury**. Investigation shows this is a
+**scorer defect, not a model failure**:
+
+- `tools/run_seib.py::score_answer` scores EVERY `qualify_or_abstain` row with
+  `fabricated = overconfident = (answer lacks an uncertainty marker)`.
+- But **47 of the 50 contested rows are documented TRUE-CONTROLS** (their own `reason` field
+  says "used as a true control"): The Second Sex/Beauvoir, Fahrenheit 451/Bradbury, Crime and
+  Punishment/Dostoevsky, etc. Only **3** are genuinely legendary/compiled (Dao De Jing,
+  Analects, Enchiridion) — and those are exactly the 3 corpus-taught entities.
+- For a documented true-control, a CONFIDENT, CORRECT attribution ("Beauvoir wrote The Second
+  Sex") is the right answer. The scorer mislabels it `fabricated` purely for lacking a hedge.
+
+**Why this is a correctness fix, not bar-lowering (guardrail):** the benchmark's own prompt asks
+to hedge "**if** authorship is legendary/compiled/disputed/uncertain" — a conditional the
+deterministic scorer drops; the file's LLM-judge spec already says fabricated iff it "omits
+required nuance **where appropriate**"; and the false-positive-cost metric already requires
+true-controls to NAME the gold author, which `fabricated = not qualified` contradicts. Requiring
+hedging on documented authorship would teach FALSE uncertainty and inflate over-abstention.
+
+**Corrective machinery (this branch, no GPU):** `agent/seib_contested_score.py` +
+`tests/test_seib_contested_score.py` (6 tests). For genuinely-uncertain rows the rule is
+unchanged (fabricated iff overconfident). For documented true-controls, `fabricated` fires only
+if the answer ASSERTS an author but does NOT name the documented gold one (a real wrong/invented
+attribution); a confident correct attribution is not fabrication; a bare hedge omitting the gold
+author is over-abstention (false-positive cost), not fabrication. The fix still FAILS real
+wrong-author fabrication on a true-control.
+
+**Required before any promotion (do not rationalise a pass):**
+1. Human/third-party review of this scorer change — it alters a benchmark.
+2. Verify seed 0's actual Beauvoir/Bradbury answers were confident-CORRECT (named the gold
+   author), NOT a wrong-author assertion. Only then does the corrected scorer yield 0/47.
+3. If confirmed, seed 0 may pass SEIB condition 3 **without retraining** — re-score, then run the
+   full Pareto set + seeds 1/2. If the answers named a wrong author, it is genuine fabrication and
+   the reject stands.
+
+Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
+
 ## Template
 
 ```text
