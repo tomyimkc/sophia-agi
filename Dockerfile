@@ -20,9 +20,11 @@
 #       --image-name <dockerhub-user>/sophia-train:latest
 #   (or set the workflow_dispatch 'image' input to the same tag).
 #
-# The base MUST match tools/runpod_rlvr.py DEFAULT_IMAGE so torch/CUDA ABI lines
-# up with the flash-attn wheel we compile against it. Keep them in sync.
-FROM runpod/pytorch:1.0.7-cu1281-torch291-ubuntu2204
+# Base pinned to torch 2.8.0 (NOT the torch-2.9.1 RLVR default): torch 2.9 has NO
+# prebuilt flash-attn wheel yet, so it would compile from source (~the 90-min timeout
+# we hit). torch 2.8 has an official cu12 wheel — see DEFAULT_BENCH_IMAGE in
+# tools/runpod_speedup.py. Keep this base and that constant in sync.
+FROM runpod/pytorch:1.0.7-cu1281-torch280-ubuntu2204
 
 # Persistent HF cache path (mirrors the remote bench script export so a cached
 # model resolves to the same location whether or not the volume is mounted).
@@ -36,9 +38,19 @@ COPY requirements-lora.txt /opt/sophia/requirements-lora.txt
 
 RUN python -m pip install --upgrade pip setuptools wheel && \
     python -m pip install -r /opt/sophia/requirements-lora.txt && \
-    # Prebuilt flash-attn: --no-build-isolation reuses the already-installed torch
-    # so pip resolves a matching wheel instead of compiling from source at runtime.
-    python -m pip install flash-attn --no-build-isolation && \
+    # Install the PINNED PREBUILT flash-attn wheel (downloads in seconds, NO compile),
+    # auto-detecting the cp tag + cxx11 ABI from the image's python/torch.
+    python - <<'PY' && \
+import subprocess, sys
+import torch
+mm = ".".join(torch.__version__.split("+")[0].split(".")[:2])
+cp = f"cp{sys.version_info.major}{sys.version_info.minor}"
+abi = "TRUE" if torch._C._GLIBCXX_USE_CXX11_ABI else "FALSE"
+url = (f"https://github.com/Dao-AILab/flash-attention/releases/download/v2.8.3.post1/"
+       f"flash_attn-2.8.3.post1+cu12torch{mm}cxx11abi{abi}-{cp}-{cp}-linux_x86_64.whl")
+print("installing", url, flush=True)
+subprocess.check_call([sys.executable, "-m", "pip", "install", url])
+PY
     # Unsloth fused-kernel backend (the 4-bit config in the speedup bench).
     python -m pip install "unsloth>=2024.8" && \
     # Fail the BUILD (not the live pod) if either heavy import is broken, so a bad

@@ -63,8 +63,13 @@ DEFAULT_GPU_TYPES = [
 # Prebaked training image (built from ./Dockerfile) with requirements-lora.txt deps,
 # a PREBUILT flash-attn wheel, and unsloth already installed. Point --image-name here
 # (or the workflow 'image' input) to kill the multi-hour flash-attn compile cold start.
-# Empty by default so we fall back to the base runpod/pytorch image when not built yet.
+# Empty by default so we fall back to DEFAULT_BENCH_IMAGE below.
 DEFAULT_PREBAKED_IMAGE = ""
+
+# Base image pinned to torch 2.8.0 (NOT the torch-2.9.1 default): torch 2.9 has NO
+# prebuilt flash-attn wheel yet, so it would compile from source (~the 90-min timeout we
+# hit). torch 2.8 has an official cu12 wheel, so the --pack config installs in seconds.
+DEFAULT_BENCH_IMAGE = "runpod/pytorch:1.0.7-cu1281-torch280-ubuntu2204"
 
 
 def _remote_bench_script(args: argparse.Namespace) -> str:
@@ -102,14 +107,33 @@ python -m pip install --upgrade pip setuptools wheel
 # Base LoRA deps: cheap no-op when the prebaked image already satisfies them, but
 # kept unconditionally so a vanilla base image still works.
 python -m pip install -r requirements-lora.txt
-# GUARD the slow extras: on the prebaked image flash-attn/unsloth are already
-# importable, so we SKIP the install entirely — this is the multi-hour compile we
-# refuse to pay again. On a vanilla base image the import fails and we install
-# (non-fatal; a failed config is just recorded FAILED by the bench).
+# flash-attn: install a PREBUILT wheel matching torch/python/abi (downloads in
+# seconds). We NEVER fall back to a source compile — that compile is the multi-hour
+# cold start that timed out the 90-min workflow. If no prebuilt wheel exists for this
+# torch (e.g. torch 2.9 has none yet), we SKIP the --pack config rather than compile.
 if python -c "import flash_attn" 2>/dev/null; then
   echo "[bench] flash-attn already importable (prebaked image) — skipping install"
 else
-  python -m pip install flash-attn --no-build-isolation || echo "[bench] flash-attn install failed (non-fatal; --pack config will be skipped)"
+  WHEEL=$(python - <<'PY'
+import sys
+try:
+    import torch
+    mm = ".".join(torch.__version__.split("+")[0].split(".")[:2])
+    cp = f"cp{{sys.version_info.major}}{{sys.version_info.minor}}"
+    abi = "TRUE" if torch._C._GLIBCXX_USE_CXX11_ABI else "FALSE"
+    if mm in ("2.4", "2.5", "2.6", "2.7", "2.8"):
+        print(f"https://github.com/Dao-AILab/flash-attention/releases/download/v2.8.3.post1/"
+              f"flash_attn-2.8.3.post1+cu12torch{{mm}}cxx11abi{{abi}}-{{cp}}-{{cp}}-linux_x86_64.whl")
+except Exception:
+    pass
+PY
+)
+  if [ -n "$WHEEL" ]; then
+    echo "[bench] installing prebuilt flash-attn wheel (no compile): $WHEEL"
+    python -m pip install "$WHEEL" || echo "[bench] wheel install failed (non-fatal; --pack skipped)"
+  else
+    echo "[bench] no prebuilt flash-attn wheel for this torch (e.g. 2.9) — --pack skipped, NO source compile"
+  fi
 fi
 if python -c "import unsloth" 2>/dev/null; then
   echo "[bench] unsloth already importable (prebaked image) — skipping install"
@@ -160,10 +184,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--interruptible", action="store_true", help="use cheaper spot/interruptible pod")
     ap.add_argument(
         "--image-name",
-        default=DEFAULT_PREBAKED_IMAGE or DEFAULT_IMAGE,
-        help="container image. Point at the prebaked ./Dockerfile image "
-             "(<user>/sophia-train:latest) to skip the multi-hour flash-attn compile; "
-             "defaults to the base runpod/pytorch image when no prebaked tag is set.",
+        default=DEFAULT_PREBAKED_IMAGE or DEFAULT_BENCH_IMAGE,
+        help="container image. Defaults to the torch-2.8 base so flash-attn installs "
+             "from a prebuilt wheel (seconds) instead of compiling. Point at a prebaked "
+             "./Dockerfile image (<user>/sophia-train:latest) to skip pip entirely.",
     )
     ap.add_argument("--container-disk-gb", type=int, default=80)
     ap.add_argument("--volume-gb", type=int, default=40)
