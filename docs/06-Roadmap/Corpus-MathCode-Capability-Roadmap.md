@@ -13,6 +13,20 @@ distinct workstreams that are often conflated. Grounded in a repo audit of
 > conscience kernel exist to catch that conflation). This doc keeps the three
 > goals separate so each is measured by its own honest yardstick.
 
+## Implementation status (2026-06-24)
+
+Steps 1–5 are **implemented and tested** (offline/CPU); step 6 is **prepared** and
+gated on CUDA hardware.
+
+| # | Step | Status | Landed in |
+|---|------|--------|-----------|
+| 1 | Symbolic math verifier + gate wiring | ✅ done | `agent/verifiers.py` (`math_sound`, `math_equivalent`), `agent/gate.py`, `requirements-math.txt` |
+| 2 | Provenance hardening + dispute pages | ✅ done | `provenance_bench/data/*` (+20 traps, +9 true controls), `docs/04-Disputes/` (+4) |
+| 3 | MATH + MBPP eval packs | ✅ done | `agent/external_eval.py` (`--scorer symbolic`), `eval/external/math-style-sample.jsonl`, `eval/coding/mbpp-style-sample.jsonl` |
+| 4 | Math RLVR pack | ✅ done | `provenance_bench/math_reward.py`, `math_dataset.py`, `data/math_problems.json` |
+| 5 | New corpus domain (science) | ✅ done | `data/science.json` (17 records), registered across schema/domains/sync; `provenance_faithful` extended to discovery verbs |
+| 6 | Live RLVR GPU run (math) | 🟡 prepared | `tools/run_rlvr.py --task math`, `docs/09-Agent/RLVR-Experiment.md`; **needs CUDA GPU** (pre-registered Open in failure-ledger) |
+
 ## The three workstreams and their real leverage
 
 | Workstream | What it actually buys | AGI-candidate leverage |
