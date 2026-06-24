@@ -1,0 +1,277 @@
+{
+  "benchmark": "rlvr-adapter-heldout",
+  "task": "math",
+  "mode": "real",
+  "model": "zai-org/glm-4-9b-chat-hf",
+  "adapter": "/workspace/sophia-runpod/checkpoints/sophia-rlvr-v1",
+  "claimStatus": "Open — per-run held-out comparison on UNSEEN problem families. Capability claim requires >=3 seeds and no-overclaim aggregation (CI excludes 0).",
+  "split": {
+    "evalProblems": 8,
+    "seed": 2,
+    "evalFrac": 0.3,
+    "evalFamilies": [
+      "factor",
+      "integrate"
+    ],
+    "trainSealed": "e6e6a38fb683ca85",
+    "evalSealed": "a7c5a47449bc4d52",
+    "familyIntersection": []
+  },
+  "base": {
+    "n": 8,
+    "meanReward": -1.0,
+    "passAt1": 0.0,
+    "passAt1ByFamily": {
+      "factor": 0.0,
+      "integrate": 0.0
+    }
+  },
+  "adapterScore": {
+    "n": 8,
+    "meanReward": -0.75,
+    "passAt1": 0.125,
+    "passAt1ByFamily": {
+      "factor": 0.0,
+      "integrate": 0.25
+    }
+  },
+  "delta": {
+    "passAt1": 0.125
+  },
+  "checks": {
+    "contaminationFree": true,
+    "adapterImprovesPassAt1": true,
+    "noPassAt1Regression": true
+  },
+  "rows": {
+    "base": [
+      {
+        "problem_id": "factor-x2-1",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x-1)*(x+1)', got '\\\\[')",
+          "sympy": true,
+          "gold": "(x-1)*(x+1)",
+          "got": "\\[",
+          "reward": -1.0
+        },
+        "completion": "To factor completely the expression \\( x^2 - 1 \\), we can recognize that this is a difference of squares, which can be factored using the formula:\n\n\\[ a^2 - b^2 = (a + b)(a - b)) \\]\n\nIn our case, \\( a = x \\) and \\( b = 1 \\). Plugging these values into the difference of squares formula, we get:\n\n\\[ x^2 - 1^2 = (x + 1)(x - 1)) \\]\n\nSo the completely factored form of \\( x^2 - 1 \\) is:\n\n\\["
+      },
+      {
+        "problem_id": "factor-x2-4",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x-2)*(x+2)', got 'So the completely factored form of \\\\( x^2 -')",
+          "sympy": true,
+          "gold": "(x-2)*(x+2)",
+          "got": "So the completely factored form of \\( x^2 -",
+          "reward": -1.0
+        },
+        "completion": "To factor completely the expression \\( x^2 - 4 \\), we can recognize that this is a difference of squares, which can be factored using the formula:\n\n\\[ a^2 - b^2 = (a + b)(a - b)) \\]\n\nIn our case, \\( a = x \\) and \\( b = 2 \\) because \\( 4 = 2^2 \\).\n\nApplying the difference of squares formula, we get:\n\n\\[ x^2 - 4 = (x + 2)(x - 2)) \\]\n\nSo the completely factored form of \\( x^2 -"
+      },
+      {
+        "problem_id": "factor-x2-5x-6",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x+2)*(x+3)', got '\\\\( x^2 + 5x + 6 = (x +')",
+          "sympy": true,
+          "gold": "(x+2)*(x+3)",
+          "got": "\\( x^2 + 5x + 6 = (x +",
+          "reward": -1.0
+        },
+        "completion": "To factor the quadratic expression \\( x^2 + 5x + 6 \\), we need to find two numbers that multiply to the constant term (6) and add up to the coefficient of the linear term (5).\n\nThe two numbers that satisfy these conditions are 2 and 3, because:\n\n- \\( 2 \\times 3 = 6 \\) (the constant term)\n- \\( 2 + 3 = 5 \\) (the coefficient of the linear term)\n\nNow we can write the factored form of the quadratic expression:\n\n\\( x^2 + 5x + 6 = (x +"
+      },
+      {
+        "problem_id": "factor-x2-9",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x-3)*(x+3)', got 'Now we can apply the difference of squares')",
+          "sympy": true,
+          "gold": "(x-3)*(x+3)",
+          "got": "Now we can apply the difference of squares",
+          "reward": -1.0
+        },
+        "completion": "To factor completely the expression \\( x^2 - 9 \\), we recognize that this is a difference of squares. The general form of a difference of squares is \\( a^2 - b^2 = (a + b)(a - b)) \\).\n\nIn our case, \\( a^2 \\) corresponds to \\( x^2 \\), and \\( b^2 \\) corresponds to \\( 9 \\), which is \\( 3^2 \\).\n\nSo we can write \\( x^2 - 9 \\) as \\( (x)^2 - (3)^2 \\).\n\nNow we can apply the difference of squares"
+      },
+      {
+        "problem_id": "int-2x",
+        "family": "integrate",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected 'x**2', got '\\\\frac{x^3}{3}')",
+          "sympy": true,
+          "gold": "x**2",
+          "got": "\\frac{x^3}{3}",
+          "reward": -1.0
+        },
+        "completion": "To integrate 2*x with respect to x, we can use the power rule of integration, which states that the integral of x^n with respect to x is (x^(n+1)))/(n+1), where n is not equal to -1.\n\nIn this case, n = 1, so we have:\n\n∫2*x dx = (2/2)*x^(2+1)))/(2+1)\n= x^3/3\n\nTherefore, the integral of 2*x with respect to x is \\boxed{\\frac{x^3}{3}}}.\n####\nThe answer is \\boxed{\\frac"
+      },
+      {
+        "problem_id": "int-3x2",
+        "family": "integrate",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected 'x**3', got 'Therefore, the integral of 3*x**2 with respect to x is x**3.')",
+          "sympy": true,
+          "gold": "x**3",
+          "got": "Therefore, the integral of 3*x**2 with respect to x is x**3.",
+          "reward": -1.0
+        },
+        "completion": "To integrate 3*x**2 with respect to x, we can use the power rule of integration, which states that the integral of x**n with respect to x is (x**n+1))/(n+1), provided that n is not equal to -1.\n\nIn this case, n = 2, so we have:\n\n∫3*x**2 dx = 3 * ∫x**2 dx\n= 3 * (x**3)/(3)) + C\n= x**3 + C\n\nTherefore, the integral of 3*x**2 with respect to x is x**3."
+      },
+      {
+        "problem_id": "int-cos",
+        "family": "integrate",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected 'sin(x)', got 'Therefore, the integral of \\\\(\\\\cos(x)\\\\) with')",
+          "sympy": true,
+          "gold": "sin(x)",
+          "got": "Therefore, the integral of \\(\\cos(x)\\) with",
+          "reward": -1.0
+        },
+        "completion": "We can use the power rule of integration, which states that if \\(f(x) = x^n\\), then \\(\\int f(x) \\, dx = \\frac{x^{n+1}}}{n+1} + C\\), where \\(C\\) is the constant of integration.\n\nIn this case, \\(f(x) = \\cos(x)\\), so \\(n = -1\\). Therefore,\n\n$$\\int \\cos(x) \\, dx = \\frac{\\cos(x)}{0} + C = \\sin(x) + C.$$\n\nTherefore, the integral of \\(\\cos(x)\\) with"
+      },
+      {
+        "problem_id": "int-1overx",
+        "family": "integrate",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected 'log(x)', got '= \\\\frac{x^0}{')",
+          "sympy": true,
+          "gold": "log(x)",
+          "got": "= \\frac{x^0}{",
+          "reward": -1.0
+        },
+        "completion": "We can use the power rule of integration, which states that if f(x) = x^n, then f(x) = \\frac{x^{n+1}}}{n+1} + C, where C is an arbitrary constant.\n\nIn this case, we have f(x) = 1/x, which is of the form f(x) = x^n, where n = -1.\n\nTherefore, we can use the power rule of integration to find that:\n\n\\int 1/x \\ dx = \\frac{x^{(-1)+1)}}}{(-1)+1}} + C\n= \\frac{x^0}{"
+      }
+    ],
+    "adapter": [
+      {
+        "problem_id": "factor-x2-1",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x-1)*(x+1)', got '\\\\[')",
+          "sympy": true,
+          "gold": "(x-1)*(x+1)",
+          "got": "\\[",
+          "reward": -1.0
+        },
+        "completion": "To factor completely the expression \\( x^2 - 1 \\), we can recognize that this is a difference of squares, which can be factored using the formula:\n\n\\[ a^2 - b^2 = (a + b)(a - b)) \\]\n\nIn our case, \\( a = x \\) and \\( b = 1 \\). Plugging these values into the difference of squares formula, we get:\n\n\\[ x^2 - 1^2 = (x + 1)(x - 1)) \\]\n\nSo the completely factored form of \\( x^2 - 1 \\) is:\n\n\\["
+      },
+      {
+        "problem_id": "factor-x2-4",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x-2)*(x+2)', got 'So the completely factored form of \\\\( x^2 -')",
+          "sympy": true,
+          "gold": "(x-2)*(x+2)",
+          "got": "So the completely factored form of \\( x^2 -",
+          "reward": -1.0
+        },
+        "completion": "To factor completely the expression \\( x^2 - 4 \\), we can recognize that this is a difference of squares, which can be factored using the formula:\n\n\\[ a^2 - b^2 = (a + b)(a - b)) \\]\n\nIn our case, \\( a = x \\) and \\( b = 2 \\) because \\( 4 = 2^2 \\).\n\nApplying the difference of squares formula, we get:\n\n\\[ x^2 - 4 = (x + 2)(x - 2)) \\]\n\nSo the completely factored form of \\( x^2 -"
+      },
+      {
+        "problem_id": "factor-x2-5x-6",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x+2)*(x+3)', got '\\\\( x^2 + 5x + 6 = (x +')",
+          "sympy": true,
+          "gold": "(x+2)*(x+3)",
+          "got": "\\( x^2 + 5x + 6 = (x +",
+          "reward": -1.0
+        },
+        "completion": "To factor the quadratic expression \\( x^2 + 5x + 6 \\), we need to find two numbers that multiply to the constant term (6) and add up to the coefficient of the linear term (5).\n\nThe two numbers that satisfy these conditions are 2 and 3, because:\n\n- \\( 2 \\times 3 = 6 \\) (the constant term)\n- \\( 2 + 3 = 5 \\) (the coefficient of the linear term)\n\nNow we can write the factored form of the quadratic expression:\n\n\\( x^2 + 5x + 6 = (x +"
+      },
+      {
+        "problem_id": "factor-x2-9",
+        "family": "factor",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected '(x-3)*(x+3)', got 'Now we can apply the difference of squares')",
+          "sympy": true,
+          "gold": "(x-3)*(x+3)",
+          "got": "Now we can apply the difference of squares",
+          "reward": -1.0
+        },
+        "completion": "To factor completely the expression \\( x^2 - 9 \\), we recognize that this is a difference of squares. The general form of a difference of squares is \\( a^2 - b^2 = (a + b)(a - b)) \\).\n\nIn our case, \\( a^2 \\) corresponds to \\( x^2 \\), and \\( b^2 \\) corresponds to \\( 9 \\), which is \\( 3^2 \\).\n\nSo we can write \\( x^2 - 9 \\) as \\( (x)^2 - (3)^2 \\).\n\nNow we can apply the difference of squares"
+      },
+      {
+        "problem_id": "int-2x",
+        "family": "integrate",
+        "reward": 1.0,
+        "detail": {
+          "passed": true,
+          "reason": "equivalent",
+          "sympy": true,
+          "gold": "x**2",
+          "got": "x^2",
+          "reward": 1.0
+        },
+        "completion": "To integrate 2x with respect to x, we can use the power rule of integration, which states that the integral of x^n with respect to x is (x^(n+1)))/(n+1), where n is not equal to -1.\n\nIn this case, n = 1, so we have:\n\n∫2x dx = (2/2)x^2 + C = x^2 + C\n\nTherefore, the integral of 2x with respect to x is x^2.\n####\nThe answer is \\boxed{x^2}.) [Ans]# 🤓  📈"
+      },
+      {
+        "problem_id": "int-3x2",
+        "family": "integrate",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected 'x**3', got '\\\\')",
+          "sympy": true,
+          "gold": "x**3",
+          "got": "\\",
+          "reward": -1.0
+        },
+        "completion": "To integrate 3*x**2 with respect to x, we can use the power rule of integration, which states that the integral of x**n with respect to x is (x**n+1))/(n+1), provided that n is not equal to -1.\n\nIn this case, n = 2, so we have:\n\n∫3*x**2 dx = 3 * ∫x**2 dx\n= 3 * (x**3)/3)\n= x**3\n\nTherefore, the integral of 3*x**2 with respect to x is x**3.\n####\nThe answer is \\"
+      },
+      {
+        "problem_id": "int-cos",
+        "family": "integrate",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected 'sin(x)', got '$$\\\\int \\\\cos')",
+          "sympy": true,
+          "gold": "sin(x)",
+          "got": "$$\\int \\cos",
+          "reward": -1.0
+        },
+        "completion": "We can use the power rule of integration, which states that if \\(f(x) = x^n\\), then \\(\\int f(x) \\, dx = \\frac{x^{n+1}}}{n+1} + C\\), where \\(C\\) is the constant of integration.\n\nIn this case, \\(f(x) = \\cos(x)\\), so \\(n = -1\\). Therefore,\n\n$$\\int \\cos(x) \\, dx = \\frac{\\cos(x)}{2} + C$$\n\nwhere \\(C\\) is the constant of integration.\n####\nThe answer is $$\\int \\cos"
+      },
+      {
+        "problem_id": "int-1overx",
+        "family": "integrate",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "unparseable math (expected 'log(x)', got 'The integral of 1')",
+          "sympy": true,
+          "gold": "log(x)",
+          "got": "The integral of 1",
+          "reward": -1.0
+        },
+        "completion": "We can use the power rule of integration, which states that if f(x) = x^n, then f(x) = \\frac{x^{n+1}}}{n+1} + C, where C is an arbitrary constant.\n\nIn this case, f(x) = 1/x, which is the same as f(x) = x^{-1}. Therefore, we can use the power rule of integration to find the integral of 1/x with respect to x.\n\nThe integral of 1/x with respect to x is \\ln|x| + C, where C is an arbitrary constant.\n####\nThe integral of 1"
+      }
+    ]
+  },
+  "passed": true
+}
