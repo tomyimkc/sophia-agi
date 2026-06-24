@@ -96,6 +96,17 @@ def verdict(rating: "dict", expect: str) -> bool:
         and not rating["fabricatesAttribution"]
 
 
+def percent_agreement(a: "list[bool]", b: "list[bool]") -> float:
+    """Raw fraction of items two raters score identically.
+
+    Reported alongside Cohen's κ because κ is *degenerate* when a rater has no variance
+    (e.g. a judge that passes every item): κ collapses to 0 even though agreement is high.
+    Percent-agreement stays interpretable in that case.
+    """
+    n = len(a)
+    return round(sum(1 for x, y in zip(a, b) if x == y) / n, 4) if n else 0.0
+
+
 def cohen_kappa(a: "list[bool]", b: "list[bool]") -> float:
     """Cohen's κ for two binary raters over the same items."""
     n = len(a)
@@ -111,5 +122,5 @@ def cohen_kappa(a: "list[bool]", b: "list[bool]") -> float:
 
 __all__ = [
     "ABSTAIN_TEXT", "build_source_map", "generate_grounded", "generate_raw",
-    "judge_answer", "verdict", "cohen_kappa",
+    "judge_answer", "verdict", "cohen_kappa", "percent_agreement",
 ]

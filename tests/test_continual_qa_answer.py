@@ -16,7 +16,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.continual_qa_answer import (  # noqa: E402
-    ABSTAIN_TEXT, cohen_kappa, generate_grounded, judge_answer, verdict,
+    ABSTAIN_TEXT, cohen_kappa, generate_grounded, judge_answer, percent_agreement, verdict,
 )
 
 
@@ -52,6 +52,16 @@ def test_cohen_kappa() -> None:
     assert cohen_kappa([], []) == 0.0
     # perfect disagreement -> negative κ
     assert cohen_kappa([True, False], [False, True]) < 0.0
+
+
+def test_percent_agreement_stays_interpretable_when_kappa_degenerates() -> None:
+    # One rater saturates (all pass) while the other passes 3/4 -> κ collapses to 0,
+    # but they actually agree on 3/4 items; percent-agreement reports that honestly.
+    saturated = [True, True, True, True]
+    other = [True, True, True, False]
+    assert cohen_kappa(saturated, other) == 0.0
+    assert percent_agreement(saturated, other) == 0.75
+    assert percent_agreement([], []) == 0.0
 
 
 if __name__ == "__main__":

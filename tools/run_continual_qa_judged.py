@@ -33,7 +33,8 @@ if str(ROOT) not in sys.path:
 from agent import deepseek_llm, llmhub_llm  # noqa: E402
 from agent.continual_qa import GraphBackedSystem, load_episodes  # noqa: E402
 from agent.continual_qa_answer import (  # noqa: E402
-    build_source_map, cohen_kappa, generate_grounded, generate_raw, judge_answer, verdict,
+    build_source_map, cohen_kappa, generate_grounded, generate_raw, judge_answer,
+    percent_agreement, verdict,
 )
 from agent.public_sanitize import sanitize_public_artifact  # noqa: E402
 from okf.page import load_pages  # noqa: E402
@@ -126,25 +127,29 @@ def main() -> None:
     def agg(system: str) -> "dict":
         per_run = []
         pooled_consensus = []
-        kappas = []
+        kappas, agreements = [], []
         for rows in run_results:
             consensus = [all(row["judges"][system][m] for m in judge_models) for row in rows]
             pooled_consensus.extend(consensus)
             per_judge = {m: round(sum(row["judges"][system][m] for row in rows) / len(rows), 4)
                          for m in judge_models}
+            entry = {"consensusPassRate": round(sum(consensus) / len(rows), 4),
+                     "perJudgePassRate": per_judge, "interJudgeKappa": None,
+                     "interJudgePercentAgreement": None}
             if len(judge_models) == 2:
                 ja = [row["judges"][system][judge_models[0]] for row in rows]
                 jb = [row["judges"][system][judge_models[1]] for row in rows]
-                k = cohen_kappa(ja, jb)
-                kappas.append(k)
-            per_run.append({"consensusPassRate": round(sum(consensus) / len(rows), 4),
-                            "perJudgePassRate": per_judge,
-                            "interJudgeKappa": kappas[-1] if kappas else None})
+                kappas.append(cohen_kappa(ja, jb))
+                agreements.append(percent_agreement(ja, jb))
+                entry["interJudgeKappa"] = kappas[-1]
+                entry["interJudgePercentAgreement"] = agreements[-1]
+            per_run.append(entry)
         return {
             "perRun": per_run,
             "meanConsensusPassRate": round(sum(pooled_consensus) / len(pooled_consensus), 4),
             "consensusCI95": _bootstrap_ci(pooled_consensus),
             "meanInterJudgeKappa": round(sum(kappas) / len(kappas), 4) if kappas else None,
+            "meanInterJudgePercentAgreement": round(sum(agreements) / len(agreements), 4) if agreements else None,
         }
 
     summary = {"grounded": agg("grounded"), "raw": agg("raw")}
