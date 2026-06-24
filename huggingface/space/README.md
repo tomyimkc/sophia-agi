@@ -7,7 +7,7 @@ sdk: gradio
 sdk_version: 4.44.0
 app_file: huggingface/space/app.py
 pinned: false
-license: mit
+license: apache-2.0
 ---
 
 # Sophia — the governance gate (interactive demo)
