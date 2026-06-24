@@ -157,6 +157,13 @@ and promote **only if** it passes the forgetting-regression gate.
 - **Tests + demo per experiment**; update `CHANGELOG.md`. No corpus/weight changes
   without the user's go-ahead.
 
+## Known limitations & the integrated next step
+
+See [continual-learning-limitations.md](continual-learning-limitations.md) for the
+honest failure-ledger (why "LLM-as-control-flow, knowledge-in-the-graph" leaks at the
+boundary, and what it structurally cannot do) and the recommended **Continual Provenance
+QA (CPQA)** harness that integrates Experiments 1–4 into one benchmarkable artifact.
+
 ## Done criteria
 
 1. Four modules + tests, all green, offline.
