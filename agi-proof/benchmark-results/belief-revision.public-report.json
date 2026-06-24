@@ -1,0 +1,1095 @@
+{
+  "schema": "sophia.belief_revision_benchmark.v1",
+  "benchmark": "Counterfactual Retraction + Belief Graph 50",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "claimBoundary": "Deterministic OKF belief-revision benchmark; proves candidate mechanism behavior, not AGI.",
+  "n": 50,
+  "metrics": {
+    "retractionPropagationRate": 1.0,
+    "multiSourceSurvivalRate": 1.0,
+    "notFoundReportingRate": 1.0,
+    "auditTrailCompleteness": 1.0,
+    "confidenceCollapseRate": 1.0,
+    "staleBeliefLeakRate": 0.0
+  },
+  "rows": [
+    {
+      "id": "br_transitive_001",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_1",
+        "mid_1",
+        "primary_1"
+      ],
+      "cascade": [
+        "leaf_1",
+        "mid_1"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_002",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_2",
+        "mid_2",
+        "primary_2"
+      ],
+      "cascade": [
+        "leaf_2",
+        "mid_2"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_003",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_3",
+        "mid_3",
+        "primary_3"
+      ],
+      "cascade": [
+        "leaf_3",
+        "mid_3"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_004",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_4",
+        "mid_4",
+        "primary_4"
+      ],
+      "cascade": [
+        "leaf_4",
+        "mid_4"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_005",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_5",
+        "mid_5",
+        "primary_5"
+      ],
+      "cascade": [
+        "leaf_5",
+        "mid_5"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_006",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_6",
+        "mid_6",
+        "primary_6"
+      ],
+      "cascade": [
+        "leaf_6",
+        "mid_6"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_007",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_7",
+        "mid_7",
+        "primary_7"
+      ],
+      "cascade": [
+        "leaf_7",
+        "mid_7"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_008",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_8",
+        "mid_8",
+        "primary_8"
+      ],
+      "cascade": [
+        "leaf_8",
+        "mid_8"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_009",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_9",
+        "mid_9",
+        "primary_9"
+      ],
+      "cascade": [
+        "leaf_9",
+        "mid_9"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_010",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_10",
+        "mid_10",
+        "primary_10"
+      ],
+      "cascade": [
+        "leaf_10",
+        "mid_10"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_011",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_11",
+        "mid_11",
+        "primary_11"
+      ],
+      "cascade": [
+        "leaf_11",
+        "mid_11"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_012",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_12",
+        "mid_12",
+        "primary_12"
+      ],
+      "cascade": [
+        "leaf_12",
+        "mid_12"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_013",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_13",
+        "mid_13",
+        "primary_13"
+      ],
+      "cascade": [
+        "leaf_13",
+        "mid_13"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_014",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_14",
+        "mid_14",
+        "primary_14"
+      ],
+      "cascade": [
+        "leaf_14",
+        "mid_14"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_015",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_15",
+        "mid_15",
+        "primary_15"
+      ],
+      "cascade": [
+        "leaf_15",
+        "mid_15"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_016",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_16",
+        "mid_16",
+        "primary_16"
+      ],
+      "cascade": [
+        "leaf_16",
+        "mid_16"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_017",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_17",
+        "mid_17",
+        "primary_17"
+      ],
+      "cascade": [
+        "leaf_17",
+        "mid_17"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_018",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_18",
+        "mid_18",
+        "primary_18"
+      ],
+      "cascade": [
+        "leaf_18",
+        "mid_18"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_019",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_19",
+        "mid_19",
+        "primary_19"
+      ],
+      "cascade": [
+        "leaf_19",
+        "mid_19"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_020",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_20",
+        "mid_20",
+        "primary_20"
+      ],
+      "cascade": [
+        "leaf_20",
+        "mid_20"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_021",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_21",
+        "mid_21",
+        "primary_21"
+      ],
+      "cascade": [
+        "leaf_21",
+        "mid_21"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_022",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_22",
+        "mid_22",
+        "primary_22"
+      ],
+      "cascade": [
+        "leaf_22",
+        "mid_22"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_023",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_23",
+        "mid_23",
+        "primary_23"
+      ],
+      "cascade": [
+        "leaf_23",
+        "mid_23"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_024",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_24",
+        "mid_24",
+        "primary_24"
+      ],
+      "cascade": [
+        "leaf_24",
+        "mid_24"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_025",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_25",
+        "mid_25",
+        "primary_25"
+      ],
+      "cascade": [
+        "leaf_25",
+        "mid_25"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_026",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_26",
+        "mid_26",
+        "primary_26"
+      ],
+      "cascade": [
+        "leaf_26",
+        "mid_26"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_027",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_27",
+        "mid_27",
+        "primary_27"
+      ],
+      "cascade": [
+        "leaf_27",
+        "mid_27"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_028",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_28",
+        "mid_28",
+        "primary_28"
+      ],
+      "cascade": [
+        "leaf_28",
+        "mid_28"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_029",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_29",
+        "mid_29",
+        "primary_29"
+      ],
+      "cascade": [
+        "leaf_29",
+        "mid_29"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_transitive_030",
+      "caseType": "transitive_retraction",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_30",
+        "mid_30",
+        "primary_30"
+      ],
+      "cascade": [
+        "leaf_30",
+        "mid_30"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multisource_survives_031",
+      "caseType": "single_source_removed_multi_survives",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_31",
+        "mid_31",
+        "primary_31"
+      ],
+      "cascade": [
+        "leaf_31",
+        "mid_31"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multisource_survives_032",
+      "caseType": "single_source_removed_multi_survives",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_32",
+        "mid_32",
+        "primary_32"
+      ],
+      "cascade": [
+        "leaf_32",
+        "mid_32"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multisource_survives_033",
+      "caseType": "single_source_removed_multi_survives",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_33",
+        "mid_33",
+        "primary_33"
+      ],
+      "cascade": [
+        "leaf_33",
+        "mid_33"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multisource_survives_034",
+      "caseType": "single_source_removed_multi_survives",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_34",
+        "mid_34",
+        "primary_34"
+      ],
+      "cascade": [
+        "leaf_34",
+        "mid_34"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multisource_survives_035",
+      "caseType": "single_source_removed_multi_survives",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_35",
+        "mid_35",
+        "primary_35"
+      ],
+      "cascade": [
+        "leaf_35",
+        "mid_35"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multisource_survives_036",
+      "caseType": "single_source_removed_multi_survives",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_36",
+        "mid_36",
+        "primary_36"
+      ],
+      "cascade": [
+        "leaf_36",
+        "mid_36"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multisource_survives_037",
+      "caseType": "single_source_removed_multi_survives",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_37",
+        "mid_37",
+        "primary_37"
+      ],
+      "cascade": [
+        "leaf_37",
+        "mid_37"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multisource_survives_038",
+      "caseType": "single_source_removed_multi_survives",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_38",
+        "mid_38",
+        "primary_38"
+      ],
+      "cascade": [
+        "leaf_38",
+        "mid_38"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multisource_survives_039",
+      "caseType": "single_source_removed_multi_survives",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_39",
+        "mid_39",
+        "primary_39"
+      ],
+      "cascade": [
+        "leaf_39",
+        "mid_39"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multisource_survives_040",
+      "caseType": "single_source_removed_multi_survives",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_40",
+        "mid_40",
+        "primary_40"
+      ],
+      "cascade": [
+        "leaf_40",
+        "mid_40"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multiretract_041",
+      "caseType": "multi_retraction_orphans_multi",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "independent_41",
+        "leaf_41",
+        "mid_41",
+        "multi_41",
+        "primary_41"
+      ],
+      "cascade": [
+        "leaf_41",
+        "mid_41",
+        "multi_41"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multiretract_042",
+      "caseType": "multi_retraction_orphans_multi",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "independent_42",
+        "leaf_42",
+        "mid_42",
+        "multi_42",
+        "primary_42"
+      ],
+      "cascade": [
+        "leaf_42",
+        "mid_42",
+        "multi_42"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multiretract_043",
+      "caseType": "multi_retraction_orphans_multi",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "independent_43",
+        "leaf_43",
+        "mid_43",
+        "multi_43",
+        "primary_43"
+      ],
+      "cascade": [
+        "leaf_43",
+        "mid_43",
+        "multi_43"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multiretract_044",
+      "caseType": "multi_retraction_orphans_multi",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "independent_44",
+        "leaf_44",
+        "mid_44",
+        "multi_44",
+        "primary_44"
+      ],
+      "cascade": [
+        "leaf_44",
+        "mid_44",
+        "multi_44"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_multiretract_045",
+      "caseType": "multi_retraction_orphans_multi",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "independent_45",
+        "leaf_45",
+        "mid_45",
+        "multi_45",
+        "primary_45"
+      ],
+      "cascade": [
+        "leaf_45",
+        "mid_45",
+        "multi_45"
+      ],
+      "notFound": []
+    },
+    {
+      "id": "br_notfound_046",
+      "caseType": "not_found_fail_closed",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_46",
+        "mid_46",
+        "primary_46"
+      ],
+      "cascade": [
+        "leaf_46",
+        "mid_46"
+      ],
+      "notFound": [
+        "ghost_46"
+      ]
+    },
+    {
+      "id": "br_notfound_047",
+      "caseType": "not_found_fail_closed",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_47",
+        "mid_47",
+        "primary_47"
+      ],
+      "cascade": [
+        "leaf_47",
+        "mid_47"
+      ],
+      "notFound": [
+        "ghost_47"
+      ]
+    },
+    {
+      "id": "br_notfound_048",
+      "caseType": "not_found_fail_closed",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_48",
+        "mid_48",
+        "primary_48"
+      ],
+      "cascade": [
+        "leaf_48",
+        "mid_48"
+      ],
+      "notFound": [
+        "ghost_48"
+      ]
+    },
+    {
+      "id": "br_notfound_049",
+      "caseType": "not_found_fail_closed",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_49",
+        "mid_49",
+        "primary_49"
+      ],
+      "cascade": [
+        "leaf_49",
+        "mid_49"
+      ],
+      "notFound": [
+        "ghost_49"
+      ]
+    },
+    {
+      "id": "br_notfound_050",
+      "caseType": "not_found_fail_closed",
+      "ok": true,
+      "propagationOk": true,
+      "survivalOk": true,
+      "notFoundOk": true,
+      "auditOk": true,
+      "confidenceCollapseOk": true,
+      "staleLeaks": [],
+      "abstain": [
+        "leaf_50",
+        "mid_50",
+        "primary_50"
+      ],
+      "cascade": [
+        "leaf_50",
+        "mid_50"
+      ],
+      "notFound": [
+        "ghost_50"
+      ]
+    }
+  ],
+  "ok": true
+}

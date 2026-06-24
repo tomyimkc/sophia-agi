@@ -26,6 +26,7 @@ Sophia gives AI systems the ability to know *who wrote what* before they reason 
 | Training examples | `training/examples/` |
 | AGI roadmap | `docs/06-Roadmap/Open-Intelligence-Plan.md` |
 | Conscience Kernel | `docs/11-Platform/Conscience-Kernel.md` |
+| All-phase benchmarks | `docs/11-Platform/Benchmark-Phases.md` |
 | AGI missing-pillars mechanisms | `docs/11-Platform/AGI-Missing-Pillars.md` |
 | Sector councils (law · finance · economy) | `docs/08-Domains/Sector-Councils.md` |
 | Council for small LLMs | `docs/11-Platform/Council-For-Small-LLMs.md` |

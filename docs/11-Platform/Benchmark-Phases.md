@@ -1,0 +1,69 @@
+# Sophia All-Phase Benchmarks
+
+**Status:** implemented as deterministic/offline candidate infrastructure.
+**Boundary:** These are benchmark harnesses and smoke fixtures. They are **not**
+proof of AGI and not headline-grade external results until real-model runs clear
+Sophia's no-overclaim gate.
+
+## Why these phases
+
+The current repo already has provenance-delta, OKF belief graph, conscience,
+MCP tools, code execution, and hidden-eval infrastructure. The all-phase suite
+turns the benchmark roadmap into one CI-safe command:
+
+```bash
+python tools/run_all_phase_benchmarks.py
+```
+
+Artifact:
+
+```text
+agi-proof/benchmark-results/all-phase-benchmarks.public-report.json
+```
+
+## Phases
+
+| Phase | Dataset | Runner | Artifact | Purpose |
+|---|---|---|---|---|
+| SEIB-100 | `eval/seib/seib_100_v1.jsonl` | `tools/run_seib.py` | `seib-100.public-report.json` | Epistemic integrity: false attribution, contested authorship, fabrication, tradition merge rate. |
+| Belief Revision 50 | `eval/belief_revision/belief_revision_50_v1.jsonl` | `tools/run_belief_revision_benchmark.py` | `belief-revision.public-report.json` | Counterfactual retraction, cascade, stale-belief leakage, audit trail. |
+| AgentBench-Sophia 30 | `eval/agentbench_sophia/agentbench_sophia_30_v1.jsonl` | `tools/run_agentbench_sophia.py` | `agentbench-sophia.public-report.json` | Advisor / Repo / Life source-discipline and audit-trace reliability. |
+| GPQA-Provenance smoke | `eval/gpqa_provenance/gpqa_provenance_smoke_v1.jsonl` | `tools/run_gpqa_provenance.py` | `gpqa-provenance-smoke.public-report.json` | Provenance contract for hard science QA. Not a GPQA-Diamond score. |
+| Code Provenance 30 | `eval/code_provenance/code_provenance_30_v1.jsonl` | `tools/run_code_provenance.py` | `code-provenance.public-report.json` | Coding source/dependency discipline. Not SWE-bench/LiveCodeBench. |
+| SEIB-Arena-20 smoke | `eval/arena/arena_20_v1.jsonl` | `tools/run_epistemic_arena.py` | `seib-arena-20.public-report.json` | Blind-comparison preparation. Not human preference evidence. |
+
+## Non-circularity
+
+SEIB-100 labels are derived from `provenance_bench/data/` external-citation /
+Wikidata snapshot records. The runtime gate is a treatment only. The scorer is
+independent of `agent.verifiers`.
+
+## Promotion rules
+
+A number may be promoted from "candidate" to public headline only if it clears:
+
+- real model run(s), not deterministic mock only;
+- at least 3 runs;
+- at least 2 independent judge families when semantic judging is used;
+- Cohen's κ >= 0.40;
+- 95% confidence interval excludes 0 for a claimed delta;
+- false-positive cost reported explicitly.
+
+Until then:
+
+```json
+{
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "canClaimAGI": false
+}
+```
+
+## 中文摘要
+
+本套件把 Sophia 的下一階段基準測試落地為可在 CI 離線執行的候選證據：
+SEIB-100、信念修訂、三路 AgentBench-Sophia、GPQA-Provenance smoke、Code
+Provenance、以及 SEIB-Arena smoke。所有輸出皆為 `candidateOnly: true`，不可
+宣稱為 AGI 證明或正式外部排行榜分數；若要成為公開 headline，需要真實模型、
+多次運行、兩個以上獨立裁判家族、一致性與信賴區間檢驗。

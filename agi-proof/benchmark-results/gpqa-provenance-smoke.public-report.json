@@ -1,0 +1,152 @@
+{
+  "schema": "sophia.gpqa_provenance_smoke_report.v1",
+  "benchmark": "GPQA-Provenance smoke",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "externalGpqaDiamond": false,
+  "claimBoundary": "Smoke fixture for GPQA-style provenance contract; not a reported GPQA-Diamond score.",
+  "n": 10,
+  "metrics": {
+    "rawCorrectness": 1.0,
+    "sophiaCorrectness": 1.0,
+    "rawProvenanceQuality": 0.0,
+    "sophiaProvenanceQuality": 1.0,
+    "rawTrustworthyScore": 0.0,
+    "sophiaTrustworthyScore": 1.0,
+    "trustworthyDelta": 1.0
+  },
+  "rows": [
+    {
+      "id": "gpqa_prov_smoke_001_enzyme-kinetics",
+      "raw": {
+        "correct": true,
+        "provenanceOk": false,
+        "trustworthy": false
+      },
+      "sophia": {
+        "correct": true,
+        "provenanceOk": true,
+        "trustworthy": true
+      }
+    },
+    {
+      "id": "gpqa_prov_smoke_002_ac-circuit",
+      "raw": {
+        "correct": true,
+        "provenanceOk": false,
+        "trustworthy": false
+      },
+      "sophia": {
+        "correct": true,
+        "provenanceOk": true,
+        "trustworthy": true
+      }
+    },
+    {
+      "id": "gpqa_prov_smoke_003_crystal-defect",
+      "raw": {
+        "correct": true,
+        "provenanceOk": false,
+        "trustworthy": false
+      },
+      "sophia": {
+        "correct": true,
+        "provenanceOk": true,
+        "trustworthy": true
+      }
+    },
+    {
+      "id": "gpqa_prov_smoke_004_bayes-rule",
+      "raw": {
+        "correct": true,
+        "provenanceOk": false,
+        "trustworthy": false
+      },
+      "sophia": {
+        "correct": true,
+        "provenanceOk": true,
+        "trustworthy": true
+      }
+    },
+    {
+      "id": "gpqa_prov_smoke_005_hardy-weinberg",
+      "raw": {
+        "correct": true,
+        "provenanceOk": false,
+        "trustworthy": false
+      },
+      "sophia": {
+        "correct": true,
+        "provenanceOk": true,
+        "trustworthy": true
+      }
+    },
+    {
+      "id": "gpqa_prov_smoke_006_nmr-shielding",
+      "raw": {
+        "correct": true,
+        "provenanceOk": false,
+        "trustworthy": false
+      },
+      "sophia": {
+        "correct": true,
+        "provenanceOk": true,
+        "trustworthy": true
+      }
+    },
+    {
+      "id": "gpqa_prov_smoke_007_lagrange-multiplier",
+      "raw": {
+        "correct": true,
+        "provenanceOk": false,
+        "trustworthy": false
+      },
+      "sophia": {
+        "correct": true,
+        "provenanceOk": true,
+        "trustworthy": true
+      }
+    },
+    {
+      "id": "gpqa_prov_smoke_008_pcr-denaturation",
+      "raw": {
+        "correct": true,
+        "provenanceOk": false,
+        "trustworthy": false
+      },
+      "sophia": {
+        "correct": true,
+        "provenanceOk": true,
+        "trustworthy": true
+      }
+    },
+    {
+      "id": "gpqa_prov_smoke_009_blackbody",
+      "raw": {
+        "correct": true,
+        "provenanceOk": false,
+        "trustworthy": false
+      },
+      "sophia": {
+        "correct": true,
+        "provenanceOk": true,
+        "trustworthy": true
+      }
+    },
+    {
+      "id": "gpqa_prov_smoke_010_eigenvalue",
+      "raw": {
+        "correct": true,
+        "provenanceOk": false,
+        "trustworthy": false
+      },
+      "sophia": {
+        "correct": true,
+        "provenanceOk": true,
+        "trustworthy": true
+      }
+    }
+  ],
+  "ok": true
+}

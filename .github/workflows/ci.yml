@@ -108,8 +108,10 @@ jobs:
           python tests/test_conscience_eval_tools.py
           python tests/test_conscience_proof_package.py
           python tests/test_public_moral_standard.py
+          python tests/test_all_phase_benchmarks.py
           python tools/run_conscience_demo.py
           python tools/run_moral_public_standard_eval.py
+          python tools/run_all_phase_benchmarks.py
           python tools/build_conscience_proof_package.py
       - name: Self-extending verification flywheel (synthesize→validate→cover, causal, transfer, long-horizon)
         run: |
