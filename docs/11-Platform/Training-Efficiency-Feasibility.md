@@ -65,6 +65,39 @@ corpus.** This has now been fixed (see §4).
 > verifier that guarantees fail-closed behaviour the weights alone do not." That claim
 > is true and measured.
 
+### 2a. Measured run — Mac Studio M3 Ultra (96 GB), 2026-06-24
+
+First end-to-end run of the hardened stack on real hardware (mlx-lm, Qwen2.5-3B-Instruct,
+full `--scaffold --guard --distill`, completion-only loss, batch 1, 1 epoch):
+
+| Metric | Value |
+|---|---|
+| Wall clock | **177 s** (~3 min) |
+| Peak unified memory | **10.2 GB** (cf. 25.5 GB for the earlier batch-4 run — memory scales with batch) |
+| Throughput | 78.2 it/s · 456.6 tok/s · 75,293 trained tokens |
+| Iters | 553 (1 epoch over 553 fitted rows) |
+| `--guard` dropped | 0 (curated corpus is intrinsically clean) |
+| Pre-split | 11 council traces dropped as unsplittable-at-1024 (surfaced, not silent) |
+| **Final train loss** | **1.746** |
+| **Final val loss** | **2.894** (val/train = **1.66 → overfitting confirmed**, more pronounced than the v2 run's 0.71/1.83) |
+
+**What this DID and did NOT prove:**
+- ✅ The full provenance-disciplined adapter trains in **~3 min at ~10 GB** on an M3 Ultra —
+  cheap and fast in *absolute* terms, and the pipeline (scaffold/guard/distill/pre-split)
+  runs clean end-to-end.
+- ❌ The **speedup multiplier vs standard LoRA is still unmeasured.** Experiment #2
+  (`bench_lora_speedup.py`) needs CUDA + bitsandbytes + Unsloth and **cannot run on Apple
+  Silicon**. Experiment #1 (padding ablation) is **invalid on MLX** — `--pad-to-max` is a
+  no-op there because mlx_lm controls its own padding (the device run correctly rejected the
+  naive 159.7 s / 177.0 s = 0.90× as run-to-run variance, not a padding effect). The trainer
+  now warns loudly about both rather than failing silently.
+- ⚠️ The **train/val gap (1.75 vs 2.89) confirms the overfitting risk** from §3. mlx-lm runs
+  all iters with no Sophia early-stop, so the run did not stop early. To measure the real
+  speedup multiplier and to exercise early-stopping, run on a CUDA box.
+
+> **Net:** the absolute MLX numbers are good and now reproducible; the headline *multiplier*
+> remains an estimate (~2–4×) pending a CUDA run. Do not quote a measured multiplier yet.
+
 ---
 
 ## 3. Blockers & gaps found in the code
@@ -137,7 +170,11 @@ warning replaces silent row-clipping.
 the same manual loop. `mlx` builds the MLX chat-data dir in-repo (via `fit_rows`) and
 invokes `python -m mlx_lm lora` with the seed/mask-prompt args, matching the logged v2
 run — so the MLX logic no longer lives only in shell history. Optional deps are listed
-in `requirements-lora.txt`.
+in `requirements-lora.txt`. **MLX caveats (now warned at runtime):** `--pad-to-max` is a
+no-op on `mlx` (mlx_lm owns padding), and Sophia early-stopping (`--patience`/
+`--overfit-ratio`) is `peft`/`unsloth`-only — on `mlx`, mlx_lm reports validation every
+`--steps-per-eval` but runs all iters. Use `--backend peft` (CUDA) for the padding
+ablation and early-stopping.
 
 **G. Pre-split enforcement in prep.** `tools/prepare_lora_dataset.py` now runs `fit_rows`
 (offline conservative heuristic) over train and holdout by default (`--max-tokens`,

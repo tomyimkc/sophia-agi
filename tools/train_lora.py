@@ -341,6 +341,15 @@ def run_mlx_backend(args: argparse.Namespace, rows: list[dict]) -> int:
 
     from tools.split_long_training_rows import fit_rows
 
+    # Honest limitations of the MLX path (mlx_lm owns the inner loop):
+    if args.pad_to_max:
+        print("NOTE: --pad-to-max is a no-op on --backend mlx (mlx_lm controls padding). "
+              "Run the padding ablation on --backend peft (CUDA).", flush=True)
+    if args.eval_every and args.holdout.exists():
+        print("NOTE: Sophia early-stopping (--patience/--overfit-ratio) is peft/unsloth-only. "
+              "On mlx, mlx_lm reports validation every --steps-per-eval but does NOT early-stop; "
+              "it runs all iters. Inspect its Val loss output to choose --iters.", flush=True)
+
     def _to_mlx(rs: list[dict]) -> list[dict]:
         return [{"messages": r["messages"], "metadata": r.get("metadata", {})}
                 for r in rs if r.get("messages")]
@@ -414,6 +423,13 @@ def run_mlx_backend(args: argparse.Namespace, rows: list[dict]) -> int:
         return 1
     (args.output / DONE_MARKER).write_text("ok\n", encoding="utf-8")
     print(f"Saved MLX adapter to {args.output}", flush=True)
+    # Consistent machine-parseable summary (loss lines come from mlx_lm's own stdout above;
+    # mlx_lm runs all iters, so earlyStopped is always False on this backend).
+    print("Run summary: " + json.dumps({
+        "backend": "mlx-lm", "globalSteps": iters, "trainRows": len(train_fitted),
+        "validRows": valid_n, "seed": args.seed, "earlyStopped": False,
+        "note": "train/val loss + peak mem are in mlx_lm stdout above; no Sophia early-stop on mlx",
+    }), flush=True)
     return 0
 
 
