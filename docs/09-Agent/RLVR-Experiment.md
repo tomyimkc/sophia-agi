@@ -144,6 +144,46 @@ python tools/run_rlvr.py --model zai-org/glm-4-9b-chat-hf --vllm server   # 2x24
 python tools/run_rlvr.py --model zai-org/glm-4-9b-chat-hf --quant bf16   # 1x80GB
 ```
 
+## Math task (`--task math`) — the cleanest held-out domain
+
+The same runner trains on a second, fully objective reward: **symbolic-math
+equivalence**. The reward is `agent.verifiers.math_equivalent` (sympy) — like the
+interpreter for code, the CAS is ground truth, so there is **no LLM judge** and the
+signal is ungameable. This is the contamination-safe, judge-free held-out domain the
+self-extension rung wants (see the roadmap in
+[Corpus-MathCode-Capability-Roadmap.md](../06-Roadmap/Corpus-MathCode-Capability-Roadmap.md)).
+
+| Artifact | Path |
+|---|---|
+| Reward core (no torch) | `provenance_bench/math_reward.py` |
+| Problem set (24, 6 families) | `provenance_bench/data/math_problems.json` |
+| Family-disjoint split | `provenance_bench/math_dataset.py` |
+| Offline invariants | `provenance_bench.math_reward.offline_invariants()` |
+| Tests | `tests/test_math_rlvr.py` |
+| Deps | `requirements-math.txt` (sympy) |
+
+The split is **family-disjoint**: whole problem families (e.g. `factor`,
+`simplify`) are held out of training, so a passing eval problem is a *new kind* of
+problem, not a memorized instance — the stronger generalization test.
+
+```bash
+# Offline reward-wiring check (any machine; needs sympy, no torch/GPU):
+pip install -r requirements-math.txt
+python tests/test_math_rlvr.py
+python tools/run_rlvr.py --task math --model mock         # full offline invariants
+
+# Live GRPO on the math reward (rented CUDA GPU), everything below the line is the
+# same GPU stack as the provenance task — only --task changes:
+pip install -r requirements-rl.txt -r requirements-math.txt
+python tools/run_rlvr.py --task math --model zai-org/glm-4-9b-chat-hf --vllm server   # 2x24GB
+python tools/run_rlvr.py --task math --model zai-org/glm-4-9b-chat-hf --quant bf16    # 1x80GB
+```
+
+After training, the live capability claim is **held-out pass@1 on the eval families
+rises vs the base adapter**, scored deterministically by `math_equivalent`
+(no judge needed) — but it remains **Open** until a gated run (≥3 seeds, CI excludes
+0) per `agi-proof/failure-ledger.md`. This run does not assert that claim.
+
 ## Budget (live run, rented GPU)
 
 ~60 train prompts, `num_generations=8`, ~50–100 GRPO steps, short completions →

@@ -42,7 +42,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from provenance_bench import rl_dataset, rl_reward  # noqa: E402
+from provenance_bench import math_dataset, math_reward, rl_dataset, rl_reward  # noqa: E402
 from provenance_bench.dataset import Case  # noqa: E402
 
 OUT_JSON = ROOT / "agi-proof" / "benchmark-results" / "rlvr.public-report.json"
@@ -161,8 +161,12 @@ def _run_gpu(args: argparse.Namespace) -> int:
     from transformers import AutoTokenizer, BitsAndBytesConfig
     from trl import GRPOConfig, GRPOTrainer
 
-    data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
-    reward_fn = rl_reward.make_grpo_reward(records=data["train_gate_records"])
+    if args.task == "math":
+        data = math_dataset.build_math_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        reward_fn = math_reward.make_grpo_reward()  # gold column -> sympy math_equivalent
+    else:
+        data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        reward_fn = rl_reward.make_grpo_reward(records=data["train_gate_records"])
     ds = Dataset.from_list(data["train_rows"])  # columns kept: remove_unused_columns=False
 
     model_init_kwargs: dict = {"trust_remote_code": False}
@@ -213,8 +217,11 @@ def _run_gpu(args: argparse.Namespace) -> int:
     trainer.save_model(str(args.output))
 
     # The live run writes its config + an explicit "no capability claim yet" note.
+    n_train = len(data["train_rows"])
+    n_eval = len(data["eval_rows"])
     report = {
-        "benchmark": "rlvr",
+        "benchmark": f"rlvr-{args.task}",
+        "task": args.task,
         "model": args.model,
         "visibility": "public-aggregate",
         "claimStatus": "Open — capability claim requires a gated run (aggregate._is_validated); "
@@ -224,8 +231,8 @@ def _run_gpu(args: argparse.Namespace) -> int:
             "beta": args.beta, "num_generations": args.num_generations,
             "target_modules": GLM_TARGET_MODULES,
         },
-        "trainCases": len(data["train_cases"]),
-        "evalCases": len(data["eval_cases"]),
+        "trainCases": n_train,
+        "evalCases": n_eval,
         "trainSealed": data["train_sealed"],
         "evalSealed": data["eval_sealed"],
         "baseModelLicense": "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)",
@@ -240,6 +247,8 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     ap.add_argument("--model", default="mock", help=f'subject model (default "mock"; GPU: "{DEFAULT_MODEL}")')
+    ap.add_argument("--task", choices=["provenance", "math"], default="provenance",
+                    help="reward task: provenance (provenance_faithful) or math (sympy math_equivalent)")
     ap.add_argument("--dry-run", action="store_true", help="offline reward-wiring check only (no GPU)")
     ap.add_argument("--out", type=Path, default=OUT_JSON)
     # GPU-only args (ignored under --model mock / --dry-run)
@@ -262,8 +271,9 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     if args.model == "mock" or args.dry_run:
-        ok, detail = _offline_invariants()
-        detail["benchmark"] = "rlvr"
+        ok, detail = math_reward.offline_invariants() if args.task == "math" else _offline_invariants()
+        detail["benchmark"] = f"rlvr-{args.task}"
+        detail["task"] = args.task
         detail["mode"] = "mock-offline"
         detail["claim"] = "reward-machinery invariants (NOT a capability claim)"
         detail["liveClaimStatus"] = (
