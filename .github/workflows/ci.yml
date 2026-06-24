@@ -6,9 +6,60 @@ on:
   pull_request:
     branches: [main]
 
+# Cancel superseded runs on the same ref (don't waste minutes on stale pushes).
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
-  validate:
+  # Detect whether any code/data/test/workflow path changed. Docs-only PRs skip the
+  # heavy validation below (the always-on fast-ci.yml lane still gates them).
+  changes:
     runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            code:
+              - 'agent/**'
+              - 'tools/**'
+              - 'tests/**'
+              - 'provenance_bench/**'
+              - 'selfextend/**'
+              - 'sophia_contract/**'
+              - 'sophia_mcp/**'
+              - 'gateway/**'
+              - 'skills/**'
+              - 'okf/**'
+              - 'data/**'
+              - 'training/**'
+              - 'benchmark/**'
+              - 'constitution/**'
+              - 'eval/**'
+              - 'scripts/**'
+              - 'wiki/**'
+              - 'requirements*.txt'
+              - 'pyproject.toml'
+              - '.github/workflows/**'
+
+  validate:
+    needs: changes
+    # Full rigorous validation runs on every push to main, on any code/data change,
+    # or when a PR carries the 'full-ci' label. Docs-only PRs skip it.
+    if: >-
+      github.event_name == 'push' ||
+      needs.changes.outputs.code == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'full-ci')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
@@ -259,13 +310,40 @@ jobs:
   # go unrun. The only third-party deps the suite needs are numpy + pytest;
   # heavy deps (torch/transformers/…) are lazy-imported and their tests skip.
   test:
+    needs: changes
+    if: >-
+      github.event_name == 'push' ||
+      needs.changes.outputs.code == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-mcp.txt
       - name: Install test dependencies
         run: python -m pip install --upgrade pip numpy pytest
       - name: Full pytest suite
         run: python -m pytest -q
+
+  # Single required status check. Passes when validate+test succeeded OR were
+  # intentionally skipped (docs-only PR). Make THIS the required check in branch
+  # protection — never 'validate'/'test' directly, since they may be skipped.
+  ci-complete:
+    needs: [changes, validate, test]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Gate on required jobs
+        run: |
+          echo "validate=${{ needs.validate.result }} test=${{ needs.test.result }}"
+          for r in "${{ needs.validate.result }}" "${{ needs.test.result }}"; do
+            if [ "$r" = "failure" ] || [ "$r" = "cancelled" ]; then
+              echo "::error::a required CI job failed ($r)"; exit 1
+            fi
+          done
+          echo "CI gate passed (jobs succeeded or were intentionally skipped)."

@@ -1,6 +1,21 @@
 name: ai-guardrails
-# Hard-fails an AI-authored PR that touches protected paths.
-on: pull_request
+# Hard-fails an AI-authored PR that touches protected paths. Only triggers when a
+# protected path actually changes (free for every other PR), and only for the AI actor.
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - 'LICENSE'
+      - 'LICENSE-COMMERCIAL.md'
+      - 'TRADEMARK-POLICY.md'
+      - 'infra/**'
+      - 'migrations/**'
+      - 'src/auth/**'
+
+concurrency:
+  group: ai-guardrails-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions: { contents: read, pull-requests: write }
 jobs:
   guard:
