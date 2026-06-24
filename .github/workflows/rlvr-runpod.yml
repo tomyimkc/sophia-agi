@@ -60,8 +60,14 @@ on:
 permissions:
   contents: read
 
+# Concurrency key is per (task, seed, mode) so DIFFERENT runs go in PARALLEL
+# (e.g. a 3-seed sweep, or provenance + math at once) — each rents its own pod —
+# while an identical re-dispatch (same task+seed+mode) still queues, preventing
+# accidental double-spend on the exact same run. Use distinct --seed per parallel
+# run. NOTE: parallel pods = parallel paid GPUs (same total GPU-hours, higher peak
+# spend); your RunPod account must have the quota/credit/GPU availability.
 concurrency:
-  group: rlvr-runpod
+  group: rlvr-runpod-${{ github.event.inputs.task }}-${{ github.event.inputs.seed }}-${{ github.event.inputs.remote_mode }}
   cancel-in-progress: false
 
 jobs:
