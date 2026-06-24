@@ -2,6 +2,25 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [Unreleased]
+
+### Added — Non-parametric continual learning (Experiment 1: sequential retention)
+
+- `agent/continual_retention.py` — a sequential-retention benchmark over the OKF
+  belief graph. A "task" is a batch of OKF pages; learning the stream means adding
+  batches and rebuilding the graph. Because adding page N+1 cannot mutate page N, a
+  purely additive stream forgets nothing — this turns that structural claim into a
+  measured retention matrix + `forgottenGroundedClaims` metric. The metric is
+  sensitive: it detects forgetting when a fact loses its provenance ground or its
+  effective confidence is weakened.
+- `tests/test_continual_retention.py` — additive stream ⇒ 0 forgotten claims and a
+  full retention matrix; metric detects lost-grounding and confidence-drop. Offline,
+  deterministic, dependency-free. Wired into `ci.yml`.
+- `scripts/demo_continual_retention.py` — offline demo; writes
+  `agi-proof/continual/retention_report.json` (`level3Evidence: false`).
+- `docs/06-Roadmap/continual-learning-non-parametric.md` — the full plan (four
+  experiments, smallest → boldest). Candidate machinery, not an AGI claim.
+
 ## [0.7.47] - 2026-06-24
 
 ### Added — SEIB real API/local priority runs + LLM judge support

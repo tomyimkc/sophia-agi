@@ -1,0 +1,57 @@
+{
+  "schema": "sophia.continual_retention.v1",
+  "level3Evidence": false,
+  "tasks": [
+    "philosophy",
+    "psychology",
+    "history",
+    "religion"
+  ],
+  "factsPerTask": {
+    "philosophy": [
+      "analects_compiled",
+      "dao_de_jing_layered"
+    ],
+    "psychology": [
+      "cognitive_dissonance"
+    ],
+    "history": [
+      "printing_press_1440"
+    ],
+    "religion": [
+      "gospel_layered",
+      "hadith_compiled"
+    ]
+  },
+  "totalGroundedFacts": 6,
+  "retentionMatrix": [
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    [
+      null,
+      1.0,
+      1.0,
+      1.0
+    ],
+    [
+      null,
+      null,
+      1.0,
+      1.0
+    ],
+    [
+      null,
+      null,
+      null,
+      1.0
+    ]
+  ],
+  "forgottenGroundedClaims": 0,
+  "forgottenDetail": [],
+  "backwardTransfer": 0.0,
+  "perfectRetention": true
+}

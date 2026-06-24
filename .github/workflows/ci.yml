@@ -92,6 +92,7 @@ jobs:
           python tests/test_wiki_librarian.py
           python tests/test_wiki_mcp.py
           python tests/test_memory_consolidation.py
+          python tests/test_continual_retention.py
           python tests/test_wiki_proof.py
           python tests/test_agent_harness.py
       - name: Governance contract conformance (golden vectors + schema)
