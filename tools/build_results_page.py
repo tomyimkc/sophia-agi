@@ -229,9 +229,17 @@ def render(doc: dict) -> str:
             "grounding's win is fail-closed abstention on traps)",
             f"- Inter-judge κ {cg.get('interJudgeKappa')} · percent-agreement "
             f"{_pct(cg.get('interJudgePercentAgreement'))}",
-            f"- ⚠ {cg.get('note', '')}",
-            "",
         ]
+        hy = cg.get("hybrid")
+        if hy:
+            L += [
+                f"- **Recall fix ({hy.get('system')}):** overall **{_pct(hy.get('consensus'))}** "
+                f"[{_pct(hy.get('ci', [None, None])[0])}, {_pct(hy.get('ci', [None, None])[1])}], "
+                f"recall **{_pct(hy.get('assert'))}** (up from strict {_pct(g.get('assert'))}), "
+                f"traps {_pct(hy.get('abstain'))}; policy {hy.get('policyCounts')}",
+                f"  - {hy.get('note', '')}",
+            ]
+        L += [f"- ⚠ {cg.get('note', '')}", ""]
 
     L += [
         "## Reproduce",

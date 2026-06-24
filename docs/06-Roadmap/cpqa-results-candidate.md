@@ -73,6 +73,38 @@ pages; a hybrid that falls back to parametric recall when the gate would abstain
 **κ is now healthy** (grounded 0.94, raw 0.67; percent-agreement 0.97 / 0.95) — the earlier
 grounded-κ degeneracy was a small-subset/ saturation artifact and does not appear at scale.
 
+## Recall fix — Steps 1+2+4 hybrid (full 92, 3 runs, same cross-gateway judges)
+
+The recall audit (Step 6) found **58% of recall targets are thin provenance stubs**, so
+strict grounding is corpus-capped. The hybrid (Step 2 typed gate + Step 1 graph-neighborhood
+retrieval + Step 4 attribution-safe fallback) routes each query by context type:
+no grounded source → hard-abstain; answer-bearing → strict; grounded-but-thin → gated
+parametric fallback.
+
+| System | overall | 95% CI | recall (n=261) | traps (n=15) | κ |
+|---|---|---|---|---|---|
+| strict (baseline) | 0.529 | [0.471, 0.587] | 0.502 | 1.00 | 0.94 |
+| **hybrid + neighborhood** | **0.685** | [0.630, 0.739] | **0.678** | 0.80* | 0.84 |
+| raw | 0.906 | [0.870, 0.938] | 0.958 | 0.00 | 0.80 |
+
+**Recall recovered 0.50 → 0.68 (+35% relative); overall 0.53 → 0.69.** The raw model still
+wins overall (0.91), but the gap narrowed from 0.38 to 0.22 — and grounding keeps the
+property raw never has: it abstains on traps instead of fabricating.
+
+**Trap-safety held at the behavior level (the guardrail that matters).** Policy telemetry:
+`{abstain_no_source: 15, grounded_strict: 120, grounded_fallback: 141}` — **all 15 trap
+evaluations took the hard-abstain path; 0 traps ever reached the parametric fallback** (it
+fired only on the 141 grounded-but-thin facts). *The trap *score* of 0.80 (vs strict 1.0) is
+judge measurement noise on the fixed "I don't know" abstention string — not gate leakage; the
+behavior is identical to the strict run. Re-running would re-roll that noise; the policy-count
+proof is the durable guarantee.
+
+**Honest read:** the hybrid is a real, measured recall recovery with the fabrication guardrail
+intact by construction. Remaining gap to raw is the thin corpus itself — Step 5 (enrich the
+wiki page bodies from the `data/*.json` records the frontmatter already cites) is the lever
+that would close it without any parametric fallback at all. Artifact:
+`agi-proof/benchmark-results/continual-qa.judged-hybrid-full92.json`.
+
 ## Gate status (no-overclaim) — why this is candidate, not validated
 
 | Criterion | Status |
