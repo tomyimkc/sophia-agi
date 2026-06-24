@@ -130,6 +130,22 @@ All notable changes to Sophia AGI are documented here.
 - `agent/deepseek_llm.py` extended use; `tests/test_continual_qa_answer.py` (offline,
   mocked) wired into `ci.yml`. The live judged/LLM runners are network-only, never in CI.
 
+### Added — CPQA cross-family judge panel (candidate, not validated)
+
+- `agent/llmhub_llm.py` — OpenAI-compatible LLMHub gateway client (one gateway exposes many
+  families; https + explicit POST; retry-with-backoff; key from env, never stored).
+  `tools/run_continual_qa_judged.py` generalized to `provider:model` specs with a neutral
+  answer model and a distinct-family judge panel, N runs, pooled CIs, per-run κ.
+- Both LLM clients now retry transient network/SSL/5xx/429 errors (a single proxy SSL blip
+  had aborted a 180-call run).
+- **Candidate result (cross-family: GPT-4o-mini answers, Claude + Gemini judges; 10 queries,
+  3 runs):** grounded consensus pass **0.733** [0.567, 0.867] vs raw **0.400** [0.233, 0.567];
+  prediction (grounded > raw) confirmed every run. Removes the prior same-provider and
+  self-grading caveats. **Still `validated:false`:** grounded κ is degenerate (Gemini passes
+  100%, collapsing Cohen's κ), single gateway/key, self-authored benchmark.
+- `docs/06-Roadmap/cpqa-results-candidate.md` — pre-registered protocol + candidate numbers
+  + explicit gate-status table (RESULTS.md is generated and not hand-edited).
+
 ## [0.7.47] - 2026-06-24
 
 ### Added — SEIB real API/local priority runs + LLM judge support
