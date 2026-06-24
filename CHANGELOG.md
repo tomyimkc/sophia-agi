@@ -32,6 +32,16 @@ All notable changes to Sophia AGI are documented here.
 - `tests/test_belief_revision_policy.py` — tier order, confidence tie-break, abstain-
   not-overwrite, cascade recording, and beating the LWW baseline. Wired into `ci.yml`.
 
+### Added — Continual learning Experiment 3: forgetting as a reversible command
+
+- `agent/unlearning.py` — `Unlearner.forget(source, reason)` tombstones a source
+  (non-destructively), un-grounds exactly its transitive support cascade, and emits an
+  audit entry + the abstain set a gate must refuse; `restore` re-grounds the *exact*
+  prior belief state. This is the selective, reversible unlearning (debunked source,
+  poisoned fact, GDPR deletion) a weight model cannot do cleanly.
+- `tests/test_unlearning.py` — exact-cascade un-grounding, abstain set = gate refusal
+  set, bit-for-bit reversible restore, fail-closed on unknown source. Wired into `ci.yml`.
+
 ## [0.7.47] - 2026-06-24
 
 ### Added — SEIB real API/local priority runs + LLM judge support
