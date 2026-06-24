@@ -287,7 +287,48 @@ unanswerable negatives to avoid the refusal-forgetting "hallucination tax".
 
 ---
 
-## 6. Keeping the gate / fail-closed / conscience kernel intact
+## 6. Repo-development roadmap (fastest training, gate upheld)
+
+The fastest path to a stronger Sophia adapter is *not* a bigger run — it is a staged
+pipeline where each phase pays for itself and the deterministic provenance gate is never
+weakened. The gate is **fail-closed**: abstention is a correct output, not a failure.
+
+| Phase | Name | What it delivers | Gate interaction |
+|---|---|---|---|
+| **P0** | Infra / prebaked image | A pinned CUDA image (torch/peft/trl/bitsandbytes/unsloth/mlx baked in) so a run starts in seconds, not minutes of `pip`. Removes the cold-start tax that swamped the §2b micro-bench. | None — pure plumbing. The gate ships in the image unchanged. |
+| **P1** | Config-transfer, no sweep | Apply the 2026 *LoRA Without Regret* defaults: `--target-modules all-linear`, LoRA LR ≈ 10× full-FT LR and **~rank-independent** (so no per-rank LR sweep), effective batch < 32, 1 epoch on small curated data. **(This component.)** | None — config only. Intrinsic `--guard` still runs at the data layer. |
+| **P2** | Gate-filtered RFT data engine | Rejection-sampled / council-distilled targets, each passed through the **intrinsic** fail-closed gate (`check_response(text, mode="advisor")["violations"]`, *no* question) to drop fabricated citations / false arithmetic / forbidden-lineage merges before they enter SFT. | Gate as a **fail-closed data filter**. Must NOT pass a question (that invokes the attribution trap-grader, a positive-expectation completeness check that wrongly deletes clean curated rows over wording). |
+| **P3** | Gate-as-reward GRPO | Online RL (GRPO/RFT) where the verifier signal is the reward. **Abstention must be reward-positive**: a correct "I can't verify that" earns reward, never a penalty. | Gate as **reward**. The single most dangerous coupling — see caveats below. Hold the fail-closed semantics fixed; never let the reward train *out* of abstention. |
+| **P4** | Gate-honesty hardening | Trap red-team set (attribution traps, fabricated-source bait), explicit **false-negative / false-positive** accounting on the gate, and **multi-family** evaluation (≥3 base-model families) so results aren't a single-model artifact. | Adversarial pressure *on the gate itself* — measures, never relaxes, fail-closed behavior. |
+
+**Honest caveats (these are the load-bearing risks, stated plainly):**
+
+- **Abstention-collapse is the #1 risk.** Naive RLVR scores an abstention as *wrong*
+  (no positive reward for "I won't fabricate"), so the policy learns to stop abstaining —
+  i.e. RL *trains out* the fail-closed behavior the gate exists to protect. **Fix:**
+  abstention is **reward-positive** in P3. A correct refusal-to-fabricate is a correct
+  output and must be rewarded as one. This is non-negotiable and overrides any raw
+  accuracy metric.
+- **Verifier ceiling.** The gate certifies **absence-of-violation, not correctness.**
+  Passing the gate means "no fabricated citation / false arithmetic / forbidden merge was
+  detected," *not* "the answer is true and complete." Optimizing hard against the gate can
+  produce gate-clean-but-vacuous answers; pair it with task-quality signals.
+- **Reward-hacking.** A policy trained against a gate will learn that gate's blind spots.
+  **Mitigation:** hold out a **stronger / independent gate** and a separate **trap-prompt
+  set** for evaluation only (P4), so the training gate is never the same artifact that
+  certifies the result.
+- **Citation hygiene.** Many supporting 2026 results (incl. *LoRA Without Regret* and
+  several GRPO/RFT papers) are **post-knowledge-cutoff** and **must be independently
+  verified before entering the proof package.** The long-established anchors (LIMA,
+  NEFTune, rsLoRA, packing, ORPO, Gudibande) are safe to cite now; the 2026 arXiv ids are
+  not, until checked.
+
+No phase weakens the gate; each either leaves it untouched (P0/P1), uses it fail-closed
+(P2), keeps abstention reward-positive (P3), or adversarially measures it (P4).
+
+---
+
+## 7. Keeping the gate / fail-closed / conscience kernel intact
 
 - **Do not bake the gate into the weights.** The ladder proves the deterministic gate
   still catches 20 violations the adapter emits — defense-in-depth working as intended.

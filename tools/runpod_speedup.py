@@ -60,18 +60,28 @@ DEFAULT_GPU_TYPES = [
     "NVIDIA A100-SXM4-80GB",
 ]
 
+# Prebaked training image (built from ./Dockerfile) with requirements-lora.txt deps,
+# a PREBUILT flash-attn wheel, and unsloth already installed. Point --image-name here
+# (or the workflow 'image' input) to kill the multi-hour flash-attn compile cold start.
+# Empty by default so we fall back to the base runpod/pytorch image when not built yet.
+DEFAULT_PREBAKED_IMAGE = ""
+
 
 def _remote_bench_script(args: argparse.Namespace) -> str:
     branch_flag = (" --branch " + shlex.quote(args.branch)) if args.branch else ""
     return f"""
 set -Eeuo pipefail
 export DEBIAN_FRONTEND=noninteractive
+# Persistent HF cache (mirrors Dockerfile HF_HOME). HF_HUB_OFFLINE is set later ONLY
+# if the requested model is already cached, so a prebaked+warmed volume avoids a
+# network round-trip while a cold cache still downloads normally.
 export HF_HOME=/workspace/.cache/huggingface
+export HF_HUB_CACHE=/workspace/.cache/huggingface/hub
 export PIP_CACHE_DIR=/workspace/.cache/pip
 export SOPHIA_MODEL={shlex.quote(args.model)}
 export SOPHIA_LIMIT={shlex.quote(str(args.limit))}
 export SOPHIA_SEED={shlex.quote(str(args.seed))}
-mkdir -p /workspace/sophia-runpod /workspace/.cache/huggingface /workspace/.cache/pip
+mkdir -p /workspace/sophia-runpod /workspace/.cache/huggingface/hub /workspace/.cache/pip
 cd /workspace/sophia-runpod
 if [ {shlex.quote(args.source)} = "git" ] && [ ! -d sophia-agi/.git ]; then
   git clone --depth 1{branch_flag} {shlex.quote(args.repo_url)} sophia-agi
@@ -89,11 +99,37 @@ except Exception as exc:
     print("torch precheck failed:", type(exc).__name__, exc)
 PY
 python -m pip install --upgrade pip setuptools wheel
+# Base LoRA deps: cheap no-op when the prebaked image already satisfies them, but
+# kept unconditionally so a vanilla base image still works.
 python -m pip install -r requirements-lora.txt
-# Optional extras; if either install fails, that config is recorded as FAILED by the
-# bench and the remaining configs still produce the headline numbers (non-fatal).
-python -m pip install flash-attn --no-build-isolation || echo "[bench] flash-attn install failed (non-fatal; --pack config will be skipped)"
-python -m pip install "unsloth>=2024.8" || echo "[bench] unsloth install failed (non-fatal)"
+# GUARD the slow extras: on the prebaked image flash-attn/unsloth are already
+# importable, so we SKIP the install entirely — this is the multi-hour compile we
+# refuse to pay again. On a vanilla base image the import fails and we install
+# (non-fatal; a failed config is just recorded FAILED by the bench).
+if python -c "import flash_attn" 2>/dev/null; then
+  echo "[bench] flash-attn already importable (prebaked image) — skipping install"
+else
+  python -m pip install flash-attn --no-build-isolation || echo "[bench] flash-attn install failed (non-fatal; --pack config will be skipped)"
+fi
+if python -c "import unsloth" 2>/dev/null; then
+  echo "[bench] unsloth already importable (prebaked image) — skipping install"
+else
+  python -m pip install "unsloth>=2024.8" || echo "[bench] unsloth install failed (non-fatal)"
+fi
+# Set HF_HUB_OFFLINE only if the model is already in the persistent cache, so a
+# warm volume avoids the hub probe while a cold run still downloads.
+python - <<'PY'
+import os
+from pathlib import Path
+model = os.environ.get("SOPHIA_MODEL", "")
+cache = Path(os.environ.get("HF_HUB_CACHE", "/workspace/.cache/huggingface/hub"))
+slug = "models--" + model.replace("/", "--")
+cached = (cache / slug).is_dir() if model else False
+with open("/workspace/sophia-runpod/hf-offline.env", "w") as fh:
+    fh.write("export HF_HUB_OFFLINE=1\\n" if cached else "")
+print(f"[bench] model {{model!r}} cached={{cached}} -> HF_HUB_OFFLINE={{'1' if cached else '(unset)'}}", flush=True)
+PY
+. /workspace/sophia-runpod/hf-offline.env
 python tools/prepare_lora_dataset.py
 python tools/bench_lora_speedup.py --limit "$SOPHIA_LIMIT" --model "$SOPHIA_MODEL" --seed "$SOPHIA_SEED"
 cp training/lora/bench/speedup_report.json /workspace/sophia-runpod/speedup_report.json || true
@@ -122,7 +158,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--gpu-count", type=int, default=1)
     ap.add_argument("--cloud-type", choices=["SECURE", "COMMUNITY"], default="SECURE")
     ap.add_argument("--interruptible", action="store_true", help="use cheaper spot/interruptible pod")
-    ap.add_argument("--image-name", default=DEFAULT_IMAGE)
+    ap.add_argument(
+        "--image-name",
+        default=DEFAULT_PREBAKED_IMAGE or DEFAULT_IMAGE,
+        help="container image. Point at the prebaked ./Dockerfile image "
+             "(<user>/sophia-train:latest) to skip the multi-hour flash-attn compile; "
+             "defaults to the base runpod/pytorch image when no prebaked tag is set.",
+    )
     ap.add_argument("--container-disk-gb", type=int, default=80)
     ap.add_argument("--volume-gb", type=int, default=40)
     ap.add_argument("--allowed-cuda-versions", default="")

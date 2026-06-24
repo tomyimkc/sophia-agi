@@ -682,7 +682,10 @@ def main() -> int:
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--grad-accum", type=int, default=4)
     parser.add_argument("--lr", type=float, default=5e-5,
-                        help="LR is the #1 small-data knob; sweep {2e-5,5e-5,1e-4}. Lowered from 2e-4.")
+                        help="LoRA LR transfer rule (2026 'LoRA Without Regret'): optimal LoRA LR is "
+                             "~rank-independent and ~10x the full-FT LR, so a per-rank sweep is usually "
+                             "unnecessary — pick by base-model/full-FT LR, not by --lora-r. Default 5e-5 "
+                             "(lowered from 2e-4).")
     parser.add_argument("--warmup-ratio", type=float, default=0.03)
     parser.add_argument("--max-grad-norm", type=float, default=1.0)
     parser.add_argument("--weight-decay", type=float, default=0.0,
@@ -693,8 +696,10 @@ def main() -> int:
     parser.add_argument("--lora-dropout", type=float, default=0.05)
     parser.add_argument("--rslora", dest="use_rslora", action="store_true",
                         help="Rank-stabilized LoRA: scale by alpha/sqrt(r) (fixes over-aggressive alpha/r)")
-    parser.add_argument("--target-modules", choices=("attn-mlp", "all-linear"), default="attn-mlp",
-                        help="all-linear targets every linear layer (MLP is the dominant locus of adaptation)")
+    parser.add_argument("--target-modules", choices=("attn-mlp", "all-linear"), default="all-linear",
+                        help="all-linear (default) targets every linear layer — the 2026 'LoRA Without "
+                             "Regret' finding: matching full-FT by adapting all linear layers (MLP is the "
+                             "dominant locus of adaptation); 'attn-mlp' is the narrower explicit Qwen list")
     parser.add_argument("--neftune-alpha", type=float, default=0.0,
                         help="NEFTune embedding-noise regularizer (try 5); helps instruction tuning on small data")
     parser.add_argument("--seed", type=int, default=0)
@@ -734,6 +739,19 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true")
     parser.set_defaults(mask_prompt=True)
     args = parser.parse_args()
+
+    # 'LoRA Without Regret' (2026): LoRA on small, curated data prefers an effective
+    # batch < 32. Warn (don't fail) when batch_size*grad_accum exceeds that — large
+    # effective batches wash out the per-example signal a tiny corpus depends on.
+    eff_batch = args.batch_size * args.grad_accum
+    if eff_batch > 32:
+        print(
+            f"WARNING: effective batch size = batch_size({args.batch_size}) * "
+            f"grad_accum({args.grad_accum}) = {eff_batch} > 32. For LoRA on small, "
+            f"curated data the 2026 'LoRA Without Regret' finding advises an effective "
+            f"batch < 32; consider lowering --batch-size or --grad-accum.",
+            flush=True,
+        )
 
     if not args.train.exists():
         print(f"Missing {args.train}. Run: python tools/prepare_lora_dataset.py")
