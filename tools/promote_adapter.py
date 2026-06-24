@@ -30,10 +30,29 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.continual_plasticity import EvalMetric, UpdateCandidate, evaluate_update  # noqa: E402
+from agent.continual_plasticity import (  # noqa: E402
+    EvalMetric,
+    RetentionEvidence,
+    UpdateCandidate,
+    evaluate_update,
+)
 from agent.formal_verifier import check_lattice_consistency  # noqa: E402
 
 DEFAULT_PROTECTED = ("religion", "history")
+
+
+def _retention_from_shift_report(report: dict[str, Any], *, source: str) -> RetentionEvidence:
+    """Build a RetentionEvidence from a learning-under-shift public report.
+
+    Reads the old-task stability the shift protocol already measured so the
+    promotion gate can refuse to reward catastrophic forgetting.
+    """
+    return RetentionEvidence(
+        old_benchmark_delta_pct=report.get("oldBenchmarkDeltaPct"),
+        passing_signal=report.get("passingSignal"),
+        evaluable=str(report.get("stabilityEvaluable", "evaluated")),
+        source=source,
+    )
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -132,6 +151,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--min-target-delta", type=float, default=0.03)
     ap.add_argument("--max-protected-regression", type=float, default=0.01)
     ap.add_argument("--require-artifacts", type=int, default=2)
+    ap.add_argument("--shift-report", default=None,
+                    help="learning-under-shift public report; its old-task stability gates "
+                         "promotion so an adapter that catastrophically forgets cannot promote")
+    ap.add_argument("--max-retention-regression", type=float, default=5.0,
+                    help="max tolerated old-task regression in percentage points (default 5.0, "
+                         "matching the learning-under-shift stability rule)")
+    ap.add_argument("--require-retention", action="store_true",
+                    help="quarantine unless a verifiable old-task retention signal is supplied")
     ap.add_argument("--extra-artifact", action="append", default=[],
                     help="extra verifier-artifact identifiers (e.g. a SEIB report path)")
     ap.add_argument("--fail-on-reject", action="store_true",
@@ -150,9 +177,20 @@ def main(argv: list[str] | None = None) -> int:
 
     protected = tuple(p.strip() for p in args.protected.split(",") if p.strip())
 
+    # Old-task retention from a learning-under-shift report (if supplied). This lets the
+    # gate fail closed on catastrophic forgetting instead of rewarding a target-suite gain
+    # that was bought by destroying previously-learned knowledge.
+    retention: RetentionEvidence | None = None
+    if args.shift_report:
+        shift_path = ROOT / args.shift_report
+        if shift_path.exists():
+            retention = _retention_from_shift_report(_load(shift_path), source=args.shift_report)
+        elif args.require_retention:
+            raise SystemExit(f"--shift-report not found: {args.shift_report}")
+
     # Collect real, on-disk artifacts so the artifact count reflects genuine evidence.
     extra: list[str] = []
-    for cand in (args.adapter_ladder, args.baseline_ladder, args.manifest, *args.extra_artifact):
+    for cand in (args.adapter_ladder, args.baseline_ladder, args.manifest, args.shift_report, *args.extra_artifact):
         if cand and (ROOT / cand).exists():
             extra.append(cand)
 
@@ -177,6 +215,9 @@ def main(argv: list[str] | None = None) -> int:
         min_target_delta=args.min_target_delta,
         max_protected_regression=args.max_protected_regression,
         require_artifacts=args.require_artifacts,
+        retention=retention,
+        max_retention_regression_pct=args.max_retention_regression,
+        require_retention=args.require_retention,
     )
 
     # The formal proof is an INDEPENDENT check: if it rejects the protected floor, the
@@ -200,11 +241,23 @@ def main(argv: list[str] | None = None) -> int:
             "protectedSuites": list(protected),
             **proof,
         },
+        "retention": {
+            "invariant": "old-task score may not regress below baseline by more than tolerance "
+                         "(no catastrophic forgetting)",
+            "tolerancePct": args.max_retention_regression,
+            "required": args.require_retention,
+            "shiftReport": args.shift_report if retention else None,
+            "oldBenchmarkDeltaPct": retention.old_benchmark_delta_pct if retention else None,
+            "passingSignal": retention.passing_signal if retention else None,
+            "evaluable": retention.evaluable if retention else "not-provided",
+            "forgetting": bool(retention and retention.forgot(args.max_retention_regression)),
+        },
         "decision": decision.to_dict(),
         "inputs": {
             "adapterLadder": args.adapter_ladder,
             "baselineLadder": args.baseline_ladder if baseline_ladder else None,
             "manifest": args.manifest if manifest_path.exists() else None,
+            "shiftReport": args.shift_report if retention else None,
             "datasetContaminated": contaminated,
         },
     }
@@ -212,6 +265,12 @@ def main(argv: list[str] | None = None) -> int:
     print(f"candidate:        {args.candidate_id}")
     print(f"target suite:     {args.target_suite}  delta={decision.metrics['targetDelta']:+.4f}")
     print(f"max protected reg:{decision.metrics['maxProtectedRegression']:+.4f}")
+    ret = decision.metrics["retention"]
+    if ret["evaluable"] == "not-provided":
+        print("old-task retention:no shift report supplied (retention unverified)")
+    else:
+        print(f"old-task retention:{ret['oldBenchmarkDeltaPct']:+.2f}pp (tol -{args.max_retention_regression:.2f}pp) "
+              f"forgetting={ret['forgetting']}")
     print(f"formal proof:     {proof.get('verdict')} ({proof.get('backend')}) — {'; '.join(proof.get('reasons', []))}")
     print(f"scorecard verdict:{decision.verdict}")
     print(f"FINAL VERDICT:    {final_verdict}")

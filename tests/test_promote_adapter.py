@@ -14,6 +14,7 @@ if str(ROOT) not in sys.path:
 from agent.continual_plasticity import evaluate_update  # noqa: E402
 from tools.promote_adapter import (  # noqa: E402
     _formal_protected_floor_proof,
+    _retention_from_shift_report,
     _rung,
     build_candidate,
 )
@@ -36,15 +37,22 @@ def _ladder(base: dict[str, float], adapter: dict[str, float]) -> dict:
 
 
 def test_v2_adapter_rejects_on_religion_regression() -> None:
-    """The real merged artifact must auto-reproduce the hand-written ledger reject."""
-    import json
-    adapter_ladder = json.loads((ROOT / "training/local_sophia_v2/eval_ladder_adapter.json").read_text())
-    after = _rung(adapter_ladder, "adapter")
-    assert after is not None and after["domains"]["religion"] == 0.0  # the known regression
+    """Reproduce the hand-written v2 ledger reject (religion 1/6 -> 0/6).
+
+    Built inline rather than read from `eval_ladder_adapter.json`: that artifact path
+    is reused by each training run and was overwritten by the v3 convergence pass, so
+    binding this regression test to it makes the test track whatever adapter ran last.
+    """
+    ladder = _ladder(
+        {"philosophy": 0.66, "psychology": 0.44, "history": 0.62, "religion": 0.167},
+        {"philosophy": 0.77, "psychology": 0.66, "history": 0.66, "religion": 0.0},
+    )
+    after = _rung(ladder, "adapter")
+    assert after is not None and after["domains"]["religion"] == 0.0  # the known v2 regression
 
     cand = build_candidate(
         candidate_id="local-sophia-v2-mlx", kind="lora_adapter", baseline_ladder=None,
-        adapter_ladder=adapter_ladder, contaminated=False, protected=("religion", "history"),
+        adapter_ladder=ladder, contaminated=False, protected=("religion", "history"),
         extra_artifacts=("a", "b"), proof_tag="formal_verifier:protected_floor[fallback:rejected]",
     )
     d = evaluate_update(cand, target_suite="total", min_target_delta=0.03, max_protected_regression=0.01)
@@ -63,6 +71,29 @@ def test_clean_improving_adapter_promotes() -> None:
     )
     d = evaluate_update(cand, target_suite="total", min_target_delta=0.03, max_protected_regression=0.01)
     assert d.verdict == "promote", d.reasons
+
+
+def test_v3_adapter_rejects_under_retention_gate() -> None:
+    """v3 cleared the old (ladder-only) gate but its real learning-shift report shows a
+    -50pp old-task regression; the retention-aware gate must now reject it."""
+    import json
+    adapter_ladder = json.loads((ROOT / "training/local_sophia_v2/eval_ladder_adapter.json").read_text())
+    shift = json.loads(
+        (ROOT / "agi-proof/learning-under-shift/"
+                "shift-result-local-sophia-v3-mlx-2026-06-24.public-report.json").read_text()
+    )
+    cand = build_candidate(
+        candidate_id="local-sophia-v3-mlx", kind="lora_adapter", baseline_ladder=None,
+        adapter_ladder=adapter_ladder, contaminated=False, protected=("religion", "history"),
+        extra_artifacts=("a", "b"), proof_tag="formal_verifier:protected_floor[fallback:accepted]",
+    )
+    retention = _retention_from_shift_report(shift, source="shift")
+    # Without retention evidence the ladder-only gate promotes (the historical verdict).
+    assert evaluate_update(cand, target_suite="total", min_target_delta=0.03).verdict == "promote"
+    # With the real shift report attached, the same adapter is rejected for forgetting.
+    d = evaluate_update(cand, target_suite="total", min_target_delta=0.03, retention=retention)
+    assert d.verdict == "reject"
+    assert any("retention regression" in r for r in d.reasons)
 
 
 def test_formal_proof_agrees_with_scorecard() -> None:
@@ -85,6 +116,7 @@ def test_formal_proof_agrees_with_scorecard() -> None:
 def main() -> int:
     test_v2_adapter_rejects_on_religion_regression()
     test_clean_improving_adapter_promotes()
+    test_v3_adapter_rejects_under_retention_gate()
     test_formal_proof_agrees_with_scorecard()
     print("test_promote_adapter: OK")
     return 0

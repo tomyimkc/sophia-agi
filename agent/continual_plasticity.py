@@ -32,6 +32,32 @@ class EvalMetric:
 
 
 @dataclass(frozen=True)
+class RetentionEvidence:
+    """Old-task retention signal from a learning-under-shift run.
+
+    `old_benchmark_delta_pct` is (post-learning old-benchmark score − baseline), in
+    percentage points; a negative value means the update degraded previously-learned
+    knowledge (catastrophic forgetting). `evaluable` mirrors the learning-shift
+    `stabilityEvaluable` field: "evaluated" | "not-requested" | "requested-but-no-baseline".
+    Only an `evaluated` signal can prove or disprove forgetting; anything else is
+    unverifiable and must not be treated as a silent pass.
+    """
+
+    old_benchmark_delta_pct: float | None
+    passing_signal: bool | None = None
+    evaluable: str = "evaluated"
+    source: str = ""
+
+    @property
+    def verifiable(self) -> bool:
+        return self.evaluable == "evaluated" and self.old_benchmark_delta_pct is not None
+
+    def forgot(self, max_regression_pct: float) -> bool:
+        """True iff retention is verifiable AND the old task regressed beyond tolerance."""
+        return self.verifiable and float(self.old_benchmark_delta_pct) < -abs(max_regression_pct)
+
+
+@dataclass(frozen=True)
 class UpdateCandidate:
     id: str
     kind: str
@@ -62,7 +88,7 @@ class PromotionDecision:
         }
 
 
-def evaluate_update(candidate: UpdateCandidate, *, target_suite: str, min_target_delta: float = 0.03, max_protected_regression: float = 0.01, require_artifacts: int = 2) -> PromotionDecision:
+def evaluate_update(candidate: UpdateCandidate, *, target_suite: str, min_target_delta: float = 0.03, max_protected_regression: float = 0.01, require_artifacts: int = 2, retention: RetentionEvidence | None = None, max_retention_regression_pct: float = 5.0, require_retention: bool = False) -> PromotionDecision:
     reasons: list[str] = []
     conscience = enforce_conscience(
         action="train_or_update_adapter",
@@ -87,7 +113,20 @@ def evaluate_update(candidate: UpdateCandidate, *, target_suite: str, min_target
     regressions = [m for m in candidate.metrics if m.protected and m.delta < -max_protected_regression]
     for m in regressions:
         reasons.append(f"protected regression on {m.suite}: {m.delta:.4f}")
-    if candidate.contaminated or regressions:
+    # Old-task retention: an update that improves the target suite by forgetting a
+    # previously-learned task is a capability loss, not an improvement. Catastrophic
+    # forgetting beyond tolerance is a HARD reject — same severity as a protected
+    # regression — so the continual loop can never reward forgetting. Unverifiable
+    # retention is not a silent pass: when retention is required it forces quarantine.
+    forgetting = retention is not None and retention.forgot(max_retention_regression_pct)
+    if forgetting:
+        reasons.append(
+            f"old-task retention regression: {retention.old_benchmark_delta_pct:.2f}pp "
+            f"< -{abs(max_retention_regression_pct):.2f}pp (catastrophic forgetting)"
+        )
+    if require_retention and (retention is None or not retention.verifiable):
+        reasons.append("retention evidence required but not verifiable (no learning-under-shift baseline)")
+    if candidate.contaminated or regressions or forgetting:
         verdict = "reject"
     elif reasons:
         verdict = "quarantine"
@@ -102,6 +141,14 @@ def evaluate_update(candidate: UpdateCandidate, *, target_suite: str, min_target
             "targetDelta": round(target_delta, 4),
             "maxProtectedRegression": max([m.delta for m in candidate.metrics if m.protected] or [0.0]),
             "artifactCount": len(candidate.verifier_artifacts),
+            "retention": {
+                "oldBenchmarkDeltaPct": retention.old_benchmark_delta_pct if retention else None,
+                "passingSignal": retention.passing_signal if retention else None,
+                "evaluable": retention.evaluable if retention else "not-provided",
+                "maxRetentionRegressionPct": max_retention_regression_pct,
+                "required": require_retention,
+                "forgetting": forgetting,
+            },
             "metricRows": [m.__dict__ | {"delta": m.delta} for m in candidate.metrics],
         },
     )
@@ -153,4 +200,4 @@ def write_plasticity_report(out: str | Path) -> dict[str, Any]:
     return report
 
 
-__all__ = ["EvalMetric", "UpdateCandidate", "PromotionDecision", "evaluate_update", "append_promotion_ledger", "demo_plasticity_report", "write_plasticity_report"]
+__all__ = ["EvalMetric", "RetentionEvidence", "UpdateCandidate", "PromotionDecision", "evaluate_update", "append_promotion_ledger", "demo_plasticity_report", "write_plasticity_report"]

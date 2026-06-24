@@ -269,3 +269,17 @@ Apple Silicon run.
 **Claim impact:** v3 is a locally trained adapter with a W2 promotion-gate verdict on first-party
 benchmarks. It is **not** validated external evidence, not a promotion-grade result, not an AGI
 claim, and not a hallucination guarantee.
+
+**Gate hardening (2026-06-24, retention gate):** The original W2 promote verdict was reached on a
+gate that read only the eval ladder + the protected-floor proof — it had **no old-task retention
+term**, so it promoted v3 despite the learning-under-shift report showing a `-50.0pp` old-benchmark
+regression (`passingSignal=false`). The gate rewarded forgetting. `tools/promote_adapter.py` and
+`agent/continual_plasticity.evaluate_update` now consume a learning-under-shift report
+(`--shift-report`) and treat an old-task regression beyond tolerance (default `5.0pp`) as a **hard
+reject**, on par with a protected-suite regression. Re-running the gate on v3 with its real shift
+report now yields `FINAL VERDICT: reject`
+(`agi-proof/continual-plasticity/local-sophia-v3-mlx-retention-gated.public-report.json`). The
+historical ladder-only `promote` artifact is retained unaltered for provenance. Net: **under the
+corrected gate, v3 does not promote.** Closing the loop without forgetting (replay/rehearsal of the
+old domain or a smaller weight delta, then re-running learning-under-shift to `passingSignal=true`)
+is now a precondition for any future promotion — this remains open and hardware-bound (MLX/GPU).

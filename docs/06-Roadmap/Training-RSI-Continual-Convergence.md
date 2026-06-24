@@ -140,9 +140,40 @@ scoring is needed; track false-positive / over-abstention cost; only then feed C
 `promote`. This is also the on-ramp to **W4** (live RLVR, `rlvr-live-run-not-yet-gated`).
 
 **Acceptance:** clears the existing promotion rule (provenance/citation up at acceptable
-false-positive cost, no useful-correctness regression) with CIs excluding 0.
+false-positive cost, no useful-correctness regression) with CIs excluding 0, **and** the
+learning-under-shift run returns `passingSignal=true` (old-task retention within tolerance —
+see C6).
 **Resource:** **GPU / Mac hardware budget — the gate on the whole tier.**
 **Honest bound:** evidence the training recipe helps at small scale — not AGI.
+
+---
+
+## C6 — Retention gate: the promotion gate may not reward forgetting ✅ *(done; no GPU)*
+
+**Why:** C1's gate read only the eval ladder + the protected-floor proof — it had **no
+old-task retention term**. So the v3 adapter (`local-sophia-v3-mlx-promoted-by-w2-but-not-validated`)
+was promoted on a `+0.25` total delta even though its learning-under-shift report showed a
+`-50.0pp` old-benchmark regression (`passingSignal=false`). The gate rewarded catastrophic
+forgetting — which is the opposite of continual learning. A loop whose gains do not persist
+across iterations is a treadmill, not self-improvement.
+
+**Built:** `agent/continual_plasticity.evaluate_update()` takes an optional `RetentionEvidence`
+(old-task delta + `passingSignal` + `stabilityEvaluable`) and treats an old-task regression
+beyond tolerance (default `5.0pp`, matching the learning-shift stability rule) as a **hard
+reject**, on par with a protected-suite regression. Unverifiable retention is not a silent pass:
+`require_retention` forces `quarantine` when no verifiable signal is supplied.
+`tools/promote_adapter.py` gained `--shift-report` / `--max-retention-regression` /
+`--require-retention`, parses the learning-under-shift public report, and records a `retention`
+block in the promotion artifact.
+
+**Result:** re-running the gate on v3 with its real shift report flips the verdict to
+`reject` — `agi-proof/continual-plasticity/local-sophia-v3-mlx-retention-gated.public-report.json`.
+The historical ladder-only `promote` artifact is kept unaltered for provenance. Gated by
+`tests/test_promote_adapter.py::test_v3_adapter_rejects_under_retention_gate` and the
+`RetentionEvidence` cases in `tests/test_continual_plasticity.py`. **Honest bound:** this stops
+the gate from *rewarding* forgetting; it does not *solve* forgetting — that is the open training
+work (replay/rehearsal of the old domain or a smaller weight delta, re-run to
+`passingSignal=true`), still hardware-bound under C5.
 
 ---
 
@@ -154,7 +185,8 @@ false-positive cost, no useful-correctness regression) with CIs excluding 0.
 | 2 | **C3** pipeline fixes (split rows, SEIB-MLX) ✅ | none | honest measurement of the real adapter |
 | 3 | **C2** fix religion regression | hardware (retrain) | the one failing predicate cleared |
 | 4 | **C4** feedback miner → next pack ✅ | none | the loop becomes *continual* |
-| 5 | **C5** multi-seed + SEIB-100 + (W4 RLVR) | **GPU** | the first promotable, validated result |
+| 5 | **C6** retention gate (no rewarding forgetting) ✅ | none | the gate rejects catastrophic forgetting; v3 re-verdicts to `reject` |
+| 6 | **C5** multi-seed + SEIB-100 + retain old task + (W4 RLVR) | **GPU** | the first promotable, validated result |
 
 **Prerequisite under all of it (unchanged):** the third-party-validated number still open in
 the ledger (`calibration-self-authored-pack-2026-06-22`, `hidden-review-third-party-not-run`).
