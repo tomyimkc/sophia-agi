@@ -77,6 +77,17 @@ Stated plainly, because owning the limits is the point. Sophia **today**:
 
 The single validated result is narrow: **attribution-hallucination reduction on one 8B model, LLM-judged.** Everything else is labelled *illustrative* or *candidate*. The honest deliverable is the machinery + the measured data + the public ledger of what is **not** yet proven.
 
+## Support this work
+
+The core is MIT and always will be. If it's useful to you, you can fund the time and compute
+to keep it honest — especially the third-party validation the ledger says is still missing.
+
+- **Sponsor** → [SPONSORS.md](SPONSORS.md) — recognition only; sponsors never steer what counts as true.
+- **Hire me** → [services](docs/07-Growth/SERVICES.md) — install the provenance gate in your stack (scoped, measured, no guarantees).
+- **Learn the method** → [Source-Discipline Engineering](docs/07-Growth/education/Source-Discipline-Engineering.md).
+
+Before any of this takes payment, see the [ops & legal checklist](docs/06-Roadmap/Monetization-Ops-Checklist.md).
+
 ## Moral + epistemic Conscience Kernel (seven paths)
 
 A deterministic, **fail-closed control layer** for AI outputs, tool use, and memory writes.
