@@ -299,6 +299,40 @@ ground truth make multi-seed CIs meaningful AND advance Hurdle 1.** Religion (me
 3/6) is a genuine but currently-unmeasurable weak spot — needs more religion eval cases + the C2
 training fix. Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
 
+## v4-seed0-gsm8k-no-transfer-honest-null-2026-06-24
+
+**Status:** OPEN — first external-GT result; honest NULL with a negative point estimate. This is a
+**Hurdle 2 (transfer)** finding, and it re-scopes the **Hurdle 1** lane for this adapter.
+
+GSM8K, first 300 test rows, 3 runs each (external gold, never the gate):
+- Base Qwen2.5-3B-Instruct: **81.7%** (245/300 each run).
+- v4 seed-0 habit adapter: **78.7%** (236/300 each run).
+- Adapter − base: **−3.0pp**, paired item-bootstrap 95% CI **[−7.33pp, +1.00pp]** → includes 0
+  → honest null, negative point estimate. No significant general-capability regression, no uplift.
+
+**Interpretation (the honest scope of the method):** the seed-0 adapter is a **provenance /
+source-discipline specialist**. GSM8K is grade-school math — not what it was trained for — so a
+neutral-to-slightly-negative result is expected and correct. This is direct **Hurdle-2 evidence
+that the provenance habit does NOT transfer to math**; the method is domain-specific, not a
+general capability improver. A small negative point estimate is consistent with a mild
+specialization tax, but the CI includes 0 so no regression is proven.
+
+**Consequence for Hurdle 1:** GSM8K (and likely SWE-bench) are *generality* probes; they cannot
+validate this adapter's actual capability because they don't test provenance. The Hurdle-1
+validation lane for THIS adapter must be **capability-matched** — an EXTERNAL provenance /
+fabrication benchmark with third-party ground truth (e.g. TruthfulQA, or an external
+authorship/citation pack), where source discipline is what's measured. SWE-bench is still worth
+running to complete the transfer picture (expect a similar null — coding isn't what it does).
+
+**Artifact hygiene:** the eval used `training/mlx_adapters/sophia-v4-seed0-before-seibtrace-repair`
+because `sophia-v4-seed0` was overwritten by the abandoned SEIB-trace repair. The promotable
+seed-0 habit adapter must be archived under a canonical, checksummed path so it cannot be
+clobbered again.
+
+Harness upgraded for `--adapter`, repeated runs, JSON reports, and paired item-bootstrap CIs
+(`agent/external_eval.py`, `tools/run_external_eval.py`). Plan:
+`docs/06-Roadmap/Hurdles-2-5-Plan.md`.
+
 ## Template
 
 ```text

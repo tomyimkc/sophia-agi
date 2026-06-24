@@ -75,6 +75,14 @@ AND math AND provenance, each with its own sound verifier. **Honest bound:** dem
 the *method* generalizes across verifier-backed families — not that it reaches families
 where no sound verifier exists (that is Hurdle 3).
 
+**Empirical update (2026-06-24).** The v4 seed-0 provenance habit adapter was run on GSM8K
+(external gold, 300 rows × 3 runs): base 81.7% vs adapter 78.7%, delta **−3.0pp, 95% CI
+[−7.33, +1.00]** (null, negative point estimate). Direct evidence that **the provenance habit
+does not transfer to math** — the method is provenance-specific, not a general capability
+improver. Consequence: GSM8K/SWE-bench are *generality* probes (Hurdle 2); the Hurdle-1
+validation lane for a provenance adapter must be **capability-matched** (an external
+provenance/fabrication benchmark such as TruthfulQA), where source discipline is what's scored.
+
 ---
 
 ## Hurdle 3 — How far sound verification reaches  *(the deep one)*
