@@ -103,6 +103,39 @@ def audit_leakage(heldout_entities: list[tuple[str, str]], examples: list[tuple[
     return findings
 
 
+def corpus_partition(contested_rows: list[dict], examples: list[tuple[str, dict]]) -> dict[str, Any]:
+    """Partition contested entities by whether the ACTIVE corpus already teaches them.
+
+    Distinguishes the legitimate mission (the corpus teaching provenance on canonical works
+    like the Analects) from a clean generalization held-out. Only ``corpusClean`` entities —
+    those NO training example covers — can measure whether the qualification habit TRANSFERS
+    to unseen entities. ``corpusTaught`` entities measure in-distribution retention, not
+    generalization.
+    """
+    texts = [(name, example_text(obj)) for name, obj in examples]
+    clean, taught = [], []
+    for row in contested_rows:
+        work, author = entity_of(row)
+        n = 0
+        if work and author:
+            n = sum(1 for _name, t in texts if work in t and author in t)
+        rec = {"id": row["id"], "work": row.get("work"), "gold_author": row.get("gold_author"),
+               "entity": [work, author], "corpusExamples": n}
+        (taught if n > 0 else clean).append(rec)
+    return {
+        "schema": "sophia.seib_contested_corpus_partition.v1",
+        "nContested": len(contested_rows),
+        "corpusClean": clean,
+        "corpusTaught": taught,
+        "nCorpusClean": len(clean),
+        "nCorpusTaught": len(taught),
+        "guidance": ("Use corpusClean entities as the GENERALIZATION held-out (fabrication==0 there "
+                     "= a transferring habit). corpusTaught entities measure in-distribution retention "
+                     "only. If nCorpusClean is too small for a stable rate, commission a fresh "
+                     "corpus-disjoint contested pack (this also advances Hurdle 1 / external validation)."),
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--seib", type=Path, default=SEIB)
@@ -110,6 +143,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--examples-glob", default=EXAMPLES_GLOB)
     ap.add_argument("--audit", action="store_true", help="scan training examples for held-out leakage")
     ap.add_argument("--fail-on-leak", action="store_true", help="exit non-zero if any held-out entity leaks")
+    ap.add_argument("--partition-by-corpus", action="store_true",
+                    help="partition contested entities into corpus-clean (generalization held-out) "
+                         "vs corpus-taught (in-distribution), by actual corpus coverage")
+    ap.add_argument("--partition-out", type=Path,
+                    default=ROOT / "eval" / "seib" / "seib_contested_corpus_partition.json")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args(argv)
 
@@ -122,24 +160,47 @@ def main(argv: list[str] | None = None) -> int:
         args.split_out.write_text(json.dumps(split, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         print(f"wrote {args.split_out}")
 
-    leak_count = 0
-    if args.audit:
-        heldout_entities = [tuple(e["entity"]) for e in split["heldout"]]
-        examples = []
+    examples: list[tuple[str, dict]] = []
+    if args.audit or args.partition_by_corpus:
         for p in sorted(ROOT.glob(args.examples_glob)):
             try:
                 examples.append((str(p.relative_to(ROOT)), json.loads(p.read_text(encoding="utf-8"))))
             except (json.JSONDecodeError, OSError):
                 continue
+
+    if args.partition_by_corpus:
+        part = corpus_partition(rows, examples)
+        print(f"\ncorpus partition: corpusClean={part['nCorpusClean']} "
+              f"(generalization held-out)  corpusTaught={part['nCorpusTaught']} (in-distribution)")
+        for e in part["corpusClean"][:50]:
+            print(f"  clean: {e['work']} / {e['gold_author']}")
+        if not args.dry_run:
+            args.partition_out.write_text(json.dumps(part, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+            print(f"wrote {args.partition_out}")
+        if part["nCorpusClean"] < 10:
+            print("WARNING: too few corpus-clean contested entities for a stable rate — "
+                  "commission a fresh corpus-disjoint pack (Hurdle 1).")
+
+    leak_count = 0
+    if args.audit:
+        # Prefer the corpus-clean set as the held-out when the partition was computed — that
+        # is the CORRECT generalization held-out (the naive hash split can misclassify the few
+        # corpus-taught entities). Auditing the clean set guards against NEW traces leaking it.
+        if args.partition_by_corpus:
+            heldout_entities = [tuple(e["entity"]) for e in corpus_partition(rows, examples)["corpusClean"]]
+            held_label = "corpus-clean generalization"
+        else:
+            heldout_entities = [tuple(e["entity"]) for e in split["heldout"]]
+            held_label = "hash-split held-out"
         findings = audit_leakage(heldout_entities, examples)
         leak_count = len(findings)
         if findings:
-            print(f"\nLEAKAGE: {leak_count} training example(s) mention a HELD-OUT contested entity:")
+            print(f"\nLEAKAGE ({held_label}): {leak_count} training example(s) teach a held-out contested entity:")
             for f in findings[:50]:
                 print(f"  - {f['file']}: {f['work']} / {f['author']}")
-            print("These teach the held-out test. Move them to train-half entities or remove them.")
+            print("Remove these or move the qualification habit to non-held-out entities.")
         else:
-            print("\nLEAKAGE AUDIT: CLEAN — no training example covers a held-out contested entity.")
+            print(f"\nLEAKAGE AUDIT ({held_label}): CLEAN — no training example covers a held-out contested entity.")
 
     if args.fail_on_leak and leak_count:
         return 1

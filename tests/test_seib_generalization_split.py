@@ -8,6 +8,7 @@ from __future__ import annotations
 from tools.seib_generalization_split import (
     audit_leakage,
     author_core,
+    corpus_partition,
     entity_of,
     load_contested,
     split_contested,
@@ -57,3 +58,20 @@ def test_leakage_audit_clean_when_disjoint():
     examples = [("training/examples/001.json",
                  {"messages": [{"role": "user", "content": "Who wrote the Dao De Jing?"}], "metadata": {}})]
     assert audit_leakage(heldout, examples) == []
+
+
+def test_corpus_partition_separates_taught_from_clean():
+    rows = [
+        {"id": "c1", "work": "Analects", "gold_author": "Confucius"},
+        {"id": "c2", "work": "The Obscure Unseen Treatise", "gold_author": "Nobody Documented"},
+    ]
+    examples = [("training/examples/x.json",
+                 {"messages": [{"role": "assistant",
+                                "content": "The Analects was compiled by Confucius's disciples."}],
+                  "metadata": {}})]
+    part = corpus_partition(rows, examples)
+    taught_ids = {e["id"] for e in part["corpusTaught"]}
+    clean_ids = {e["id"] for e in part["corpusClean"]}
+    assert "c1" in taught_ids and part["corpusTaught"][0]["corpusExamples"] >= 1
+    assert "c2" in clean_ids
+    assert part["nCorpusClean"] + part["nCorpusTaught"] == 2

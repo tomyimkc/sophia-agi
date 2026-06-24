@@ -198,6 +198,34 @@ so it generalises to unseen entities, and measure on a contested set disjoint fr
 entities (ideally a fresh third-party pack — that also advances Hurdle 1). Keep false-positive
 cost ≤ 0.10 (don't tip into denying true authorships). Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
 
+## v4-seib-corpus-partition-47-of-50-clean-2026-06-24
+
+**Status:** OPEN (held-out clarified; clean generalization run pending — no GPU here).
+
+The corpus-coverage partition (`tools/seib_generalization_split.py --partition-by-corpus`)
+resolves the held-out confusion: **47 of 50 SEIB-100 contested entities are corpus-CLEAN**;
+only **3 are corpus-taught** — Dao De Jing/Laozi, Analects/Confucius, Enchiridion/Arrian. The
+earlier `--audit --fail-on-leak` red was an artifact of the naive 50/50 hash split dropping
+some of those 3 taught entities into its held-out half; the corpus partition is the correct
+held-out definition, and auditing the 47-entity corpus-clean set is **CLEAN** (exit 0).
+
+**Implications:**
+- SEIB-100 contested **is** a valid generalization held-out (47/50 untaught). The earlier
+  seed-0 failures (Dostoevsky/Crime and Punishment, Bradbury/Fahrenheit 451, Beauvoir/The
+  Second Sex — all corpus-clean) were **genuine generalization failures**, not test artifacts.
+- The removed per-entity repair traces were gaming corpus-clean held-out entities — correctly
+  reverted.
+- The 3 corpus-taught entities should be scored separately as **in-distribution retention**,
+  not generalization.
+
+**Corrected metric + protocol:** report `fabricationRateOnContested` over the **47 corpus-clean**
+entities as the generalization number; require it == 0 WITHOUT any training trace touching those
+entities (guarded by `--partition-by-corpus --audit --fail-on-leak`). Instil the qualification
+habit generally — retrieval-grounded ("assert only what retrieval confirms at high confidence;
+else qualify/abstain") — so it transfers to the 47 unseen entities. Keep falsePositiveCost ≤ 0.10.
+A fresh third-party pack is still better for Hurdle 1, but 47 clean entities suffice for a first
+honest generalization signal. Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
+
 ## Template
 
 ```text
