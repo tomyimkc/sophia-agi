@@ -93,6 +93,32 @@ L2-init / continual-backprop) at the retrain step — is hardware-bound. The run
 (`tools/run_ssil_generations.py`) already consumes real aggregates; only the GPU runs remain.
 Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
 
+## hurdle1-swebench-runner-built-not-run-2026-06-24
+
+**Status:** OPEN (runner built + tested; no real run yet).
+
+Hurdle 1 (external/independent validation) enablement: `tools/run_swebench.py` runs
+SWE-bench Verified the honest way — Sophia produces patches; the **official**
+`swebench.harness.run_evaluation` grades in Docker against the real
+FAIL_TO_PASS/PASS_TO_PASS tests (external ground truth, never the Sophia gate). The tool
+owns only the deterministic halves: prompt build, unified-diff extraction, official
+prediction format ({instance_id, model_name_or_path, model_patch}), and parsing the
+official report into a no-overclaim artifact (`schema sophia.external_benchmark.v1`,
+resolvedRate, per-instance ids, decontamination + claim-boundary). Offline style sample
+(`eval/external/swebench-style-sample.jsonl`) + `tests/test_run_swebench.py` (8 tests)
+keep it CI-safe; lint_claims OK.
+
+**Why this is NOT a result:** no real SWE-bench Verified run has happened. The committed
+solver is a minimal scaffold (problem statement → model → diff) with no repo navigation,
+so resolved% will be a floor. Grading needs Docker + the `swebench` package (x86_64 by
+default; Apple Silicon needs arm64 images or a Linux host for the eval step).
+
+**Required to make it a defensible claim:** real run on `princeton-nlp/SWE-bench_Verified`,
+base vs sophia-full vs adapter, ≥3 runs with CIs, report the DELTA vs base (cancels shared
+pretraining contamination), then third-party reproduction. Companion external lane GSM8K is
+already wired (`tools/fetch_eval_dataset.py --dataset gsm8k` + `tools/run_external_eval.py`).
+Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
+
 ## Template
 
 ```text
