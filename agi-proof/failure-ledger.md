@@ -166,5 +166,15 @@ council-quality traces, evaluate the MLX adapter on SEIB directly (runner does n
 MLX adapters), then re-run ≥3 seeds and only promote if provenance/citation improves at
 acceptable false-positive cost with no useful-correctness regression.
 
-**Claim impact:** Sophia now has an executed local-training path and one trained local adapter,
-but no public headline should claim a validated wisdom-model uplift yet.
+**Update (C1, 2026-06-24):** this NOT-PROMOTED verdict is no longer a hand-written note. The
+adapter's eval ladder is now run through the W2 bounded-RSI promotion gate
+(`agent/continual_plasticity.evaluate_update`) by `tools/promote_adapter.py`, which
+independently reproduces the `reject` — protected regression on `religion` (−0.167) — and an
+`agent/formal_verifier` protected-floor lattice proof agrees (`after_religion(0) >= 157`
+violated). Reproducible artifact:
+`agi-proof/continual-plasticity/sophia-v2-promotion.public-report.json`; gated by
+`tests/test_promote_adapter.py`. Plan: `docs/06-Roadmap/Training-RSI-Continual-Convergence.md`.
+
+**Claim impact:** Sophia now has an executed local-training path, one trained local adapter,
+and a **machine-checked promotion gate** that rejects it for a stated reason — but no public
+headline should claim a validated wisdom-model uplift yet.

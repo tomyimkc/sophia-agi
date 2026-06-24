@@ -38,25 +38,25 @@ connected. The promotion step is the one place where "the gate enforces truth" i
 
 ---
 
-## C1 — Wire training output → W2 promotion gate *(do first; no GPU)*
+## C1 — Wire training output → W2 promotion gate ✅ *(done; no GPU)*
 
 **Why:** turns the hand-written promotion note into a reproducible, machine-checked W2
 artifact. This is the highest-leverage item and needs no new training.
 
-**Build:**
-1. Add `tools/promote_adapter.py` that reads `eval_ladder_baseline.json` +
-   `eval_ladder_adapter.json`, builds an `UpdateCandidate` (per-domain suites; mark
-   `Religion`, `History` **protected**), attaches the contamination flag from the dataset
-   manifest and the eval-run artifacts, and calls
-   `continual_plasticity.evaluate_update(target_suite="Total", ...)`.
-2. Emit the `PromotionDecision` to
-   `agi-proof/continual-plasticity/sophia-v2-promotion.public-report.json`.
-3. Re-run on the current adapter — it **must** return `reject` (Religion −16.7pt protected
-   regression), reproducing today's hand decision *automatically*.
+**Built:** `tools/promote_adapter.py` reads `eval_ladder_baseline.json` +
+`eval_ladder_adapter.json`, builds an `UpdateCandidate` (per-domain suites; `religion`,
+`history` marked **protected**), attaches the contamination flag from the dataset manifest +
+the on-disk run artifacts, runs an **independent** `agent/formal_verifier` protected-floor
+lattice proof, and calls `continual_plasticity.evaluate_update(target_suite="total", ...)`.
+The `PromotionDecision` is written to
+`agi-proof/continual-plasticity/sophia-v2-promotion.public-report.json`. `--fail-on-reject`
+makes it CI-gateable.
 
-**Acceptance:** the v2 adapter is rejected by the gate for the same reason the ledger states;
-a test asserts a clean improving candidate would promote and the religion-regressing one
-rejects. **Resource:** none. **Honest bound:** a verified *promotion* decision — not a
+**Result:** on the current adapter the gate returns **`reject`** — protected regression on
+`religion` (−0.167) — and the formal proof independently agrees (`after_religion(0) >= 157`
+violated). This reproduces today's hand decision *automatically*. Gated by
+`tests/test_promote_adapter.py` (also asserts a clean improving candidate promotes), wired
+into `.github/workflows/ci.yml`. **Honest bound:** a verified *promotion* decision — not a
 verified *capability*.
 
 ---
@@ -129,7 +129,7 @@ false-positive cost, no useful-correctness regression) with CIs excluding 0.
 
 | Order | Item | Resource | Ships |
 |---|---|---|---|
-| 1 | **C1** wire training → W2 gate | none | machine-checked promotion (auto-reproduces today's decision) |
+| 1 | **C1** wire training → W2 gate ✅ | none | machine-checked promotion (auto-reproduces today's decision) |
 | 2 | **C3** pipeline fixes (split rows, SEIB-MLX) | none | honest measurement of the real adapter |
 | 3 | **C2** fix religion regression | hardware (retrain) | the one failing predicate cleared |
 | 4 | **C4** feedback miner → next pack | none | the loop becomes *continual* |
