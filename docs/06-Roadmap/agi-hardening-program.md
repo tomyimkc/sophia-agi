@@ -106,7 +106,7 @@ promotion through `agent.continual_plasticity` for parity. `skill_retention_benc
 `forgottenSkills == 0` with a skill reused across later episodes (deterministic).
 Tests in `tests/test_skill_library.py` (CI `validate-core`).
 
-## Phase 3 — Capstone: governed autonomous RSI (gated by all above)
+## Phase 3 — Capstone: governed autonomous RSI (gated by all above)  ✅ delivered (candidate)
 **#6 Full autonomous RSI inside the inviolable cage.** The loop proposes + commits improvements
 (new facts, skills, verifiers, corpus enrichment) autonomously, **but**: only in verifiable
 domains (Judge-Code/RLVR); every commit passes verifier-based gates + the anti-forgetting
@@ -114,6 +114,27 @@ tripwire; any invariant breach ⇒ automatic rollback + halt; full append-only a
 Substrate: `constitution/`, `conscience.py`, `verifier_synthesis.py`, `continual_plasticity.py`.
 *Done when:* the loop runs unattended over a stream, improves a measured metric, and a red-team
 proves no invariant can be driven false (rollback fires every time).
+→ **`agent/governed_rsi.py`** (`CAGE_INVARIANTS` (frozen tuple), `Proposal`, `GovernedRSI`
+(`step`/`run`/`check_invariants`/`kill`/`audit_log`), `red_team_report`); tests in
+`tests/test_governed_rsi.py` (CI `validate-core`). The `step()` pipeline is fail-closed in order:
+halted-noop → **tamper⇒reject+halt** → weight-update⇒reject (`weights_frozen`) → **verifiability via
+`verifier_synthesis.synthesize`** (abstain⇒reject — verifier-based, never a classifier, per the
+RSI-workshop finding) → shadow-apply + verifier `.gate` + poison check (`poison_resistant_ingestion`)
++ provenance (`run_attribution_checks`) + anti-forgetting pre-check → **commit then re-audit all
+invariants; any breach ⇒ rollback + halt** (the inviolable backstop). `CAGE_INVARIANTS` is an
+immutable tuple with no mutation path; the audit is append-only on a monotonic `seq`; a hard
+kill-switch makes `step()` a no-op. **A 4-agent red-team independently attacked each invariant and
+could not breach the cage** (`red_team_report().ok == True`, `anyInvariantDrivenFalse == False`,
+reject/rollback fired every time).
+
+---
+
+## Status: all 7 factors delivered (candidate)
+Every phase is implemented, offline-tested, CI-wired, and built through a build → adversarial-verify
+→ (red-team) → cage-compliance multi-agent pipeline. Per Sophia discipline these ship `candidateOnly`
+until they clear the candidate → validated gate (≥2–3 distinct judge families, κ ≥ 0.40, ≥3 runs,
+CIs, independent replication). "Toward general AI" remains the direction; this is honest, measured,
+gated machinery — not an AGI claim.
 
 ---
 

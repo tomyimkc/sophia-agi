@@ -122,6 +122,7 @@ jobs:
           python tests/test_poison_resistant_ingestion.py
           python tests/test_incremental_revision.py
           python tests/test_skill_library.py
+          python tests/test_governed_rsi.py
           python tests/test_run_cls_consolidation.py
           python tests/test_wiki_proof.py
           python tests/test_agent_harness.py
