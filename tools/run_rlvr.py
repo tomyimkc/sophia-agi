@@ -196,9 +196,17 @@ def _run_gpu(args: argparse.Namespace) -> int:
         use_vllm=use_vllm,
     )
     if use_vllm:
-        grpo_kwargs["vllm_mode"] = args.vllm
-        grpo_kwargs["vllm_gpu_memory_utilization"] = args.vllm_mem_util
-        grpo_kwargs["vllm_max_model_len"] = args.max_prompt_len + args.max_completion_len
+        # vllm_mode (colocate/server selector) only exists in trl >= 0.17; older
+        # pinned trl (0.16.x) does in-process colocate via use_vllm alone and
+        # rejects the kwarg. Gate on the actual dataclass fields so the config is
+        # valid on whatever trl the pod resolved.
+        cfg_fields = set(getattr(GRPOConfig, "__dataclass_fields__", {}))
+        if "vllm_mode" in cfg_fields:
+            grpo_kwargs["vllm_mode"] = args.vllm
+        if "vllm_gpu_memory_utilization" in cfg_fields:
+            grpo_kwargs["vllm_gpu_memory_utilization"] = args.vllm_mem_util
+        if "vllm_max_model_len" in cfg_fields:
+            grpo_kwargs["vllm_max_model_len"] = args.max_prompt_len + args.max_completion_len
     cfg = GRPOConfig(**grpo_kwargs)
 
     peft_cfg = LoraConfig(

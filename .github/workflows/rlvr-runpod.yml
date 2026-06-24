@@ -118,7 +118,7 @@ jobs:
             --task "${{ github.event.inputs.task }}" \
             --epochs "${{ github.event.inputs.epochs }}" \
             --seed "${{ github.event.inputs.seed }}" \
-            --quant bf16 --vllm colocate \
+            --quant bf16 --vllm none \
             --gpu-type "${{ github.event.inputs.gpu_type }}" \
             $INTERRUPTIBLE
 
