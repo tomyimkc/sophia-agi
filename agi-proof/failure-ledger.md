@@ -196,3 +196,76 @@ violated). Reproducible artifact:
 **Claim impact:** Sophia now has an executed local-training path, one trained local adapter,
 and a **machine-checked promotion gate** that rejects it for a stated reason — but no public
 headline should claim a validated wisdom-model uplift yet.
+
+## local-sophia-v3-mlx-promoted-by-w2-but-not-validated-2026-06-24
+
+**Status:** PARTIAL / W2-PROMOTED, NOT VALIDATED.
+
+Hardware-bound C2 was run on Apple Silicon / MLX-LM (`mlx_lm 0.29.1`) on branch
+`claude/sophia-training-next-steps-ij1kvm`. The training pack was rebuilt after adding new,
+human-authored religion council traces that are distinct from held-out eval prompts. The
+contamination guard stayed CLEAN throughout.
+
+**Data + token-fit:**
+
+- Added 90 new religion repair council traces in `training/council/traces.jsonl` across the
+  weak topics: Gospel/Matthew authorship, ancestor veneration vs Confucian philosophy,
+  Dao De Jing philosophy/religion, early Islam theology/history boundary, nirvana pop myth,
+  and Sunni/Shia hadith vs Quran boundaries.
+- Final manifest: `trainRowsTotal=1356`; `missingRequiredInputs={}`; `contamination.clean=true`;
+  `vsEval.overlapCount=0`; `vsHoldoutOverlapCount=0`.
+- Final MLX pack: `trainRows=739`, `validRows=89`, `maxTokens=1024`.
+- `tools/split_long_training_rows.py training/local_sophia_v2/mlx/train.jsonl --dry-run` emitted
+  `rowsDroppedUnsplittable=0`, `turnsDroppedOverlong=0` on the emitted pack. The final MLX
+  training run showed no truncation warnings.
+
+**Training:**
+
+- Base model: `Qwen/Qwen2.5-3B-Instruct`.
+- Adapter: `training/mlx_adapters/sophia-v3`.
+- Command: `python3 -m mlx_lm lora --train --model Qwen/Qwen2.5-3B-Instruct --data training/local_sophia_v2/mlx --iters 500 --batch-size 4 --mask-prompt --adapter-path training/mlx_adapters/sophia-v3 --max-seq-length 1024`.
+- Final run: 500 iters, final train loss `0.933`, final val loss `1.793`, peak memory `22.202 GB`.
+- Metadata: `training/local_sophia_v2/training_run_mlx_sophia_v3.json`.
+
+**Eval ladder:**
+
+- MLX base: `16/32 = 50.0%`.
+- MLX base+gate: `16/32 = 50.0%`, with 29 gate flags.
+- MLX adapter v3: `24/32 = 75.0%`.
+- MLX adapter v3+gate: `24/32 = 75.0%`, with 20 gate flags.
+- Domain deltas: philosophy `6/9 -> 9/9`, psychology `4/9 -> 8/9`, history `5/8 -> 6/8`, religion `1/6 -> 1/6`.
+
+**W2 promotion gate:**
+
+- Artifact: `agi-proof/continual-plasticity/local-sophia-v3-mlx-promotion.public-report.json`.
+- `tools/promote_adapter.py` returned `FINAL VERDICT: promote` for `local-sophia-v3-mlx`.
+- Reason: total delta `+0.25`, protected history improved, protected religion no longer regressed.
+- Honest caveat: religion only recovered to baseline (`1/6`), below the aspirational target `3/6`.
+
+**C3 direct SEIB on MLX adapter:**
+
+- Artifact: `agi-proof/benchmark-results/seib-mlx-sophia-v3.json`.
+- Result: `ok=false`.
+- Deltas: `raw_to_full_accuracy_delta=-0.01`, `prompt_to_full_citation_delta=+0.30`,
+  `raw_to_full_contested_fabrication_reduction=-0.02`, `sophia_full_false_positive_cost=0.02`.
+- `sophia_full`: provenance accuracy `0.96`, false attribution rate `0.0`, contested fabrication
+  `0.08`, source citation rate `0.30`.
+- Claim impact: this blocks any validated SEIB uplift claim for v3.
+
+**C4 learning-under-shift post-test:**
+
+- Artifact: `agi-proof/learning-under-shift/shift-result-local-sophia-v3-mlx-2026-06-24.public-report.json`.
+- Result: `passingSignal=false`.
+- Pre-test `0.0%`; post-test `50.0%`; contamination audit clean; protected hashes unchanged.
+- Failure: old-benchmark stability was `50.0%` vs baseline `100.0%`, delta `-50.0`, so the protocol
+  correctly refuses the passing signal.
+
+**C5 status:** NOT RUN as promotion-grade evidence. Although the W2 gate promoted v3 on the
+first-party eval ladder, the direct SEIB run returned `ok=false` and the learning-shift protocol
+returned `passingSignal=false`. Multi-seed stability, SEIB-100 ≥3 runs with ≥2 judge families,
+and live RLVR remain open. Live RLVR is also CUDA/vLLM-gated and was not attempted on this
+Apple Silicon run.
+
+**Claim impact:** v3 is a locally trained adapter with a W2 promotion-gate verdict on first-party
+benchmarks. It is **not** validated external evidence, not a promotion-grade result, not an AGI
+claim, and not a hallucination guarantee.
