@@ -70,6 +70,17 @@ Robust regardless of judge:
 - the delta is positive and real
 - the effect tracks a model's propensity-to-assert, not its size
 
+## Continual / grounded-answering (CANDIDATE — not a headline)
+
+Continual Provenance QA (CPQA): a frozen LLM answers either from the retrieved OKF/wiki source (`grounded`) or from parametric memory (`raw`), and a cross-provider judge panel scores both. Held to the no-overclaim gate and **candidate, not validated** — self-authored benchmark, keys held by one operator, no external replication.
+
+- Benchmark: Continual Provenance QA (CPQA) — grounded vs raw answers over the 92-page wiki corpus
+- Answers: gpt-4o-mini (OpenAI, via LLMHub) · Judges: openrouter:deepseek/deepseek-chat (DeepSeek), openrouter:meta-llama/llama-3.3-70b-instruct (Meta) (judges via OpenRouter; answers via LLMHub — independent gateways) · 3 runs · N=20
+- Overall consensus pass: grounded **93.3%** [86.7%, 98.3%] vs raw **66.7%** [55.0%, 78.3%]
+- By expectation — **abstain/attribution-traps: grounded 100.0% vs raw 0.0%**; recall: grounded 91.1% vs raw 88.9% (a strong raw model already knows well-known facts; grounding's win is fail-closed abstention on traps)
+- Inter-judge κ 0.33 · percent-agreement 93.0%
+- ⚠ CANDIDATE, not validated: self-authored benchmark, two API keys held by one operator, no external replication, and grounded kappa is depressed by near-saturation (percent-agreement 0.93 is the honest agreement number). The robust, gate-relevant finding is the per-expectation split: on abstain/attribution-traps grounded scores 1.0 vs raw 0.0; on plain recall the two are ~equal (a strong raw model already knows well-known facts). Numbers are the 20-query cross-gateway subset; a full 92-query run is pending.
+
 ## Reproduce
 
 ```bash

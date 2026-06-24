@@ -204,6 +204,35 @@ def render(doc: dict) -> str:
             L += [f"- {x}" for x in audit["robustRegardlessOfJudge"]]
             L.append("")
 
+    cg = doc.get("continualGroundedEvals")
+    if cg:
+        g, r = cg.get("grounded", {}), cg.get("raw", {})
+        gci, rci = g.get("ci", [None, None]), r.get("ci", [None, None])
+        L += [
+            "## Continual / grounded-answering (CANDIDATE — not a headline)",
+            "",
+            "Continual Provenance QA (CPQA): a frozen LLM answers either from the retrieved "
+            "OKF/wiki source (`grounded`) or from parametric memory (`raw`), and a "
+            "cross-provider judge panel scores both. Held to the no-overclaim gate and "
+            "**candidate, not validated** — self-authored benchmark, keys held by one "
+            "operator, no external replication.",
+            "",
+            f"- Benchmark: {cg.get('benchmark')}",
+            f"- Answers: {cg.get('answerModel')} · Judges: {', '.join(cg.get('judges', []))} "
+            f"({cg.get('gateway')}) · {cg.get('runs')} runs · N={cg.get('queryCount')}",
+            f"- Overall consensus pass: grounded **{_pct(g.get('consensus'))}** "
+            f"[{_pct(gci[0])}, {_pct(gci[1])}] vs raw **{_pct(r.get('consensus'))}** "
+            f"[{_pct(rci[0])}, {_pct(rci[1])}]",
+            f"- By expectation — **abstain/attribution-traps: grounded {_pct(g.get('abstain'))} "
+            f"vs raw {_pct(r.get('abstain'))}**; recall: grounded {_pct(g.get('assert'))} "
+            f"vs raw {_pct(r.get('assert'))} (a strong raw model already knows well-known facts; "
+            "grounding's win is fail-closed abstention on traps)",
+            f"- Inter-judge κ {cg.get('interJudgeKappa')} · percent-agreement "
+            f"{_pct(cg.get('interJudgePercentAgreement'))}",
+            f"- ⚠ {cg.get('note', '')}",
+            "",
+        ]
+
     L += [
         "## Reproduce",
         "",
