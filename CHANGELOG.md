@@ -74,6 +74,28 @@ All notable changes to Sophia AGI are documented here.
   catastrophic forgetting with deliberate unlearning recorded, baseline forgets +
   fabricates, retraction/cascade/revision force correct abstention. Wired into `ci.yml`.
 
+### Added — CPQA next steps: LLM-controller layer, wiki-scale corpus, validation CIs
+
+- `agent/continual_qa_controller.py` — the "LLM as control flow" layer routes a
+  natural-language question to a fact id. `OracleController` (perfect routing, isolates
+  the store), `LexicalController` (deterministic token-overlap, CI-able), `LLMController`
+  (real routing via `agent.llm.complete`; gated behind an API key, not run in CI).
+  `continual_qa.control_flow_report` measures the **control-flow gap** = oracle minus
+  controller accuracy — limitation #1 quantified.
+- `tools/gen_continual_qa_from_wiki.py` + `eval/continual_qa/episodes_v2_wiki.jsonl` —
+  generates a **92-query benchmark from the real 67-page wiki/ corpus** (recall /
+  retention / unlearning / control). Report: `agi-proof/benchmark-results/continual-qa-wiki.public-report.json`.
+- `tools/run_continual_qa_validation.py` — bootstrap-CI validation. Exact-match scoring
+  has no judge subjectivity (LLM-judge families apply only to the future LLM-controller
+  path), so rigor = confidence intervals + a control-flow sweep.
+- **Results (wiki, 92 queries):** graph_backed accuracy **1.0, CI [1.0, 1.0]**, 0/92
+  errors (rule-of-three upper error bound 3.3%), 0 unintended forgetting, 2 deliberate
+  unlearnings; parametric_baseline **0.37, CI [0.28, 0.47]** (56 misses, 2 stale
+  fabrications). Control-flow gap grows **0.09 → 0.30 → 0.45** as lexical routing
+  strictness rises. All `candidateOnly:true`, `validated:false`.
+- `tests/test_continual_qa_controller.py`, `tests/test_continual_qa_validation.py` —
+  wired into `ci.yml` alongside corpus generation + validation runs.
+
 ## [0.7.47] - 2026-06-24
 
 ### Added — SEIB real API/local priority runs + LLM judge support

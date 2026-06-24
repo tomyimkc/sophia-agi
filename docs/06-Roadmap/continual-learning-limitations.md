@@ -118,3 +118,25 @@ controller can start deterministic (retrieval-only) so the benchmark proves the
 **Pre-registered honesty:** `level3Evidence:false` / `validated:false` until it clears the
 full no-overclaim gate (≥2 judge families, κ ≥ 0.40, ≥3 runs, CIs) per RESULTS.md. The
 baseline must be a fair weight-model analogue, not a strawman.
+
+### Status — CPQA built and extended (all three next steps landed)
+
+1. **LLM-control-flow layer** — `agent/continual_qa_controller.py` (Oracle / Lexical /
+   gated LLM). The control-flow gap is now *measured*, directly quantifying limitation #1:
+   under perfect oracle routing the store scores 1.0, but a lexical router opens a gap of
+   **0.09 → 0.30 → 0.45** as routing strictness rises. The real-LLM path is wired but
+   needs an API key (not run in CI).
+2. **Wiki-scale corpus** — `tools/gen_continual_qa_from_wiki.py` →
+   `episodes_v2_wiki.jsonl`: **92 queries from the real 67-page wiki/ corpus.**
+   graph_backed accuracy **1.0**, 0 unintended forgetting; baseline **0.37**.
+3. **Validation CIs** — `tools/run_continual_qa_validation.py`: graph_backed accuracy CI
+   **[1.0, 1.0]** (0/92 errors, rule-of-three upper bound 3.3%); baseline CI
+   **[0.28, 0.47]**. Exact-match scoring has no judge subjectivity, so multi-judge
+   families are reserved for the future generated-answer (LLM-controller) path.
+
+**Remaining honest gaps:** the substrate result (1.0) is the *knowledge store* under
+perfect routing; real end-to-end accuracy is bounded by the control-flow layer (the gap
+above) and by query-formulation, which needs the parametric prior of limitation #1. The
+corpus is 67 curated pages, not open-domain. Moving CPQA from `candidateOnly` to a
+RESULTS.md number additionally requires the LLM-controller path measured across ≥3 runs
+with judge families on the generated answers.

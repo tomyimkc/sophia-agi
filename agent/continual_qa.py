@@ -25,6 +25,7 @@ from pathlib import Path
 from typing import Any
 
 from agent.belief_revision_policy import resolve_conflicts
+from agent.continual_qa_controller import OracleController
 from agent.continual_retention import Snapshot, build_report
 from okf import build_graph, claims_to_abstain, is_grounded, propagate_confidence
 from okf.graph import resolve
@@ -54,6 +55,24 @@ class Episode:
 def _page_from_dict(d: dict) -> Page:
     meta = {k: v for k, v in d.items() if k not in _NON_META}
     return Page(path=Path(f"{meta['id']}.md"), meta=meta)
+
+
+def build_vocab(episodes) -> "dict[str, str]":
+    """Map every taught fact id to its searchable text (id words + title + aliases).
+
+    This is the namespace a controller routes a question into — the wiki's catalog.
+    """
+    vocab: dict[str, str] = {}
+    for ep in episodes:
+        for p in ep.learn:
+            parts = [p.id.replace("_", " ")]
+            title = p.meta.get("canonicalTitleEn")
+            if title:
+                parts.append(str(title))
+            for alias in p.meta.get("aliases", []) or []:
+                parts.append(str(alias).replace("_", " "))
+            vocab[p.id] = " ".join(parts)
+    return vocab
 
 
 def load_episodes(path) -> "list[Episode]":
@@ -140,10 +159,18 @@ class ParametricBaseline:
         return "assert" if target in self._frozen else "abstain"
 
 
-def _score(answer: str, expect: str) -> str:
+def _score_routed(routed, target: str, expect: str, asserted: bool) -> str:
+    """Score one query given where the controller routed and whether the store asserted.
+
+    assert-expected: correct only if the store asserts the *right* fact; asserting the
+    wrong routed fact is ``wrong`` (control-flow error), asserting nothing is ``miss``
+    (forgetting / never-learned). abstain-expected: asserting anything is a fabrication.
+    """
     if expect == "assert":
-        return "correct" if answer == "assert" else "miss"          # miss == forgetting/never-learned
-    return "correct" if answer == "abstain" else "fabrication"      # asserted a stale/unknown fact
+        if not asserted:
+            return "miss"
+        return "correct" if routed == target else "wrong"
+    return "correct" if not asserted else "fabrication"
 
 
 def _aggregate(rows, key: str) -> "dict":
@@ -151,6 +178,7 @@ def _aggregate(rows, key: str) -> "dict":
     correct = sum(1 for r in rows if r[key] == "correct")
     fabrication = sum(1 for r in rows if r[key] == "fabrication")
     miss = sum(1 for r in rows if r[key] == "miss")
+    wrong = sum(1 for r in rows if r[key] == "wrong")
     return {
         "total": n,
         "correct": correct,
@@ -159,11 +187,21 @@ def _aggregate(rows, key: str) -> "dict":
         "fabricationRate": round(fabrication / n, 4) if n else 0.0,
         "misses": miss,
         "missRate": round(miss / n, 4) if n else 0.0,
+        "wrong": wrong,
+        "wrongRate": round(wrong / n, 4) if n else 0.0,
     }
 
 
-def run_benchmark(episodes) -> "dict[str, Any]":
-    """Stream the episodes through both systems and score retention + fabrication."""
+def run_benchmark(episodes, controller=None) -> "dict[str, Any]":
+    """Stream the episodes through both systems, routing each question with ``controller``.
+
+    The controller (the "LLM as control flow" layer) decides which fact a question is
+    about; both stores then answer the *same* routed fact, so the only variable between
+    systems is the knowledge store. Defaults to ``OracleController`` (perfect routing),
+    which isolates the knowledge substrate.
+    """
+    controller = controller or OracleController()
+    vocab = build_vocab(episodes)
     gb = GraphBackedSystem()
     baseline: "ParametricBaseline | None" = None
     snapshots: list[Snapshot] = []
@@ -181,16 +219,18 @@ def run_benchmark(episodes) -> "dict[str, Any]":
             baseline = ParametricBaseline(state.keys())   # freeze the weight model at t0
 
         for q in ep.queries:
-            gb_ans = gb.answer(q.target)
-            bl_ans = baseline.answer(q.target) if baseline else "abstain"
+            routed = controller.route(q.text, vocab, gold=q.target)
+            gb_asserted = routed is not None and routed in state
+            bl_asserted = bool(baseline and routed is not None and baseline.answer(routed) == "assert")
             rows.append({
                 "episode": ep.id,
                 "query": q.id,
                 "target": q.target,
+                "routed": routed,
                 "expect": q.expect,
                 "type": q.type,
-                "graph_backed": _score(gb_ans, q.expect),
-                "parametric_baseline": _score(bl_ans, q.expect),
+                "graph_backed": _score_routed(routed, q.target, q.expect, gb_asserted),
+                "parametric_baseline": _score_routed(routed, q.target, q.expect, bl_asserted),
             })
 
     retention = build_report(snapshots)
@@ -215,8 +255,33 @@ def run_benchmark(episodes) -> "dict[str, Any]":
             "backwardTransfer": retention["backwardTransfer"],
             "retentionMatrix": retention["retentionMatrix"],
         },
+        "controller": controller.name,
         "rows": rows,
     }
 
 
-__all__ = ["Query", "Episode", "load_episodes", "GraphBackedSystem", "ParametricBaseline", "run_benchmark"]
+def control_flow_report(episodes, controller) -> "dict[str, Any]":
+    """Quantify the control-flow error: graph_backed accuracy under a perfect oracle
+    router vs under ``controller``. The gap is what the LLM-as-control-flow layer costs.
+    """
+    oracle = run_benchmark(episodes, OracleController())
+    routed = run_benchmark(episodes, controller)
+    sub = oracle["systems"]["graph_backed"]["accuracy"]
+    end = routed["systems"]["graph_backed"]["accuracy"]
+    return {
+        "schema": "sophia.continual_qa_control_flow.v1",
+        "candidateOnly": True,
+        "validated": False,
+        "level3Evidence": False,
+        "controller": controller.name,
+        "substrateAccuracy": sub,                       # oracle routing == knowledge store alone
+        "endToEndAccuracy": end,                         # store + this controller
+        "controlFlowGap": round(sub - end, 4),           # error introduced by routing
+        "routingErrors": [r["query"] for r in routed["rows"] if r["graph_backed"] in ("wrong", "miss")],
+        "oracle": oracle["systems"]["graph_backed"],
+        "routedSystem": routed["systems"]["graph_backed"],
+    }
+
+
+__all__ = ["Query", "Episode", "load_episodes", "build_vocab", "GraphBackedSystem",
+           "ParametricBaseline", "run_benchmark", "control_flow_report"]
