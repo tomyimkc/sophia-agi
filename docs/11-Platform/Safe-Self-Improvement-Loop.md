@@ -160,12 +160,18 @@ anti-circularity primitive in the repo — SSIL leans on it as the core trust st
 protected-suite regression** and no contamination. Same module gates Layer-0 skills
 and Layer-1 weight deltas.
 
-### G5 — Honeypot / canary *(new)*
+### G5 — Honeypot / canary *(BUILT — `agent/honeypot_gate.py`)*
 Plant detectable easy-cheats in the eval harness — one per Goodhart mode (regressional
-/ extremal / causal / adversarial). A Δ that takes the bait is auto-rejected.
-- **Anti-evasion caveat (see §7):** honeypots must rotate and be unpredictable, or you
-  select for honeypot-*detection* rather than honesty. Log every time a honeypot is
-  retired or stops being trusted.
+/ extremal / causal / adversarial). A Δ that takes the bait is auto-rejected; probing
+non-active/retired honeypots also rejects.
+- **Anti-evasion (implemented):** the active set rotates deterministically per `seed`
+  (hashlib-based), guaranteeing one honeypot per required mode while varying which one
+  is live. Retired honeypots are excluded and logged, never silently dropped.
+
+> **Status:** implemented. Module `agent/honeypot_gate.py`, frozen pool
+> `eval/conscience/honeypots.v1.json`, tests `tests/test_honeypot_gate.py` (9),
+> runner `tools/run_honeypot_gate.py`
+> (artifact: `agi-proof/self-gate/honeypot-gate.public-report.json`).
 
 ### G6 — Corrigibility invariant *(BUILT — `agent/corrigibility_gate.py`)*
 
@@ -287,10 +293,14 @@ shipping the gate **and** this list.
 2. **G2 reward-isolation tripwire** — ✅ **DONE** (`agent/reward_isolation.py`,
    frozen surface, 11 tests, runner). Turns two constitutional prohibitions into
    executable checks.
-3. **G5 honeypots** — one canary per Goodhart mode, rotating.
-4. **SSIL orchestrator** — chain G1–G9, fail closed on any abstain/reject, emit an
-   append-only signed audit artifact (mirror the `tools/run_agi_missing_pillars.py`
-   one-command-artifact pattern).
+3. **G5 honeypots** — ✅ **DONE** (`agent/honeypot_gate.py`, rotating pool, 9 tests).
+4. **SSIL orchestrator** — ✅ **DONE** (`agent/ssil.py`, `tools/run_ssil.py`). Chains
+   G2/G4/G5/G6, fails closed (reject < quarantine < promote), emits one artifact
+   (`agi-proof/self-extension/ssil-loop.public-report.json`). The demo shows an honest
+   improvement promoted while a reward-hacker (high metrics, but tampered the
+   threshold), a Goodhart shortcut, and an incorrigible self-edit are all rejected —
+   gaming the score does not buy promotion because the score is out of reach. Wiring
+   G1/G3/G7/G8/G9 into the same aggregation contract is the next extension.
 5. **Layer-1 hook** — route a LoRA/RLVR Δ through the same `continual_plasticity` gate
    once a GPU lane is available (see `docs/11-Platform/AGI-Infrastructure-Plan.md`).
 
