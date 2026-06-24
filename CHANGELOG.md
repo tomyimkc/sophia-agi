@@ -96,6 +96,21 @@ All notable changes to Sophia AGI are documented here.
 - `tests/test_continual_qa_controller.py`, `tests/test_continual_qa_validation.py` —
   wired into `ci.yml` alongside corpus generation + validation runs.
 
+### Added — CPQA live LLM-controller pass (DeepSeek)
+
+- `agent/deepseek_llm.py` — optional OpenAI-compatible DeepSeek client (stdlib urllib,
+  honors proxy + CA bundle; key read from `DEEPSEEK_API_KEY` env or `--api-key-file`,
+  never stored). `tools/run_continual_qa_llm.py` routes every CPQA question with a real
+  LLM across N runs and reports the true control-flow gap. Network-only; never in CI.
+- **Live result (deepseek-chat, 3 runs, 92-query wiki benchmark):** substrate 1.0,
+  end-to-end **0.989**, control-flow gap **0.011** — stable across runs; one consistent
+  mis-route (`dao_de_jing_daoist_scripture` vs `dao_de_jing`, a near-duplicate). A strong
+  LLM router beats the lexical floor (gap 0.087) but is still nonzero — limitation #1
+  quantified. Report: `agi-proof/benchmark-results/continual-qa.llm-control-flow.json`
+  (`candidateOnly`, `validated:false`; metrics only, no key/raw text).
+- `tests/test_continual_qa_controller.py` extended with an offline `LLMController`
+  parsing test (mock completion; robust to backticks/prose/NONE).
+
 ## [0.7.47] - 2026-06-24
 
 ### Added — SEIB real API/local priority runs + LLM judge support

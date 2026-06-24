@@ -17,7 +17,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.continual_qa import control_flow_report, load_episodes  # noqa: E402
-from agent.continual_qa_controller import LexicalController, OracleController  # noqa: E402
+from agent.continual_qa_controller import LexicalController, LLMController, OracleController  # noqa: E402
 
 WIKI = ROOT / "eval" / "continual_qa" / "episodes_v2_wiki.jsonl"
 
@@ -33,6 +33,16 @@ def test_lexical_routes_by_overlap() -> None:
 
 def test_lexical_abstains_without_overlap() -> None:
     assert LexicalController().route("an utterly unrelated query", {"analects": "analects"}) is None
+
+
+def test_llm_controller_parses_robustly() -> None:
+    vocab = {"dao_de_jing": "dao de jing", "analects": "analects"}
+    # backticks / extra prose around the id still resolve to the right entry
+    assert LLMController(complete=lambda s, u: "`analects`").route("q", vocab) == "analects"
+    assert LLMController(complete=lambda s, u: "The entry is analects.").route("q", vocab) == "analects"
+    # an explicit NONE, or an unknown id, abstains
+    assert LLMController(complete=lambda s, u: "NONE").route("q", vocab) is None
+    assert LLMController(complete=lambda s, u: "no_such_entry").route("q", vocab) is None
 
 
 def test_substrate_perfect_but_routing_opens_a_gap() -> None:

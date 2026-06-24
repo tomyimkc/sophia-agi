@@ -83,9 +83,13 @@ class LLMController:
             from agent.llm import complete as complete  # noqa: PLC0415
         catalog = "\n".join(f"- {cid}: {text}" for cid, text in sorted(vocab.items()))
         user = f"Entries:\n{catalog}\n\nQuestion: {question}\n\nWhich entry id?"
-        out = (complete(_SYSTEM, user) or "").strip().split()[0:1]
-        token = out[0] if out else ""
-        return token if token in vocab else None
+        out = (complete(_SYSTEM, user) or "").strip()
+        if out.upper().startswith("NONE"):
+            return None
+        # Robust to formatting (backticks, punctuation): return the longest known id the
+        # model named; ids are unique slugs so the longest match is unambiguous.
+        hits = [cid for cid in vocab if cid in out]
+        return max(hits, key=len) if hits else None
 
 
 __all__ = ["OracleController", "LexicalController", "LLMController"]

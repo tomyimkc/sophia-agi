@@ -134,9 +134,20 @@ baseline must be a fair weight-model analogue, not a strawman.
    **[0.28, 0.47]**. Exact-match scoring has no judge subjectivity, so multi-judge
    families are reserved for the future generated-answer (LLM-controller) path.
 
+**Real LLM-controller measurement (DeepSeek `deepseek-chat`, 3 runs).** The gated
+`LLMController` was run live via `tools/run_continual_qa_llm.py` over the 92-query wiki
+benchmark: substrate (oracle) **1.0**, end-to-end **0.989** (stable across 3 runs at
+temperature 0), **control-flow gap 0.011** — a single, *consistent* mis-route:
+`dao_de_jing_daoist_scripture` confused with the plain `dao_de_jing` page (a genuinely
+ambiguous near-duplicate entry). So a strong LLM router is far better than the lexical
+floor (gap 0.087) but still nonzero — limitation #1 made concrete: even an excellent
+controller cannot perfectly disambiguate which fact a question is about. Report:
+`agi-proof/benchmark-results/continual-qa.llm-control-flow.json`.
+
 **Remaining honest gaps:** the substrate result (1.0) is the *knowledge store* under
-perfect routing; real end-to-end accuracy is bounded by the control-flow layer (the gap
-above) and by query-formulation, which needs the parametric prior of limitation #1. The
-corpus is 67 curated pages, not open-domain. Moving CPQA from `candidateOnly` to a
-RESULTS.md number additionally requires the LLM-controller path measured across ≥3 runs
-with judge families on the generated answers.
+perfect routing; real end-to-end accuracy is bounded by the control-flow layer (0.989
+here) and by query-formulation, which needs the parametric prior of limitation #1. The
+corpus is 67 curated pages, not open-domain. The LLM path scores *routing* by exact id
+match (no judge subjectivity); a full RESULTS.md entry on *generated prose answers* would
+still need ≥2 judge families. One key was used at runtime via env var only and is not
+stored in the repo.
