@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Canonical entity-alias resolution for author attribution matching.
 
 The gate's attribution checks (``agent.benchmark_checks.author_markers`` and the

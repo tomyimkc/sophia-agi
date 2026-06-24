@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Evaluate a local HF model (base or LoRA) on Sophia benchmarks.
 
 Produces benchmark/model_runs/*.json + *.report.json like run_external_models.py.

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Cross-entity generalization — the honest limit of memorized provenance rules.
 
 The self-improvement loop (:mod:`provenance_bench.improvement`) generalizes across

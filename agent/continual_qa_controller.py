@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Control-flow layer for CPQA: route a natural-language question to a fact id.
 
 This is the "LLM as control flow" half of the design. The knowledge store

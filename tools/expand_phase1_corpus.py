@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Expand Phase 1 corpus: 30+ attributions, 10+ disputes, 50+ training examples."""
 
 from __future__ import annotations

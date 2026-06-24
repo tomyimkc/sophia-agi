@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the best-of-N provenance reranker (agent/best_of.py). Offline.
 
 Sample up to N candidates, rank by the source-discipline gate (a passing answer

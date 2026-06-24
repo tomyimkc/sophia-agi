@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Generate a CPQA episode stream from the real wiki/ corpus.
 
 Loads the live OKF pages under wiki/, keeps the ones that are actually grounded, splits

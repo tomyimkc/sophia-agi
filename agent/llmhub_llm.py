@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Optional LLMHub client (OpenAI-compatible multi-provider gateway).
 
 LLMHub exposes many model families (Anthropic, Google, OpenAI, Qwen, ...) behind one

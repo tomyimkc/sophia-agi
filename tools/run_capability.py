@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Spec D — capability-retention runner. Two-tier (mirrors tools/run_steering.py):
   --dry-run : deterministic core on bundled fixtures -> CAPABILITY RETENTION VERIFIED
   --model X : reduced REAL run, granite steered-vs-unsteered on the arithmetic slice

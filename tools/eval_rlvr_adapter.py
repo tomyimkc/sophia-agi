@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Evaluate a live RLVR adapter against the base model on the held-out split.
 
 This is the missing second half of ``tools/run_rlvr.py``:

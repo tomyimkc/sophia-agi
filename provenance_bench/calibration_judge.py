@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """LLM-judge corroboration of the calibration scorer (hardening toward headline grade).
 
 The validated calibration result (RESULTS.md) uses a deterministic marker-based

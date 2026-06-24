@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for agent.unlearning — reversible, audited forgetting on the OKF graph.
 
 Verifies that forgetting a source un-grounds exactly its transitive support cascade,

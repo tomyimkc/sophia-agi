@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Provenance-faithfulness lint over the whole OKF wiki — the falsifier.
 
 Runs agent.verifiers.provenance_faithful over every wiki + dispute page body. A

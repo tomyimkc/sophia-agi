@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the read-only OpenClaw MCP tool (sophia_mcp). All offline.
 
 The real ``openclaw`` CLI is never invoked: ``tools_impl.subprocess.run`` is stubbed.

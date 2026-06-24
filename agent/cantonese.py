@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Cantonese (粵語 / 廣東話) detection and output scaffolding.
 
 The HK access-to-justice niche the legal-industry assessment flags as underserved:

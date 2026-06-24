@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Level-3 activation steering (Spec B).
 
 Pure-stdlib vector math + composition live here; torch is imported ONLY inside

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Injection / containment red-team (M1) — does the deterministic gate contain a
 COMPROMISED model?
 

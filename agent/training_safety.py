@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """LoRA leakage guard — keep confidential/secret/PII data OUT of the weights.
 
 Anything in a fine-tuned model's weights is extractable (membership inference,

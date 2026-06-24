@@ -20,8 +20,29 @@
     "sft_council_traces.jsonl": {
       "source": "training/council/traces.jsonl",
       "kind": "sft",
+      "rows": 125,
+      "present": true,
+      "droppedForDecontamination": 0
+    },
+    "sft_moral_gate.jsonl": {
+      "source": "training/moral_gate_sft.jsonl",
+      "kind": "sft",
       "rows": 35,
       "present": true,
+      "droppedForDecontamination": 0
+    },
+    "general_instruct.jsonl": {
+      "source": "training/local_sophia_v2/general_instruct.jsonl",
+      "kind": "sft",
+      "rows": 120,
+      "present": true,
+      "droppedForDecontamination": 0
+    },
+    "sft_from_feedback.jsonl": {
+      "source": "training/feedback/sft_from_feedback.jsonl",
+      "kind": "sft",
+      "rows": 0,
+      "present": false,
       "droppedForDecontamination": 0
     },
     "dpo_hard_negatives.jsonl": {
@@ -43,7 +64,7 @@
     "source": "training/lora/holdout.jsonl",
     "rows": 89
   },
-  "trainRowsTotal": 1111,
+  "trainRowsTotal": 1356,
   "recommendedMix": {
     "sft_source_discipline": 0.3,
     "sft_council_traces": 0.2,
@@ -52,29 +73,163 @@
     "dpo_hard_negatives": 0.1,
     "general_instruction_retention": 0.1
   },
-  "missingRequiredInputs": {
-    "general_instruction_retention": "Bring a license-clean external instruct slice (~10% of mix) or the model becomes a narrow refusal machine. No in-repo source.",
-    "moral_gate_sft": "moral_corpus/ is structured data, not SFT jsonl yet — needs a routing-example converter (allow/revise/retrieve/clarify/escalate/abstain/block)."
-  },
+  "missingRequiredInputs": {},
   "excluded": [
     "benchmark/eval holdouts",
     "hidden-eval packs",
     "API keys",
     "unverified self-generated answers"
   ],
-  "baseline": null,
+  "baseline": {
+    "schema": "sophia.eval_ladder.v1",
+    "createdAt": "2026-06-24T12:22:21.286812+00:00",
+    "candidateOnly": true,
+    "level3Evidence": false,
+    "model": "Qwen/Qwen2.5-3B-Instruct",
+    "adapter": null,
+    "backend": "mlx",
+    "claimBoundary": "Local-model ladder status/results; not AGI proof. External gates enforce correctness.",
+    "promotionRule": "promote only if provenance/citation improves at acceptable false-positive cost.",
+    "rungs": [
+      {
+        "rung": "base",
+        "command": [
+          "/Library/Developer/CommandLineTools/usr/bin/python3",
+          "tools/eval_mlx_model.py",
+          "--model",
+          "Qwen/Qwen2.5-3B-Instruct",
+          "--domains",
+          "philosophy",
+          "psychology",
+          "history",
+          "religion"
+        ],
+        "returncode": 1,
+        "status": "complete",
+        "summary": {
+          "domains": {
+            "philosophy": {
+              "passed": 6,
+              "total": 9,
+              "score_pct": 66.7
+            },
+            "psychology": {
+              "passed": 4,
+              "total": 9,
+              "score_pct": 44.4
+            },
+            "history": {
+              "passed": 5,
+              "total": 8,
+              "score_pct": 62.5
+            },
+            "religion": {
+              "passed": 1,
+              "total": 6,
+              "score_pct": 16.7
+            }
+          },
+          "passed": 16,
+          "total": 32,
+          "score_pct": 50.0,
+          "gateFailures": 0
+        },
+        "stdoutTail": "ertainty...\n  philosophy/trap_confucius_mencius...\n  philosophy/trap_laozi_zhuangzi...\n  philosophy/socrates_symposium...\n  philosophy/zhuangzi_analects_boundary...\n  philosophy/symposium_dialogue_not_autograph...\nphilosophy: 6/9 (66.7%)\n  psychology/freud_cognitive_dissonance...\n  psychology/left_brain_myth...\n  psychology/chemical_imbalance_simplification...\n  psychology/stockholm_every_kidnapping...\n  psychology/dunning_kruger_attribution...\n  psychology/confirmation_bias_bacon...\n  psychology/ten_percent_brain...\n  psychology/mozart_effect...\n  psychology/ptsd_clinical_boundary...\npsychology: 4/9 (44.4%)\n  history/marco_polo_pasta...\n  history/flat_earth_medieval...\n  history/napoleon_height...\n  history/great_wall_space...\n  history/viking_horns...\n  history/magna_carta_democracy_myth...\n  history/boston_tea_party_tax_myth...\n  history/first_flight_uncontested_myth...\nhistory: 5/8 (62.5%)\n  religion/gospel_authorship_council...\n  religion/ancestor_veneration_split...\n  religion/dao_de_jing_religion_philosophy...\n  religion/islam_historical_figure_sensitive...\n  religion/buddha_nirvana_pop...\n  religion/hadith_sect_boundary_council...\nreligion: 1/6 (16.7%)\nTOTAL: 16/32 (50.0%)\n",
+        "stderrTail": "\nFetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]\nFetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 106634.85it/s]\n"
+      },
+      {
+        "rung": "base+gate",
+        "command": [
+          "/Library/Developer/CommandLineTools/usr/bin/python3",
+          "tools/eval_mlx_model.py",
+          "--model",
+          "Qwen/Qwen2.5-3B-Instruct",
+          "--domains",
+          "philosophy",
+          "psychology",
+          "history",
+          "religion",
+          "--with-gate"
+        ],
+        "returncode": 1,
+        "status": "complete",
+        "summary": {
+          "domains": {
+            "philosophy": {
+              "passed": 6,
+              "total": 9,
+              "score_pct": 66.7,
+              "gateFailures": 9
+            },
+            "psychology": {
+              "passed": 4,
+              "total": 9,
+              "score_pct": 44.4,
+              "gateFailures": 8
+            },
+            "history": {
+              "passed": 5,
+              "total": 8,
+              "score_pct": 62.5,
+              "gateFailures": 6
+            },
+            "religion": {
+              "passed": 1,
+              "total": 6,
+              "score_pct": 16.7,
+              "gateFailures": 6
+            }
+          },
+          "passed": 16,
+          "total": 32,
+          "score_pct": 50.0,
+          "gateFailures": 29
+        },
+        "stdoutTail": "ertainty...\n  philosophy/trap_confucius_mencius...\n  philosophy/trap_laozi_zhuangzi...\n  philosophy/socrates_symposium...\n  philosophy/zhuangzi_analects_boundary...\n  philosophy/symposium_dialogue_not_autograph...\nphilosophy: 6/9 (66.7%)\n  psychology/freud_cognitive_dissonance...\n  psychology/left_brain_myth...\n  psychology/chemical_imbalance_simplification...\n  psychology/stockholm_every_kidnapping...\n  psychology/dunning_kruger_attribution...\n  psychology/confirmation_bias_bacon...\n  psychology/ten_percent_brain...\n  psychology/mozart_effect...\n  psychology/ptsd_clinical_boundary...\npsychology: 4/9 (44.4%)\n  history/marco_polo_pasta...\n  history/flat_earth_medieval...\n  history/napoleon_height...\n  history/great_wall_space...\n  history/viking_horns...\n  history/magna_carta_democracy_myth...\n  history/boston_tea_party_tax_myth...\n  history/first_flight_uncontested_myth...\nhistory: 5/8 (62.5%)\n  religion/gospel_authorship_council...\n  religion/ancestor_veneration_split...\n  religion/dao_de_jing_religion_philosophy...\n  religion/islam_historical_figure_sensitive...\n  religion/buddha_nirvana_pop...\n  religion/hadith_sect_boundary_council...\nreligion: 1/6 (16.7%)\nTOTAL: 16/32 (50.0%)\n",
+        "stderrTail": "\nFetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]\nFetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 24576.00it/s]\n"
+      }
+    ]
+  },
   "promotionRule": "promote only if provenance/citation improves at acceptable false-positive cost (no useful-correctness regression).",
   "contamination": {
     "droppedForDecontamination": 114,
     "vsEval": {
       "clean": true,
-      "nTrain": 1111,
+      "nTrain": 1356,
       "nEval": 190,
       "overlap": [],
       "overlapCount": 0
     },
     "vsHoldoutOverlapCount": 0,
     "clean": true
+  },
+  "mlx": {
+    "trainRows": 739,
+    "validRows": 89,
+    "path": "training/local_sophia_v2/mlx",
+    "maxTokens": 1024,
+    "fit": {
+      "train": {
+        "maxTokens": 1024,
+        "rowsIn": 750,
+        "rowsKeptUnchanged": 739,
+        "rowsSplit": 0,
+        "subRowsFromSplits": 0,
+        "rowsDroppedUnsplittable": 11,
+        "turnsDroppedOverlong": 11,
+        "rowsOut": 739
+      },
+      "valid": {
+        "maxTokens": 1024,
+        "rowsIn": 89,
+        "rowsKeptUnchanged": 89,
+        "rowsSplit": 0,
+        "subRowsFromSplits": 0,
+        "rowsDroppedUnsplittable": 0,
+        "turnsDroppedOverlong": 0,
+        "rowsOut": 89
+      }
+    }
   },
   "claimBoundary": "Trains behavioral discipline, not general intelligence. External MCP/verifier gates enforce correctness at runtime."
 }

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """OKF — Open Knowledge Format profile for Sophia's provenance-native wiki.
 
 A dependency-free toolkit for a directory of Markdown pages with YAML frontmatter,

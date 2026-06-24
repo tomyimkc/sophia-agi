@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Append-only audit log for declassification (#3).
 
 Every declassification (and every denied attempt) is hash-chained: each entry's

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Deterministic GRPO reward for provenance-aware RLVR (verifier-as-reward).
 
 A reward in ``[-1, 1]`` composed from ``agent.verifiers`` primitives (the

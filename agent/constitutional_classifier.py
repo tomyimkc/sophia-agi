@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Deterministic Constitutional-Classifier-style input/output screen.
 
 This v1 is a rule/fixture classifier derived from the constitution. It provides

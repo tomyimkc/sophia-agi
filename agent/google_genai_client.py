@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Google Gemini / Vertex AI client helpers."""
 
 from __future__ import annotations

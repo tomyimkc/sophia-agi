@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Memory consolidation: episodic agent-run logs -> semantic OKF wiki pages.
 
 This is the continual-learning step that makes Sophia stateful: a verified agent

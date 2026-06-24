@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Structured-output discipline for tool calls and belief writes (Stage D).
 
 Reliable agentic behaviour requires that every tool call / belief-graph write be

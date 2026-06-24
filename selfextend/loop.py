@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Close the full self-extending loop end to end on a HELD-OUT domain.
 
 Each selfextend module works in isolation; this orchestrates them into the one cycle

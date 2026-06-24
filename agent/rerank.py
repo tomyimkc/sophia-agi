@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Reranking + citation faithfulness for the RAG layer.
 
 - Deterministic lexical rerank (BM25-lite) so retrieval can over-fetch then

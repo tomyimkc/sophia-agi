@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the sophia_counterfactual + sophia_retract MCP tools. All offline.
 
 The corpus loader is stubbed so the queries are deterministic and never touch the

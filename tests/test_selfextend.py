@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the self-extending verification flywheel (selfextend/). Deterministic,
 offline. Each falsifiable claim from the path-to-AGI brainstorm has a check here."""
 

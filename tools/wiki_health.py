@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """OKF wiki health metrics — for long-horizon autonomy + AGI-proof evidence.
 
 One number per dimension of "is the knowledge base staying coherent on its own":

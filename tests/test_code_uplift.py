@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the code-execution verifier, code reward, code route, and uplift runner.
 
 Offline (executes tiny snippets in a sandbox — the whole point). Confirms the

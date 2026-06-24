@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run all phase benchmarks recommended for Sophia's next evidence layer.
 
 Phases:

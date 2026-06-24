@@ -28,6 +28,7 @@ Sophia gives AI systems the ability to know *who wrote what* before they reason 
 | Conscience Kernel | `docs/11-Platform/Conscience-Kernel.md` |
 | All-phase benchmarks | `docs/11-Platform/Benchmark-Phases.md` |
 | AGI missing-pillars mechanisms | `docs/11-Platform/AGI-Missing-Pillars.md` |
+| Safe Self-Improvement Loop (SSIL) | `docs/11-Platform/Safe-Self-Improvement-Loop.md` |
 | Sector councils (law · finance · economy) | `docs/08-Domains/Sector-Councils.md` |
 | Council for small LLMs | `docs/11-Platform/Council-For-Small-LLMs.md` |
 | Council distillation | `docs/11-Platform/Council-Distillation.md` |

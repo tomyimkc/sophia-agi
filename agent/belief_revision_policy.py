@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Conflict resolution by belief revision — revise or abstain, never clobber.
 
 In a weight model, learning a fact that contradicts an old one silently overwrites

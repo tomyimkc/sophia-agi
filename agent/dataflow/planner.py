@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Planner — turn a trusted request into a validated PLAN for the interpreter (M2.3).
 
 The privileged planner (a deterministic template planner, or a real P-LLM via the

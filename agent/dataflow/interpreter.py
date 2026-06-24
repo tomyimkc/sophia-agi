@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Constrained interpreter — the dual-LLM / CaMeL execution model (M2.2).
 
 M2 gave a firewall but left two holes the adversarial review flagged: taint did not

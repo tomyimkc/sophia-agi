@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Token-aware recursive chunking with overlap and stable chunk ids.
 
 Replaces the "truncate to N chars" ingestion in retrieval. Splits on paragraphs,

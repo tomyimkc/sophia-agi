@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Per-case runner: produce the model's answer ALONE and BEHIND the gate.
 
 To isolate *the gate's* effect, both answers start from the **same** natural

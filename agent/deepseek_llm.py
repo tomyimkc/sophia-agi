@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Optional DeepSeek client (OpenAI-compatible) for live CPQA control-flow runs.
 
 No API key is stored in the repo. Provide it at runtime:

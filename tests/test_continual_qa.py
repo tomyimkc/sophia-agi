@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for agent.continual_qa — the integrated CPQA benchmark.
 
 Verifies the headline contrast on the shipped episodes: the graph-backed system attains

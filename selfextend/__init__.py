@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """selfextend — the self-extending verification flywheel (the path-to-AGI engine).
 
 Connects Sophia's static pieces into a loop that grows its OWN competence:

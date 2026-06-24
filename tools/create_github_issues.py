@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Create good-first GitHub issues via REST API.
 
 Requires GITHUB_TOKEN in .env (repo scope) or environment.

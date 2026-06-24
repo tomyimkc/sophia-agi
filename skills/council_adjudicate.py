@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Skill: council_adjudicate — gate-filtered multi-seat council deliberation."""
 from __future__ import annotations
 

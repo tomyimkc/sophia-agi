@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """C2 — held-out family disjointness + sealing (pure stdlib). Construct-disjoint,
 not just string-disjoint: hold out whole clusters, assert no shared content 3-gram,
 and that the fit module never imports the held-out paths."""

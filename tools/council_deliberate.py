@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Deliberate a query across a sector council's seats (map-reduce + per-seat gate).
 
 Decomposes into a few narrow seat passes (small-model friendly), gates each, then

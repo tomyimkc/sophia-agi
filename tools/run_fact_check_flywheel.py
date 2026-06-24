@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Turn accepted fact-check learning candidates through quarantine + recheck."""
 from __future__ import annotations
 

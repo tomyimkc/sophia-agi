@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for agent.belief_revision_policy — revise-or-abstain conflict resolution.
 
 Verifies the AGM-style importance order (axiom > user > sourced > inferred), that a

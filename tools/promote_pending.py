@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Promote verified gate-miss candidates into the live record set — the second half
 of the active-learning loop.
 

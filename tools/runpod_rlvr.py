@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Launch Sophia's live RLVR run on RunPod, then always terminate the Pod.
 
 This is intentionally a small, dependency-free orchestrator:
@@ -362,6 +364,13 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
     -C /workspace/sophia-runpod/checkpoints sophia-rlvr-v1
   sha256sum /workspace/sophia-runpod/sophia-rlvr-v1.tar.gz \\
     | tee /workspace/sophia-runpod/sophia-rlvr-v1.tar.gz.sha256
+  # Produce the held-out before/after adapter-eval the SSIL Layer-1 gate ingests.
+  # Non-fatal: if eval OOMs or fails, the training artifacts are still copied back.
+  python tools/eval_rlvr_adapter.py --mode real \\
+    --model "$SOPHIA_MODEL" \\
+    --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
+    --out /workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json \\
+    || echo "[runpod] adapter-eval failed (non-fatal); no SSIL gate input produced"
 fi
 """
     else:
@@ -619,6 +628,14 @@ def main(argv: list[str] | None = None) -> int:
                 key_path,
                 "/workspace/sophia-runpod/rlvr.offline-report.json",
                 args.artifacts_dir / f"{pod_id}.rlvr.offline-report.json",
+            )
+            # Before/after adapter-eval (live mode only; best-effort). The workflow's
+            # ingest step globs *adapter-eval*.json and runs it through the SSIL gate.
+            _scp_from_pod(
+                conn,
+                key_path,
+                "/workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json",
+                args.artifacts_dir / f"{pod_id}.rlvr.adapter-eval.json",
             )
             _scp_from_pod(
                 conn,

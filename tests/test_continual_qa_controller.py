@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the CPQA control-flow layer + control-flow-error measurement.
 
 Verifies oracle/lexical routing behavior and that, on the real wiki corpus, the

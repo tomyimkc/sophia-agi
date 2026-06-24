@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Build Economics & Political Economy + AGI-incentive shift scaffolds.
 
 This applies the chosen distribution-shift domain to Sophia's Level-3 workflow.

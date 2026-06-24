@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Classification lattice (#3): Bell-LaPadula + Biba + bounded, audited declassification.
 
 Falsifiable invariants (deterministic, offline): no-write-down (BLP), no-write-up

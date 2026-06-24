@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for tools/run_level3_candidate_benchmark.py.
 
 The central safety invariant: this tool may rehearse all three Level-3 lanes, but

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Validation pass for CPQA: bootstrap confidence intervals + control-flow sweep.
 
 CPQA is scored by exact match (assert/abstain vs the pre-registered expectation), so

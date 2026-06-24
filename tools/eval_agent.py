@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Continuous eval for the Sophia agent harness.
 
 Runs a suite of goals through the harness and reports pass-rate, failure-class

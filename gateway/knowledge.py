@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Knowledge MCP (P3): expose the OKF belief graph as gated gateway tools.
 
 Any agent can query the shared, provenance-tracked, self-healing knowledge base through

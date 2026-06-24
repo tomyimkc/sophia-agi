@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """End-to-end tests: Role 5 copywriting pipeline + LangGraph contract nodes +
 calibration LLM-judge corroboration. Deterministic, offline (stub drafter/judge)."""
 

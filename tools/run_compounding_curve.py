@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Compounding-knowledge curve — does the wiki answer more as it grows? (AGI-proof)
 
 Grows the OKF wiki in increments and, after each, measures how many held-out

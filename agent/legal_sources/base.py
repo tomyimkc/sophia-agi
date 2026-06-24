@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Shared types for legal-authority sources (HKLII, e-Legislation, ...).
 
 A ``LegalSource`` answers one narrow, machine-checkable question: *does this

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Council panel benchmark — does a HETEROGENEOUS model team beat one model wearing
 N hats? (the "team agents mode" head-to-head.)
 

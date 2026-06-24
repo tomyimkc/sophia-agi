@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Lifecycle hook bus — deterministic, named steering events (Stage A).
 
 Sophia already enforces its guarantees *inside* ``gateway/interceptor.py`` (the

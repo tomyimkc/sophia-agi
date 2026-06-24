@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Bundle repo stats and leaderboards into web/data/manifest.json."""
 
 from __future__ import annotations

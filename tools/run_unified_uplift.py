@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Unified small-LLM uplift study — every lever, one harness, one validation gate.
 
 The repo grew TWO uplift harnesses that each measured a different lever with a

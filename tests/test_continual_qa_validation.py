@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the CPQA validation pass — bootstrap CIs on the real wiki benchmark.
 
 Verifies the graph-backed system's accuracy CI collapses to [1.0, 1.0] with a reported

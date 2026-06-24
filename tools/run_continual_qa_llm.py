@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Live LLM-controller pass for CPQA — the real control-flow error.
 
 Routes every CPQA question with a real LLM (DeepSeek, OpenAI-compatible) instead of the

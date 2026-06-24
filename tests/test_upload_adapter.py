@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for LoRA adapter upload helper.
 
 The adapter checkpoint is a TRAINING ARTIFACT (model weights), gitignored under

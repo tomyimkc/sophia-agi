@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Learning-under-distribution-shift experiment for the Sophia AGI-candidate proof.
 
 Implements the protocol in agi-proof/learning-under-shift/README.md as a single

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Generic data-driven sector council router (law, financial, economy, ...).
 
 Mirrors the coding council pattern (agent/coding_council.py) but generalized so a

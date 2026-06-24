@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Judged-answer CPQA pass: grounded vs raw answers, multi-judge panel.
 
 Generates a prose answer per question from two systems — ``grounded`` (answer only from

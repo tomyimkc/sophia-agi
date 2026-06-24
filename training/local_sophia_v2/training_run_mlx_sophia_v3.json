@@ -1,0 +1,42 @@
+{
+  "schema": "sophia.local_sophia_training_run.v1",
+  "createdAt": "2026-06-24T13:18:00Z",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "baseModel": "Qwen/Qwen2.5-3B-Instruct",
+  "backend": "mlx-lm",
+  "mlxLmVersion": "0.29.1",
+  "adapterPath": "training/mlx_adapters/sophia-v3",
+  "datasetManifest": "training/local_sophia_v2/manifest.json",
+  "command": "python3 -m mlx_lm lora --train --model Qwen/Qwen2.5-3B-Instruct --data training/local_sophia_v2/mlx --iters 500 --batch-size 4 --mask-prompt --adapter-path training/mlx_adapters/sophia-v3 --max-seq-length 1024 --steps-per-report 50 --steps-per-eval 250 --save-every 250",
+  "iters": 500,
+  "batchSize": 4,
+  "maxSeqLength": 1024,
+  "trainableParametersPct": 0.216,
+  "trainableParameters": "6.652M/3085.939M",
+  "finalTrainLoss": 0.933,
+  "finalValLoss": 1.793,
+  "peakMemGb": 22.202,
+  "tokenFit": {
+    "contaminationGuard": "CLEAN",
+    "mlxTrainRows": 739,
+    "mlxValidRows": 89,
+    "postFitDryRunDroppedOverlong": 0,
+    "mlxTrainingTruncationWarnings": 0
+  },
+  "dataIterations": [
+    "initial 12 religion repair council traces: promotion rejected, religion 0/6",
+    "additional 18 council-format traces: promotion rejected, religion 0/6",
+    "additional 60 council-format traces: promotion gate verdict promote, religion restored to baseline 1/6"
+  ],
+  "promotion": {
+    "artifact": "agi-proof/continual-plasticity/local-sophia-v3-mlx-promotion.public-report.json",
+    "verdict": "promote",
+    "boundary": "W2 promotion-gate verdict on first-party eval ladder; not validated external evidence."
+  },
+  "notes": [
+    "No truncation warnings appeared in the final MLX training run after token-fit rebuild.",
+    "Religion recovered only to baseline 1/6, below aspirational target 3/6; further religion work remains.",
+    "Direct SEIB-100 MLX adapter run returned ok=false; do not claim validated uplift."
+  ]
+}

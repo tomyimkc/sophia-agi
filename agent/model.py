@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Unified model adapter for Sophia AGI.
 
 One abstraction over every backend the repo touches, so the agent harness,
@@ -78,6 +80,7 @@ PRESETS: dict[str, dict[str, Any]] = {
     "llamacpp": {"kind": "openai", "base_url": "http://localhost:8080/v1", "api_key_env": "LLAMACPP_API_KEY", "model": "local", "api_key_default": "sk-no-key"},
     "grok": {"kind": "grok", "model": "grok-cli"},
     "openclaw": {"kind": "openclaw", "model": "xai/grok-4.3"},
+    "mlx": {"kind": "mlx", "model": "Qwen/Qwen2.5-3B-Instruct"},
     "mock": {"kind": "mock", "model": "mock-1"},
 }
 
@@ -94,6 +97,7 @@ class ModelConfig:
     base_url: str | None = None
     api_key_env: str | None = None
     api_key_default: str | None = None  # for local servers that need a dummy key
+    adapter_path: str | None = None  # local LoRA adapter dir (mlx transport)
     max_tokens: int = 2400
     temperature: float = 0.2
     reasoning_effort: str | None = None  # low | medium | high (provider-dependent)
@@ -199,6 +203,7 @@ def resolve_config(spec: str | None = None) -> ModelConfig:
         base_url=os.environ.get("SOPHIA_MODEL_BASE_URL") or preset.get("base_url"),
         api_key_env=preset.get("api_key_env"),
         api_key_default=preset.get("api_key_default"),
+        adapter_path=(os.environ.get("SOPHIA_MLX_ADAPTER") or None) if preset["kind"] == "mlx" else None,
         max_tokens=int(os.environ.get("SOPHIA_MAX_TOKENS", "2400")),
         temperature=float(os.environ.get("SOPHIA_TEMPERATURE", "0.2")),
         reasoning_effort=os.environ.get("SOPHIA_REASONING_EFFORT") or None,
@@ -443,12 +448,44 @@ def _call_openclaw(system: str, user: str, cfg: ModelConfig, **_: Any) -> ModelR
         return ModelResult(text="", provider="openclaw", model=cfg.model, ok=False, error=repr(exc), finish_reason="error")
 
 
+def _call_mlx(system: str, user: str, cfg: ModelConfig, *, on_token: Callable[[str], None] | None = None, **_: Any) -> ModelResult:
+    """Local MLX-LM inference with an optional LoRA adapter (Apple Silicon).
+
+    Loads ``cfg.model`` (+ ``cfg.adapter_path`` when set) via ``mlx_lm`` and generates.
+    ``mlx_lm`` is absent off-Mac/CI, so this fails closed with a clear error — callers
+    (e.g. the SEIB preflight) then record an environment artifact, not a crash/score.
+    """
+    try:
+        from mlx_lm import generate, load  # lazy: only present on Apple Silicon with mlx-lm
+    except Exception as exc:
+        return ModelResult(text="", provider="mlx", model=cfg.model, ok=False,
+                           error=f"mlx_lm unavailable: {type(exc).__name__}: {exc}")
+    try:
+        load_kwargs: dict[str, Any] = {}
+        if cfg.adapter_path:
+            load_kwargs["adapter_path"] = cfg.adapter_path
+        model, tokenizer = load(cfg.model, **load_kwargs)
+        messages = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": user}]
+        prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        text = generate(model, tokenizer, prompt=prompt, max_tokens=cfg.max_tokens, verbose=False)
+        return ModelResult(
+            text=text, provider="mlx",
+            model=cfg.model + (f"+{cfg.adapter_path}" if cfg.adapter_path else ""),
+            prompt_tokens=len(tokenizer.encode(prompt)),
+            completion_tokens=len(tokenizer.encode(text)),
+            finish_reason="stop",
+        )
+    except Exception as exc:
+        return ModelResult(text="", provider="mlx", model=cfg.model, ok=False, error=repr(exc))
+
+
 _TRANSPORTS: dict[str, Callable[..., ModelResult]] = {
     "mock": _call_mock,
     "anthropic": _call_anthropic,
     "openai": _call_openai_compatible,
     "grok": _call_grok,
     "openclaw": _call_openclaw,
+    "mlx": _call_mlx,
 }
 
 
@@ -469,6 +506,8 @@ def _egress_blocked_for(cfg: "ModelConfig") -> bool:
     from agent.dataflow.firewall import egress_blocked
 
     if not egress_blocked():
+        return False
+    if cfg.kind == "mlx":  # local on-device inference; no network egress
         return False
     url = getattr(cfg, "base_url", "") or ""
     return not any(host in url for host in _LOCAL_HOSTS)

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for agent/legal_docs.py — document ingestion + citation scanning (offline).
 
 Builds a real .docx (a zip of XML) and HTML/TXT inputs in-process; no network, no

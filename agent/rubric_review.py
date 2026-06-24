@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Deterministic rubric review for Sophia hidden-eval answers."""
 
 from __future__ import annotations

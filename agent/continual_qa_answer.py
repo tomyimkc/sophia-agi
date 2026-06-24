@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Grounded prose answering + multi-judge scoring for CPQA.
 
 Extends CPQA from id-routing to *generated answers*, then scores them with a panel of

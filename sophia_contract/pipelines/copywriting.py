@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Role 5 — copywriting-in-a-bespoke-voice, end to end through the contract.
 
 The loop the playbook describes, made real:

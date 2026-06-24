@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Minimal LoRA SFT for Sophia AGI corpus (GPU / Colab workflow).
 
 Uses a minimal manual SFT loop + PEFT (no HF Trainer — avoids Windows Trainer import crash).

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Sophia moral ontology - stable moral categories for the public-standard gate.
 
 This module defines the *fixed vocabulary* of moral concerns the conscience can

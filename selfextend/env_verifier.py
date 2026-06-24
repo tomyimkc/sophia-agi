@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Environment-as-verifier: verify by EXECUTING the candidate, not by judging it.
 
 The strongest verification needs no LLM judge — the environment decides. Two safe,

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for okf.belief — per-entity belief lookup exposing effectiveConfidenceRank.
 
 belief() resolves an entity to its node and reports the min-over-derivesFrom-chain

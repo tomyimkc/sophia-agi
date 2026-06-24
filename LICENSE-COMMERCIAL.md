@@ -1,24 +1,24 @@
 # Commercial License — Sophia (the Wisdom Gate)
 
-**Sole author & rights holder:** tomyimkc (HaremKing).
+**Sole author & rights holder:** tomyimkc.
 
 ## You probably do NOT need this
 
-The source code, tools, and benchmarks are **MIT-licensed** — free for any use,
+The source code, tools, and benchmarks are **Apache-2.0-licensed** — free for any use,
 **including commercial use**, with no fee and no permission required. The repository
 is and remains fully public. If all you want is to use, modify, or redistribute the
-**code**, the [MIT License](LICENSE) already covers you.
+**code**, the [Apache License 2.0](LICENSE) already covers you.
 
 ## What the commercial license is for
 
-A commercial license is an **optional** agreement with the sole author for things MIT
+A commercial license is an **optional** agreement with the sole author for things Apache-2.0
 deliberately does **not** grant:
 
 1. **Brand / trademark use** — shipping a commercial product, service, or paid offering
    under the names or logos "Sophia AGI", "Sophia — the Wisdom Gate", "Wisdom Gate",
    "Moral Gate", "Conscience Kernel", or implying endorsement. See
    [TRADEMARK-POLICY.md](TRADEMARK-POLICY.md).
-2. **Warranty & indemnity** — the MIT code is provided "AS IS"; a commercial agreement
+2. **Warranty & indemnity** — the Apache-2.0 code is provided "AS IS"; a commercial agreement
    can add a limited warranty / indemnification for production use.
 3. **Priority support / SLA** — guaranteed response times, private support, or
    maintenance commitments.
@@ -35,7 +35,7 @@ This is informational and not an offer.
 Copy, fill in, and send (open a private channel or email the sole author):
 
 ```
-To: tomyimkc (HaremKing), sole author & rights holder — Sophia
+To: tomyimkc, sole author & rights holder — Sophia
 Subject: Commercial / trademark license request
 
 1. Your name / organization:

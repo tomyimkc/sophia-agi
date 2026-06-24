@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the Continual Provenance QA (CPQA) benchmark.
 
 Streams a sequence of episodes (learn / retract / query) through two systems and scores

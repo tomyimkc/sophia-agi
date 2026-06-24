@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Spec A — personality measurement gate tests (plain-script style, no pytest)."""
 import os
 import sys

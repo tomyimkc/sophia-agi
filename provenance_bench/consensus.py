@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Multi-judge consensus — the no-overclaim gate.
 
 A single LLM-judge is unreliable: in our own audit two judges agreed only ~76%

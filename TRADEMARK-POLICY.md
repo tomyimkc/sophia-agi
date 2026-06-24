@@ -1,6 +1,6 @@
 # Trademark & Brand Policy — Sophia (the Wisdom Gate)
 
-**Sole author & rights holder:** tomyimkc (HaremKing).
+**Sole author & rights holder:** tomyimkc.
 
 This policy protects the project's identity while keeping the code and corpus fully open.
 It is friendly by design: research, education, and honest reference are always free.
@@ -22,7 +22,7 @@ common-law (unregistered) trademarks **as used to identify this project**:
 
 ## ✅ Always free — no permission needed
 
-- **Use the MIT-licensed code and corpus** for anything, including commercially.
+- **Use the Apache-2.0-licensed code and corpus** for anything, including commercially.
 - **Non-commercial, research, and educational use** of the names to refer to this project.
 - **Nominative / factual reference** — e.g. "built with Sophia", "compatible with the Sophia
   gate", "based on the Sophia corpus" — as long as it is truthful and does not imply

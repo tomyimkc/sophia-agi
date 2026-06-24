@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """HKLII source — verifies HK/common-law neutral citations (``[2025] HKCFI 808``).
 
 HKLII (hklii.hk) gives free access to HK primary case law (CFA 1997-, CA/CFI

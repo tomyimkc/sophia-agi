@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the measured out-of-wiki fact-check evaluation.
 
 Default mode is deterministic/offline: it uses committed held-out claims plus

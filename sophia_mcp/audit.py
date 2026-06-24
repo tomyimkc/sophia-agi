@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Audit + permission substrate for MCP tools.
 
 Every tool call is appended to an audit log; mutating/high-risk tools require an

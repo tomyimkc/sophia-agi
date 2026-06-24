@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Verified reward — the learning signal a live RLVR run would optimize, with the
 anti-gaming guard built in.
 

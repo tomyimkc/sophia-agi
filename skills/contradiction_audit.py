@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Skill: contradiction_audit — surface internal contradictions in the OKF knowledge base."""
 from __future__ import annotations
 

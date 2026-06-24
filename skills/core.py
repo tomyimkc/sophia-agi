@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Sophia Skills — core registry + the ``@sophia_skill`` decorator.
 
 A *skill* is a thin, friendly, **fail-closed** wrapper over one or more Sophia MCP

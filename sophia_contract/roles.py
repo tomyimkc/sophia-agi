@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """The 9 aihk-os service-role scopes — least-privilege capability registry.
 
 Maps the One-Man-AI-Company playbook's nine role pipelines onto the contract's

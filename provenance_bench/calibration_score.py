@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Calibration-aware scoring — measure what keyword/regex scoring cannot.
 
 The baseline hidden-eval scorer rewards "the right term appeared." A capable base

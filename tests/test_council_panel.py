@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the council panel head-to-head (single vs homo vs hetero). Offline.
 
 Confirms the majority-vote wiring, that heterogeneous seats use different clients,

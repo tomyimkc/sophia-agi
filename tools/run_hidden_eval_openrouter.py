@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Generate hidden-eval response JSON with OpenRouter.
 
 This tool is a transport adapter only. It does NOT judge the hidden comparison;

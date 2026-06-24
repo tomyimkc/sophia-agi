@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Grounding gate: close the cross-entity generalization gap at LOW false-positive cost.
 
 `tools/run_cross_entity.py` shows the limit — structure transfers across entities

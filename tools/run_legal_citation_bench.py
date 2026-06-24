@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Score the legal-citation verifier against the real-vs-fabricated benchmark.
 
 This is an **objective** eval: every case in ``benchmark/legal_citations.json``

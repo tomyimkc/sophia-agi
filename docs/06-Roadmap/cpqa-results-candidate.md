@@ -38,16 +38,41 @@ judges `deepseek-reasoner` + `deepseek-chat` (12 queries): grounded consensus **
 CI [1.0, 1.0], κ 1.0; raw ~0.33–0.42. Higher absolute numbers, but same provider and
 self-grading — strictly weaker evidence than the cross-family panel above.
 
+## Strongest panel — cross-GATEWAY, distinct families (20 queries, 3 runs)
+
+Answers `gpt-4o-mini` (OpenAI, via LLMHub); judges `deepseek/deepseek-chat` (DeepSeek) +
+`meta-llama/llama-3.3-70b-instruct` (Meta), **both via OpenRouter — an independent
+gateway from the answer model.** This removes the single-gateway and self-grading
+caveats and uses the repo's established validated judge pair.
+
+| System | consensus pass | 95% CI | **assert (recall)** | **abstain (traps)** | κ / %-agree |
+|---|---|---|---|---|---|
+| **grounded** | **0.933** | [0.867, 0.983] | 0.911 (n=45) | **1.000 (n=15)** | 0.33 / 0.93 |
+| **raw** | 0.667 | [0.55, 0.783] | 0.889 (n=45) | **0.000 (n=15)** | 0.81 / 0.92 |
+
+**The clean finding (per-expect breakdown):** on *recall* the two are ~equal (0.911 vs
+0.889) — a strong raw model already knows well-known wiki facts, so grounding barely
+helps. The entire advantage is on the *abstain* traps/retractions: grounded **1.000** vs
+raw **0.000** — total, robust separation, with **disjoint overall CIs**. Grounding's
+contribution is precisely *fail-closed abstention*, not recall — exactly the thesis, now
+measured across distinct provider families on independent infrastructure. Artifact:
+`agi-proof/benchmark-results/continual-qa.judged-xgateway.json`.
+
+*κ caveat persists on grounded:* κ=0.33 (< 0.40) because grounded is near-saturated
+(both judges pass almost everything → low variance), while raw κ=0.81 is healthy. The
+honest agreement number is **percent-agreement 0.93**; report it alongside κ.
+
 ## Gate status (no-overclaim) — why this is candidate, not validated
 
 | Criterion | Status |
 |---|---|
-| ≥2 judge families | ✅ Anthropic + Google (cross-family panel) |
-| Judge ≠ subject | ✅ answers by OpenAI; judges Anthropic/Google |
+| ≥2 judge families | ✅ DeepSeek + Meta (cross-gateway panel); also Anthropic + Google |
+| Judge ≠ subject | ✅ answers by OpenAI; judges DeepSeek/Meta — no overlap |
+| Judge gateway ≠ answer gateway | ✅ judges via OpenRouter, answers via LLMHub (independent infra) |
 | ≥3 runs | ✅ 3 runs |
-| Confidence intervals | ✅ bootstrap 95% CI |
-| Inter-judge agreement κ ≥ 0.40 | ⚠️ **raw κ 0.80 ✓**, but **grounded κ 0.0** — *degenerate*: Gemini-flash passes 100% of grounded (zero variance), so Cohen's κ collapses. Agreement is high (both lenient) but κ is uninformative here. |
-| Independent / pre-registered / replicated | ❌ one gateway, one key, self-authored benchmark, single subset |
+| Confidence intervals | ✅ bootstrap 95% CI (overall CIs disjoint: [0.867,0.983] vs [0.55,0.783]) |
+| Inter-judge agreement κ ≥ 0.40 | ⚠️ **raw κ 0.81 ✓**, but **grounded κ 0.33** — depressed by near-saturation (both judges pass almost all grounded answers → low variance). Honest agreement = **percent-agreement 0.93**. |
+| Pre-registered sign-off / external replication | ❌ self-authored benchmark, two keys held by one operator, single 20-query subset |
 
 **Verdict: candidate / illustrative only. `validated:false`.** The cross-family
 machinery, distinct families, runs, and CIs are in place; what remains is (a) a stronger

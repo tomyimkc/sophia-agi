@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Deontic hard-rule verifier for the Sophia conscience.
 
 This is the machine-checkable subset of the constitution: prohibitions that can be

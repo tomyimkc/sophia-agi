@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run SEIB-100: Sophia Epistemic Integrity Benchmark.
 
 SEIB-100 is the first all-phase benchmark because it directly measures Sophia's
@@ -454,6 +456,7 @@ def run(
     *,
     real_model: bool = False,
     model: str = "mock",
+    adapter: str | None = None,
     limit: int = 0,
     runs: int = 1,
     judges: str | None = None,
@@ -469,8 +472,14 @@ def run(
     judge_specs = [j.strip() for j in (judges or "").split(",") if j.strip()]
     judge_clients: list[tuple[str, Any]] = []
     if real_model:
+        import os
+
         from agent.model import default_client
 
+        # The mlx transport reads SOPHIA_MLX_ADAPTER; set it so the trained adapter is
+        # evaluated, not just the base model.
+        if adapter:
+            os.environ["SOPHIA_MLX_ADAPTER"] = adapter
         client = default_client(model)
         preflight = _preflight(client)
         if not preflight.get("ok"):
@@ -483,6 +492,7 @@ def run(
                 "realModelRun": True,
                 "preflightOk": False,
                 "modelSpec": model,
+                "adapterPath": adapter,
                 "judgeSpecs": judge_specs,
                 "claimBoundary": "Real-model SEIB preflight failed; no capability result was produced. This is an environment/setup artifact, not a benchmark score.",
                 "error": preflight,
@@ -537,6 +547,7 @@ def run(
         "realModelRun": bool(real_model),
         "preflightOk": None if preflight is None else bool(preflight.get("ok")),
         "modelSpec": model if real_model else "deterministic-offline",
+        "adapterPath": adapter if real_model else None,
         "judgeSpecs": judge_specs,
         "judgeFamilies": sorted({_judge_family(j) for j in judge_specs}),
         "judgeAgreement": _agreement(rows, judge_specs) if judge_specs else None,
@@ -572,12 +583,13 @@ def main() -> int:
     ap.add_argument("--in", dest="inp", default=str(DEFAULT_IN))
     ap.add_argument("--out", default=str(DEFAULT_OUT))
     ap.add_argument("--real-model", action="store_true", help="use a real model client instead of deterministic fixture answers")
-    ap.add_argument("--model", default="mock", help="model spec, e.g. openrouter:openai/gpt-4o-mini")
+    ap.add_argument("--model", default="mock", help="model spec, e.g. openrouter:openai/gpt-4o-mini, or mlx:Qwen/Qwen2.5-3B-Instruct")
+    ap.add_argument("--adapter", default=None, help="local MLX LoRA adapter dir (use with --model mlx:<base>)")
     ap.add_argument("--limit", type=int, default=0, help="limit cases for a cheap smoke run (0 = all)")
     ap.add_argument("--runs", type=int, default=1, help="number of runs per case")
     ap.add_argument("--judges", default=None, help="comma-separated judge specs to record for future LLM-judge runs")
     args = ap.parse_args()
-    report = run(args.inp, args.out, real_model=args.real_model, model=args.model, limit=args.limit, runs=args.runs, judges=args.judges)
+    report = run(args.inp, args.out, real_model=args.real_model, model=args.model, adapter=args.adapter, limit=args.limit, runs=args.runs, judges=args.judges)
     payload = {"ok": report.get("ok"), "out": args.out}
     if "deltas" in report:
         payload["deltas"] = report["deltas"]

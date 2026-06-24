@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Competence where no verifier exists — calibrated abstention.
 
 When :mod:`agent.verifier_synthesis` abstains (no admitted check), the task is

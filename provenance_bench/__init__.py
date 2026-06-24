@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Provenance Delta benchmark.
 
 Measures, on independent ground truth, how often a model asserts a FALSE

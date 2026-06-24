@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Model-in-the-loop self-improvement: failures may come from a model's answers.
 
 The injected ``answer_fn`` must obey the same contract as the deterministic path:

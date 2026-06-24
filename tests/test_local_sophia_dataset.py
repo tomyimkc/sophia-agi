@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Local-Sophia dataset: train/eval contamination guard + build invariants (offline)."""
 from __future__ import annotations
 
@@ -35,6 +37,23 @@ def test_guard_passes_clean_set() -> None:
 def test_build_check_is_fail_closed_and_clean() -> None:
     # build --check decontaminates then asserts disjoint; must return 0 (clean).
     assert build.build(check_only=True) == 0
+
+
+def test_moral_gate_sft_covers_all_verdicts() -> None:
+    from tools import build_moral_gate_sft
+    rows = build_moral_gate_sft.build()
+    verdicts = {r["metadata"]["verdict"] for r in rows}
+    assert verdicts == {"allow", "revise", "retrieve", "clarify", "escalate", "abstain", "block"}
+
+
+def test_build_has_required_inputs_after_step1() -> None:
+    manifest = build.OUT / "manifest.json"
+    if manifest.exists():
+        import json
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+        assert data.get("missingRequiredInputs") == {}
+        assert data.get("contamination", {}).get("clean") is True
+        assert data.get("mlx", {}).get("trainRows", 0) > 0
 
 
 def main() -> int:

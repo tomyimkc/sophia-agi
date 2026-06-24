@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Sequential-retention benchmark over the OKF belief graph.
 
 Measures catastrophic forgetting of *declarative* knowledge when that knowledge is

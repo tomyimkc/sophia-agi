@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Write salted public commitments for a private Sophia hidden eval pack."""
 
 from __future__ import annotations

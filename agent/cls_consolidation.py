@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Complementary Learning Systems: consolidate stable wiki knowledge into weights —
 but only through the anti-forgetting plasticity gate.
 

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """MCTS-style deliberate planning over verification tool calls.
 
 The planner searches over *verification strategies*, not final claims. A plan wins

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Counterfactual belief-graph queries and first-class retraction.
 
 The belief graph (``okf.graph``) already records *who derives a claim from what*

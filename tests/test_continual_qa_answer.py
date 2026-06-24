@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for agent.continual_qa_answer — grounded answering + multi-judge scoring.
 
 Verifies abstention without a source, robust judge-JSON parsing, the verdict rubric for

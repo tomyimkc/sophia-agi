@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Continual Provenance QA (CPQA): the integrated dual-store benchmark.
 
 Runs the full "LLM-as-control-flow, knowledge-in-the-graph" loop over a *streamed*

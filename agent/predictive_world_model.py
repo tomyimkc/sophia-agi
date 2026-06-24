@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """A tiny learned predictive world model for Sophia's agent loop.
 
 This is the missing *model of consequences* layer: learn P(next_state, reward | state,

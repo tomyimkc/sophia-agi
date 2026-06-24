@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 # Generated Sophia verifiable skill.
 from __future__ import annotations
 from verifier import check_answer

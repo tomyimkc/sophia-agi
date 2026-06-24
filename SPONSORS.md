@@ -1,6 +1,6 @@
 # Sponsor Sophia — the Wisdom Gate
 
-Sophia is and always will be **MIT-licensed and free**. Sponsorship funds the *time and
+Sophia is and always will be **Apache-2.0-licensed and free**. Sponsorship funds the *time and
 compute* to keep it honest: development, benchmark runs, and — most importantly — the
 **independent third-party validation** the failure ledger says is still missing.
 

@@ -1,0 +1,129 @@
+name: rlvr-runpod
+
+# Manual-only RunPod RLVR launcher (the "RunPod through GitHub" path).
+#
+# This is the ONE workflow in this repo that uses a secret and can spend money.
+# It is dispatch-only: it never runs on push/PR/schedule. On dispatch it uses the
+# existing orchestrator `tools/runpod_rlvr.py` to rent a RunPod GPU pod via the
+# RunPod REST API, run RLVR over SSH, copy the report back, and ALWAYS delete the
+# pod. Any adapter-eval report that comes back is then run through the SSIL Layer-1
+# gate (`tools/ingest_rlvr_eval.py`).
+#
+# PREREQUISITES (only you can do these):
+#   1. Add a VALID RunPod API key as a repo secret named RUNPOD_API_KEY
+#      (Settings -> Secrets and variables -> Actions). The runner reads it from the
+#      secret; it is never written to the repo or logs.
+#   2. Your RunPod account must have GPU credit. A pod costs real money while it runs.
+#
+# The secret is never printed; runpod_rlvr.py redacts it and deletes the pod in a
+# finally block (plus a remote watchdog). Default mode is the cheap OFFLINE smoke so
+# a first dispatch validates the whole path before you opt into a full live GRPO run.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to confirm you accept renting a paid GPU pod'
+        required: true
+        default: ''
+      remote_mode:
+        description: 'offline = cheap remote smoke test; live = full GRPO (costs more)'
+        required: true
+        default: 'offline'
+        type: choice
+        options: [offline, live]
+      epochs:
+        description: 'Training epochs (live mode)'
+        required: false
+        default: '1.0'
+      gpu_type:
+        description: 'RunPod GPU type preference'
+        required: false
+        default: 'NVIDIA A100 80GB PCIe'
+      interruptible:
+        description: 'Use cheaper spot/interruptible pod'
+        required: false
+        default: 'true'
+        type: choice
+        options: ['true', 'false']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rlvr-runpod
+  cancel-in-progress: false
+
+jobs:
+  runpod:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — confirm + secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "RUN" ]; then
+            echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
+            exit 1
+          fi
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set (or empty). Add a VALID key in Settings -> Secrets and variables -> Actions. Aborting (no pod created)."
+            exit 1
+          fi
+          echo "Preflight OK: confirmed, secret present. GPU runs on the rented pod, not this runner."
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Dry-run payload (no pod, no cost — sanity check the request)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          python tools/runpod_rlvr.py --dry-run \
+            --source git --branch "${{ github.ref_name }}" \
+            --remote-mode "${{ github.event.inputs.remote_mode }}" \
+            --gpu-type "${{ github.event.inputs.gpu_type }}"
+
+      - name: Launch RunPod RLVR (rents GPU, runs over SSH, deletes pod)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          INTERRUPTIBLE=""
+          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
+          python tools/runpod_rlvr.py --yes \
+            --source git --branch "${{ github.ref_name }}" \
+            --remote-mode "${{ github.event.inputs.remote_mode }}" \
+            --epochs "${{ github.event.inputs.epochs }}" \
+            --quant bf16 --vllm none \
+            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            $INTERRUPTIBLE
+
+      - name: Ingest any adapter-eval report into the SSIL Layer-1 gate
+        if: always()
+        run: |
+          shopt -s globstar nullglob
+          found=""
+          for f in agi-proof/benchmark-results/**/*adapter-eval*.json; do found="$f"; break; done
+          if [ -n "$found" ]; then
+            echo "Ingesting $found"
+            python tools/ingest_rlvr_eval.py "$found" --print || true
+          else
+            echo "No *adapter-eval*.json copied back. The training run produces rlvr.*-report.json;"
+            echo "produce the before/after eval on the pod with tools/eval_rlvr_adapter.py --mode real,"
+            echo "then this step will gate it. (rlvr training reports are still uploaded below.)"
+          fi
+
+      - name: Upload RunPod artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rlvr-runpod-reports
+          path: |
+            agi-proof/benchmark-results/runpod-rlvr/**
+            agi-proof/self-extension/ssil-layer1-real.public-report.json
+          if-no-files-found: warn

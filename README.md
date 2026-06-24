@@ -1,20 +1,23 @@
 # Sophia — the Wisdom Gate
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+> **Wisdom before intelligence.** A provenance-aware reasoning layer that **abstains instead of fabricating**.
+
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
 ![Version](https://img.shields.io/badge/version-0.7.47-blue)
-![Training examples](https://img.shields.io/badge/training_examples-528-green)
-![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
+![Corpus](https://img.shields.io/badge/corpus-528_bilingual_examples-green)
+![Scope](https://img.shields.io/badge/scope-AGI--candidate%2C_not_proven_AGI-lightgrey)
+[![Thesis site](https://img.shields.io/badge/live-thesis_site-9a7b4f)](https://tomyimkc.github.io/sophia-agi/)
+[![Dataset](https://img.shields.io/badge/🤗-dataset-orange)](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus)
+[![Brand](https://img.shields.io/badge/brand-trademark_protected-orange)](TRADEMARK-POLICY.md)
 
-**License & Brand**
-[![License](https://img.shields.io/badge/license-MIT%20%2B%20Commercial-blue)](LICENSE)
-[![Trademark](https://img.shields.io/badge/brand-trademark%20protected-orange)](TRADEMARK-POLICY.md)
-[![Repo](https://img.shields.io/badge/repo-public%20forever-brightgreen)](https://github.com/tomyimkc/sophia-agi)
-[![Author](https://img.shields.io/badge/sole%20author-tomyimkc%20(HaremKing)-black)](https://github.com/tomyimkc)
+Sophia is an open, **provenance-aware, verifier-gated reasoning layer that abstains instead of fabricating** — a corpus + gate that stops LLMs from inventing attributions and merging distinct intellectual traditions, then reasoning on top of the error. It is a research program *toward* grounded AI; **not a claim of AGI** (see scope below).
 
-**Wisdom before intelligence.**
+The gate, in one line:
 
-Sophia is a **provenance-aware, verifier-gated reasoning layer that abstains instead of fabricating** — an open corpus + gate that stops LLMs from inventing attributions and merging distinct intellectual traditions. It is a research program *toward* grounded AI; **not a claim of AGI** (see scope below).
+```text
+claim  →  verify against sources  →  accept · abstain · block
+```
 
 **One-sentence problem it solves:** Modern AI confidently merges Confucius with the *Dao De Jing*, credits Freud for ideas from the 1950s, and treats legendary figures as literal authors — then uses those errors as premises for further reasoning.
 
@@ -85,7 +88,7 @@ The single validated result is narrow: **attribution-hallucination reduction on 
 
 ## Support this work
 
-The core is MIT and always will be. If it's useful to you, you can fund the time and compute
+The core is Apache-2.0 and always will be. If it's useful to you, you can fund the time and compute
 to keep it honest — especially the third-party validation the ledger says is still missing.
 
 - **Sponsor** → [SPONSORS.md](SPONSORS.md) — recognition only; sponsors never steer what counts as true.
@@ -132,20 +135,20 @@ python tests/test_skills_layer.py   # deterministic, offline
 
 ## 🔒 Dual License & Trademark Protection
 
-Sophia stays **100% public and MIT-licensed forever** — and the brand is protected so the
+Sophia stays **100% public and Apache-2.0-licensed forever** — and the brand is protected so the
 project's name can't be hijacked to make claims it never made. The two layers are separate on
 purpose:
 
 | Layer | What it covers | Terms |
 |---|---|---|
-| **MIT License** | source code, tools, benchmarks, corpus | free for **any** use, including commercial — no permission, no fee. See [LICENSE](LICENSE). |
+| **Apache License 2.0** | source code, tools, benchmarks, corpus | free for **any** use, including commercial — no permission, no fee; redistributions keep the copyright/attribution + state changes. See [LICENSE](LICENSE). |
 | **Brand & Trademark** | the names & logos ("Sophia AGI", "Sophia — the Wisdom Gate", "Wisdom Gate", "Moral Gate", "Conscience Kernel") | reserved by the sole author; free for research, education, and honest reference; commercial **brand** use needs written permission. See [TRADEMARK-POLICY.md](TRADEMARK-POLICY.md). |
 | **Commercial license** *(optional)* | brand use in products, warranty/indemnity, support/SLA | by agreement — see [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md). You do **not** need this to use the code. |
 
 **Why this protects the mission:** the code being open lets anyone verify and build on it; the
 brand being protected stops someone from shipping an unverified product under the Sophia name and
 eroding the no-overclaim standard the project exists to uphold. Authored and maintained by the
-sole author and rights holder, **tomyimkc (HaremKing)**. Every fork carries [NOTICE.md](NOTICE.md).
+sole author and rights holder, **tomyimkc**. Every fork carries [NOTICE.md](NOTICE.md).
 
 ## Moral + epistemic Conscience Kernel (seven paths)
 
@@ -474,4 +477,4 @@ Changelog: [CHANGELOG.md](CHANGELOG.md)
 
 Every star and every contribution helps build the open foundation for AI that knows its sources.
 
-**License:** MIT — see [LICENSE](LICENSE).
+**License:** Apache 2.0 — see [LICENSE](LICENSE).

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Best-of-N provenance reranker.
 
 Sample up to N candidate answers from a (small) model and pick the best one under

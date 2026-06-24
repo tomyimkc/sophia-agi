@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Continual learning without catastrophic forgetting — measured, offline.
 
 Learns a stream of "tasks" (batches of OKF pages) one after another and shows that

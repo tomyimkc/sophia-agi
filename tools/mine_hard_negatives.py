@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Graph-driven hard-negative DPO miner — turn the provenance graph into the exact
 contrastive pairs that teach a model NOT to merge lineages.
 
