@@ -61,4 +61,4 @@ Use:
 
 Do not use:
 
-> Sophia is proven AGI.
+> Sophia is proven AGI. <!-- claim-ok: this line is a FORBIDDEN-claim example -->

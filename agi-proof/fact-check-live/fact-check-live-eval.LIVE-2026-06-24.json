@@ -1,0 +1,3614 @@
+{
+  "schema": "sophia.fact_check.live_eval.v1",
+  "candidateOnly": false,
+  "level3Evidence": false,
+  "liveBackendUsed": true,
+  "n": 53,
+  "labelCounts": {
+    "true": 22,
+    "false": 19,
+    "unknowable": 12
+  },
+  "metrics": {
+    "fabricationRate": 0.0,
+    "overAbstentionRate": 0.3182,
+    "falseRejectRateOnTrue": 0.0,
+    "correctAbstentionRateOnUnknowable": 1.0,
+    "resolvedAnswerableAccuracy": 0.7805,
+    "overallDecisionAccuracy": 0.8679,
+    "calibrationNResolved": 32,
+    "ece": 0.0844,
+    "brier": 0.011
+  },
+  "confidenceIntervals": {
+    "fabricationRateWilson95": {
+      "k": 0,
+      "n": 31,
+      "low": 0.0,
+      "high": 0.1103
+    },
+    "overAbstentionRateWilson95": {
+      "k": 7,
+      "n": 22,
+      "low": 0.1636,
+      "high": 0.5268
+    }
+  },
+  "derivedFloors": {
+    "targetFabricationRate": 0.01,
+    "byRisk": {
+      "high": {
+        "floor": 0.84,
+        "measuredFabricationRate": 0.0,
+        "trueAcceptCoverage": 0.5714,
+        "nAcceptedAtFloor": 4
+      },
+      "normal": {
+        "floor": 0.8,
+        "measuredFabricationRate": 0.0,
+        "trueAcceptCoverage": 0.7333,
+        "nAcceptedAtFloor": 11
+      }
+    }
+  },
+  "riskCoverage": [
+    {
+      "coverage": 0.0189,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.0377,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.0566,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.0755,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.0943,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.1132,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.1321,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.1509,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.1698,
+      "risk": 0.0,
+      "threshold": 0.96
+    },
+    {
+      "coverage": 0.1887,
+      "risk": 0.0,
+      "threshold": 0.96
+    },
+    {
+      "coverage": 0.2075,
+      "risk": 0.0,
+      "threshold": 0.96
+    },
+    {
+      "coverage": 0.2264,
+      "risk": 0.0,
+      "threshold": 0.95
+    },
+    {
+      "coverage": 0.2453,
+      "risk": 0.0,
+      "threshold": 0.95
+    },
+    {
+      "coverage": 0.2642,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.283,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3019,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3208,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3396,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3585,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3774,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.3962,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.4151,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.434,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.4528,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.4717,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.4906,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.5094,
+      "risk": 0.0,
+      "threshold": 0.84
+    },
+    {
+      "coverage": 0.5283,
+      "risk": 0.0,
+      "threshold": 0.84
+    },
+    {
+      "coverage": 0.5472,
+      "risk": 0.0,
+      "threshold": 0.84
+    },
+    {
+      "coverage": 0.566,
+      "risk": 0.0,
+      "threshold": 0.84
+    },
+    {
+      "coverage": 0.5849,
+      "risk": 0.0,
+      "threshold": 0.8
+    },
+    {
+      "coverage": 0.6038,
+      "risk": 0.0,
+      "threshold": 0.8
+    },
+    {
+      "coverage": 0.6226,
+      "risk": 0.0303,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.6415,
+      "risk": 0.0588,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.6604,
+      "risk": 0.0857,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.6792,
+      "risk": 0.1111,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.6981,
+      "risk": 0.1081,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.717,
+      "risk": 0.1053,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.7358,
+      "risk": 0.1026,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.7547,
+      "risk": 0.1,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.7736,
+      "risk": 0.122,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.7925,
+      "risk": 0.1429,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.8113,
+      "risk": 0.1395,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.8302,
+      "risk": 0.1364,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.8491,
+      "risk": 0.1556,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.8679,
+      "risk": 0.1522,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.8868,
+      "risk": 0.1489,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9057,
+      "risk": 0.1458,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9245,
+      "risk": 0.1429,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9434,
+      "risk": 0.14,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9623,
+      "risk": 0.1373,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9811,
+      "risk": 0.1346,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 1.0,
+      "risk": 0.1321,
+      "threshold": 0.0
+    }
+  ],
+  "cases": [
+    {
+      "id": "t_math_001",
+      "claim": "2 + 2 = 4",
+      "label": "true",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "2 + 2 = 4",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "arithmetic equality verified by computation",
+          "confidence": 1.0,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_e93dff0d1076b537",
+            "claim": "2 + 2 = 4",
+            "type": "math",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 1.0,
+            "evidence": [],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "arithmetic equality verified by computation",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_math_002",
+      "claim": "6 * 7 = 42",
+      "label": "true",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "6 * 7 = 42",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "arithmetic equality verified by computation",
+          "confidence": 1.0,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_98e74ebac310e889",
+            "claim": "6 * 7 = 42",
+            "type": "math",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 1.0,
+            "evidence": [],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "arithmetic equality verified by computation",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_math_003",
+      "claim": "10 / 2 = 5",
+      "label": "true",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "10 / 2 = 5",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "arithmetic equality verified by computation",
+          "confidence": 1.0,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_8ef3297102f589a2",
+            "claim": "10 / 2 = 5",
+            "type": "math",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 1.0,
+            "evidence": [],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "arithmetic equality verified by computation",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_math_004",
+      "claim": "9 - 3 = 6",
+      "label": "true",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "9 - 3 = 6",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "arithmetic equality verified by computation",
+          "confidence": 1.0,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_89b52b46f3e33825",
+            "claim": "9 - 3 = 6",
+            "type": "math",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 1.0,
+            "evidence": [],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "arithmetic equality verified by computation",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_date_001",
+      "claim": "1900 is before 2000",
+      "label": "true",
+      "type": "date_temporal",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.8,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "1900 is before 2000",
+          "type": "date_temporal",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "explicit year ordering is internally consistent",
+          "confidence": 0.8,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_b50db075774bf023",
+            "claim": "1900 is before 2000",
+            "type": "date_temporal",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.8,
+            "evidence": [],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "explicit year ordering is internally consistent",
+              "confidence": 0.8,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_date_002",
+      "claim": "2020 is after 2019",
+      "label": "true",
+      "type": "date_temporal",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.8,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "2020 is after 2019",
+          "type": "date_temporal",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "explicit year ordering is internally consistent",
+          "confidence": 0.8,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_bf3102bd271eb1a3",
+            "claim": "2020 is after 2019",
+            "type": "date_temporal",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.8,
+            "evidence": [],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "explicit year ordering is internally consistent",
+              "confidence": 0.8,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_doi_001",
+      "claim": "The DOI 10.1038/nphys1170 exists",
+      "label": "true",
+      "type": "doi",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.96,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "The DOI 10.1038/nphys1170 exists",
+          "type": "doi",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "all DOIs resolved",
+          "confidence": 0.96,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_9c9419984d4d5695",
+            "claim": "The DOI 10.1038/nphys1170 exists",
+            "type": "doi",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.96,
+            "evidence": [
+              {
+                "id": "doi:10.1038/nphys1170",
+                "url": "https://doi.org/10.1038/nphys1170",
+                "kind": "doi-exists"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "all DOIs resolved",
+              "confidence": 0.96,
+              "evidence": [
+                {
+                  "id": "doi:10.1038/nphys1170",
+                  "url": "https://doi.org/10.1038/nphys1170",
+                  "kind": "doi-exists"
+                }
+              ],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_doi_002",
+      "claim": "The DOI 10.1126/science.169.3946.635 exists",
+      "label": "true",
+      "type": "doi",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.96,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "The DOI 10.1126/science.169.3946.635 exists",
+          "type": "doi",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "all DOIs resolved",
+          "confidence": 0.96,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_2bada75c2d30baad",
+            "claim": "The DOI 10.1126/science.169.3946.635 exists",
+            "type": "doi",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.96,
+            "evidence": [
+              {
+                "id": "doi:10.1126/science.169.3946.635",
+                "url": "https://doi.org/10.1126/science.169.3946.635",
+                "kind": "doi-exists"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "all DOIs resolved",
+              "confidence": 0.96,
+              "evidence": [
+                {
+                  "id": "doi:10.1126/science.169.3946.635",
+                  "url": "https://doi.org/10.1126/science.169.3946.635",
+                  "kind": "doi-exists"
+                }
+              ],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_doi_003",
+      "claim": "The DOI 10.1145/3292500.3330701 exists",
+      "label": "true",
+      "type": "doi",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.96,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "The DOI 10.1145/3292500.3330701 exists",
+          "type": "doi",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "all DOIs resolved",
+          "confidence": 0.96,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_306061eb945b3f17",
+            "claim": "The DOI 10.1145/3292500.3330701 exists",
+            "type": "doi",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.96,
+            "evidence": [
+              {
+                "id": "doi:10.1145/3292500.3330701",
+                "url": "https://doi.org/10.1145/3292500.3330701",
+                "kind": "doi-exists"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "all DOIs resolved",
+              "confidence": 0.96,
+              "evidence": [
+                {
+                  "id": "doi:10.1145/3292500.3330701",
+                  "url": "https://doi.org/10.1145/3292500.3330701",
+                  "kind": "doi-exists"
+                }
+              ],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_url_001",
+      "claim": "The URL https://example.com exists",
+      "label": "true",
+      "type": "url",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.95,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "The URL https://example.com exists",
+          "type": "url",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "all URLs resolved",
+          "confidence": 0.95,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_2612b8135b510e7d",
+            "claim": "The URL https://example.com exists",
+            "type": "url",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.95,
+            "evidence": [
+              {
+                "id": "https://example.com",
+                "url": "https://example.com",
+                "kind": "url-exists"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "all URLs resolved",
+              "confidence": 0.95,
+              "evidence": [
+                {
+                  "id": "https://example.com",
+                  "url": "https://example.com",
+                  "kind": "url-exists"
+                }
+              ],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_url_002",
+      "claim": "The URL https://www.wikidata.org exists",
+      "label": "true",
+      "type": "url",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.95,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "The URL https://www.wikidata.org exists",
+          "type": "url",
+          "risk": "normal",
+          "verdict": "accepted",
+          "reason": "all URLs resolved",
+          "confidence": 0.95,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_2d856d3aefb13a37",
+            "claim": "The URL https://www.wikidata.org exists",
+            "type": "url",
+            "risk": "normal",
+            "verifiedBy": "deterministic",
+            "confidence": 0.95,
+            "evidence": [
+              {
+                "id": "https://www.wikidata.org",
+                "url": "https://www.wikidata.org",
+                "kind": "url-exists"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "accepted",
+              "reason": "all URLs resolved",
+              "confidence": 0.95,
+              "evidence": [
+                {
+                  "id": "https://www.wikidata.org",
+                  "url": "https://www.wikidata.org",
+                  "kind": "url-exists"
+                }
+              ],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_auth_001",
+      "claim": "Douglas Adams wrote The Hitchhiker's Guide to the Galaxy",
+      "label": "true",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": false,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Douglas Adams wrote The Hitchhiker's Guide to the Galaxy",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 1/2",
+              "confidence": 0.35,
+              "evidence": [
+                {
+                  "id": "wikidata:Q25169",
+                  "url": "https://www.wikidata.org/wiki/Q25169",
+                  "title": "Wikidata authorship record for The Hitchhiker's Guide to the Galaxy",
+                  "publisher": "Wikidata",
+                  "domain": "wikidata.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "wikidata:Q3107329",
+                  "url": "https://www.wikidata.org/wiki/Q3107329",
+                  "title": "Wikidata authorship record for The Hitchhiker's Guide to the Galaxy",
+                  "publisher": "Wikidata",
+                  "domain": "wikidata.org",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "irrelevant": 0,
+                "requiredSources": 2
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_auth_002",
+      "claim": "Jane Austen wrote Pride and Prejudice",
+      "label": "true",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": false,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Jane Austen wrote Pride and Prejudice",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 1/2",
+              "confidence": 0.35,
+              "evidence": [
+                {
+                  "id": "wikidata:Q170583",
+                  "url": "https://www.wikidata.org/wiki/Q170583",
+                  "title": "Wikidata authorship record for Pride and Prejudice",
+                  "publisher": "Wikidata",
+                  "domain": "wikidata.org",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "irrelevant": 0,
+                "requiredSources": 2
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_auth_003",
+      "claim": "George Orwell wrote Nineteen Eighty-Four",
+      "label": "true",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": false,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "George Orwell wrote Nineteen Eighty-Four",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 1/2",
+              "confidence": 0.35,
+              "evidence": [
+                {
+                  "id": "wikidata:Q208460",
+                  "url": "https://www.wikidata.org/wiki/Q208460",
+                  "title": "Wikidata authorship record for Nineteen Eighty-Four",
+                  "publisher": "Wikidata",
+                  "domain": "wikidata.org",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "irrelevant": 0,
+                "requiredSources": 2
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_auth_004",
+      "claim": "Mary Shelley wrote Frankenstein",
+      "label": "true",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": false,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Mary Shelley wrote Frankenstein",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_econ_001",
+      "claim": "US inflation increased in 2021",
+      "label": "true",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "accepted",
+      "confidence": 0.84,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "US inflation increased in 2021",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "accepted",
+          "reason": "3 independent sources entail claim (required 3; entailment backend)",
+          "confidence": 0.84,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_53ce4c19f7273745",
+            "claim": "US inflation increased in 2021",
+            "type": "econ_causal",
+            "risk": "high",
+            "verifiedBy": "external_grounding",
+            "confidence": 0.84,
+            "evidence": [
+              {
+                "id": "world_bank:USA:inflation:2021",
+                "url": "https://api.worldbank.org/v2/country/USA/indicator/FP.CPI.TOTL.ZG?format=json&date=2020%3A2021&per_page=1000",
+                "title": "World Bank macro record for United States inflation in 2021",
+                "publisher": "World Bank",
+                "domain": "api.worldbank.org",
+                "relation": "entails"
+              },
+              {
+                "id": "fred:USA:inflation:2021",
+                "url": "https://fred.stlouisfed.org/series/CPIAUCSL",
+                "title": "FRED macro record for United States inflation in 2021",
+                "publisher": "FRED",
+                "domain": "fred.stlouisfed.org",
+                "relation": "entails"
+              },
+              {
+                "id": "bls:USA:inflation:2021",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0?startyear=2019&endyear=2021",
+                "title": "BLS macro record for United States inflation in 2021",
+                "publisher": "BLS",
+                "domain": "api.bls.gov",
+                "relation": "entails"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "accepted",
+              "reason": "3 independent sources entail claim (required 3; entailment backend)",
+              "confidence": 0.84,
+              "evidence": [
+                {
+                  "id": "world_bank:USA:inflation:2021",
+                  "url": "https://api.worldbank.org/v2/country/USA/indicator/FP.CPI.TOTL.ZG?format=json&date=2020%3A2021&per_page=1000",
+                  "title": "World Bank macro record for United States inflation in 2021",
+                  "publisher": "World Bank",
+                  "domain": "api.worldbank.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "fred:USA:inflation:2021",
+                  "url": "https://fred.stlouisfed.org/series/CPIAUCSL",
+                  "title": "FRED macro record for United States inflation in 2021",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "bls:USA:inflation:2021",
+                  "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0?startyear=2019&endyear=2021",
+                  "title": "BLS macro record for United States inflation in 2021",
+                  "publisher": "BLS",
+                  "domain": "api.bls.gov",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "independentDomains": [
+                  "api.bls.gov",
+                  "api.worldbank.org",
+                  "fred.stlouisfed.org"
+                ],
+                "requiredSources": 3,
+                "entailmentBasis": "entailment backend"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_econ_002",
+      "claim": "US unemployment decreased in 2021",
+      "label": "true",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "accepted",
+      "confidence": 0.84,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "US unemployment decreased in 2021",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "accepted",
+          "reason": "3 independent sources entail claim (required 3; entailment backend)",
+          "confidence": 0.84,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_c011c2375455fe3c",
+            "claim": "US unemployment decreased in 2021",
+            "type": "econ_causal",
+            "risk": "high",
+            "verifiedBy": "external_grounding",
+            "confidence": 0.84,
+            "evidence": [
+              {
+                "id": "world_bank:USA:unemployment:2021",
+                "url": "https://api.worldbank.org/v2/country/USA/indicator/SL.UEM.TOTL.ZS?format=json&date=2020%3A2021&per_page=1000",
+                "title": "World Bank macro record for United States unemployment in 2021",
+                "publisher": "World Bank",
+                "domain": "api.worldbank.org",
+                "relation": "entails"
+              },
+              {
+                "id": "fred:USA:unemployment:2021",
+                "url": "https://fred.stlouisfed.org/series/UNRATE",
+                "title": "FRED macro record for United States unemployment in 2021",
+                "publisher": "FRED",
+                "domain": "fred.stlouisfed.org",
+                "relation": "entails"
+              },
+              {
+                "id": "bls:USA:unemployment:2021",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/LNS14000000?startyear=2020&endyear=2021",
+                "title": "BLS macro record for United States unemployment in 2021",
+                "publisher": "BLS",
+                "domain": "api.bls.gov",
+                "relation": "entails"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "accepted",
+              "reason": "3 independent sources entail claim (required 3; entailment backend)",
+              "confidence": 0.84,
+              "evidence": [
+                {
+                  "id": "world_bank:USA:unemployment:2021",
+                  "url": "https://api.worldbank.org/v2/country/USA/indicator/SL.UEM.TOTL.ZS?format=json&date=2020%3A2021&per_page=1000",
+                  "title": "World Bank macro record for United States unemployment in 2021",
+                  "publisher": "World Bank",
+                  "domain": "api.worldbank.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "fred:USA:unemployment:2021",
+                  "url": "https://fred.stlouisfed.org/series/UNRATE",
+                  "title": "FRED macro record for United States unemployment in 2021",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "bls:USA:unemployment:2021",
+                  "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/LNS14000000?startyear=2020&endyear=2021",
+                  "title": "BLS macro record for United States unemployment in 2021",
+                  "publisher": "BLS",
+                  "domain": "api.bls.gov",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "independentDomains": [
+                  "api.bls.gov",
+                  "api.worldbank.org",
+                  "fred.stlouisfed.org"
+                ],
+                "requiredSources": 3,
+                "entailmentBasis": "entailment backend"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_econ_003",
+      "claim": "Deployment incentives can create pressure to release AGI systems before safety evidence is complete",
+      "label": "true",
+      "type": "econ_causal",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": false,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Deployment incentives can create pressure to release AGI systems before safety evidence is complete",
+          "type": "econ_empirical",
+          "risk": "high",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/3",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 6,
+                "requiredSources": 3
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_math_001",
+      "claim": "2 + 2 = 5",
+      "label": "false",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "2 + 2 = 5",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "2 + 2 = 5 is false; computed 4",
+          "confidence": 1.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "2 + 2 = 5 is false; computed 4",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_math_002",
+      "claim": "6 * 7 = 41",
+      "label": "false",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "6 * 7 = 41",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "6 * 7 = 41 is false; computed 42",
+          "confidence": 1.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "6 * 7 = 41 is false; computed 42",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_math_003",
+      "claim": "10 / 2 = 6",
+      "label": "false",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "10 / 2 = 6",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "10 / 2 = 6 is false; computed 5",
+          "confidence": 1.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "10 / 2 = 6 is false; computed 5",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_math_004",
+      "claim": "9 - 3 = 7",
+      "label": "false",
+      "type": "math",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 1.0,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "9 - 3 = 7",
+          "type": "math",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "9 - 3 = 7 is false; computed 6",
+          "confidence": 1.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "9 - 3 = 7 is false; computed 6",
+              "confidence": 1.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_date_001",
+      "claim": "2000 is before 1900",
+      "label": "false",
+      "type": "date_temporal",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "2000 is before 1900",
+          "type": "date_temporal",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "temporal order false: 2000 is not before 1900",
+          "confidence": 0.9,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "temporal order false: 2000 is not before 1900",
+              "confidence": 0.9,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_date_002",
+      "claim": "2019 is after 2020",
+      "label": "false",
+      "type": "date_temporal",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "2019 is after 2020",
+          "type": "date_temporal",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "temporal order false: 2019 is not after 2020",
+          "confidence": 0.9,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "temporal order false: 2019 is not after 2020",
+              "confidence": 0.9,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_doi_001",
+      "claim": "The DOI 10.5555/not-a-real-sophia-doi exists",
+      "label": "false",
+      "type": "doi",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "The DOI 10.5555/not-a-real-sophia-doi exists",
+          "type": "doi",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more DOIs do not resolve",
+          "confidence": 0.9,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "one or more DOIs do not resolve",
+              "confidence": 0.9,
+              "evidence": [],
+              "details": {
+                "dois": [
+                  "10.5555/not-a-real-sophia-doi"
+                ],
+                "resolved": []
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_doi_002",
+      "claim": "The DOI 10.9999/sophia-fabricated-doi-2026 exists",
+      "label": "false",
+      "type": "doi",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "The DOI 10.9999/sophia-fabricated-doi-2026 exists",
+          "type": "doi",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more DOIs do not resolve",
+          "confidence": 0.9,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "one or more DOIs do not resolve",
+              "confidence": 0.9,
+              "evidence": [],
+              "details": {
+                "dois": [
+                  "10.9999/sophia-fabricated-doi-2026"
+                ],
+                "resolved": []
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_url_001",
+      "claim": "The URL https://nonexistent.sophia.invalid/report exists",
+      "label": "false",
+      "type": "url",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "The URL https://nonexistent.sophia.invalid/report exists",
+          "type": "url",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more URLs do not resolve",
+          "confidence": 0.9,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "one or more URLs do not resolve",
+              "confidence": 0.9,
+              "evidence": [],
+              "details": {
+                "urls": [
+                  "https://nonexistent.sophia.invalid/report"
+                ],
+                "resolved": []
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_url_002",
+      "claim": "The URL https://example.invalid/sophia-report exists",
+      "label": "false",
+      "type": "url",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "The URL https://example.invalid/sophia-report exists",
+          "type": "url",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more URLs do not resolve",
+          "confidence": 0.9,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "rejected",
+              "reason": "one or more URLs do not resolve",
+              "confidence": 0.9,
+              "evidence": [],
+              "details": {
+                "urls": [
+                  "https://example.invalid/sophia-report"
+                ],
+                "resolved": []
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_auth_001",
+      "claim": "J. K. Rowling wrote The Hitchhiker's Guide to the Galaxy",
+      "label": "false",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "J",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        },
+        {
+          "claim": "K",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        },
+        {
+          "claim": "Rowling wrote The Hitchhiker's Guide to the Galaxy",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "wikidata:Q25169",
+                  "url": "https://www.wikidata.org/wiki/Q25169",
+                  "title": "Wikidata authorship record for The Hitchhiker's Guide to the Galaxy",
+                  "publisher": "Wikidata",
+                  "domain": "wikidata.org",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "wikidata:Q3107329",
+                  "url": "https://www.wikidata.org/wiki/Q3107329",
+                  "title": "Wikidata authorship record for The Hitchhiker's Guide to the Galaxy",
+                  "publisher": "Wikidata",
+                  "domain": "wikidata.org",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_auth_002",
+      "claim": "Plato wrote The Dao De Jing",
+      "label": "false",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Plato wrote The Dao De Jing",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_auth_003",
+      "claim": "Confucius wrote The Republic",
+      "label": "false",
+      "type": "authorship_external",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Confucius wrote The Republic",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_econ_001",
+      "claim": "US inflation decreased in 2021",
+      "label": "false",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "US inflation decreased in 2021",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "world_bank:USA:inflation:2021",
+                  "url": "https://api.worldbank.org/v2/country/USA/indicator/FP.CPI.TOTL.ZG?format=json&date=2020%3A2021&per_page=1000",
+                  "title": "World Bank macro record for United States inflation in 2021",
+                  "publisher": "World Bank",
+                  "domain": "api.worldbank.org",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "fred:USA:inflation:2021",
+                  "url": "https://fred.stlouisfed.org/series/CPIAUCSL",
+                  "title": "FRED macro record for United States inflation in 2021",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "bls:USA:inflation:2021",
+                  "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0?startyear=2019&endyear=2021",
+                  "title": "BLS macro record for United States inflation in 2021",
+                  "publisher": "BLS",
+                  "domain": "api.bls.gov",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_econ_002",
+      "claim": "US unemployment increased in 2021",
+      "label": "false",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "US unemployment increased in 2021",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "world_bank:USA:unemployment:2021",
+                  "url": "https://api.worldbank.org/v2/country/USA/indicator/SL.UEM.TOTL.ZS?format=json&date=2020%3A2021&per_page=1000",
+                  "title": "World Bank macro record for United States unemployment in 2021",
+                  "publisher": "World Bank",
+                  "domain": "api.worldbank.org",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "fred:USA:unemployment:2021",
+                  "url": "https://fred.stlouisfed.org/series/UNRATE",
+                  "title": "FRED macro record for United States unemployment in 2021",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "bls:USA:unemployment:2021",
+                  "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/LNS14000000?startyear=2020&endyear=2021",
+                  "title": "BLS macro record for United States unemployment in 2021",
+                  "publisher": "BLS",
+                  "domain": "api.bls.gov",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_001",
+      "claim": "An unpublished Sophia Lab X memo was circulated on 2026-06-01",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "An unpublished Sophia Lab X memo was circulated on 2026-06-01",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_002",
+      "claim": "Project Kestrel privately changed its benchmark seed in 2025",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Project Kestrel privately changed its benchmark seed in 2025",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_003",
+      "claim": "A confidential Runpod instance produced a hidden Level 3 pass yesterday",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "A confidential Runpod instance produced a hidden Level 3 pass yesterday",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_004",
+      "claim": "The private AGI incentive pack contains exactly 137 examples",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "The private AGI incentive pack contains exactly 137 examples",
+          "type": "econ_empirical",
+          "risk": "high",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/3",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 6,
+                "requiredSources": 3
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_005",
+      "claim": "A nonpublic reviewer approved Sophia as proven AGI in 2026",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "A nonpublic reviewer approved Sophia as proven AGI in 2026",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/2",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 3,
+                "requiredSources": 2
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_006",
+      "claim": "A sealed economics council memo rejected the baseline on 2026-02-02",
+      "label": "unknowable",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "A sealed economics council memo rejected the baseline on 2026-02-02",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/2",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 3,
+                "requiredSources": 2
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_007",
+      "claim": "The hidden distribution-shift pack was solved by an unnamed model in 11 minutes",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "The hidden distribution-shift pack was solved by an unnamed model in 11 minutes",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_008",
+      "claim": "A private Crossref draft DOI for the Sophia paper was reserved in 2026",
+      "label": "unknowable",
+      "type": "doi",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "A private Crossref draft DOI for the Sophia paper was reserved in 2026",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/2",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 3,
+                "requiredSources": 2
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_009",
+      "claim": "An internal-only Wikidata sandbox item proves the claim",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "An internal-only Wikidata sandbox item proves the claim",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_open_010",
+      "claim": "The unpublished long-horizon run contained no human intervention",
+      "label": "unknowable",
+      "type": "open_empirical",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "The unpublished long-horizon run contained no human intervention",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_econ_004",
+      "claim": "US GDP increased in 2021",
+      "label": "true",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": false,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "US GDP increased in 2021",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 2/3",
+              "confidence": 0.35,
+              "evidence": [
+                {
+                  "id": "world_bank:USA:gdp:2021",
+                  "url": "https://api.worldbank.org/v2/country/USA/indicator/NY.GDP.MKTP.CD?format=json&date=2020%3A2021&per_page=1000",
+                  "title": "World Bank macro record for United States gdp in 2021",
+                  "publisher": "World Bank",
+                  "domain": "api.worldbank.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "fred:USA:gdp:2021",
+                  "url": "https://fred.stlouisfed.org/series/GDP",
+                  "title": "FRED macro record for United States gdp in 2021",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "irrelevant": 0,
+                "requiredSources": 3
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_econ_005",
+      "claim": "US GDP decreased in 2020",
+      "label": "true",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": false,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "US GDP decreased in 2020",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 2/3",
+              "confidence": 0.35,
+              "evidence": [
+                {
+                  "id": "world_bank:USA:gdp:2020",
+                  "url": "https://api.worldbank.org/v2/country/USA/indicator/NY.GDP.MKTP.CD?format=json&date=2019%3A2020&per_page=1000",
+                  "title": "World Bank macro record for United States gdp in 2020",
+                  "publisher": "World Bank",
+                  "domain": "api.worldbank.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "fred:USA:gdp:2020",
+                  "url": "https://fred.stlouisfed.org/series/GDP",
+                  "title": "FRED macro record for United States gdp in 2020",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "irrelevant": 0,
+                "requiredSources": 3
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_econ_006",
+      "claim": "US unemployment increased in 2020",
+      "label": "true",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "accepted",
+      "confidence": 0.84,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "US unemployment increased in 2020",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "accepted",
+          "reason": "3 independent sources entail claim (required 3; entailment backend)",
+          "confidence": 0.84,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_e10bc52ac1ba893e",
+            "claim": "US unemployment increased in 2020",
+            "type": "econ_causal",
+            "risk": "high",
+            "verifiedBy": "external_grounding",
+            "confidence": 0.84,
+            "evidence": [
+              {
+                "id": "world_bank:USA:unemployment:2020",
+                "url": "https://api.worldbank.org/v2/country/USA/indicator/SL.UEM.TOTL.ZS?format=json&date=2019%3A2020&per_page=1000",
+                "title": "World Bank macro record for United States unemployment in 2020",
+                "publisher": "World Bank",
+                "domain": "api.worldbank.org",
+                "relation": "entails"
+              },
+              {
+                "id": "fred:USA:unemployment:2020",
+                "url": "https://fred.stlouisfed.org/series/UNRATE",
+                "title": "FRED macro record for United States unemployment in 2020",
+                "publisher": "FRED",
+                "domain": "fred.stlouisfed.org",
+                "relation": "entails"
+              },
+              {
+                "id": "bls:USA:unemployment:2020",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/LNS14000000?startyear=2019&endyear=2020",
+                "title": "BLS macro record for United States unemployment in 2020",
+                "publisher": "BLS",
+                "domain": "api.bls.gov",
+                "relation": "entails"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "accepted",
+              "reason": "3 independent sources entail claim (required 3; entailment backend)",
+              "confidence": 0.84,
+              "evidence": [
+                {
+                  "id": "world_bank:USA:unemployment:2020",
+                  "url": "https://api.worldbank.org/v2/country/USA/indicator/SL.UEM.TOTL.ZS?format=json&date=2019%3A2020&per_page=1000",
+                  "title": "World Bank macro record for United States unemployment in 2020",
+                  "publisher": "World Bank",
+                  "domain": "api.worldbank.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "fred:USA:unemployment:2020",
+                  "url": "https://fred.stlouisfed.org/series/UNRATE",
+                  "title": "FRED macro record for United States unemployment in 2020",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "bls:USA:unemployment:2020",
+                  "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/LNS14000000?startyear=2019&endyear=2020",
+                  "title": "BLS macro record for United States unemployment in 2020",
+                  "publisher": "BLS",
+                  "domain": "api.bls.gov",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "independentDomains": [
+                  "api.bls.gov",
+                  "api.worldbank.org",
+                  "fred.stlouisfed.org"
+                ],
+                "requiredSources": 3,
+                "entailmentBasis": "entailment backend"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_econ_007",
+      "claim": "US inflation decreased in 2020",
+      "label": "true",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "accepted",
+      "confidence": 0.84,
+      "correct": true,
+      "reason": "all atomic claims verified",
+      "claims": [
+        {
+          "claim": "US inflation decreased in 2020",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "accepted",
+          "reason": "3 independent sources entail claim (required 3; entailment backend)",
+          "confidence": 0.84,
+          "learningCandidate": {
+            "schema": "sophia.fact_check.learning_candidate.v1",
+            "claimId": "fc_ebe5a24b4c113065",
+            "claim": "US inflation decreased in 2020",
+            "type": "econ_causal",
+            "risk": "high",
+            "verifiedBy": "external_grounding",
+            "confidence": 0.84,
+            "evidence": [
+              {
+                "id": "world_bank:USA:inflation:2020",
+                "url": "https://api.worldbank.org/v2/country/USA/indicator/FP.CPI.TOTL.ZG?format=json&date=2019%3A2020&per_page=1000",
+                "title": "World Bank macro record for United States inflation in 2020",
+                "publisher": "World Bank",
+                "domain": "api.worldbank.org",
+                "relation": "entails"
+              },
+              {
+                "id": "fred:USA:inflation:2020",
+                "url": "https://fred.stlouisfed.org/series/CPIAUCSL",
+                "title": "FRED macro record for United States inflation in 2020",
+                "publisher": "FRED",
+                "domain": "fred.stlouisfed.org",
+                "relation": "entails"
+              },
+              {
+                "id": "bls:USA:inflation:2020",
+                "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0?startyear=2018&endyear=2020",
+                "title": "BLS macro record for United States inflation in 2020",
+                "publisher": "BLS",
+                "domain": "api.bls.gov",
+                "relation": "entails"
+              }
+            ],
+            "promotionState": "pending_quarantine",
+            "promotionRules": [
+              "never use this candidate as evidence for itself",
+              "require source freshness TTL before reuse",
+              "require independent recheck before promotion to curated wiki",
+              "store as external/provisional, not canonical, until review"
+            ]
+          },
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "accepted",
+              "reason": "3 independent sources entail claim (required 3; entailment backend)",
+              "confidence": 0.84,
+              "evidence": [
+                {
+                  "id": "world_bank:USA:inflation:2020",
+                  "url": "https://api.worldbank.org/v2/country/USA/indicator/FP.CPI.TOTL.ZG?format=json&date=2019%3A2020&per_page=1000",
+                  "title": "World Bank macro record for United States inflation in 2020",
+                  "publisher": "World Bank",
+                  "domain": "api.worldbank.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "fred:USA:inflation:2020",
+                  "url": "https://fred.stlouisfed.org/series/CPIAUCSL",
+                  "title": "FRED macro record for United States inflation in 2020",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "entails"
+                },
+                {
+                  "id": "bls:USA:inflation:2020",
+                  "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0?startyear=2018&endyear=2020",
+                  "title": "BLS macro record for United States inflation in 2020",
+                  "publisher": "BLS",
+                  "domain": "api.bls.gov",
+                  "relation": "entails"
+                }
+              ],
+              "details": {
+                "independentDomains": [
+                  "api.bls.gov",
+                  "api.worldbank.org",
+                  "fred.stlouisfed.org"
+                ],
+                "requiredSources": 3,
+                "entailmentBasis": "entailment backend"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_econ_003",
+      "claim": "US GDP decreased in 2021",
+      "label": "false",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "US GDP decreased in 2021",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "world_bank:USA:gdp:2021",
+                  "url": "https://api.worldbank.org/v2/country/USA/indicator/NY.GDP.MKTP.CD?format=json&date=2020%3A2021&per_page=1000",
+                  "title": "World Bank macro record for United States gdp in 2021",
+                  "publisher": "World Bank",
+                  "domain": "api.worldbank.org",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "fred:USA:gdp:2021",
+                  "url": "https://fred.stlouisfed.org/series/GDP",
+                  "title": "FRED macro record for United States gdp in 2021",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_econ_004",
+      "claim": "US GDP increased in 2020",
+      "label": "false",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "US GDP increased in 2020",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "world_bank:USA:gdp:2020",
+                  "url": "https://api.worldbank.org/v2/country/USA/indicator/NY.GDP.MKTP.CD?format=json&date=2019%3A2020&per_page=1000",
+                  "title": "World Bank macro record for United States gdp in 2020",
+                  "publisher": "World Bank",
+                  "domain": "api.worldbank.org",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "fred:USA:gdp:2020",
+                  "url": "https://fred.stlouisfed.org/series/GDP",
+                  "title": "FRED macro record for United States gdp in 2020",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_econ_005",
+      "claim": "US unemployment decreased in 2020",
+      "label": "false",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "US unemployment decreased in 2020",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "world_bank:USA:unemployment:2020",
+                  "url": "https://api.worldbank.org/v2/country/USA/indicator/SL.UEM.TOTL.ZS?format=json&date=2019%3A2020&per_page=1000",
+                  "title": "World Bank macro record for United States unemployment in 2020",
+                  "publisher": "World Bank",
+                  "domain": "api.worldbank.org",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "fred:USA:unemployment:2020",
+                  "url": "https://fred.stlouisfed.org/series/UNRATE",
+                  "title": "FRED macro record for United States unemployment in 2020",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "bls:USA:unemployment:2020",
+                  "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/LNS14000000?startyear=2019&endyear=2020",
+                  "title": "BLS macro record for United States unemployment in 2020",
+                  "publisher": "BLS",
+                  "domain": "api.bls.gov",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f_econ_006",
+      "claim": "US inflation increased in 2020",
+      "label": "false",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "US inflation increased in 2020",
+          "type": "econ_causal",
+          "risk": "high",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "world_bank:USA:inflation:2020",
+                  "url": "https://api.worldbank.org/v2/country/USA/indicator/FP.CPI.TOTL.ZG?format=json&date=2019%3A2020&per_page=1000",
+                  "title": "World Bank macro record for United States inflation in 2020",
+                  "publisher": "World Bank",
+                  "domain": "api.worldbank.org",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "fred:USA:inflation:2020",
+                  "url": "https://fred.stlouisfed.org/series/CPIAUCSL",
+                  "title": "FRED macro record for United States inflation in 2020",
+                  "publisher": "FRED",
+                  "domain": "fred.stlouisfed.org",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "bls:USA:inflation:2020",
+                  "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0?startyear=2018&endyear=2020",
+                  "title": "BLS macro record for United States inflation in 2020",
+                  "publisher": "BLS",
+                  "domain": "api.bls.gov",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_econ_011",
+      "claim": "A private central bank memo proves AGI deployment incentives changed rates in 2026",
+      "label": "unknowable",
+      "type": "econ_causal",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "A private central bank memo proves AGI deployment incentives changed rates in 2026",
+          "type": "econ_empirical",
+          "risk": "high",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/3",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 6,
+                "requiredSources": 3
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "u_econ_012",
+      "claim": "An unpublished regulator secretly measured AGI monopoly rents in 2025",
+      "label": "unknowable",
+      "type": "econ_empirical",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "An unpublished regulator secretly measured AGI monopoly rents in 2025",
+          "type": "econ_empirical",
+          "risk": "high",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/3",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 3,
+                "requiredSources": 3
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

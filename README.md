@@ -1,4 +1,4 @@
-# Sophia AGI
+# Sophia — the Wisdom Gate
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
@@ -6,9 +6,15 @@
 ![Training examples](https://img.shields.io/badge/training_examples-528-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
+**License & Brand**
+[![License](https://img.shields.io/badge/license-MIT%20%2B%20Commercial-blue)](LICENSE)
+[![Trademark](https://img.shields.io/badge/brand-trademark%20protected-orange)](TRADEMARK-POLICY.md)
+[![Repo](https://img.shields.io/badge/repo-public%20forever-brightgreen)](https://github.com/tomyimkc/sophia-agi)
+[![Author](https://img.shields.io/badge/sole%20author-tomyimkc%20(HaremKing)-black)](https://github.com/tomyimkc)
+
 **Wisdom before intelligence.**
 
-Sophia AGI is the open provenance corpus + **verifier gate** that stops LLMs from fabricating attributions and merging distinct intellectual traditions.
+Sophia is a **provenance-aware, verifier-gated reasoning layer that abstains instead of fabricating** — an open corpus + gate that stops LLMs from inventing attributions and merging distinct intellectual traditions. It is a research program *toward* grounded AI; **not a claim of AGI** (see scope below).
 
 **One-sentence problem it solves:** Modern AI confidently merges Confucius with the *Dao De Jing*, credits Freud for ideas from the 1950s, and treats legendary figures as literal authors — then uses those errors as premises for further reasoning.
 
@@ -21,7 +27,7 @@ Sophia AGI is the open provenance corpus + **verifier gate** that stops LLMs fro
 
 **Thesis site:** https://tomyimkc.github.io/sophia-agi/
 
-**⭐ Star the repo** — support the only open project shipping *measured*, fail-closed source discipline for AI.
+**⭐ Star the repo** — support an open project shipping *measured*, fail-closed source discipline for AI, with a public failure ledger.
 
 **Live & ready today**
 - [Thesis + leaderboards + Ask Sophia](https://tomyimkc.github.io/sophia-agi/)
@@ -34,15 +40,15 @@ Try the gate right now: `python scripts/demo_gate.py` (abstain + provenance verd
 
 ## What it does (main usage)
 
-**Sophia is the provenance gate that makes AI safe to ship.** It verifies every claim against real sources, **abstains instead of fabricating**, and only lets *accepted* output through — the difference between "AI that sounds right" and "AI you can trust in production without constant oversight."
+**Sophia is a fail-closed provenance gate.** It checks each claim against sources it can machine-verify, **abstains instead of fabricating**, and only lets `accepted` output through. Measured effect: on an 8B model it cuts attribution-hallucination Δ12.5% (95% CI [5.6%, 19.4%]) at 0% false-positive cost — but **23.6% still gets through. It is a filter that reduces harm, not a guarantee, and not a substitute for human oversight.**
 
-The validated delta above is the one headline that has cleared the full no-overclaim gate.
+The validated delta above is the one result that has cleared the full no-overclaim gate. See [What Sophia cannot do (yet)](#what-sophia-cannot-do-yet) for the honest limits.
 
 **Use it three ways (today):**
 
 - **Governance gate for any AI pipeline** — `record_claim → verify_claim`. Only `accepted` verdicts may publish. Fail-closed + auditable. Drop into LangGraph, Claude SDK, n8n, or any MCP host.  
   → `python scripts/demo_gate.py` | [CONTRACT.md](CONTRACT.md)
-- **Spine for a solo-founder AI company** — 9 least-privilege roles, vault gate, durable queue, approve-by-exception. Everything you ship has passed the provenance gate.
+- **Governance scaffold for a solo-founder AI stack** — 9 least-privilege roles, vault gate, durable queue, approve-by-exception. A reference implementation, not a hardened production platform.
 - **Honest corpus + benchmark** — 528 bilingual examples + per-domain leaderboards under the strict no-overclaim gate.  
   → [HF Dataset](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) · [RESULTS.md](RESULTS.md)
 
@@ -62,8 +68,48 @@ pip install -r requirements-mcp.txt && python sophia_mcp/server.py
 - **Measured, not claimed** — only numbers that pass ≥2 judge families + CIs headline
 - **Fail-closed by default** — never fabricates to look capable
 - **Governance-ready** — stable contract + MCP you can ship behind today
-- **Self-improving honesty** — flywheel writes + validates its own verifiers on held-out data
+- **Offline self-extension demo** — the flywheel *selects* (does not yet train) verifiers on a held-out split; a live RL weight update is OPEN (needs GPU). See the failure ledger.
 - Full open corpus + replication package
+
+## What Sophia cannot do (yet)
+
+Stated plainly, because owning the limits is the point. Sophia **today**:
+
+- **Live verification works but is not yet independently validated** — the live Wikidata/Crossref/macro backend has been run (`liveBackendUsed: true`: 0% fabrication, Wilson-95 [0, 11%], at 32% over-abstention on a **first-party** pack, single run); the CI default stays on offline fixtures for reproducibility. A third-party pack + ≥3 runs are still needed. See the [failure ledger](agi-proof/failure-ledger.md).
+- **Cannot learn or update its weights** — there is no training loop in the gate; RLVR and the self-extension flywheel are offline *selection*, not parameter updates.
+- **Has not beaten a direct model on a third-party hidden eval** — every independent hidden run so far is incomplete, backend-broken, or self-authored (see [failure ledger](agi-proof/failure-ledger.md)).
+- **Does not generalize like a mind** — the "AGI-shaped" modules (program induction, planner, world model, …) are fail-closed *interfaces with toy reference implementations*, not the capabilities their names describe. See [AGI-Missing-Pillars](docs/11-Platform/AGI-Missing-Pillars.md).
+- **Is not independently replicated** — benchmarks, packs, judges, and corpus are largely first-party. A fully independent claim needs third-party packs + human review.
+
+The single validated result is narrow: **attribution-hallucination reduction on one 8B model, LLM-judged.** Everything else is labelled *illustrative* or *candidate*. The honest deliverable is the machinery + the measured data + the public ledger of what is **not** yet proven.
+
+## Support this work
+
+The core is MIT and always will be. If it's useful to you, you can fund the time and compute
+to keep it honest — especially the third-party validation the ledger says is still missing.
+
+- **Sponsor** → [SPONSORS.md](SPONSORS.md) — recognition only; sponsors never steer what counts as true.
+- **Hire me** → [services](docs/07-Growth/SERVICES.md) — install the provenance gate in your stack (scoped, measured, no guarantees).
+- **Learn the method** → [Source-Discipline Engineering](docs/07-Growth/education/Source-Discipline-Engineering.md).
+
+Before any of this takes payment, see the [ops & legal checklist](docs/06-Roadmap/Monetization-Ops-Checklist.md).
+
+## 🔒 Dual License & Trademark Protection
+
+Sophia stays **100% public and MIT-licensed forever** — and the brand is protected so the
+project's name can't be hijacked to make claims it never made. The two layers are separate on
+purpose:
+
+| Layer | What it covers | Terms |
+|---|---|---|
+| **MIT License** | source code, tools, benchmarks, corpus | free for **any** use, including commercial — no permission, no fee. See [LICENSE](LICENSE). |
+| **Brand & Trademark** | the names & logos ("Sophia AGI", "Sophia — the Wisdom Gate", "Wisdom Gate", "Moral Gate", "Conscience Kernel") | reserved by the sole author; free for research, education, and honest reference; commercial **brand** use needs written permission. See [TRADEMARK-POLICY.md](TRADEMARK-POLICY.md). |
+| **Commercial license** *(optional)* | brand use in products, warranty/indemnity, support/SLA | by agreement — see [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md). You do **not** need this to use the code. |
+
+**Why this protects the mission:** the code being open lets anyone verify and build on it; the
+brand being protected stops someone from shipping an unverified product under the Sophia name and
+eroding the no-overclaim standard the project exists to uphold. Authored and maintained by the
+sole author and rights holder, **tomyimkc (HaremKing)**. Every fork carries [NOTICE.md](NOTICE.md).
 
 ## Moral + epistemic Conscience Kernel (seven paths)
 
@@ -143,7 +189,7 @@ python tools/run_selfextend_loop.py   # the loop CLOSED on a held-out domain: ab
 
 ## AGI-candidate proof package
 
-Sophia is **not claimed as proven AGI**. The stronger and more defensible public claim is:
+Sophia is **not claimed as proven AGI**. The stronger and more defensible public claim is: <!-- claim-ok: negation -->
 
 > Sophia AGI is an AGI-candidate proof package for provenance-aware reasoning.
 

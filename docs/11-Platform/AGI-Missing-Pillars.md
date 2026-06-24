@@ -1,11 +1,23 @@
-# AGI Missing Pillars — Stage 1 Implementation
+# AGI-Shaped Capability Interfaces — Stage 1 (toy reference implementations)
 
-**Status:** implemented as deterministic/offline candidate infrastructure.  
-**Boundary:** This is **not** proof that Sophia is AGI. These modules close major architecture gaps and produce verifier-gated artifacts marked `candidateOnly: true` and `level3Evidence: false`.
+**Status:** fail-closed **interfaces with toy reference implementations**, deterministic/offline.
+**Boundary:** This is **not** proof that Sophia is AGI, and these are **not** the capabilities their
+names describe. Each module is a *plumbing seam + a deterministic toy* so the real capability can be
+tested later without weakening the no-overclaim gate. Artifacts are marked `candidateOnly: true`,
+`level3Evidence: false`, and `depth: "toy-reference"`.
 
-Sophia remains an **AGI-candidate verifier-gated epistemic framework**. The goal of this stage is to make the next AGI-shaped capabilities testable without weakening the no-overclaim gate.
+"Implemented" below means **the interface and a toy reference exist** — not that program induction,
+planning, world-modelling, etc. are solved.
 
-## What was added
+> **What each module literally is** (owning the toy-ness so it cannot be "exposed"):
+> - `program_induction.py` — template-matching over ~3 hand-coded fitters (affine/quadratic/string/grid), **not** generative synthesis.
+> - `active_inference.py` — a priority-sorted **TODO list** from report metadata, **not** an adaptive belief-update loop.
+> - `planner_mcts.py` — MCTS against a **scripted simulator** with hardcoded outcomes, **not** planning under real uncertainty.
+> - `predictive_world_model.py` — a `{(state,action): Counter}` **lookup table** over a handful of traces, **not** a learned world model.
+> - `continual_plasticity.py` — a promotion **scorecard that updates no weights**, **not** online learning.
+> - `layered_memory.py` — a permission-gated **dict** with token-overlap retrieval, **not** hierarchical cognitive memory.
+
+## What was added (interface + toy reference)
 
 | Pillar | Module | What it implements | Fail-closed rule |
 |---|---|---|---|

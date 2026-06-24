@@ -2,7 +2,8 @@
   "schema": "sophia.agi_missing_pillars_bundle.v1",
   "candidateOnly": true,
   "level3Evidence": false,
-  "claimBoundary": "Mechanism bundle for AGI-candidate infrastructure; does not prove AGI.",
+  "depth": "toy-reference",
+  "claimBoundary": "Fail-closed INTERFACES with toy reference implementations for AGI-shaped capabilities; this bundle is not the capabilities their names describe and does not prove AGI.",
   "seed": 0,
   "components": {
     "programInduction": {
@@ -305,7 +306,7 @@
       "schema": "sophia.active_inference_agenda.v1",
       "candidateOnly": true,
       "level3Evidence": false,
-      "generatedAt": "2026-06-23T14:40:04.373170+00:00",
+      "generatedAt": "2026-06-24T07:00:38.905139+00:00",
       "nGaps": 12,
       "plans": [
         {
@@ -968,7 +969,7 @@
               }
             ]
           },
-          "timestamp": "2026-06-23T14:40:04.373904+00:00"
+          "timestamp": "2026-06-24T07:00:38.910371+00:00"
         },
         {
           "schema": "sophia.continual_plasticity_decision.v1",
@@ -1003,7 +1004,7 @@
               }
             ]
           },
-          "timestamp": "2026-06-23T14:40:04.373915+00:00"
+          "timestamp": "2026-06-24T07:00:38.910858+00:00"
         }
       ],
       "invariants": {
@@ -1038,7 +1039,7 @@
           "tags": [
             "authorship"
           ],
-          "created_at": "2026-06-23T14:40:04.373932+00:00"
+          "created_at": "2026-06-24T07:00:38.911331+00:00"
         }
       },
       "proceduralWrite": {
@@ -1059,7 +1060,7 @@
           "tags": [
             "verifier"
           ],
-          "created_at": "2026-06-23T14:40:04.373938+00:00"
+          "created_at": "2026-06-24T07:00:38.911811+00:00"
         }
       },
       "retrieved": [
@@ -1077,7 +1078,7 @@
           "tags": [
             "authorship"
           ],
-          "created_at": "2026-06-23T14:40:04.373932+00:00",
+          "created_at": "2026-06-24T07:00:38.911331+00:00",
           "score": 3.43
         }
       ],
