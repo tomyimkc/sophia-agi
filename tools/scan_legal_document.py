@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Scan a legal document (or raw text) for fabricated citations — build-item 4.
 
 Extracts text from a contract / filing / memo (TXT/MD, DOCX, HTML; PDF if a parser

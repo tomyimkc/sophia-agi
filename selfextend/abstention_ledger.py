@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Abstention ledger — turns 'I don't know' into a self-directed learning agenda.
 
 Every abstention is a localized gap. Logging them yields the curiosity agenda: the

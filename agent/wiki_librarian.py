@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """The OKF wiki librarian: ingest a raw source into a gated wiki page proposal.
 
 The LLM-Wiki loop, with Sophia's source discipline wired in: read a raw source

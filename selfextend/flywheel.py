@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """The keystone loop: abstention -> synthesize verifier -> validate -> promote ->
 coverage rises, WITHOUT a human writing the new checks and WITHOUT gaming.
 

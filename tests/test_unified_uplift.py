@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the unified uplift harness. Offline, no model, no torch.
 
 Verifies the harness wires all levers over one case set, scores them, and runs

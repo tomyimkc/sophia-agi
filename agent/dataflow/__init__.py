@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Out-of-prompt data-flow firewall (M2) — capability + taint enforcement.
 
 The security boundary lives in deterministic CODE, not in a prompt label the model

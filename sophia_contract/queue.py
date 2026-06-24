@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Durable, idempotent task queue — so the founder can hand work to Sophia and walk
 away. Backed by append-only JSONL (in-memory when path is None). At-least-once with
 idempotency: enqueuing the same ``idempotency_key`` returns the same ``task_id`` and

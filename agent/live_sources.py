@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Keyless live/fixture source adapters for the out-of-wiki fact-check gate.
 
 The fact-check gate is deliberately backend-injected: CI must stay deterministic

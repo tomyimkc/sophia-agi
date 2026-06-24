@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Skill: wiki_grounded_answer — answer only from the OKF wiki; abstain when out-of-wiki."""
 from __future__ import annotations
 

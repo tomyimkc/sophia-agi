@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Neurosymbolic formal verifier with an optional Z3 backend (Stage C).
 
 Sophia's gates are strong on *provenance* and *grounding* but had no path for

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Legal-citation extraction + an authoritative-source registry loader.
 
 This is the substance layer the legal-AI use case needs: a way to pull the

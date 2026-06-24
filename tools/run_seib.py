@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run SEIB-100: Sophia Epistemic Integrity Benchmark.
 
 SEIB-100 is the first all-phase benchmark because it directly measures Sophia's

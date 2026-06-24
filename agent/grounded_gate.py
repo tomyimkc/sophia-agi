@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """On-demand, retrieval-grounded record synthesis for the provenance gate.
 
 The frozen ``doNotAttributeTo`` corpus (``provenance_bench`` misattributions +

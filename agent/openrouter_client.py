@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Optional OpenRouter client for hidden comparison / judge backends.
 
 No API key is stored in the repo. Use either:

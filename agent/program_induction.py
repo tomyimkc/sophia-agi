@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Verifier-gated program induction for Sophia's generality track.
 
 This module is deliberately **not** a claim of AGI. It implements the next

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Compounding SSIL loop — make the "recursive" in RSI literal, every round gated.
 
 Each round:

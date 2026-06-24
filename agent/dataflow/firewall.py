@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """The firewall: enforce a tool's capability against its arguments' taint.
 
 ``guard_call`` returns the policy Decision for a prospective tool call.

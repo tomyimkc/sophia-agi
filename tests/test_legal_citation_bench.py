@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for tools/run_legal_citation_bench.py and its published numbers.
 
 Locks the verifier's benchmark result and guards against drift between the live

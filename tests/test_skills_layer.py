@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Sophia Skills layer: registration, fail-closed behaviour, in-process MCP bridge.
 
 Deterministic and offline — the bridge defaults to in-process `sophia_mcp.tools_impl`

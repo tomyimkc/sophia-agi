@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Competence self-model: where am I reliable, and route by it.
 
 A primitive metacognition layer. Per domain it tracks (correct, total) outcomes ->

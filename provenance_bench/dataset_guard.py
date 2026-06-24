@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Train/eval contamination guard for local-Sophia training packs.
 
 The #1 way to fake training "uplift" is to leak eval prompts into the training set.

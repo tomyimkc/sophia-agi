@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for runtime verifier policies in the guarded loop.
 
 The guarded spine is gate-agnostic: the same retrieve→generate→gate→repair/abstain

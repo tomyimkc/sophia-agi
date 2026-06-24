@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Claims linter — fail the build if public copy makes a capability/safety overclaim.
 
 The README and marketing must never exceed what the failure ledger supports. This

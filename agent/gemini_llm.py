@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Gemini generation for Sophia online RAG."""
 
 from __future__ import annotations

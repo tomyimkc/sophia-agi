@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for tools/wiki_sync.py and tools/wiki_validate.py (offline)."""
 
 from __future__ import annotations

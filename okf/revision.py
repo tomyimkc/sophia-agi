@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Belief revision: apply retractions and propagate their consequences.
 
 Counterfactual queries (``okf.counterfactual``) ask *what if* a single source were

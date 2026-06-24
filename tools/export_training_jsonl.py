@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Export training/examples/*.json to a single JSONL corpus."""
 
 from __future__ import annotations

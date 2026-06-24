@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Cross-domain transfer: the SAME synthesize-validate loop, no per-domain tuning.
 
 Generality is transfer. This runs the one verifier-synthesis loop across several

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the injection / containment red-team (M1).
 
 Gates the CONTAINMENT properties (deterministic gates stop a compromised model;

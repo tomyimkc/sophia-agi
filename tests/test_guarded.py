@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the guarded completion loop (agent/guarded.py). Offline.
 
 guarded_complete wraps a small model: retrieve+format_context, generate, and on a

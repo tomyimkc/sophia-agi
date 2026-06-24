@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run Sophia's offline AGI-missing-pillars mechanism checks.
 
 These artifacts are candidate infrastructure only: they demonstrate mechanisms

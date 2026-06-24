@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Spec D — deterministic capability-retention scorer (pure stdlib).
 
 Produces B's SSA capability inputs: does steering degrade reasoning? Accuracy

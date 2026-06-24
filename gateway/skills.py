@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Verifiable Skills (P2): a skill = program + verifier + classification + eval suite.
 
 A skill is registered like any tool, but it carries its own ``verifier_ref`` (its output

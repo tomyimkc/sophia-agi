@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Render the GitHub Wiki (the `<repo>.wiki.git` surface) from the OKF belief graph.
 
 `wiki/` holds OKF pages that `tools/wiki_sync.py` already generates from `data/*.json`

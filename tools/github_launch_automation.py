@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """One-shot GitHub launch automation (About, topics, issue comments)."""
 
 from __future__ import annotations

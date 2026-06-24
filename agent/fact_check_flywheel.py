@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Quarantine → recheck → promote loop for externally verified claims.
 
 The fact-check gate already emits learning candidates for accepted out-of-wiki

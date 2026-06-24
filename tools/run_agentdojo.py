@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """AgentDojo-style end-to-end injection suite (M2.4): ASR + utility under attack.
 
 Runs the full planner → interpreter pipeline on benign requests whose retrieved

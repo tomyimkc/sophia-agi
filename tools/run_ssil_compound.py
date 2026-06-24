@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the compounding SSIL loop and emit an artifact.
 
 Offline (default): a scripted proposer drives a deterministic compounding curve —

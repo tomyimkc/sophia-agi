@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Sophia in 30 seconds — the governance gate, end to end, offline.
 
 Shows the one thing Sophia is for: AI output only ships when it can be machine-checked,

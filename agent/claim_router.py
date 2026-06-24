@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Atomic-claim decomposition + claim-type routing (FActScore / SAFE-style).
 
 The fixed panel in :func:`agent.gate.check_response` runs every verifier over the

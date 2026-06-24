@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Axis-vector composition + orthogonalization (pure stdlib).
 
 Takes OCEAN target signs only — never an MBTI string (veneer-invariance).

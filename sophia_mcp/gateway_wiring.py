@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Wire the fail-closed gateway into the live MCP server's side-effecting tools.
 
 Until now ``gateway/interceptor.py`` was tested as a library but had **zero

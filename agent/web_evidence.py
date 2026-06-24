@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Web and local evidence search helpers for Sophia.
 
 The online providers are opt-in because hidden benchmark prompts and private

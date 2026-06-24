@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the measured, contamination-free self-improvement loop.
 
 Falsifiable claim: held-out recall (catching lineage-merges in *unseen phrasings*)

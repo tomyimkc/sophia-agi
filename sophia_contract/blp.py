@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Bell-LaPadula classification for the contract wire vocabulary.
 
 The contract exposes four ordered levels — the stable enum aihk-os pins against:

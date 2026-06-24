@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Reflexive no-overclaim gate for Sophia's own AGI claims.
 
 This is intentionally narrower than the general fact-check gate. It scans project

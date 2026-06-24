@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Verified-consensus (P5): adjudicate competing answers by VERIFICATION, not a vote.
 
 Given several candidate outputs (from different agents/skills/models), each is run through

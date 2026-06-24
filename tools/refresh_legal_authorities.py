@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Refresh the HK legal-authority snapshot from primary sources (strategy A).
 
 Runs the live resolver over a list of citations and (a) warms the resolution

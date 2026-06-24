@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Source ranking for grounded gateway verification.
 
 Grounding is not just "has a source"; source quality matters.  This small,

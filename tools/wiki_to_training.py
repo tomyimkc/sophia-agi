@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Mine the OKF wiki's provenance graph into SFT + DPO training data (the flywheel).
 
 Every page with a doNotAttributeTo edge becomes training signal for the exact

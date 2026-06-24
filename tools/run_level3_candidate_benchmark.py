@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run a local candidate benchmark for Sophia's remaining Level-3 lanes.
 
 This is a rehearsal kit, not a Level-3 evidence generator. It exercises the

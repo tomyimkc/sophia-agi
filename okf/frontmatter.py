@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Dependency-free YAML-frontmatter codec for the OKF wiki.
 
 A deliberately small, round-trippable subset of YAML so the ``okf`` package can be

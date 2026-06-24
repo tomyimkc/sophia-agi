@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Activation/truth/deception probe contract.
 
 This is a local-first, dependency-free stand-in for future residual-stream probes.

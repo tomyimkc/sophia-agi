@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 from __future__ import annotations
 """Validate, template, and score Sophia hidden evaluation packs.
 

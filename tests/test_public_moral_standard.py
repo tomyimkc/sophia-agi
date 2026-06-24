@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the public moral standard layer (8 corrected steps).
 
 Covers: the moral ontology, the public-standard gate (hard floor / gray zone /

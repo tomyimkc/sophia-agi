@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Classification lattice — Bell-LaPadula confidentiality + Biba integrity (#3).
 
 The original review found the confidentiality story incomplete: max-over-chain

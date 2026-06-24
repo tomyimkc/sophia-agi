@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Local-agent delta core: alone vs +gate vs +MCP-tools over provenance cases.
 
 The ``+mcp-tools`` condition is the new piece — nothing else in the repo wires

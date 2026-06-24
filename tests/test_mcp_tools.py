@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Smoke tests for sophia_mcp tool implementations."""
 
 from __future__ import annotations

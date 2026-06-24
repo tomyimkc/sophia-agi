@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Librarian CLI: ingest a raw source into a gated OKF wiki draft.
 
     python tools/wiki_ingest.py raw/sample-oikeiosis.txt --provider mock

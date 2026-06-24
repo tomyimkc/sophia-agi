@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Fetch a real external benchmark and convert it to the eval's JSONL contract.
 
 `tools/run_external_eval.py` scores a model against EXTERNAL gold answers (never

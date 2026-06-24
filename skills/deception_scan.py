@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Skill: deception_scan — black-box deception signals + stated confidence."""
 from __future__ import annotations
 

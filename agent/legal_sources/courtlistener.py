@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """US source — CourtListener (Free Law Project, courtlistener.com).
 
 Free access to 9M+ US opinions with a documented REST API. Handles US reporter

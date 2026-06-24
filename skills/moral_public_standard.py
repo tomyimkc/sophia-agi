@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Skill: moral_public_standard_review — Moral Gate v2 (public standard + parliament)."""
 from __future__ import annotations
 

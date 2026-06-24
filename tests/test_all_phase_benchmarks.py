@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """All-phase benchmark suite tests.
 
 Runs the deterministic candidate benchmark phases and verifies:

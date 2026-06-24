@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run code-provenance adaptation benchmark (30 tasks).
 
 This complements ``run_code_uplift.py``. It does not claim SWE-bench or

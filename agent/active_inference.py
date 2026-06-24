@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Uncertainty-driven active verification daemon.
 
 Sophia should not go silent on out-of-wiki claims. This module turns holds,

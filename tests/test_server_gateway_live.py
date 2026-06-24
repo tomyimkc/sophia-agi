@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Red-team tests for the served gateway wiring (sophia_mcp.gateway_wiring).
 
 These prove the fail-closed gateway is actually enforced on the live MCP server's

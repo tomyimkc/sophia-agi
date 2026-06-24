@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Prepare LoRA train split with benchmark holdout.
 
 Excludes examples linked to benchmark case IDs so eval measures generalization.

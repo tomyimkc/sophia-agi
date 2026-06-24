@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Bounded, logged declassification — the controlled relief for label creep (#3).
 
 Combining sources drives confidentiality up (max-over-chain), so without a downgrade

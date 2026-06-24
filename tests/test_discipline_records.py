@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for user-supplied source-discipline records (SOPHIA_DISCIPLINE_RECORDS). Offline.
 
 Lets a small model enforce the user's OWN attribution rules (legal/corporate/code

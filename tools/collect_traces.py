@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Turn agent run traces into SFT + DPO training data (the flywheel).
 
 Reads append-only run logs from agent/memory/agent_runs/*.jsonl (written by the

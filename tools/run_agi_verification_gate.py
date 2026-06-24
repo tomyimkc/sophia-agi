@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run Sophia's non-human AGI verification gate.
 
 This script converts the AGI proof package from prose into a machine-checkable

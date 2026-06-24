@@ -5,7 +5,7 @@ instead of fabricating, and reports honestly-bounded numbers. This teaches a *pr
 a product — and definitely not "how to build AGI."
 
 > Built from the open corpus, the OKF wiki, and the verifier gate in this repo. Everything
-> taught here is reproducible against the MIT core.
+> taught here is reproducible against the Apache-2.0 core.
 
 ## Who it's for
 Engineers and researchers shipping LLM features who need outputs they can defend — legal,

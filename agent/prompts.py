@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """System prompts for the three Sophia agent paths."""
 
 from __future__ import annotations
