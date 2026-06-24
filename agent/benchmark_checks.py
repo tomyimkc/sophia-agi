@@ -110,6 +110,9 @@ DOMAIN_BENCH: dict[str, Path] = {
     "history": ROOT / "tests" / "benchmark-history.json",
     "religion": ROOT / "tests" / "benchmark-religion.json",
     "personality": ROOT / "tests" / "benchmark-personality.json",
+    # Hurdle 2 — structurally different, sound-verifier families (transfer test).
+    "math": ROOT / "tests" / "benchmark-math.json",
+    "coding": ROOT / "tests" / "benchmark-coding.json",
 }
 
 CONFIDENCE_PATTERNS: dict[str, list[str]] = {

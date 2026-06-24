@@ -26,6 +26,36 @@ Failures are claim evidence. They show where the system is not AGI.
 
 | grounded-gate-not-yet-validated-2026-06-22 | Open | The retrieval-grounded gate (check_claim ground=True) is verified bug-fixed (no pen-name false positives; catches known-author misattributions for out-of-corpus works) but a 3-run/2-family N=24 run gave +gate Δ8.3%, 95% CI [0.000, +16.7%] — lower bound touches zero, so illustrative not validated (vs the prior non-grounded validated Δ12.5%). Sampling variance at small N. | Re-run grounded at larger N (>=40 cases / more runs) to push the CI off zero |
 
+## hurdle2-transfer-scorer-registry-wired-2026-06-24
+
+**Status:** PARTIAL (mechanism wired + tested; capability evidence hardware-bound).
+
+Hurdle 2 (broad transfer) step 1: the eval ladder + scoring path is no longer
+provenance-only. `agent/domain_scorers.py` adds a `domain → score_fn` registry and
+both eval backends (`eval_local_model.py`, `eval_mlx_model.py`) dispatch through it.
+Two structurally different, **sound-verifier** families are wired as the transfer test:
+
+- `math` (`tests/benchmark-math.json`, 12 cases from `capability_arithmetic.json`):
+  exact answer-match + `arithmetic_sound` soundness veto.
+- `coding` (`tests/benchmark-coding.json`, 2 cases from `eval/coding/smoke.jsonl`):
+  `code_tests_pass` (executes Python, checks exit code).
+
+`tools/eval_ladder.py` now takes `--domains`, so the **identical** 4-rung
+base/+gate/adapter/+gate ladder runs on math/coding. Gated by
+`tests/test_domain_scorers.py` (9 tests: registry routing, per-family accept/reject
+incl. real code execution, soundness veto, full-pack scoring). The provenance path is
+unchanged; `tools/lint_claims.py` OK; 134 related tests pass.
+
+**Why this is NOT a transfer capability claim:** no adapter has been trained/evaluated
+on math or coding yet — the identical retention+promotion *loop* on these families
+(step 2.4) is hardware-bound like C2/C5. This is proof the scoring substrate is
+domain-general and the two families score through their own sound verifiers, not proof
+the method *improves* a model on them.
+
+**Next experiment:** train one adapter per family, run the ladder + W2 gate + feedback
+miner, report per-family deltas with CIs. Coding+unit-test is the on-ramp to SWE-bench
+(Hurdle 1). Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
+
 ## Template
 
 ```text

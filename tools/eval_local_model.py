@@ -24,7 +24,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.benchmark_checks import DOMAIN_BENCH, load_json, score_case  # noqa: E402
+from agent.benchmark_checks import DOMAIN_BENCH, load_json  # noqa: E402
+from agent.domain_scorers import score_for_domain  # noqa: E402
 from agent.gate import check_response  # noqa: E402
 
 OUT_DIR = ROOT / "benchmark" / "model_runs"
@@ -76,7 +77,7 @@ def score_domain(domain: str, responses: dict[str, str], traditions: dict) -> di
     for case in bench.get("cases", []):
         case_id = case["id"]
         response = responses.get(case_id, "")
-        ok, reasons = score_case(case, response, traditions)
+        ok, reasons = score_for_domain(domain, case, response, ctx={"traditions": traditions})
         if ok:
             passed += 1
         results.append({"id": case_id, "passed": ok, "reasons": reasons})

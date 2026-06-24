@@ -33,27 +33,27 @@ def _slug(name: str) -> str:
     return name.replace("/", "-").replace(" ", "-").lower()
 
 
-def _rungs(model: str, adapter: str | None, backend: str) -> list[tuple[str, list[str], str]]:
+def _rungs(model: str, adapter: str | None, backend: str, domains: list[str]) -> list[tuple[str, list[str], str]]:
     py = sys.executable or "python3"
     eval_script = MLX_EVAL if backend == "mlx" else HF_EVAL
-    base = [py, eval_script, "--model", model, "--domains", *DOMAINS]
+    base = [py, eval_script, "--model", model, "--domains", *domains]
     label = _slug(model)
     rungs = [("base", base, label), ("base+gate", base + ["--with-gate"], label)]
     if adapter:
         adapter_name = Path(adapter).name
         adapter_label = _slug(adapter_name)
-        a = [py, eval_script, "--model", model, "--adapter", adapter, "--domains", *DOMAINS]
+        a = [py, eval_script, "--model", model, "--adapter", adapter, "--domains", *domains]
         rungs += [("adapter", a, adapter_label), ("adapter+gate", a + ["--with-gate"], adapter_label)]
     return rungs
 
 
-def _domain_report_paths(label: str) -> list[Path]:
-    return [ROOT / "benchmark" / "model_runs" / f"local-{label}-{domain}.report.json" for domain in DOMAINS]
+def _domain_report_paths(label: str, domains: list[str]) -> list[Path]:
+    return [ROOT / "benchmark" / "model_runs" / f"local-{label}-{domain}.report.json" for domain in domains]
 
 
-def _load_reports(label: str) -> list[dict[str, Any]]:
+def _load_reports(label: str, domains: list[str]) -> list[dict[str, Any]]:
     reports: list[dict[str, Any]] = []
-    for path in _domain_report_paths(label):
+    for path in _domain_report_paths(label, domains):
         if path.exists():
             try:
                 reports.append(json.loads(path.read_text(encoding="utf-8")))
@@ -98,14 +98,14 @@ def _update_manifest_baseline(report: dict[str, Any]) -> None:
     _write_json(MANIFEST, manifest)
 
 
-def _run_rung(name: str, cmd: list[str], label: str) -> dict[str, Any]:
+def _run_rung(name: str, cmd: list[str], label: str, domains: list[str]) -> dict[str, Any]:
     print(f"[{name}] running: {' '.join(cmd)}", flush=True)
     proc = subprocess.run(cmd, cwd=ROOT, text=True, capture_output=True)
     if proc.stdout:
         print(proc.stdout, end="")
     if proc.stderr:
         print(proc.stderr, end="", file=sys.stderr)
-    reports = _load_reports(label)
+    reports = _load_reports(label, domains)
     summary = _summarize_reports(reports)
     status = "complete" if summary else "blocked_or_failed"
     return {
@@ -124,10 +124,14 @@ def main(argv=None) -> int:
     ap.add_argument("--model", default="Qwen/Qwen2.5-3B-Instruct")
     ap.add_argument("--adapter", default=None)
     ap.add_argument("--backend", choices=["hf", "mlx"], default="hf", help="Evaluation backend: hf/PEFT or mlx/MLX-LM")
+    ap.add_argument("--domains", nargs="*", default=DOMAINS,
+                    help="Task families to run the identical ladder on (e.g. math coding). "
+                         "Default: the provenance suites.")
     ap.add_argument("--dry-run", action="store_true", help="verify wiring only (no weights)")
     args = ap.parse_args(argv)
 
-    rungs = _rungs(args.model, args.adapter, args.backend)
+    domains = args.domains or DOMAINS
+    rungs = _rungs(args.model, args.adapter, args.backend, domains)
     print("Sophia eval ladder — promotion rule: improve provenance/citation at "
           "acceptable false-positive cost (no useful-correctness regression).\n")
     if args.dry_run:
@@ -148,12 +152,13 @@ def main(argv=None) -> int:
         "model": args.model,
         "adapter": args.adapter,
         "backend": args.backend,
+        "domains": domains,
         "claimBoundary": "Local-model ladder status/results; not AGI proof. External gates enforce correctness.",
-        "promotionRule": "promote only if provenance/citation improves at acceptable false-positive cost.",
+        "promotionRule": "promote only if the family metric improves at acceptable false-positive cost.",
         "rungs": [],
     }
     for name, cmd, label in rungs:
-        payload["rungs"].append(_run_rung(name, cmd, label))
+        payload["rungs"].append(_run_rung(name, cmd, label, domains))
 
     # Baseline is the no-adapter ladder. Adapter runs are separate reports.
     out_name = "eval_ladder_baseline.json" if not args.adapter else "eval_ladder_adapter.json"
