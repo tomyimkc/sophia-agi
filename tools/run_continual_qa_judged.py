@@ -136,10 +136,13 @@ def main() -> None:
     def agg(system: str) -> "dict":
         per_run = []
         pooled_consensus = []
+        by_expect: dict = {"assert": [], "abstain": []}
         kappas, agreements = [], []
         for rows in run_results:
             consensus = [all(row["judges"][system][m] for m in judge_models) for row in rows]
             pooled_consensus.extend(consensus)
+            for row, c in zip(rows, consensus):
+                by_expect.setdefault(row["expect"], []).append(c)
             per_judge = {m: round(sum(row["judges"][system][m] for row in rows) / len(rows), 4)
                          for m in judge_models}
             entry = {"consensusPassRate": round(sum(consensus) / len(rows), 4),
@@ -157,6 +160,11 @@ def main() -> None:
             "perRun": per_run,
             "meanConsensusPassRate": round(sum(pooled_consensus) / len(pooled_consensus), 4),
             "consensusCI95": _bootstrap_ci(pooled_consensus),
+            # Where grounding actually helps: split consensus pass by expectation. The
+            # recall ("assert") cases are facts a strong raw model also knows; the
+            # fail-closed advantage of grounding concentrates on the "abstain" traps.
+            "byExpect": {k: {"n": len(v), "consensusPassRate": round(sum(v) / len(v), 4)}
+                         for k, v in by_expect.items() if v},
             "meanInterJudgeKappa": round(sum(kappas) / len(kappas), 4) if kappas else None,
             "meanInterJudgePercentAgreement": round(sum(agreements) / len(agreements), 4) if agreements else None,
         }

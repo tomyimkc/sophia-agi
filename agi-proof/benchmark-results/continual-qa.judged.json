@@ -16,75 +16,83 @@
   "distinctProviderFamilies": true,
   "selfGradingRisk": false,
   "runs": 3,
-  "queryCount": 10,
+  "queryCount": 30,
   "summary": {
     "grounded": {
       "perRun": [
         {
-          "consensusPassRate": 0.8,
+          "consensusPassRate": 0.4667,
           "perJudgePassRate": {
-            "claude-opus-4-8-low": 0.8,
-            "gemini-2.5-flash": 1.0
+            "claude-opus-4-8-low": 0.5333,
+            "gemini-2.5-flash": 0.6
           },
-          "interJudgeKappa": 0.0
+          "interJudgeKappa": 0.5946,
+          "interJudgePercentAgreement": 0.8
         },
         {
-          "consensusPassRate": 0.7,
+          "consensusPassRate": 0.4333,
           "perJudgePassRate": {
-            "claude-opus-4-8-low": 0.7,
-            "gemini-2.5-flash": 1.0
+            "claude-opus-4-8-low": 0.5,
+            "gemini-2.5-flash": 0.6333
           },
-          "interJudgeKappa": 0.0
+          "interJudgeKappa": 0.4667,
+          "interJudgePercentAgreement": 0.7333
         },
         {
-          "consensusPassRate": 0.7,
+          "consensusPassRate": 0.5667,
           "perJudgePassRate": {
-            "claude-opus-4-8-low": 0.7,
-            "gemini-2.5-flash": 1.0
+            "claude-opus-4-8-low": 0.5667,
+            "gemini-2.5-flash": 0.7667
           },
-          "interJudgeKappa": 0.0
+          "interJudgeKappa": 0.5694,
+          "interJudgePercentAgreement": 0.8
         }
       ],
-      "meanConsensusPassRate": 0.7333,
+      "meanConsensusPassRate": 0.4889,
       "consensusCI95": [
-        0.5667,
-        0.8667
+        0.3889,
+        0.5889
       ],
-      "meanInterJudgeKappa": 0.0
+      "meanInterJudgeKappa": 0.5436,
+      "meanInterJudgePercentAgreement": 0.7778
     },
     "raw": {
       "perRun": [
         {
+          "consensusPassRate": 0.4667,
+          "perJudgePassRate": {
+            "claude-opus-4-8-low": 0.5,
+            "gemini-2.5-flash": 0.7
+          },
+          "interJudgeKappa": 0.4667,
+          "interJudgePercentAgreement": 0.7333
+        },
+        {
           "consensusPassRate": 0.5,
           "perJudgePassRate": {
-            "claude-opus-4-8-low": 0.5,
-            "gemini-2.5-flash": 0.5
+            "claude-opus-4-8-low": 0.5333,
+            "gemini-2.5-flash": 0.7667
           },
-          "interJudgeKappa": 1.0
+          "interJudgeKappa": 0.3779,
+          "interJudgePercentAgreement": 0.7
         },
         {
-          "consensusPassRate": 0.3,
-          "perJudgePassRate": {
-            "claude-opus-4-8-low": 0.3,
-            "gemini-2.5-flash": 0.5
-          },
-          "interJudgeKappa": 0.6
-        },
-        {
-          "consensusPassRate": 0.4,
+          "consensusPassRate": 0.4667,
           "perJudgePassRate": {
             "claude-opus-4-8-low": 0.5,
-            "gemini-2.5-flash": 0.4
+            "gemini-2.5-flash": 0.6333
           },
-          "interJudgeKappa": 0.8
+          "interJudgeKappa": 0.6,
+          "interJudgePercentAgreement": 0.8
         }
       ],
-      "meanConsensusPassRate": 0.4,
+      "meanConsensusPassRate": 0.4778,
       "consensusCI95": [
-        0.2333,
-        0.5667
+        0.3667,
+        0.5889
       ],
-      "meanInterJudgeKappa": 0.8
+      "meanInterJudgeKappa": 0.4815,
+      "meanInterJudgePercentAgreement": 0.7444
     }
   },
   "caveats": [
