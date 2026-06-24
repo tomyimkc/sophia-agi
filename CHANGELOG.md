@@ -16,6 +16,22 @@ All notable changes to Sophia AGI are documented here.
   drift. The recall audit (`tools/audit_cpqa_recall.py`) lists the thin targets to enrich.
 - `tests/test_grounded_agent.py` wired into CI.
 
+### Added — continual-learning extensions (non-stationarity, lifelong, consolidation)
+
+- `agent/temporal_validity.py` — as-of-date belief over `validFrom`/`validUntil` windows
+  (knowledge that changes over time) + temporal-conflict detection.
+- `agent/knowledge_gap_log.py` — log routing/abstain/fallback gaps → frequency-ranked
+  enrichment worklist (self-improving corpus); wired into `grounded_agent` via `gap_log_path`.
+- `agent/forgetting_curve.py` — spaced-repetition graded decay: unused facts fade below the
+  assertion threshold (graceful, auditable), reinforced facts persist.
+- `agent/belief_revision_scaling.py` — revision cost-curve stress harness (honors the
+  TMS-scaling caveat in the limitations ledger with measurement, not hand-waving).
+- `tools/run_cls_consolidation.py` — offline selector that emits a GPU-ready consolidation
+  manifest (stable, gate-cleared facts); training + the anti-forgetting promotion gate run
+  on a GPU box, no fabricated metrics here.
+- `eval/continual_qa/README.md` — CPQA packaged as a reproducible, citable benchmark spec.
+- All offline, deterministic, tested, wired into CI.
+
 ## [0.8.0] - 2026-06-24
 
 ### Added — Non-parametric continual learning (Experiment 1: sequential retention)
