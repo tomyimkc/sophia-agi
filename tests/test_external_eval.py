@@ -50,11 +50,39 @@ def test_committed_sample_loads_and_is_consistent() -> None:
     assert e.run_dataset(items, lambda it: str(it["answer"]))["accuracy"] == 1.0
 
 
+def _has_sympy() -> bool:
+    try:
+        import sympy  # noqa: F401
+        return True
+    except Exception:
+        return False
+
+
+def test_score_item_symbolic() -> None:
+    # equivalence modulo algebra (only meaningful with sympy; fail-closed without)
+    if _has_sympy():
+        assert e.score_item_symbolic({"answer": "x**2 - 1"}, r"answer: \boxed{(x-1)(x+1)}") is True
+        assert e.score_item_symbolic({"answer": "x**2 - 1"}, r"\boxed{x**2 + 1}") is False
+    else:
+        assert e.score_item_symbolic({"answer": "x**2 - 1"}, r"\boxed{(x-1)(x+1)}") is False
+
+
+def test_math_sample_loads_and_is_consistent() -> None:
+    path = ROOT / "eval" / "external" / "math-style-sample.jsonl"
+    items = [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
+    assert len(items) >= 10
+    if _has_sympy():
+        rep = e.run_dataset(items, lambda it: str(it["answer"]), scorer=e.score_item_symbolic)
+        assert rep["accuracy"] == 1.0  # gold is internally consistent under symbolic scoring
+
+
 def main() -> int:
     test_extract_answer()
     test_score_item_uses_gold()
     test_run_dataset_accuracy()
     test_committed_sample_loads_and_is_consistent()
+    test_score_item_symbolic()
+    test_math_sample_loads_and_is_consistent()
     print("test_external_eval: OK")
     return 0
 

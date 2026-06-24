@@ -45,23 +45,29 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--dataset", default=str(SAMPLE))
     ap.add_argument("--model", default=None, help="model spec; omit for offline mock plumbing")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--scorer", choices=["numeric", "symbolic"], default="numeric",
+                    help="numeric exact-match (GSM8K-style) or symbolic equivalence (MATH-style, sympy)")
     args = ap.parse_args(argv)
 
     items = _load(Path(args.dataset))
     if args.limit:
         items = items[: args.limit]
 
+    symbolic = args.scorer == "symbolic"
+    scorer = external_eval.score_item_symbolic if symbolic else None
     if args.model:
         from agent.model import default_client
 
         client = default_client(args.model)
-        sys_prompt = "Solve the problem. Show brief reasoning and end with the final number only."
+        sys_prompt = ("Solve the problem. Show brief reasoning and put the final answer in \\boxed{}."
+                      if symbolic else
+                      "Solve the problem. Show brief reasoning and end with the final number only.")
         solver = lambda it: getattr(client.generate(sys_prompt, it["question"]), "text", "") or ""
         label = args.model
     else:
         solver, label = _mock_solver, "mock (plumbing only)"
 
-    report = external_eval.run_dataset(items, solver)
+    report = external_eval.run_dataset(items, solver, scorer=scorer)
     is_sample = Path(args.dataset).resolve() == SAMPLE.resolve()
     print(f"dataset: {Path(args.dataset).name}{'  [STYLE SAMPLE — not a benchmark result]' if is_sample else ''}")
     print(f"model:   {label}")
