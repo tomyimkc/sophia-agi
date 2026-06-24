@@ -182,6 +182,23 @@ def test_run_rlvr_mock_passes_invariants() -> None:
     assert detail["trainCases"] > 0 and detail["evalCases"] > 0
 
 
+def test_ingest_refuses_committed_archive() -> None:
+    """The gate must never re-read the durable rlvr-replication/ archive: doing so
+    decoupled the live gate from the actual training (a fresh run re-promoting stale
+    numbers — the stale-promote bug). The guard refuses such a path structurally."""
+    from tools import ingest_rlvr_eval
+
+    archive_path = (
+        ROOT / "agi-proof" / "benchmark-results" / "rlvr-replication" / "seed0.adapter-eval.json"
+    )
+    try:
+        ingest_rlvr_eval.ingest(archive_path)
+    except SystemExit as e:
+        assert ingest_rlvr_eval.ARCHIVE_DIR_NAME in str(e)
+    else:
+        raise AssertionError("ingest must refuse a file under the committed archive dir")
+
+
 def main() -> int:
     test_reward_is_deterministic()
     test_reward_false_monotone_and_forbidden_negative()
@@ -195,6 +212,7 @@ def main() -> int:
     test_gate_records_scoped_to_partition()
     test_sealed_hash_is_stable()
     test_run_rlvr_mock_passes_invariants()
+    test_ingest_refuses_committed_archive()
     print("test_rlvr: OK")
     return 0
 
