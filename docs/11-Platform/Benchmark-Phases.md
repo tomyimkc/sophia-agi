@@ -56,6 +56,39 @@ the benchmark because `falsePositiveCost` is bounded in the `ok` criterion. The
 `sourceCitationRate` (`prompt_to_full_citation_delta`): prompt-only answers may be
 correct but cite no provenance.
 
+## Real-model SEIB-100 via OpenRouter
+
+`tools/run_seib.py` now supports a real-model path:
+
+```bash
+export OPENROUTER_API_KEY="..."  # never commit this
+
+python tools/run_seib.py \
+  --real-model \
+  --model openrouter:openai/gpt-4o-mini \
+  --limit 10 \
+  --runs 1 \
+  --out agi-proof/benchmark-results/seib-100-openrouter-smoke.public-report.json
+```
+
+Then run the full candidate suite:
+
+```bash
+python tools/run_seib.py \
+  --real-model \
+  --model openrouter:openai/gpt-4o-mini \
+  --runs 3 \
+  --judges openrouter:anthropic/claude-sonnet-4.5,openrouter:qwen/qwen-2.5-72b-instruct \
+  --out agi-proof/benchmark-results/seib-100-openrouter-gpt4omini.public-report.json
+```
+
+Current real-mode caveat: this path uses Sophia's deterministic SEIB scorer and
+benchmark-side MCP context (`mcpMode=context_from_external_eval_sources`). It records
+`judgeSpecs` for later validation but does not yet use LLM judges in the scoring
+loop (`llmJudgesUsed=false`). Therefore even a real OpenRouter run remains
+`validated=false` until a multi-run, multi-judge scorer is added and passes the
+no-overclaim gate.
+
 ## Promotion rules
 
 A number may be promoted from "candidate" to public headline only if it clears:

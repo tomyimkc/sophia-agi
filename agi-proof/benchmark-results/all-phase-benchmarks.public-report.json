@@ -24,7 +24,7 @@
         "sophia_full_false_positive_cost": 0.02
       },
       "n": 100,
-      "claimBoundary": "Candidate SEIB-100 benchmark. Deterministic/offline path proves wiring and scoring; real-model headline claims require >=3 runs, >=2 independent judge families, kappa>=0.40, and CI excluding 0."
+      "claimBoundary": "Candidate SEIB-100 benchmark. Deterministic scorer / context-MCP path; real-model headline claims require >=3 runs, >=2 independent judge families, kappa>=0.40, CI excluding 0, and explicit false-positive cost."
     },
     "beliefRevision50": {
       "schema": "sophia.belief_revision_benchmark.v1",

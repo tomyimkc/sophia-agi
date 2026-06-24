@@ -2,6 +2,22 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.46] - 2026-06-24
+
+### Added — SEIB-100 real-model runner path
+
+- `tools/run_seib.py` now supports `--real-model`, `--model`, `--limit`,
+  `--runs`, and `--judges` so SEIB-100 can be executed against real model
+  adapters such as `openrouter:openai/gpt-4o-mini`.
+- Real-mode reports include `realModelRun`, `preflightOk`, `modelSpec`,
+  `judgeSpecs`, `judgeMethod`, `llmJudgesUsed`, and `mcpMode`.
+- The runner performs a preflight call and writes a setup-blocker artifact if the
+  model cannot be reached, preventing silent fallback to mock results.
+- Documentation in `docs/11-Platform/Benchmark-Phases.md` now includes OpenRouter
+  smoke/full commands and states the current caveat: real-mode scoring still uses
+  Sophia's deterministic SEIB scorer and benchmark-side MCP context, so results
+  remain `validated=false` until multi-judge scoring is added.
+
 ## [0.7.45] - 2026-06-24
 
 ### Fixed — SEIB-100 methodology gaps (independent verification pass)
