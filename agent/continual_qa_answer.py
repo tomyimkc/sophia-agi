@@ -24,12 +24,29 @@ from typing import Any
 
 ABSTAIN_TEXT = "I don't have a grounded source for this in the corpus, so I won't assert an answer."
 
+# Strict mode (Step 0 baseline): answer ONLY from the source, else abstain. Maximises
+# faithfulness/trap-safety but tanks recall when the source is a thin provenance stub.
 _ANSWER_SYSTEM = (
     "You answer strictly from the SINGLE provided source. Respect its provenance: never "
     "attribute the text to anyone in its doNotAttributeTo list, and treat compiled / "
     "legendary / layered authorship as uncertain. If the source does not answer the "
     "question, reply exactly: I don't know. Be concise."
 )
+# Step 4 — attribution-safe mode: loosen along the *non-attribution* axis only. The source
+# is primary; well-established general facts may be used to answer; but a work or idea is
+# NEVER attributed to a person without source support, and doNotAttributeTo is absolute.
+# This recovers recall on stub-backed factual questions while preserving the trap discipline
+# (the part the gate exists for).
+_ANSWER_SYSTEM_ATTRIB_SAFE = (
+    "Answer the question. Use the provided SOURCE as the primary authority. For general, "
+    "well-established factual matters you may also use common knowledge to give a useful "
+    "answer rather than refusing. BUT source discipline on attributions is absolute: never "
+    "attribute a text, idea, or quote to a specific person unless the SOURCE supports it, "
+    "never attribute to anyone in the source's doNotAttributeTo list, and treat compiled / "
+    "legendary / layered authorship as uncertain. If you genuinely cannot answer, say: I "
+    "don't know. Be concise."
+)
+_ANSWER_SYSTEMS = {"strict": _ANSWER_SYSTEM, "attribution_safe": _ANSWER_SYSTEM_ATTRIB_SAFE}
 _RAW_SYSTEM = "Answer the question concisely from your own knowledge."
 
 _JUDGE_SYSTEM = (
@@ -57,11 +74,15 @@ def build_source_map(pages) -> "dict[str, str]":
     return out
 
 
-def generate_grounded(question: str, source_text, complete) -> str:
+def generate_grounded(question: str, source_text, complete, *, mode: str = "strict") -> str:
+    """Answer from the retrieved source. ``mode='strict'`` answers only from the source;
+    ``mode='attribution_safe'`` (Step 4) also allows well-established general facts while
+    keeping attribution discipline absolute."""
     if not source_text:
         return ABSTAIN_TEXT
+    system = _ANSWER_SYSTEMS.get(mode, _ANSWER_SYSTEM)
     user = f"SOURCE:\n{source_text}\n\nQUESTION: {question}"
-    return (complete(_ANSWER_SYSTEM, user) or "").strip()
+    return (complete(system, user) or "").strip()
 
 
 def generate_raw(question: str, complete) -> str:

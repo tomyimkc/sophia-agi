@@ -104,6 +104,8 @@ def main() -> None:
     ap.add_argument("--limit", type=int, default=10)
     ap.add_argument("--runs", type=int, default=3)
     ap.add_argument("--answer", default="llmhub:gpt-5-mini", help="provider:model for answers")
+    ap.add_argument("--grounded-mode", default="strict", choices=["strict", "attribution_safe"],
+                    help="Step 4: 'attribution_safe' allows general-fact recall while keeping attribution discipline")
     ap.add_argument("--judge", action="append", default=None,
                     help="provider:model judge (repeatable); default = cross-family Claude + Gemini")
     args = ap.parse_args()
@@ -125,7 +127,7 @@ def main() -> None:
         rows = []
         for q, expect, grounded in selected:
             src = source_map.get(q.target) if grounded else None
-            answers = {"grounded": generate_grounded(q.text, src, answer_complete),
+            answers = {"grounded": generate_grounded(q.text, src, answer_complete, mode=args.grounded_mode),
                        "raw": generate_raw(q.text, answer_complete)}
             row = {"query": q.id, "expect": expect, "judges": {}}
             for system, ans in answers.items():
@@ -183,6 +185,7 @@ def main() -> None:
         "judgeFamilies": judge_families,
         "distinctProviderFamilies": len(judge_families) >= 2,
         "selfGradingRisk": answer_family in judge_families,
+        "groundedMode": args.grounded_mode,
         "runs": args.runs,
         "queryCount": len(selected),
         "summary": summary,

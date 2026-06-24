@@ -33,6 +33,24 @@ def test_grounded_uses_source() -> None:
     assert out == "grounded answer"
 
 
+def test_grounded_mode_selects_system_prompt() -> None:
+    # Step 4: attribution_safe must send a different system prompt than strict, and the
+    # loosened prompt must still forbid unsupported attributions.
+    seen = {}
+
+    def capture(system, user):
+        seen["system"] = system
+        return "ans"
+
+    generate_grounded("q", "src", capture, mode="strict")
+    strict_sys = seen["system"]
+    generate_grounded("q", "src", capture, mode="attribution_safe")
+    safe_sys = seen["system"]
+    assert strict_sys != safe_sys
+    assert "only from the source" in strict_sys.lower() or "strictly from" in strict_sys.lower()
+    assert "donotattributeto" in safe_sys.lower() and "common knowledge" in safe_sys.lower()
+
+
 def test_judge_parses_messy_json() -> None:
     raw = 'Sure: {"abstains": false, "answersQuestion": true, "faithful": true, "fabricatesAttribution": false} ok'
     r = judge_answer("q", "a", lambda s, u: raw)
