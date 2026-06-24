@@ -1,0 +1,3972 @@
+{
+  "schema": "sophia.seib_100_report.v1",
+  "benchmark": "SEIB-100",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "realModelRun": true,
+  "preflightOk": true,
+  "modelSpec": "ollama:qwen3:30b-a3b",
+  "judgeSpecs": [],
+  "judgeFamilies": [],
+  "judgeAgreement": null,
+  "judgeMethod": "deterministic_seib_scorer",
+  "llmJudgesUsed": false,
+  "mcpMode": "context_from_external_eval_sources",
+  "claimBoundary": "Candidate SEIB-100 benchmark. Deterministic scorer / context-MCP path; real-model headline claims require >=3 runs, >=2 independent judge families, kappa>=0.40, CI excluding 0, and explicit false-positive cost.",
+  "nonCircularityContract": "Labels are external to the runtime gate (provenance_bench external-citation/Wikidata snapshot). The gate is treatment only; this runner's scorer is independent of agent.verifiers.",
+  "nCases": 20,
+  "runs": 1,
+  "conditions": [
+    "raw",
+    "raw+prompt",
+    "raw+mcp",
+    "raw+gate",
+    "sophia_full"
+  ],
+  "byCondition": {
+    "raw": {
+      "n": 20,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 0.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.0,
+      "sourceCitationRate": 0.0
+    },
+    "raw+prompt": {
+      "n": 20,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 0.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.0,
+      "sourceCitationRate": 0.0
+    },
+    "raw+mcp": {
+      "n": 20,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 0.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.0,
+      "sourceCitationRate": 0.8
+    },
+    "raw+gate": {
+      "n": 20,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 0.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.0,
+      "sourceCitationRate": 0.0
+    },
+    "sophia_full": {
+      "n": 20,
+      "provenanceAccuracy": 0.9,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 0.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.0,
+      "sourceCitationRate": 0.8
+    }
+  },
+  "deltas": {
+    "raw_to_mcp_accuracy_delta": 0.0,
+    "raw_to_gate_accuracy_delta": 0.0,
+    "raw_to_prompt_accuracy_delta": 0.0,
+    "raw_to_full_accuracy_delta": -0.1,
+    "prompt_to_full_citation_delta": 0.8,
+    "raw_to_full_false_attribution_reduction": 0.0,
+    "raw_to_full_contested_fabrication_reduction": 0.0,
+    "sophia_full_false_positive_cost": 0.0
+  },
+  "ok": false,
+  "rows": [
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Laozi (Lao Tzu).  \nUncertainty: Historical existence of Laozi is debated; the text likely compiled by multiple authors over time, but traditionally attributed to Laozi.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.079
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nThe **Dao De Jing** (Tao Te Ching) is traditionally attributed to **Laozi** (Lao Tzu), a figure from the 6th–5th century BCE, associated with Daoism (Taoism). Confucius (Kong Fuzi, 551–479 BCE) was a contemporary philosopher but a founder of Confucianism, not Daoism. The two texts and philosophies are fundamentally distinct.  \n\n**Uncertainty note**: While Laozi’s historicity is debated (some scholars view him as a legendary or composite figure), **Confucius is never cited as the author** in any credible historical or textual tradition. The attribution to Laozi is consistent across classical Chinese sources (e.g., Sima Qian’s *Records of the Grand Historian*), and no reputable scholarship links Confucius to the *Dao De Jing*.  \n\n**Correct attribution**: Laozi (traditional), though modern scholarship questions whether Laozi was a single historical person or a collective author.  \n**Confucius is definitively not the author**.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.113
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Laozi.  \n*(Source: documented in context; Confucius belongs to Confucian tradition, not Daoist; Dao De Jing traditionally attributed to Laozi per Wikipedia: https://en.wikipedia.org/wiki/Tao_Te_Ching)*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.273,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Laozi (Lao Tzu).  \nUncertainty: Historical existence of Laozi is debated; the text likely compiled by multiple authors over time, but traditionally attributed to Laozi.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.079,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Laozi.  \nThe Dao De Jing (Tao Te Ching) is traditionally attributed to Laozi (Lao Tzu), a figure associated with Daoism, not Confucius. Confucius (Kong Fuzi) was a 6th–5th century BCE Chinese philosopher who founded Confucianism, a distinct tradition from Daoism. The text is never credited to Confucius in historical or scholarly sources.  \n\n**Uncertainty note**: While the traditional attribution to Laozi is widely accepted (e.g., per Wikipedia and classical scholarship), the historical existence of Laozi and the exact authorship of the Dao De Jing remain debated among scholars (e.g., some argue it was compiled by multiple authors over time). However, **the attribution to Confucius is unequivocally false and unsupported by any credible evidence**—it is a persistent misconception.  \n\n*Source: Wikipedia (Dao Te Ching):*  \n> \"The Tao Te Ching is a Chinese classic text... traditionally attributed to Laozi.\"  \n> [https://en.wikipedia.org/wiki/Tao_Te_Ching](https://en.wikipedia.org/wiki/Tao_Te_Ching)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 16.829,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nPlato  \nNot disputed. Socrates did not write *The Republic*; it was authored by his student Plato.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.514
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Plato  \nNot disputed. Socrates did not write *The Republic*; it is a Socratic dialogue attributed to Plato, his student. Socrates was the primary speaker in the work but did not author it.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.211
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The correct attribution is Plato. Socrates is a character within the dialogue; Plato authored *The Republic*. (Source: [Plato's Republic - Wikipedia](https://en.wikipedia.org/wiki/Republic_(Plato)))",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.278,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nPlato  \nNot disputed. Socrates did not write *The Republic*; it was authored by his student Plato.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.514,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "length",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 23.025,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": false,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": false,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": false,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": false,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Laozi (Lao Tzu).  \nUncertainty: None (widely established attribution in scholarship).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.419
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: **Laozi** (Lao Tzu), traditionally attributed as the author of the *Dao De Jing* (Tao Te Ching).  \nUncertainty: The historical existence of Laozi is debated by scholars (he may be a legendary figure or a composite of multiple authors), but the text is universally attributed to him in Chinese philosophical tradition. **Plato had no connection to the composition of the *Dao De Jing***; he was a 4th-century BCE Greek philosopher, while the *Dao De Jing* originated in ancient China (likely 4th–3rd century BCE). The attribution to Plato is a historical error with no basis in scholarship.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.205
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Laozi.  \n*(Note: Plato (c. 428–348 BCE) was a Greek philosopher; Dao De Jing (Tao Te Ching) is a Chinese Daoist text traditionally attributed to Laozi (Lao Tzu), dating to the 4th–3rd century BCE. The attribution is well-established and not disputed.)*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.092,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Laozi (Lao Tzu).  \nUncertainty: None (widely established attribution in scholarship).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.419,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nLaozi  \nNo uncertainty; the attribution to Plato is a historical error with no scholarly dispute. The *Dao De Jing* (Tao Te Ching) is a foundational Daoist text traditionally attributed to Laozi (Lao Tzu), a Chinese philosopher of the 6th–4th century BCE. Plato (c. 428–348 BCE), a Greek philosopher, lived in a separate cultural and temporal context and had no connection to Chinese classical texts. The claim violates basic historical and cross-cultural scholarship.  \n\n**Sources**:  \n- Wikipedia: [Tao Te Ching](https://en.wikipedia.org/wiki/Tao_Te_Ching) (documented gold author: Laozi)  \n- *Encyclopædia Britannica*: \"The *Tao Te Ching* is traditionally attributed to Laozi, a Chinese philosopher of the 6th century BCE.\"  \n- *Oxford Handbook of Chinese Philosophy*: \"Laozi is the conventional author of the *Dao De Jing*, though the text likely evolved over centuries.\"  \n\n*Note: The MCP context explicitly rejects \"Plato -> dao_de_jing\" as a \"forbidden attribution\" due to incompatible traditions/eras.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.098,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Confucius (or his disciples, compiled posthumously).  \nUncertainty: None (well-established historical consensus).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.407
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: **Confucius (Kong Fuzi) and his disciples** (compiled posthumously, primarily by Confucius's followers like Zengzi, Zisi, and others).  \nUncertainty: **None**—this is a well-established historical fact with no credible scholarly dispute. Laozi (Lao Tzu) is traditionally associated with the *Tao Te Ching* (Dao De Jing), not the *Analects*. The two texts represent fundamentally distinct philosophical traditions (Daoism vs. Confucianism), and Laozi and Confucius were contemporaries but not connected in authorship.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.847
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Confucius (compiled by disciples).  \n*Source: [Analects - Wikipedia](https://en.wikipedia.org/wiki/Analects)*  \n*Note: Laozi (Daoist philosopher) and Confucius (Confucianism) are distinct figures; Analects records Confucius' teachings, not Laozi's.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.6,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Confucius (or his disciples, compiled posthumously).  \nUncertainty: None (well-established historical consensus).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.407,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nConfucius (compiled by disciples)  \nUncertainty: low (well-established, no scholarly dispute; Laozi authored the *Tao Te Ching*, a Daoist text, while the *Analects* records Confucius's teachings; see [Wikipedia: Analects](https://en.wikipedia.org/wiki/Analects), which states: \"The *Analects* is a collection of sayings and ideas attributed to Confucius and his disciples\").",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 12.286,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Mencius (Mengzi), a later Confucian philosopher (c. 372–289 BCE).  \nUncertainty: None; this is well-established historical fact. Confucius (551–479 BCE) died centuries before Mencius wrote his work.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.465
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: **Mencius** (Mengzi), a 4th-century BCE philosopher and disciple of Confucius's grandson. The text was compiled by Mencius's followers after his death.  \nUncertainty: None. This is a well-established historical fact; Confucius (c. 551–479 BCE) predates Mencius (c. 372–289 BCE) by over a century, and the *Mencius* is explicitly attributed to Mencius in classical sources.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.621
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Mencius (and disciples)  \n*Source: [Mencius (book) - Wikipedia](https://en.wikipedia.org/wiki/Mencius_(book))*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.217,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Mencius (Mengzi), a later Confucian philosopher (c. 372–289 BCE).  \nUncertainty: None; this is well-established historical fact. Confucius (551–479 BCE) died centuries before Mencius wrote his work.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.465,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Mencius (and disciples). Well-established, no dispute.  \n\n**Source-grounded explanation**:  \n- Confucius (Kong Fuzi, 551–479 BCE) lived centuries before the *Mencius* was compiled. Mencius (Mengzi, 372–289 BCE) was a later philosopher who studied Confucius's teachings but was not his contemporary.  \n- The *Mencius* (also called *Mengzi*) is a collection of dialogues and essays attributed to Mencius and his disciples, recorded after his death. It is part of the Confucian canon but explicitly not authored by Confucius.  \n- **Scholarly consensus**: The text is universally attributed to Mencius (e.g., *Encyclopædia Britannica*, *Stanford Encyclopedia of Philosophy*), with no credible dispute about Confucius's authorship. The *Mencius* (book) is named after its primary figure, Mencius, not Confucius.  \n- **Uncertainty boundary**: Zero uncertainty in historical scholarship. The attribution is confirmed by:  \n  - Primary sources: *Mencius* (e.g., Book 1A, \"Mencius said...\"), which references Mencius's own life and teachings.  \n  - Secondary sources: Wikipedia (external label source), *The Cambridge History of Chinese Philosophy* (2002), and *The Analects* (Confucius's own work) are distinct texts.  \n  - **Key evidence**: Confucius died in 479 BCE; Mencius was born in 372 BCE—over a century later. The *Mencius* explicitly states Mencius's views (e.g., \"Mencius said: 'The way of the sage...'\" in Book 2B), confirming his authorship.  \n\n**Citation**:  \n- *Mencius* (book), translated by D.C. Lau (Penguin Classics, 1970), Introduction: \"The text is a record of Mencius's teachings and dialogues.\"  \n- Wikipedia: \"The *Mencius* is a collection of conversations between Mencius and rulers of the Warring States period.\" (https://en.wikipedia.org/wiki/Mencius_(book))  \n- *Stanford Encyclopedia of Philosophy*: \"Mencius (Mengzi) was a Confucian philosopher who lived in the fourth century BCE, a century after Confucius.\" (https://plato.stanford.edu/entries/mencius/)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 15.807,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_006_false-aristotle-republic",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nPlato  \nNo uncertainty; widely established attribution.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.995
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_006_false-aristotle-republic",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nPlato  \nNot disputed; universally attributed to Plato (c. 428–348 BCE). Aristotle (384–322 BCE) was Plato's student and wrote his own philosophical works, but \"The Republic\" is a Platonic dialogue.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.362
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_006_false-aristotle-republic",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Plato",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.958,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_006_false-aristotle-republic",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nPlato  \nNo uncertainty; widely established attribution.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.995,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_006_false-aristotle-republic",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "Answer: no, Plato, not disputed  \n**Source-grounded justification**:  \n- The Republic is definitively attributed to Plato (documented gold author: Plato), as confirmed by external sources including Wikipedia (https://en.wikipedia.org/wiki/Republic_(Plato)) and historical scholarship.  \n- Aristotle (Plato's student) authored separate works (e.g., *Nicomachean Ethics*, *Politics*), and the claim of Aristotle as the author is a well-documented historical error.  \n- **Uncertainty boundary**: Zero dispute in academic consensus; this attribution is settled since antiquity (e.g., Plato's *Republic* is referenced by Aristotle in *Metaphysics* 987b, but Aristotle never claimed authorship).  \n**Citation**: Wikipedia, \"Republic (Plato)\" (accessed 2023-10-05), citing Plato's authorship as undisputed in classical scholarship.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.011,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_007_false-epictetus-meditations",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Marcus Aurelius. Epictetus did not write *Meditations*; it is attributed to the Roman Emperor Marcus Aurelius (121–180 CE). This attribution is well-established and undisputed in scholarly consensus.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.892
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_007_false-epictetus-meditations",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The work *Meditations* is attributed to **Marcus Aurelius**, Roman Emperor and Stoic philosopher (c. 121–180 CE). Epictetus (c. 50–135 CE), a Greek Stoic teacher, authored *The Discourses* and *Enchiridion* (compiled by his student Arrian), but did not write *Meditations*. This attribution is well-established and undisputed.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.211
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_007_false-epictetus-meditations",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Marcus Aurelius.  \nSource: https://en.wikipedia.org/wiki/Meditations",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.247,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_007_false-epictetus-meditations",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Marcus Aurelius. Epictetus did not write *Meditations*; it is attributed to the Roman Emperor Marcus Aurelius (121–180 CE). This attribution is well-established and undisputed in scholarly consensus.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.892,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_007_false-epictetus-meditations",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Source discipline: Meditations should not be attributed to Epictetus; the documented attribution is Marcus Aurelius. Meditations is by Marcus Aurelius. Epictetus is associated with the Enchiridion (compiled by Arrian). Source: https://en.wikipedia.org/wiki/Meditations.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.356,
+        "mcpContextAttached": true,
+        "gateTreatment": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_008_false-marcus-enchiridion",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Epictetus (compiled by his student Arrian from his lectures).  \nUncertainty: None (well-established scholarly consensus).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.417
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_008_false-marcus-enchiridion",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: **Epictetus** (compiled by his student Arrian).  \nUncertainty: None; this is a well-established historical fact. Marcus Aurelius authored *Meditations* (not *Enchiridion*). The *Enchiridion* is a Stoic manual by Epictetus, written in the 1st century CE.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.97
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_008_false-marcus-enchiridion",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Arrian (recording Epictetus). Marcus Aurelius wrote the Meditations.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 15.443,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_008_false-marcus-enchiridion",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Epictetus (compiled by his student Arrian from his lectures).  \nUncertainty: None (well-established scholarly consensus).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.417,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_008_false-marcus-enchiridion",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nCorrect attribution: Arrian (recording Epictetus)  \nUncertainty: None (well-established; Marcus Aurelius wrote *Meditations*, not *Enchiridion*; *Enchiridion* is Epictetus's teachings compiled by Arrian, per scholarly consensus and sources like [Wikipedia: Enchiridion of Epictetus](https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus)).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.845,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_009_false-nietzsche-manifesto",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Karl Marx and Friedrich Engels. No uncertainty.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.827
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_009_false-nietzsche-manifesto",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The Communist Manifesto was written by Karl Marx and Friedrich Engels. This attribution is well-established and undisputed in historical and scholarly sources. Nietzsche was a 19th-century philosopher whose work (e.g., *Thus Spoke Zarathustra*) was critical of socialism and communism, not a proponent of it. There is no scholarly basis for attributing the Manifesto to Nietzsche.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.609
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_009_false-nietzsche-manifesto",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The correct attribution is Karl Marx and Friedrich Engels (1848). The claim is well-documented and undisputed; Nietzsche had no involvement with the work.  \nSource: [The Communist Manifesto - Wikipedia](https://en.wikipedia.org/wiki/The_Communist_Manifesto)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.445,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_009_false-nietzsche-manifesto",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Karl Marx and Friedrich Engels. No uncertainty.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.827,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_009_false-nietzsche-manifesto",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "Answer: no, Karl Marx and Friedrich Engels, no uncertainty (cited: https://en.wikipedia.org/wiki/The_Communist_Manifesto)  \n\n**Source-grounded explanation**:  \n- The claim is definitively false per historical and scholarly consensus. Nietzsche (1844–1900) was a German philosopher whose work focused on morality, religion, and individualism (e.g., *Thus Spoke Zarathustra*), while *The Communist Manifesto* (1848) was authored by Marx and Engels as a political pamphlet for the Communist League.  \n- **Provenance**: The external label source (Wikipedia) explicitly attributes the work to Marx and Engels, with no scholarly dispute. Nietzsche never engaged with communist theory, and his writings contain no connection to the Manifesto.  \n- **Uncertainty boundary**: Zero uncertainty—this is a well-documented historical fact with no credible counter-claims in academic literature (e.g., Marx-Engels Collected Works, Vol. 4, 1848).  \n\n*Note: The Sophia MCP violation (\"forbidden attribution asserted: Nietzsche -> the_communist_manifesto\") confirms the claim’s inaccuracy per established disciplinary protocols.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.141,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_010_false-freud-bge",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nFriedrich Nietzsche  \n(Attribution is undisputed; Nietzsche published it in 1886. Freud was a psychoanalyst, not a philosopher of ethics like Nietzsche.)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.885
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_010_false-freud-bge",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: **Friedrich Nietzsche**.  \nUncertainty: **None**. The work *Beyond Good and Evil* (1886) is definitively Nietzsche's, with no disputed or pseudonymous authorship. Freud (Sigmund Freud) was a psychoanalyst whose works (e.g., *The Interpretation of Dreams*) are unrelated to this text.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.469
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_010_false-freud-bge",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Friedrich Nietzsche  \n*(Source: Wikipedia: https://en.wikipedia.org/wiki/Beyond_Good_and_Evil)*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.14,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_010_false-freud-bge",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nFriedrich Nietzsche  \n(Attribution is undisputed; Nietzsche published it in 1886. Freud was a psychoanalyst, not a philosopher of ethics like Nietzsche.)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.885,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_010_false-freud-bge",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No  \nCorrect attribution: Friedrich Nietzsche  \nUncertainty: None (well-established, undisputed attribution; Freud was a psychoanalyst active in the early 20th century, while Nietzsche died in 1900; *Beyond Good and Evil* was published in 1886).  \n\n**Source grounding**:  \n- Documented gold author: Friedrich Nietzsche (per MCP context and external source [Wikipedia](https://en.wikipedia.org/wiki/Beyond_Good_and_Evil)).  \n- Freud's works (e.g., *The Interpretation of Dreams*, 1900) are unrelated to Nietzsche's philosophical treatise.  \n- Scholarly consensus confirms Nietzsche as author (e.g., *Oxford Bibliographies*, *Stanford Encyclopedia of Philosophy*).  \n- MCP context explicitly rejects Freud attribution: `violations: [\"Freud -> beyond_good_and_evil\"]`.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.226,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_011_false-kant-prince",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nNiccolò Machiavelli  \nuncertainty: none (well-established historical fact)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.609
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_011_false-kant-prince",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Niccolò Machiavelli (written c. 1513, published 1532).  \nUncertainty: None; this is a well-established historical fact with no scholarly dispute. Kant (1724–1804) was an 18th-century German philosopher whose works (e.g., *Critique of Pure Reason*) are unrelated to Machiavelli's Renaissance-era political treatise.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.543
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_011_false-kant-prince",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nCorrect attribution: Niccolò Machiavelli  \nSource: [https://en.wikipedia.org/wiki/The_Prince](https://en.wikipedia.org/wiki/The_Prince)  \nNote: *The Prince* (1513) predates Kant (1724–1804); no dispute exists.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.098,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_011_false-kant-prince",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nNiccolò Machiavelli  \nuncertainty: none (well-established historical fact)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.609,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_011_false-kant-prince",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "Answer: No, Niccolò Machiavelli, well-established authorship with no dispute (documented in historical records and scholarly consensus; Kant was an 18th-century philosopher, while *The Prince* was written by Machiavelli in 1513).  \n\n**Source grounding**:  \n- External source: [Wikipedia: *The Prince*](https://en.wikipedia.org/wiki/The_Prince) explicitly attributes the work to Niccolò Machiavelli (1469–1527).  \n- Historical context: Kant (1724–1804) lived centuries after Machiavelli; *The Prince* was composed in 1513 and published posthumously in 1532.  \n- Sophia MCP violation: Confirmed \"forbidden attribution\" (Kant → *The Prince*), as Kant never wrote it.  \n\n**Uncertainty boundary**: None. The attribution is definitive and undisputed in historical scholarship (e.g., Machiavelli's authorship is verified via his correspondence, manuscript evidence, and contemporary records).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.314,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_012_false-zhuangzi-dao_de_jing",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Laozi (Lao Tzu).  \nUncertainty: None; this is a well-established historical fact. Zhuangzi (Zhuang Zhou) authored the *Zhuangzi*, a separate text.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.959
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_012_false-zhuangzi-dao_de_jing",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Laozi (traditionally attributed, though historical existence is debated).  \nUncertainty: The authorship of the *Dao De Jing* is traditionally ascribed to Laozi (Lao Tzu), a semi-legendary figure from the 6th century BCE. However, the historical Laozi is considered by many scholars to be a composite or legendary figure, and the text likely evolved over time through multiple authors or editors. The *Zhuangzi* (written by Zhuang Zhou, c. 369–286 BCE) is a separate text and not the *Dao De Jing*. There is no scholarly consensus attributing the *Dao De Jing* to Zhuangzi.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.975
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_012_false-zhuangzi-dao_de_jing",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Laozi  \n*(Source: documented_gold_author in context; Dao De Jing attributed to Laozi, not Zhuangzi. Conflation of Zhuangzi (author of *Zhuangzi* text) and Laozi (author of *Dao De Jing*) is a common historical error.)*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.228,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_012_false-zhuangzi-dao_de_jing",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Laozi (Lao Tzu).  \nUncertainty: None; this is a well-established historical fact. Zhuangzi (Zhuang Zhou) authored the *Zhuangzi*, a separate text.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.959,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_012_false-zhuangzi-dao_de_jing",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \n**Correct attribution**: Laozi (Lao Tzu).  \n**Uncertainty**: None. The attribution to Laozi is well-established in historical and scholarly consensus. The Dao De Jing (Tao Te Ching) is traditionally ascribed to Laozi, a semi-legendary figure of the 6th century BCE. Zhuangzi (Zhuang Zhou, c. 369–286 BCE) authored the *Zhuangzi*, a distinct text that expands on Daoist philosophy but does not contain the *Dao De Jing*. Conflating the two is a common historical error, but scholarly consensus (e.g., from the *Oxford Handbook of Chinese Philosophy*, 2013) firmly separates the texts and authors.  \n\n**Citation**:  \n- External source: [Wikipedia: Tao Te Ching](https://en.wikipedia.org/wiki/Tao_Te_Ching) (states: \"The Tao Te Ching is a Chinese classic text... traditionally attributed to Laozi\").  \n- Scholarly consensus: Laozi is the accepted author in all major academic references (e.g., *The Cambridge History of Chinese Literature*, Vol. 1, 2001).  \n\n*Note: The Sophia MCP context explicitly prohibits the attribution \"Zhuangzi → dao_de_jing\" as a factual error.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.126,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_013_false-aristotle-rhetoric_to_alexander",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The work \"Rhetoric to Alexander\" (Rhetorica ad Alexandrum) is **not** by Aristotle. The correct attribution for Aristotle's genuine rhetorical treatise is simply *Rhetoric* (Ῥητορική). \"Rhetoric to Alexander\" is a disputed, spurious text, likely composed by a Hellenistic author (e.g., a Stoic or Peripatetic follower) in the 3rd–2nd century BCE, not by Aristotle himself. It is widely rejected as inauthentic by scholars.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.739
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_013_false-aristotle-rhetoric_to_alexander",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Pseudo-Aristotle (anonymous pseudepigraphon). Uncertainty: Not by Aristotle; falsely attributed in antiquity, author unknown, likely Hellenistic period forgery.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.063
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_013_false-aristotle-rhetoric_to_alexander",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nCorrect attribution: Anaximenes of Lampsacus  \nNote: Traditionally misattributed to Aristotle until the Renaissance; since the 16th century, correctly attributed to Anaximenes of Lampsacus per documented evidence (see [Wikipedia](https://en.wikipedia.org/wiki/Rhetoric_to_Alexander)).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.932,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_013_false-aristotle-rhetoric_to_alexander",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The work \"Rhetoric to Alexander\" (Rhetorica ad Alexandrum) is **not** by Aristotle. The correct attribution for Aristotle's genuine rhetorical treatise is simply *Rhetoric* (Ῥητορική). \"Rhetoric to Alexander\" is a disputed, spurious text, likely composed by a Hellenistic author (e.g., a Stoic or Peripatetic follower) in the 3rd–2nd century BCE, not by Aristotle himself. It is widely rejected as inauthentic by scholars.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.739,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_013_false-aristotle-rhetoric_to_alexander",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "Answer: no, Anaximenes of Lampsacus, uncertainty: traditionally attributed to Aristotle until the 16th century (per Renaissance scholarship), but since the 16th century, scholarly consensus attributes it to Anaximenes of Lampsacus (source: Wikipedia, *Rhetoric to Alexander*; documented gold author: Anaximenes of Lampsacus). The attribution dispute is well-documented in classical scholarship, with no credible evidence supporting Aristotle's authorship in modern academic discourse.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 10.384,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_014_false-plato-epinomis",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Attributed to a later Platonist (not Plato). Well-established as spurious (disputed attribution, but consensus rejects Plato as author).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.325
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_014_false-plato-epinomis",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: **Pseudo-Platonic** (attributed to Plato in antiquity but widely rejected by modern scholarship as a **late Platonist** work, likely composed in the **4th century BCE** by an unknown author.  \nUncertainty: **Disputed and rejected**. The text exhibits stylistic, philosophical, and terminological inconsistencies with Plato's authentic works (e.g., *Republic*, *Timaeus*), and no credible evidence supports Plato's authorship. It is now classified as a **spurious addition** to the Platonic corpus, possibly written by a follower of Plato or a later Neoplatonist.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.137
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_014_false-plato-epinomis",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Philip of Opus.  \n(Scholarly consensus attributes Epinomis to Philip of Opus, not Plato; see [Wikipedia: Epinomis](https://en.wikipedia.org/wiki/Epinomis).)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.304,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_014_false-plato-epinomis",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Attributed to a later Platonist (not Plato). Well-established as spurious (disputed attribution, but consensus rejects Plato as author).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.325,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_014_false-plato-epinomis",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "length",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 23.839,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": false,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": false,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": false,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": false,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_015_false-xenophon-constitution_athenians",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nCorrect attribution: Aristotle (or his school)  \nUncertainty: None; this is well-established scholarship (Xenophon wrote *Hellenica*, not this work).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.283
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_015_false-xenophon-constitution_athenians",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: **Aristotle** (specifically, *Athenaion Politeia*, or \"Constitution of the Athenians\").  \nUncertainty: **None**—this is a well-established attribution in classical scholarship. Xenophon authored *Constitution of the Lacedaemonians* (about Sparta), not the Athenian work. The confusion sometimes arises from Xenophon’s other political writings, but the *Athenaion Politeia* is definitively Aristotle’s.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.35
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_015_false-xenophon-constitution_athenians",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The correct attribution is to the Old Oligarch (also known as Pseudo-Xenophon).  \nSource: [Constitution of the Athenians (Pseudo-Xenophon)](https://en.wikipedia.org/wiki/Constitution_of_the_Athenians_(Pseudo-Xenophon))  \n*Note: The work was long misattributed to Xenophon but is now recognized as anonymous (the \"Old Oligarch\"), preserved among Xenophon's works by error.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.413,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_015_false-xenophon-constitution_athenians",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nCorrect attribution: Aristotle (or his school)  \nUncertainty: None; this is well-established scholarship (Xenophon wrote *Hellenica*, not this work).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.283,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_015_false-xenophon-constitution_athenians",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The work is not by Xenophon. The correct attribution is to an anonymous author known as **the Old Oligarch** (or **Pseudo-Xenophon**), a 5th-century BCE Greek writer who criticized Athenian democracy. This attribution is well-established in modern scholarship, though the text was historically misattributed to Xenophon and preserved among his works in ancient manuscripts.  \n\n**Uncertainty boundaries**:  \n- **Historical dispute**: For centuries (from antiquity through the 19th century), the work was falsely attributed to Xenophon due to its inclusion in his corpus. This error was resolved by 19th-century philologists (e.g., through textual analysis by scholars like J. B. Bury).  \n- **Current consensus**: Modern scholarship (e.g., *Oxford Classical Dictionary*, *Cambridge History of Greek Literature*) universally rejects Xenophon as the author. The attribution to \"the Old Oligarch\" is based on stylistic, historical, and political evidence (e.g., the text's pro-aristocratic bias aligns with oligarchic thought, not Xenophon's known views).  \n- **Source grounding**:  \n  - Wikipedia: [Constitution of the Athenians (Pseudo-Xenophon)](https://en.wikipedia.org/wiki/Constitution_of_the_Athenians_(Pseudo-Xenophon)) explicitly states it is \"by an anonymous author known as the Old Oligarch.\"  \n  - *Oxford Classical Dictionary* (3rd ed., 2003): Attributes it to \"Pseudo-Xenophon\" (i.e., the Old Oligarch), noting Xenophon's \"lack of interest in constitutional detail\" as evidence against his authorship.  \n  - *The Cambridge History of Greek Literature* (2011): Confirms the work's anonymous authorship, citing its \"distinctive rhetorical style\" and \"oligarchic perspective\" as incompatible with Xenophon's known works.  \n\n**Conclusion**: The attribution to Xenophon is a historical error; the work is definitively by the Old Oligarch. Uncertainty is resolved—no credible modern scholar disputes this.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.825,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_016_false-caesar-gallic_war_book_8",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The Gallic War (Commentarii de Bello Gallico) consists of seven books, all authored by Julius Caesar. The \"eighth book\" is a misattribution; it refers to the eighth book of the *Commentarii de Bello Civili* (Commentaries on the Civil War), which Caesar also wrote. However, the *Gallic War* itself has no eighth book. Uncertainty exists only in historical confusion about manuscript traditions, but Caesar did not write an eighth book for the Gallic War.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.111
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_016_false-caesar-gallic_war_book_8",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Aulus Hirtius (a contemporary of Caesar and his lieutenant).  \nUncertainty: None; this is well-established scholarly consensus. Caesar authored Books 1–7 of the *Commentarii de Bello Gallico*; Book 8 was added posthumously by Hirtius, who also wrote the final section of the *Commentarii de Bello Civili* (Civil War).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.73
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_016_false-caesar-gallic_war_book_8",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Aulus Hirtius. Source: https://en.wikipedia.org/wiki/Commentarii_de_Bello_Gallico",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 16.691,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_016_false-caesar-gallic_war_book_8",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The Gallic War (Commentarii de Bello Gallico) consists of seven books, all authored by Julius Caesar. The \"eighth book\" is a misattribution; it refers to the eighth book of the *Commentarii de Bello Civili* (Commentaries on the Civil War), which Caesar also wrote. However, the *Gallic War* itself has no eighth book. Uncertainty exists only in historical confusion about manuscript traditions, but Caesar did not write an eighth book for the Gallic War.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.111,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_016_false-caesar-gallic_war_book_8",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nAulus Hirtius  \nNot disputed (well-established scholarly consensus; documented in primary sources and academic scholarship)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.439,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_017_false-aristotle-de_mundo",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nCorrect attribution: \"De Mundo\" (On the Universe), but this is a misattribution; it is not by Aristotle.  \nUncertainty: Widely disputed and rejected by modern scholarship as a spurious work (likely Hellenistic or later, author unknown).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.143
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_017_false-aristotle-de_mundo",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nThe work titled *On the Universe* (Greek: *Peri tou Kosmou*) is **not** by Aristotle. It is a later Stoic text, often attributed to **Chrysippus** (c. 280–207 BCE), but its authorship is **disputed** and it survives only in fragments. Aristotle’s relevant cosmological treatise is *On the Heavens* (*De Caelo*), which is well-attested to his authorship. The confusion likely arises from misattribution or conflation of titles.  \n\n**Key distinctions**:  \n- Aristotle’s *On the Heavens* (De Caelo) is a canonical work in his corpus.  \n- *On the Universe* (Peri tou Kosmou) is a separate, fragmentary Stoic text with uncertain authorship.  \n\n**Uncertainty**: The Stoic *On the Universe* is pseudonymous or compiled, and Chrysippus’s direct authorship is not definitively proven. It is **not** Aristotle’s work.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.344
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_017_false-aristotle-de_mundo",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Pseudo-Aristotle (unknown author)  \n*Source: [De Mundo on Wikipedia](https://en.wikipedia.org/wiki/De_Mundo)*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.909,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_017_false-aristotle-de_mundo",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nCorrect attribution: \"De Mundo\" (On the Universe), but this is a misattribution; it is not by Aristotle.  \nUncertainty: Widely disputed and rejected by modern scholarship as a spurious work (likely Hellenistic or later, author unknown).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.143,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_017_false-aristotle-de_mundo",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: **Pseudo-Aristotle** (a spurious work falsely attributed to Aristotle; the actual author is unknown).  \nUncertainty: **Low** (scholarly consensus firmly rejects Aristotle as the author; the work is widely classified as *Pseudo-Aristotelian* in academic sources).  \n\n**Source-grounded justification**:  \n- The *De Mundo* (On the Universe) is explicitly identified as spurious in the *Stanford Encyclopedia of Philosophy* (entry on \"Aristotle's Works,\" 2023), stating: *\"De Mundo is generally considered a Pseudo-Aristotelian work, likely composed in the Hellenistic period.\"*  \n- The Wikipedia page for *De Mundo* (cited in the MCP context) confirms: *\"The work is generally considered spurious, and not by Aristotle.\"*  \n- The *Oxford Classical Dictionary* (4th ed., 2012) classifies it under \"Pseudo-Aristotelian works,\" noting its attribution to Aristotle is a later forgery.  \n\n**Citation**:  \n- Stanford Encyclopedia of Philosophy: [Aristotle's Works](https://plato.stanford.edu/entries/aristotle-works/) (Section 1.2: \"Spurious Works\").  \n- Wikipedia: [De Mundo](https://en.wikipedia.org/wiki/De_Mundo) (accessed 2023-10-05).  \n- Oxford Classical Dictionary: *Pseudo-Aristotle* (entry, 2012).  \n\n*Note: Uncertainty is low because the spurious nature of the work is uncontested in classical scholarship; the only unresolved element is the unknown author's identity, not the attribution to Aristotle.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.632,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_018_false-confucius-ten_wings",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Anonymous Warring States period scholars (c. 4th–3rd century BCE).  \nUncertainty: Disputed by modern scholarship; traditionally attributed to Confucius but widely considered a later fabrication to lend authority to the text.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.863
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_018_false-confucius-ten_wings",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: The Ten Wings (I Ching commentaries) are traditionally attributed to Confucius in later Chinese tradition, but modern scholarship universally rejects this. They are now understood to be anonymous works compiled by multiple authors during the Warring States period (c. 475–221 BCE), likely after Confucius's death (c. 479 BCE).  \nUncertainty: The attribution to Confucius is a Han dynasty (206 BCE–220 CE) tradition that conflated Confucius with the text's later editors, but there is no historical or textual evidence supporting his authorship. The attribution is pseudonymous and disputed.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.33
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_018_false-confucius-ten_wings",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \ncorrect attribution: anonymous later commentators (modern scholarship)  \nuncertainty: traditional attribution to Confucius is disputed; scholarly consensus rejects it (per Wikipedia source).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.282,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_018_false-confucius-ten_wings",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Anonymous Warring States period scholars (c. 4th–3rd century BCE).  \nUncertainty: Disputed by modern scholarship; traditionally attributed to Confucius but widely considered a later fabrication to lend authority to the text.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.863,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_018_false-confucius-ten_wings",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \n**Correct attribution**: Anonymous later commentators (specifically, Han dynasty scholars, not Confucius).  \n**Uncertainty**: Traditional Chinese scholarship (e.g., Han dynasty texts like the *Book of Han*) attributed the *Ten Wings* to Confucius, but modern academic consensus rejects this. The *Ten Wings* were composed by anonymous scholars during the Han dynasty (c. 206 BCE–220 CE), likely as part of the Confucian canonization process. Confucius (551–479 BCE) died centuries before the *I Ching* commentaries were compiled.  \n\n**Source grounding**:  \n- Wikipedia (I Ching entry): \"The *Ten Wings* (or *Ten Wings*), traditionally attributed to Confucius, are actually anonymous Han dynasty commentaries.\"  \n- Scholarly consensus (e.g., *The I Ching: A New Translation* by Richard Wilhelm, 1950; *The Classic of Changes* by John Minford, 2012): The *Ten Wings* were compiled by later Confucian scholars, not Confucius himself.  \n- **Uncertainty boundary**: The attribution to Confucius is a *traditional myth* (c. 2nd century BCE), but **not** supported by historical or textual evidence. Modern scholarship (e.g., *The Cambridge History of Ancient China*, 1999) confirms the Han dynasty authorship.  \n\n*Note: The MCP context explicitly rejects the Confucius attribution as \"forbidden\" due to historical inaccuracy.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.76,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_019_false-constantine-donation",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: 8th-century forger (likely a cleric in the papal chancery).  \nUncertainty: Disputed? No—this is a well-established historical forgery, exposed as such by Lorenzo Valla in 1440. Constantine died in 337 AD; the document was forged centuries later.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.001
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_019_false-constantine-donation",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nThe Donation of Constantine is a **medieval forgery** created in the **8th century** (c. 750–800 AD), not by Constantine the Great (who died in 337 AD). It was likely composed by a **papal scribe or official** in the Roman papal chancery to bolster papal claims to temporal power. The document falsely attributes the gift of imperial authority to Pope Sylvester I and the Papacy to Constantine.  \n\n**Uncertainty**: The *specific author* of the forgery is unknown, but it is definitively **not** by Constantine. The forgery was exposed as such by Lorenzo Valla in 1440. The attribution to Constantine is a **false historical claim** with no scholarly dispute about its origin.  \n\n**Correct attribution**: An anonymous forger in the **8th-century papal chancery**.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.837
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_019_false-constantine-donation",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, an 8th-century forger (https://en.wikipedia.org/wiki/Donation_of_Constantine)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 15.732,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_019_false-constantine-donation",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: 8th-century forger (likely a cleric in the papal chancery).  \nUncertainty: Disputed? No—this is a well-established historical forgery, exposed as such by Lorenzo Valla in 1440. Constantine died in 337 AD; the document was forged centuries later.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.001,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_019_false-constantine-donation",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: The Donation of Constantine was forged in the 8th century by an unknown forger (proven by Lorenzo Valla in 1440).  \nUncertainty: None. The forgery is conclusively documented (per Valla's 1440 analysis and modern scholarship), with no credible dispute in historical or philological circles. Constantine the Great (reigned 306–337 CE) died centuries before the document's creation, and the text's anachronisms (e.g., references to medieval concepts) were exposed by Valla.  \n\n**Sources**:  \n- Valla, L. (1440). *De falso credita et ementita Constantini donatione* (On the False Donation of Constantine).  \n- Wikipedia: [Donation of Constantine](https://en.wikipedia.org/wiki/Donation_of_Constantine) (citing Valla's proof and 8th-century forgery context).  \n- Scholarly consensus: The document was fabricated in the 8th century (likely in the Carolingian era) to bolster papal claims, as confirmed by linguistic, historical, and archival evidence.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.401,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_020_false-aristotle-on_plants",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Likely a later Peripatetic author (e.g., Theophrastus or a follower), not Aristotle.  \nUncertainty: Disputed; widely considered spurious (not part of Aristotle's authentic corpus).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.13
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_020_false-aristotle-on_plants",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: **Anonymous Hellenistic work** (often mistakenly attributed to Aristotle in medieval manuscripts).  \nUncertainty: **Disputed and false attribution**. The work titled *On Plants* (Greek: *Peri Phytōn*) is a Hellenistic-era botanical text (c. 1st century BCE–1st century CE), likely compiled by a member of the Peripatetic school or a later scholar. It was **never authored by Aristotle**; this misattribution arose from medieval confusion with his biological corpus. The actual author is unknown, and scholarly consensus (since the 19th century) rejects Aristotle as the author. Theophrastus (Aristotle's successor) wrote *Enquiry into Plants* (*Historia Plantarum*), but this is a distinct work.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.084
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_020_false-aristotle-on_plants",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Nicolaus of Damascus (Pseudo-Aristotle); https://en.wikipedia.org/wiki/On_Plants",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.825,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_020_false-aristotle-on_plants",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Likely a later Peripatetic author (e.g., Theophrastus or a follower), not Aristotle.  \nUncertainty: Disputed; widely considered spurious (not part of Aristotle's authentic corpus).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.13,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_020_false-aristotle-on_plants",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Nicolaus of Damascus (Pseudo-Aristotle), low uncertainty  \n\n**Source-grounded justification**:  \n- The MCP context explicitly states: *\"documented_gold_author: Nicolaus of Damascus (Pseudo-Aristotle)\"* and notes the work was *\"long included in the Corpus Aristotelicum but recognized as falsely attributed\"*.  \n- External source (Wikipedia: [On Plants](https://en.wikipedia.org/wiki/On_Plants)) confirms it is a pseudo-Aristotelian work attributed to Nicolaus of Damascus (c. 64 BCE–c. 30 BCE), a Hellenistic historian.  \n- **Uncertainty boundary**: Low (well-established in scholarship; no credible dispute since the 19th century). The attribution to Aristotle was a medieval forgery; modern philology (e.g., *Corpus Aristotelicum* studies) definitively rejects Aristotle's authorship.  \n\n*Note: \"Pseudo-Aristotle\" denotes false attribution, not the author's name. The work is now attributed to Nicolaus of Damascus or his school.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 14.791,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    }
+  ]
+}
