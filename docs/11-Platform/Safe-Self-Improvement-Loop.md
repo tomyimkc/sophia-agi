@@ -23,6 +23,29 @@ by construction.
 > This is a genuine *bounded* self-improvement: a measured gain that cleared capability
 > + corrigibility + honeypots + reward-isolation, with the score outside the model's
 > reach. It is **not** open-ended RSI and `canClaimAGI` stays `false`.
+>
+> **Compounding (recursive, every round gated).** `agent/ssil_compound.py` +
+> `agent/ssil_registry.py` make the loop recursive: each round measures improvement
+> against the *current canonical best*, and a gain becomes canonical only after N
+> independent replications (`no_self_promotion_of_candidates`). Two-key promotion is
+> wired in — **G1 value** (`agent/public_standard_gate.py` hard-floor) and **G3
+> capability** (`agent/verifier_synthesis.py` meta-verified) — alongside G2/G4/G5/G6.
+> Offline the canonical baseline rises **0.525 → 0.825 → 0.875** then converges
+> (promotions stop when no proposal beats the floor). Live, DeepSeek drove the loop to
+> the same canonical best with per-round corrigibility/honeypot probes. The registry
+> supports **counterfactual revert** ("moral bisect"). Runs:
+> `tools/run_ssil_compound.py [--live]`.
+>
+> **Layer-1 hook.** `agent/ssil_layer1.py` routes a (mock) LoRA/RLVR weight delta
+> through the *identical* orchestrator: a clean adapter promotes, a protected-suite
+> regression rejects, and an adapter that also edits the threshold surface is blocked
+> by G2 — the gate treats a weight delta exactly like a skill. Swap the mock metrics
+> for `tools/eval_rlvr_adapter.py` output and Layer 1 is real. Run:
+> `tools/run_ssil_layer1.py`.
+>
+> **Harder task.** `agent/ssil_microtask_transform.py` adds an ARC-like string-transform
+> task (executable op pipeline, protected non-identity metric) to show the loop
+> generalizes beyond a single threshold task.
 **Boundary:** This is **not** a claim of AGI, RSI, or open-ended self-redesign. It
 specifies a *bounded, verifier-gated* self-improvement loop in which the thing that
 scores improvement lives outside the optimizer's reach. The reflexive self-gate

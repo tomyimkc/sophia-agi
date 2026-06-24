@@ -89,15 +89,16 @@ def _answer_recall(spec: PolicySpec, cases: list[dict]) -> float:
 ANSWER_RECALL_FLOOR = 0.5
 
 
-def measure_policy(candidate: PolicySpec, *, path: str | Path | None = None) -> tuple[tuple[EvalMetric, ...], dict[str, Any]]:
+def measure_policy(candidate: PolicySpec, *, baseline: "PolicySpec | None" = None, path: str | Path | None = None) -> tuple[tuple[EvalMetric, ...], dict[str, Any]]:
     """Measure candidate vs baseline on the held-out TEST split.
 
     Returns (metrics, detail). Metrics feed G4: a headline 'routing_accuracy' suite
-    (improvement over the weak baseline) plus a PROTECTED 'answer_recall' suite held
-    to an absolute floor (degenerate always-abstain scores 0 and is rejected).
+    (improvement over ``baseline`` — pass the current canonical best to compound)
+    plus a PROTECTED 'answer_recall' suite held to an absolute floor (degenerate
+    always-abstain scores 0 and is rejected).
     """
     test = load_cases("test", path=path)
-    base = baseline_spec()
+    base = baseline or baseline_spec()
     cand_recall = _answer_recall(candidate, test)
     metrics = (
         EvalMetric("routing_accuracy", _accuracy(base, test), _accuracy(candidate, test), protected=False),

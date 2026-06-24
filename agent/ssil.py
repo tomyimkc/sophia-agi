@@ -52,8 +52,13 @@ class SSILCandidate:
     notes: str = ""
 
 
-def run_ssil(candidate: SSILCandidate, **gate_kwargs: Any) -> dict[str, Any]:
-    """Run every gate, aggregate fail-closed, return a single decision record."""
+def run_ssil(candidate: SSILCandidate, *, extra_gates: dict[str, dict] | None = None, **gate_kwargs: Any) -> dict[str, Any]:
+    """Run every gate, aggregate fail-closed, return a single decision record.
+
+    ``extra_gates`` lets callers inject already-computed gate decisions (e.g. G1
+    value key, G3 capability key) into the same fail-closed aggregation — the
+    two-key promotion. Each value is a {verdict, reasons, metrics} dict.
+    """
     g2 = evaluate_reward_isolation(candidate.id, candidate.access, surface=gate_kwargs.get("surface"))
     g4 = evaluate_update(candidate.update, target_suite=candidate.target_suite)
     g5 = evaluate_honeypots(HoneypotCandidate(candidate.id, candidate.honeypots), seed=candidate.seed, spec=gate_kwargs.get("honeypot_spec"))
@@ -65,6 +70,8 @@ def run_ssil(candidate: SSILCandidate, **gate_kwargs: Any) -> dict[str, Any]:
         "G5_honeypots": g5.to_dict(),
         "G6_corrigibility": g6.to_dict(),
     }
+    for name, decision in (extra_gates or {}).items():
+        gates[name] = decision
     verdicts = {name: d["verdict"] for name, d in gates.items()}
     overall = min(verdicts.values(), key=lambda v: _PRECEDENCE[v])  # reject < quarantine < promote
     blocking = sorted(name for name, v in verdicts.items() if v != "promote")

@@ -65,3 +65,6 @@ _wiki_build/
 training/hard_negatives_dpo.jsonl
 training/wiki_provenance_*.jsonl
 training/local_sophia_v2/*.jsonl
+
+# SSIL runtime registry (mutable append log)
+agi-proof/self-extension/ssil-registry.jsonl
