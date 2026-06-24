@@ -1,0 +1,160 @@
+{
+  "_meta": {
+    "description": "Symbolic-math RLVR problem set. Reward = math_equivalent(gold) (sympy), a deterministic verifier, no LLM judge — the math analogue of code tests-pass. Split is FAMILY-disjoint (train families never appear in eval) so 'generalized' means a new problem TYPE, not a memorized instance. Golds are sympy-parseable.",
+    "schemaVersion": 1,
+    "families": [
+      "derivative",
+      "expand",
+      "factor",
+      "integrate",
+      "simplify",
+      "solve_linear"
+    ]
+  },
+  "problems": [
+    {
+      "id": "factor-x2-1",
+      "family": "factor",
+      "prompt": "Factor completely: x**2 - 1. Put the final answer in \\boxed{}.",
+      "gold": "(x-1)*(x+1)"
+    },
+    {
+      "id": "factor-x2-4",
+      "family": "factor",
+      "prompt": "Factor completely: x**2 - 4. Put the final answer in \\boxed{}.",
+      "gold": "(x-2)*(x+2)"
+    },
+    {
+      "id": "factor-x2-5x-6",
+      "family": "factor",
+      "prompt": "Factor completely: x**2 + 5*x + 6. Put the final answer in \\boxed{}.",
+      "gold": "(x+2)*(x+3)"
+    },
+    {
+      "id": "factor-x2-9",
+      "family": "factor",
+      "prompt": "Factor completely: x**2 - 9. Put the final answer in \\boxed{}.",
+      "gold": "(x-3)*(x+3)"
+    },
+    {
+      "id": "expand-xp1-sq",
+      "family": "expand",
+      "prompt": "Expand: (x+1)**2. Put the final answer in \\boxed{}.",
+      "gold": "x**2 + 2*x + 1"
+    },
+    {
+      "id": "expand-xp2-xm2",
+      "family": "expand",
+      "prompt": "Expand: (x+2)*(x-2). Put the final answer in \\boxed{}.",
+      "gold": "x**2 - 4"
+    },
+    {
+      "id": "expand-xp3-sq",
+      "family": "expand",
+      "prompt": "Expand: (x+3)**2. Put the final answer in \\boxed{}.",
+      "gold": "x**2 + 6*x + 9"
+    },
+    {
+      "id": "expand-2xp1-xm1",
+      "family": "expand",
+      "prompt": "Expand: (2*x+1)*(x-1). Put the final answer in \\boxed{}.",
+      "gold": "2*x**2 - x - 1"
+    },
+    {
+      "id": "deriv-x3",
+      "family": "derivative",
+      "prompt": "Differentiate with respect to x: x**3. Put the final answer in \\boxed{}.",
+      "gold": "3*x**2"
+    },
+    {
+      "id": "deriv-x2-3x",
+      "family": "derivative",
+      "prompt": "Differentiate with respect to x: x**2 + 3*x. Put the final answer in \\boxed{}.",
+      "gold": "2*x + 3"
+    },
+    {
+      "id": "deriv-sin",
+      "family": "derivative",
+      "prompt": "Differentiate with respect to x: sin(x). Put the final answer in \\boxed{}.",
+      "gold": "cos(x)"
+    },
+    {
+      "id": "deriv-exp2x",
+      "family": "derivative",
+      "prompt": "Differentiate with respect to x: exp(2*x). Put the final answer in \\boxed{}.",
+      "gold": "2*exp(2*x)"
+    },
+    {
+      "id": "simp-x2m1-over-xm1",
+      "family": "simplify",
+      "prompt": "Simplify: (x**2 - 1)/(x - 1). Put the final answer in \\boxed{}.",
+      "gold": "x + 1"
+    },
+    {
+      "id": "simp-pythag",
+      "family": "simplify",
+      "prompt": "Simplify: sin(x)**2 + cos(x)**2. Put the final answer in \\boxed{}.",
+      "gold": "1"
+    },
+    {
+      "id": "simp-2xp4-over-2",
+      "family": "simplify",
+      "prompt": "Simplify: (2*x + 4)/2. Put the final answer in \\boxed{}.",
+      "gold": "x + 2"
+    },
+    {
+      "id": "simp-xxx",
+      "family": "simplify",
+      "prompt": "Simplify: x*x*x. Put the final answer in \\boxed{}.",
+      "gold": "x**3"
+    },
+    {
+      "id": "solve-2xp3-7",
+      "family": "solve_linear",
+      "prompt": "Solve for x: 2*x + 3 = 7. Put the final answer in \\boxed{}.",
+      "gold": "2"
+    },
+    {
+      "id": "solve-3xm6-0",
+      "family": "solve_linear",
+      "prompt": "Solve for x: 3*x - 6 = 0. Put the final answer in \\boxed{}.",
+      "gold": "2"
+    },
+    {
+      "id": "solve-5x-20",
+      "family": "solve_linear",
+      "prompt": "Solve for x: 5*x = 20. Put the final answer in \\boxed{}.",
+      "gold": "4"
+    },
+    {
+      "id": "solve-xover2p1-4",
+      "family": "solve_linear",
+      "prompt": "Solve for x: x/2 + 1 = 4. Put the final answer in \\boxed{}.",
+      "gold": "6"
+    },
+    {
+      "id": "int-2x",
+      "family": "integrate",
+      "prompt": "Integrate with respect to x (omit the constant): 2*x. Put the final answer in \\boxed{}.",
+      "gold": "x**2"
+    },
+    {
+      "id": "int-3x2",
+      "family": "integrate",
+      "prompt": "Integrate with respect to x (omit the constant): 3*x**2. Put the final answer in \\boxed{}.",
+      "gold": "x**3"
+    },
+    {
+      "id": "int-cos",
+      "family": "integrate",
+      "prompt": "Integrate with respect to x (omit the constant): cos(x). Put the final answer in \\boxed{}.",
+      "gold": "sin(x)"
+    },
+    {
+      "id": "int-1overx",
+      "family": "integrate",
+      "prompt": "Integrate with respect to x (omit the constant), x>0: 1/x. Put the final answer in \\boxed{}.",
+      "gold": "log(x)"
+    }
+  ]
+}
