@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Aggregate per-case results into the three honest Provenance Delta metrics.
 
 1. hallucinated-attribution rate (false cases): asserted a false lineage /

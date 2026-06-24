@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Baseline/ablation runner for the Sophia AGI-candidate proof.
 
 Runs the SAME hidden pack through the SAME scorer under each of the seven modes

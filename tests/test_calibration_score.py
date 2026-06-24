@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for provenance_bench.calibration_score — score epistemic calibration
 (correct abstention vs fabrication) that keyword scoring is blind to. Deterministic.
 """

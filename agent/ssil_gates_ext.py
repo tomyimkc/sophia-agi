@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Extension gates for SSIL — G1 (value key) and G3 (capability key).
 
 Two-key promotion: a self-modification needs an independent **capability** key (G3:

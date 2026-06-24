@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """RL dataset + contamination-free split for the RLVR experiment.
 
 Reuses ``provenance_bench.dataset.build_cases()`` (the external-ground-truth

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for tools/calibrate_thresholds.py (offline, deterministic, stdlib-only)."""
 
 import sys

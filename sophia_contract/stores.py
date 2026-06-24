@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Durable, inspectable stores behind the contract.
 
 All four are append-friendly JSONL (human-readable, greppable, hand-editable) with

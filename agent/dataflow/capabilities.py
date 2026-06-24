@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Capabilities + the deterministic policy that enforces them.
 
 Every tool has a *capability* describing its effect on the world. The policy

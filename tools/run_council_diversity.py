@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """C1 driver — personality-diverse council A/B → ΔQ. NULL ΔQ is a legitimate result."""
 from __future__ import annotations
 

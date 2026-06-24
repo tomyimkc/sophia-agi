@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Sophia public moral standard gate.
 
 Maps an action/output text against the overlapping-consensus public moral

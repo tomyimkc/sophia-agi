@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the sophia-guard CLI (tools/sophia_guard.py). Offline.
 
 The CLI wraps guarded_complete so any local model can answer behind Sophia's

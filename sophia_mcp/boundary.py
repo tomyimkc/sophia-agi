@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Caller identity + kill-switch surface for the served MCP boundary.
 
 MCP/stdio has **no authenticated caller on the wire** — every tool call arrives

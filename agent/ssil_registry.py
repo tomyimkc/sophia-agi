@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Promoted-improvement registry — provenance, N-replication, counterfactual revert.
 
 This is SSIL gate G9 made operational and the substrate of *compounding*: promoted

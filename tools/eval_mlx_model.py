@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Evaluate a local MLX model/adapter on Sophia domain benchmarks.
 
 This is the Mac/Apple Silicon counterpart to ``tools/eval_local_model.py`` for

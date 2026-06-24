@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Offline plumbing test for the live proposer (mock provider — no API key needed)."""
 from __future__ import annotations
 

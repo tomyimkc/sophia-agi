@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Verify a tool's OUTPUT, routing to the right verifier (Universal Verify, idea #8).
 
 Returns ``(verdict, claim_id)`` where ``verdict`` is a governance-contract Verdict

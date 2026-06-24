@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Layer-1 hook — a weight delta (LoRA/RLVR adapter) through the SAME SSIL gate.
 
 The payoff of the layered design (docs/11-Platform/Safe-Self-Improvement-Loop.md §2):

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """C2 — ship-steering-or-ABSTAIN, mirroring the selfextend false-accept contract.
 Ship a vector only if all three falsifiable invariants hold on the HELD-OUT split;
 else ABSTAIN + record. fail-closed. An unvalidated steering vector is worse than none."""

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Hugging Face Space — interactive demo of the Sophia governance gate.
 
 Lets anyone verify, in the browser, the core claim: the gate publishes only what it can

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Third-party replication harness for the Sophia AGI-candidate proof.
 
 Runs the clean-clone checklist from agi-proof/third-party-replication/README.md,

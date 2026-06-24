@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Skill: source_discipline_enforce — fail-closed source-discipline gate."""
 from __future__ import annotations
 

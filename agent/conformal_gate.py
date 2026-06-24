@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Conformal abstention gate for the Conscience Kernel.
 
 This converts arbitrary nonconformity scores into answer/abstain decisions with a

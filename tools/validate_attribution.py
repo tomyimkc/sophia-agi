@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Validate attribution records and training examples in the Sophia AGI corpus."""
 
 from __future__ import annotations

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Spec B — toy-decoder steering-hook tests (skip-guarded; torch-only)."""
 import importlib.util
 import sys

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the sophia_belief MCP tool (sophia_mcp). All offline.
 
 The corpus loader is stubbed so the belief lookup is deterministic and never

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run a private Sophia hidden evaluation pack against Grok CLI.
 
 Full prompts and responses stay in private/hidden-evals/. The public report is

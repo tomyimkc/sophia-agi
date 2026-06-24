@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Ingest a real RLVR adapter-eval report and run it through the SSIL Layer-1 gate.
 
 Turns a trained weight delta's held-out eval into an SSIL verdict — the single

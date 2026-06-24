@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """C3 — PIF/SSA headline harness (pure stdlib). The build_cells_from_scores seam
 takes pre-computed per-seed score arrays → fully CI-testable, no model. A near-null
 headline confirming Spec B 0/2 is the expected, pre-registered result."""

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the temporal/date-impossibility verifier. Offline, no model.
 
 Confirms it catches author-died-before-work impossibilities (no provenance record

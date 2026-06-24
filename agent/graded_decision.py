@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Calibrated graded decision — answer / hedge / abstain on a confidence curve.
 
 The guarded loop (``agent/guarded.py``) currently makes a BINARY gate decision: if

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Capability scopes per role — least privilege for the 9 aihk-os role pipelines.
 
 A role may only perform the operations in its scope, up to a maximum classification.

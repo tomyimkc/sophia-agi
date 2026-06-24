@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the Provenance Delta benchmark (provenance_bench/*). Offline.
 
 Drives the runner with an injected ``generate`` callable and synthetic gate

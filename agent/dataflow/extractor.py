@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Quarantined extractor (Q-LLM) for the dual-LLM model (M2.4).
 
 The extractor is the only component that READS untrusted content, and it is

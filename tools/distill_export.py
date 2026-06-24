@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Verifier-gated distillation: teacher model -> verified SFT data + rejected set.
 
 Runs a teacher (any adapter provider — GLM-5.2, DeepSeek, Claude) over a set of

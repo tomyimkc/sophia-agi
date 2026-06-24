@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Code-uplift benchmark — does Sophia's execute-and-repair loop improve a local
 LLM's coding pass@1?
 

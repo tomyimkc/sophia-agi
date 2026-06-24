@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Capability manifest for the Sophia MCP tools (default-deny).
 
 Classifies each ``sophia_*`` tool by its real effect. An UNKNOWN tool is treated

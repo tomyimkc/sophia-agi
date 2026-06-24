@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Source-discipline checker CLI: run Sophia's provenance_faithful verifier over text.
 
 Reads draft text on stdin (or ``--text``) and prints

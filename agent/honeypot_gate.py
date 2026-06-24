@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Honeypot / canary gate — SSIL stage G5.
 
 An optimizer finds the easiest path to high reward; if a shortcut exists, it takes

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Aggregate multiple runs into point estimates with bootstrap 95% CIs.
 
 Turns the single-run, illustrative numbers into something citable: each model is

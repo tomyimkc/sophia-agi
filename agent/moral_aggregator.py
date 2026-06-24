@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Bounded moral-uncertainty aggregation (the Sophia moral parliament).
 
 Hard prohibitions live in constitutional/deontic gates. This module handles gray

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the long-horizon autonomy curve (agent/horizon.py). Offline."""
 
 from __future__ import annotations

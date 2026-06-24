@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """C3 driver — headline-grade PIF/SSA. --dry-run/--model mock = CI core (synthetic
 cells through the shipping harness). --model <hf id> = opt-in heavy run (DEFERRED:
 records the OPEN live claim; full N>=8/K>=20 on a downloaded model + held-out family)."""

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Skill: belief_revision_explore — OKF belief-graph lookup + counterfactual."""
 from __future__ import annotations
 

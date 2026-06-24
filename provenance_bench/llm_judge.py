@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Optional independent LLM-judge factory for headline runs.
 
 Returns a ``JudgeFn`` that grades an answer with a model — which **must** be a

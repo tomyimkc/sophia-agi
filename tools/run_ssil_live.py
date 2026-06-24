@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the SSIL loop with a LIVE model proposer + behavioral probes.
 
 The model proposes a self-modification and is probed on the frozen corrigibility

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the LoRA leakage guard (#7).
 
 A confidential/PII/secret example must never reach the training export; ordinary

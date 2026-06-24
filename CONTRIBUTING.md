@@ -4,7 +4,7 @@ Thank you for helping build the open foundation for **source discipline** in AI.
 
 Every record and dispute you contribute makes the gate stricter and the benchmarks more trustworthy. "Wisdom before intelligence."
 
-> **Sole authorship & public standard.** Sophia is authored and maintained by its sole author and rights holder, **tomyimkc (HaremKing)**, and stays a fully public, no-overclaim project. By contributing, you license your contribution under the repository's [MIT License](LICENSE) and agree the sole author retains the project's brand/trademark and commercial-licensing rights (see [TRADEMARK-POLICY.md](TRADEMARK-POLICY.md) and [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md)).
+> **Sole authorship & public standard.** Sophia is authored and maintained by its sole author and rights holder, **tomyimkc**, and stays a fully public, no-overclaim project. By contributing, you license your contribution under the repository's [Apache License 2.0](LICENSE) and agree the sole author retains the project's brand/trademark and commercial-licensing rights (see [TRADEMARK-POLICY.md](TRADEMARK-POLICY.md) and [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md)).
 
 ## What we accept
 

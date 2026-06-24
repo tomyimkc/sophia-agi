@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Long-horizon autonomy curve — success rate vs task length.
 
 `tools/run_long_horizon.py` logs ONE run's interventions; this measures the

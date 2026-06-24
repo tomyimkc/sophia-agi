@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run SEIB-Arena-20 blind-comparison smoke benchmark.
 
 This is a deterministic offline proxy for a future LMSYS-style human arena. It

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Aggregate hidden-eval comparisons across Sophia modes.
 
 This runner expects a hidden pack plus one response JSON per mode. It scores all

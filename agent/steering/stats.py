@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Effect-size, bootstrap CI, kappa, and the pre-registered SSA verdict (pure stdlib).
 
 Reuses provenance_bench's stdlib helpers verbatim — no new stats deps.

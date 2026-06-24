@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Launch Sophia's live RLVR run on RunPod, then always terminate the Pod.
 
 This is intentionally a small, dependency-free orchestrator:

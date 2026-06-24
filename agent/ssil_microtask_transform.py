@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Harder SSIL micro-task — string transformation (ARC-like, executable spec).
 
 Demonstrates the loop generalizes beyond a single threshold task. The model proposes

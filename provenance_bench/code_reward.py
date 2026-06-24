@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Verifier-as-reward for CODE — tests-pass is the reward (the strongest RLVR signal).
 
 The provenance RLVR reward (``rl_reward``) uses ``provenance_faithful`` as the

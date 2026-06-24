@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Phase 4: failed benchmark eval -> draft training example via Claude."""
 
 from __future__ import annotations

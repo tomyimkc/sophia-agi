@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Code-execution checking for the code-uplift benchmark — the strongest verifier.
 
 Provenance reduces correctness to "does the documented author match". CODE reduces

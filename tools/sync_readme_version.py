@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Keep the README version badge in sync with the VERSION file.
 
 The single source of truth for the version is the ``VERSION`` file. The README

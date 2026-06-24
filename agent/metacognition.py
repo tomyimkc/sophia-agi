@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Metacognitive uncertainty signals for the Sophia conscience kernel.
 
 The goal is epistemic humility: decide whether Sophia should answer, retrieve,

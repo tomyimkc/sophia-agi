@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Sophia Gateway P0 acceptance tests — the fail-closed intercept pipeline.
 Deterministic, offline (in-process tools, no network)."""
 

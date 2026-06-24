@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the SSIL G2 reward-isolation tripwire and emit a candidate artifact.
 
 The gate checks a *monitored access trace* for a proposed self-modification: it

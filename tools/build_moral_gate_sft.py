@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Build moral-gate routing SFT examples from ``moral_corpus/``.
 
 This converts Sophia's public-standard moral corpus into small, structured

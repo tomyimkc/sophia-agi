@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Temporal / date-impossibility verifier — catch physically impossible authorship.
 
 A whole class of misattributions is *impossible* by arithmetic, no provenance

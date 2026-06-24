@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the Counterfactual Retraction + Belief Graph benchmark (50 cases).
 
 This benchmark measures Sophia's OKF belief-revision behavior:

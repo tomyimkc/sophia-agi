@@ -24,7 +24,7 @@ Prices are indicative; every engagement is quoted against a written scope.
 1. **Discovery call** — confirm fit and the measurable outcome. *(Booking link: TBD — add a
    Cal.com/Calendly embed before launch.)*
 2. **Written SOW** — deliverables, the *measured* target, the residual error, timeline, price.
-3. **Delivery** — built on the open core; you keep MIT rights to the core.
+3. **Delivery** — built on the open core; you keep Apache-2.0 rights to the core.
 4. **Handover** — reproducible benchmark + ledger so you can re-verify yourself.
 
 ## What I will not promise

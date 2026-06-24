@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Drop the governance gate into a LangGraph pipeline.
 
 The node factories are plain ``state -> state`` callables (the LangGraph node

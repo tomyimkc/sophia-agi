@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Contract error model (stable wire shape).
 
 Every failure crosses the seam as ``{"error": {code, message, retryable}}`` with a

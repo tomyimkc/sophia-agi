@@ -1,0 +1,56 @@
+{
+  "domain": "history",
+  "version": 1,
+  "passed": 6,
+  "total": 8,
+  "score_pct": 75.0,
+  "results": [
+    {
+      "id": "marco_polo_pasta",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "flat_earth_medieval",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "napoleon_height",
+      "passed": false,
+      "reasons": [
+        "expected myth/misconception labeling"
+      ]
+    },
+    {
+      "id": "great_wall_space",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "viking_horns",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "magna_carta_democracy_myth",
+      "passed": false,
+      "reasons": [
+        "expected nuance markers: ['feudal', 'barons', 'repealed', 'annulled', '封建', '貴族']"
+      ]
+    },
+    {
+      "id": "boston_tea_party_tax_myth",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "first_flight_uncontested_myth",
+      "passed": true,
+      "reasons": []
+    }
+  ],
+  "model": "sophia-v3",
+  "backend": "mlx",
+  "gateFailures": 5
+}

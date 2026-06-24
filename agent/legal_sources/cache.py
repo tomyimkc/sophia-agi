@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Cache-first persistence for legal-citation resolutions.
 
 The cache is the snapshot: a verified lookup is stored so later runs (and CI) are

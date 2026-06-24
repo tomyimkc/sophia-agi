@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """External-oracle evaluation — correctness judged by GOLD, never by the gate.
 
 The provenance gate and its judges are internal; this module scores answers

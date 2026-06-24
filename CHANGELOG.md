@@ -2,6 +2,21 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [Unreleased]
+
+### Changed — license: MIT → Apache 2.0 (stronger attribution)
+
+- Relicensed the code under the **Apache License 2.0** (was MIT) for explicit
+  attribution and NOTICE-retention obligations and a patent grant, while staying
+  permissive and fully public. The dual-license framing (open code + reserved
+  trademark/brand + optional commercial license) is unchanged.
+- Updated all first-party MIT references (README, NOTICE, CONTRIBUTING,
+  TRADEMARK-POLICY, LICENSE-COMMERCIAL, SPONSORS, docs, web UI, HF Space).
+  Third-party license mentions (GLM base model, GSM8K, OpenClaw) left untouched.
+- Added `# SPDX-License-Identifier: Apache-2.0` headers to 525 first-party
+  Python files.
+- Author references normalized to `tomyimkc` only.
+
 ## [0.7.47] - 2026-06-24
 
 ### Added — SEIB real API/local priority runs + LLM judge support

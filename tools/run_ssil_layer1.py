@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the Layer-1 demo: a weight delta (LoRA/RLVR adapter) through the SAME gate."""
 from __future__ import annotations
 

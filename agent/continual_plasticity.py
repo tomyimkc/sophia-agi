@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Safe continual-plasticity gate for model/skill updates.
 
 No weights are changed here. The module decides whether a proposed adapter/skill

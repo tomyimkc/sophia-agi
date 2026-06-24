@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Structured tracing in a Langfuse-compatible shape.
 
 Each service call emits one trace event with the fields a Langfuse ingestor expects

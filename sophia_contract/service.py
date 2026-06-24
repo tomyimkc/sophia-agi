@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """SophiaContract — the governance service aihk-os consumes.
 
 Deterministic and fail-closed by construction: no model is in the verify path, so a

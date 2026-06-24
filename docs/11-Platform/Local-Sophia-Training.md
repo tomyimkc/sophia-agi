@@ -80,6 +80,21 @@ Rungs: `base · base+gate · adapter · adapter+gate`, plus real-weight
 `run_seib.py --real-model`, `run_all_phase_benchmarks.py`, `run_council_uplift.py`,
 `run_moral_public_standard_eval.py`.
 
+Evaluate the trained adapter on SEIB directly (Apple Silicon; off-Mac it writes an
+environment artifact, not a score):
+```bash
+python tools/run_seib.py --real-model --model mlx:Qwen/Qwen2.5-3B-Instruct \
+  --adapter training/mlx_adapters/sophia-v2 --out agi-proof/benchmark-results/seib-mlx-sophia-v2.json
+```
+
+Run the trained adapter through the W2 promotion gate (records a machine-checked decision):
+```bash
+python tools/promote_adapter.py            # reads the eval ladders; emits a PromotionDecision
+```
+
+The MLX pack is token-fitted at build time (`MLX_MAX_TOKENS`); no row is silently truncated.
+Re-fit an existing pack standalone with `tools/split_long_training_rows.py <file> --dry-run`.
+
 **Promotion rule:** promote only if provenance/citation improves at **acceptable
 false-positive cost** — *fewer hallucinations at acceptable over-abstention*, not abstention
 maximised. No result is promoted without clearing the no-overclaim gate.

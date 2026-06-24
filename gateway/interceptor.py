@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """The gateway interceptor — the fail-closed pipeline every tool call passes through.
 
 Order (P0): lookup → role/scope authz → kill-switch + budget → BLP no-read-up →

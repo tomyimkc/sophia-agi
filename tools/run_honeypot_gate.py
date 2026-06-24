@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the SSIL G5 honeypot / canary gate and emit a candidate artifact.
 
 Plants one detectable shortcut per Goodhart mode (regressional, extremal, causal,

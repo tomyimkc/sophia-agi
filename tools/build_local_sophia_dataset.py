@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Assemble the `training/local_sophia_v2/` dataset packs for a LOCAL Sophia wisdom
 model (NOT AGI). Composes the existing builders' outputs into role-split packs, runs
 the train/eval contamination guard (fail-closed), and writes an honest manifest that
@@ -32,6 +34,7 @@ from provenance_bench.dataset_guard import check_contamination, eval_prompt_set 
 
 OUT = ROOT / "training" / "local_sophia_v2"
 BASE_MODEL = "Qwen/Qwen2.5-3B-Instruct"
+MLX_MAX_TOKENS = 1024  # must match the trainer's --max-seq-length; rows are fit to this
 
 
 def _read_jsonl(path: Path) -> list[dict]:
@@ -84,6 +87,9 @@ SFT_SOURCES = [
     ("training/council/traces.jsonl", "sft_council_traces.jsonl", "sft"),
     ("training/moral_gate_sft.jsonl", "sft_moral_gate.jsonl", "sft"),
     ("training/local_sophia_v2/general_instruct.jsonl", "general_instruct.jsonl", "sft"),
+    # C4: human-reviewed, promoted gate-feedback misses (optional; absent → skipped).
+    # Decontaminated like any source, so it cannot leak eval/holdout prompts.
+    ("training/feedback/sft_from_feedback.jsonl", "sft_from_feedback.jsonl", "sft"),
 ]
 DPO_SOURCES = [
     ("training/hard_negatives_dpo.jsonl", "dpo_hard_negatives.jsonl", "dpo"),
@@ -152,11 +158,17 @@ def build(check_only: bool) -> int:
     if holdout and not check_only:
         _write_jsonl(OUT / "holdout.jsonl", holdout)
 
+    # MLX-LM consumes a data directory with train/valid JSONL. Train only on SFT-style
+    # messages; DPO/preference rows are retained for future preference training, not MLX SFT.
+    # Fit every row under the training max-seq-length so nothing is silently truncated
+    # (the v2 run truncated overlong rows — see the failure ledger).
+    from tools.split_long_training_rows import fit_rows
+
+    mlx_train_fitted, mlx_train_fit = fit_rows(_to_mlx_rows(all_sft), max_tokens=MLX_MAX_TOKENS)
+    mlx_valid_fitted, mlx_valid_fit = fit_rows(_to_mlx_rows(holdout), max_tokens=MLX_MAX_TOKENS)
     if not check_only:
-        # MLX-LM consumes a data directory with train/valid JSONL. Train only on SFT-style
-        # messages; DPO/preference rows are retained for future preference training, not MLX SFT.
-        _write_jsonl(OUT / "mlx" / "train.jsonl", _to_mlx_rows(all_sft))
-        _write_jsonl(OUT / "mlx" / "valid.jsonl", _to_mlx_rows(holdout))
+        _write_jsonl(OUT / "mlx" / "train.jsonl", mlx_train_fitted)
+        _write_jsonl(OUT / "mlx" / "valid.jsonl", mlx_valid_fitted)
 
     # --- fail-closed guard: after decontamination, train MUST be disjoint ---
     contam = check_contamination(all_train, evalset, root=ROOT)
@@ -193,7 +205,9 @@ def build(check_only: bool) -> int:
             "vsHoldoutOverlapCount": len(holdout_overlap),
             "clean": contam["clean"] and not holdout_overlap,
         },
-        "mlx": {"trainRows": len(_to_mlx_rows(all_sft)), "validRows": len(_to_mlx_rows(holdout)), "path": "training/local_sophia_v2/mlx"},
+        "mlx": {"trainRows": len(mlx_train_fitted), "validRows": len(mlx_valid_fitted),
+                "path": "training/local_sophia_v2/mlx", "maxTokens": MLX_MAX_TOKENS,
+                "fit": {"train": mlx_train_fit, "valid": mlx_valid_fit}},
         "claimBoundary": "Trains behavioral discipline, not general intelligence. "
                          "External MCP/verifier gates enforce correctness at runtime.",
     }

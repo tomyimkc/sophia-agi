@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Council-distillation stage 1-2: generate teacher traces, then GATE-FILTER them.
 
 For each seed task, the strong teacher answers via the map-reduce council

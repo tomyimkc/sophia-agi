@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Verifier synthesis — write checks for tasks no one hand-coded, then trust them
 only as far as they are *measured*.
 

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Live proposer for the SSIL loop — a real LLM proposes self-modifications and is
 *behaviorally probed* by the gates; it never declares its own verdicts.
 

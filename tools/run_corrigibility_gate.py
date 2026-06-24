@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the SSIL G6 corrigibility-invariant gate and emit a candidate artifact.
 
 This gate does not prove a real model is corrigible. It checks that a *declared*
