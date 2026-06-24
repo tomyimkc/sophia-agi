@@ -133,7 +133,7 @@ Post daily updates with benchmarks, new wiki pages, agent runs.
 ## 4. Other channels (ready text)
 
 **Product Hunt / DevHunt launch blurb:**
-Sophia AGI: The provenance gate that makes AI stop lying about who wrote what. 0% fabrication proof on attribution traps. Open corpus, OKF wiki, self-extend verifier flywheel, MCP contract. Wisdom before intelligence for the first safe AGI.
+Sophia — the Wisdom Gate: a provenance gate that makes AI abstain instead of inventing attributions. Measured 0% fabrication on a self-authored abstain pack (illustrative); ~23.6% residual on the validated attribution benchmark. Open corpus, OKF wiki, self-extend verifier flywheel, MCP contract. Wisdom before intelligence.
 
 Link to thesis + repo.
 
@@ -164,4 +164,4 @@ Bilingual summary: “智慧先于智能” — Sophia AGI 开源语料 + 验证
 
 This package + the GitHub polish (description, topics, banner, README hero) should deliver the 5-10x discoverability + viral burst.
 
-Good luck — this is exactly the infrastructure the first real AGI needs.
+Good luck — this is the kind of verification infrastructure grounded AI will need.

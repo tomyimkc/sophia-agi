@@ -16,6 +16,8 @@ jobs:
           python-version: "3.12"
       - name: Validate attributions and training examples
         run: python tools/validate_attribution.py
+      - name: Claims linter (no-overclaim copy gate)
+        run: python tools/lint_claims.py
       - name: Validate OKF wiki (drift, links, provenance)
         run: |
           python tools/wiki_sync.py check
@@ -103,6 +105,7 @@ jobs:
       - name: "Conscience kernel (seven paths + seven hardening priorities)"
         run: |
           python tests/test_conscience.py
+          python tests/test_metacognition.py
           python tests/test_mcp_conscience.py
           python tests/test_conscience_priorities.py
           python tests/test_conscience_eval_tools.py

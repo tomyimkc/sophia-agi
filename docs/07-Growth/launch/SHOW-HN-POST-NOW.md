@@ -37,7 +37,7 @@ Live today:
 • Thesis-style site documenting UI council design
 • Three-path agent: advisor | repo | life
 
-Claude Sonnet scores 100% on all domains on our harness. We want GPT/Grok/local model runs — PRs with scored JSON welcome.
+Claude Sonnet scores 100% on all domains on our harness. We want GPT/Grok/local model runs — PRs with scored JSON welcome. <!-- claim-ok: scoped to "our harness" -->
 
 Not claiming AGI — claiming we need a provenance gate before belief scales.
 

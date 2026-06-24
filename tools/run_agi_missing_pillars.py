@@ -56,7 +56,8 @@ def build_report(seed: int = 0) -> dict:
         "schema": "sophia.agi_missing_pillars_bundle.v1",
         "candidateOnly": True,
         "level3Evidence": False,
-        "claimBoundary": "Mechanism bundle for AGI-candidate infrastructure; does not prove AGI.",
+        "depth": "toy-reference",
+        "claimBoundary": "Fail-closed INTERFACES with toy reference implementations for AGI-shaped capabilities; this bundle is not the capabilities their names describe and does not prove AGI.",
         "seed": seed,
         "components": {
             "programInduction": program,

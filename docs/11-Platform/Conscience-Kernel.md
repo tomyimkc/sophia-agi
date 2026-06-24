@@ -1,7 +1,14 @@
 # Sophia Conscience Kernel — Seven Paths
 
-**Status:** implemented as deterministic/offline candidate infrastructure.  
-**Boundary:** This is not proof that Sophia is AGI. It implements a moral + epistemic control layer for an AGI-candidate verifier-gated framework.
+**Status:** implemented as deterministic/offline candidate infrastructure.
+**Boundary:** This is not proof that Sophia is AGI. It is a **deterministic policy/control layer** —
+the evocative names are labels, not claims of introspection or sentience.
+
+> **What this literally is** (de-anthropomorphized): "Conscience" = a fail-closed **policy gate**;
+> "Metacognition" = a **confidence heuristic** (regex specificity + self-consistency + entropy +
+> verdict, plus arithmetic), not self-reflection; "Moral parliament" = a **multi-rule weighted
+> aggregator** over fixed perspectives, not moral cognition. No component introspects on its own
+> reasoning or learns.
 
 The Conscience Kernel turns the report's blueprint into seven concrete paths:
 

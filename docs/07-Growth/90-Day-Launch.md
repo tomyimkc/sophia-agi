@@ -9,7 +9,7 @@ Step-by-step growth plan for Sophia AGI after the initial `git push`.
 - [x] CI workflow (GitHub Actions)
 - [x] Per-domain leaderboards (`benchmark/results/leaderboard-*.json`)
 - [x] Hugging Face dataset live: `tomyimkc/sophia-agi-corpus`
-- [x] Claude 100% on all 4 domains; reference teacher 100%
+- [x] Claude 100% on all 4 domains (first-party harness); reference teacher 100% <!-- claim-ok: first-party harness, scoped -->
 - [x] Sophia Agent v0.4.x (advisor · repo · life)
 - [x] Thesis web UI + GitHub Pages workflow (v0.4.1)
 - [ ] Run GPT-4o / Gemini / Grok on benchmark; update leaderboards
