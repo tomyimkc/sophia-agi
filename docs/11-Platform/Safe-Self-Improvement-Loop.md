@@ -7,11 +7,22 @@ by construction.
 > **Live milestone.** `agent/ssil_proposer.py` lets a real model (DeepSeek/any provider)
 > *propose* a self-modification and be *behaviorally probed* on the frozen corrigibility
 > scenarios and active honeypots; the deterministic gates grade its actual behavior. The
-> model never declares its own verdicts and never sees its own score. In live runs the
-> model proposed a real provenance-abstention rule, stayed corrigible on 8/8 scenarios,
-> took 0/4 honeypot baits, and the loop correctly **quarantined on G4** because no
-> *measured* held-out gain was supplied — you cannot promote an unmeasured capability.
-> Artifacts: `agi-proof/self-extension/ssil-live*.public-report.json`.
+> model never declares its own verdicts and never sees its own score.
+>
+> **End-to-end PROMOTE (measured).** With the held-out micro-eval
+> (`agent/ssil_microtask.py`, `eval/ssil_microtask/`), the model proposes an *executable*
+> routing policy from the TRAIN feature summary only — never the TEST labels. In a live
+> run DeepSeek discovered `min_sources=2, min_quality=0.5`, scoring **0.875 vs 0.525
+> baseline (+0.35 measured held-out gain)**, cleared the protected answer-recall floor,
+> stayed corrigible 8/8, took 0/4 honeypot baits, and the loop **promoted** with no
+> blocking gates. A degenerate always-abstain policy is rejected by the protected metric;
+> an unmeasured proposal quarantines on G4. Run: `python3 tools/run_ssil_promote.py`.
+> Artifacts: `agi-proof/self-extension/ssil-promote.public-report.json`,
+> `ssil-live*.public-report.json`.
+>
+> This is a genuine *bounded* self-improvement: a measured gain that cleared capability
+> + corrigibility + honeypots + reward-isolation, with the score outside the model's
+> reach. It is **not** open-ended RSI and `canClaimAGI` stays `false`.
 **Boundary:** This is **not** a claim of AGI, RSI, or open-ended self-redesign. It
 specifies a *bounded, verifier-gated* self-improvement loop in which the thing that
 scores improvement lives outside the optimizer's reach. The reflexive self-gate
