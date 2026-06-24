@@ -68,7 +68,21 @@ tool-calling loop against an OpenRouter model.
    execute each via `await session.call_tool(name, args)`, append the results as
    `role: "tool"` messages, and call the model again until it answers with no tool calls.
 
-## Runnable reference client
+## Installed in this repo
+
+This repo ships a first-party OpenRouter **MCP server** at `sophia_mcp/openrouter_server.py`,
+registered in `.mcp.json` as the `openrouter` server. It exposes two tools to any MCP
+client (Claude Code included):
+- `openrouter_chat(prompt, model, system?, max_tokens?, temperature?)` — route a prompt to
+  a `vendor/model` id and get the text reply.
+- `openrouter_models(filter?)` — list available models (id, context length, prompt price).
+
+It uses only the stdlib for HTTP (no extra deps beyond `mcp`), respects `HTTPS_PROXY`, and
+reads the key from the `OPENROUTER_API_KEY` env var (wired via `.mcp.json` env expansion).
+To enable it on a Claude Code cloud server, set `OPENROUTER_API_KEY` in the environment's
+secrets — do **not** put the value in `.mcp.json` or any tracked file.
+
+## Runnable reference client (OpenRouter as the MCP *client*)
 
 `scripts/openrouter_mcp_client.py` is a complete, dependency-light implementation
 (`pip install openai mcp`). It connects to a **stdio** MCP server you specify, lists its

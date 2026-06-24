@@ -6,6 +6,14 @@
       "env": {
         "PYTHONPATH": "."
       }
+    },
+    "openrouter": {
+      "command": "python3",
+      "args": ["sophia_mcp/openrouter_server.py"],
+      "env": {
+        "PYTHONPATH": ".",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}"
+      }
     }
   }
 }
