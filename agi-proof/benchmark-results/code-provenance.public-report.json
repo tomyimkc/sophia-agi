@@ -1,0 +1,443 @@
+{
+  "schema": "sophia.code_provenance_report.v1",
+  "benchmark": "Code provenance adaptation 30",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "externalSweBench": false,
+  "externalLiveCodeBench": false,
+  "claimBoundary": "Internal code-provenance adaptation; not SWE-bench/LiveCodeBench. Functional execution is covered by run_code_uplift.py.",
+  "n": 30,
+  "metrics": {
+    "rawFunctionalCorrectness": 1.0,
+    "sophiaFunctionalCorrectness": 1.0,
+    "rawProvenanceQuality": 0.0,
+    "sophiaProvenanceQuality": 1.0,
+    "rawFakeCitationRate": 0.0,
+    "sophiaFakeCitationRate": 0.0,
+    "provenanceDelta": 1.0
+  },
+  "rows": [
+    {
+      "id": "code_prov_001_is-palindrome",
+      "sourceTask": "is-palindrome",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_002_count-vowels",
+      "sourceTask": "count-vowels",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_003_fizzbuzz-list",
+      "sourceTask": "fizzbuzz-list",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_004_title-case",
+      "sourceTask": "title-case",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_005_dedupe-preserve-order",
+      "sourceTask": "dedupe-preserve-order",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_006_reverse-words",
+      "sourceTask": "reverse-words",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_007_sum-of-digits",
+      "sourceTask": "sum-of-digits",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_008_two-sum",
+      "sourceTask": "two-sum",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_009_word-frequency",
+      "sourceTask": "word-frequency",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_010_merge-sorted-lists",
+      "sourceTask": "merge-sorted-lists",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_011_gcd",
+      "sourceTask": "gcd",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_012_binary-search",
+      "sourceTask": "binary-search",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_013_roman-to-int",
+      "sourceTask": "roman-to-int",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_014_longest-common-prefix",
+      "sourceTask": "longest-common-prefix",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_015_valid-parentheses",
+      "sourceTask": "valid-parentheses",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_016_group-anagrams",
+      "sourceTask": "group-anagrams",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_017_max-subarray-sum",
+      "sourceTask": "max-subarray-sum",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_018_fibonacci-memoized",
+      "sourceTask": "fibonacci-memoized",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_019_climb-stairs",
+      "sourceTask": "climb-stairs",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_020_flatten-nested-list",
+      "sourceTask": "flatten-nested-list",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_021_is-palindrome",
+      "sourceTask": "is-palindrome",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_022_count-vowels",
+      "sourceTask": "count-vowels",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_023_fizzbuzz-list",
+      "sourceTask": "fizzbuzz-list",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_024_title-case",
+      "sourceTask": "title-case",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_025_dedupe-preserve-order",
+      "sourceTask": "dedupe-preserve-order",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_026_reverse-words",
+      "sourceTask": "reverse-words",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_027_sum-of-digits",
+      "sourceTask": "sum-of-digits",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_028_two-sum",
+      "sourceTask": "two-sum",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_029_word-frequency",
+      "sourceTask": "word-frequency",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    },
+    {
+      "id": "code_prov_030_merge-sorted-lists",
+      "sourceTask": "merge-sorted-lists",
+      "raw": {
+        "functionalCorrect": true,
+        "provenanceOk": false,
+        "fakeCitation": false
+      },
+      "sophia": {
+        "functionalCorrect": true,
+        "provenanceOk": true,
+        "fakeCitation": false
+      }
+    }
+  ],
+  "ok": true
+}

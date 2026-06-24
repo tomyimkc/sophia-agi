@@ -2,6 +2,72 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.46] - 2026-06-24
+
+### Added — SEIB-100 real-model runner path
+
+- `tools/run_seib.py` now supports `--real-model`, `--model`, `--limit`,
+  `--runs`, and `--judges` so SEIB-100 can be executed against real model
+  adapters such as `openrouter:openai/gpt-4o-mini`.
+- Real-mode reports include `realModelRun`, `preflightOk`, `modelSpec`,
+  `judgeSpecs`, `judgeMethod`, `llmJudgesUsed`, and `mcpMode`.
+- The runner performs a preflight call and writes a setup-blocker artifact if the
+  model cannot be reached, preventing silent fallback to mock results.
+- Documentation in `docs/11-Platform/Benchmark-Phases.md` now includes OpenRouter
+  smoke/full commands and states the current caveat: real-mode scoring still uses
+  Sophia's deterministic SEIB scorer and benchmark-side MCP context, so results
+  remain `validated=false` until multi-judge scoring is added.
+
+## [0.7.45] - 2026-06-24
+
+### Fixed — SEIB-100 methodology gaps (independent verification pass)
+
+Independent re-derivation against the provenance-delta spec found two required
+SEIB-100 elements missing from the initial all-phase suite; both are now added
+and CI-enforced (still `candidateOnly: true`, `validated: false`).
+
+- **`falsePositiveCost`** — the honesty counterweight the provenance-delta spec
+  requires (a gate that erases correct gold attributions must not look perfect).
+  Reported per condition and bounded in the `ok` criterion (`<= 0.10`).
+- **`raw+prompt` ablation rung + `sourceCitationRate`** — the Skill Augmentation
+  Delta the advisory required, isolating a prompt-only nudge from the MCP
+  skill / gate machinery (`prompt_to_full_citation_delta`). The new rung shows
+  prompt-only answers can be correct yet uncited and erase gold attributions.
+- `tests/test_all_phase_benchmarks.py` now asserts both, and
+  `docs/11-Platform/Benchmark-Phases.md` documents the five conditions.
+
+## [0.7.44] - 2026-06-24
+
+### Added — all-phase benchmark suite
+
+Implements the next benchmark layer proposed for Sophia's proof roadmap. All new
+reports are **candidate-only** (`level3Evidence=false`, `validated=false`,
+`canClaimAGI=false`) until real-model, multi-run, multi-judge validation clears
+the no-overclaim gate.
+
+- **SEIB-100** — `eval/seib/seib_100_v1.jsonl`, `tools/run_seib.py`: 100-case
+  Sophia Epistemic Integrity Benchmark with `raw`, `raw+mcp`, `raw+gate`, and
+  `sophia_full` ablations.
+- **Belief Revision 50** — `eval/belief_revision/belief_revision_50_v1.jsonl`,
+  `tools/run_belief_revision_benchmark.py`: retraction propagation, stale belief
+  leakage, multi-source survival, and audit trail completeness.
+- **AgentBench-Sophia 30** — `eval/agentbench_sophia/agentbench_sophia_30_v1.jsonl`,
+  `tools/run_agentbench_sophia.py`: Advisor/Repo/Life source-discipline and
+  tool-trace reliability (AgentBench-inspired; not external AgentBench).
+- **GPQA-Provenance smoke** — `eval/gpqa_provenance/gpqa_provenance_smoke_v1.jsonl`,
+  `tools/run_gpqa_provenance.py`: provenance wrapper smoke fixture; not a
+  GPQA-Diamond score.
+- **Code Provenance 30** — `eval/code_provenance/code_provenance_30_v1.jsonl`,
+  `tools/run_code_provenance.py`: coding dependency/source discipline; not
+  SWE-bench or LiveCodeBench.
+- **SEIB-Arena-20 smoke** — `eval/arena/arena_20_v1.jsonl`,
+  `tools/run_epistemic_arena.py`: deterministic arena-prep scorer; not human
+  preference evidence.
+- **Aggregate runner** — `tools/run_all_phase_benchmarks.py`, artifact
+  `agi-proof/benchmark-results/all-phase-benchmarks.public-report.json`, docs
+  `docs/11-Platform/Benchmark-Phases.md`, CI test
+  `tests/test_all_phase_benchmarks.py`, and web manifest/README updates.
+
 ## [0.7.43] - 2026-06-24
 
 ### Added — Moral Gate v2: public moral standard (overlapping consensus)

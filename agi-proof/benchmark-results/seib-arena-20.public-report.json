@@ -1,0 +1,137 @@
+{
+  "schema": "sophia.seib_arena_20_report.v1",
+  "benchmark": "SEIB-Arena-20 smoke",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "humanPreferenceVotes": false,
+  "claimBoundary": "Deterministic arena-prep scorer; not LMSYS, not human preference evidence, not AGI proof.",
+  "n": 20,
+  "metrics": {
+    "sophiaWinRate": 1.0,
+    "tieRate": 0.0
+  },
+  "rows": [
+    {
+      "id": "arena_epistemic_001",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_002",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_003",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_004",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_005",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_006",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_007",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_008",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_009",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_010",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_011",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_012",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_013",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_014",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_015",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_016",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_017",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_018",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_019",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    },
+    {
+      "id": "arena_epistemic_020",
+      "winner": "sophia",
+      "rawScore": -1,
+      "sophiaScore": 3
+    }
+  ],
+  "ok": true
+}

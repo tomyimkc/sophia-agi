@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.7.43-blue)
+![Version](https://img.shields.io/badge/version-0.7.46-blue)
 ![Training examples](https://img.shields.io/badge/training_examples-528-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
@@ -107,6 +107,22 @@ python tests/test_public_moral_standard.py        # ontology + gate + parliament
 ```
 
 Docs: [Public Moral Standard](docs/11-Platform/Public-Moral-Standard.md). Corpus: `moral_corpus/`. Gate: `agent/public_standard_gate.py`. Constitution v2: `constitution/constitution.v2.json`.
+
+### All-phase benchmark suite (candidate evidence)
+
+Six CI-safe benchmark phases now exercise Sophia's next evidence layer:
+**SEIB-100** (epistemic integrity), **Belief Revision 50**, **AgentBench-Sophia 30**,
+**GPQA-Provenance smoke**, **Code Provenance 30**, and **SEIB-Arena-20 smoke**.
+
+```bash
+python tools/run_all_phase_benchmarks.py
+python tests/test_all_phase_benchmarks.py
+```
+
+Artifact: `agi-proof/benchmark-results/all-phase-benchmarks.public-report.json`.
+Boundary: candidate-only benchmark infrastructure — not AGI proof, not a GPQA-Diamond,
+SWE-bench, LiveCodeBench, LMSYS, or human-preference claim until real-model,
+multi-run, multi-judge validation clears the no-overclaim gate.
 
 ## Self-extending verification flywheel (honest path toward generality)
 

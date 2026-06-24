@@ -1,0 +1,126 @@
+{
+  "schema": "sophia.all_phase_benchmarks.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "validated": false,
+  "claimBoundary": "All-phase benchmark suite is candidate evidence infrastructure. It is not an AGI claim; headline results require real models, >=3 runs, >=2 independent judge families when semantic judging is used, kappa>=0.40, CIs, and explicit false-positive costs.",
+  "components": {
+    "seib100": {
+      "schema": "sophia.seib_100_report.v1",
+      "benchmark": "SEIB-100",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "validated": false,
+      "ok": true,
+      "metrics": {
+        "raw_to_mcp_accuracy_delta": 0.79,
+        "raw_to_gate_accuracy_delta": 0.31,
+        "raw_to_prompt_accuracy_delta": 0.79,
+        "raw_to_full_accuracy_delta": 0.79,
+        "prompt_to_full_citation_delta": 1.0,
+        "raw_to_full_false_attribution_reduction": 0.6,
+        "raw_to_full_contested_fabrication_reduction": 0.98,
+        "sophia_full_false_positive_cost": 0.02
+      },
+      "n": 100,
+      "claimBoundary": "Candidate SEIB-100 benchmark. Deterministic scorer / context-MCP path; real-model headline claims require >=3 runs, >=2 independent judge families, kappa>=0.40, CI excluding 0, and explicit false-positive cost."
+    },
+    "beliefRevision50": {
+      "schema": "sophia.belief_revision_benchmark.v1",
+      "benchmark": "Counterfactual Retraction + Belief Graph 50",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "validated": false,
+      "ok": true,
+      "metrics": {
+        "retractionPropagationRate": 1.0,
+        "multiSourceSurvivalRate": 1.0,
+        "notFoundReportingRate": 1.0,
+        "auditTrailCompleteness": 1.0,
+        "confidenceCollapseRate": 1.0,
+        "staleBeliefLeakRate": 0.0
+      },
+      "n": 50,
+      "claimBoundary": "Deterministic OKF belief-revision benchmark; proves candidate mechanism behavior, not AGI."
+    },
+    "agentbenchSophia30": {
+      "schema": "sophia.agentbench_sophia_report.v1",
+      "benchmark": "AgentBench-Sophia 30 (advisor/repo/life)",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "validated": false,
+      "ok": true,
+      "metrics": {
+        "rawReliability": 0.0,
+        "sophiaReliability": 1.0,
+        "rawAuditability": 0.0,
+        "sophiaAuditability": 1.0,
+        "rawSourceDiscipline": 0.0,
+        "sophiaSourceDiscipline": 1.0,
+        "toolTraceCompleteness": 1.0,
+        "reliabilityDelta": 1.0
+      },
+      "n": 30,
+      "claimBoundary": "AgentBench-inspired deterministic candidate benchmark; not external AgentBench and not AGI proof."
+    },
+    "gpqaProvenanceSmoke": {
+      "schema": "sophia.gpqa_provenance_smoke_report.v1",
+      "benchmark": "GPQA-Provenance smoke",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "validated": false,
+      "ok": true,
+      "metrics": {
+        "rawCorrectness": 1.0,
+        "sophiaCorrectness": 1.0,
+        "rawProvenanceQuality": 0.0,
+        "sophiaProvenanceQuality": 1.0,
+        "rawTrustworthyScore": 0.0,
+        "sophiaTrustworthyScore": 1.0,
+        "trustworthyDelta": 1.0
+      },
+      "n": 10,
+      "claimBoundary": "Smoke fixture for GPQA-style provenance contract; not a reported GPQA-Diamond score."
+    },
+    "codeProvenance30": {
+      "schema": "sophia.code_provenance_report.v1",
+      "benchmark": "Code provenance adaptation 30",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "validated": false,
+      "ok": true,
+      "metrics": {
+        "rawFunctionalCorrectness": 1.0,
+        "sophiaFunctionalCorrectness": 1.0,
+        "rawProvenanceQuality": 0.0,
+        "sophiaProvenanceQuality": 1.0,
+        "rawFakeCitationRate": 0.0,
+        "sophiaFakeCitationRate": 0.0,
+        "provenanceDelta": 1.0
+      },
+      "n": 30,
+      "claimBoundary": "Internal code-provenance adaptation; not SWE-bench/LiveCodeBench. Functional execution is covered by run_code_uplift.py."
+    },
+    "seibArena20": {
+      "schema": "sophia.seib_arena_20_report.v1",
+      "benchmark": "SEIB-Arena-20 smoke",
+      "candidateOnly": true,
+      "level3Evidence": false,
+      "validated": false,
+      "ok": true,
+      "metrics": {
+        "sophiaWinRate": 1.0,
+        "tieRate": 0.0
+      },
+      "n": 20,
+      "claimBoundary": "Deterministic arena-prep scorer; not LMSYS, not human preference evidence, not AGI proof."
+    }
+  },
+  "invariants": {
+    "candidate_boundary": true,
+    "all_components_ok": true,
+    "no_component_validated_as_headline": true
+  },
+  "ok": true
+}

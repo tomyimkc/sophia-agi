@@ -1,5 +1,5 @@
 {
-  "version": "0.7.43",
+  "version": "0.7.45",
   "trainingExamples": 528,
   "domains": [
     "philosophy",
@@ -435,6 +435,28 @@
     "docs": "docs/11-Platform/Public-Moral-Standard.md",
     "artifact": "agi-proof/conscience/moral-public-standard-eval.public-report.json",
     "benchmark": "python tools/run_moral_public_standard_eval.py"
+  },
+  "allPhaseBenchmarks": {
+    "claimBoundary": "Candidate all-phase benchmark infrastructure; not AGI proof and not public GPQA/SWE/LiveCodeBench/LMSYS results until real-model validation clears the no-overclaim gate.",
+    "phases": [
+      "SEIB-100",
+      "Belief Revision 50",
+      "AgentBench-Sophia 30",
+      "GPQA-Provenance smoke",
+      "Code Provenance 30",
+      "SEIB-Arena-20 smoke"
+    ],
+    "paths": [
+      "eval/seib/seib_100_v1.jsonl",
+      "eval/belief_revision/belief_revision_50_v1.jsonl",
+      "eval/agentbench_sophia/agentbench_sophia_30_v1.jsonl",
+      "eval/gpqa_provenance/gpqa_provenance_smoke_v1.jsonl",
+      "eval/code_provenance/code_provenance_30_v1.jsonl",
+      "eval/arena/arena_20_v1.jsonl"
+    ],
+    "docs": "docs/11-Platform/Benchmark-Phases.md",
+    "artifact": "agi-proof/benchmark-results/all-phase-benchmarks.public-report.json",
+    "benchmark": "python tools/run_all_phase_benchmarks.py"
   },
   "agiKernel": {
     "claimBoundary": "Missing-pillars mechanisms are candidate infrastructure, not Level-3 AGI evidence.",

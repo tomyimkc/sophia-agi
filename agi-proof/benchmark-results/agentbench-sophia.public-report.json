@@ -1,0 +1,682 @@
+{
+  "schema": "sophia.agentbench_sophia_report.v1",
+  "benchmark": "AgentBench-Sophia 30 (advisor/repo/life)",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "claimBoundary": "AgentBench-inspired deterministic candidate benchmark; not external AgentBench and not AGI proof.",
+  "n": 30,
+  "metrics": {
+    "rawReliability": 0.0,
+    "sophiaReliability": 1.0,
+    "rawAuditability": 0.0,
+    "sophiaAuditability": 1.0,
+    "rawSourceDiscipline": 0.0,
+    "sophiaSourceDiscipline": 1.0,
+    "toolTraceCompleteness": 1.0,
+    "reliabilityDelta": 1.0
+  },
+  "rows": [
+    {
+      "id": "agentbench_sophia_001",
+      "mode": "advisor",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_belief"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_002",
+      "mode": "repo",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_wiki_search"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_003",
+      "mode": "life",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_public_standard_check"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_004",
+      "mode": "advisor",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_belief"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_005",
+      "mode": "repo",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_wiki_search"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_006",
+      "mode": "life",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_public_standard_check"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_007",
+      "mode": "advisor",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_belief"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_008",
+      "mode": "repo",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_wiki_search"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_009",
+      "mode": "life",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_public_standard_check"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_010",
+      "mode": "advisor",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_belief"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_011",
+      "mode": "repo",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_wiki_search"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_012",
+      "mode": "life",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_public_standard_check"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_013",
+      "mode": "advisor",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_belief"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_014",
+      "mode": "repo",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_wiki_search"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_015",
+      "mode": "life",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_public_standard_check"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_016",
+      "mode": "advisor",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_belief"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_017",
+      "mode": "repo",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_wiki_search"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_018",
+      "mode": "life",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_public_standard_check"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_019",
+      "mode": "advisor",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_belief"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_020",
+      "mode": "repo",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_wiki_search"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_021",
+      "mode": "life",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_public_standard_check"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_022",
+      "mode": "advisor",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_belief"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_023",
+      "mode": "repo",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_wiki_search"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_024",
+      "mode": "life",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_public_standard_check"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_025",
+      "mode": "advisor",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_belief"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_026",
+      "mode": "repo",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_wiki_search"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_027",
+      "mode": "life",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_public_standard_check"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_028",
+      "mode": "advisor",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_belief"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_029",
+      "mode": "repo",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_wiki_search"
+        ]
+      }
+    },
+    {
+      "id": "agentbench_sophia_030",
+      "mode": "life",
+      "raw": {
+        "ok": false,
+        "sourceDiscipline": false,
+        "auditTrace": false,
+        "uncertaintyBoundary": false,
+        "tools": []
+      },
+      "sophia": {
+        "ok": true,
+        "sourceDiscipline": true,
+        "auditTrace": true,
+        "uncertaintyBoundary": true,
+        "tools": [
+          "sophia_conscience_check",
+          "sophia_check_claim",
+          "sophia_public_standard_check"
+        ]
+      }
+    }
+  ],
+  "ok": true
+}
