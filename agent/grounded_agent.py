@@ -44,25 +44,30 @@ def vocab_for_pages(pages) -> "dict[str, str]":
 
 
 def grounded_answer(question: str, complete, *, pages, controller=None, retrieval: str = "single",
-                    hops: int = 1, attribution_check=None) -> "dict[str, Any]":
+                    hops: int = 1, attribution_check=None, gap_log_path=None) -> "dict[str, Any]":
     """Answer ``question`` from the OKF corpus via routing + the gated hybrid policy.
 
     Returns {answer, policy, target, gated}. ``policy`` is one of: abstain_no_route (the
     controller found no page), abstain_no_source, grounded_strict, grounded_fallback,
-    fallback_gated_abstain.
+    fallback_gated_abstain. If ``gap_log_path`` is set, knowledge gaps (anything but a clean
+    grounded answer) are appended there to feed the self-improving corpus worklist.
     """
     controller = controller or LexicalController()
     target = controller.route(question, vocab_for_pages(pages))
     if target is None:
-        return {"answer": ABSTAIN_TEXT, "policy": "abstain_no_route", "target": None, "gated": False}
+        out = {"answer": ABSTAIN_TEXT, "policy": "abstain_no_route", "target": None, "gated": False}
+    else:
+        source_map = (build_neighborhood_source_map(pages, hops=hops)
+                      if retrieval == "neighborhood" else build_source_map(pages))
+        by_id = {p.id: p for p in pages}
+        answer_bearing = classify_source(by_id[target])["answerBearing"] if target in by_id else False
+        out = answer_with_policy(question, source_map.get(target), complete,
+                                 answer_bearing=answer_bearing, attribution_check=attribution_check)
+        out["target"] = target
 
-    source_map = (build_neighborhood_source_map(pages, hops=hops)
-                  if retrieval == "neighborhood" else build_source_map(pages))
-    by_id = {p.id: p for p in pages}
-    answer_bearing = classify_source(by_id[target])["answerBearing"] if target in by_id else False
-    out = answer_with_policy(question, source_map.get(target), complete,
-                             answer_bearing=answer_bearing, attribution_check=attribution_check)
-    out["target"] = target
+    if gap_log_path is not None:
+        from agent.knowledge_gap_log import log_gap  # noqa: PLC0415
+        log_gap(question, target=out.get("target"), policy=out["policy"], path=gap_log_path)
     return out
 
 
