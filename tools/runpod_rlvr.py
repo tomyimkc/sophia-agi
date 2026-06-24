@@ -326,13 +326,16 @@ python - <<'PY'
 from pathlib import Path
 p = Path("/tmp/requirements-rl.sophia.txt")
 pins = {
-    # trl 0.19 has the vllm_mode selector (colocate is the DEFAULT: vLLM in-process
-    # on one GPU, no separate server) — unlike 0.16/0.17 which lacked the field and
-    # defaulted to server mode. Pair with vllm 0.9.1 (trl-0.19-era vLLM API).
-    # transformers / peft / accelerate / datasets are left UNPINNED so pip resolves
-    # the mutually-compatible set trl 0.19.1 actually needs.
+    # Coherent vLLM-colocate stack. trl 0.19 has the vllm_mode selector (colocate is
+    # the DEFAULT: vLLM in-process on one GPU, no server). vllm 0.9.1 is the matching
+    # vLLM API. transformers MUST be pinned to the 4.53.x line: vllm 0.9.1 registers
+    # an `aimv2` AutoConfig that already exists in transformers >=5.x, so an unpinned
+    # transformers (pip picks 5.x) crashes GRPOTrainer import. datasets pinned off the
+    # 5.x line for the same float-too-new reason. peft/accelerate resolve compatibly.
     "trl": "trl==0.19.1",
     "vllm": "vllm==0.9.1",
+    "transformers": "transformers==4.53.2",
+    "datasets": "datasets==3.6.0",
 }
 out = []
 for line in p.read_text().splitlines():
