@@ -189,6 +189,16 @@ python tools/run_rlvr.py --task math --model zai-org/glm-4-9b-chat-hf --vllm ser
 python tools/run_rlvr.py --task math --model zai-org/glm-4-9b-chat-hf --quant bf16    # 1x80GB
 ```
 
+> **Performance / dependency note (2026-06-24).** The RunPod launcher
+> (`.github/workflows/rlvr-runpod.yml`) runs `--vllm none` because the pinned
+> RLVR stack (`tools/runpod_rlvr.py`: trl 0.16.1) predates trl's `vllm_mode`
+> selector (added in trl ≥ 0.17). `--vllm none` is generation-bound: a 3-seed,
+> epochs=3 sweep over the 164-train/60-held-out pack is ~1.5 h per pod. To get
+> vLLM-accelerated generation (~10×, single A100 80GB) bump the pod's pinned set
+> to a mutually-compatible **trl ≥ 0.17 + vllm + torch + transformers**, then
+> switch the workflow launch to `--vllm colocate`. `run_rlvr` already field-gates
+> `vllm_mode`, so it is correct on either trl; the blocker is purely the dep pin.
+
 After training, the live capability claim is **held-out pass@1 on the eval families
 rises vs the base adapter**, scored deterministically by `math_equivalent`
 (no judge needed) — but it remains **Open** until a gated run (≥3 seeds, CI excludes
