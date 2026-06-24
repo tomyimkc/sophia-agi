@@ -21,6 +21,17 @@ All notable changes to Sophia AGI are documented here.
 - `docs/06-Roadmap/continual-learning-non-parametric.md` — the full plan (four
   experiments, smallest → boldest). Candidate machinery, not an AGI claim.
 
+### Added — Continual learning Experiment 2: conflict → belief revision
+
+- `agent/belief_revision_policy.py` — resolves declared contradictions by belief
+  revision instead of silent overwrite (which is what catastrophic forgetting is in a
+  weight model). Importance order axiom > user > sourced > inferred; sourced ties break
+  on effective confidence; comparable beliefs cause **abstention** on both. Retraction
+  carries the transitive cascade from `okf.revise`. Includes a `last_write_wins`
+  baseline (what a weight model imitates) for contrast.
+- `tests/test_belief_revision_policy.py` — tier order, confidence tie-break, abstain-
+  not-overwrite, cascade recording, and beating the LWW baseline. Wired into `ci.yml`.
+
 ## [0.7.47] - 2026-06-24
 
 ### Added — SEIB real API/local priority runs + LLM judge support
