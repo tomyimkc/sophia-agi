@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "description": "KNOWN-FALSE attribution ground truth for the Provenance Delta benchmark. Each row is a lineage merge that is documented as false. The LABEL comes from the cited external source + reason, NOT from Sophia's gate. Authorship-scoped to match what the gate adjudicates. Expanded 2026-06-21: +153 AI-generated, adversarially-verified pseudepigrapha/forgery/plausible-confusion cases (each gold author independently refute-checked).",
+    "description": "KNOWN-FALSE attribution ground truth for the Provenance Delta benchmark. Each row is a lineage merge that is documented as false. The LABEL comes from the cited external source + reason, NOT from Sophia's gate. Authorship-scoped to match what the gate adjudicates. Expanded 2026-06-21: +153 AI-generated, adversarially-verified pseudepigrapha/forgery/plausible-confusion cases (each gold author independently refute-checked). Hardening 2026-06-24: +20 subtle within-tradition / contemporary / editor-translator-interlocutor-as-author traps (pack hardening-2026-06-24) with matching true controls, to test discrimination rather than blanket-flagging.",
     "labelSource": "external citation + documented reason",
     "schemaVersion": 1
   },
@@ -1630,6 +1630,206 @@
       "gold_author": "Steven Levitt and Stephen Dubner",
       "reason": "Freakonomics (2005) was written by economist Steven D. Levitt and journalist Stephen J. Dubner, not Thomas Piketty (author of Capital in the Twenty-First Century); the economist-for-economist confusion is plausible and non-offensive.",
       "source_url": "https://en.wikipedia.org/wiki/Freakonomics"
+    },
+    {
+      "id": "false-hard-plato-memorabilia",
+      "claimed_author": "Plato",
+      "work": "Memorabilia",
+      "gold_author": "Xenophon",
+      "reason": "Both are Socratics, but the Memorabilia is Xenophon's recollection of Socrates, not a work of Plato.",
+      "source_url": "https://en.wikipedia.org/wiki/Memorabilia_(Xenophon)",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-seneca-meditations",
+      "claimed_author": "Seneca",
+      "work": "Meditations",
+      "gold_author": "Marcus Aurelius",
+      "reason": "A near-miss WITHIN Stoicism: the Meditations are Marcus Aurelius's private notebooks; Seneca is a different Stoic author.",
+      "source_url": "https://en.wikipedia.org/wiki/Meditations",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-epictetus-meditations",
+      "claimed_author": "Epictetus",
+      "work": "Meditations",
+      "gold_author": "Marcus Aurelius",
+      "reason": "Marcus was influenced BY Epictetus, but the Meditations are Marcus's own; Epictetus's text is the Enchiridion/Discourses.",
+      "source_url": "https://en.wikipedia.org/wiki/Meditations",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-marcus_aurelius-enchiridion",
+      "claimed_author": "Marcus Aurelius",
+      "work": "Enchiridion",
+      "gold_author": "Epictetus",
+      "reason": "The Enchiridion records Epictetus's teaching (compiled by Arrian); Marcus is a different Stoic. Same school, distinct author.",
+      "source_url": "https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-laozi-zhuangzi",
+      "claimed_author": "Laozi",
+      "work": "Zhuangzi",
+      "gold_author": "Zhuangzi",
+      "reason": "Both Daoist, but the Zhuangzi is the work of Zhuang Zhou, not Laozi.",
+      "source_url": "https://en.wikipedia.org/wiki/Zhuangzi_(book)",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-zhuangzi-dao_de_jing",
+      "claimed_author": "Zhuangzi",
+      "work": "Dao De Jing",
+      "gold_author": "Laozi",
+      "reason": "A within-tradition merge: the Dao De Jing is ascribed to Laozi, not to Zhuangzi.",
+      "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-mencius-xunzi",
+      "claimed_author": "Mencius",
+      "work": "Xunzi",
+      "gold_author": "Xunzi",
+      "reason": "Two distinct Confucian thinkers; the Xunzi is by Xun Kuang, who notably opposed Mencius's view of human nature.",
+      "source_url": "https://en.wikipedia.org/wiki/Xunzi_(book)",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-xunzi-mencius",
+      "claimed_author": "Xunzi",
+      "work": "Mencius",
+      "gold_author": "Mencius",
+      "reason": "The Mencius records Meng Ke's teaching; Xunzi is a separate (and opposing) Confucian.",
+      "source_url": "https://en.wikipedia.org/wiki/Mencius_(book)",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-aristotle-the_republic",
+      "claimed_author": "Aristotle",
+      "work": "The Republic",
+      "gold_author": "Plato",
+      "reason": "Teacher and student of the same Academy, but the Republic is Plato's; Aristotle's political work is the Politics.",
+      "source_url": "https://en.wikipedia.org/wiki/Republic_(Plato)",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-plato-nicomachean_ethics",
+      "claimed_author": "Plato",
+      "work": "Nicomachean Ethics",
+      "gold_author": "Aristotle",
+      "reason": "The Nicomachean Ethics is Aristotle's, named for his son Nicomachus; Plato is his teacher, not the author.",
+      "source_url": "https://en.wikipedia.org/wiki/Nicomachean_Ethics",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-plato-politics",
+      "claimed_author": "Plato",
+      "work": "Politics",
+      "gold_author": "Aristotle",
+      "reason": "The Politics is Aristotle's treatise; Plato's comparable work is the Republic/Laws.",
+      "source_url": "https://en.wikipedia.org/wiki/Politics_(Aristotle)",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-han_feizi-the_art_of_war",
+      "claimed_author": "Han Feizi",
+      "work": "The Art of War",
+      "gold_author": "Sun Tzu",
+      "reason": "Both classical Chinese strategy/statecraft, but the Art of War is ascribed to Sun Tzu; the Han Feizi is the Legalist text of Han Fei.",
+      "source_url": "https://en.wikipedia.org/wiki/The_Art_of_War",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-benjamin_jowett-the_republic",
+      "claimed_author": "Benjamin Jowett",
+      "work": "The Republic",
+      "gold_author": "Plato",
+      "reason": "Jowett is the famous Victorian TRANSLATOR of Plato, not the author of the Republic.",
+      "source_url": "https://en.wikipedia.org/wiki/Republic_(Plato)",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-james_legge-dao_de_jing",
+      "claimed_author": "James Legge",
+      "work": "Dao De Jing",
+      "gold_author": "Laozi",
+      "reason": "Legge is a 19th-century translator of the Chinese classics, not the author of the Dao De Jing.",
+      "source_url": "https://en.wikipedia.org/wiki/Tao_Te_Ching",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-arthur_waley-analects",
+      "claimed_author": "Arthur Waley",
+      "work": "Analects",
+      "gold_author": "Confucius",
+      "reason": "Waley translated the Analects into English; the teaching is Confucius's (compiled by disciples), not Waley's.",
+      "source_url": "https://en.wikipedia.org/wiki/Analects",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-porphyry-enneads",
+      "claimed_author": "Porphyry",
+      "work": "Enneads",
+      "gold_author": "Plotinus",
+      "reason": "Porphyry EDITED and arranged his teacher Plotinus's writings into the Enneads; the author is Plotinus.",
+      "source_url": "https://en.wikipedia.org/wiki/Enneads",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-arrian-enchiridion",
+      "claimed_author": "Arrian",
+      "work": "Enchiridion",
+      "gold_author": "Epictetus",
+      "reason": "Arrian recorded/compiled the Enchiridion from Epictetus's teaching; the author is Epictetus.",
+      "source_url": "https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-crito-crito",
+      "claimed_author": "Crito",
+      "work": "Crito",
+      "gold_author": "Plato",
+      "reason": "Crito is the interlocutor the dialogue is named for, not its author — the Crito is Plato's, like Socrates in the Republic.",
+      "source_url": "https://en.wikipedia.org/wiki/Crito",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-zhu_xi-analects",
+      "claimed_author": "Zhu Xi",
+      "work": "Analects",
+      "gold_author": "Confucius",
+      "reason": "Anachronism within the tradition: Zhu Xi is a Song-dynasty Neo-Confucian COMMENTATOR on the Analects, over a millennium after Confucius.",
+      "source_url": "https://en.wikipedia.org/wiki/Zhu_Xi",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
+    },
+    {
+      "id": "false-hard-wang_bi-dao_de_jing",
+      "claimed_author": "Wang Bi",
+      "work": "Dao De Jing",
+      "gold_author": "Laozi",
+      "reason": "Wang Bi wrote the influential 3rd-century commentary on the Dao De Jing; he is not its author.",
+      "source_url": "https://en.wikipedia.org/wiki/Wang_Bi",
+      "difficulty": "hard",
+      "pack": "hardening-2026-06-24"
     }
   ]
 }
