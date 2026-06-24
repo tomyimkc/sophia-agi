@@ -94,6 +94,42 @@ to keep it honest — especially the third-party validation the ledger says is s
 
 Before any of this takes payment, see the [ops & legal checklist](docs/06-Roadmap/Monetization-Ops-Checklist.md).
 
+## Skills layer (MCP-matched, fail-closed)
+
+A thin, friendly Python surface over the Sophia MCP tools. Every skill **abstains
+(`held`) rather than raise or fabricate**, and the bridge runs **in-process by default**
+(no network, no `mcp`/`requests` needed) — set `SOPHIA_MCP_URL` to use a running server.
+
+```python
+from skills import run_skill, list_skills
+
+run_skill("provenance_fact_check", text="Confucius wrote the Dao De Jing.")
+# -> {'skill': 'provenance_fact_check', 'ok': True, 'verdict': 'flagged', 'violations': [...]}
+
+run_skill("wiki_grounded_answer", query="something not in the wiki")
+# -> {'ok': True, 'verdict': 'held', 'grounded': False, 'reason': 'out-of-wiki: ... abstaining'}
+
+list_skills()   # {name: {summary, uses}} for all registered skills
+```
+
+Skills auto-register via the `@sophia_skill` decorator. Current set:
+
+| Skill | Uses (MCP tools) |
+|---|---|
+| `provenance_fact_check` / `source_discipline_enforce` | `check_claim` |
+| `conscience_abstain` | `conscience_check_tool`, `uncertainty_score` |
+| `moral_parliament_decide` / `moral_public_standard_review` | `moral_parliament_tool`, `public_standard_check_tool` |
+| `deception_scan` | `deception_check_tool`, `uncertainty_score` |
+| `claim_verify_and_record` | `record_claim`, `verify_claim` |
+| `belief_revision_explore` | `belief`, `counterfactual` |
+| `wiki_grounded_answer` / `contradiction_audit` | `wiki_search`, `wiki_read`, `wiki_contradictions` |
+| `council_adjudicate` | `council_deliberate` |
+| `self_extend_probe` | offline flywheel *(candidate, not a capability claim)* |
+
+```bash
+python tests/test_skills_layer.py   # deterministic, offline
+```
+
 ## 🔒 Dual License & Trademark Protection
 
 Sophia stays **100% public and MIT-licensed forever** — and the brand is protected so the

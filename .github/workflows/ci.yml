@@ -52,6 +52,10 @@ jobs:
           python tests/test_gateway_roadmap.py
           python tools/run_gateway_demo.py
           python tests/test_hf_space.py
+      - name: Skills layer (MCP-matched, fail-closed) + registry
+        run: |
+          python tests/test_skills.py
+          python tests/test_skills_layer.py
       - name: Model adapter + OpenClaw provider tests
         run: |
           python tests/test_model_adapter.py
