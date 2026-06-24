@@ -45,6 +45,22 @@ def test_contamination_rejects() -> None:
     assert rec["verdict"] == "reject"
 
 
+def test_missing_fp_rate_fails_closed() -> None:
+    # No trueFalsePositiveRate -> unverified integrity must NOT be treated as perfect.
+    bad = {
+        "adapter": "ckpt/x",
+        "base": {"meanReward": 0.71},
+        "adapterScore": {"meanReward": 0.85},
+        "entityIntersection": [],
+    }
+    try:
+        map_report(bad)
+        raised = False
+    except SystemExit:
+        raised = True
+    assert raised, "expected fail-closed error when FP rate is missing"
+
+
 def test_missing_before_after_errors() -> None:
     bad = {"benchmark": "x", "rewards": {"trueGood": {}}}  # training report, no base/adapterScore
     try:
@@ -65,6 +81,7 @@ def main() -> int:
     test_clean_improving_adapter_promotes()
     test_false_positive_regression_rejects()
     test_contamination_rejects()
+    test_missing_fp_rate_fails_closed()
     test_missing_before_after_errors()
     test_mapping_inverts_fp_to_integrity()
     print("test_ingest_rlvr_eval: OK")

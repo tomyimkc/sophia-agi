@@ -68,6 +68,18 @@ def test_tamper_pattern_rejects() -> None:
     assert any("tampering intent" in r for r in d.reasons)
 
 
+def test_deep_path_globs_match() -> None:
+    # ** patterns must catch protected paths at 2+ directory levels (correct glob semantics).
+    from agent.reward_isolation import _matches
+    surface = SPEC
+    assert _matches(["a/b/c/secret_reward_config.py"], surface["noWriteGlobs"])      # **/*reward*
+    assert _matches(["x/y/hidden-evals/pack.json"], surface["noReadGlobs"])           # **/hidden-evals/**
+    assert _matches([".github/workflows/sub/deep.yml"], surface["noWriteGlobs"])      # .github/workflows/**
+    assert _matches(["constitution/nested/dir/file.json"], surface["noWriteGlobs"])   # constitution/**
+    # A clearly-unprotected deep path must NOT match.
+    assert not _matches(["skills/sub/router.py"], surface["noWriteGlobs"])
+
+
 def test_unmonitored_quarantines() -> None:
     t = AccessTrace(monitored=False)
     d = _ev("u", t)
@@ -96,6 +108,7 @@ def main() -> int:
     test_write_to_ci_rejects()
     test_reward_glob_write_rejects()
     test_hidden_eval_read_rejects()
+    test_deep_path_globs_match()
     test_tamper_pattern_rejects()
     test_unmonitored_quarantines()
     test_breach_beats_unmonitored()

@@ -23,10 +23,11 @@ See docs/11-Platform/Safe-Self-Improvement-Loop.md (gate G2).
 """
 from __future__ import annotations
 
-import fnmatch
 import json
+import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -76,16 +77,43 @@ def load_surface(path: str | Path | None = None) -> dict[str, Any]:
         return json.load(f)
 
 
+@lru_cache(maxsize=256)
+def _glob_re(glob: str) -> "re.Pattern[str]":
+    """Compile a path glob with correct, explicit semantics:
+      ``**`` matches any number of path segments (including zero),
+      ``*``  matches within a single segment (does not cross '/'),
+      ``?``  matches one non-'/' char.
+    This replaces the prior fnmatch path (whose ``*`` crossed '/', so it
+    over-matched — fail-safe but imprecise). Protected directories should use
+    ``dir/**`` to stay recursive under these stricter, correct semantics.
+    """
+    i, n, out = 0, len(glob), []
+    while i < n:
+        if glob[i:i + 3] == "**/":
+            out.append("(?:[^/]+/)*")   # zero or more directory segments
+            i += 3
+        elif glob[i:i + 2] == "**":
+            out.append(".*")            # any chars, crossing '/'
+            i += 2
+        elif glob[i] == "*":
+            out.append("[^/]*")         # within a single segment
+            i += 1
+        elif glob[i] == "?":
+            out.append("[^/]")
+            i += 1
+        else:
+            out.append(re.escape(glob[i]))
+            i += 1
+    return re.compile("^" + "".join(out) + "$")
+
+
 def _matches(paths: Iterable[str], globs: Iterable[str]) -> list[str]:
-    globs = list(globs)
+    compiled = [_glob_re(g) for g in globs]
     hits: list[str] = []
     for pth in paths:
         norm = pth[2:] if pth.startswith("./") else pth
-        for g in globs:
-            # fnmatch '*' does not cross '/'; '**' patterns are matched permissively.
-            if fnmatch.fnmatch(norm, g) or (("**" in g) and fnmatch.fnmatch(norm, g.replace("**", "*"))):
-                hits.append(pth)
-                break
+        if any(rx.match(norm) for rx in compiled):
+            hits.append(pth)
     return sorted(set(hits))
 
 

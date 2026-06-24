@@ -50,7 +50,8 @@ def main() -> int:
     print(f"baseline_acc={m['baseline']['accuracy']} candidate_acc={m['candidate']['accuracy']} "
           f"protected_recall={m['candidate']['answer_recall']}")
     print(f"VERDICT={rec['verdict']} blocking={rec['blockingGates']} -> {out}")
-    return 0
+    # Exit non-zero on non-promote so CI / automation can detect it via exit code.
+    return 0 if rec["verdict"] == "promote" else 1
 
 
 if __name__ == "__main__":

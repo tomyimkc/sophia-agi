@@ -63,9 +63,16 @@ def map_report(report: dict[str, Any], *, adapter_id: str | None = None) -> dict
             "Produce it with: python3 tools/eval_rlvr_adapter.py --mode real --adapter <ckpt>"
         )
     # False-positive rate: lower is better -> invert to an integrity metric (higher better)
-    # so a rise in FP rate registers as a protected regression. Default to perfect if absent.
-    prot_before = round(1.0 - float(base_fp), 4) if base_fp is not None else 1.0
-    prot_after = round(1.0 - float(adapter_fp), 4) if adapter_fp is not None else 1.0
+    # so a rise in FP rate registers as a protected regression. Fail-closed: a MISSING FP
+    # rate is unverified integrity, not perfect integrity — refuse rather than assume 1.0.
+    if base_fp is None or adapter_fp is None:
+        raise SystemExit(
+            "ERROR: report is missing trueFalsePositiveRate on base and/or adapter. "
+            "The Layer-1 gate is fail-closed: unverified integrity cannot promote. "
+            "Re-run tools/eval_rlvr_adapter.py so the eval reports false-positive rates."
+        )
+    prot_before = round(1.0 - float(base_fp), 4)
+    prot_after = round(1.0 - float(adapter_fp), 4)
     entity_intersection = _dig(report, ("entityIntersection",), ("split", "entityIntersection")) or []
     contaminated = bool(entity_intersection)
     aid = adapter_id or _dig(report, ("adapter",)) or report.get("model") or "rlvr-adapter"
