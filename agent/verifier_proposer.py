@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """LLM-proposed verifier predicates with AST-sandbox + held-out validation.
 
 A model may widen the candidate set by proposing Python predicates, but it never

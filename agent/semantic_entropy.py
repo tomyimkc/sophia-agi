@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Semantic-entropy utilities for hallucination/confabulation detection.
 
 Modes:

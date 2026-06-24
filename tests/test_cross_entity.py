@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the cross-entity generalization benchmark.
 
 The falsifiable properties: an entity-disjoint split (no shared author/work);

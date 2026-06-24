@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Counterfactual + retraction probes over the OKF belief graph.
 
 Answers the Sophia question "what would I conclude if this source were removed?"

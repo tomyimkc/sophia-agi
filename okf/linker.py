@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Link-integrity + contradiction reporting over an OKF wiki.
 
 Builds backlinks, finds dangling links and orphan pages, and folds in the

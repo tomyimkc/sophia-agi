@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Re-score an ablation private dump on epistemic calibration instead of keywords.
 
 The keyword/regex scorer cannot see Sophia's value (correct abstention, refusing to

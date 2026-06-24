@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the semantic citation-faithfulness tier (offline, stub judge).
 
 A deterministic stub judge stands in for the production LLM judge so this verifies

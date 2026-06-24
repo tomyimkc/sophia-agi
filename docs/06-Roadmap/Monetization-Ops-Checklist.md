@@ -17,7 +17,7 @@ jurisdiction.
 - [ ] **Privacy Policy** (covers sponsor names, emails, analytics; GDPR/CCPA rights incl.
       deletion).
 - [ ] **Refund Policy** (digital-goods + services).
-- [ ] License clarity: MIT core stays MIT; what (if anything) paid assets add.
+- [ ] License clarity: Apache-2.0 core stays Apache-2.0; what (if anything) paid assets add.
 
 ## C. Claims compliance (the project's whole point)
 - [ ] `python tools/lint_claims.py` passes on all sales copy.

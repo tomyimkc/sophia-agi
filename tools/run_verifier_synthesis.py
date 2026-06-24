@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the verifier-synthesis demonstration and check its falsifiable invariants.
 
 Synthesises verifiers for tasks it has never seen, validates them against an

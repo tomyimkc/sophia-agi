@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Compatibility wrapper for the learning-under-distribution-shift lane.
 
 The implementation lives in tools/run_learning_shift.py. This wrapper exists so

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """W3C PROV lineage export (Stage B).
 
 Sophia already records provenance: every gated claim is a ``Claim`` with

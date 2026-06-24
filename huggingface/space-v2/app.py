@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Hugging Face Space — Sophia, the Wisdom Gate (interactive, honest demo).
 
 A high-conversion but HONEST demo: every claim shown here matches the repo's
@@ -142,7 +144,7 @@ FOOTER = f"""
 ---
 <div style="text-align:center;color:#8b949e">
 Built in 2026 by the sole author <b>tomyimkc</b> ·
-Dual-licensed: MIT code + reserved brand ·
+Dual-licensed: Apache 2.0 code + reserved brand ·
 <b>Not a claim of AGI</b> ·
 <a href="{REPO}">⭐ Star the repo</a> to support open, <i>measured</i> AI honesty.
 </div>
@@ -197,8 +199,8 @@ def build_demo():  # pragma: no cover - requires gradio at runtime
 
         with gr.Tab("🔧 Fork & fine-tune"):
             gr.Markdown(f"""
-**Everything here is MIT and reproducible.**
-- ⭐ **[Star / fork the repo]({REPO})** — the core is MIT forever.
+**Everything here is Apache-2.0 and reproducible.**
+- ⭐ **[Star / fork the repo]({REPO})** — the core is Apache-2.0 forever.
 - 📦 **[HF dataset (528 bilingual examples)]({DATASET})**
 - 🧪 Reproduce the gate locally:
 ```bash

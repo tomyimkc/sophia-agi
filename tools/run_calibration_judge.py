@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Corroborate the calibration scorer with one or more independent LLM judges.
 
 Re-judges captured ablation responses (run_ablation_sophia --private-out dumps) with

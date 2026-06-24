@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Legal-authority sources: verify citations against primary sources, fail-closed.
 
     from agent.legal_sources import make_resolver

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the self-extending verification flywheel and print its falsifiable metrics.
 
 Demonstrates the path-to-AGI engine end to end, offline:

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Reusable skill registry for the Sophia agent harness.
 
 A skill is a data file (skills/registry/*.json) describing WHEN to use it, the

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Install Sophia skills to user-level Grok, Cursor, and Claude Code directories.
 
 Usage:

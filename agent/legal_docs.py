@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Document ingestion for legal citation checking (build-item 4).
 
 Extract text from real work product (TXT/MD, DOCX, HTML; PDF if a parser is

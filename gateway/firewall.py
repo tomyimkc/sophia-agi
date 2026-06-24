@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """MCP firewall (P1) — tool descriptions and outputs are untrusted input.
 
 Two defenses, both fail-closed:

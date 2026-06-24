@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Generate the public RESULTS.md from the curated published-results.json.
 
 RESULTS.md is the public face of the benchmark. It is GENERATED — never edit it

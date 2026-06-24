@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Fetch a small license-clean OpenAssistant OASST1 general-instruct slice.
 
 The slice is intentionally external to the Sophia corpus, used only for general

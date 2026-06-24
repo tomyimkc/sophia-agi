@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Upload Sophia AGI LoRA adapter to Hugging Face Hub (model repo).
 
 Requires: pip install huggingface_hub

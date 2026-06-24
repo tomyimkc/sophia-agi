@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Parse and normalize ``[[wikilinks]]`` in OKF page bodies.
 
 Supports ``[[target]]``, ``[[target#anchor]]`` and ``[[target|alias]]``. Targets

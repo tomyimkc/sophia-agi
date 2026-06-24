@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Spec C — personality-diverse council A/B (plain-script, no pytest)."""
 import sys
 from pathlib import Path

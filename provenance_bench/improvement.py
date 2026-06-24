@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """A measured, contamination-free self-improvement loop.
 
 The falsifiable claim: a system that learns provenance RULES from its own

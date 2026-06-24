@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Corroboration-aware confidence: independent agreement raises belief (the axis
 min-over-chain misses). Reports the structural curve, a calibration comparison,
 and falsifiable invariants. Exits non-zero if an invariant fails.

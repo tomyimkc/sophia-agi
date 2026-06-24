@@ -37,7 +37,7 @@ When theology and history conflict, the teacher agent uses **structured debate**
 | Benchmark structure | **Per-domain leaderboards** + combined rollup |
 | Language | **Always bilingual** EN + 中文 (all domains) |
 | Training agents | Domain-tagged examples; shared source-discipline system prompt |
-| OSS | MIT, public corpus |
+| OSS | Apache-2.0, public corpus |
 
 ---
 

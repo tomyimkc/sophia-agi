@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Contamination-free extract/measure split of the IPIP item bank (Spec B).
 
 Mirrors provenance_bench/rl_dataset.py's entity-disjoint split + sealed_hash, but

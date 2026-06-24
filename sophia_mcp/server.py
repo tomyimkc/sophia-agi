@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Sophia AGI MCP server — validate, gate, benchmark, corpus lookup.
 
 Run: python mcp/server.py

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Pure-stdlib residual-stream vector math (no torch, no numpy).
 
 A Vector is a list[float]. The real path (hooks.py) converts torch hidden states

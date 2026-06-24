@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Sophia Skills — MCP-matched, fail-closed skill layer.
 
 A thin, friendly Python surface over the Sophia MCP tools (`sophia_mcp.tools_impl`).

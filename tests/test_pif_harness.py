@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Spec C — PIF harness + held-out + anti-gaming (plain-script, no pytest)."""
 import sys
 from pathlib import Path

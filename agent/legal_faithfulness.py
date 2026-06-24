@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Semantic citation faithfulness — does a cited authority SUPPORT the proposition?
 
 `legal_citation_exists` answers "is this authority real?" (the *Mata* fake-case

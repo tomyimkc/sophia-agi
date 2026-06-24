@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Synthesize a verifier from labeled examples, then validate it on held-out data.
 
 The honest core of self-extension: faced with a domain it cannot check, the system

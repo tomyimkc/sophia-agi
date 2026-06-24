@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Lightweight RAG over Sophia corpus data, docs, and training examples."""
 
 from __future__ import annotations

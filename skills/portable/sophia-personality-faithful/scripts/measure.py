@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Portable personality-faithfulness check. Uses the sophia-agi verifier when
 importable; otherwise falls back to a self-contained merge-pattern check."""
 from __future__ import annotations

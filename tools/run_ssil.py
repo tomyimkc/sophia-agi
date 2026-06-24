@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the SSIL orchestrator over demo candidates and emit one signed-style artifact.
 
 This is the runnable bounded-self-improvement loop: each candidate self-modification

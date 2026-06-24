@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Evaluate Sophia's memory substrate for append-only learning safety.
 
 This is a harness-level memory test, not a capability claim. It verifies:

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Single-pass semantic-entropy probe placeholder.
 
 This deterministic linear probe operates over transparent text features so CI can

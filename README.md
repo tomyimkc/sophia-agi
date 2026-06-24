@@ -2,7 +2,7 @@
 
 > **Wisdom before intelligence.** A provenance-aware reasoning layer that **abstains instead of fabricating**.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
 ![Version](https://img.shields.io/badge/version-0.7.47-blue)
 ![Corpus](https://img.shields.io/badge/corpus-528_bilingual_examples-green)
@@ -88,7 +88,7 @@ The single validated result is narrow: **attribution-hallucination reduction on 
 
 ## Support this work
 
-The core is MIT and always will be. If it's useful to you, you can fund the time and compute
+The core is Apache-2.0 and always will be. If it's useful to you, you can fund the time and compute
 to keep it honest — especially the third-party validation the ledger says is still missing.
 
 - **Sponsor** → [SPONSORS.md](SPONSORS.md) — recognition only; sponsors never steer what counts as true.
@@ -135,13 +135,13 @@ python tests/test_skills_layer.py   # deterministic, offline
 
 ## 🔒 Dual License & Trademark Protection
 
-Sophia stays **100% public and MIT-licensed forever** — and the brand is protected so the
+Sophia stays **100% public and Apache-2.0-licensed forever** — and the brand is protected so the
 project's name can't be hijacked to make claims it never made. The two layers are separate on
 purpose:
 
 | Layer | What it covers | Terms |
 |---|---|---|
-| **MIT License** | source code, tools, benchmarks, corpus | free for **any** use, including commercial — no permission, no fee. See [LICENSE](LICENSE). |
+| **Apache License 2.0** | source code, tools, benchmarks, corpus | free for **any** use, including commercial — no permission, no fee; redistributions keep the copyright/attribution + state changes. See [LICENSE](LICENSE). |
 | **Brand & Trademark** | the names & logos ("Sophia AGI", "Sophia — the Wisdom Gate", "Wisdom Gate", "Moral Gate", "Conscience Kernel") | reserved by the sole author; free for research, education, and honest reference; commercial **brand** use needs written permission. See [TRADEMARK-POLICY.md](TRADEMARK-POLICY.md). |
 | **Commercial license** *(optional)* | brand use in products, warranty/indemnity, support/SLA | by agreement — see [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md). You do **not** need this to use the code. |
 
@@ -477,4 +477,4 @@ Changelog: [CHANGELOG.md](CHANGELOG.md)
 
 Every star and every contribution helps build the open foundation for AI that knows its sources.
 
-**License:** MIT — see [LICENSE](LICENSE).
+**License:** Apache 2.0 — see [LICENSE](LICENSE).

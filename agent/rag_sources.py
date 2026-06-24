@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Curated Sophia corpus chunks for online RAG (no benchmark holdouts)."""
 
 from __future__ import annotations

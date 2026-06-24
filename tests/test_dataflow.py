@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the out-of-prompt data-flow firewall (M2).
 
 The security property is deterministic and code-enforced: tainted (untrusted) data

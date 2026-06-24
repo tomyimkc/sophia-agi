@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Build the Provenance Delta case set from external ground-truth files.
 
 Cases come from two committed files whose labels are externally sourced:

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the active-learning promotion loop (tools/promote_pending.py). Offline.
 
 Exercises the full second half: a gate-miss candidate in the pending queue is

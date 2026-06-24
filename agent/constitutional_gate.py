@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Constitutional via-negativa gate for Sophia.
 
 The constitution is external policy, not model preference. This v1 implements

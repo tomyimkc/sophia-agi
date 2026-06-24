@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """A causal world model — beyond provenance ('who said what') to 'what causes what'.
 
 Sophia's belief graph tracks where a claim came from; reasoning needs to predict the

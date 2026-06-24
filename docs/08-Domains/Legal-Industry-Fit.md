@@ -1,7 +1,7 @@
 # Legal Industry Fit — what Sophia can and cannot tackle
 
 > **Stance.** This is a capability assessment, not a product claim or legal advice.
-> Sophia is research code (MIT) that explicitly **does not claim to be AGI**
+> Sophia is research code (Apache-2.0) that explicitly **does not claim to be AGI**
 > ([README](../../README.md), [RESULTS.md](../../RESULTS.md)). The honest answer to
 > "can it tackle legal AI?" is: *it tackles the **discipline** of legal AI; it does
 > not yet tackle the **practice** of law.*

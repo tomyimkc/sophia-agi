@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Taint labels for data-flow tracking.
 
 A value's taint is a set of labels describing *where it came from*. Untrusted

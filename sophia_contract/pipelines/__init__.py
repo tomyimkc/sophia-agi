@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Reference role pipelines that run end-to-end through the governance contract.
 
 These are runnable templates for the aihk-os / solo-ai-co role pipelines: each

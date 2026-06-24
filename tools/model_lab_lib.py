@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Shared helpers for Claude model lab (no API calls)."""
 
 from __future__ import annotations

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Unified model adapter for Sophia AGI.
 
 One abstraction over every backend the repo touches, so the agent harness,

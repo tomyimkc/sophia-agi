@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Flag MISSTATED authorities — real citations used for propositions their holding
 does not support (the *Ayinde* failure). Semantic tier above citation existence.
 

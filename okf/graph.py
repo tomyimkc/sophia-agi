@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Belief graph over OKF pages: edge resolution, contradiction detection, and
 min-over-chain confidence propagation (provenance taint-tracking).
 

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tool/skill registry — the catalog every gateway call is checked against.
 
 Each entry declares its risk tier, classification, allowed roles, side-effects, and how

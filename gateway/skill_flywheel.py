@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Self-improving + synthesized skills (P4) wired to strong verifier synthesis.
 
 This module now uses :mod:`agent.verifier_synthesis`, not the toy substring stump

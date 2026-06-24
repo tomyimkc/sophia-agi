@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Route a query through a Sophia sector council (law / financial / economy).
 
     python tools/sector_council.py law "Review our gacha odds disclosure for Hong Kong and the EU"

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Smoke tests for the Sophia baseline/ablation runner.
 
 These assert that each ablation mode actually suppresses its component, that the

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Vault ↔ contract bridge — the Stage-0 ``provenance.py`` of the playbook.
 
 Turns an Obsidian/Markdown note into a provenance-gated artifact: read the note's

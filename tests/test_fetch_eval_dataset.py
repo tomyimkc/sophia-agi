@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Offline tests for the external-dataset fetcher's CONVERSION (no network).
 
 The download path needs the internet and is not run in CI; the parsing/reshaping

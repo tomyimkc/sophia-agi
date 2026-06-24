@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for verifier synthesis — synthesise a check, then verify the verifier.
 
 The properties under test are the falsifiable ones: synthesised+validated checks

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Deterministic Big-Five measurement harness (Spec A).
 
 `score_items` is a PURE FUNCTION over a fixed item-bank key (no model in the

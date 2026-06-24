@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Measure the long-horizon autonomy curve: success rate vs task length.
 
 The headline is the EFFECTIVE HORIZON — the longest task length still solved at

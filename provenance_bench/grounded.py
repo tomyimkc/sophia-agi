@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Grounding-gated detector — closing the cross-entity gap at LOW false-positive cost.
 
 :mod:`provenance_bench.cross_entity` makes the honest limit falsifiable: a memorized

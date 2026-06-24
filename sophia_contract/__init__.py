@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Sophia governance contract — the stable, versioned seam aihk-os pins against.
 
 Import surface is intentionally tiny and stable:

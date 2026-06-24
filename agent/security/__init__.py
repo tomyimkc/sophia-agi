@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Classification lattice (#3): Bell-LaPadula confidentiality + Biba integrity,
 with bounded, tamper-evident declassification. See docs/11-Platform/Security-Roadmap.md."""
 

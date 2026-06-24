@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Skill: claim_verify_and_record — record with provenance, then verify (fail-closed)."""
 from __future__ import annotations
 

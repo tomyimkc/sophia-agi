@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Moral public-standard benchmark runner.
 
 Scores ``agent.public_standard_gate.check_public_standard`` against EXTERNAL labels

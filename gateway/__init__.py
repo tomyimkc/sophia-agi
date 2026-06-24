@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Sophia Gateway — the super-MCP / super-skills governance proxy (P0 MVP).
 
 One endpoint that federates tools/skills and gates EVERY call through the contract:

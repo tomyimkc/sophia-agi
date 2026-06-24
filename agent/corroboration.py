@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Corroboration-aware confidence — independent agreement should RAISE belief.
 
 The OKF belief graph propagates confidence as **min-over-chain** (``okf/graph.py``),

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Seal the held-out personality family → public SHA-256 commitments only.
 The salt + unsealed prompts are written under gitignored private/; only the
 per-case hashes are published. Reuses tools/hidden_eval_commitments.py."""

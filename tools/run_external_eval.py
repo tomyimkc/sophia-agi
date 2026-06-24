@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run an external-oracle eval: score a model against GOLD answers (not the gate).
 
 Dataset-agnostic. A small style-sample ships so it runs offline; point --dataset

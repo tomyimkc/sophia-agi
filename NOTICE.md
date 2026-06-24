@@ -3,7 +3,7 @@
 **Sophia — the Wisdom Gate**
 Copyright (c) 2026 **tomyimkc** — sole author and rights holder.
 
-- **Code, tools, benchmarks:** MIT License — see [LICENSE](LICENSE). Free for any use,
+- **Code, tools, benchmarks:** Apache License 2.0 — see [LICENSE](LICENSE). Free for any use,
   including commercial; the project is fully public.
 - **Brand & trademarks** ("Sophia AGI", "Sophia — the Wisdom Gate", "Wisdom Gate",
   "Moral Gate", "Conscience Kernel", logos): reserved — see

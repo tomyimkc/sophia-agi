@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Project data/*.json provenance records into OKF wiki/ pages, and check drift.
 
 data/*.json stays the single source of truth for provenance fields; this emits one

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Selectable verifier policies for the guarded loop.
 
 The guarded completion spine (retrieve → generate → gate → repair/abstain) was

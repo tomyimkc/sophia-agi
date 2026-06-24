@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Sophia Conscience Kernel — unified moral + epistemic gate.
 
 This composes the seven implemented paths:

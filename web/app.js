@@ -114,7 +114,7 @@ function renderProofPackage() {
 function renderFooter() {
   const footer = document.getElementById("site-footer");
   if (footer && manifest?.version) {
-    footer.textContent = `Sophia · the Wisdom Gate · v${manifest.version} · MIT License · UI decided by council panel · Wisdom before intelligence.`;
+    footer.textContent = `Sophia · the Wisdom Gate · v${manifest.version} · Apache 2.0 · UI decided by council panel · Wisdom before intelligence.`;
   }
 }
 

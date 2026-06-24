@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Active-learning feedback: turn live judge-vs-gate disagreements into
 candidate ``doNotAttributeTo`` records.
 

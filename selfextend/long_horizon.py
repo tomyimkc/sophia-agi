@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Real long-horizon autonomy on the governance contract — with recovery.
 
 Executes an N-step plan, gating every step (record -> verify). A step that is HELD

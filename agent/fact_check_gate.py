@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Layered out-of-wiki fact-check gate.
 
 Problem addressed
