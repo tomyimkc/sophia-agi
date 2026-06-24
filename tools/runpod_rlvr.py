@@ -355,6 +355,7 @@ python tools/run_rlvr.py \\
   --quant "$SOPHIA_QUANT" \\
   --vllm "$SOPHIA_VLLM" \\
   --epochs "$SOPHIA_EPOCHS" \\
+  --seed "$SOPHIA_SEED" \\
   --out /workspace/sophia-runpod/rlvr.public-report.json \\
   --output /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1
 if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
@@ -367,6 +368,7 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
   python tools/eval_rlvr_adapter.py --mode real \\
     --model "$SOPHIA_MODEL" \\
     --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
+    --seed "$SOPHIA_SEED" \\
     --out /workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json \\
     || echo "[runpod] adapter-eval failed (non-fatal); no SSIL gate input produced"
 fi
@@ -387,6 +389,7 @@ export SOPHIA_MODEL={shlex.quote(args.model)}
 export SOPHIA_QUANT={shlex.quote(args.quant)}
 export SOPHIA_VLLM={shlex.quote(args.vllm)}
 export SOPHIA_EPOCHS={shlex.quote(str(args.epochs))}
+export SOPHIA_SEED={shlex.quote(str(args.seed))}
 mkdir -p /workspace/sophia-runpod /workspace/.cache/huggingface /workspace/.cache/pip
 cd /workspace/sophia-runpod
 if [ {shlex.quote(args.source)} = "git" ] && [ ! -d sophia-agi/.git ]; then
@@ -530,6 +533,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--quant", choices=["bf16", "4bit"], default="bf16")
     ap.add_argument("--vllm", choices=["none", "server", "colocate"], default="none")
     ap.add_argument("--epochs", type=float, default=1.0)
+    ap.add_argument("--seed", type=int, default=0, help="training+eval seed; vary across runs for independent replications")
     ap.add_argument("--gpu-type", default=",".join(DEFAULT_GPU_TYPES), help="comma-separated RunPod GPU type preference list")
     ap.add_argument("--gpu-count", type=int, default=1)
     ap.add_argument("--cloud-type", choices=["SECURE", "COMMUNITY"], default="SECURE")
