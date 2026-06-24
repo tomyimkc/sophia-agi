@@ -120,11 +120,44 @@ def _tradition_meta(tid: str, record: dict, *, source_ref: str) -> dict:
     return _ordered({k: v for k, v in meta.items() if v is not None or k in ("doNotMergeWith", "links")})
 
 
-def _render_body(meta: dict, notes: str) -> str:
+def _summary_sentence(meta: dict) -> str:
+    """A single answer-bearing prose sentence composed ONLY from already-sourced provenance
+    fields (Step 5 enrichment). Authors no new facts — it just surfaces title / domain /
+    recordType / subfield / tradition / attributedAuthor+confidence / period as prose the
+    grounded model can answer who/when/what-domain questions from, instead of leaving them
+    as bullet scaffold a reader (and the source-sufficiency audit) skips."""
+    title = meta.get("canonicalTitleEn") or meta.get("id")
+    zh = meta.get("canonicalTitleZh")
+    name = f"{title}" + (f" ({zh})" if zh else "")
+    record_type = meta.get("recordType") or meta.get("pageType") or "record"
+    domain = meta.get("domain")
+    kind = f"{domain} {record_type}" if domain else str(record_type)
+    clauses = [f"{name} is a {kind}"]
+    if meta.get("subfield"):
+        clauses.append(f"in the {meta['subfield']} subfield")
+    if meta.get("tradition"):
+        clauses.append(f"in the {meta['tradition']} tradition")
+    if meta.get("attributedAuthor"):
+        clauses.append(f"attributed to {meta['attributedAuthor']} "
+                       f"(authorship confidence: {meta.get('authorConfidence', 'unknown')})")
+    if meta.get("period"):
+        clauses.append(f"dated to {meta['period']}")
+    sentence = ", ".join(clauses) + "."
+    return sentence[0].upper() + sentence[1:]
+
+
+def _render_body(meta: dict, notes: str, summary: str = "") -> str:
     title = meta.get("canonicalTitleEn") or meta.get("id")
     zh = meta.get("canonicalTitleZh")
     head = f"# {title}" + (f" ({zh})" if zh else "")
-    lines = [head, ""]
+    # Lead with an answer-bearing prose summary (sourced fields only), then the bullets.
+    lines = [head, "", _summary_sentence(meta)]
+    # Step 5 enrichment hook: a record may carry an authored `summary` with richer,
+    # human-vetted sourced prose; surface it so grounded answers can draw on it. Absent
+    # (the default today), the field-derived sentence above stands on its own.
+    if summary and summary.strip():
+        lines += ["", summary.strip()]
+    lines += [""]
     if meta.get("attributedAuthor"):
         lines.append(f"- **Attributed author:** {meta['attributedAuthor']} "
                      f"(confidence: `{meta.get('authorConfidence', 'unknown')}`)")
@@ -179,7 +212,9 @@ def build_pages(wiki_dir: Path = WIKI_DIR) -> "list[dict]":
             if page_path in seen:
                 raise ValueError(f"id collision: {page_path} ({rid} from {filename} vs {seen[page_path]})")
             seen[page_path] = filename
-            pages.append({"path": page_path, "meta": meta, "body": _render_body(meta, record.get("notes", "")), "key": rid})
+            pages.append({"path": page_path, "meta": meta,
+                          "body": _render_body(meta, record.get("notes", ""), record.get("summary", "")),
+                          "key": rid})
 
     traditions_path = DATA_DIR / "traditions.json"
     if traditions_path.exists():

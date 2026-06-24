@@ -122,19 +122,26 @@ jobs:
             --gpu-type "${{ github.event.inputs.gpu_type }}" \
             $INTERRUPTIBLE
 
-      - name: Ingest any adapter-eval report into the SSIL Layer-1 gate
+      - name: Ingest the FRESH pod adapter-eval report into the SSIL Layer-1 gate
         if: always()
         run: |
           shopt -s globstar nullglob
+          # Gate ONLY a freshly copied-back pod report (runpod-rlvr/ is the scp destination
+          # for THIS run). The committed durable archive under rlvr-replication/ must NEVER be
+          # re-gated here: a broad benchmark-results/** glob picks the committed seed0 archive
+          # first (it sorts before runpod-rlvr/), which decouples the gate from the actual
+          # training — it would re-promote stale numbers no matter what this run produced.
+          # Fail-closed: if the pod produced no fresh eval, do NOT fall back to any committed
+          # file. Do not swallow ingest errors (the tool is fail-closed on missing metrics).
           found=""
-          for f in agi-proof/benchmark-results/**/*adapter-eval*.json; do found="$f"; break; done
+          for f in agi-proof/benchmark-results/runpod-rlvr/**/*adapter-eval*.json; do found="$f"; break; done
           if [ -n "$found" ]; then
-            echo "Ingesting $found"
-            python tools/ingest_rlvr_eval.py "$found" --print || true
+            echo "Ingesting FRESH pod report: $found"
+            python tools/ingest_rlvr_eval.py "$found" --print
           else
-            echo "No *adapter-eval*.json copied back. The training run produces rlvr.*-report.json;"
-            echo "produce the before/after eval on the pod with tools/eval_rlvr_adapter.py --mode real,"
-            echo "then this step will gate it. (rlvr training reports are still uploaded below.)"
+            echo "::warning::No fresh adapter-eval was copied back from the pod. NOT gating any"
+            echo "committed archive (fail-closed). The live run produces sophia-rlvr-v1.adapter-eval.json"
+            echo "via tools/eval_rlvr_adapter.py --mode real; only files under runpod-rlvr/ are gated here."
           fi
 
       - name: Upload RunPod artifacts

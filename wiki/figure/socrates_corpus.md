@@ -16,6 +16,8 @@ links: [socratic]
 
 # Socratic corpus
 
+Socratic corpus is a philosophy figure, in the socratic tradition, attributed to socrates (authorship confidence: none_extant), dated to classical_greece.
+
 - **Attributed author:** socrates (confidence: `none_extant`)
 - **Tradition:** socratic
 - **Domain:** philosophy

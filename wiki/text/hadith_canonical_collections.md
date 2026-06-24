@@ -16,6 +16,8 @@ links: [islam]
 
 # Hadith canonical collections (sect-bounded) (聖訓經典彙編（教派分界）)
 
+Hadith canonical collections (sect-bounded) (聖訓經典彙編（教派分界）) is a religion text, in the islam tradition, attributed to muhammad_al_bukhari (authorship confidence: compiled).
+
 - **Attributed author:** muhammad_al_bukhari (confidence: `compiled`)
 - **Tradition:** islam
 - **Domain:** religion

@@ -51,6 +51,10 @@ _HEDGE_MARKERS = (
     "spurious", "pseudo", "commonly attributed", "often attributed",
 )
 _MAX_HEDGES = 2  # at most this many hedge markers before the positive reward is capped
+# Penalty for a wrong refusal on a true case (over-refusal = the false positive the
+# integrity/trueFalsePositiveRate metric tracks). Folding it into the reward keeps
+# training from gaining reward by eroding false-positive integrity.
+_TRUE_CASE_DENIAL_PENALTY = -0.5
 
 
 def _denies(text: str) -> bool:
@@ -141,10 +145,14 @@ def reward_for_case(
     else:
         # TRUE case: must actually name the author. A denial here is a wrong
         # refusal (mutual-exclusion: one universal "no" template cannot satisfy
-        # both labels), so it scores 0 rather than risking a gold substring hit.
+        # both labels). Over-refusal on true cases IS the false-positive the
+        # integrity metric (trueFalsePositiveRate) tracks, so PENALIZE it (was 0.0)
+        # — otherwise training can raise mean reward by denying more aggressively
+        # while eroding false-positive integrity (the seed-1 reward-hack the gate
+        # caught). Naming a wrong author scores 0.0; a wrong refusal scores below it.
         if detail["denies"]:
             detail["deniedOnTrueCase"] = True
-            score = 0.0
+            score = _TRUE_CASE_DENIAL_PENALTY
         else:
             score = 1.0 if detail["namesGold"] else 0.0
 

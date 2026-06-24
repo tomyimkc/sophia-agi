@@ -1,0 +1,1018 @@
+{
+  "schema": "sophia.continual_qa.v1",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "episodes": [
+    "ep1_history",
+    "ep2_philosophy",
+    "ep3_psychology",
+    "ep4_religion",
+    "ep5_tradition",
+    "epF_revision"
+  ],
+  "queryCount": 92,
+  "systems": {
+    "graph_backed": {
+      "total": 92,
+      "correct": 92,
+      "accuracy": 1.0,
+      "fabrications": 0,
+      "fabricationRate": 0.0,
+      "misses": 0,
+      "missRate": 0.0,
+      "wrong": 0,
+      "wrongRate": 0.0
+    },
+    "parametric_baseline": {
+      "total": 92,
+      "correct": 34,
+      "accuracy": 0.3696,
+      "fabrications": 2,
+      "fabricationRate": 0.0217,
+      "misses": 56,
+      "missRate": 0.6087,
+      "wrong": 0,
+      "wrongRate": 0.0
+    }
+  },
+  "retention": {
+    "unintendedForgetting": 0,
+    "deliberateUnlearning": 2,
+    "unintendedDetail": [],
+    "backwardTransfer": -0.0364,
+    "retentionMatrix": [
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.8182
+      ],
+      [
+        null,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      [
+        null,
+        null,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      [
+        null,
+        null,
+        null,
+        1.0,
+        1.0,
+        1.0
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        1.0,
+        1.0
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        1.0
+      ]
+    ]
+  },
+  "controller": "oracle",
+  "rows": [
+    {
+      "episode": "ep1_history",
+      "query": "recall_boston_tea_party_1773",
+      "target": "boston_tea_party_1773",
+      "routed": "boston_tea_party_1773",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep1_history",
+      "query": "recall_fall_of_rome_476",
+      "target": "fall_of_rome_476",
+      "routed": "fall_of_rome_476",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep1_history",
+      "query": "recall_first_powered_flight_1903",
+      "target": "first_powered_flight_1903",
+      "routed": "first_powered_flight_1903",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep1_history",
+      "query": "recall_flat_earth_medieval_myth",
+      "target": "flat_earth_medieval_myth",
+      "routed": "flat_earth_medieval_myth",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep1_history",
+      "query": "recall_great_wall_from_space_myth",
+      "target": "great_wall_from_space_myth",
+      "routed": "great_wall_from_space_myth",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep1_history",
+      "query": "recall_magna_carta_1215",
+      "target": "magna_carta_1215",
+      "routed": "magna_carta_1215",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep1_history",
+      "query": "recall_marco_polo_pasta_myth",
+      "target": "marco_polo_pasta_myth",
+      "routed": "marco_polo_pasta_myth",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep1_history",
+      "query": "recall_moon_landing_1969",
+      "target": "moon_landing_1969",
+      "routed": "moon_landing_1969",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep1_history",
+      "query": "recall_napoleon_short_myth",
+      "target": "napoleon_short_myth",
+      "routed": "napoleon_short_myth",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep1_history",
+      "query": "recall_printing_press_1440",
+      "target": "printing_press_1440",
+      "routed": "printing_press_1440",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep1_history",
+      "query": "recall_viking_horned_helmets_myth",
+      "target": "viking_horned_helmets_myth",
+      "routed": "viking_horned_helmets_myth",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_analects",
+      "target": "analects",
+      "routed": "analects",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_apology",
+      "target": "apology",
+      "routed": "apology",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_art_of_war",
+      "target": "art_of_war",
+      "routed": "art_of_war",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_book_of_songs",
+      "target": "book_of_songs",
+      "routed": "book_of_songs",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_categories",
+      "target": "categories",
+      "routed": "categories",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_crito",
+      "target": "crito",
+      "routed": "crito",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_dao_de_jing",
+      "target": "dao_de_jing",
+      "routed": "dao_de_jing",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_doctrine_of_mean",
+      "target": "doctrine_of_mean",
+      "routed": "doctrine_of_mean",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_enchiridion",
+      "target": "enchiridion",
+      "routed": "enchiridion",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_great_learning",
+      "target": "great_learning",
+      "routed": "great_learning",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_han_feizi",
+      "target": "han_feizi",
+      "routed": "han_feizi",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_heraclitus_fragments",
+      "target": "heraclitus_fragments",
+      "routed": "heraclitus_fragments",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_i_ching",
+      "target": "i_ching",
+      "routed": "i_ching",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_liezi",
+      "target": "liezi",
+      "routed": "liezi",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_meditations",
+      "target": "meditations",
+      "routed": "meditations",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_mencius",
+      "target": "mencius",
+      "routed": "mencius",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_metaphysics",
+      "target": "metaphysics",
+      "routed": "metaphysics",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_mozi",
+      "target": "mozi",
+      "routed": "mozi",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_nicomachean_ethics",
+      "target": "nicomachean_ethics",
+      "routed": "nicomachean_ethics",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_parmenides",
+      "target": "parmenides",
+      "routed": "parmenides",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_phaedo",
+      "target": "phaedo",
+      "routed": "phaedo",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_politics",
+      "target": "politics",
+      "routed": "politics",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_republic",
+      "target": "republic",
+      "routed": "republic",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_shiji",
+      "target": "shiji",
+      "routed": "shiji",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_socrates_corpus",
+      "target": "socrates_corpus",
+      "routed": "socrates_corpus",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_symposium",
+      "target": "symposium",
+      "routed": "symposium",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_timaeus",
+      "target": "timaeus",
+      "routed": "timaeus",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_xunzi",
+      "target": "xunzi",
+      "routed": "xunzi",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_zhuangzi",
+      "target": "zhuangzi",
+      "routed": "zhuangzi",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "recall_zuo_zhuan",
+      "target": "zuo_zhuan",
+      "routed": "zuo_zhuan",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "retain_1_boston_tea_party_1773",
+      "target": "boston_tea_party_1773",
+      "routed": "boston_tea_party_1773",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "retain_1_fall_of_rome_476",
+      "target": "fall_of_rome_476",
+      "routed": "fall_of_rome_476",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "retain_1_first_powered_flight_1903",
+      "target": "first_powered_flight_1903",
+      "routed": "first_powered_flight_1903",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "retain_1_flat_earth_medieval_myth",
+      "target": "flat_earth_medieval_myth",
+      "routed": "flat_earth_medieval_myth",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep2_philosophy",
+      "query": "retain_1_great_wall_from_space_myth",
+      "target": "great_wall_from_space_myth",
+      "routed": "great_wall_from_space_myth",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "recall_chemical_imbalance_slogan",
+      "target": "chemical_imbalance_slogan",
+      "routed": "chemical_imbalance_slogan",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "recall_cognitive_dissonance",
+      "target": "cognitive_dissonance",
+      "routed": "cognitive_dissonance",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "recall_confirmation_bias",
+      "target": "confirmation_bias",
+      "routed": "confirmation_bias",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "recall_dunning_kruger_effect",
+      "target": "dunning_kruger_effect",
+      "routed": "dunning_kruger_effect",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "recall_learning_styles_vak",
+      "target": "learning_styles_vak",
+      "routed": "learning_styles_vak",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "recall_left_brain_right_brain_pop",
+      "target": "left_brain_right_brain_pop",
+      "routed": "left_brain_right_brain_pop",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "recall_mozart_effect_myth",
+      "target": "mozart_effect_myth",
+      "routed": "mozart_effect_myth",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "recall_ptsd_clinical_vs_pop",
+      "target": "ptsd_clinical_vs_pop",
+      "routed": "ptsd_clinical_vs_pop",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "recall_stockholm_syndrome",
+      "target": "stockholm_syndrome",
+      "routed": "stockholm_syndrome",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "recall_ten_percent_brain_myth",
+      "target": "ten_percent_brain_myth",
+      "routed": "ten_percent_brain_myth",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "retain_2_boston_tea_party_1773",
+      "target": "boston_tea_party_1773",
+      "routed": "boston_tea_party_1773",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "retain_2_fall_of_rome_476",
+      "target": "fall_of_rome_476",
+      "routed": "fall_of_rome_476",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "retain_2_first_powered_flight_1903",
+      "target": "first_powered_flight_1903",
+      "routed": "first_powered_flight_1903",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "retain_2_flat_earth_medieval_myth",
+      "target": "flat_earth_medieval_myth",
+      "routed": "flat_earth_medieval_myth",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep3_psychology",
+      "query": "retain_2_great_wall_from_space_myth",
+      "target": "great_wall_from_space_myth",
+      "routed": "great_wall_from_space_myth",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep4_religion",
+      "query": "recall_buddha_dharma_teachings",
+      "target": "buddha_dharma_teachings",
+      "routed": "buddha_dharma_teachings",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep4_religion",
+      "query": "recall_confucian_ancestor_veneration",
+      "target": "confucian_ancestor_veneration",
+      "routed": "confucian_ancestor_veneration",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep4_religion",
+      "query": "recall_dao_de_jing_daoist_scripture",
+      "target": "dao_de_jing_daoist_scripture",
+      "routed": "dao_de_jing_daoist_scripture",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep4_religion",
+      "query": "recall_gospel_matthew",
+      "target": "gospel_matthew",
+      "routed": "gospel_matthew",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep4_religion",
+      "query": "recall_hadith_canonical_collections",
+      "target": "hadith_canonical_collections",
+      "routed": "hadith_canonical_collections",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep4_religion",
+      "query": "recall_islam_early_history",
+      "target": "islam_early_history",
+      "routed": "islam_early_history",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep4_religion",
+      "query": "recall_jesus_gospel_teachings",
+      "target": "jesus_gospel_teachings",
+      "routed": "jesus_gospel_teachings",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep4_religion",
+      "query": "recall_nirvana_pop_heaven",
+      "target": "nirvana_pop_heaven",
+      "routed": "nirvana_pop_heaven",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep4_religion",
+      "query": "retain_3_boston_tea_party_1773",
+      "target": "boston_tea_party_1773",
+      "routed": "boston_tea_party_1773",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep4_religion",
+      "query": "retain_3_fall_of_rome_476",
+      "target": "fall_of_rome_476",
+      "routed": "fall_of_rome_476",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep4_religion",
+      "query": "retain_3_first_powered_flight_1903",
+      "target": "first_powered_flight_1903",
+      "routed": "first_powered_flight_1903",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep4_religion",
+      "query": "retain_3_flat_earth_medieval_myth",
+      "target": "flat_earth_medieval_myth",
+      "routed": "flat_earth_medieval_myth",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep4_religion",
+      "query": "retain_3_great_wall_from_space_myth",
+      "target": "great_wall_from_space_myth",
+      "routed": "great_wall_from_space_myth",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep5_tradition",
+      "query": "recall_buddhism",
+      "target": "buddhism",
+      "routed": "buddhism",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep5_tradition",
+      "query": "recall_christianity",
+      "target": "christianity",
+      "routed": "christianity",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep5_tradition",
+      "query": "recall_confucian",
+      "target": "confucian",
+      "routed": "confucian",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep5_tradition",
+      "query": "recall_confucian_ritual",
+      "target": "confucian_ritual",
+      "routed": "confucian_ritual",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep5_tradition",
+      "query": "recall_daoist",
+      "target": "daoist",
+      "routed": "daoist",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep5_tradition",
+      "query": "recall_islam",
+      "target": "islam",
+      "routed": "islam",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep5_tradition",
+      "query": "recall_platonist",
+      "target": "platonist",
+      "routed": "platonist",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep5_tradition",
+      "query": "recall_socratic",
+      "target": "socratic",
+      "routed": "socratic",
+      "expect": "assert",
+      "type": "recall",
+      "graph_backed": "correct",
+      "parametric_baseline": "miss"
+    },
+    {
+      "episode": "ep5_tradition",
+      "query": "retain_4_boston_tea_party_1773",
+      "target": "boston_tea_party_1773",
+      "routed": "boston_tea_party_1773",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep5_tradition",
+      "query": "retain_4_fall_of_rome_476",
+      "target": "fall_of_rome_476",
+      "routed": "fall_of_rome_476",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep5_tradition",
+      "query": "retain_4_first_powered_flight_1903",
+      "target": "first_powered_flight_1903",
+      "routed": "first_powered_flight_1903",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep5_tradition",
+      "query": "retain_4_flat_earth_medieval_myth",
+      "target": "flat_earth_medieval_myth",
+      "routed": "flat_earth_medieval_myth",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "ep5_tradition",
+      "query": "retain_4_great_wall_from_space_myth",
+      "target": "great_wall_from_space_myth",
+      "routed": "great_wall_from_space_myth",
+      "expect": "assert",
+      "type": "retention",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "epF_revision",
+      "query": "unlearn_boston_tea_party_1773",
+      "target": "boston_tea_party_1773",
+      "routed": "boston_tea_party_1773",
+      "expect": "abstain",
+      "type": "unlearning",
+      "graph_backed": "correct",
+      "parametric_baseline": "fabrication"
+    },
+    {
+      "episode": "epF_revision",
+      "query": "unlearn_fall_of_rome_476",
+      "target": "fall_of_rome_476",
+      "routed": "fall_of_rome_476",
+      "expect": "abstain",
+      "type": "unlearning",
+      "graph_backed": "correct",
+      "parametric_baseline": "fabrication"
+    },
+    {
+      "episode": "epF_revision",
+      "query": "control_confucius_wrote_the_iching",
+      "target": "confucius_wrote_the_iching",
+      "routed": "confucius_wrote_the_iching",
+      "expect": "abstain",
+      "type": "control",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "epF_revision",
+      "query": "control_freud_coined_dissonance",
+      "target": "freud_coined_dissonance",
+      "routed": "freud_coined_dissonance",
+      "expect": "abstain",
+      "type": "control",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    },
+    {
+      "episode": "epF_revision",
+      "query": "control_laozi_authored_pasta",
+      "target": "laozi_authored_pasta",
+      "routed": "laozi_authored_pasta",
+      "expect": "abstain",
+      "type": "control",
+      "graph_backed": "correct",
+      "parametric_baseline": "correct"
+    }
+  ]
+}

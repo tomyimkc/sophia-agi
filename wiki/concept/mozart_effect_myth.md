@@ -15,6 +15,8 @@ links: []
 
 # the Mozart effect (listening to Mozart raises IQ) (莫札特效應（聽莫札特提升智商）)
 
+The Mozart effect (listening to Mozart raises IQ) (莫札特效應（聽莫札特提升智商）) is a psychology concept, in the pop_myth subfield.
+
 - **Domain:** psychology
 
 Pop-science myth. Rauscher et al. (1993) reported only a small, temporary spatial-reasoning effect in adults; media inflated it into 'Mozart makes babies smarter'. Not a durable IQ boost.

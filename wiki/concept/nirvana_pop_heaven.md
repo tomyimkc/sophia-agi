@@ -15,6 +15,8 @@ links: [buddhism]
 
 # nirvana as eternal heaven (pop spirituality) (涅槃即永恆天堂)
 
+Nirvana as eternal heaven (pop spirituality) (涅槃即永恆天堂) is a religion concept, in the buddhism tradition.
+
 - **Tradition:** buddhism
 - **Domain:** religion
 

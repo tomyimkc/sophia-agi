@@ -15,6 +15,8 @@ links: []
 
 # depression is just a chemical imbalance (憂鬱症只是化學失衡)
 
+Depression is just a chemical imbalance (憂鬱症只是化學失衡) is a psychology concept, in the pop_myth subfield.
+
 - **Domain:** psychology
 
 Oversimplified pop slogan; biopsychosocial clinical models are more accurate

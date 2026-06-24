@@ -169,5 +169,70 @@
         }
       }
     }
-  ]
+  ],
+  "continualGroundedEvals": {
+    "benchmark": "Continual Provenance QA (CPQA) — grounded vs raw answers over the 92-page wiki corpus",
+    "validated": false,
+    "status": "candidate",
+    "answerModel": "gpt-4o-mini (OpenAI, via LLMHub)",
+    "judges": [
+      "openrouter:deepseek/deepseek-chat (DeepSeek)",
+      "openrouter:meta-llama/llama-3.3-70b-instruct (Meta)"
+    ],
+    "gateway": "judges via OpenRouter; answers via LLMHub — independent gateways",
+    "runs": 3,
+    "queryCount": 92,
+    "grounded": {
+      "consensus": 0.529,
+      "ci": [
+        0.471,
+        0.587
+      ],
+      "assert": 0.502,
+      "abstain": 1.0
+    },
+    "raw": {
+      "consensus": 0.884,
+      "ci": [
+        0.848,
+        0.92
+      ],
+      "assert": 0.935,
+      "abstain": 0.0
+    },
+    "interJudgeKappa": 0.94,
+    "interJudgePercentAgreement": 0.97,
+    "note": "CANDIDATE, not validated (self-authored benchmark, keys held by one operator, no external replication). FULL 92-query cross-gateway run, 3 runs. Honest headline: on attribution-traps/retractions grounded scores 1.0 vs raw 0.0 (perfect fail-closed abstention), but on plain recall grounded collapses to 0.50 vs raw 0.93 because answers are constrained to the retrieved wiki page and many pages are thin provenance stubs that don't contain the answer. Net, the raw model wins OVERALL (0.88 vs 0.53) on this recall-heavy, thin-source corpus. This is the predicted coverage-vs-fabrication tradeoff: grounding buys trap-safety at a recall cost, not a blanket win. Inter-judge kappa is now healthy (0.94/0.67; the earlier degeneracy was a small-subset artifact). UPDATE: a Step 1+2 hybrid (graph-neighborhood + typed gate with attribution-safe fallback) recovers recall to 0.68 and overall to 0.685 while keeping all traps on the hard-abstain path (see continualGroundedEvals.hybrid).",
+    "hybrid": {
+      "system": "hybrid (typed gate) + graph-neighborhood retrieval, attribution-safe fallback",
+      "consensus": 0.685,
+      "ci": [
+        0.63,
+        0.739
+      ],
+      "assert": 0.678,
+      "abstain": 0.8,
+      "interJudgeKappa": 0.84,
+      "interJudgePercentAgreement": 0.93,
+      "policyCounts": {
+        "abstain_no_source": 15,
+        "grounded_strict": 120,
+        "grounded_fallback": 141
+      },
+      "note": "Steps 1+2+4 combined. Recall recovered 0.50 -> 0.68 (+35% rel), overall 0.53 -> 0.69. Behavioral trap-safety preserved: all 15 trap evaluations hit the hard-abstain policy (abstain_no_source=15) and 0 traps reached the parametric fallback (fallback fired only on the 141 grounded-but-thin facts). The trap SCORE 0.80 (vs strict 1.0) is judge measurement noise on the fixed abstention string, not gate leakage. raw still wins overall (0.91) but the gap narrowed from 0.38 to 0.22."
+    },
+    "enrichedStrict": {
+      "system": "strict grounded on Step-5-enriched corpus (pure grounding, no parametric fallback)",
+      "consensus": 0.623,
+      "ci": [
+        0.565,
+        0.678
+      ],
+      "assert": 0.602,
+      "abstain": 1.0,
+      "interJudgeKappa": 0.87,
+      "interJudgePercentAgreement": 0.94,
+      "note": "Step 5 surfaces existing sourced provenance fields as answer-bearing prose (thin-source 58%->12%). Pure-grounded recall rose 0.502 -> 0.602 (+20% rel), overall 0.529 -> 0.623, with traps a clean 1.0 and ZERO parametric reliance. It did not reach the ~0.88 prose-ceiling because the summaries are terse provenance-derived sentences (who/when/what-domain), which judges credit on focused questions but not fully on open-ended ones. Closing the rest needs genuinely richer authored+sourced content (a maintainer task), not field reformatting."
+    }
+  }
 }

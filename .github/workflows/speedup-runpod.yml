@@ -1,0 +1,122 @@
+name: speedup-runpod
+
+# Manual-only RunPod launcher for the fair-baseline LoRA SPEEDUP benchmark.
+#
+# CUDA counterpart to the Apple-Silicon MLX run: it measures the honest
+# apples-to-apples multiplier (same model / same data / same 1 epoch) across
+# {fp16-maxpad reference, fp16-dynpad, QLoRA-4bit, Unsloth-4bit} — experiment #2 and
+# the padding ablation (experiment #1) from docs/11-Platform/Training-Efficiency-Feasibility.md.
+#
+# Dispatch-only: never runs on push/PR/schedule. On dispatch it uses the orchestrator
+# tools/runpod_speedup.py to rent a pod via the RunPod REST API, run the benchmark over
+# SSH, copy speedup_report.json back, and ALWAYS delete the pod (finally block + remote
+# watchdog). The secret is read from RUNPOD_API_KEY and never printed.
+#
+# PREREQUISITES (only the maintainer can do these):
+#   1. Repo secret RUNPOD_API_KEY (Settings -> Secrets and variables -> Actions).
+#   2. RunPod account GPU credit. A pod costs real money while it runs (~minutes here).
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to confirm you accept renting a paid GPU pod'
+        required: true
+        default: ''
+      model:
+        description: 'Base model to benchmark'
+        required: false
+        default: 'Qwen/Qwen2.5-3B-Instruct'
+      limit:
+        description: 'Subset rows to time (apples-to-apples; 128 is a quick, stable bench)'
+        required: false
+        default: '128'
+      seed:
+        description: 'Seed (vary across runs for independent replications)'
+        required: false
+        default: '0'
+      gpu_type:
+        description: 'Comma-separated RunPod GPU type preference (4090 first = cheapest)'
+        required: false
+        default: 'NVIDIA GeForce RTX 4090,NVIDIA A100 80GB PCIe'
+      interruptible:
+        description: 'Use cheaper spot/interruptible pod'
+        required: false
+        default: 'true'
+        type: choice
+        options: ['true', 'false']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: speedup-runpod
+  cancel-in-progress: false
+
+jobs:
+  runpod:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — confirm + secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "RUN" ]; then
+            echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
+            exit 1
+          fi
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set (or empty). Add a VALID key in Settings -> Secrets and variables -> Actions. Aborting (no pod created)."
+            exit 1
+          fi
+          echo "Preflight OK: confirmed, secret present. GPU runs on the rented pod, not this runner."
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Dry-run payload (no pod, no cost — sanity check the request)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          python tools/runpod_speedup.py --dry-run \
+            --source git --branch "${{ github.ref_name }}" \
+            --model "${{ github.event.inputs.model }}" \
+            --limit "${{ github.event.inputs.limit }}" \
+            --seed "${{ github.event.inputs.seed }}" \
+            --gpu-type "${{ github.event.inputs.gpu_type }}"
+
+      - name: Launch RunPod speedup bench (rents GPU, runs over SSH, deletes pod)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          INTERRUPTIBLE=""
+          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
+          python tools/runpod_speedup.py --yes \
+            --source git --branch "${{ github.ref_name }}" \
+            --model "${{ github.event.inputs.model }}" \
+            --limit "${{ github.event.inputs.limit }}" \
+            --seed "${{ github.event.inputs.seed }}" \
+            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            $INTERRUPTIBLE
+
+      - name: Show the speedup report in the run log
+        if: always()
+        run: |
+          shopt -s nullglob
+          for f in agi-proof/benchmark-results/runpod-speedup/*.speedup_report.json; do
+            echo "===== $f ====="
+            cat "$f"
+          done
+
+      - name: Upload speedup artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: speedup-runpod-reports
+          path: agi-proof/benchmark-results/runpod-speedup/**
+          if-no-files-found: warn

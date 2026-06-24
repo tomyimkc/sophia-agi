@@ -17,6 +17,8 @@ links: []
 
 # Art of War (孫子兵法)
 
+Art of War (孫子兵法) is a philosophy text, in the military_classics tradition, attributed to sunzi (authorship confidence: legendary), dated to warring_states.
+
 - **Attributed author:** sunzi (confidence: `legendary`)
 - **Tradition:** military_classics
 - **Domain:** philosophy

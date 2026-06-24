@@ -17,6 +17,8 @@ links: [platonist]
 
 # Phaedo (斐多)
 
+Phaedo (斐多) is a philosophy text, in the platonist tradition, attributed to plato (authorship confidence: attributed), dated to classical_greece.
+
 - **Attributed author:** plato (confidence: `attributed`)
 - **Tradition:** platonist
 - **Domain:** philosophy

@@ -17,6 +17,8 @@ links: []
 
 # Dunning–Kruger effect (鄧寧-克魯格效應)
 
+Dunning–Kruger effect (鄧寧-克魯格效應) is a psychology concept, in the cognitive subfield, attributed to david_dunning (authorship confidence: attributed), dated to 1999.
+
 - **Attributed author:** david_dunning (confidence: `attributed`)
 - **Domain:** psychology
 

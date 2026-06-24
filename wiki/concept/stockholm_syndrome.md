@@ -16,6 +16,8 @@ links: []
 
 # Stockholm syndrome (斯德哥爾摩症候群)
 
+Stockholm syndrome (斯德哥爾摩症候群) is a psychology concept, in the clinical subfield, attributed to nils_bejerot (authorship confidence: attributed).
+
 - **Attributed author:** nils_bejerot (confidence: `attributed`)
 - **Domain:** psychology
 

@@ -16,6 +16,8 @@ links: []
 
 # Enchiridion (手冊)
 
+Enchiridion (手冊) is a philosophy text, in the stoic tradition, attributed to arrian (authorship confidence: compiled).
+
 - **Attributed author:** arrian (confidence: `compiled`)
 - **Tradition:** stoic
 - **Domain:** philosophy

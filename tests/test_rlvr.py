@@ -75,12 +75,15 @@ def test_reward_true_monotone() -> None:
     assert r_bad == 0.0
 
 
-def test_reward_true_case_denial_scores_zero() -> None:
-    """Mutual-exclusion: a true-case denial can't earn gold credit (anti universal-hedge)."""
+def test_reward_true_case_denial_penalized() -> None:
+    """A true-case denial (over-refusal) is the false-positive the integrity metric
+    tracks, so it is penalized below a wrong-author answer (which scores 0.0) — folding
+    false-positive integrity into the reward so training can't gain by over-refusing."""
     gate = _gate()
     denial = "No, the founding committee did not write the Project Phoenix Charter."
     r, detail = rl_reward.reward_for_case(TRUE_CASE, denial, gate=gate)
-    assert r == 0.0
+    assert r < 0.0
+    assert r == rl_reward._TRUE_CASE_DENIAL_PENALTY
     assert detail.get("deniedOnTrueCase") is True
 
 
@@ -179,11 +182,28 @@ def test_run_rlvr_mock_passes_invariants() -> None:
     assert detail["trainCases"] > 0 and detail["evalCases"] > 0
 
 
+def test_ingest_refuses_committed_archive() -> None:
+    """The gate must never re-read the durable rlvr-replication/ archive: doing so
+    decoupled the live gate from the actual training (a fresh run re-promoting stale
+    numbers — the stale-promote bug). The guard refuses such a path structurally."""
+    from tools import ingest_rlvr_eval
+
+    archive_path = (
+        ROOT / "agi-proof" / "benchmark-results" / "rlvr-replication" / "seed0.adapter-eval.json"
+    )
+    try:
+        ingest_rlvr_eval.ingest(archive_path)
+    except SystemExit as e:
+        assert ingest_rlvr_eval.ARCHIVE_DIR_NAME in str(e)
+    else:
+        raise AssertionError("ingest must refuse a file under the committed archive dir")
+
+
 def main() -> int:
     test_reward_is_deterministic()
     test_reward_false_monotone_and_forbidden_negative()
     test_reward_true_monotone()
-    test_reward_true_case_denial_scores_zero()
+    test_reward_true_case_denial_penalized()
     test_reward_invokes_verifier_seam()
     test_reward_is_bounded()
     test_reward_anti_hedging_cap()
@@ -192,6 +212,7 @@ def main() -> int:
     test_gate_records_scoped_to_partition()
     test_sealed_hash_is_stable()
     test_run_rlvr_mock_passes_invariants()
+    test_ingest_refuses_committed_archive()
     print("test_rlvr: OK")
     return 0
 

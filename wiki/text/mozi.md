@@ -17,6 +17,8 @@ links: []
 
 # Mozi (墨子)
 
+Mozi (墨子) is a philosophy text, in the mohist tradition, attributed to mozi (authorship confidence: compiled), dated to warring_states.
+
 - **Attributed author:** mozi (confidence: `compiled`)
 - **Tradition:** mohist
 - **Domain:** philosophy
