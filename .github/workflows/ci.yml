@@ -81,6 +81,8 @@ jobs:
           python tests/test_wiki_tools.py
           python tests/test_verifiers.py
           python tests/test_local_sophia_dataset.py
+          python tests/test_split_long_training_rows.py
+          python tests/test_mlx_transport.py
           python tools/build_local_sophia_dataset.py --check
           python tests/test_personality.py
           python tests/test_steering.py

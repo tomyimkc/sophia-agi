@@ -197,9 +197,32 @@
     "clean": true
   },
   "mlx": {
-    "trainRows": 660,
+    "trainRows": 649,
     "validRows": 89,
-    "path": "training/local_sophia_v2/mlx"
+    "path": "training/local_sophia_v2/mlx",
+    "maxTokens": 1024,
+    "fit": {
+      "train": {
+        "maxTokens": 1024,
+        "rowsIn": 660,
+        "rowsKeptUnchanged": 649,
+        "rowsSplit": 0,
+        "subRowsFromSplits": 0,
+        "rowsDroppedUnsplittable": 11,
+        "turnsDroppedOverlong": 11,
+        "rowsOut": 649
+      },
+      "valid": {
+        "maxTokens": 1024,
+        "rowsIn": 89,
+        "rowsKeptUnchanged": 89,
+        "rowsSplit": 0,
+        "subRowsFromSplits": 0,
+        "rowsDroppedUnsplittable": 0,
+        "turnsDroppedOverlong": 0,
+        "rowsOut": 89
+      }
+    }
   },
   "claimBoundary": "Trains behavioral discipline, not general intelligence. External MCP/verifier gates enforce correctness at runtime."
 }

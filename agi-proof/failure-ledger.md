@@ -166,6 +166,15 @@ council-quality traces, evaluate the MLX adapter on SEIB directly (runner does n
 MLX adapters), then re-run ≥3 seeds and only promote if provenance/citation improves at
 acceptable false-positive cost with no useful-correctness regression.
 
+**Update (C3, 2026-06-24):** two of the next-experiment blockers are resolved.
+`tools/split_long_training_rows.py` now fits every MLX row under `MLX_MAX_TOKENS` (1024) at
+pack-build time — the rebuild dropped 11 overlong single-turn rows that the v2 run silently
+truncated, recorded under `mlx.fit` in the manifest. `agent/model.py` gained an `mlx`
+transport and `tools/run_seib.py` gained `--model mlx:<base> --adapter <path>`, so the trained
+adapter can now be evaluated on SEIB directly (on Apple Silicon; off-Mac it writes an
+environment artifact, not a score). Remaining for promotion: the religion retrain (C2) and
+multi-seed + SEIB-100 evidence (C5).
+
 **Update (C1, 2026-06-24):** this NOT-PROMOTED verdict is no longer a hand-written note. The
 adapter's eval ladder is now run through the W2 bounded-RSI promotion gate
 (`agent/continual_plasticity.evaluate_update`) by `tools/promote_adapter.py`, which

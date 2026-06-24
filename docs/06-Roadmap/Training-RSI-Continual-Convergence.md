@@ -76,19 +76,28 @@ elsewhere, checked through the C1 gate. **Resource:** none (data) + your hardwar
 
 ---
 
-## C3 — Fix the data pipeline defects surfaced by the run *(no GPU)*
+## C3 — Fix the data pipeline defects surfaced by the run ✅ *(done; no GPU)*
 
-**Why:** the v2 run truncated rows >1024 tokens, and SEIB cannot load MLX adapters, so the
+**Why:** the v2 run truncated rows >1024 tokens, and SEIB could not load MLX adapters, so the
 adapter was never measured on the suite that actually gates promotion.
 
-**Build:**
-1. `tools/split_long_training_rows.py` (or pack-level max-token filtering) so no row is
-   silently truncated; record dropped/split counts in the manifest.
-2. Add `--model mlx:<base> --adapter <path>` to `tools/run_seib.py` so the trained adapter is
-   evaluated on SEIB directly.
+**Built:**
+1. `tools/split_long_training_rows.py` — fits MLX chat rows under a token budget (offline
+   heuristic counter by default; `--hf-tokenizer` for the real tokenizer). It keeps fitting
+   rows, splits multi-turn rows at turn boundaries, and drops single turns that cannot fit —
+   asserting **no emitted row exceeds the budget**. Wired into `build_local_sophia_dataset.py`
+   (`MLX_MAX_TOKENS = 1024`); the manifest now records a `mlx.fit` block. On the current pack
+   it dropped 11 overlong single-turn rows that the v2 run would have silently truncated.
+2. `agent/model.py` gained an `mlx` provider/transport (lazy `mlx_lm`, fails closed off-Mac,
+   exempt from the airgap egress block), and `tools/run_seib.py` gained
+   `--model mlx:<base> --adapter <path>` (sets `SOPHIA_MLX_ADAPTER`; records `adapterPath`).
 
-**Acceptance:** rebuilt pack has zero >max-token rows; SEIB runs against the MLX adapter and
-its result feeds C1. **Resource:** none. **Honest bound:** measurement hygiene, not capability.
+**Result:** rebuilt pack has zero >max-token rows (idempotent re-fit drops nothing); the SEIB
+`mlx:` path routes correctly and, where `mlx_lm` is absent, writes a clean
+"environment artifact, not a score" report instead of crashing. On Apple Silicon the same
+command evaluates the real adapter, feeding C1. Gated by `tests/test_split_long_training_rows.py`
+and `tests/test_mlx_transport.py` (both in CI). **Honest bound:** measurement hygiene, not
+capability.
 
 ---
 
@@ -130,7 +139,7 @@ false-positive cost, no useful-correctness regression) with CIs excluding 0.
 | Order | Item | Resource | Ships |
 |---|---|---|---|
 | 1 | **C1** wire training → W2 gate ✅ | none | machine-checked promotion (auto-reproduces today's decision) |
-| 2 | **C3** pipeline fixes (split rows, SEIB-MLX) | none | honest measurement of the real adapter |
+| 2 | **C3** pipeline fixes (split rows, SEIB-MLX) ✅ | none | honest measurement of the real adapter |
 | 3 | **C2** fix religion regression | hardware (retrain) | the one failing predicate cleared |
 | 4 | **C4** feedback miner → next pack | none | the loop becomes *continual* |
 | 5 | **C5** multi-seed + SEIB-100 + (W4 RLVR) | **GPU** | the first promotable, validated result |
