@@ -119,6 +119,48 @@ pretraining contamination), then third-party reproduction. Companion external la
 already wired (`tools/fetch_eval_dataset.py --dataset gsm8k` + `tools/run_external_eval.py`).
 Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
 
+## v4-learning-under-shift-wrong-store-diagnosis-2026-06-24
+
+**Status:** OPEN (diagnosis + corrective machinery; the corrected run is hardware/graph-bound).
+
+The first sophia-v4 multi-goal attempt (branch `claude/sophia-v4-multigoal-codex`, seed 0)
+**fixed v3's catastrophic forgetting** — old-task retention held (`oldBenchmarkDeltaPct=0.0`) —
+and improved the first-party ladder (56.2%→68.8%; philosophy 77.8→100, history 62.5→75,
+religion 0→16.7). It was correctly **rejected** by the hardened gate because
+`learning-under-shift` returned `passingSignal=false`.
+
+**Root cause (structural, not model quality):** the shift result was **pre 0/10 AND post 0/10**.
+`learning-under-shift` teaches by appending declarative records to `agent/memory/learning_shift.jsonl`
+and post-tests whether they are used — but it was gated against a **frozen LoRA adapter**
+(`--backend adapter`), which cannot absorb newly-appended facts and whose answer path did not
+retrieve them. So `post == pre` by construction. This is the PR #82 two-store rule biting back:
+**declarative learning lives in the OKF graph / retrieval ("hippocampus"), not the weights
+("neocortex").** Gating a habit adapter on a knowledge-store signal tests the wrong store. Also
+matches `distribution-shift-not-run` ("no signal").
+
+**Corrective machinery (this branch, no GPU):** `agent/store_routing.py` routes each signal to
+its store and gives a store-aware adapter verdict that does NOT weaken the gate: a habit-store
+failure still **rejects**; a knowledge-store signal measured on the habit store is an **INVALID
+measurement → quarantine** (neither promote nor reject), forcing re-measurement on the
+graph/CPQA path; an unvalidated knowledge goal → quarantine. Under this routing, v4 seed 0 is a
+**quarantine** (habit store passed; knowledge signal mis-measured), not a hard reject. Gated by
+`tests/test_store_routing.py`; lint OK.
+
+**Next experiment (do BEFORE more seeds — running seeds 1/2 now repeats the same structural
+reject and wastes GPU):**
+1. Confirm the wrong-store hypothesis: dump a post-test prompt + the appended records + the raw
+   answer; verify the records are absent from context.
+2. Re-measure learning/knowledge goals on the **knowledge store** — the graph-backed CPQA path
+   (`tools/run_continual_qa_validation.py`) or a retrieval-augmented backend that injects the
+   appended records — and prove `pre<post` is reachable on a known-learnable mini-domain (closes
+   `distribution-shift-not-run`).
+3. Wire `agent/store_routing.store_aware_adapter_verdict` into the v4 `promote_adapter` so the
+   adapter is gated on habit metrics (ladder + SEIB + retention) while knowledge goals gate
+   separately on the graph.
+4. Re-score seed 0 on the corrected gate (no retrain); only then run seeds 1/2.
+
+Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
+
 ## Template
 
 ```text
