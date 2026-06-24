@@ -38,6 +38,8 @@ from agent.continual_qa_answer import (  # noqa: E402
     build_neighborhood_source_map, build_source_map, cohen_kappa, generate_grounded,
     generate_raw, judge_answer, percent_agreement, verdict,
 )
+from agent.continual_qa_hybrid import hybrid_answer  # noqa: E402
+from tools.audit_cpqa_recall import classify_source  # noqa: E402
 from agent.public_sanitize import sanitize_public_artifact  # noqa: E402
 from okf.page import load_pages  # noqa: E402
 
@@ -109,6 +111,8 @@ def main() -> None:
     ap.add_argument("--retrieval", default="single", choices=["single", "neighborhood"],
                     help="Step 1: 'neighborhood' backs each page with its k-hop OKF neighbors")
     ap.add_argument("--hops", type=int, default=1, help="neighborhood hop count (Step 1)")
+    ap.add_argument("--grounded-system", default="grounded", choices=["grounded", "hybrid"],
+                    help="Step 2: 'hybrid' routes by context type (abstain / strict / attribution-safe fallback)")
     ap.add_argument("--judge", action="append", default=None,
                     help="provider:model judge (repeatable); default = cross-family Claude + Gemini")
     args = ap.parse_args()
@@ -126,13 +130,24 @@ def main() -> None:
     judge_families = sorted({_family(m) for m in judge_models})
     answer_family = _family(answer_model_id)
 
-    # runs[r][system] -> {"consensus":[bool...], "perJudge":{model:[bool...]}}
+    # Step 2: per-target source sufficiency (answer-bearing prose vs thin stub).
+    answer_bearing = {p.id: classify_source(p)["answerBearing"] for p in pages}
+    policy_counts: dict[str, int] = {}
+
+    def grounded_answer(q, src):
+        if args.grounded_system == "hybrid":
+            ans, policy = hybrid_answer(q.text, src, answer_complete,
+                                        answer_bearing=answer_bearing.get(q.target, False))
+            policy_counts[policy] = policy_counts.get(policy, 0) + 1
+            return ans
+        return generate_grounded(q.text, src, answer_complete, mode=args.grounded_mode)
+
     run_results = []
     for r in range(args.runs):
         rows = []
         for q, expect, grounded in selected:
             src = source_map.get(q.target) if grounded else None
-            answers = {"grounded": generate_grounded(q.text, src, answer_complete, mode=args.grounded_mode),
+            answers = {"grounded": grounded_answer(q, src),
                        "raw": generate_raw(q.text, answer_complete)}
             row = {"query": q.id, "expect": expect, "judges": {}}
             for system, ans in answers.items():
@@ -191,8 +206,10 @@ def main() -> None:
         "distinctProviderFamilies": len(judge_families) >= 2,
         "selfGradingRisk": answer_family in judge_families,
         "groundedMode": args.grounded_mode,
+        "groundedSystem": args.grounded_system,
         "retrieval": args.retrieval,
         "hops": args.hops if args.retrieval == "neighborhood" else None,
+        "hybridPolicyCounts": policy_counts or None,
         "runs": args.runs,
         "queryCount": len(selected),
         "summary": summary,
