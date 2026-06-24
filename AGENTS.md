@@ -8,6 +8,8 @@ Open corpus for **provenance-aware philosophy** and AGI-shaped epistemic reasoni
 2. `docs/00-Index/Home.md`
 3. `data/attributions.json`
 4. `docs/04-Disputes/` for contested cases
+5. Training/RSI/continual work: `docs/06-Roadmap/Training-RSI-Continual-Convergence.md`,
+   `docs/11-Platform/Local-Sophia-Training.md`, `agi-proof/failure-ledger.md`
 
 ## Rules
 
@@ -15,6 +17,17 @@ Open corpus for **provenance-aware philosophy** and AGI-shaped epistemic reasoni
 - Flag `authorConfidence: legendary` or `compiled` as uncertain — do not state as settled fact.
 - Keep 儒家 (Confucian) and 道家 (Daoist) lineages distinct unless evidence supports a link.
 - Training outputs: bilingual EN + 中文 summary; JSONL-compatible structure.
+
+## Guardrails (enforced — do not bypass)
+
+- **No overclaiming.** `python tools/lint_claims.py` must pass before every commit. Never claim
+  AGI, validated uplift, or that an adapter is promoted unless the gate says so.
+- **Promotion is decided by `tools/promote_adapter.py`** (the W2 `agent/continual_plasticity.py`
+  gate), not by judgment. `religion`/`history` are protected suites — a regression forces reject.
+- **Contamination guard must stay CLEAN.** Never put eval/holdout prompts in training;
+  `tools/build_local_sophia_dataset.py` decontaminates and fails closed.
+- **Record runs (including failures) in `agi-proof/failure-ledger.md`** with the numbers and
+  what is not yet proven.
 
 ## Agents
 
