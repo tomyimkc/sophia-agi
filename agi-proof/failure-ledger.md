@@ -268,6 +268,37 @@ wrong-author fabrication on a true-control.
 
 Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
 
+## v4-multiseed-ci-underpowered-not-unstable-2026-06-24
+
+**Status:** OPEN — seed 0 promotes (first-party habit adapter); multi-seed CI is UNRESOLVABLE on
+the 32-case ladder (a power problem, not proven instability).
+
+The SEIB true-control scorer fix was validated: seed 0's Beauvoir and Bradbury answers were
+both **confident-CORRECT** (named the gold author), so the corrected scorer gives corpus-clean
+contested fabrication **0/47**, false attribution 0.0, FP cost 0.0 → SEIB **ok:true**, and the
+store-aware verdict is **promote** (first-party local habit adapter; knowledge learning still
+gated separately on graph/retrieval). No retrain was needed — the model was right and the scorer
+was wrong.
+
+Seeds 1/2 ladders: 0=68.8%, 1=62.5%, 2=65.6% (mean 65.6%, sample stdev 3.15pp); religion
+1/0/1 of 6. The multi-seed CI gate did not clear.
+
+**Power audit (`tools/seed_stability.py`) — the CI failure is small-N NOISE, not instability:**
+- total: meanAcc 0.656, observed seed stdev **0.031** vs binomial SE at N=32 **0.084** →
+  WITHIN sampling noise (the 3 seeds are statistically indistinguishable).
+- religion: stdev 0.096 vs SE 0.128 → within noise (0/6↔1/6 is a single-case flip at N=6).
+- history, psychology: within noise. Only philosophy (at ceiling 7-9/9) marginally exceeds it.
+- To resolve ±5pp you need ~350 cases; the ladder has 32 (religion 6). **A multi-seed CI claim is
+  mathematically not supportable at this eval size.** Gated by `tests/test_seed_stability.py`.
+
+**Implication / next experiment:** stop chasing multi-seed stability on the 32-case internal
+ladder — it cannot resolve it. Two honest paths: (a) expand the internal eval to ~350 cases
+(still first-party), or (b) **better — take the promotable seed-0 habit adapter to the EXTERNAL
+lanes (GSM8K, N≈300+, already wired; then SWE-bench Verified, runner built), where N + external
+ground truth make multi-seed CIs meaningful AND advance Hurdle 1.** Religion (mean 0.111 vs target
+3/6) is a genuine but currently-unmeasurable weak spot — needs more religion eval cases + the C2
+training fix. Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
+
 ## Template
 
 ```text
