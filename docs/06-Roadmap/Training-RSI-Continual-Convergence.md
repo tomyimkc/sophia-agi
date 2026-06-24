@@ -175,6 +175,17 @@ the gate from *rewarding* forgetting; it does not *solve* forgetting — that is
 work (replay/rehearsal of the old domain or a smaller weight delta, re-run to
 `passingSignal=true`), still hardware-bound under C5.
 
+**Multi-goal extension.** `agent/continual_plasticity.evaluate_update_multigoal(goals=...)` (and
+`tools/promote_adapter.py --goal SUITE[:MIN_DELTA]`, repeatable) generalize the single
+`target_suite` rule to N objectives under a **Pareto rule**: every goal must clear its own floor
+and *no* goal or protected suite may regress beyond tolerance, so lifting one goal by sacrificing
+another (v3 raised aggregate while religion stayed flat) is a `reject`, not a `promote`. This is
+the gate the multi-goal v4 training plan targets; it composes with the retention term above and
+with PR #82's CLS consolidation (`agent/cls_consolidation.py`), which routes only stable,
+gate-cleared facts into weights while declarative knowledge stays non-parametric in the OKF
+graph. Gated by the `multigoal` cases in `tests/test_continual_plasticity.py` and
+`tests/test_promote_adapter.py`.
+
 ---
 
 ## Sequence

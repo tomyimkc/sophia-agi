@@ -32,13 +32,35 @@ if str(ROOT) not in sys.path:
 
 from agent.continual_plasticity import (  # noqa: E402
     EvalMetric,
+    Goal,
     RetentionEvidence,
     UpdateCandidate,
     evaluate_update,
+    evaluate_update_multigoal,
 )
 from agent.formal_verifier import check_lattice_consistency  # noqa: E402
 
 DEFAULT_PROTECTED = ("religion", "history")
+
+
+def _parse_goals(raw: list[str], *, default_min_delta: float) -> tuple[Goal, ...]:
+    """Parse repeated --goal "suite[:min_delta]" flags into a Goal tuple.
+
+    A goal with no explicit delta inherits --min-target-delta; use ":0" for a hold-steady
+    goal (must not regress, need not improve).
+    """
+    goals: list[Goal] = []
+    for item in raw:
+        suite, _, delta = item.partition(":")
+        suite = suite.strip()
+        if not suite:
+            raise SystemExit(f"invalid --goal {item!r}: empty suite")
+        try:
+            min_delta = float(delta) if delta.strip() else default_min_delta
+        except ValueError:
+            raise SystemExit(f"invalid --goal {item!r}: min_delta must be a number")
+        goals.append(Goal(suite=suite, min_delta=min_delta))
+    return tuple(goals)
 
 
 def _retention_from_shift_report(report: dict[str, Any], *, source: str) -> RetentionEvidence:
@@ -149,6 +171,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--protected", default=",".join(DEFAULT_PROTECTED),
                     help="comma-separated suites that may not regress beyond tolerance")
     ap.add_argument("--min-target-delta", type=float, default=0.03)
+    ap.add_argument("--goal", action="append", default=[], metavar="SUITE[:MIN_DELTA]",
+                    help="multi-goal mode: a suite that must improve by >= MIN_DELTA (default "
+                         "--min-target-delta); repeatable. Promotion requires every goal to clear "
+                         "its floor with no regression on any goal or protected suite (Pareto).")
     ap.add_argument("--max-protected-regression", type=float, default=0.01)
     ap.add_argument("--require-artifacts", type=int, default=2)
     ap.add_argument("--shift-report", default=None,
@@ -209,16 +235,28 @@ def main(argv: list[str] | None = None) -> int:
         extra_artifacts=tuple(extra), proof_tag=proof_tag,
     )
 
-    decision = evaluate_update(
-        candidate,
-        target_suite=args.target_suite,
-        min_target_delta=args.min_target_delta,
-        max_protected_regression=args.max_protected_regression,
-        require_artifacts=args.require_artifacts,
-        retention=retention,
-        max_retention_regression_pct=args.max_retention_regression,
-        require_retention=args.require_retention,
-    )
+    goals = _parse_goals(args.goal, default_min_delta=args.min_target_delta)
+    if goals:
+        decision = evaluate_update_multigoal(
+            candidate,
+            goals=goals,
+            max_regression=args.max_protected_regression,
+            require_artifacts=args.require_artifacts,
+            retention=retention,
+            max_retention_regression_pct=args.max_retention_regression,
+            require_retention=args.require_retention,
+        )
+    else:
+        decision = evaluate_update(
+            candidate,
+            target_suite=args.target_suite,
+            min_target_delta=args.min_target_delta,
+            max_protected_regression=args.max_protected_regression,
+            require_artifacts=args.require_artifacts,
+            retention=retention,
+            max_retention_regression_pct=args.max_retention_regression,
+            require_retention=args.require_retention,
+        )
 
     # The formal proof is an INDEPENDENT check: if it rejects the protected floor, the
     # promotion may not stand even if the scorecard somehow cleared it. Fail closed.
@@ -263,8 +301,16 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     print(f"candidate:        {args.candidate_id}")
-    print(f"target suite:     {args.target_suite}  delta={decision.metrics['targetDelta']:+.4f}")
-    print(f"max protected reg:{decision.metrics['maxProtectedRegression']:+.4f}")
+    if goals:
+        print(f"mode:             multigoal ({len(goals)} goals; Pareto, max reg -{args.max_protected_regression:.4f})")
+        for g in decision.metrics["goals"]:
+            d = "n/a" if g["delta"] is None else f"{g['delta']:+.4f}"
+            print(f"  goal {g['suite']:<14} delta={d}  floor>={g['minDelta']:+.4f}  cleared={g['clearedFloor']}")
+        if decision.metrics["paretoViolations"]:
+            print(f"  Pareto violations: {', '.join(decision.metrics['paretoViolations'])}")
+    else:
+        print(f"target suite:     {args.target_suite}  delta={decision.metrics['targetDelta']:+.4f}")
+        print(f"max protected reg:{decision.metrics['maxProtectedRegression']:+.4f}")
     ret = decision.metrics["retention"]
     if ret["evaluable"] == "not-provided":
         print("old-task retention:no shift report supplied (retention unverified)")

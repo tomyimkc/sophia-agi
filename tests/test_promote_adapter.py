@@ -11,9 +11,10 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.continual_plasticity import evaluate_update  # noqa: E402
+from agent.continual_plasticity import Goal, evaluate_update, evaluate_update_multigoal  # noqa: E402
 from tools.promote_adapter import (  # noqa: E402
     _formal_protected_floor_proof,
+    _parse_goals,
     _retention_from_shift_report,
     _rung,
     build_candidate,
@@ -96,6 +97,23 @@ def test_v3_adapter_rejects_under_retention_gate() -> None:
     assert any("retention regression" in r for r in d.reasons)
 
 
+def test_parse_goals_and_multigoal_promotion() -> None:
+    """--goal parsing + a multi-goal Pareto promotion over a real-shaped ladder."""
+    goals = _parse_goals(["religion:0.1", "philosophy", "history:0"], default_min_delta=0.03)
+    assert goals == (Goal("religion", 0.1), Goal("philosophy", 0.03), Goal("history", 0.0))
+
+    base = {"philosophy": 0.66, "psychology": 0.44, "history": 0.62, "religion": 0.167}
+    adapter = {"philosophy": 0.77, "psychology": 0.66, "history": 0.66, "religion": 0.5}
+    cand = build_candidate(
+        candidate_id="mg-v1", kind="lora_adapter", baseline_ladder=None, adapter_ladder=_ladder(base, adapter),
+        contaminated=False, protected=("religion", "history"),
+        extra_artifacts=("ladder", "manifest"), proof_tag="formal_verifier:protected_floor[fallback:accepted]",
+    )
+    d = evaluate_update_multigoal(cand, goals=(Goal("religion", 0.10), Goal("philosophy", 0.0)))
+    assert d.verdict == "promote", d.reasons
+    assert all(g["clearedFloor"] for g in d.metrics["goals"])
+
+
 def test_formal_proof_agrees_with_scorecard() -> None:
     # protected regression -> formal proof rejects; clean -> accepts
     bad = build_candidate(
@@ -117,6 +135,7 @@ def main() -> int:
     test_v2_adapter_rejects_on_religion_regression()
     test_clean_improving_adapter_promotes()
     test_v3_adapter_rejects_under_retention_gate()
+    test_parse_goals_and_multigoal_promotion()
     test_formal_proof_agrees_with_scorecard()
     print("test_promote_adapter: OK")
     return 0
