@@ -1,0 +1,589 @@
+{
+  "schema": "sophia.cpqa_recall_audit.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "recallTargets": 67,
+  "thinSource": 39,
+  "answerBearing": 28,
+  "thinSourceShare": 0.5821,
+  "interpretation": "thinSourceShare is the fraction of recall queries whose retrieved page is a provenance stub with no answer-bearing prose. Grounded recall is capped at ~0.4179 by the corpus alone; the rest needs richer source bodies (Step 5) or graph-neighborhood retrieval (Step 1).",
+  "thinTargets": [
+    "art_of_war",
+    "book_of_songs",
+    "buddhism",
+    "categories",
+    "christianity",
+    "confucian",
+    "confucian_ritual",
+    "crito",
+    "dao_de_jing",
+    "daoist",
+    "doctrine_of_mean",
+    "flat_earth_medieval_myth",
+    "great_learning",
+    "great_wall_from_space_myth",
+    "han_feizi",
+    "heraclitus_fragments",
+    "i_ching",
+    "islam",
+    "learning_styles_vak",
+    "liezi",
+    "marco_polo_pasta_myth",
+    "meditations",
+    "metaphysics",
+    "moon_landing_1969",
+    "mozi",
+    "napoleon_short_myth",
+    "nicomachean_ethics",
+    "parmenides",
+    "phaedo",
+    "platonist",
+    "politics",
+    "printing_press_1440",
+    "republic",
+    "shiji",
+    "socratic",
+    "symposium",
+    "timaeus",
+    "xunzi",
+    "zuo_zhuan"
+  ],
+  "rows": [
+    {
+      "target": "analects",
+      "found": true,
+      "bodyChars": 352,
+      "proseLines": 1,
+      "proseChars": 62,
+      "answerBearing": true
+    },
+    {
+      "target": "apology",
+      "found": true,
+      "bodyChars": 344,
+      "proseLines": 1,
+      "proseChars": 61,
+      "answerBearing": true
+    },
+    {
+      "target": "art_of_war",
+      "found": true,
+      "bodyChars": 309,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "book_of_songs",
+      "found": true,
+      "bodyChars": 305,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "boston_tea_party_1773",
+      "found": true,
+      "bodyChars": 501,
+      "proseLines": 1,
+      "proseChars": 302,
+      "answerBearing": true
+    },
+    {
+      "target": "buddha_dharma_teachings",
+      "found": true,
+      "bodyChars": 439,
+      "proseLines": 1,
+      "proseChars": 133,
+      "answerBearing": true
+    },
+    {
+      "target": "buddhism",
+      "found": true,
+      "bodyChars": 132,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "categories",
+      "found": true,
+      "bodyChars": 300,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "chemical_imbalance_slogan",
+      "found": true,
+      "bodyChars": 299,
+      "proseLines": 1,
+      "proseChars": 76,
+      "answerBearing": true
+    },
+    {
+      "target": "christianity",
+      "found": true,
+      "bodyChars": 141,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "cognitive_dissonance",
+      "found": true,
+      "bodyChars": 446,
+      "proseLines": 1,
+      "proseChars": 85,
+      "answerBearing": true
+    },
+    {
+      "target": "confirmation_bias",
+      "found": true,
+      "bodyChars": 548,
+      "proseLines": 1,
+      "proseChars": 253,
+      "answerBearing": true
+    },
+    {
+      "target": "confucian",
+      "found": true,
+      "bodyChars": 186,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "confucian_ancestor_veneration",
+      "found": true,
+      "bodyChars": 399,
+      "proseLines": 1,
+      "proseChars": 83,
+      "answerBearing": true
+    },
+    {
+      "target": "confucian_ritual",
+      "found": true,
+      "bodyChars": 216,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "crito",
+      "found": true,
+      "bodyChars": 277,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "dao_de_jing",
+      "found": true,
+      "bodyChars": 303,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "dao_de_jing_daoist_scripture",
+      "found": true,
+      "bodyChars": 432,
+      "proseLines": 1,
+      "proseChars": 109,
+      "answerBearing": true
+    },
+    {
+      "target": "daoist",
+      "found": true,
+      "bodyChars": 165,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "doctrine_of_mean",
+      "found": true,
+      "bodyChars": 318,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "dunning_kruger_effect",
+      "found": true,
+      "bodyChars": 521,
+      "proseLines": 1,
+      "proseChars": 219,
+      "answerBearing": true
+    },
+    {
+      "target": "enchiridion",
+      "found": true,
+      "bodyChars": 364,
+      "proseLines": 1,
+      "proseChars": 61,
+      "answerBearing": true
+    },
+    {
+      "target": "fall_of_rome_476",
+      "found": true,
+      "bodyChars": 293,
+      "proseLines": 1,
+      "proseChars": 81,
+      "answerBearing": true
+    },
+    {
+      "target": "first_powered_flight_1903",
+      "found": true,
+      "bodyChars": 512,
+      "proseLines": 1,
+      "proseChars": 273,
+      "answerBearing": true
+    },
+    {
+      "target": "flat_earth_medieval_myth",
+      "found": true,
+      "bodyChars": 274,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "gospel_matthew",
+      "found": true,
+      "bodyChars": 433,
+      "proseLines": 1,
+      "proseChars": 103,
+      "answerBearing": true
+    },
+    {
+      "target": "great_learning",
+      "found": true,
+      "bodyChars": 313,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "great_wall_from_space_myth",
+      "found": true,
+      "bodyChars": 238,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "hadith_canonical_collections",
+      "found": true,
+      "bodyChars": 858,
+      "proseLines": 1,
+      "proseChars": 471,
+      "answerBearing": true
+    },
+    {
+      "target": "han_feizi",
+      "found": true,
+      "bodyChars": 302,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "heraclitus_fragments",
+      "found": true,
+      "bodyChars": 334,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "i_ching",
+      "found": true,
+      "bodyChars": 293,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "islam",
+      "found": true,
+      "bodyChars": 128,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "islam_early_history",
+      "found": true,
+      "bodyChars": 359,
+      "proseLines": 1,
+      "proseChars": 66,
+      "answerBearing": true
+    },
+    {
+      "target": "jesus_gospel_teachings",
+      "found": true,
+      "bodyChars": 448,
+      "proseLines": 1,
+      "proseChars": 139,
+      "answerBearing": true
+    },
+    {
+      "target": "learning_styles_vak",
+      "found": true,
+      "bodyChars": 272,
+      "proseLines": 1,
+      "proseChars": 53,
+      "answerBearing": false
+    },
+    {
+      "target": "left_brain_right_brain_pop",
+      "found": true,
+      "bodyChars": 352,
+      "proseLines": 1,
+      "proseChars": 80,
+      "answerBearing": true
+    },
+    {
+      "target": "liezi",
+      "found": true,
+      "bodyChars": 290,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "magna_carta_1215",
+      "found": true,
+      "bodyChars": 452,
+      "proseLines": 1,
+      "proseChars": 254,
+      "answerBearing": true
+    },
+    {
+      "target": "marco_polo_pasta_myth",
+      "found": true,
+      "bodyChars": 268,
+      "proseLines": 1,
+      "proseChars": 57,
+      "answerBearing": false
+    },
+    {
+      "target": "meditations",
+      "found": true,
+      "bodyChars": 313,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "mencius",
+      "found": true,
+      "bodyChars": 395,
+      "proseLines": 1,
+      "proseChars": 86,
+      "answerBearing": true
+    },
+    {
+      "target": "metaphysics",
+      "found": true,
+      "bodyChars": 303,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "moon_landing_1969",
+      "found": true,
+      "bodyChars": 259,
+      "proseLines": 1,
+      "proseChars": 57,
+      "answerBearing": false
+    },
+    {
+      "target": "mozart_effect_myth",
+      "found": true,
+      "bodyChars": 455,
+      "proseLines": 1,
+      "proseChars": 187,
+      "answerBearing": true
+    },
+    {
+      "target": "mozi",
+      "found": true,
+      "bodyChars": 285,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "napoleon_short_myth",
+      "found": true,
+      "bodyChars": 236,
+      "proseLines": 1,
+      "proseChars": 40,
+      "answerBearing": false
+    },
+    {
+      "target": "nicomachean_ethics",
+      "found": true,
+      "bodyChars": 331,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "nirvana_pop_heaven",
+      "found": true,
+      "bodyChars": 375,
+      "proseLines": 1,
+      "proseChars": 87,
+      "answerBearing": true
+    },
+    {
+      "target": "parmenides",
+      "found": true,
+      "bodyChars": 301,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "phaedo",
+      "found": true,
+      "bodyChars": 289,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "platonist",
+      "found": true,
+      "bodyChars": 129,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "politics",
+      "found": true,
+      "bodyChars": 307,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "printing_press_1440",
+      "found": true,
+      "bodyChars": 272,
+      "proseLines": 1,
+      "proseChars": 55,
+      "answerBearing": false
+    },
+    {
+      "target": "ptsd_clinical_vs_pop",
+      "found": true,
+      "bodyChars": 541,
+      "proseLines": 1,
+      "proseChars": 263,
+      "answerBearing": true
+    },
+    {
+      "target": "republic",
+      "found": true,
+      "bodyChars": 301,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "shiji",
+      "found": true,
+      "bodyChars": 318,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "socrates_corpus",
+      "found": true,
+      "bodyChars": 324,
+      "proseLines": 1,
+      "proseChars": 66,
+      "answerBearing": true
+    },
+    {
+      "target": "socratic",
+      "found": true,
+      "bodyChars": 127,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "stockholm_syndrome",
+      "found": true,
+      "bodyChars": 368,
+      "proseLines": 1,
+      "proseChars": 73,
+      "answerBearing": true
+    },
+    {
+      "target": "symposium",
+      "found": true,
+      "bodyChars": 372,
+      "proseLines": 1,
+      "proseChars": 58,
+      "answerBearing": false
+    },
+    {
+      "target": "ten_percent_brain_myth",
+      "found": true,
+      "bodyChars": 482,
+      "proseLines": 1,
+      "proseChars": 213,
+      "answerBearing": true
+    },
+    {
+      "target": "timaeus",
+      "found": true,
+      "bodyChars": 293,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "viking_horned_helmets_myth",
+      "found": true,
+      "bodyChars": 274,
+      "proseLines": 1,
+      "proseChars": 61,
+      "answerBearing": true
+    },
+    {
+      "target": "xunzi",
+      "found": true,
+      "bodyChars": 298,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    },
+    {
+      "target": "zhuangzi",
+      "found": true,
+      "bodyChars": 381,
+      "proseLines": 1,
+      "proseChars": 74,
+      "answerBearing": true
+    },
+    {
+      "target": "zuo_zhuan",
+      "found": true,
+      "bodyChars": 300,
+      "proseLines": 0,
+      "proseChars": 0,
+      "answerBearing": false
+    }
+  ]
+}

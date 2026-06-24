@@ -107,6 +107,8 @@ jobs:
           python tools/gen_continual_qa_from_wiki.py
           python tools/run_continual_qa_benchmark.py --episodes eval/continual_qa/episodes_v2_wiki.jsonl --out agi-proof/benchmark-results/continual-qa-wiki.public-report.json
           python tools/run_continual_qa_validation.py
+          python tests/test_audit_cpqa_recall.py
+          python tools/audit_cpqa_recall.py
           python tests/test_wiki_proof.py
           python tests/test_agent_harness.py
       - name: Governance contract conformance (golden vectors + schema)
