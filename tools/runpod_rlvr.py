@@ -353,6 +353,7 @@ PY
     if args.remote_mode == "live":
         live_cmd = """
 python tools/run_rlvr.py \\
+  --task "$SOPHIA_TASK" \\
   --model "$SOPHIA_MODEL" \\
   --quant "$SOPHIA_QUANT" \\
   --vllm "$SOPHIA_VLLM" \\
@@ -368,6 +369,7 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
   # Produce the held-out before/after adapter-eval the SSIL Layer-1 gate ingests.
   # Non-fatal: if eval OOMs or fails, the training artifacts are still copied back.
   python tools/eval_rlvr_adapter.py --mode real \\
+    --task "$SOPHIA_TASK" \\
     --model "$SOPHIA_MODEL" \\
     --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
     --seed "$SOPHIA_SEED" \\
@@ -388,6 +390,7 @@ export HF_HOME=/workspace/.cache/huggingface
 export TRANSFORMERS_CACHE=/workspace/.cache/huggingface/transformers
 export PIP_CACHE_DIR=/workspace/.cache/pip
 export SOPHIA_MODEL={shlex.quote(args.model)}
+export SOPHIA_TASK={shlex.quote(args.task)}
 export SOPHIA_QUANT={shlex.quote(args.quant)}
 export SOPHIA_VLLM={shlex.quote(args.vllm)}
 export SOPHIA_EPOCHS={shlex.quote(str(args.epochs))}
@@ -420,12 +423,17 @@ except Exception as exc:
     print("torch precheck failed:", type(exc).__name__, exc)
 PY
 python -m pip install --upgrade pip setuptools wheel
+# The math task's reward is sympy (math_equivalent); needed in BOTH modes so the
+# offline smoke's math invariants and the live reward can run.
+if [ "$SOPHIA_TASK" = "math" ]; then
+  python -m pip install -r requirements-math.txt
+fi
 if [ {shlex.quote(args.remote_mode)} = "live" ]; then
 {req_cmd}
   python -m pip install -r /tmp/requirements-rl.sophia.txt
 fi
 python tools/validate_attribution.py
-python tools/run_rlvr.py --model mock --dry-run --out /workspace/sophia-runpod/rlvr.offline-report.json
+python tools/run_rlvr.py --task "$SOPHIA_TASK" --model mock --dry-run --out /workspace/sophia-runpod/rlvr.offline-report.json
 {live_cmd}
 echo "Sophia RLVR remote run complete."
 ls -lh /workspace/sophia-runpod/rlvr*.json || true
@@ -532,6 +540,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--branch", default="", help="optional git branch/tag to clone")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--remote-mode", choices=["offline", "live"], default="live", help="run only remote offline smoke test or full live GRPO")
+    ap.add_argument("--task", choices=["provenance", "math"], default="provenance", help="RLVR reward task: provenance (provenance_faithful) or math (sympy math_equivalent)")
     ap.add_argument("--quant", choices=["bf16", "4bit"], default="bf16")
     ap.add_argument("--vllm", choices=["none", "server", "colocate"], default="none")
     ap.add_argument("--epochs", type=float, default=1.0)

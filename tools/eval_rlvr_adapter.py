@@ -36,7 +36,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from provenance_bench import rl_dataset, rl_reward  # noqa: E402
+from provenance_bench import math_dataset, math_reward, rl_dataset, rl_reward  # noqa: E402
 
 OUT = ROOT / "agi-proof" / "benchmark-results" / "rlvr.adapter-eval.json"
 
@@ -194,9 +194,104 @@ def run_eval(args: argparse.Namespace) -> dict:
     return report
 
 
+# --------------------------------------------------------------------------- #
+# Math task — held-out pass@1 before/after on UNSEEN problem families.
+# Reward = sympy math_equivalent (deterministic, no judge), so pass@1 IS the
+# capability number; no false-positive axis (every item has a gold).
+# --------------------------------------------------------------------------- #
+def _mock_completion_math(prob: dict, *, improved: bool) -> str:
+    if improved:
+        return f"After working it out, the answer is \\boxed{{{prob['gold']}}}."
+    return "I'm not sure; maybe \\boxed{0}."  # base deliberately wrong
+
+
+def _score_problems(problems: list, completions: dict) -> dict:
+    rows, rewards, pass1 = [], [], 0
+    by_family: dict = {}
+    for p in problems:
+        text = completions.get(p["id"], "")
+        reward, detail = math_reward.reward_for_problem(text, p["gold"])
+        rewards.append(float(reward))
+        ok = int(reward >= 1.0)
+        pass1 += ok
+        by_family.setdefault(p["family"], []).append(ok)
+        rows.append({"problem_id": p["id"], "family": p["family"], "reward": reward,
+                     "detail": detail, "completion": text})
+    return {
+        "n": len(problems),
+        "meanReward": round(statistics.mean(rewards), 4) if rewards else 0.0,
+        "passAt1": round(pass1 / len(problems), 4) if problems else 0.0,
+        "passAt1ByFamily": {f: round(sum(v) / len(v), 4) for f, v in by_family.items()},
+        "rows": rows,
+    }
+
+
+def run_eval_math(args: argparse.Namespace) -> dict:
+    data = math_dataset.build_math_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+    problems = data["eval_problems"]
+    if args.limit:
+        problems = problems[: args.limit]
+    if data["family_intersection"]:
+        raise SystemExit(f"contaminated split: {data['family_intersection']}")
+
+    if args.mode == "mock":
+        base = {p["id"]: _mock_completion_math(p, improved=False) for p in problems}
+        adapter = {p["id"]: _mock_completion_math(p, improved=True) for p in problems}
+        model_desc = "mock"
+    else:
+        if not args.adapter:
+            raise SystemExit("--adapter is required under --mode real")
+        if not math_reward.sympy_available():
+            raise SystemExit("math adapter eval needs sympy; pip install -r requirements-math.txt")
+        base_gen, adapter_gen = _load_real_generators(args.model, args.adapter, max_new_tokens=args.max_new_tokens)
+        base, adapter = {}, {}
+        for i, p in enumerate(problems, 1):
+            print(f"[eval-math] {i}/{len(problems)} {p['id']}", flush=True)
+            base[p["id"]] = base_gen(p["prompt"])
+            adapter[p["id"]] = adapter_gen(p["prompt"])
+        model_desc = args.model
+
+    base_score = _score_problems(problems, base)
+    adapter_score = _score_problems(problems, adapter)
+    delta = round(adapter_score["passAt1"] - base_score["passAt1"], 4)
+    report = {
+        "benchmark": "rlvr-adapter-heldout",
+        "task": "math",
+        "mode": args.mode,
+        "model": model_desc,
+        "adapter": str(args.adapter) if args.adapter else None,
+        "claimStatus": (
+            "Open — per-run held-out comparison on UNSEEN problem families. Capability "
+            "claim requires >=3 seeds and no-overclaim aggregation (CI excludes 0)."
+        ),
+        "split": {
+            "evalProblems": len(problems),
+            "seed": args.seed,
+            "evalFrac": args.eval_frac,
+            "evalFamilies": sorted({p["family"] for p in problems}),
+            "trainSealed": data["train_sealed"],
+            "evalSealed": data["eval_sealed"],
+            "familyIntersection": data["family_intersection"],
+        },
+        "base": {k: v for k, v in base_score.items() if k != "rows"},
+        "adapterScore": {k: v for k, v in adapter_score.items() if k != "rows"},
+        "delta": {"passAt1": delta},
+        "checks": {
+            "contaminationFree": not data["family_intersection"],
+            "adapterImprovesPassAt1": delta > 0,
+            "noPassAt1Regression": delta >= 0,
+        },
+        "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
+    }
+    report["passed"] = all(report["checks"].values())
+    return report
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--mode", choices=["mock", "real"], default="mock")
+    ap.add_argument("--task", choices=["provenance", "math"], default="provenance",
+                    help="provenance (provenance_faithful reward) or math (sympy math_equivalent reward)")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--adapter", type=Path, default=None)
     ap.add_argument("--out", type=Path, default=OUT)
@@ -206,7 +301,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--max-new-tokens", type=int, default=128)
     ap.add_argument("--max-fp-regression", type=float, default=0.0)
     args = ap.parse_args(argv)
-    report = run_eval(args)
+    report = run_eval_math(args) if args.task == "math" else run_eval(args)
     _write(args.out, report)
     print("RLVR ADAPTER EVAL PASS ✓" if report["passed"] else "RLVR ADAPTER EVAL NOT PASSED ✗")
     return 0 if report["passed"] else 1
