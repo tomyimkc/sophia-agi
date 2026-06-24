@@ -357,7 +357,16 @@ PY
     live_cmd = ""
     if args.remote_mode == "live":
         live_cmd = """
-python tools/run_rlvr.py \\
+# vLLM colocate/server runs through vLLM's external-launcher executor, which reads
+# the distributed env (RANK/WORLD_SIZE/LOCAL_RANK) that `accelerate launch` sets.
+# Plain `python` leaves RANK unset -> KeyError: 'RANK'. --vllm none has no such
+# executor and runs fine under plain python.
+if [ "$SOPHIA_VLLM" = "none" ]; then
+  SOPHIA_LAUNCH="python"
+else
+  SOPHIA_LAUNCH="accelerate launch --num_processes 1 --num_machines 1"
+fi
+$SOPHIA_LAUNCH tools/run_rlvr.py \\
   --task "$SOPHIA_TASK" \\
   --model "$SOPHIA_MODEL" \\
   --quant "$SOPHIA_QUANT" \\
