@@ -79,3 +79,12 @@ python tools/run_provenance_delta.py --models <subject> \
 ```
 
 Offline tests run in CI on every commit. Real-model numbers are produced locally by the maintainer and curated into `agi-proof/benchmark-results/published-results.json`.
+
+<!-- rlvr-replication-archive -->
+### RLVR adapter — multi-seed replication (candidate)
+
+- Adapter: `sophia-rlvr-v1`; seeds: [0, 1, 2]; n=3
+- Held-out capability (meanReward): 0.5935 → 0.7609 (mean Δ 0.1674, range 0.1126…0.2058, σ 0.0487)
+- SSIL gate promotes: 2/3; protected regression: True; contaminated: False
+- Runs: https://github.com/tomyimkc/sophia-agi/actions/runs/28101283220,https://github.com/tomyimkc/sophia-agi/actions/runs/28108334353,https://github.com/tomyimkc/sophia-agi/actions/runs/28113651413
+- **Boundary:** aggregated gate result under the no-overclaim measurement gate; n is small; `candidateOnly: true`, `canClaimAGI: false`. Not a validated capability claim.

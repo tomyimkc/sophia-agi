@@ -1,0 +1,73 @@
+{
+  "schema": "sophia.rlvr_aggregate.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "adapterId": "sophia-rlvr-v1",
+  "config": {
+    "adapter": "sophia-rlvr-v1",
+    "kind": "lora_adapter"
+  },
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "n": 3,
+  "perSeed": [
+    {
+      "seed": 0,
+      "before": 0.531,
+      "after": 0.7149,
+      "delta": 0.1839,
+      "protectedDelta": 0.0,
+      "contaminated": false,
+      "verdict": "promote",
+      "reasons": []
+    },
+    {
+      "seed": 1,
+      "before": 0.6908,
+      "after": 0.8034,
+      "delta": 0.1126,
+      "protectedDelta": -0.0303,
+      "contaminated": false,
+      "verdict": "reject",
+      "reasons": [
+        "protected integrity regressed: -0.0303"
+      ]
+    },
+    {
+      "seed": 2,
+      "before": 0.5586,
+      "after": 0.7644,
+      "delta": 0.2058,
+      "protectedDelta": 0.0,
+      "contaminated": false,
+      "verdict": "promote",
+      "reasons": []
+    }
+  ],
+  "capability": {
+    "meanBefore": 0.5935,
+    "meanAfter": 0.7609,
+    "meanDelta": 0.1674,
+    "minDelta": 0.1126,
+    "maxDelta": 0.2058,
+    "stdevDelta": 0.0487
+  },
+  "promotes": 2,
+  "anyProtectedRegression": true,
+  "anyContaminated": false,
+  "baselineAfter": null,
+  "capabilityClaimReady": false,
+  "boundary": "Aggregated gate result over a few seeds, under the no-overclaim measurement gate. NOT a validated capability claim; n is small. canClaimAGI=false.",
+  "registry": {
+    "adapterId": "sophia-rlvr-v1",
+    "replications": 3,
+    "capabilityClaimReady": false,
+    "canonical": false,
+    "canonicalMeanAfter": null,
+    "nextAdapterMustBeat": null
+  }
+}
