@@ -1,0 +1,4 @@
+gradio>=5.0.0
+numpy>=1.26
+# Sophia core (gateway, sophia_contract, provenance_bench, sophia_mcp.tools_impl) is
+# imported in-process from the repo tree this Space is built from — no extra install.

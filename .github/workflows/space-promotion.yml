@@ -1,0 +1,40 @@
+name: space-promotion
+
+# On every change to the HF Space, generate a SHAREABLE summary card (a prefilled
+# tweet-intent link + the honest one-liner) in the Actions run summary.
+#
+# It deliberately does NOT auto-post to X/Twitter: auto-spamming every build is
+# low-value, needs API secrets, and risks broadcasting unverified claims. The
+# maintainer clicks the prefilled link when they actually want to share — keeping
+# promotion human-in-the-loop and on-message with the no-overclaim gate.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'huggingface/space-v2/**'
+      - '.github/workflows/space-promotion.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  share-card:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Build honest share card
+        run: |
+          SPACE="https://huggingface.co/spaces/tomyimkc/sophia-agi"
+          TWEET="I tested Sophia — the Wisdom Gate by @tomyimkc: an AI gate that abstains instead of fabricating, cuts attribution-hallucination Δ12.5%25 (95%25 CI 5.6–19.4%25, 2 independent judges), and publishes its own failure ledger. ${SPACE}"
+          INTENT="https://twitter.com/intent/tweet?text=$(echo "$TWEET" | sed 's/ /%20/g')"
+          {
+            echo "## 🛡️ Sophia Space updated";
+            echo "";
+            echo "**Honest one-liner:** an AI gate that abstains instead of fabricating, and publishes its own failure rate (not a claim of AGI).";
+            echo "";
+            echo "- Space: $SPACE";
+            echo "- Repo: https://github.com/tomyimkc/sophia-agi";
+            echo "";
+            echo "**Share (click to open a prefilled tweet):** [$INTENT]($INTENT)";
+          } >> "$GITHUB_STEP_SUMMARY"
