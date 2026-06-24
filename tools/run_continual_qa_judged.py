@@ -172,11 +172,17 @@ def main() -> None:
             entry = {"consensusPassRate": round(sum(consensus) / len(rows), 4),
                      "perJudgePassRate": per_judge, "interJudgeKappa": None,
                      "interJudgePercentAgreement": None}
-            if len(judge_models) == 2:
-                ja = [row["judges"][system][judge_models[0]] for row in rows]
-                jb = [row["judges"][system][judge_models[1]] for row in rows]
-                kappas.append(cohen_kappa(ja, jb))
-                agreements.append(percent_agreement(ja, jb))
+            # Mean pairwise inter-judge agreement over ALL judge pairs — generalizes the
+            # 2-judge case to an N-family panel (validation across >2 families).
+            if len(judge_models) >= 2:
+                votes = {m: [row["judges"][system][m] for row in rows] for m in judge_models}
+                pair_k, pair_a = [], []
+                for i in range(len(judge_models)):
+                    for j in range(i + 1, len(judge_models)):
+                        pair_k.append(cohen_kappa(votes[judge_models[i]], votes[judge_models[j]]))
+                        pair_a.append(percent_agreement(votes[judge_models[i]], votes[judge_models[j]]))
+                kappas.append(round(sum(pair_k) / len(pair_k), 4))
+                agreements.append(round(sum(pair_a) / len(pair_a), 4))
                 entry["interJudgeKappa"] = kappas[-1]
                 entry["interJudgePercentAgreement"] = agreements[-1]
             per_run.append(entry)
