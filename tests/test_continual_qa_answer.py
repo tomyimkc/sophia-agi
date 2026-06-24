@@ -18,8 +18,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.continual_qa_answer import (  # noqa: E402
-    ABSTAIN_TEXT, cohen_kappa, generate_grounded, judge_answer, percent_agreement, verdict,
+    ABSTAIN_TEXT, build_neighborhood_source_map, cohen_kappa, generate_grounded, judge_answer,
+    neighborhood_ids, percent_agreement, verdict,
 )
+from okf import build_graph  # noqa: E402
+from okf.page import Page  # noqa: E402
 
 
 def test_grounded_abstains_without_source() -> None:
@@ -65,6 +68,31 @@ def test_verdict_rubric() -> None:
     assert verdict(fabricated, "assert") is False          # fabrication fails an assert
     assert verdict(declined, "abstain") is True            # correct refusal passes
     assert verdict(good, "abstain") is False               # answering when it should abstain fails
+
+
+def _p(pid, body="", **meta):
+    return Page(path=Path(f"{pid}.md"), meta={"id": pid, "pageType": "concept", **meta}, body=body)
+
+
+def test_neighborhood_ids_follows_edges() -> None:
+    # stub --derivesFrom--> rich --links--> extra ; 1 hop reaches rich, 2 hops reaches extra
+    pages = [_p("stub", derivesFrom=["rich"]), _p("rich", links=["extra"]), _p("extra"), _p("loner")]
+    g = build_graph(pages)
+    one = neighborhood_ids(g, "stub", hops=1)
+    assert one[0] == "stub" and "rich" in one and "extra" not in one
+    two = neighborhood_ids(g, "stub", hops=2)
+    assert "rich" in two and "extra" in two and "loner" not in two
+
+
+def test_neighborhood_source_includes_neighbor_content() -> None:
+    pages = [
+        _p("stub", body="# stub\n", derivesFrom=["rich"]),
+        _p("rich", body="The Analects is a compiled record of conversations attributed to Confucius."),
+    ]
+    smap = build_neighborhood_source_map(pages, hops=1)
+    # the stub's combined source now carries the rich neighbor's prose
+    assert "compiled record of conversations" in smap["stub"]
+    assert smap["stub"].startswith("id: stub")     # target first
 
 
 def test_cohen_kappa() -> None:

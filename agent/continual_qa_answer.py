@@ -74,6 +74,54 @@ def build_source_map(pages) -> "dict[str, str]":
     return out
 
 
+_NEIGHBOR_EDGE_KEYS = ("derivesFrom", "links", "contradicts", "supersedes", "supersededBy")
+
+
+def neighborhood_ids(graph, target: str, *, hops: int = 1) -> "list[str]":
+    """Target id + ids reachable within ``hops`` over the OKF edges (provenance + links).
+
+    Pure-grounded expansion: every id is a real corpus page, so widening the context this
+    way cannot introduce parametric content and cannot weaken attribution discipline."""
+    from okf.graph import resolve  # noqa: PLC0415
+    from okf.schema import as_list  # noqa: PLC0415
+
+    seen = {target}
+    frontier = {target}
+    for _ in range(max(0, hops)):
+        nxt: set[str] = set()
+        for nid in frontier:
+            node = graph.nodes.get(nid)
+            if node is None:
+                continue
+            cand: list[str] = []
+            for key in _NEIGHBOR_EDGE_KEYS:
+                cand += [str(x) for x in as_list(node["meta"].get(key))]
+            cand += list(node["page"].body_links())
+            for raw in cand:
+                rid = resolve(graph, raw)
+                if rid is not None and rid not in seen:
+                    nxt.add(rid)
+        seen |= nxt
+        frontier = nxt
+        if not frontier:
+            break
+    return [target] + sorted(seen - {target})
+
+
+def build_neighborhood_source_map(pages, *, hops: int = 1, max_chars: int = 4000) -> "dict[str, str]":
+    """Step 1: id -> combined source over the k-hop OKF neighborhood (target page first,
+    then neighbors), so a thin stub is backed by its provenance sources and linked pages."""
+    from okf import build_graph  # noqa: PLC0415
+
+    graph = build_graph(list(pages))
+    per = build_source_map(pages)
+    out: dict[str, str] = {}
+    for p in pages:
+        ordered = [i for i in neighborhood_ids(graph, p.id, hops=hops) if i in per]
+        out[p.id] = "\n---\n".join(per[i] for i in ordered)[:max_chars]
+    return out
+
+
 def generate_grounded(question: str, source_text, complete, *, mode: str = "strict") -> str:
     """Answer from the retrieved source. ``mode='strict'`` answers only from the source;
     ``mode='attribution_safe'`` (Step 4) also allows well-established general facts while
@@ -144,6 +192,7 @@ def cohen_kappa(a: "list[bool]", b: "list[bool]") -> float:
 
 
 __all__ = [
-    "ABSTAIN_TEXT", "build_source_map", "generate_grounded", "generate_raw",
-    "judge_answer", "verdict", "cohen_kappa", "percent_agreement",
+    "ABSTAIN_TEXT", "build_source_map", "build_neighborhood_source_map", "neighborhood_ids",
+    "generate_grounded", "generate_raw", "judge_answer", "verdict", "cohen_kappa",
+    "percent_agreement",
 ]

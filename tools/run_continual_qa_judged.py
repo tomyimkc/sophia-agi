@@ -35,8 +35,8 @@ if str(ROOT) not in sys.path:
 from agent import deepseek_llm, llmhub_llm, openrouter_client  # noqa: E402
 from agent.continual_qa import GraphBackedSystem, load_episodes  # noqa: E402
 from agent.continual_qa_answer import (  # noqa: E402
-    build_source_map, cohen_kappa, generate_grounded, generate_raw, judge_answer,
-    percent_agreement, verdict,
+    build_neighborhood_source_map, build_source_map, cohen_kappa, generate_grounded,
+    generate_raw, judge_answer, percent_agreement, verdict,
 )
 from agent.public_sanitize import sanitize_public_artifact  # noqa: E402
 from okf.page import load_pages  # noqa: E402
@@ -106,13 +106,18 @@ def main() -> None:
     ap.add_argument("--answer", default="llmhub:gpt-5-mini", help="provider:model for answers")
     ap.add_argument("--grounded-mode", default="strict", choices=["strict", "attribution_safe"],
                     help="Step 4: 'attribution_safe' allows general-fact recall while keeping attribution discipline")
+    ap.add_argument("--retrieval", default="single", choices=["single", "neighborhood"],
+                    help="Step 1: 'neighborhood' backs each page with its k-hop OKF neighbors")
+    ap.add_argument("--hops", type=int, default=1, help="neighborhood hop count (Step 1)")
     ap.add_argument("--judge", action="append", default=None,
                     help="provider:model judge (repeatable); default = cross-family Claude + Gemini")
     args = ap.parse_args()
 
     judge_specs = args.judge or ["llmhub:claude-opus-4-8", "llmhub:gemini-2.5-pro"]
     episodes = load_episodes(args.episodes)
-    source_map = build_source_map(load_pages(args.wiki))
+    pages = load_pages(args.wiki)
+    source_map = (build_neighborhood_source_map(pages, hops=args.hops)
+                  if args.retrieval == "neighborhood" else build_source_map(pages))
     selected = _select(episodes, args.limit)
 
     answer_model_id, answer_complete = _complete_for(args.answer, max_tokens=256)
@@ -186,6 +191,8 @@ def main() -> None:
         "distinctProviderFamilies": len(judge_families) >= 2,
         "selfGradingRisk": answer_family in judge_families,
         "groundedMode": args.grounded_mode,
+        "retrieval": args.retrieval,
+        "hops": args.hops if args.retrieval == "neighborhood" else None,
         "runs": args.runs,
         "queryCount": len(selected),
         "summary": summary,
