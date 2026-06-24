@@ -36,11 +36,20 @@ def _ladder(base: dict[str, float], adapter: dict[str, float]) -> dict:
 
 
 def test_v2_adapter_rejects_on_religion_regression() -> None:
-    """The real merged artifact must auto-reproduce the hand-written ledger reject."""
-    import json
-    adapter_ladder = json.loads((ROOT / "training/local_sophia_v2/eval_ladder_adapter.json").read_text())
+    """A v2-style adapter that regresses a protected domain (religion) must be
+    auto-rejected by the promotion gate — reproducing the failure-ledger decision.
+
+    This uses a deterministic synthetic ladder so the gate *logic* is tested
+    independently of the real adapter artifact, which is re-measured over time.
+    (As of the latest measured ``training/local_sophia_v2/eval_ladder_adapter.json``,
+    the real adapter no longer regresses religion — base == adapter == 0.167 — so the
+    real artifact now PROMOTES rather than rejects; see CHANGELOG.)
+    """
+    base = {"philosophy": 0.66, "psychology": 0.44, "history": 0.62, "religion": 0.33}
+    adapter = {"philosophy": 0.88, "psychology": 0.66, "history": 0.66, "religion": 0.0}
+    adapter_ladder = _ladder(base, adapter)
     after = _rung(adapter_ladder, "adapter")
-    assert after is not None and after["domains"]["religion"] == 0.0  # the known regression
+    assert after is not None and after["domains"]["religion"] == 0.0  # the protected regression
 
     cand = build_candidate(
         candidate_id="local-sophia-v2-mlx", kind="lora_adapter", baseline_ladder=None,
