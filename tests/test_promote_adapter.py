@@ -42,9 +42,14 @@ def test_v2_adapter_rejects_on_religion_regression() -> None:
     Built from a synthetic ladder so the test exercises the gate rule directly and stays
     decoupled from the regenerated ``eval_ladder_adapter.json`` artifact, whose scores
     drift between eval runs (it has since moved religion off 0.0, which would silently
-    invalidate a brittle artifact-pinned assertion)."""
+    invalidate a brittle artifact-pinned assertion).
+
+    The adapter is deliberately the *faithful hard case*: it clears the target-suite
+    improvement floor (total +8.3pp) yet collapses the protected ``religion`` domain to
+    0.0 — so the reject must be attributable to the protected-floor rule alone, not to a
+    failure to improve. The test asserts exactly that."""
     base = {"philosophy": 0.66, "psychology": 0.44, "history": 0.62, "religion": 0.33}
-    adapter = {"philosophy": 0.77, "psychology": 0.66, "history": 0.66, "religion": 0.0}
+    adapter = {"philosophy": 0.88, "psychology": 0.77, "history": 0.77, "religion": 0.0}
     adapter_ladder = _ladder(base, adapter)
     after = _rung(adapter_ladder, "adapter")
     assert after is not None and after["domains"]["religion"] == 0.0  # the protected-domain collapse
@@ -56,7 +61,8 @@ def test_v2_adapter_rejects_on_religion_regression() -> None:
     )
     d = evaluate_update(cand, target_suite="total", min_target_delta=0.03, max_protected_regression=0.01)
     assert d.verdict == "reject"
-    assert any("religion" in r for r in d.reasons)
+    assert any("religion" in r for r in d.reasons)                       # rejected for the protected regression
+    assert not any("below floor" in r for r in d.reasons)                # and NOT because it failed to improve
 
 
 def test_clean_improving_adapter_promotes() -> None:
