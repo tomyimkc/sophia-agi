@@ -71,3 +71,6 @@ training/mlx_adapters/**
 !training/mlx_adapters/sophia-v2/
 !training/mlx_adapters/sophia-v2/adapter_config.json
 !training/mlx_adapters/sophia-v2/adapters.safetensors
+
+# SSIL runtime registry (mutable append log)
+agi-proof/self-extension/ssil-registry.jsonl
