@@ -50,7 +50,8 @@ jobs:
               - 'pyproject.toml'
               - '.github/workflows/**'
 
-  validate:
+  validate-core:
+    # Provenance, OKF, contract, gateway, skills, discipline
     needs: changes
     # Full rigorous validation runs on every push to main, on any code/data change,
     # or when a PR carries the 'full-ci' label. Docs-only PRs skip it.
@@ -59,7 +60,7 @@ jobs:
       needs.changes.outputs.code == 'true' ||
       contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
@@ -130,6 +131,23 @@ jobs:
           python tools/belief_counterfactual.py retract analects --reason ci-smoke >/dev/null
           python tests/test_mine_hard_negatives.py
           python tests/test_sophia_guard_cli.py
+
+  validate-reasoning:
+    # Benchmarks, generality, synthesis, pillars, flywheel, RLVR
+    needs: changes
+    # Full rigorous validation runs on every push to main, on any code/data change,
+    # or when a PR carries the 'full-ci' label. Docs-only PRs skip it.
+    if: >-
+      github.event_name == 'push' ||
+      needs.changes.outputs.code == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'full-ci')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
       - name: Provenance Delta benchmark tests
         run: |
           python tests/test_provenance_bench.py
@@ -157,20 +175,6 @@ jobs:
           python tests/test_layered_memory.py
           python tests/test_agi_missing_pillars_bundle.py
           python tools/run_agi_missing_pillars.py
-      - name: "Conscience kernel (seven paths + seven hardening priorities)"
-        run: |
-          python tests/test_conscience.py
-          python tests/test_metacognition.py
-          python tests/test_mcp_conscience.py
-          python tests/test_conscience_priorities.py
-          python tests/test_conscience_eval_tools.py
-          python tests/test_conscience_proof_package.py
-          python tests/test_public_moral_standard.py
-          python tests/test_all_phase_benchmarks.py
-          python tools/run_conscience_demo.py
-          python tools/run_moral_public_standard_eval.py
-          python tools/run_all_phase_benchmarks.py
-          python tools/build_conscience_proof_package.py
       - name: Self-extending verification flywheel (synthesize→validate→cover, causal, transfer, long-horizon)
         run: |
           python tests/test_selfextend.py
@@ -200,6 +204,37 @@ jobs:
         run: |
           python tests/test_corroboration.py
           python tools/run_corroboration.py
+
+  validate-safety:
+    # Conscience, moral, training-safety, steering, injection, legal
+    needs: changes
+    # Full rigorous validation runs on every push to main, on any code/data change,
+    # or when a PR carries the 'full-ci' label. Docs-only PRs skip it.
+    if: >-
+      github.event_name == 'push' ||
+      needs.changes.outputs.code == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'full-ci')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: "Conscience kernel (seven paths + seven hardening priorities)"
+        run: |
+          python tests/test_conscience.py
+          python tests/test_metacognition.py
+          python tests/test_mcp_conscience.py
+          python tests/test_conscience_priorities.py
+          python tests/test_conscience_eval_tools.py
+          python tests/test_conscience_proof_package.py
+          python tests/test_public_moral_standard.py
+          python tests/test_all_phase_benchmarks.py
+          python tools/run_conscience_demo.py
+          python tools/run_moral_public_standard_eval.py
+          python tools/run_all_phase_benchmarks.py
+          python tools/build_conscience_proof_package.py
       - name: Training safety — LoRA leakage guard + contamination control (#7)
         run: |
           python tests/test_training_safety.py
@@ -253,6 +288,23 @@ jobs:
         run: |
           python tests/test_gate.py
           python tests/test_cantonese.py
+
+  validate-build:
+    # Council, uplift, gates, corpus + leaderboards + web build
+    needs: changes
+    # Full rigorous validation runs on every push to main, on any code/data change,
+    # or when a PR carries the 'full-ci' label. Docs-only PRs skip it.
+    if: >-
+      github.event_name == 'push' ||
+      needs.changes.outputs.code == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'full-ci')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
       - name: Council deliberation (map-reduce + per-seat gate) + small-LLM uplift
         run: |
           python tests/test_council_deliberate.py
@@ -305,10 +357,6 @@ jobs:
           python tools/build_agi_proof_package.py
           python tools/build_web_data.py
 
-  # Full pytest sweep — runs EVERY tests/test_*.py (incl. files the curated
-  # `validate` job does not hand-list), so a new test file can never silently
-  # go unrun. The only third-party deps the suite needs are numpy + pytest;
-  # heavy deps (torch/transformers/…) are lazy-imported and their tests skip.
   test:
     needs: changes
     if: >-
@@ -333,15 +381,15 @@ jobs:
   # intentionally skipped (docs-only PR). Make THIS the required check in branch
   # protection — never 'validate'/'test' directly, since they may be skipped.
   ci-complete:
-    needs: [changes, validate, test]
+    needs: [changes, validate-core, validate-reasoning, validate-safety, validate-build, test]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
       - name: Gate on required jobs
         run: |
-          echo "validate=${{ needs.validate.result }} test=${{ needs.test.result }}"
-          for r in "${{ needs.validate.result }}" "${{ needs.test.result }}"; do
+          echo "results: ${{ needs.validate-core.result }} ${{ needs.validate-reasoning.result }} ${{ needs.validate-safety.result }} ${{ needs.validate-build.result }} ${{ needs.test.result }}"
+          for r in ${{ needs.validate-core.result }} ${{ needs.validate-reasoning.result }} ${{ needs.validate-safety.result }} ${{ needs.validate-build.result }} ${{ needs.test.result }}; do
             if [ "$r" = "failure" ] || [ "$r" = "cancelled" ]; then
               echo "::error::a required CI job failed ($r)"; exit 1
             fi
