@@ -57,6 +57,14 @@ def test_all_phase_runner() -> None:
     assert seib["nCases"] == 100
     assert seib["byCondition"]["sophia_full"]["falseAttributionRate"] == 0.0
     assert seib["deltas"]["raw_to_full_accuracy_delta"] > 0.0
+    # Honesty counterweight (provenance-delta spec): false-positive cost must be
+    # reported AND bounded, so a degenerate gate that erases correct attributions
+    # cannot pass. The prompt-only ablation rung must exist and be distinguishable
+    # from the tool/gate rungs by source-citation rate.
+    assert "falsePositiveCost" in seib["byCondition"]["sophia_full"]
+    assert seib["byCondition"]["sophia_full"]["falsePositiveCost"] <= 0.10
+    assert "raw+prompt" in seib["conditions"]
+    assert seib["byCondition"]["sophia_full"]["sourceCitationRate"] > seib["byCondition"]["raw+prompt"]["sourceCitationRate"]
 
 
 def main() -> int:

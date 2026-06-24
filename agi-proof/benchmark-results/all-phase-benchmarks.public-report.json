@@ -16,9 +16,12 @@
       "metrics": {
         "raw_to_mcp_accuracy_delta": 0.79,
         "raw_to_gate_accuracy_delta": 0.31,
+        "raw_to_prompt_accuracy_delta": 0.79,
         "raw_to_full_accuracy_delta": 0.79,
+        "prompt_to_full_citation_delta": 1.0,
         "raw_to_full_false_attribution_reduction": 0.6,
-        "raw_to_full_contested_fabrication_reduction": 0.98
+        "raw_to_full_contested_fabrication_reduction": 0.98,
+        "sophia_full_false_positive_cost": 0.02
       },
       "n": 100,
       "claimBoundary": "Candidate SEIB-100 benchmark. Deterministic/offline path proves wiring and scoring; real-model headline claims require >=3 runs, >=2 independent judge families, kappa>=0.40, and CI excluding 0."

@@ -9,6 +9,7 @@
   "nCases": 100,
   "conditions": [
     "raw",
+    "raw+prompt",
     "raw+mcp",
     "raw+gate",
     "sophia_full"
@@ -20,7 +21,19 @@
       "falseAttributionRate": 0.6,
       "fabricationRateOnContested": 0.98,
       "qualificationRateOnContested": 0.02,
-      "traditionMergeRate": 0.08
+      "traditionMergeRate": 0.08,
+      "falsePositiveCost": 0.02,
+      "sourceCitationRate": 0.0
+    },
+    "raw+prompt": {
+      "n": 100,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 1.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 1.0,
+      "sourceCitationRate": 0.0
     },
     "raw+mcp": {
       "n": 100,
@@ -28,7 +41,9 @@
       "falseAttributionRate": 0.0,
       "fabricationRateOnContested": 0.0,
       "qualificationRateOnContested": 1.0,
-      "traditionMergeRate": 0.0
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.02,
+      "sourceCitationRate": 1.0
     },
     "raw+gate": {
       "n": 100,
@@ -36,7 +51,9 @@
       "falseAttributionRate": 0.0,
       "fabricationRateOnContested": 0.96,
       "qualificationRateOnContested": 0.04,
-      "traditionMergeRate": 0.0
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.02,
+      "sourceCitationRate": 0.51
     },
     "sophia_full": {
       "n": 100,
@@ -44,15 +61,20 @@
       "falseAttributionRate": 0.0,
       "fabricationRateOnContested": 0.0,
       "qualificationRateOnContested": 1.0,
-      "traditionMergeRate": 0.0
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.02,
+      "sourceCitationRate": 1.0
     }
   },
   "deltas": {
     "raw_to_mcp_accuracy_delta": 0.79,
     "raw_to_gate_accuracy_delta": 0.31,
+    "raw_to_prompt_accuracy_delta": 0.79,
     "raw_to_full_accuracy_delta": 0.79,
+    "prompt_to_full_citation_delta": 1.0,
     "raw_to_full_false_attribution_reduction": 0.6,
-    "raw_to_full_contested_fabrication_reduction": 0.98
+    "raw_to_full_contested_fabrication_reduction": 0.98,
+    "sophia_full_false_positive_cost": 0.02
   },
   "ok": true,
   "rows": [
@@ -67,7 +89,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": true
+        "traditionMerge": true,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Confucius did not write Dao De Jing; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -81,7 +121,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -95,7 +137,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -109,7 +153,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -123,7 +169,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": true
+        "traditionMerge": true,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Socrates did not write The Republic; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -137,7 +201,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -151,7 +217,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -165,7 +233,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -179,7 +249,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato did not write Dao De Jing; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -193,7 +281,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -207,7 +297,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -221,7 +313,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -235,7 +329,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": true
+        "traditionMerge": true,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Laozi did not write Analects; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -249,7 +361,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -263,7 +377,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -277,7 +393,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -291,7 +409,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Confucius did not write Mencius; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -305,7 +441,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -319,7 +457,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -333,7 +473,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -347,7 +489,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_006_false-aristotle-republic",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Aristotle did not write The Republic; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -361,7 +521,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -375,7 +537,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -389,7 +553,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -403,7 +569,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_007_false-epictetus-meditations",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Epictetus did not write Meditations; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -417,7 +601,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -431,7 +617,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -445,7 +633,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -459,7 +649,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_008_false-marcus-enchiridion",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Marcus Aurelius did not write Enchiridion; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -473,7 +681,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -487,7 +697,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -501,7 +713,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -515,7 +729,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_009_false-nietzsche-manifesto",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Nietzsche did not write The Communist Manifesto; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -529,7 +761,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -543,7 +777,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -557,7 +793,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -571,7 +809,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_010_false-freud-bge",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Freud did not write Beyond Good and Evil; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -585,7 +841,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -599,7 +857,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -613,7 +873,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -627,7 +889,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_011_false-kant-prince",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Kant did not write The Prince; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -641,7 +921,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -655,7 +937,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -669,7 +953,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -683,7 +969,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": true
+        "traditionMerge": true,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_012_false-zhuangzi-dao_de_jing",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Zhuangzi did not write Dao De Jing; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -697,7 +1001,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -711,7 +1017,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -725,7 +1033,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -739,7 +1049,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_013_false-aristotle-rhetoric_to_alexander",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Aristotle did not write Rhetoric to Alexander; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -753,7 +1081,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -767,7 +1097,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -781,7 +1113,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -795,7 +1129,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_014_false-plato-epinomis",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato did not write Epinomis; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -809,7 +1161,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -823,7 +1177,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -837,7 +1193,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -851,7 +1209,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_015_false-xenophon-constitution_athenians",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Xenophon did not write Constitution of the Athenians; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -865,7 +1241,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -879,7 +1257,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -893,7 +1273,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -907,7 +1289,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_016_false-caesar-gallic_war_book_8",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Julius Caesar did not write the eighth book of the Gallic War; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -921,7 +1321,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -935,7 +1337,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -949,7 +1353,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -963,7 +1369,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_017_false-aristotle-de_mundo",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Aristotle did not write On the Universe; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -977,7 +1401,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -991,7 +1417,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1005,7 +1433,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1019,7 +1449,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_018_false-confucius-ten_wings",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Confucius did not write the Ten Wings of the I Ching; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -1033,7 +1481,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1047,7 +1497,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1061,7 +1513,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1075,7 +1529,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_019_false-constantine-donation",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Constantine the Great did not write the Donation of Constantine; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -1089,7 +1561,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1103,7 +1577,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1117,7 +1593,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1131,7 +1609,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_020_false-aristotle-on_plants",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Aristotle did not write On Plants; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -1145,7 +1641,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1159,7 +1657,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1173,7 +1673,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1187,7 +1689,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_021_false-aristotle-problemata",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Aristotle did not write the Problems (Problemata); that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -1201,7 +1721,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1215,7 +1737,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1229,7 +1753,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1243,7 +1769,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_022_false-homer-batrachomyomachia",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Homer did not write the Batrachomyomachia; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -1257,7 +1801,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1271,7 +1817,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1285,7 +1833,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1299,7 +1849,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_023_false-homer-homeric_hymns",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Homer did not write the Homeric Hymns; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -1313,7 +1881,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1327,7 +1897,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1341,7 +1913,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1355,7 +1929,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_024_false-hermes-corpus_hermeticum",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Hermes Trismegistus did not write the Corpus Hermeticum; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -1369,7 +1961,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1383,7 +1977,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1397,7 +1993,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1411,7 +2009,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_025_false-plato-axiochus",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato did not write the Axiochus; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -1425,7 +2041,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1439,7 +2057,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1453,7 +2073,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1467,7 +2089,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_026_false-plato-second_alcibiades",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato did not write the Second Alcibiades; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -1481,7 +2121,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1495,7 +2137,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1509,7 +2153,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1523,7 +2169,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_027_false-phalaris-epistles",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Phalaris did not write the Epistles of Phalaris; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -1537,7 +2201,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1551,7 +2217,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1565,7 +2233,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1579,7 +2249,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_028_false-dionysius-corpus",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Dionysius the Areopagite did not write the Corpus Areopagiticum; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -1593,7 +2281,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1607,7 +2297,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1621,7 +2313,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1635,7 +2329,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_029_false-caesar-alexandrian_war",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Julius Caesar did not write the Alexandrian War; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -1649,7 +2361,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1663,7 +2377,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1677,7 +2393,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1691,7 +2409,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_030_false-virgil-appendix",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Virgil did not write the Appendix Vergiliana; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -1705,7 +2441,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1719,7 +2457,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1733,7 +2473,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1747,7 +2489,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_031_false-pythagoras-golden_verses",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Pythagoras did not write the Golden Verses; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -1761,7 +2521,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1775,7 +2537,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1789,7 +2553,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1803,7 +2569,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_032_false-aesop-fables",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Aesop did not write Aesop's Fables; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -1817,7 +2601,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1831,7 +2617,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1845,7 +2633,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1859,7 +2649,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_033_false-moses-deuteronomy",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Moses did not write Deuteronomy; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -1873,7 +2681,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1887,7 +2697,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1901,7 +2713,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1915,7 +2729,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_034_false-solomon-ecclesiastes",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Solomon did not write Ecclesiastes; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -1929,7 +2761,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1943,7 +2777,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1957,7 +2793,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1971,7 +2809,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_035_false-solomon-wisdom",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Solomon did not write the Wisdom of Solomon; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -1985,7 +2841,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -1999,7 +2857,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2013,7 +2873,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2027,7 +2889,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_036_false-isaiah-deutero",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Isaiah did not write chapters 40 to 66 of the Book of Isaiah; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -2041,7 +2921,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2055,7 +2937,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2069,7 +2953,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2083,7 +2969,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_037_false-daniel-book",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, the prophet Daniel did not write the Book of Daniel; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -2097,7 +3001,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2111,7 +3017,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2125,7 +3033,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2139,7 +3049,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_038_false-david-psalms",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, King David did not write the Book of Psalms; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -2153,7 +3081,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2167,7 +3097,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2181,7 +3113,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2195,7 +3129,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_039_false-paul-hebrews",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Paul did not write the Epistle to the Hebrews; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -2209,7 +3161,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2223,7 +3177,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2237,7 +3193,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2251,7 +3209,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_040_false-paul-first_timothy",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Paul did not write the First Epistle to Timothy; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -2265,7 +3241,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2279,7 +3257,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2293,7 +3273,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2307,7 +3289,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_041_false-paul-titus",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Paul did not write the Epistle to Titus; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -2321,7 +3321,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2335,7 +3337,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2349,7 +3353,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2363,7 +3369,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_042_false-enoch-book",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, the biblical Enoch did not write the Book of Enoch; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -2377,7 +3401,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2391,7 +3417,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2405,7 +3433,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2419,7 +3449,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_043_false-thomas-gospel",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, the Apostle Thomas did not write the Gospel of Thomas; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -2433,7 +3481,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2447,7 +3497,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2461,7 +3513,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2475,7 +3529,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_044_false-lieyukou-liezi",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Lie Yukou did not write the Liezi; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -2489,7 +3561,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2503,7 +3577,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2517,7 +3593,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2531,7 +3609,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_045_false-guanzhong-guanzi",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Guan Zhong did not write the Guanzi; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -2545,7 +3641,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2559,7 +3657,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2573,7 +3673,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2587,7 +3689,25 @@
         "falseAttribution": true,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_046_false-confucius-spring_autumn",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Confucius did not write the Spring and Autumn Annals; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -2601,7 +3721,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2615,7 +3737,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2629,7 +3753,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2643,7 +3769,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_047_false-plato-theages",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato did not write Theages; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -2657,7 +3801,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2671,7 +3817,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2685,7 +3833,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2699,7 +3849,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_048_false-plato-minos",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato did not write Minos; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -2713,7 +3881,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2727,7 +3897,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2741,7 +3913,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2755,7 +3929,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_049_false-plato-hipparchus",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato did not write Hipparchus; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -2769,7 +3961,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2783,7 +3977,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2797,7 +3993,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2811,7 +4009,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_false_050_false-plato-demodocus",
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato did not write Demodocus; that is a misattribution and should not be stated as settled (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -2825,7 +4041,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2839,7 +4057,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2853,7 +4073,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2867,7 +4089,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_001_true-laozi-dao_de_jing",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Dao De Jing is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -2881,7 +4121,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2895,7 +4137,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -2909,7 +4153,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2923,7 +4169,25 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_002_true-confucius-analects",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Analects is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -2937,7 +4201,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2951,7 +4217,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -2965,7 +4233,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -2979,7 +4249,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_003_true-arrian-enchiridion",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Enchiridion is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -2993,7 +4281,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3007,7 +4297,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3021,7 +4313,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3035,7 +4329,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_004_true-anaximenes-rhetoric_to_alexander",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Rhetoric to Alexander is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3049,7 +4361,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3063,7 +4377,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3077,7 +4393,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3091,7 +4409,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_005_true-philip-epinomis",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Epinomis is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3105,7 +4441,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3119,7 +4457,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3133,7 +4473,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3147,7 +4489,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_006_true-many_authors_over_-the_book_of_psalms",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of the Book of Psalms is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3161,7 +4521,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": true
       }
     },
     {
@@ -3175,7 +4537,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3189,7 +4553,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": true
       }
     },
     {
@@ -3203,7 +4569,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_007_true-moses_de_le_n-zohar",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Zohar is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3217,7 +4601,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3231,7 +4617,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3245,7 +4633,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3259,7 +4649,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_008_true-james_macpherson-the_poems_of_ossian_fingal_tem",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The Poems of Ossian (Fingal, Temora) is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3273,7 +4681,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3287,7 +4697,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3301,7 +4713,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3315,7 +4729,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_009_true-thomas_chatterton-the_rowley_poems",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The Rowley Poems is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3329,7 +4761,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3343,7 +4777,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3357,7 +4793,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3371,7 +4809,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_010_true-thomas_kempis-de_imitatione_christi_the_imit",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of De Imitatione Christi (The Imitation of Christ) is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3385,7 +4841,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3399,7 +4857,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3413,7 +4873,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3427,7 +4889,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_011_true-william_henry_irel-vortigern_and_rowena",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Vortigern and Rowena is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3441,7 +4921,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3455,7 +4937,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3469,7 +4953,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3483,7 +4969,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_012_true-philo_of_byblos-phoenician_history",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Phoenician History is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3497,7 +5001,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3511,7 +5017,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3525,7 +5033,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3539,7 +5049,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_013_true-arthur_schopenhaue-the_world_as_will_and_represen",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The World as Will and Representation is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3553,7 +5081,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3567,7 +5097,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3581,7 +5113,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3595,7 +5129,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_014_true-lucretius-on_the_nature_of_things",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of On the Nature of Things is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3609,7 +5161,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3623,7 +5177,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3637,7 +5193,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3651,7 +5209,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_015_true-john_locke-an_essay_concerning_human_unde",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of An Essay Concerning Human Understanding is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3665,7 +5241,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3679,7 +5257,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3693,7 +5273,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3707,7 +5289,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_016_true-david_hume-an_enquiry_concerning_the_prin",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of An Enquiry Concerning the Principles of Morals is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3721,7 +5321,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3735,7 +5337,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3749,7 +5353,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3763,7 +5369,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_017_true-montesquieu-the_spirit_of_the_laws",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The Spirit of the Laws is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3777,7 +5401,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3791,7 +5417,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3805,7 +5433,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3819,7 +5449,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_018_true-simone_de_beauvoir-the_second_sex",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The Second Sex is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3833,7 +5481,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3847,7 +5497,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3861,7 +5513,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3875,7 +5529,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_019_true-jean_paul_sartre-being_and_nothingness",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Being and Nothingness is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3889,7 +5561,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3903,7 +5577,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3917,7 +5593,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3931,7 +5609,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_020_true-martin_heidegger-being_and_time",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Being and Time is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -3945,7 +5641,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3959,7 +5657,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -3973,7 +5673,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -3987,7 +5689,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_021_true-ludwig_wittgenstei-philosophical_investigations",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Philosophical Investigations is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4001,7 +5721,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4015,7 +5737,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4029,7 +5753,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4043,7 +5769,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_022_true-ludwig_wittgenstei-tractatus_logico_philosophicus",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Tractatus Logico-Philosophicus is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4057,7 +5801,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4071,7 +5817,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4085,7 +5833,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4099,7 +5849,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_023_true-francis_bacon-the_new_atlantis",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The New Atlantis is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4113,7 +5881,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4127,7 +5897,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4141,7 +5913,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4155,7 +5929,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_024_true-ren_descartes-discourse_on_method",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Discourse on Method is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4169,7 +5961,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4183,7 +5977,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4197,7 +5993,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4211,7 +6009,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_025_true-friedrich_nietzsch-the_genealogy_of_morals",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The Genealogy of Morals is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4225,7 +6041,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4239,7 +6057,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4253,7 +6073,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4267,7 +6089,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_026_true-voltaire-candide",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Candide is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4281,7 +6121,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4295,7 +6137,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4309,7 +6153,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4323,7 +6169,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_027_true-al_ghazali-the_incoherence_of_the_philoso",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The Incoherence of the Philosophers is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4337,7 +6201,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4351,7 +6217,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4365,7 +6233,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4379,7 +6249,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_028_true-jean_paul_sartre-nausea",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Nausea is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4393,7 +6281,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4407,7 +6297,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4421,7 +6313,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4435,7 +6329,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_029_true-albert_camus-the_stranger",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The Stranger is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4449,7 +6361,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4463,7 +6377,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4477,7 +6393,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4491,7 +6409,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_030_true-ernest_hemingway-the_old_man_and_the_sea",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The Old Man and the Sea is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4505,7 +6441,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4519,7 +6457,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4533,7 +6473,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4547,7 +6489,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_031_true-ernest_hemingway-for_whom_the_bell_tolls",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of For Whom the Bell Tolls is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4561,7 +6521,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4575,7 +6537,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4589,7 +6553,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4603,7 +6569,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_032_true-fyodor_dostoevsky-crime_and_punishment",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Crime and Punishment is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4617,7 +6601,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4631,7 +6617,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4645,7 +6633,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4659,7 +6649,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_033_true-leo_tolstoy-anna_karenina",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Anna Karenina is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4673,7 +6681,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4687,7 +6697,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4701,7 +6713,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4715,7 +6729,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_034_true-william_makepeace_-vanity_fair",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Vanity Fair is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4729,7 +6761,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4743,7 +6777,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4757,7 +6793,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4771,7 +6809,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_035_true-emily_bront-wuthering_heights",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Wuthering Heights is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4785,7 +6841,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4799,7 +6857,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4813,7 +6873,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4827,7 +6889,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_036_true-george_eliot-middlemarch",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Middlemarch is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4841,7 +6921,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4855,7 +6937,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4869,7 +6953,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4883,7 +6969,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_037_true-jack_london-the_call_of_the_wild",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The Call of the Wild is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4897,7 +7001,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4911,7 +7017,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4925,7 +7033,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4939,7 +7049,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_038_true-ray_bradbury-fahrenheit_451",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Fahrenheit 451 is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -4953,7 +7081,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4967,7 +7097,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -4981,7 +7113,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -4995,7 +7129,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_039_true-anthony_burgess-a_clockwork_orange",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of A Clockwork Orange is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -5009,7 +7161,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5023,7 +7177,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -5037,7 +7193,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5051,7 +7209,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_040_true-c_s_lewis-the_chronicles_of_narnia",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The Chronicles of Narnia is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -5065,7 +7241,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5079,7 +7257,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -5093,7 +7273,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5107,7 +7289,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_041_true-hermann_hesse-steppenwolf",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Steppenwolf is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -5121,7 +7321,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5135,7 +7337,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -5149,7 +7353,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5163,7 +7369,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_042_true-isabel_allende-the_house_of_the_spirits",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The House of the Spirits is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -5177,7 +7401,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5191,7 +7417,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -5205,7 +7433,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5219,7 +7449,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_043_true-evelyn_waugh-brideshead_revisited",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Brideshead Revisited is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -5233,7 +7481,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5247,7 +7497,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -5261,7 +7513,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5275,7 +7529,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_044_true-virginia_woolf-mrs_dalloway",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Mrs Dalloway is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -5289,7 +7561,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5303,7 +7577,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -5317,7 +7593,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5331,7 +7609,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_045_true-harper_lee-to_kill_a_mockingbird",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of To Kill a Mockingbird is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -5345,7 +7641,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5359,7 +7657,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -5373,7 +7673,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5387,7 +7689,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_046_true-john_maynard_keyne-the_general_theory_of_employme",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The General Theory of Employment, Interest and Money is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -5401,7 +7721,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5415,7 +7737,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -5429,7 +7753,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5443,7 +7769,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_047_true-friedrich_hayek-the_road_to_serfdom",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The Road to Serfdom is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -5457,7 +7801,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5471,7 +7817,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -5485,7 +7833,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5499,7 +7849,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_048_true-richard_dawkins-the_selfish_gene",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of The Selfish Gene is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -5513,7 +7881,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5527,7 +7897,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -5541,7 +7913,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5555,7 +7929,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_049_true-stephen_hawking-a_brief_history_of_time",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of A Brief History of Time is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -5569,7 +7961,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5583,7 +7977,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -5597,7 +7993,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5611,7 +8009,25 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      }
+    },
+    {
+      "id": "seib_contested_050_true-yuval_noah_harari-sapiens_a_brief_history_of_hum",
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Authorship of Sapiens: A Brief History of Humankind is traditionally or legendarily attributed and may be compiled or disputed, so it should not be over-stated (no source cited here).",
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
       }
     },
     {
@@ -5625,7 +8041,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     },
     {
@@ -5639,7 +8057,9 @@
         "falseAttribution": false,
         "fabricated": true,
         "qualified": false,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
       }
     },
     {
@@ -5653,7 +8073,9 @@
         "falseAttribution": false,
         "fabricated": false,
         "qualified": true,
-        "traditionMerge": false
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
       }
     }
   ]

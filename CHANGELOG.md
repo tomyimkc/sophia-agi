@@ -2,6 +2,24 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.45] - 2026-06-24
+
+### Fixed — SEIB-100 methodology gaps (independent verification pass)
+
+Independent re-derivation against the provenance-delta spec found two required
+SEIB-100 elements missing from the initial all-phase suite; both are now added
+and CI-enforced (still `candidateOnly: true`, `validated: false`).
+
+- **`falsePositiveCost`** — the honesty counterweight the provenance-delta spec
+  requires (a gate that erases correct gold attributions must not look perfect).
+  Reported per condition and bounded in the `ok` criterion (`<= 0.10`).
+- **`raw+prompt` ablation rung + `sourceCitationRate`** — the Skill Augmentation
+  Delta the advisory required, isolating a prompt-only nudge from the MCP
+  skill / gate machinery (`prompt_to_full_citation_delta`). The new rung shows
+  prompt-only answers can be correct yet uncited and erase gold attributions.
+- `tests/test_all_phase_benchmarks.py` now asserts both, and
+  `docs/11-Platform/Benchmark-Phases.md` documents the five conditions.
+
 ## [0.7.44] - 2026-06-24
 
 ### Added — all-phase benchmark suite

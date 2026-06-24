@@ -38,6 +38,24 @@ SEIB-100 labels are derived from `provenance_bench/data/` external-citation /
 Wikidata snapshot records. The runtime gate is a treatment only. The scorer is
 independent of `agent.verifiers`.
 
+## SEIB-100 conditions & honesty metrics
+
+SEIB-100 runs five ablation rungs so a cheap prompt nudge is never confused with
+the tool/gate machinery:
+
+`raw` · `raw+prompt` (system-prompt-only, no tools/gate) · `raw+mcp` (skill) ·
+`raw+gate` (provenance gate treatment) · `sophia_full`.
+
+Per condition it reports `provenanceAccuracy`, `falseAttributionRate`,
+`fabricationRateOnContested`, `qualificationRateOnContested`, `traditionMergeRate`,
+`sourceCitationRate`, and — as the honesty counterweight required by the
+provenance-delta spec — **`falsePositiveCost`** (did the discipline erase a
+documented gold attribution?). A degenerate gate that nukes correct answers fails
+the benchmark because `falsePositiveCost` is bounded in the `ok` criterion. The
+`raw+prompt` rung is distinguished from the skill/gate rungs by
+`sourceCitationRate` (`prompt_to_full_citation_delta`): prompt-only answers may be
+correct but cite no provenance.
+
 ## Promotion rules
 
 A number may be promoted from "candidate" to public headline only if it clears:
