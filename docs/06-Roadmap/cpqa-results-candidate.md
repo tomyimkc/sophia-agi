@@ -38,29 +38,40 @@ judges `deepseek-reasoner` + `deepseek-chat` (12 queries): grounded consensus **
 CI [1.0, 1.0], κ 1.0; raw ~0.33–0.42. Higher absolute numbers, but same provider and
 self-grading — strictly weaker evidence than the cross-family panel above.
 
-## Strongest panel — cross-GATEWAY, distinct families (20 queries, 3 runs)
+## Full 92-query cross-GATEWAY run, 3 runs — the honest result at scale
 
 Answers `gpt-4o-mini` (OpenAI, via LLMHub); judges `deepseek/deepseek-chat` (DeepSeek) +
 `meta-llama/llama-3.3-70b-instruct` (Meta), **both via OpenRouter — an independent
-gateway from the answer model.** This removes the single-gateway and self-grading
-caveats and uses the repo's established validated judge pair.
+gateway from the answer model** (distinct families, no self-grading, the repo's
+established judge pair). Artifact: `agi-proof/benchmark-results/continual-qa.judged-xgateway-full92.json`.
 
-| System | consensus pass | 95% CI | **assert (recall)** | **abstain (traps)** | κ / %-agree |
+| System | overall consensus | 95% CI | **recall (n=261)** | **traps (n=15)** | κ / %-agree |
 |---|---|---|---|---|---|
-| **grounded** | **0.933** | [0.867, 0.983] | 0.911 (n=45) | **1.000 (n=15)** | 0.33 / 0.93 |
-| **raw** | 0.667 | [0.55, 0.783] | 0.889 (n=45) | **0.000 (n=15)** | 0.81 / 0.92 |
+| **grounded** | 0.529 | [0.471, 0.587] | **0.502** | **1.000** | 0.94 / 0.97 |
+| **raw** | **0.884** | [0.848, 0.920] | **0.935** | **0.000** | 0.67 / 0.95 |
 
-**The clean finding (per-expect breakdown):** on *recall* the two are ~equal (0.911 vs
-0.889) — a strong raw model already knows well-known wiki facts, so grounding barely
-helps. The entire advantage is on the *abstain* traps/retractions: grounded **1.000** vs
-raw **0.000** — total, robust separation, with **disjoint overall CIs**. Grounding's
-contribution is precisely *fail-closed abstention*, not recall — exactly the thesis, now
-measured across distinct provider families on independent infrastructure. Artifact:
-`agi-proof/benchmark-results/continual-qa.judged-xgateway.json`.
+**The honest headline flips at scale, and that matters more than the flattering subset.**
+A 20-query, trap-heavy subset earlier showed grounded 0.93 > raw 0.67. On the full 92
+queries the overall winner is **raw (0.88) over grounded (0.53)** — and the per-expect
+split shows exactly why:
 
-*κ caveat persists on grounded:* κ=0.33 (< 0.40) because grounded is near-saturated
-(both judges pass almost everything → low variance), while raw κ=0.81 is healthy. The
-honest agreement number is **percent-agreement 0.93**; report it alongside κ.
+- **Traps / retractions (n=15): grounded 1.000 vs raw 0.000.** Robust, total separation —
+  grounding gives perfect fail-closed abstention; the raw model fabricates/asserts on
+  every one. The safety thesis holds.
+- **Recall (n=261): grounded 0.502 vs raw 0.935.** Grounding *collapses* on recall because
+  the answer is constrained to the retrieved wiki page, and many pages are thin provenance
+  stubs that do not contain the answer — so the grounded system abstains/fails where a raw
+  model just answers from parametric memory.
+
+This is the **coverage-vs-fabrication tradeoff** named in the limitations doc, now measured:
+grounding buys trap-safety **at a recall cost**, not a blanket win, and on a recall-heavy,
+thin-source corpus the raw model wins overall. The right reading is *not* "grounding loses"
+— it is "grounding is a precision/safety layer whose value depends on (a) how trap-heavy
+the workload is and (b) how complete the sources are." Both are improvable (richer wiki
+pages; a hybrid that falls back to parametric recall when the gate would abstain).
+
+**κ is now healthy** (grounded 0.94, raw 0.67; percent-agreement 0.97 / 0.95) — the earlier
+grounded-κ degeneracy was a small-subset/ saturation artifact and does not appear at scale.
 
 ## Gate status (no-overclaim) — why this is candidate, not validated
 

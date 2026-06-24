@@ -181,27 +181,27 @@
     ],
     "gateway": "judges via OpenRouter; answers via LLMHub — independent gateways",
     "runs": 3,
-    "queryCount": 20,
+    "queryCount": 92,
     "grounded": {
-      "consensus": 0.933,
+      "consensus": 0.529,
       "ci": [
-        0.867,
-        0.983
+        0.471,
+        0.587
       ],
-      "assert": 0.911,
+      "assert": 0.502,
       "abstain": 1.0
     },
     "raw": {
-      "consensus": 0.667,
+      "consensus": 0.884,
       "ci": [
-        0.55,
-        0.783
+        0.848,
+        0.92
       ],
-      "assert": 0.889,
+      "assert": 0.935,
       "abstain": 0.0
     },
-    "interJudgeKappa": 0.33,
-    "interJudgePercentAgreement": 0.93,
-    "note": "CANDIDATE, not validated: self-authored benchmark, two API keys held by one operator, no external replication, and grounded kappa is depressed by near-saturation (percent-agreement 0.93 is the honest agreement number). The robust, gate-relevant finding is the per-expectation split: on abstain/attribution-traps grounded scores 1.0 vs raw 0.0; on plain recall the two are ~equal (a strong raw model already knows well-known facts). Numbers are the 20-query cross-gateway subset; a full 92-query run is pending."
+    "interJudgeKappa": 0.94,
+    "interJudgePercentAgreement": 0.97,
+    "note": "CANDIDATE, not validated (self-authored benchmark, keys held by one operator, no external replication). FULL 92-query cross-gateway run, 3 runs. Honest headline: on attribution-traps/retractions grounded scores 1.0 vs raw 0.0 (perfect fail-closed abstention), but on plain recall grounded collapses to 0.50 vs raw 0.93 because answers are constrained to the retrieved wiki page and many pages are thin provenance stubs that don't contain the answer. Net, the raw model wins OVERALL (0.88 vs 0.53) on this recall-heavy, thin-source corpus. This is the predicted coverage-vs-fabrication tradeoff: grounding buys trap-safety at a recall cost, not a blanket win. Inter-judge kappa is now healthy (0.94/0.67; the earlier degeneracy was a small-subset artifact)."
   }
 }
