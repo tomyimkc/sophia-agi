@@ -30,16 +30,32 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from agent import deepseek_llm, llmhub_llm  # noqa: E402
 from agent.continual_qa import GraphBackedSystem, load_episodes  # noqa: E402
 from agent.continual_qa_answer import (  # noqa: E402
     build_source_map, cohen_kappa, generate_grounded, generate_raw, judge_answer, verdict,
 )
-from agent.deepseek_llm import make_complete  # noqa: E402
 from agent.public_sanitize import sanitize_public_artifact  # noqa: E402
 from okf.page import load_pages  # noqa: E402
 
 DEFAULT_IN = ROOT / "eval" / "continual_qa" / "episodes_v2_wiki.jsonl"
 DEFAULT_OUT = ROOT / "agi-proof" / "benchmark-results" / "continual-qa.judged.json"
+
+# Coarse provider family per model id, for the distinct-families check.
+def _family(model: str) -> str:
+    m = model.lower()
+    for fam in ("claude", "gemini", "gpt", "deepseek", "qwen", "grok", "doubao", "kimi"):
+        if fam in m:
+            return "anthropic" if fam == "claude" else "google" if fam == "gemini" else \
+                   "openai" if fam == "gpt" else fam
+    return model
+
+
+def _complete_for(spec: str, *, max_tokens: int):
+    """spec = 'provider:model'. provider in {llmhub, deepseek}."""
+    provider, _, model = spec.partition(":")
+    module = {"llmhub": llmhub_llm, "deepseek": deepseek_llm}[provider]
+    return model, module.make_complete(model=model, max_tokens=max_tokens)
 
 
 def _select(episodes, limit):
@@ -73,78 +89,94 @@ def main() -> None:
     ap.add_argument("--episodes", default=str(DEFAULT_IN))
     ap.add_argument("--out", default=str(DEFAULT_OUT))
     ap.add_argument("--wiki", default=str(ROOT / "wiki"))
-    ap.add_argument("--limit", type=int, default=12)
+    ap.add_argument("--limit", type=int, default=10)
+    ap.add_argument("--runs", type=int, default=3)
+    ap.add_argument("--answer", default="llmhub:gpt-5-mini", help="provider:model for answers")
+    ap.add_argument("--judge", action="append", default=None,
+                    help="provider:model judge (repeatable); default = cross-family Claude + Gemini")
     args = ap.parse_args()
 
+    judge_specs = args.judge or ["llmhub:claude-opus-4-8", "llmhub:gemini-2.5-pro"]
     episodes = load_episodes(args.episodes)
     source_map = build_source_map(load_pages(args.wiki))
     selected = _select(episodes, args.limit)
 
-    answer_model = make_complete(model="deepseek-chat", max_tokens=256)
-    judges = [
-        ("deepseek-reasoner", make_complete(model="deepseek-reasoner", max_tokens=1500)),
-        ("deepseek-chat", make_complete(model="deepseek-chat", max_tokens=96)),
-    ]
+    answer_model_id, answer_complete = _complete_for(args.answer, max_tokens=256)
+    judges = [_complete_for(spec, max_tokens=800) for spec in judge_specs]   # (model, complete)
+    judge_models = [m for m, _ in judges]
+    judge_families = sorted({_family(m) for m in judge_models})
+    answer_family = _family(answer_model_id)
 
-    rows = []
-    for q, expect, grounded in selected:
-        src = source_map.get(q.target) if grounded else None
-        answers = {
-            "grounded": generate_grounded(q.text, src, answer_model),
-            "raw": generate_raw(q.text, answer_model),
+    # runs[r][system] -> {"consensus":[bool...], "perJudge":{model:[bool...]}}
+    run_results = []
+    for r in range(args.runs):
+        rows = []
+        for q, expect, grounded in selected:
+            src = source_map.get(q.target) if grounded else None
+            answers = {"grounded": generate_grounded(q.text, src, answer_complete),
+                       "raw": generate_raw(q.text, answer_complete)}
+            row = {"query": q.id, "expect": expect, "judges": {}}
+            for system, ans in answers.items():
+                row["judges"][system] = {m: verdict(judge_answer(q.text, ans, jc), expect)
+                                         for m, jc in judges}
+            rows.append(row)
+        run_results.append(rows)
+        print(f"run {r + 1}/{args.runs} done ({len(rows)} queries)")
+
+    def agg(system: str) -> "dict":
+        per_run = []
+        pooled_consensus = []
+        kappas = []
+        for rows in run_results:
+            consensus = [all(row["judges"][system][m] for m in judge_models) for row in rows]
+            pooled_consensus.extend(consensus)
+            per_judge = {m: round(sum(row["judges"][system][m] for row in rows) / len(rows), 4)
+                         for m in judge_models}
+            if len(judge_models) == 2:
+                ja = [row["judges"][system][judge_models[0]] for row in rows]
+                jb = [row["judges"][system][judge_models[1]] for row in rows]
+                k = cohen_kappa(ja, jb)
+                kappas.append(k)
+            per_run.append({"consensusPassRate": round(sum(consensus) / len(rows), 4),
+                            "perJudgePassRate": per_judge,
+                            "interJudgeKappa": kappas[-1] if kappas else None})
+        return {
+            "perRun": per_run,
+            "meanConsensusPassRate": round(sum(pooled_consensus) / len(pooled_consensus), 4),
+            "consensusCI95": _bootstrap_ci(pooled_consensus),
+            "meanInterJudgeKappa": round(sum(kappas) / len(kappas), 4) if kappas else None,
         }
-        row = {"query": q.id, "target": q.target, "expect": expect, "type": q.type, "judges": {}}
-        for system, ans in answers.items():
-            row[f"answer_{system}"] = ans[:240]
-            row["judges"][system] = {}
-            for jname, jcomplete in judges:
-                rating = judge_answer(q.text, ans, jcomplete)
-                row["judges"][system][jname] = verdict(rating, expect)
-        rows.append(row)
-        print(f"{q.id} ({expect}): " + " ".join(
-            f"{s}[{'/'.join('P' if row['judges'][s][jn] else 'F' for jn, _ in judges)}]"
-            for s in ("grounded", "raw")))
 
-    # Aggregate: per-judge and consensus (all judges agree pass) pass rates, + κ.
-    summary = {}
-    for system in ("grounded", "raw"):
-        per_judge = {jn: round(sum(r["judges"][system][jn] for r in rows) / len(rows), 4)
-                     for jn, _ in judges}
-        consensus = [all(r["judges"][system][jn] for jn, _ in judges) for r in rows]
-        ja = [r["judges"][system][judges[0][0]] for r in rows]
-        jb = [r["judges"][system][judges[1][0]] for r in rows]
-        summary[system] = {
-            "perJudgePassRate": per_judge,
-            "consensusPassRate": round(sum(consensus) / len(rows), 4),
-            "consensusCI95": _bootstrap_ci(consensus),
-            "interJudgeKappa": cohen_kappa(ja, jb),
-        }
-
+    summary = {"grounded": agg("grounded"), "raw": agg("raw")}
     report = {
-        "schema": "sophia.continual_qa_judged.v1",
+        "schema": "sophia.continual_qa_judged.v2",
         "candidateOnly": True,
         "validated": False,
         "level3Evidence": False,
-        "answerModel": "deepseek-chat",
-        "judges": [jn for jn, _ in judges],
-        "distinctProviderFamilies": False,
-        "caveats": [
-            "Both judges are DeepSeek (same provider) -> validated:false; a RESULTS.md run needs >=2 provider families.",
-            "deepseek-chat both generates answers and judges (self-grading risk).",
-            "abstain-rubric: confident refutation of a fictional premise is scored as non-abstention, "
-            "which can understate the raw model on fictional-premise controls; the grounded system's "
-            "target behavior is uniform fail-closed abstention. The unambiguous contrast is on RETRACTED "
-            "real facts, where raw asserts the stale fact and grounded abstains.",
-        ],
-        "queryCount": len(rows),
+        "answerModel": answer_model_id,
+        "answerFamily": answer_family,
+        "judges": judge_models,
+        "judgeFamilies": judge_families,
+        "distinctProviderFamilies": len(judge_families) >= 2,
+        "selfGradingRisk": answer_family in judge_families,
+        "runs": args.runs,
+        "queryCount": len(selected),
         "summary": summary,
-        "rows": rows,
+        "caveats": [
+            "Models reached via one gateway (LLMHub) under one key; validated:false pending "
+            "independent replication and pre-registration, though judges are distinct families.",
+            "abstain-rubric scores confident refutation of a fictional premise as non-abstention, "
+            "which can understate the raw model on fictional-premise controls; the unambiguous "
+            "contrast is on RETRACTED real facts (raw asserts the stale fact, grounded abstains).",
+        ],
     }
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(sanitize_public_artifact(report), indent=2, ensure_ascii=False) + "\n",
                    encoding="utf-8")
-    print(json.dumps(summary, indent=2))
+    print(json.dumps({"judges": judge_models, "judgeFamilies": judge_families,
+                      "distinctProviderFamilies": report["distinctProviderFamilies"],
+                      "selfGradingRisk": report["selfGradingRisk"], "summary": summary}, indent=2))
     print(f"written: {args.out}")
 
 
