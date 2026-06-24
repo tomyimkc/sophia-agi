@@ -121,7 +121,7 @@ HERO = f"""
 background:linear-gradient(135deg,#0a0e1a 0%,#10233b 60%,#0a0e1a 100%);
 border:1px solid #1f6feb;color:#e6edf3">
 <h1 style="margin:.2em 0;font-size:2.0em">🛡️ Sophia — the Wisdom Gate</h1>
-<p style="font-size:1.15em;color:#7ee787;margin:.2em">A verifiable foundation <i>toward</i> AGI — built by Tom Yim (sole author, tomyimkc / HaremKing)</p>
+<p style="font-size:1.15em;color:#7ee787;margin:.2em">A verifiable foundation <i>toward</i> AGI — built by tomyimkc (sole author)</p>
 <p style="color:#c9d1d9">The AI gate that <b>abstains instead of fabricating</b> — and publishes its own failure rate.</p>
 <p style="color:#8b949e;font-size:.95em">
 <b>Δ12.5%</b> attribution-hallucination cut <code>[5.6–19.4%]</code>, 2 independent judges ·
@@ -141,7 +141,7 @@ WHY = """
 FOOTER = f"""
 ---
 <div style="text-align:center;color:#8b949e">
-Built in 2026 by the sole author <b>Tom Yim</b> (tomyimkc / HaremKing) ·
+Built in 2026 by the sole author <b>tomyimkc</b> ·
 Dual-licensed: MIT code + reserved brand ·
 <b>Not a claim of AGI</b> ·
 <a href="{REPO}">⭐ Star the repo</a> to support open, <i>measured</i> AI honesty.

@@ -148,7 +148,7 @@ purpose:
 **Why this protects the mission:** the code being open lets anyone verify and build on it; the
 brand being protected stops someone from shipping an unverified product under the Sophia name and
 eroding the no-overclaim standard the project exists to uphold. Authored and maintained by the
-sole author and rights holder, **tomyimkc (HaremKing)**. Every fork carries [NOTICE.md](NOTICE.md).
+sole author and rights holder, **tomyimkc**. Every fork carries [NOTICE.md](NOTICE.md).
 
 ## Moral + epistemic Conscience Kernel (seven paths)
 

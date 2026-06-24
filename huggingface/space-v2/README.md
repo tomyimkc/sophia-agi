@@ -21,7 +21,7 @@ tags:
 
 # 🛡️ Sophia — the Wisdom Gate
 
-A verifiable foundation **toward** AGI — built by **Tom Yim** (sole author, `tomyimkc` / `HaremKing`).
+A verifiable foundation **toward** AGI — built by **tomyimkc** (sole author).
 The AI gate that **abstains instead of fabricating**, and is honest about its limits.
 
 [![Star the repo](https://img.shields.io/github/stars/tomyimkc/sophia-agi?style=social)](https://github.com/tomyimkc/sophia-agi)

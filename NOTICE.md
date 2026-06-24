@@ -1,7 +1,7 @@
 # NOTICE
 
 **Sophia — the Wisdom Gate**
-Copyright (c) 2026 **tomyimkc (HaremKing)** — sole author and rights holder.
+Copyright (c) 2026 **tomyimkc** — sole author and rights holder.
 
 - **Code, tools, benchmarks:** MIT License — see [LICENSE](LICENSE). Free for any use,
   including commercial; the project is fully public.

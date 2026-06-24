@@ -1,6 +1,6 @@
 # Trademark & Brand Policy — Sophia (the Wisdom Gate)
 
-**Sole author & rights holder:** tomyimkc (HaremKing).
+**Sole author & rights holder:** tomyimkc.
 
 This policy protects the project's identity while keeping the code and corpus fully open.
 It is friendly by design: research, education, and honest reference are always free.

@@ -1,6 +1,6 @@
 # Commercial License — Sophia (the Wisdom Gate)
 
-**Sole author & rights holder:** tomyimkc (HaremKing).
+**Sole author & rights holder:** tomyimkc.
 
 ## You probably do NOT need this
 
@@ -35,7 +35,7 @@ This is informational and not an offer.
 Copy, fill in, and send (open a private channel or email the sole author):
 
 ```
-To: tomyimkc (HaremKing), sole author & rights holder — Sophia
+To: tomyimkc, sole author & rights holder — Sophia
 Subject: Commercial / trademark license request
 
 1. Your name / organization:
