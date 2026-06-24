@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Aggregate multi-seed RLVR adapter runs under the no-overclaim discipline, and
 record a replicated adapter into the compounding registry as canonical.
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Archive a multi-seed RLVR replication as durable evidence.
 
 GitHub Actions artifacts expire (~90 days). This preserves the small, durable pieces:

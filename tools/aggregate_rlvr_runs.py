@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Aggregate multi-seed RLVR adapter runs into a no-overclaim result + optionally
 record the replicated adapter into the compounding registry as canonical.
 
