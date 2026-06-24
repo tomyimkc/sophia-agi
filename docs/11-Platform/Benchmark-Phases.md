@@ -118,3 +118,38 @@ SEIB-100、信念修訂、三路 AgentBench-Sophia、GPQA-Provenance smoke、Cod
 Provenance、以及 SEIB-Arena smoke。所有輸出皆為 `candidateOnly: true`，不可
 宣稱為 AGI 證明或正式外部排行榜分數；若要成為公開 headline，需要真實模型、
 多次運行、兩個以上獨立裁判家族、一致性與信賴區間檢驗。
+
+## First real-model SEIB-100 run (candidate, single run)
+
+A genuine real-model run was executed against a **local Ollama backend**
+(`ollama:llama3.2:3b`) — not a mock — over all 100 cases x 5 conditions
+(500 model calls). Artifact:
+`agi-proof/benchmark-results/seib-100-ollama-llama32-3b.public-report.json`.
+
+| Condition | Prov. acc | False-attr | Fab (contested) | Qual (contested) | FP cost | Cite rate |
+|---|---:|---:|---:|---:|---:|---:|
+| raw | 0.66 | 0.02 | 0.62 | 0.38 | 0.20 | 0.00 |
+| raw+prompt | 0.84 | 0.00 | 0.32 | 0.68 | 0.24 | 0.00 |
+| raw+mcp | 1.00 | 0.00 | 0.00 | 1.00 | 0.02 | 0.74 |
+| raw+gate | 0.66 | 0.02 | 0.62 | 0.38 | 0.18 | 0.07 |
+| sophia_full | 1.00 | 0.00 | 0.00 | 1.00 | 0.02 | 0.93 |
+
+Headline deltas (single run, deterministic lexical scorer): raw→full provenance
+accuracy **+0.34**; raw→full contested-fabrication reduction **0.62**;
+prompt→full citation delta **0.93**; full false-positive cost **0.02**.
+
+**Boundary / honest caveats (verification pass):**
+
+- `validated: false`, `candidateOnly: true`. This is **one run** with a
+  **deterministic lexical scorer** and **no independent LLM judges**, so it does
+  not meet the no-overclaim promotion bar (>=3 runs, >=2 judge families,
+  kappa>=0.40, CI excluding 0).
+- The lexical scorer credits **hedging** on contested cases even when the model
+  names the wrong author (observed ~10/50 raw contested rows hedge without naming
+  the gold author). A future LLM-judge scorer is required before any headline.
+- `raw+gate` ≈ `raw` here because the source-discipline gate only fires when the
+  raw text literally asserts a known-forbidden lineage (fired on 6/50 false
+  cases); it is precise and narrow by design, not a general hallucination filter.
+- The lift attributed to `raw+mcp` / `sophia_full` reflects **tool-grounded
+  context + gate discipline**, not model intelligence — the MCP context encodes
+  the externally-labeled provenance under test.
