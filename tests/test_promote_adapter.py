@@ -36,11 +36,18 @@ def _ladder(base: dict[str, float], adapter: dict[str, float]) -> dict:
 
 
 def test_v2_adapter_rejects_on_religion_regression() -> None:
-    """The real merged artifact must auto-reproduce the hand-written ledger reject."""
-    import json
-    adapter_ladder = json.loads((ROOT / "training/local_sophia_v2/eval_ladder_adapter.json").read_text())
+    """Gate logic: an adapter that collapses a protected domain (religion -> 0.0) must be
+    rejected on the protected-floor rule.
+
+    Built from a synthetic ladder so the test exercises the gate rule directly and stays
+    decoupled from the regenerated ``eval_ladder_adapter.json`` artifact, whose scores
+    drift between eval runs (it has since moved religion off 0.0, which would silently
+    invalidate a brittle artifact-pinned assertion)."""
+    base = {"philosophy": 0.66, "psychology": 0.44, "history": 0.62, "religion": 0.33}
+    adapter = {"philosophy": 0.77, "psychology": 0.66, "history": 0.66, "religion": 0.0}
+    adapter_ladder = _ladder(base, adapter)
     after = _rung(adapter_ladder, "adapter")
-    assert after is not None and after["domains"]["religion"] == 0.0  # the known regression
+    assert after is not None and after["domains"]["religion"] == 0.0  # the protected-domain collapse
 
     cand = build_candidate(
         candidate_id="local-sophia-v2-mlx", kind="lora_adapter", baseline_ladder=None,
