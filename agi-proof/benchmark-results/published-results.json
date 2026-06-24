@@ -220,6 +220,19 @@
         "grounded_fallback": 141
       },
       "note": "Steps 1+2+4 combined. Recall recovered 0.50 -> 0.68 (+35% rel), overall 0.53 -> 0.69. Behavioral trap-safety preserved: all 15 trap evaluations hit the hard-abstain policy (abstain_no_source=15) and 0 traps reached the parametric fallback (fallback fired only on the 141 grounded-but-thin facts). The trap SCORE 0.80 (vs strict 1.0) is judge measurement noise on the fixed abstention string, not gate leakage. raw still wins overall (0.91) but the gap narrowed from 0.38 to 0.22."
+    },
+    "enrichedStrict": {
+      "system": "strict grounded on Step-5-enriched corpus (pure grounding, no parametric fallback)",
+      "consensus": 0.623,
+      "ci": [
+        0.565,
+        0.678
+      ],
+      "assert": 0.602,
+      "abstain": 1.0,
+      "interJudgeKappa": 0.87,
+      "interJudgePercentAgreement": 0.94,
+      "note": "Step 5 surfaces existing sourced provenance fields as answer-bearing prose (thin-source 58%->12%). Pure-grounded recall rose 0.502 -> 0.602 (+20% rel), overall 0.529 -> 0.623, with traps a clean 1.0 and ZERO parametric reliance. It did not reach the ~0.88 prose-ceiling because the summaries are terse provenance-derived sentences (who/when/what-domain), which judges credit on focused questions but not fully on open-ended ones. Closing the rest needs genuinely richer authored+sourced content (a maintainer task), not field reformatting."
     }
   }
 }

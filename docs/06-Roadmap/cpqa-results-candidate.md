@@ -105,6 +105,36 @@ wiki page bodies from the `data/*.json` records the frontmatter already cites) i
 that would close it without any parametric fallback at all. Artifact:
 `agi-proof/benchmark-results/continual-qa.judged-hybrid-full92.json`.
 
+## Step 5 — corpus enrichment, pure grounding (full 92, 3 runs, cross-gateway)
+
+Step 5 surfaces the existing sourced provenance fields (title / domain / recordType /
+subfield / tradition / attributedAuthor+confidence / period) as one answer-bearing prose
+sentence per page — **authoring no new facts** (provenance lint: 0 forbidden attributions).
+The audit's thin-source share fell **58% → 12%**. Re-measured with *strict* grounding (no
+parametric fallback at all):
+
+| Config (full-92) | overall | recall (n=261) | traps (n=15) |
+|---|---|---|---|
+| strict / thin corpus | 0.529 | 0.502 | 1.00 |
+| hybrid + neighborhood / thin | 0.685 | 0.678 | 0.80\* |
+| **strict / enriched corpus** | **0.623** | **0.602** | **1.00** |
+| raw (reference) | 0.895 | 0.946 | 0.00 |
+
+**Pure-grounded recall rose 0.502 → 0.602 (+20% relative), overall 0.529 → 0.623, with traps a
+clean 1.0 and zero parametric reliance.** It did *not* reach the ~0.88 the prose-ceiling audit
+suggested, and that gap is the honest finding: the summaries are *terse provenance-derived
+sentences* (who/when/what-domain), which the judges credit on focused questions but not fully
+on the open-ended "what does the corpus record about X". **Answer-bearing ≠ full judge pass.**
+
+**Conclusion of the recall arc.** Two safe, complementary levers were measured: enrichment
+(+0.10 recall, pure grounding, perfect traps) and the hybrid fallback (+0.18 recall, traps safe
+by construction). Neither closes the full gap to raw alone, because the residual is *how much
+the corpus actually says* — and the principled way to close that is **richer authored+sourced
+content per record** (a maintainer/provenance task), not more answering machinery. The best
+*safe* config is enriched-corpus + hybrid (enrichment shrinks the thin set so the parametric
+fallback fires rarely); that combined run is the natural next measurement. Artifact:
+`agi-proof/benchmark-results/continual-qa.judged-enriched-strict-full92.json`.
+
 ## Gate status (no-overclaim) — why this is candidate, not validated
 
 | Criterion | Status |

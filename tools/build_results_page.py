@@ -239,6 +239,15 @@ def render(doc: dict) -> str:
                 f"traps {_pct(hy.get('abstain'))}; policy {hy.get('policyCounts')}",
                 f"  - {hy.get('note', '')}",
             ]
+        es = cg.get("enrichedStrict")
+        if es:
+            L += [
+                f"- **Corpus enrichment ({es.get('system')}):** overall **{_pct(es.get('consensus'))}** "
+                f"[{_pct(es.get('ci', [None, None])[0])}, {_pct(es.get('ci', [None, None])[1])}], "
+                f"recall **{_pct(es.get('assert'))}** (up from strict {_pct(g.get('assert'))}), "
+                f"traps {_pct(es.get('abstain'))} — pure grounding, no fallback",
+                f"  - {es.get('note', '')}",
+            ]
         L += [f"- ⚠ {cg.get('note', '')}", ""]
 
     L += [
