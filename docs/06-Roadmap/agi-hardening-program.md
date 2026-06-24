@@ -50,18 +50,33 @@ risk reuse `agent.calibration`; the conformal answer threshold reuses `agent.con
 unseen domains fail closed (competence 0.0, threshold 0.0); `learning_priorities` ranks
 weakest-first by **measured** deficit, bridging into `agent.knowledge_gap_log`.
 
-## Phase 1 — Trust
+## Phase 1 — Trust  ✅ delivered (candidate)
 **#2 Verified compositional reasoning** — adopt the **[VeriCoT](https://arxiv.org/abs/2511.04662)**
 pattern: autoformalize each reasoning step, tag each premise by source type (grounded-fact /
 commonsense / prior-step), solver-verify the chain → **proof-carrying answers** over the grounded
 graph. Closes the ripple-effect / synthesis-hallucination gap the gate currently misses.
 *Done when:* multi-hop answers carry a verified premise chain; unverifiable steps ⇒ abstain.
+→ **`agent/proof_carrying_reasoning.py`** (`autoformalize_claims`, `verify_step`, `verify_chain`,
+`proof_carrying_answer`); tests in `tests/test_proof_carrying_reasoning.py` (CI `validate-core`).
+Grounded-fact premises must be `okf.is_grounded` and clear an effective-confidence floor; prior-step
+premises must cite an *earlier verified* step (forward/self-reference earns no warrant); commonsense
+premises abstain by default. The whole autoformalized claim set is run through
+`agent.formal_verifier.check_no_contradiction` (z3 optional, fail-closed) → `verified` /
+`abstain` / `rejected`; verified answers carry `agent.symbol_identity` stable-identity citations.
 
 **#4 Poisoning-robust ingestion** — the threat is real and active
 ([PoisonedRAG](https://hf.co/papers/2402.07867), [RAGDefender](https://hf.co/papers/2511.01268)):
 **k-independent corroboration + source-trust modeling + post-retrieval adversarial filtering**,
 with retraction/counterfactual as remediation. *Done when:* a single well-sourced falsehood
 cannot be admitted without k independent corroborations; poisoned-stream benchmark passes.
+→ **`agent/poison_resistant_ingestion.py`** (`SourceTrust`, `assess_item`, `adversarial_filter`,
+`ingest_stream`, `run_poison_benchmark`); tests in `tests/test_poison_resistant_ingestion.py`
+(CI `validate-core`). Admission requires ≥k *distinct* independence groups above a trust floor **and**
+pooled confidence (trust-weighted, deduped by group via `agent.corroboration`) above a floor — so a
+single source, or a Sybil sharing one group, can never alone meet k≥2 however confident; low-trust
+sources are downweighted; values conflicting with an established consensus are flagged as suspected
+poison and quarantined; proven-malicious sources are remediated via `agent.unlearning.Unlearner`
+(cascade un-grounds dependents). Seeded poison-stream benchmark passes deterministically.
 
 ## Phase 2 — Scale + generality
 **#5 Incremental belief revision** — recompute only the affected subgraph; shard + index; the

@@ -118,6 +118,8 @@ jobs:
           python tests/test_belief_revision_scaling.py
           python tests/test_symbol_identity.py
           python tests/test_competence_model.py
+          python tests/test_proof_carrying_reasoning.py
+          python tests/test_poison_resistant_ingestion.py
           python tests/test_run_cls_consolidation.py
           python tests/test_wiki_proof.py
           python tests/test_agent_harness.py
