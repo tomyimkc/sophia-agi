@@ -2,7 +2,7 @@
 
 All notable changes to Sophia AGI are documented here.
 
-## [Unreleased]
+## [0.8.0] - 2026-06-24
 
 ### Changed — license: MIT → Apache 2.0 (stronger attribution)
 
