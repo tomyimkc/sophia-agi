@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Spec B — Level-3 activation-steering runner.
 
 OFFLINE (default, no torch/GPU/network): --model mock / --dry-run runs the

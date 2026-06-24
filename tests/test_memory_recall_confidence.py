@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for graph-confidence injection into harness._memory_recall. Offline.
 
 Memory recall should surface the belief graph's EFFECTIVE confidence (min over the

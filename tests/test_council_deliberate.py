@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for council deliberation (map-reduce + per-seat gate) and the uplift harness.
 
 Uses STUB clients (no model calls) so behaviour is deterministic offline. These

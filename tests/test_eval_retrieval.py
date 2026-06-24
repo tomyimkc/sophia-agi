@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Test for the retrieval eval harness (offline, real corpus)."""
 
 from __future__ import annotations

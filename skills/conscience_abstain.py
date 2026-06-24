@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Skill: conscience_abstain — run output through the Conscience Kernel."""
 from __future__ import annotations
 

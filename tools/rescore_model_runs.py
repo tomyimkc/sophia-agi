@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Re-score saved model_runs/*.json after benchmark heuristic updates."""
 
 from __future__ import annotations

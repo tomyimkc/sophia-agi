@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Provenance-routing micro-eval — a real, measurable held-out task for SSIL G4.
 
 The point: give the plasticity gate (G4) something *measured* to promote on, so a

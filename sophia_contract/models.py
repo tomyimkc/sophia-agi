@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Wire data models for the contract: Claim and Verdict builders + input
 normalisation. Field names here ARE the contract — never rename in a MINOR.
 

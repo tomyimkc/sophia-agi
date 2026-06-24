@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the local-agent delta: alone vs +gate vs +MCP-tools over provenance cases.
 
 The demo that "a local LLM + Sophia's tools performs better": runs the local MoE

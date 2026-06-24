@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Assemble the `training/local_sophia_v2/` dataset packs for a LOCAL Sophia wisdom
 model (NOT AGI). Composes the existing builders' outputs into role-split packs, runs
 the train/eval contamination guard (fail-closed), and writes an honest manifest that

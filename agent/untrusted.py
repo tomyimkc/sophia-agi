@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Prompt-injection defense: fence untrusted (retrieved/web/material) content.
 
 Any text that did not come from the operator — RAG chunks, web pages, file

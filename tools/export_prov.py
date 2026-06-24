@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Export Sophia claim lineage to W3C PROV (Stage B).
 
 Reads claims (from a contract store directory, a claims.jsonl file, or stdin) and

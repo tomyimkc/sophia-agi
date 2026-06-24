@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Spec D capability-retention guardrail tests (pure stdlib, no pytest)."""
 from __future__ import annotations
 

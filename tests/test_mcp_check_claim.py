@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the mode-free check_claim MCP tool (sophia_mcp). All offline.
 
 Unlike sophia_gate_check (moded, needs a question), check_claim is a pure

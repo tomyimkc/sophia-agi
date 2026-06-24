@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Behaviour tests for the metacognition confidence heuristic (deterministic, offline).
 
 This module is a confidence HEURISTIC (specificity + self-consistency + semantic

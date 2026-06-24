@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """OCEAN substrate + one-way MBTI display veneer (Spec A).
 
 Big Five (OCEAN) is the measured substrate. MBTI is a *display veneer*:

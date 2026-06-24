@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Behavioral PIF channel — sibling to the self-report personality_measure.py (Spec A).
 
 Open-ended, trait-name-free elicitation; an independent LLM judge panel scores

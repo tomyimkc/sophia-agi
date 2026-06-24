@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the AgentDojo-style end-to-end suite (M2.4).
 
 The security claim: across the suite, ASR is 0 — the interpreter's control-flow

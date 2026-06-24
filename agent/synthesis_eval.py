@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Falsifiable evaluation of verifier synthesis — the ablation that earns the claim.
 
 Builds a deterministic suite of *novel* tasks the synthesiser has never seen, split

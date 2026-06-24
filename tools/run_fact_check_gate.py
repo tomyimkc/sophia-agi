@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the out-of-wiki fact-check gate on text.
 
 Offline by default. Optional retrieval backends can be wired later; this CLI is a

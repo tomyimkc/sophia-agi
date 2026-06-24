@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """The OKF page contract for Sophia: page types, provenance vocabulary, validation.
 
 Mirrors data/schema.json's provenance ontology (authorConfidence enum,

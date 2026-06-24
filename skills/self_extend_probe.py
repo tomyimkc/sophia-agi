@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Skill: self_extend_probe — offline self-extending-flywheel coverage probe.
 
 Honest scope: this runs the OFFLINE flywheel (synthesize -> validate on a held-out

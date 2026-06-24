@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Decision memory log (local, gitignored)."""
 
 from __future__ import annotations

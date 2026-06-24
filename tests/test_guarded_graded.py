@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the graded on_fail route in agent/guarded.py (R-5 wiring).
 
 The graded route turns the binary gate failure into a calibrated hedge-vs-abstain

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Agent harness for Sophia AGI: plan -> execute -> critic -> reflect/retry.
 
 Built on the unified model adapter (agent/model.py). Reuses existing pieces as

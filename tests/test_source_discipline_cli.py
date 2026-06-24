@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for tools/source_discipline_cli.py — the source-discipline checker CLI.
 
 Offline: reuses agent.verifiers.provenance_faithful (a local-regex check, no model,

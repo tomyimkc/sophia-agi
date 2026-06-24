@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Bridge from the Skills layer to the Sophia MCP surface.
 
 Two transports, auto-detected:

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """SSIL orchestrator — chain the bounded self-improvement gates, fail closed.
 
 A self-modification candidate is promoted only if **every** gate promotes. Any gate

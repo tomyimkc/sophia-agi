@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Black-box deception/misbehavior signals for the Sophia conscience.
 
 White-box activation probes can be added later. This v1 catches contradictions

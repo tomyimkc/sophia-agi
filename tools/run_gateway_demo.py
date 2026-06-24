@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Sophia Gateway P0 demo — federate tools, gate every call, surface only 'accepted'.
 
     python tools/run_gateway_demo.py

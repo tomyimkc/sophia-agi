@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Residual-stream steering hooks + SteeredClient (the ONLY torch module).
 
 torch is imported lazily inside functions so importing agent.steering never

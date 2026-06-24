@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for agent/legal_sources/* — offline, with injected fake fetchers.
 
 No test touches the real network: every source/resolver is driven by a fake

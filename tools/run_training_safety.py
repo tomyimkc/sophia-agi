@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """LoRA leakage guard + contamination control (#7) — falsifiable, on the real corpus.
 
   - Leakage: the real training corpus has 0 unsafe (confidential/PII/secret)

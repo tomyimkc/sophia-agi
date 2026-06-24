@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Trustworthy uncertainty everywhere: ECE + Brier over (confidence, correct) pairs.
 
 A verdict's confidence is only useful if it tracks correctness. These are the

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the 1.1.0 guardrails & memory: capability scopes per role, dry-run,
 kill switch, durable idempotent task queue, Langfuse-compatible traces, and the
 per-verdict ROI estimate. Deterministic, offline.

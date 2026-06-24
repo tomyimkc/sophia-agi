@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the 4 aihk-os integration adapters:
   1. contract over MCP (sophia_mcp.tools_impl contract fns)
   2. vault bridge (sophia_contract.vault.VaultGate)

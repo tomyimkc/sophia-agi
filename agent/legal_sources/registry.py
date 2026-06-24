@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Citation → source routing with a cache-first, fail-closed resolver.
 
 Mode is set by ``SOPHIA_LEGAL_SOURCE``:

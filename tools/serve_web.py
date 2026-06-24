@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Serve Sophia AGI thesis web UI + /api/ask agent endpoint.
 
 Usage:

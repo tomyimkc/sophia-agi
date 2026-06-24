@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Data-driven coding council routing for Sophia."""
 
 from __future__ import annotations

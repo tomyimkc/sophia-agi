@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run a private hidden evaluation pack through the full Sophia pipeline.
 
 This runner exercises retrieval, prompt discipline, gate checks, one bounded

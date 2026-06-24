@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run the Provenance Delta benchmark: build → run (alone vs gated) → score → report.
 
 Examples

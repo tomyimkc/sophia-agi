@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Pluggable verifiers for the agent harness, eval, and RL loops.
 
 A verifier is ``(text, task, step) -> {"passed": bool, "reasons": [...], "detail": {...}}``

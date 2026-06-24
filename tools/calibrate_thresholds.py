@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Calibrate the graded-decision hedge threshold from labeled confidence data.
 
 ``agent/graded_decision.DEFAULT_THRESHOLDS`` ships honest defaults (hi=0.7,

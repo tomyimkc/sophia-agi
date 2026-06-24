@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Epistemic self-check for agent responses (Phase 3 runtime gate)."""
 
 from __future__ import annotations

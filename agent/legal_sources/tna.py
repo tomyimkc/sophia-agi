@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """UK source — National Archives "Find Case Law" (caselaw.nationalarchives.gov.uk).
 
 The official publisher of UK court judgments from 2001 (the database the *Ayinde*

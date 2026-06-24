@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Council deliberation — map-reduce a hard query across constrained seats.
 
 The upgrade that makes the council a real uplift for SMALL models: instead of one

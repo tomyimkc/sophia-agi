@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Run GPQA-Provenance smoke benchmark.
 
 This is a provenance-layer smoke fixture inspired by GPQA-style graduate science

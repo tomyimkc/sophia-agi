@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for corroboration-aware confidence (#4).
 
 Properties: independent agreement raises belief; dependent (same-group) sources do

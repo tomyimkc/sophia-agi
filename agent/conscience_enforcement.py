@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Mandatory Conscience enforcement adapters.
 
 The Conscience Kernel is useful only if high-impact actions cannot bypass it.

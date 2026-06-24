@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """sophia-guard — run ANY local model behind Sophia's source-discipline gate.
 
 A thin CLI over agent.guarded.guarded_complete: it retrieves context, generates an

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Retrieval-quality eval: recall@k and MRR over golden queries.
 
 Measures whether the RAG layer actually surfaces the right source for a query, so

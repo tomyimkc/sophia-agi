@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Ship sophia-contract trace spans to Langfuse.
 
     python tools/langfuse_export.py <traces.jsonl> [--dry-run]

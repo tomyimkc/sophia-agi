@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Gated semantic-faithfulness benchmark — measure legal_holding_faithful honestly.
 
 Unlike the objective citation-existence benchmark, judging whether a holding

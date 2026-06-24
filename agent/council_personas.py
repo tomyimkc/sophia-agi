@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """C1 — personality-diverse council A/B (Spec C). Pure stdlib + the council engine.
 
 Seats carry an OCEAN persona via a prefix wrapper passed through deliberate()'s

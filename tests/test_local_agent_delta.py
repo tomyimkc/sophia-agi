@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the local-agent delta (alone vs +gate vs +MCP-tools). Offline, no torch.
 
 Exercises the in-process MCP dispatch, the native tool loop, and the three

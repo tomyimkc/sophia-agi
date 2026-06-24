@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the planner + plan-validator (M2.3).
 
 The validator `parse_plan` is the trust boundary for planner output: only known

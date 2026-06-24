@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for the RLVR reward + dataset + offline runner. Offline, no torch.
 
 Asserts the six reward-machinery invariants the falsifiable offline claim rests

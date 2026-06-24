@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Layered memory substrate for Sophia.
 
 Memory is split by function and trust level:

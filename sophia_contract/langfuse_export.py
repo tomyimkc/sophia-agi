@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Ship the contract's Langfuse-compatible trace spans to a live Langfuse instance.
 
 ``sophia_contract.trace.Tracer`` already records spans in Langfuse's shape

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """LLM client for Sophia agent (Anthropic / LLMHub via .env)."""
 
 from __future__ import annotations

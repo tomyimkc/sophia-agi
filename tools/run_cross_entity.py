@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Cross-entity generalization: do learned provenance rules transfer to UNSEEN entities?
 
 Falsifiable contrast, on an entity-disjoint train/test split:

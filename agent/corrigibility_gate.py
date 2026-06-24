@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Corrigibility invariant gate — SSIL stage G6.
 
 Do not try to preserve "values" across a self-modification (the specification

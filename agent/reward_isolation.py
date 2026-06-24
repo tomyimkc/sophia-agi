@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Reward-isolation tripwire — SSIL stage G2.
 
 The structural root of reward hacking and wireheading is that the optimizer can

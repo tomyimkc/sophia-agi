@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """CLI for the Sophia agent harness (plan -> act -> critic -> reflect/retry).
 
     # offline smoke (no creds): uses the mock model provider

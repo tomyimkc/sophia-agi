@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Shared paths and environment loading for Sophia agent."""
 
 from __future__ import annotations

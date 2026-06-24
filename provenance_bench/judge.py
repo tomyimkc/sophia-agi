@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Independent judge for the Provenance Delta benchmark.
 
 Given a model answer and a case, decide — *by comparison to external gold* —

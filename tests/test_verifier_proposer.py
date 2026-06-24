@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Tests for agent/verifier_proposer.py (offline, deterministic).
 
 Covers the missing-coverage gap for step 3: an LLM may *propose* predicates, but

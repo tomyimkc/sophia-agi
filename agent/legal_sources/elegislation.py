@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """e-Legislation source — verifies HK ordinance chapter references (``Cap. 614``).
 
 Hong Kong e-Legislation (elegislation.gov.hk) is, since Q1 2025, the sole official

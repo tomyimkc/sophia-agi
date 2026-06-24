@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Live MEASURED SSIL loop — the path where a real improvement can PROMOTE.
 
 The model proposes an executable routing policy (thresholds) from the TRAIN feature

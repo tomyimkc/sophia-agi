@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Federate a real downstream MCP server's tools behind the gateway (P1).
 
 Each downstream tool is registered as a ``ToolEntry`` whose handler calls a transport.

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
 """Guarded completion loop — the spine of the discipline layer.
 
 ``guarded_complete`` wraps a small/local model with Sophia's machine-checked
