@@ -1,0 +1,3 @@
+gradio>=5.49,<6
+numpy>=1.26
+# Sophia core is imported in-process from the repo tree this Space is built from.

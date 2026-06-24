@@ -1,0 +1,17 @@
+# Keep the Space build lean — exclude heavy/irrelevant repo trees from the Space image.
+.git/
+.github/
+__pycache__/
+**/__pycache__/
+*.pyc
+private/
+agi-proof/baseline-ablation/
+agi-proof/hidden-reviewer-packs/
+training/lora/
+benchmark/
+tests/
+web/
+docs/
+*.ipynb
+.env
+.env.*
