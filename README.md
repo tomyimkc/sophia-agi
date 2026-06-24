@@ -75,7 +75,7 @@ pip install -r requirements-mcp.txt && python sophia_mcp/server.py
 
 Stated plainly, because owning the limits is the point. Sophia **today**:
 
-- **Cannot verify claims against the live world** — external grounding runs on offline fixtures; live source backends (Wikidata/Crossref/search) are not yet wired in by default.
+- **Live verification works but is not yet independently validated** — the live Wikidata/Crossref/macro backend has been run (`liveBackendUsed: true`: 0% fabrication, Wilson-95 [0, 11%], at 32% over-abstention on a **first-party** pack, single run); the CI default stays on offline fixtures for reproducibility. A third-party pack + ≥3 runs are still needed. See the [failure ledger](agi-proof/failure-ledger.md).
 - **Cannot learn or update its weights** — there is no training loop in the gate; RLVR and the self-extension flywheel are offline *selection*, not parameter updates.
 - **Has not beaten a direct model on a third-party hidden eval** — every independent hidden run so far is incomplete, backend-broken, or self-authored (see [failure ledger](agi-proof/failure-ledger.md)).
 - **Does not generalize like a mind** — the "AGI-shaped" modules (program induction, planner, world model, …) are fail-closed *interfaces with toy reference implementations*, not the capabilities their names describe. See [AGI-Missing-Pillars](docs/11-Platform/AGI-Missing-Pillars.md).

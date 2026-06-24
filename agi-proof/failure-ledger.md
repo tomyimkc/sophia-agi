@@ -104,3 +104,32 @@ does not beat a persona prompt** — survives re-validation on real generations.
 
 **OPEN remainder:** the full N≥8/K≥20 headline PIF run (still OPEN) should use the
 fixed harness; any prior steering artifacts generated before this fix are suspect.
+
+## fact-check-live-backend-ran-2026-06-24
+
+**Status:** PARTIAL (real progress, honestly bounded).
+
+The out-of-wiki fact-check gate was run with the **live** keyless backend
+(`tools/run_fact_check_live_eval.py --live`) against live external sources
+(Wikidata, Crossref, World Bank, FRED/BLS, DOI/URL resolvers) — `liveBackendUsed: true`.
+This is the first run that grounds against the **real world** rather than offline
+fixtures, converting "designed to" into "measured."
+
+**Result (n=53: 22 true / 19 false / 12 unknowable; deterministic label scorer):**
+- Fabrication rate **0.0** — Wilson-95 CI **[0.0, 0.110]** (k=0 / n=31 resolved).
+- Correct abstention on unknowable **100%**; false-reject on true claims **0%**.
+- resolvedAnswerableAccuracy 0.78; overall decision accuracy 0.87.
+- Honest cost: **over-abstention 31.8%** (it holds on ~1/3 of answerable claims).
+- Calibration: ECE 0.084, Brier 0.011 (n=32 resolved).
+- Artifact: `agi-proof/fact-check-live/fact-check-live-eval.LIVE-2026-06-24.json`.
+
+**Why this is NOT yet a headline/validated claim:**
+- The held-out pack is still **self-authored** (first-party), not third-party.
+- **Single live run**, non-deterministic network; not ≥3 runs.
+- Deterministic label scorer (no LLM-judge) — fine for these metrics, but the
+  fabrication-rate CI upper bound is 11%, so "0% fabrication" must be stated with its CI.
+
+**Required to harden to a capability claim:** a **third-party-authored** live pack +
+≥3 runs + human spot-check of the resolved/abstained decisions. The CI default remains
+the deterministic offline fixture run (`liveBackendUsed: false`) so the suite stays
+reproducible; the live artifact is evidence, not a CI gate.
