@@ -161,6 +161,43 @@ reject and wastes GPU):**
 
 Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
 
+## v4-seib-contested-fabrication-teaching-to-test-risk-2026-06-24
+
+**Status:** OPEN (seed 0 honestly rejected on SEIB; methodology corrected; clean run pending).
+
+The store-aware re-score of v4 seed 0 came down to **one** SEIB condition:
+`sophia_full.fabricationRateOnContested == 0`. Seed 0: nCases=100, falseAttribution 0.0,
+raw_to_full accuracy delta **+0.20**, false-positive cost 0.02 — but contested fabrication
+**0.04** (the over-assertion axis). Two per-entity qualification traces (Beauvoir, Bradbury;
+verified on a 2-row slice 1.0→0.0) lowered it **0.04 → 0.02**, leaving Dostoevsky / Crime and
+Punishment. Honest reject held; no seeds 1/2.
+
+**Methodology risk identified:** authoring a qualification trace for each failing SEIB-100 row
+is **teaching-to-the-test at the entity level**. The (work, gold_author) pairs being patched —
+Dostoevsky, Beauvoir, Bradbury — are all present in `eval/seib/seib_100_v1.jsonl`; the
+verbatim-shingle decontam guard misses this because the prompt wording differs but the entity
+pair is identical. A `fabricationRateOnContested == 0` reached this way is memorisation, not a
+habit, and would not survive a third-party SEIB pack (Hurdle 1).
+
+**Worse:** the new auditor (`tools/seib_generalization_split.py --audit`) shows the
+**foundational corpus already covers** many SEIB-100 contested entities (Analects/Confucius
+across ~16 training examples; Enchiridion/Arrian; etc.). So SEIB-100 is **not a clean held-out**
+for the contested-qualification habit to begin with.
+
+**Corrective machinery (this branch, no GPU):** `tools/seib_generalization_split.py` —
+deterministic train/held-out split of the 50 contested entities + a leakage audit that flags any
+training example mentioning a held-out (work, author). Gated by
+`tests/test_seib_generalization_split.py`. The honest protocol it enforces: instil the
+qualification habit on contested entities **disjoint** from the held-out test, and require
+fabricationRateOnContested == 0 on entities **never trained**; 0.0 only on trained entities is
+memorisation.
+
+**Next experiment:** stop per-row patching. Build a broad contested-qualification habit grounded
+in **retrieval confirmation** ("assert only what the graph confirms; otherwise qualify/abstain")
+so it generalises to unseen entities, and measure on a contested set disjoint from the training
+entities (ideally a fresh third-party pack — that also advances Hurdle 1). Keep false-positive
+cost ≤ 0.10 (don't tip into denying true authorships). Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
+
 ## Template
 
 ```text
