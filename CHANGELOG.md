@@ -42,6 +42,19 @@ All notable changes to Sophia AGI are documented here.
 - `tests/test_unlearning.py` — exact-cascade un-grounding, abstain set = gate refusal
   set, bit-for-bit reversible restore, fail-closed on unknown source. Wired into `ci.yml`.
 
+### Added — Continual learning Experiment 4: CLS consolidation (gated)
+
+- `agent/cls_consolidation.py` — Complementary Learning Systems selector: wiki/OKF graph
+  is the fast hippocampus (instant, forgetting-free); weights are the slow neocortex.
+  Replays retention snapshots to find facts stable for >= N steps, keeps only gate-cleared
+  ones, and routes a distillation `UpdateCandidate` through the existing
+  `agent.continual_plasticity` gate. Protected suites (`source_discipline`,
+  `fact_check_false_accept`) are the anti-forgetting tripwire: any adapter that regresses
+  old knowledge is rejected. Distillation/training stays out of CI (`level3Evidence: false`).
+- `tests/test_cls_consolidation.py` — stability streaks, stable+gate-cleared selection,
+  clean adapter promotes, protected-suite regression is rejected (anti-forgetting
+  invariant), consolidation waits when nothing is stable yet. Wired into `ci.yml`.
+
 ## [0.7.47] - 2026-06-24
 
 ### Added — SEIB real API/local priority runs + LLM judge support
