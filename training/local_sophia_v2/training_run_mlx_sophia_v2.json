@@ -1,0 +1,26 @@
+{
+  "schema": "sophia.local_sophia_training_run.v1",
+  "createdAt": "2026-06-24T10:47:00Z",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "baseModel": "Qwen/Qwen2.5-3B-Instruct",
+  "backend": "mlx-lm",
+  "mlxLmVersion": "0.29.1",
+  "adapterPath": "training/mlx_adapters/sophia-v2",
+  "datasetManifest": "training/local_sophia_v2/manifest.json",
+  "command": "python3 -m mlx_lm lora --train --model Qwen/Qwen2.5-3B-Instruct --data training/local_sophia_v2/mlx --iters 500 --batch-size 4 --mask-prompt --adapter-path training/mlx_adapters/sophia-v2 --steps-per-report 50 --steps-per-eval 250 --save-every 250 --max-seq-length 1024",
+  "iters": 500,
+  "batchSize": 4,
+  "maxSeqLength": 1024,
+  "trainableParametersPct": 0.216,
+  "trainableParameters": "6.652M/3085.939M",
+  "finalTrainLoss": 0.714,
+  "finalValLoss": 1.828,
+  "peakMemGb": 25.466,
+  "notes": [
+    "Some rows exceeded 1024 tokens and were truncated by MLX-LM; future pack should pre-split or shorten long rows.",
+    "This is one local adapter run, not validated evidence and not AGI proof."
+  ],
+  "promotionStatus": "not_promoted",
+  "promotionReason": "Adapter improved internal domain score 50.0% -> 62.5%, but religion regressed 1/6 -> 0/6, gate failures remain high, and SEIB smoke did not clear the promotion rule."
+}
