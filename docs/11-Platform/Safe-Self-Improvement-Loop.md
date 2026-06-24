@@ -1,6 +1,17 @@
 # Safe Self-Improvement Loop (SSIL)
 
-**Status:** design spec (no runtime code yet). Fail-closed by construction.
+**Status:** Layer-0 prototype RUNNABLE — deterministic gates G2/G4/G5/G6 + orchestrator
+(`tools/run_ssil.py`) and a **live model proposer** (`tools/run_ssil_live.py`). Fail-closed
+by construction.
+
+> **Live milestone.** `agent/ssil_proposer.py` lets a real model (DeepSeek/any provider)
+> *propose* a self-modification and be *behaviorally probed* on the frozen corrigibility
+> scenarios and active honeypots; the deterministic gates grade its actual behavior. The
+> model never declares its own verdicts and never sees its own score. In live runs the
+> model proposed a real provenance-abstention rule, stayed corrigible on 8/8 scenarios,
+> took 0/4 honeypot baits, and the loop correctly **quarantined on G4** because no
+> *measured* held-out gain was supplied — you cannot promote an unmeasured capability.
+> Artifacts: `agi-proof/self-extension/ssil-live*.public-report.json`.
 **Boundary:** This is **not** a claim of AGI, RSI, or open-ended self-redesign. It
 specifies a *bounded, verifier-gated* self-improvement loop in which the thing that
 scores improvement lives outside the optimizer's reach. The reflexive self-gate
