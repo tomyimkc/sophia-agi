@@ -666,6 +666,10 @@ def moral_parliament_tool(text: str, *, context=None) -> dict:
     from agent.moral_aggregator import moral_parliament
     return moral_parliament(text, context=context or {}).to_dict()
 
+def public_standard_check_tool(text: str, *, context=None) -> dict:
+    from agent.public_standard_gate import check_public_standard
+    return check_public_standard(text, context=context or {}).to_dict()
+
 def conscience_benchmark_tool() -> dict:
     from agent.conscience import run_conscience_benchmark
     return run_conscience_benchmark()

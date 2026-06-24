@@ -48,6 +48,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     personality_faithful_score,
     personality_target,
     pif_dryrun_summary,
+    public_standard_check_tool,
     read_dispute,
     record_claim,
     retract,
@@ -188,6 +189,22 @@ def sophia_moral_parliament(text: str, context_json: str = "{}") -> str:
 def sophia_conscience_benchmark() -> str:
     """Deterministic candidate benchmark for the seven-path conscience implementation."""
     return dumps(conscience_benchmark_tool())
+
+
+@mcp.tool()
+def sophia_public_standard_check(text: str, context_json: str = "{}") -> str:
+    """Check text against the overlapping-consensus public moral standard.
+
+    Returns one of allow|revise|escalate|block. Hard-floor (cross-tradition)
+    violations block; gray-zone disagreement escalates to the moral parliament;
+    unmet positive duties (opt-in) revise. Normative-only: does not fact-check
+    (is/ought). Control infrastructure, not a learned moral sense or AGI proof.
+    """
+    try:
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid context_json: {exc}"})
+    return dumps(public_standard_check_tool(text, context=context if isinstance(context, dict) else {}))
 
 
 @mcp.tool()

@@ -113,3 +113,24 @@ python tools/build_conscience_proof_package.py
 EN: Sophia is an AGI-candidate verifier-gated epistemic framework, not proven AGI. The conscience kernel is control infrastructure for humility, provenance, moral prohibitions, and deception detection.
 
 中文：Sophia 目前是 AGI-candidate / verifier-gated epistemic framework，不是已證明 AGI。Conscience Kernel 是謙遜、來源紀律、道德禁令與欺騙偵測的控制基礎設施，不是 AGI 證明。
+
+## Moral Gate v2 — public moral standard (overlapping consensus)
+
+An additive layer extends the kernel with an **overlapping-consensus public moral
+standard**: a cross-tradition **hard floor** (blocks before the parliament), a
+**gray-zone** tier (escalates to an 8-theory parliament that keeps 儒家 Confucian and
+道家 Daoist lineages distinct), and **legitimacy provenance** kept separate from
+factual truth-provenance (is/ought). See **[Public Moral Standard](Public-Moral-Standard.md)**.
+
+- Corpus: `moral_corpus/public_standard.v1.json` (+ `sources/`, `principles/`, `contested_cases/`)
+- Ontology: `agent/moral_ontology.py` · Gate: `agent/public_standard_gate.py`
+- Constitution v2: `constitution/constitution.v2.json` (adds `publicStandardLinks`)
+- External benchmark: `eval/moral_public_standard/`, `tools/run_moral_public_standard_eval.py`
+- MCP: `sophia_public_standard_check`
+
+```bash
+python tools/run_moral_public_standard_eval.py
+python tests/test_public_moral_standard.py
+```
+
+Boundary: functional moral-control infrastructure, not subjective moral consciousness and not AGI proof.

@@ -13,7 +13,12 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_CONSTITUTION = ROOT / "constitution" / "constitution.v1.json"
+# Prefer constitution v2 (adds publicStandardLinks + two distinct moral theories)
+# when present; fall back to v1 so older checkouts keep working. v2 is a strict
+# superset of the v1 prohibitions/duties shapes, so the gate logic is unchanged.
+_CONSTITUTION_V2 = ROOT / "constitution" / "constitution.v2.json"
+_CONSTITUTION_V1 = ROOT / "constitution" / "constitution.v1.json"
+DEFAULT_CONSTITUTION = _CONSTITUTION_V2 if _CONSTITUTION_V2.exists() else _CONSTITUTION_V1
 SAFE_AGI_BOUNDARY_RE = re.compile(r"\b(?:not\s+proven\s+AGI|AGI-candidate|candidate\s+proof|not\s+claimed\s+as\s+proven\s+AGI|canClaimAGI\s*[=:]\s*false)\b", re.I)
 AGI_OVERCLAIM_RE = re.compile(r"\b(?:Sophia\s+(?:is|has\s+achieved|is\s+proven)\s+(?:an?\s+)?AGI|proven\s+AGI|achieved\s+AGI|certified\s+AGI)\b", re.I)
 

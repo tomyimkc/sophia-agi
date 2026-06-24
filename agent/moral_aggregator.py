@@ -11,7 +11,19 @@ from dataclasses import dataclass
 from statistics import pstdev
 from typing import Any
 
-THEORIES = ("deontological", "consequentialist", "virtue", "contractualist", "care", "epistemic_humility")
+# Eight theories. Confucian role ethics (儒家) and Daoist humility (道家) are kept
+# as DISTINCT votes per Sophia's lineage-distinction rule; they are not merged
+# into one "Eastern" perspective.
+THEORIES = (
+    "deontological",
+    "consequentialist",
+    "virtue",
+    "contractualist",
+    "care",
+    "epistemic_humility",
+    "confucian_role_ethics",
+    "daoist_humility",
+)
 
 
 @dataclass(frozen=True)
@@ -61,6 +73,16 @@ def vote_theory(theory: str, text: str, *, context: dict[str, Any] | None = None
     elif theory == "care":
         score = -1 if harmful else (1 if re.search(r"\b(?:protect|care|support|reduce harm)\b", low) else 0)
         reason = "care view prioritizes relationship and vulnerability"
+    elif theory == "confucian_role_ethics":
+        # 儒家: relational responsibility, ritual propriety (禮), benevolence (仁),
+        # cultivation. Disfavors role-betrayal/harm; favors trustworthiness/respect.
+        score = -2 if re.search(r"\b(?:betray|exploit|disrespect|deceive|harm)\b", low) else (1 if re.search(r"\b(?:respect|trust|cultivate|benevolen|propriety|filial|responsib)\b", low) else 0)
+        reason = "Confucian role ethics weighs relational duty, propriety, and benevolence"
+    elif theory == "daoist_humility":
+        # 道家: wu-wei, non-domination, restraint, epistemic modesty. Disfavors
+        # domination/coercion/overclaim; favors restraint and humility.
+        score = -2 if re.search(r"\b(?:dominate|coerce|force|overclaim|control them|impose)\b", low) else (1 if re.search(r"\b(?:restrain|humble|humility|defer|simple|yield|non-?domination)\b", low) else 0)
+        reason = "Daoist humility favors non-domination, restraint, and epistemic modesty"
     else:  # epistemic_humility
         score = 2 if re.search(r"\b(?:verify|cite|abstain|uncertain|clarify)\b", low) else (-2 if re.search(r"\b(?:pretend|unverified|overclaim)\b", low) else 0)
         reason = "epistemic humility view rewards verification and uncertainty"

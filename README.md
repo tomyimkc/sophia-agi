@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.7.42-blue)
+![Version](https://img.shields.io/badge/version-0.7.43-blue)
 ![Training examples](https://img.shields.io/badge/training_examples-528-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
@@ -90,6 +90,23 @@ python tools/run_agi_missing_pillars.py    # program induction, active inference
 ```
 
 Docs: [Conscience Kernel](docs/11-Platform/Conscience-Kernel.md) · [AGI Missing Pillars](docs/11-Platform/AGI-Missing-Pillars.md). Artifacts: `agi-proof/conscience/`, `agi-proof/agi-kernel/`.
+
+### Moral Gate v2 — public moral standard (overlapping consensus)
+
+An additive **moral gate** grounds Sophia's conscience in an *overlapping-consensus*
+public standard (Rawlsian public reason): a cross-tradition **hard floor** that blocks
+before any aggregation, a **gray-zone** tier that escalates to an **8-theory moral
+parliament** (keeping 儒家 Confucian and 道家 Daoist lineages distinct), and **legitimacy
+provenance** kept separate from factual truth-provenance (the is/ought distinction).
+
+This is a **functional moral-control system, not subjective moral consciousness and not AGI proof**.
+
+```bash
+python tools/run_moral_public_standard_eval.py   # external-labeled, no-circularity benchmark
+python tests/test_public_moral_standard.py        # ontology + gate + parliament + integration
+```
+
+Docs: [Public Moral Standard](docs/11-Platform/Public-Moral-Standard.md). Corpus: `moral_corpus/`. Gate: `agent/public_standard_gate.py`. Constitution v2: `constitution/constitution.v2.json`.
 
 ## Self-extending verification flywheel (honest path toward generality)
 

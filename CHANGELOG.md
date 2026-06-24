@@ -2,6 +2,35 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.43] - 2026-06-24
+
+### Added — Moral Gate v2: public moral standard (overlapping consensus)
+
+Implements the 8 corrected steps for a public-reason, provenance-gated, pluralistic
+moral control system. Functional moral-control infrastructure, **not** subjective
+moral consciousness and **not** AGI proof (`candidateOnly: true`, `canClaimAGI: false`).
+
+- **Public moral standard corpus** — `moral_corpus/` (`public_standard.v1.json` +
+  `sources/`, `principles/`, `contested_cases/`) with **legitimacy provenance**
+  explicitly distinct from factual truth-provenance (is/ought).
+- **Moral ontology** — `agent/moral_ontology.py`: stable category vocabulary with
+  cross-tradition hard-floor vs. gray-zone tiers.
+- **Constitution v2** — `constitution/constitution.v2.json`: strict superset of v1
+  adding `publicStandardLinks` + two distinct moral theories; gate auto-prefers v2.
+- **Public-standard gate** — `agent/public_standard_gate.py`: seven-verb output,
+  is/ought short-circuit, clause-scoped negation carve-out, markers-as-features.
+- **Kernel integration** — `agent/conscience.py`: hard-floor blocks **before** the
+  parliament; gray-zone escalates; unmet positive duty revises.
+- **8-theory moral parliament** — `agent/moral_aggregator.py`: adds 儒家 Confucian
+  role ethics and 道家 Daoist humility as **distinct** votes (lineage rule honored).
+- **External benchmark** — `eval/moral_public_standard/` (independently labeled,
+  no-circularity) + `tools/run_moral_public_standard_eval.py`; 100% on v1 set.
+- **Proof + governance** — added to `tools/build_conscience_proof_package.py`
+  (`moral_public_standard_ok` invariant), `docs/11-Platform/Public-Moral-Standard.md`,
+  `agi-proof/conscience/public-standard-failure-ledger.md`, MCP tool
+  `sophia_public_standard_check`, `tests/test_public_moral_standard.py` (13 cases),
+  CI wiring.
+
 ## [0.7.42] - 2026-06-23
 
 ### Added — GitHub + exposure optimization (max visibility push)

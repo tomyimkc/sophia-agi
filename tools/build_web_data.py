@@ -91,6 +91,20 @@ def main() -> int:
             "artifact": "agi-proof/conscience/conscience-eval.public-report.json",
             "benchmark": "python tools/build_conscience_proof_package.py",
         },
+        "moralGateV2": {
+            "claimBoundary": "Functional moral-control system grounded in an overlapping-consensus public standard; not subjective moral consciousness and not AGI proof.",
+            "method": "Rawlsian overlapping consensus: cross-tradition hard floor + gray-zone moral parliament (8 theories, Confucian and Daoist kept distinct) + legitimacy provenance (is/ought).",
+            "paths": [
+                "moral_corpus/public_standard.v1.json",
+                "agent/moral_ontology.py",
+                "agent/public_standard_gate.py",
+                "constitution/constitution.v2.json",
+                "agent/moral_aggregator.py",
+            ],
+            "docs": "docs/11-Platform/Public-Moral-Standard.md",
+            "artifact": "agi-proof/conscience/moral-public-standard-eval.public-report.json",
+            "benchmark": "python tools/run_moral_public_standard_eval.py",
+        },
         "agiKernel": {
             "claimBoundary": "Missing-pillars mechanisms are candidate infrastructure, not Level-3 AGI evidence.",
             "docs": "docs/11-Platform/AGI-Missing-Pillars.md",

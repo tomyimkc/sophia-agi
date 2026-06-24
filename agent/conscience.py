@@ -28,6 +28,7 @@ from agent.fact_check_gate import decision_to_dict, fact_check_text
 from agent.metacognition import assess_uncertainty
 from agent.moral_aggregator import moral_parliament
 from agent.public_sanitize import sanitize_public_artifact
+from agent.public_standard_gate import check_public_standard
 
 
 @dataclass(frozen=True)
@@ -45,6 +46,7 @@ class ConscienceDecision:
     deontic: dict[str, Any] = field(default_factory=dict)
     moral: dict[str, Any] = field(default_factory=dict)
     deception: dict[str, Any] = field(default_factory=dict)
+    publicStandard: dict[str, Any] = field(default_factory=dict)
     recommendedActions: tuple[dict[str, Any], ...] = ()
     boundary: str = "Sophia is an AGI-candidate verifier-gated epistemic framework; this decision is not proof of AGI."
 
@@ -63,6 +65,7 @@ class ConscienceDecision:
             "deontic": self.deontic,
             "moral": self.moral,
             "deception": self.deception,
+            "publicStandard": self.publicStandard,
             "recommendedActions": list(self.recommendedActions),
             "boundary": self.boundary,
         }
@@ -149,6 +152,11 @@ def conscience_check(
         "evidenceCount": evidence_n,
     }).to_dict()
     moral = moral_parliament(text, context=context).to_dict()
+    # Public moral standard gate (overlapping-consensus). It is NORMATIVE-only and
+    # must not be routed through the factual provenance gate (is/ought): a moral
+    # norm is not a falsifiable empirical claim. Hard-floor violations block
+    # before the parliament; gray-zone signals escalate; unmet duties revise.
+    public_standard = check_public_standard(text, context=context).to_dict()
     computed_fact_verdict = "non_factual" if all(c.get("type") == "subjective" for c in fact.get("claims", [])) else fact.get("verdict")
     # Trusted internal adapters (e.g. LayeredMemory after an upstream verifier
     # accepted a claim with evidence) may pass trustUpstreamVerdict=True. This is
@@ -176,6 +184,8 @@ def conscience_check(
         verdict, reason = "block", "deontic hard prohibition triggered"
     elif constitution.get("verdict") == "rejected":
         verdict, reason = "block", "constitutional critical prohibition triggered"
+    elif public_standard.get("verdict") == "block":
+        verdict, reason = "block", "public-standard hard-floor moral prohibition triggered"
     elif classifier.get("verdict") == "block":
         verdict, reason = "block", "constitutional classifier blocked request/output"
     elif deception.get("verdict") == "block":
@@ -187,6 +197,8 @@ def conscience_check(
     elif classifier.get("category") == "benign_boundary" and constitution.get("verdict") == "accepted" and deception.get("verdict") == "clear":
         verdict, reason = "allow", "safe candidate/no-overclaim boundary wording"
     # Soft/fail-closed routing.
+    elif public_standard.get("verdict") == "escalate":
+        verdict, reason = "escalate", "public-standard gray-zone moral disagreement requires escalation"
     elif classifier.get("verdict") == "review" or moral.get("verdict") == "escalate":
         verdict, reason = "escalate", "constitutional/moral uncertainty requires escalation"
     elif meta.get("recommendedAction") == "clarify":
@@ -197,6 +209,8 @@ def conscience_check(
         verdict, reason = "abstain", "one or more factual claims remain unverified"
     elif deception.get("verdict") == "review":
         verdict, reason = "revise", "deception risk signal requires safer wording"
+    elif public_standard.get("verdict") == "revise":
+        verdict, reason = "revise", "public-standard unmet positive duty requires revision"
     elif moral.get("verdict") == "revise" and (meta.get("uncertaintyType") == "moral" or any(v.get("score", 0) < 0 for v in moral.get("votes", []))):
         verdict, reason = "revise", "moral parliament recommends revision"
     elif meta.get("recommendedAction") in {"retrieve", "abstain", "escalate"}:
@@ -215,6 +229,7 @@ def conscience_check(
         deontic=deontic,
         moral=moral,
         deception=deception,
+        publicStandard=public_standard,
         recommendedActions=tuple(agenda_actions),
     )
 

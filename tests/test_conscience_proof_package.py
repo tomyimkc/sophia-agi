@@ -10,7 +10,10 @@ def test_conscience_proof_package() -> None:
     report=json.loads((ROOT/'agi-proof/conscience/conscience-eval.public-report.json').read_text())
     assert report['ok'] is True
     assert report['candidateOnly'] is True and report['level3Evidence'] is False and report['canClaimAGI'] is False
-    assert len(report['implementedPriorities']) == 7
+    # Seven hardening priorities + the public moral standard gate (Moral Gate v2).
+    assert len(report['implementedPriorities']) == 8
+    assert any('public moral standard' in p for p in report['implementedPriorities'])
+    assert report['invariants']['moral_public_standard_ok'] is True
 
 def main() -> int:
     test_conscience_proof_package(); print('test_conscience_proof_package: OK'); return 0

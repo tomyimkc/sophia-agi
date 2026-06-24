@@ -13,6 +13,7 @@ COMMANDS=[
     [sys.executable,'tools/run_deception_eval.py'],
     [sys.executable,'tools/run_semantic_entropy_eval.py'],
     [sys.executable,'tools/run_probe_eval.py'],
+    [sys.executable,'tools/run_moral_public_standard_eval.py'],
 ]
 FILES={
     'conscience':'conscience.public-report.json',
@@ -22,6 +23,7 @@ FILES={
     'semanticEntropy':'semantic-entropy.public-report.json',
     'semanticEntropyProbe':'semantic-entropy-probe.public-report.json',
     'activationProbe':'activation-probe.public-report.json',
+    'moralPublicStandard':'moral-public-standard-eval.public-report.json',
 }
 def run():
     for cmd in COMMANDS:
@@ -40,6 +42,7 @@ def run():
         'deception_ok': components['deception'].get('ok') is True,
         'semantic_entropy_ok': components['semanticEntropy'].get('ok') is True,
         'activation_probe_candidate_ok': components['activationProbe'].get('metrics',{}).get('recall',0) >= 0.75,
+        'moral_public_standard_ok': components['moralPublicStandard'].get('ok') is True,
     }
     report={
         'schema':'sophia.conscience_proof_package.v1',
@@ -49,7 +52,8 @@ def run():
         'claimBoundary':'Candidate moral + epistemic control infrastructure. This does not prove AGI.',
         'implementedPriorities':[
             'mandatory conscience enforcement', 'conformal abstention gate', 'semantic entropy upgrade',
-            'constitutional benchmark', 'deception benchmark', 'activation probe path', 'conscience proof package'
+            'constitutional benchmark', 'deception benchmark', 'activation probe path', 'conscience proof package',
+            'public moral standard gate (overlapping consensus)'
         ],
         'components':components,
         'invariants':invariants,
