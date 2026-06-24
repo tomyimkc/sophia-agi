@@ -4,11 +4,12 @@ emoji: 🛡️
 colorFrom: blue
 colorTo: gray
 sdk: gradio
-sdk_version: 5.0.0
+sdk_version: 5.50.0
 app_file: huggingface/space-v2/app.py
+python_version: "3.12"
 pinned: true
 license: mit
-short_description: An AI gate that abstains instead of fabricating — and publishes its own failure rate.
+short_description: An AI gate that abstains instead of fabricating
 tags:
   - provenance
   - hallucination
