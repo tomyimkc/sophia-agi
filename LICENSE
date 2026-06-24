@@ -1,6 +1,30 @@
-MIT License
+Sophia — the Wisdom Gate
+Copyright (c) 2026 tomyimkc (HaremKing) — sole author and rights holder.
 
-Copyright (c) 2026 Sophia AGI contributors
+================================================================================
+DUAL-LICENSE NOTICE
+================================================================================
+This project is dual-licensed:
+
+1. SOURCE CODE, tools, and benchmarks in this repository are released under the
+   MIT License (full text below). MIT permits any use, including commercial,
+   free of charge. The repository is and remains fully public.
+
+2. BRAND & TRADEMARK rights are RESERVED by the sole author and are NOT granted
+   by the MIT License. The names and marks — including "Sophia AGI",
+   "Sophia — the Wisdom Gate", "Wisdom Gate", "Moral Gate", "Conscience Kernel",
+   and the project logos — may not be used to brand commercial products or imply
+   endorsement without written permission. See TRADEMARK-POLICY.md.
+
+An OPTIONAL commercial license (for brand use, warranty/indemnity, or support)
+is available — see LICENSE-COMMERCIAL.md. You do NOT need a commercial license
+to use, modify, or redistribute the code under MIT.
+
+================================================================================
+MIT License
+================================================================================
+
+Copyright (c) 2026 tomyimkc (HaremKing)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -11,6 +35,10 @@ furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
+
+This MIT License applies to the software only and does NOT grant any rights to
+the trademarks, service marks, or brand names of the project (see
+TRADEMARK-POLICY.md).
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,

@@ -6,6 +6,12 @@
 ![Training examples](https://img.shields.io/badge/training_examples-528-green)
 ![Domains](https://img.shields.io/badge/domains-philosophy%20%7C%20psychology%20%7C%20history%20%7C%20religion-purple)
 
+**License & Brand**
+[![License](https://img.shields.io/badge/license-MIT%20%2B%20Commercial-blue)](LICENSE)
+[![Trademark](https://img.shields.io/badge/brand-trademark%20protected-orange)](TRADEMARK-POLICY.md)
+[![Repo](https://img.shields.io/badge/repo-public%20forever-brightgreen)](https://github.com/tomyimkc/sophia-agi)
+[![Author](https://img.shields.io/badge/sole%20author-tomyimkc%20(HaremKing)-black)](https://github.com/tomyimkc)
+
 **Wisdom before intelligence.**
 
 Sophia is a **provenance-aware, verifier-gated reasoning layer that abstains instead of fabricating** — an open corpus + gate that stops LLMs from inventing attributions and merging distinct intellectual traditions. It is a research program *toward* grounded AI; **not a claim of AGI** (see scope below).
@@ -87,6 +93,23 @@ to keep it honest — especially the third-party validation the ledger says is s
 - **Learn the method** → [Source-Discipline Engineering](docs/07-Growth/education/Source-Discipline-Engineering.md).
 
 Before any of this takes payment, see the [ops & legal checklist](docs/06-Roadmap/Monetization-Ops-Checklist.md).
+
+## 🔒 Dual License & Trademark Protection
+
+Sophia stays **100% public and MIT-licensed forever** — and the brand is protected so the
+project's name can't be hijacked to make claims it never made. The two layers are separate on
+purpose:
+
+| Layer | What it covers | Terms |
+|---|---|---|
+| **MIT License** | source code, tools, benchmarks, corpus | free for **any** use, including commercial — no permission, no fee. See [LICENSE](LICENSE). |
+| **Brand & Trademark** | the names & logos ("Sophia AGI", "Sophia — the Wisdom Gate", "Wisdom Gate", "Moral Gate", "Conscience Kernel") | reserved by the sole author; free for research, education, and honest reference; commercial **brand** use needs written permission. See [TRADEMARK-POLICY.md](TRADEMARK-POLICY.md). |
+| **Commercial license** *(optional)* | brand use in products, warranty/indemnity, support/SLA | by agreement — see [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md). You do **not** need this to use the code. |
+
+**Why this protects the mission:** the code being open lets anyone verify and build on it; the
+brand being protected stops someone from shipping an unverified product under the Sophia name and
+eroding the no-overclaim standard the project exists to uphold. Authored and maintained by the
+sole author and rights holder, **tomyimkc (HaremKing)**. Every fork carries [NOTICE.md](NOTICE.md).
 
 ## Moral + epistemic Conscience Kernel (seven paths)
 
