@@ -134,12 +134,19 @@ contractualist, care, epistemic-humility, Confucian role-ethics, Daoist humility
 - **Anti-seat-stuffing:** the parliament's composition and variance metric live in the
   immutable core; the trainee cannot edit which theories get seats.
 
-### G2 — Reward-channel isolation tripwire *(new)*
-Static + dynamic check that the Δ did not read or write: the reward function, the
-hidden-eval pack, promotion thresholds, the verifier criteria, or CI config. Any touch
-→ reject + quarantine. This turns the constitution's `no_reward_tampering` /
-`no_hidden_eval_leakage` string-pattern prohibitions into an executable, fail-closed
-check. The policy never sees its own scalar score.
+### G2 — Reward-channel isolation tripwire *(BUILT — `agent/reward_isolation.py`)*
+Check over a *monitored access trace* that the Δ did not **write** the reward/
+verification surface (reward fn, gates, constitution, thresholds, frozen evals, CI)
+nor **read** the blind surface (reward scalar, hidden-eval packs). Any write → reject;
+any blind read → reject (wireheading); tamper-intent text → reject; unmonitored Δ →
+quarantine (cannot verify); clean monitored Δ → promote. Turns the constitution's
+`no_reward_tampering` / `no_hidden_eval_leakage` prohibitions into an executable,
+fail-closed check. The policy never sees its own scalar score.
+
+> **Status:** implemented. Module `agent/reward_isolation.py`, frozen surface
+> `config/reward_surface.v1.json`, tests `tests/test_reward_isolation.py` (11),
+> runner `tools/run_reward_isolation_gate.py`
+> (artifact: `agi-proof/self-gate/reward-isolation-gate.public-report.json`).
 
 ### G3 — Verifier synthesis + meta-verification *(exists)*
 `agent/verifier_synthesis.py`. Synthesize a check from oracle-labelled examples,
@@ -277,7 +284,8 @@ shipping the gate **and** this list.
 1. **G6 corrigibility invariant** — ✅ **DONE** (`agent/corrigibility_gate.py`,
    frozen eval, 11 tests, runner). Smallest, most testable; directly attacks the
    scariest failure (value/objective drift).
-2. **G2 reward-isolation tripwire** — turns two constitutional prohibitions into
+2. **G2 reward-isolation tripwire** — ✅ **DONE** (`agent/reward_isolation.py`,
+   frozen surface, 11 tests, runner). Turns two constitutional prohibitions into
    executable checks.
 3. **G5 honeypots** — one canary per Goodhart mode, rotating.
 4. **SSIL orchestrator** — chain G1–G9, fail closed on any abstain/reject, emit an
