@@ -1,6 +1,9 @@
 # Plan: Non-Parametric Continual Learning on the OKF Belief Graph
 
-**Status:** active — branch `claude/continual-learning-catastrophic-forgetting-kyhui2`
+**Status:** Experiments 1–4 landed (modules + tests + CI) on branch
+`claude/continual-learning-catastrophic-forgetting-kyhui2`. Experiment 4's distillation
+step is a gated dry-run candidate (`level3Evidence: false`); a real training run remains
+future work.
 **Thesis:** Catastrophic forgetting is a property of *parametric* (weight-stored)
 knowledge. Sophia already stores declarative knowledge **non-parametrically** — as
 provenance-typed OKF pages in a belief graph (`okf/`). When "learning" is a page
