@@ -326,15 +326,13 @@ python - <<'PY'
 from pathlib import Path
 p = Path("/tmp/requirements-rl.sophia.txt")
 pins = {
-    "transformers": "transformers==4.51.3",
-    # trl 0.17.0 is the first with the GRPO vllm_mode (colocate/server) selector,
-    # and is compatible with transformers 4.51.3. Paired with vllm 0.8.5 (the
-    # trl-0.17-era vLLM API) so colocate generation works in-process on one GPU.
-    "trl": "trl==0.17.0",
-    "vllm": "vllm==0.8.5",
-    "peft": "peft==0.15.2",
-    "datasets": "datasets==3.6.0",
-    "accelerate": "accelerate==1.6.0",
+    # trl 0.19 has the vllm_mode selector (colocate is the DEFAULT: vLLM in-process
+    # on one GPU, no separate server) — unlike 0.16/0.17 which lacked the field and
+    # defaulted to server mode. Pair with vllm 0.9.1 (trl-0.19-era vLLM API).
+    # transformers / peft / accelerate / datasets are left UNPINNED so pip resolves
+    # the mutually-compatible set trl 0.19.1 actually needs.
+    "trl": "trl==0.19.1",
+    "vllm": "vllm==0.9.1",
 }
 out = []
 for line in p.read_text().splitlines():
