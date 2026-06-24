@@ -78,16 +78,33 @@ sources are downweighted; values conflicting with an established consensus are f
 poison and quarantined; proven-malicious sources are remediated via `agent.unlearning.Unlearner`
 (cascade un-grounds dependents). Seeded poison-stream benchmark passes deterministically.
 
-## Phase 2 — Scale + generality
+## Phase 2 — Scale + generality  ✅ delivered (candidate)
 **#5 Incremental belief revision** — recompute only the affected subgraph; shard + index; the
 scaling harness already measures the cost curve. *Done when:* revision is sub-linear as facts
 scale; the harness shows the new curve.
+→ **`agent/incremental_revision.py`** (`IncrementalReviser.add_fact`/`belief_state`/`kept_ids`,
+`incremental_sweep`, `compare_to_full`). Maintains contradicts-adjacency + reverse-`derivesFrom`
+indices built per-add (O(edges of the new page), never O(N)); `add_fact` re-resolves only the
+affected closure (new node + its `derivesFrom` ancestors + contradiction neighbours + transitive
+dependents). Proven **belief-state-identical** to the full `agent.belief_revision_policy.resolve_conflicts`
+oracle at several N and order-independently; `maxAffectedNodes` stays **bounded (=2)** across
+N∈{30,60,120} while full recompute touches ~N — `subLinear=True`. Timing reported, never asserted.
+Tests in `tests/test_incremental_revision.py` (CI `validate-core`).
 
 **#1 Skills (generality leap)** — a **[Voyager](https://arxiv.org/abs/2305.16291)/AutoSkill**-style
 **executable-code skill library** (versioned, gated, compositional, forgetting-resistant, *no
 fine-tuning*) **+ declarative verifier specs** (preconditions/effects/verifier) in the OKF graph.
 Skills promote through the same anti-forgetting gate as facts. *Done when:* a skill learned in
 one episode is reused later with 0 regression of prior skills (skill-retention benchmark).
+→ **`agent/skill_library.py`** (`Skill`, `SkillLibrary.learn`/`invoke`/`version_tag`/`to_update_candidate`,
+`verify_skill`, `skill_retention_benchmark`). Skill code is sandboxed through `agent.program_induction`'s
+safe-AST compiler (imports / `eval` / dunders / attribute escapes rejected — all four spot-checked);
+composites resolve only already-verified deps. `learn` admits iff the code is safe, passes its own
+verifier, **and** the anti-forgetting tripwire holds (no dependent skill's verifier regresses) — so a
+breaking upgrade is **rejected** and the dependent stays passing; `to_update_candidate` renders the
+promotion through `agent.continual_plasticity` for parity. `skill_retention_benchmark` proves
+`forgottenSkills == 0` with a skill reused across later episodes (deterministic).
+Tests in `tests/test_skill_library.py` (CI `validate-core`).
 
 ## Phase 3 — Capstone: governed autonomous RSI (gated by all above)
 **#6 Full autonomous RSI inside the inviolable cage.** The loop proposes + commits improvements
