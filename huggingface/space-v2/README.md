@@ -8,7 +8,7 @@ sdk_version: 5.50.0
 app_file: huggingface/space-v2/app.py
 python_version: "3.12"
 pinned: true
-license: mit
+license: apache-2.0
 short_description: An AI gate that abstains instead of fabricating
 tags:
   - provenance

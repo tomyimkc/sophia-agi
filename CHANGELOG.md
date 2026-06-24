@@ -2,7 +2,7 @@
 
 All notable changes to Sophia AGI are documented here.
 
-## [Unreleased]
+## [0.8.0] - 2026-06-24
 
 ### Added — Non-parametric continual learning (Experiment 1: sequential retention)
 
