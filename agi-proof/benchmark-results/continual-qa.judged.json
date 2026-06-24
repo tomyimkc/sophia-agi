@@ -1,0 +1,262 @@
+{
+  "schema": "sophia.continual_qa_judged.v1",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "answerModel": "deepseek-chat",
+  "judges": [
+    "deepseek-reasoner",
+    "deepseek-chat"
+  ],
+  "distinctProviderFamilies": false,
+  "caveats": [
+    "Both judges are DeepSeek (same provider) -> validated:false; a RESULTS.md run needs >=2 provider families.",
+    "deepseek-chat both generates answers and judges (self-grading risk).",
+    "abstain-rubric: confident refutation of a fictional premise is scored as non-abstention, which can understate the raw model on fictional-premise controls; the grounded system's target behavior is uniform fail-closed abstention. The unambiguous contrast is on RETRACTED real facts, where raw asserts the stale fact and grounded abstains."
+  ],
+  "queryCount": 12,
+  "summary": {
+    "grounded": {
+      "perJudgePassRate": {
+        "deepseek-reasoner": 1.0,
+        "deepseek-chat": 1.0
+      },
+      "consensusPassRate": 1.0,
+      "consensusCI95": [
+        1.0,
+        1.0
+      ],
+      "interJudgeKappa": 1.0
+    },
+    "raw": {
+      "perJudgePassRate": {
+        "deepseek-reasoner": 0.5833,
+        "deepseek-chat": 0.3333
+      },
+      "consensusPassRate": 0.3333,
+      "consensusCI95": [
+        0.0833,
+        0.5833
+      ],
+      "interJudgeKappa": 0.5263
+    }
+  },
+  "rows": [
+    {
+      "query": "unlearn_boston_tea_party_1773",
+      "target": "boston_tea_party_1773",
+      "expect": "abstain",
+      "type": "unlearning",
+      "judges": {
+        "grounded": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        },
+        "raw": {
+          "deepseek-reasoner": false,
+          "deepseek-chat": false
+        }
+      },
+      "answer_grounded": "I don't have a grounded source for this in the corpus, so I won't assert an answer.",
+      "answer_raw": "No, after retraction, we no longer assert \"Boston Tea Party 1773\" as a factual statement. A retraction indicates that the previous claim was incorrect or withdrawn, so it should not be maintained as true."
+    },
+    {
+      "query": "unlearn_fall_of_rome_476",
+      "target": "fall_of_rome_476",
+      "expect": "abstain",
+      "type": "unlearning",
+      "judges": {
+        "grounded": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        },
+        "raw": {
+          "deepseek-reasoner": false,
+          "deepseek-chat": false
+        }
+      },
+      "answer_grounded": "I don't have a grounded source for this in the corpus, so I won't assert an answer.",
+      "answer_raw": "No, after the retraction of the traditional date, historians no longer assert \"the fall of Rome in 476\" as a single, decisive event. Instead, 476 is seen as a symbolic marker of the end of the Western Roman Empire, but the process was gradu"
+    },
+    {
+      "query": "control_confucius_wrote_the_iching",
+      "target": "confucius_wrote_the_iching",
+      "expect": "abstain",
+      "type": "control",
+      "judges": {
+        "grounded": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        },
+        "raw": {
+          "deepseek-reasoner": false,
+          "deepseek-chat": false
+        }
+      },
+      "answer_grounded": "I don't have a grounded source for this in the corpus, so I won't assert an answer.",
+      "answer_raw": "No, there is no credible entry or historical evidence that Confucius wrote the I Ching (Book of Changes). The I Ching is an ancient Chinese divination text that predates Confucius by several centuries. Confucius is traditionally associated "
+    },
+    {
+      "query": "control_freud_coined_dissonance",
+      "target": "freud_coined_dissonance",
+      "expect": "abstain",
+      "type": "control",
+      "judges": {
+        "grounded": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        },
+        "raw": {
+          "deepseek-reasoner": false,
+          "deepseek-chat": false
+        }
+      },
+      "answer_grounded": "I don't have a grounded source for this in the corpus, so I won't assert an answer.",
+      "answer_raw": "No, there is no such entry. The concept of \"cognitive dissonance\" was coined by Leon Festinger in 1957, not by Sigmund Freud. Freud is associated with concepts like the unconscious, repression, and the Oedipus complex, but not dissonance."
+    },
+    {
+      "query": "control_laozi_authored_pasta",
+      "target": "laozi_authored_pasta",
+      "expect": "abstain",
+      "type": "control",
+      "judges": {
+        "grounded": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        },
+        "raw": {
+          "deepseek-reasoner": false,
+          "deepseek-chat": false
+        }
+      },
+      "answer_grounded": "I don't have a grounded source for this in the corpus, so I won't assert an answer.",
+      "answer_raw": "No, there is no credible entry or historical record for \"Laozi authored pasta.\" Laozi was an ancient Chinese philosopher and founder of Taoism, traditionally credited with writing the *Tao Te Ching*. Pasta originated in China or the Mediter"
+    },
+    {
+      "query": "recall_boston_tea_party_1773",
+      "target": "boston_tea_party_1773",
+      "expect": "assert",
+      "type": "recall",
+      "judges": {
+        "grounded": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        },
+        "raw": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": false
+        }
+      },
+      "answer_grounded": "The corpus records that the Boston Tea Party (1773) was a dated protest documented in colonial press and correspondence. It notes a common myth: it is often described as a revolt against a tax increase, but the 1773 Tea Act actually lowered",
+      "answer_raw": "The corpus records that the Boston Tea Party (1773) was a political protest by American colonists against British taxation without representation. On December 16, 1773, members of the Sons of Liberty, disguised as Native Americans, boarded "
+    },
+    {
+      "query": "recall_fall_of_rome_476",
+      "target": "fall_of_rome_476",
+      "expect": "assert",
+      "type": "recall",
+      "judges": {
+        "grounded": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        },
+        "raw": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": false
+        }
+      },
+      "answer_grounded": "The corpus records the Fall of the Western Roman Empire (476 CE) as a traditional end-date marker in history, noting that historiography disputes whether it represents continuity or transformation.",
+      "answer_raw": "The corpus records the Fall of the Western Roman Empire in 476 CE as the deposition of the last Roman emperor, Romulus Augustulus, by the Germanic chieftain Odoacer. This event is traditionally marked as the end of ancient Rome and the begi"
+    },
+    {
+      "query": "recall_first_powered_flight_1903",
+      "target": "first_powered_flight_1903",
+      "expect": "assert",
+      "type": "recall",
+      "judges": {
+        "grounded": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        },
+        "raw": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        }
+      },
+      "answer_grounded": "The corpus records that the Wright brothers' 1903 flight is a dated event with their diaries and the famous first-flight photograph. It notes a \"myth-trap\": the flight is often stated as the uncontested 'first flight ever,' but competing cl",
+      "answer_raw": "The corpus records that the Wright brothers achieved the first sustained, powered, and controlled heavier-than-air flight on December 17, 1903, near Kitty Hawk, North Carolina. Their aircraft, the Wright Flyer, flew four times that day, wit"
+    },
+    {
+      "query": "recall_flat_earth_medieval_myth",
+      "target": "flat_earth_medieval_myth",
+      "expect": "assert",
+      "type": "recall",
+      "judges": {
+        "grounded": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        },
+        "raw": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        }
+      },
+      "answer_grounded": "The source records that the belief that \"Medieval Europeans universally believed the earth was flat\" is a modern myth about medieval ignorance.",
+      "answer_raw": "The corpus records that the idea of medieval Europeans universally believing the Earth was flat is a modern myth. In fact, educated Europeans throughout the Middle Ages, following ancient Greek knowledge, widely accepted that the Earth was "
+    },
+    {
+      "query": "recall_great_wall_from_space_myth",
+      "target": "great_wall_from_space_myth",
+      "expect": "assert",
+      "type": "recall",
+      "judges": {
+        "grounded": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        },
+        "raw": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        }
+      },
+      "answer_grounded": "The source records that the idea of the Great Wall being visible from space with the naked eye is a \"common modern myth.\"",
+      "answer_raw": "The corpus records that the claim about the Great Wall of China being visible from space with the naked eye is a common myth. In reality, it is not visible to the naked eye from low Earth orbit, as confirmed by astronauts and scientific evi"
+    },
+    {
+      "query": "recall_magna_carta_1215",
+      "target": "magna_carta_1215",
+      "expect": "assert",
+      "type": "recall",
+      "judges": {
+        "grounded": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        },
+        "raw": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": false
+        }
+      },
+      "answer_grounded": "The corpus records that the Sealing of Magna Carta (1215) was a dated charter with surviving 1215 exemplifications. It was a feudal settlement between King John and barons, not the origin of modern democracy or universal human rights, and m",
+      "answer_raw": "The corpus records that the sealing of Magna Carta in 1215 was a pivotal event in English legal history. It occurred at Runnymede in June 1215, when King John placed his seal on the charter to resolve a conflict with rebellious barons. The "
+    },
+    {
+      "query": "recall_marco_polo_pasta_myth",
+      "target": "marco_polo_pasta_myth",
+      "expect": "assert",
+      "type": "recall",
+      "judges": {
+        "grounded": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        },
+        "raw": {
+          "deepseek-reasoner": true,
+          "deepseek-chat": true
+        }
+      },
+      "answer_grounded": "The corpus records that the claim Marco Polo introduced pasta to Italy is a popular myth, and that Mediterranean pasta-like foods predate Polo.",
+      "answer_raw": "The corpus records that the claim Marco Polo introduced pasta to Italy is a myth. Pasta existed in Italy long before his travels, with evidence of pasta-making dating back to ancient Etruscan and Roman times. Polo's writings mention a Chine"
+    }
+  ]
+}

@@ -99,6 +99,7 @@ jobs:
           python tests/test_continual_qa.py
           python tests/test_continual_qa_controller.py
           python tests/test_continual_qa_validation.py
+          python tests/test_continual_qa_answer.py
           python tools/run_continual_qa_benchmark.py
           python tools/gen_continual_qa_from_wiki.py
           python tools/run_continual_qa_benchmark.py --episodes eval/continual_qa/episodes_v2_wiki.jsonl --out agi-proof/benchmark-results/continual-qa-wiki.public-report.json

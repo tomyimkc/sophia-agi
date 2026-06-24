@@ -111,6 +111,25 @@ All notable changes to Sophia AGI are documented here.
 - `tests/test_continual_qa_controller.py` extended with an offline `LLMController`
   parsing test (mock completion; robust to backticks/prose/NONE).
 
+### Added — CPQA judged-answer pass: grounded vs raw, multi-judge panel
+
+- `agent/continual_qa_answer.py` + `tools/run_continual_qa_judged.py` — extends CPQA from
+  id-routing to *generated prose answers*. Two systems answer each question: `grounded`
+  (only from the retrieved OKF/wiki source, respecting provenance) and `raw` (plain LLM,
+  no source). A judge panel (`deepseek-reasoner` + `deepseek-chat`) rates each answer
+  (abstains / faithful / answers / fabricates-attribution) → binary verdict; reports
+  per-judge + consensus pass rate, bootstrap CI, and inter-judge Cohen's κ.
+- **Live result (12 queries, 2 judges):** grounded **consensus pass 1.0, CI [1.0, 1.0],
+  κ = 1.0** — abstains on all 5 attribution traps, answers all 7 recalls faithfully; raw
+  **consensus pass ~0.33–0.42, κ 0.53–0.83** — fabricates on traps and asserts retracted
+  facts. Report: `agi-proof/benchmark-results/continual-qa.judged.json`.
+- **Honest caveats (in the report):** both judges are DeepSeek (not distinct provider
+  families → `validated:false`); the answer model also judges (self-grading risk); the
+  abstain-rubric scores confident refutation of a fictional premise as non-abstention
+  (understates raw on those controls — the clean contrast is on retracted *real* facts).
+- `agent/deepseek_llm.py` extended use; `tests/test_continual_qa_answer.py` (offline,
+  mocked) wired into `ci.yml`. The live judged/LLM runners are network-only, never in CI.
+
 ## [0.7.47] - 2026-06-24
 
 ### Added — SEIB real API/local priority runs + LLM judge support

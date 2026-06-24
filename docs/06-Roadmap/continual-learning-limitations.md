@@ -144,10 +144,21 @@ floor (gap 0.087) but still nonzero — limitation #1 made concrete: even an exc
 controller cannot perfectly disambiguate which fact a question is about. Report:
 `agi-proof/benchmark-results/continual-qa.llm-control-flow.json`.
 
+**Judged-answer pass (grounded prose, multi-judge).** `tools/run_continual_qa_judged.py`
+extends CPQA to generated answers: a `grounded` system answers only from the retrieved
+source, a `raw` system answers from parametric memory, and a panel of judges
+(`deepseek-reasoner` + `deepseek-chat`) rates each. Live (12 queries): grounded
+**consensus pass 1.0, CI [1.0, 1.0], κ = 1.0** (abstains on every attribution trap,
+faithful on every recall); raw **~0.33–0.42** (fabricates on traps, asserts retracted
+facts). This is Sophia's source-discipline thesis measured on the integrated system.
+Caveats kept in the report: both judges are one provider (→ `validated:false`), the
+answer model also judges, and the abstain-rubric understates `raw` on fictional-premise
+controls (the clean contrast is on retracted *real* facts).
+
 **Remaining honest gaps:** the substrate result (1.0) is the *knowledge store* under
 perfect routing; real end-to-end accuracy is bounded by the control-flow layer (0.989
 here) and by query-formulation, which needs the parametric prior of limitation #1. The
-corpus is 67 curated pages, not open-domain. The LLM path scores *routing* by exact id
-match (no judge subjectivity); a full RESULTS.md entry on *generated prose answers* would
-still need ≥2 judge families. One key was used at runtime via env var only and is not
-stored in the repo.
+corpus is 67 curated pages, not open-domain. The judged pass demonstrates the multi-judge
+machinery + κ, but a true RESULTS.md entry still needs **≥2 distinct provider families**,
+≥3 runs, and κ ≥ 0.40 across them. Any API key was used at runtime via env var only and is
+not stored in the repo.
