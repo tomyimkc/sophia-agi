@@ -2,6 +2,26 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [0.7.47] - 2026-06-24
+
+### Added — SEIB real API/local priority runs + LLM judge support
+
+- `tools/run_seib.py` now performs case-level LLM judging when `--judges` is
+  supplied. It scores all five SEIB conditions per case, accepts JSON object or
+  array judge payloads, records judge families and mean pairwise agreement, and
+  preserves deterministic fallback scores.
+- Added real candidate result artifacts:
+  - `seib-100-openrouter-deepseek.public-report.json` — full 100-case
+    OpenRouter DeepSeek subject run (deterministic SEIB scorer).
+  - `seib-20-balanced-openrouter-deepseek-judged.public-report.json` — 20-case
+    balanced OpenRouter run judged by direct DeepSeek + OpenRouter Qwen
+    (mean agreement 0.9737 on valid rows).
+  - `seib-20-balanced-ollama-qwen3-30b-a3b.public-report.json` — stronger local
+    Qwen3 30B balanced run.
+- Documented real-run analysis and provider caveats in
+  `docs/11-Platform/Benchmark-Phases.md`. All results remain
+  `candidateOnly=true`, `validated=false`.
+
 ## [0.7.46] - 2026-06-24
 
 ### Added — SEIB-100 real-model runner path

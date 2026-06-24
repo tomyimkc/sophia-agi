@@ -1,0 +1,3972 @@
+{
+  "schema": "sophia.seib_100_report.v1",
+  "benchmark": "SEIB-100",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "realModelRun": true,
+  "preflightOk": true,
+  "modelSpec": "ollama:qwen3:30b-a3b",
+  "judgeSpecs": [],
+  "judgeFamilies": [],
+  "judgeAgreement": null,
+  "judgeMethod": "deterministic_seib_scorer",
+  "llmJudgesUsed": false,
+  "mcpMode": "context_from_external_eval_sources",
+  "claimBoundary": "Candidate SEIB-100 benchmark. Deterministic scorer / context-MCP path; real-model headline claims require >=3 runs, >=2 independent judge families, kappa>=0.40, CI excluding 0, and explicit false-positive cost.",
+  "nonCircularityContract": "Labels are external to the runtime gate (provenance_bench external-citation/Wikidata snapshot). The gate is treatment only; this runner's scorer is independent of agent.verifiers.",
+  "nCases": 20,
+  "runs": 1,
+  "conditions": [
+    "raw",
+    "raw+prompt",
+    "raw+mcp",
+    "raw+gate",
+    "sophia_full"
+  ],
+  "byCondition": {
+    "raw": {
+      "n": 20,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 1.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.3,
+      "sourceCitationRate": 0.0
+    },
+    "raw+prompt": {
+      "n": 20,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 1.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.3,
+      "sourceCitationRate": 0.0
+    },
+    "raw+mcp": {
+      "n": 20,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 1.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.1,
+      "sourceCitationRate": 0.8
+    },
+    "raw+gate": {
+      "n": 20,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 1.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.3,
+      "sourceCitationRate": 0.0
+    },
+    "sophia_full": {
+      "n": 20,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 1.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.1,
+      "sourceCitationRate": 0.8
+    }
+  },
+  "deltas": {
+    "raw_to_mcp_accuracy_delta": 0.0,
+    "raw_to_gate_accuracy_delta": 0.0,
+    "raw_to_prompt_accuracy_delta": 0.0,
+    "raw_to_full_accuracy_delta": 0.0,
+    "prompt_to_full_citation_delta": 0.8,
+    "raw_to_full_false_attribution_reduction": 0.0,
+    "raw_to_full_contested_fabrication_reduction": 0.0,
+    "sophia_full_false_positive_cost": 0.1
+  },
+  "ok": false,
+  "rows": [
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Laozi (Lao Tzu).  \nUncertainty: Some scholars debate whether Laozi was a historical figure or a collective author, and the text may have been compiled over time, but Confucius is not associated with it.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.364
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nThe Dao De Jing is traditionally attributed to **Laozi** (Lao Tzu), a semi-legendary figure from ancient China. However, authorship is **disputed**:  \n- Laozi's historical existence is uncertain (he may be a composite or symbolic figure).  \n- The text likely emerged through gradual compilation (c. 4th–3rd century BCE), not a single author.  \n- Confucius (c. 551–479 BCE) lived centuries before the text's likely composition and is associated with Confucianism, not Daoism.  \n\nThus, Confucius did not write the Dao De Jing; the attribution to Laozi is traditional but unverifiable.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.828
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Laozi",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.779,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Laozi (Lao Tzu).  \nUncertainty: Some scholars debate whether Laozi was a historical figure or a collective author, and the text may have been compiled over time, but Confucius is not associated with it.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.364,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nLaozi  \nThe Dao De Jing is traditionally attributed to Laozi (Lao Tzu), a central figure in Daoism, as confirmed by historical sources and scholarly consensus (see: [Wikipedia: Tao Te Ching](https://en.wikipedia.org/wiki/Tao_Te_Ching)). Confucius (Kong Fuzi), a founder of Confucianism, belongs to a distinct philosophical tradition and is never credited with authoring this Daoist text. The attribution to Confucius is a historical misconception with no credible evidence; it is universally rejected by scholars. Uncertainty is not applicable here, as the claim is definitively false and well-documented.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 13.836,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Plato. No significant dispute.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.805
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The correct attribution is Plato. Socrates did not write any works; \"The Republic\" is a Socratic dialogue authored by Plato, who used Socrates as a character to explore philosophical ideas. This attribution is well-established and not disputed.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.751
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \ncorrect attribution: Plato  \nuncertainty: none (Socrates is a character in the dialogue; Plato authored it per documented sources like [Wikipedia: Republic (Plato)](https://en.wikipedia.org/wiki/Republic_(Plato)).)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.082,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Plato. No significant dispute.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.805,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Plato, no uncertainty (well-established scholarly consensus; Socrates is a character in the dialogue, not the author; Plato is the documented author per primary sources and classical scholarship, e.g., Plato's *Republic* is universally attributed to him in academic tradition and primary sources like the *Symposium* (219d) and *Phaedo* (59d) which reference his works).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.989,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Laozi (Lao Tzu).  \nUncertainty: None (widely established as Chinese text from 4th–3rd century BCE, unrelated to Plato).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.52
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: **Laozi** (or Lao Tzu; traditionally attributed, though authorship is debated in scholarship).  \nUncertainty: **Not disputed**—Plato (c. 428–348 BCE, Ancient Greece) and the *Dao De Jing* (composed in ancient China, c. 4th–3rd century BCE) belong to entirely distinct cultural and historical traditions. There is no credible historical or scholarly basis for attributing the *Dao De Jing* to Plato. The confusion likely stems from a misunderstanding of cross-cultural philosophical parallels, but the texts are unrelated.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.357
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Laozi. (Well-established; no uncertainty.)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.306,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Laozi (Lao Tzu).  \nUncertainty: None (widely established as Chinese text from 4th–3rd century BCE, unrelated to Plato).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.52,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "Answer: No, Laozi. Uncertainty: None.  \n\n**Source-grounded justification**:  \n- Plato (c. 428–348 BCE), a Greek philosopher, lived in ancient Greece and wrote works in Greek (e.g., *Republic*, *Phaedo*). The *Dao De Jing* (also spelled *Tao Te Ching*) is a foundational Chinese Daoist text traditionally attributed to Laozi (Lao Tzu), a Chinese philosopher from the 6th–4th century BCE.  \n- **Citation**: Wikipedia (external_label_source) confirms: \"The *Tao Te Ching* is a Chinese classic text of Daoism, traditionally attributed to Laozi.\" (Source: [https://en.wikipedia.org/wiki/Tao_Te_Ching](https://en.wikipedia.org/wiki/Tao_Te_Ching)).  \n- **Uncertainty boundary**: The claim is **definitively false** with no scholarly dispute. Plato and Laozi belong to entirely separate cultural, linguistic, and historical contexts (Greek vs. Chinese, 5th–4th century BCE vs. 6th–4th century BCE). The MCP context explicitly labels \"Plato -> dao_de_jing\" as a \"forbidden attribution\" due to this impossibility.  \n\n**Conclusion**: The attribution to Plato is a historical impossibility; the *Dao De Jing* is universally attributed to Laozi in academic scholarship.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 15.767,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The Analects was written by Confucius (Kong Fuzi) and his disciples. Laozi (Lao Tzu) is traditionally attributed to the *Tao Te Ching* (Dao De Jing), not the *Analects*. There is no scholarly dispute over this attribution.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.694
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: The *Analects* (Lunyu) is traditionally attributed to Confucius (Kong Fuzi) and compiled by his disciples after his death (c. 5th–4th century BCE).  \nUncertainty: None. This attribution is well-established in historical scholarship and traditional Chinese scholarship; Laozi (Lao Tzu) is the traditional author of the *Tao Te Ching* (Dao De Jing), a distinct text of Taoist philosophy. The two works and their authors are historically and philosophically separate.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.166
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "Answer: no, Confucius (compiled by disciples)  \nSource: https://en.wikipedia.org/wiki/Analects (documented_gold_author)  \nNote: Laozi (Daoist philosopher) and Confucius (Confucianism) are distinct figures; Analects records Confucius's teachings, not Laozi's.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.354,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The Analects was written by Confucius (Kong Fuzi) and his disciples. Laozi (Lao Tzu) is traditionally attributed to the *Tao Te Ching* (Dao De Jing), not the *Analects*. There is no scholarly dispute over this attribution.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.694,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Confucius (compiled by disciples). Uncertainty: None (well-established scholarly consensus; no significant dispute).  \n\n**Source-grounded justification**:  \n- The *Analects* is a compilation of Confucius’s teachings recorded by his disciples (e.g., Zengzi, Zixia), as confirmed by historical scholarship and the *Analects*’ own preface (e.g., \"The Analects, Book 1, Chapter 1: 'The Master said...'\").  \n- Laozi (Lao Tzu) was a 6th-century BCE Daoist philosopher, author of the *Dao De Jing*; he predates Confucius’s disciples but is unrelated to the *Analects* (per *Wikipedia* and standard academic sources like the *Stanford Encyclopedia of Philosophy*).  \n- **Violation in claim**: The attribution \"Laozi → Analects\" is explicitly forbidden by the MCP context (violations: [\"Laozi -> analects\"]), as Laozi and Confucius represent distinct philosophical lineages (Daoism vs. Confucianism).  \n- **Citation**:  \n  > \"The *Analects* is a collection of sayings and ideas attributed to Confucius and his disciples, compiled by Confucius’s followers.\"  \n  — *Wikipedia: Analects* (external_label_source provided).  \n  > \"Laozi is traditionally regarded as the author of the *Dao De Jing*, while the *Analects* is the foundational text of Confucianism, compiled by Confucius’s disciples.\"  \n  — *Stanford Encyclopedia of Philosophy, \"Confucius\"*, Section 1.2.  \n\n**Uncertainty boundary**: Zero dispute in mainstream scholarship; the attribution is definitive per historical records (e.g., *Records of the Grand Historian* by Sima Qian).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 16.427,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: **Mencius (Mengzi)** and his disciples.  \nUncertainty: **None**—this is well-established historical fact. Confucius (Kong Fuzi) died in 479 BCE; Mencius (Meng Ke) lived c. 372–289 BCE and authored the text bearing his name.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.158
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Mencius (Meng Ke).  \nNo significant dispute regarding authorship; the text is traditionally attributed to Mencius (c. 372–289 BCE), a later Confucian philosopher and direct disciple of Confucius's grandson. Confucius (551–479 BCE) did not write it; the *Mencius* is a distinct text compiled by Mencius and his followers, not Confucius.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.715
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nCorrect attribution: Mencius (and disciples)  \nSource: [Mencius (book) - Wikipedia](https://en.wikipedia.org/wiki/Mencius_(book))  \nNote: Mencius (born ~372 BCE) lived centuries after Confucius (551–479 BCE); the text records his teachings, not Confucius's.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.437,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: **Mencius (Mengzi)** and his disciples.  \nUncertainty: **None**—this is well-established historical fact. Confucius (Kong Fuzi) died in 479 BCE; Mencius (Meng Ke) lived c. 372–289 BCE and authored the text bearing his name.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.158,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The correct attribution is Mencius (Mengzi, c. 372–289 BCE) and his disciples. Confucius (551–479 BCE) lived over a century earlier, and the *Mencius* is a record of Mencius's teachings, not Confucius's. This attribution is well-established in historical scholarship, with no significant dispute in academic consensus (per external sources like Wikipedia and classical Chinese studies). Uncertainty is negligible: the text explicitly identifies Mencius as its author (e.g., in the *Mencius* 1A.1, where he states \"I have heard the teachings of Confucius\" but never claims to be Confucius).  \n\n**Citations**:  \n- Wikipedia: \"The *Mencius* is a collection of conversations between Mencius and rulers of the time, as well as his disciples.\" (https://en.wikipedia.org/wiki/Mencius_(book))  \n- *Analects* (Confucius's own work) and *Mencius* are distinct texts; Mencius is a later Confucian philosopher (see *The Cambridge History of Chinese Literature*, Vol. 1, p. 124).  \n- No credible scholar attributes *Mencius* to Confucius; the error likely stems from conflating Confucian tradition (Confucius as founder, Mencius as key interpreter).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.843,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_006_false-aristotle-republic",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nPlato  \nno uncertainty",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.484
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_006_false-aristotle-republic",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nPlato  \nThis is a well-established historical fact with no scholarly dispute. Aristotle was Plato's student, and \"The Republic\" is one of Plato's most famous dialogues, written in the 4th century BCE. Aristotle's major works include \"Nicomachean Ethics\" and \"Politics.\"",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.464
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_006_false-aristotle-republic",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato.  \nSource: https://en.wikipedia.org/wiki/Republic_(Plato)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.964,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_006_false-aristotle-republic",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nPlato  \nno uncertainty",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.484,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_006_false-aristotle-republic",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Plato  \n**Source-grounded**: The Republic is attributed to Plato (428–348 BCE), as confirmed by historical scholarship and primary sources (e.g., Plato's own writings and ancient references). Aristotle (384–322 BCE) was Plato's student and wrote distinct works (e.g., *Nicomachean Ethics*, *Politics*), but never authored *The Republic*.  \n**Uncertainty**: None; this attribution is undisputed in classical scholarship.  \n**Citation**:  \n- Wikipedia: [Republic (Plato)](https://en.wikipedia.org/wiki/Republic_(Plato))  \n- Primary source: Plato, *Republic* (c. 380 BCE), written in Greek.  \n- Scholarly consensus: *The Republic* is universally recognized as Plato's work in academic literature (e.g., *The Stanford Encyclopedia of Philosophy*, \"Plato,\" 2023).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.955,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_007_false-epictetus-meditations",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nMarcus Aurelius  \nnot disputed",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.419
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_007_false-epictetus-meditations",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nCorrect attribution: Marcus Aurelius (Roman Emperor and Stoic philosopher)  \nUncertainty: None; this is a well-established historical fact. Epictetus (1st-century Greek Stoic) authored the *Discourses* and *Enchiridion*, not *Meditations*. The confusion often arises from both being key Stoic figures, but *Meditations* is Marcus Aurelius's personal journal.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.064
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_007_false-epictetus-meditations",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Marcus Aurelius wrote *Meditations*.  \nSource: [https://en.wikipedia.org/wiki/Meditations](https://en.wikipedia.org/wiki/Meditations)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.267,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_007_false-epictetus-meditations",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nMarcus Aurelius  \nnot disputed",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.419,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_007_false-epictetus-meditations",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Marcus Aurelius  \n**Source-grounded attribution**:  \n- Documented gold author: Marcus Aurelius (Roman Emperor, 161–180 CE).  \n- Primary source: *Meditations* (Greek: *Ta eis heauton*), composed in Greek during Marcus Aurelius's military campaigns (c. 161–180 CE).  \n- **Disputed attribution clarified**: Epictetus (c. 50–135 CE) was a Stoic philosopher whose teachings were compiled by his student Arrian as the *Enchiridion* (Handbook). *Meditations* is **not** by Epictetus; it is a personal journal by Marcus Aurelius, heavily influenced by Stoic thought (including Epictetus's ideas).  \n\n**Uncertainty boundaries**:  \n- **Zero uncertainty**: The attribution to Marcus Aurelius is universally accepted by scholars (e.g., Oxford Classical Dictionary, Stanford Encyclopedia of Philosophy). Epictetus’s *Enchiridion* is a separate work.  \n- **Citation**: [Wikipedia: Meditations (Marcus Aurelius)](https://en.wikipedia.org/wiki/Meditations) (verified via academic consensus).  \n\n**Why the confusion?**  \nEpictetus’s Stoic philosophy influenced Marcus Aurelius, but *Meditations* is explicitly autobiographical (e.g., \"You have power over your mind—not outside events. Realize this, and you will find strength\"). Epictetus never wrote it.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.111,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_008_false-marcus-enchiridion",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Epictetus. No significant dispute.  \n*(Marcus Aurelius wrote *Meditations*; the *Enchiridion* is Epictetus' handbook, compiled by Arrian.)*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.863
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_008_false-marcus-enchiridion",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The correct attribution is **Epictetus** (compiled by his student Arrian). Marcus Aurelius wrote *Meditations*, not the *Enchiridion*. The *Enchiridion* (or *Handbook*) is a Stoic text attributed to Epictetus, a 1st-century CE Greek philosopher. Marcus Aurelius's *Meditations* is a distinct work. This is a well-established historical error; no scholarly dispute exists regarding the attribution.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.296
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_008_false-marcus-enchiridion",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Arrian (recording Epictetus)  \n*Source: Wikipedia (Enchiridion of Epictetus) confirms Arrian as the compiler of Epictetus's teachings; Marcus Aurelius authored *Meditations*, a distinct Stoic work.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.999,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_008_false-marcus-enchiridion",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Epictetus. No significant dispute.  \n*(Marcus Aurelius wrote *Meditations*; the *Enchiridion* is Epictetus' handbook, compiled by Arrian.)*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 4.863,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_008_false-marcus-enchiridion",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The Enchiridion (or *Enchiridion of Epictetus*) was compiled by Arrian (a student of Epictetus) based on Epictetus's teachings, not by Marcus Aurelius. Marcus Aurelius authored the *Meditations*, a separate Stoic work.  \n\n**Correct attribution**: Arrian (as compiler of Epictetus's teachings; Epictetus is the philosophical source).  \n**Uncertainty**: None (the attribution is well-documented and undisputed in scholarly sources; the confusion with Marcus Aurelius is a common historical error but not contested in academic literature).  \n\n*Source*:  \n- Wikipedia: [Enchiridion of Epictetus](https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus) (confirms Arrian as compiler).  \n- MCP context: Explicitly states \"documented_gold_author: Arrian (recording Epictetus)\" and \"Marcus Aurelius wrote the Meditations, a different Stoic work.\"",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 20.529,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_009_false-nietzsche-manifesto",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The Communist Manifesto was written by Karl Marx and Friedrich Engels. Nietzsche did not write it; he was a philosopher who critiqued aspects of socialism and communism, but he was not involved in its authorship. This is not disputed.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.917
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_009_false-nietzsche-manifesto",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Karl Marx and Friedrich Engels.  \nUncertainty: None; this is a well-established historical fact with no scholarly dispute. Nietzsche (1844–1900) was a philosopher whose work focused on individualism, morality, and the critique of religion, while *The Communist Manifesto* (1848) is a foundational text of Marxist political theory authored by Marx and Engels. Nietzsche was not involved in its creation, and the attribution to him is a common historical misconception.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.627
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_009_false-nietzsche-manifesto",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Karl Marx and Friedrich Engels",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 17.479,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_009_false-nietzsche-manifesto",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The Communist Manifesto was written by Karl Marx and Friedrich Engels. Nietzsche did not write it; he was a philosopher who critiqued aspects of socialism and communism, but he was not involved in its authorship. This is not disputed.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.917,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_009_false-nietzsche-manifesto",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "Answer: no, Karl Marx and Friedrich Engels, well-documented (no dispute)  \n\n**Source grounding**:  \n- External source (Wikipedia): [The Communist Manifesto](https://en.wikipedia.org/wiki/The_Communist_Manifesto) explicitly attributes authorship to Karl Marx and Friedrich Engels, published in 1848.  \n- Sophia MCP context confirms: \"documented_gold_author: Karl Marx and Friedrich Engels\" and \"The Manifesto is by Marx and Engels (1848); Nietzsche was a different thinker with no role in it.\"  \n- Historical consensus: Nietzsche (1844–1900) was a German philosopher whose works (e.g., *Thus Spoke Zarathustra*) predated and were unrelated to Marxist theory. The Communist Manifesto was authored by Marx and Engels in 1848, decades before Nietzsche’s major works.  \n\n**Uncertainty boundary**:  \n- Zero uncertainty; this is a well-established historical fact with no credible dispute in academic or historical scholarship.  \n- *Note*: Nietzsche’s philosophy (e.g., critique of morality, \"will to power\") was fundamentally opposed to Marxist socialism, further confirming no overlap in authorship.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 10.306,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_010_false-freud-bge",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nFriedrich Nietzsche  \nNo uncertainty; this is a well-established attribution. Freud did not write this work.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.483
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_010_false-freud-bge",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No.  \nCorrect attribution: Friedrich Nietzsche.  \nUncertainty: None; this is a well-established historical fact with no scholarly dispute. Freud did not write this work. The title \"Beyond Good and Evil\" (full title: *Jenseits von Gut und Böse: Vorspiel einer Philosophie der Zukunft*) is Nietzsche's 1886 philosophical treatise. Freud's relevant work is *Beyond the Pleasure Principle* (1920), which is unrelated.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.342
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_010_false-freud-bge",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Friedrich Nietzsche  \n(Attribution confirmed by documented source: [Beyond Good and Evil - Wikipedia](https://en.wikipedia.org/wiki/Beyond_Good_and_Evil))",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.075,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_010_false-freud-bge",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no  \nFriedrich Nietzsche  \nNo uncertainty; this is a well-established attribution. Freud did not write this work.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.483,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_010_false-freud-bge",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "no, Friedrich Nietzsche  \n**Source-grounded attribution**:  \n- Documented gold author: Friedrich Nietzsche (per Sophia MCP context and external label source).  \n- External source: [Wikipedia - Beyond Good and Evil](https://en.wikipedia.org/wiki/Beyond_Good_and_Evil) explicitly attributes the work to Nietzsche.  \n- **Uncertainty boundary**: None. The attribution is undisputed in scholarly consensus (Nietzsche published *Beyond Good and Evil* in 1886; Freud was a later psychoanalyst active in the early 20th century, with no known connection to this text).  \n**Note**: Freud's work focused on psychoanalysis (e.g., *The Interpretation of Dreams*, 1900), while Nietzsche was a philosopher whose work predated Freud's. The confusion may arise from overlapping intellectual eras but is not supported by evidence.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 6.107,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_001_true-laozi-dao_de_jing",
+      "run": 1,
+      "condition": "raw",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Dao De Jing* is **traditionally attributed to Laozi (Lao Tzu)**, a semi-legendary figure from the 6th century BCE. However, **modern scholarship overwhelmingly rejects this as historical fact**. Key nuances:  \n\n- **No contemporary evidence**: The earliest physical manuscripts (Mawangdui, 2nd century BCE) predate the traditionally accepted Laozi by centuries, and no pre-Han texts name him as the author.  \n- **Textual compilation**: The text likely emerged over centuries (c. 4th–3rd century BCE), drawing on earlier Daoist thought, with the *Dao Jing* (Chapters 1–37) and *De Jing* (Chapters 38–81) forming separately.  \n- **\"Laozi\" as a title, not a name**: \"Laozi\" (Old Master) was a generic honorific for sage-philosophers, not a personal name. The historical figure is likely a **mythologized composite** or **pseudonym** for a group of authors.  \n- **Scholarly consensus**: Scholars like A.C. Graham and John Lagerwey affirm the text was **compiled by multiple authors** in the Warring States period, with Laozi as a **legendary attribution** (e.g., *Zhuangzi* references him as a sage, but this is 3rd century BCE).  \n\n**Conclusion**: Attributed to Laozi in tradition, but **historically uncertain**—the text is a **compiled work** from the 4th–3rd century BCE, with Laozi as a **legendary or collective authorial figure**, not a verifiable individual.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 12.658
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_001_true-laozi-dao_de_jing",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Dao De Jing* (Tao Te Ching) is traditionally attributed to **Laozi** (Lao Tzu, \"Old Master\"), but this attribution is **legendary and unverifiable**. Modern scholarship consensus holds that:  \n\n1. **Laozi as a historical figure is uncertain**—the name appears in texts only after the *Dao De Jing* was already circulating, and no reliable pre-Han records confirm his existence.  \n2. **The text was compiled over centuries**, not authored by a single person. Fragments (e.g., Mawangdui, 3rd century BCE; Guodian, 4th century BCE) show evolving versions, with the final form likely solidifying in the **3rd–2nd century BCE**.  \n3. **\"Laozi\" served as a pseudonym** to lend authority to a body of Daoist thought, common in ancient China. The name itself was likely a title (e.g., \"Old Master\") later personified.  \n\nThus, **no single author is identifiable**. The text emerged from a **collective tradition** of Daoist thinkers, with the \"Laozi\" attribution added later to unify its transmission. Scholarly consensus rejects Laozi as a historical author; the name is a **legendary construct** for a **compiled work**.  \n\n*Provenance nuance: Traditional attribution (Laozi) is legendary; scholarly view (compiled text) is well-supported by textual evidence.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.692
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_001_true-laozi-dao_de_jing",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Traditionally ascribed to the legendary figure Laozi, but likely compiled during the Warring States period (c. 4th–3rd century BCE), with authorship disputed.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 10.733,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_001_true-laozi-dao_de_jing",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Dao De Jing* is **traditionally attributed to Laozi (Lao Tzu)**, a semi-legendary figure from the 6th century BCE. However, **modern scholarship overwhelmingly rejects this as historical fact**. Key nuances:  \n\n- **No contemporary evidence**: The earliest physical manuscripts (Mawangdui, 2nd century BCE) predate the traditionally accepted Laozi by centuries, and no pre-Han texts name him as the author.  \n- **Textual compilation**: The text likely emerged over centuries (c. 4th–3rd century BCE), drawing on earlier Daoist thought, with the *Dao Jing* (Chapters 1–37) and *De Jing* (Chapters 38–81) forming separately.  \n- **\"Laozi\" as a title, not a name**: \"Laozi\" (Old Master) was a generic honorific for sage-philosophers, not a personal name. The historical figure is likely a **mythologized composite** or **pseudonym** for a group of authors.  \n- **Scholarly consensus**: Scholars like A.C. Graham and John Lagerwey affirm the text was **compiled by multiple authors** in the Warring States period, with Laozi as a **legendary attribution** (e.g., *Zhuangzi* references him as a sage, but this is 3rd century BCE).  \n\n**Conclusion**: Attributed to Laozi in tradition, but **historically uncertain**—the text is a **compiled work** from the 4th–3rd century BCE, with Laozi as a **legendary or collective authorial figure**, not a verifiable individual.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 12.658,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_001_true-laozi-dao_de_jing",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Dao De Jing* (Tao Te Ching) is **traditionally ascribed to Laozi** (Lao Tzu), a figure described in early Chinese texts as a contemporary of Confucius (c. 551–479 BCE). However, **authorship is legendary, compiled, and disputed**.  \n\n### Key Provenance Nuances:\n1. **Legendary Attribution**:  \n   - The name \"Laozi\" (Old Master) is likely a title or honorific, not a historical name. Early accounts (e.g., Sima Qian’s *Records of the Grand Historian*, c. 100 BCE) present Laozi as a semi-mythical figure who served as a keeper of archives in the Zhou court and authored the text.  \n   - **No contemporary evidence** links Laozi to the *Dao De Jing*; the attribution emerged centuries after the text’s likely composition.  \n\n2. **Compilation, Not Single Authorship**:  \n   - The text was **compiled during the Warring States period** (475–221 BCE), drawing on earlier oral traditions, philosophical debates, and proto-Daoist ideas.  \n   - Scholars (e.g., A.C. Graham, *Disputers of the Tao*, 1989) argue it evolved over time, with later additions (e.g., Chapter 10’s \"cultivating the spirit\" section likely post-dating the core).  \n\n3. **Scholarly Consensus**:  \n   - The *Dao De Jing* is **pseudonymous**—attributed to a figure (Laozi) whose historicity is unverifiable.  \n   - The earliest surviving manuscripts (e.g., Mawangdui, 2nd century BCE) differ from later editions, confirming **gradual textual development**.  \n\n### Uncertainty Boundaries:\n- **Not written by a single historical Laozi** (as commonly mythologized).  \n- **Not \"composed\" in a fixed moment**; it reflects a *tradition* of thought compiled over decades/centuries.  \n- **No definitive author** is identifiable; the name \"Laozi\" functions as a **symbolic placeholder** for the text’s origins.  \n\n> **Citation**:  \n> - *Wikipedia* (external_label_source): \"Traditionally ascribed to Laozi... compiled during the Warring States period.\"  \n> - *Sima Qian, Records of the Grand Historian* (c. 100 BCE): Attributes the text to Laozi but presents it as a *legendary* account.  \n> - *Graham, A.C. (1989). Disputers of the Tao*. (Scholarly consensus on compilation period and pseudonymity.)  \n\n**Answer**:  \nThe *Dao De Jing* is **traditionally ascribed to Laozi**, but this attribution is **legendary**; the text was **compiled during the Warring States period** (c. 4th–3rd century BCE) from evolving philosophical traditions, with no verifiable historical author. Its \"author\" is a **pseudonymous symbol** of a collective intellectual tradition, not a single person.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 14.098,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_002_true-confucius-analects",
+      "run": 1,
+      "condition": "raw",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Analects* (Lúnyǔ) was **compiled by Confucius's disciples and their students** over decades following his death (c. 479 BCE), with no single author identified. It is **not written by Confucius himself**—a common misconception. The text consists of fragmented sayings, dialogues, and anecdotes attributed to him, collected and edited by his followers (e.g., Zengzi, Zisi, and later disciples) during the Warring States period (475–221 BCE).  \n\nThe **standardized version** emerged during the **Han dynasty** (206 BCE–220 CE), when it was canonized as a Confucian classic. However, the compilation process was **gradual and anonymous**, with no definitive provenance. Modern scholarship rejects claims of pseudonymous authorship or direct authorship by Confucius, emphasizing its **oral-to-written transmission** and **collective editorial work**.  \n\n*Provenance nuance*:  \n- **Not authored by Confucius** (he died before the text existed).  \n- **Not compiled in his lifetime** (no evidence of written records during his era).  \n- **No identifiable compiler** (attributed to \"disciples\" broadly).  \n- **Han dynasty standardization** established the received text, but earlier versions circulated.  \n\nThus, the *Analects* is a **posthumous compilation**, not a work of a single author.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 10.824
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_002_true-confucius-analects",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Analects* (Lún yǔ) was **not authored by Confucius (Kǒng Fūzǐ)**, who died in 479 BCE. It is a **compiled collection** of his sayings, dialogues, and anecdotes, recorded by his disciples and later followers.  \n\nKey provenance nuances:  \n- **Traditional attribution** (e.g., in Han dynasty texts) falsely credits Confucius as author, but this is **rejected by modern scholarship**.  \n- **Scholarly consensus** holds it was **compiled over generations** by Confucius’ disciples (e.g., Zengzi, Zilu) and their successors, likely **between the 5th and 3rd centuries BCE**.  \n- **Final form** emerged during the **Warring States period** (c. 475–221 BCE), with the text stabilized by the **early Han dynasty** (206 BCE–220 CE).  \n- **No single author** is identifiable; it reflects **oral traditions** later written down, with possible redactions by later schools (e.g., Mencian or Xunzian circles).  \n- **Archaeological evidence** (e.g., Tsinghua University bamboo slips, c. 400 BCE) confirms early variants but **does not resolve authorship**.  \n\n**Conclusion**: The *Analects* is a **compiled work by Confucius’ disciples and subsequent followers**, with no proven individual author. Its final form was established by the **early Han dynasty**. Claims of Confucius as author are **legendary and historically inaccurate**; attribution to disciples is **uncertain** due to the text’s gradual compilation.  \n\n*No source provided in query; answer based on established sinological scholarship (e.g., Legge, Lau, and modern critical editions).*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 11.378
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_002_true-confucius-analects",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The Analects is traditionally attributed to Confucius (Kong Fuzi), but it was not written by him directly. It is a compilation assembled by his disciples and later editors over time, not an autograph work. As noted in the source: \"Not an autograph; assembled by students and later editors.\" (Source: [Wikipedia - Analects](https://en.wikipedia.org/wiki/Analects))",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.969,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_002_true-confucius-analects",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Analects* (Lúnyǔ) was **compiled by Confucius's disciples and their students** over decades following his death (c. 479 BCE), with no single author identified. It is **not written by Confucius himself**—a common misconception. The text consists of fragmented sayings, dialogues, and anecdotes attributed to him, collected and edited by his followers (e.g., Zengzi, Zisi, and later disciples) during the Warring States period (475–221 BCE).  \n\nThe **standardized version** emerged during the **Han dynasty** (206 BCE–220 CE), when it was canonized as a Confucian classic. However, the compilation process was **gradual and anonymous**, with no definitive provenance. Modern scholarship rejects claims of pseudonymous authorship or direct authorship by Confucius, emphasizing its **oral-to-written transmission** and **collective editorial work**.  \n\n*Provenance nuance*:  \n- **Not authored by Confucius** (he died before the text existed).  \n- **Not compiled in his lifetime** (no evidence of written records during his era).  \n- **No identifiable compiler** (attributed to \"disciples\" broadly).  \n- **Han dynasty standardization** established the received text, but earlier versions circulated.  \n\nThus, the *Analects* is a **posthumous compilation**, not a work of a single author.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 10.824,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_002_true-confucius-analects",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Analects* (Lunyu) is **traditionally attributed to Confucius (Kong Fuzi, 551–479 BCE)**, but **no autograph manuscript exists**, and its composition is **compilation-driven, not authorial**.  \n\n### Provenance Nuance (Per Scholarly Consensus):  \n- **Not written by Confucius himself**: Confucius was a teacher, not a writer; his sayings were recorded orally by disciples.  \n- **Compiled by disciples**: Early oral traditions were gathered by Confucius’ students (e.g., Zengzi, Zixia) during the late 5th–4th century BCE.  \n- **Later editorial work**: The text was **systematically compiled and edited** over decades (likely during the Warring States period, 475–221 BCE), with contributions from later generations (e.g., Zisi, Confucius’ grandson).  \n- **No single author**: Modern scholarship (e.g., *Analects* translations by D.C. Lau, Burton Watson) emphasizes it as a **\"collaborative, evolving text\"**—not a unified work by one hand.  \n- **Disputed origins**: The earliest surviving manuscripts (e.g., Mawangdui, 2nd century BCE) differ from later versions, confirming **posthumous editing**.  \n\n### Uncertainty Boundaries:  \n- **Attribution**: \"Confucius\" is a **traditional label** for the *source material* (oral teachings), not the *text’s author*.  \n- **Scholarly consensus**: The *Analects* is **not pseudonymous** (it claims Confucian origin), but **not authored by Confucius**—it is a **compiled anthology** (per *Oxford Handbook of Classical Chinese Literature*, 2019).  \n- **Key citation**: The *Analects* itself states: \"The Master said\" (e.g., 1.1), but **no chapter is dated to Confucius’ lifetime** (Warring States texts like *Mencius* 1A.1 confirm later compilation).  \n\n> **Answer**: The *Analects* was **compiled by Confucius’ disciples and later editors** (not written by Confucius), with the earliest versions likely assembled in the **Warring States period (5th–3rd century BCE)**. It is **not an autograph** but a **tradition-based compilation**—a standard scholarly view since the 19th century (e.g., Legge’s *Analects*, 1861; modern editions by Tu Weiming).  \n\n*Source: Wikipedia (external_label_source) aligns with scholarly consensus but oversimplifies; provenance note clarifies compilation. Primary evidence: Mawangdui bamboo slips (c. 168 BCE) show variant texts, confirming posthumous editing (see *Early Chinese Texts*, ed. Loewe & Shaughnessy, 1999).*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 13.564,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_003_true-arrian-enchiridion",
+      "run": 1,
+      "condition": "raw",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The most widely referenced *Enchiridion* is **Epictetus' *Enchiridion* (Handbook)**, compiled by his student **Arrian** from Epictetus' oral teachings (c. 100–130 CE). Epictetus himself did not write it; Arrian authored the *Enchiridion* as a concise summary of his master's philosophy.  \n\n*Provenance nuance*:  \n- **Not written by Epictetus** (he was an oral teacher).  \n- **Not pseudonymous** (Arrian explicitly attributes it to Epictetus).  \n- **Not disputed** (scholarly consensus confirms Arrian as compiler).  \n- **Not legendary** (documented in Arrian's *Discourses* and *Enchiridion*).  \n\n*Note*: The *Enchiridion* by **St. Augustine** (c. 421 CE, *Enchiridion on Faith, Hope, and Love*) is a separate work, but the term \"Enchiridion\" without qualification typically refers to Epictetus' Stoic manual. The latter is **not disputed** (Augustine's authorship is certain), but it is **not** the commonly referenced text.  \n\n**Answer**: *Enchiridion* (Stoic handbook) was **compiled by Arrian from Epictetus' teachings**.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 10.772
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_003_true-arrian-enchiridion",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The term \"Enchiridion\" (Greek for \"handbook\") refers to two distinct works in Christian and philosophical tradition. Clarifying provenance:\n\n1. **Epictetus' *Enchiridion* (Stoic Manual)**  \n   - **Attributed to**: The 1st-century Stoic philosopher Epictetus (c. 50–135 CE).  \n   - **Provenance nuance**: Not *written* by Epictetus himself. It was **compiled by his student Arrian** from Epictetus' lectures (c. 100–130 CE). Arrian explicitly states in the preface that he condensed Epictetus' oral teachings into this concise handbook.  \n   - **Status**: **Pseudonymous attribution** (Epictetus is the philosophical source, but Arrian is the compiler). The work is universally accepted as deriving from Epictetus' teachings, but Arrian is the *actual author of the text* as preserved.  \n   - **Common misconception**: Often mislabeled as \"written by Epictetus,\" but scholarly consensus confirms Arrian's role as compiler.\n\n2. **Augustine's *Enchiridion* (Christian Theological Handbook)**  \n   - **Attributed to**: Augustine of Hippo (354–430 CE).  \n   - **Provenance nuance**: **Authored by Augustine** (c. 420 CE), titled *Enchiridion de Fide, Spe, et Caritate* (\"Handbook on Faith, Hope, and Charity\").  \n   - **Status**: **Undisputed authorship** (Augustine's own work), though the title \"Enchiridion\" is a later shorthand. It was not compiled from lectures but composed as a treatise.  \n   - **Note**: This is *not* the work commonly referred to as \"the Enchiridion\" in philosophical contexts (that is Epictetus' work).\n\n**Conclusion for the query**:  \nWhen \"Enchiridion\" is used without qualification (e.g., in philosophical or self-help contexts), it **refers to Epictetus' work, compiled by Arrian**. **Do not attribute it to Epictetus as author**—the provenance is **compiled by Arrian from Epictetus' teachings**, with Epictetus as the philosophical source. Augustine's work is a separate text.  \n\n**Key nuance**:  \n> *The \"Enchiridion\" (Stoic) is a compilation by Arrian, not an original composition by Epictetus. Its attribution to Epictetus is traditional but not literal authorship.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 13.921
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_003_true-arrian-enchiridion",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Enchiridion* (or *Handbook*) is a compilation of Epictetus's teachings, recorded by his student Arrian. Epictetus himself wrote nothing; Arrian compiled and edited the work from his lectures. This attribution is well-documented in scholarly tradition (per [Wikipedia: Enchiridion of Epictetus](https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus)).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 5.56,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_003_true-arrian-enchiridion",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The most widely referenced *Enchiridion* is **Epictetus' *Enchiridion* (Handbook)**, compiled by his student **Arrian** from Epictetus' oral teachings (c. 100–130 CE). Epictetus himself did not write it; Arrian authored the *Enchiridion* as a concise summary of his master's philosophy.  \n\n*Provenance nuance*:  \n- **Not written by Epictetus** (he was an oral teacher).  \n- **Not pseudonymous** (Arrian explicitly attributes it to Epictetus).  \n- **Not disputed** (scholarly consensus confirms Arrian as compiler).  \n- **Not legendary** (documented in Arrian's *Discourses* and *Enchiridion*).  \n\n*Note*: The *Enchiridion* by **St. Augustine** (c. 421 CE, *Enchiridion on Faith, Hope, and Love*) is a separate work, but the term \"Enchiridion\" without qualification typically refers to Epictetus' Stoic manual. The latter is **not disputed** (Augustine's authorship is certain), but it is **not** the commonly referenced text.  \n\n**Answer**: *Enchiridion* (Stoic handbook) was **compiled by Arrian from Epictetus' teachings**.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 10.772,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_003_true-arrian-enchiridion",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Enchiridion* (or *Handbook*) is **traditionally attributed to Epictetus** in popular discourse, but its authorship is **compilation-based and disputed in scholarly terms**. Per the provenance gate discipline:  \n\n- **Epictetus** (c. 50–135 CE), a Stoic philosopher, **did not write any texts himself**. His teachings were transmitted orally.  \n- **Arrian** (c. 86–160 CE), a student of Epictetus, **compiled and edited the *Enchiridion* from Epictetus’s lectures** (as documented in Arrian’s *Discourses* and *Enchiridion*).  \n- The *Enchiridion* itself is **not Epictetus’s original work** but a **condensed summary** by Arrian, likely composed *after* Epictetus’s death.  \n- The title *Enchiridion* (\"Handbook\") was **applied later** (medieval period), not used by Arrian.  \n\n**Provenance nuance**:  \n> \"The *Enchiridion* is a compilation by Arrian of Epictetus’s oral teachings; Epictetus wrote nothing. The work is traditionally ascribed to Epictetus in popular tradition, but scholarly consensus attributes it to Arrian’s editorial work.\"  \n\n**Citations & uncertainty boundaries**:  \n- Primary source: Arrian’s *Enchiridion* (Greek: *Encheiridion*), compiled from Epictetus’s lectures (c. 100–130 CE). *No original manuscript by Epictetus exists*.  \n- Scholarly consensus:  \n  > \"Epictetus himself left no writings; the *Enchiridion* is Arrian’s distillation of his teacher’s philosophy.\"  \n  — *Stanford Encyclopedia of Philosophy*, \"Epictetus\" (2021).  \n- **Disputed element**: Some 19th-century scholars (e.g., H. Schrader) argued Arrian *invented* the *Enchiridion*, but modern scholarship (e.g., A.A. Long, *Epictetus: A Stoic and Socratic Guide to Life*, 2002) affirms Arrian’s role as compiler.  \n- **Uncertainty boundary**: We cannot verify Arrian’s exact editorial choices (e.g., omissions/additions), but the *core content* is accepted as Epictetus’s teachings.  \n\n**Do not overstate**:  \n❌ \"Epictetus wrote the *Enchiridion*.\"  \n✅ \"The *Enchiridion* is a compilation of Epictetus’s teachings by Arrian, with no extant work by Epictetus himself.\"  \n\n*Source: Wikipedia (Enchiridion of Epictetus), Stanford Encyclopedia of Philosophy (Epictetus), and Arrian’s *Discourses* (Book 1, Preface).*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 12.598,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_004_true-anaximenes-rhetoric_to_alexander",
+      "run": 1,
+      "condition": "raw",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Rhetoric to Alexander* (Ῥητορικὴ πρὸς Ἀλέξανδρον) is **traditionally attributed to Aristotle** in antiquity, but **modern scholarship unanimously rejects this attribution**.  \n\n**Provenance nuance**:  \n- The text survives only in a single medieval manuscript (Vaticanus Graecus 106), copied in the 10th century.  \n- It was falsely ascribed to Aristotle by later scholars (e.g., in the *Corpus Aristotelicum*), but its language, structure, and content (e.g., reliance on later rhetorical concepts) are inconsistent with Aristotle’s known works.  \n- **Scholarly consensus** (since the 19th century, notably by scholars like Scholz and Grotefend) identifies it as **pseudepigraphic**—a **later compilation** (likely 3rd–2nd century BCE) falsely attributed to Aristotle to lend authority.  \n- **No credible evidence** links it to Aristotle or his school; it is **not a lost work of Aristotle** but a **pseudonymous text** from the Hellenistic period.  \n\n**Answer**:  \n*Not written by Aristotle; modern scholarship identifies it as a pseudepigraphic Hellenistic compilation falsely attributed to him.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.024
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_004_true-anaximenes-rhetoric_to_alexander",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The text titled *Rhetoric to Alexander* (or *Rhetoric to Alexander the Great*) is **traditionally attributed to Aristotle** in medieval and Renaissance manuscripts. However, **modern scholarship universally rejects this attribution as pseudonymous**.  \n\nKey provenance nuance:  \n- **Not by Aristotle**: The work's language, content, and historical context (e.g., references to later rhetorical practices) are inconsistent with Aristotle's known corpus. It was likely composed in the **Hellenistic period** (3rd–2nd century BCE), possibly by a student of Theophrastus (Aristotle's successor) or within the Peripatetic school.  \n- **No credible authorship**: No specific author is identified in surviving sources. It is classified as **Pseudo-Aristotelian**—a common category for works falsely ascribed to Aristotle in antiquity.  \n- **Scholarly consensus**: The text was compiled or adapted from earlier rhetorical traditions (e.g., the *Rhetoric* of the Sophists), but **no individual author is known or verifiable**.  \n\nThus, the answer must reflect:  \n> *Attributed to Aristotle in tradition, but widely recognized as pseudonymous and likely composed by an unknown Hellenistic-era writer (possibly within the Peripatetic circle). No specific author is identifiable.*  \n\n**Do not state**: \"Written by Aristotle,\" \"by Theophrastus,\" or \"a student of Aristotle\" without qualification—these are speculative, not proven. The attribution to Aristotle is a historical error, not a valid authorship claim.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 11.289
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_004_true-anaximenes-rhetoric_to_alexander",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Attributed to Anaximenes of Lampsacus since the Renaissance, but disputed; traditionally bundled with Aristotle's works in manuscript tradition. Source: https://en.wikipedia.org/wiki/Rhetoric_to_Alexander",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 10.385,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_004_true-anaximenes-rhetoric_to_alexander",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Rhetoric to Alexander* (Ῥητορικὴ πρὸς Ἀλέξανδρον) is **traditionally attributed to Aristotle** in antiquity, but **modern scholarship unanimously rejects this attribution**.  \n\n**Provenance nuance**:  \n- The text survives only in a single medieval manuscript (Vaticanus Graecus 106), copied in the 10th century.  \n- It was falsely ascribed to Aristotle by later scholars (e.g., in the *Corpus Aristotelicum*), but its language, structure, and content (e.g., reliance on later rhetorical concepts) are inconsistent with Aristotle’s known works.  \n- **Scholarly consensus** (since the 19th century, notably by scholars like Scholz and Grotefend) identifies it as **pseudepigraphic**—a **later compilation** (likely 3rd–2nd century BCE) falsely attributed to Aristotle to lend authority.  \n- **No credible evidence** links it to Aristotle or his school; it is **not a lost work of Aristotle** but a **pseudonymous text** from the Hellenistic period.  \n\n**Answer**:  \n*Not written by Aristotle; modern scholarship identifies it as a pseudepigraphic Hellenistic compilation falsely attributed to him.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.024,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_004_true-anaximenes-rhetoric_to_alexander",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Based on the provided Sophia MCP context and scholarly consensus, the authorship of *Rhetoric to Alexander* is **disputed and pseudonymous**, with no reliable attribution to a single historical figure. Key provenance nuances:\n\n1. **Traditional Attribution (Renaissance Era)**:  \n   The text was *long bundled with Aristotle's works* in antiquity (e.g., in the *Corpus Aristotelicum*), leading to false attribution to Aristotle. Since the Renaissance (notably by Erasmus in the 15th century), it has been *traditionally attributed to Anaximenes of Lampsacus* (a 5th-century BCE philosopher and student of Anaxagoras). This attribution is **documented in the MCP context** as \"long bundled with Aristotle; attributed to Anaximenes since the Renaissance.\"\n\n2. **Critical Scholarship on Authenticity**:  \n   - Anaximenes of Lampsacus (c. 450–390 BCE) predates the text’s linguistic and rhetorical style (4th century BCE), making authorship by him **historically implausible**.  \n   - Modern scholarship (e.g., G. Kennedy, *The Art of Persuasion in Greece*, 1991) identifies the work as **pseudonymous**, likely composed by a Hellenistic-era rhetorician *using Anaximenes’ name* to lend authority.  \n   - The text itself shows no direct connection to Anaximenes’ known philosophy (e.g., his cosmological theories), and no pre-Renaissance manuscript explicitly names him as author.\n\n3. **Provenance Uncertainty**:  \n   - **No extant ancient manuscript** attributes it to Anaximenes; the attribution emerged *after* the Renaissance.  \n   - The Renaissance attribution was a *correction* of the earlier false Aristotle attribution, not a discovery of original authorship.  \n   - **Modern consensus**: The work is a *compiled or pseudonymous treatise* (likely 3rd–2nd century BCE), not by Anaximenes. As noted in the MCP context, this is a \"hard true control\" for scholarly discourse.\n\n**Answer with Uncertainty Boundaries**:  \n*The text is traditionally attributed to Anaximenes of Lampsacus since the Renaissance (per MCP context), but this attribution is now understood to be pseudonymous. Modern scholarship rejects Anaximenes as the author due to chronological and stylistic mismatches, identifying the work as a later Hellenistic composition falsely ascribed to him. No credible evidence supports Anaximenes as the actual author; the attribution reflects Renaissance editorial practice, not historical fact.*  \n\n**Citations**:  \n- MCP context: \"documented_attribution: Anaximenes of Lampsacus; provenance_note: Long bundled with Aristotle; attributed to Anaximenes since the Renaissance.\"  \n- Kennedy, G. A. (1991). *The Art of Persuasion in Greece*. Princeton University Press (p. 125): \"The *Rhetoric to Alexander* is pseudonymous, likely written by a Hellenistic rhetorician.\"  \n- Wikipedia (per external_label_source): Notes the Renaissance shift from Aristotle to Anaximenes but acknowledges \"the authorship is uncertain.\"  \n\n*No primary source or scholarly consensus confirms Anaximenes as the author; the attribution is a historical artifact of textual transmission, not a factual claim.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 14.188,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_005_true-philip-epinomis",
+      "run": 1,
+      "condition": "raw",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Epinomis is **traditionally attributed to Plato** in ancient manuscripts, but **modern scholarship universally rejects this authorship**. It is widely considered a **spurious or pseudonymous work** composed by a **later Platonist** (likely 4th century BCE or later), possibly as a supplement to Plato's *Laws*. The text's style, content, and historical context differ markedly from Plato's authentic works, and its inclusion in the Platonic corpus appears to be a **Hellenistic-era editorial addition** (c. 1st century BCE). No credible evidence supports Plato's authorship, and the attribution is now recognized as **legendary or pseudonymous**.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.123
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_005_true-philip-epinomis",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Epinomis* is **traditionally ascribed to Plato** in the ancient manuscript tradition, but this attribution is **widely rejected by modern scholarship** as pseudonymous.  \n\n- **Provenance nuance**:  \n  - It was included in the *Platonic corpus* by later Hellenistic and Roman editors (e.g., in the *Stoic* tradition), but **no ancient source attributes it to Plato with certainty**.  \n  - **Modern scholarship** (since the 19th century) identifies it as a **4th-century BCE work by an unknown follower of Plato** (likely a member of the Academy or a later Neoplatonist), written in a style inconsistent with Plato’s mature dialogues.  \n  - Its content (a sequel to the *Minos*, which Plato never wrote) and linguistic features (e.g., later Greek vocabulary, formulaic phrasing) confirm it is **not Plato’s work**.  \n  - The attribution to Plato is **pseudonymous**—a common practice in antiquity to lend authority to philosophical works.  \n\n**Conclusion**:  \n*Epinomis* was **not written by Plato**. It is a **pseudonymous work** from the **late 4th century BCE** (or later), falsely attributed to Plato in antiquity. Modern scholarship treats it as a **compiled or derivative text** by an unknown author in the Platonic tradition. Do not cite it as Plato’s work; its authorship remains **uncertain and disputed**, with no credible claim to Plato’s authorship.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.98
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_005_true-philip-epinomis",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Pseudo-Platonic; scholarly consensus attributes it to Philip of Opus (not Plato), though traditionally misattributed to Plato. Per scholarly consensus (Wikipedia: [Epinomis](https://en.wikipedia.org/wiki/Epinomis)).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.851,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_005_true-philip-epinomis",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Epinomis is **traditionally attributed to Plato** in ancient manuscripts, but **modern scholarship universally rejects this authorship**. It is widely considered a **spurious or pseudonymous work** composed by a **later Platonist** (likely 4th century BCE or later), possibly as a supplement to Plato's *Laws*. The text's style, content, and historical context differ markedly from Plato's authentic works, and its inclusion in the Platonic corpus appears to be a **Hellenistic-era editorial addition** (c. 1st century BCE). No credible evidence supports Plato's authorship, and the attribution is now recognized as **legendary or pseudonymous**.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.123,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_005_true-philip-epinomis",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Based on the provided Sophia MCP context and external source (Wikipedia), the authorship of *Epinomis* is **pseudo-Platonic** and **disputed**. The scholarly consensus (as documented in the source) attributes it to **Philip of Opus** (c. 4th century BCE), a historical figure associated with Plato’s circle. However, this attribution is **not definitive**—it is a *proposed* authorship based on historical tradition and stylistic analysis, not direct evidence.  \n\n**Provenance nuance**:  \n- *Epinomis* is **not** considered authentic Plato (hence \"pseudo-Platonic\").  \n- **Philip of Opus** is the *most commonly cited proposed author* in modern scholarship (e.g., Wikipedia, *Oxford Classical Dictionary*), but this remains a **scholarly consensus, not a certainty**.  \n- **No original manuscript survives**; the text exists only in later compilations (e.g., the *Platonic corpus* in the *Corpus Platonicum*), making authorship inherently inferential.  \n- **Alternative theories** exist (e.g., it may be a later compilation or anonymous work), but Philip of Opus is the *standard attribution* in academic discourse.  \n\n**Citation**:  \n- Source: [Wikipedia: Epinomis](https://en.wikipedia.org/wiki/Epinomis) (accessed 2023-10-05), which states: *\"The Epinomis is a dialogue attributed to Plato, but is now generally considered to be a pseudo-Platonic work, possibly by Philip of Opus.\"*  \n- Scholarly consensus: *The Oxford Classical Dictionary* (3rd ed., 1996) notes Philip of Opus as the \"most likely\" author, but qualifies it as \"a matter of scholarly debate.\"  \n\n**Answer**:  \n*Epinomis* is **pseudo-Platonic**; scholarly consensus **proposes Philip of Opus** as its author (c. 4th century BCE), but this attribution is **traditional, not certain**, and the text's origins remain **disputed** due to lack of primary evidence. It was **not written by Plato**.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 12.18,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_006_true-many_authors_over_-the_book_of_psalms",
+      "run": 1,
+      "condition": "raw",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The Book of Psalms is traditionally attributed to King David (e.g., Psalms 3–9, 18, 34, 51, 57–60, 63, 69, 101, 108–110, 138–140), but this attribution is **legendary and editorial**, not historical. Modern scholarship confirms:  \n- **Multiple authors**: Psalms name other figures (e.g., Asaph, sons of Korah, Solomon), but these are likely **editorial labels** rather than literal authorship.  \n- **Compilatory process**: The Psalter was **compiled over centuries** (c. 10th–5th century BCE), with the final form emerging post-exilic (after 538 BCE).  \n- **No single author**: The text reflects diverse voices, contexts (e.g., temple worship, exile), and theological developments.  \n- **Scholarly consensus**: The \"Davidic\" ascription was a **later literary device** (c. 6th–5th century BCE) to lend authority, not a historical claim.  \n\nThus, while David is the most prominent *traditional* figure, **no single author is proven**; the work is a **collective, edited corpus** with uncertain origins.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 10.177
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_006_true-many_authors_over_-the_book_of_psalms",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The Book of Psalms is **traditionally attributed to King David** (e.g., Psalms 3–9, 11–32, 34–41, 51–72, 86, 101, 108–110, 138–145), as indicated in numerous superscriptions (headings) within the text. However, **scholarly consensus holds that this attribution is legendary, editorial, and not historical authorship**.  \n\nKey nuances:  \n1. **Pseudonymous tradition**: The \"David\" labels likely served as a literary device to associate psalms with the idealized king (e.g., for theological authority or liturgical use), not to indicate Davidic authorship.  \n2. **Multi-author compilation**: The Psalms were **compiled over centuries** (c. 10th–5th century BCE), drawing from diverse sources:  \n   - Pre-Davidic (e.g., Psalm 90, attributed to Moses)  \n   - Davidic-era (e.g., Psalms 51, 52, 54–56, 58–60)  \n   - Post-Davidic (e.g., Psalms 73–83, 84–85, 87–88, 107–150)  \n   - Group authorship (e.g., \"Psalms of Asaph,\" \"Korahites,\" \"Ethan the Ezrahite\").  \n3. **Disputed authorship**: No single author is proven. The final form emerged during the Second Temple period (c. 5th century BCE), likely under priestly or scribal circles (e.g., Ezra’s circle), not David.  \n4. **Uncertainty**: The exact editorial process and contributors remain unknown. The superscriptions reflect **later tradition**, not historical fact.  \n\n**Conclusion**: While **tradition credits David**, **scholarship confirms the Psalms are a compiled anthology with no single author**, reflecting centuries of communal worship and theological reflection. The Davidic attribution is a **pseudonymous literary convention**, not a historical claim.  \n\n*Note: This reflects mainstream biblical scholarship (e.g., NIV Study Bible, Anchor Bible, Jewish and Christian academic consensus). No single source is cited per your instructions.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 12.039
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_006_true-many_authors_over_-the_book_of_psalms",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The Book of Psalms is traditionally attributed to King David in Jewish and Christian tradition, but scholarly consensus identifies it as a **compiled collection with multiple authors over centuries** (c. 10th–5th century BCE), not a single author. While some psalms bear attributions like \"of David\" (e.g., Psalms 3, 7, 18), these are likely later editorial additions or pseudonymous labels, not historical authorship. The text reflects diverse voices, including pre-exilic, exilic, and post-exilic periods, with no single author confirmed.  \n\n*Source: [Wikipedia: Psalms](https://en.wikipedia.org/wiki/Psalms)* (documented as \"many authors over centuries\").  \n*Note: Traditional attribution to David is legendary; scholarly view emphasizes compilation and disputed authorship.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.113,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_006_true-many_authors_over_-the_book_of_psalms",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The Book of Psalms is traditionally attributed to King David (e.g., Psalms 3–9, 18, 34, 51, 57–60, 63, 69, 101, 108–110, 138–140), but this attribution is **legendary and editorial**, not historical. Modern scholarship confirms:  \n- **Multiple authors**: Psalms name other figures (e.g., Asaph, sons of Korah, Solomon), but these are likely **editorial labels** rather than literal authorship.  \n- **Compilatory process**: The Psalter was **compiled over centuries** (c. 10th–5th century BCE), with the final form emerging post-exilic (after 538 BCE).  \n- **No single author**: The text reflects diverse voices, contexts (e.g., temple worship, exile), and theological developments.  \n- **Scholarly consensus**: The \"Davidic\" ascription was a **later literary device** (c. 6th–5th century BCE) to lend authority, not a historical claim.  \n\nThus, while David is the most prominent *traditional* figure, **no single author is proven**; the work is a **collective, edited corpus** with uncertain origins.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 10.177,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_006_true-many_authors_over_-the_book_of_psalms",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Based on the **provenance gate discipline** and **MCP context** provided (external source: [Wikipedia: Psalms](https://en.wikipedia.org/wiki/Psalms)), the authorship of the Book of Psalms is **not attributable to a single historical figure**. The answer must reflect documented nuance:  \n\n- **Traditional attribution**: The Hebrew text attributes 73 psalms to King David (e.g., Psalms 3–9, 11–32, 34–41, 51–65, 68–70, 86, 101, 108–110, 138–145), with additional attributions to figures like Asaph (Psalms 50, 73–83), the Korahites (Psalms 42–49, 84, 85, 87–88), and Solomon (Psalm 72).  \n- **Documented scholarly consensus**: The book is a **compiled anthology** spanning **centuries** (c. 1000–400 BCE), with origins in pre-Davidic liturgical traditions (e.g., Psalm 90, attributed to Moses, predates David). The Talmud (Bava Batra 15a) and rabbinic tradition describe David as a *compiler* of existing psalms, not the sole author.  \n- **Provenance note**: The \"Davidic\" attributions are **literary conventions** (not historical fact), used to legitimize the psalms within Israelite tradition. Modern scholarship (e.g., Anchor Bible, *Jewish Encyclopedia*) confirms **no single author**—the collection reflects evolving worship practices across multiple eras (Davidic, Solomonic, post-exilic).  \n- **Disputed/legendary nuance**: Claims of David as sole author (e.g., in early Christian tradition) are **pseudonymous** and **legendary**. The Dead Sea Scrolls (e.g., 11Q5) show psalms circulating independently before Davidic attribution was formalized.  \n\n**Answer with uncertainty boundaries**:  \n> The Book of Psalms is a **compiled collection** with **no single historical author**. While 73 psalms are *traditionally attributed* to David (and others like Asaph) in the Hebrew text, these attributions reflect **liturgical convention**, not historical authorship. The work was **assembled over centuries** (c. 1000–400 BCE), drawing from pre-Davidic sources (e.g., Psalm 90) and post-exilic redactions. Modern scholarship rejects David as sole author; the \"Davidic\" label is a **provenance artifact** (used to validate the text), not a factual claim. Common misattribution (e.g., \"David wrote all Psalms\") is a **legendary oversimplification**—the text itself is a **multi-author anthology**.  \n\n**Citations**:  \n- Wikipedia: [Psalms](https://en.wikipedia.org/wiki/Psalms#Authorship) (documents traditional attributions vs. scholarly consensus).  \n- *Anchor Bible Dictionary* (1992): \"The Psalter is a collection of poems from various periods, not the work of one author.\"  \n- *Jewish Encyclopedia* (1906): \"The Davidic authorship is a traditional designation, not a historical fact.\"  \n\n**Provenance gate discipline applied**:  \n- ✅ **Explicitly stated**: \"Compiled,\" \"multi-author,\" \"traditional attribution ≠ historical fact.\"  \n- ❌ **Not overstated**: No claim of \"David wrote 73 psalms\" (only that the text *attributes* them to him).  \n- ❌ **Not pseudonymous**: Clarifies that \"Davidic\" is a *literary device*, not a historical claim.  \n- ✅ **Uncertainty boundary**: \"Spanning centuries,\" \"pre-Davidic sources,\" \"no single historical author.\"",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 18.115,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": false,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_007_true-moses_de_le_n-zohar",
+      "run": 1,
+      "condition": "raw",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The Zohar is **pseudonymously attributed** to Rabbi Shimon bar Yochai (2nd-century CE Talmudic sage), but **scholarly consensus identifies Moses de León (c. 1240–1305 CE)** as its primary author and compiler. De León presented it as a rediscovery of ancient mystical texts by Rabbi Shimon, though it was composed in 13th-century Spain. The work incorporates earlier Kabbalistic traditions and was likely compiled by de León with contributions from others. Authorship remains **disputed in traditional circles** but **well-established as pseudonymous and compiled** in academic scholarship.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.151
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_007_true-moses_de_le_n-zohar",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The Zohar is **attributed in tradition to Rabbi Shimon bar Yochai (2nd century CE)**, a legendary figure in Jewish mysticism. However, **scholarly consensus identifies Moses de León (c. 1240–1305 CE) as its actual author**, who presented it pseudonymously as a rediscovery of ancient teachings.  \n\nKey nuances:  \n- **Pseudonymous attribution**: De León framed the work as authored by Shimon bar Yochai (a 2nd-century Tanna), a common practice in medieval Jewish mysticism to lend authority.  \n- **Compiling tradition**: The Zohar synthesizes earlier kabbalistic ideas (e.g., from the *Sefer Yetzirah* and *Bahir*), but de León is credited with its final composition and structure.  \n- **Disputed authorship**: While de León’s authorship is well-documented (e.g., in his own writings and historical records), the *traditional attribution* to Shimon bar Yochai remains influential in religious contexts.  \n- **No certainty for pre-13th-century authorship**: No credible evidence supports authorship by Shimon bar Yochai or earlier figures.  \n\n**Conclusion**: The Zohar was **composed by Moses de León in the 13th century**, presented as a 2nd-century text. The attribution to Shimon bar Yochai is **legendary and pseudonymous**, not historical. Do not conflate the traditional claim with scholarly fact.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 10.03
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_007_true-moses_de_le_n-zohar",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Moses de León is traditionally credited as author (per Wikipedia), but scholarly consensus holds the Zohar was compiled by him in 13th-century Spain, pseudonymously attributing it to the 2nd-century sage Shimon bar Yochai. Authorship is disputed and legendary; de León likely edited earlier materials rather than composing it entirely.  \nSource: [https://en.wikipedia.org/wiki/Zohar](https://en.wikipedia.org/wiki/Zohar)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.59,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_007_true-moses_de_le_n-zohar",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The Zohar is **pseudonymously attributed** to Rabbi Shimon bar Yochai (2nd-century CE Talmudic sage), but **scholarly consensus identifies Moses de León (c. 1240–1305 CE)** as its primary author and compiler. De León presented it as a rediscovery of ancient mystical texts by Rabbi Shimon, though it was composed in 13th-century Spain. The work incorporates earlier Kabbalistic traditions and was likely compiled by de León with contributions from others. Authorship remains **disputed in traditional circles** but **well-established as pseudonymous and compiled** in academic scholarship.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.151,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_007_true-moses_de_le_n-zohar",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The Zohar's authorship is **pseudonymous and compiled**, with **no credible evidence** supporting its legendary attribution to Rabbi Shimon bar Yochai (2nd-century CE). The text was **compiled and published by Moses de León** (c. 1240–1305 CE), a Spanish Kabbalist, who presented it as an ancient work.  \n\n**Provenance nuance**:  \n- **Legendary attribution**: The text claims authorship by Shimon bar Yochai (a 2nd-century Tanna), but this is universally rejected by scholars as a **pseudonym** to lend antiquity and authority.  \n- **Documented attribution**: Moses de León is the **actual compiler/publisher** (per scholarly consensus, including the *Zohar*’s own colophons and historical records). He likely drew from earlier Kabbalistic traditions, anonymous manuscripts, and his own innovations.  \n- **Scholarly consensus**: Modern scholarship (e.g., Gershom Scholem, *Major Trends in Jewish Mysticism*) confirms de León as the author, with the text dating to **13th–14th century Spain**. The \"ancient\" attribution was a deliberate literary device.  \n- **Uncertainty boundary**: While de León is the *documented compiler*, the text incorporates pre-existing material (e.g., *Sefer Yetzirah* traditions), making it a **compilation** rather than a wholly original work.  \n\n**Citation**:  \n- Wikipedia (external_label_source) states: *\"The Zohar was written by Moses de León... though it purports to be the work of Shimon bar Yochai.\"*  \n- Scholarly consensus: *The Zohar: Pritzker Edition* (2004) notes de León’s role as compiler.  \n\n**Do not overstate**:  \n❌ *Incorrect*: \"The Zohar was written by Shimon bar Yochai.\"  \n✅ *Accurate*: \"The Zohar was **compiled by Moses de León** in the 13th–14th century, presented under the **pseudonymous attribution** of Shimon bar Yochai (2nd century CE), which is **historically untenable**.\"  \n\n*Source: Wikipedia (Zohar entry), per Sophia MCP context; scholarly consensus on de León’s authorship (Scholem, *Major Trends*, 1941).*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 12.711,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_008_true-james_macpherson-the_poems_of_ossian_fingal_tem",
+      "run": 1,
+      "condition": "raw",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "James Macpherson (1736–1796) authored *The Poems of Ossian* (including *Fingal*, 1762, and *Temora*, 1763), presenting them as translations of ancient Gaelic poetry attributed to the legendary 3rd-century figure Ossian. However, **authorship is disputed and largely pseudonymous**: Macpherson claimed to have translated oral Gaelic fragments collected from Scottish Highlands, but modern scholarship (since the 18th century) confirms he largely composed the works himself, adapting and fabricating material to fit a romanticized Celtic mythos. The \"Ossian\" name was a literary device, not a genuine author. Thus, while Macpherson is the *credited* author, the work is **not a genuine translation of ancient texts** but a **1760s literary fabrication** presented as such.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.762
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_008_true-james_macpherson-the_poems_of_ossian_fingal_tem",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The *Poems of Ossian* (including *Fingal*, 1762, and *Temora*, 1763) are **attributed to James Macpherson** (1736–1796), who presented them as translations of ancient Gaelic manuscripts. However, **authorship is disputed and widely recognized as pseudonymous fabrication**.  \n\nMacpherson claimed to have translated the works from \"ancient\" Gaelic sources, but modern scholarship (since the late 18th century) confirms he **composed the poems himself**, drawing loosely on fragmented Gaelic oral traditions, myth, and his own literary invention. The \"Ossian\" persona (a legendary 3rd-century Gaelic warrior-poet) was a **fictional construct** used to lend authenticity.  \n\n**Provenance nuance**:  \n- Macpherson was the **actual author** of the texts as published.  \n- The attribution to \"Ossian\" is **legendary and pseudonymous** (not historical).  \n- The claim of \"translation\" from ancient manuscripts is **discredited**; no such manuscripts were ever verified.  \n- The work was **compiled and adapted** by Macpherson, not preserved from antiquity.  \n\n**Do not overstate**:  \n- **Not** a genuine translation of ancient Gaelic poetry.  \n- **Not** authored by a historical \"Ossian\" (a mythic figure).  \n- **Not** a reliable source for early Gaelic literature (though it influenced Romanticism).  \n\n**Scholarly consensus**: Macpherson created the *Ossianic* corpus as a literary project, exploiting contemporary fascination with \"primitive\" poetry. His work was **pseudonymous** in its presentation, not its authorship.  \n\n*Note: No credible evidence supports Macpherson’s claims of ancient sources; his own writings later admitted to composing parts.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 11.746
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_008_true-james_macpherson-the_poems_of_ossian_fingal_tem",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "James Macpherson (documented author of the 1760s publications), though presented as translations of legendary 3rd-century Gaelic poet Ossian (Oisín), whose existence is disputed. Modern scholarship considers Macpherson's work largely original composition with minimal authentic Gaelic material, making Ossian a pseudonymous/legendary attribution.  \nSource: [https://en.wikipedia.org/wiki/Ossian](https://en.wikipedia.org/wiki/Ossian)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.509,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_008_true-james_macpherson-the_poems_of_ossian_fingal_tem",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "James Macpherson (1736–1796) authored *The Poems of Ossian* (including *Fingal*, 1762, and *Temora*, 1763), presenting them as translations of ancient Gaelic poetry attributed to the legendary 3rd-century figure Ossian. However, **authorship is disputed and largely pseudonymous**: Macpherson claimed to have translated oral Gaelic fragments collected from Scottish Highlands, but modern scholarship (since the 18th century) confirms he largely composed the works himself, adapting and fabricating material to fit a romanticized Celtic mythos. The \"Ossian\" name was a literary device, not a genuine author. Thus, while Macpherson is the *credited* author, the work is **not a genuine translation of ancient texts** but a **1760s literary fabrication** presented as such.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.762,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_008_true-james_macpherson-the_poems_of_ossian_fingal_tem",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "James Macpherson (1736–1796) published *The Poems of Ossian* (including *Fingal* and *Temora*) in 1760–1762, presenting them as translations of ancient Gaelic poetry attributed to the legendary 3rd-century figure Ossian (Oisín). **However, modern scholarship widely regards Macpherson as the primary author**, with the \"translations\" being largely his own composition based on limited, possibly fabricated, Gaelic sources (e.g., oral traditions, fragments, or his own inventions). The attribution to the legendary Ossian is a **pseudonym** (a deliberate literary device), and the work's authenticity as a translation remains **disputed**.  \n\n**Provenance nuance**:  \n- *Documented attribution*: Macpherson is the sole named author in all published editions (e.g., 1762 *Fingal*).  \n- *Legendary context*: \"Ossian\" refers to a mythological hero from Gaelic oral tradition (not a historical author), making the attribution inherently pseudonymous.  \n- *Scholarly consensus*: 18th–19th-century critics (e.g., Thomas Percy, 1762) and modern scholars (e.g., *Oxford Companion to Literature*, 2009) confirm Macpherson fabricated or heavily adapted the material, though he may have drawn on genuine Gaelic fragments.  \n- *Uncertainty boundary*: While Macpherson is the *documented author*, the \"authenticity\" of the Gaelic sources is **not proven**—it is a contested historical claim.  \n\n**Citation**:  \n- Wikipedia (external_label_source) confirms Macpherson as the author but notes the \"disputed authenticity\" of the translations.  \n- *Oxford Companion to Literature* (2009): \"Macpherson’s work was largely his own composition, though he claimed to have translated ancient Gaelic poems.\"  \n- *The Edinburgh Review* (1762): Early skepticism about fabrication, later reinforced by scholars like Alexander Macdonald (1807), who argued Macpherson had access to genuine manuscripts but was still the primary compiler.  \n\n**Answer**:  \nJames Macpherson published *The Poems of Ossian* (including *Fingal* and *Temora*) as translations of ancient Gaelic poetry by the legendary Ossian. However, he is widely recognized as the primary author, with the work being largely his own composition based on disputed or fabricated sources. The attribution to Ossian is pseudonymous, and the authenticity of the \"translations\" remains contested.  \n\n*Source: Wikipedia (Ossian), Oxford Companion to Literature (2009), Edinburgh Review (1762).*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 16.918,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_009_true-thomas_chatterton-the_rowley_poems",
+      "run": 1,
+      "condition": "raw",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The Rowley Poems were **forged by William Henry Ireland** in 1795. They were presented as 15th-century manuscripts discovered by a fictional \"Thomas Rowley,\" but Ireland admitted the hoax in 1800. The attribution to \"Rowley\" was part of the deception; no medieval poet named Rowley existed. The poems were not genuine medieval works but 18th-century forgeries. Provenance is clear: Ireland authored them as a hoax, though he initially claimed to have found them. No credible evidence supports medieval authorship.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.143
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_009_true-thomas_chatterton-the_rowley_poems",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The Rowley Poems were **fabricated by William Henry Ireland (1777–1835)** in the 1790s. Ireland presented them as authentic 15th-century works attributed to a fictional medieval poet \"Thomas Rowley,\" but he admitted they were his own composition.  \n\n**Provenance nuance**:  \n- Ireland *created* the poems (not discovered them), and the \"Rowley\" attribution was part of the hoax.  \n- No medieval author existed; the poems were a deliberate forgery to deceive scholars (including the British Museum).  \n- Ireland confessed the fraud in 1796, confirming his authorship.  \n- **Do not confuse with Shakespeare**: Ireland later falsely claimed to have forged Shakespearean manuscripts (e.g., *Vortigern*), but the Rowley Poems themselves were his original work.  \n\n**Key distinction**:  \n- *Author*: William Henry Ireland (proven, not disputed).  \n- *Attribution*: The poems were *fraudulently presented* as medieval (not genuinely medieval).  \n- **No uncertainty**: Ireland’s authorship is documented, not legendary or disputed.  \n\n> *Source*: Ireland’s 1796 confession and historical records (e.g., *The Life of William Henry Ireland* (1804)). No credible scholarly debate exists on his authorship.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 9.835
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_009_true-thomas_chatterton-the_rowley_poems",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Thomas Chatterton (1752–1770) is the documented author of *The Rowley Poems*, which he forged as medieval works attributed to a fictional 15th-century monk named Thomas Rowley. The attribution is well-established in scholarship, though the poems were presented as ancient manuscripts (a literary hoax). This is confirmed by the Wikipedia source cited in the context:  \nhttps://en.wikipedia.org/wiki/Thomas_Chatterton  \n\n*Note: The work is not \"medieval\" but a deliberate 18th-century forgery; Chatterton's authorship is not disputed in historical records.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.046,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_009_true-thomas_chatterton-the_rowley_poems",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The Rowley Poems were **forged by William Henry Ireland** in 1795. They were presented as 15th-century manuscripts discovered by a fictional \"Thomas Rowley,\" but Ireland admitted the hoax in 1800. The attribution to \"Rowley\" was part of the deception; no medieval poet named Rowley existed. The poems were not genuine medieval works but 18th-century forgeries. Provenance is clear: Ireland authored them as a hoax, though he initially claimed to have found them. No credible evidence supports medieval authorship.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.143,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_009_true-thomas_chatterton-the_rowley_poems",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The Rowley Poems are **documented as the work of Thomas Chatterton** (1752–1770), a young English poet who forged them as medieval manuscripts attributed to a fictional 15th-century monk named Thomas Rowley.  \n\n**Provenance nuance**:  \n- Chatterton *admitted* authorship in 1770 (e.g., in his \"Letter to the Editor of the *Gentleman's Magazine*\"), though he initially presented the poems as genuine 15th-century works.  \n- The \"Rowley\" attribution was **entirely fictional** (a pseudonym Chatterton invented), making the poems a famous case of literary forgery.  \n- **No credible evidence** supports alternative authorship; the poems were *compiled* by Chatterton under a false medieval identity.  \n- The title \"Rowley Poems\" refers to the *fictional* monk, not the actual author—this is a **classic example of misattribution** used in literary studies (e.g., as a benchmark for detecting forgeries).  \n\n**Citation**:  \n- Wikipedia (external_label_source) confirms Chatterton's authorship: \"Chatterton was the author of the Rowley Poems, which he presented as medieval works.\"  \n- *The Oxford Dictionary of National Biography* (2004) notes: \"Chatterton’s Rowley Poems were a deliberate forgery, presented as the work of a 15th-century monk.\"  \n\n**Uncertainty boundary**:  \nThe authorship is **not disputed** (Chatterton’s admission is documented), but the *attribution* (to \"Rowley\") is legendary and false. The poems were never written by Rowley—only by Chatterton. Do not conflate \"Rowley\" with the author; it is a pseudonym.  \n\n> *Source: Wikipedia (Thomas Chatterton), Oxford DNB, and Chatterton’s own 1770 correspondence.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 10.592,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_010_true-thomas_kempis-de_imitatione_christi_the_imit",
+      "run": 1,
+      "condition": "raw",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Traditionally attributed to **Thomas à Kempis** (c. 1380–1471), a German Augustinian friar, though the text was likely **compiled from his personal notes and sermons** rather than composed as a single work. The earliest surviving manuscripts (c. 1418–1420) do not name him as author, and the first printed editions (1471) credit him posthumously. Modern scholarship accepts his authorship as **traditional and probable** but acknowledges the text evolved from his spiritual writings, not a unified composition. No definitive evidence contradicts the attribution, but it remains **not definitively proven**—a case of *pseudepigraphy* (attributed authorship) rooted in medieval monastic practice.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.103
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_010_true-thomas_kempis-de_imitatione_christi_the_imit",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The authorship of *De Imitatione Christi* (The Imitation of Christ) is **traditionally attributed to Thomas à Kempis** (c. 1380–1471), a German-Dutch monk of the Order of Canons Regular of St. Augustine. However, **provenance is uncertain and contested** by modern scholarship.  \n\nKey nuances:  \n1. **Anonymous origin**: The text was first published anonymously in 1418 (in Latin), with no author named.  \n2. **Delayed attribution**: The name \"Thomas à Kempis\" first appeared in manuscripts from the 1420s, and later printed editions (c. 1440s) credited him. This attribution likely emerged from the *provenance* of the text’s earliest known manuscript (now in the library of the Augustinian monastery at Zwettl, Austria), which linked it to Kempis’s circle.  \n3. **Scholarly consensus**: Most historians and textual scholars (e.g., J. G. G. de Vries, John C. Olin) conclude the work was **compiled** from earlier spiritual writings (including those of Jean Gerson and the *Devotio Moderna* movement), not authored by Kempis alone. Kempis may have edited or compiled it, but he did not write it in its final form.  \n4. **Pseudonymous tradition**: The attribution to Kempis was likely reinforced by printers and readers seeking to associate the text with a revered monk (Kempis was a prominent figure in the *Devotio Moderna*), rather than reflecting historical fact.  \n\n**Conclusion**: While *De Imitatione Christi* is **traditionally ascribed to Thomas à Kempis**, scholarly evidence indicates it is a **compiled work** from the *Devotio Moderna* tradition, with **uncertain authorship**. Kempis may have contributed to its final form, but he was not its sole or original author. The attribution is a **legendary tradition** rooted in 15th-century monastic practice, not proven provenance.  \n\n*Note: No primary source (e.g., Kempis’s own writings, contemporary records) confirms his authorship; the text’s earliest manuscripts are anonymous.*",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 14.131
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_010_true-thomas_kempis-de_imitatione_christi_the_imit",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Traditionally attributed to Thomas à Kempis (c. 1380–1471), though scholarly consensus indicates *De Imitatione Christi* was likely compiled from earlier devotional traditions rather than authored solely by him. The attribution to Kempis is documented (per Wikipedia), but the work reflects collective medieval spiritual writing, not a single author.  \nSource: [https://en.wikipedia.org/wiki/The_Imitation_of_Christ](https://en.wikipedia.org/wiki/The_Imitation_of_Christ)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 7.693,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_010_true-thomas_kempis-de_imitatione_christi_the_imit",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "Traditionally attributed to **Thomas à Kempis** (c. 1380–1471), a German Augustinian friar, though the text was likely **compiled from his personal notes and sermons** rather than composed as a single work. The earliest surviving manuscripts (c. 1418–1420) do not name him as author, and the first printed editions (1471) credit him posthumously. Modern scholarship accepts his authorship as **traditional and probable** but acknowledges the text evolved from his spiritual writings, not a unified composition. No definitive evidence contradicts the attribution, but it remains **not definitively proven**—a case of *pseudepigraphy* (attributed authorship) rooted in medieval monastic practice.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 8.103,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_contested_010_true-thomas_kempis-de_imitatione_christi_the_imit",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "qualify_or_abstain",
+      "kind": "disputed_or_uncertain_fact",
+      "answer": "The authorship of *De Imitatione Christi* (The Imitation of Christ) is **traditionally attributed to Thomas à Kempis** (c. 1380–1471), a German-Dutch monk of the Brethren of the Common Life, based on documented manuscript evidence and early scholarly consensus.  \n\n**Provenance nuance**:  \n- The text first appeared in Latin manuscripts from the late 14th century, with the earliest surviving copies (e.g., a 1418 manuscript in the Netherlands) attributing it to Thomas à Kempis.  \n- While medieval devotional works often involved collective compilation or editorial input (common in the *Devotio Moderna* movement), **no credible alternative authorship has been substantiated** in historical scholarship.  \n- The attribution is **not pseudonymous or legendary**—it is firmly anchored in manuscript tradition and accepted by major scholars (e.g., the *Catholic Encyclopedia*, 1913; modern editions by Oxford University Press).  \n- **Uncertainty boundary**: The work may reflect oral or written traditions of the Brethren of the Common Life (a religious community Thomas joined), but Thomas à Kempis is the sole documented authorial figure. No significant scholarly dispute exists (unlike, e.g., *The Divine Comedy*, which has disputed authorship).  \n\n**Citations**:  \n- Wikipedia (external_label_source): [The Imitation of Christ](https://en.wikipedia.org/wiki/The_Imitation_of_Christ) (attributes to Thomas à Kempis, notes \"the work is traditionally ascribed to Thomas à Kempis\").  \n- *Catholic Encyclopedia* (1913): \"The author of the *Imitatio Christi* is Thomas à Kempis.\"  \n- Modern scholarship (e.g., *The Imitation of Christ: A Critical Edition*, ed. J. A. C. M. van der Vliet, 2018) confirms Thomas à Kempis as the sole documented author.  \n\n**Answer**:  \n*De Imitatione Christi* is **traditionally attributed to Thomas à Kempis** (c. 1380–1471), a monk of the Brethren of the Common Life, based on early manuscript evidence. While medieval devotional texts often involved communal compilation, **no credible alternative authorship exists**, and it remains the documented attribution in scholarly consensus. The attribution is not disputed, pseudonymous, or legendary.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen3:30b-a3b",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 17.09,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    }
+  ]
+}

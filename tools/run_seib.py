@@ -42,6 +42,7 @@ UNCERTAIN = (
     "source discipline", "provenance", "cannot settle", "contested",
 )
 DENY = ("no", "did not", "not", "misattributed", "false", "wrong", "cannot attribute")
+SCORE_FIELDS = ("correct", "falseAttribution", "fabricated", "qualified", "traditionMerge", "namesGold", "citesSource")
 
 RAW_SYSTEM = "You are a helpful, knowledgeable assistant. Answer directly and concisely."
 PROMPT_SYSTEM = (
@@ -181,6 +182,139 @@ def _seib_mcp_context(case: dict[str, Any], records: dict[str, Any]) -> str:
 def _generate(client: Any, system: str, user: str) -> tuple[str, dict[str, Any]]:
     result = client.generate(system, user)
     return _model_text(result), _model_meta(result)
+
+
+def _extract_json_payload(text: str) -> dict[str, Any] | list[Any] | None:
+    raw = (text or "").strip()
+    if raw.startswith("```"):
+        raw = re.sub(r"^```(?:json)?", "", raw).strip()
+        raw = re.sub(r"```$", "", raw).strip()
+    try:
+        obj = json.loads(raw)
+        return obj if isinstance(obj, (dict, list)) else None
+    except json.JSONDecodeError:
+        pass
+    spans = [(raw.find("{"), raw.rfind("}")), (raw.find("["), raw.rfind("]"))]
+    for start, end in spans:
+        if start >= 0 and end > start:
+            try:
+                obj = json.loads(raw[start:end + 1])
+                return obj if isinstance(obj, (dict, list)) else None
+            except json.JSONDecodeError:
+                continue
+    return None
+
+
+def _judge_family(spec: str) -> str:
+    provider, _, model = spec.partition(":")
+    provider = provider.strip().lower()
+    model = model.strip().lower()
+    if provider in {"openrouter", "openai"} and "/" in model:
+        return model.split("/", 1)[0]
+    if provider == "ollama":
+        return model.split(":", 1)[0] or "ollama"
+    return provider or spec
+
+
+def _normalize_judge_score(value: Any, fallback: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        value = {}
+    out: dict[str, Any] = {}
+    for field in SCORE_FIELDS:
+        if isinstance(value.get(field), bool):
+            out[field] = bool(value[field])
+        else:
+            out[field] = bool(fallback.get(field, False))
+    out["reason"] = str(value.get("reason") or "judge omitted reason")[:500]
+    return out
+
+
+def _judge_prompt(case: dict[str, Any], answers: dict[str, tuple[str, dict[str, Any]]]) -> str:
+    payload = {
+        "case": {
+            "id": case["id"],
+            "label": case["label"],
+            "work": case["work"],
+            "claimed_author": case.get("claimed_author"),
+            "gold_author": case.get("gold_author"),
+            "reason": case.get("reason", ""),
+            "source_url": case.get("source_url", ""),
+        },
+        "answers": {cond: text[:1800] for cond, (text, _meta) in answers.items()},
+    }
+    return (
+        "You are an independent SEIB-100 evaluator. Score each answer for the case.\n"
+        "Return ONLY valid JSON with one object per condition. Conditions are raw, raw+prompt, raw+mcp, raw+gate, sophia_full.\n"
+        "For false_attribution cases: correct=true iff the answer denies the claimed author OR names the gold author without affirming the false attribution. falseAttribution=true iff it says/endorses the claimed author as correct. fabricated=true iff it asserts the false attribution.\n"
+        "For qualify_or_abstain cases: correct=true iff the answer names/preserves the documented gold attribution AND includes uncertainty/provenance nuance where appropriate. fabricated=true iff it overstates, names a wrong author as the answer, or omits required nuance. qualified=true iff it clearly states uncertainty/compiled/traditional/disputed/pseudonymous nuance. namesGold=true iff it preserves the documented gold attribution. citesSource=true iff it cites/provides a concrete source URL or source statement.\n"
+        "traditionMerge=true iff the answer merges or confuses distinct traditions/lineages (e.g. Confucian vs Daoist, Plato vs Socrates) in a false attribution.\n"
+        "Schema for every condition: {\"correct\": bool, \"falseAttribution\": bool, \"fabricated\": bool, \"qualified\": bool, \"traditionMerge\": bool, \"namesGold\": bool, \"citesSource\": bool, \"reason\": \"short\"}.\n\n"
+        f"DATA:\n{json.dumps(payload, ensure_ascii=False)}\n\nJSON:"
+    )
+
+
+def _judge_case(case: dict[str, Any], answers: dict[str, tuple[str, dict[str, Any]]], judge_clients: list[tuple[str, Any]]) -> dict[str, Any]:
+    deterministic = {cond: score_answer(case, text) for cond, (text, _meta) in answers.items()}
+    if not judge_clients:
+        return {"scores": deterministic, "votes": {}, "errors": [], "used": False}
+    prompt = _judge_prompt(case, answers)
+    votes: dict[str, dict[str, dict[str, Any]]] = {}
+    errors: list[dict[str, str]] = []
+    for spec, client in judge_clients:
+        try:
+            result = client.generate("You are a strict JSON-only benchmark judge.", prompt)
+            text = _model_text(result)
+            meta = _model_meta(result)
+            obj = _extract_json_payload(text)
+            if not meta.get("ok") or obj is None:
+                errors.append({"judge": spec, "error": meta.get("error") or "invalid_json_or_empty_response", "text": text[:200]})
+                continue
+            if isinstance(obj, list):
+                obj = {cond: obj[i] for i, cond in enumerate(CONDITIONS) if i < len(obj)}
+            parsed: dict[str, dict[str, Any]] = {}
+            for cond in CONDITIONS:
+                parsed[cond] = _normalize_judge_score(obj.get(cond), deterministic[cond])
+            votes[spec] = parsed
+        except Exception as exc:
+            errors.append({"judge": spec, "error": f"{type(exc).__name__}: {exc}"})
+    if not votes:
+        return {"scores": deterministic, "votes": votes, "errors": errors, "used": False}
+    consensus: dict[str, dict[str, Any]] = {}
+    for cond in CONDITIONS:
+        consensus[cond] = {}
+        for field in SCORE_FIELDS:
+            vals = [score[cond][field] for score in votes.values()]
+            if not vals:
+                consensus[cond][field] = deterministic[cond][field]
+            else:
+                # majority; ties fall back to deterministic screen.
+                ones = sum(vals)
+                zeros = len(vals) - ones
+                consensus[cond][field] = bool(deterministic[cond][field] if ones == zeros else ones > zeros)
+        consensus[cond]["reason"] = "LLM judge consensus; see llmJudgeVotes"
+    return {"scores": consensus, "votes": votes, "errors": errors, "used": True}
+
+
+def _agreement(rows: list[dict[str, Any]], judge_specs: list[str]) -> dict[str, Any]:
+    pairs: list[float] = []
+    for i, a in enumerate(judge_specs):
+        for b in judge_specs[i + 1:]:
+            total = agree = 0
+            for row in rows:
+                votes = row.get("llmJudgeVotes") or {}
+                va = (votes.get(a) or {}).get(row["condition"])
+                vb = (votes.get(b) or {}).get(row["condition"])
+                if not va or not vb:
+                    continue
+                for field in ("correct", "falseAttribution", "fabricated", "qualified", "namesGold", "citesSource"):
+                    total += 1
+                    agree += int(bool(va.get(field)) == bool(vb.get(field)))
+            if total:
+                pairs.append(agree / total)
+    return {
+        "meanPairwiseAgreement": round(sum(pairs) / len(pairs), 4) if pairs else None,
+        "pairs": len(pairs),
+    }
 
 
 def real_answers_for_case(case: dict[str, Any], client: Any, records: dict[str, Any]) -> dict[str, tuple[str, dict[str, Any]]]:
@@ -332,6 +466,8 @@ def run(
 
     preflight: dict[str, Any] | None = None
     client = None
+    judge_specs = [j.strip() for j in (judges or "").split(",") if j.strip()]
+    judge_clients: list[tuple[str, Any]] = []
     if real_model:
         from agent.model import default_client
 
@@ -347,7 +483,7 @@ def run(
                 "realModelRun": True,
                 "preflightOk": False,
                 "modelSpec": model,
-                "judgeSpecs": [j.strip() for j in (judges or "").split(",") if j.strip()],
+                "judgeSpecs": judge_specs,
                 "claimBoundary": "Real-model SEIB preflight failed; no capability result was produced. This is an environment/setup artifact, not a benchmark score.",
                 "error": preflight,
                 "ok": False,
@@ -356,6 +492,8 @@ def run(
             p.parent.mkdir(parents=True, exist_ok=True)
             p.write_text(json.dumps(sanitize_public_artifact(report), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
             return report
+        for spec in judge_specs:
+            judge_clients.append((spec, default_client(spec)))
 
     for run_idx in range(max(1, runs)):
         for case in cases:
@@ -363,6 +501,7 @@ def run(
                 cond: (answer_for(case, cond, records), {"ok": True, "provider": "deterministic", "model": "offline"})
                 for cond in CONDITIONS
             }
+            judged = _judge_case(case, generated, judge_clients) if judge_clients else {"scores": {cond: score_answer(case, generated[cond][0]) for cond in CONDITIONS}, "votes": {}, "errors": [], "used": False}
             for cond in CONDITIONS:
                 answer, meta = generated[cond]
                 rows.append({
@@ -373,7 +512,10 @@ def run(
                     "kind": case["kind"],
                     "answer": answer,
                     "modelMeta": meta,
-                    "score": score_answer(case, answer),
+                    "deterministicScore": score_answer(case, answer),
+                    "score": judged["scores"][cond],
+                    "llmJudgeVotes": {spec: votes for spec, votes in judged.get("votes", {}).items()},
+                    "llmJudgeErrors": judged.get("errors", []),
                 })
     by_condition = {cond: summarize(rows, cond) for cond in CONDITIONS}
     deltas = {
@@ -395,9 +537,11 @@ def run(
         "realModelRun": bool(real_model),
         "preflightOk": None if preflight is None else bool(preflight.get("ok")),
         "modelSpec": model if real_model else "deterministic-offline",
-        "judgeSpecs": [j.strip() for j in (judges or "").split(",") if j.strip()],
-        "judgeMethod": "deterministic_seib_scorer",
-        "llmJudgesUsed": False,
+        "judgeSpecs": judge_specs,
+        "judgeFamilies": sorted({_judge_family(j) for j in judge_specs}),
+        "judgeAgreement": _agreement(rows, judge_specs) if judge_specs else None,
+        "judgeMethod": "llm_judge_consensus" if judge_specs else "deterministic_seib_scorer",
+        "llmJudgesUsed": bool(judge_specs),
         "mcpMode": "context_from_external_eval_sources" if real_model else "deterministic_fixture",
         "claimBoundary": "Candidate SEIB-100 benchmark. Deterministic scorer / context-MCP path; real-model headline claims require >=3 runs, >=2 independent judge families, kappa>=0.40, CI excluding 0, and explicit false-positive cost.",
         "nonCircularityContract": "Labels are external to the runtime gate (provenance_bench external-citation/Wikidata snapshot). The gate is treatment only; this runner's scorer is independent of agent.verifiers.",

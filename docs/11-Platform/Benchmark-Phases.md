@@ -153,3 +153,37 @@ prompt→full citation delta **0.93**; full false-positive cost **0.02**.
 - The lift attributed to `raw+mcp` / `sophia_full` reflects **tool-grounded
   context + gate discipline**, not model intelligence — the MCP context encodes
   the externally-labeled provenance under test.
+
+## API + stronger-local follow-up runs (candidate)
+
+After adding `--real-model` and LLM judge support, three priority follow-ups were
+run using real providers / local models. These are still **candidate-only**:
+
+1. **OpenRouter full SEIB-100 (subject: `openrouter:deepseek/deepseek-chat`)**
+   - Artifact: `agi-proof/benchmark-results/seib-100-openrouter-deepseek.public-report.json`
+   - Full 100 cases × 5 conditions; deterministic SEIB scorer; no LLM judges in this full run.
+   - Result: raw accuracy 0.95 → Sophia-full 0.98; contested fabrication 0.10 → 0.04;
+     source citation 0.00 → 0.94; full false-positive cost 0.02.
+   - `ok=false` because the strict SEIB pass criterion requires zero contested fabrication;
+     this is useful negative evidence, not a failure of the harness.
+
+2. **OpenRouter judged balanced slice (subject: `openrouter:deepseek/deepseek-chat`)**
+   - Artifact: `agi-proof/benchmark-results/seib-20-balanced-openrouter-deepseek-judged.public-report.json`
+   - 20 balanced cases (10 false attribution + 10 contested) × 5 conditions.
+   - Judges: direct DeepSeek + OpenRouter Qwen; mean pairwise agreement 0.9737 on valid judged rows.
+   - Result: all conditions scored 1.00 on this easy balanced slice; Sophia-full source
+     citation rate 1.00 vs raw 0.00.
+   - `ok=false` only because the fixture is 20 cases, not the full 100-case SEIB.
+
+3. **Stronger local model balanced slice (`ollama:qwen3:30b-a3b`)**
+   - Artifact: `agi-proof/benchmark-results/seib-20-balanced-ollama-qwen3-30b-a3b.public-report.json`
+   - 20 balanced cases × 5 conditions; deterministic SEIB scorer.
+   - Result: raw accuracy already 1.00 on this slice; Sophia-full kept accuracy 1.00,
+     reduced false-positive cost 0.30 → 0.10, and raised citation rate 0.00 → 0.80.
+   - `ok=false` because it is a 20-case slice and full false-positive cost is at the
+     strict threshold (0.10), not below it.
+
+**Provider caveat:** an OpenRouter `openai/gpt-4o-mini` preflight was region-blocked,
+and the supplied Claude-compatible llmhub route returned empty content through the
+current adapter, so they were not used for scored artifacts. No keys are stored in
+the repository.
