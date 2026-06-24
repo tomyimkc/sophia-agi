@@ -58,8 +58,13 @@ def _complete_for(spec: str, *, max_tokens: int):
 
     Model ids may contain ':' (e.g. openrouter:meta-llama/llama-3.3-70b-instruct:free),
     so split only on the first ':'."""
-    provider, _, model = spec.partition(":")
-    module = {"llmhub": llmhub_llm, "deepseek": deepseek_llm, "openrouter": openrouter_client}[provider]
+    providers = {"llmhub": llmhub_llm, "deepseek": deepseek_llm, "openrouter": openrouter_client}
+    provider, sep, model = spec.partition(":")
+    if not sep or not model:
+        raise ValueError(f"invalid model spec {spec!r}: expected 'provider:model' (e.g. 'deepseek:deepseek-chat')")
+    if provider not in providers:
+        raise ValueError(f"unknown provider {provider!r} in spec {spec!r}: choose one of {sorted(providers)}")
+    module = providers[provider]
     return model, module.make_complete(model=model, max_tokens=max_tokens)
 
 

@@ -67,11 +67,22 @@ def build_candidate(selected, metrics, *, candidate_id: str, verifier_artifacts=
 
     ``metrics`` is a list of (suite, before, after) triples; the protected suites are
     tagged automatically so the plasticity gate enforces the anti-forgetting invariant.
+
+    Fail closed: every suite in ``PROTECTED_SUITES`` must be measured. Without these
+    the plasticity gate has nothing to test the anti-forgetting tripwire against, so a
+    candidate could be silently promoted without ever proving it preserves old knowledge.
     """
     rows = tuple(
         EvalMetric(suite=s, before=float(b), after=float(a), protected=(s in PROTECTED_SUITES))
         for (s, b, a) in metrics
     )
+    measured = {m.suite for m in rows}
+    missing = [s for s in PROTECTED_SUITES if s not in measured]
+    if missing:
+        raise ValueError(
+            f"candidate {candidate_id!r} missing protected-suite metrics {missing}: "
+            f"the anti-forgetting tripwire requires before/after for all of {list(PROTECTED_SUITES)}"
+        )
     return UpdateCandidate(
         id=candidate_id,
         kind="lora_adapter",

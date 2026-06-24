@@ -39,6 +39,18 @@ DEFAULT_OUT = ROOT / "agi-proof" / "benchmark-results" / "continual-qa.validatio
 
 def bootstrap_ci(rows, key: str, *, B: int = 2000, seed: int = 12345) -> "dict":
     n = len(rows)
+    if n == 0 or B <= 0:
+        # Fail closed: an empty episode set (bad path, filtered set, future dataset
+        # change) must still produce a readable report, not a ZeroDivisionError /
+        # randrange(0). A zero-n report is the clear signal that nothing was scored.
+        return {
+            "n": n,
+            "pointAccuracy": None,
+            "bootstrapMean": None,
+            "ci95": [None, None],
+            "observedErrors": 0,
+            "note": "no rows to score" if n == 0 else "non-positive bootstrap count",
+        }
     rnd = random.Random(seed)
     accs: list[float] = []
     for _ in range(B):
