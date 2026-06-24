@@ -20,7 +20,9 @@ gate-filtered distillation, a formally-checked promotion gate, a 3-seed bar). Th
 - **"10–50× faster"** — misattributed. The speedup comes almost entirely from
   *training on 500–2000 examples for 1 epoch instead of a large multi-epoch corpus*.
   That is a **smaller job**, not the **same job done faster**. Against a fair baseline
-  (same model, same rows, same epoch, vanilla PEFT) the optimized stack is **~2–4×**.
+  (same model, same rows, same epoch, vanilla PEFT) the optimized stack is **2.0×,
+  measured on an RTX 4090** (§2b) — from dynamic padding; QLoRA and Unsloth did not beat
+  it at this scale.
 - **"0% fabrication Sophia model"** — the model+gate **system** achieves this; the
   **weights** do not. `training/local_sophia_v2/eval_ladder_adapter.json` shows the
   trained adapter still produces **20 gate failures** at the `adapter+gate` rung.
@@ -53,17 +55,50 @@ Qwen2.5-3B, 500 iters, batch 4, seq 1024, **peak 25.5 GB**, mlx-lm 0.29.1,
 | Hardware | Fast path | Fair baseline (same data/epoch) | Honest speedup |
 |---|---|---|---|
 | **M3 Max** | mlx-lm LoRA, ~10–25 min | mlx-lm LoRA, ~same | **~1.0–1.5×** |
-| **RTX 4090** | QLoRA 4-bit (25.5 GB peak ⇒ bf16 won't fit 24 GB), ~5–15 min; +Unsloth ~3–8 min | vanilla PEFT, ~15–30 min | **~2–4×** |
+| **RTX 4090** | fp16 + dynamic padding | vanilla PEFT + full-length padding | **2.0× (measured, §2b)** |
 
 The largest *untapped* win is not in the five techniques: the trainer previously used
 `padding="max_length"` to 1024 — every short row paid a full 1024-token
 forward/backward. **Dynamic padding / packing alone is plausibly 3–10× on this short
-corpus.** This has now been fixed (see §4).
+corpus.** This has now been fixed (see §4) and **measured at 2.0× on an RTX 4090** (§2b).
 
 > **Honest reframing that survives review:** "a small, gate-disciplined adapter trained
 > in minutes on a curated corpus, with a formally-checked promotion gate and a runtime
 > verifier that guarantees fail-closed behaviour the weights alone do not." That claim
 > is true and measured.
+
+### 2b. Measured speedup — RunPod RTX 4090 (spot), 2026-06-24
+
+The fair-baseline benchmark (`tools/bench_lora_speedup.py` via the `speedup-runpod`
+workflow) on the device class the claim targets — Qwen2.5-3B-Instruct, **128 rows, 1
+epoch, 32 optimizer steps, seed 0**, identical across configs. Report:
+`agi-proof/benchmark-results/runpod-speedup/run-28125095723.speedup_report.json`.
+
+| Config | Wall (s) | Speedup vs standard-LoRA ref |
+|---|---|---|
+| `peft-fp16-maxpad` *(standard-LoRA reference: full-length padding)* | 58.3 | 1.00× |
+| **`peft-fp16-dynpad`** *(the one fix that matters)* | **29.04** | **2.01×** |
+| `peft-4bit-dynpad` (QLoRA) | 36.26 | 1.61× |
+| `unsloth-4bit-dynpad` | 63.15 | 0.92× |
+
+**The measured, defensible multiplier vs standard LoRA is ~2.0×, from dynamic padding
+alone.** Three honest findings, none flattering:
+- **QLoRA 4-bit was *slower* than fp16 dynamic padding** (36.3 s vs 29.0 s). It only
+  beats the reference because it *also* uses dynamic padding. 4-bit's quant/dequant
+  overhead isn't worth it when a 3B already fits in fp16 on a 4090 — 4-bit is for
+  *fitting bigger models*, not speed.
+- **Unsloth was net *slower* than the reference (0.92×).** Its compile/patch overhead
+  dominates a 32-step micro-run and never amortizes; the advertised ~2× shows up on long
+  runs, **not** on this bench. Do **not** quote a 2× Unsloth number from this evidence.
+- The 2.0× from padding is **below my own 3–10× estimate** for this subset — magnitude
+  scales with how short the rows are relative to `max_seq_len` and with subset size; at
+  128 rows it is a conservative, real 2.0×.
+
+> **Bottom line, now measured on both platforms:** the apples-to-apples speedup vs
+> standard LoRA is **~2×** (dynamic padding), **not 10–50×**. The 10–50× headline is
+> the corpus-shrink lever (fewer examples = a smaller, narrower job), which this bench
+> deliberately does not measure. Quote "~2× wall-clock at fixed data/epochs (RTX 4090,
+> measured)"; do not quote QLoRA or Unsloth as speedups at this scale.
 
 ### 2a. Measured run — Mac Studio M3 Ultra (96 GB), 2026-06-24
 
@@ -85,18 +120,19 @@ full `--scaffold --guard --distill`, completion-only loss, batch 1, 1 epoch):
 - ✅ The full provenance-disciplined adapter trains in **~3 min at ~10 GB** on an M3 Ultra —
   cheap and fast in *absolute* terms, and the pipeline (scaffold/guard/distill/pre-split)
   runs clean end-to-end.
-- ❌ The **speedup multiplier vs standard LoRA is still unmeasured.** Experiment #2
-  (`bench_lora_speedup.py`) needs CUDA + bitsandbytes + Unsloth and **cannot run on Apple
-  Silicon**. Experiment #1 (padding ablation) is **invalid on MLX** — `--pad-to-max` is a
-  no-op there because mlx_lm controls its own padding (the device run correctly rejected the
-  naive 159.7 s / 177.0 s = 0.90× as run-to-run variance, not a padding effect). The trainer
-  now warns loudly about both rather than failing silently.
+- ✅ The **speedup multiplier is now measured on CUDA (§2b): ~2.0×**, not on this Mac.
+  Experiment #2 (`bench_lora_speedup.py`) needs CUDA + bitsandbytes + Unsloth and **cannot
+  run on Apple Silicon**; experiment #1 (padding ablation) is **invalid on MLX** —
+  `--pad-to-max` is a no-op there because mlx_lm controls its own padding (the device run
+  correctly rejected the naive 159.7 s / 177.0 s = 0.90× as run-to-run variance, not a
+  padding effect). The trainer now warns loudly about both rather than failing silently.
+  Both ran on the RunPod RTX 4090 instead — see §2b.
 - ⚠️ The **train/val gap (1.75 vs 2.89) confirms the overfitting risk** from §3. mlx-lm runs
   all iters with no Sophia early-stop, so the run did not stop early. To measure the real
   speedup multiplier and to exercise early-stopping, run on a CUDA box.
 
 > **Net:** the absolute MLX numbers are good and now reproducible; the headline *multiplier*
-> remains an estimate (~2–4×) pending a CUDA run. Do not quote a measured multiplier yet.
+> is now **measured at ~2.0× on a CUDA RTX 4090 (§2b)** — quote that, not the old estimate.
 
 ---
 
