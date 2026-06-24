@@ -1,0 +1,63 @@
+{
+  "domain": "psychology",
+  "version": 1,
+  "passed": 6,
+  "total": 9,
+  "score_pct": 66.7,
+  "results": [
+    {
+      "id": "freud_cognitive_dissonance",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "left_brain_myth",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "chemical_imbalance_simplification",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "stockholm_every_kidnapping",
+      "passed": false,
+      "reasons": [
+        "expected subfield 'pop_myth'"
+      ]
+    },
+    {
+      "id": "dunning_kruger_attribution",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "confirmation_bias_bacon",
+      "passed": false,
+      "reasons": [
+        "expected mention of correct author 'wason'"
+      ]
+    },
+    {
+      "id": "ten_percent_brain",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "mozart_effect",
+      "passed": false,
+      "reasons": [
+        "expected subfield 'pop_myth'"
+      ]
+    },
+    {
+      "id": "ptsd_clinical_boundary",
+      "passed": true,
+      "reasons": []
+    }
+  ],
+  "model": "sophia-v2",
+  "backend": "mlx",
+  "gateFailures": 8
+}

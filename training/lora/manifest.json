@@ -1,10 +1,11 @@
 {
-  "totalExamples": 518,
+  "totalExamples": 528,
   "trainCount": 439,
-  "holdoutCount": 79,
-  "benchmarkCaseCount": 23,
+  "holdoutCount": 89,
+  "benchmarkCaseCount": 35,
+  "droppedUnsafe": 0,
   "holdoutReasons": {
-    "exact_benchmark_question": 28,
+    "exact_benchmark_question": 38,
     "benchmarkCase=trap_confucius_ddj": 3,
     "benchmarkCase=socrates_republic": 2,
     "benchmarkCase=analects_compiled": 2,

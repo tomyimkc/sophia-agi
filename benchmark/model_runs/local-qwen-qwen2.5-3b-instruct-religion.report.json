@@ -1,0 +1,53 @@
+{
+  "domain": "religion",
+  "version": 1,
+  "passed": 1,
+  "total": 6,
+  "score_pct": 16.7,
+  "results": [
+    {
+      "id": "gospel_authorship_council",
+      "passed": false,
+      "reasons": [
+        "expected council/panel debate format"
+      ]
+    },
+    {
+      "id": "ancestor_veneration_split",
+      "passed": false,
+      "reasons": [
+        "expected council/panel debate format"
+      ]
+    },
+    {
+      "id": "dao_de_jing_religion_philosophy",
+      "passed": false,
+      "reasons": [
+        "expected council/panel debate format"
+      ]
+    },
+    {
+      "id": "islam_historical_figure_sensitive",
+      "passed": false,
+      "reasons": [
+        "expected council/panel debate format"
+      ]
+    },
+    {
+      "id": "buddha_nirvana_pop",
+      "passed": false,
+      "reasons": [
+        "expected myth/misconception labeling",
+        "expected council/panel debate format"
+      ]
+    },
+    {
+      "id": "hadith_sect_boundary_council",
+      "passed": true,
+      "reasons": []
+    }
+  ],
+  "model": "qwen-qwen2.5-3b-instruct",
+  "backend": "mlx",
+  "gateFailures": 6
+}

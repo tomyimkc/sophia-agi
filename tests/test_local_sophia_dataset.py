@@ -37,6 +37,23 @@ def test_build_check_is_fail_closed_and_clean() -> None:
     assert build.build(check_only=True) == 0
 
 
+def test_moral_gate_sft_covers_all_verdicts() -> None:
+    from tools import build_moral_gate_sft
+    rows = build_moral_gate_sft.build()
+    verdicts = {r["metadata"]["verdict"] for r in rows}
+    assert verdicts == {"allow", "revise", "retrieve", "clarify", "escalate", "abstain", "block"}
+
+
+def test_build_has_required_inputs_after_step1() -> None:
+    manifest = build.OUT / "manifest.json"
+    if manifest.exists():
+        import json
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+        assert data.get("missingRequiredInputs") == {}
+        assert data.get("contamination", {}).get("clean") is True
+        assert data.get("mlx", {}).get("trainRows", 0) > 0
+
+
 def main() -> int:
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for t in tests:

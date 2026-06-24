@@ -65,3 +65,9 @@ _wiki_build/
 training/hard_negatives_dpo.jsonl
 training/wiki_provenance_*.jsonl
 training/local_sophia_v2/*.jsonl
+!training/local_sophia_v2/general_instruct.jsonl
+training/local_sophia_v2/mlx/*.jsonl
+training/mlx_adapters/**
+!training/mlx_adapters/sophia-v2/
+!training/mlx_adapters/sophia-v2/adapter_config.json
+!training/mlx_adapters/sophia-v2/adapters.safetensors

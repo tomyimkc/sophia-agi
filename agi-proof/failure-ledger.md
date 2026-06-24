@@ -133,3 +133,38 @@ fixtures, converting "designed to" into "measured."
 ≥3 runs + human spot-check of the resolved/abstained decisions. The CI default remains
 the deterministic offline fixture run (`liveBackendUsed: false`) so the suite stays
 reproducible; the live artifact is evidence, not a CI gate.
+
+## local-sophia-v2-mlx-trained-not-promoted-2026-06-24
+
+**Status:** OPEN / NOT PROMOTED.
+
+A single Mac/MLX LoRA adapter was trained for the local verifier-gated wisdom-model
+program:
+
+- Base model: `Qwen/Qwen2.5-3B-Instruct`
+- Backend: MLX-LM (`training/mlx_adapters/sophia-v2`)
+- Data: `training/local_sophia_v2/manifest.json` after decontamination guard CLEAN
+- Training: 500 iterations, batch 4, `--mask-prompt`, final train loss 0.714, final val loss 1.828
+- Artifact metadata: `training/local_sophia_v2/training_run_mlx_sophia_v2.json`
+
+**Observed eval-ladder result (candidate, first-party, single run):**
+
+- MLX base: 16/32 = 50.0%
+- MLX base+gate: 16/32 = 50.0%, with 29 gate failures flagged
+- MLX adapter: 20/32 = 62.5%
+- MLX adapter+gate: 20/32 = 62.5%, with 28 gate failures flagged
+
+**Why this is not promoted:** the adapter improves the aggregate internal domain score,
+but the religion slice regressed from 1/6 to 0/6, the gate still flags many outputs,
+and the available SEIB smoke (`ollama:qwen3:30b-a3b`, N=20) did not clear the promotion
+rule (`raw_to_full_accuracy_delta = -0.10`, source-citation delta +0.80, false-positive
+cost 0.0). This is evidence that the training/eval substrate runs end-to-end, not a
+validated capability claim.
+
+**Next experiment:** shorten/split overlong rows before MLX training, add more religion and
+council-quality traces, evaluate the MLX adapter on SEIB directly (runner does not yet load
+MLX adapters), then re-run ≥3 seeds and only promote if provenance/citation improves at
+acceptable false-positive cost with no useful-correctness regression.
+
+**Claim impact:** Sophia now has an executed local-training path and one trained local adapter,
+but no public headline should claim a validated wisdom-model uplift yet.

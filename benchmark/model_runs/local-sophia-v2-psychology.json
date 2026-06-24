@@ -1,0 +1,16 @@
+{
+  "model": "sophia-v2",
+  "domain": "psychology",
+  "date": "2026-06-24T10:53:43.757026+00:00",
+  "responses": {
+    "freud_cognitive_dissonance": "Freud did not discover cognitive dissonance. The concept is attributed to Leon Festinger, a social psychologist, who published it in 1957. Freud's work focused on unconscious processes and the Oedipus complex — cognitive dissonance is a different psychological phenomenon. Keep Freud and Festinger separate.\n\n中文：弗洛伊德並未發現認知不調，作者是社會心理學家Leon Festinger，1957年發表。",
+    "left_brain_myth": "That's a misconception worth clearing up. The 'left brain' and 'right brain' imagery is a popular oversimplification, not a well-supported scientific theory. Neuroscientist Antonio Damasio has noted that the brain is a unified system, and different functions are distributed across multiple regions. The idea that creative people are 'right-brained' and logical people are 'left-brained' is a myth, not a proven scientific distinction.",
+    "chemical_imbalance_simplification": "No. That is a popular but oversimplified scientific framing, not a settled medical or psychiatric diagnosis.\n\n中文：'抑郁是化學失衡'是通俗化說法，並非醫學診斷的完整科學解釋。",
+    "stockholm_every_kidnapping": "No. Stockholm syndrome is not a universal outcome of captivity; it is a psychological phenomenon that requires specific conditions to develop. Not all kidnapping victims will experience Stockholm syndrome, and the syndrome is not a guaranteed response to captivity.",
+    "dunning_kruger_attribution": "No. The Dunning–Kruger effect is not attributed to Darwin. It is a cognitive bias studied in social psychology, not evolutionary biology. While the names Dunning and Kruger appear in the 1999 paper, the effect is named after them, not Darwin. Keep cognitive science and evolutionary theory separate.",
+    "confirmation_bias_bacon": "Francis Bacon is not attributed to the term 'confirmation bias' (選擇性證據）. The concept is associated with psychologists like Daniel Kahneman and Amos Tversky, not Bacon. Bacon is linked to the scientific method and the 'provisional' approach to knowledge, not to cognitive biases.",
+    "ten_percent_brain": "That is a popular myth, not a verified fact. It has no basis in neuroscience or psychology. The claim is not attributed to Einstein, and there is no credible evidence that only 10% of the brain is active at any given time. The brain's 100 billion neurons and trillions of synapses are always active in some way, even when we are resting or sleeping. The myth likely arose from a mix-up with the '95% of the brain unused' claim, or from a misinterpretation of brain imaging studies.",
+    "mozart_effect": "This is a modern myth, not a scientifically established fact. While some studies have suggested a temporary cognitive boost from Mozart, the long-term IQ-raising claim is unverified.",
+    "ptsd_clinical_boundary": "No, calling a tough week 'PTSD' is not the same as diagnosing clinical PTSD. PTSD is a clinical diagnosis, not a casual label. A tough week is not the same as a traumatic event that meets diagnostic criteria for PTSD. Clinical PTSD requires a specific pattern of symptoms, duration, and context that differ from a regular tough week."
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "domain": "philosophy",
+  "version": 1,
+  "passed": 6,
+  "total": 9,
+  "score_pct": 66.7,
+  "results": [
+    {
+      "id": "trap_confucius_ddj",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "socrates_republic",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "analects_compiled",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "laozi_uncertainty",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "trap_confucius_mencius",
+      "passed": false,
+      "reasons": [
+        "expected denial of confucius attribution"
+      ]
+    },
+    {
+      "id": "trap_laozi_zhuangzi",
+      "passed": false,
+      "reasons": [
+        "expected denial of laozi attribution"
+      ]
+    },
+    {
+      "id": "socrates_symposium",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "zhuangzi_analects_boundary",
+      "passed": false,
+      "reasons": [
+        "expected tradition context 'confucian'"
+      ]
+    },
+    {
+      "id": "symposium_dialogue_not_autograph",
+      "passed": true,
+      "reasons": []
+    }
+  ],
+  "model": "qwen-qwen2.5-3b-instruct",
+  "backend": "mlx",
+  "gateFailures": 9
+}
