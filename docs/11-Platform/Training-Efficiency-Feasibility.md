@@ -132,18 +132,44 @@ verify it), cosine LR + warmup (`--warmup-ratio`), gradient clipping (`--max-gra
 and bf16 by default on Ada/Hopper (`--dtype {auto,bf16,fp16}`). A loud truncation
 warning replaces silent row-clipping.
 
-> Still **not** done (deliberately, larger scope): a real in-repo Unsloth backend
-> (`--backend {peft,unsloth,mlx}`) and pre-split enforcement in the prep step. These are
-> recommended next.
+**F. Backends (`--backend {peft,unsloth,mlx}`).** `peft` is the vanilla CUDA path.
+`unsloth` uses `FastLanguageModel` fused kernels (~2× throughput / ~½ memory) and feeds
+the same manual loop. `mlx` builds the MLX chat-data dir in-repo (via `fit_rows`) and
+invokes `python -m mlx_lm lora` with the seed/mask-prompt args, matching the logged v2
+run — so the MLX logic no longer lives only in shell history. Optional deps are listed
+in `requirements-lora.txt`.
+
+**G. Pre-split enforcement in prep.** `tools/prepare_lora_dataset.py` now runs `fit_rows`
+(offline conservative heuristic) over train and holdout by default (`--max-tokens`,
+`--no-presplit`), so over-long rows are split at turn boundaries before they can be
+silently truncated. The fit report is recorded in the manifest.
+
+**H. DPO `rejected` anti-circularity guard.** `tools/wiki_to_training.py` now gate-checks
+every `chosen` target (intrinsic, fail-closed) and drops self-contradictory pages
+(attributed author appearing in its own `doNotAttributeTo`). The `rejected` sample's
+wrongness is established by the wiki provenance graph itself — the deterministic gate has
+no canonical attribution table for arbitrary titles and is *honestly not relied on* to
+adjudicate it (verified: it returns no violation for a wrong free-text attribution).
+
+**I. Seed → promotion provenance.** `tools/promote_adapter.py` reads the trainer-emitted
+seed from `sophia_lora_config.json` (`--adapter-config`) and records it in the promotion
+report + artifact list, so the reproducibility provenance the 3-seed bar relies on is
+machine-traceable.
+
+**J. Speedup benchmark.** `tools/bench_lora_speedup.py` runs experiment #2 directly:
+same model/data/1 epoch across {fp16-maxpad reference, fp16-dynpad, QLoRA-4bit,
+Unsloth-4bit}, reporting wall clock + speedup vs the standard-LoRA reference. `--dry-run`
+validates plumbing offline; real numbers need a CUDA GPU.
 
 ---
 
 ## 5. Quick experiments to validate the claims (each falsifies a specific one)
 
-1. **Padding ablation** — same data/seed/epoch: `max_length` vs dynamic vs packing.
-   Report tokens/s + wall clock on the 4090. *Expected: 3–10× from this alone.*
-2. **Fair-baseline speedup** — same model/data/1 epoch: vanilla PEFT fp16 vs QLoRA 4-bit
-   vs Unsloth. *Expected: 2–4×, not 10–50×.* Publish this; it kills the strawman first.
+1. **Padding ablation** — `tools/train_lora.py --pad-to-max` vs default dynamic padding,
+   same data/seed/epoch. *Expected: 3–10× from this alone.*
+2. **Fair-baseline speedup** — `python tools/bench_lora_speedup.py` (fp16-maxpad ref vs
+   fp16-dynpad vs QLoRA-4bit vs Unsloth-4bit). *Expected: 2–4×, not 10–50×.* Publish this;
+   it kills the strawman first.
 3. **Data-scaling curve** — train on 100/250/500/750/all; eval gate-clean rate on holdout.
    Find the plateau — this is what actually justifies "500–2000 perfect examples."
 4. **Weights-vs-gate isolation (most important)** — eval the adapter with the runtime

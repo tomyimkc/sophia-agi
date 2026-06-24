@@ -24,6 +24,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.benchmark_checks import DOMAIN_BENCH, load_json  # noqa: E402
+from agent.gate import check_response  # noqa: E402
 from agent.prompts import MODE_PROMPTS  # noqa: E402
 from okf import page as okf_page  # noqa: E402
 
@@ -42,11 +43,13 @@ def _benchmark_questions() -> set:
     return questions
 
 
-def collect(wiki_dir: Path = WIKI_DIR, *, deleak: bool = True) -> dict:
+def collect(wiki_dir: Path = WIKI_DIR, *, deleak: bool = True, gate_filter: bool = True) -> dict:
     holdout = _benchmark_questions() if deleak else set()
     sft: list = []
     dpo: list = []
     leaked = 0
+    chosen_gate_violations = 0
+    inconsistent_skipped = 0
     for page in okf_page.load_pages(wiki_dir):
         meta = page.meta
         author = meta.get("attributedAuthor")
@@ -58,12 +61,32 @@ def collect(wiki_dir: Path = WIKI_DIR, *, deleak: bool = True) -> dict:
         if deleak and question.strip().lower() in holdout:
             leaked += 1
             continue
+
+        # Anti-circularity / provenance-consistency guard: the `rejected` sample's
+        # wrongness is established by the wiki provenance graph itself (the author it
+        # asserts is in this page's doNotAttributeTo set), NOT by the gate — the
+        # deterministic gate has no canonical attribution table for arbitrary titles,
+        # so it cannot adjudicate this and must not be relied on to. Reject any page
+        # whose metadata is self-contradictory (the forbidden lineage overlaps the
+        # attributed author), which would make the preference pair incoherent.
+        if author.strip().lower() in {f.strip().lower() for f in forbidden}:
+            inconsistent_skipped += 1
+            continue
+
         confidence = meta.get("authorConfidence") or "attributed"
         chosen = (
             f"{title} is attributed to {author} (confidence: {confidence}). "
             f"It must not be attributed to {', '.join(forbidden)} — those are distinct lineages. "
             f"中文摘要：{title} 歸於 {author}，勿混淆其他傳統。"
         )
+
+        # Fail-closed on the TARGET we actually train toward: the `chosen` string must
+        # carry no intrinsic gate violation (fabricated citation / false arithmetic).
+        # Intrinsic-only (no question) — see tools/train_lora.py guard_filter for why.
+        if gate_filter and check_response(chosen, mode="advisor")["violations"]:
+            chosen_gate_violations += 1
+            continue
+
         sft.append({
             "messages": [
                 {"role": "system", "content": SYSTEM},
@@ -76,9 +99,12 @@ def collect(wiki_dir: Path = WIKI_DIR, *, deleak: bool = True) -> dict:
             "prompt": question,
             "chosen": chosen,
             "rejected": f"{forbidden[0].title()} wrote {title}.",
-            "metadata": {"source": "wiki-provenance", "pageId": page.id},
+            "metadata": {"source": "wiki-provenance", "pageId": page.id,
+                         "rejectedForbiddenBy": "doNotAttributeTo"},
         })
-    return {"sft": sft, "dpo": dpo, "leakedSkipped": leaked, "leakageChecked": deleak}
+    return {"sft": sft, "dpo": dpo, "leakedSkipped": leaked, "leakageChecked": deleak,
+            "gateFilter": gate_filter, "chosenGateViolations": chosen_gate_violations,
+            "inconsistentSkipped": inconsistent_skipped}
 
 
 def _write_jsonl(path: Path, rows: list) -> None:
@@ -92,12 +118,17 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Mine OKF wiki provenance into SFT/DPO data")
     parser.add_argument("--out-dir", type=Path, default=ROOT / "training")
     parser.add_argument("--no-deleak", action="store_true")
+    parser.add_argument("--no-gate-filter", action="store_true",
+                        help="Skip the intrinsic gate-check on chosen targets (not recommended)")
     args = parser.parse_args()
-    data = collect(deleak=not args.no_deleak)
+    data = collect(deleak=not args.no_deleak, gate_filter=not args.no_gate_filter)
     _write_jsonl(args.out_dir / "wiki_provenance_sft.jsonl", data["sft"])
     _write_jsonl(args.out_dir / "wiki_provenance_dpo.jsonl", data["dpo"])
     print(json.dumps({"sftRows": len(data["sft"]), "dpoPairs": len(data["dpo"]),
-                      "leakedSkipped": data["leakedSkipped"], "outDir": str(args.out_dir)},
+                      "leakedSkipped": data["leakedSkipped"],
+                      "chosenGateViolations": data["chosenGateViolations"],
+                      "inconsistentSkipped": data["inconsistentSkipped"],
+                      "outDir": str(args.out_dir)},
                      indent=2, ensure_ascii=False))
     return 0
 

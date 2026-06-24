@@ -51,6 +51,8 @@ agi-proof/benchmark-results/provenance-delta.md
 dist/
 build/
 training/lora/checkpoints/
+training/lora/bench/
+*-mlx-data/
 training/lab/reviews/*.json
 training/lab/judgements/*.json
 training/lab/distill/distill-*.json

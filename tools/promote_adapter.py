@@ -123,6 +123,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--adapter-ladder", default="training/local_sophia_v2/eval_ladder_adapter.json")
     ap.add_argument("--baseline-ladder", default="training/local_sophia_v2/eval_ladder_baseline.json")
     ap.add_argument("--manifest", default="training/local_sophia_v2/manifest.json")
+    ap.add_argument("--adapter-config", default="training/mlx_adapters/sophia-v2/sophia_lora_config.json",
+                    help="trainer-emitted config; its seed is recorded for reproducibility provenance")
     ap.add_argument("--out", default="agi-proof/continual-plasticity/sophia-v2-promotion.public-report.json")
     ap.add_argument("--candidate-id", default="local-sophia-v2-mlx")
     ap.add_argument("--kind", default="lora_adapter")
@@ -150,11 +152,23 @@ def main(argv: list[str] | None = None) -> int:
 
     protected = tuple(p.strip() for p in args.protected.split(",") if p.strip())
 
+    # Record the trainer-emitted seed (if present) so the promotion artifact carries
+    # the reproducibility provenance the 3-seed bar relies on.
+    training_seed = None
+    cfg_path = ROOT / args.adapter_config
+    if cfg_path.exists():
+        try:
+            training_seed = _load(cfg_path).get("seed")
+        except Exception:  # noqa: BLE001 - config provenance is best-effort
+            training_seed = None
+
     # Collect real, on-disk artifacts so the artifact count reflects genuine evidence.
     extra: list[str] = []
-    for cand in (args.adapter_ladder, args.baseline_ladder, args.manifest, *args.extra_artifact):
+    for cand in (args.adapter_ladder, args.baseline_ladder, args.manifest, args.adapter_config, *args.extra_artifact):
         if cand and (ROOT / cand).exists():
             extra.append(cand)
+    if training_seed is not None:
+        extra.append(f"training_seed:{training_seed}")
 
     # Build provisional metrics for the formal proof first (proof outcome becomes an artifact).
     provisional = build_candidate(
@@ -206,6 +220,7 @@ def main(argv: list[str] | None = None) -> int:
             "baselineLadder": args.baseline_ladder if baseline_ladder else None,
             "manifest": args.manifest if manifest_path.exists() else None,
             "datasetContaminated": contaminated,
+            "trainingSeed": training_seed,
         },
     }
 

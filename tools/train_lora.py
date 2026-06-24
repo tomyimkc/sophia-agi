@@ -184,15 +184,20 @@ def build_records(
 
 
 class DynamicCausalCollator:
-    """Pad a batch to the longest sequence in that batch (not to max_seq_len)."""
+    """Pad a batch to the longest sequence in that batch (not to max_seq_len).
 
-    def __init__(self, pad_token_id: int) -> None:
+    ``pad_to`` forces a fixed pad length instead (used by ``--pad-to-max`` to
+    reproduce the old pad-to-max-length behaviour for the speedup ablation).
+    """
+
+    def __init__(self, pad_token_id: int, pad_to: int | None = None) -> None:
         self.pad_token_id = pad_token_id
+        self.pad_to = pad_to
 
     def __call__(self, features: list[dict]) -> dict:
         import torch
 
-        max_len = max(len(f["input_ids"]) for f in features)
+        max_len = self.pad_to or max(len(f["input_ids"]) for f in features)
         input_ids, labels, attn = [], [], []
         for f in features:
             ids = f["input_ids"]
@@ -276,6 +281,142 @@ def build_model_and_tokenizer(
     return model, tokenizer
 
 
+def build_model_and_tokenizer_unsloth(
+    model_id: str,
+    four_bit: bool,
+    lora_r: int,
+    lora_alpha: int,
+    *,
+    max_seq_len: int,
+    dtype: Any,
+    seed: int,
+    resume_adapter: Path | None = None,
+) -> tuple[Any, Any]:
+    """Unsloth fused-kernel backend (~2× throughput / ~½ memory vs vanilla PEFT).
+
+    Unsloth handles 4-bit loading and k-bit prep internally; the returned model is a
+    standard PEFT model, so the manual training loop below is unchanged.
+    """
+    from unsloth import FastLanguageModel  # lazy: pip install unsloth (CUDA-only)
+
+    if resume_adapter and resume_adapter.exists():
+        raise SystemExit(
+            "--backend unsloth does not support --resume-adapter; use --backend peft to "
+            "continue from an existing adapter."
+        )
+
+    model, tokenizer = FastLanguageModel.from_pretrained(
+        model_name=model_id,
+        max_seq_length=max_seq_len,
+        dtype=dtype,
+        load_in_4bit=four_bit,
+        trust_remote_code=True,
+    )
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    model = FastLanguageModel.get_peft_model(
+        model,
+        r=lora_r,
+        lora_alpha=lora_alpha,
+        lora_dropout=0.0,  # Unsloth-optimized path requires dropout 0
+        bias="none",
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+        use_gradient_checkpointing="unsloth",
+        random_state=seed,
+    )
+    model.print_trainable_parameters()
+    return model, tokenizer
+
+
+# --------------------------------------------------------------------------- #
+# MLX backend (Apple Silicon) — invoke mlx_lm with logic kept in-repo
+# --------------------------------------------------------------------------- #
+def run_mlx_backend(args: argparse.Namespace, rows: list[dict]) -> int:
+    """Train via mlx-lm on Apple Silicon. Builds the MLX chat-data dir from the
+    (already scaffolded/distilled/guarded) rows, fits every row under the token
+    budget, then invokes ``python -m mlx_lm lora``. Emits the seed into the adapter
+    config so the promotion gate can verify it."""
+    import math
+    import subprocess
+
+    from tools.split_long_training_rows import fit_rows
+
+    def _to_mlx(rs: list[dict]) -> list[dict]:
+        return [{"messages": r["messages"], "metadata": r.get("metadata", {})}
+                for r in rs if r.get("messages")]
+
+    data_dir = args.output.with_name(args.output.name + "-mlx-data")
+    data_dir.mkdir(parents=True, exist_ok=True)
+
+    train_fitted, train_rep = fit_rows(_to_mlx(rows), max_tokens=args.max_seq_len)
+    (data_dir / "train.jsonl").write_text(
+        "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in train_fitted), encoding="utf-8")
+
+    valid_n = 0
+    if args.holdout.exists():
+        hold = load_rows(args.holdout)
+        if args.scaffold:
+            scaffold_rows(hold)
+        valid_fitted, _ = fit_rows(_to_mlx(hold), max_tokens=args.max_seq_len)
+        valid_n = len(valid_fitted)
+        (data_dir / "valid.jsonl").write_text(
+            "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in valid_fitted), encoding="utf-8")
+
+    iters = args.iters or args.epochs * max(1, math.ceil(len(train_fitted) / args.batch_size))
+    print(f"MLX data: {len(train_fitted)} train / {valid_n} valid rows → {data_dir} "
+          f"(fit: {json.dumps(train_rep)})", flush=True)
+
+    cmd = [
+        sys.executable, "-m", "mlx_lm", "lora", "--train",
+        "--model", args.model,
+        "--data", str(data_dir),
+        "--iters", str(iters),
+        "--batch-size", str(args.batch_size),
+        "--learning-rate", str(args.lr),
+        "--adapter-path", str(args.output),
+        "--max-seq-length", str(args.max_seq_len),
+        "--seed", str(args.seed),
+        "--steps-per-report", "50",
+        "--save-every", "250",
+    ]
+    if args.mask_prompt:
+        cmd.append("--mask-prompt")
+    if valid_n:
+        cmd += ["--steps-per-eval", str(args.eval_every or 250)]
+    if args.resume_adapter:
+        cmd += ["--resume-adapter-file", str(args.resume_adapter / "adapters.safetensors")]
+
+    args.output.mkdir(parents=True, exist_ok=True)
+    print("MLX command:\n  " + " ".join(cmd), flush=True)
+    try:
+        import mlx_lm  # noqa: F401 — fail fast with a clear message
+    except Exception as exc:  # noqa: BLE001
+        print(f"--backend mlx requires mlx-lm: pip install mlx-lm ({type(exc).__name__}: {exc})", flush=True)
+        return 1
+
+    rc = subprocess.run(cmd, cwd=ROOT).returncode
+
+    # Emit the Sophia config (seed + provenance flags) alongside the MLX adapter so
+    # the promotion gate sees the same metadata the PEFT path writes.
+    (args.output / "sophia_lora_config.json").write_text(
+        json.dumps({
+            "baseModel": args.model, "backend": "mlx-lm", "seed": args.seed,
+            "iters": iters, "batchSize": args.batch_size, "maskPrompt": args.mask_prompt,
+            "trainRows": len(train_fitted), "maxSeqLength": args.max_seq_len,
+            "scaffold": args.scaffold, "guard": args.guard, "distill": args.distill,
+        }, indent=2) + "\n", encoding="utf-8")
+
+    if rc != 0:
+        print(f"mlx_lm exited {rc}", flush=True)
+        return rc
+    if not (args.output / "adapters.safetensors").exists():
+        print(f"ERROR: MLX run finished but {args.output / 'adapters.safetensors'} missing", flush=True)
+        return 1
+    (args.output / DONE_MARKER).write_text("ok\n", encoding="utf-8")
+    print(f"Saved MLX adapter to {args.output}", flush=True)
+    return 0
+
+
 # --------------------------------------------------------------------------- #
 # Train + eval
 # --------------------------------------------------------------------------- #
@@ -330,13 +471,14 @@ def run_manual_train(
     min_delta: float,
     overfit_ratio: float,
     save_best: "callable | None",
+    pad_to: int | None = None,
 ) -> dict:
     import torch
     from torch.utils.data import DataLoader
     from transformers import get_cosine_schedule_with_warmup
 
     device = model.get_input_embeddings().weight.device
-    collator = DynamicCausalCollator(tokenizer.pad_token_id)
+    collator = DynamicCausalCollator(tokenizer.pad_token_id, pad_to=pad_to)
     loader = DataLoader(train_records, batch_size=batch_size, shuffle=True, collate_fn=collator)
     eval_loader = None
     if eval_records:
@@ -475,6 +617,12 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--dtype", choices=("auto", "bf16", "fp16"), default="auto")
     parser.add_argument("--4bit", dest="four_bit", action="store_true", help="QLoRA 4-bit load")
+    parser.add_argument("--backend", choices=("peft", "unsloth", "mlx"), default="peft",
+                        help="peft = vanilla PEFT (CUDA); unsloth = fused kernels (CUDA); mlx = Apple Silicon")
+    parser.add_argument("--iters", type=int, default=0,
+                        help="MLX backend: optimizer steps (0 = derive from epochs × rows/batch)")
+    parser.add_argument("--pad-to-max", action="store_true",
+                        help="Ablation: pad every batch to --max-seq-len (reproduces pre-fix behaviour)")
     # provenance-discipline data hooks
     parser.add_argument("--scaffold", action="store_true",
                         help="Inject the advisor source-discipline system prompt into rows that lack one")
@@ -515,9 +663,12 @@ def main() -> int:
         rows, dropped = guard_filter(rows)
         print(f"--guard: dropped {dropped} gate-violating target(s); {len(rows)} clean row(s) remain", flush=True)
 
-    print(f"Train rows: {len(rows)} | model: {args.model} | output: {args.output}", flush=True)
+    print(f"Train rows: {len(rows)} | model: {args.model} | backend: {args.backend} | output: {args.output}", flush=True)
     if args.dry_run or not rows:
         return 0
+
+    if args.backend == "mlx":
+        return run_mlx_backend(args, rows)
 
     print("loading torch...", flush=True)
     try:
@@ -551,14 +702,26 @@ def main() -> int:
     if marker.exists():
         marker.unlink()
 
-    model, tokenizer = build_model_and_tokenizer(
-        args.model,
-        args.four_bit,
-        args.lora_r,
-        args.lora_alpha,
-        dtype=dtype,
-        resume_adapter=args.resume_adapter,
-    )
+    if args.backend == "unsloth":
+        model, tokenizer = build_model_and_tokenizer_unsloth(
+            args.model,
+            args.four_bit,
+            args.lora_r,
+            args.lora_alpha,
+            max_seq_len=args.max_seq_len,
+            dtype=dtype,
+            seed=args.seed,
+            resume_adapter=args.resume_adapter,
+        )
+    else:
+        model, tokenizer = build_model_and_tokenizer(
+            args.model,
+            args.four_bit,
+            args.lora_r,
+            args.lora_alpha,
+            dtype=dtype,
+            resume_adapter=args.resume_adapter,
+        )
 
     train_records, truncated = build_records(tokenizer, rows, args.max_seq_len, mask_prompt=args.mask_prompt)
     if truncated:
@@ -595,6 +758,8 @@ def main() -> int:
         "guard": args.guard,
         "distill": args.distill,
         "truncatedRows": truncated,
+        "backend": args.backend,
+        "padToMax": args.pad_to_max,
     }
 
     def save_best(extra: dict[str, Any]) -> None:
@@ -618,6 +783,7 @@ def main() -> int:
         min_delta=args.min_delta,
         overfit_ratio=args.overfit_ratio,
         save_best=save_best if eval_records else None,
+        pad_to=args.max_seq_len if args.pad_to_max else None,
     )
 
     # If eval never saved a best checkpoint (no holdout, or no improvement window),
