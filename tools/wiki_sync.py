@@ -145,12 +145,18 @@ def _summary_sentence(meta: dict) -> str:
     return sentence[0].upper() + sentence[1:]
 
 
-def _render_body(meta: dict, notes: str) -> str:
+def _render_body(meta: dict, notes: str, summary: str = "") -> str:
     title = meta.get("canonicalTitleEn") or meta.get("id")
     zh = meta.get("canonicalTitleZh")
     head = f"# {title}" + (f" ({zh})" if zh else "")
     # Lead with an answer-bearing prose summary (sourced fields only), then the bullets.
-    lines = [head, "", _summary_sentence(meta), ""]
+    lines = [head, "", _summary_sentence(meta)]
+    # Step 5 enrichment hook: a record may carry an authored `summary` with richer,
+    # human-vetted sourced prose; surface it so grounded answers can draw on it. Absent
+    # (the default today), the field-derived sentence above stands on its own.
+    if summary and summary.strip():
+        lines += ["", summary.strip()]
+    lines += [""]
     if meta.get("attributedAuthor"):
         lines.append(f"- **Attributed author:** {meta['attributedAuthor']} "
                      f"(confidence: `{meta.get('authorConfidence', 'unknown')}`)")
@@ -205,7 +211,9 @@ def build_pages(wiki_dir: Path = WIKI_DIR) -> "list[dict]":
             if page_path in seen:
                 raise ValueError(f"id collision: {page_path} ({rid} from {filename} vs {seen[page_path]})")
             seen[page_path] = filename
-            pages.append({"path": page_path, "meta": meta, "body": _render_body(meta, record.get("notes", "")), "key": rid})
+            pages.append({"path": page_path, "meta": meta,
+                          "body": _render_body(meta, record.get("notes", ""), record.get("summary", "")),
+                          "key": rid})
 
     traditions_path = DATA_DIR / "traditions.json"
     if traditions_path.exists():
