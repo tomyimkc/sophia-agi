@@ -230,9 +230,41 @@ report + artifact list, so the reproducibility provenance the 3-seed bar relies 
 machine-traceable.
 
 **J. Speedup benchmark.** `tools/bench_lora_speedup.py` runs experiment #2 directly:
-same model/data/1 epoch across {fp16-maxpad reference, fp16-dynpad, QLoRA-4bit,
-Unsloth-4bit}, reporting wall clock + speedup vs the standard-LoRA reference. `--dry-run`
-validates plumbing offline; real numbers need a CUDA GPU.
+same model/data/1 epoch across {fp16-maxpad reference, fp16-dynpad, bf16-pack,
+QLoRA-4bit, Unsloth-4bit}, reporting wall clock + speedup vs the standard-LoRA reference.
+`--dry-run` validates plumbing offline; real numbers need a CUDA GPU.
+
+### 4a. Research-backed knobs added (2026 literature review)
+
+A three-thread literature review (throughput / adapter-quality / distillation) drove the
+following, each tied to the measured overfitting (train 1.75 / val 2.89) or the remaining
+speed headroom. *Faster:*
+- **`--pack`** — sequence packing via `DataCollatorWithFlattening` + Flash-Attention
+  varlen (`--attn flash_attention_2`); concatenates short rows so no step wastes tokens.
+  HF measured ~2× on short, high-variance data — *on top of* dynamic padding. Completion
+  `-100` masks preserved (loss-masking ⟂ attention-masking).
+
+*Better (anti-overfitting):*
+- **`--lr` default lowered 2e-4 → 5e-5** — LR is the #1 small-data knob; controlled 2026
+  studies find it dominates the choice of LoRA variant.
+- **`--rslora`** — rank-stabilized scaling (α/√r) fixes the over-aggressive α/r = 2.
+- **`--neftune-alpha`** (try 5) — embedding-noise regularizer that helps instruction
+  tuning most on small data (NEFTune, arXiv 2310.05914).
+- **`--weight-decay`, `--lora-dropout`, `--target-modules all-linear`** — cheap
+  regularizers; all-linear targets MLP (the dominant locus of adaptation).
+
+*Discipline transfer:* **`tools/train_orpo.py`** — ORPO preference training on the
+gate-clean chosen/rejected pairs from `wiki_to_training.py`. Abstention/citation is
+*contrastive*, so preference methods instil it better than SFT; ORPO is single-stage and
+reference-model-free. Recommended pattern: SFT for format → ORPO for discipline; mix in
+unanswerable negatives to avoid the refusal-forgetting "hallucination tax".
+
+> Honest caveat: exotic LoRA variants (DoRA/LoRA+/PiSSA) buy only ~1–2% over a
+> well-tuned vanilla LoRA per the controlled studies — so effort went to LR, scaling,
+> NEFTune, packing, and data quality, not variant-chasing. Several supporting citations
+> are post-knowledge-cutoff (2026 arXiv ids) and must be verified before entering the
+> public proof package; the core techniques (LIMA, NEFTune, rsLoRA, packing, ORPO,
+> Gudibande) are well-established.
 
 ---
 

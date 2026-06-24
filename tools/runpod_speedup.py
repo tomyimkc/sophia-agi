@@ -90,8 +90,9 @@ except Exception as exc:
 PY
 python -m pip install --upgrade pip setuptools wheel
 python -m pip install -r requirements-lora.txt
-# Unsloth is optional: if its install fails, the unsloth-4bit config is recorded as
-# FAILED by the bench and the other three configs still produce the headline numbers.
+# Optional extras; if either install fails, that config is recorded as FAILED by the
+# bench and the remaining configs still produce the headline numbers (non-fatal).
+python -m pip install flash-attn --no-build-isolation || echo "[bench] flash-attn install failed (non-fatal; --pack config will be skipped)"
 python -m pip install "unsloth>=2024.8" || echo "[bench] unsloth install failed (non-fatal)"
 python tools/prepare_lora_dataset.py
 python tools/bench_lora_speedup.py --limit "$SOPHIA_LIMIT" --model "$SOPHIA_MODEL" --seed "$SOPHIA_SEED"

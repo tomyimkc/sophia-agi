@@ -229,6 +229,15 @@ def _resolve_dtype(choice: str) -> Any:
     return torch.float16
 
 
+ATTN_MLP_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+
+
+def _resolve_target_modules(choice: str) -> Any:
+    # "all-linear" lets PEFT target every linear layer (the strongest module finding:
+    # MLP is the dominant locus of adaptation); "attn-mlp" is the explicit Qwen list.
+    return "all-linear" if choice == "all-linear" else ATTN_MLP_MODULES
+
+
 def build_model_and_tokenizer(
     model_id: str,
     four_bit: bool,
@@ -236,6 +245,10 @@ def build_model_and_tokenizer(
     lora_alpha: int,
     *,
     dtype: Any,
+    lora_dropout: float = 0.05,
+    use_rslora: bool = False,
+    target_modules: str = "attn-mlp",
+    attn_impl: str | None = None,
     resume_adapter: Path | None = None,
 ) -> tuple[Any, Any]:
     import torch
@@ -247,6 +260,8 @@ def build_model_and_tokenizer(
         tokenizer.pad_token = tokenizer.eos_token
 
     load_kwargs: dict[str, Any] = {"trust_remote_code": True, "device_map": "auto"}
+    if attn_impl:
+        load_kwargs["attn_implementation"] = attn_impl  # e.g. flash_attention_2 / sdpa
     if four_bit:
         load_kwargs["quantization_config"] = BitsAndBytesConfig(
             load_in_4bit=True,
@@ -271,14 +286,35 @@ def build_model_and_tokenizer(
         lora = LoraConfig(
             r=lora_r,
             lora_alpha=lora_alpha,
-            lora_dropout=0.05,
+            lora_dropout=lora_dropout,
             bias="none",
             task_type="CAUSAL_LM",
-            target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+            use_rslora=use_rslora,
+            target_modules=_resolve_target_modules(target_modules),
         )
         model = get_peft_model(model, lora)
     model.print_trainable_parameters()
     return model, tokenizer
+
+
+def attach_neftune(model: Any, alpha: float) -> Any:
+    """NEFTune: add uniform noise to embedding outputs during training (regularizer
+    that helps instruction tuning, most on small data). Returns the hook handle so the
+    caller can remove it before saving/inference. No-op when alpha <= 0."""
+    import torch
+
+    if alpha <= 0:
+        return None
+    emb = model.get_input_embeddings()
+
+    def hook(module: Any, args: Any, output: Any) -> Any:
+        if not module.training:
+            return output
+        dims = torch.tensor(output.size(1) * output.size(2), dtype=torch.float32)
+        mag = alpha / torch.sqrt(dims)
+        return output + torch.zeros_like(output).uniform_(-mag.item(), mag.item())
+
+    return emb.register_forward_hook(hook)
 
 
 def build_model_and_tokenizer_unsloth(
@@ -290,6 +326,8 @@ def build_model_and_tokenizer_unsloth(
     max_seq_len: int,
     dtype: Any,
     seed: int,
+    use_rslora: bool = False,
+    target_modules: str = "attn-mlp",
     resume_adapter: Path | None = None,
 ) -> tuple[Any, Any]:
     """Unsloth fused-kernel backend (~2× throughput / ~½ memory vs vanilla PEFT).
@@ -320,7 +358,8 @@ def build_model_and_tokenizer_unsloth(
         lora_alpha=lora_alpha,
         lora_dropout=0.0,  # Unsloth-optimized path requires dropout 0
         bias="none",
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+        target_modules=_resolve_target_modules(target_modules),
+        use_rslora=use_rslora,
         use_gradient_checkpointing="unsloth",
         random_state=seed,
     )
@@ -342,6 +381,12 @@ def run_mlx_backend(args: argparse.Namespace, rows: list[dict]) -> int:
     from tools.split_long_training_rows import fit_rows
 
     # Honest limitations of the MLX path (mlx_lm owns the inner loop):
+    ignored = [n for n, v in (("--pack", args.pack), ("--rslora", args.use_rslora),
+                              ("--neftune-alpha", args.neftune_alpha), ("--weight-decay", args.weight_decay),
+                              ("--lora-dropout", args.lora_dropout != 0.05)) if v]
+    if ignored:
+        print(f"NOTE: {', '.join(ignored)} are peft/unsloth-only and ignored on --backend mlx "
+              f"(mlx_lm owns the inner loop). Use --backend peft to apply them.", flush=True)
     if args.pad_to_max:
         print("NOTE: --pad-to-max is a no-op on --backend mlx (mlx_lm controls padding). "
               "Run the padding ablation on --backend peft (CUDA).", flush=True)
@@ -488,25 +533,37 @@ def run_manual_train(
     overfit_ratio: float,
     save_best: "callable | None",
     pad_to: int | None = None,
+    weight_decay: float = 0.0,
+    pack: bool = False,
 ) -> dict:
     import torch
     from torch.utils.data import DataLoader
     from transformers import get_cosine_schedule_with_warmup
 
     device = model.get_input_embeddings().weight.device
-    collator = DynamicCausalCollator(tokenizer.pad_token_id, pad_to=pad_to)
-    loader = DataLoader(train_records, batch_size=batch_size, shuffle=True, collate_fn=collator)
+    # Packing concatenates short rows into one flat sequence (no padding) and relies on
+    # Flash-Attention varlen via position_ids to keep examples from attending across
+    # boundaries. Completion-only -100 label masks are preserved by the collator.
+    if pack:
+        from transformers import DataCollatorWithFlattening
+
+        train_collator = DataCollatorWithFlattening()
+    else:
+        train_collator = DynamicCausalCollator(tokenizer.pad_token_id, pad_to=pad_to)
+    # Eval always uses padded batches so val-loss is defined identically across configs.
+    eval_collator = DynamicCausalCollator(tokenizer.pad_token_id, pad_to=pad_to)
+    loader = DataLoader(train_records, batch_size=batch_size, shuffle=True, collate_fn=train_collator)
     eval_loader = None
     if eval_records:
-        eval_loader = DataLoader(eval_records, batch_size=batch_size, shuffle=False, collate_fn=collator)
+        eval_loader = DataLoader(eval_records, batch_size=batch_size, shuffle=False, collate_fn=eval_collator)
 
     trainable = [p for p in model.parameters() if p.requires_grad]
     if four_bit:
         import bitsandbytes as bnb
 
-        optimizer = bnb.optim.Adam8bit(trainable, lr=lr)
+        optimizer = bnb.optim.Adam8bit(trainable, lr=lr, weight_decay=weight_decay)
     else:
-        optimizer = torch.optim.AdamW(trainable, lr=lr)
+        optimizer = torch.optim.AdamW(trainable, lr=lr, weight_decay=weight_decay)
 
     steps_per_epoch = max(1, -(-len(loader) // grad_accum))  # ceil
     total_steps = steps_per_epoch * epochs
@@ -624,15 +681,29 @@ def main() -> int:
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--grad-accum", type=int, default=4)
-    parser.add_argument("--lr", type=float, default=2e-4)
+    parser.add_argument("--lr", type=float, default=5e-5,
+                        help="LR is the #1 small-data knob; sweep {2e-5,5e-5,1e-4}. Lowered from 2e-4.")
     parser.add_argument("--warmup-ratio", type=float, default=0.03)
     parser.add_argument("--max-grad-norm", type=float, default=1.0)
+    parser.add_argument("--weight-decay", type=float, default=0.0,
+                        help="Small-data regularizer; 0.01–0.05 is cheap insurance")
     parser.add_argument("--max-seq-len", type=int, default=1024)
     parser.add_argument("--lora-r", type=int, default=16)
     parser.add_argument("--lora-alpha", type=int, default=32)
+    parser.add_argument("--lora-dropout", type=float, default=0.05)
+    parser.add_argument("--rslora", dest="use_rslora", action="store_true",
+                        help="Rank-stabilized LoRA: scale by alpha/sqrt(r) (fixes over-aggressive alpha/r)")
+    parser.add_argument("--target-modules", choices=("attn-mlp", "all-linear"), default="attn-mlp",
+                        help="all-linear targets every linear layer (MLP is the dominant locus of adaptation)")
+    parser.add_argument("--neftune-alpha", type=float, default=0.0,
+                        help="NEFTune embedding-noise regularizer (try 5); helps instruction tuning on small data")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--dtype", choices=("auto", "bf16", "fp16"), default="auto")
     parser.add_argument("--4bit", dest="four_bit", action="store_true", help="QLoRA 4-bit load")
+    parser.add_argument("--attn", choices=("auto", "flash_attention_2", "sdpa", "eager"), default="auto",
+                        help="Attention impl; flash_attention_2 is required for --pack")
+    parser.add_argument("--pack", action="store_true",
+                        help="Sequence packing (concat short rows, no padding) via Flash-Attention varlen")
     parser.add_argument("--backend", choices=("peft", "unsloth", "mlx"), default="peft",
                         help="peft = vanilla PEFT (CUDA); unsloth = fused kernels (CUDA); mlx = Apple Silicon")
     parser.add_argument("--iters", type=int, default=0,
@@ -718,7 +789,15 @@ def main() -> int:
     if marker.exists():
         marker.unlink()
 
+    # Packing requires Flash-Attention varlen; force it when --pack and --attn=auto.
+    attn_impl = None if args.attn == "auto" else args.attn
+    if args.pack and attn_impl in (None, "sdpa", "eager"):
+        attn_impl = "flash_attention_2"
+        print("--pack requires flash_attention_2; setting --attn flash_attention_2", flush=True)
+
     if args.backend == "unsloth":
+        if args.pack:
+            print("NOTE: --pack is ignored on --backend unsloth (Unsloth manages its own kernels)", flush=True)
         model, tokenizer = build_model_and_tokenizer_unsloth(
             args.model,
             args.four_bit,
@@ -727,6 +806,8 @@ def main() -> int:
             max_seq_len=args.max_seq_len,
             dtype=dtype,
             seed=args.seed,
+            use_rslora=args.use_rslora,
+            target_modules=args.target_modules,
             resume_adapter=args.resume_adapter,
         )
     else:
@@ -736,8 +817,16 @@ def main() -> int:
             args.lora_r,
             args.lora_alpha,
             dtype=dtype,
+            lora_dropout=args.lora_dropout,
+            use_rslora=args.use_rslora,
+            target_modules=args.target_modules,
+            attn_impl=attn_impl,
             resume_adapter=args.resume_adapter,
         )
+
+    neftune_handle = attach_neftune(model, args.neftune_alpha)
+    if neftune_handle:
+        print(f"NEFTune enabled (alpha={args.neftune_alpha})", flush=True)
 
     train_records, truncated = build_records(tokenizer, rows, args.max_seq_len, mask_prompt=args.mask_prompt)
     if truncated:
@@ -776,6 +865,14 @@ def main() -> int:
         "truncatedRows": truncated,
         "backend": args.backend,
         "padToMax": args.pad_to_max,
+        "lr": args.lr,
+        "loraDropout": args.lora_dropout,
+        "rslora": args.use_rslora,
+        "targetModules": args.target_modules,
+        "neftuneAlpha": args.neftune_alpha,
+        "weightDecay": args.weight_decay,
+        "packed": args.pack,
+        "attn": attn_impl or "default",
     }
 
     def save_best(extra: dict[str, Any]) -> None:
@@ -800,7 +897,13 @@ def main() -> int:
         overfit_ratio=args.overfit_ratio,
         save_best=save_best if eval_records else None,
         pad_to=args.max_seq_len if args.pad_to_max else None,
+        weight_decay=args.weight_decay,
+        pack=args.pack,
     )
+
+    # Remove the NEFTune noise hook before persisting so inference is noise-free.
+    if neftune_handle:
+        neftune_handle.remove()
 
     # If eval never saved a best checkpoint (no holdout, or no improvement window),
     # persist the final-state adapter so we always emit a usable artifact.

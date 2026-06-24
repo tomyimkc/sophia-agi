@@ -45,6 +45,8 @@ CONFIGS: list[dict] = [
      "note": "standard-LoRA reference (full-length padding)"},
     {"label": "peft-fp16-dynpad", "flags": ["--dtype", "fp16"],
      "note": "dynamic per-batch padding (isolates the padding win)"},
+    {"label": "peft-bf16-pack", "flags": ["--dtype", "bf16", "--pack", "--batch-size", "8"],
+     "note": "sequence packing + Flash-Attention varlen (needs flash-attn; the next big win)"},
     {"label": "peft-4bit-dynpad", "flags": ["--4bit"],
      "note": "QLoRA 4-bit + dynamic padding"},
     {"label": "unsloth-4bit-dynpad", "flags": ["--backend", "unsloth", "--4bit"],
