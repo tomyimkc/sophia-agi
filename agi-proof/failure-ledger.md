@@ -166,6 +166,15 @@ council-quality traces, evaluate the MLX adapter on SEIB directly (runner does n
 MLX adapters), then re-run ≥3 seeds and only promote if provenance/citation improves at
 acceptable false-positive cost with no useful-correctness regression.
 
+**Update (C4, 2026-06-24):** the continual loop's return path is wired.
+`tools/feedback_to_training.py` turns gate MISSES into a reviewed candidate queue
+(`mine` → `approve` → `build-sft`); only human-promoted candidates become SFT rows
+(`training/feedback/sft_from_feedback.jsonl`), ingested by `build_local_sophia_dataset.py`
+under the same decontamination guard. Non-circular by construction (separate file from frozen
+records, default-deny promotion, decontaminated on ingest); gated by
+`tests/test_feedback_to_training.py`. Remaining: re-run `tools/run_learning_shift.py` with the
+new pack as post-test (needs a model backend; runs on hardware).
+
 **Update (C3, 2026-06-24):** two of the next-experiment blockers are resolved.
 `tools/split_long_training_rows.py` now fits every MLX row under `MLX_MAX_TOKENS` (1024) at
 pack-build time — the rebuild dropped 11 overlong single-turn rows that the v2 run silently

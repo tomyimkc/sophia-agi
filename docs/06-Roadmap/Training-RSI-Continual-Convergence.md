@@ -21,13 +21,14 @@ but they do not talk to each other:
 
 The adapter's promotion decision was written **by hand** as a failure-ledger note. It was
 **never run through `agent/continual_plasticity.evaluate_update()`** — which is precisely the
-W2 bounded-RSI promotion gate. Today that gate only runs in the toy demo
-(`tools/run_agi_missing_pillars.py`). Symmetrically, `gate_feedback.py` (gate-vs-judge misses
-→ candidate `doNotAttributeTo` records) does **not** feed the next training pack.
+W2 bounded-RSI promotion gate (which only ran in the toy `tools/run_agi_missing_pillars.py`).
+Symmetrically, `gate_feedback.py` (gate-vs-judge misses → candidate `doNotAttributeTo`
+records) did **not** feed the next training pack.
 
-So: a training output, a promotion gate, and a feedback miner all exist — and none of them are
-connected. The promotion step is the one place where "the gate enforces truth" is currently
-**not** mechanically true. Closing that is higher-leverage than training a second adapter.
+So: a training output, a promotion gate, and a feedback miner all existed — and none of them
+were connected. C1 wired the promotion step (the one place "the gate enforces truth" was not
+mechanically true); C4 wired the feedback miner back into the pack. Both were higher-leverage
+than training a second adapter.
 
 ```
   [train adapter] --metrics--> [W2 plasticity gate + formal proof] --verdict--> ledger/promote
@@ -101,20 +102,31 @@ capability.
 
 ---
 
-## C4 — Close the continual loop: feedback miner → next pack *(no GPU)*
+## C4 — Close the continual loop: feedback miner → next pack ✅ *(done; no GPU)*
 
 **Why:** this is what makes the system *continual* rather than a one-shot train. The miners
-already exist; they just aren't connected to the trainer.
+already existed; they just weren't connected to the trainer.
 
-**Build:** route `agent/gate_feedback.py` misses and `provenance_bench/improvement.py`
-held-out failures into a reviewed candidate queue, and have `build_local_sophia_dataset.py`
-optionally ingest **promoted** candidates (manual review step preserved, so it stays
-non-circular). Re-run the `learning-under-shift` protocol with the new pack as the post-test.
+**Built:** `tools/feedback_to_training.py` provides the return path in three explicit stages —
+`mine` (gate MISSES from run/case results → deduped pending queue, all `promoted:false`),
+`approve` (the human review step flips specific rids to `promoted:true` with a note), and
+`build-sft` (ONLY promoted candidates → `training/feedback/sft_from_feedback.jsonl` +
+a promoted gate-records file). `build_local_sophia_dataset.py` ingests that SFT file as a
+normal source, so it passes the **same decontamination guard**. Workflow + non-circularity
+contract documented in `training/feedback/README.md`.
 
-**Acceptance:** a documented round where mined misses become reviewed training rows and the
-learning-under-shift report shows post > pre with protected knowledge stable and contamination
-clean. **Resource:** none. **Honest bound:** offline selection + manual promotion — **not**
-online weight learning.
+**Non-circularity (machine-checked):** pending candidates live in a separate file and are
+never merged into the frozen runtime records; `build-sft` emits nothing until a human
+promotes (default-deny); ingested rows are decontaminated like any source. End-to-end demo:
+4 case results → 2 genuine misses mined (non-hallucinated / already-revised skipped) → 0 SFT
+rows before approval → 1 well-formed source-discipline SFT row after one approval → ingested
+into the pack (`present:true, droppedForDecontamination:0`, guard CLEAN). Gated by
+`tests/test_feedback_to_training.py` (in CI).
+
+**Remaining (needs a model backend):** re-run `tools/run_learning_shift.py` with the new pack
+as the post-test to show post > pre with protected knowledge stable — runs on your hardware
+(`--backend adapter`), not in CI. **Honest bound:** offline selection + manual promotion —
+**not** online weight learning.
 
 ---
 
@@ -141,7 +153,7 @@ false-positive cost, no useful-correctness regression) with CIs excluding 0.
 | 1 | **C1** wire training → W2 gate ✅ | none | machine-checked promotion (auto-reproduces today's decision) |
 | 2 | **C3** pipeline fixes (split rows, SEIB-MLX) ✅ | none | honest measurement of the real adapter |
 | 3 | **C2** fix religion regression | hardware (retrain) | the one failing predicate cleared |
-| 4 | **C4** feedback miner → next pack | none | the loop becomes *continual* |
+| 4 | **C4** feedback miner → next pack ✅ | none | the loop becomes *continual* |
 | 5 | **C5** multi-seed + SEIB-100 + (W4 RLVR) | **GPU** | the first promotable, validated result |
 
 **Prerequisite under all of it (unchanged):** the third-party-validated number still open in

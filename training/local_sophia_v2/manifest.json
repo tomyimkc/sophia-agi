@@ -38,6 +38,13 @@
       "present": true,
       "droppedForDecontamination": 0
     },
+    "sft_from_feedback.jsonl": {
+      "source": "training/feedback/sft_from_feedback.jsonl",
+      "kind": "sft",
+      "rows": 0,
+      "present": false,
+      "droppedForDecontamination": 0
+    },
     "dpo_hard_negatives.jsonl": {
       "source": "training/hard_negatives_dpo.jsonl",
       "kind": "dpo",
