@@ -17,6 +17,8 @@ links: [confucian]
 
 # Xunzi (荀子)
 
+Xunzi (荀子) is a philosophy text, in the confucian tradition, attributed to xunzi (authorship confidence: compiled), dated to warring_states.
+
 - **Attributed author:** xunzi (confidence: `compiled`)
 - **Tradition:** confucian
 - **Domain:** philosophy

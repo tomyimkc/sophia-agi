@@ -1,0 +1,122 @@
+{
+  "schema": "sophia.continual_qa_judged.v2",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "answerModel": "gpt-4o-mini",
+  "answerFamily": "openai",
+  "judges": [
+    "deepseek/deepseek-chat",
+    "meta-llama/llama-3.3-70b-instruct"
+  ],
+  "judgeFamilies": [
+    "deepseek",
+    "meta"
+  ],
+  "distinctProviderFamilies": true,
+  "selfGradingRisk": false,
+  "runs": 3,
+  "queryCount": 20,
+  "summary": {
+    "grounded": {
+      "perRun": [
+        {
+          "consensusPassRate": 0.95,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.95,
+            "meta-llama/llama-3.3-70b-instruct": 1.0
+          },
+          "interJudgeKappa": 0.0,
+          "interJudgePercentAgreement": 0.95
+        },
+        {
+          "consensusPassRate": 1.0,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 1.0,
+            "meta-llama/llama-3.3-70b-instruct": 1.0
+          },
+          "interJudgeKappa": 1.0,
+          "interJudgePercentAgreement": 1.0
+        },
+        {
+          "consensusPassRate": 0.85,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 1.0,
+            "meta-llama/llama-3.3-70b-instruct": 0.85
+          },
+          "interJudgeKappa": 0.0,
+          "interJudgePercentAgreement": 0.85
+        }
+      ],
+      "meanConsensusPassRate": 0.9333,
+      "consensusCI95": [
+        0.8667,
+        0.9833
+      ],
+      "byExpect": {
+        "assert": {
+          "n": 45,
+          "consensusPassRate": 0.9111
+        },
+        "abstain": {
+          "n": 15,
+          "consensusPassRate": 1.0
+        }
+      },
+      "meanInterJudgeKappa": 0.3333,
+      "meanInterJudgePercentAgreement": 0.9333
+    },
+    "raw": {
+      "perRun": [
+        {
+          "consensusPassRate": 0.65,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.7,
+            "meta-llama/llama-3.3-70b-instruct": 0.7
+          },
+          "interJudgeKappa": 0.7619,
+          "interJudgePercentAgreement": 0.9
+        },
+        {
+          "consensusPassRate": 0.6,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.7,
+            "meta-llama/llama-3.3-70b-instruct": 0.65
+          },
+          "interJudgeKappa": 0.6591,
+          "interJudgePercentAgreement": 0.85
+        },
+        {
+          "consensusPassRate": 0.75,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.75,
+            "meta-llama/llama-3.3-70b-instruct": 0.75
+          },
+          "interJudgeKappa": 1.0,
+          "interJudgePercentAgreement": 1.0
+        }
+      ],
+      "meanConsensusPassRate": 0.6667,
+      "consensusCI95": [
+        0.55,
+        0.7833
+      ],
+      "byExpect": {
+        "assert": {
+          "n": 45,
+          "consensusPassRate": 0.8889
+        },
+        "abstain": {
+          "n": 15,
+          "consensusPassRate": 0.0
+        }
+      },
+      "meanInterJudgeKappa": 0.807,
+      "meanInterJudgePercentAgreement": 0.9167
+    }
+  },
+  "caveats": [
+    "Models reached via one gateway (LLMHub) under one key; validated:false pending independent replication and pre-registration, though judges are distinct families.",
+    "abstain-rubric scores confident refutation of a fictional premise as non-abstention, which can understate the raw model on fictional-premise controls; the unambiguous contrast is on RETRACTED real facts (raw asserts the stale fact, grounded abstains)."
+  ]
+}

@@ -15,6 +15,8 @@ links: []
 
 # Apollo 11 Moon landing (1969) (阿波羅11號登月（1969）)
 
+Apollo 11 Moon landing (1969) (阿波羅11號登月（1969）) is a history event, dated to 1969-07-20.
+
 - **Domain:** history
 
 Primary mission records; conspiracy claims are myth traps

@@ -16,6 +16,8 @@ links: [christianity]
 
 # Gospel of Matthew (馬太福音)
 
+Gospel of Matthew (馬太福音) is a religion text, in the christianity tradition, attributed to matthew_tradition (authorship confidence: disputed).
+
 - **Attributed author:** matthew_tradition (confidence: `disputed`)
 - **Tradition:** christianity
 - **Domain:** religion

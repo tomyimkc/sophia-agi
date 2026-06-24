@@ -17,6 +17,8 @@ links: []
 
 # Han Feizi (韓非子)
 
+Han Feizi (韓非子) is a philosophy text, in the legalist tradition, attributed to han_feizi (authorship confidence: attributed), dated to warring_states.
+
 - **Attributed author:** han_feizi (confidence: `attributed`)
 - **Tradition:** legalist
 - **Domain:** philosophy

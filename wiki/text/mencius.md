@@ -17,6 +17,8 @@ links: [confucian]
 
 # Mencius (孟子)
 
+Mencius (孟子) is a philosophy text, in the confucian tradition, attributed to mencius (authorship confidence: attributed), dated to warring_states.
+
 - **Attributed author:** mencius (confidence: `attributed`)
 - **Tradition:** confucian
 - **Domain:** philosophy

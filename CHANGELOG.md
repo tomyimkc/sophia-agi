@@ -4,6 +4,147 @@ All notable changes to Sophia AGI are documented here.
 
 ## [0.8.0] - 2026-06-24
 
+### Added — Non-parametric continual learning (Experiment 1: sequential retention)
+
+- `agent/continual_retention.py` — a sequential-retention benchmark over the OKF
+  belief graph. A "task" is a batch of OKF pages; learning the stream means adding
+  batches and rebuilding the graph. Because adding page N+1 cannot mutate page N, a
+  purely additive stream forgets nothing — this turns that structural claim into a
+  measured retention matrix + `forgottenGroundedClaims` metric. The metric is
+  sensitive: it detects forgetting when a fact loses its provenance ground or its
+  effective confidence is weakened.
+- `tests/test_continual_retention.py` — additive stream ⇒ 0 forgotten claims and a
+  full retention matrix; metric detects lost-grounding and confidence-drop. Offline,
+  deterministic, dependency-free. Wired into `ci.yml`.
+- `scripts/demo_continual_retention.py` — offline demo; writes
+  `agi-proof/continual/retention_report.json` (`level3Evidence: false`).
+- `docs/06-Roadmap/continual-learning-non-parametric.md` — the full plan (four
+  experiments, smallest → boldest). Candidate machinery, not an AGI claim.
+
+### Added — Continual learning Experiment 2: conflict → belief revision
+
+- `agent/belief_revision_policy.py` — resolves declared contradictions by belief
+  revision instead of silent overwrite (which is what catastrophic forgetting is in a
+  weight model). Importance order axiom > user > sourced > inferred; sourced ties break
+  on effective confidence; comparable beliefs cause **abstention** on both. Retraction
+  carries the transitive cascade from `okf.revise`. Includes a `last_write_wins`
+  baseline (what a weight model imitates) for contrast.
+- `tests/test_belief_revision_policy.py` — tier order, confidence tie-break, abstain-
+  not-overwrite, cascade recording, and beating the LWW baseline. Wired into `ci.yml`.
+
+### Added — Continual learning Experiment 3: forgetting as a reversible command
+
+- `agent/unlearning.py` — `Unlearner.forget(source, reason)` tombstones a source
+  (non-destructively), un-grounds exactly its transitive support cascade, and emits an
+  audit entry + the abstain set a gate must refuse; `restore` re-grounds the *exact*
+  prior belief state. This is the selective, reversible unlearning (debunked source,
+  poisoned fact, GDPR deletion) a weight model cannot do cleanly.
+- `tests/test_unlearning.py` — exact-cascade un-grounding, abstain set = gate refusal
+  set, bit-for-bit reversible restore, fail-closed on unknown source. Wired into `ci.yml`.
+
+### Added — Continual learning Experiment 4: CLS consolidation (gated)
+
+- `agent/cls_consolidation.py` — Complementary Learning Systems selector: wiki/OKF graph
+  is the fast hippocampus (instant, forgetting-free); weights are the slow neocortex.
+  Replays retention snapshots to find facts stable for >= N steps, keeps only gate-cleared
+  ones, and routes a distillation `UpdateCandidate` through the existing
+  `agent.continual_plasticity` gate. Protected suites (`source_discipline`,
+  `fact_check_false_accept`) are the anti-forgetting tripwire: any adapter that regresses
+  old knowledge is rejected. Distillation/training stays out of CI (`level3Evidence: false`).
+- `tests/test_cls_consolidation.py` — stability streaks, stable+gate-cleared selection,
+  clean adapter promotes, protected-suite regression is rejected (anti-forgetting
+  invariant), consolidation waits when nothing is stable yet. Wired into `ci.yml`.
+
+### Added — Continual Provenance QA (CPQA): integrated dual-store benchmark
+
+- `agent/continual_qa.py` + `tools/run_continual_qa_benchmark.py` +
+  `eval/continual_qa/episodes_v1.jsonl` — integrates Experiments 1–4 into one
+  benchmarkable artifact. Streams episodes (learn / retract / query) through two
+  systems: `graph_backed` (knowledge in the OKF graph; learns by page write, revises
+  conflicts, unlearns on demand, answers only from the grounded belief state) vs
+  `parametric_baseline` (knowledge frozen after episode 0 — a weight model without
+  retraining). Scores accuracy, fabrication rate, miss rate, and separates
+  **catastrophic (unintended) forgetting** from **deliberate unlearning/revision**.
+- Result on the 15-query v1 episodes: graph_backed **accuracy 1.0, fabrication 0,
+  unintended forgetting 0**; parametric_baseline **accuracy 0.27, fabrication 0.20,
+  miss 0.53** (3 removals correctly counted as deliberate). Report at
+  `agi-proof/benchmark-results/continual-qa.public-report.json`
+  (`candidateOnly:true`, `validated:false`, `level3Evidence:false`).
+- `tests/test_continual_qa.py` — perfect/non-fabricating graph_backed, zero
+  catastrophic forgetting with deliberate unlearning recorded, baseline forgets +
+  fabricates, retraction/cascade/revision force correct abstention. Wired into `ci.yml`.
+
+### Added — CPQA next steps: LLM-controller layer, wiki-scale corpus, validation CIs
+
+- `agent/continual_qa_controller.py` — the "LLM as control flow" layer routes a
+  natural-language question to a fact id. `OracleController` (perfect routing, isolates
+  the store), `LexicalController` (deterministic token-overlap, CI-able), `LLMController`
+  (real routing via `agent.llm.complete`; gated behind an API key, not run in CI).
+  `continual_qa.control_flow_report` measures the **control-flow gap** = oracle minus
+  controller accuracy — limitation #1 quantified.
+- `tools/gen_continual_qa_from_wiki.py` + `eval/continual_qa/episodes_v2_wiki.jsonl` —
+  generates a **92-query benchmark from the real 67-page wiki/ corpus** (recall /
+  retention / unlearning / control). Report: `agi-proof/benchmark-results/continual-qa-wiki.public-report.json`.
+- `tools/run_continual_qa_validation.py` — bootstrap-CI validation. Exact-match scoring
+  has no judge subjectivity (LLM-judge families apply only to the future LLM-controller
+  path), so rigor = confidence intervals + a control-flow sweep.
+- **Results (wiki, 92 queries):** graph_backed accuracy **1.0, CI [1.0, 1.0]**, 0/92
+  errors (rule-of-three upper error bound 3.3%), 0 unintended forgetting, 2 deliberate
+  unlearnings; parametric_baseline **0.37, CI [0.28, 0.47]** (56 misses, 2 stale
+  fabrications). Control-flow gap grows **0.09 → 0.30 → 0.45** as lexical routing
+  strictness rises. All `candidateOnly:true`, `validated:false`.
+- `tests/test_continual_qa_controller.py`, `tests/test_continual_qa_validation.py` —
+  wired into `ci.yml` alongside corpus generation + validation runs.
+
+### Added — CPQA live LLM-controller pass (DeepSeek)
+
+- `agent/deepseek_llm.py` — optional OpenAI-compatible DeepSeek client (stdlib urllib,
+  honors proxy + CA bundle; key read from `DEEPSEEK_API_KEY` env or `--api-key-file`,
+  never stored). `tools/run_continual_qa_llm.py` routes every CPQA question with a real
+  LLM across N runs and reports the true control-flow gap. Network-only; never in CI.
+- **Live result (deepseek-chat, 3 runs, 92-query wiki benchmark):** substrate 1.0,
+  end-to-end **0.989**, control-flow gap **0.011** — stable across runs; one consistent
+  mis-route (`dao_de_jing_daoist_scripture` vs `dao_de_jing`, a near-duplicate). A strong
+  LLM router beats the lexical floor (gap 0.087) but is still nonzero — limitation #1
+  quantified. Report: `agi-proof/benchmark-results/continual-qa.llm-control-flow.json`
+  (`candidateOnly`, `validated:false`; metrics only, no key/raw text).
+- `tests/test_continual_qa_controller.py` extended with an offline `LLMController`
+  parsing test (mock completion; robust to backticks/prose/NONE).
+
+### Added — CPQA judged-answer pass: grounded vs raw, multi-judge panel
+
+- `agent/continual_qa_answer.py` + `tools/run_continual_qa_judged.py` — extends CPQA from
+  id-routing to *generated prose answers*. Two systems answer each question: `grounded`
+  (only from the retrieved OKF/wiki source, respecting provenance) and `raw` (plain LLM,
+  no source). A judge panel (`deepseek-reasoner` + `deepseek-chat`) rates each answer
+  (abstains / faithful / answers / fabricates-attribution) → binary verdict; reports
+  per-judge + consensus pass rate, bootstrap CI, and inter-judge Cohen's κ.
+- **Live result (12 queries, 2 judges):** grounded **consensus pass 1.0, CI [1.0, 1.0],
+  κ = 1.0** — abstains on all 5 attribution traps, answers all 7 recalls faithfully; raw
+  **consensus pass ~0.33–0.42, κ 0.53–0.83** — fabricates on traps and asserts retracted
+  facts. Report: `agi-proof/benchmark-results/continual-qa.judged.json`.
+- **Honest caveats (in the report):** both judges are DeepSeek (not distinct provider
+  families → `validated:false`); the answer model also judges (self-grading risk); the
+  abstain-rubric scores confident refutation of a fictional premise as non-abstention
+  (understates raw on those controls — the clean contrast is on retracted *real* facts).
+- `agent/deepseek_llm.py` extended use; `tests/test_continual_qa_answer.py` (offline,
+  mocked) wired into `ci.yml`. The live judged/LLM runners are network-only, never in CI.
+
+### Added — CPQA cross-family judge panel (candidate, not validated)
+
+- `agent/llmhub_llm.py` — OpenAI-compatible LLMHub gateway client (one gateway exposes many
+  families; https + explicit POST; retry-with-backoff; key from env, never stored).
+  `tools/run_continual_qa_judged.py` generalized to `provider:model` specs with a neutral
+  answer model and a distinct-family judge panel, N runs, pooled CIs, per-run κ.
+- Both LLM clients now retry transient network/SSL/5xx/429 errors (a single proxy SSL blip
+  had aborted a 180-call run).
+- **Candidate result (cross-family: GPT-4o-mini answers, Claude + Gemini judges; 10 queries,
+  3 runs):** grounded consensus pass **0.733** [0.567, 0.867] vs raw **0.400** [0.233, 0.567];
+  prediction (grounded > raw) confirmed every run. Removes the prior same-provider and
+  self-grading caveats. **Still `validated:false`:** grounded κ is degenerate (Gemini passes
+  100%, collapsing Cohen's κ), single gateway/key, self-authored benchmark.
+- `docs/06-Roadmap/cpqa-results-candidate.md` — pre-registered protocol + candidate numbers
+  + explicit gate-status table (RESULTS.md is generated and not hand-edited).
 ### Changed — license: MIT → Apache 2.0 (stronger attribution)
 
 - Relicensed the code under the **Apache License 2.0** (was MIT) for explicit

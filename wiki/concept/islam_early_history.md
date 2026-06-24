@@ -15,6 +15,8 @@ links: [islam]
 
 # early Islam historical-theological boundary (早期伊斯蘭歷史與神學分界)
 
+Early Islam historical-theological boundary (早期伊斯蘭歷史與神學分界) is a religion concept, in the islam tradition.
+
 - **Tradition:** islam
 - **Domain:** religion
 

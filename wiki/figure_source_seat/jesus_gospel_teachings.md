@@ -15,6 +15,8 @@ links: [christianity]
 
 # Jesus traditions in the canonical Gospels (福音書中的耶穌傳統)
 
+Jesus traditions in the canonical Gospels (福音書中的耶穌傳統) is a religion figure_source_seat, in the christianity tradition.
+
 - **Tradition:** christianity
 - **Domain:** religion
 

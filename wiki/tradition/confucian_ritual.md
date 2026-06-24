@@ -10,6 +10,8 @@ links: []
 
 # Confucian ritual religion (儒家禮教)
 
+Confucian ritual religion (儒家禮教) is a tradition.
+
 
 > **Do not merge with:** christianity, islam, buddhism.
 

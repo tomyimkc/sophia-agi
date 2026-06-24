@@ -17,6 +17,8 @@ links: [platonist]
 
 # Symposium (會飲篇)
 
+Symposium (會飲篇) is a philosophy text, in the platonist tradition, attributed to plato (authorship confidence: attributed), dated to classical_greece.
+
 - **Attributed author:** plato (confidence: `attributed`)
 - **Tradition:** platonist
 - **Domain:** philosophy

@@ -16,6 +16,8 @@ links: []
 
 # Heraclitus fragments (赫拉克利特殘篇)
 
+Heraclitus fragments (赫拉克利特殘篇) is a philosophy text, in the presocratic tradition, attributed to heraclitus (authorship confidence: compiled).
+
 - **Attributed author:** heraclitus (confidence: `compiled`)
 - **Tradition:** presocratic
 - **Domain:** philosophy

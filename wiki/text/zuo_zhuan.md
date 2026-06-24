@@ -16,6 +16,8 @@ links: []
 
 # Zuo Zhuan (左傳)
 
+Zuo Zhuan (左傳) is a philosophy text, in the zhou_classics tradition, attributed to zuo_qiuming (authorship confidence: compiled).
+
 - **Attributed author:** zuo_qiuming (confidence: `compiled`)
 - **Tradition:** zhou_classics
 - **Domain:** philosophy

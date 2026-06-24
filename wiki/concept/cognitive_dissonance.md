@@ -17,6 +17,8 @@ links: []
 
 # cognitive dissonance (認知失調)
 
+Cognitive dissonance (認知失調) is a psychology concept, in the cognitive subfield, attributed to leon_festinger (authorship confidence: attributed), dated to 1957.
+
 - **Attributed author:** leon_festinger (confidence: `attributed`)
 - **Domain:** psychology
 

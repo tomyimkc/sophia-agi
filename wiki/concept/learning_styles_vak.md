@@ -15,6 +15,8 @@ links: []
 
 # VAK learning styles matching hypothesis (VAK學習風格配對假說)
 
+VAK learning styles matching hypothesis (VAK學習風格配對假說) is a psychology concept, in the pop_myth subfield.
+
 - **Domain:** psychology
 
 Preference is not evidence-based instruction matching

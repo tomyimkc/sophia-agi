@@ -15,6 +15,8 @@ links: []
 
 # left brain / right brain personality dichotomy (左右腦人格二分法)
 
+Left brain / right brain personality dichotomy (左右腦人格二分法) is a psychology concept, in the pop_myth subfield.
+
 - **Domain:** psychology
 
 Pop myth; split-brain research does not support personality hemispheres teaching

@@ -16,6 +16,8 @@ links: []
 
 # Records of the Grand Historian (史記)
 
+Records of the Grand Historian (史記) is a philosophy text, in the historiography tradition, attributed to sima_qian (authorship confidence: attributed).
+
 - **Attributed author:** sima_qian (confidence: `attributed`)
 - **Tradition:** historiography
 - **Domain:** philosophy

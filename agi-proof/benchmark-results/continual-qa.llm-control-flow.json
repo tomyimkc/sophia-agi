@@ -1,0 +1,61 @@
+{
+  "schema": "sophia.continual_qa_llm_control_flow.v1",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "model": "deepseek-chat",
+  "provider": "deepseek",
+  "episodes": [
+    "ep1_history",
+    "ep2_philosophy",
+    "ep3_psychology",
+    "ep4_religion",
+    "ep5_tradition",
+    "epF_revision"
+  ],
+  "runs": [
+    {
+      "run": 1,
+      "substrateAccuracy": 1.0,
+      "endToEndAccuracy": 0.9891,
+      "controlFlowGap": 0.0109,
+      "routingErrorCount": 1,
+      "routingErrors": [
+        "recall_dao_de_jing_daoist_scripture"
+      ]
+    },
+    {
+      "run": 2,
+      "substrateAccuracy": 1.0,
+      "endToEndAccuracy": 0.9891,
+      "controlFlowGap": 0.0109,
+      "routingErrorCount": 1,
+      "routingErrors": [
+        "recall_dao_de_jing_daoist_scripture"
+      ]
+    },
+    {
+      "run": 3,
+      "substrateAccuracy": 1.0,
+      "endToEndAccuracy": 0.9891,
+      "controlFlowGap": 0.0109,
+      "routingErrorCount": 1,
+      "routingErrors": [
+        "recall_dao_de_jing_daoist_scripture"
+      ]
+    }
+  ],
+  "summary": {
+    "substrateAccuracy": 1.0,
+    "endToEndAccuracyMean": 0.9891,
+    "endToEndAccuracyRange": [
+      0.9891,
+      0.9891
+    ],
+    "controlFlowGapMean": 0.0109,
+    "controlFlowGapRange": [
+      0.0109,
+      0.0109
+    ]
+  }
+}

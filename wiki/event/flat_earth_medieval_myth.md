@@ -14,6 +14,8 @@ links: []
 
 # Medieval Europeans universally believed the earth was flat (中世紀歐洲普遍認為地球是平的)
 
+Medieval Europeans universally believed the earth was flat (中世紀歐洲普遍認為地球是平的) is a history event.
+
 - **Domain:** history
 
 Modern myth about medieval ignorance
