@@ -15,6 +15,8 @@ from __future__ import annotations
 import json
 import os
 import ssl
+import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -41,16 +43,26 @@ def _ssl_context() -> ssl.SSLContext:
 
 
 def chat_completion(*, messages, model: str, api_key: str | None = None, api_key_file=None,
-                    temperature: float = 0.0, max_tokens: int = 256, timeout_sec: int = 180) -> str:
+                    temperature: float = 0.0, max_tokens: int = 256, timeout_sec: int = 180,
+                    retries: int = 4) -> str:
     key = load_api_key(api_key=api_key, api_key_file=api_key_file)
     body = json.dumps({"model": model, "messages": messages,
                        "temperature": temperature, "max_tokens": max_tokens}).encode("utf-8")
     req = urllib.request.Request(BASE_URL, data=body, method="POST",
                                  headers={"Authorization": f"Bearer {key}",
                                           "Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=timeout_sec, context=_ssl_context()) as resp:
-        data = json.load(resp)
-    return data["choices"][0]["message"]["content"]
+    # Retry transient network/5xx errors with exponential backoff (long judged runs make
+    # hundreds of calls; a single proxy SSL blip must not abort the whole pass).
+    for attempt in range(retries):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout_sec, context=_ssl_context()) as resp:
+                return json.load(resp)["choices"][0]["message"]["content"]
+        except (urllib.error.URLError, ssl.SSLError, TimeoutError, ConnectionError) as exc:
+            code = getattr(exc, "code", None)
+            if attempt == retries - 1 or (code is not None and code < 500 and code != 429):
+                raise
+            time.sleep(2 ** attempt)
+    raise RuntimeError("unreachable")
 
 
 def make_complete(*, model: str, api_key: str | None = None, api_key_file=None,
