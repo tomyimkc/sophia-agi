@@ -56,6 +56,43 @@ the method *improves* a model on them.
 miner, report per-family deltas with CIs. Coding+unit-test is the on-ramp to SWE-bench
 (Hurdle 1). Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
 
+## hurdle2-promotion-gate-generalizes-2026-06-24
+
+**Status:** CLOSED (mechanism). The W2 promotion gate is confirmed domain-general:
+`tools/promote_adapter.py` already accepts `--protected`, and a test now locks in that
+`evaluate_update` + the formal protected-floor proof promote a clean coding+math adapter
+with an EMPTY protected set and reject a coding regression when `coding` is marked
+protected — no provenance hardcoded
+(`tests/test_promote_adapter.py::test_promotion_gate_generalizes_to_non_provenance_families`).
+Combined with `hurdle2-transfer-scorer-registry-wired-2026-06-24`, the full
+score→ladder→promote path is now family-agnostic. **Honest bound:** machinery generality,
+not a transfer capability claim (no adapter trained on coding/math yet — step 2.4, hardware).
+
+## hurdle4-plasticity-probe-and-diversity-floor-2026-06-24
+
+**Status:** PARTIAL (anti-degradation machinery added + tested; real runs hardware-bound).
+
+Hurdle 4 (prevent plateau/degradation) — two no-GPU guards added:
+
+- **Plasticity probe** (`agent/plasticity_probe.py`): pure-Python stable rank (rank-collapse
+  correlate, `‖W‖_F²/‖W‖₂²` via deterministic power iteration), dead-unit fraction, and
+  weight-norm growth — the loss-of-plasticity correlates the 2025 literature identifies
+  (spectral collapse arXiv 2509.22335; 2404.00781). `watch_generations` emits a
+  `degrading-plasticity-warning`, attachable to the generational compounding artifact via
+  `tools/run_ssil_generations.py --plasticity-json`. Gated by `tests/test_plasticity_probe.py`.
+- **Diversity floor** (`tools/feedback_to_training.py mine --min-novelty`): rejects a mined
+  candidate whose token-Jaccard to anything already queued exceeds `(1 - min_novelty)`, so the
+  continual loop can't narrow onto near-duplicate misses (accumulated reward bias / shrinking
+  answer diversity — the self-rewarding diminishing-returns failure mode). Default 0.0 = off
+  (back-compat). Gated by `tests/test_feedback_diversity_floor.py`.
+
+**Why NOT a capability claim:** these are early-warning *diagnostics* and a *queue guard*,
+not a measured anti-degradation result. The real test — `ssil_generations` ≥3 generations on
+real weights with per-generation rank/dormancy stats, and the mitigation (shrink-and-perturb /
+L2-init / continual-backprop) at the retrain step — is hardware-bound. The runner
+(`tools/run_ssil_generations.py`) already consumes real aggregates; only the GPU runs remain.
+Plan: `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
+
 ## Template
 
 ```text

@@ -62,9 +62,11 @@ verifier is SWE-bench in miniature; math + answer-match is GSM8K in miniature.
   `tests/benchmark-coding.json` in the same `{"cases":[...]}` schema the pipeline expects,
   built from the existing `data/capability_arithmetic.json` and `eval/coding/smoke.jsonl`.
   **Status: in this PR.**
-- **2.3 — Ladder/promotion parameterized by family (no GPU).** `tools/eval_ladder.py`
-  takes `--domains` / `--protected` so a coding/math run uses the same rungs; protected
-  suites become a parameter (provenance run keeps `religion,history`). **Status: in this PR.**
+- **2.3 — Ladder/promotion parameterized by family (no GPU). ✅ done.** `tools/eval_ladder.py`
+  takes `--domains`; `tools/promote_adapter.py` already took `--protected`, and a test now
+  locks in that the W2 gate promotes/rejects a coding+math adapter with a configurable
+  (or empty) protected set — no provenance hardcoded
+  (`tests/test_promote_adapter.py::test_promotion_gate_generalizes_to_non_provenance_families`).
 - **2.4 — Run the identical loop on each family (hardware).** Train one adapter per family,
   run the 4-rung ladder + W2 gate + feedback miner, report per-family deltas. **Status: hardware-bound (like C2/C5).**
 
@@ -125,12 +127,20 @@ append-only + fresh-held-out machinery is built to catch it.
 **Steps**
 
 - **4.1 (hardware)** Run `ssil_generations` for ≥3 generations on real weights; publish the
-  `compoundingCurve` with CIs. Plateau is a fine outcome — report it.
-- **4.2 (hardware)** Fight loss-of-plasticity at the retrain step: shrink-and-perturb / L2-init
-  / continual-backprop between generations; add a per-generation rank/dormancy probe to the
-  artifact (spectral collapse is the diagnosed mechanism in the 2025 literature).
-- **4.3 (no GPU)** Add a diversity/novelty floor on mined feedback candidates to avoid
-  self-data model-collapse (accumulated reward bias / shrinking answer diversity).
+  `compoundingCurve` with CIs. Plateau is a fine outcome — report it. *(Runner already exists:
+  `tools/run_ssil_generations.py`; consumes real per-generation 3-seed aggregates.)*
+- **4.2 — plasticity probe ✅ done (no GPU); mitigation hardware.** `agent/plasticity_probe.py`
+  computes the loss-of-plasticity correlates the 2025 literature identifies — stable rank
+  (collapse), dead-unit fraction, weight-norm growth — in pure Python; `watch_generations`
+  emits a `degrading-plasticity-warning` early-warning, now attachable to the generational
+  artifact via `tools/run_ssil_generations.py --plasticity-json`
+  (`tests/test_plasticity_probe.py`). The *mitigation* (shrink-and-perturb / L2-init /
+  continual-backprop at the retrain step) and the real per-generation weight stats are hardware.
+- **4.3 — diversity/novelty floor ✅ done (no GPU).** `tools/feedback_to_training.py mine`
+  takes `--min-novelty`: a candidate is rejected if its token-Jaccard to anything already
+  queued exceeds `(1 - min_novelty)`, so the queue can't narrow onto near-duplicate misses
+  (accumulated reward bias / shrinking diversity). Default 0.0 = off, back-compat
+  (`tests/test_feedback_diversity_floor.py`).
 - **4.4** Mandate fresh held-out per generation in the generational harness (best detector of
   contamination-driven fake gains).
 - **4.5** Keep the protected-floor gate exactly as-is — it is the anti-degradation mechanism.
