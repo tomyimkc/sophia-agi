@@ -2,6 +2,20 @@
 
 All notable changes to Sophia AGI are documented here.
 
+## [Unreleased]
+
+### Added — CPQA hybrid gate productized into the agent
+
+- `agent/grounded_agent.py` + `tools/sophia_agent.py --grounded` — wires the CPQA gated
+  hybrid into the live agent: route a question to an OKF wiki page, answer strictly from its
+  source if answer-bearing, fall back to attribution-safe parametric recall (verified by
+  Sophia's real attribution gate, fail-closed) if thin, and abstain when unroutable/ungrounded.
+  Converts the benchmark finding into a runtime capability. Offline tests (LLM + gate mocked).
+- `tools/wiki_sync.py` — optional authored `summary` field per record is surfaced into the
+  page body as richer answer-bearing prose (Step 5 enrichment hook); absent today, so no page
+  drift. The recall audit (`tools/audit_cpqa_recall.py`) lists the thin targets to enrich.
+- `tests/test_grounded_agent.py` wired into CI.
+
 ## [0.8.0] - 2026-06-24
 
 ### Added — Non-parametric continual learning (Experiment 1: sequential retention)

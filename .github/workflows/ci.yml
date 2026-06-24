@@ -111,6 +111,7 @@ jobs:
           python tools/audit_cpqa_recall.py
           python tests/test_continual_qa_hybrid.py
           python tests/test_grounded_answer_policy.py
+          python tests/test_grounded_agent.py
           python tests/test_wiki_proof.py
           python tests/test_agent_harness.py
       - name: Governance contract conformance (golden vectors + schema)
