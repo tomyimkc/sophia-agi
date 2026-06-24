@@ -1,0 +1,169 @@
+#!/usr/bin/env python3
+"""Assemble the `training/local_sophia_v2/` dataset packs for a LOCAL Sophia wisdom
+model (NOT AGI). Composes the existing builders' outputs into role-split packs, runs
+the train/eval contamination guard (fail-closed), and writes an honest manifest that
+records BOTH the present packs and the still-MISSING required inputs.
+
+Run the upstream builders first:
+    python tools/export_training_jsonl.py
+    python tools/wiki_to_training.py
+    python tools/mine_hard_negatives.py --out training/hard_negatives_dpo.jsonl
+    python tools/prepare_lora_dataset.py
+
+Then:
+    python tools/build_local_sophia_dataset.py            # build + guard
+    python tools/build_local_sophia_dataset.py --check    # guard only, no writes (CI)
+
+This does NOT train anything (training needs your Mac/MLX or a cloud GPU).
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from provenance_bench.dataset_guard import check_contamination, eval_prompt_set  # noqa: E402
+
+OUT = ROOT / "training" / "local_sophia_v2"
+BASE_MODEL = "Qwen/Qwen2.5-3B-Instruct"
+
+
+def _read_jsonl(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    rows = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line:
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError:
+                pass
+    return rows
+
+
+def _write_jsonl(path: Path, rows: list[dict]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as fh:
+        for r in rows:
+            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+
+
+# (source path, output pack name, kind)
+SFT_SOURCES = [
+    ("training/corpus.jsonl", "sft_source_discipline.jsonl", "sft"),
+    ("training/wiki_provenance_sft.jsonl", "sft_wiki_provenance.jsonl", "sft"),
+    ("training/council/traces.jsonl", "sft_council_traces.jsonl", "sft"),
+]
+DPO_SOURCES = [
+    ("training/hard_negatives_dpo.jsonl", "dpo_hard_negatives.jsonl", "dpo"),
+    ("training/wiki_provenance_dpo.jsonl", "dpo_wiki_provenance.jsonl", "dpo"),
+]
+HOLDOUT_SRC = "training/lora/holdout.jsonl"
+
+# Required inputs the repo does NOT yet provide — flagged so no one trains thinking
+# the mix is complete (see docs/11-Platform/Local-Sophia-Training.md).
+MISSING_REQUIRED = {
+    "general_instruction_retention": "Bring a license-clean external instruct slice "
+        "(~10% of mix) or the model becomes a narrow refusal machine. No in-repo source.",
+    "moral_gate_sft": "moral_corpus/ is structured data, not SFT jsonl yet — needs a "
+        "routing-example converter (allow/revise/retrieve/clarify/escalate/abstain/block).",
+}
+
+
+def build(check_only: bool) -> int:
+    from provenance_bench.dataset_guard import normalize, prompt_of
+
+    holdout = _read_jsonl(ROOT / HOLDOUT_SRC)
+    holdout_prompts = {normalize(prompt_of(r)) for r in holdout if prompt_of(r)}
+    evalset = eval_prompt_set(root=ROOT)
+    # forbidden = held-out eval prompts ∪ the local holdout prompts
+    forbidden = set(evalset) | holdout_prompts
+
+    packs: dict[str, dict] = {}
+    all_train: list[dict] = []
+    dropped_total = 0
+
+    for rel, name, kind in SFT_SOURCES + DPO_SOURCES:
+        rows = _read_jsonl(ROOT / rel)
+        # DECONTAMINATE: drop any row whose prompt collides with eval/holdout.
+        clean_rows, dropped = [], 0
+        for r in rows:
+            pr = prompt_of(r)
+            if pr and normalize(pr) in forbidden:
+                dropped += 1
+            else:
+                clean_rows.append(r)
+        dropped_total += dropped
+        packs[name] = {"source": rel, "kind": kind, "rows": len(clean_rows),
+                       "present": bool(rows), "droppedForDecontamination": dropped}
+        if clean_rows:
+            all_train.extend(clean_rows)
+            if not check_only:
+                _write_jsonl(OUT / name, clean_rows)
+
+    if holdout and not check_only:
+        _write_jsonl(OUT / "holdout.jsonl", holdout)
+
+    # --- fail-closed guard: after decontamination, train MUST be disjoint ---
+    contam = check_contamination(all_train, evalset, root=ROOT)
+    holdout_overlap = [prompt_of(r) for r in all_train
+                       if prompt_of(r) and normalize(prompt_of(r)) in holdout_prompts]
+
+    manifest = {
+        "schema": "sophia.local_sophia_dataset.v2",
+        "trainingGoal": "local verifier-gated wisdom model — NOT AGI",
+        "baseModel": BASE_MODEL,
+        "packs": packs,
+        "holdout": {"source": HOLDOUT_SRC, "rows": len(holdout)},
+        "trainRowsTotal": len(all_train),
+        "recommendedMix": {  # documented target ratios (see training doc)
+            "sft_source_discipline": 0.30, "sft_council_traces": 0.20,
+            "moral_gate_sft": 0.15, "tool_use_mcp": 0.15,
+            "dpo_hard_negatives": 0.10, "general_instruction_retention": 0.10,
+        },
+        "missingRequiredInputs": MISSING_REQUIRED,
+        "excluded": ["benchmark/eval holdouts", "hidden-eval packs", "API keys",
+                     "unverified self-generated answers"],
+        "baseline": None,  # fill via tools/eval_ladder.py on your hardware BEFORE training
+        "promotionRule": "promote only if provenance/citation improves at acceptable "
+                         "false-positive cost (no useful-correctness regression).",
+        "contamination": {
+            "droppedForDecontamination": dropped_total,
+            "vsEval": contam,
+            "vsHoldoutOverlapCount": len(holdout_overlap),
+            "clean": contam["clean"] and not holdout_overlap,
+        },
+        "claimBoundary": "Trains behavioral discipline, not general intelligence. "
+                         "External MCP/verifier gates enforce correctness at runtime.",
+    }
+
+    if not check_only:
+        _write_jsonl  # noqa
+        (OUT).mkdir(parents=True, exist_ok=True)
+        (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
+                                           encoding="utf-8")
+
+    print(json.dumps({k: manifest[k] for k in
+                      ("trainRowsTotal", "missingRequiredInputs", "contamination")}, indent=2))
+
+    if not manifest["contamination"]["clean"]:
+        print("::error:: CONTAMINATION — training prompts overlap eval/holdout. Fail-closed.")
+        return 1
+    print("contamination guard: CLEAN" + ("  (check-only)" if check_only else f"  → wrote {OUT}"))
+    return 0
+
+
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--check", action="store_true", help="guard only; no writes (CI)")
+    return build(ap.parse_args(argv).check)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
