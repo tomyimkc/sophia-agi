@@ -1,0 +1,75 @@
+{
+  "schema": "sophia.preregistration.v1",
+  "experimentId": "sophia-7b-train-verify",
+  "registeredAt": "2026-06-25",
+  "status": "OPEN",
+  "canClaimAGI": false,
+  "baseModel": "Qwen/Qwen2.5-7B-Instruct",
+  "trainingRecipe": {
+    "method": "QLoRA 4-bit",
+    "epochs": 2,
+    "maskPrompt": true,
+    "seeds": [0, 1, 2],
+    "minSeedsForCitedNumbers": 3
+  },
+  "oracleSplit": "agi-proof/sophia-7b-train-verify/oracle-split.md",
+  "holdoutSeal": "agi-proof/sophia-7b-train-verify/heldout-seal.manifest.json",
+  "trainingOracle": {
+    "label": "release gate — NOT third-party evidence",
+    "components": [
+      "eval_ladder CONTENT channel",
+      "promote_adapter W2 protected floor",
+      "invariant_suite + godel_oracle solverChecked",
+      "run_positive_control",
+      "moral_gate SFT + hard-negative DPO"
+    ]
+  },
+  "evidenceOracle": {
+    "label": "disjoint third-party verification",
+    "lead": "Vectara HHEM",
+    "secondary": [
+      "hidden reviewer pack (hidden_eval_protocol)",
+      "HF Open LLM Leaderboard (context)",
+      "Artificial Analysis (context)"
+    ],
+    "explicitlyExcludedLead": "LMArena"
+  },
+  "thresholds": {
+    "vectaraHHEM": {
+      "metric": "hallucination_rate_pct",
+      "ceiling": 12.0,
+      "note": "Adapter mean across ≥3 seeds must be ≤ ceiling; baseline recorded before training"
+    },
+    "hiddenPackCalibration": {
+      "metric": "calibration_delta_pct",
+      "minimum": 10.0,
+      "ciExcludesZero": true,
+      "minRuns": 3,
+      "note": "sophia-full vs raw on third-party or reviewer-controlled pack"
+    },
+    "mmluPro": {
+      "metric": "accuracy_delta_vs_base",
+      "maxRegression": 2.0,
+      "note": "Adapter must not regress >2.0 points vs base on MMLU-Pro (honest abstention tradeoff)"
+    },
+    "internalReleaseGate": {
+      "metric": "promote_adapter verdict",
+      "require": "promote on ≥1 seed without protected-suite regression",
+      "solverChecked": true,
+      "notCountedAsEvidence": true
+    }
+  },
+  "successRules": [
+    "All evidence-oracle thresholds met with ≥3 seeds / CI excluding 0 where applicable",
+    "build_local_sophia_dataset.py --check remains CLEAN",
+    "Holdout seal verify passes",
+    "lint_claims.py OK; canClaimAGI stays false"
+  ],
+  "failureRules": [
+    "Any protected-suite regression (religion/history) on promote_adapter → reject adapter",
+    "Holdout seal mismatch or train/eval contamination → abort and ledger",
+    "Evidence oracle blocked (no API keys) → record blocker; do not cite training-oracle as substitute",
+    "MMLU-Pro regression >2.0 points → headline claim withdrawn even if internal gate passes"
+  ],
+  "claimBoundary": "Behavioral discipline + verifier-gated habits on Qwen2.5-7B — NOT AGI, NOT zero hallucination"
+}
