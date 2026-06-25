@@ -6,11 +6,21 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB_DATA = ROOT / "web" / "data" / "manifest.json"
 DOMAINS = ("philosophy", "psychology", "history", "religion", "personality")
+
+# Items mentioning the training method/recipe are kept OFF the public manifest
+# (see tools/lint_web_privacy.py for the published-site privacy policy).
+_TRAINING_DETAIL_RE = re.compile(r"RLVR|pass@1|reward model|fine[\s\-]?tun", re.I)
+
+
+def _sanitize_required(items: list) -> list:
+    """Drop required-proof items that would reveal the training method."""
+    return [item for item in items if not _TRAINING_DETAIL_RE.search(str(item))]
 
 
 def _rag_chunk_count() -> int:
@@ -45,6 +55,11 @@ def main() -> int:
 
     models = _models_meta()
     agi_proof = _agi_proof_meta()
+    # Public-safe manifest only. Intentionally EXCLUDES training/architecture
+    # details (base model, adapter/LoRA path, internal module map / artifactIndex,
+    # training-pipeline runners). The site renders results + the claim boundary,
+    # not how the system is built. The web privacy guard enforces this.
+    score_pct = models.get("benchmarkScore", {}).get("scorePct")
     payload = {
         "version": version,
         "trainingExamples": examples,
@@ -52,17 +67,10 @@ def main() -> int:
         "leaderboards": leaderboards,
         "rag": {
             "indexChunks": _rag_chunk_count(),
-            "backends": ["gemini", "vertex", "claude"],
-            "webEvidenceProviders": ["brave", "tavily", "serpapi"],
-            "webEvidenceDefault": "off-for-hidden-evals",
-            "cli": "python tools/sophia_rag.py",
-            "docs": "docs/09-Agent/Online-RAG.md",
         },
         "localModel": {
-            "name": "sophia-v1",
-            "base": models.get("baseModel", "Qwen/Qwen2.5-3B-Instruct"),
-            "benchmark": models.get("benchmarkScore", {}),
-            "hf": models.get("hfModelRepo", ""),
+            # score only — no base model, adapter path, or model repo
+            "benchmark": {"scorePct": score_pct} if score_pct is not None else {},
         },
         "agiProof": {
             "claimBoundary": agi_proof.get(
@@ -71,74 +79,12 @@ def main() -> int:
             ),
             "proofLadder": agi_proof.get("proofLadder", []),
             "externalBenchmarks": agi_proof.get("externalBenchmarks", []),
-            "requiredProofData": agi_proof.get("requiredProofData", []),
-            "artifactIndex": agi_proof.get("artifactIndex", {}),
+            "requiredProofData": _sanitize_required(agi_proof.get("requiredProofData", [])),
             "docs": "agi-proof/README.md",
-            "manifest": "agi-proof/evidence-manifest.json",
-        },
-        "conscienceKernel": {
-            "claimBoundary": "Candidate moral + epistemic control infrastructure; not proof of AGI.",
-            "verdicts": ["allow", "revise", "retrieve", "clarify", "escalate", "abstain", "block"],
-            "paths": [
-                "agent/conscience.py",
-                "agent/metacognition.py",
-                "constitution/constitution.v1.json",
-                "agent/deontic_verifier.py",
-                "agent/moral_aggregator.py",
-                "agent/constitutional_classifier.py",
-                "agent/deception_signals.py",
-                "sophia_mcp/server.py",
-            ],
-            "docs": "docs/11-Platform/Conscience-Kernel.md",
-            "artifact": "agi-proof/conscience/conscience-eval.public-report.json",
-            "benchmark": "python tools/build_conscience_proof_package.py",
-        },
-        "moralGateV2": {
-            "claimBoundary": "Functional moral-control system grounded in an overlapping-consensus public standard; not subjective moral consciousness and not AGI proof.",
-            "method": "Rawlsian overlapping consensus: cross-tradition hard floor + gray-zone moral parliament (8 theories, Confucian and Daoist kept distinct) + legitimacy provenance (is/ought).",
-            "paths": [
-                "moral_corpus/public_standard.v1.json",
-                "agent/moral_ontology.py",
-                "agent/public_standard_gate.py",
-                "constitution/constitution.v2.json",
-                "agent/moral_aggregator.py",
-            ],
-            "docs": "docs/11-Platform/Public-Moral-Standard.md",
-            "artifact": "agi-proof/conscience/moral-public-standard-eval.public-report.json",
-            "benchmark": "python tools/run_moral_public_standard_eval.py",
-        },
-        "allPhaseBenchmarks": {
-            "claimBoundary": "Candidate all-phase benchmark infrastructure; not AGI proof and not public GPQA/SWE/LiveCodeBench/LMSYS results until real-model validation clears the no-overclaim gate.",
-            "phases": [
-                "SEIB-100",
-                "Belief Revision 50",
-                "AgentBench-Sophia 30",
-                "GPQA-Provenance smoke",
-                "Code Provenance 30",
-                "SEIB-Arena-20 smoke",
-            ],
-            "paths": [
-                "eval/seib/seib_100_v1.jsonl",
-                "eval/belief_revision/belief_revision_50_v1.jsonl",
-                "eval/agentbench_sophia/agentbench_sophia_30_v1.jsonl",
-                "eval/gpqa_provenance/gpqa_provenance_smoke_v1.jsonl",
-                "eval/code_provenance/code_provenance_30_v1.jsonl",
-                "eval/arena/arena_20_v1.jsonl",
-            ],
-            "docs": "docs/11-Platform/Benchmark-Phases.md",
-            "artifact": "agi-proof/benchmark-results/all-phase-benchmarks.public-report.json",
-            "benchmark": "python tools/run_all_phase_benchmarks.py",
-        },
-        "agiKernel": {
-            "claimBoundary": "Missing-pillars mechanisms are candidate infrastructure, not Level-3 AGI evidence.",
-            "docs": "docs/11-Platform/AGI-Missing-Pillars.md",
-            "artifact": "agi-proof/agi-kernel/missing-pillars.public-report.json",
-            "benchmark": "python tools/run_agi_missing_pillars.py",
         },
         "links": {
             "github": "https://github.com/tomyimkc/sophia-agi",
             "huggingface": "https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus",
-            "hfModel": "https://huggingface.co/tomyimkc/sophia-agi-lora-v1",
         },
     }
     WEB_DATA.parent.mkdir(parents=True, exist_ok=True)

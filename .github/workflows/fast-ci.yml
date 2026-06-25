@@ -38,6 +38,9 @@ jobs:
       - name: Attribution + training-example validation
         run: python tools/validate_attribution.py
 
+      - name: Web privacy guard (no training/architecture leaks on the public site)
+        run: python tools/lint_web_privacy.py
+
       - name: Core unit tests (fast, dependency-free)
         run: |
           python tests/test_skills.py

@@ -77,7 +77,7 @@
         <a href="#method">III. Methodology</a>
         <a href="#council-ui">IV. UI Council</a>
         <a href="#results">V. Benchmark Results</a>
-        <a href="#agent">VI. Agent Architecture</a>
+        <a href="#agent">VI. The Agent</a>
         <a href="#online-rag">VII. Online RAG</a>
         <a href="#agi-proof">VIII. AGI Proof Package</a>
         <a href="#conscience">IX. Conscience Kernel</a>
@@ -101,11 +101,11 @@
           becomes “eternal heaven.” <strong>Sophia</strong> (σοφία, wisdom) is an open provenance corpus + a
           <strong>verifier gate</strong> that enforces <em>source discipline</em> before reasoning — and <strong>abstains</strong>
           rather than fabricate. Validated: 0% fabrication on genuine “I don’t know” traps (raw models 17–25%); a 12.5-point
-          reduction in hallucinated attributions on an 8B local model at 0% false-positive cost. Current public claim: an
+          reduction in hallucinated attributions on a local model at 0% false-positive cost. Current public claim: an
           <strong>AGI-candidate proof package</strong>, not proven AGI.
         </p>
         <div class="zh-block">
-          <strong>中文摘要：</strong>大型語言模型常混淆思想系譜。Sophia 是開源的「來源紀律」語料庫 + 驗證閘道：寧可<strong>棄答</strong>，也不虛構。陷阱問題 0% 虛構（原始模型 17–25%）；8B 模型幻覺歸因降低 12.5 個百分點（0% 假陽性）。目前公開主張：AGI 候選證明包，而非已證明 AGI。
+          <strong>中文摘要：</strong>大型語言模型常混淆思想系譜。Sophia 是開源的「來源紀律」語料庫 + 驗證閘道：寧可<strong>棄答</strong>，也不虛構。陷阱問題 0% 虛構（原始模型 17–25%）；本地模型幻覺歸因降低 12.5 個百分點（0% 假陽性）。目前公開主張：AGI 候選證明包，而非已證明 AGI。
         </div>
         <div id="stats" class="stats"></div>
       </section>
@@ -121,7 +121,7 @@
         </p>
         <p>
           Sophia treats each trap as measurable. Validated: the gate fabricates <strong>0%</strong> on genuine unknown-answer
-          questions where raw models fabricate 17–25%. On a real 8B local model it cuts hallucinated attributions
+          questions where raw models fabricate 17–25%. On a real local model it cuts hallucinated attributions
           <strong>36.1% → 23.6%</strong> (Δ 12.5%, 95% CI [5.6%, 19.4%]) at 0% false-positive cost. It is a filter that reduces
           harm — <em>not</em> a guarantee, and not a substitute for human oversight.
         </p>
@@ -159,8 +159,8 @@
         <h3>3.1 Data layer</h3>
         <p>
           Structured JSON in <code>data/</code>: <code>attributions.json</code>, <code>psychology_concepts.json</code>,
-          <code>religion_concepts.json</code>, <code>traditions.json</code>. <strong>528</strong> bilingual training examples in
-          <code>training/examples/</code> export to <code>corpus.jsonl</code> on Hugging Face.
+          <code>religion_concepts.json</code>, <code>traditions.json</code>. <strong>528</strong> bilingual examples are
+          published as <code>corpus.jsonl</code> on Hugging Face.
         </p>
         <h3>3.2 Benchmark layer</h3>
         <p>
@@ -169,12 +169,12 @@
           responses score 100% on all domains; external models run on the same harness. Every <em>headline</em> number must
           clear the no-overclaim gate (≥2 judge families, κ ≥ 0.40, ≥3 runs, confidence intervals).
         </p>
-        <h3>3.3 Agent layer</h3>
+        <h3>3.3 Gate layer</h3>
         <p>
-          Three paths — <em>advisor</em>, <em>repo</em>, <em>life</em> — share a curated RAG index, a configured LLM backend
-          (Anthropic / OpenAI-compatible / local), an epistemic self-check, and provenance-gated decision memory. Local LoRA
-          <strong>sophia-v1</strong> (Qwen2.5-3B) scores <strong>20/23 (87%)</strong>; curated <strong>RAG + Claude</strong>
-          scores <strong>22/23 (96%)</strong> on the same harness.
+          Every answer passes an epistemic gate that checks source-discipline markers before release. On the same
+          marker-based harness, the local model scores <strong>20/23 (87%)</strong> and curated <strong>RAG + Claude</strong>
+          scores <strong>22/23 (96%)</strong>. Implementation details of the model and training are kept out of this public
+          thesis; the deliverable here is the measured behaviour, not the build recipe.
         </p>
       </section>
 
@@ -211,35 +211,26 @@
 
       <section id="agent" class="chapter">
         <div class="chapter-label">Chapter VI</div>
-        <h2>Agent architecture: three decision paths</h2>
-        <table>
-          <tr><th>Path</th><th>Role</th><th>CLI</th></tr>
-          <tr><td><strong>Advisor</strong></td><td>Project, corpus, benchmark, growth</td><td><code>sophia_agent.py advisor</code></td></tr>
-          <tr><td><strong>Repo</strong></td><td>Automation + approved tools</td><td><code>sophia_agent.py repo --execute --approve</code></td></tr>
-          <tr><td><strong>Life</strong></td><td>General decisions + guardrails</td><td><code>sophia_agent.py life</code></td></tr>
-        </table>
+        <h2>The agent: gated, multi-mode, human-approved</h2>
         <p>
-          Pipeline: <strong>question → curated RAG → LLM → epistemic gate → provenance-gated memory</strong>. Repo tools
-          (validate, export, benchmark, HF upload) execute only with an explicit <code>--approve</code>.
+          Sophia runs as an agent with several decision modes, each constrained by the same epistemic gate: a claim is
+          verified against curated sources before it is accepted, and actions that change state require explicit human
+          approval. The point this thesis defends is <em>behavioural</em> — grounded answers, abstention over fabrication,
+          and a fail-closed posture. The internal architecture and operational wiring are intentionally kept out of the
+          public site.
         </p>
       </section>
 
       <section id="online-rag" class="chapter">
         <div class="chapter-label">Chapter VII</div>
-        <h2>Online RAG: Gemini API &amp; Vertex AI</h2>
+        <h2>Curated retrieval, no open-web grounding</h2>
         <p>
-          Curated online RAG — <em>no open-web grounding</em>. Retrieval uses a pre-built index (benchmark holdouts excluded)
-          over data, disputes, domain docs, reference answers, and teacher examples. Generation runs on Gemini (local MVP) or
-          Vertex AI (Cloud Run), with a Claude fallback and the same epistemic gate as the agent CLI.
+          Retrieval is restricted to a <em>curated</em> index (benchmark holdouts excluded) over the project's data,
+          disputes, domain docs, reference answers, and examples — <strong>no open-web grounding</strong>. Whatever backend
+          generates the answer, it passes the same epistemic gate before release. This keeps the system's claims tied to
+          vetted sources rather than the live internet.
         </p>
-        <table>
-          <tr><th>Component</th><th>Path</th></tr>
-          <tr><td>Build index</td><td><code>python tools/build_rag_index.py</code></td></tr>
-          <tr><td>CLI + gate</td><td><code>python tools/sophia_rag.py "…"</code></td></tr>
-          <tr><td>HTTP API</td><td><code>services/rag_api/</code> — <code>POST /ask</code></td></tr>
-          <tr><td>LoRA adapter</td><td><a href="https://huggingface.co/tomyimkc/sophia-agi-lora-v1" target="_blank" rel="noopener">tomyimkc/sophia-agi-lora-v1</a></td></tr>
-        </table>
-        <div class="zh-block"><strong>中文：</strong>線上 RAG 僅檢索審定語料（非開放網路），經 Gemini 或 Vertex 生成後再過史源關卡；本地 LoRA 模型 sophia-v1 評測 20/23。</div>
+        <div class="zh-block"><strong>中文：</strong>線上 RAG 僅檢索審定語料（非開放網路），生成後再過史源關卡，確保主張繫於已審定來源而非即時網路。</div>
       </section>
 
       <section id="agi-proof" class="chapter">
@@ -274,24 +265,16 @@
         <h2>Moral + epistemic Conscience Kernel</h2>
         <p>
           Sophia includes a deterministic, fail-closed <strong>candidate Conscience Kernel</strong> that governs AI output, tool
-          calls, and trusted-memory writes. It returns <code>allow</code>, <code>revise</code>, <code>retrieve</code>,
-          <code>clarify</code>, <code>escalate</code>, <code>abstain</code>, or <code>block</code> by composing fact-checking,
-          metacognition, constitutional prohibitions, deontic hard rules, moral-uncertainty aggregation, a constitutional
-          classifier, and deception signals.
+          calls, and trusted-memory writes. It returns one of seven verdicts — <code>allow</code>, <code>revise</code>,
+          <code>retrieve</code>, <code>clarify</code>, <code>escalate</code>, <code>abstain</code>, or <code>block</code> —
+          combining fact-checking, constitutional limits, and moral-uncertainty handling. The published view is this
+          decision interface and its boundary; the internal composition lives in the repository, not on this site.
         </p>
         <div class="proof-boundary">
           Boundary: this is moral + epistemic control infrastructure for an AGI-candidate system; it is not proof of AGI and does
           not change <code>canClaimAGI = false</code>.
         </div>
-        <table>
-          <tr><th>Layer</th><th>Repo path</th></tr>
-          <tr><td>Conscience benchmark</td><td><code>python tools/run_conscience_demo.py</code></td></tr>
-          <tr><td>Seven-path docs</td><td><code>docs/11-Platform/Conscience-Kernel.md</code></td></tr>
-          <tr><td>MCP tools</td><td><code>sophia_conscience_check</code>, <code>sophia_deontic_check</code>, <code>sophia_deception_check</code></td></tr>
-          <tr><td>Candidate artifacts</td><td><code>agi-proof/conscience/</code>, <code>agi-proof/agi-kernel/</code></td></tr>
-        </table>
         <p class="links">
-          <a href="https://github.com/tomyimkc/sophia-agi/blob/main/docs/11-Platform/Conscience-Kernel.md" target="_blank" rel="noopener">Conscience docs</a>
           <a href="https://github.com/tomyimkc/sophia-agi/tree/main/agi-proof/conscience" target="_blank" rel="noopener">Conscience artifact</a>
         </p>
         <div class="zh-block"><strong>中文：</strong>Conscience Kernel 是七路徑的道德與認知控制層：能決定允許、修改、查證、澄清、升級、棄答或封鎖；它是 AGI-candidate 基礎設施，不是已證明 AGI。</div>
