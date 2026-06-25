@@ -4,7 +4,7 @@ Failures are claim evidence. They show where the system is not AGI.
 
 | Failure ID | Status | Claim impact | Required response |
 |---|---|---|---|
-| external-benchmarks-not-run | Open | Blocks expert AGI claim | Keep wording at AGI-candidate |
+| external-benchmarks-not-run | Partial (one pilot run) | W5 DONE (pilot): GSM8K-STYLE 10-item numeric exact-match, raw vs sophia-full, 3 seeds, DeepSeek `deepseek-v4-pro`. Both arms 100%; **Δ = 0.000, 95% CI [0.000,0.000] — NULL/tie** (base at ceiling on trivial items). Gate fired 30/30 on STYLE/format grounds only (no numeric violations), gate-coverage cost on correctness = 0. Artifacts: `agi-proof/external-benchmarks/w5-gsm8k-style-pilot-2026-06-26.*`. NOT official GSM8K; foothold plumbing pilot, `_is_validated`=false. | Run the licensed GSM8K/ARC set at larger N so the CI moves off ceiling; keep wording at AGI-candidate. `canClaimAGI` stays false. |
 | hidden-review-third-party-not-run | Open | Blocks independent hidden generalization claim | Run third-party packs |
 | hidden-prepared-pack-grok-cli-2026-06-19 | Open | Preliminary hidden run only: 28.75/40 auto score, 2/8 strict pass | Improve strict pass rate; run fresh third-party hidden pack |
 | hidden-fresh-pack-sophia-grok-2026-06-19 | Open | Full hidden-run artifact exists, but backend produced 0/8 nonempty answers; not valid evidence of reasoning competence | Fix Grok/session/network execution and run a new unspent hidden pack |

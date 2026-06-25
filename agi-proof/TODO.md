@@ -89,7 +89,7 @@ that Sophia is proven AGI.
 - [ ] Run GAIA-style tool-using assistant tasks.
 - [ ] Run SWE-bench-style repository tasks.
 - [ ] Run expert-blinded philosophy/psychology/history/religion tests.
-- [ ] Publish setup, commit hash, model/backend versions, and raw aggregate scores.
+- [x] Publish setup, commit hash, model/backend versions, and raw aggregate scores. (W5 pilot 2026-06-26: GSM8K-style 10-item, raw vs sophia-full, 3 seeds, DeepSeek; Δ=0.0 null, CI [0,0]; `agi-proof/external-benchmarks/w5-gsm8k-style-pilot-2026-06-26.REPORT.md`. Style sample, not official GSM8K.)
 
 ## Third-Party Reproduction
 
@@ -129,7 +129,7 @@ evidence runs that need either a live backend or an external human.
 - [ ] Fresh independent hidden pack is needed; the current diagnostic packs are spent. W1 live-backend execution-health run 2026-06-26 is artifact-backed, but it used a self-authored pack and therefore does **not** close this independent-pack gap (`agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.public.json`). The earlier v1 artifact-retention failure is also recorded (`agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1.invalid-run-summary.json`).
 - [ ] Manual semantic review is still required for strict hidden-test claims.
 - [~] Ablation deltas produced on a live backend (W2 2026-06-26, DeepSeek, 3 seeds: sophia-full fabrication Δ +0.111, CI excludes 0, deterministic scorer). Independent-judge validation still blocked (no non-DeepSeek judge keys). Learning-shift deltas still not run.
-- [ ] External benchmarks are not yet run.
+- [~] External benchmarks: one GSM8K-STYLE pilot run 2026-06-26 (null Δ, style sample, not validated); official ARC-AGI/GAIA/SWE-bench still not run.
 - [ ] Independent clean-clone replication is not yet run (harness ready; a real
       external reviewer must run and sign it).
 - [ ] Long-horizon 30-minute / 2-hour / 1-day runs not yet executed (harness ready;
