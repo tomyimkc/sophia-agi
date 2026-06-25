@@ -6,7 +6,7 @@
   "canClaimAGI": false,
   "claimBoundary": "CANDIDATE only: deterministic synthetic corpus, mock backend, no hidden non-synthetic eval, and no model-ability or AGI claim.",
   "packId": "long-context-synthetic-seed-1729",
-  "runAt": "2026-06-26T01:16:50",
+  "runAt": "2026-06-26T01:58:42",
   "visibility": "public-aggregate-no-prompts",
   "backend": "mock",
   "backendClaimBoundary": "Recall came from the offline MOCK backend. It validates harness wiring, context packing, and deterministic scoring only; it is not evidence of model long-context ability.",
@@ -268,7 +268,7 @@
           "16384": 0.0
         },
         "meanPromptTokens": 3148.2,
-        "meanWallTimeSec": 0.001688,
+        "meanWallTimeSec": 0.001712,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -300,7 +300,7 @@
           "16384": 1.0
         },
         "meanPromptTokens": 4229.2,
-        "meanWallTimeSec": 0.001736,
+        "meanWallTimeSec": 0.001798,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -332,7 +332,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.000396,
+        "meanWallTimeSec": 0.000405,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -364,7 +364,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.000376,
+        "meanWallTimeSec": 0.000404,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -396,7 +396,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.000386,
+        "meanWallTimeSec": 0.0004,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -428,7 +428,7 @@
           "16384": 1.0
         },
         "meanPromptTokens": 4229.2,
-        "meanWallTimeSec": 0.000393,
+        "meanWallTimeSec": 0.000389,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -460,7 +460,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.002159,
+        "meanWallTimeSec": 0.002229,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -492,7 +492,7 @@
           "16384": 1.0
         },
         "meanPromptTokens": 4215.6,
-        "meanWallTimeSec": 0.001743,
+        "meanWallTimeSec": 0.001795,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -524,7 +524,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.001738,
+        "meanWallTimeSec": 0.001781,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -556,7 +556,7 @@
           "16384": 1.0
         },
         "meanPromptTokens": 4229.2,
-        "meanWallTimeSec": 0.001735,
+        "meanWallTimeSec": 0.001806,
         "totalCalls": 20,
         "costUsd": 0.0
       }

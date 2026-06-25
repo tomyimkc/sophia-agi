@@ -1,7 +1,7 @@
 {
   "schemaVersion": "sophia.intake-eval.v1",
   "status": "candidate",
-  "runAt": "2026-06-25T17:56:02+00:00",
+  "runAt": "2026-06-25T17:58:41+00:00",
   "seed": 1701,
   "visibility": "public-aggregate-no-hidden-prompts",
   "metricDiscipline": "intent-fidelity only; downstream success is reported separately and is not a reward signal",
@@ -113,20 +113,20 @@
     "withIntake": {
       "returncode": 0,
       "answerNonempty": true,
-      "latencySec": 0.000109,
+      "latencySec": 0.000114,
       "costUsd": 0.0
     },
     "withoutIntake": {
       "returncode": 0,
       "answerNonempty": true,
-      "latencySec": 0.000137,
+      "latencySec": 0.000129,
       "costUsd": 0.0
     },
     "claimBoundary": "Mock smoke delta only; candidate plumbing signal, not downstream quality evidence."
   },
   "latencyCost": {
-    "totalSec": 0.00102,
-    "meanSec": 0.000146,
+    "totalSec": 0.001026,
+    "meanSec": 0.000147,
     "costUsd": 0.0,
     "backend": "deterministic_offline"
   },
