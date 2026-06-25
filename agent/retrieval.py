@@ -164,36 +164,77 @@ def _retrieve_keyword(query: str, *, top_k: int = 8) -> list[SourceChunk]:
     return ranked[:top_k]
 
 
-def retrieve(query: str, *, top_k: int = 8) -> list[SourceChunk]:
-    """Retrieve sources — prefers curated `rag/index` when present."""
-    try:
-        from agent.vector_store import index_dir, load_index, search
+def _retrieve_lexical_vector(query: str, *, top_k: int = 8) -> list[SourceChunk]:
+    """Deterministic offline vector retrieval (cosine over hashed n-gram vectors).
 
-        indexed = load_index(index_dir())
-        if indexed:
-            from agent.config import load_dotenv
+    Reproducible, numpy-free, no model/network — the middle tier between the learned
+    embedding path and plain keyword overlap. Preserves the provenance confidence boost.
+    """
+    from agent.lexical_embed import embed, cosine
 
-            load_dotenv()
-            backend = (os.environ.get("SOPHIA_RAG_BACKEND") or "auto").strip().lower()
-            if backend == "vertex":
-                os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
-            query_embedding = None
-            use_vectors = backend in {"gemini", "vertex", "auto"} and indexed[0].embedding is not None
-            if use_vectors:
-                try:
-                    from agent.rag_embed import embed_query
+    query_vec = embed(query)
+    ranked: list[SourceChunk] = []
+    for item in collect_corpus():
+        path_label, title, text = item[0], item[1], item[2]
+        prov = item[3] if len(item) > 3 else None
+        score = cosine(query_vec, embed(f"{title} {text}"))
+        if score <= 0:
+            continue
+        if prov:  # provenance boost: curated, confident wiki pages win over raw dumps
+            score += 0.05 + _CONFIDENCE_BOOST.get(prov.get("author_confidence"), 0.0)
+        excerpt = text[:1200] + ("..." if len(text) > 1200 else "")
+        ranked.append(SourceChunk(
+            path=path_label, title=title, excerpt=excerpt, score=score,
+            page_id=(prov or {}).get("page_id"),
+            tradition=(prov or {}).get("tradition"),
+            author_confidence=(prov or {}).get("author_confidence"),
+            do_not_attribute_to=list((prov or {}).get("do_not_attribute_to") or []),
+        ))
+    ranked.sort(key=lambda c: c.score, reverse=True)
+    return ranked[:top_k]
 
-                    query_embedding = embed_query(query)
-                except Exception:
-                    use_vectors = False
-            return search(
-                query,
-                indexed,
-                top_k=top_k,
-                query_embedding=query_embedding if use_vectors else None,
-            )
-    except Exception:
-        pass
+
+def retrieve(query: str, *, top_k: int = 8, mode: "str | None" = None) -> list[SourceChunk]:
+    """Retrieve sources. Tiers: learned vectors (if a model+index exist) → deterministic
+    offline lexical-vector cosine → keyword overlap. ``mode``/``SOPHIA_RETRIEVAL`` forces a
+    tier ("learned" | "vector" | "keyword"); default "auto" walks the tiers in order."""
+    mode = (mode or os.environ.get("SOPHIA_RETRIEVAL") or "auto").strip().lower()
+
+    if mode in {"auto", "learned", "vertex", "gemini"}:
+        try:
+            from agent.vector_store import index_dir, load_index, search
+
+            indexed = load_index(index_dir())
+            if indexed and indexed[0].embedding is not None:
+                from agent.config import load_dotenv
+
+                load_dotenv()
+                backend = (os.environ.get("SOPHIA_RAG_BACKEND") or "auto").strip().lower()
+                if backend == "vertex":
+                    os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
+                query_embedding = None
+                if backend in {"gemini", "vertex", "auto"}:
+                    try:
+                        from agent.rag_embed import embed_query
+
+                        query_embedding = embed_query(query)
+                    except Exception:
+                        query_embedding = None
+                if query_embedding is not None:
+                    return search(query, indexed, top_k=top_k, query_embedding=query_embedding)
+        except Exception:
+            pass
+        if mode != "auto":  # caller explicitly asked for learned; do not silently fall through
+            return _retrieve_keyword(query, top_k=top_k)
+
+    if mode in {"auto", "vector", "lexical"}:
+        try:
+            ranked = _retrieve_lexical_vector(query, top_k=top_k)
+            if ranked or mode != "auto":
+                return ranked
+        except Exception:
+            pass
+
     return _retrieve_keyword(query, top_k=top_k)
 
 
