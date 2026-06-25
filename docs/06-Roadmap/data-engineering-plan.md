@@ -32,7 +32,7 @@ catalog), importable from `agent/` so it stays consistent with the trust-layer v
 |---|-------|-------|--------------|--------|
 | 0 | Foundation & contracts | `pipeline/` pkg, document schema, manifest, fixtures | all | ✅ done |
 | 1 | Quality scoring | `quality_score.py`, `link_priority.py`, `tools/score_corpus.py` | 采集 pipeline (链接质量预估/数据优先级) | ✅ done |
-| 2 | Dedup & URL hygiene | MinHash-LSH, vector near-dup, URL canonicalization | 采集 / 语言数据 (MinHash/向量去重/链接规模控制) | ⏳ next |
+| 2 | Dedup & URL hygiene | MinHash-LSH, vector near-dup, URL canonicalization | 采集 / 语言数据 (MinHash/向量去重/链接规模控制) | ✅ done |
 | 3 | Columnar & regression | DuckDB/Parquet corpus stats, quality-regression gate | 语言数据处理 (质量回归) | ⏳ |
 | 4 | Acquisition loop | async crawler, priority frontier, CommonCrawl WARC ingest | 采集 pipeline (全网采集环路) | ⏳ |
 | 5 | Scale proof & infra | object-store shards, KV seen-set, queue, RESULTS numbers | 数据基建 (TB tokens) | ⏳ |
@@ -53,11 +53,16 @@ catalog), importable from `agent/` so it stays consistent with the trust-layer v
 - `tools/score_corpus.py` — CLI: score a JSONL batch, emit a quality histogram + priority report.
 - **Acceptance:** low-trust/boilerplate docs score below curated docs; deterministic; tested.
 
-### Phase 2 — Dedup & URL hygiene (MinHash / 向量去重 / 链接规模控制)
-- `pipeline/url_canonical.py` — strip tracking params, normalize, mirror/site-cluster detect.
-- `pipeline/dedup/minhash.py` — MinHash-LSH near-dup (datasketch).
-- `pipeline/dedup/vector.py` — embedding near-dup via `agent/rag_local_embed.py` (airgap-safe).
-- **Acceptance:** known-dup recall/precision reported; param-variant + mirror URLs collapse.
+### Phase 2 — Dedup & URL hygiene (MinHash / 向量去重 / 链接规模控制) ✅
+- `pipeline/url_canonical.py` — strip tracking/session params, normalize host/scheme/port/slash,
+  collapse URL variants (`canonical_clusters`).
+- `pipeline/dedup/minhash.py` — MinHash + LSH near-dup, **pure stdlib** (no datasketch);
+  stable `blake2b` hashing, deterministic; estimate tracks true Jaccard within ~0.003 on test.
+- `pipeline/dedup/vector.py` — embedding near-dup via `agent/rag_local_embed.py` (airgap-safe;
+  numpy optional, `available()` guard + MinHash fallback).
+- `pipeline/dedup/__init__.py` — `dedup_documents` stage: canonicalize → MinHash cluster →
+  set `doc['dedup']`, keep one per cluster, report dedup ratio. Wired into `tools/score_corpus.py --dedup`.
+- **Done:** mirror pair in fixtures detected & removed; param-variant URLs collapse; tests green.
 
 ### Phase 3 — Columnar & quality regression (duckdb / 质量回归)
 - Rewrite `tools/corpus_stats.py` over DuckDB/Parquet (SQL token/lang/quality histograms).

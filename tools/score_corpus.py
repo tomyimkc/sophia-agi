@@ -25,6 +25,7 @@ if str(ROOT) not in sys.path:
 
 from pipeline import document as docmod  # noqa: E402
 from pipeline import link_priority, manifest, quality_score  # noqa: E402
+from pipeline.dedup import dedup_documents  # noqa: E402
 
 
 def _print_histogram(docs: list[dict]) -> None:
@@ -55,18 +56,33 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--keep-threshold", type=float, default=quality_score.DEFAULT_KEEP_THRESHOLD)
     ap.add_argument("-k", type=int, default=2, help="independent-corroboration floor (poison gate)")
     ap.add_argument("--base-quota", type=int, default=100)
+    ap.add_argument("--dedup", action="store_true", help="run URL+MinHash dedup before scoring")
+    ap.add_argument("--dedup-threshold", type=float, default=0.8)
     ap.add_argument("--quiet", action="store_true", help="suppress per-document reasons")
     args = ap.parse_args(argv)
 
     raw = list(docmod.read_jsonl(args.input))
     bad = 0
-    docs: list[dict] = []
+    valid: list[dict] = []
     for i, doc in enumerate(raw):
         problems = docmod.validate(doc)
         if problems:
             bad += 1
             print(f"[skip] row {i}: {problems[0]}", file=sys.stderr)
             continue
+        valid.append(doc)
+
+    pre_dedup = len(valid)
+    if args.dedup:
+        result = dedup_documents(valid, threshold=args.dedup_threshold)
+        valid = result["kept"]
+        print(
+            f"Dedup: kept {result['stats']['kept']}/{result['stats']['input']} "
+            f"(removed {result['stats']['removed']}, ratio {result['stats']['dedupRatio']:.3f})"
+        )
+
+    docs: list[dict] = []
+    for doc in valid:
         doc["quality"] = quality_score.score_document(
             doc, k=args.k, keep_threshold=args.keep_threshold
         )
@@ -88,7 +104,7 @@ def main(argv: list[str] | None = None) -> int:
         n = docmod.write_jsonl(args.out, docs)
         print(f"\nWrote {n} scored docs -> {args.out}")
     if args.manifest:
-        m = manifest.build_manifest(docs, shard_path=args.out, pre_dedup_count=len(raw))
+        m = manifest.build_manifest(docs, shard_path=args.out, pre_dedup_count=pre_dedup)
         manifest.write_manifest(args.manifest, m)
         print(f"Wrote manifest -> {args.manifest}")
     return 0
