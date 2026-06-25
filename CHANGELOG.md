@@ -4,6 +4,8 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-06-25
+
 ### Added — runtime trust-layer wiring + measurement arc
 
 - **Graded answer/hedge/abstain router wired live** (`agent/grounded_agent.grounded_answer(graded=True)`
