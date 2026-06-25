@@ -22,6 +22,7 @@ train-error.log
 train-out.txt
 agent/memory/*.jsonl
 agent/memory/agent_runs/
+agent/memory/task_ledgers/
 agent/memory/legal_cache.json
 # live governance-contract stores (claims/decisions/tasks/traces)
 agent/memory/contract/

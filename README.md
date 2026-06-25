@@ -310,7 +310,10 @@ python tools/sophia_agent.py repo "What should I do next?" --execute --approve
 python tools/sophia_agent.py life "Should I prioritize corpus or marketing?"
 ```
 
-See [docs/09-Agent/Sophia-Agent.md](docs/09-Agent/Sophia-Agent.md).
+See [docs/09-Agent/Sophia-Agent.md](docs/09-Agent/Sophia-Agent.md). For where the
+harness is headed — context management, subagent delegation, long-horizon execution,
+and the model↔harness co-evolution loop — see
+[docs/09-Agent/Harness-Roadmap.md](docs/09-Agent/Harness-Roadmap.md).
 
 ## Online RAG (Gemini / Vertex)
 
