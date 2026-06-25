@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 # Held-out sets that training must never overlap.
-EVAL_GLOBS = ["eval/**/*.jsonl"]
+EVAL_GLOBS = ["eval/**/*.jsonl", "data/wisdom_market_benchmark/*.jsonl"]
 EVAL_PACKS = ["agi-proof/baseline-ablation/abstain-pack-2026-06-22.json"]
 
 
