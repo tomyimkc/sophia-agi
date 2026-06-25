@@ -356,3 +356,262 @@ and C2 religion-repair retrain on Apple Silicon. **Not AGI claims; not validated
 **Claim impact:** Wires conscience + promotion seam + REM wake demo; v4 shows first-party ladder
 gain on religion repair data with W2 promote verdict. Not validated external evidence or AGI.
 `python tools/lint_claims.py` passes.
+
+### Format-fitting caveat (reviewer defect #2, 2026-06-25)
+
+The v4 religion combined uplift **1/6 → 2/6** may reflect **council-panel FORMAT learning**
+rather than substantive content repair:
+
+- On re-score with split channels (`tools/rescore_religion_channels.py`), v4 vs Qwen2.5-3B baseline:
+  - **FORMAT:** 1/6 → 2/6 (+1 case)
+  - **CONTENT:** 5/6 → 5/6 (**no change**)
+  - **Combined:** 1/6 → 2/6 (+1 case)
+- Of 6 religion cases, **4/6** combined failures on v4 are format-graded (`mustUseCouncilPanel`);
+  the 12 `religion_repair_c4.jsonl` traces teach that panel structure explicitly.
+- Entity-level decontamination remains CLEAN (`evalOverlapCount=0`), but the eval conflated
+  format compliance with content correctness until Task 4 split the scorer.
+- **Confidence in religion uplift is lowered** until a retrain targets CONTENT channel ≥3/6
+  without format-only Goodhart. Artifact: `agi-proof/religion-channel-rescore/religion-channels.public-report.json`.
+
+## agi-pilots-feasibility-review-2026-06-25
+
+**Status:** CANDIDATE INFRASTRUCTURE (`candidateOnly: true`, `level3Evidence: false`).
+
+**Task 1 — Crucible determinism:**
+
+- Added `--seed` (default 0) to `tools/run_crucible_arena.py`; generality stub uses `zlib.crc32`
+  instead of salted `hash()`; `seed` recorded in arena report.
+- Two consecutive `--seed 0` runs produce **byte-identical** JSON; `topFitness: 0.8286` reproducible.
+- Regenerated `agi-proof/embryogenesis-crucible/crucible-arena.public-report.json`.
+
+**Task 3 — Promotion loop default-deny:**
+
+- `approve_projection_candidate()` + idempotent `commit_approved_candidate()`; full body stored at submit.
+- Demo: `tools/run_promotion_loop_demo.py` → `agi-proof/promotion-loop/promotion-loop.public-report.json`
+- Tests: default-deny + approve-once idempotent commit.
+
+**Task 4 — Religion FORMAT vs CONTENT channels:**
+
+- `score_case_format` / `score_case_content` / `score_case_channels` in `agent/benchmark_checks.py`
+- `tools/rescore_religion_channels.py` on committed v4 artifacts:
+  - baseline FORMAT 1/6, CONTENT 5/6; v4 FORMAT 2/6, CONTENT 5/6
+  - **Honest finding:** v4 combined +1 is **format-only**; content channel flat.
+
+**Task 5 — Full retrain:** deferred pending Task 4 completion (now unblocked); requires GPU session.
+
+## agi-pilots-task5-v5-full-retrain-2026-06-25
+
+**Status:** HONEST NEGATIVE on religion CONTENT target (`candidateOnly: true`, `level3Evidence: false`).
+
+**Train (Apple Silicon, mlx_lm, 500 iters):**
+
+- Pack: `training/local_sophia_v2/mlx` (751 train / 89 valid, contamination CLEAN)
+- Adapter: `training/mlx_adapters/sophia-v5-full-religion-repair` (gitignored weights)
+- Final train loss `0.695`, final val loss `1.838`, peak mem `22.203 GB`
+
+**Eval ladder (combined channel, legacy):**
+
+- Base `16/32 = 50.0%` → adapter `21/32 = 65.6%` (delta `+15.6%`)
+- Religion **1/6 → 1/6** (no combined uplift; below aspirational **3/6**)
+- History `5/8 → 5/8` (protected, no regression)
+
+**Split-channel rescore** (`agi-proof/religion-channel-rescore/religion-channels-v5.public-report.json`):
+
+- vs Qwen2.5-3B baseline: FORMAT **1→2**, CONTENT **5→4** (regression), combined **1→1**
+- **Target not met:** CONTENT channel **4/6 < 3/6** goal was wrong direction — content regressed
+- v4 smoke (50 iters) had CONTENT 5/6; full train **hurt** content while adding format cases
+
+**W2 promotion gate:**
+
+- `tools/promote_adapter.py`: **promote** (no protected regression vs baseline ladder)
+- Artifact: `agi-proof/continual-plasticity/sophia-v5-full-religion-repair-promotion.public-report.json`
+- Honest caveat: promote reflects baseline-relative protected floors, not religion CONTENT success
+
+**Claim impact:** Full retrain does not validate religion repair; format/content split exposed
+content regression. Not AGI. Do not retrain-to-fit without new content-focused traces.
+
+## religion-repair-lora-path-falsified-2026-06-25
+
+**Status:** Closed / Falsified (`candidateOnly: true`, `level3Evidence: false`).
+
+**Three-channel religion ladder (Qwen2.5-3B baseline → v4 50-iter → v5 500-iter):**
+
+| Run | FORMAT | CONTENT | COMBINED |
+|---|---|---|---|
+| Baseline | 1/6 | 5/6 | 1/6 |
+| v4 smoke (50 iter) | 2/6 (+1) | 5/6 (0) | 2/6 (+1) |
+| v5 full (500 iter) | 2/6 (+1) | 4/6 (−1) | 1/6 (0) |
+
+N=6 ⇒ ±1/6 is within noise; the v5 CONTENT regression is still a protected-floor breach
+under the corrected CONTENT-channel gate.
+
+**Corrected W2 gate (CONTENT + invariant oracle):**
+
+- Legacy COMBINED-only gate: **promote** (false positive — blind to CONTENT regression)
+- Corrected gate: **reject** — `protected_floor_content` breached (religion CONTENT 5/6 → 4/6)
+- Proof bundle: `agi-proof/self-gate/invariant-suite.local-sophia-v5-full-religion-repair-mlx.public-report.json`
+
+**Conclusion:** Weight-training on 12 council-panel religion repair traces is the **wrong
+lever** for this benchmark. FORMAT uplift is inference-time structure (council prompt /
+gate), not LoRA weights. CONTENT channel did not improve and regressed under full train.
+v4/v5 artifacts retained for audit. **Do not retrain religion repair LoRA.**
+
+**Claim impact:** Falsifies the religion-repair LoRA hypothesis. `canClaimAGI: false`.
+
+## okf-local-global-consistency-2026-06-25
+
+**Status:** CANDIDATE INFRASTRUCTURE (`candidateOnly: true`, `level3Evidence: false`).
+
+**Scope:** Syntactic local-global consistency over OKF pages — finds undeclared
+cross-context disagreements (epistemic holes) when the same entity carries
+different asserted claims in different tradition partitions. Declared ``contradicts``
+edges defer to ``contradiction_ledger`` (no double-report). Does **not** decide
+truth or auto-generate training facts.
+
+**Wiki run** (`python3 tools/run_consistency_check.py`):
+
+| Metric | Count |
+|---|---|
+| Contexts (tradition partition) | 17 |
+| Entities spanning >1 context | 0 |
+| Undeclared epistemic holes | 0 |
+| Declared contradictions deferred | 0 |
+
+**Synthetic unit-test gate** (`tests/test_consistency_check.py`):
+
+| Metric | Count |
+|---|---|
+| Holes in fixture graph | 1 |
+| Patch candidates passed provenance gate | 1 |
+| Rejected (no source citation) | 1 |
+
+**Artifacts:** `okf/consistency_check.py`, `tools/run_consistency_check.py`,
+`agi-proof/okf-consistency/consistency.public-report.json`,
+`training/feedback/epistemic_holes.jsonl` (queue; empty on wiki until holes appear).
+
+**Claim impact:** Consistency escalation only; `canClaimAGI: false`. No adapter
+promotion or protected-suite change.
+
+## okf-referent-attribution-consistency-2026-06-25
+
+**Status:** CANDIDATE INFRASTRUCTURE (`candidateOnly: true`, `level3Evidence: false`).
+
+**Prior false negative:** Tradition partition (`partitionKey: tradition`) reported
+0 entities spanning >1 context and 0 holes — entities are tradition-bound by design.
+Real conflict axis is **attribution** via `links`, `attributedAuthor`, and
+`doNotAttributeTo` on shared referents (works/figures).
+
+**Re-key:** Default checker mode is referent-attribution (`partitionKey: referent`).
+Undeclared hole when >=2 pages assert conflicting attribution on the same referent:
+(a) different non-empty `attributedAuthor`, or (b) one page attributes author X while
+another lists X in `doNotAttributeTo`. Declared ``contradicts`` / ledger tradition-merge
+rows defer (counted, not re-emitted). Consistency checks **not** truth.
+
+**Wiki run** (`python3 tools/run_consistency_check.py`):
+
+| Metric | Count |
+|---|---|
+| Shared referents (>=2 pages) | 1 |
+| Undeclared epistemic holes | 0 |
+| Declared contradictions deferred | 0 |
+| Gate pass | yes |
+
+**Synthetic unit-test gate** (`tests/test_consistency_check.py`):
+
+| Metric | Count |
+|---|---|
+| Referent dnm-violation hole (type b) | 1 |
+| Declared contradicts deferred | 1 |
+| Patch rejected (no source) | 1 |
+| Patch accepted (grounded source) | 1 |
+
+**Artifacts:** `okf/consistency_check.py`, `tools/run_consistency_check.py`,
+`agi-proof/okf-consistency/consistency.public-report.json`,
+`training/feedback/epistemic_holes.jsonl` (empty — no undeclared holes on wiki).
+
+**Claim impact:** Consistency escalation only; `canClaimAGI: false`.
+
+## gate-z3-backend-deadcode-found-and-fixed-2026-06-25
+
+**Status:** RESOLVED (bug fixed) + accept-path validated.
+
+Installing `z3-solver` and running a POSITIVE CONTROL through the invariant
+oracle (`tools/run_positive_control.py`) exposed that the z3 backend of
+`agent/formal_verifier.py::_z3_lattice` had **never executed**. The accept-path
+unit tests (`test_godel_oracle`, `test_invariant_suite`) mock `require_z3`, but
+z3 was not installed in any environment, so `check_lattice_consistency` always
+took the pure-Python fallback. The z3 branch contained a latent crash:
+`vs.get(lhs, z3.IntVal(_as_int(lhs)))` evaluates the default eagerly, so a NAMED
+variable on the LHS (every production invariant, e.g.
+`content_after_religion >= floor`) was passed to `z3.IntVal(None)` →
+`Z3Exception: parser error`. The whole gate was fallback-only by accident.
+
+**Fix:** lazy operand resolution in `_z3_lattice` mirroring the fallback's
+unbound-variable handling (held/error instead of crash). Added a real-z3
+regression test (`test_lattice_named_variable_runs_on_z3_backend`) that pins
+accept+reject verdicts and `backend == "z3"`; generalized the unbound-variable
+test to both backends; added `z3-solver` to the CI test install so the path is
+exercised going forward.
+
+**Accept-path validation:** with z3 installed, a synthetic known-good candidate
+(`positive-control-synthetic`) now promotes with all five invariants `accepted`
+on the **z3** backend — the gate is proven to ACCEPT a good candidate, not only
+to REJECT (v5 still correctly rejects on `protected_floor_content`). Artifact:
+`agi-proof/self-gate/invariant-suite.positive-control-synthetic.public-report.json`.
+
+**Claim impact:** the self-gate's formal proofs are now actually solver-checked,
+not silently fallback-only. Decidable numeric invariants only; not alignment,
+not AGI, not a Gödel machine. canClaimAGI stays False.
+
+## agi-pilots-way-forward-gate-rollup-2026-06-25
+
+**Status:** CANDIDATE INFRASTRUCTURE (`candidateOnly: true`, `level3Evidence: false`).
+
+**Task 1 — z3 hard promotion requirement (`solverChecked`):**
+
+- `build_proof_bundle` / promotion reports stamp top-level `solverChecked` (= every invariant `backend == "z3"`).
+- Default: promotion blocked when `solver_attestation` is `held` (no z3) or any invariant uses fallback.
+- `--allow-fallback-proof` (OFF by default): may promote with `solverChecked: false` + note
+  `fallback proof — not solver-checked`.
+- Fixed z3 `dict.get` eager-default bug in `agent/formal_verifier.py`.
+- Positive control (`tools/run_positive_control.py`): **promote True**, all five invariants **z3**, `solverChecked: true`.
+
+**Task 2 — CONTENT is pass gate:**
+
+- `tools/eval_ladder.py`: headline `passed` / `score_pct` = **CONTENT** channel; FORMAT + COMBINED reported only.
+- Regenerated `training/local_sophia_v2/eval_ladder_{baseline,adapter}.json` with `passGate: content`.
+- Baseline religion CONTENT **5/6** unchanged; no training improved it — measurement artifact fix, **not** capability uplift.
+
+**Task 3 — Council-panel format at inference (no weights):**
+
+- `agent/council_format.py` + `--religion-council-panel` on `eval_local_model.py` / `eval_mlx_model.py`.
+- Qwen2.5-3B base, same model, religion N=6 (`benchmark/model_runs/local-qwen-qwen2.5-3b-instruct-council-panel-religion.report.json`):
+
+| Template | FORMAT | CONTENT | COMBINED |
+|---|---|---|---|
+| WITHOUT | 1/6 | 5/6 | 1/6 |
+| WITH council panel | 6/6 | 5/6 | 5/6 |
+
+- **Honest finding:** FORMAT uplift is inference-time structure, not LoRA weights. CONTENT flat (no regression); ship template.
+- N=6 ⇒ ±1/6 within noise; **no religion uplift claim**.
+
+**Task 4 — `provenance_complete` on 12 religion repair traces:**
+
+| | lackingCount | verdict |
+|---|---|---|
+| Before (`religion_repair_c4.jsonl` without `metadata.sourceCitation`) | 12 | rejected |
+| After (citations → `data/attributions.json` / `data/traditions.json` keys) | 0 | accepted (z3) |
+
+- `tools/build_local_sophia_dataset.py --check`: contamination **CLEAN**.
+
+**Task 5 — End-to-end gate re-confirmation (z3 installed):**
+
+| Candidate | oracle promote | solverChecked | FINAL |
+|---|---|---|---|
+| Positive control | True | True | accept |
+| v5 full religion repair | False (`protected_floor_content`) | True | **reject** |
+| Known-good cited fixture | True | True | **promote** |
+
+**Claim impact:** z3 solver-checked promotion is now explicit policy; CONTENT channel is the ladder pass gate;
+religion FORMAT is prompt-structurable at inference; religion-repair LoRA path remains falsified.
+`canClaimAGI: false`.

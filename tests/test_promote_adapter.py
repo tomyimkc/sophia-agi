@@ -58,7 +58,7 @@ def test_v2_adapter_rejects_on_religion_regression() -> None:
         candidate_id="local-sophia-v2-mlx", kind="lora_adapter", baseline_ladder=None,
         adapter_ladder=adapter_ladder, contaminated=False, protected=("religion", "history"),
         extra_artifacts=("a", "b"), proof_tag="formal_verifier:protected_floor[fallback:rejected]",
-    )
+    )[0]
     d = evaluate_update(cand, target_suite="total", min_target_delta=0.03, max_protected_regression=0.01)
     assert d.verdict == "reject"
     assert any("religion" in r for r in d.reasons)                       # rejected for the protected regression
@@ -73,7 +73,7 @@ def test_clean_improving_adapter_promotes() -> None:
         candidate_id="clean-v1", kind="lora_adapter", baseline_ladder=None, adapter_ladder=ladder,
         contaminated=False, protected=("religion", "history"),
         extra_artifacts=("ladder", "manifest"), proof_tag="formal_verifier:protected_floor[fallback:accepted]",
-    )
+    )[0]
     d = evaluate_update(cand, target_suite="total", min_target_delta=0.03, max_protected_regression=0.01)
     assert d.verdict == "promote", d.reasons
 
@@ -84,14 +84,14 @@ def test_formal_proof_agrees_with_scorecard() -> None:
         candidate_id="bad", kind="lora_adapter", baseline_ladder=None,
         adapter_ladder=_ladder({"history": 0.6, "religion": 0.5}, {"history": 0.6, "religion": 0.0}),
         contaminated=False, protected=("religion", "history"), extra_artifacts=(), proof_tag="",
-    )
+    )[0]
     assert _formal_protected_floor_proof(list(bad.metrics), tolerance=0.01)["verdict"] == "rejected"
 
     good = build_candidate(
         candidate_id="good", kind="lora_adapter", baseline_ladder=None,
         adapter_ladder=_ladder({"history": 0.6, "religion": 0.5}, {"history": 0.6, "religion": 0.6}),
         contaminated=False, protected=("religion", "history"), extra_artifacts=(), proof_tag="",
-    )
+    )[0]
     assert _formal_protected_floor_proof(list(good.metrics), tolerance=0.01)["verdict"] == "accepted"
 
 

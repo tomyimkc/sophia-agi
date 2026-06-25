@@ -54,8 +54,12 @@ VERIFIER_SUBSETS = (
 )
 
 
-def seed_population(size: int = 8, *, generation: int = 0) -> list[EmbryoSpec]:
-    """Create an initial population (8–32) from tradition × council combinations."""
+def seed_population(size: int = 8, *, generation: int = 0, seed: int = 0) -> list[EmbryoSpec]:
+    """Create an initial population (8–32) from tradition × council combinations.
+
+    ``seed`` is recorded for audit; initial combos are deterministic (itertools).
+    """
+    _ = seed  # reserved for future stochastic seeding; combos stay deterministic
     size = max(1, min(32, size))
     combos = list(
         itertools.islice(
@@ -77,11 +81,12 @@ def seed_population(size: int = 8, *, generation: int = 0) -> list[EmbryoSpec]:
     return out
 
 
-def mutate(parent: EmbryoSpec, child_index: int, *, generation: int) -> EmbryoSpec:
+def mutate(parent: EmbryoSpec, child_index: int, *, generation: int, seed: int = 0) -> EmbryoSpec:
     """Emit one child spec by swapping tradition, council seat, or verifier subset."""
-    trad_idx = (TRADITION_SEEDS.index(parent.tradition_seed) + 1) % len(TRADITION_SEEDS)
-    seat_idx = (COUNCIL_SEATS.index(parent.council_mix[0]) + 1) % len(COUNCIL_SEATS)
-    ver_idx = (VERIFIER_SUBSETS.index(parent.verifier_subset) + 1) % len(VERIFIER_SUBSETS)
+    _ = seed
+    trad_idx = (TRADITION_SEEDS.index(parent.tradition_seed) + child_index + 1) % len(TRADITION_SEEDS)
+    seat_idx = (COUNCIL_SEATS.index(parent.council_mix[0]) + child_index + 1) % len(COUNCIL_SEATS)
+    ver_idx = (VERIFIER_SUBSETS.index(parent.verifier_subset) + child_index + 1) % len(VERIFIER_SUBSETS)
     return EmbryoSpec(
         embryo_id=f"embryo_g{generation}_{child_index:02d}",
         tradition_seed=TRADITION_SEEDS[trad_idx],

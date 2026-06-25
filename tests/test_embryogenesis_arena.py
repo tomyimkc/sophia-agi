@@ -31,6 +31,14 @@ def test_score_embryo_returns_scorecard() -> None:
 
 
 def test_run_arena_produces_history() -> None:
-    report = run_arena(population_size=4, generations=2, top_k=2, generality_limit=3)
+    report = run_arena(population_size=4, generations=2, top_k=2, generality_limit=3, seed=0)
     assert len(report["history"]) == 2
     assert report["weightsFrozen"] is True
+
+
+def test_run_arena_deterministic_under_seed() -> None:
+    kwargs = dict(population_size=8, generations=2, top_k=3, generality_limit=5, seed=0)
+    a = run_arena(**kwargs)
+    b = run_arena(**kwargs)
+    assert a == b
+    assert a["seed"] == 0

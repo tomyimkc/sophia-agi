@@ -44,11 +44,31 @@ def test_lattice_write_down_rejected() -> None:
 
 
 def test_lattice_unbound_variable_held() -> None:
-    # only meaningful for the fallback path (z3 would treat as IntVal); guard it
+    # An unbound RHS variable must be reported (held/error) on BOTH backends.
+    # Previously the z3 path eagerly built z3.IntVal on the variable name and
+    # crashed with a parser error instead; it is now resolved lazily.
+    r = check_lattice_consistency({"a": 1}, [("a", "<=", "ghost_var_xyz")])
+    assert r["verdict"] == "held"
+    assert r["status"] == "error"
+
+
+def test_lattice_named_variable_runs_on_z3_backend() -> None:
+    # Regression: the real z3 lattice path with a NAMED variable on the LHS (as
+    # every production invariant uses, e.g. content_after_religion >= floor) was
+    # dead code — no test ran with z3 installed, so an eager-default crash hid
+    # for the lifetime of the module. Pin both verdicts on the real z3 backend.
     if not z3_available():
-        r = check_lattice_consistency({"a": 1}, [("a", "<=", "ghost_var_xyz")])
-        assert r["verdict"] == "held"
-        assert r["status"] == "error"
+        return
+    ok = check_lattice_consistency({"content_after_religion": 833}, [("content_after_religion", ">=", "624")])
+    assert ok["verdict"] == "accepted"
+    assert ok["backend"] == "z3"
+    bad = check_lattice_consistency({"content_after_religion": 667}, [("content_after_religion", ">=", "823")])
+    assert bad["verdict"] == "rejected"
+    assert bad["backend"] == "z3"
+    # variable-vs-variable comparison must also resolve on z3
+    dom = check_lattice_consistency({"derived": 2, "parent": 0}, [("derived", ">=", "parent")])
+    assert dom["verdict"] == "accepted"
+    assert dom["backend"] == "z3"
 
 
 def test_contradiction_rejected() -> None:

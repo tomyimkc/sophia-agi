@@ -105,11 +105,23 @@ def _z3_lattice(assignments, constraints) -> dict:
     ops = {"<=": lambda a, b: a <= b, "<": lambda a, b: a < b,
            ">=": lambda a, b: a >= b, ">": lambda a, b: a > b,
            "==": lambda a, b: a == b, "!=": lambda a, b: a != b}
+
+    def _resolve(token):
+        # A token is either a declared variable or an integer literal. Resolve
+        # lazily: building z3.IntVal eagerly in a dict.get default would parse
+        # variable names (non-numeric) and crash.
+        if token in vs:
+            return vs[token]
+        iv = _as_int(token)
+        return None if iv is None else z3.IntVal(iv)
+
     for lhs, op, rhs in constraints:
         if op not in ops:
             return _err(f"unknown operator {op!r}")
-        a = vs.get(lhs, z3.IntVal(_as_int(lhs)))
-        b = vs.get(rhs, z3.IntVal(_as_int(rhs)))
+        a = _resolve(lhs)
+        b = _resolve(rhs)
+        if a is None or b is None:
+            return _err(f"unbound variable in constraint ({lhs} {op} {rhs})")
         s.add(ops[op](a, b))
     if s.check() == z3.sat:
         m = s.model()

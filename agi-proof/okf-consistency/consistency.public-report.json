@@ -1,0 +1,16 @@
+{
+  "schema": "sophia.okf_consistency_report.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "partitionKey": "referent",
+  "contextCount": 0,
+  "contexts": [],
+  "sharedReferents": 1,
+  "entitiesSpanningContexts": 0,
+  "epistemicHoleCount": 0,
+  "declaredContradictionsDeferred": 0,
+  "declaredContradictionCount": 0,
+  "gatePass": true,
+  "epistemicHoles": [],
+  "boundary": "Syntactic local-global consistency only; escalates disagreements, does not decide truth or auto-generate training facts."
+}

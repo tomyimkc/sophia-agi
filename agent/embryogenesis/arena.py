@@ -8,11 +8,18 @@ No weight updates. Fitness is verifier pass rate and deterministic generality st
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+import zlib
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from agent.embryogenesis.population import EmbryoSpec, mutate, seed_population
+
+
+def _seeded_mod(seed: int, *parts: str, modulus: int) -> int:
+    """Process-stable hash (Python ``hash()`` is salted per interpreter)."""
+    blob = f"{seed}:" + ":".join(parts)
+    return zlib.crc32(blob.encode("utf-8")) % modulus
 
 ROOT = Path(__file__).resolve().parents[2]
 TRAPS_PATH = ROOT / "data" / "reference_holdout_traps.json"
@@ -68,11 +75,11 @@ def _score_trap_intrinsic(answer: str) -> bool:
         return False
 
 
-def _score_generality_stub(task: dict, embryo: EmbryoSpec) -> bool:
-    """Deterministic stub: hash embryo + task id to simulate variable capability."""
+def _score_generality_stub(task: dict, embryo: EmbryoSpec, *, seed: int) -> bool:
+    """Deterministic stub: seeded crc32 over embryo + task id."""
     from tools.eval_generality import score
 
-    seed_bias = hash((embryo.embryo_id, embryo.tradition_seed)) % 3
+    seed_bias = _seeded_mod(seed, embryo.embryo_id, embryo.tradition_seed, modulus=3)
     gold = str(task.get("answer", ""))
     match = str(task.get("match", "exact"))
     if seed_bias == 0:
@@ -84,13 +91,13 @@ def _score_generality_stub(task: dict, embryo: EmbryoSpec) -> bool:
     return score(reply, gold, match)
 
 
-def score_embryo(embryo: EmbryoSpec, *, generality_limit: int = 5) -> EvalScorecard:
+def score_embryo(embryo: EmbryoSpec, *, generality_limit: int = 5, seed: int = 0) -> EvalScorecard:
     traps = _load_traps()
     trap_passed = sum(1 for t in traps if _score_trap_intrinsic(str(t.get("answer", ""))))
     trap_total = len(traps) or 1
 
     gen_tasks = _load_generality(generality_limit)
-    gen_passed = sum(1 for t in gen_tasks if _score_generality_stub(t, embryo))
+    gen_passed = sum(1 for t in gen_tasks if _score_generality_stub(t, embryo, seed=seed))
     gen_total = len(gen_tasks) or 1
 
     trap_rate = round(trap_passed / trap_total, 4)
@@ -116,14 +123,15 @@ def run_arena(
     generations: int = 2,
     top_k: int = 3,
     generality_limit: int = 5,
+    seed: int = 0,
 ) -> dict[str, Any]:
     """Run population scoring + top-k reproduction for ``generations`` rounds."""
-    population = seed_population(population_size, generation=0)
+    population = seed_population(population_size, generation=0, seed=seed)
     history: list[dict] = []
 
     for gen in range(generations):
-        scorecards = [score_embryo(e, generality_limit=generality_limit) for e in population]
-        scorecards.sort(key=lambda s: s.fitness, reverse=True)
+        scorecards = [score_embryo(e, generality_limit=generality_limit, seed=seed) for e in population]
+        scorecards.sort(key=lambda s: (-s.fitness, s.embryo.embryo_id))
         winners = scorecards[:top_k]
         history.append(
             {
@@ -137,12 +145,12 @@ def run_arena(
             break
         next_pop: list[EmbryoSpec] = []
         for i, w in enumerate(winners):
-            next_pop.append(mutate(w.embryo, i, generation=gen + 1))
+            next_pop.append(mutate(w.embryo, i, generation=gen + 1, seed=seed))
         # refill to population_size with mutated children of winners
         idx = len(next_pop)
         while len(next_pop) < population_size:
             parent = winners[idx % len(winners)].embryo
-            next_pop.append(mutate(parent, idx, generation=gen + 1))
+            next_pop.append(mutate(parent, idx, generation=gen + 1, seed=seed))
             idx += 1
         population = next_pop
 
@@ -151,6 +159,7 @@ def run_arena(
         "schema": "sophia.embryogenesis_arena.v1",
         "candidateOnly": True,
         "level3Evidence": False,
+        "seed": seed,
         "populationSize": population_size,
         "generations": generations,
         "topK": top_k,

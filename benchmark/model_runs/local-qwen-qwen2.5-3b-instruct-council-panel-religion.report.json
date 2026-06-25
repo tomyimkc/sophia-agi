@@ -1,0 +1,73 @@
+{
+  "domain": "religion",
+  "version": 1,
+  "formatPassed": 6,
+  "contentPassed": 5,
+  "passed": 5,
+  "total": 6,
+  "formatPct": 100.0,
+  "contentPct": 83.3,
+  "score_pct": 83.3,
+  "results": [
+    {
+      "id": "gospel_authorship_council",
+      "formatPassed": true,
+      "contentPassed": true,
+      "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
+      "reasons": []
+    },
+    {
+      "id": "ancestor_veneration_split",
+      "formatPassed": true,
+      "contentPassed": true,
+      "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
+      "reasons": []
+    },
+    {
+      "id": "dao_de_jing_religion_philosophy",
+      "formatPassed": true,
+      "contentPassed": true,
+      "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
+      "reasons": []
+    },
+    {
+      "id": "islam_historical_figure_sensitive",
+      "formatPassed": true,
+      "contentPassed": true,
+      "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
+      "reasons": []
+    },
+    {
+      "id": "buddha_nirvana_pop",
+      "formatPassed": true,
+      "contentPassed": false,
+      "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected myth/misconception labeling"
+      ],
+      "reasons": [
+        "expected myth/misconception labeling"
+      ]
+    },
+    {
+      "id": "hadith_sect_boundary_council",
+      "formatPassed": true,
+      "contentPassed": true,
+      "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
+      "reasons": []
+    }
+  ],
+  "model": "qwen-qwen2.5-3b-instruct-council-panel",
+  "backend": "mlx"
+}

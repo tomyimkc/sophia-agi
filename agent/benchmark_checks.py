@@ -164,7 +164,19 @@ def author_markers(author_id: str, *, expand_surnames: bool = True) -> list[str]
     return list(dict.fromkeys(markers))
 
 
-def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[str]]:
+def score_case_format(case: dict, response: str, traditions: dict) -> tuple[bool, list[str]]:
+    """FORMAT channel: council-panel / debate structure only."""
+    reasons: list[str] = []
+    text = normalize(response)
+    ok = True
+    if case.get("mustUseCouncilPanel") and not matches_any(text, COUNCIL_PATTERNS):
+        ok = False
+        reasons.append("expected council/panel debate format")
+    return ok, reasons
+
+
+def score_case_content(case: dict, response: str, traditions: dict) -> tuple[bool, list[str]]:
+    """CONTENT channel: attribution, tradition, nuance, myth labeling, splits, sensitivity."""
     reasons: list[str] = []
     text = normalize(response)
     ok = True
@@ -225,10 +237,6 @@ def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[
                 ok = False
                 reasons.append(f"expected subfield '{subfield}'")
 
-    if case.get("mustUseCouncilPanel") and not matches_any(text, COUNCIL_PATTERNS):
-        ok = False
-        reasons.append("expected council/panel debate format")
-
     split = case.get("mustSplitWhenAppropriate")
     if split:
         has_ritual = matches_any(text, [r"ancestor", r"veneration", r"祭祖", r"ritual", r"禮"])
@@ -238,11 +246,61 @@ def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[
             reasons.append("expected split between Confucian philosophy and ritual religion when appropriate")
 
     if case.get("mustHandleSensitive"):
-        if not (matches_any(text, COUNCIL_PATTERNS) or matches_any(text, SENSITIVE_OK_PATTERNS)):
+        if not matches_any(text, SENSITIVE_OK_PATTERNS):
             ok = False
             reasons.append("expected careful scholarly/traditional handling of sensitive topic")
 
     return ok, reasons
+
+
+def score_case_channels(case: dict, response: str, traditions: dict) -> dict:
+    """Return separate FORMAT and CONTENT verdicts plus legacy combined pass."""
+    fmt_ok, fmt_reasons = score_case_format(case, response, traditions)
+    content_ok, content_reasons = score_case_content(case, response, traditions)
+    return {
+        "formatPassed": fmt_ok,
+        "contentPassed": content_ok,
+        "passed": fmt_ok and content_ok,
+        "formatReasons": fmt_reasons,
+        "contentReasons": content_reasons,
+        "reasons": fmt_reasons + content_reasons,
+    }
+
+
+def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[str]]:
+    channels = score_case_channels(case, response, traditions)
+    return channels["passed"], channels["reasons"]
+
+
+def score_domain_channels(domain: str, responses: dict[str, str], traditions: dict) -> dict:
+    """Score a full domain benchmark with FORMAT, CONTENT, and COMBINED channels."""
+    bench = load_benchmark(domain)
+    results = []
+    fmt_pass = content_pass = combined_pass = 0
+    for case in bench.get("cases", []):
+        cid = case["id"]
+        ch = score_case_channels(case, responses.get(cid, ""), traditions)
+        if ch["formatPassed"]:
+            fmt_pass += 1
+        if ch["contentPassed"]:
+            content_pass += 1
+        if ch["passed"]:
+            combined_pass += 1
+        results.append({"id": cid, **ch})
+    total = len(results)
+    pct = lambda n: round(100.0 * n / total, 1) if total else 0.0
+    return {
+        "domain": domain,
+        "version": bench.get("version", 1),
+        "formatPassed": fmt_pass,
+        "contentPassed": content_pass,
+        "passed": combined_pass,
+        "total": total,
+        "formatPct": pct(fmt_pass),
+        "contentPct": pct(content_pass),
+        "score_pct": pct(combined_pass),
+        "results": results,
+    }
 
 
 def load_traditions() -> dict:

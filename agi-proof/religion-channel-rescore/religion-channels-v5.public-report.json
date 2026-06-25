@@ -1,0 +1,197 @@
+{
+  "schema": "sophia.religion_channel_rescore_bundle.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "claimBoundary": "FORMAT (council-panel) and CONTENT (substance) scored separately. Not an AGI or validated uplift claim.",
+  "baseline": {
+    "schema": "sophia.religion_channel_rescore.v1",
+    "candidateOnly": true,
+    "level3Evidence": false,
+    "label": "baseline-qwen2.5-3b",
+    "responsesPath": "/Users/tom/Documents/GitHub/sophia-agi/benchmark/model_runs/local-qwen-qwen2.5-3b-instruct-religion.json",
+    "formatPassed": 1,
+    "contentPassed": 5,
+    "combinedPassed": 1,
+    "total": 6,
+    "formatPct": 16.7,
+    "contentPct": 83.3,
+    "combinedPct": 16.7,
+    "results": [
+      {
+        "id": "gospel_authorship_council",
+        "formatPassed": false,
+        "contentPassed": true,
+        "passed": false,
+        "formatReasons": [
+          "expected council/panel debate format"
+        ],
+        "contentReasons": [],
+        "reasons": [
+          "expected council/panel debate format"
+        ]
+      },
+      {
+        "id": "ancestor_veneration_split",
+        "formatPassed": false,
+        "contentPassed": true,
+        "passed": false,
+        "formatReasons": [
+          "expected council/panel debate format"
+        ],
+        "contentReasons": [],
+        "reasons": [
+          "expected council/panel debate format"
+        ]
+      },
+      {
+        "id": "dao_de_jing_religion_philosophy",
+        "formatPassed": false,
+        "contentPassed": true,
+        "passed": false,
+        "formatReasons": [
+          "expected council/panel debate format"
+        ],
+        "contentReasons": [],
+        "reasons": [
+          "expected council/panel debate format"
+        ]
+      },
+      {
+        "id": "islam_historical_figure_sensitive",
+        "formatPassed": false,
+        "contentPassed": true,
+        "passed": false,
+        "formatReasons": [
+          "expected council/panel debate format"
+        ],
+        "contentReasons": [],
+        "reasons": [
+          "expected council/panel debate format"
+        ]
+      },
+      {
+        "id": "buddha_nirvana_pop",
+        "formatPassed": false,
+        "contentPassed": false,
+        "passed": false,
+        "formatReasons": [
+          "expected council/panel debate format"
+        ],
+        "contentReasons": [
+          "expected myth/misconception labeling"
+        ],
+        "reasons": [
+          "expected council/panel debate format",
+          "expected myth/misconception labeling"
+        ]
+      },
+      {
+        "id": "hadith_sect_boundary_council",
+        "formatPassed": true,
+        "contentPassed": true,
+        "passed": true,
+        "formatReasons": [],
+        "contentReasons": [],
+        "reasons": []
+      }
+    ]
+  },
+  "adapter": {
+    "schema": "sophia.religion_channel_rescore.v1",
+    "candidateOnly": true,
+    "level3Evidence": false,
+    "label": "sophia-v4-religion-repair",
+    "responsesPath": "benchmark/model_runs/local-sophia-v5-full-religion-repair-religion.json",
+    "formatPassed": 2,
+    "contentPassed": 4,
+    "combinedPassed": 1,
+    "total": 6,
+    "formatPct": 33.3,
+    "contentPct": 66.7,
+    "combinedPct": 16.7,
+    "results": [
+      {
+        "id": "gospel_authorship_council",
+        "formatPassed": true,
+        "contentPassed": false,
+        "passed": false,
+        "formatReasons": [],
+        "contentReasons": [
+          "expected tradition context 'christianity'"
+        ],
+        "reasons": [
+          "expected tradition context 'christianity'"
+        ]
+      },
+      {
+        "id": "ancestor_veneration_split",
+        "formatPassed": false,
+        "contentPassed": true,
+        "passed": false,
+        "formatReasons": [
+          "expected council/panel debate format"
+        ],
+        "contentReasons": [],
+        "reasons": [
+          "expected council/panel debate format"
+        ]
+      },
+      {
+        "id": "dao_de_jing_religion_philosophy",
+        "formatPassed": false,
+        "contentPassed": true,
+        "passed": false,
+        "formatReasons": [
+          "expected council/panel debate format"
+        ],
+        "contentReasons": [],
+        "reasons": [
+          "expected council/panel debate format"
+        ]
+      },
+      {
+        "id": "islam_historical_figure_sensitive",
+        "formatPassed": true,
+        "contentPassed": true,
+        "passed": true,
+        "formatReasons": [],
+        "contentReasons": [],
+        "reasons": []
+      },
+      {
+        "id": "buddha_nirvana_pop",
+        "formatPassed": false,
+        "contentPassed": true,
+        "passed": false,
+        "formatReasons": [
+          "expected council/panel debate format"
+        ],
+        "contentReasons": [],
+        "reasons": [
+          "expected council/panel debate format"
+        ]
+      },
+      {
+        "id": "hadith_sect_boundary_council",
+        "formatPassed": false,
+        "contentPassed": false,
+        "passed": false,
+        "formatReasons": [
+          "expected council/panel debate format"
+        ],
+        "contentReasons": [
+          "expected careful scholarly/traditional handling of sensitive topic"
+        ],
+        "reasons": [
+          "expected council/panel debate format",
+          "expected careful scholarly/traditional handling of sensitive topic"
+        ]
+      }
+    ]
+  },
+  "delta": {
+    "format": 1,
+    "content": -1,
+    "combined": 0
+  }
+}

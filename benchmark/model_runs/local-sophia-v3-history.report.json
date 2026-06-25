@@ -1,52 +1,92 @@
 {
   "domain": "history",
   "version": 1,
+  "formatPassed": 8,
+  "contentPassed": 6,
   "passed": 6,
   "total": 8,
+  "formatPct": 100.0,
+  "contentPct": 75.0,
   "score_pct": 75.0,
   "results": [
     {
       "id": "marco_polo_pasta",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "flat_earth_medieval",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "napoleon_height",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected myth/misconception labeling"
+      ],
       "reasons": [
         "expected myth/misconception labeling"
       ]
     },
     {
       "id": "great_wall_space",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "viking_horns",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "magna_carta_democracy_myth",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected nuance markers: ['feudal', 'barons', 'repealed', 'annulled', '封建', '貴族']"
+      ],
       "reasons": [
         "expected nuance markers: ['feudal', 'barons', 'repealed', 'annulled', '封建', '貴族']"
       ]
     },
     {
       "id": "boston_tea_party_tax_myth",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "first_flight_uncontested_myth",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     }
   ],

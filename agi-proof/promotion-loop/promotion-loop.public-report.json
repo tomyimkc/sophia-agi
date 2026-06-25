@@ -1,0 +1,53 @@
+{
+  "schema": "sophia.promotion_loop_demo.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "path": "/var/folders/4h/nzfg6lh153s9c_728t7j63jm0000gn/T/tmp9om_5x2z/pending_projection_candidates.jsonl",
+  "submitted": 1,
+  "approved": 1,
+  "committed": 1,
+  "defaultDeny": true,
+  "submit": {
+    "schema": "sophia.submit_projection_candidates.v1",
+    "candidateOnly": true,
+    "path": "/var/folders/4h/nzfg6lh153s9c_728t7j63jm0000gn/T/tmp9om_5x2z/pending_projection_candidates.jsonl",
+    "submitted": 1,
+    "pendingTotal": 1,
+    "promotedCount": 1
+  },
+  "defaultDenyAttempt": {
+    "ok": false,
+    "error": "candidate not approved — default-deny",
+    "defaultDeny": true,
+    "nodeId": "bulk_promo_demo"
+  },
+  "approve": {
+    "ok": true,
+    "nodeId": "bulk_promo_demo",
+    "approved": true
+  },
+  "firstCommit": {
+    "ok": true,
+    "wiki": {
+      "ok": true,
+      "id": "bulk_promo_demo",
+      "path": "/var/folders/4h/nzfg6lh153s9c_728t7j63jm0000gn/T/tmp_5r3w_lo/drafts/bulk_promo_demo.md",
+      "tier": "draft",
+      "revisions": 1
+    },
+    "nodeId": "bulk_promo_demo",
+    "committed": true
+  },
+  "secondCommit": {
+    "ok": true,
+    "idempotent": true,
+    "nodeId": "bulk_promo_demo",
+    "alreadyCommitted": true
+  },
+  "invariants": {
+    "defaultDenyBlocksUnapproved": true,
+    "approveThenCommit": true,
+    "idempotentSecondCommit": true
+  },
+  "ok": true
+}

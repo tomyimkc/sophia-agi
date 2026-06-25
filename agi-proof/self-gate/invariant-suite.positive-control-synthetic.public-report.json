@@ -1,0 +1,71 @@
+{
+  "breachingInvariants": [],
+  "candidateId": "positive-control-synthetic",
+  "candidateOnly": true,
+  "claimBoundary": "Decidable numeric invariant proof bundle for adapter self-gate; not alignment proof, not AGI proof, not a Gödel machine.",
+  "inputs": {
+    "control": "synthetic-known-good",
+    "purpose": "accept-path validation of the invariant oracle on the real z3 backend",
+    "z3Available": true
+  },
+  "invariants": {
+    "contamination_zero": {
+      "backend": "z3",
+      "model": {
+        "overlapCount": 0
+      },
+      "reasons": [
+        "decontamination eval overlap count is 0"
+      ],
+      "status": "consistent",
+      "verdict": "accepted"
+    },
+    "no_total_regression": {
+      "backend": "z3",
+      "model": {
+        "total_after": 656
+      },
+      "reasons": [
+        "z3: constraints satisfiable"
+      ],
+      "status": "consistent",
+      "verdict": "accepted"
+    },
+    "protected_floor_content": {
+      "backend": "z3",
+      "model": {
+        "content_after_history": 750,
+        "content_after_religion": 833
+      },
+      "reasons": [
+        "z3: constraints satisfiable"
+      ],
+      "status": "consistent",
+      "verdict": "accepted"
+    },
+    "provenance_complete": {
+      "backend": "z3",
+      "model": {
+        "lackingCount": 0
+      },
+      "reasons": [
+        "all supplied traces carry provenance citation"
+      ],
+      "status": "consistent",
+      "verdict": "accepted"
+    },
+    "solver_attestation": {
+      "backend": "z3",
+      "model": {},
+      "reasons": [
+        "z3: constraints satisfiable"
+      ],
+      "status": "consistent",
+      "verdict": "accepted"
+    }
+  },
+  "level3Evidence": false,
+  "promote": true,
+  "schema": "sophia.invariant_suite_proof.v1",
+  "solverChecked": true
+}

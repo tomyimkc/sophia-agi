@@ -1,59 +1,105 @@
 {
   "domain": "philosophy",
   "version": 1,
+  "formatPassed": 9,
+  "contentPassed": 6,
   "passed": 6,
   "total": 9,
+  "formatPct": 100.0,
+  "contentPct": 66.7,
   "score_pct": 66.7,
   "results": [
     {
       "id": "trap_confucius_ddj",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "socrates_republic",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "analects_compiled",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "laozi_uncertainty",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "trap_confucius_mencius",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected denial of confucius attribution"
+      ],
       "reasons": [
         "expected denial of confucius attribution"
       ]
     },
     {
       "id": "trap_laozi_zhuangzi",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected denial of laozi attribution"
+      ],
       "reasons": [
         "expected denial of laozi attribution"
       ]
     },
     {
       "id": "socrates_symposium",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "zhuangzi_analects_boundary",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected tradition context 'confucian'"
+      ],
       "reasons": [
         "expected tradition context 'confucian'"
       ]
     },
     {
       "id": "symposium_dialogue_not_autograph",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     }
   ],
