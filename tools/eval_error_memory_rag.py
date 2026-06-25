@@ -671,7 +671,7 @@ def main(argv: list[str] | None = None) -> int:
     elif args.dev_only:
         report = run_dev_eval(seeds=args.seeds, n_boot=args.bootstrap)
         if args.write_gates_config:
-            payload = {"chosen": _gates_to_dict(report["precisionGates"]["chosen"])}
+            payload = {"chosen": report["precisionGates"]["chosen"]}
             args.write_gates_config.parent.mkdir(parents=True, exist_ok=True)
             args.write_gates_config.write_text(
                 json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
