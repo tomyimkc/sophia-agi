@@ -26,7 +26,7 @@ function renderStats() {
     <div class="stat-card"><div class="stat-value">v${manifest.version}</div><div class="stat-label">Release</div></div>
     <div class="stat-card"><div class="stat-value">${manifest.trainingExamples}</div><div class="stat-label">Bilingual examples</div></div>
     <div class="stat-card"><div class="stat-value">${ragChunks || "—"}</div><div class="stat-label">RAG index chunks</div></div>
-    <div class="stat-card"><div class="stat-value">${loraPct}</div><div class="stat-label">sophia-v1 LoRA</div></div>
+    <div class="stat-card"><div class="stat-value">${loraPct}</div><div class="stat-label">Local model</div></div>
     <div class="stat-card"><div class="stat-value">${domains}</div><div class="stat-label">Active domains</div></div>`;
 }
 
