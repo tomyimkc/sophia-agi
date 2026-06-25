@@ -644,10 +644,27 @@ Commit `9f00733`.
 `build_local_sophia_dataset.py --check`: contamination **CLEAN** (0 eval overlap, 0 holdout overlap).
 Hard-negative miner: 615 pairs (gate-validated). Moral Gate SFT: 35 rows.
 
-**Stage 2 blocker:** `RUNPOD_API_KEY` absent locally. Prepared launch:
-`agi-proof/sophia-7b-train-verify/runpod-sft-3seed.sh` (seeds 0–2, 2 epochs, QLoRA 4-bit).
+**Stage 2 blocker (2026-06-25, updated):** `RUNPOD_API_KEY` **present**; two pod-create attempts
+(`sophia-7b-sft-seed0`, pods `crdl0788rpc98m` / `8k7vqe3m5nbynv`) reached SSH **port mapping**
+but **outbound SSH from the Cursor agent host timed out** (`Operation timed out` to mapped
+`ip:port` after 300s login wait). Pods deleted (cost control). Logs:
+`agi-proof/benchmark-results/runpod-train/sft-3seed-20260625-095511.log`,
+`sft-seed0-retry.log`. **Next step:** re-run `runpod-sft-3seed.sh` from a host with outbound
+SSH to RunPod (local Mac / CI runner); `runpod_train.py` now retries SSH **login** failures
+across pod recreates (`--ssh-login-timeout-s`, `--ssh-attempts`).
 
-**Stages 3–7:** NOT RUN — blocked on GPU (SFT) and third-party API keys (Vectara HHEM, hidden pack).
+**Stage 3 prep (no GPU):** `tools/train_dpo.py` (TRL `DPOTrainer`), `runpod-dpo-3seed.sh`
+(DPO on `dpo_hard_negatives.jsonl`, 590 pairs in pack / 615 mined), pre/post internal
+`eval_ladder` on pod. Blocked on Stage-2 SFT adapter tarballs per seed.
+
+**Stages 5–6:** NOT RUN (no adapter). Local wiring OK: `run_positive_control.py` ✓,
+`promote_adapter` + invariant oracle policy unchanged (release gate — NOT evidence).
+
+**Stage 7 blockers:** `VECTARA_*` credentials absent; hidden reviewer pack needs served model +
+backend credentials. Do **not** substitute internal gate for third-party evidence.
+
+**Headline (falsifiable, OPEN):** Qwen2.5-7B QLoRA SFT (≥3 seeds) has **not** yet cleared the
+internal release gate on RunPod — SSH egress blocked this session, not a training verdict.
 
 **Tradeoff (pre-registered, not yet measured):** abstention/MMLU-Pro regression ≤2.0 points vs base;
 honest reporting required even if internal release gate passes.

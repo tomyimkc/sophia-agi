@@ -1,0 +1,94 @@
+ERROR: Timed out waiting for SSH login to 213.181.111.2:43206
+[local] ssh-keygen -t ed25519 -q -N '' -C sophia-runpod-ephemeral -f /var/folders/4h/nzfg6lh153s9c_728t7j63jm0000gn/T/sophia-train-x6eakqgw/runpod_sophia_ed25519
+[runpod] api key env=RUNPOD_API_KEY, value=rpa_RC…jl4q
+[runpod] create payload (sanitized):
+{
+  "name": "sophia-7b-sft-seed0",
+  "cloudType": "SECURE",
+  "computeType": "GPU",
+  "gpuTypeIds": [
+    "NVIDIA GeForce RTX 4090",
+    "NVIDIA A100 80GB PCIe",
+    "NVIDIA A100-SXM4-80GB"
+  ],
+  "gpuTypePriority": "availability",
+  "gpuCount": 1,
+  "imageName": "runpod/pytorch:1.0.7-cu1281-torch280-ubuntu2204",
+  "containerDiskInGb": 80,
+  "volumeInGb": 40,
+  "volumeMountPath": "/workspace",
+  "ports": [
+    "22/tcp"
+  ],
+  "supportPublicIp": true,
+  "interruptible": false,
+  "locked": false,
+  "env": {
+    "PUBLIC_KEY": "ssh-ed25519 \u2026",
+    "SOPHIA_REMOTE_DELETE_WATCHDOG": "1",
+    "RUNPOD_API_KEY": "rpa_RC\u2026jl4q"
+  },
+  "dockerEntrypoint": [],
+  "dockerStartCmd": [
+    "bash",
+    "-lc",
+    "\nset -Eeuo pipefail\ncleanup() {\n  code=$?\n  if [ \"${SOPHIA_REMOTE_DELETE_WATCHDOG:-0}\" = \"1\" ] && [ -n \"${RUNPOD_API_KEY:-}\" ] && [ -n \"${RUNPOD_POD_ID:-}\" ]; then\n    echo \"Sophia watchdog deleting RunPod Pod $RUNPOD_POD_ID after startup command exit.\"\n    curl -fsS --request DELETE \\\n      --url \"https://rest.runpod.io/v1/pods/${RUNPOD_POD_ID}\" \\\n      --header \"Authorization: Bearer $RUNPOD_API_KEY\" || true\n  fi\n  exit \"$code\"\n}\ntrap cleanup EXIT\nexport DEBIAN_FRONTEND=noninteractive\napt-get update\napt-get install -y --no-install-recommends openssh-server git curl ca-certificates rsync\nmkdir -p /var/run/sshd /root/.ssh\nchmod 700 /root/.ssh\nprintf '%s\\n' \"$PUBLIC_KEY\" > /root/.ssh/authorized_keys\nchmod 600 /root/.ssh/authorized_keys\nssh-keygen -A\nsed -i 's/^#\\?PermitRootLogin .*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config\nsed -i 's/^#\\?PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config\nservice ssh start\necho \"Sophia RunPod SSH ready; auto-exit in 10800s if not terminated earlier.\"\ntimeout 10800s sleep infinity\n"
+  ]
+}
+[runpod] remote training script:
+
+set -Eeuo pipefail
+export DEBIAN_FRONTEND=noninteractive
+export HF_HOME=/workspace/.cache/huggingface
+export HF_HUB_CACHE=/workspace/.cache/huggingface/hub
+export PIP_CACHE_DIR=/workspace/.cache/pip
+export SOPHIA_MODEL=Qwen/Qwen2.5-7B-Instruct
+export SOPHIA_EPOCHS=2
+export SOPHIA_SEED=0
+mkdir -p /workspace/sophia-runpod /workspace/.cache/huggingface/hub /workspace/.cache/pip
+cd /workspace/sophia-runpod
+if [ local = "git" ] && [ ! -d sophia-agi/.git ]; then
+  git clone --depth 1 --branch claude/sophia-7b-train-verify https://github.com/tomyimkc/sophia-agi.git sophia-agi
+fi
+cd sophia-agi
+(git rev-parse HEAD || true) | tee /workspace/sophia-runpod/repo-head.txt
+nvidia-smi || true
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements-lora.txt   # torch pinned <2.9 -> ABI stable
+
+# 1) use the COMMITTED sealed pack (decontaminated; holdout sealed off-pod)
+python tools/build_local_sophia_dataset.py --check
+
+# 2) REAL training — the research-backed gate-disciplined recipe. Adapter is tarred
+#    immediately after so it always comes back even if eval/promote later fail.
+python tools/train_lora.py   --model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05   --scaffold --guard --eval-every 25 --patience 4 --train training/local_sophia_7b/mlx/train.jsonl   --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED"   --output /workspace/sophia-runpod/sophia-agi/training/lora/checkpoints/sophia-cuda-v1
+if [ -d /workspace/sophia-runpod/sophia-agi/training/lora/checkpoints/sophia-cuda-v1 ]; then
+  tar -czf /workspace/sophia-runpod/sophia-cuda-v1.tar.gz -C $(dirname /workspace/sophia-runpod/sophia-agi/training/lora/checkpoints/sophia-cuda-v1) $(basename /workspace/sophia-runpod/sophia-agi/training/lora/checkpoints/sophia-cuda-v1)
+  cp /workspace/sophia-runpod/sophia-agi/training/lora/checkpoints/sophia-cuda-v1/sophia_lora_config.json /workspace/sophia-runpod/sophia_lora_config.json || true
+fi
+
+# 3) eval ladder: base · base+gate · adapter · adapter+gate (writes eval_ladder_adapter.json)
+python tools/eval_ladder.py --backend hf --model "$SOPHIA_MODEL" --adapter /workspace/sophia-runpod/sophia-agi/training/lora/checkpoints/sophia-cuda-v1   || echo "[train] eval_ladder failed (non-fatal); adapter still returned"
+cp training/local_sophia_v2/eval_ladder_adapter.json /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
+
+# 4) W2 promotion gate (protected-floor proof; reads the eval ladder + adapter seed)
+python tools/promote_adapter.py   --adapter-config /workspace/sophia-runpod/sophia-agi/training/lora/checkpoints/sophia-cuda-v1/sophia_lora_config.json   --out /workspace/sophia-runpod/promotion.public-report.json   || echo "[train] promote_adapter failed (non-fatal)"
+
+echo "===== sophia_lora_config.json ====="; cat /workspace/sophia-runpod/sophia_lora_config.json 2>/dev/null || true
+echo "===== eval_ladder_adapter.json ====="; cat /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
+echo "===== promotion.public-report.json ====="; cat /workspace/sophia-runpod/promotion.public-report.json 2>/dev/null || true
+echo "Sophia real training run complete."
+
+[runpod] attempt 1/5: created pod 8k7vqe3m5nbynv; costPerHr=0.69, gpu=None
+[runpod] waiting for SSH mapping; status=RUNNING, ip=, ports={}
+[runpod] SSH mapped: root@213.181.111.2 -p 43206
+[local] ssh -i /var/folders/4h/nzfg6lh153s9c_728t7j63jm0000gn/T/sophia-train-x6eakqgw/runpod_sophia_ed25519 -p 43206 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=30 -o ServerAliveCountMax=20 root@213.181.111.2 'echo sophia-ssh-ok'
+ssh: connect to host 213.181.111.2 port 43206: Operation timed out
+[local] ssh -i /var/folders/4h/nzfg6lh153s9c_728t7j63jm0000gn/T/sophia-train-x6eakqgw/runpod_sophia_ed25519 -p 43206 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=30 -o ServerAliveCountMax=20 root@213.181.111.2 'echo sophia-ssh-ok'
+ssh: connect to host 213.181.111.2 port 43206: Operation timed out
+[local] ssh -i /var/folders/4h/nzfg6lh153s9c_728t7j63jm0000gn/T/sophia-train-x6eakqgw/runpod_sophia_ed25519 -p 43206 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=30 -o ServerAliveCountMax=20 root@213.181.111.2 'echo sophia-ssh-ok'
+ssh: connect to host 213.181.111.2 port 43206: Operation timed out
+[local] ssh -i /var/folders/4h/nzfg6lh153s9c_728t7j63jm0000gn/T/sophia-train-x6eakqgw/runpod_sophia_ed25519 -p 43206 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=30 -o ServerAliveCountMax=20 root@213.181.111.2 'echo sophia-ssh-ok'
+ssh: connect to host 213.181.111.2 port 43206: Operation timed out
+[runpod] terminating pod 8k7vqe3m5nbynv ...
+[runpod] pod 8k7vqe3m5nbynv terminated

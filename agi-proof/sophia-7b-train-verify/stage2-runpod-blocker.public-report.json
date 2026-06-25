@@ -1,0 +1,26 @@
+{
+  "schema": "sophia.runpod_stage2_blocker.v1",
+  "experimentId": "sophia-7b-train-verify",
+  "recordedAt": "2026-06-25",
+  "head": "70006d8b71f1ade2e9cafb9d4c9d22a0b8938cd1",
+  "stage": 2,
+  "status": "BLOCKED",
+  "blocker": "outbound_ssh_timeout",
+  "detail": "RunPod API created pods and mapped SSH ports, but TCP/SSH from Cursor agent host timed out before login.",
+  "attempts": [
+    {"podId": "crdl0788rpc98m", "mapped": "157.157.221.29:31790", "deleted": true},
+    {"podId": "8k7vqe3m5nbynv", "mapped": "213.181.111.2:43206", "deleted": true}
+  ],
+  "logs": [
+    "agi-proof/benchmark-results/runpod-train/sft-3seed-20260625-095511.log",
+    "agi-proof/benchmark-results/runpod-train/sft-seed0-retry.log"
+  ],
+  "preflight": {
+    "build_local_sophia_dataset_check": "CLEAN",
+    "holdoutSeal": "84d00bdc36205abdb5a162530d8fc972ee27075c053bfd0615de59d3ed9aeb97",
+    "positive_control": "OK",
+    "lint_claims": "OK"
+  },
+  "canClaimAGI": false,
+  "label": "infrastructure blocker — not a training verdict"
+}
