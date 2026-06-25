@@ -530,3 +530,35 @@ rows defer (counted, not re-emitted). Consistency checks **not** truth.
 `training/feedback/epistemic_holes.jsonl` (empty — no undeclared holes on wiki).
 
 **Claim impact:** Consistency escalation only; `canClaimAGI: false`.
+
+## gate-z3-backend-deadcode-found-and-fixed-2026-06-25
+
+**Status:** RESOLVED (bug fixed) + accept-path validated.
+
+Installing `z3-solver` and running a POSITIVE CONTROL through the invariant
+oracle (`tools/run_positive_control.py`) exposed that the z3 backend of
+`agent/formal_verifier.py::_z3_lattice` had **never executed**. The accept-path
+unit tests (`test_godel_oracle`, `test_invariant_suite`) mock `require_z3`, but
+z3 was not installed in any environment, so `check_lattice_consistency` always
+took the pure-Python fallback. The z3 branch contained a latent crash:
+`vs.get(lhs, z3.IntVal(_as_int(lhs)))` evaluates the default eagerly, so a NAMED
+variable on the LHS (every production invariant, e.g.
+`content_after_religion >= floor`) was passed to `z3.IntVal(None)` →
+`Z3Exception: parser error`. The whole gate was fallback-only by accident.
+
+**Fix:** lazy operand resolution in `_z3_lattice` mirroring the fallback's
+unbound-variable handling (held/error instead of crash). Added a real-z3
+regression test (`test_lattice_named_variable_runs_on_z3_backend`) that pins
+accept+reject verdicts and `backend == "z3"`; generalized the unbound-variable
+test to both backends; added `z3-solver` to the CI test install so the path is
+exercised going forward.
+
+**Accept-path validation:** with z3 installed, a synthetic known-good candidate
+(`positive-control-synthetic`) now promotes with all five invariants `accepted`
+on the **z3** backend — the gate is proven to ACCEPT a good candidate, not only
+to REJECT (v5 still correctly rejects on `protected_floor_content`). Artifact:
+`agi-proof/self-gate/invariant-suite.positive-control-synthetic.public-report.json`.
+
+**Claim impact:** the self-gate's formal proofs are now actually solver-checked,
+not silently fallback-only. Decidable numeric invariants only; not alignment,
+not AGI, not a Gödel machine. canClaimAGI stays False.

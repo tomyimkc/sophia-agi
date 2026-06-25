@@ -421,7 +421,9 @@ jobs:
           cache: pip
           cache-dependency-path: requirements-mcp.txt
       - name: Install test dependencies
-        run: python -m pip install --upgrade pip numpy pytest
+        # z3-solver so the formal-verifier / invariant-suite z3 backend is
+        # actually exercised in CI (the fallback-only path once hid a crash).
+        run: python -m pip install --upgrade pip numpy pytest z3-solver
       - name: Full pytest suite
         run: python -m pytest -q
 
