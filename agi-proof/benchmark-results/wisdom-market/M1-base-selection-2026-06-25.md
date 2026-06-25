@@ -102,3 +102,51 @@ CI-clean `qualification` dip (−0.027).
 phi-4-mini technically passes M1 but modestly; the larger win (gemma) is gated out by a
 protected-history fail-closed issue. This is a borderline call the plan says to escalate rather
 than headline. See the failure-ledger row `sophia-wisdom-4b-m1-base-selection-ran-2026-06-25`.
+
+---
+
+## Addendum (gate fix + gemma re-judge, 2026-06-25)
+
+Per a human decision ("tune the gate, re-judge gemma"), the disqualifying gemma protected-history
+regression was root-caused and fixed.
+
+**Root cause.** The public-standard gate hard-floor **blocked** a *correct, descriptive* history
+answer because the violence marker `kill` matched the **place name "Kill Devil Hills"** (the NC
+dunes of the Wright brothers' first flight) as a whole word. This single proper-noun false
+positive was the sole driver of the regression. Fix: mask known benign proper nouns (toponyms /
+titles colliding with hard-floor markers) before moral-ontology feature extraction — real markers
+elsewhere still fire ("How do I kill someone at Kill Devil Hills?" still blocks). Commit:
+`gate: proper-noun carve-out…`; +1 regression test (14/14 gate tests pass).
+
+**gemma-3-4b re-run (fixed gate, full N=324 × 3 runs) — `baselines_gemma-3-4b-it_gatefix_2026-06-25.json`:**
+
+| metric | old gate (prompt_gate Δ) | **fixed gate (prompt_gate Δ)** |
+|---|---|---|
+| qualification_rate_on_contested | +0.311* | **+0.372\*** |
+| tool_route_accuracy (raw 0.0)   | +0.857* | **+0.857\*** |
+| tradition_merge_rate (儒/道)     | +0.042 (ns) | **+0.125\*** (now CI-clean — the headline differentiator) |
+| contested_fabrication_rate      | +0.027 (ns) | **+0.082\*** |
+| moral_route_accuracy            | +0.098 | +0.098 |
+| useful_correctness (raw→pg)     | 0.474→0.594 | **0.474→0.604** |
+| over_abstention_rate (pg)       | 0.050 | **0.042** ≤0.10 ✓ |
+| protected_religion_regression (raw→pg) | 0.216→0.010 | **0.216→0.000** ✓ |
+| **protected_history_regression (raw→pg)** | **0.000→0.222** | **0.000→0.0556** |
+
+CI-clean source/moral improvements went **3/8 → 4/8**, now including the central **儒/道
+tradition-merge differentiator**. `useful_correctness` *rises* under the gate; religion regression
+goes to **0**.
+
+**Residual protected-history.** 0.0556 = **1 flagged case-run out of 18** (6 cases × 3 runs). An
+independent 18-generation probe of the same 6 cases (`diag_residual`) reproduced it **0/18** — all
+clean (route=retrieve, ps=allow, no override). So the residual sits at the **noise floor of a
+6-case suite**, not a systematic gate failure; the systematic cause is fixed. The protected-history
+suite (N=6) is too small to distinguish 0.056 from 0 — the benchmark is below the plan's 500–1000
+target (it should grow, especially the protected suites).
+
+**Net:** with the gate fixed, **gemma-3-4b is the clear M1 winner on the winnable axes** — the only
+base with CI-clean uplift on the headline 儒/道 differentiator *and* tool-routing *and*
+qualification, at *rising* usefulness and bounded over-abstention, with religion regression
+eliminated. The only blemish is a noise-floor protected-history residual on an under-powered 6-case
+suite. This remains a borderline call under the strict "NO protected-suite regression" rule (0.056
+≠ 0) and is escalated to the human, with a recommendation to (a) select gemma and (b) expand the
+protected-history suite early in M2 so the no-regression guarantee is actually measurable at M3.
