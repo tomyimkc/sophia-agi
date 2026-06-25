@@ -1,0 +1,159 @@
+name: sophia-math-code-sft-runpod
+
+# Manual RunPod launcher for sophia-math-code-curriculum Stage 3 (3-seed QLoRA SFT).
+#
+# POLICY: RunPod GPU jobs for this experiment MUST run via GitHub Actions (this workflow
+# or the generic train-runpod / speedup-runpod / rlvr-runpod workflows) — NOT from a local
+# Mac or Cursor agent shell. Outbound SSH to RunPod mapped pod high-ports times out from
+# local Cursor egress; GHA ubuntu runners have reliable pod SSH (see
+# agi-proof/sophia-math-code-curriculum/stage3-runpod-blocker.public-report.json).
+#
+# PREREQUISITES (maintainer only):
+#   1. Repo secret RUNPOD_API_KEY (Settings -> Secrets and variables -> Actions).
+#   2. RunPod account GPU credit. Each seed rents a paid pod until training completes.
+#
+# Artifacts: train logs, adapter tarballs, repo-head. Retention-days limits storage cost.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to confirm you accept renting paid GPU pod(s)'
+        required: true
+        default: ''
+      seed:
+        description: 'Single seed (0, 1, or 2). Leave empty to run all three seeds.'
+        required: false
+        default: ''
+      branch:
+        description: 'Git branch cloned on the pod'
+        required: false
+        default: 'claude/sophia-math-code-curriculum'
+      epochs:
+        description: 'Training epochs (empty = 2)'
+        required: false
+        default: ''
+      interruptible:
+        description: 'Use cheaper spot pod (on-demand default for reliability)'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['true', 'false']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sophia-math-code-sft-runpod
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Contamination guard (build_local_sophia_dataset --check)
+        run: python tools/build_local_sophia_dataset.py --check
+
+      - name: Held-out seal (seal_math_code_heldout --check)
+        run: python tools/seal_math_code_heldout.py --check
+
+      - name: Claims linter (no-overclaim copy gate)
+        run: python tools/lint_claims.py
+
+  runpod:
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 480
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — confirm + secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "RUN" ]; then
+            echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
+            exit 1
+          fi
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set. Add it in Settings -> Secrets and variables -> Actions. Aborting (no pod created)."
+            exit 1
+          fi
+          echo "Preflight OK: confirmed, secret present. GPU runs on the rented pod, not this runner."
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Dry-run remote script (no pod, no cost)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          BRANCH: ${{ github.event.inputs.branch }}
+          EPOCHS_INPUT: ${{ github.event.inputs.epochs }}
+        run: |
+          set -euo pipefail
+          if [ -n "$EPOCHS_INPUT" ]; then export EPOCHS="$EPOCHS_INPUT"; else export EPOCHS="2"; fi
+          python3 tools/runpod_train.py --dry-run --branch "$BRANCH" \
+            --model "Qwen/Qwen2.5-7B-Instruct" --epochs "$EPOCHS" --seed 0 \
+            --train-data training/sophia-math-code-curriculum/sft_all.jsonl \
+            --adapter-dir "/workspace/sophia-runpod/sophia-agi/training/sophia-math-code-curriculum/checkpoints/sophia-cuda-v1-seed0" \
+            --train-only
+
+      - name: Launch RunPod math-code SFT (3 seeds or single seed)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          BRANCH: ${{ github.event.inputs.branch }}
+          SEED_INPUT: ${{ github.event.inputs.seed }}
+          EPOCHS_INPUT: ${{ github.event.inputs.epochs }}
+          INTERRUPTIBLE_INPUT: ${{ github.event.inputs.interruptible }}
+        run: |
+          set -euo pipefail
+          export BRANCH
+          if [ -n "$EPOCHS_INPUT" ]; then export EPOCHS="$EPOCHS_INPUT"; else export EPOCHS="2"; fi
+          mkdir -p agi-proof/benchmark-results/runpod-train
+
+          run_one_seed() {
+            local seed="$1"
+            echo "===== math-code SFT seed $seed ====="
+            python3 tools/runpod_train.py --yes --branch "$BRANCH" \
+              --model "Qwen/Qwen2.5-7B-Instruct" --epochs "$EPOCHS" --seed "$seed" \
+              --train-data training/sophia-math-code-curriculum/sft_all.jsonl \
+              --adapter-dir "/workspace/sophia-runpod/sophia-agi/training/sophia-math-code-curriculum/checkpoints/sophia-cuda-v1-seed${seed}" \
+              --train-only --name "sophia-math-code-sft-seed${seed}" \
+              $([ "$INTERRUPTIBLE_INPUT" = "true" ] && echo --interruptible)
+          }
+
+          if [ -n "$SEED_INPUT" ]; then
+            run_one_seed "$SEED_INPUT"
+          else
+            bash agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh
+          fi
+
+      - name: Show repo-head + train logs in the run log
+        if: always()
+        run: |
+          shopt -s nullglob
+          for f in agi-proof/benchmark-results/runpod-train/*.repo-head.txt \
+                   agi-proof/benchmark-results/runpod-train/*.train.log; do
+            echo "===== $f ====="
+            tail -n 80 "$f" || cat "$f"
+          done
+
+      - name: Upload training artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: sophia-math-code-sft-artifacts
+          path: |
+            agi-proof/benchmark-results/runpod-train/**
+            agi-proof/sophia-math-code-curriculum/heldout-seal.manifest.json
+          retention-days: 14
+          if-no-files-found: warn

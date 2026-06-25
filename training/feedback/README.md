@@ -50,3 +50,21 @@ python tools/run_learning_shift.py <spec.json> --backend adapter
 
 Not an AGI claim: this trains the refuse-unsupported-attribution **habit** from reviewed
 evidence; external gates still enforce correctness at runtime.
+
+## Failure memory (error-RAG, inference-time)
+
+Verifier-confirmed errors live in `training/feedback/failure_memory/nodes.jsonl`
+(git-ignored) — **never** in the OKF wiki. Built via `agent/failure_memory.py`;
+inference guard-rails via `agent/error_rag.py` (optional, fail-closed).
+
+```bash
+# Stage-3 held-out measurement (dev sweep on v1; sealed test on v2)
+python tools/build_error_memory_heldout_v2.py   # regenerate v2 pack + manifest
+python tools/eval_error_memory_rag.py
+```
+
+Precision gates (default all ON): `min_score`, same `errorClass` match, and
+`would_repeat` (current answer must equal recorded `wrongClaim`). Tune on v1 dev
+only — evaluate net value once on sealed v2.
+
+Held-out packs: `data/error_memory_heldout_v1.jsonl` (dev), `data/error_memory_heldout_v2.jsonl` (test, ≥40).
