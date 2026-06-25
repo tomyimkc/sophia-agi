@@ -123,6 +123,40 @@ def _offline_invariants() -> tuple[bool, dict]:
     return all(checks.values()), detail
 
 
+def _gate_reward_invariants() -> tuple[bool, dict]:
+    """Assert the gate-as-reward invariants offline (no torch / GPU).
+
+    The gate reward (``agent.gate_reward``) wraps the INTRINSIC fail-closed gate
+    and is reward-positive on abstention (the abstention-collapse fix). This
+    surfaces its self-check inside the RLVR offline report so the mock run also
+    proves the gate-reward wiring, not just the verifier-as-reward path.
+    """
+    from agent import gate_reward
+
+    detail = gate_reward.self_check()
+    ok = all(detail["invariants"].values())
+    return ok, detail
+
+
+def _gate_curriculum_order(rows: list[dict], *, samples: int = 1) -> list[dict]:
+    """Offline curriculum: order tasks easy->hard by gate pass-rate over mock
+    samples. With no live policy here, the "sample" is the row's own reference
+    completion (gold-clean rows pass, forbidden rows fail), so the ordering is a
+    deterministic, offline-safe proxy for difficulty. Behind ``--curriculum``.
+    """
+    from agent import gate_reward
+
+    def pass_rate(row: dict) -> float:
+        # Use any available reference text; fall back to the prompt so the call
+        # is always well-defined offline.
+        text = row.get("completion") or row.get("reference") or row.get("prompt") or ""
+        hits = sum(1 for _ in range(max(1, samples)) if not gate_reward.gate_violations(text))
+        return hits / max(1, samples)
+
+    # Descending pass-rate => easiest (highest pass-rate) first.
+    return sorted(rows, key=pass_rate, reverse=True)
+
+
 def _write_report(detail: dict, out: Path) -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(detail, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -179,8 +213,19 @@ def _run_gpu(args: argparse.Namespace) -> int:
         reward_fn = math_reward.make_grpo_reward()  # gold column -> sympy math_equivalent
     else:
         data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
-        reward_fn = rl_reward.make_grpo_reward(records=data["train_gate_records"])
-    ds = Dataset.from_list(data["train_rows"])  # columns kept: remove_unused_columns=False
+        if args.reward == "gate":
+            # Gate-as-reward: the intrinsic fail-closed provenance gate IS the reward,
+            # reward-positive on abstention (abstention-collapse fix). Question-free by
+            # design, so it needs no label/gold columns.
+            from agent import gate_reward
+
+            reward_fn = gate_reward.make_grpo_reward()
+        else:
+            reward_fn = rl_reward.make_grpo_reward(records=data["train_gate_records"])
+    train_rows = data["train_rows"]
+    if args.curriculum:
+        train_rows = _gate_curriculum_order(train_rows, samples=args.curriculum_samples)
+    ds = Dataset.from_list(train_rows)  # columns kept: remove_unused_columns=False
 
     model_init_kwargs: dict = {"trust_remote_code": False}
     if four_bit:
@@ -289,13 +334,32 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--lora-alpha", type=int, default=32)
     ap.add_argument("--eval-frac", type=float, default=0.3)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument(
+        "--reward", default="verifier", choices=["verifier", "gate"],
+        help='reward signal: "verifier" (gold/forbidden verifier-as-reward, default) '
+             'or "gate" (intrinsic fail-closed gate, reward-positive abstention)',
+    )
+    ap.add_argument(
+        "--curriculum", action="store_true",
+        help="order training tasks easy->hard by gate pass-rate (offline-safe)",
+    )
+    ap.add_argument("--curriculum-samples", type=int, default=1)
     args = ap.parse_args(argv)
 
     if args.model == "mock" or args.dry_run:
-        ok, detail = math_reward.offline_invariants() if args.task == "math" else _offline_invariants()
+        if args.task == "math":
+            ok, detail = math_reward.offline_invariants()
+        else:
+            ok, detail = _offline_invariants()
+            # Also prove the gate-as-reward wiring offline (abstention-collapse fix).
+            gate_ok, gate_detail = _gate_reward_invariants()
+            ok = ok and gate_ok
+            detail["checks"]["gateRewardInvariants"] = gate_ok
+            detail["gateReward"] = gate_detail
         detail["benchmark"] = f"rlvr-{args.task}"
         detail["task"] = args.task
         detail["mode"] = "mock-offline"
+        detail["rewardSelected"] = args.reward
         detail["claim"] = "reward-machinery invariants (NOT a capability claim)"
         detail["liveClaimStatus"] = (
             "Open — see agi-proof/failure-ledger.md rlvr-live-run-not-yet-gated-2026-06-21"

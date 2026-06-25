@@ -1,0 +1,17 @@
+{
+  "schema": "sophia.lora_speedup_bench.v1",
+  "claimBoundary": "Apples-to-apples backend/padding speedup at FIXED data+epochs. Does NOT measure the corpus-shrink lever; the headline 10-50x conflates the two.",
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "rows": 128,
+  "epochs": 1,
+  "seed": 0,
+  "hardware": "RunPod RTX 4090 (spot), pod arm9i914qkhiwe",
+  "githubRun": "https://github.com/tomyimkc/sophia-agi/actions/runs/28125095723",
+  "results": [
+    { "label": "peft-fp16-maxpad", "ref": true, "wallSeconds": 58.3, "returnCode": 0, "skipped": false, "globalSteps": 32, "speedupVsRef": 1.0 },
+    { "label": "peft-fp16-dynpad", "ref": false, "wallSeconds": 29.04, "returnCode": 0, "skipped": false, "globalSteps": 32, "speedupVsRef": 2.01 },
+    { "label": "peft-4bit-dynpad", "ref": false, "wallSeconds": 36.26, "returnCode": 0, "skipped": false, "globalSteps": 32, "speedupVsRef": 1.61 },
+    { "label": "unsloth-4bit-dynpad", "ref": false, "wallSeconds": 63.15, "returnCode": 0, "skipped": false, "globalSteps": 32, "speedupVsRef": 0.92 }
+  ],
+  "referenceLabel": "peft-fp16-maxpad"
+}

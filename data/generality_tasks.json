@@ -1,0 +1,245 @@
+{
+  "heldout": true,
+  "note": "never use for training; decontaminate against train sets",
+  "description": "Held-out GENERALITY probe set. DELIBERATELY contains NO provenance/attribution/source-discipline tasks. These measure raw capability (abstraction, multi-step reasoning, analogy, out-of-domain transfer) so that gate pass-rate + wall-clock cannot be Goodharted as a stand-in for 'getting more capable'. Scored deterministically (exact/numeric/regex) against gold — NO LLM judge.",
+  "tasks": [
+    {
+      "id": "pat-001",
+      "category": "abstraction_pattern",
+      "prompt": "Continue this integer sequence with the next single number: 2, 4, 8, 16, 32, ?\nReply with only the number.",
+      "answer": "64",
+      "match": "numeric"
+    },
+    {
+      "id": "pat-002",
+      "category": "abstraction_pattern",
+      "prompt": "Continue this integer sequence with the next single number: 1, 1, 2, 3, 5, 8, 13, ?\nReply with only the number.",
+      "answer": "21",
+      "match": "numeric"
+    },
+    {
+      "id": "pat-003",
+      "category": "abstraction_pattern",
+      "prompt": "Continue this integer sequence with the next single number: 1, 4, 9, 16, 25, ?\nReply with only the number.",
+      "answer": "36",
+      "match": "numeric"
+    },
+    {
+      "id": "pat-004",
+      "category": "abstraction_pattern",
+      "prompt": "In an ARC-style grid, a row is recolored by mapping each cell to the color directly to its right (the last cell wraps to the first). Input row colors: [A, B, C, D]. Output the resulting row as four space-separated letters.",
+      "answer": "B C D A",
+      "match": "exact"
+    },
+    {
+      "id": "pat-005",
+      "category": "abstraction_pattern",
+      "prompt": "Tiny grid puzzle: a 2x2 grid is rotated 90 degrees clockwise. Input rows are 'a b' (top) and 'c d' (bottom). Give the top row of the rotated grid as two space-separated letters.",
+      "answer": "c a",
+      "match": "exact"
+    },
+    {
+      "id": "pat-006",
+      "category": "abstraction_pattern",
+      "prompt": "Next number in the sequence: 3, 6, 11, 18, 27, ? (differences increase by 2 each step). Reply with only the number.",
+      "answer": "38",
+      "match": "numeric"
+    },
+    {
+      "id": "pat-007",
+      "category": "abstraction_pattern",
+      "prompt": "A 1-D cellular row applies the rule: each cell becomes 1 if exactly one of its two neighbors is 1, else 0 (ends have a single neighbor counted, the missing side treated as 0). Input: 0 1 0 0 1. Output the next row as five space-separated digits.",
+      "answer": "1 0 1 1 0",
+      "match": "exact"
+    },
+    {
+      "id": "arith-001",
+      "category": "multistep_arithmetic",
+      "prompt": "A train travels 60 km in the first hour and 80 km in the second hour. What is its average speed over the two hours, in km/h? Reply with only the number.",
+      "answer": "70",
+      "match": "numeric"
+    },
+    {
+      "id": "arith-002",
+      "category": "multistep_arithmetic",
+      "prompt": "A shirt costs $40. It is discounted 25%, then sales tax of 8% is added to the discounted price. What is the final price in dollars? Reply with only the number (no dollar sign).",
+      "answer": "32.4",
+      "match": "numeric"
+    },
+    {
+      "id": "arith-003",
+      "category": "multistep_arithmetic",
+      "prompt": "Anna has 3 boxes with 12 apples each and gives away 7 apples. How many apples does she have left? Reply with only the number.",
+      "answer": "29",
+      "match": "numeric"
+    },
+    {
+      "id": "arith-004",
+      "category": "multistep_arithmetic",
+      "prompt": "If 5 machines make 5 widgets in 5 minutes, how many minutes do 100 machines take to make 100 widgets? Reply with only the number.",
+      "answer": "5",
+      "match": "numeric"
+    },
+    {
+      "id": "arith-005",
+      "category": "multistep_arithmetic",
+      "prompt": "A rectangle is 7 cm wide and 4 cm tall. What is its area in square centimeters? Reply with only the number.",
+      "answer": "28",
+      "match": "numeric"
+    },
+    {
+      "id": "arith-006",
+      "category": "multistep_arithmetic",
+      "prompt": "You buy 3 coffees at $2.50 each and pay with a $20 bill. How much change do you get in dollars? Reply with only the number.",
+      "answer": "12.5",
+      "match": "numeric"
+    },
+    {
+      "id": "arith-007",
+      "category": "multistep_arithmetic",
+      "prompt": "A tank holds 240 liters. It drains at 8 liters per minute. How many minutes until it is empty? Reply with only the number.",
+      "answer": "30",
+      "match": "numeric"
+    },
+    {
+      "id": "logic-001",
+      "category": "logic_wordproblem",
+      "prompt": "All bloops are razzies. All razzies are lazzies. Are all bloops definitely lazzies? Answer yes or no.",
+      "answer": "yes",
+      "match": "regex"
+    },
+    {
+      "id": "logic-002",
+      "category": "logic_wordproblem",
+      "prompt": "Tom is taller than Sara. Sara is taller than Mike. Who is the shortest of the three? Reply with only the name.",
+      "answer": "Mike",
+      "match": "regex"
+    },
+    {
+      "id": "logic-003",
+      "category": "logic_wordproblem",
+      "prompt": "If it is raining then the ground is wet. The ground is NOT wet. Is it raining? Answer yes or no.",
+      "answer": "no",
+      "match": "regex"
+    },
+    {
+      "id": "logic-004",
+      "category": "logic_wordproblem",
+      "prompt": "Five people sit in a row. Cara is in the middle seat (seat 3 of 5). There are equal numbers of people on each side of her. How many people sit to her left? Reply with only the number.",
+      "answer": "2",
+      "match": "numeric"
+    },
+    {
+      "id": "logic-005",
+      "category": "logic_wordproblem",
+      "prompt": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost in dollars? Reply with only the number (no dollar sign).",
+      "answer": "0.05",
+      "match": "numeric"
+    },
+    {
+      "id": "logic-006",
+      "category": "logic_wordproblem",
+      "prompt": "Some cats are black. No black things glow. Can we conclude that some cats do not glow? Answer yes or no.",
+      "answer": "yes",
+      "match": "regex"
+    },
+    {
+      "id": "analogy-001",
+      "category": "analogy",
+      "prompt": "Hot is to cold as up is to ___? Reply with a single word.",
+      "answer": "down",
+      "match": "regex"
+    },
+    {
+      "id": "analogy-002",
+      "category": "analogy",
+      "prompt": "Finger is to hand as leaf is to ___? Reply with a single word.",
+      "answer": "tree",
+      "match": "regex"
+    },
+    {
+      "id": "analogy-003",
+      "category": "analogy",
+      "prompt": "Puppy is to dog as kitten is to ___? Reply with a single word.",
+      "answer": "cat",
+      "match": "regex"
+    },
+    {
+      "id": "analogy-004",
+      "category": "analogy",
+      "prompt": "Day is to night as summer is to ___? Reply with a single word.",
+      "answer": "winter",
+      "match": "regex"
+    },
+    {
+      "id": "analogy-005",
+      "category": "analogy",
+      "prompt": "Author is to book as composer is to ___? Reply with a single word.",
+      "answer": "symphony|music|song|score",
+      "match": "regex"
+    },
+    {
+      "id": "analogy-006",
+      "category": "analogy",
+      "prompt": "2 is to 8 as 3 is to ___? (the rule is cube). Reply with only the number.",
+      "answer": "27",
+      "match": "numeric"
+    },
+    {
+      "id": "ood-001",
+      "category": "out_of_domain",
+      "prompt": "Decode this Caesar-shifted word (each letter shifted forward by 1): 'gdkkn'. Reply with only the decoded word.",
+      "answer": "hello",
+      "match": "regex"
+    },
+    {
+      "id": "ood-002",
+      "category": "out_of_domain",
+      "prompt": "Reverse the string 'stressed' and reply with only the resulting word.",
+      "answer": "desserts",
+      "match": "regex"
+    },
+    {
+      "id": "ood-003",
+      "category": "out_of_domain",
+      "prompt": "In the made-up language Zubi, 'mi ka' means 'red ball' and 'mi tu' means 'red box'. What word means 'red'? Reply with a single word.",
+      "answer": "mi",
+      "match": "regex"
+    },
+    {
+      "id": "ood-004",
+      "category": "out_of_domain",
+      "prompt": "Convert binary 1011 to a decimal integer. Reply with only the number.",
+      "answer": "11",
+      "match": "numeric"
+    },
+    {
+      "id": "ood-005",
+      "category": "out_of_domain",
+      "prompt": "You have a 3-liter jug and a 5-liter jug and unlimited water. What is the smallest number of liters greater than zero you can measure exactly into a container using only these jugs? Reply with only the number.",
+      "answer": "1",
+      "match": "numeric"
+    },
+    {
+      "id": "ood-006",
+      "category": "out_of_domain",
+      "prompt": "How many times does the letter 'r' appear in the word 'strawberry'? Reply with only the number.",
+      "answer": "3",
+      "match": "numeric"
+    },
+    {
+      "id": "ood-007",
+      "category": "out_of_domain",
+      "prompt": "Sort these numbers in ascending order and give them space-separated: 4 1 3 2. ",
+      "answer": "1 2 3 4",
+      "match": "exact"
+    },
+    {
+      "id": "ood-008",
+      "category": "out_of_domain",
+      "prompt": "A standard six-sided die shows 6 on top. What number is on the bottom face (opposite faces of a standard die sum to 7)? Reply with only the number.",
+      "answer": "1",
+      "match": "numeric"
+    }
+  ]
+}

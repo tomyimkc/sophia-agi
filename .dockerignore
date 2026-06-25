@@ -1,0 +1,50 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+#
+# Keep the build context tiny: the prebaked image only needs requirements-lora.txt
+# (the repo is git-cloned onto the live pod at runtime, not baked in). Excluding
+# .git/, training artifacts, model weights, and caches avoids sending GBs to the
+# Docker daemon and keeps the build fast + reproducible.
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Heavy / regenerable training artifacts and model weights
+training/
+models/
+*.safetensors
+*.bin
+*.pt
+*.gguf
+*-mlx-data/
+
+# Caches
+**/__pycache__/
+*.py[cod]
+.cache/
+.venv/
+.venv-gpu/
+venv/
+
+# Secrets / local env (never bake into an image)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Datasets, proofs, large outputs not needed at build time
+data/
+raw/
+agi-proof/
+provenance_bench/
+moral_corpus/
+eval/external/
+wiki/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

@@ -60,18 +60,33 @@ DEFAULT_GPU_TYPES = [
     "NVIDIA A100-SXM4-80GB",
 ]
 
+# Prebaked training image (built from ./Dockerfile) with requirements-lora.txt deps,
+# a PREBUILT flash-attn wheel, and unsloth already installed. Point --image-name here
+# (or the workflow 'image' input) to kill the multi-hour flash-attn compile cold start.
+# Empty by default so we fall back to DEFAULT_BENCH_IMAGE below.
+DEFAULT_PREBAKED_IMAGE = ""
+
+# Base image pinned to torch 2.8.0 (NOT the torch-2.9.1 default): torch 2.9 has NO
+# prebuilt flash-attn wheel yet, so it would compile from source (~the 90-min timeout we
+# hit). torch 2.8 has an official cu12 wheel, so the --pack config installs in seconds.
+DEFAULT_BENCH_IMAGE = "runpod/pytorch:1.0.7-cu1281-torch280-ubuntu2204"
+
 
 def _remote_bench_script(args: argparse.Namespace) -> str:
     branch_flag = (" --branch " + shlex.quote(args.branch)) if args.branch else ""
     return f"""
 set -Eeuo pipefail
 export DEBIAN_FRONTEND=noninteractive
+# Persistent HF cache (mirrors Dockerfile HF_HOME). HF_HUB_OFFLINE is set later ONLY
+# if the requested model is already cached, so a prebaked+warmed volume avoids a
+# network round-trip while a cold cache still downloads normally.
 export HF_HOME=/workspace/.cache/huggingface
+export HF_HUB_CACHE=/workspace/.cache/huggingface/hub
 export PIP_CACHE_DIR=/workspace/.cache/pip
 export SOPHIA_MODEL={shlex.quote(args.model)}
 export SOPHIA_LIMIT={shlex.quote(str(args.limit))}
 export SOPHIA_SEED={shlex.quote(str(args.seed))}
-mkdir -p /workspace/sophia-runpod /workspace/.cache/huggingface /workspace/.cache/pip
+mkdir -p /workspace/sophia-runpod /workspace/.cache/huggingface/hub /workspace/.cache/pip
 cd /workspace/sophia-runpod
 if [ {shlex.quote(args.source)} = "git" ] && [ ! -d sophia-agi/.git ]; then
   git clone --depth 1{branch_flag} {shlex.quote(args.repo_url)} sophia-agi
@@ -89,10 +104,56 @@ except Exception as exc:
     print("torch precheck failed:", type(exc).__name__, exc)
 PY
 python -m pip install --upgrade pip setuptools wheel
+# Base LoRA deps: cheap no-op when the prebaked image already satisfies them, but
+# kept unconditionally so a vanilla base image still works.
 python -m pip install -r requirements-lora.txt
-# Unsloth is optional: if its install fails, the unsloth-4bit config is recorded as
-# FAILED by the bench and the other three configs still produce the headline numbers.
-python -m pip install "unsloth>=2024.8" || echo "[bench] unsloth install failed (non-fatal)"
+# flash-attn: install a PREBUILT wheel matching torch/python/abi (downloads in
+# seconds). We NEVER fall back to a source compile — that compile is the multi-hour
+# cold start that timed out the 90-min workflow. If no prebuilt wheel exists for this
+# torch (e.g. torch 2.9 has none yet), we SKIP the --pack config rather than compile.
+if python -c "import flash_attn" 2>/dev/null; then
+  echo "[bench] flash-attn already importable (prebaked image) — skipping install"
+else
+  WHEEL=$(python - <<'PY'
+import sys
+try:
+    import torch
+    mm = ".".join(torch.__version__.split("+")[0].split(".")[:2])
+    cp = f"cp{{sys.version_info.major}}{{sys.version_info.minor}}"
+    abi = "TRUE" if torch._C._GLIBCXX_USE_CXX11_ABI else "FALSE"
+    if mm in ("2.4", "2.5", "2.6", "2.7", "2.8"):
+        print(f"https://github.com/Dao-AILab/flash-attention/releases/download/v2.8.3.post1/"
+              f"flash_attn-2.8.3.post1+cu12torch{{mm}}cxx11abi{{abi}}-{{cp}}-{{cp}}-linux_x86_64.whl")
+except Exception:
+    pass
+PY
+)
+  if [ -n "$WHEEL" ]; then
+    echo "[bench] installing prebuilt flash-attn wheel (no compile): $WHEEL"
+    python -m pip install "$WHEEL" || echo "[bench] wheel install failed (non-fatal; --pack skipped)"
+  else
+    echo "[bench] no prebuilt flash-attn wheel for this torch (e.g. 2.9) — --pack skipped, NO source compile"
+  fi
+fi
+if python -c "import unsloth" 2>/dev/null; then
+  echo "[bench] unsloth already importable (prebaked image) — skipping install"
+else
+  python -m pip install "unsloth>=2024.8" || echo "[bench] unsloth install failed (non-fatal)"
+fi
+# Set HF_HUB_OFFLINE only if the model is already in the persistent cache, so a
+# warm volume avoids the hub probe while a cold run still downloads.
+python - <<'PY'
+import os
+from pathlib import Path
+model = os.environ.get("SOPHIA_MODEL", "")
+cache = Path(os.environ.get("HF_HUB_CACHE", "/workspace/.cache/huggingface/hub"))
+slug = "models--" + model.replace("/", "--")
+cached = (cache / slug).is_dir() if model else False
+with open("/workspace/sophia-runpod/hf-offline.env", "w") as fh:
+    fh.write("export HF_HUB_OFFLINE=1\\n" if cached else "")
+print(f"[bench] model {{model!r}} cached={{cached}} -> HF_HUB_OFFLINE={{'1' if cached else '(unset)'}}", flush=True)
+PY
+. /workspace/sophia-runpod/hf-offline.env
 python tools/prepare_lora_dataset.py
 python tools/bench_lora_speedup.py --limit "$SOPHIA_LIMIT" --model "$SOPHIA_MODEL" --seed "$SOPHIA_SEED"
 cp training/lora/bench/speedup_report.json /workspace/sophia-runpod/speedup_report.json || true
@@ -121,7 +182,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--gpu-count", type=int, default=1)
     ap.add_argument("--cloud-type", choices=["SECURE", "COMMUNITY"], default="SECURE")
     ap.add_argument("--interruptible", action="store_true", help="use cheaper spot/interruptible pod")
-    ap.add_argument("--image-name", default=DEFAULT_IMAGE)
+    ap.add_argument(
+        "--image-name",
+        default=DEFAULT_PREBAKED_IMAGE or DEFAULT_BENCH_IMAGE,
+        help="container image. Defaults to the torch-2.8 base so flash-attn installs "
+             "from a prebuilt wheel (seconds) instead of compiling. Point at a prebaked "
+             "./Dockerfile image (<user>/sophia-train:latest) to skip pip entirely.",
+    )
     ap.add_argument("--container-disk-gb", type=int, default=80)
     ap.add_argument("--volume-gb", type=int, default=40)
     ap.add_argument("--allowed-cuda-versions", default="")

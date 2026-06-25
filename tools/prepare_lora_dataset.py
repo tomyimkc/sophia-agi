@@ -54,6 +54,35 @@ def is_holdout(example: dict, bench_ids: set[str], bench_questions: set[str]) ->
     return None
 
 
+def presplit_rows(rows: list[dict], max_tokens: int) -> tuple[list[dict], dict]:
+    """Guarantee every row fits the token budget BEFORE it reaches a trainer.
+
+    Reuses tools.split_long_training_rows.fit_rows (offline conservative heuristic),
+    splitting over-long multi-turn rows at turn boundaries and re-deriving id/text.
+    Prevents the silent mid-example truncation seen in the v2 MLX run.
+    """
+    from tools.split_long_training_rows import fit_rows
+
+    src = [
+        {"messages": r["messages"], "metadata": {**(r.get("metadata") or {}), "_srcId": r["id"]}}
+        for r in rows
+    ]
+    fitted, report = fit_rows(src, max_tokens=max_tokens)
+    seen: dict[str, int] = {}
+    out: list[dict] = []
+    for fr in fitted:
+        meta = dict(fr.get("metadata") or {})
+        src_id = meta.pop("_srcId", "row")
+        msgs = fr["messages"]
+        if meta.get("split"):
+            seen[src_id] = seen.get(src_id, 0) + 1
+            row_id = f"{src_id}-p{seen[src_id]}"
+        else:
+            row_id = src_id
+        out.append({"id": row_id, "messages": msgs, "text": format_chat(msgs), "metadata": meta})
+    return out, report
+
+
 def format_chat(messages: list[dict]) -> str:
     """Simple chat template compatible with most instruct models."""
     parts: list[str] = []
@@ -70,6 +99,10 @@ def format_chat(messages: list[dict]) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Prepare LoRA dataset with benchmark holdout")
     parser.add_argument("--out-dir", type=Path, default=OUT_DIR)
+    parser.add_argument("--max-tokens", type=int, default=1024,
+                        help="Pre-split rows over this token budget (offline heuristic)")
+    parser.add_argument("--no-presplit", action="store_true",
+                        help="Disable pre-split enforcement (rows may then truncate at train time)")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -98,17 +131,26 @@ def main() -> int:
         else:
             train_rows.append(row)
 
+    # Aggregate holdout reasons from the source examples BEFORE pre-splitting (reasons
+    # are per-source-example; splitting changes row counts, not why a row was held out).
+    holdout_reasons: dict[str, int] = {}
+    for row in holdout_rows:
+        holdout_reasons[row["holdoutReason"]] = holdout_reasons.get(row["holdoutReason"], 0) + 1
+
+    presplit_reports: dict = {}
+    if not args.no_presplit:
+        train_rows, presplit_reports["train"] = presplit_rows(train_rows, args.max_tokens)
+        holdout_rows, presplit_reports["holdout"] = presplit_rows(holdout_rows, args.max_tokens)
+
     manifest = {
         "totalExamples": len(train_rows) + len(holdout_rows),
         "trainCount": len(train_rows),
         "holdoutCount": len(holdout_rows),
         "benchmarkCaseCount": len(bench_ids),
         "droppedUnsafe": dropped_unsafe,
-        "holdoutReasons": {},
+        "presplit": {"enabled": not args.no_presplit, "maxTokens": args.max_tokens, **presplit_reports},
+        "holdoutReasons": holdout_reasons,
     }
-    for row in holdout_rows:
-        reason = row["holdoutReason"]
-        manifest["holdoutReasons"][reason] = manifest["holdoutReasons"].get(reason, 0) + 1
 
     print(json.dumps(manifest, indent=2))
     if args.dry_run:

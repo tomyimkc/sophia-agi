@@ -1,6 +1,12 @@
-torch
+# Pinned to <2.9: torch 2.9+ has no prebuilt flash-attn wheel yet, and an unpinned
+# upgrade silently broke ABI on the pod (pip pulled 2.10). 2.7/2.8 have flash-attn wheels.
+torch>=2.7,<2.9
 transformers>=4.44,<5.0
 peft>=0.19.1,<0.20
 datasets>=2.18
 accelerate>=1.14.0
 bitsandbytes>=0.43; platform_system != "Darwin"
+
+# Optional backends for tools/train_lora.py --backend (install on the target machine):
+#   --backend unsloth (CUDA, fused kernels, ~2x): pip install "unsloth>=2024.8"
+#   --backend mlx (Apple Silicon):                pip install "mlx-lm>=0.20"
