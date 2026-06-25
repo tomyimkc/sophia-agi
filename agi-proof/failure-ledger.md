@@ -629,6 +629,23 @@ held-out MATH/GSM8K/HumanEval/MBPP style samples (+ hidden pack when run) with
 ≥3 seeds and 95% CI excluding 0. Training-oracle passes are NOT benchmark proof.
 `canClaimAGI` stays **False**.
 
-**Blockers for headline:** baseline not yet recorded on Qwen2.5-7B; no GPU SFT/RLVR
-run; evidence-oracle thresholds untested.
+**Stage 2 (curriculum data) — 2026-06-25:** `tools/generate_math_code_curriculum.py`
+→ `training/sophia-math-code-curriculum/` (144 sympy/exec-verified SFT rows;
+seed `20260625`). Per-tier kept/dropped (generated → kept):
+
+| Tier | Math kept | Code kept | Total kept | Dropped |
+|------|-----------|-----------|------------|---------|
+| tier0 (GSM8K-style + trivial code) | 24 | 6 | 30 | 0 |
+| tier1 (derivative_poly/solve/eval + list/string code) | 48 | 6 | 54 | 0 |
+| tier2 (func/product/definite_integral + loop code) | 54 | 6 | 60 | 0 |
+| **Total** | **126** | **18** | **144** | **0** |
+
+Decontam: `build_local_sophia_dataset.py --check` → **CLEAN**; held-out seal
+`--check` OK; curriculum `check_contamination` → 0 overlaps vs 234 eval prompts.
+RLVR eval families (`derivative_chain`, `integrate_func`, `second_derivative`)
+excluded from training pack. `canClaimAGI` stays **False**.
+
+**Blockers for Stage 3 (GPU SFT):** Qwen2.5-7B baseline not recorded; no QLoRA
+recipe wired to `training/sophia-math-code-curriculum/`; evidence-oracle
+thresholds untested; protected-suite regression gate not run post-adapter.
 
