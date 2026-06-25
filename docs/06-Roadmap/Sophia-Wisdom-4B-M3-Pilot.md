@@ -72,9 +72,17 @@ outcome at this row count and is reported as such.
 
 ## Infrastructure + prerequisites (resolve before GPU spend)
 
-- **Base weights:** `google/gemma-3-4b-it` is a **gated** HF model — requires accepting Google's
-  Gemma license and an `HF_TOKEN` with access. **Blocker to clear first.** (A non-gated mirror is
-  not a substitute without license clearance.)
+- **Base weights — CONFIRMED BLOCKER (2026-06-25):** `google/gemma-3-4b-it` is **`gated: manual`**
+  on HF (needs Google Gemma license acceptance + a per-account access grant) and **no `HF_TOKEN`
+  is set in this environment** → `…/resolve/main/config.json` returns **HTTP 401**. The base
+  cannot be pulled here; not routed around (access control). It is also **multimodal**
+  (`image-text-to-text`), so the Qwen2.5-text-built LoRA stack needs more than a chat-template
+  swap (train only the language tower; verify on a smoke run). **Decision required before any
+  GPU:** either (a) provide an `HF_TOKEN` with gemma access (license accepted), or (b) run the
+  pilot on a **non-gated, text-only, same-size** base instead — accepting that it was **not** the
+  M1-selected base (e.g. Qwen2.5-3B, which the stack already supports, or Llama-3.2-3B, which M1
+  showed collapses under the scaffold — so Qwen2.5-3B is the more sensible non-gated fallback,
+  but it would need its own quick M1 prompt+gate check first).
 - **Train:** RunPod CUDA via the RunPod MCP (`--backend peft` in `tools/train_lora.py`); MLX is
   unavailable here (no Apple Silicon). **ONE seed**, LoRA, **seq-len 1024** (the proven length —
   do not jump to 2048). gemma-3 chat template must be wired (the stack was built for Qwen2.5-3B —
