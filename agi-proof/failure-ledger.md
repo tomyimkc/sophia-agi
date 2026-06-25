@@ -4,6 +4,11 @@ Failures are claim evidence. They show where the system is not AGI.
 
 | Failure ID | Status | Claim impact | Required response |
 |---|---|---|---|
+| tool-use-phase0-2026-06-25 | Closed | Sealed benchmark v1 N=120 (40/40/40), hash `67ee5152d501164df79c709199927e4037d0c06acb460d5d4edd8f08eb27b289`, `--check` CLEAN | — |
+| tool-use-phase1-2026-06-25 | Closed | 80 verified mock SFT traces, 0 verify_fail | RunPod real traces |
+| tool-use-phase2-2026-06-25 | Open | RunPod blocker: no SFT ≥3 seeds | train_lora on RunPod |
+| tool-use-phase3-2026-06-25 | Partial | 200 DPO pairs (over_call=36, mis_ground=28, wrong_tool=28, ignored_error=36, schema_invalid=36, spurious_extra=36) | DPO after Phase 2 |
+| tool-use-phase6-2026-06-25 | Open | Mock eval 3 seeds: trained pass@1=0.65 vs no_tools=0.025 (Δ+0.625 CI excl.0); within noise vs always_tools (Δ=0). `canClaimAGI:false` | Real adapter eval |
 | external-benchmarks-not-run | Open | Blocks expert AGI claim | Keep wording at AGI-candidate |
 | hidden-review-third-party-not-run | Open | Blocks independent hidden generalization claim | Run third-party packs |
 | hidden-prepared-pack-grok-cli-2026-06-19 | Open | Preliminary hidden run only: 28.75/40 auto score, 2/8 strict pass | Improve strict pass rate; run fresh third-party hidden pack |

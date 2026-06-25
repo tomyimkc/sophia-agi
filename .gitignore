@@ -82,3 +82,8 @@ training/feedback/*.jsonl
 
 # SSIL runtime registry (mutable append log)
 agi-proof/self-extension/ssil-registry.jsonl
+
+training/tool_use/checkpoints/
+training/tool_use/dpo_pairs.jsonl
+!training/tool_use/sft_traces.jsonl
+

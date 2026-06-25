@@ -30,7 +30,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from provenance_bench.dataset_guard import check_contamination, eval_prompt_set  # noqa: E402
+from provenance_bench.dataset_guard import check_contamination, eval_prompt_set, tool_use_benchmark_prompt_set  # noqa: E402
 
 OUT = ROOT / "training" / "local_sophia_v2"
 BASE_MODEL = "Qwen/Qwen2.5-3B-Instruct"
@@ -91,10 +91,12 @@ SFT_SOURCES = [
     # C4: human-reviewed, promoted gate-feedback misses (optional; absent → skipped).
     # Decontaminated like any source, so it cannot leak eval/holdout prompts.
     ("training/feedback/sft_from_feedback.jsonl", "sft_from_feedback.jsonl", "sft"),
+    ("training/tool_use/sft_traces.jsonl", "sft_tool_use.jsonl", "sft"),
 ]
 DPO_SOURCES = [
     ("training/hard_negatives_dpo.jsonl", "dpo_hard_negatives.jsonl", "dpo"),
     ("training/wiki_provenance_dpo.jsonl", "dpo_wiki_provenance.jsonl", "dpo"),
+    ("training/tool_use/dpo_pairs.jsonl", "dpo_tool_use.jsonl", "dpo"),
 ]
 HOLDOUT_SRC = "training/lora/holdout.jsonl"
 
@@ -129,7 +131,13 @@ def build(check_only: bool) -> int:
     holdout_prompts = {normalize(prompt_of(r)) for r in holdout if prompt_of(r)}
     evalset = eval_prompt_set(root=ROOT)
     # forbidden = held-out eval prompts ∪ the local holdout prompts
-    forbidden = set(evalset) | holdout_prompts
+    tool_use_prompts = tool_use_benchmark_prompt_set(root=ROOT)
+    forbidden = set(evalset) | holdout_prompts | tool_use_prompts
+    tool_use_hash = None
+    tm = ROOT / "data/tool_use_benchmark/manifest.json"
+    if tm.exists():
+        try: tool_use_hash = json.loads(tm.read_text()).get("contentHash")
+        except json.JSONDecodeError: pass
 
     packs: dict[str, dict] = {}
     all_train: list[dict] = []
@@ -200,11 +208,13 @@ def build(check_only: bool) -> int:
         "baseline": _existing_baseline(),  # fill via tools/eval_ladder.py on your hardware BEFORE training
         "promotionRule": "promote only if provenance/citation improves at acceptable "
                          "false-positive cost (no useful-correctness regression).",
+        "toolUseBenchmarkHash": tool_use_hash,
         "contamination": {
             "droppedForDecontamination": dropped_total,
             "vsEval": contam,
             "vsHoldoutOverlapCount": len(holdout_overlap),
-            "clean": contam["clean"] and not holdout_overlap,
+            "vsToolUseBenchmarkOverlapCount": sum(1 for r in all_train if prompt_of(r) and normalize(prompt_of(r)) in tool_use_prompts),
+            "clean": contam["clean"] and not holdout_overlap and not any(prompt_of(r) and normalize(prompt_of(r)) in tool_use_prompts for r in all_train),
         },
         "mlx": {"trainRows": len(mlx_train_fitted), "validRows": len(mlx_valid_fitted),
                 "path": "training/local_sophia_v2/mlx", "maxTokens": MLX_MAX_TOKENS,
