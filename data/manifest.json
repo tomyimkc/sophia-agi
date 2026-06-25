@@ -1,5 +1,5 @@
 {
-  "version": "0.8.0",
+  "version": "0.9.0",
   "trainingExamples": 528,
   "domains": [
     "philosophy",
@@ -243,7 +243,7 @@
     }
   },
   "rag": {
-    "indexChunks": 541
+    "indexChunks": 634
   },
   "localModel": {
     "benchmark": {
