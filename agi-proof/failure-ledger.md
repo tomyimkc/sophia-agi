@@ -619,6 +619,75 @@ not AGI, not a Gödel machine. canClaimAGI stays False.
 religion FORMAT is prompt-structurable at inference; religion-repair LoRA path remains falsified.
 `canClaimAGI: false`.
 
+## sophia-7b-train-verify-data-flywheel-2026-06-25
+
+**Status:** STAGE 0–1 COMPLETE; STAGE 2+ BLOCKED (SSH egress timeout to RunPod mapped pod ports from local Mac / Cursor agent shell).
+
+**Pre-registration (Stage 0):** `agi-proof/sophia-7b-train-verify/preregistration.json`,
+oracle split `oracle-split.md`, holdout seal `heldout-seal.manifest.json`
+(`contentHash: 84d00bdc36205abdb5a162530d8fc972ee27075c053bfd0615de59d3ed9aeb97`, 89 rows).
+Commit `9f00733`.
+
+**Data flywheel (Stage 1) — `training/local_sophia_7b/`, base `Qwen/Qwen2.5-7B-Instruct`:**
+
+| Pack | Rows | Decontam dropped |
+|---|---:|---:|
+| sft_source_discipline | 439 | 89 |
+| sft_wiki_provenance | 34 | 0 |
+| sft_council_traces | 125 | 0 |
+| sft_religion_repair_c4 | 12 | 0 |
+| sft_moral_gate | 35 | 0 |
+| general_instruct | 120 | 0 |
+| dpo_hard_negatives | 590 | 25 |
+| dpo_wiki_provenance | 34 | 0 |
+| **train total** | **1389** | **114** |
+| holdout (sealed) | 89 | — |
+| MLX SFT train / valid | 754 / 89 | 11 turns dropped overlong |
+
+`build_local_sophia_dataset.py --check`: contamination **CLEAN** (0 eval overlap, 0 holdout overlap).
+Hard-negative miner: 615 pairs (gate-validated). Moral Gate SFT: 35 rows.
+
+**Stage 2 blocker (2026-06-25, updated @ `8975744`):**
+
+1. **This session (2026-06-25T11:10Z):** `RUNPOD_API_KEY` **present**. Stage 0 gates re-verified
+   (contamination CLEAN, holdout seal `84d00bdc…`, lint_claims OK). SSH smoke probe
+   (`sophia-7b-ssh-smoke`, interruptible) created pods `g6de2tbp9jzge1`
+   (`213.173.109.78:15792`) and `6l4go54e2n4f54` (`213.173.107.230:12881`); RunPod API
+   reported SSH mapping but **outbound SSH login timed out** (300s wait, 2 attempts each).
+   Pods deleted. Log: `agi-proof/benchmark-results/runpod-train/ssh-smoke-20260625-111011.log`.
+   Local Mac outbound TCP/22 to `github.com` and `ssh.runpod.io` **passes**; mapped pod
+   high-ports **do not**.
+2. **Prior session (same day):** pods `crdl0788rpc98m` / `8k7vqe3m5nbynv` — same
+   `ssh_login_timeout` pattern. Logs: `sft-3seed-20260625-095511.log`, `sft-seed0-retry.log`.
+3. **Earlier session:** `RUNPOD_API_KEY` unset — dry-run only (`868fa31`).
+
+**Policy (2026-06-25):** RunPod GPU jobs for this experiment **must** run via GitHub Actions
+(`.github/workflows/runpod-sophia-7b-sft.yml`; secret `RUNPOD_API_KEY`). Do **not** invoke
+`runpod-sft-3seed.sh` / `runpod_train.py --yes` from local Mac or Cursor agent shells — SSH to
+mapped pod ports times out there. See `agi-proof/sophia-7b-train-verify/README.md`.
+
+**Next step:** dispatch **runpod-sophia-7b-sft** (stage `sft`, confirm `RUN`) on branch
+`claude/sophia-7b-train-verify`. Do **not** cite 0/3 seeds as a training verdict until a GHA
+run completes.
+
+**Stage 3 prep (no GPU):** `tools/train_dpo.py` (TRL `DPOTrainer`), `runpod-dpo-3seed.sh`
+(DPO on `dpo_hard_negatives.jsonl`, 590 pairs in pack / 615 mined), pre/post internal
+`eval_ladder` on pod. Blocked on Stage-2 SFT adapter tarballs per seed.
+
+**Stages 5–6:** NOT RUN (no adapter). Local wiring OK: `run_positive_control.py` ✓,
+`promote_adapter` + invariant oracle policy unchanged (release gate — NOT evidence).
+
+**Stage 7 blockers:** `VECTARA_*` credentials absent; hidden reviewer pack needs served model +
+backend credentials. Do **not** substitute internal gate for third-party evidence.
+
+**Headline (falsifiable, OPEN):** Qwen2.5-7B QLoRA SFT (≥3 seeds) has **not** started — blocked
+on SSH egress timeout from Cursor agent host to RunPod mapped pod ports (API key OK; smoke
+reproduced 2026-06-25); **0/3 seeds**, not a training verdict.
+
+**Tradeoff (pre-registered, not yet measured):** abstention/MMLU-Pro regression ≤2.0 points vs base;
+honest reporting required even if internal release gate passes.
+
+**canClaimAGI:** False.
 ## hk-advisor-phase0-2026-06-25
 
 **Status:** COMPLETE (sealed benchmark + contamination guard).

@@ -1,0 +1,17 @@
+# Sophia-7B Stage 2 SSH smoke probe — 2026-06-25
+# Host: Darwin TomdeMacBook-Pro.local 27.0.0 arm64 (local Mac, Cursor agent shell)
+# HEAD: 897574498eb2900ed7a10821157c8b4d7278b245
+# Outbound TCP/22: github.com pass, ssh.runpod.io pass
+# RUNPOD_API_KEY: present (redacted)
+
+[runpod] attempt 1/2: created pod g6de2tbp9jzge1; costPerHr=0.69
+[runpod] SSH mapped: root@213.173.109.78 -p 15792
+ssh: connect to host 213.173.109.78 port 15792: Operation timed out (x4, 300s login wait)
+[runpod] attempt 1/2 failed SSH reachability; pod g6de2tbp9jzge1 deleted
+
+[runpod] attempt 2/2: created pod 6l4go54e2n4f54; costPerHr=0.69
+[runpod] SSH mapped: root@213.173.107.230 -p 12881
+ssh: connect to host 213.173.107.230 port 12881: Operation timed out (x4, 300s login wait)
+[runpod] attempt 2/2 failed SSH reachability; pod 6l4go54e2n4f54 deleted
+
+SSH_SMOKE=FAIL no SSH-reachable pod after 2 attempt(s)
