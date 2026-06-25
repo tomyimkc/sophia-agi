@@ -24,6 +24,7 @@ lands — born already measured against the physical limit.
 from __future__ import annotations
 
 import argparse
+import shlex
 import sys
 import tempfile
 from pathlib import Path
@@ -57,18 +58,24 @@ def _remote_kernel_script(args: argparse.Namespace) -> str:
     self-test, so this stays green even before any CUDA kernel exists; the GPU is used for
     the (optional) ncu profiling step and, later, for real kernel timing.
     """
-    branch = args.branch
+    # shlex.quote the branch: it can come from CLI / workflow_dispatch input, so it must
+    # never be able to break out of the bash string (injection) or trip on odd chars.
+    # m/n/k/iters are argparse int, so safe to interpolate bare.
+    branch_q = shlex.quote(args.branch)
     m, n, k, iters = args.m, args.n, args.k, args.iters
     return f"""
 set -Eeuo pipefail
+BRANCH={branch_q}
 cd /workspace
 if [ ! -d sophia-agi ]; then
-  git clone --depth 1 --branch {branch} {DEFAULT_REPO_URL} sophia-agi
+  git clone --depth 1 --branch "$BRANCH" {DEFAULT_REPO_URL} sophia-agi
 fi
 cd sophia-agi
-git fetch --depth 1 origin {branch} || true
-git checkout {branch} || true
-git pull --ff-only origin {branch} || true
+# Fail fast if the requested branch can't be obtained — never silently run a stale
+# revision left in /workspace (that would burn GPU time on the wrong code).
+git fetch --depth 1 origin "$BRANCH"
+git checkout "$BRANCH"
+git reset --hard "origin/$BRANCH"
 
 mkdir -p kernels/reports
 echo "== nvidia-smi =="
@@ -109,8 +116,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                    help="print the remote script and exit; no pod, no cost (DEFAULT)")
     p.add_argument("--yes", dest="dry_run", action="store_false",
                    help="actually rent a pod and run (requires RUNPOD_API_KEY)")
-    p.add_argument("--branch", default="claude/hpc-operator-compiler-roadmap-zumu83",
-                   help="repo branch to clone/run on the pod")
+    p.add_argument("--branch", default="main",
+                   help="repo branch to clone/run on the pod (the workflow passes the "
+                        "dispatch ref explicitly; the local default is main so runs don't "
+                        "break after a feature branch is merged/deleted)")
     p.add_argument("--name", default="sophia-kernels", help="pod name")
     p.add_argument("--m", type=int, default=4096, help="GEMM M")
     p.add_argument("--n", type=int, default=4096, help="GEMM N")

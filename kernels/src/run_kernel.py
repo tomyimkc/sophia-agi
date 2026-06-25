@@ -151,7 +151,17 @@ def run_gemm(
     import torch
 
     matmul = _build_kernel()
-    torch_dtype = torch.bfloat16 if dtype in {"bf16", "half"} else torch.float16
+    # Explicit, unambiguous mapping: "half"/"float16" mean FP16, not BF16. run_gemm is a
+    # public entry point, so validate rather than silently coercing an unknown dtype.
+    dtype_map = {
+        "bf16": torch.bfloat16,
+        "fp16": torch.float16,
+        "half": torch.float16,
+        "float16": torch.float16,
+    }
+    if dtype not in dtype_map:
+        raise ValueError(f"unsupported dtype {dtype!r}; use one of {sorted(dtype_map)}")
+    torch_dtype = dtype_map[dtype]
     a = torch.randn((m, k), device="cuda", dtype=torch_dtype)
     b = torch.randn((k, n), device="cuda", dtype=torch_dtype)
 
