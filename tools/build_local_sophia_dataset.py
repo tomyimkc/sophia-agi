@@ -85,12 +85,14 @@ SFT_SOURCES = [
     ("training/corpus.jsonl", "sft_source_discipline.jsonl", "sft"),
     ("training/wiki_provenance_sft.jsonl", "sft_wiki_provenance.jsonl", "sft"),
     ("training/council/traces.jsonl", "sft_council_traces.jsonl", "sft"),
+    ("training/team_agents/sft_traces.jsonl", "sft_team_agents.jsonl", "sft"),
     ("training/council/religion_repair_c4.jsonl", "sft_religion_repair_c4.jsonl", "sft"),
     ("training/moral_gate_sft.jsonl", "sft_moral_gate.jsonl", "sft"),
     ("training/local_sophia_v2/general_instruct.jsonl", "general_instruct.jsonl", "sft"),
     # C4: human-reviewed, promoted gate-feedback misses (optional; absent → skipped).
     # Decontaminated like any source, so it cannot leak eval/holdout prompts.
     ("training/feedback/sft_from_feedback.jsonl", "sft_from_feedback.jsonl", "sft"),
+    ("training/hk_advisor/sft_traces.jsonl", "sft_hk_advisor.jsonl", "sft"),
 ]
 DPO_SOURCES = [
     ("training/hard_negatives_dpo.jsonl", "dpo_hard_negatives.jsonl", "dpo"),

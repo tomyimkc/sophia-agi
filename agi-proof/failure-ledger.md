@@ -616,6 +616,7 @@ not AGI, not a Gödel machine. canClaimAGI stays False.
 religion FORMAT is prompt-structurable at inference; religion-repair LoRA path remains falsified.
 `canClaimAGI: false`.
 
+<<<<<<< HEAD
 ## hk-advisor-phase0-2026-06-25
 
 **Status:** COMPLETE (sealed benchmark + contamination guard).
@@ -626,3 +627,48 @@ religion FORMAT is prompt-structurable at inference; religion-repair LoRA path r
 `tools/build_local_sophia_dataset.py --check`: contamination **CLEAN** (hkAdvisorBenchmarkHash recorded).
 
 **Claim impact:** Benchmark sealed; no training/eval uplift claim yet. `candidateOnly: true`; `canClaimAGI: false`.
+
+## hk-advisor-phase1-2026-06-25
+
+**Status:** COMPLETE (verifier + verified SFT traces).
+
+**Artifacts:** `agent/hk_advisor/{policy,verifier}.py`, `training/hk_advisor/sft_traces.jsonl` (25 verified rows,
+disjoint from held-out benchmark). All rows pass `verify_trace` (advisory boundary, citation, abstention,
+no-fabrication, bilingual fidelity).
+
+**Claim impact:** Training substrate ready; no adapter/eval uplift yet. `canClaimAGI: false`.
+=======
+## team-agents-mode-mock-eval-2026-06-25
+
+**Status:** OPEN (mock eval only — not real-model evidence).
+
+**Branch:** `claude/team-agents-mode`
+
+**Benchmark:** Sealed `team_agents_benchmark` heldout_v1 — 36 cases (12/12/12 balance),
+12 probe_divisive cases, contentHash=`50a0bfab6b9690aabdc7d9346a2487b900e87bd77647e81e81d292d06ace7e7b`,
+decontam CLEAN.
+
+**Traces:** 8 externally verified rows in `training/team_agents/sft_traces.jsonl`
+(mock teacher, 0 overlap with heldout, 0 gate-only drops in sample).
+
+**Independence (mock, 3 seeds):** homogeneous panel mean ρ≈0.56, N_eff≈1.41;
+heterogeneous mock panel ρ≈0.56, N_eff≈1.41 — **below** pre-registered consensus
+threshold (N_eff ≥ 2.0). Reports use **"correlated panel — not consensus"** wording.
+
+**Eval vs baseline (mock, 3 seeds):** team_agents composite pass rate beats single_agent
+by +0.056 (95% CI [0.056, 0.056], excludes 0 on this deterministic stub). Trap
+false-consensus: team ≤ single. External scorer disjoint from intrinsic gate.
+
+**SFT (P2):** No GPU run in this session — `train_lora.py --dry-run` on team traces
+passes; real 3-seed SFT blocked pending GPU.
+
+**Promotion gate:** Not attempted — no adapter ladder artifact. Positive control
+promotes with `solverChecked: true`; team-agents adapter promotion requires a gated
+ladder run via `tools/promote_adapter.py`.
+
+**Honest claim:** Verifier-gated deliberation policy **candidate** only.
+`canClaimAGI: false` — not AGI, not validated uplift, not independent consensus
+when N_eff < 2.0.
+
+**Artifact:** `agi-proof/benchmark-results/team-agents.public-report.json`
+>>>>>>> eeda4d0 (feat(team-agents): eval harness, dataset pack, independence reporting (P3+P4))
