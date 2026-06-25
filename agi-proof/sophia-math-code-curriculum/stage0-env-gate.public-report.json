@@ -1,0 +1,84 @@
+{
+  "schema": "sophia.math_code_curriculum_env_gate.v1",
+  "experimentId": "sophia-math-code-curriculum",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "claimBoundary": "Stage-0 environment gate before GPU spend. Passes here do NOT prove benchmark uplift.",
+  "recordedAt": "2026-06-25T12:15:00Z",
+  "branch": "claude/sophia-math-code-curriculum",
+  "repoHead": "cb9a78268123fb57ccf7c0b20b183d785b5e667d",
+  "remoteHead": "cb9a78268123fb57ccf7c0b20b183d785b5e667d",
+  "headMatch": true,
+  "verdict": "PASS_LOCAL_BLOCK_GPU",
+  "gates": {
+    "decontamination": {
+      "command": "python3 tools/build_local_sophia_dataset.py --check",
+      "verdict": "PASS",
+      "clean": true,
+      "overlapCount": 0,
+      "vsHoldoutOverlapCount": 0
+    },
+    "heldoutSeal": {
+      "command": "python3 tools/seal_math_code_heldout.py --check",
+      "verdict": "PASS",
+      "filesChecked": 6
+    },
+    "lintClaims": {
+      "command": "python3 tools/lint_claims.py",
+      "verdict": "PASS",
+      "filesScanned": 24
+    },
+    "unitTests": {
+      "command": "python3 -m pytest -q tests/test_math_verifier.py tests/test_code_verifier.py tests/test_generate_math_code_curriculum.py tests/test_train_lora_math_code_pack.py",
+      "verdict": "PASS",
+      "passed": 21,
+      "failed": 0
+    },
+    "curriculumPack": {
+      "path": "training/sophia-math-code-curriculum/",
+      "verdict": "PASS",
+      "sftAllRows": 144,
+      "sftMathRows": 126,
+      "sftCodeRows": 18,
+      "trainLoraDryRun": {
+        "command": "python3 tools/train_lora.py --dry-run --data training/sophia-math-code-curriculum/",
+        "rows": 144
+      }
+    },
+    "runpodApiKey": {
+      "verdict": "PASS",
+      "env": "RUNPOD_API_KEY",
+      "set": true,
+      "notes": "REST API list-pods OK; key not committed"
+    },
+    "localCuda": {
+      "verdict": "BLOCKED",
+      "torchInstalled": false,
+      "cudaAvailable": false,
+      "notes": "torch not installed in agent environment; local CUDA path unavailable"
+    },
+    "runpodSshSmoke": {
+      "verdict": "FAIL",
+      "reason": "SSH egress timeout from Cursor agent environment",
+      "probePodId": "0l6i9hurt74osj",
+      "probeSshHost": "213.173.108.232:16786",
+      "error": "Operation timed out waiting for SSH login (pod provisioned + mapped, login unreachable)",
+      "orphanPodsObserved": [
+        {
+          "id": "6l4go54e2n4f54",
+          "name": "sophia-7b-ssh-smoke",
+          "publicIp": "213.173.107.230",
+          "sshPort": 12881,
+          "notes": "Pre-existing pod under same account; no ephemeral key in this session"
+        }
+      ],
+      "notes": "Run 3-seed SFT from local Mac (or host with working RunPod SSH egress)"
+    }
+  },
+  "nextUnblocked": [
+    "Run bash agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh from host where SSH smoke passes",
+    "Record Qwen2.5-7B-Instruct base on sealed evidence oracles before citing adapter Δ",
+    "Terminate orphan pods if no longer needed (billing continues while RUNNING)"
+  ]
+}

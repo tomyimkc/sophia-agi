@@ -76,21 +76,32 @@ def _scp_to_pod(conn: PodConnection, key_path: Path, local: Path, remote: str) -
 
 def _remote_train_script(args: argparse.Namespace) -> str:
     branch_flag = (" --branch " + shlex.quote(args.branch)) if args.branch else ""
+    adapter_dir = shlex.quote(args.adapter_dir)
+    train_only = getattr(args, "train_only", False)
     data_step = (
         "# 1) sealed pack guard (holdout never trained)\n"
         "python tools/build_local_sophia_dataset.py --check\n"
     )
     if args.dpo_pairs:
         train_block = f"""
-mkdir -p {ADAPTER_DIR}
-tar -xzf /workspace/sophia-runpod/sft-adapter.tar.gz -C $(dirname {ADAPTER_DIR})
-python tools/eval_ladder.py --backend hf --model "$SOPHIA_MODEL" --adapter {ADAPTER_DIR} \\
+mkdir -p {adapter_dir}
+tar -xzf /workspace/sophia-runpod/sft-adapter.tar.gz -C $(dirname {adapter_dir})
+python tools/eval_ladder.py --backend hf --model "$SOPHIA_MODEL" --adapter {adapter_dir} \\
   || echo "[dpo] pre-DPO eval_ladder failed (non-fatal)"
 cp training/local_sophia_v2/eval_ladder_adapter.json /workspace/sophia-runpod/eval_ladder_sft.json 2>/dev/null || true
 python -m pip install -r requirements-rl.txt
 python tools/train_dpo.py --model "$SOPHIA_MODEL" --4bit --rslora \\
-  --adapter {ADAPTER_DIR} --pairs {shlex.quote(args.dpo_pairs)} \\
-  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" --output {ADAPTER_DIR}
+  --adapter {adapter_dir} --pairs {shlex.quote(args.dpo_pairs)} \\
+  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" --output {adapter_dir}
+"""
+    elif train_only and args.train_data:
+        # Sealed-curriculum SFT (math-code): minimal recipe on a pre-built pack —
+        # no source-discipline scaffold/guard, just QLoRA on the verified rows.
+        train_block = f"""
+python tools/train_lora.py \\
+  --model "$SOPHIA_MODEL" --train {shlex.quote(args.train_data)} --4bit \\
+  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" \\
+  --output {adapter_dir}
 """
     else:
         if args.train_data:
@@ -106,8 +117,27 @@ python tools/train_lora.py \\
   --model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 \\
   --scaffold --guard --eval-every 25 --patience 4{train_flag} \\
   --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" \\
-  --output {ADAPTER_DIR}
+  --output {adapter_dir}
 """
+    # Eval ladder + W2 promotion gate run after training UNLESS --train-only
+    # (sealed-pack / curriculum SFT just returns the adapter for offline eval).
+    eval_block = ""
+    if not train_only:
+        eval_block = f"""
+# 3) eval ladder: base · base+gate · adapter · adapter+gate (writes eval_ladder_adapter.json)
+python tools/eval_ladder.py --backend hf --model "$SOPHIA_MODEL" --adapter {adapter_dir} \
+  || echo "[train] eval_ladder failed (non-fatal); adapter still returned"
+cp training/local_sophia_v2/eval_ladder_adapter.json /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
+
+# 4) W2 promotion gate (protected-floor proof; reads the eval ladder + adapter seed)
+python tools/promote_adapter.py \
+  --adapter-config {adapter_dir}/sophia_lora_config.json \
+  --out /workspace/sophia-runpod/promotion.public-report.json \
+  || echo "[train] promote_adapter failed (non-fatal)"
+
+echo "===== sophia_lora_config.json ====="; cat /workspace/sophia-runpod/sophia_lora_config.json 2>/dev/null || true
+echo "===== eval_ladder_adapter.json ====="; cat /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
+echo "===== promotion.public-report.json ====="; cat /workspace/sophia-runpod/promotion.public-report.json 2>/dev/null || true"""
     return f"""
 set -Eeuo pipefail
 export DEBIAN_FRONTEND=noninteractive
@@ -131,25 +161,11 @@ python -m pip install -r requirements-lora.txt   # torch pinned <2.9 -> ABI stab
 {data_step}
 # 2) training (SFT or DPO-on-SFT). Adapter tarred immediately after.
 {train_block}
-if [ -d {ADAPTER_DIR} ]; then
-  tar -czf /workspace/sophia-runpod/sophia-cuda-v1.tar.gz -C $(dirname {ADAPTER_DIR}) $(basename {ADAPTER_DIR})
-  cp {ADAPTER_DIR}/sophia_lora_config.json /workspace/sophia-runpod/sophia_lora_config.json || true
+if [ -d {adapter_dir} ]; then
+  tar -czf /workspace/sophia-runpod/sophia-cuda-v1.tar.gz -C $(dirname {adapter_dir}) $(basename {adapter_dir})
+  cp {adapter_dir}/sophia_lora_config.json /workspace/sophia-runpod/sophia_lora_config.json || true
 fi
-
-# 3) eval ladder: base · base+gate · adapter · adapter+gate (writes eval_ladder_adapter.json)
-python tools/eval_ladder.py --backend hf --model "$SOPHIA_MODEL" --adapter {ADAPTER_DIR} \
-  || echo "[train] eval_ladder failed (non-fatal); adapter still returned"
-cp training/local_sophia_v2/eval_ladder_adapter.json /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
-
-# 4) W2 promotion gate (protected-floor proof; reads the eval ladder + adapter seed)
-python tools/promote_adapter.py \
-  --adapter-config {ADAPTER_DIR}/sophia_lora_config.json \
-  --out /workspace/sophia-runpod/promotion.public-report.json \
-  || echo "[train] promote_adapter failed (non-fatal)"
-
-echo "===== sophia_lora_config.json ====="; cat /workspace/sophia-runpod/sophia_lora_config.json 2>/dev/null || true
-echo "===== eval_ladder_adapter.json ====="; cat /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
-echo "===== promotion.public-report.json ====="; cat /workspace/sophia-runpod/promotion.public-report.json 2>/dev/null || true
+{eval_block}
 echo "Sophia real training run complete."
 """
 
@@ -171,8 +187,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--train-data", default="",
                     help="path to a pre-built sealed train split (e.g. "
-                         "training/local_sophia_7b/mlx/train.jsonl). Empty = regenerate on-pod "
-                         "via prepare_lora_dataset.py (legacy 3B path).")
+                         "training/local_sophia_7b/mlx/train.jsonl or "
+                         "training/sophia-math-code-curriculum/sft_all.jsonl). Empty = regenerate "
+                         "on-pod via prepare_lora_dataset.py (legacy 3B path).")
+    ap.add_argument("--adapter-dir", default=ADAPTER_DIR,
+                    help="remote adapter output directory inside the pod "
+                         "(per-seed dir for curriculum SFT runs)")
+    ap.add_argument("--train-only", action="store_true",
+                    help="skip on-pod eval_ladder + promote_adapter (sealed-pack / curriculum SFT; "
+                         "adapter is returned for offline eval)")
     ap.add_argument("--dpo-pairs", default="",
                     help="if set, run Stage-3 DPO (train_dpo.py) instead of SFT")
     ap.add_argument("--sft-adapter-archive", type=Path, default=None,

@@ -1,0 +1,81 @@
+{
+  "schema": "sophia.preregistration.v1",
+  "experimentId": "sophia-math-code-curriculum",
+  "status": "OPEN",
+  "registeredAt": "2026-06-25",
+  "branch": "claude/sophia-math-code-curriculum",
+  "canClaimAGI": false,
+  "baseModel": "Qwen/Qwen2.5-7B-Instruct",
+  "recipe": {
+    "method": "QLoRA 4-bit SFT (+ optional RLVR/DPO on sympy/exec-verified synthetic curriculum)",
+    "epochs": 2,
+    "maskPrompt": true,
+    "seeds": [0, 1, 2],
+    "minSeedsForCitedNumbers": 3,
+    "decontamination": "tools/build_local_sophia_dataset.py --check → CLEAN",
+    "holdoutSeal": "agi-proof/sophia-math-code-curriculum/heldout-seal.manifest.json"
+  },
+  "oracleSplit": "agi-proof/sophia-math-code-curriculum/oracle-split.md",
+  "trainingOracle": {
+    "math": "sympy canonical equivalence (agent/math_verifier.py)",
+    "code": "sandboxed subprocess execution (agent/code_verifier.py)",
+    "citableAsBenchmarkEvidence": false
+  },
+  "evidenceOracle": {
+    "benchmarks": ["MATH-style", "GSM8K-style", "HumanEval-style", "MBPP-style", "hidden-reviewer-pack"],
+    "manifest": "agi-proof/sophia-math-code-curriculum/heldout-seal.manifest.json",
+    "citableWhen": "≥3 seeds, 95% bootstrap CI excludes 0, contamination CLEAN, lint_claims OK"
+  },
+  "thresholds": [
+    {
+      "metric": "MATH-style accuracy Δ vs base",
+      "threshold": 0.05,
+      "direction": "min_increase",
+      "ciExcludesZero": true,
+      "notes": "Style sample until official MATH licensed; honest negative outcomes acceptable"
+    },
+    {
+      "metric": "GSM8K-style accuracy Δ vs base",
+      "threshold": 0.03,
+      "direction": "min_increase",
+      "ciExcludesZero": true,
+      "notes": "Numeric exact-match oracle"
+    },
+    {
+      "metric": "HumanEval-style pass@1 Δ vs base",
+      "threshold": 0.05,
+      "direction": "min_increase",
+      "ciExcludesZero": true,
+      "notes": "Hidden-test execution oracle"
+    },
+    {
+      "metric": "MBPP-style pass@1 Δ vs base",
+      "threshold": 0.03,
+      "direction": "min_increase",
+      "ciExcludesZero": true,
+      "notes": "Hidden-test execution oracle"
+    },
+    {
+      "metric": "provenance protected suites (religion/history)",
+      "threshold": 0.0,
+      "direction": "no_regression",
+      "ciExcludesZero": false,
+      "notes": "W2 promote_adapter protected floor — any regression → reject"
+    }
+  ],
+  "success": {
+    "headline": "All evidence-oracle thresholds met on ≥3 seeds with CI excluding 0; contamination CLEAN; holdout seal OK; lint_claims OK",
+    "canClaimAGI": false
+  },
+  "failure": [
+    "Any protected-suite regression → reject adapter",
+    "Seal or contamination break → abort training / withdraw headline",
+    "Evidence thresholds not met → record honest negative in failure-ledger",
+    "Training-oracle-only uplift cited as benchmark proof → protocol violation"
+  ],
+  "falsification": [
+    "Held-out benchmark Δ ≤ 0 with CI including 0 across ≥3 seeds",
+    "Train/eval prompt overlap detected by dataset_guard",
+    "Generator reads sealed held-out manifest paths"
+  ]
+}

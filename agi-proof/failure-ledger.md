@@ -619,6 +619,133 @@ not AGI, not a Gödel machine. canClaimAGI stays False.
 religion FORMAT is prompt-structurable at inference; religion-repair LoRA path remains falsified.
 `canClaimAGI: false`.
 
+## math-code-curriculum-preregistered-2026-06-25
+
+**Status:** OPEN — pre-registered on branch `claude/sophia-math-code-curriculum` before
+any Qwen2.5-7B MATH/CODE curriculum GPU run. Manifest:
+`agi-proof/sophia-math-code-curriculum/preregistration.json`; oracle split:
+`agi-proof/sophia-math-code-curriculum/oracle-split.md`; held-out seal:
+`agi-proof/sophia-math-code-curriculum/heldout-seal.manifest.json`.
+
+**Scope:** Train on sympy/exec-verified **synthetic** curriculum; cite only sealed
+held-out MATH/GSM8K/HumanEval/MBPP style samples (+ hidden pack when run) with
+≥3 seeds and 95% CI excluding 0. Training-oracle passes are NOT benchmark proof.
+`canClaimAGI` stays **False**.
+
+**Stage 2 (curriculum data) — 2026-06-25:** `tools/generate_math_code_curriculum.py`
+→ `training/sophia-math-code-curriculum/` (144 sympy/exec-verified SFT rows;
+seed `20260625`). Per-tier kept/dropped (generated → kept):
+
+| Tier | Math kept | Code kept | Total kept | Dropped |
+|------|-----------|-----------|------------|---------|
+| tier0 (GSM8K-style + trivial code) | 24 | 6 | 30 | 0 |
+| tier1 (derivative_poly/solve/eval + list/string code) | 48 | 6 | 54 | 0 |
+| tier2 (func/product/definite_integral + loop code) | 54 | 6 | 60 | 0 |
+| **Total** | **126** | **18** | **144** | **0** |
+
+Decontam: `build_local_sophia_dataset.py --check` → **CLEAN**; held-out seal
+`--check` OK; curriculum `check_contamination` → 0 overlaps vs 234 eval prompts.
+RLVR eval families (`derivative_chain`, `integrate_func`, `second_derivative`)
+excluded from training pack. `canClaimAGI` stays **False**.
+
+**Stage 3 prep (QLoRA wiring) — 2026-06-25:** Stage 3 GPU run **not executed**
+(no `RUNPOD_API_KEY` / no local CUDA in prep session). Wired:
+
+| Artifact | Purpose |
+|----------|---------|
+| `training/sophia-math-code-curriculum/README.md` | Local + RunPod train commands (QLoRA 4-bit, `--mask-prompt`, 2 epochs, seeds 0–2) |
+| `agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh` | 3-seed RunPod launcher → `sft_all.jsonl` |
+| `tools/train_lora.py` | `--data` alias + pack-dir manifest hook → `sft_all.jsonl` |
+| `tools/runpod_train.py` | `--train-data`, `--train-only`, `--adapter-dir` for sealed-pack SFT |
+| `tools/prepare_math_code_mlx.py` | Optional MLX chat-data materialization (not committed) |
+| `tests/test_train_lora_math_code_pack.py` | Pack format + resolve hook |
+
+`train_lora.py --dry-run --data training/sophia-math-code-curriculum/` → **144 rows**.
+`guard_filter` on pack → **0 dropped**. `canClaimAGI` stays **False**.
+
+**Stage 0 env gate re-verify — 2026-06-25 (agent session):** repo
+`897930a9842f172bf042e9c1c470aa80aa3e6ac0` == remote
+`origin/claude/sophia-math-code-curriculum`. Gates re-run:
+
+| Gate | Result |
+|------|--------|
+| `build_local_sophia_dataset.py --check` | **CLEAN** (overlap 0) |
+| `seal_math_code_heldout.py --check` | **OK** (6 files) |
+| `lint_claims.py` | **OK** (24 files) |
+| pytest (math/code/curriculum/train_lora pack) | **21 passed** |
+| `train_lora.py --dry-run` on pack | **144 rows** |
+| `RUNPOD_API_KEY` | **UNSET** |
+| local CUDA / torch | **unavailable** (torch not installed) |
+| RunPod SSH smoke | **NOT RUN** (no API key) |
+
+Artifact: `agi-proof/sophia-math-code-curriculum/stage0-env-gate.public-report.json`.
+`canClaimAGI` stays **False**.
+
+**Stage 3 GPU SFT — BLOCKED 2026-06-25:** `runpod-sft-3seed.sh` dry-run exit 2
+(`RUNPOD_API_KEY` unset). No pods provisioned; seeds 0/1/2 **not executed**; no
+adapters produced. Remaining blockers: Qwen2.5-7B-Instruct base weights download;
+post-train held-out evidence-oracle eval + 7B baseline ladder; `promote_adapter`
+protected-floor after adapter exists. Downstream blocked: baseline ladder (3b),
+RLVR/DPO (4), internal gate (5), evidence oracles (6), prereg threshold
+reconciliation (7). Artifact:
+`agi-proof/sophia-math-code-curriculum/stage3-runpod-blocker.public-report.json`.
+
+**Honest headline:** Curriculum pack (144 sympy/exec-verified rows) and Stage 3
+wiring verified locally; GPU training blocked pending `RUNPOD_API_KEY` on a host
+with RunPod SSH egress (or local CUDA). No MATH/GSM8K/HumanEval/MBPP uplift claimed.
+`canClaimAGI: false`.
+
+**Stage 0 re-gate + SSH smoke — 2026-06-25 (agent session, cb9a782):** repo ==
+remote `origin/claude/sophia-math-code-curriculum`. Gates re-run:
+
+| Gate | Result |
+|------|--------|
+| `build_local_sophia_dataset.py --check` | **CLEAN** (overlap 0) |
+| `lint_claims.py` | **OK** (24 files) |
+| pytest (math/code/curriculum/train_lora pack) | **21 passed** |
+| `RUNPOD_API_KEY` | **SET** (env only; not committed) |
+| RunPod REST API (`GET /pods`) | **OK** |
+| RunPod SSH smoke (probe pod `0l6i9hurt74osj`) | **FAIL** — SSH mapped at `213.173.108.232:16786` but login **Operation timed out** from Cursor agent env |
+| local CUDA / torch | **unavailable** |
+
+Orphan pod observed: `6l4go54e2n4f54` (`sophia-7b-ssh-smoke`, RUNNING, $0.69/hr) — not
+terminated by this session (no ephemeral key). Artifacts:
+`agi-proof/sophia-math-code-curriculum/stage0-env-gate.public-report.json`,
+`ssh-smoke.public-report.json`, `stage3-runpod-blocker.public-report.json`.
+
+**Stage 3 GPU SFT — BLOCKED 2026-06-25 (cb9a782):** `runpod-sft-3seed.sh` **not
+launched** (SSH prerequisite failed). Seeds **0/3** executed; no adapters. Adapter paths
+(planned, absent): `training/sophia-math-code-curriculum/checkpoints/sophia-cuda-v1-seed{0,1,2}/`.
+Downstream blocked: baseline ladder (3b), RLVR/DPO (4), internal gate (5), evidence
+oracles (6), prereg reconciliation (7).
+
+**Honest headline (cb9a782):** Local gates PASS; RunPod API OK; SSH egress FAIL from
+agent env. 144-row curriculum ready; GPU SFT blocked. No MATH/GSM8K/HumanEval/MBPP uplift
+claimed. `canClaimAGI: false`.
+
+## sophia-math-code-curriculum-stage3-ssh-blocked-2026-06-25
+
+**Status:** BLOCKED (`candidateOnly: true`, `level3Evidence: false`, `canClaimAGI: false`).
+
+**Local gates (re-run on branch `claude/sophia-math-code-curriculum`):**
+
+- `python3 tools/build_local_sophia_dataset.py --check` — contamination **CLEAN**
+- `python3 tools/lint_claims.py` — **PASS**
+- Curriculum pack `training/sophia-math-code-curriculum/sft_all.jsonl` — **144 rows** (sealed SFT only)
+
+**RunPod SSH smoke (Mac path `/Users/tom/Documents/GitHub/sophia-agi`, Cursor agent shell):**
+
+- API list/create: **PASS**
+- Probe name `sophia-math-code-ssh-smoke`, 3 attempts, pods `m9atlzki74hsjo`, `64o3crc5yxbqh9`, `5gmtho2z91z1e1` — each **terminated** after **600s** with no public SSH mapping
+- Outbound TCP to `157.157.221.29:42525` (prior mapped port) **hung** — egress to RunPod SSH not reachable from this host
+- **Verdict: FAIL** — `agi-proof/sophia-math-code-curriculum/ssh-smoke.public-report.json`
+
+**Stage 3 SFT (`runpod-sft-3seed.sh`):** **NOT LAUNCHED** (SSH prerequisite failed). **Seeds completed: 0/3**. No adapter artifacts under `training/sophia-math-code-curriculum/checkpoints/`.
+
+**Billing note:** orphan pod `0s40ngsh22llz0` (`sophia-7b-sft-seed0`, RUNNING) observed — not created by this smoke session; left running (possible parallel attempt). Terminate manually if unused.
+
+**Claim impact:** No Stage 3 adapters; no Stage 6 benchmark uplift claims. Artifacts: `stage3-runpod-blocker.public-report.json`.
+
 ## sophia-7b-train-verify-data-flywheel-2026-06-25
 
 **Status:** STAGE 0–1 COMPLETE; STAGE 2+ BLOCKED (SSH egress timeout to RunPod mapped pod ports from local Mac / Cursor agent shell).

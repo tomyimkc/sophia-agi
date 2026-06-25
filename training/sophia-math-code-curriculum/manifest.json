@@ -1,0 +1,108 @@
+{
+  "schema": "sophia.math_code_curriculum.v1",
+  "experimentId": "sophia-math-code-curriculum",
+  "baseModel": "Qwen/Qwen2.5-7B-Instruct",
+  "seed": 20260625,
+  "trainingOracleOnly": true,
+  "canClaimAGI": false,
+  "counts": {
+    "total": 144,
+    "math": 126,
+    "code": 18,
+    "byTier": {
+      "tier0": 30,
+      "tier1": 54,
+      "tier2": 60
+    }
+  },
+  "verification": {
+    "tiers": {
+      "tier0": {
+        "math": {
+          "generated": 24,
+          "kept": 24,
+          "dropped": 0,
+          "verdicts": {
+            "accepted": 24
+          }
+        },
+        "code": {
+          "generated": 6,
+          "kept": 6,
+          "dropped": 0,
+          "verdicts": {
+            "accepted": 6
+          }
+        },
+        "kept": 30,
+        "dropped": 0,
+        "generated": 30
+      },
+      "tier1": {
+        "math": {
+          "generated": 48,
+          "kept": 48,
+          "dropped": 0,
+          "verdicts": {
+            "accepted": 48
+          }
+        },
+        "code": {
+          "generated": 6,
+          "kept": 6,
+          "dropped": 0,
+          "verdicts": {
+            "accepted": 6
+          }
+        },
+        "kept": 54,
+        "dropped": 0,
+        "generated": 54
+      },
+      "tier2": {
+        "math": {
+          "generated": 54,
+          "kept": 54,
+          "dropped": 0,
+          "verdicts": {
+            "accepted": 54
+          }
+        },
+        "code": {
+          "generated": 6,
+          "kept": 6,
+          "dropped": 0,
+          "verdicts": {
+            "accepted": 6
+          }
+        },
+        "kept": 60,
+        "dropped": 0,
+        "generated": 60
+      }
+    },
+    "totals": {
+      "generated": 144,
+      "kept": 144,
+      "dropped": 0
+    }
+  },
+  "contamination": {
+    "clean": true,
+    "nTrain": 144,
+    "nEval": 234,
+    "overlap": [],
+    "overlapCount": 0
+  },
+  "tierLadder": {
+    "tier0": "GSM8K-style numeric + trivial code (base floor rung)",
+    "tier1": "derivative_poly/solve_linear/evaluate_poly + list/string code",
+    "tier2": "derivative_func/product/definite_integral + loop/aggregate code",
+    "excluded": "RLVR eval families (derivative_chain, integrate_func, second_derivative) — held-out only"
+  },
+  "outputs": {
+    "sft_math.jsonl": 126,
+    "sft_code.jsonl": 18,
+    "sft_all.jsonl": 144
+  }
+}

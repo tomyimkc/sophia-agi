@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 # Held-out sets that training must never overlap.
 EVAL_GLOBS = ["eval/**/*.jsonl"]
 EVAL_PACKS = ["agi-proof/baseline-ablation/abstain-pack-2026-06-22.json"]
+SEAL_MANIFEST = "agi-proof/sophia-math-code-curriculum/heldout-seal.manifest.json"
 TEAM_AGENTS_MANIFEST = ROOT / "data" / "team_agents_benchmark" / "manifest.json"
 TEAM_AGENTS_LONGTASK_MANIFEST = ROOT / "data" / "team_agents_longtask" / "manifest.json"
 
@@ -97,6 +98,23 @@ def eval_prompt_set(*, root: Path = ROOT) -> set[str]:
                 pr = prompt_of(case) if isinstance(case, dict) else None
                 if pr:
                     out.add(normalize(pr))
+    seal = root / SEAL_MANIFEST
+    if seal.exists():
+        for entry in json.loads(seal.read_text(encoding="utf-8")).get("files", []):
+            fp = root / entry["path"]
+            if not fp.exists():
+                continue
+            if fp.suffix == ".jsonl":
+                for row in _load_jsonl(fp):
+                    pr = prompt_of(row)
+                    if pr:
+                        out.add(normalize(pr))
+            elif fp.name == "code_tasks.json":
+                data = json.loads(fp.read_text(encoding="utf-8"))
+                for task in data.get("tasks", []):
+                    pr = prompt_of(task)
+                    if pr:
+                        out.add(normalize(pr))
     for manifest_path in (
         root / "data" / "team_agents_benchmark" / "manifest.json",
         root / "data" / "team_agents_longtask" / "manifest.json",
