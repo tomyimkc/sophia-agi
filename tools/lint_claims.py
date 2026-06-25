@@ -44,6 +44,10 @@ FORBIDDEN: list[tuple[str, str]] = [
     (r"\b100%\s+on\s+all\b", "first-party benchmark stated as universal result"),
     (r"\bworld'?s first\b", "primacy claim"),
     (r"\bbreakthrough\b", "hype term without a cited result"),
+    (r"\bproves alignment\b", "unformalizable alignment overclaim"),
+    (r"\bproves safe self-improvement\b", "unqualified safe-self-improvement claim"),
+    (r"\bgödel machine\b|\bgodel machine\b", "misleading Gödel-machine framing"),
+    (r"\bproves it is trustworthy\b", "unqualified trustworthiness proof claim"),
 ]
 
 ALLOW_MARKER = "claim-ok"
