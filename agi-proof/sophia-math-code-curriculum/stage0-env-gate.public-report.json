@@ -5,10 +5,10 @@
   "level3Evidence": false,
   "canClaimAGI": false,
   "claimBoundary": "Stage-0 environment gate before GPU spend. Passes here do NOT prove benchmark uplift.",
-  "recordedAt": "2026-06-25T10:54:00Z",
+  "recordedAt": "2026-06-25T12:15:00Z",
   "branch": "claude/sophia-math-code-curriculum",
-  "repoHead": "897930a9842f172bf042e9c1c470aa80aa3e6ac0",
-  "remoteHead": "897930a9842f172bf042e9c1c470aa80aa3e6ac0",
+  "repoHead": "cb9a78268123fb57ccf7c0b20b183d785b5e667d",
+  "remoteHead": "cb9a78268123fb57ccf7c0b20b183d785b5e667d",
   "headMatch": true,
   "verdict": "PASS_LOCAL_BLOCK_GPU",
   "gates": {
@@ -47,10 +47,10 @@
       }
     },
     "runpodApiKey": {
-      "verdict": "BLOCKED",
+      "verdict": "PASS",
       "env": "RUNPOD_API_KEY",
-      "set": false,
-      "notes": "Required for RunPod 3-seed QLoRA SFT"
+      "set": true,
+      "notes": "REST API list-pods OK; key not committed"
     },
     "localCuda": {
       "verdict": "BLOCKED",
@@ -59,14 +59,26 @@
       "notes": "torch not installed in agent environment; local CUDA path unavailable"
     },
     "runpodSshSmoke": {
-      "verdict": "NOT_RUN",
-      "reason": "RUNPOD_API_KEY unset — cannot provision pod or test SSH egress",
-      "notes": "Per cross-thread note: run GPU jobs from local Mac where RunPod SSH smoke test passes"
+      "verdict": "FAIL",
+      "reason": "SSH egress timeout from Cursor agent environment",
+      "probePodId": "0l6i9hurt74osj",
+      "probeSshHost": "213.173.108.232:16786",
+      "error": "Operation timed out waiting for SSH login (pod provisioned + mapped, login unreachable)",
+      "orphanPodsObserved": [
+        {
+          "id": "6l4go54e2n4f54",
+          "name": "sophia-7b-ssh-smoke",
+          "publicIp": "213.173.107.230",
+          "sshPort": 12881,
+          "notes": "Pre-existing pod under same account; no ephemeral key in this session"
+        }
+      ],
+      "notes": "Run 3-seed SFT from local Mac (or host with working RunPod SSH egress)"
     }
   },
   "nextUnblocked": [
-    "Export RUNPOD_API_KEY on host with working RunPod SSH egress",
-    "bash agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh",
-    "Record Qwen2.5-7B-Instruct base on sealed evidence oracles before citing adapter Δ"
+    "Run bash agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh from host where SSH smoke passes",
+    "Record Qwen2.5-7B-Instruct base on sealed evidence oracles before citing adapter Δ",
+    "Terminate orphan pods if no longer needed (billing continues while RUNNING)"
   ]
 }

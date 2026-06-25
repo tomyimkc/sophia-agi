@@ -691,3 +691,31 @@ reconciliation (7). Artifact:
 wiring verified locally; GPU training blocked pending `RUNPOD_API_KEY` on a host
 with RunPod SSH egress (or local CUDA). No MATH/GSM8K/HumanEval/MBPP uplift claimed.
 `canClaimAGI: false`.
+
+**Stage 0 re-gate + SSH smoke — 2026-06-25 (agent session, cb9a782):** repo ==
+remote `origin/claude/sophia-math-code-curriculum`. Gates re-run:
+
+| Gate | Result |
+|------|--------|
+| `build_local_sophia_dataset.py --check` | **CLEAN** (overlap 0) |
+| `lint_claims.py` | **OK** (24 files) |
+| pytest (math/code/curriculum/train_lora pack) | **21 passed** |
+| `RUNPOD_API_KEY` | **SET** (env only; not committed) |
+| RunPod REST API (`GET /pods`) | **OK** |
+| RunPod SSH smoke (probe pod `0l6i9hurt74osj`) | **FAIL** — SSH mapped at `213.173.108.232:16786` but login **Operation timed out** from Cursor agent env |
+| local CUDA / torch | **unavailable** |
+
+Orphan pod observed: `6l4go54e2n4f54` (`sophia-7b-ssh-smoke`, RUNNING, $0.69/hr) — not
+terminated by this session (no ephemeral key). Artifacts:
+`agi-proof/sophia-math-code-curriculum/stage0-env-gate.public-report.json`,
+`ssh-smoke.public-report.json`, `stage3-runpod-blocker.public-report.json`.
+
+**Stage 3 GPU SFT — BLOCKED 2026-06-25 (cb9a782):** `runpod-sft-3seed.sh` **not
+launched** (SSH prerequisite failed). Seeds **0/3** executed; no adapters. Adapter paths
+(planned, absent): `training/sophia-math-code-curriculum/checkpoints/sophia-cuda-v1-seed{0,1,2}/`.
+Downstream blocked: baseline ladder (3b), RLVR/DPO (4), internal gate (5), evidence
+oracles (6), prereg reconciliation (7).
+
+**Honest headline (cb9a782):** Local gates PASS; RunPod API OK; SSH egress FAIL from
+agent env. 144-row curriculum ready; GPU SFT blocked. No MATH/GSM8K/HumanEval/MBPP uplift
+claimed. `canClaimAGI: false`.

@@ -1,0 +1,25 @@
+{
+  "schema": "sophia.runpod_ssh_smoke.v1",
+  "experimentId": "sophia-math-code-curriculum",
+  "recordedAt": "2026-06-25T12:15:00Z",
+  "branch": "claude/sophia-math-code-curriculum",
+  "repoHead": "cb9a78268123fb57ccf7c0b20b183d785b5e667d",
+  "canClaimAGI": false,
+  "verdict": "FAIL",
+  "runpodApi": {
+    "listPods": "PASS",
+    "createPod": "PASS"
+  },
+  "probe": {
+    "podId": "0l6i9hurt74osj",
+    "name": "sophia-math-code-ssh-smoke",
+    "sshMapped": true,
+    "sshHost": "213.173.108.232:16786",
+    "sshLogin": false,
+    "nvidiaSmi": false,
+    "error": "Timed out waiting for SSH login — ssh: Operation timed out",
+    "podDeletedAfterProbe": true
+  },
+  "environment": "Cursor agent shell (darwin)",
+  "conclusion": "RunPod provisioning works; SSH egress from this environment is blocked. Launch SFT from a host with working RunPod SSH."
+}

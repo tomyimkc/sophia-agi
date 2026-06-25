@@ -5,9 +5,9 @@
   "level3Evidence": false,
   "canClaimAGI": false,
   "claimBoundary": "Honest blocker report — Stage 3 QLoRA SFT not executed. No adapter exists; no uplift may be cited.",
-  "recordedAt": "2026-06-25T10:54:00Z",
+  "recordedAt": "2026-06-25T12:15:00Z",
   "branch": "claude/sophia-math-code-curriculum",
-  "repoHead": "897930a9842f172bf042e9c1c470aa80aa3e6ac0",
+  "repoHead": "cb9a78268123fb57ccf7c0b20b183d785b5e667d",
   "status": "BLOCKED",
   "stage": 3,
   "stageName": "3-seed QLoRA SFT",
@@ -23,9 +23,9 @@
   },
   "blockers": [
     {
-      "id": "runpod_api_key_unset",
+      "id": "ssh_egress_timeout",
       "severity": "hard",
-      "detail": "RUNPOD_API_KEY not set in environment"
+      "detail": "RunPod REST API OK; pod provisioned with SSH mapping but SSH login times out from Cursor agent env (Operation timed out)"
     },
     {
       "id": "no_local_cuda",
@@ -33,18 +33,45 @@
       "detail": "torch not installed; no local CUDA GPU path in agent session"
     },
     {
-      "id": "ssh_smoke_not_run",
+      "id": "sft_not_started",
       "severity": "hard",
-      "detail": "RunPod SSH egress smoke test skipped — cannot provision pod without API key"
+      "detail": "runpod-sft-3seed.sh not launched — SSH prerequisite failed"
     }
   ],
-  "dryRun": {
-    "command": "bash agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh",
-    "exitCode": 2,
-    "outcome": "Dry-run payload printed; no pod created"
+  "runpodApi": {
+    "verdict": "PASS",
+    "listPods": "OK",
+    "createPod": "OK (probe pod 0l6i9hurt74osj created, SSH mapped, deleted after smoke fail)"
   },
+  "sshSmoke": {
+    "verdict": "FAIL",
+    "probePodId": "0l6i9hurt74osj",
+    "sshHost": "213.173.108.232:16786",
+    "error": "Timed out waiting for SSH login — Operation timed out",
+    "durationS": 240
+  },
+  "dryRun": null,
   "seedsExecuted": [],
-  "pods": [],
+  "seedsPlanned": [0, 1, 2],
+  "pods": [
+    {
+      "id": "0l6i9hurt74osj",
+      "name": "sophia-math-code-ssh-smoke",
+      "role": "ssh-smoke-probe",
+      "status": "terminated",
+      "costPerHr": 0.69
+    },
+    {
+      "id": "6l4go54e2n4f54",
+      "name": "sophia-7b-ssh-smoke",
+      "role": "orphan-observed",
+      "status": "RUNNING",
+      "publicIp": "213.173.107.230",
+      "sshPort": 12881,
+      "costPerHr": 0.69,
+      "notes": "Not created by this session; no ephemeral SSH key available"
+    }
+  ],
   "adapters": [],
   "downstreamBlocked": {
     "stage3b_baseline": "BLOCKED — no base-model evidence-oracle ladder recorded",
@@ -52,7 +79,7 @@
     "stage5_internalGate": "BLOCKED — promote_adapter requires adapter artifacts",
     "stage6_evidence": "BLOCKED — no adapters; thresholds untested",
     "stage7_preregReconciliation": "OPEN — thresholds remain UNTESTED (see preregistration.json)",
-    "stage8_headline": "BLOCKED — honest negative: curriculum pack ready; GPU SFT not run"
+    "stage8_headline": "BLOCKED — honest negative: curriculum pack ready; GPU SFT blocked on SSH egress"
   },
   "preregThresholds": [
     {
@@ -87,12 +114,13 @@
       "reason": "promote_adapter not run — no adapter"
     }
   ],
-  "headline": "Stage 0 local gates PASS; Stage 3 GPU SFT BLOCKED (RUNPOD_API_KEY unset, no local CUDA). 144-row sympy/exec-verified curriculum pack ready. No benchmark uplift claimed. canClaimAGI: false.",
+  "headline": "Stage 0 local gates PASS; RunPod API OK; SSH smoke FAIL (egress timeout). Stage 3 GPU SFT BLOCKED — 0/3 seeds. 144-row curriculum pack ready. No benchmark uplift claimed. canClaimAGI: false.",
   "unblockSteps": [
-    "On local Mac (or host with RunPod SSH egress): export RUNPOD_API_KEY",
-    "Verify SSH smoke: python3 tools/runpod_train.py --dry-run (with key set) then single-seed probe",
+    "From local Mac (or host with RunPod SSH egress): export RUNPOD_API_KEY",
+    "Verify SSH: ephemeral pod + ssh echo sophia-ssh-ok + nvidia-smi -L",
     "bash agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh",
     "Record base Qwen2.5-7B-Instruct on sealed held-out oracles (stage 3b)",
-    "Run evidence-oracle eval ≥3 seeds with 95% CI excluding 0 before any headline"
+    "Run evidence-oracle eval ≥3 seeds with 95% CI excluding 0 before any headline",
+    "Terminate orphan pod 6l4go54e2n4f54 if no longer needed"
   ]
 }
