@@ -333,6 +333,45 @@ Harness upgraded for `--adapter`, repeated runs, JSON reports, and paired item-b
 (`agent/external_eval.py`, `tools/run_external_eval.py`). Plan:
 `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
 
+## v4-adapter-externally-unvalidated-pivot-to-gate-2026-06-24
+
+**Status:** OPEN — decision point. The trained habit ADAPTER does not externally validate;
+external validation should pivot to the GATE.
+
+Two external-ground-truth lanes for the v4 seed-0 provenance habit adapter are now both honest
+NULLS:
+- GSM8K (general capability / math): adapter − base **−3.0pp**, 95% CI [−7.33, +1.00].
+- TruthfulQA MC (truthfulness / non-fabrication; capability-MATCHED), N=817, deterministic
+  logprob scorer pinned to sylinrl/TruthfulQA@013686a: MC1 35.37%→34.64% (**−0.73pp**, CI
+  [−2.45, +0.98]); MC2 50.83%→49.72% (**−1.11pp**, CI [−2.25, +0.12]). Both include 0, small
+  negative point estimates.
+
+**Conclusion:** the adapter's gains are confined to the first-party SEIB/ladder (authorship-
+attribution provenance) and do **not** externalize — not to math, and not even to adjacent
+truthfulness. The trained habit adapter is a narrow, in-distribution artifact. This is direct
+evidence on Hurdle 2 (no broad transfer) and means the adapter is the project's WEAKER lever.
+
+**Pivot (the differentiated lever is the GATE, not the adapter):** the project's thesis is "the
+model learns habits; external GATES enforce truth." The gate (retrieval + provenance/fact-check +
+calibrated abstention) already has first-party VALIDATED deltas the adapter never produced:
+`+gate` hallucination reduction Δ12.5% CI [+5.6, +19.4] (3 runs, 2 judge families, κ=0.74);
+calibration Δ+22%; and a live external-source fact-check at 0% fabrication (Wilson CI [0, 0.11],
+self-authored pack, single run). So the gate is ~one third-party pack away from an externally-
+validated claim, while the adapter shows no external signal.
+
+**Next experiments:**
+1. PRIMARY — externalize the GATE: base (raw) vs base+gate (sophia-full) on a fabrication/
+   attribution task scored against EXTERNAL sources (`run_fact_check_live_eval --live`), a
+   THIRD-PARTY-authored pack, ≥3 runs, report the fabrication-rate delta + CI and over-abstention
+   cost. This closes `fact-check-live-backend-ran` (single-run/self-authored) and advances Hurdle 1.
+2. CONFIRMATORY — formally close the adapter lever: one external authorship-attribution check
+   (the adapter's exact skill) graded vs Wikidata. Null there → adapter externally invalid; beats
+   base → narrow real external skill. Either way the adapter question is settled.
+
+Adapter archived at `training/mlx_adapters/sophia-v4-seed0-promoted` (gitignored; sha256
+4e5e0582d14d2bc89e56e7a0818da90e4ea079ceb3922042ef0626a0c9631f28). Plan:
+`docs/06-Roadmap/Hurdles-2-5-Plan.md`.
+
 ## Template
 
 ```text
