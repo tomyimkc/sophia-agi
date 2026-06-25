@@ -114,7 +114,7 @@ def build_candidate(
         metrics=tuple(metrics),
         verifier_artifacts=artifacts,
         contaminated=contaminated,
-        notes="local-Sophia MLX adapter promotion via eval ladder; external gates still enforce truth.",
+        notes="local-Sophia adapter promotion via eval ladder; external gates still enforce truth.",
     )
 
 

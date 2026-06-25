@@ -134,6 +134,58 @@ full `--scaffold --guard --distill`, completion-only loss, batch 1, 1 epoch):
 > **Net:** the absolute MLX numbers are good and now reproducible; the headline *multiplier*
 > is now **measured at ~2.0× on a CUDA RTX 4090 (§2b)** — quote that, not the old estimate.
 
+### 2c. Measured real-GPU TRAINING run — RunPod RTX 4090, 2026-06-25
+
+First successful end-to-end *training* run on CUDA (three prior attempts died on a
+flash-attn cold-compile timeout, an unpinned-torch ABI break, and a RunPod SSH-mapping
+flake — each fixed). The `train-runpod` workflow rented a 4090 and ran the full
+**prepare → 4-bit LoRA train (`--rslora --neftune-alpha 5 --weight-decay 0.05 --scaffold
+--guard`, holdout early-stop, all-linear targets) → eval ladder → W2 promotion gate**
+pipeline in **~58 min for ≈ $0.67**, then deleted the pod. Evidence: GitHub Actions run
+`28145489352`, artifact `train-runpod-artifacts` (adapter + eval ladder + promotion report).
+
+**Eval ladder — 32 held-out attribution traps, greedy decode, deterministic gate scoring:**
+
+| Suite | Base | Adapter | Δ |
+|---|---:|---:|---:|
+| philosophy | 66.7% | 88.9% | +22.2 |
+| psychology | 44.4% | 55.6% | +11.2 |
+| history *(protected)* | 62.5% | 75.0% | +12.5 |
+| religion *(protected)* | 16.7% | 33.3% | +16.6 |
+| **TOTAL** | **50.0%** | **65.6%** | **+15.6** |
+
+**W2 promotion gate: `promote`.** The independent protected-floor proof ("no protected
+suite regresses below incumbent − 0.01") returned `accepted / consistent`: both protected
+suites *improved* (history +12.5, religion +16.6), so nothing regressed. `targetDelta
++0.156` cleared the `min-target-delta 0.03` bar. The artifact states `candidateOnly: true,
+level3Evidence: false` — "not a validated capability and not an AGI claim."
+
+**What this DID and did NOT prove — read before quoting:**
+- ✅ The gate-disciplined adapter **measurably uplifts the base on every domain** of the
+  in-domain provenance benchmark, and the formal promotion gate accepts it on a fresh CUDA
+  run — the full local loop (train → eval → machine-checked promote) runs end-to-end on
+  rented hardware for under a dollar.
+- ⚠️ **In-domain, small-N.** These are 32 attribution/provenance traps — the benchmark the
+  adapter was *trained to discipline*, **not** the held-out generality eval
+  (`tools/eval_generality.py`). It shows the adapter learned source-discipline, **not** a
+  general capability gain. +15.6 pts on 32 items needs a confidence interval (experiment
+  #6) before anyone quotes it.
+- ⚠️ **religion is still the floor at 33% (2/6)** even after +16.6 — the hardest suite, far
+  from solved.
+- ⚠️ The W2 proof ran on the **`fallback` constraint backend** (an exact integer-rank
+  lattice check), not z3/SMT — sound, but not a solver proof.
+- 🔧 **Provenance fix applied (this commit).** The first run's report carried a stale
+  `candidateId: "local-sophia-v2-mlx"` and silently used the committed **MLX** baseline as
+  "before" against a **CUDA** "after". The numbers were equivalent (greedy decode +
+  deterministic scoring is backend-invariant on these traps), but that cross-backend
+  comparison is a provenance smell. `runpod_train.py` now (a) labels the candidate
+  `sophia-cuda-v1-qwen2.5-3b` and (b) takes "before" from the **same run's own base rung**,
+  so every future report is single-backend and self-contained.
+
+> **Net:** the first real-GPU training run is a clean pass — measurable in-domain uplift
+> and a machine-checked `promote` for under a dollar. It is **not** evidence of general
+> capability; that is the held-out generality eval's job, still to be run on CUDA.
+
 ---
 
 ## 3. Blockers & gaps found in the code

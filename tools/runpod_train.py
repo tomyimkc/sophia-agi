@@ -104,8 +104,17 @@ python tools/eval_ladder.py --backend hf --model "$SOPHIA_MODEL" --adapter {ADAP
   || echo "[train] eval_ladder failed (non-fatal); adapter still returned"
 cp training/local_sophia_v2/eval_ladder_adapter.json /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
 
-# 4) W2 promotion gate (protected-floor proof; reads the eval ladder + adapter seed)
+# 4) W2 promotion gate (protected-floor proof; reads the eval ladder + adapter seed).
+#    Compare THIS run's own base rung against its adapter rung — both come from the
+#    freshly written CUDA/hf ladder, same backend and same session — by pointing
+#    --baseline-ladder at that same file. This never reads the committed MLX
+#    eval_ladder_baseline.json (a cross-backend "before" is a provenance smell, even
+#    when the numbers coincide). The candidate id reflects the CUDA backend, not the
+#    stale MLX default.
 python tools/promote_adapter.py \
+  --adapter-ladder training/local_sophia_v2/eval_ladder_adapter.json \
+  --baseline-ladder training/local_sophia_v2/eval_ladder_adapter.json \
+  --candidate-id sophia-cuda-v1-qwen2.5-3b \
   --adapter-config {ADAPTER_DIR}/sophia_lora_config.json \
   --out /workspace/sophia-runpod/promotion.public-report.json \
   || echo "[train] promote_adapter failed (non-fatal)"
