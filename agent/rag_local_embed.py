@@ -77,12 +77,18 @@ def embed_text(text: str) -> np.ndarray:
         # sublinear term weighting (1 + log tf) dampens repeated-token dominance
         counts[bucket] = counts.get(bucket, 0.0) + (1.0 + math.log(c)) * sign
         signs[bucket] = sign
+    # Normalize with a pure-Python L2 norm (math.fsum, not np.linalg.norm): the numpy/BLAS
+    # reduction differs in low bits across numpy builds, which broke cross-version
+    # reproducibility. fsum over the Python-float weights is bit-stable everywhere, and the
+    # remaining float32 division is element-wise IEEE — so the vector is deterministic.
+    norm = math.sqrt(math.fsum(w * w for w in counts.values()))
     vec = np.zeros(DIM, dtype=np.float32)
-    for bucket, weight in counts.items():
-        vec[bucket] = weight
-    norm = float(np.linalg.norm(vec))
     if norm > 0.0:
-        vec /= norm
+        for bucket, weight in counts.items():
+            vec[bucket] = weight / norm
+    else:
+        for bucket, weight in counts.items():
+            vec[bucket] = weight
     return vec
 
 

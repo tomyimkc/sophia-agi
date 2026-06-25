@@ -90,18 +90,33 @@ def verify(out_dir: Path) -> int:
     indexed = _to_indexed(collect_curated_chunks())
     _embed(indexed, backend)
     rebuilt = _manifest(indexed, committed.get("backend"))
-    ok = (rebuilt["embeddingsSha256"] == committed.get("embeddingsSha256")
-          and rebuilt["chunkIdsSha256"] == committed.get("chunkIdsSha256"))
-    if ok:
-        print(f"OK: reproducible — backend={rebuilt['backend']} dim={rebuilt['dim']} "
-              f"count={rebuilt['count']} sha={rebuilt['embeddingsSha256'][:12]}")
-        return 0
-    print("FAIL: rebuilt index does not match committed manifest", file=sys.stderr)
-    print(f"  chunkIds:   {rebuilt['chunkIdsSha256'][:12]} vs {committed.get('chunkIdsSha256','')[:12]}",
-          file=sys.stderr)
-    print(f"  embeddings: {rebuilt['embeddingsSha256'][:12]} vs {committed.get('embeddingsSha256','')[:12]}",
-          file=sys.stderr)
-    return 1
+
+    # Structural: the chunk-id set/order must be identical (catches corpus drift).
+    if rebuilt["chunkIdsSha256"] != committed.get("chunkIdsSha256"):
+        print("FAIL: chunk ids changed vs committed index", file=sys.stderr)
+        print(f"  chunkIds: {rebuilt['chunkIdsSha256'][:12]} vs "
+              f"{committed.get('chunkIdsSha256','')[:12]}", file=sys.stderr)
+        return 1
+
+    # Numerical: compare the actual committed vectors to a fresh rebuild within tolerance.
+    # An exact byte/quantized-hash match is too brittle across numpy/BLAS builds; a real
+    # change to the embedder or corpus shifts vectors far more than ATOL, so this still
+    # catches regressions while tolerating cross-version last-ULP noise.
+    atol = 1e-4
+    committed_matrix = np.load(out_dir / EMBEDDINGS_FILE)["embeddings"]
+    rebuilt_matrix = np.vstack([np.asarray(c.embedding, dtype=np.float32) for c in indexed])
+    if committed_matrix.shape != rebuilt_matrix.shape:
+        print(f"FAIL: shape {rebuilt_matrix.shape} != committed {committed_matrix.shape}",
+              file=sys.stderr)
+        return 1
+    max_diff = float(np.max(np.abs(committed_matrix - rebuilt_matrix)))
+    if max_diff > atol:
+        print(f"FAIL: embeddings differ from committed index (max |Δ|={max_diff:.2e} > {atol:.0e})",
+              file=sys.stderr)
+        return 1
+    print(f"OK: reproducible — backend={rebuilt['backend']} dim={rebuilt['dim']} "
+          f"count={rebuilt['count']} max|Δ|={max_diff:.2e} (atol={atol:.0e})")
+    return 0
 
 
 def main() -> int:
