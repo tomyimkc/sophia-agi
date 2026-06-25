@@ -141,11 +141,46 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--volume-gb", type=int, default=40)
     ap.add_argument("--allowed-cuda-versions", default="")
     ap.add_argument("--no-remote-delete-watchdog", action="store_true")
-    ap.add_argument("--ssh-timeout-s", type=int, default=1200)
+    ap.add_argument("--ssh-timeout-s", type=int, default=600,
+                    help="seconds to wait for SSH mapping PER attempt (lower so a flake retries sooner)")
+    ap.add_argument("--ssh-attempts", type=int, default=3,
+                    help="recreate the pod up to N times if it never maps SSH (RunPod provisioning flake)")
     ap.add_argument("--auto-exit-seconds", type=int, default=3 * 60 * 60)
     ap.add_argument("--artifacts-dir", type=Path,
                     default=ROOT / "agi-proof" / "benchmark-results" / "runpod-train")
     return ap.parse_args(argv)
+
+
+def _create_pod_with_ssh(api_key, payload, name, *, attempts, ssh_timeout_s):
+    """Create a pod and wait for SSH; on RunPod's intermittent 'RUNNING but no public
+    IP/ports' provisioning flake, DELETE the unreachable pod and retry (up to `attempts`).
+    Returns (pod_id, conn) for the first reachable pod; raises if every attempt fails.
+    Each failed pod is deleted before the next attempt, so no pod is left billing."""
+    last_exc = None
+    for attempt in range(1, attempts + 1):
+        pod_id = ""
+        try:
+            try:
+                pod = _api_request("POST", "/pods", api_key, payload)
+            except RunPodError as exc:
+                print(f"[runpod] create errored; scanning for orphan named {name!r}: {exc}")
+                pod = _find_pod_by_name(api_key, name)
+                if not pod:
+                    raise
+                print(f"[runpod] recovered created pod after error: {pod.get('id')}")
+            pod_id = _pod_id(pod)
+            print(f"[runpod] attempt {attempt}/{attempts}: created pod {pod_id}; "
+                  f"costPerHr={pod.get('costPerHr')}, gpu={pod.get('gpu')}")
+            conn = _poll_ssh(api_key, pod_id, timeout_s=ssh_timeout_s)
+            print(f"[runpod] SSH mapped: root@{conn.public_ip} -p {conn.ssh_port}")
+            return pod_id, conn
+        except RunPodError as exc:
+            last_exc = exc
+            tail = "; deleting unreachable pod and retrying" if attempt < attempts else ""
+            print(f"[runpod] attempt {attempt}/{attempts} failed to map SSH ({exc}){tail}")
+            if pod_id:
+                _delete_pod(api_key, pod_id)
+    raise RunPodError(f"no SSH-reachable pod after {attempts} attempt(s): {last_exc}")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -197,18 +232,10 @@ def main(argv: list[str] | None = None) -> int:
         conn: PodConnection | None = None
         exit_code = 1
         try:
-            try:
-                pod = _api_request("POST", "/pods", api_key, payload)
-            except RunPodError as exc:
-                print(f"[runpod] create errored; scanning for orphan named {args.name!r}: {exc}")
-                pod = _find_pod_by_name(api_key, args.name)
-                if not pod:
-                    raise
-                print(f"[runpod] recovered created pod after error: {pod.get('id')}")
-            pod_id = _pod_id(pod)
-            print(f"[runpod] created pod {pod_id}; costPerHr={pod.get('costPerHr')}, gpu={pod.get('gpu')}")
-            conn = _poll_ssh(api_key, pod_id, timeout_s=args.ssh_timeout_s)
-            print(f"[runpod] SSH mapped: root@{conn.public_ip} -p {conn.ssh_port}")
+            pod_id, conn = _create_pod_with_ssh(
+                api_key, payload, args.name,
+                attempts=args.ssh_attempts, ssh_timeout_s=args.ssh_timeout_s,
+            )
             _wait_ssh_login(conn, key_path)
             if args.source == "local":
                 _rsync_repo_to_pod(conn, key_path)
