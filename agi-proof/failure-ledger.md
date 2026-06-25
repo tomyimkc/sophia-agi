@@ -372,6 +372,30 @@ Adapter archived at `training/mlx_adapters/sophia-v4-seed0-promoted` (gitignored
 4e5e0582d14d2bc89e56e7a0818da90e4ea079ceb3922042ef0626a0c9631f28). Plan:
 `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
 
+## gate-raw-vs-full-arm-wired-2026-06-24
+
+**Status:** OPEN (machinery built + tested; the external raw-vs-full run is hardware/network-bound).
+
+Wired the RAW baseline arm into the fact-check eval so the GATE can be measured against the base
+model alone on the SAME externally-graded pack (the pivot from `v4-adapter-externally-unvalidated`).
+
+- `agent/fact_check_eval.run_fact_check_eval` gained an injected `verdict_fn` (default unchanged =
+  the gate pipeline; backward-compatible — 18 existing fact-check tests still pass).
+- `agent/raw_fact_classifier.py`: the base model classifies each claim accepted/rejected/held with
+  NO gate/retrieval (fails closed to held on ambiguous output). This is the baseline the gate's
+  fabrication-reduction is measured against.
+- `tools/run_fact_check_live_eval.py` gained `--condition {full,raw}` + `--model`; raw requires a
+  model spec and records `condition`/`rawModel` in the report. Reports already include per-`cases`,
+  so a paired item-bootstrap CI over the shared pack is possible.
+- Gated by `tests/test_raw_fact_classifier.py` (5 tests); lint OK.
+
+**To produce the claim (Mac/network):** build a fresh externally-sourced (ideally third-party) pack;
+run `--condition raw --model mlx:<base>` and `--condition full --live` on it, ≥3 runs; report the
+raw−full fabrication-rate delta + CI and the over-abstention cost. A raw>full fabrication gap with
+CI excluding 0 on a third-party pack is the first defensible EXTERNAL claim for the gate (the lever
+that, unlike the adapter, already has validated first-party deltas). Plan:
+`docs/06-Roadmap/Hurdles-2-5-Plan.md`.
+
 ## Template
 
 ```text
