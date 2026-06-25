@@ -1,0 +1,108 @@
+# Agent-Trajectory Evaluation & Specialized-Domain Data Packs
+
+> Status: **candidate** — shipped as fail-closed machinery with offline tests; the
+> LLM-judge tiers are *measured under the no-overclaim gate*, not asserted. No
+> headline number is published from this work yet.
+
+## Why this, why now (market signal)
+
+DeepSeek / High-Flyer's 2026 hiring drive — 33 roles across seven categories — is
+an explicit pivot from "use a model" to **agentic AI plus owning the data/eval
+stack**. The loudest signal is three brand-new role titles: **Agent Deep Learning
+Algorithm Researcher, Agent Infrastructure Engineer, and Agent Data Evaluation
+Expert**, alongside specialized-domain data roles for **medicine and law**
+([Bloomberg](https://www.bloomberg.com/news/articles/2026-03-24/deepseek-s-latest-job-postings-highlight-pivot-to-agentic-ai),
+[SCMP](https://www.scmp.com/tech/big-tech/article/3358394/deepseek-hiring-spree-chinese-ai-firm-seeks-newcomers-it-pursues-agi)).
+
+The market is paying top-of-band for **agent-trajectory evaluation** and
+**domain-specific (law/medicine) data discipline** — which is exactly what
+Sophia's thesis already is, lifted from a single claim to a whole agent run. This
+work makes that fit explicit. It hits three of the seven hiring categories (deep
+learning research / model-data strategy / specialized-domain data) and both new
+"Agent" role titles, mostly by **recombining modules the repo already had**.
+
+## What shipped
+
+### 1. Agent-trajectory evaluator — `agent/trajectory_eval.py`
+
+Sophia's existing gates score a *single* answer. An agentic system emits a
+*trajectory* — tool calls, observations, intermediate assertions — and can pass
+every single-answer check at the end while the fabrication happened **mid-plan**:
+a claim asserted at step 4 that no observation up to step 4 supported, then
+reasoned on top of. `evaluate_trajectory` scores a run **step by step** and emits
+a fail-closed verdict.
+
+Per claim-bearing step:
+
+| Verdict | Meaning |
+| --- | --- |
+| `blocked` | the claim trips a hard Sophia provenance violation (merged lineage, fabricated attribution, false arithmetic) — via `agent.guarded.check_claim` |
+| `ungrounded` | the claim has **no** supporting evidence available at this step — the mid-plan fabrication this exists to catch |
+| `unverified` | evidence exists but the offline judge cannot confirm entailment — abstained, not condemned |
+| `grounded` | supported by available evidence and trips no gate |
+| `skipped` | no asserted claim to check |
+
+Grounding has two modes, both fail-closed: **explicit `cites`** give a narrow,
+audited warrant (forward / self / observation-less citations earn nothing, as in
+`proof_carrying_reasoning`); **no `cites`** grounds the claim against every prior
+observation the agent actually had in context, so a missing citation is not a
+penalty — only the *absence of any supporting observation* is.
+
+The trajectory verdict: `blocked` if any step is blocked, `abstain` if any step is
+ungrounded/unverified (the run is **withheld, not certified**), `accept` only if
+every claim-bearing step is grounded. It also reports `faithfulnessScore`
+(grounded / claim-bearing steps) and `firstUnfaithfulStep`.
+
+**The support judge is pluggable.** The default is a deterministic, offline,
+embedding-free **lexical** judge that confirms strong overlap and otherwise
+*abstains* (it never calls a paraphrase a fabrication). Inject
+`make_entailment_judge(spec)` for a measured LLM run — and, like every judged tier
+in this repo, any headline number from it must clear the no-overclaim gate
+(≥2 judge families, κ ≥ 0.40, ≥3 runs, CIs) before it is published.
+
+### 2. Medical citation-discipline pack — `agent/medical_faithfulness.py`
+
+The medicine sibling of `agent/legal_faithfulness.py`, because the market is
+hiring domain-data discipline for *both* law and medicine. Same two failure modes:
+
+- **Existence (deterministic, always runs).** A model invents `PMID 99999999` or a
+  plausible DOI — the medical analogue of *Mata v. Avianca*. `medical_citation_exists`
+  checks PMIDs / DOIs / NICE guideline IDs against a register
+  (`data/medical_register.json`; a live PubMed/Crossref/guideline resolver in
+  production) and fails closed on anything unresolvable.
+- **Faithfulness (judged, measured).** A *real* trial cited for a claim its result
+  does not establish (e.g. a secondary-prevention statin trial cited to start a
+  statin in an asymptomatic low-risk adult). Pluggable judge; default abstains so
+  the wiring is provable offline. **Citation review only — not medical advice.**
+
+### 3. Surfaces
+
+- **MCP tools:** `sophia_trajectory_eval`, `sophia_medical_citation_check`
+  (`sophia_mcp/server.py`, impls in `sophia_mcp/tools_impl.py`).
+- **Skill:** `agent_trajectory_eval` (`skills/trajectory_eval.py`) — maps the
+  evaluator's fail-closed verdict onto the skills contract (`accept`→`ok`,
+  `blocked`→`flagged`, else `held`).
+- **Tests:** `tests/test_trajectory_eval.py`, `tests/test_medical_faithfulness.py`.
+
+## Honest limits (failure ledger discipline)
+
+- The default trajectory judge is **lexical**, so it confirms only high-overlap
+  grounding and abstains otherwise; it does **not** detect semantic entailment or
+  subtle unfaithfulness without an injected LLM judge — and that judge is
+  unvalidated here.
+- The medical register is a **tiny illustrative snapshot**, not a citator; it
+  proves the wiring, not coverage. A fabricated-but-plausible citation outside the
+  snapshot is reported as non-existent (correct here, but only because the snapshot
+  is small) — production needs the live resolver.
+- No third-party agent-faithfulness benchmark has been run yet. The natural next
+  step (see `agi-proof/`) is a held-out trajectory pack + ≥2 judge families to put
+  a measured number behind the evaluator.
+
+## Next
+
+- A public **agent-faithfulness benchmark + leaderboard** under the same
+  no-overclaim gate as the attribution benchmark (Tier-2 in the roadmap brainstorm).
+- Live PubMed/Crossref resolver for the medical pack; the same shape extends to
+  other specialized domains (finance, non-English sources).
+- A corpus-cleaning pass: run the gate over a dataset and emit accept/abstain/block
+  labels as a reproducible pre-training/RL **data filter**.

@@ -43,6 +43,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     get_record,
     list_disputes,
     mbti_type_record,
+    medical_citation_check,
     moral_parliament_tool,
     next_task,
     ocean_measure,
@@ -58,6 +59,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     rubric_review,
     sector_council,
     team_agents_deliberate,
+    trajectory_eval,
     uncertainty_score,
     validate_corpus,
     verify_claim,
@@ -122,6 +124,28 @@ def sophia_check_claim(text: str) -> str:
     """Mode-free source-discipline check: is an attribution forbidden by Sophia's
     'don't merge lineages' rule? Returns {passed, reasons, violations}. Read-only."""
     return dumps(check_claim(text))
+
+
+@mcp.tool()
+def sophia_trajectory_eval(trajectory: list) -> str:
+    """Score a whole agent trajectory for mid-plan faithfulness, step by step.
+
+    Each step is an object: ``observation`` = evidence returned by the environment,
+    ``claim``/``text`` = what the agent asserted, ``cites`` = ids of earlier steps
+    that support the claim. Returns a fail-closed verdict (accept | abstain |
+    blocked), a faithfulness score, the first unfaithful step, and a per-step
+    breakdown. Catches the fabrication a single-answer gate misses: a claim asserted
+    mid-plan that no earlier observation supports. Read-only, offline."""
+    return dumps(trajectory_eval(trajectory))
+
+
+@mcp.tool()
+def sophia_medical_citation_check(text: str) -> str:
+    """Verify medical citations (PMID / DOI / NICE guideline IDs): do they EXIST,
+    and are they cited faithfully? Fabricated references are always flagged; the
+    support tier abstains without a judge (fail-closed). Citation review only — not
+    medical advice. Read-only."""
+    return dumps(medical_citation_check(text))
 
 
 @mcp.tool()
