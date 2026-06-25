@@ -1,0 +1,90 @@
+{
+  "schema": "sophia.error_memory_rag_eval.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "claimBoundary": "Inference-time error-RAG guard-rail measurement on a disjoint held-out oracle — NOT capability or AGI evidence.",
+  "heldoutPath": "data/error_memory_heldout_v1.jsonl",
+  "heldoutCaseCount": 6,
+  "repeatEligibleCount": 3,
+  "alreadyRightCount": 3,
+  "seeds": 3,
+  "evaluator": "disjoint-oracle (labels in heldout_v1.jsonl; independent of store/gate)",
+  "decontamination": {
+    "storeNeverSawHeldout": true,
+    "evalPromptHash": "8e66094e8852ca35",
+    "errorMemoryHeldoutHash": "431ab9dc651cf317"
+  },
+  "metrics": {
+    "repeatErrorReduction": {
+      "mean": 1.0,
+      "ci95": [
+        1.0,
+        1.0
+      ],
+      "perSeed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "falseCorrectionCost": {
+      "mean": 1.0,
+      "ci95": [
+        1.0,
+        1.0
+      ],
+      "perSeed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "netValue": {
+      "mean": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "perSeed": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "perSeed": [
+    {
+      "seed": 0,
+      "repeatErrorRateWithout": 1.0,
+      "repeatErrorRateWith": 0.0,
+      "repeatErrorReduction": 1.0,
+      "falseCorrectionCostWithout": 0.0,
+      "falseCorrectionCostWith": 1.0,
+      "falseCorrectionDelta": 1.0,
+      "netValue": 0.0
+    },
+    {
+      "seed": 1,
+      "repeatErrorRateWithout": 1.0,
+      "repeatErrorRateWith": 0.0,
+      "repeatErrorReduction": 1.0,
+      "falseCorrectionCostWithout": 0.0,
+      "falseCorrectionCostWith": 1.0,
+      "falseCorrectionDelta": 1.0,
+      "netValue": 0.0
+    },
+    {
+      "seed": 2,
+      "repeatErrorRateWithout": 1.0,
+      "repeatErrorRateWith": 0.0,
+      "repeatErrorReduction": 1.0,
+      "falseCorrectionCostWithout": 0.0,
+      "falseCorrectionCostWith": 1.0,
+      "falseCorrectionDelta": 1.0,
+      "netValue": 0.0
+    }
+  ],
+  "verdict": "within_noise",
+  "verdictRule": "helps if net CI lower > 0; harms if net CI upper < 0; else within_noise"
+}
