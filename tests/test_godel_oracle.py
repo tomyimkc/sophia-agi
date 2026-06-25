@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.godel_oracle import evaluate_for_promotion  # noqa: E402
+from agent.godel_oracle import compute_solver_checked, evaluate_for_promotion  # noqa: E402
 
 
 def _manifest_clean() -> dict:
@@ -39,6 +39,7 @@ def test_clean_candidate_promotes_with_z3() -> None:
         )
     assert ok is True
     assert bundle["promote"] is True
+    assert bundle["solverChecked"] is True
     assert path.exists()
 
 
@@ -100,11 +101,63 @@ def test_contamination_blocks() -> None:
     assert "contamination_zero" in bundle["breachingInvariants"]
 
 
+def test_solver_checked_false_blocks_without_z3() -> None:
+    with patch("agent.formal_verifier.z3_available", return_value=False):
+        ok, bundle, _ = evaluate_for_promotion(
+            candidate_id="no-z3",
+            protected_content_metrics=[
+                {"suite": "religion", "contentBefore": 0.5, "contentAfter": 0.6},
+            ],
+            before_total=0.5,
+            after_total=0.6,
+            manifest=_manifest_clean(),
+            traces=[{"metadata": {"sourceCitation": "https://example.org/src"}}],
+            tolerance=0.01,
+            out_dir=Path(tempfile.mkdtemp()),
+        )
+    assert ok is False
+    assert bundle["solverChecked"] is False
+    assert "solver_attestation" in bundle["breachingInvariants"]
+
+
+def test_allow_fallback_promotes_without_z3() -> None:
+    with patch("agent.formal_verifier.z3_available", return_value=False):
+        ok, bundle, _ = evaluate_for_promotion(
+            candidate_id="fallback-ok",
+            protected_content_metrics=[
+                {"suite": "religion", "contentBefore": 0.5, "contentAfter": 0.6},
+            ],
+            before_total=0.5,
+            after_total=0.6,
+            manifest=_manifest_clean(),
+            traces=[{"metadata": {"sourceCitation": "https://example.org/src"}}],
+            tolerance=0.01,
+            out_dir=Path(tempfile.mkdtemp()),
+            allow_fallback_proof=True,
+        )
+    assert ok is True
+    assert bundle["solverChecked"] is False
+    assert bundle.get("solverNotes") == ["fallback proof — not solver-checked"]
+
+
+def test_compute_solver_checked_all_z3() -> None:
+    inv = {
+        "a": {"verdict": "accepted", "backend": "z3"},
+        "b": {"verdict": "accepted", "backend": "z3"},
+    }
+    assert compute_solver_checked(inv) is True
+    inv["b"]["backend"] = "fallback"
+    assert compute_solver_checked(inv) is False
+
+
 def main() -> int:
     test_clean_candidate_promotes_with_z3()
     test_v5_religion_content_regression_blocks()
     test_deterministic_bundle()
     test_contamination_blocks()
+    test_solver_checked_false_blocks_without_z3()
+    test_allow_fallback_promotes_without_z3()
+    test_compute_solver_checked_all_z3()
     print("test_godel_oracle: OK")
     return 0
 

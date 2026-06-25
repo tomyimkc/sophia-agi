@@ -190,6 +190,11 @@ def main(argv: list[str] | None = None) -> int:
                     help="extra verifier-artifact identifiers (e.g. a SEIB report path)")
     ap.add_argument("--fail-on-reject", action="store_true",
                     help="exit non-zero unless the verdict is 'promote' (for CI gating)")
+    ap.add_argument(
+        "--allow-fallback-proof",
+        action="store_true",
+        help="OFF by default: allow promotion without z3 solver attestation (stamps solverChecked:false)",
+    )
     ap.add_argument("--dry-run", action="store_true", help="evaluate and print; do not write the report")
     args = ap.parse_args(argv)
 
@@ -256,7 +261,9 @@ def main(argv: list[str] | None = None) -> int:
             "manifest": args.manifest if manifest_path.exists() else None,
             "traces": args.traces if traces_path.exists() else None,
             "protectedChannel": "content",
+            "allowFallbackProof": args.allow_fallback_proof,
         },
+        allow_fallback_proof=args.allow_fallback_proof,
     )
 
     proof_tag = (
@@ -299,6 +306,7 @@ def main(argv: list[str] | None = None) -> int:
         ),
         "candidateId": args.candidate_id,
         "verdict": final_verdict,
+        "solverChecked": oracle_bundle.get("solverChecked", False),
         "scorecardVerdict": decision.verdict,
         "oraclePromote": oracle_ok,
         "oracleProofPath": str(oracle_path.relative_to(ROOT)) if oracle_path.is_relative_to(ROOT) else str(oracle_path),
@@ -326,6 +334,10 @@ def main(argv: list[str] | None = None) -> int:
     print(f"target suite:     {args.target_suite}  delta={decision.metrics['targetDelta']:+.4f}")
     print(f"max protected reg:{decision.metrics['maxProtectedRegression']:+.4f} (CONTENT channel)")
     print(f"oracle promote:   {oracle_ok}  breaching={oracle_bundle.get('breachingInvariants')}")
+    print(f"solver checked:   {oracle_bundle.get('solverChecked')}")
+    if oracle_bundle.get("solverNotes"):
+        for note in oracle_bundle["solverNotes"]:
+            print(f"  solver note: {note}")
     for name, inv in oracle_bundle.get("invariants", {}).items():
         print(f"  {name}: {inv.get('verdict')} ({inv.get('backend')})")
     print(f"scorecard verdict:{decision.verdict}")

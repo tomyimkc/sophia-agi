@@ -9,7 +9,7 @@ with a MOCKED z3, so a genuinely-good candidate clearing every invariant on a
 REAL solver was never demonstrated. This runner closes that gap: it feeds a
 synthetic, clearly-labelled KNOWN-GOOD candidate (content improves, total
 improves, contamination clean, all traces cited) through the real oracle and
-asserts ``promote: True`` with every invariant ``accepted``.
+asserts ``promote: True`` with ``solverChecked: true``.
 
 This is a SYNTHETIC control, NOT a real trained adapter. The candidate id is
 ``positive-control-synthetic`` so the bundle can never be mistaken for a real
@@ -18,7 +18,6 @@ promotion. canClaimAGI stays False.
 
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 
@@ -31,9 +30,6 @@ from agent.godel_oracle import evaluate_for_promotion  # noqa: E402
 
 CANDIDATE_ID = "positive-control-synthetic"
 
-# Known-good synthetic candidate: every protected CONTENT channel improves or
-# holds, total improves, decontamination clean, and every trace carries a
-# provenance citation. Tolerance matches the production gate.
 PROTECTED_CONTENT_METRICS = [
     {"suite": "religion", "contentBefore": 0.667, "contentAfter": 0.833},
     {"suite": "history", "contentBefore": 0.625, "contentAfter": 0.750},
@@ -76,16 +72,16 @@ def main() -> int:
         },
     )
 
+    solver_checked = bundle.get("solverChecked")
     print(f"z3 available: {z3_available()}")
     print(f"candidate:    {CANDIDATE_ID}")
     print(f"promote:      {promote}")
+    print(f"solverChecked:{solver_checked}")
     print("invariants:")
     for name, r in sorted(bundle["invariants"].items()):
         print(f"  {name:24s} {r['verdict']:9s} backend={r['backend']}")
     print(f"bundle: {path.relative_to(ROOT)}")
 
-    # Accept-path assertions. Without z3 the solver_attestation invariant holds
-    # and this control correctly fails closed — that is the documented behaviour.
     if not z3_available():
         print("\nz3 NOT installed: solver_attestation held => promote blocked (fail-closed, expected).")
         return 1
@@ -93,20 +89,20 @@ def main() -> int:
     failures = []
     if not promote:
         failures.append("expected promote=True for known-good candidate")
+    if not solver_checked:
+        failures.append("expected solverChecked=True")
     for name, r in bundle["invariants"].items():
         if r["verdict"] != "accepted":
             failures.append(f"{name} != accepted ({r['verdict']})")
-    # The two lattice invariants and the solver attestation must use the real z3 backend.
-    for name in ("protected_floor_content", "no_total_regression", "solver_attestation"):
-        if bundle["invariants"][name]["backend"] != "z3":
-            failures.append(f"{name} backend is {bundle['invariants'][name]['backend']!r}, expected 'z3'")
+        if r["backend"] != "z3":
+            failures.append(f"{name} backend is {r['backend']!r}, expected 'z3'")
 
     if failures:
         print("\nPOSITIVE CONTROL FAILED:")
         for f in failures:
             print(f"  - {f}")
         return 1
-    print("\nPOSITIVE CONTROL OK: known-good candidate promotes with all invariants z3-accepted.")
+    print("\nPOSITIVE CONTROL OK: known-good candidate promotes with solverChecked on all five invariants.")
     return 0
 
 
