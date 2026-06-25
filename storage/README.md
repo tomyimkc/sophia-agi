@@ -1,11 +1,24 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
-# Sophia storage — `kvcache` (Phase 1)
+# Sophia storage workspace
+
+Rust crates implementing the [distributed-storage roadmap](../docs/storage/STORAGE_ROADMAP.md),
+mapping the repo toward the high-performance-storage skill set (Rust, async,
+multithreading, durable I/O, consensus).
+
+| crate | phase | what it is |
+|---|---|---|
+| [`kvcache`](#kvcache-phase-1) | 1 / 1b | sharded async in-memory KV cache + pipelining |
+| [`diskstore`](#diskstore-phase-2) | 2 | bitcask-style durable engine; std + io_uring read backends |
+| `raftkv` | 3 | Raft-replicated KV (see roadmap) |
+
+Run everything: `cargo test` (workspace root `storage/`).
+
+---
+
+## `kvcache` (Phase 1)
 
 A sharded, async, in-memory **KV cache** in Rust, and the Python seam that lets
-Sophia's RAG path offload hot reads to it. This is Phase 1 of the
-[distributed-storage roadmap](../docs/storage/STORAGE_ROADMAP.md) — the first
-concrete artifact mapping the repo toward the high-performance-storage skill set
-(Rust, async, multithreading, latency engineering).
+Sophia's RAG path offload hot reads to it.
 
 > **Honest scope.** Single node, in-memory only, request/response (no
 > pipelining), no persistence, no replication. It is a *cache*, not a database —
@@ -89,12 +102,39 @@ export SOPHIA_KVCACHE_ADDR=127.0.0.1:7070   # that's the only switch
 same protocol; its lenient `get`/`set` never raise, the strict `*_strict`
 variants do.
 
+---
+
+## `diskstore` (Phase 2)
+
+A bitcask-style **durable** KV engine: every write appends a CRC-checked record
+to an append-only log and updates an in-memory keydir (`key → value offset`);
+reads are one positional read. Crash recovery replays the log and truncates a
+torn tail; `compact()` rewrites only live values.
+
+```
+put k,v  ──► append [crc|tstamp|klen|vlen|key|val] ──► keydir[k] = (offset, len)
+get k    ──► keydir[k] ──► pread(value_offset, len)
+recover  ──► scan log, last-writer-wins, stop at first bad CRC, truncate tail
+```
+
+The interesting part is `multi_get`, which routes batched reads through a
+`BatchReader`:
+- **`StdReader`** — one `pread` per key (portable, default, CI-tested).
+- **`UringReader`** (feature `io_uring`) — pushes the whole batch into one
+  io_uring submission and reaps completions; verified byte-identical to pread.
+
+```bash
+cargo test -p diskstore                                    # std path
+cargo test -p diskstore --features io_uring                # + io_uring parity test
+cargo run --release -p diskstore --features io_uring --bin diskstore-bench
+```
+
+Benchmark numbers and an **honest** note on when io_uring actually wins (it ties
+pread on a page-cached set; the win needs real I/O) are in
+[../RESULTS.md](../RESULTS.md).
+
 ## What's next (see the roadmap)
 
-- **1b** — request pipelining; value-size histograms; admission control.
-- **2** — on-disk engine (`io_uring` via `tokio-uring`/`glommio`), WAL, crash
-  consistency — turns the cache into a durable tier.
-- **3** — Raft replication (`openraft`) across shards for a strongly-consistent
-  control plane.
+- **3** — Raft replication (`openraft`) for a strongly-consistent control plane.
 - **4** — specialize as an **LLM inference KVCache** (prefix-keyed blocks,
-  RAM→SSD tiering) — the role's core responsibility.
+  RAM→SSD tiering over `kvcache` + `diskstore`) — the role's core responsibility.

@@ -92,12 +92,18 @@ Each phase ends with a runnable artifact + benchmark numbers committed to the re
 - ⏭ **Phase 1b (next):** request pipelining (the throughput limiter), value-size
   histograms, admission control.
 
-### Phase 2 — On-disk engine with io_uring (weeks 5–10) → proves storage-hardware skill
-- Bitcask-style append log + in-memory keydir, then a tiny leveled LSM.
-- I/O via `tokio-uring`/`glommio`; crash-consistent WAL + fsync discipline.
-- Benchmark IOPS/latency vs a `std::fs` baseline **and** a RocksDB baseline;
-  write the *first-principles* tradeoff analysis (this is the 不简单套用 point).
-- **Deliverable:** `STORAGE_ENGINE.md` design doc + reproducible benchmark.
+### Phase 2 — On-disk engine with io_uring ✅ SHIPPED → proves storage-hardware skill
+- ✅ `storage/diskstore`: bitcask-style append log + in-memory keydir, CRC-32 per
+  record, crash recovery (torn-tail truncation), compaction.
+- ✅ Batched-read abstraction (`BatchReader`) with a portable `pread` backend and
+  a real **io_uring** backend (`UringReader`, feature `io_uring`) — submission/
+  completion path verified byte-identical to pread.
+- ✅ `diskstore-bench` compares both backends; honest finding recorded in
+  `RESULTS.md` (≈equal on a page-cached set — io_uring wins under real I/O, the
+  next lever). 7 unit + 7 integration tests.
+- ⏭ **Next:** rolling segments + hint files; `O_DIRECT`/cold-cache bench to show
+  the io_uring win; a leveled-LSM variant for write amplification study; RocksDB
+  baseline + the *first-principles* tradeoff writeup.
 
 ### Phase 3 — Replication & consensus (weeks 11–16) → proves Raft/Paxos
 - 3-node cluster via `openraft`: leader election, log replication, snapshots,

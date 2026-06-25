@@ -119,6 +119,36 @@ cargo test                                                                     #
 cargo run --release --bin kvcache-bench -- --clients 32 --ops 30000 --pipeline 16
 ```
 
+## Storage — diskstore (Phase 2)
+
+Bitcask-style **durable** KV engine (`storage/diskstore`, Rust): append-only log,
+CRC-32 per record, in-memory keydir, crash recovery (torn-tail truncation),
+compaction, and a batched-read abstraction with two backends — portable `pread`
+(`StdReader`) and **io_uring** (`UringReader`, feature `io_uring`).
+
+Batched random reads — 200k keys × 512 B (≈103 MiB), 3000 batches × 256 keys:
+
+| backend | throughput | batch p50 | batch p99 |
+|---|---|---|---|
+| std (pread) | ~837k reads/sec | ~284 µs | ~459 µs |
+| io_uring | ~868k reads/sec | ~275 µs | ~467 µs |
+
+**Honest reading of this:** the two are ~equal *because the working set is
+page-cached* — a warm `pread` is a cheap syscall with nothing to block on, so
+collapsing 256 syscalls into one submission saves little. io_uring's advantage
+materializes under real I/O (cold cache, `O_DIRECT`, deep queue depth), which is
+deliberately not yet exercised here. What Phase 2 *does* prove: a correct io_uring
+submission/completion path whose reads are verified **byte-identical** to pread
+(`multi_get_uring_matches_std`), plus durability and recovery. 7 unit + 6/7
+integration tests (the 7th is the io_uring parity test, gated on the feature).
+
+```bash
+cd storage
+cargo test -p diskstore                                   # std path (CI)
+cargo test -p diskstore --features io_uring               # + io_uring parity
+cargo run --release -p diskstore --features io_uring --bin diskstore-bench
+```
+
 ## Reproduce
 
 ```bash

@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+[package]
+name = "diskstore"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Bitcask-style durable KV engine with a batched read path (std + io_uring)"
+
+[lib]
+name = "diskstore"
+path = "src/lib.rs"
+
+[[bin]]
+name = "diskstore-bench"
+path = "src/bin/bench.rs"
+
+[features]
+# The io_uring read backend is opt-in: the default build (and CI) uses the
+# portable std pread path. Enable on a Linux host with io_uring available.
+default = []
+io_uring = ["dep:io-uring"]
+
+[dependencies]
+io-uring = { version = "0.7", optional = true }
