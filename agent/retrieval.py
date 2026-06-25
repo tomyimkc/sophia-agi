@@ -167,31 +167,41 @@ def _retrieve_keyword(query: str, *, top_k: int = 8) -> list[SourceChunk]:
 def retrieve(query: str, *, top_k: int = 8) -> list[SourceChunk]:
     """Retrieve sources — prefers curated `rag/index` when present."""
     try:
-        from agent.vector_store import index_dir, load_index, search
+        from agent.vector_store import (
+            embedding_backend_id, index_dir, load_index, search,
+        )
 
-        indexed = load_index(index_dir())
+        idir = index_dir()
+        indexed = load_index(idir)
         if indexed:
             from agent.config import load_dotenv
 
             load_dotenv()
             backend = (os.environ.get("SOPHIA_RAG_BACKEND") or "auto").strip().lower()
-            if backend == "vertex":
-                os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
             query_embedding = None
-            use_vectors = backend in {"gemini", "vertex", "auto"} and indexed[0].embedding is not None
-            if use_vectors:
-                try:
-                    from agent.rag_embed import embed_query
+            has_embeddings = indexed[0].embedding is not None
+            # Embed the query with the SAME backend that built the index, so the committed
+            # vectors and the query vector share one space. The local hashing backend is
+            # offline/CPU — vector recall works under airgap with no API key.
+            index_backend = embedding_backend_id(idir)
+            if backend != "keyword" and has_embeddings:
+                if index_backend == "local-hash-v1":
+                    try:
+                        from agent.rag_local_embed import embed_query
 
-                    query_embedding = embed_query(query)
-                except Exception:
-                    use_vectors = False
-            return search(
-                query,
-                indexed,
-                top_k=top_k,
-                query_embedding=query_embedding if use_vectors else None,
-            )
+                        query_embedding = embed_query(query)
+                    except Exception:
+                        query_embedding = None
+                elif backend in {"gemini", "vertex", "auto"}:
+                    if backend == "vertex":
+                        os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
+                    try:
+                        from agent.rag_embed import embed_query
+
+                        query_embedding = embed_query(query)
+                    except Exception:
+                        query_embedding = None
+            return search(query, indexed, top_k=top_k, query_embedding=query_embedding)
     except Exception:
         pass
     return _retrieve_keyword(query, top_k=top_k)

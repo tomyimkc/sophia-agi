@@ -142,6 +142,10 @@ jobs:
           python tests/test_continual_qa_hybrid.py
           python tests/test_grounded_answer_policy.py
           python tests/test_grounded_agent.py
+          python tests/test_grounded_agent_graded.py
+          python tests/test_grounded_confidence.py
+          python tests/test_calibrate_graded_thresholds.py
+          python tests/test_check_version_consistency.py
           python tests/test_temporal_validity.py
           python tests/test_knowledge_gap_log.py
           python tests/test_forgetting_curve.py
@@ -381,6 +385,11 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - name: Version consistency (VERSION ↔ CHANGELOG ↔ README badge)
+        # Stops the drift that left VERSION at 0.8.0 while the last tag was v0.5.3:
+        # a VERSION bump must carry a matching CHANGELOG section + synced README badge.
+        # The release workflow then auto-tags + publishes on push to main.
+        run: python tools/check_version_consistency.py
       - name: Council deliberation (map-reduce + per-seat gate) + small-LLM uplift
         run: |
           python tests/test_council_deliberate.py
@@ -454,6 +463,8 @@ jobs:
         # sympy so the math/code curriculum verifier tests run instead of erroring
         # out at import-time collection.
         run: python -m pip install --upgrade pip numpy pytest z3-solver sympy
+      - name: RAG index is reproducible (committed local embeddings match a fresh build)
+        run: python tools/build_rag_index.py --verify
       - name: Full pytest suite
         run: python -m pytest -q
 

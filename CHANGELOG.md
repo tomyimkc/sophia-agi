@@ -4,6 +4,39 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-06-25
+
+### Added — runtime trust-layer wiring + measurement arc
+
+- **Graded answer/hedge/abstain router wired live** (`agent/grounded_agent.grounded_answer(graded=True)`
+  → `apply_graded_decision` → `agent/graded_decision.decide`): a gate-passing answer is
+  downgraded to hedge/abstain on low confidence (downgrade-only, fail-closed, opt-in, no-op
+  without a signal). Closes the "graded router has no live caller" gap. Tests:
+  `tests/test_grounded_agent_graded.py`.
+- **Live provenance-derived confidence** (`agent/grounded_confidence.py`): pools the routed
+  page's `authorConfidence` with k-hop neighbor corroboration; `grounded_answer(
+  confidence_from_sources=True)`. Measured over the OKF wiki: weak sources downgraded 100%,
+  strong kept 67% (`tools/eval_graded_confidence.py`, candidate).
+- **Real vector recall, offline + committed** (`agent/rag_local_embed.py`): deterministic,
+  airgap-safe hashing embedder; committed reproducible `rag/index/embeddings.npz` (+
+  `tools/build_rag_index.py --verify` in CI) drives cosine search in `agent/retrieval.retrieve`.
+  Measured delta vs keyword: +0.317 recall@5 (`tools/eval_retrieval_recall.py`, candidate).
+- **Served-output re-verification** (`sophia_mcp/gateway_wiring.verify_output`, opt-in
+  `SOPHIA_MCP_OUTPUT_VERIFY=1`): re-checks served tool text through the epistemic gate and
+  withholds fabricated-attribution payloads fail-closed. Tests: `tests/test_gateway_output_reverify.py`.
+- **Graded-threshold calibration** (`tools/calibrate_graded_thresholds.py` operating curve +
+  loop-closer; `tools/run_graded_calibration_live.py` real stochastic run). Honest finding:
+  provenance confidence is a weak, non-monotonic predictor of answer correctness, so the
+  default hi=0.7 is near-optimal and fitted thresholds are NOT adopted.
+
+### Added — automatic version control (tag + release on VERSION bump)
+
+- `.github/workflows/release.yml` — auto-creates the `vX.Y.Z` tag + GitHub Release from the
+  CHANGELOG section whenever `VERSION` changes on `main` (idempotent; `workflow_dispatch` to
+  backfill). Fixes the drift that left VERSION at 0.8.0 with the last tag at v0.5.3.
+- `tools/check_version_consistency.py` + CI guard — a VERSION bump must carry a matching
+  CHANGELOG section and a synced README badge. Tests: `tests/test_check_version_consistency.py`.
+
 ### Added — CPQA hybrid gate productized into the agent
 
 - `agent/grounded_agent.py` + `tools/sophia_agent.py --grounded` — wires the CPQA gated
