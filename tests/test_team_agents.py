@@ -144,17 +144,32 @@ def test_effective_n_correlated_panel() -> None:
 
 def test_eval_report_schema() -> None:
     import subprocess
+    import tempfile
 
-    rc = subprocess.run(
-        [sys.executable, str(ROOT / "tools" / "eval_team_agents.py"), "--model", "mock", "--dry-run"],
-        cwd=ROOT, capture_output=True, text=True,
-    )
-    assert rc.returncode == 0
-    report_path = ROOT / "agi-proof" / "benchmark-results" / "team-agents.public-report.json"
-    assert report_path.exists()
-    report = json.loads(report_path.read_text(encoding="utf-8"))
+    with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as tmp:
+        out = Path(tmp.name)
+    try:
+        rc = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "tools" / "eval_team_agents.py"),
+                "--mode",
+                "mock",
+                "--dry-run",
+                "--out",
+                str(out),
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        assert rc.returncode == 0, rc.stderr
+        report = json.loads(out.read_text(encoding="utf-8"))
+    finally:
+        out.unlink(missing_ok=True)
     assert report.get("canClaimAGI") is False
     assert report.get("evaluatorDisjointFromTrainingGate") is True
+    assert report.get("mode") == "mock"
     assert "benchmarkContentHash" in report
 
 

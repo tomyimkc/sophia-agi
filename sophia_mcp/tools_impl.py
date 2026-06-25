@@ -320,6 +320,48 @@ def council_deliberate(query: str, *, model: str = "mock", models: list | None =
     return out
 
 
+def team_agents_deliberate(
+    query: str,
+    *,
+    model: str = "mock",
+    adapter_path: str = "",
+    seat_models: list | None = None,
+    max_seats: int = 4,
+    gate: bool = True,
+) -> dict:
+    """Runtime team orchestrator: deliberate_team() with optional Sophia LoRA adapter.
+
+    Decision support only — not professional advice. ``canClaimAGI: false`` always.
+    """
+    if not query.strip():
+        return {"error": "query is required"}
+    import os
+
+    from agent.model import default_client
+    from agent.team_agents import deliberate_team
+
+    if adapter_path:
+        os.environ["SOPHIA_MLX_ADAPTER"] = adapter_path
+    client = default_client(model)
+    seat_clients = [default_client(m) for m in seat_models] if seat_models else None
+    d = deliberate_team(
+        query,
+        client=client,
+        seat_clients=seat_clients,
+        max_seats=max_seats,
+        gate=gate,
+    )
+    out = d.to_dict()
+    out.update(
+        adapterPath=adapter_path or None,
+        heterogeneous=bool(seat_clients),
+        candidateOnly=True,
+        canClaimAGI=False,
+        notAdvice="Decision support only — not professional legal/financial advice.",
+    )
+    return out
+
+
 @audited("sophia_export_corpus", risk="medium")
 def export_corpus() -> dict:
     examples = sorted(EXAMPLES_DIR.glob("*.json"))

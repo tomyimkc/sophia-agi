@@ -8,13 +8,15 @@ from the intrinsic gate). Reports role-fidelity, hand-off integrity, calibrated
 abstention, false-consensus, and panel independence (effective-N) at ≥3 seeds with
 bootstrap 95% CI.
 
-    python tools/eval_team_agents.py --model mock --dry-run
-    python tools/eval_team_agents.py --model mock --seeds 3
+    python tools/eval_team_agents.py --mode mock --dry-run
+    python tools/eval_team_agents.py --mode real --model mlx:Qwen/Qwen2.5-3B-Instruct \\
+        --adapter training/mlx_adapters/sophia-v3 --backend mlx --seeds 0,1,2
 """
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import statistics
 import sys
 from pathlib import Path
@@ -36,6 +38,39 @@ from provenance_bench.team_agents_benchmark import (  # noqa: E402
 )
 
 OUT_JSON = ROOT / "agi-proof" / "benchmark-results" / "team-agents.public-report.json"
+SINGLE_SYSTEM = (
+    "You are a careful source-disciplined Sophia advisor. "
+    "Be concise; cite sources when grounded."
+)
+CONSENSUS_THRESHOLD_N_EFF = 2.0
+
+
+def _resolve_model_spec(model: str, backend: str) -> str:
+    if model.startswith(("mlx:", "hf:", "ollama:", "mock", "openrouter:", "anthropic:")):
+        return model
+    if backend == "mlx":
+        return f"mlx:{model}"
+    if backend == "hf":
+        return f"hf:{model}"
+    return model
+
+
+def _make_client(
+    *,
+    mode: str,
+    seed: int,
+    model: str,
+    adapter: str | None,
+    backend: str,
+):
+    if mode == "mock":
+        return _mock_client(seed)
+    from agent.model import default_client
+
+    spec = _resolve_model_spec(model, backend)
+    if adapter:
+        os.environ["SOPHIA_MLX_ADAPTER"] = adapter
+    return default_client(spec)
 
 
 def _load_jsonl_local(path: Path) -> list[dict]:
@@ -71,15 +106,12 @@ def _mock_client(seed: int = 0):
 
 
 def _single_agent(case: dict, client) -> object:
-    ans = client.generate(
-        "You are a careful source-disciplined advisor. Be concise; cite sources.",
-        case["prompt"],
-    ).text
+    ans = client.generate(SINGLE_SYSTEM, case["prompt"]).text
     from agent.council_deliberate import Deliberation
 
     return Deliberation(
         query=case["prompt"], councilId=case.get("councilId"), seats=[], guardians=[],
-        synthesis=ans, gatedOutSeatIds=[], note="single_agent baseline",
+        synthesis=ans, gatedOutSeatIds=[], note="sophia_single baseline",
     )
 
 
@@ -98,7 +130,7 @@ def _rate(rows: list[dict], key: str) -> float:
 def _eval_cases(cases: list[dict], *, client, condition: str, seat_clients=None) -> list[dict]:
     rows = []
     for case in cases:
-        if condition == "single_agent":
+        if condition == "sophia_single":
             d = _single_agent(case, client)
         else:
             d = _team_agents(case, client, seat_clients=seat_clients)
@@ -115,7 +147,7 @@ def _eval_cases(cases: list[dict], *, client, condition: str, seat_clients=None)
     return rows
 
 
-def run_eval(*, seeds: list[int], model: str = "mock", dry_run: bool = False) -> dict:
+def run_eval(*, mode: str = "mock", seeds: list[int], model: str = "mock", adapter: str | None = None, backend: str = "mlx", seat_models: list[str] | None = None, dry_run: bool = False) -> dict:
     manifest = verify_manifest()
     heldout = _load_jsonl_local(HELDOUT)
     probes = _load_jsonl_local(PROBE)
@@ -123,7 +155,10 @@ def run_eval(*, seeds: list[int], model: str = "mock", dry_run: bool = False) ->
     if dry_run:
         return {
             "schema": "sophia.team_agents_eval.v1",
+            "mode": mode,
             "dryRun": True,
+            "baseModel": model.split(":", 1)[-1] if ":" in model else model,
+            "adapterPath": adapter,
             "nCases": len(heldout),
             "nProbeCases": len(probes),
             "benchmarkContentHash": manifest["contentHash"],
@@ -132,16 +167,33 @@ def run_eval(*, seeds: list[int], model: str = "mock", dry_run: bool = False) ->
             "evaluatorDisjointFromTrainingGate": True,
         }
 
-    per_seed: dict[str, list[dict]] = {"single_agent": [], "team_agents": []}
+    per_seed: dict[str, list[dict]] = {"sophia_single": [], "sophia_team_orchestrator": []}
     homo_indep: list[dict] = []
     hetero_indep: list[dict] = []
 
     for seed in seeds:
-        client = _mock_client(seed)
-        sa_rows = _eval_cases(heldout, client=client, condition="single_agent")
-        ta_rows = _eval_cases(heldout, client=client, condition="team_agents")
-        per_seed["single_agent"].append(sa_rows)
-        per_seed["team_agents"].append(ta_rows)
+        client = _make_client(mode=mode, seed=seed, model=model, adapter=adapter, backend=backend)
+        seat_clients = None
+        if seat_models:
+            seat_clients = [
+                _make_client(
+                    mode=mode,
+                    seed=seed + i + 1,
+                    model=m,
+                    adapter=adapter,
+                    backend=backend,
+                )
+                for i, m in enumerate(seat_models)
+            ]
+        sa_rows = _eval_cases(heldout, client=client, condition="sophia_single")
+        ta_rows = _eval_cases(
+            heldout,
+            client=client,
+            condition="sophia_team_orchestrator",
+            seat_clients=seat_clients,
+        )
+        per_seed["sophia_single"].append(sa_rows)
+        per_seed["sophia_team_orchestrator"].append(ta_rows)
         homo_indep.append(measure_panel_independence(probes, client=client, max_seats=3))
         hetero_indep.append(measure_panel_independence(
             probes, client=client, seat_clients=[_mock_client(seed + 1), _mock_client(seed + 2)],
@@ -157,21 +209,21 @@ def run_eval(*, seeds: list[int], model: str = "mock", dry_run: bool = False) ->
             out[k + "PerSeed"] = rates
         return out
 
-    single_m = _aggregate(per_seed["single_agent"])
-    team_m = _aggregate(per_seed["team_agents"])
+    single_m = _aggregate(per_seed["sophia_single"])
+    team_m = _aggregate(per_seed["sophia_team_orchestrator"])
 
     composite_single = [
-        statistics.fmean([r["passed"] for r in rows]) for rows in per_seed["single_agent"]
+        statistics.fmean([r["passed"] for r in rows]) for rows in per_seed["sophia_single"]
     ]
     composite_team = [
-        statistics.fmean([r["passed"] for r in rows]) for rows in per_seed["team_agents"]
+        statistics.fmean([r["passed"] for r in rows]) for rows in per_seed["sophia_team_orchestrator"]
     ]
     diff_ci = stats.bootstrap_diff_ci(composite_team, composite_single, seed=0)
 
     traps = [c for c in heldout if c.get("caseKind") == "coordination_trap"]
-    trap_false_single = _rate(_eval_cases(traps, client=_mock_client(0), condition="single_agent"),
+    trap_false_single = _rate(_eval_cases(traps, client=_make_client(mode=mode, seed=0, model=model, adapter=adapter, backend=backend), condition="sophia_single"),
                               "falseConsensus")
-    trap_false_team = _rate(_eval_cases(traps, client=_mock_client(0), condition="team_agents"),
+    trap_false_team = _rate(_eval_cases(traps, client=_make_client(mode=mode, seed=0, model=model, adapter=adapter, backend=backend), condition="sophia_team_orchestrator"),
                             "falseConsensus")
 
     homo_rho = statistics.fmean(d["meanPairwiseRho"] for d in homo_indep)
@@ -181,7 +233,11 @@ def run_eval(*, seeds: list[int], model: str = "mock", dry_run: bool = False) ->
 
     report = {
         "schema": "sophia.team_agents_eval.v1",
+        "mode": mode,
         "model": model,
+        "baseModel": model.split(":", 1)[-1] if ":" in model else model,
+        "adapterPath": adapter,
+        "backend": backend,
         "seeds": seeds,
         "nCases": len(heldout),
         "nProbeCases": len(probes),
@@ -190,8 +246,8 @@ def run_eval(*, seeds: list[int], model: str = "mock", dry_run: bool = False) ->
         "canClaimAGI": False,
         "evaluatorDisjointFromTrainingGate": True,
         "conditions": {
-            "single_agent": single_m,
-            "team_agents": team_m,
+            "sophia_single": single_m,
+            "sophia_team_orchestrator": team_m,
         },
         "compositeDiff": {
             "point": round(statistics.fmean(composite_team) - statistics.fmean(composite_single), 4),
@@ -199,23 +255,31 @@ def run_eval(*, seeds: list[int], model: str = "mock", dry_run: bool = False) ->
             "ciExcludesZero": diff_ci[0] > 0 or diff_ci[1] < 0,
         },
         "trapFalseConsensus": {
-            "single_agent": trap_false_single,
-            "team_agents": trap_false_team,
+            "sophia_single": trap_false_single,
+            "sophia_team_orchestrator": trap_false_team,
         },
         "independence": {
             "homo": {
                 "meanPairwiseRho": round(homo_rho, 4),
                 "effectiveN": round(homo_neff, 4),
-                "claimsConsensus": homo_neff >= 2.0,
-                "label": "correlated panel — not consensus" if homo_neff < 2.0 else "effective panel",
+                "claimsConsensus": homo_neff >= CONSENSUS_THRESHOLD_N_EFF,
+                "label": (
+                    "correlated panel — not consensus"
+                    if homo_neff < CONSENSUS_THRESHOLD_N_EFF
+                    else "effective panel"
+                ),
             },
             "hetero": {
                 "meanPairwiseRho": round(hetero_rho, 4),
                 "effectiveN": round(hetero_neff, 4),
-                "claimsConsensus": hetero_neff >= 2.0,
-                "label": "correlated panel — not consensus" if hetero_neff < 2.0 else "effective panel",
+                "claimsConsensus": hetero_neff >= CONSENSUS_THRESHOLD_N_EFF,
+                "label": (
+                    "correlated panel — not consensus"
+                    if hetero_neff < CONSENSUS_THRESHOLD_N_EFF
+                    else "effective panel"
+                ),
             },
-            "consensusThresholdNEff": 2.0,
+            "consensusThresholdNEff": CONSENSUS_THRESHOLD_N_EFF,
         },
         "promotionNote": (
             "Internal gate only — run promote_adapter.py with solverChecked after a "
@@ -227,7 +291,11 @@ def run_eval(*, seeds: list[int], model: str = "mock", dry_run: bool = False) ->
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--model", default="mock")
+    ap.add_argument("--mode", choices=("mock", "real"), default="mock")
+    ap.add_argument("--model", default="mock", help="model spec or bare name with --backend")
+    ap.add_argument("--adapter", default=None, help="LoRA adapter path (sets SOPHIA_MLX_ADAPTER)")
+    ap.add_argument("--backend", choices=("mlx", "hf"), default="mlx")
+    ap.add_argument("--seat-models", default="", help="comma-separated specs for heterogeneous seats")
     ap.add_argument("--seeds", default="0,1,2", help="comma-separated seeds (≥3)")
     ap.add_argument("--out", default=str(OUT_JSON))
     ap.add_argument("--dry-run", action="store_true")
@@ -237,8 +305,20 @@ def main(argv: list[str] | None = None) -> int:
     if not args.dry_run and len(seeds) < 3:
         print("ERROR: need ≥3 seeds for CI reporting", file=sys.stderr)
         return 1
+    if args.mode == "real" and args.model == "mock":
+        print("ERROR: --mode real requires --model", file=sys.stderr)
+        return 1
 
-    report = run_eval(seeds=seeds, model=args.model, dry_run=args.dry_run)
+    seat_models = [s.strip() for s in args.seat_models.split(",") if s.strip()] or None
+    report = run_eval(
+        mode=args.mode,
+        seeds=seeds,
+        model=args.model,
+        adapter=args.adapter,
+        backend=args.backend,
+        seat_models=seat_models,
+        dry_run=args.dry_run,
+    )
     out = Path(args.out)
     if not out.is_absolute():
         out = ROOT / out
@@ -247,7 +327,11 @@ def main(argv: list[str] | None = None) -> int:
     print(json.dumps({k: report[k] for k in (
         "nCases", "benchmarkContentHash", "compositeDiff", "independence", "canClaimAGI",
     ) if k in report}, indent=2))
-    print(f"wrote {out.relative_to(ROOT)}")
+    try:
+        rel = out.relative_to(ROOT)
+    except ValueError:
+        rel = out
+    print(f"wrote {rel}")
     return 0
 
 
