@@ -860,10 +860,26 @@ def _pack_long_context(
     if context_packing_policy not in valid_policies:
         raise ValueError(f"unknown context_packing_policy: {context_packing_policy}")
 
+    # Relevance source for the retrieval signal that feeds packing. "synthetic" uses the
+    # case's hand-set relevanceScore (default, deterministic); "lexical" computes it with the
+    # offline lexical-vector retriever — a real, derived signal instead of a planted one.
+    relevance_source = str(case.get("relevanceSource", "synthetic"))
+    _lex = None
+    if use_kb and relevance_source == "lexical":
+        from agent.lexical_embed import cosine as _cos, embed as _embed
+
+        _lex = (_embed, _cos, _embed(str(case.get("prompt", ""))))
+
     considered: list[dict[str, Any]] = []
     for index, passage in enumerate(passages):
         raw_relevance = float(passage.get("relevanceScore", 0.0))
-        relevance = raw_relevance if use_kb else 0.0
+        if not use_kb:
+            relevance = 0.0
+        elif _lex is not None:
+            embed_fn, cos_fn, query_vec = _lex
+            relevance = max(0.0, cos_fn(query_vec, embed_fn(str(passage.get("text", "")))))
+        else:
+            relevance = raw_relevance
         verifier = float(passage.get("verifierScore", 0.5 if use_gate else 0.0)) if use_gate else 0.0
         contains_answer = bool(set(passage.get("answerTokens", [])) & answer_tokens)
         considered.append(
@@ -1000,6 +1016,7 @@ def _pack_long_context(
         "packing_policy": context_packing_policy if use_context_packing else "raw_original_order_truncation",
         "retrievalPolicy": "score_retrieval" if use_kb else "raw_order_no_retrieval",
         "retrieval_policy": "score_retrieval" if use_kb else "raw_order_no_retrieval",
+        "relevanceSource": relevance_source,
         "candidatePassagesConsidered": public_considered,
         "candidates_considered": candidates_considered,
         "packedPassages": packed_passages,

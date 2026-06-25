@@ -168,6 +168,33 @@ def test_long_context_matrix_has_raw_baseline_controls_and_headline_delta() -> N
     }
 
 
+def test_lexical_relevance_source_changes_signal_and_stays_valid() -> None:
+    # The lexical retriever feeds packing a DERIVED relevance signal instead of the planted
+    # synthetic scores. Same grid, two sources: cards stay valid, source is recorded, and the
+    # recorded relevance actually differs (proving the wiring is live, not a no-op).
+    def relevance_scores(source: str) -> tuple[list[float], dict]:
+        modes = long_context.long_context_modes("matrix-g1-r1-p1-gated-packed")
+        matrix = long_context.run_matrix(
+            context_sizes=[2048],
+            depths=[50],
+            needle_counts=[1],
+            modes=modes,
+            seed=5,
+            budget_tokens=1024,
+            relevance_source=source,
+        )
+        card = matrix["caseResults"][0]["contextPackCard"]
+        assert long_context.validate_context_pack_card(card) == []
+        scores = [round(c["relevance_score"], 6) for c in card["candidates_considered"]]
+        return scores, card
+
+    synthetic_scores, synthetic_card = relevance_scores("synthetic")
+    lexical_scores, lexical_card = relevance_scores("lexical")
+    assert synthetic_card["relevanceSource"] == "synthetic"
+    assert lexical_card["relevanceSource"] == "lexical"
+    assert synthetic_scores != lexical_scores  # the derived signal is genuinely different
+
+
 def test_real_backend_arm_skips_offline_safe_when_no_local_model() -> None:
     # A real-model arm must not fake numbers or clobber the report when no local model is
     # reachable. Force a closed endpoint so preflight fails deterministically everywhere.
@@ -231,6 +258,7 @@ def main() -> int:
     test_context_pack_card_validator_rejects_missing_required_field()
     test_long_context_cli_writes_candidate_report_offline()
     test_long_context_matrix_has_raw_baseline_controls_and_headline_delta()
+    test_lexical_relevance_source_changes_signal_and_stays_valid()
     test_real_backend_arm_skips_offline_safe_when_no_local_model()
     test_architecture_bets_root_map_has_required_fields()
     print("test_long_context_runner: OK")

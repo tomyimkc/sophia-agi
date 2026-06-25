@@ -103,6 +103,7 @@ def build_synthetic_case(
     needle_count: int,
     seed: int,
     budget_tokens: int,
+    relevance_source: str = "synthetic",
 ) -> dict[str, Any]:
     passage_count = max(4, context_size // PASSAGE_TOKENS)
     case_id = f"lc_{context_size}_{depth_pct}_{needle_count}_{seed}"
@@ -170,6 +171,7 @@ def build_synthetic_case(
         ),
         "materials": [],
         "longContextPassages": passages,
+        "relevanceSource": relevance_source,
         "contextBudgetTokens": budget_tokens,
         "needleDepthPct": depth_pct,
         "contextSizeTokens": context_size,
@@ -371,6 +373,7 @@ def run_matrix(
     budget_tokens: int,
     backend: str = "mock",
     timeout_sec: int = 5,
+    relevance_source: str = "synthetic",
 ) -> dict[str, Any]:
     config = RunConfig(backend=backend, timeout_sec=timeout_sec)
     pack_id = f"long-context-synthetic-seed-{seed}"
@@ -386,6 +389,7 @@ def run_matrix(
                     needle_count=needle_count,
                     seed=seed,
                     budget_tokens=budget_tokens,
+                    relevance_source=relevance_source,
                 )
                 for mode_name, ablation in modes.items():
                     started = time.time()
@@ -707,6 +711,7 @@ def build_report(
     budget_tokens: int,
     seed_plan: dict[str, Any] | None = None,
     backend: str = "mock",
+    relevance_source: str = "synthetic",
 ) -> dict[str, Any]:
     results = matrix["caseResults"]
     headline = build_headline_metric(results)
@@ -729,6 +734,12 @@ def build_report(
         "runAt": datetime.now().isoformat(timespec="seconds"),
         "visibility": "public-aggregate-no-prompts",
         "backend": backend,
+        "relevanceSource": relevance_source,
+        "relevanceSourceNote": (
+            "synthetic = hand-set passage relevanceScore (default, deterministic). "
+            "lexical = relevance computed by the offline lexical-vector retriever "
+            "(agent/lexical_embed.py) — a derived retrieval signal, not a planted one."
+        ),
         "backendClaimBoundary": (
             "Recall came from the offline MOCK backend. It validates harness wiring, context packing, "
             "and deterministic scoring only; it is not evidence of model long-context ability."
@@ -908,6 +919,13 @@ def main() -> int:
         "tokens, and model_ignored_packed_span measurable.",
     )
     parser.add_argument("--timeout-sec", type=int, default=5, help="Per-case backend timeout (raise for real models)")
+    parser.add_argument(
+        "--relevance",
+        choices=["synthetic", "lexical"],
+        default="synthetic",
+        help="Retrieval relevance source feeding packing: 'synthetic' (default, hand-set scores) or "
+        "'lexical' (computed by the offline lexical-vector retriever).",
+    )
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args()
 
@@ -945,6 +963,7 @@ def main() -> int:
             budget_tokens=args.budget_tokens,
             backend=args.backend,
             timeout_sec=args.timeout_sec,
+            relevance_source=args.relevance,
         )
         for seed in seeds
     ]
@@ -976,6 +995,7 @@ def main() -> int:
         budget_tokens=args.budget_tokens,
         seed_plan=seed_plan,
         backend=args.backend,
+        relevance_source=args.relevance,
     )
     if not report["cardValidation"]["valid"]:
         print(json.dumps({"ok": False, "stage": "context-card-validation", "errors": report["cardValidation"]["errors"]}, indent=2))

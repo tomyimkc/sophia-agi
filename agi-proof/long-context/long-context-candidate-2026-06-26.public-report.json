@@ -6,9 +6,11 @@
   "canClaimAGI": false,
   "claimBoundary": "CANDIDATE only: deterministic synthetic corpus, mock backend, no hidden non-synthetic eval, and no model-ability or AGI claim.",
   "packId": "long-context-synthetic-seeds-1729",
-  "runAt": "2026-06-25T18:15:38",
+  "runAt": "2026-06-25T18:52:07",
   "visibility": "public-aggregate-no-prompts",
   "backend": "mock",
+  "relevanceSource": "synthetic",
+  "relevanceSourceNote": "synthetic = hand-set passage relevanceScore (default, deterministic). lexical = relevance computed by the offline lexical-vector retriever (agent/lexical_embed.py) — a derived retrieval signal, not a planted one.",
   "backendClaimBoundary": "Recall came from the offline MOCK backend. It validates harness wiring, context packing, and deterministic scoring only; it is not evidence of model long-context ability.",
   "corpus": {
     "kind": "deterministic synthetic",
@@ -344,7 +346,7 @@
           "16384": 0.0
         },
         "meanPromptTokens": 3148.2,
-        "meanWallTimeSec": 0.00303,
+        "meanWallTimeSec": 0.002774,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -376,7 +378,7 @@
           "16384": 1.0
         },
         "meanPromptTokens": 4229.2,
-        "meanWallTimeSec": 0.003264,
+        "meanWallTimeSec": 0.002933,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -408,7 +410,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.000717,
+        "meanWallTimeSec": 0.000675,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -440,7 +442,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.000669,
+        "meanWallTimeSec": 0.000617,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -472,7 +474,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.000652,
+        "meanWallTimeSec": 0.000602,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -504,7 +506,7 @@
           "16384": 1.0
         },
         "meanPromptTokens": 4229.2,
-        "meanWallTimeSec": 0.000657,
+        "meanWallTimeSec": 0.000634,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -536,7 +538,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.004489,
+        "meanWallTimeSec": 0.004303,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -568,7 +570,7 @@
           "16384": 1.0
         },
         "meanPromptTokens": 4215.6,
-        "meanWallTimeSec": 0.003201,
+        "meanWallTimeSec": 0.002974,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -600,7 +602,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.003168,
+        "meanWallTimeSec": 0.002904,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -632,7 +634,7 @@
           "16384": 1.0
         },
         "meanPromptTokens": 4229.2,
-        "meanWallTimeSec": 0.003175,
+        "meanWallTimeSec": 0.002948,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -672,6 +674,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_1_1729_p0000",
@@ -841,6 +844,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_1_1729_p0000",
@@ -1010,6 +1014,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_1_1729_p0000",
@@ -1179,6 +1184,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_1_1729_p0000",
@@ -1348,6 +1354,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_1_1729_p0000",
@@ -1517,6 +1524,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_1_1729_p0000",
@@ -1686,6 +1694,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_1_1729_p0000",
@@ -1855,6 +1864,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_1_1729_p0000",
@@ -2024,6 +2034,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_1_1729_p0000",
@@ -2187,6 +2198,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_1_1729_p0000",
@@ -2360,6 +2372,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_3_1729_p0000",
@@ -2535,6 +2548,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_3_1729_p0000",
@@ -2710,6 +2724,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_3_1729_p0000",
@@ -2885,6 +2900,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_3_1729_p0000",
@@ -3060,6 +3076,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_3_1729_p0000",
@@ -3235,6 +3252,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_3_1729_p0000",
@@ -3410,6 +3428,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_3_1729_p0000",
@@ -3585,6 +3604,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_3_1729_p0000",
@@ -3760,6 +3780,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_3_1729_p0000",
@@ -3917,6 +3938,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_0_3_1729_p0000",
@@ -4088,6 +4110,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_1_1729_p0000",
@@ -4257,6 +4280,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_1_1729_p0000",
@@ -4426,6 +4450,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_1_1729_p0000",
@@ -4595,6 +4620,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_1_1729_p0000",
@@ -4764,6 +4790,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_1_1729_p0000",
@@ -4933,6 +4960,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_1_1729_p0000",
@@ -5102,6 +5130,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_1_1729_p0000",
@@ -5271,6 +5300,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_1_1729_p0000",
@@ -5440,6 +5470,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_1_1729_p0000",
@@ -5603,6 +5634,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_1_1729_p0000",
@@ -5776,6 +5808,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_3_1729_p0000",
@@ -5951,6 +5984,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_3_1729_p0000",
@@ -6126,6 +6160,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_3_1729_p0000",
@@ -6301,6 +6336,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_3_1729_p0000",
@@ -6476,6 +6512,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_3_1729_p0000",
@@ -6651,6 +6688,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_3_1729_p0000",
@@ -6826,6 +6864,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_3_1729_p0000",
@@ -7001,6 +7040,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_3_1729_p0000",
@@ -7176,6 +7216,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_3_1729_p0000",
@@ -7333,6 +7374,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_25_3_1729_p0000",
@@ -7504,6 +7546,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_1_1729_p0000",
@@ -7673,6 +7716,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_1_1729_p0000",
@@ -7842,6 +7886,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_1_1729_p0000",
@@ -8011,6 +8056,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_1_1729_p0000",
@@ -8180,6 +8226,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_1_1729_p0000",
@@ -8349,6 +8396,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_1_1729_p0000",
@@ -8518,6 +8566,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_1_1729_p0000",
@@ -8687,6 +8736,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_1_1729_p0000",
@@ -8856,6 +8906,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_1_1729_p0000",
@@ -9019,6 +9070,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_1_1729_p0000",
@@ -9192,6 +9244,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_3_1729_p0000",
@@ -9367,6 +9420,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_3_1729_p0000",
@@ -9542,6 +9596,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_3_1729_p0000",
@@ -9717,6 +9772,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_3_1729_p0000",
@@ -9892,6 +9948,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_3_1729_p0000",
@@ -10067,6 +10124,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_3_1729_p0000",
@@ -10242,6 +10300,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_3_1729_p0000",
@@ -10417,6 +10476,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_3_1729_p0000",
@@ -10592,6 +10652,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_3_1729_p0000",
@@ -10749,6 +10810,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_50_3_1729_p0000",
@@ -10920,6 +10982,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_1_1729_p0000",
@@ -11089,6 +11152,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_1_1729_p0000",
@@ -11258,6 +11322,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_1_1729_p0000",
@@ -11427,6 +11492,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_1_1729_p0000",
@@ -11596,6 +11662,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_1_1729_p0000",
@@ -11765,6 +11832,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_1_1729_p0000",
@@ -11934,6 +12002,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_1_1729_p0000",
@@ -12103,6 +12172,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_1_1729_p0000",
@@ -12272,6 +12342,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_1_1729_p0000",
@@ -12435,6 +12506,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_1_1729_p0000",
@@ -12608,6 +12680,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_3_1729_p0000",
@@ -12783,6 +12856,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_3_1729_p0000",
@@ -12958,6 +13032,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_3_1729_p0000",
@@ -13133,6 +13208,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_3_1729_p0000",
@@ -13308,6 +13384,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_3_1729_p0000",
@@ -13483,6 +13560,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_3_1729_p0000",
@@ -13658,6 +13736,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_3_1729_p0000",
@@ -13833,6 +13912,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_3_1729_p0000",
@@ -14008,6 +14088,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_3_1729_p0000",
@@ -14165,6 +14246,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_75_3_1729_p0000",
@@ -14336,6 +14418,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_1_1729_p0000",
@@ -14505,6 +14588,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_1_1729_p0000",
@@ -14674,6 +14758,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_1_1729_p0000",
@@ -14843,6 +14928,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_1_1729_p0000",
@@ -15012,6 +15098,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_1_1729_p0000",
@@ -15181,6 +15268,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_1_1729_p0000",
@@ -15350,6 +15438,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_1_1729_p0000",
@@ -15519,6 +15608,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_1_1729_p0000",
@@ -15688,6 +15778,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_1_1729_p0000",
@@ -15851,6 +15942,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_1_1729_p0000",
@@ -16024,6 +16116,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_3_1729_p0000",
@@ -16199,6 +16292,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_3_1729_p0000",
@@ -16374,6 +16468,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_3_1729_p0000",
@@ -16549,6 +16644,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_3_1729_p0000",
@@ -16724,6 +16820,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_3_1729_p0000",
@@ -16899,6 +16996,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_3_1729_p0000",
@@ -17074,6 +17172,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_3_1729_p0000",
@@ -17249,6 +17348,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_3_1729_p0000",
@@ -17424,6 +17524,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_3_1729_p0000",
@@ -17581,6 +17682,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_4096_100_3_1729_p0000",
@@ -17752,6 +17854,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_1_1729_p0000",
@@ -18197,6 +18300,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_1_1729_p0000",
@@ -18642,6 +18746,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_1_1729_p0000",
@@ -19087,6 +19192,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_1_1729_p0000",
@@ -19532,6 +19638,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_1_1729_p0000",
@@ -19977,6 +20084,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_1_1729_p0000",
@@ -20422,6 +20530,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_1_1729_p0000",
@@ -20867,6 +20976,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_1_1729_p0000",
@@ -21312,6 +21422,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_1_1729_p0000",
@@ -21757,6 +21868,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_1_1729_p0000",
@@ -22206,6 +22318,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_3_1729_p0000",
@@ -22657,6 +22770,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_3_1729_p0000",
@@ -23108,6 +23222,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_3_1729_p0000",
@@ -23559,6 +23674,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_3_1729_p0000",
@@ -24010,6 +24126,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_3_1729_p0000",
@@ -24461,6 +24578,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_3_1729_p0000",
@@ -24912,6 +25030,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_3_1729_p0000",
@@ -25363,6 +25482,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_3_1729_p0000",
@@ -25814,6 +25934,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_3_1729_p0000",
@@ -26265,6 +26386,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_0_3_1729_p0000",
@@ -26712,6 +26834,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_1_1729_p0000",
@@ -27157,6 +27280,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_1_1729_p0000",
@@ -27602,6 +27726,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_1_1729_p0000",
@@ -28047,6 +28172,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_1_1729_p0000",
@@ -28492,6 +28618,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_1_1729_p0000",
@@ -28937,6 +29064,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_1_1729_p0000",
@@ -29382,6 +29510,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_1_1729_p0000",
@@ -29827,6 +29956,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_1_1729_p0000",
@@ -30272,6 +30402,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_1_1729_p0000",
@@ -30717,6 +30848,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_1_1729_p0000",
@@ -31166,6 +31298,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_3_1729_p0000",
@@ -31617,6 +31750,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_3_1729_p0000",
@@ -32068,6 +32202,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_3_1729_p0000",
@@ -32519,6 +32654,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_3_1729_p0000",
@@ -32970,6 +33106,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_3_1729_p0000",
@@ -33421,6 +33558,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_3_1729_p0000",
@@ -33872,6 +34010,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_3_1729_p0000",
@@ -34323,6 +34462,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_3_1729_p0000",
@@ -34774,6 +34914,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_3_1729_p0000",
@@ -35225,6 +35366,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_25_3_1729_p0000",
@@ -35672,6 +35814,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_1_1729_p0000",
@@ -36117,6 +36260,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_1_1729_p0000",
@@ -36562,6 +36706,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_1_1729_p0000",
@@ -37007,6 +37152,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_1_1729_p0000",
@@ -37452,6 +37598,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_1_1729_p0000",
@@ -37897,6 +38044,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_1_1729_p0000",
@@ -38342,6 +38490,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_1_1729_p0000",
@@ -38787,6 +38936,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_1_1729_p0000",
@@ -39232,6 +39382,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_1_1729_p0000",
@@ -39677,6 +39828,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_1_1729_p0000",
@@ -40126,6 +40278,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_3_1729_p0000",
@@ -40577,6 +40730,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_3_1729_p0000",
@@ -41028,6 +41182,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_3_1729_p0000",
@@ -41479,6 +41634,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_3_1729_p0000",
@@ -41930,6 +42086,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_3_1729_p0000",
@@ -42381,6 +42538,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_3_1729_p0000",
@@ -42832,6 +42990,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_3_1729_p0000",
@@ -43283,6 +43442,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_3_1729_p0000",
@@ -43734,6 +43894,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_3_1729_p0000",
@@ -44185,6 +44346,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_50_3_1729_p0000",
@@ -44632,6 +44794,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_1_1729_p0000",
@@ -45077,6 +45240,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_1_1729_p0000",
@@ -45522,6 +45686,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_1_1729_p0000",
@@ -45967,6 +46132,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_1_1729_p0000",
@@ -46412,6 +46578,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_1_1729_p0000",
@@ -46857,6 +47024,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_1_1729_p0000",
@@ -47302,6 +47470,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_1_1729_p0000",
@@ -47747,6 +47916,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_1_1729_p0000",
@@ -48192,6 +48362,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_1_1729_p0000",
@@ -48637,6 +48808,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_1_1729_p0000",
@@ -49086,6 +49258,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_3_1729_p0000",
@@ -49537,6 +49710,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_3_1729_p0000",
@@ -49988,6 +50162,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_3_1729_p0000",
@@ -50439,6 +50614,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_3_1729_p0000",
@@ -50890,6 +51066,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_3_1729_p0000",
@@ -51341,6 +51518,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_3_1729_p0000",
@@ -51792,6 +51970,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_3_1729_p0000",
@@ -52243,6 +52422,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_3_1729_p0000",
@@ -52694,6 +52874,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_3_1729_p0000",
@@ -53145,6 +53326,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_75_3_1729_p0000",
@@ -53592,6 +53774,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_1_1729_p0000",
@@ -54037,6 +54220,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_1_1729_p0000",
@@ -54482,6 +54666,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_1_1729_p0000",
@@ -54927,6 +55112,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_1_1729_p0000",
@@ -55372,6 +55558,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_1_1729_p0000",
@@ -55817,6 +56004,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_1_1729_p0000",
@@ -56262,6 +56450,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_1_1729_p0000",
@@ -56707,6 +56896,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_1_1729_p0000",
@@ -57152,6 +57342,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_1_1729_p0000",
@@ -57597,6 +57788,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_1_1729_p0000",
@@ -58046,6 +58238,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_3_1729_p0000",
@@ -58497,6 +58690,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_3_1729_p0000",
@@ -58948,6 +59142,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_3_1729_p0000",
@@ -59399,6 +59594,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_3_1729_p0000",
@@ -59850,6 +60046,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_3_1729_p0000",
@@ -60301,6 +60498,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "raw_order_no_retrieval",
       "retrieval_policy": "raw_order_no_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_3_1729_p0000",
@@ -60752,6 +60950,7 @@
       "packing_policy": "raw_original_order_truncation",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_3_1729_p0000",
@@ -61203,6 +61402,7 @@
       "packing_policy": "score",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_3_1729_p0000",
@@ -61654,6 +61854,7 @@
       "packing_policy": "broken",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_3_1729_p0000",
@@ -62105,6 +62306,7 @@
       "packing_policy": "oracle",
       "retrievalPolicy": "score_retrieval",
       "retrieval_policy": "score_retrieval",
+      "relevanceSource": "synthetic",
       "candidatePassagesConsidered": [
         {
           "passageId": "lc_16384_100_3_1729_p0000",
