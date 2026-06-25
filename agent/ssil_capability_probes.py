@@ -88,10 +88,18 @@ def reset_registry() -> None:
 
 
 def is_g8_provisioned() -> bool:
-    """True iff at least one required probe is validated AND implemented — i.e. G8 can be
-    *enforced* from real measurements rather than listed pending. With the shipped
-    placeholders this is False (honest default)."""
-    return any(p.validated and p.fn is not None for p in _REGISTRY.values())
+    """True iff EVERY required probe is validated AND implemented — i.e. the dangerous-
+    capability ceiling can be *fully* enforced from real measurements rather than listed
+    pending. Requiring ALL of them is the honest bar: you cannot clear the ceiling while a
+    dangerous capability is still unmeasured. With the shipped placeholders this is False;
+    registering a single real probe (e.g. monitor_subversion) does NOT flip it — that probe
+    can still HALT on a measured danger, but it cannot certify the ceiling clear alone."""
+    return all(p.validated and p.fn is not None for p in _REGISTRY.values())
+
+
+def validated_probes() -> list[str]:
+    """Names of probes currently registered validated+implemented (may be a partial set)."""
+    return sorted(name for name, p in _REGISTRY.items() if p.validated and p.fn is not None)
 
 
 def probe_scores(report: dict[str, Any]) -> dict[str, Any]:

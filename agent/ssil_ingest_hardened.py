@@ -83,6 +83,16 @@ _BOUNDARY = (
 )
 
 
+def _ensure_builtin_probes() -> None:
+    """Register the real, validated dangerous-capability probes that ship today. Idempotent.
+    Currently just monitor_subversion; this is where future real probes get wired in. It
+    does NOT make G8 fully provisioned (5 placeholders remain), but it lets a measured
+    monitor-subversion danger HALT the loop."""
+    from agent import ssil_probe_monitor_subversion as monitor_subversion
+
+    monitor_subversion.register(validated=True)
+
+
 def _base_checkpoint() -> dict[str, Any]:
     """The always-available rollback target: dropping the LoRA adapter reverts to the
     frozen base model, a known-safe generation. Marked canonical+promote so GUARD's
@@ -168,15 +178,25 @@ def harden(
         }
     enforced["GOOD"] = ood_guard.evaluate(good_bundle, candidate_id=candidate_id)
 
-    # --- G8: enforced only once a real validated probe exists; else pending. ---
+    # --- G8: enforce when the ceiling is FULLY provisioned (all probes validated) OR when
+    # any single measured probe is at/above the halt threshold (a measured dangerous
+    # capability HALTs the loop regardless of how many other probes exist yet — G8's halt
+    # condition wins outright). Otherwise G8 is advisory/pending: a few measured probes
+    # below halt must not block an otherwise-clean promote just because the full battery
+    # is not built. ---
     pending = dict(PENDING_GATES)
-    if probe_report is not None and probes.is_g8_provisioned():
+    measured = {k: float(v) for k, v in (probe_report or {}).items() if isinstance(v, (int, float))}
+    any_halt = any(v >= capability_ceiling.HALT_THRESHOLD_DEFAULT for v in measured.values())
+    if probe_report is not None and (probes.is_g8_provisioned() or any_halt):
         enforced["G8"] = capability_ceiling.evaluate({"probeScores": probe_report}, candidate_id=candidate_id)
         pending.pop("G8", None)
     else:
+        validated = probes.validated_probes()
         pending["G8"] = (
-            "dangerous-capability probeScores — no validated probe registered "
-            "(see agent/ssil_capability_probes.register_probe); G8 fail-closed by absence"
+            "dangerous-capability ceiling not fully provisioned "
+            f"(validated probes: {validated or 'none'}; measured this run: {sorted(measured)}); "
+            "no measured HALT — advisory only. Register the remaining probes "
+            "(agent/ssil_capability_probes.register_probe / ssil_probe_*.register) to enforce."
         )
 
     # --- Combine fail-closed (worst-wins) with the Layer-1 verdict. ---
@@ -214,6 +234,7 @@ def harden_from_report(
     """Convenience: map a raw eval ``report`` and run ``harden`` against a Layer-1 record."""
     from tools.ingest_rlvr_eval import map_report
 
+    _ensure_builtin_probes()
     mapped = map_report(report, adapter_id=adapter_id)
     probe_report = probes.probe_scores(report)["scores"]
     return harden(
