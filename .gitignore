@@ -80,6 +80,7 @@ training/mlx_adapters/**
 
 # C4 gate-feedback queue (generated working files; promote via tools/feedback_to_training.py)
 training/feedback/*.jsonl
+training/feedback/failure_memory/
 
 # SSIL runtime registry (mutable append log)
 agi-proof/self-extension/ssil-registry.jsonl

@@ -1,0 +1,7 @@
+{
+  "chosen": {
+    "min_score": 0.45,
+    "require_class_match": true,
+    "require_would_repeat": true
+  }
+}
