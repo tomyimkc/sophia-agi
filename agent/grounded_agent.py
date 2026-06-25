@@ -102,7 +102,8 @@ def vocab_for_pages(pages) -> "dict[str, str]":
 def grounded_answer(question: str, complete, *, pages, controller=None, retrieval: str = "single",
                     hops: int = 1, attribution_check=None, gap_log_path=None,
                     graded: bool = False, confidence=None, corroboration_evidence=None,
-                    self_consistency_samples=None, thresholds=None) -> "dict[str, Any]":
+                    self_consistency_samples=None, thresholds=None,
+                    confidence_from_sources: bool = False) -> "dict[str, Any]":
     """Answer ``question`` from the OKF corpus via routing + the gated hybrid policy.
 
     Returns {answer, policy, target, gated}. ``policy`` is one of: abstain_no_route (the
@@ -119,6 +120,13 @@ def grounded_answer(question: str, complete, *, pages, controller=None, retrieva
     ``self_consistency_samples`` (sampled answers); with no signal, grading is a no-op so
     existing callers and benchmarks see zero drift. ``thresholds`` overrides the ``hi``/``lo``
     cut points (default ``{"hi": 0.7, "lo": 0.4}``).
+
+    ``confidence_from_sources=True`` derives that confidence **live** from the routed page's
+    provenance and k-hop neighborhood (`agent.grounded_confidence`) — source quality
+    (``authorConfidence``) pooled with neighbor corroboration — so a weakly-sourced
+    (legendary/disputed) answer is downgraded automatically, with no caller-supplied number.
+    An explicit ``confidence`` / ``corroboration_evidence`` / ``self_consistency_samples``
+    takes precedence over it.
     """
     controller = controller or LexicalController()
     target = controller.route(question, vocab_for_pages(pages))
@@ -134,6 +142,13 @@ def grounded_answer(question: str, complete, *, pages, controller=None, retrieva
         out["target"] = target
 
     if graded:
+        # Derive a LIVE confidence from the routed page's provenance neighborhood when asked
+        # and no explicit signal was supplied (explicit signals take precedence).
+        if (confidence_from_sources and confidence is None and not corroboration_evidence
+                and not self_consistency_samples and out.get("target")):
+            from agent.grounded_confidence import corroboration_evidence_for  # noqa: PLC0415
+            corroboration_evidence = corroboration_evidence_for(
+                out["target"], pages, hops=hops) or None
         apply_graded_decision(out, confidence=confidence,
                               corroboration_evidence=corroboration_evidence,
                               self_consistency_samples=self_consistency_samples,
