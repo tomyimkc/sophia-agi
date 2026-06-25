@@ -345,17 +345,19 @@ def _execute_step(
         tool_results: list[dict] = []
         if step["action"] == "tool" or "{\"tools\"" in text or "```json" in text:
             requested = parse_tool_requests(text)
+            allowed_requests = requested
             # Least-privilege: a tool requested outside this run's scope is refused
             # fail-closed (recorded as a failed result so the step does not pass).
             if allowed_tools is not None and requested:
                 blocked = [t for t in requested if t not in allowed_tools]
-                requested = [t for t in requested if t in allowed_tools]
+                allowed_requests = [t for t in requested if t in allowed_tools]
                 if blocked:
                     store.log("tool_scope_block", step=step["id"], blocked=blocked)
                     tool_results.extend({"tool": t, "ok": False, "error": "out of subagent tool scope"} for t in blocked)
-            if requested:
-                tool_results.extend(run_tools(requested, approved=approve_tools))
+            if allowed_requests:
+                tool_results.extend(run_tools(allowed_requests, approved=approve_tools))
             if tool_results:
+                # log the ORIGINAL requested list so blocked tools are visible alongside their results
                 store.log("tool_call", step=step["id"], requested=requested, results=tool_results)
         result.tool_results = tool_results
 
@@ -412,7 +414,10 @@ def run_agent(
     """
     client = client or default_client()
     verifier = verifier or gate_verifier
-    store = RunStore(task.task_id)
+    # Pass RUNS_DIR explicitly (looked up here at call time) so a runtime override
+    # of the module global — as tests do — actually redirects the run logs; the
+    # RunStore default binds at definition time and would ignore the override.
+    store = RunStore(task.task_id, runs_dir=RUNS_DIR)
     store.resume() if resume else store.fresh()
     store.log("task_start", goal=task.goal, mode=task.mode, skill=(task.skill or {}).get("name"), resumed=resume)
 

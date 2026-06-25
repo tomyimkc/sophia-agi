@@ -33,13 +33,14 @@ def test_happy_path_runs_and_persists() -> None:
         h.RUNS_DIR = Path(tmp)
         task = h.AgentTask(goal="Should we launch on HN this week?", mode="advisor", task_id="t-happy")
         result = h.run_agent(task, client=_mock_client(), max_retries=1)
-    assert result.ok is True
-    assert result.final_text.strip()
-    assert all(s.ok for s in result.steps)
-    # decision log persisted with task_start/plan/model_call/task_end events
-    events = [json.loads(line) for line in Path(result.trace_path).read_text().splitlines() if line.strip()]
-    types = {e["type"] for e in events}
-    assert {"task_start", "plan", "model_call", "critic", "task_end"} <= types
+        assert result.ok is True
+        assert result.final_text.strip()
+        assert all(s.ok for s in result.steps)
+        # decision log persisted with task_start/plan/model_call/task_end events
+        # (read inside the tempdir block: RUNS_DIR override now redirects traces here)
+        events = [json.loads(line) for line in Path(result.trace_path).read_text().splitlines() if line.strip()]
+        types = {e["type"] for e in events}
+        assert {"task_start", "plan", "model_call", "critic", "task_end"} <= types
 
 
 def test_failure_classification_and_retry_exhaustion() -> None:
@@ -80,9 +81,9 @@ def test_checkpoint_resume_skips_completed() -> None:
         assert first.ok is True
         # resume: the completed step is skipped, run still ok
         second = h.run_agent(task, client=_mock_client(), max_retries=1, resume=True)
-    assert second.ok is True
-    events = [json.loads(line) for line in Path(second.trace_path).read_text().splitlines() if line.strip()]
-    assert any(e["type"] == "step_skip" for e in events)
+        assert second.ok is True
+        events = [json.loads(line) for line in Path(second.trace_path).read_text().splitlines() if line.strip()]
+        assert any(e["type"] == "step_skip" for e in events)
 
 
 def test_skill_injection_into_task() -> None:

@@ -37,6 +37,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
+from agent import harness
 from agent.harness import AgentResult, AgentTask, RunStore, run_agent
 from agent.model import ModelClient, default_client
 
@@ -179,7 +180,9 @@ def delegate(
     successful outputs (useful when the caller wants to run its own reduce, e.g.
     ``team_agents.deliberate_team`` for calibrated, divergence-aware synthesis)."""
     client = client or default_client()
-    store = RunStore(f"{parent_id}.delegation").fresh()
+    # Use the harness's current RUNS_DIR (looked up at call time) so parent and
+    # child traces co-locate and a test/runtime override of the dir is honoured.
+    store = RunStore(f"{parent_id}.delegation", runs_dir=harness.RUNS_DIR).fresh()
     store.log("delegate_start", parentGoal=parent_goal, nChildren=len(specs))
 
     children: list[SubagentResult] = []

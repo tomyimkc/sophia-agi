@@ -312,10 +312,13 @@ class ContextManager:
             else:
                 dropped.append(seg.tag())
 
-        # Emit in original insertion order so the stable prefix leads and the
-        # human-readable flow is preserved; cache_key pins the prefix identity.
-        chosen.sort(key=lambda pair: (0 if pair[1].stable else 1, pair[0]))
-        ordered = [seg for _i, seg in chosen]
+        # Emit the stable prefix first, in its _stable_order() sequence (preserved
+        # by the append order above — NOT re-sorted by insertion index, which would
+        # discard the priority ordering the cache_key documents), then the
+        # non-stable segments in insertion order for human-readable flow.
+        stable_part = [seg for _i, seg in chosen if seg.stable]
+        nonstable_part = [seg for _i, seg in sorted((p for p in chosen if not p[1].stable), key=lambda p: p[0])]
+        ordered = stable_part + nonstable_part
         text = self.joiner.join(seg.text for seg in ordered if seg.text)
 
         prefix_text = self.joiner.join(seg.text for seg in ordered if seg.stable)
@@ -391,7 +394,7 @@ def compact_history(
             Segment(
                 kind="prior",
                 text=out,
-                priority=1000 - i,  # newer admitted first
+                priority=i,  # higher index == newer == admitted first under tight budget
                 pinned=is_recent,
                 provenance=f"prior#{i}",
             )
