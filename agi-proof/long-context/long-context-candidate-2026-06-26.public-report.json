@@ -5,8 +5,8 @@
   "candidateOnly": true,
   "canClaimAGI": false,
   "claimBoundary": "CANDIDATE only: deterministic synthetic corpus, mock backend, no hidden non-synthetic eval, and no model-ability or AGI claim.",
-  "packId": "long-context-synthetic-seed-1729",
-  "runAt": "2026-06-26T01:58:42",
+  "packId": "long-context-synthetic-seeds-1729",
+  "runAt": "2026-06-25T18:15:38",
   "visibility": "public-aggregate-no-prompts",
   "backend": "mock",
   "backendClaimBoundary": "Recall came from the offline MOCK backend. It validates harness wiring, context packing, and deterministic scoring only; it is not evidence of model long-context ability.",
@@ -43,6 +43,15 @@
     "fullMatrixRun": false,
     "ablationCells": 8,
     "allOffCellEqualsRawLongContextBaseline": true
+  },
+  "seedPlan": {
+    "seeds": [
+      1729
+    ],
+    "seedsRun": 1,
+    "promotionRequiresMinSeeds": 3,
+    "multiSeed": false,
+    "note": "Each seed reruns the full matrix; promotion to validated requires >=3 seeds."
   },
   "tokenBudget": {
     "requestedBudgetTokens": 4096,
@@ -84,17 +93,20 @@
     }
   },
   "headlineMetric": {
-    "metric": "gated_recall - raw_recall",
+    "metric": "packed_recall - truncated_raw_recall",
     "scoring": "deterministic span-containment/exact-match over synthetic answer tokens; no LLM judge",
     "rawBaselineMode": "matrix-g0-r0-p0-raw-long-context",
-    "gatedMode": "matrix-g1-r1-p1-gated-packed",
-    "rawRecall": 0.616667,
-    "gatedRecall": 1.0,
+    "packedMode": "matrix-g1-r1-p1-gated-packed",
+    "truncatedRawRecall": 0.616667,
+    "packedRecall": 1.0,
     "delta": 0.383333,
-    "ci95": [
+    "gridDispersion95": [
       0.169912,
       0.596755
     ],
+    "gridDispersion95Note": "Dispersion across the deterministic case grid at the run's seed(s); NOT a sampling confidence interval. Promotion requires >=3 seeds (see seedPlan).",
+    "postAnswerVerifierGateRecallContribution": 0.0,
+    "gateContributionNote": "gate-only recall minus raw-truncation recall. ~0 means the verifier gate contributes nothing to RECALL here; its measurable effect is on distractor selection (see distractorRobustnessByArm), and the delta comes from context packing.",
     "pairedCases": 20
   },
   "ablationMatrix": [
@@ -203,6 +215,34 @@
       "allOffEqualsRawLongContextBaseline": false
     }
   ],
+  "interactionNote": "Ablation flags are independently toggleable, but their measured effects interact: context packing has no effect unless use_kb (relevance) or use_gate (verifier) supplies a non-zero ranking signal (packing-only == raw). The 8-cell matrix therefore measures interaction effects, not independent main effects.",
+  "distractorRobustnessByArm": {
+    "metric": "selected_distractor_passage_rate",
+    "finding": "Verifier-only packing minimizes distractor-passage selection; adding relevance retrieval ranks near-duplicate distractors back up, so the full arm is WORSE on distractors at equal recall. Recommended configuration: verifier-only packing.",
+    "arms": [
+      {
+        "arm": "truncated_raw",
+        "mode": "matrix-g0-r0-p0-raw-long-context",
+        "recall": 0.616667,
+        "selectedDistractorPassageRate": 0.35
+      },
+      {
+        "arm": "verifier_only_packed",
+        "mode": "matrix-g1-r0-p1-gate-packing",
+        "recall": 1.0,
+        "selectedDistractorPassageRate": 0.25
+      },
+      {
+        "arm": "relevance_plus_verifier_full",
+        "mode": "matrix-g1-r1-p1-gated-packed",
+        "recall": 1.0,
+        "selectedDistractorPassageRate": 0.5
+      }
+    ],
+    "bestArmsBySelectedDistractorPassageRate": [
+      "verifier_only_packed"
+    ]
+  },
   "controls": {
     "brokenPackerPresent": true,
     "brokenPackerRecall": 0.0,
@@ -212,27 +252,63 @@
     "oraclePackerAssertHigh": true,
     "note": "Controls use the same mock backend and token budget; broken excludes answer spans, oracle promotes them first."
   },
+  "taxonomyCoverage": {
+    "reachable": [
+      "retrieval_miss",
+      "packer_eviction"
+    ],
+    "unreachable": [
+      "model_ignored_packed_span",
+      "gate_suppressed"
+    ],
+    "why": "The offline mock backend is span-extractive from accepted packed spans: if the answer span is packed, recall is 1.0, so model_ignored_packed_span and gate_suppressed cannot fire. Those classes require a generative model arm."
+  },
   "positionLengthCrossTab": {
-    "depth_0": {
-      "4096": 1.0,
-      "16384": 1.0
+    "rawArm": {
+      "depth_0": {
+        "4096": 1.0,
+        "16384": 1.0
+      },
+      "depth_25": {
+        "4096": 1.0,
+        "16384": 0.166666
+      },
+      "depth_50": {
+        "4096": 1.0,
+        "16384": 0.0
+      },
+      "depth_75": {
+        "4096": 1.0,
+        "16384": 0.0
+      },
+      "depth_100": {
+        "4096": 1.0,
+        "16384": 0.0
+      }
     },
-    "depth_25": {
-      "4096": 1.0,
-      "16384": 1.0
+    "packedArm": {
+      "depth_0": {
+        "4096": 1.0,
+        "16384": 1.0
+      },
+      "depth_25": {
+        "4096": 1.0,
+        "16384": 1.0
+      },
+      "depth_50": {
+        "4096": 1.0,
+        "16384": 1.0
+      },
+      "depth_75": {
+        "4096": 1.0,
+        "16384": 1.0
+      },
+      "depth_100": {
+        "4096": 1.0,
+        "16384": 1.0
+      }
     },
-    "depth_50": {
-      "4096": 1.0,
-      "16384": 1.0
-    },
-    "depth_75": {
-      "4096": 1.0,
-      "16384": 1.0
-    },
-    "depth_100": {
-      "4096": 1.0,
-      "16384": 1.0
-    }
+    "note": "Raw arm shows truncation falloff: at a context larger than the budget, needles past the first packed tokens are evicted, so recall drops with depth. The packed arm saturates at 1.0 because packing selects the answer passage regardless of depth."
   },
   "metricFamilies": {
     "multiNeedleRecall": "single and multiple verified synthetic needles recovered by span containment/exact match",
@@ -268,7 +344,7 @@
           "16384": 0.0
         },
         "meanPromptTokens": 3148.2,
-        "meanWallTimeSec": 0.001712,
+        "meanWallTimeSec": 0.00303,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -300,7 +376,7 @@
           "16384": 1.0
         },
         "meanPromptTokens": 4229.2,
-        "meanWallTimeSec": 0.001798,
+        "meanWallTimeSec": 0.003264,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -332,7 +408,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.000405,
+        "meanWallTimeSec": 0.000717,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -364,7 +440,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.000404,
+        "meanWallTimeSec": 0.000669,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -396,7 +472,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.0004,
+        "meanWallTimeSec": 0.000652,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -428,7 +504,7 @@
           "16384": 1.0
         },
         "meanPromptTokens": 4229.2,
-        "meanWallTimeSec": 0.000389,
+        "meanWallTimeSec": 0.000657,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -460,7 +536,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.002229,
+        "meanWallTimeSec": 0.004489,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -492,7 +568,7 @@
           "16384": 1.0
         },
         "meanPromptTokens": 4215.6,
-        "meanWallTimeSec": 0.001795,
+        "meanWallTimeSec": 0.003201,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -524,7 +600,7 @@
           "16384": 0.233333
         },
         "meanPromptTokens": 4196.5,
-        "meanWallTimeSec": 0.001781,
+        "meanWallTimeSec": 0.003168,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -556,7 +632,7 @@
           "16384": 1.0
         },
         "meanPromptTokens": 4229.2,
-        "meanWallTimeSec": 0.001806,
+        "meanWallTimeSec": 0.003175,
         "totalCalls": 20,
         "costUsd": 0.0
       }
@@ -62776,6 +62852,9 @@
       "Live embedding retrieval replacement is not completed by this runner.",
       "The graded router remains an architecture bet unless separately wired and tested.",
       "Distractor robustness against real model behavior is not measured by this mock run.",
+      "The verifier gate's contribution to RECALL is ~0 here; the delta is from packing, not governance.",
+      "The delta magnitude reflects corpus layout (needles vs. budget), not model long-context capability.",
+      "Single-seed runs report grid dispersion, not a sampling CI; promotion requires >=3 seeds.",
       "No trained checkpoint or AGI capability is claimed."
     ]
   },

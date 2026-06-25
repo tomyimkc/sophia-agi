@@ -140,9 +140,22 @@ def test_long_context_matrix_has_raw_baseline_controls_and_headline_delta() -> N
     assert report["tokenBudget"]["identicalAcrossArms"] is True
     assert report["matrix"]["ablationCells"] == 8
     assert report["matrix"]["allOffCellEqualsRawLongContextBaseline"] is True
-    assert report["headlineMetric"]["metric"] == "gated_recall - raw_recall"
+    assert report["headlineMetric"]["metric"] == "packed_recall - truncated_raw_recall"
     assert report["headlineMetric"]["pairedCases"] == 2
-    assert report["headlineMetric"]["gatedRecall"] >= report["headlineMetric"]["rawRecall"]
+    assert report["headlineMetric"]["packedRecall"] >= report["headlineMetric"]["truncatedRawRecall"]
+    # F1: the verifier gate must not be credited with the recall delta.
+    assert report["headlineMetric"]["postAnswerVerifierGateRecallContribution"] == 0.0
+    assert "gridDispersion95" in report["headlineMetric"]
+    # F2: verifier-only packing is reported and is the distractor-minimizing arm.
+    arms = {arm["arm"]: arm for arm in report["distractorRobustnessByArm"]["arms"]}
+    assert "verifier_only_packed" in arms
+    assert "verifier_only_packed" in report["distractorRobustnessByArm"]["bestArmsBySelectedDistractorPassageRate"]
+    # F3 / F4 / F5: interaction note, taxonomy coverage, and a raw-arm cross-tab.
+    assert "interactionNote" in report
+    assert set(report["taxonomyCoverage"]["unreachable"]) == {"model_ignored_packed_span", "gate_suppressed"}
+    assert "rawArm" in report["positionLengthCrossTab"]
+    # F6: a seed plan with the >=3-seed promotion gate.
+    assert report["seedPlan"]["promotionRequiresMinSeeds"] == 3
     assert report["controls"]["brokenPackerAssertApproxZero"] is True
     assert report["controls"]["oraclePackerAssertHigh"] is True
     assert report["trainingFirebreak"]["eligibleAsTrainingTarget"] is False

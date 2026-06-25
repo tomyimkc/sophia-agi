@@ -40,6 +40,8 @@ NEEDLE_COUNTS = [1, 3]
 PASSAGE_TOKENS = 1024
 RAW_BASELINE_MODE = "matrix-g0-r0-p0-raw-long-context"
 GATED_PACKED_MODE = "matrix-g1-r1-p1-gated-packed"
+GATE_ONLY_MODE = "matrix-g1-r0-p0-gate-only"
+VERIFIER_ONLY_PACKED_MODE = "matrix-g1-r0-p1-gate-packing"
 MATRIX_MODE_ORDER = [
     RAW_BASELINE_MODE,
     "matrix-g0-r0-p1-packing-only",
@@ -477,25 +479,80 @@ def matrix_axes_for_mode(mode: str) -> dict[str, bool] | None:
 def build_headline_metric(results: list[dict[str, Any]]) -> dict[str, Any]:
     by_case_mode = {(row["caseId"], row["mode"]): row for row in results}
     paired_deltas: list[float] = []
+    gate_contrib_deltas: list[float] = []
     for case_id in sorted({row["caseId"] for row in results}):
         raw = by_case_mode.get((case_id, RAW_BASELINE_MODE))
         gated = by_case_mode.get((case_id, GATED_PACKED_MODE))
-        if raw is None or gated is None:
-            continue
-        paired_deltas.append(float(gated["recall"]) - float(raw["recall"]))
+        gate_only = by_case_mode.get((case_id, GATE_ONLY_MODE))
+        if raw is not None and gated is not None:
+            paired_deltas.append(float(gated["recall"]) - float(raw["recall"]))
+        if raw is not None and gate_only is not None:
+            gate_contrib_deltas.append(float(gate_only["recall"]) - float(raw["recall"]))
     raw_rows = [row for row in results if row["mode"] == RAW_BASELINE_MODE]
     gated_rows = [row for row in results if row["mode"] == GATED_PACKED_MODE]
-    delta = average(paired_deltas)
     return {
-        "metric": "gated_recall - raw_recall",
+        # F1: the delta is produced by context PACKING, not the verifier gate — the
+        # name must not credit the gate. See postAnswerVerifierGateRecallContribution.
+        "metric": "packed_recall - truncated_raw_recall",
         "scoring": "deterministic span-containment/exact-match over synthetic answer tokens; no LLM judge",
         "rawBaselineMode": RAW_BASELINE_MODE,
-        "gatedMode": GATED_PACKED_MODE,
-        "rawRecall": average([float(row["recall"]) for row in raw_rows]),
-        "gatedRecall": average([float(row["recall"]) for row in gated_rows]),
-        "delta": delta,
-        "ci95": ci95(paired_deltas),
+        "packedMode": GATED_PACKED_MODE,
+        "truncatedRawRecall": average([float(row["recall"]) for row in raw_rows]),
+        "packedRecall": average([float(row["recall"]) for row in gated_rows]),
+        "delta": average(paired_deltas),
+        # F6: single-seed runs have no sampling randomness; this is grid dispersion, not a CI.
+        "gridDispersion95": ci95(paired_deltas),
+        "gridDispersion95Note": (
+            "Dispersion across the deterministic case grid at the run's seed(s); NOT a sampling "
+            "confidence interval. Promotion requires >=3 seeds (see seedPlan)."
+        ),
+        # F1: gate-only minus raw-truncation recall. ~0.0 means the verifier gate does not move
+        # recall in this run; the headline delta is attributable to packing, not governance.
+        "postAnswerVerifierGateRecallContribution": average(gate_contrib_deltas),
+        "gateContributionNote": (
+            "gate-only recall minus raw-truncation recall. ~0 means the verifier gate contributes "
+            "nothing to RECALL here; its measurable effect is on distractor selection "
+            "(see distractorRobustnessByArm), and the delta comes from context packing."
+        ),
         "pairedCases": len(paired_deltas),
+    }
+
+
+def build_distractor_robustness_by_arm(results: list[dict[str, Any]]) -> dict[str, Any]:
+    """F2: surface that verifier-only packing minimizes distractor selection, while the
+    full relevance+verifier arm ranks near-duplicate distractors back up at equal recall."""
+    arm_modes = [
+        ("truncated_raw", RAW_BASELINE_MODE),
+        ("verifier_only_packed", VERIFIER_ONLY_PACKED_MODE),
+        ("relevance_plus_verifier_full", GATED_PACKED_MODE),
+    ]
+    arms: list[dict[str, Any]] = []
+    for name, mode in arm_modes:
+        rows = [row for row in results if row["mode"] == mode]
+        if not rows:
+            continue
+        arms.append(
+            {
+                "arm": name,
+                "mode": mode,
+                "recall": average([float(row["recall"]) for row in rows]),
+                "selectedDistractorPassageRate": average(
+                    [1.0 if row["selectedDistractorPassageCount"] else 0.0 for row in rows]
+                ),
+            }
+        )
+    best = min((arm["selectedDistractorPassageRate"] for arm in arms), default=None)
+    return {
+        "metric": "selected_distractor_passage_rate",
+        "finding": (
+            "Verifier-only packing minimizes distractor-passage selection; adding relevance "
+            "retrieval ranks near-duplicate distractors back up, so the full arm is WORSE on "
+            "distractors at equal recall. Recommended configuration: verifier-only packing."
+        ),
+        "arms": arms,
+        "bestArmsBySelectedDistractorPassageRate": [
+            arm["arm"] for arm in arms if best is not None and arm["selectedDistractorPassageRate"] == best
+        ],
     }
 
 
@@ -522,23 +579,31 @@ def build_ablation_matrix(results: list[dict[str, Any]]) -> list[dict[str, Any]]
     return rows
 
 
-def build_position_length_cross_tab(results: list[dict[str, Any]]) -> dict[str, Any]:
+def _cross_tab_for_mode(results: list[dict[str, Any]], mode: str) -> dict[str, dict[str, float]]:
+    rows = [row for row in results if row["mode"] == mode]
     tab: dict[str, dict[str, float]] = {}
-    for row in results:
-        if row["mode"] != GATED_PACKED_MODE:
-            continue
-        key = f"depth_{row['needleDepthPct']}"
-        bucket = tab.setdefault(key, {})
-        bucket[str(row["contextSizeTokens"])] = average(
-            [
-                float(other["recall"])
-                for other in results
-                if other["mode"] == GATED_PACKED_MODE
-                and other["needleDepthPct"] == row["needleDepthPct"]
-                and other["contextSizeTokens"] == row["contextSizeTokens"]
-            ]
-        )
+    for depth in sorted({row["needleDepthPct"] for row in rows}):
+        tab[f"depth_{depth}"] = {
+            str(size): average(
+                [float(row["recall"]) for row in rows if row["needleDepthPct"] == depth and row["contextSizeTokens"] == size]
+            )
+            for size in sorted({row["contextSizeTokens"] for row in rows})
+        }
     return tab
+
+
+def build_position_length_cross_tab(results: list[dict[str, Any]]) -> dict[str, Any]:
+    # F5: the packed arm saturates at 1.0 (packing finds the answer at any depth), so it is
+    # uninformative alone. The RAW arm carries the lost-beyond-budget falloff with depth.
+    return {
+        "rawArm": _cross_tab_for_mode(results, RAW_BASELINE_MODE),
+        "packedArm": _cross_tab_for_mode(results, GATED_PACKED_MODE),
+        "note": (
+            "Raw arm shows truncation falloff: at a context larger than the budget, needles past "
+            "the first packed tokens are evicted, so recall drops with depth. The packed arm "
+            "saturates at 1.0 because packing selects the answer passage regardless of depth."
+        ),
+    }
 
 
 def build_token_budget_summary(results: list[dict[str, Any]], budget_tokens: int) -> dict[str, Any]:
@@ -632,11 +697,13 @@ def build_report(
     needle_counts: list[int],
     full_matrix_available: bool,
     budget_tokens: int,
+    seed_plan: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     results = matrix["caseResults"]
     headline = build_headline_metric(results)
     ablation_matrix = build_ablation_matrix(results)
     control_sanity = build_control_sanity(results)
+    distractor_by_arm = build_distractor_robustness_by_arm(results)
     return {
         "schema": "sophia.long_context.public_report.v1",
         "reportStatus": "candidate",
@@ -678,10 +745,30 @@ def build_report(
                 for row in ablation_matrix
             ),
         },
+        "seedPlan": seed_plan
+        or {"seeds": [], "seedsRun": 0, "promotionRequiresMinSeeds": 3, "multiSeed": False},
         "tokenBudget": build_token_budget_summary(results, budget_tokens),
         "headlineMetric": headline,
         "ablationMatrix": ablation_matrix,
+        # F3: flags are independently toggleable, but their measured effects INTERACT.
+        "interactionNote": (
+            "Ablation flags are independently toggleable, but their measured effects interact: "
+            "context packing has no effect unless use_kb (relevance) or use_gate (verifier) "
+            "supplies a non-zero ranking signal (packing-only == raw). The 8-cell matrix therefore "
+            "measures interaction effects, not independent main effects."
+        ),
+        "distractorRobustnessByArm": distractor_by_arm,
         "controls": control_sanity,
+        # F4: under a span-extractive mock, packed-but-unrecalled collapses cannot occur.
+        "taxonomyCoverage": {
+            "reachable": ["retrieval_miss", "packer_eviction"],
+            "unreachable": ["model_ignored_packed_span", "gate_suppressed"],
+            "why": (
+                "The offline mock backend is span-extractive from accepted packed spans: if the "
+                "answer span is packed, recall is 1.0, so model_ignored_packed_span and "
+                "gate_suppressed cannot fire. Those classes require a generative model arm."
+            ),
+        },
         "positionLengthCrossTab": build_position_length_cross_tab(results),
         "metricFamilies": {
             "multiNeedleRecall": "single and multiple verified synthetic needles recovered by span containment/exact match",
@@ -744,6 +831,9 @@ def build_report(
                 "Live embedding retrieval replacement is not completed by this runner.",
                 "The graded router remains an architecture bet unless separately wired and tested.",
                 "Distractor robustness against real model behavior is not measured by this mock run.",
+                "The verifier gate's contribution to RECALL is ~0 here; the delta is from packing, not governance.",
+                "The delta magnitude reflects corpus layout (needles vs. budget), not model long-context capability.",
+                "Single-seed runs report grid dispersion, not a sampling CI; promotion requires >=3 seeds.",
                 "No trained checkpoint or AGI capability is claimed.",
             ],
         },
@@ -773,6 +863,7 @@ def main() -> int:
     parser.add_argument("--modes", default="all", help="'all' or comma-separated long-context ablation modes")
     parser.add_argument("--budget-tokens", type=int, default=4096)
     parser.add_argument("--seed", type=int, default=1729)
+    parser.add_argument("--seeds", default="", help="Comma-separated seeds; overrides --seed for multi-seed aggregation")
     parser.add_argument("--full", action="store_true", help="Run 4k, 16k, 64k, and 128k+ context sizes")
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args()
@@ -781,14 +872,40 @@ def main() -> int:
     depths = parse_ints(args.depths)
     needle_counts = parse_ints(args.needle_counts)
     modes = long_context_modes(args.modes)
-    matrix = run_matrix(
-        context_sizes=context_sizes,
-        depths=depths,
-        needle_counts=needle_counts,
-        modes=modes,
-        seed=args.seed,
-        budget_tokens=args.budget_tokens,
-    )
+    seeds = parse_ints(args.seeds) if args.seeds else [args.seed]
+
+    # F6: run the full matrix per seed and merge. Case ids embed the seed, so rows stay
+    # distinct; downstream aggregation (delta, dispersion, controls) spans all seeds.
+    per_seed = [
+        run_matrix(
+            context_sizes=context_sizes,
+            depths=depths,
+            needle_counts=needle_counts,
+            modes=modes,
+            seed=seed,
+            budget_tokens=args.budget_tokens,
+        )
+        for seed in seeds
+    ]
+    merged_errors: dict[str, list[str]] = {}
+    for sub in per_seed:
+        merged_errors.update(sub["cardValidation"]["errors"])
+    matrix = {
+        "packId": f"long-context-synthetic-seeds-{'-'.join(str(s) for s in seeds)}",
+        "caseResults": [row for sub in per_seed for row in sub["caseResults"]],
+        "cardValidation": {
+            "schema": str(CARD_SCHEMA.relative_to(ROOT)),
+            "valid": not merged_errors,
+            "errors": merged_errors,
+        },
+    }
+    seed_plan = {
+        "seeds": seeds,
+        "seedsRun": len(seeds),
+        "promotionRequiresMinSeeds": 3,
+        "multiSeed": len(seeds) > 1,
+        "note": "Each seed reruns the full matrix; promotion to validated requires >=3 seeds.",
+    }
     report = build_report(
         matrix,
         context_sizes=context_sizes,
@@ -796,6 +913,7 @@ def main() -> int:
         needle_counts=needle_counts,
         full_matrix_available=args.full,
         budget_tokens=args.budget_tokens,
+        seed_plan=seed_plan,
     )
     if not report["cardValidation"]["valid"]:
         print(json.dumps({"ok": False, "stage": "context-card-validation", "errors": report["cardValidation"]["errors"]}, indent=2))
