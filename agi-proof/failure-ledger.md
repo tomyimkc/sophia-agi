@@ -430,6 +430,34 @@ rather than substantive content repair:
 **Claim impact:** Full retrain does not validate religion repair; format/content split exposed
 content regression. Not AGI. Do not retrain-to-fit without new content-focused traces.
 
+## religion-repair-lora-path-falsified-2026-06-25
+
+**Status:** Closed / Falsified (`candidateOnly: true`, `level3Evidence: false`).
+
+**Three-channel religion ladder (Qwen2.5-3B baseline → v4 50-iter → v5 500-iter):**
+
+| Run | FORMAT | CONTENT | COMBINED |
+|---|---|---|---|
+| Baseline | 1/6 | 5/6 | 1/6 |
+| v4 smoke (50 iter) | 2/6 (+1) | 5/6 (0) | 2/6 (+1) |
+| v5 full (500 iter) | 2/6 (+1) | 4/6 (−1) | 1/6 (0) |
+
+N=6 ⇒ ±1/6 is within noise; the v5 CONTENT regression is still a protected-floor breach
+under the corrected CONTENT-channel gate.
+
+**Corrected W2 gate (CONTENT + invariant oracle):**
+
+- Legacy COMBINED-only gate: **promote** (false positive — blind to CONTENT regression)
+- Corrected gate: **reject** — `protected_floor_content` breached (religion CONTENT 5/6 → 4/6)
+- Proof bundle: `agi-proof/self-gate/invariant-suite.local-sophia-v5-full-religion-repair-mlx.public-report.json`
+
+**Conclusion:** Weight-training on 12 council-panel religion repair traces is the **wrong
+lever** for this benchmark. FORMAT uplift is inference-time structure (council prompt /
+gate), not LoRA weights. CONTENT channel did not improve and regressed under full train.
+v4/v5 artifacts retained for audit. **Do not retrain religion repair LoRA.**
+
+**Claim impact:** Falsifies the religion-repair LoRA hypothesis. `canClaimAGI: false`.
+
 ## okf-local-global-consistency-2026-06-25
 
 **Status:** CANDIDATE INFRASTRUCTURE (`candidateOnly: true`, `level3Evidence: false`).
