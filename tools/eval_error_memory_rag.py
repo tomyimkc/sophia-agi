@@ -461,29 +461,48 @@ def run_net_eval(
     }
 
 
-def run_full_eval(*, seeds: int = 3, n_boot: int = 2000) -> dict:
-    dev_cases = _load_jsonl(DEV_HELDOUT)
-    test_cases = _load_jsonl(TEST_HELDOUT)
-    for path, cases in ((DEV_HELDOUT, dev_cases), (TEST_HELDOUT, test_cases)):
-        audit = check_heldout_pack_disjoint(path)
-        if not audit["clean"]:
-            raise RuntimeError(f"held-out pack not disjoint: {path} {audit}")
+def _gates_from_dict(data: dict) -> PrecisionGates:
+    return PrecisionGates(
+        min_score=float(data["min_score"]),
+        require_class_match=bool(data.get("require_class_match", True)),
+        require_would_repeat=bool(data.get("require_would_repeat", True)),
+    )
 
-    with tempfile.TemporaryDirectory() as tmp:
-        store = build_seed_store(Path(tmp))
-        chosen_gates, sweep = pick_gates_on_dev(store, dev_cases)
-        dev_retrieval = measure_retrieval(dev_cases, store, chosen_gates)
-        test_retrieval = measure_retrieval(test_cases, store, chosen_gates)
-        net = run_net_eval(test_cases, store, chosen_gates, seeds=seeds, n_boot=n_boot)
 
+def _load_gates_config(path: Path) -> PrecisionGates:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if "chosen" in payload:
+        payload = payload["chosen"]
+    return _gates_from_dict(payload)
+
+
+def _validate_heldout(path: Path, cases: list[dict]) -> None:
+    audit = check_heldout_pack_disjoint(path)
+    if not audit["clean"]:
+        raise RuntimeError(f"held-out pack not disjoint: {path} {audit}")
+
+
+def _report_envelope(
+    *,
+    mode: str,
+    dev_cases: list[dict],
+    test_cases: list[dict],
+    chosen_gates: PrecisionGates,
+    sweep: list[dict] | None,
+    dev_retrieval: dict | None,
+    test_retrieval: dict | None,
+    net: dict | None,
+    seeds: int,
+) -> dict:
     claim_wording = (
         "reduces repeat errors at acceptable false-correction cost on this held-out pack"
-        if net["verdict"] == "helps"
+        if net and net.get("verdict") == "helps"
         else "inference-time guard-rail mechanism only; net value not established on sealed v2"
     )
 
-    return {
+    report: dict = {
         "schema": "sophia.error_memory_rag_eval.v2",
+        "mode": mode,
         "candidateOnly": True,
         "level3Evidence": False,
         "canClaimAGI": False,
@@ -492,6 +511,9 @@ def run_full_eval(*, seeds: int = 3, n_boot: int = 2000) -> dict:
             "oracle — NOT capability or AGI evidence."
         ),
         "claimWording": claim_wording,
+        "phase1Verdict": "within_noise",
+        "evaluatorBackend": "deterministic-oracle",
+        "liveModelEval": None,
         "precisionGates": {
             "default": _gates_to_dict(PrecisionGates()),
             "chosen": _gates_to_dict(chosen_gates),
@@ -505,16 +527,10 @@ def run_full_eval(*, seeds: int = 3, n_boot: int = 2000) -> dict:
             "path": str(DEV_HELDOUT.relative_to(ROOT)),
             "caseCount": len(dev_cases),
             "note": "DEV ONLY — not test evidence",
-            "gateSweep": sweep,
-            "retrievalAtChosenGates": dev_retrieval,
         },
         "testSplit": {
             "path": str(TEST_HELDOUT.relative_to(ROOT)),
             "caseCount": len(test_cases),
-            "repeatEligible": net["repeatEligibleCount"],
-            "alreadyRight": net["alreadyRightCount"],
-            "retrievalAtChosenGates": test_retrieval,
-            **net,
         },
         "seeds": seeds,
         "evaluator": "disjoint-oracle (held-out labels; independent of store/gate)",
@@ -527,6 +543,94 @@ def run_full_eval(*, seeds: int = 3, n_boot: int = 2000) -> dict:
         },
         "verdictRule": "helps if net CI lower > 0; harms if net CI upper < 0; else within_noise",
     }
+    if sweep is not None:
+        report["devSplit"]["gateSweep"] = sweep
+    if dev_retrieval is not None:
+        report["devSplit"]["retrievalAtChosenGates"] = dev_retrieval
+    if test_retrieval is not None:
+        report["testSplit"]["retrievalAtChosenGates"] = test_retrieval
+    if net is not None:
+        report["testSplit"].update(net)
+    return report
+
+
+def run_dev_eval(*, seeds: int = 3, n_boot: int = 2000) -> dict:
+    dev_cases = _load_jsonl(DEV_HELDOUT)
+    test_cases = _load_jsonl(TEST_HELDOUT)
+    _validate_heldout(DEV_HELDOUT, dev_cases)
+    _validate_heldout(TEST_HELDOUT, test_cases)
+
+    with tempfile.TemporaryDirectory() as tmp:
+        store = build_seed_store(Path(tmp))
+        chosen_gates, sweep = pick_gates_on_dev(store, dev_cases)
+        dev_retrieval = measure_retrieval(dev_cases, store, chosen_gates)
+
+    return _report_envelope(
+        mode="dev-only",
+        dev_cases=dev_cases,
+        test_cases=test_cases,
+        chosen_gates=chosen_gates,
+        sweep=sweep,
+        dev_retrieval=dev_retrieval,
+        test_retrieval=None,
+        net=None,
+        seeds=seeds,
+    )
+
+
+def run_test_eval(
+    gates: PrecisionGates,
+    *,
+    seeds: int = 3,
+    n_boot: int = 2000,
+) -> dict:
+    dev_cases = _load_jsonl(DEV_HELDOUT)
+    test_cases = _load_jsonl(TEST_HELDOUT)
+    _validate_heldout(DEV_HELDOUT, dev_cases)
+    _validate_heldout(TEST_HELDOUT, test_cases)
+
+    with tempfile.TemporaryDirectory() as tmp:
+        store = build_seed_store(Path(tmp))
+        test_retrieval = measure_retrieval(test_cases, store, gates)
+        net = run_net_eval(test_cases, store, gates, seeds=seeds, n_boot=n_boot)
+
+    return _report_envelope(
+        mode="test-only",
+        dev_cases=dev_cases,
+        test_cases=test_cases,
+        chosen_gates=gates,
+        sweep=None,
+        dev_retrieval=None,
+        test_retrieval=test_retrieval,
+        net=net,
+        seeds=seeds,
+    )
+
+
+def run_full_eval(*, seeds: int = 3, n_boot: int = 2000) -> dict:
+    dev_cases = _load_jsonl(DEV_HELDOUT)
+    test_cases = _load_jsonl(TEST_HELDOUT)
+    _validate_heldout(DEV_HELDOUT, dev_cases)
+    _validate_heldout(TEST_HELDOUT, test_cases)
+
+    with tempfile.TemporaryDirectory() as tmp:
+        store = build_seed_store(Path(tmp))
+        chosen_gates, sweep = pick_gates_on_dev(store, dev_cases)
+        dev_retrieval = measure_retrieval(dev_cases, store, chosen_gates)
+        test_retrieval = measure_retrieval(test_cases, store, chosen_gates)
+        net = run_net_eval(test_cases, store, chosen_gates, seeds=seeds, n_boot=n_boot)
+
+    return _report_envelope(
+        mode="full",
+        dev_cases=dev_cases,
+        test_cases=test_cases,
+        chosen_gates=chosen_gates,
+        sweep=sweep,
+        dev_retrieval=dev_retrieval,
+        test_retrieval=test_retrieval,
+        net=net,
+        seeds=seeds,
+    )
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -534,15 +638,56 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--seeds", type=int, default=3)
     ap.add_argument("--bootstrap", type=int, default=2000)
     ap.add_argument("--out", type=Path, default=ROOT / "agi-proof" / "error-memory")
+    ap.add_argument(
+        "--dev-only",
+        action="store_true",
+        help="Run dev gate sweep only (no sealed test metrics).",
+    )
+    ap.add_argument(
+        "--test-only",
+        action="store_true",
+        help="Run sealed test eval with gates from --gates-config.",
+    )
+    ap.add_argument(
+        "--gates-config",
+        type=Path,
+        help="JSON file with chosen precision gates (required for --test-only).",
+    )
+    ap.add_argument(
+        "--write-gates-config",
+        type=Path,
+        help="Write chosen gates from --dev-only to this path.",
+    )
     args = ap.parse_args(argv)
 
-    report = run_full_eval(seeds=args.seeds, n_boot=args.bootstrap)
+    if args.dev_only and args.test_only:
+        ap.error("--dev-only and --test-only are mutually exclusive")
+
+    if args.test_only:
+        if args.gates_config is None:
+            ap.error("--test-only requires --gates-config")
+        gates = _load_gates_config(args.gates_config)
+        report = run_test_eval(gates, seeds=args.seeds, n_boot=args.bootstrap)
+    elif args.dev_only:
+        report = run_dev_eval(seeds=args.seeds, n_boot=args.bootstrap)
+        if args.write_gates_config:
+            payload = {"chosen": _gates_to_dict(report["precisionGates"]["chosen"])}
+            args.write_gates_config.parent.mkdir(parents=True, exist_ok=True)
+            args.write_gates_config.write_text(
+                json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+            print(f"wrote {args.write_gates_config}", file=sys.stderr)
+    else:
+        report = run_full_eval(seeds=args.seeds, n_boot=args.bootstrap)
+
     print(json.dumps(report, indent=2))
 
-    args.out.mkdir(parents=True, exist_ok=True)
-    out_path = args.out / "error-memory-rag.public-report.json"
-    out_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"wrote {out_path}")
+    if not args.dev_only and not args.test_only:
+        args.out.mkdir(parents=True, exist_ok=True)
+        out_path = args.out / "error-memory-rag.public-report.json"
+        out_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        print(f"wrote {out_path}", file=sys.stderr)
     return 0
 
 

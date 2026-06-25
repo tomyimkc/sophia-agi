@@ -1,10 +1,14 @@
 {
   "schema": "sophia.error_memory_rag_eval.v2",
+  "mode": "full",
   "candidateOnly": true,
   "level3Evidence": false,
   "canClaimAGI": false,
   "claimBoundary": "Inference-time error-RAG guard-rail measurement on a disjoint held-out oracle — NOT capability or AGI evidence.",
   "claimWording": "reduces repeat errors at acceptable false-correction cost on this held-out pack",
+  "phase1Verdict": "within_noise",
+  "evaluatorBackend": "deterministic-oracle",
+  "liveModelEval": null,
   "precisionGates": {
     "default": {
       "min_score": 0.55,
@@ -105,8 +109,6 @@
   "testSplit": {
     "path": "data/error_memory_heldout_v2.jsonl",
     "caseCount": 40,
-    "repeatEligible": 20,
-    "alreadyRight": 20,
     "retrievalAtChosenGates": {
       "fired": 20,
       "firedWouldRepeat": 20,
