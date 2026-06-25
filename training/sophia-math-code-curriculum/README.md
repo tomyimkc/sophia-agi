@@ -52,7 +52,17 @@ provenance-corpus SFT).
 
 ## Stage 3 GPU — RunPod (3 seeds)
 
-Requires `RUNPOD_API_KEY`. Dry-run without a key prints the remote script and exits 2.
+**Policy:** RunPod jobs for this experiment must run via **GitHub Actions** only — not from
+a Cursor agent shell or local SSH (outbound SSH to RunPod mapped ports times out from agent
+egress; see `agi-proof/sophia-math-code-curriculum/stage3-runpod-blocker.public-report.json`).
+
+1. Ensure repo secret `RUNPOD_API_KEY` is set (Settings → Secrets and variables → Actions).
+2. Actions → **sophia-math-code-sft-runpod** → Run workflow → set `confirm` to `RUN`.
+3. Optional inputs: single `seed` (0–2), `branch`, `epochs`, `interruptible`.
+
+Artifacts land under `agi-proof/benchmark-results/runpod-train/` and as a workflow artifact
+(`sophia-math-code-sft-artifacts`). The shell launcher below is what GHA invokes; do not run
+it locally unless you have working RunPod SSH egress:
 
 ```bash
 bash agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh
