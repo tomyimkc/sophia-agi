@@ -233,6 +233,42 @@
       "interJudgeKappa": 0.87,
       "interJudgePercentAgreement": 0.94,
       "note": "Step 5 surfaces existing sourced provenance fields as answer-bearing prose (thin-source 58%->12%). Pure-grounded recall rose 0.502 -> 0.602 (+20% rel), overall 0.529 -> 0.623, with traps a clean 1.0 and ZERO parametric reliance. It did not reach the ~0.88 prose-ceiling because the summaries are terse provenance-derived sentences (who/when/what-domain), which judges credit on focused questions but not fully on open-ended ones. Closing the rest needs genuinely richer authored+sourced content (a maintainer task), not field reformatting."
+    },
+    "threeFamily": {
+      "system": "hybrid + neighborhood on enriched corpus; 3 distinct judge families",
+      "judges": [
+        "deepseek/deepseek-chat (DeepSeek)",
+        "meta-llama/llama-3.3-70b-instruct (Meta)",
+        "qwen/qwen-2.5-72b-instruct (Qwen)"
+      ],
+      "grounded": {
+        "consensus": 0.678,
+        "ci": [
+          0.623,
+          0.732
+        ],
+        "assert": 0.663,
+        "abstain": 0.933
+      },
+      "raw": {
+        "consensus": 0.895,
+        "ci": [
+          0.859,
+          0.931
+        ],
+        "assert": 0.946,
+        "abstain": 0.0
+      },
+      "meanPairwiseKappa": {
+        "grounded": 0.88,
+        "raw": 0.81
+      },
+      "policyCounts": {
+        "abstain_no_source": 15,
+        "grounded_strict": 237,
+        "grounded_fallback": 24
+      },
+      "note": "3-FAMILY VALIDATION (DeepSeek+Meta+Qwen, full-92, 3 runs). The grounded-vs-raw finding is robust across three independent families: mean pairwise kappa 0.88 (grounded) / 0.81 (raw), per-judge spread tight. Key behavioral result: vs the thin-corpus hybrid (141 parametric fallbacks), enrichment shifts the hybrid to 237 strict / 24 fallback — SAME recall (~0.67) with ~6x LESS parametric reliance (more grounded, not just more accurate). Traps behaviorally 1.0 (all 15 took the hard-abstain policy; the 0.933 score is judge noise on the fixed abstention string). raw still wins overall (0.895) — the residual gap is corpus coverage (terse field-derived summaries), not method."
     }
   }
 }

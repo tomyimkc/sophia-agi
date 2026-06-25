@@ -126,6 +126,23 @@ suggested, and that gap is the honest finding: the summaries are *terse provenan
 sentences* (who/when/what-domain), which the judges credit on focused questions but not fully
 on the open-ended "what does the corpus record about X". **Answer-bearing ≠ full judge pass.**
 
+## 3-family validation (DeepSeek + Meta + Qwen, enriched corpus, hybrid, full-92 × 3)
+
+| System | overall | 95% CI | recall | traps | mean pairwise κ |
+|---|---|---|---|---|---|
+| grounded | 0.678 | [0.62, 0.73] | 0.663 | 0.93\* | **0.88** |
+| raw | 0.895 | [0.86, 0.93] | 0.946 | 0.00 | 0.81 |
+
+**The grounded-vs-raw finding holds across three independent provider families** — mean
+pairwise κ **0.88** (grounded) / 0.81 (raw), per-judge spread tight (0.70 / 0.73 / 0.74). It
+is not an artifact of any one judge. Two further results: (a) **traps behaviorally 1.0** —
+all 15 trap evaluations took the hard-abstain policy (`abstain_no_source: 15`); the 0.93
+*score* is the usual judge noise on the fixed abstention string. (b) **Enrichment makes the
+hybrid more grounded, not just more accurate:** vs the thin-corpus hybrid's 141 parametric
+fallbacks, the enriched run is **237 strict / 24 fallback** — the *same* recall (~0.67) with
+~6× **less** parametric reliance. The residual gap to raw (0.895) is corpus coverage, not
+method. Artifact: `agi-proof/benchmark-results/continual-qa.judged-3family-enriched-hybrid-full92.json`.
+
 **Conclusion of the recall arc.** Two safe, complementary levers were measured: enrichment
 (+0.10 recall, pure grounding, perfect traps) and the hybrid fallback (+0.18 recall, traps safe
 by construction). Neither closes the full gap to raw alone, because the residual is *how much
