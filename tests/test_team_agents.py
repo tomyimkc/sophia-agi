@@ -86,6 +86,52 @@ def test_manifest_flags() -> None:
     assert PROBE.exists()
 
 
+def test_divergence_triggers_abstention() -> None:
+    from agent.team_agents import apply_calibrated_synthesis, detect_seat_divergence
+
+    seats = [
+        SeatResult(seatId="a", displayName="Risk", answer="Cut burn; tail risk dominates.",
+                   ok=True, gatePassed=True),
+        SeatResult(seatId="b", displayName="Growth", answer="Invest aggressively for upside.",
+                   ok=True, gatePassed=True),
+    ]
+    d = Deliberation(
+        query="trap", councilId="financial", seats=seats, guardians=[],
+        synthesis="Unanimous: invest everything.", gatedOutSeatIds=[],
+    )
+    gold = {"expectedSynthesis": "abstain_or_flag_conflict"}
+    report = detect_seat_divergence(seats, gold=gold)
+    assert report.divergent
+    d2 = apply_calibrated_synthesis(d, gold=gold)
+    assert "insufficient" in d2.synthesis.lower() or "conflict" in d2.synthesis.lower()
+
+
+def test_external_verify_fail_closed() -> None:
+    from agent.team_agents import verify_trace_external
+
+    d = Deliberation(
+        query="trap", councilId="financial",
+        seats=[SeatResult(seatId="s", displayName="S", answer="Growth first.", ok=True, gatePassed=True)],
+        guardians=[], synthesis="All seats agree unanimously.", gatedOutSeatIds=[],
+    )
+    gold = {"expectedSynthesis": "abstain_or_flag_conflict",
+            "forbiddenSynthesisPatterns": ["unanimous", "all seats agree"]}
+    assert not verify_trace_external(d, gold)
+
+
+def test_trace_prompts_disjoint_from_benchmark() -> None:
+    traces = ROOT / "training" / "team_agents" / "sft_traces.jsonl"
+    assert traces.exists()
+    evalset = dataset_guard.eval_prompt_set(root=ROOT)
+    for line in traces.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        pr = dataset_guard.prompt_of(row)
+        if pr:
+            assert dataset_guard.normalize(pr) not in evalset
+
+
 def main() -> int:
     import inspect
     for nm, fn in sorted(globals().items()):
