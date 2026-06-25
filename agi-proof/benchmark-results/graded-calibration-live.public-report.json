@@ -1,0 +1,764 @@
+{
+  "benchmark": "graded-threshold live calibration (real model, deterministic scorer)",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "model": "deepseek/deepseek-chat",
+  "n": 35,
+  "nLabeled": 35,
+  "accuracy": 0.5143,
+  "currentDefault": {
+    "hi": 0.7,
+    "lo": 0.4,
+    "balancedAccuracy": 0.5196
+  },
+  "fit": {
+    "n": 35,
+    "bestHi": 0.74,
+    "lo": 0.35,
+    "balancedAccuracy": 0.5784,
+    "currentDefault": {
+      "hi": 0.7,
+      "lo": 0.4
+    },
+    "curve": [
+      {
+        "hi": 0.0,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.01,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.02,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.03,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.04,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.05,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.06,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.07,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.08,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.09,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.1,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.11,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.12,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.13,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.14,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.15,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.16,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.17,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.18,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.19,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.2,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.21,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.22,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.23,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.24,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.25,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.26,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.27,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.28,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.29,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.3,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.31,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.32,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.33,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.34,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.35,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.36,
+        "balancedAccuracy": 0.4722
+      },
+      {
+        "hi": 0.37,
+        "balancedAccuracy": 0.4722
+      },
+      {
+        "hi": 0.38,
+        "balancedAccuracy": 0.4722
+      },
+      {
+        "hi": 0.39,
+        "balancedAccuracy": 0.4722
+      },
+      {
+        "hi": 0.4,
+        "balancedAccuracy": 0.4722
+      },
+      {
+        "hi": 0.41,
+        "balancedAccuracy": 0.4444
+      },
+      {
+        "hi": 0.42,
+        "balancedAccuracy": 0.4444
+      },
+      {
+        "hi": 0.43,
+        "balancedAccuracy": 0.4755
+      },
+      {
+        "hi": 0.44,
+        "balancedAccuracy": 0.4755
+      },
+      {
+        "hi": 0.45,
+        "balancedAccuracy": 0.4755
+      },
+      {
+        "hi": 0.46,
+        "balancedAccuracy": 0.3676
+      },
+      {
+        "hi": 0.47,
+        "balancedAccuracy": 0.3676
+      },
+      {
+        "hi": 0.48,
+        "balancedAccuracy": 0.3987
+      },
+      {
+        "hi": 0.49,
+        "balancedAccuracy": 0.3987
+      },
+      {
+        "hi": 0.5,
+        "balancedAccuracy": 0.3987
+      },
+      {
+        "hi": 0.51,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.52,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.53,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.54,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.55,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.56,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.57,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.58,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.59,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.6,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.61,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.62,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.63,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.64,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.65,
+        "balancedAccuracy": 0.4297
+      },
+      {
+        "hi": 0.66,
+        "balancedAccuracy": 0.4902
+      },
+      {
+        "hi": 0.67,
+        "balancedAccuracy": 0.4902
+      },
+      {
+        "hi": 0.68,
+        "balancedAccuracy": 0.4902
+      },
+      {
+        "hi": 0.69,
+        "balancedAccuracy": 0.5196
+      },
+      {
+        "hi": 0.7,
+        "balancedAccuracy": 0.5196
+      },
+      {
+        "hi": 0.71,
+        "balancedAccuracy": 0.5196
+      },
+      {
+        "hi": 0.72,
+        "balancedAccuracy": 0.5196
+      },
+      {
+        "hi": 0.73,
+        "balancedAccuracy": 0.5196
+      },
+      {
+        "hi": 0.74,
+        "balancedAccuracy": 0.5784
+      },
+      {
+        "hi": 0.75,
+        "balancedAccuracy": 0.5784
+      },
+      {
+        "hi": 0.76,
+        "balancedAccuracy": 0.5784
+      },
+      {
+        "hi": 0.77,
+        "balancedAccuracy": 0.5784
+      },
+      {
+        "hi": 0.78,
+        "balancedAccuracy": 0.5784
+      },
+      {
+        "hi": 0.79,
+        "balancedAccuracy": 0.5784
+      },
+      {
+        "hi": 0.8,
+        "balancedAccuracy": 0.5784
+      },
+      {
+        "hi": 0.81,
+        "balancedAccuracy": 0.5784
+      },
+      {
+        "hi": 0.82,
+        "balancedAccuracy": 0.5784
+      },
+      {
+        "hi": 0.83,
+        "balancedAccuracy": 0.5278
+      },
+      {
+        "hi": 0.84,
+        "balancedAccuracy": 0.5278
+      },
+      {
+        "hi": 0.85,
+        "balancedAccuracy": 0.5278
+      },
+      {
+        "hi": 0.86,
+        "balancedAccuracy": 0.5278
+      },
+      {
+        "hi": 0.87,
+        "balancedAccuracy": 0.5278
+      },
+      {
+        "hi": 0.88,
+        "balancedAccuracy": 0.5278
+      },
+      {
+        "hi": 0.89,
+        "balancedAccuracy": 0.5278
+      },
+      {
+        "hi": 0.9,
+        "balancedAccuracy": 0.5278
+      },
+      {
+        "hi": 0.91,
+        "balancedAccuracy": 0.5278
+      },
+      {
+        "hi": 0.92,
+        "balancedAccuracy": 0.5278
+      },
+      {
+        "hi": 0.93,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.94,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.95,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.96,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.97,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.98,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 0.99,
+        "balancedAccuracy": 0.5
+      },
+      {
+        "hi": 1.0,
+        "balancedAccuracy": 0.5
+      }
+    ]
+  },
+  "records": [
+    {
+      "id": "trap_confucius_ddj",
+      "domain": "philosophy",
+      "target": "dao_de_jing",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.475,
+      "correct": false
+    },
+    {
+      "id": "socrates_republic",
+      "domain": "philosophy",
+      "target": "socrates_corpus",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.425,
+      "correct": true
+    },
+    {
+      "id": "analects_compiled",
+      "domain": "philosophy",
+      "target": "analects",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.655,
+      "correct": true
+    },
+    {
+      "id": "laozi_uncertainty",
+      "domain": "philosophy",
+      "target": "dao_de_jing",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.475,
+      "correct": true
+    },
+    {
+      "id": "trap_confucius_mencius",
+      "domain": "philosophy",
+      "target": "mencius",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.685,
+      "correct": false
+    },
+    {
+      "id": "trap_laozi_zhuangzi",
+      "domain": "philosophy",
+      "target": "zhuangzi",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.655,
+      "correct": false
+    },
+    {
+      "id": "socrates_symposium",
+      "domain": "philosophy",
+      "target": "socrates_corpus",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.425,
+      "correct": false
+    },
+    {
+      "id": "zhuangzi_analects_boundary",
+      "domain": "philosophy",
+      "target": "analects",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.655,
+      "correct": false
+    },
+    {
+      "id": "symposium_dialogue_not_autograph",
+      "domain": "philosophy",
+      "target": "socrates_corpus",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.425,
+      "correct": false
+    },
+    {
+      "id": "freud_cognitive_dissonance",
+      "domain": "psychology",
+      "target": "cognitive_dissonance",
+      "policy": "grounded_strict",
+      "action": "answer",
+      "confidence": 0.82,
+      "correct": true
+    },
+    {
+      "id": "left_brain_myth",
+      "domain": "psychology",
+      "target": "left_brain_right_brain_pop",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.45,
+      "correct": true
+    },
+    {
+      "id": "chemical_imbalance_simplification",
+      "domain": "psychology",
+      "target": "chemical_imbalance_slogan",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.45,
+      "correct": true
+    },
+    {
+      "id": "stockholm_every_kidnapping",
+      "domain": "psychology",
+      "target": "stockholm_syndrome",
+      "policy": "grounded_strict",
+      "action": "answer",
+      "confidence": 0.82,
+      "correct": false
+    },
+    {
+      "id": "dunning_kruger_attribution",
+      "domain": "psychology",
+      "target": "dunning_kruger_effect",
+      "policy": "grounded_strict",
+      "action": "answer",
+      "confidence": 0.82,
+      "correct": true
+    },
+    {
+      "id": "confirmation_bias_bacon",
+      "domain": "psychology",
+      "target": "confirmation_bias",
+      "policy": "grounded_strict",
+      "action": "answer",
+      "confidence": 0.82,
+      "correct": true
+    },
+    {
+      "id": "ten_percent_brain",
+      "domain": "psychology",
+      "target": "ten_percent_brain_myth",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.45,
+      "correct": false
+    },
+    {
+      "id": "mozart_effect",
+      "domain": "psychology",
+      "target": "mozart_effect_myth",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.45,
+      "correct": true
+    },
+    {
+      "id": "ptsd_clinical_boundary",
+      "domain": "psychology",
+      "target": "ptsd_clinical_vs_pop",
+      "policy": "grounded_strict",
+      "action": "answer",
+      "confidence": 0.92,
+      "correct": true
+    },
+    {
+      "id": "marco_polo_pasta",
+      "domain": "history",
+      "target": "marco_polo_pasta_myth",
+      "policy": "graded_abstain_low_confidence",
+      "action": "abstain",
+      "confidence": 0.35,
+      "correct": true
+    },
+    {
+      "id": "flat_earth_medieval",
+      "domain": "history",
+      "target": "flat_earth_medieval_myth",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.45,
+      "correct": true
+    },
+    {
+      "id": "napoleon_height",
+      "domain": "history",
+      "target": "napoleon_short_myth",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.45,
+      "correct": true
+    },
+    {
+      "id": "great_wall_space",
+      "domain": "history",
+      "target": "great_wall_from_space_myth",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.45,
+      "correct": true
+    },
+    {
+      "id": "viking_horns",
+      "domain": "history",
+      "target": "viking_horned_helmets_myth",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.45,
+      "correct": false
+    },
+    {
+      "id": "magna_carta_democracy_myth",
+      "domain": "history",
+      "target": "magna_carta_1215",
+      "policy": "grounded_strict",
+      "action": "answer",
+      "confidence": 0.82,
+      "correct": false
+    },
+    {
+      "id": "boston_tea_party_tax_myth",
+      "domain": "history",
+      "target": "boston_tea_party_1773",
+      "policy": "grounded_strict",
+      "action": "answer",
+      "confidence": 0.82,
+      "correct": false
+    },
+    {
+      "id": "first_flight_uncontested_myth",
+      "domain": "history",
+      "target": "first_powered_flight_1903",
+      "policy": "grounded_strict",
+      "action": "answer",
+      "confidence": 0.82,
+      "correct": true
+    },
+    {
+      "id": "gospel_authorship_council",
+      "domain": "religion",
+      "target": "gospel_matthew",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.5,
+      "correct": true
+    },
+    {
+      "id": "ancestor_veneration_split",
+      "domain": "religion",
+      "target": "confucian_ancestor_veneration",
+      "policy": "grounded_strict",
+      "action": "answer",
+      "confidence": 0.735,
+      "correct": false
+    },
+    {
+      "id": "dao_de_jing_religion_philosophy",
+      "domain": "religion",
+      "target": "dao_de_jing_daoist_scripture",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.475,
+      "correct": false
+    },
+    {
+      "id": "islam_historical_figure_sensitive",
+      "domain": "religion",
+      "target": "islam_early_history",
+      "policy": "grounded_strict",
+      "action": "answer",
+      "confidence": 0.735,
+      "correct": false
+    },
+    {
+      "id": "buddha_nirvana_pop",
+      "domain": "religion",
+      "target": "nirvana_pop_heaven",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.5,
+      "correct": false
+    },
+    {
+      "id": "hadith_sect_boundary_council",
+      "domain": "religion",
+      "target": "hadith_canonical_collections",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.655,
+      "correct": false
+    },
+    {
+      "id": "express_high_extraversion",
+      "domain": "personality",
+      "target": "boston_tea_party_1773",
+      "policy": "grounded_strict",
+      "action": "answer",
+      "confidence": 0.82,
+      "correct": true
+    },
+    {
+      "id": "express_high_openness",
+      "domain": "personality",
+      "target": "art_of_war",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.4,
+      "correct": true
+    },
+    {
+      "id": "mbti_is_not_big_five",
+      "domain": "personality",
+      "target": "nirvana_pop_heaven",
+      "policy": "grounded_strict_hedged",
+      "action": "hedge",
+      "confidence": 0.5,
+      "correct": false
+    }
+  ],
+  "honestBound": "Real stochastic-model answers labeled by the deterministic trap scorer (no LLM judge). Fitted hi/lo is a CANDIDATE over a small, self-authored in-domain set (n<=35) — it is NOT auto-applied to DEFAULT_THRESHOLDS and is not a headline capability claim.",
+  "accuracyByConfidenceBand": {
+    "low_lt_0.5": {
+      "n": 16,
+      "accuracy": 0.625
+    },
+    "mid_0.5_0.7": {
+      "n": 8,
+      "accuracy": 0.25
+    },
+    "high_ge_0.7": {
+      "n": 11,
+      "accuracy": 0.5455
+    }
+  },
+  "finding": "Provenance confidence is a WEAK, non-monotonic predictor of trap-answer correctness on this in-domain set: balanced accuracy 0.52 at the hi=0.7 default, only 0.58 when fitted (hi=0.74, lo=0.35). The signal measures SOURCE quality, not answer correctness (a well-known low-confidence-authorship trap is still answered correctly). Conclusion: the hand-picked default hi=0.7 is near-optimal; the fitted thresholds are a small-N candidate and are NOT adopted."
+}
