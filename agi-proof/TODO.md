@@ -40,14 +40,14 @@ that Sophia is proven AGI.
   `run_case` pipeline; `tests/test_ablation_runner.py`; example
   `agi-proof/baseline-ablation/example-pack.json`.
   Run: `python3.12 tools/run_ablation_sophia.py <pack.json> --backend grok --modes all`.
-- [ ] Compare Sophia-full against raw model.
-- [ ] Compare Sophia-full against raw model plus tools.
-- [ ] Compare Sophia-full against Sophia without knowledge base.
-- [ ] Compare Sophia-full against Sophia without council.
-- [ ] Compare Sophia-full against Sophia without gate.
-- [ ] Compare Sophia-full against Sophia without memory.
+- [x] Compare Sophia-full against raw model. (W2 2026-06-26, 3 seeds, DeepSeek: fabrication Δ +0.111, 95% CI [+0.028,+0.222] excludes 0; deterministic scorer — NOT judge-validated, see ledger `ablation-matrix-3seed-fresh-2026-06-26`.)
+- [x] Compare Sophia-full against raw model plus tools. (W2: raw+tools fabricates 0.167; sophia-full 0.000; Δ CI [-0.194,+0.083] vs raw+tools wide at N.)
+- [x] Compare Sophia-full against Sophia without knowledge base. (W2: no-kb fabrication 0.000; Δ vs raw +0.111 CI excludes 0.)
+- [x] Compare Sophia-full against Sophia without council. (W2: no-council fabrication 0.028.)
+- [x] Compare Sophia-full against Sophia without gate. (W2: no-gate fabrication 0.056.)
+- [x] Compare Sophia-full against Sophia without memory. (W2: no-memory fabrication 0.028.)
 - [ ] Compare Sophia-full against Sophia without executor.
-- [ ] Publish effect sizes, confidence intervals, and failure examples.
+- [x] Publish effect sizes, confidence intervals, and failure examples. (W2 REPORT.md + calibration-aggregate.json with bootstrap CIs; judge-validation still blocked on independent judge keys.)
 
 ## Learning Under Novelty
 
@@ -128,8 +128,7 @@ evidence runs that need either a live backend or an external human.
 
 - [ ] Fresh independent hidden pack is needed; the current diagnostic packs are spent. W1 live-backend execution-health run 2026-06-26 is artifact-backed, but it used a self-authored pack and therefore does **not** close this independent-pack gap (`agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.public.json`). The earlier v1 artifact-retention failure is also recorded (`agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1.invalid-run-summary.json`).
 - [ ] Manual semantic review is still required for strict hidden-test claims.
-- [ ] Ablation and learning-shift deltas not yet produced on a live backend
-      (grok token expired / `DEEPSEEK_API_KEY` unset); runners are ready.
+- [~] Ablation deltas produced on a live backend (W2 2026-06-26, DeepSeek, 3 seeds: sophia-full fabrication Δ +0.111, CI excludes 0, deterministic scorer). Independent-judge validation still blocked (no non-DeepSeek judge keys). Learning-shift deltas still not run.
 - [ ] External benchmarks are not yet run.
 - [ ] Independent clean-clone replication is not yet run (harness ready; a real
       external reviewer must run and sign it).
