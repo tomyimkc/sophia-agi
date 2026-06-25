@@ -27,6 +27,7 @@ def main() -> int:
     ap.add_argument("--generations", type=int, default=2)
     ap.add_argument("--top-k", type=int, default=3)
     ap.add_argument("--generality-limit", type=int, default=5)
+    ap.add_argument("--seed", type=int, default=0, help="Deterministic RNG seed (default 0)")
     ap.add_argument("--out", default=str(DEFAULT_OUT))
     args = ap.parse_args()
 
@@ -35,6 +36,7 @@ def main() -> int:
         generations=args.generations,
         top_k=args.top_k,
         generality_limit=args.generality_limit,
+        seed=args.seed,
     )
     report["ok"] = bool(report.get("history"))
     report["invariants"] = {

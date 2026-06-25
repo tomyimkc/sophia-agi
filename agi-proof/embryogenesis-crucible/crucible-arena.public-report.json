@@ -2,6 +2,7 @@
   "schema": "sophia.embryogenesis_arena.v1",
   "candidateOnly": true,
   "level3Evidence": false,
+  "seed": 0,
   "populationSize": 8,
   "generations": 2,
   "topK": 3,
@@ -9,117 +10,15 @@
     {
       "generation": 0,
       "populationSize": 8,
-      "topFitness": 0.8286,
+      "topFitness": 0.6686,
       "scorecards": [
         {
           "embryo": {
-            "embryoId": "embryo_g0_02",
-            "traditionSeed": "confucian",
-            "verifierSubset": [
-              "provenance_faithful",
-              "arithmetic_sound"
-            ],
-            "councilMix": [
-              "epistemic_humility",
-              "source_discipline"
-            ],
-            "governedRsi": false,
-            "selfextend": true,
-            "generation": 0,
-            "parentId": null
-          },
-          "trapPassRate": 0.7143,
-          "trapPassed": 5,
-          "trapTotal": 7,
-          "generalityPassRate": 1.0,
-          "generalityPassed": 5,
-          "generalityTotal": 5,
-          "fitness": 0.8286,
-          "candidateOnly": true
-        },
-        {
-          "embryo": {
-            "embryoId": "embryo_g0_06",
-            "traditionSeed": "confucian",
-            "verifierSubset": [
-              "provenance_faithful"
-            ],
-            "councilMix": [
-              "theological_voice",
-              "source_discipline"
-            ],
-            "governedRsi": false,
-            "selfextend": true,
-            "generation": 0,
-            "parentId": null
-          },
-          "trapPassRate": 0.7143,
-          "trapPassed": 5,
-          "trapTotal": 7,
-          "generalityPassRate": 1.0,
-          "generalityPassed": 5,
-          "generalityTotal": 5,
-          "fitness": 0.8286,
-          "candidateOnly": true
-        },
-        {
-          "embryo": {
-            "embryoId": "embryo_g0_07",
+            "embryoId": "embryo_g0_04",
             "traditionSeed": "confucian",
             "verifierSubset": [
               "provenance_faithful",
               "grounding"
-            ],
-            "councilMix": [
-              "theological_voice",
-              "source_discipline"
-            ],
-            "governedRsi": false,
-            "selfextend": true,
-            "generation": 0,
-            "parentId": null
-          },
-          "trapPassRate": 0.7143,
-          "trapPassed": 5,
-          "trapTotal": 7,
-          "generalityPassRate": 1.0,
-          "generalityPassed": 5,
-          "generalityTotal": 5,
-          "fitness": 0.8286,
-          "candidateOnly": true
-        },
-        {
-          "embryo": {
-            "embryoId": "embryo_g0_01",
-            "traditionSeed": "confucian",
-            "verifierSubset": [
-              "provenance_faithful",
-              "grounding"
-            ],
-            "councilMix": [
-              "epistemic_humility",
-              "source_discipline"
-            ],
-            "governedRsi": false,
-            "selfextend": true,
-            "generation": 0,
-            "parentId": null
-          },
-          "trapPassRate": 0.7143,
-          "trapPassed": 5,
-          "trapTotal": 7,
-          "generalityPassRate": 0.6,
-          "generalityPassed": 3,
-          "generalityTotal": 5,
-          "fitness": 0.6686,
-          "candidateOnly": true
-        },
-        {
-          "embryo": {
-            "embryoId": "embryo_g0_03",
-            "traditionSeed": "confucian",
-            "verifierSubset": [
-              "provenance_faithful"
             ],
             "councilMix": [
               "historical_critical",
@@ -167,6 +66,31 @@
         },
         {
           "embryo": {
+            "embryoId": "embryo_g0_06",
+            "traditionSeed": "confucian",
+            "verifierSubset": [
+              "provenance_faithful"
+            ],
+            "councilMix": [
+              "theological_voice",
+              "source_discipline"
+            ],
+            "governedRsi": false,
+            "selfextend": true,
+            "generation": 0,
+            "parentId": null
+          },
+          "trapPassRate": 0.7143,
+          "trapPassed": 5,
+          "trapTotal": 7,
+          "generalityPassRate": 0.6,
+          "generalityPassed": 3,
+          "generalityTotal": 5,
+          "fitness": 0.6686,
+          "candidateOnly": true
+        },
+        {
+          "embryo": {
             "embryoId": "embryo_g0_00",
             "traditionSeed": "confucian",
             "verifierSubset": [
@@ -192,14 +116,91 @@
         },
         {
           "embryo": {
-            "embryoId": "embryo_g0_04",
+            "embryoId": "embryo_g0_01",
             "traditionSeed": "confucian",
             "verifierSubset": [
               "provenance_faithful",
               "grounding"
             ],
             "councilMix": [
+              "epistemic_humility",
+              "source_discipline"
+            ],
+            "governedRsi": false,
+            "selfextend": true,
+            "generation": 0,
+            "parentId": null
+          },
+          "trapPassRate": 0.7143,
+          "trapPassed": 5,
+          "trapTotal": 7,
+          "generalityPassRate": 0.0,
+          "generalityPassed": 0,
+          "generalityTotal": 5,
+          "fitness": 0.4286,
+          "candidateOnly": true
+        },
+        {
+          "embryo": {
+            "embryoId": "embryo_g0_02",
+            "traditionSeed": "confucian",
+            "verifierSubset": [
+              "provenance_faithful",
+              "arithmetic_sound"
+            ],
+            "councilMix": [
+              "epistemic_humility",
+              "source_discipline"
+            ],
+            "governedRsi": false,
+            "selfextend": true,
+            "generation": 0,
+            "parentId": null
+          },
+          "trapPassRate": 0.7143,
+          "trapPassed": 5,
+          "trapTotal": 7,
+          "generalityPassRate": 0.0,
+          "generalityPassed": 0,
+          "generalityTotal": 5,
+          "fitness": 0.4286,
+          "candidateOnly": true
+        },
+        {
+          "embryo": {
+            "embryoId": "embryo_g0_03",
+            "traditionSeed": "confucian",
+            "verifierSubset": [
+              "provenance_faithful"
+            ],
+            "councilMix": [
               "historical_critical",
+              "source_discipline"
+            ],
+            "governedRsi": false,
+            "selfextend": true,
+            "generation": 0,
+            "parentId": null
+          },
+          "trapPassRate": 0.7143,
+          "trapPassed": 5,
+          "trapTotal": 7,
+          "generalityPassRate": 0.0,
+          "generalityPassed": 0,
+          "generalityTotal": 5,
+          "fitness": 0.4286,
+          "candidateOnly": true
+        },
+        {
+          "embryo": {
+            "embryoId": "embryo_g0_07",
+            "traditionSeed": "confucian",
+            "verifierSubset": [
+              "provenance_faithful",
+              "grounding"
+            ],
+            "councilMix": [
+              "theological_voice",
               "source_discipline"
             ],
             "governedRsi": false,
@@ -225,10 +226,63 @@
       "scorecards": [
         {
           "embryo": {
-            "embryoId": "embryo_g1_03",
+            "embryoId": "embryo_g1_00",
             "traditionSeed": "daoist",
             "verifierSubset": [
-              "provenance_faithful"
+              "provenance_faithful",
+              "arithmetic_sound"
+            ],
+            "councilMix": [
+              "theological_voice",
+              "source_discipline"
+            ],
+            "governedRsi": false,
+            "selfextend": true,
+            "generation": 1,
+            "parentId": "embryo_g0_04"
+          },
+          "trapPassRate": 0.7143,
+          "trapPassed": 5,
+          "trapTotal": 7,
+          "generalityPassRate": 1.0,
+          "generalityPassed": 5,
+          "generalityTotal": 5,
+          "fitness": 0.8286,
+          "candidateOnly": true
+        },
+        {
+          "embryo": {
+            "embryoId": "embryo_g1_01",
+            "traditionSeed": "buddhism",
+            "verifierSubset": [
+              "provenance_faithful",
+              "grounding"
+            ],
+            "councilMix": [
+              "source_discipline",
+              "source_discipline"
+            ],
+            "governedRsi": false,
+            "selfextend": true,
+            "generation": 1,
+            "parentId": "embryo_g0_05"
+          },
+          "trapPassRate": 0.7143,
+          "trapPassed": 5,
+          "trapTotal": 7,
+          "generalityPassRate": 1.0,
+          "generalityPassed": 5,
+          "generalityTotal": 5,
+          "fitness": 0.8286,
+          "candidateOnly": true
+        },
+        {
+          "embryo": {
+            "embryoId": "embryo_g1_03",
+            "traditionSeed": "islam",
+            "verifierSubset": [
+              "provenance_faithful",
+              "arithmetic_sound"
             ],
             "councilMix": [
               "historical_critical",
@@ -237,59 +291,7 @@
             "governedRsi": false,
             "selfextend": true,
             "generation": 1,
-            "parentId": "embryo_g0_02"
-          },
-          "trapPassRate": 0.7143,
-          "trapPassed": 5,
-          "trapTotal": 7,
-          "generalityPassRate": 1.0,
-          "generalityPassed": 5,
-          "generalityTotal": 5,
-          "fitness": 0.8286,
-          "candidateOnly": true
-        },
-        {
-          "embryo": {
-            "embryoId": "embryo_g1_05",
-            "traditionSeed": "daoist",
-            "verifierSubset": [
-              "provenance_faithful",
-              "arithmetic_sound"
-            ],
-            "councilMix": [
-              "source_discipline",
-              "source_discipline"
-            ],
-            "governedRsi": false,
-            "selfextend": true,
-            "generation": 1,
-            "parentId": "embryo_g0_07"
-          },
-          "trapPassRate": 0.7143,
-          "trapPassed": 5,
-          "trapTotal": 7,
-          "generalityPassRate": 1.0,
-          "generalityPassed": 5,
-          "generalityTotal": 5,
-          "fitness": 0.8286,
-          "candidateOnly": true
-        },
-        {
-          "embryo": {
-            "embryoId": "embryo_g1_02",
-            "traditionSeed": "daoist",
-            "verifierSubset": [
-              "provenance_faithful",
-              "arithmetic_sound"
-            ],
-            "councilMix": [
-              "source_discipline",
-              "source_discipline"
-            ],
-            "governedRsi": false,
-            "selfextend": true,
-            "generation": 1,
-            "parentId": "embryo_g0_07"
+            "parentId": "embryo_g0_04"
           },
           "trapPassRate": 0.7143,
           "trapPassed": 5,
@@ -302,14 +304,13 @@
         },
         {
           "embryo": {
-            "embryoId": "embryo_g1_04",
+            "embryoId": "embryo_g1_05",
             "traditionSeed": "daoist",
             "verifierSubset": [
-              "provenance_faithful",
-              "grounding"
+              "provenance_faithful"
             ],
             "councilMix": [
-              "source_discipline",
+              "epistemic_humility",
               "source_discipline"
             ],
             "governedRsi": false,
@@ -328,8 +329,8 @@
         },
         {
           "embryo": {
-            "embryoId": "embryo_g1_06",
-            "traditionSeed": "daoist",
+            "embryoId": "embryo_g1_02",
+            "traditionSeed": "christianity",
             "verifierSubset": [
               "provenance_faithful"
             ],
@@ -340,32 +341,7 @@
             "governedRsi": false,
             "selfextend": true,
             "generation": 1,
-            "parentId": "embryo_g0_02"
-          },
-          "trapPassRate": 0.7143,
-          "trapPassed": 5,
-          "trapTotal": 7,
-          "generalityPassRate": 0.6,
-          "generalityPassed": 3,
-          "generalityTotal": 5,
-          "fitness": 0.6686,
-          "candidateOnly": true
-        },
-        {
-          "embryo": {
-            "embryoId": "embryo_g1_00",
-            "traditionSeed": "daoist",
-            "verifierSubset": [
-              "provenance_faithful"
-            ],
-            "councilMix": [
-              "historical_critical",
-              "source_discipline"
-            ],
-            "governedRsi": false,
-            "selfextend": true,
-            "generation": 1,
-            "parentId": "embryo_g0_02"
+            "parentId": "embryo_g0_06"
           },
           "trapPassRate": 0.7143,
           "trapPassed": 5,
@@ -378,20 +354,46 @@
         },
         {
           "embryo": {
-            "embryoId": "embryo_g1_01",
-            "traditionSeed": "daoist",
+            "embryoId": "embryo_g1_04",
+            "traditionSeed": "confucian",
             "verifierSubset": [
               "provenance_faithful",
               "grounding"
             ],
             "councilMix": [
-              "source_discipline",
+              "theological_voice",
               "source_discipline"
             ],
             "governedRsi": false,
             "selfextend": true,
             "generation": 1,
-            "parentId": "embryo_g0_06"
+            "parentId": "embryo_g0_05"
+          },
+          "trapPassRate": 0.7143,
+          "trapPassed": 5,
+          "trapTotal": 7,
+          "generalityPassRate": 0.0,
+          "generalityPassed": 0,
+          "generalityTotal": 5,
+          "fitness": 0.4286,
+          "candidateOnly": true
+        },
+        {
+          "embryo": {
+            "embryoId": "embryo_g1_06",
+            "traditionSeed": "buddhism",
+            "verifierSubset": [
+              "provenance_faithful",
+              "arithmetic_sound"
+            ],
+            "councilMix": [
+              "epistemic_humility",
+              "source_discipline"
+            ],
+            "governedRsi": false,
+            "selfextend": true,
+            "generation": 1,
+            "parentId": "embryo_g0_04"
           },
           "trapPassRate": 0.7143,
           "trapPassed": 5,
@@ -405,19 +407,19 @@
         {
           "embryo": {
             "embryoId": "embryo_g1_07",
-            "traditionSeed": "daoist",
+            "traditionSeed": "christianity",
             "verifierSubset": [
               "provenance_faithful",
               "grounding"
             ],
             "councilMix": [
-              "source_discipline",
+              "historical_critical",
               "source_discipline"
             ],
             "governedRsi": false,
             "selfextend": true,
             "generation": 1,
-            "parentId": "embryo_g0_06"
+            "parentId": "embryo_g0_05"
           },
           "trapPassRate": 0.7143,
           "trapPassed": 5,
@@ -434,10 +436,63 @@
   "winners": [
     {
       "embryo": {
-        "embryoId": "embryo_g1_03",
+        "embryoId": "embryo_g1_00",
         "traditionSeed": "daoist",
         "verifierSubset": [
-          "provenance_faithful"
+          "provenance_faithful",
+          "arithmetic_sound"
+        ],
+        "councilMix": [
+          "theological_voice",
+          "source_discipline"
+        ],
+        "governedRsi": false,
+        "selfextend": true,
+        "generation": 1,
+        "parentId": "embryo_g0_04"
+      },
+      "trapPassRate": 0.7143,
+      "trapPassed": 5,
+      "trapTotal": 7,
+      "generalityPassRate": 1.0,
+      "generalityPassed": 5,
+      "generalityTotal": 5,
+      "fitness": 0.8286,
+      "candidateOnly": true
+    },
+    {
+      "embryo": {
+        "embryoId": "embryo_g1_01",
+        "traditionSeed": "buddhism",
+        "verifierSubset": [
+          "provenance_faithful",
+          "grounding"
+        ],
+        "councilMix": [
+          "source_discipline",
+          "source_discipline"
+        ],
+        "governedRsi": false,
+        "selfextend": true,
+        "generation": 1,
+        "parentId": "embryo_g0_05"
+      },
+      "trapPassRate": 0.7143,
+      "trapPassed": 5,
+      "trapTotal": 7,
+      "generalityPassRate": 1.0,
+      "generalityPassed": 5,
+      "generalityTotal": 5,
+      "fitness": 0.8286,
+      "candidateOnly": true
+    },
+    {
+      "embryo": {
+        "embryoId": "embryo_g1_03",
+        "traditionSeed": "islam",
+        "verifierSubset": [
+          "provenance_faithful",
+          "arithmetic_sound"
         ],
         "councilMix": [
           "historical_critical",
@@ -446,59 +501,7 @@
         "governedRsi": false,
         "selfextend": true,
         "generation": 1,
-        "parentId": "embryo_g0_02"
-      },
-      "trapPassRate": 0.7143,
-      "trapPassed": 5,
-      "trapTotal": 7,
-      "generalityPassRate": 1.0,
-      "generalityPassed": 5,
-      "generalityTotal": 5,
-      "fitness": 0.8286,
-      "candidateOnly": true
-    },
-    {
-      "embryo": {
-        "embryoId": "embryo_g1_05",
-        "traditionSeed": "daoist",
-        "verifierSubset": [
-          "provenance_faithful",
-          "arithmetic_sound"
-        ],
-        "councilMix": [
-          "source_discipline",
-          "source_discipline"
-        ],
-        "governedRsi": false,
-        "selfextend": true,
-        "generation": 1,
-        "parentId": "embryo_g0_07"
-      },
-      "trapPassRate": 0.7143,
-      "trapPassed": 5,
-      "trapTotal": 7,
-      "generalityPassRate": 1.0,
-      "generalityPassed": 5,
-      "generalityTotal": 5,
-      "fitness": 0.8286,
-      "candidateOnly": true
-    },
-    {
-      "embryo": {
-        "embryoId": "embryo_g1_02",
-        "traditionSeed": "daoist",
-        "verifierSubset": [
-          "provenance_faithful",
-          "arithmetic_sound"
-        ],
-        "councilMix": [
-          "source_discipline",
-          "source_discipline"
-        ],
-        "governedRsi": false,
-        "selfextend": true,
-        "generation": 1,
-        "parentId": "embryo_g0_07"
+        "parentId": "embryo_g0_04"
       },
       "trapPassRate": 0.7143,
       "trapPassed": 5,
