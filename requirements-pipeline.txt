@@ -1,0 +1,15 @@
+# Optional dependencies for the pretraining data-engineering pipeline (pipeline/).
+#
+# The pipeline's core paths are stdlib-only and airgap-safe: document contract, quality
+# scoring, MinHash dedup, URL canonicalization, corpus stats, and the regression gate all
+# run without anything here. These extras unlock faster/columnar paths:
+#
+#   pyarrow  -> Parquet shard read/write (pipeline/io.py); JSONL fallback otherwise.
+#   duckdb   -> SQL aggregation over Parquet shards (pipeline/corpus_table.py).
+#   numpy    -> vector (embedding) near-dup via agent/rag_local_embed (pipeline/dedup/vector.py).
+#
+# Install when you want the columnar/analytical or semantic-dedup paths:
+#   pip install -r requirements-pipeline.txt
+pyarrow>=14.0
+duckdb>=0.10
+numpy>=1.24
