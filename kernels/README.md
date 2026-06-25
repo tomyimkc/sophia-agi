@@ -30,12 +30,24 @@ python tools/runpod_kernels.py --dry-run              # print the remote script;
 
 ## On a real GPU
 
+Two ways, both dispatch-only and both with a confirm gate:
+
+**A. GitHub Actions (no local secret needed).** Set the repo secret `RUNPOD_API_KEY` once
+(Settings → Secrets and variables → Actions), then run the **`kernels-runpod`** workflow
+(Actions tab → Run workflow), type `RUN` to confirm, pick the GPU and GEMM size. It
+dry-runs the request, rents the pod, runs the roofline self-test + timed kernel + `ncu`
+profile over SSH, uploads `kernels/reports/**` as a run artifact, and **always deletes the
+pod**.
+
+**B. Locally.**
+
 ```bash
 RUNPOD_API_KEY=... python tools/runpod_kernels.py --yes --gpu-type "NVIDIA H100 80GB HBM3"
 ```
 
-Always rents one pod, runs over SSH, copies reports back, and **deletes the pod even on
-failure** (lifecycle reused from `tools/runpod_rlvr.py`).
+Both rent one pod, run over SSH, copy reports back, and **delete the pod even on failure**
+(lifecycle reused from `tools/runpod_rlvr.py`). The pod also self-destructs via a remote
+watchdog if the orchestrator dies.
 
 ## The reporting rule
 

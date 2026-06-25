@@ -42,7 +42,6 @@ from tools.runpod_rlvr import (  # noqa: E402
     _generate_ssh_key,
     _poll_ssh,
     _pod_id,
-    _rsync_repo_to_pod,
     _scp_from_pod,
     _ssh_base,
     _startup_cmd,
@@ -59,6 +58,7 @@ def _remote_kernel_script(args: argparse.Namespace) -> str:
     the (optional) ncu profiling step and, later, for real kernel timing.
     """
     branch = args.branch
+    m, n, k, iters = args.m, args.n, args.k, args.iters
     return f"""
 set -Eeuo pipefail
 cd /workspace
@@ -77,24 +77,25 @@ nvidia-smi --query-gpu=name,memory.total,power.limit --format=csv || true
 echo "== roofline self-test (no GPU needed; proves the gate runs) =="
 python kernels/bench/roofline.py --self-test | tee kernels/reports/roofline_selftest.txt
 
-DEV="$(nvidia-smi --query-gpu=name --format=csv,noheader | head -1 | sed 's/^ *//;s/ *$//')"
-echo "== roofline demo for detected device: $DEV =="
-python kernels/bench/roofline.py --demo --device "$DEV" --json \\
-  | tee kernels/reports/roofline_demo.json || true
+# Triton ships with recent torch, but install if the image lacks it.
+python -c "import triton" 2>/dev/null || pip install -q triton || true
 
-# --- M1+ hook: when a real kernel exists at kernels/src, build + ncu-profile it here. ---
 if [ -f kernels/src/run_kernel.py ]; then
-  echo "== ncu profile of kernels/src/run_kernel.py =="
+  echo "== real kernel: timed roofline ({iters} iters) =="
+  python kernels/src/run_kernel.py --m {m} --n {n} --k {k} --iters {iters} \\
+    | tee kernels/reports/kernel_roofline.txt || true
+
+  echo "== ncu profile (SINGLE launch — ncu replays kernels, so keep it to 1) =="
   if command -v ncu >/dev/null 2>&1; then
     ncu --set full --target-processes all \\
       -o kernels/reports/ncu_profile \\
-      python kernels/src/run_kernel.py || true
+      python kernels/src/run_kernel.py --m {m} --n {n} --k {k} --iters 1 --warmup 0 \\
+      > kernels/reports/ncu_stdout.txt 2>&1 || true
   else
-    echo "ncu not found in image; running kernel un-profiled"
-    python kernels/src/run_kernel.py | tee kernels/reports/kernel_run.txt || true
+    echo "ncu not found in image; skipping hardware profiling (roofline number above still valid)"
   fi
 else
-  echo "no kernels/src/run_kernel.py yet — roofline gate verified, kernel TODO (M1)."
+  echo "no kernels/src/run_kernel.py — roofline gate verified, kernel TODO."
 fi
 
 echo "== artifacts =="
@@ -111,9 +112,20 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--branch", default="claude/hpc-operator-compiler-roadmap-zumu83",
                    help="repo branch to clone/run on the pod")
     p.add_argument("--name", default="sophia-kernels", help="pod name")
+    p.add_argument("--m", type=int, default=4096, help="GEMM M")
+    p.add_argument("--n", type=int, default=4096, help="GEMM N")
+    p.add_argument("--k", type=int, default=4096, help="GEMM K")
+    p.add_argument("--iters", type=int, default=50, help="timed kernel iterations")
     p.add_argument("--gpu-type", default="NVIDIA H100 80GB HBM3,NVIDIA A100-SXM4-80GB",
                    help="comma-separated RunPod GPU type priority list")
-    p.add_argument("--cloud-type", default="SECURE")
+    p.add_argument("--gpu-count", type=int, default=1)
+    p.add_argument("--cloud-type", choices=["SECURE", "COMMUNITY"], default="SECURE")
+    p.add_argument("--interruptible", action="store_true", help="use cheaper spot/interruptible pod")
+    p.add_argument("--image-name", default="runpod/pytorch:1.0.7-cu1281-torch291-ubuntu2204",
+                   help="container image; the default ships torch+CUDA (triton is pip-installed on the pod)")
+    p.add_argument("--container-disk-gb", type=int, default=60)
+    p.add_argument("--volume-gb", type=int, default=40)
+    p.add_argument("--allowed-cuda-versions", default="")
     p.add_argument("--ssh-timeout", type=int, default=900, help="seconds to wait for SSH")
     p.add_argument("--auto-exit-seconds", type=int, default=3600,
                    help="pod self-destruct guard if the orchestrator dies")
@@ -154,7 +166,8 @@ def main(argv: list[str] | None = None) -> int:
             print(f"created pod {pod_id}; waiting for SSH…")
             conn = _poll_ssh(api_key, pod_id, timeout_s=args.ssh_timeout)
             _wait_ssh_login(conn, key_path)
-            _rsync_repo_to_pod(conn, key_path)
+            # The remote script clones the pushed branch from origin (self-contained);
+            # no rsync of the local tree is needed.
 
             log_path = tmp / "kernels_run.log"
             ssh = _ssh_base(conn, key_path)
@@ -163,7 +176,8 @@ def main(argv: list[str] | None = None) -> int:
             # Copy reports back regardless of rc so a partial run is still inspectable.
             out_dir = ROOT / "kernels" / "reports"
             out_dir.mkdir(parents=True, exist_ok=True)
-            for name in ("roofline_selftest.txt", "roofline_demo.json"):
+            for name in ("roofline_selftest.txt", "kernel_roofline.txt",
+                         "ncu_stdout.txt", "ncu_profile.ncu-rep"):
                 _scp_from_pod(conn, key_path, f"/workspace/sophia-agi/kernels/reports/{name}",
                               out_dir / name)
             print(f"remote exit code: {rc}; reports in {out_dir}")
