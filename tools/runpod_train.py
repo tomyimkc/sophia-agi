@@ -64,6 +64,21 @@ ADAPTER_DIR = "/workspace/sophia-runpod/sophia-agi/training/lora/checkpoints/sop
 
 def _remote_train_script(args: argparse.Namespace) -> str:
     branch_flag = (" --branch " + shlex.quote(args.branch)) if args.branch else ""
+    if args.train_data:
+        # Train on a pre-built, sealed, decontaminated pack (e.g. the Stage-1
+        # training/local_sophia_7b split) instead of regenerating one on-pod.
+        # Guard: verify the committed pack is still contamination-CLEAN before spending GPU.
+        data_step = (
+            "# 1) use the COMMITTED sealed pack (decontaminated; holdout sealed off-pod)\n"
+            "python tools/build_local_sophia_dataset.py --check\n"
+        )
+        train_flag = " --train " + shlex.quote(args.train_data)
+    else:
+        data_step = (
+            "# 1) data (decontaminated train/holdout + pre-split)\n"
+            "python tools/prepare_lora_dataset.py\n"
+        )
+        train_flag = ""
     return f"""
 set -Eeuo pipefail
 export DEBIAN_FRONTEND=noninteractive
@@ -84,14 +99,12 @@ nvidia-smi || true
 python -m pip install --upgrade pip setuptools wheel
 python -m pip install -r requirements-lora.txt   # torch pinned <2.9 -> ABI stable
 
-# 1) data (decontaminated train/holdout + pre-split)
-python tools/prepare_lora_dataset.py
-
+{data_step}
 # 2) REAL training — the research-backed gate-disciplined recipe. Adapter is tarred
 #    immediately after so it always comes back even if eval/promote later fail.
 python tools/train_lora.py \
   --model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 \
-  --scaffold --guard --eval-every 25 --patience 4 \
+  --scaffold --guard --eval-every 25 --patience 4{train_flag} \
   --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" \
   --output {ADAPTER_DIR}
 if [ -d {ADAPTER_DIR} ]; then
@@ -132,6 +145,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--model", default="Qwen/Qwen2.5-3B-Instruct")
     ap.add_argument("--epochs", type=int, default=1)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--train-data", default="",
+                    help="path to a pre-built sealed train split (e.g. "
+                         "training/local_sophia_7b/mlx/train.jsonl). Empty = regenerate on-pod "
+                         "via prepare_lora_dataset.py (legacy 3B path).")
     ap.add_argument("--gpu-type", default=",".join(DEFAULT_GPU_TYPES))
     ap.add_argument("--gpu-count", type=int, default=1)
     ap.add_argument("--cloud-type", choices=["SECURE", "COMMUNITY"], default="SECURE")
