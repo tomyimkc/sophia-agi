@@ -1,0 +1,73 @@
+{
+  "breachingInvariants": [
+    "protected_floor_content",
+    "provenance_complete",
+    "solver_attestation"
+  ],
+  "candidateId": "local-sophia-v5-full-religion-repair-mlx",
+  "candidateOnly": true,
+  "claimBoundary": "Decidable numeric invariant proof bundle for adapter self-gate; not alignment proof, not AGI proof, not a Gödel machine.",
+  "inputs": {
+    "adapterLadder": "training/local_sophia_v2/eval_ladder_adapter.json",
+    "baselineLadder": "training/local_sophia_v2/eval_ladder_baseline.json",
+    "manifest": "training/local_sophia_v2/manifest.json",
+    "protectedChannel": "content",
+    "traces": "training/council/religion_repair_c4.jsonl"
+  },
+  "invariants": {
+    "contamination_zero": {
+      "backend": "fallback",
+      "model": {
+        "overlapCount": 0
+      },
+      "reasons": [
+        "decontamination eval overlap count is 0"
+      ],
+      "status": "consistent",
+      "verdict": "accepted"
+    },
+    "no_total_regression": {
+      "backend": "fallback",
+      "model": {
+        "total_after": 656
+      },
+      "reasons": [
+        "fallback: all constraints hold"
+      ],
+      "status": "consistent",
+      "verdict": "accepted"
+    },
+    "protected_floor_content": {
+      "backend": "fallback",
+      "model": null,
+      "reasons": [
+        "violated: content_after_religion(667) >= 823(823)"
+      ],
+      "status": "contradiction",
+      "verdict": "rejected"
+    },
+    "provenance_complete": {
+      "backend": "fallback",
+      "model": {
+        "lackingCount": 12
+      },
+      "reasons": [
+        "12 trace(s) lack provenance citation"
+      ],
+      "status": "contradiction",
+      "verdict": "rejected"
+    },
+    "solver_attestation": {
+      "backend": "none",
+      "model": null,
+      "reasons": [
+        "z3-solver not installed; install `z3-solver` to enable solver-checked formal verification (held, not accepted)"
+      ],
+      "status": "z3_unavailable",
+      "verdict": "held"
+    }
+  },
+  "level3Evidence": false,
+  "promote": false,
+  "schema": "sophia.invariant_suite_proof.v1"
+}

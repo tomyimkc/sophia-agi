@@ -1,27 +1,104 @@
 {
-  "schema": "sophia.adapter_promotion.v1",
+  "schema": "sophia.adapter_promotion.v2",
   "candidateOnly": true,
   "level3Evidence": false,
-  "claimBoundary": "Machine-checked PROMOTION decision for a local adapter; not a validated capability and not an AGI claim. External gates enforce truth.",
+  "claimBoundary": "Machine-checked PROMOTION decision for a local adapter; protected suites use CONTENT channel; invariant oracle required. Not AGI proof.",
   "candidateId": "local-sophia-v5-full-religion-repair-mlx",
-  "verdict": "promote",
-  "scorecardVerdict": "promote",
-  "formalProof": {
-    "invariant": "no protected suite regresses below (incumbent - tolerance)",
+  "verdict": "reject",
+  "scorecardVerdict": "reject",
+  "oraclePromote": false,
+  "oracleProofPath": "agi-proof/self-gate/invariant-suite.local-sophia-v5-full-religion-repair-mlx.public-report.json",
+  "breachingInvariants": [
+    "protected_floor_content",
+    "provenance_complete",
+    "solver_attestation"
+  ],
+  "formalProofLegacyCombined": {
+    "invariant": "legacy COMBINED protected floor (continuity only)",
     "tolerance": 0.01,
     "protectedSuites": [
       "religion",
       "history"
     ],
-    "verdict": "accepted",
+    "verdict": "rejected",
     "backend": "fallback",
-    "status": "consistent",
+    "status": "contradiction",
     "reasons": [
-      "fallback: all constraints hold"
+      "violated: after_religion(667) >= 823(823)"
     ],
-    "model": {
-      "after_history": 625,
-      "after_religion": 167
+    "model": null
+  },
+  "invariantOracle": {
+    "schema": "sophia.invariant_suite_proof.v1",
+    "candidateOnly": true,
+    "level3Evidence": false,
+    "claimBoundary": "Decidable numeric invariant proof bundle for adapter self-gate; not alignment proof, not AGI proof, not a Gödel machine.",
+    "candidateId": "local-sophia-v5-full-religion-repair-mlx",
+    "promote": false,
+    "breachingInvariants": [
+      "protected_floor_content",
+      "provenance_complete",
+      "solver_attestation"
+    ],
+    "invariants": {
+      "protected_floor_content": {
+        "verdict": "rejected",
+        "backend": "fallback",
+        "status": "contradiction",
+        "reasons": [
+          "violated: content_after_religion(667) >= 823(823)"
+        ],
+        "model": null
+      },
+      "no_total_regression": {
+        "verdict": "accepted",
+        "backend": "fallback",
+        "status": "consistent",
+        "reasons": [
+          "fallback: all constraints hold"
+        ],
+        "model": {
+          "total_after": 656
+        }
+      },
+      "contamination_zero": {
+        "verdict": "accepted",
+        "backend": "fallback",
+        "status": "consistent",
+        "reasons": [
+          "decontamination eval overlap count is 0"
+        ],
+        "model": {
+          "overlapCount": 0
+        }
+      },
+      "provenance_complete": {
+        "verdict": "rejected",
+        "backend": "fallback",
+        "status": "contradiction",
+        "reasons": [
+          "12 trace(s) lack provenance citation"
+        ],
+        "model": {
+          "lackingCount": 12
+        }
+      },
+      "solver_attestation": {
+        "verdict": "held",
+        "backend": "none",
+        "status": "z3_unavailable",
+        "reasons": [
+          "z3-solver not installed; install `z3-solver` to enable solver-checked formal verification (held, not accepted)"
+        ],
+        "model": null
+      }
+    },
+    "inputs": {
+      "adapterLadder": "training/local_sophia_v2/eval_ladder_adapter.json",
+      "baselineLadder": "training/local_sophia_v2/eval_ladder_baseline.json",
+      "manifest": "training/local_sophia_v2/manifest.json",
+      "traces": "training/council/religion_repair_c4.jsonl",
+      "protectedChannel": "content"
     }
   },
   "decision": {
@@ -29,9 +106,9 @@
     "candidateOnly": true,
     "level3Evidence": false,
     "candidateId": "local-sophia-v5-full-religion-repair-mlx",
-    "verdict": "promote",
+    "verdict": "reject",
     "reasons": [
-      "all gates cleared"
+      "protected regression on religion: -0.1660"
     ],
     "metrics": {
       "targetSuite": "total",
@@ -62,10 +139,10 @@
         },
         {
           "suite": "religion",
-          "before": 0.16699999999999998,
-          "after": 0.16699999999999998,
+          "before": 0.833,
+          "after": 0.667,
           "protected": true,
-          "delta": 0.0
+          "delta": -0.166
         },
         {
           "suite": "total",
@@ -76,13 +153,15 @@
         }
       ]
     },
-    "timestamp": "2026-06-25T07:56:15.511034+00:00"
+    "timestamp": "2026-06-25T08:16:17.387317+00:00"
   },
   "inputs": {
     "adapterLadder": "training/local_sophia_v2/eval_ladder_adapter.json",
     "baselineLadder": "training/local_sophia_v2/eval_ladder_baseline.json",
     "manifest": "training/local_sophia_v2/manifest.json",
+    "traces": "training/council/religion_repair_c4.jsonl",
     "datasetContaminated": false,
-    "trainingSeed": null
+    "trainingSeed": null,
+    "protectedChannel": "content"
   }
 }
