@@ -491,3 +491,42 @@ truth or auto-generate training facts.
 
 **Claim impact:** Consistency escalation only; `canClaimAGI: false`. No adapter
 promotion or protected-suite change.
+
+## okf-referent-attribution-consistency-2026-06-25
+
+**Status:** CANDIDATE INFRASTRUCTURE (`candidateOnly: true`, `level3Evidence: false`).
+
+**Prior false negative:** Tradition partition (`partitionKey: tradition`) reported
+0 entities spanning >1 context and 0 holes — entities are tradition-bound by design.
+Real conflict axis is **attribution** via `links`, `attributedAuthor`, and
+`doNotAttributeTo` on shared referents (works/figures).
+
+**Re-key:** Default checker mode is referent-attribution (`partitionKey: referent`).
+Undeclared hole when >=2 pages assert conflicting attribution on the same referent:
+(a) different non-empty `attributedAuthor`, or (b) one page attributes author X while
+another lists X in `doNotAttributeTo`. Declared ``contradicts`` / ledger tradition-merge
+rows defer (counted, not re-emitted). Consistency checks **not** truth.
+
+**Wiki run** (`python3 tools/run_consistency_check.py`):
+
+| Metric | Count |
+|---|---|
+| Shared referents (>=2 pages) | 1 |
+| Undeclared epistemic holes | 0 |
+| Declared contradictions deferred | 0 |
+| Gate pass | yes |
+
+**Synthetic unit-test gate** (`tests/test_consistency_check.py`):
+
+| Metric | Count |
+|---|---|
+| Referent dnm-violation hole (type b) | 1 |
+| Declared contradicts deferred | 1 |
+| Patch rejected (no source) | 1 |
+| Patch accepted (grounded source) | 1 |
+
+**Artifacts:** `okf/consistency_check.py`, `tools/run_consistency_check.py`,
+`agi-proof/okf-consistency/consistency.public-report.json`,
+`training/feedback/epistemic_holes.jsonl` (empty — no undeclared holes on wiki).
+
+**Claim impact:** Consistency escalation only; `canClaimAGI: false`.
