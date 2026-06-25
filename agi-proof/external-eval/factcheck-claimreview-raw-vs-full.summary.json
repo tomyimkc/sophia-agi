@@ -1,0 +1,64 @@
+{
+  "schema": "sophia.fact_check.raw_vs_full.v1",
+  "n": 228,
+  "labelCounts": {
+    "true": 41,
+    "false": 187
+  },
+  "runs": {
+    "raw": 3,
+    "full": 3
+  },
+  "fabricationDenominator": 187,
+  "raw": {
+    "fabricationRatePerRun": [
+      0.016,
+      0.016,
+      0.016
+    ],
+    "fabricationRateMean": 0.016,
+    "overAbstentionRatePerRun": [
+      0.2195,
+      0.2195,
+      0.2195
+    ],
+    "overAbstentionRateMean": 0.2195,
+    "correctAbstentionUnknowableMean": 0.0
+  },
+  "full": {
+    "fabricationRatePerRun": [
+      0.0107,
+      0.0107,
+      0.0107
+    ],
+    "fabricationRateMean": 0.0107,
+    "overAbstentionRatePerRun": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "overAbstentionRateMean": 1.0,
+    "correctAbstentionUnknowableMean": 0.0
+  },
+  "fabricationDelta": {
+    "rawMinusFull": 0.0053,
+    "ci95": [
+      -0.016,
+      0.0267
+    ],
+    "ciExcludesZero": false,
+    "favorsFull": false,
+    "method": "paired item-bootstrap over per-item fabrication indicators averaged across runs",
+    "nBoot": 5000
+  },
+  "overAbstentionCost": {
+    "fullMinusRaw": 0.7805,
+    "ci95": [
+      0.6585,
+      0.9024
+    ],
+    "note": "cost the FULL arm pays: true claims it holds that raw would accept"
+  },
+  "oracle": "external sources (Wikidata/World Bank/Crossref) graded each claim's label; raw=base model alone, full=gate+retrieval, SAME frozen pack",
+  "claimBoundary": "First-party EXECUTION on a programmatically-sampled external pack; not yet third-party reproduced."
+}

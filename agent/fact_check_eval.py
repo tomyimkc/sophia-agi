@@ -32,20 +32,33 @@ def run_fact_check_eval(
     judges=None,
     live_backend: bool = False,
     target_fabrication_rate: float = 0.01,
+    verdict_fn=None,
 ) -> dict[str, Any]:
+    """Score each claim's verdict against its external label.
+
+    ``verdict_fn`` lets a caller supply the per-claim verdict instead of the gate —
+    used for the RAW arm (base model classifies the claim with no gate/retrieval), so
+    raw-vs-full isolates the gate's value on the SAME pack/grader. It takes the row and
+    returns a dict with at least ``verdict`` (accepted|rejected|held); optional
+    ``reason``/``claims``/``confidence``. Default (None) is the full gate pipeline.
+    """
     per_case = []
     for row in rows:
-        decision = fact_check_text(
-            row["claim"],
-            retriever=retriever,
-            entailment=entailment,
-            doi_resolver=doi_resolver,
-            url_resolver=url_resolver,
-            judges=judges,
-        )
-        d = decision_to_dict(decision)
+        if verdict_fn is not None:
+            d = verdict_fn(row)
+        else:
+            decision = fact_check_text(
+                row["claim"],
+                retriever=retriever,
+                entailment=entailment,
+                doi_resolver=doi_resolver,
+                url_resolver=url_resolver,
+                judges=judges,
+            )
+            d = decision_to_dict(decision)
+        claims = d.get("claims", [])
+        conf = d["confidence"] if "confidence" in d else max([c.get("confidence", 0.0) for c in claims] or [0.0])
         correctness = verdict_correct(d["verdict"], row["label"])
-        conf = max([c.get("confidence", 0.0) for c in d.get("claims", [])] or [0.0])
         per_case.append({
             "id": row.get("id"),
             "claim": row["claim"],
@@ -55,8 +68,8 @@ def run_fact_check_eval(
             "verdict": d["verdict"],
             "confidence": round(float(conf), 4),
             "correct": correctness,
-            "reason": d["reason"],
-            "claims": d.get("claims", []),
+            "reason": d.get("reason", ""),
+            "claims": claims,
         })
     return summarize_cases(per_case, live_backend=live_backend, target_fabrication_rate=target_fabrication_rate)
 

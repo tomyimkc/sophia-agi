@@ -1,27 +1,62 @@
 {
-  "benchmark": "rlvr",
-  "model": "zai-org/glm-4-9b-chat-hf",
-  "visibility": "public-aggregate",
-  "claimStatus": "Open — capability claim requires a gated run (aggregate._is_validated); this artifact records the training config only",
-  "config": {
-    "vllm": "none",
-    "quant": "bf16",
-    "epochs": 1.0,
-    "lr": 1e-05,
-    "beta": 0.04,
-    "num_generations": 8,
-    "target_modules": [
-      "q_proj",
-      "k_proj",
-      "v_proj",
-      "o_proj",
-      "gate_up_proj",
-      "down_proj"
-    ]
+  "rewards": {
+    "falseGood": {
+      "label": "false",
+      "passed": true,
+      "denies": true,
+      "namesGold": true,
+      "hedges": 0,
+      "reward": 1.0
+    },
+    "falseBad": {
+      "label": "false",
+      "passed": false,
+      "denies": false,
+      "namesGold": false,
+      "hedges": 0,
+      "assertedForbidden": true
+    },
+    "trueGood": {
+      "label": "true",
+      "passed": true,
+      "denies": false,
+      "namesGold": true,
+      "hedges": 0,
+      "reward": 1.0
+    },
+    "trueBad": {
+      "label": "true",
+      "passed": true,
+      "denies": false,
+      "namesGold": false,
+      "hedges": 0,
+      "reward": 0.0
+    }
+  },
+  "checks": {
+    "deterministic": true,
+    "falseMonotone": true,
+    "trueMonotone": true,
+    "forbiddenNegative": true,
+    "verifierSeamInvoked": true,
+    "bounded": true,
+    "contaminationFree": true
   },
   "trainCases": 203,
   "evalCases": 87,
   "trainSealed": "4efd66c8ff0f9986",
   "evalSealed": "833600c436cce7ca",
-  "baseModelLicense": "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)"
+  "entityIntersection": [],
+  "gateTargetModules": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_up_proj",
+    "down_proj"
+  ],
+  "benchmark": "rlvr",
+  "mode": "mock-offline",
+  "claim": "reward-machinery invariants (NOT a capability claim)",
+  "liveClaimStatus": "Open — see agi-proof/failure-ledger.md rlvr-live-run-not-yet-gated-2026-06-21"
 }
