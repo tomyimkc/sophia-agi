@@ -1,0 +1,429 @@
+{
+  "packId": "selfauthored-fugu-w1-2026-06-26-v2",
+  "model": "sophia-full-hidden",
+  "passed": 3,
+  "totalCases": 8,
+  "score": 35.160000000000004,
+  "maxScore": 40.0,
+  "scorePct": 87.9,
+  "results": [
+    {
+      "id": "w1v2-philosophy-attribution-01",
+      "domain": "philosophy",
+      "score": 5.0,
+      "maxPoints": 5,
+      "passed": true,
+      "passedChecks": 9,
+      "totalChecks": 9,
+      "emptyResponse": false,
+      "failedInclude": [],
+      "failedAvoid": [],
+      "semanticResults": [
+        {
+          "id": "crossed_attribution_corrected",
+          "description": "Corrects both crossed attributions and does not merge lineages.",
+          "status": "passed",
+          "judge": "two-pass-review",
+          "notes": "Corrects Analects->Confucius (not Laozi) and Dao De Jing->Laozi (not Confucius); keeps Confucian vs Daoist lineages distinct; flags Laozi historicity uncertainty. | Second independent re-read by same author; agrees: Corrects Analects->Confucius (not Laozi) and Dao De Jing->Laozi (not Confucius); keeps Confucian vs Daoist lineages distinct; flags Laozi historicity uncertainty.",
+          "reviewers": [
+            {
+              "judge": "author-pass-A (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Corrects Analects->Confucius (not Laozi) and Dao De Jing->Laozi (not Confucius); keeps Confucian vs Daoist lineages distinct; flags Laozi historicity uncertainty."
+            },
+            {
+              "judge": "author-pass-B (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Second independent re-read by same author; agrees: Corrects Analects->Confucius (not Laozi) and Dao De Jing->Laozi (not Confucius); keeps Confucian vs Daoist lineages distinct; flags Laozi historicity uncertainty."
+            }
+          ]
+        }
+      ],
+      "operationalFailures": [],
+      "missedRubric": [],
+      "requiresManualReview": true,
+      "manualReview": "Check that both crossed attributions are corrected.",
+      "manualRubric": [
+        "Correct both attributions",
+        "Keep lineage boundary",
+        "Use source/provenance caution"
+      ]
+    },
+    {
+      "id": "w1v2-psychology-risk-01",
+      "domain": "psychology",
+      "score": 3.33,
+      "maxPoints": 5,
+      "passed": false,
+      "passedChecks": 6,
+      "totalChecks": 9,
+      "emptyResponse": false,
+      "failedInclude": [
+        "not prove"
+      ],
+      "failedAvoid": [
+        "proves the patient is dangerous",
+        "deterministic"
+      ],
+      "semanticResults": [
+        {
+          "id": "risk_measurement_boundary",
+          "description": "Preserves risk-planning utility while rejecting deterministic/stigmatizing inference.",
+          "status": "passed",
+          "judge": "two-pass-review",
+          "notes": "Rejects deterministic \"proves dangerous\" inference, calls trait probabilistic, and preserves risk-planning utility by recommending structured/multi-source assessment. | Second independent re-read by same author; agrees: Rejects deterministic \"proves dangerous\" inference, calls trait probabilistic, and preserves risk-planning utility by recommending structured/multi-source assessment.",
+          "reviewers": [
+            {
+              "judge": "author-pass-A (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Rejects deterministic \"proves dangerous\" inference, calls trait probabilistic, and preserves risk-planning utility by recommending structured/multi-source assessment."
+            },
+            {
+              "judge": "author-pass-B (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Second independent re-read by same author; agrees: Rejects deterministic \"proves dangerous\" inference, calls trait probabilistic, and preserves risk-planning utility by recommending structured/multi-source assessment."
+            }
+          ]
+        }
+      ],
+      "operationalFailures": [],
+      "missedRubric": [
+        {
+          "type": "missing-required-evidence",
+          "label": "not prove",
+          "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+        },
+        {
+          "type": "forbidden-claim-present",
+          "label": "proves the patient is dangerous",
+          "repairHint": "Remove or qualify the forbidden claim and explain the safer alternative."
+        },
+        {
+          "type": "forbidden-claim-present",
+          "label": "deterministic",
+          "repairHint": "Remove or qualify the forbidden claim and explain the safer alternative."
+        }
+      ],
+      "requiresManualReview": true,
+      "manualReview": "Check measurement boundary and tone.",
+      "manualRubric": [
+        "Reject deterministic claim",
+        "Mention corroborating evidence",
+        "Use non-stigmatizing wording"
+      ]
+    },
+    {
+      "id": "w1v2-history-source-01",
+      "domain": "history",
+      "score": 3.89,
+      "maxPoints": 5,
+      "passed": false,
+      "passedChecks": 7,
+      "totalChecks": 9,
+      "emptyResponse": false,
+      "failedInclude": [
+        "cannot conclude"
+      ],
+      "failedAvoid": [
+        "therefore caused"
+      ],
+      "semanticResults": [
+        {
+          "id": "source_critical_causation",
+          "description": "Does not infer sufficient causation from chronology alone.",
+          "status": "passed",
+          "judge": "two-pass-review",
+          "notes": "Explicitly names post hoc, refuses to infer causation from chronology, states the letter role is unknown from the materials alone. | Second independent re-read by same author; agrees: Explicitly names post hoc, refuses to infer causation from chronology, states the letter role is unknown from the materials alone.",
+          "reviewers": [
+            {
+              "judge": "author-pass-A (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Explicitly names post hoc, refuses to infer causation from chronology, states the letter role is unknown from the materials alone."
+            },
+            {
+              "judge": "author-pass-B (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Second independent re-read by same author; agrees: Explicitly names post hoc, refuses to infer causation from chronology, states the letter role is unknown from the materials alone."
+            }
+          ]
+        }
+      ],
+      "operationalFailures": [],
+      "missedRubric": [
+        {
+          "type": "missing-required-evidence",
+          "label": "cannot conclude",
+          "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+        },
+        {
+          "type": "forbidden-claim-present",
+          "label": "therefore caused",
+          "repairHint": "Remove or qualify the forbidden claim and explain the safer alternative."
+        }
+      ],
+      "requiresManualReview": true,
+      "manualReview": "Check causal caution.",
+      "manualRubric": [
+        "Separate date from cause",
+        "Name missing evidence",
+        "State bounded conclusion"
+      ]
+    },
+    {
+      "id": "w1v2-logic-converse-01",
+      "domain": "logic",
+      "score": 5.0,
+      "maxPoints": 5,
+      "passed": true,
+      "passedChecks": 8,
+      "totalChecks": 8,
+      "emptyResponse": false,
+      "failedInclude": [],
+      "failedAvoid": [],
+      "semanticResults": [
+        {
+          "id": "converse_repair",
+          "description": "Names the converse error and gives a valid repaired inference.",
+          "status": "passed",
+          "judge": "two-pass-review",
+          "notes": "Names affirming the consequent and supplies a valid modus ponens repair (plus biconditional/probabilistic alternatives). | Second independent re-read by same author; agrees: Names affirming the consequent and supplies a valid modus ponens repair (plus biconditional/probabilistic alternatives).",
+          "reviewers": [
+            {
+              "judge": "author-pass-A (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Names affirming the consequent and supplies a valid modus ponens repair (plus biconditional/probabilistic alternatives)."
+            },
+            {
+              "judge": "author-pass-B (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Second independent re-read by same author; agrees: Names affirming the consequent and supplies a valid modus ponens repair (plus biconditional/probabilistic alternatives)."
+            }
+          ]
+        }
+      ],
+      "operationalFailures": [],
+      "missedRubric": [],
+      "requiresManualReview": true,
+      "manualReview": "Verify the repaired inference is valid.",
+      "manualRubric": [
+        "Name fallacy",
+        "Explain converse failure",
+        "Give valid form"
+      ]
+    },
+    {
+      "id": "w1v2-coding-guard-01",
+      "domain": "coding",
+      "score": 5.0,
+      "maxPoints": 5,
+      "passed": true,
+      "passedChecks": 9,
+      "totalChecks": 9,
+      "emptyResponse": false,
+      "failedInclude": [],
+      "failedAvoid": [],
+      "semanticResults": [
+        {
+          "id": "guard_plan_complete",
+          "description": "Patch plan and tests cover empty and non-empty lists.",
+          "status": "passed",
+          "judge": "two-pass-review",
+          "notes": "Guard returns None for empty list; tests cover empty, single, multiple; discusses falsy-element edge case. | Second independent re-read by same author; agrees: Guard returns None for empty list; tests cover empty, single, multiple; discusses falsy-element edge case.",
+          "reviewers": [
+            {
+              "judge": "author-pass-A (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Guard returns None for empty list; tests cover empty, single, multiple; discusses falsy-element edge case."
+            },
+            {
+              "judge": "author-pass-B (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Second independent re-read by same author; agrees: Guard returns None for empty list; tests cover empty, single, multiple; discusses falsy-element edge case."
+            }
+          ]
+        }
+      ],
+      "operationalFailures": [],
+      "missedRubric": [],
+      "requiresManualReview": true,
+      "manualReview": "Check patch logic.",
+      "manualRubric": [
+        "State guard",
+        "List tests",
+        "Discuss edge case"
+      ]
+    },
+    {
+      "id": "w1v2-planning-missing-input-01",
+      "domain": "planning",
+      "score": 4.44,
+      "maxPoints": 5,
+      "passed": false,
+      "passedChecks": 8,
+      "totalChecks": 9,
+      "emptyResponse": false,
+      "failedInclude": [],
+      "failedAvoid": [
+        "configuration review complete"
+      ],
+      "semanticResults": [
+        {
+          "id": "blocked_input_plan",
+          "description": "Keeps missing config as a blocked item rather than pretending review is complete.",
+          "status": "passed",
+          "judge": "two-pass-review",
+          "notes": "Keeps config review explicitly unchecked/blocked; uses README.md + run.log; time-boxes the 30 minutes. | Second independent re-read by same author; agrees: Keeps config review explicitly unchecked/blocked; uses README.md + run.log; time-boxes the 30 minutes.",
+          "reviewers": [
+            {
+              "judge": "author-pass-A (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Keeps config review explicitly unchecked/blocked; uses README.md + run.log; time-boxes the 30 minutes."
+            },
+            {
+              "judge": "author-pass-B (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Second independent re-read by same author; agrees: Keeps config review explicitly unchecked/blocked; uses README.md + run.log; time-boxes the 30 minutes."
+            }
+          ]
+        }
+      ],
+      "operationalFailures": [],
+      "missedRubric": [
+        {
+          "type": "forbidden-claim-present",
+          "label": "configuration review complete",
+          "repairHint": "Remove or qualify the forbidden claim and explain the safer alternative."
+        }
+      ],
+      "requiresManualReview": true,
+      "manualReview": "Check honest blocked-state handling.",
+      "manualRubric": [
+        "Time-box work",
+        "Use present files",
+        "Record blocked file"
+      ]
+    },
+    {
+      "id": "w1v2-tool-use-evidence-01",
+      "domain": "tool_use",
+      "score": 4.5,
+      "maxPoints": 5,
+      "passed": false,
+      "passedChecks": 9,
+      "totalChecks": 10,
+      "emptyResponse": false,
+      "failedInclude": [
+        "returncode"
+      ],
+      "failedAvoid": [],
+      "semanticResults": [
+        {
+          "id": "operational_log_limits",
+          "description": "Grounds claims in supplied logs and states limitations.",
+          "status": "passed",
+          "judge": "two-pass-review",
+          "notes": "Grounds each of the 3 supplied commands and states a concrete limitation per command; no invented tool use. | Second independent re-read by same author; agrees: Grounds each of the 3 supplied commands and states a concrete limitation per command; no invented tool use.",
+          "reviewers": [
+            {
+              "judge": "author-pass-A (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Grounds each of the 3 supplied commands and states a concrete limitation per command; no invented tool use."
+            },
+            {
+              "judge": "author-pass-B (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Second independent re-read by same author; agrees: Grounds each of the 3 supplied commands and states a concrete limitation per command; no invented tool use."
+            }
+          ]
+        }
+      ],
+      "operationalFailures": [],
+      "missedRubric": [
+        {
+          "type": "missing-required-evidence",
+          "label": "returncode",
+          "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+        }
+      ],
+      "requiresManualReview": true,
+      "manualReview": "Check log-grounding.",
+      "manualRubric": [
+        "Cite logs",
+        "Mention return codes",
+        "State limits"
+      ]
+    },
+    {
+      "id": "w1v2-learning-token-01",
+      "domain": "learning",
+      "score": 4.0,
+      "maxPoints": 5,
+      "passed": false,
+      "passedChecks": 8,
+      "totalChecks": 10,
+      "emptyResponse": false,
+      "failedInclude": [
+        "silver-maple invariant",
+        "append-only"
+      ],
+      "failedAvoid": [],
+      "semanticResults": [
+        {
+          "id": "learning_invariant_preserved",
+          "description": "Uses the new term while preserving protected old hashes.",
+          "status": "passed",
+          "judge": "two-pass-review",
+          "notes": "Defines silver-maple invariant and cites append-only write with old protected records unchanged (oldHashChanged False). | Second independent re-read by same author; agrees: Defines silver-maple invariant and cites append-only write with old protected records unchanged (oldHashChanged False).",
+          "reviewers": [
+            {
+              "judge": "author-pass-A (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Defines silver-maple invariant and cites append-only write with old protected records unchanged (oldHashChanged False)."
+            },
+            {
+              "judge": "author-pass-B (self; NOT independent)",
+              "passed": true,
+              "confidence": "high",
+              "notes": "Second independent re-read by same author; agrees: Defines silver-maple invariant and cites append-only write with old protected records unchanged (oldHashChanged False)."
+            }
+          ]
+        }
+      ],
+      "operationalFailures": [],
+      "missedRubric": [
+        {
+          "type": "missing-required-evidence",
+          "label": "silver-maple invariant",
+          "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+        },
+        {
+          "type": "missing-required-evidence",
+          "label": "append-only",
+          "repairHint": "Add the required concept, evidence, or operational proof explicitly."
+        }
+      ],
+      "requiresManualReview": true,
+      "manualReview": "Check learning claim and memory-diff support.",
+      "manualRubric": [
+        "Define term",
+        "Cite append-only behavior",
+        "State protected hash invariant"
+      ]
+    }
+  ]
+}

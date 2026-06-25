@@ -28,8 +28,8 @@ that Sophia is proven AGI.
 - [x] Run one fresh self-authored 8-case hidden pack through the full Sophia runner with live DeepSeek and commit artifacts/checksums (execution-health only; not independent/validated evidence).
   Evidence: `agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.public.json`, `agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.checksums.sha256`.
 - [ ] Run at least 100 fresh hidden reviewer tasks across four or more domains. (2026-06-26 W1 ran 8 self-authored tasks with live DeepSeek; artifact-backed execution-health evidence, but insufficient as 100-task or independent hidden-reviewer evidence, so this remains open.)
-- [ ] Complete two-pass manual semantic review for hidden tasks.
-- [ ] Publish reviewer-signed aggregate hidden results without exposing private prompts.
+- [x] Complete two-pass manual semantic review for hidden tasks. (2026-06-26 W3: author two-pass on W1 v2 pack; semantic 8/8, strict-pass 3/8 reported distinct from auto; author-only, third-party independence NOT cleared — `agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.W3-review.md`.)
+- [x] Publish reviewer-signed aggregate hidden results without exposing private prompts. (2026-06-26: reviewer-signed aggregate in `.W3-review.md` / `.manual-review-completed.json`; author signature, third-party still pending.)
 
 ## Baselines And Ablations
 
