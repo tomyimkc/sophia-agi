@@ -19,7 +19,7 @@ if str(ROOT) not in sys.path:
 from agent import wiki_store  # noqa: E402
 from okf.consistency_check import (  # noqa: E402
     consistency_report,
-    write_epistemic_holes,
+    sync_epistemic_holes,
 )
 
 DEFAULT_OUT = ROOT / "agi-proof" / "okf-consistency" / "consistency.public-report.json"
@@ -36,7 +36,7 @@ def _load_dnm() -> dict:
 def run_check(
     *,
     roots: list[Path] | None = None,
-    partition_key: str = "tradition",
+    partition_key: str = "referent",
     write_holes: bool = True,
     holes_path: Path | None = None,
 ) -> dict:
@@ -48,8 +48,8 @@ def run_check(
         pages = wiki_store.belief_graph_pages()
 
     report = consistency_report(pages, partition_key=partition_key, dnm_by_tradition=_load_dnm())
-    if write_holes and report["epistemicHoleCount"]:
-        write_epistemic_holes(report["epistemicHoles"], path=holes_path)
+    if write_holes:
+        sync_epistemic_holes(report["epistemicHoles"], path=holes_path)
 
     return report
 
@@ -57,7 +57,7 @@ def run_check(
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--root", action="append", help="OKF page root (repeatable); default wiki_store")
-    ap.add_argument("--partition-key", default="tradition", help="context partition field")
+    ap.add_argument("--partition-key", default="referent", help="referent-attribution (default) or tradition")
     ap.add_argument("--out", default=str(DEFAULT_OUT))
     ap.add_argument("--no-write-holes", action="store_true")
     ap.add_argument("--holes-path", default=None)
@@ -77,10 +77,10 @@ def main(argv: list[str] | None = None) -> int:
 
     summary = {
         "out": str(out),
-        "contextCount": report["contextCount"],
-        "entitiesSpanningContexts": report["entitiesSpanningContexts"],
+        "sharedReferents": report.get("sharedReferents", 0),
         "epistemicHoleCount": report["epistemicHoleCount"],
         "declaredContradictionsDeferred": report["declaredContradictionsDeferred"],
+        "gatePass": report.get("gatePass", report["epistemicHoleCount"] == 0),
         "candidateOnly": report["candidateOnly"],
     }
     print(json.dumps(summary, indent=2))
