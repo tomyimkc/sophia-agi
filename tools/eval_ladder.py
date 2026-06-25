@@ -70,13 +70,14 @@ def _channel_block(report: dict[str, Any]) -> dict[str, Any]:
     combined = int(report.get("passed", 0))
     pct = lambda n: round(100.0 * n / total, 1) if total else 0.0
     block = {
+        "passGate": "content",
         "format": {"passed": fmt, "total": total, "score_pct": report.get("formatPct", pct(fmt))},
         "content": {"passed": content, "total": total, "score_pct": report.get("contentPct", pct(content))},
         "combined": {"passed": combined, "total": total, "score_pct": report.get("score_pct", pct(combined))},
-        # Legacy combined fields for continuity
-        "passed": combined,
+        # Headline pass gate = CONTENT channel (FORMAT/COMBINED reported only)
+        "passed": content,
         "total": total,
-        "score_pct": report.get("score_pct", pct(combined)),
+        "score_pct": report.get("contentPct", pct(content)),
     }
     if "gateFailures" in report:
         block["gateFailures"] = report["gateFailures"]
@@ -96,15 +97,16 @@ def _summarize_reports(reports: list[dict[str, Any]]) -> dict[str, Any] | None:
         int(r.get("gateFailures", 0)) for r in reports if "gateFailures" in r
     )
     summary: dict[str, Any] = {
+        "passGate": "content",
         "domains": domains,
         "channels": {
             "format": {"passed": fmt_passed, "total": total, "score_pct": pct(fmt_passed)},
             "content": {"passed": content_passed, "total": total, "score_pct": pct(content_passed)},
             "combined": {"passed": combined_passed, "total": total, "score_pct": pct(combined_passed)},
         },
-        "passed": combined_passed,
+        "passed": content_passed,
         "total": total,
-        "score_pct": pct(combined_passed),
+        "score_pct": pct(content_passed),
     }
     if any("gateFailures" in r for r in reports):
         summary["gateFailures"] = gate_failures
@@ -171,7 +173,8 @@ def main(argv=None) -> int:
 
     payload = {
         "schema": "sophia.eval_ladder.v2",
-        "headline": "FORMAT / CONTENT / COMBINED per suite; protected gate uses CONTENT channel.",
+        "headline": "PASS gate = CONTENT channel per suite; FORMAT and COMBINED reported only.",
+        "passGate": "content",
         "createdAt": datetime.now(timezone.utc).isoformat(),
         "candidateOnly": True,
         "level3Evidence": False,

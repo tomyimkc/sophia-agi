@@ -67,7 +67,12 @@ def test_protected_suite_content_separate_from_combined() -> None:
     ]
     summary = _summarize_reports(reports)
     assert summary is not None
+    assert summary["passGate"] == "content"
+    assert summary["passed"] == 4
+    assert summary["channels"]["combined"]["passed"] == 1
     rel = summary["domains"]["religion"]
+    assert rel["passGate"] == "content"
+    assert rel["passed"] == rel["content"]["passed"]
     assert rel["content"]["score_pct"] == 66.7
     assert rel["combined"]["score_pct"] == 16.7
 
