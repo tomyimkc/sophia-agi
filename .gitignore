@@ -96,3 +96,4 @@ training/team_agents/adapter_model/
 
 # Rust ANN serving build artifacts
 services/ann_serving/target/
+rag/index/vectors.txt

@@ -53,12 +53,14 @@ def search(
     client: Any | None = None,
     over_fetch: int = 30,
     rerank: bool = True,
+    dedupe: bool = True,
 ) -> SearchResult:
     """Run the full pipeline and return a :class:`SearchResult`.
 
     Multi-hop queries fan out: each sub-query is recalled independently (hybrid), then the
     per-sub-query rankings are fused with RRF so a chunk relevant to *several* hops rises.
-    The expansion terms widen the recall string for each sub-query.
+    The expansion terms widen the recall string for each sub-query. ``dedupe`` collapses
+    near-duplicate chunks in the fused pool so r0/r1 variants don't crowd the final list.
     """
     plan = analyze(query, client=client)
     expansion_suffix = (" " + " ".join(plan.expansions)) if plan.expansions else ""
@@ -80,6 +82,11 @@ def search(
 
     fused = reciprocal_rank_fusion(rankings)
     ordered = [by_id[cid] for cid, _ in fused]
+
+    if dedupe and ordered:
+        from agent.dedup import dedupe_chunks
+
+        ordered = dedupe_chunks(ordered)
 
     if rerank and ordered:
         from agent.rerank import rerank_chunks

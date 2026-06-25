@@ -324,6 +324,23 @@ python tools/sophia_rag.py "Did Confucius write the Dao De Jing?"
 
 Cloud Run API: `services/rag_api/` — see [docs/09-Agent/Online-RAG.md](docs/09-Agent/Online-RAG.md).
 
+## AI search pipeline (understand → hybrid recall → verify-ready)
+
+A deterministic, offline AI-search layer over the same index: **query understanding**
+(normalize · intent · multi-hop decomposition · alias/synonym expansion, EN+ZH), **hybrid
+recall** (dense cosine ⨁ sparse BM25-lite fused by weighted Reciprocal Rank Fusion), near-dup
+collapse, and rerank — returning a `SearchResult` that carries the analyzed plan.
+
+```python
+from agent.ai_search import search
+r = search("Compare Plato and Aristotle on virtue")   # intent=comparison, fans out per entity
+```
+
+- Pipeline + honest bounds: [docs/09-Agent/AI-Search.md](docs/09-Agent/AI-Search.md)
+- Quality eval体系 (graded nDCG / recall / MRR + badcase taxonomy): `tools/eval_search_quality.py`, [eval/search_quality/](eval/search_quality/)
+- Scale-out: dependency-free Rust **HNSW** serving core + Python bridge — [services/ann_serving/](services/ann_serving/)
+- **Why it's an AGI substrate** (verifiable, provenance-grounded perception): [docs/09-Agent/Search-as-AGI-Substrate.md](docs/09-Agent/Search-as-AGI-Substrate.md)
+
 ## Thesis web UI (council-decided)
 
 The public face of the project: scholarly thesis with persistent chapter navigation, per-domain leaderboards, council panel explanation, and (when running locally) a live "Ask Sophia" agent panel.

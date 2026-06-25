@@ -16,10 +16,15 @@ query
 sub-queries ──► agent/hybrid_retrieval.py   per sub-query: dense cosine  ⨁  sparse BM25-lite
   │                                          fused by weighted Reciprocal Rank Fusion
   ▼
-agent/ai_search.py   fuse across sub-queries (RRF) ──► agent/rerank.py (final BM25-lite order)
+agent/ai_search.py   fuse across sub-queries (RRF) ──► dedup (agent/dedup.py)
+  │                                                ──► agent/rerank.py (final BM25-lite order)
   ▼
 SearchResult { AnalyzedQuery plan, ranked SourceChunks }
 ```
+
+> **Where this is heading.** Wired onto Sophia's belief graph + grounded gate + graded
+> abstention, this pipeline becomes a *verifiable perception organ* — see
+> [Search-as-AGI-Substrate.md](Search-as-AGI-Substrate.md).
 
 Every stage is deterministic. The committed `local-hash-v1` embedder
 (`agent/rag_local_embed.py`) makes dense recall work under `SOPHIA_PROFILE=airgap` with no key.
@@ -44,6 +49,28 @@ as a *minority vote* because Sophia's near-duplicate teacher-example corpus make
 high-recall / low-precision (see the eval finding below). The fusion layer is
 **index-size-agnostic**: swap the dense view for the Rust ANN core (`services/ann_serving`) or
 an HNSW/FAISS backend at scale and RRF is unchanged.
+
+### Near-duplicate collapse — `agent/dedup.py`
+Word-shingle Jaccard clustering collapses genuine duplicates (chunk overlap, `r0`/`r1` teacher
+variants) in the candidate pool, keyed on chunk **body** so variant titles don't defeat it.
+Opt-in on `retrieve_hybrid(dedupe=True)`, on by default in `ai_search`. Honest bound: it
+improves result *diversity*; it does not merge distinct-but-related records (that's a
+ranking/field problem), so on the gold-record metric its delta is ~zero here — a finding the
+eval's `hybrid_dedup` ablation makes explicit.
+
+### Pluggable embedders — `agent/embedding_backends.py`
+The seam where a new embedder — notably a learned **multilingual / multimodal** model (the JD's
+"任何语言、任何模态") — registers under a backend id and is picked up by
+`retrieval.embed_query_for_index` with no change to the retrieval path. Built-ins:
+`local-hash-v1`, `gemini`. Shipping learned weights is out of scope for the offline CI; this is
+the contract they plug into.
+
+### Scale-out serving — `services/ann_serving/` + `agent/ann_client.py`
+A dependency-free Rust core with **flat (exact)**, **single-layer NSW**, and **multi-layer
+HNSW** cosine indexes; HNSW lifts recall over NSW at equal `ef` (benchmarked). `agent/ann_client.py`
+drives the `serve` binary as a fail-soft subprocess (falls back to the Python vector path when
+the binary/export are absent), so the dense view can be served by the Rust core while Python
+keeps understanding, fusion, rerank, and provenance.
 
 ### Orchestration — `agent/ai_search.py`
 `search(query, top_k=…, client=None)` runs the whole pipeline and returns a `SearchResult`

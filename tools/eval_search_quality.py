@@ -46,7 +46,11 @@ from tools.eval_retrieval_recall import _norm, build_probes  # noqa: E402
 
 OUT_PATH = ROOT / "agi-proof" / "benchmark-results" / "search-quality.public-report.json"
 
-BACKENDS = ("keyword", "vector", "hybrid")
+# Backends scored for metrics. The badcase taxonomy reasons over the core three (keyword /
+# vector / hybrid); hybrid_dedup is an ablation that adds near-duplicate collapse on top of
+# hybrid, so its delta vs hybrid isolates what dedup buys.
+BACKENDS = ("keyword", "vector", "hybrid", "hybrid_dedup")
+TAXONOMY_BACKENDS = ("keyword", "vector", "hybrid")
 EXACT_GAIN = 3.0
 TOPICAL_GAIN = 1.0
 
@@ -63,11 +67,11 @@ def _gain(title: str, path: str, gold: str) -> float:
 
 def _hits(backend: str, query: str, *, top_k: int):
     """Run one backend, returning its top-k hits (objects with .title/.path)."""
-    if backend == "hybrid":
+    if backend in {"hybrid", "hybrid_dedup"}:
         os.environ["SOPHIA_RAG_BACKEND"] = "auto"
         from agent.hybrid_retrieval import retrieve_hybrid
 
-        return retrieve_hybrid(query, top_k=top_k)
+        return retrieve_hybrid(query, top_k=top_k, dedupe=(backend == "hybrid_dedup"))
     os.environ["SOPHIA_RAG_BACKEND"] = "auto" if backend == "vector" else "keyword"
     from agent.retrieval import retrieve
 
@@ -154,9 +158,10 @@ def run(*, limit: int | None = None, top_k: int = 5) -> dict:
         "badcaseTaxonomy": taxonomy,
         "honestBound": (
             "Self-authored probes over the live corpus; exact-match scorer (no LLM judge). "
-            "nDCG IDCG is POOLED (ideal = best gain ordering any of the three backends "
-            "surfaced), so metrics validate the ranking deltas + the harness, not a "
-            "third-party headline. All three backends search the SAME committed index."
+            "nDCG IDCG is POOLED (ideal = best gain ordering any backend surfaced), so metrics "
+            "validate the ranking deltas + the harness, not a third-party headline. "
+            "hybrid_dedup = hybrid + near-duplicate collapse (ablation). All backends search "
+            "the SAME committed index."
         ),
     }
 
@@ -170,8 +175,8 @@ def _badcase_taxonomy(probes, per_backend, *, top_k: int) -> dict:
         return next((i for i, g in enumerate(gains[:k], 1) if g >= EXACT_GAIN), 0)
 
     for i, p in enumerate(probes):
-        kw, vec, hyb = (per_backend[b][i] for b in BACKENDS)
-        hit_top = {b: _exact_rank(per_backend[b][i], top_k) > 0 for b in BACKENDS}
+        kw, vec, hyb = (per_backend[b][i] for b in TAXONOMY_BACKENDS)
+        hit_top = {b: _exact_rank(per_backend[b][i], top_k) > 0 for b in TAXONOMY_BACKENDS}
         if any(hit_top.values()):
             # Surface asymmetries even when *some* backend wins — these are the actionable
             # badcases (one view's blind spot that fusion should cover).

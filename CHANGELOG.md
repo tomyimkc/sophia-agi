@@ -26,10 +26,27 @@ All notable changes to Sophia AGI are documented here.
   wins on this corpus (recall@5 0.52 vs hybrid 0.27 vs keyword 0.20); hybrid beats keyword and
   closes lexical gaps but not dense, because sparse needs near-duplicate dedup first — the
   harness *revealed* that. Candidate report; not validated. Tests: `tests/test_eval_search_quality.py`.
-- **Rust ANN serving core** (`services/ann_serving/`): dependency-free flat (exact) + NSW
-  (approximate) cosine index — the architecture-track systems artifact. `bench` traces the
-  recall/latency trade-off (e.g. ~0.87 recall@10 at ~6× speedup vs exact, or ~58× speedup at
-  lower recall). Single-layer (HNSW layers + PyO3 binding are documented next steps). `cargo test`.
+- **Rust ANN serving core** (`services/ann_serving/`): dependency-free flat (exact) + NSW +
+  **multi-layer HNSW** cosine index — the architecture-track systems artifact. HNSW lifts recall
+  over single-layer NSW at equal `ef` (benched: 0.96 vs 0.87 recall@10 at ef=256; ~3–28×
+  speedup vs exact across the curve). `cargo test` (7 tests).
+- **Near-duplicate collapse** (`agent/dedup.py`): word-shingle Jaccard clustering keyed on chunk
+  body; opt-in `retrieve_hybrid(dedupe=True)`, default-on in `ai_search`. Honest finding: a
+  no-op on the gold-record metric here (the eval's `hybrid_dedup` ablation shows it) — it
+  improves result diversity, not recall, since the sparse false-positives are distinct records,
+  not body-duplicates. Tests: `tests/test_dedup.py`.
+- **Pluggable embedder registry** (`agent/embedding_backends.py`): the seam where a learned
+  multilingual/**multimodal** embedder registers under a backend id and is picked up by
+  `retrieval.embed_query_for_index` with no retrieval-path change. Built-ins: `local-hash-v1`,
+  `gemini`. Tests: `tests/test_embedding_backends.py`.
+- **Python↔Rust serving bridge** (`agent/ann_client.py`, `tools/export_rag_index.py`,
+  `services/ann_serving/serve`): export the committed index → stream queries to the Rust HNSW
+  server → row ids map back to chunks. Fail-soft (falls back to the Python vector path when the
+  binary/export are absent). Verified to return the same top-k as Python exact cosine at high
+  `ef`. Tests: `tests/test_ann_bridge.py` (live round-trip gated on the built binary).
+- **Search-as-AGI-substrate** doc (`docs/09-Agent/Search-as-AGI-Substrate.md`): how grounding
+  this pipeline on the belief graph + grounded gate + graded abstention + badcase flywheel turns
+  it into a verifiable perception organ — search as Sophia's AGI substrate.
 
 ## [0.9.0] - 2026-06-25
 

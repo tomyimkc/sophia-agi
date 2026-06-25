@@ -187,13 +187,24 @@ def embed_query_for_index(query: str, idir, *, has_embeddings: bool = True):
             return embed_query(query)
         except Exception:
             return None
-    if backend in {"gemini", "vertex", "auto"}:
+    if index_backend in {"gemini", None} and backend in {"gemini", "vertex", "auto"}:
         if backend == "vertex":
             os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
         try:
             from agent.rag_embed import embed_query
 
             return embed_query(query)
+        except Exception:
+            return None
+    # Any other backend id (e.g. a registered learned multilingual/multimodal embedder) is
+    # resolved through the pluggable registry, so new backends need no change here.
+    if index_backend:
+        try:
+            from agent.embedding_backends import get
+
+            fn = get(index_backend)
+            if fn is not None:
+                return fn(query)
         except Exception:
             return None
     return None

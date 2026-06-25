@@ -131,11 +131,15 @@ def hybrid_search(
     return out
 
 
-def retrieve_hybrid(query: str, *, top_k: int = 8, over_fetch: int = 30) -> list[SourceChunk]:
+def retrieve_hybrid(
+    query: str, *, top_k: int = 8, over_fetch: int = 30, dedupe: bool = False
+) -> list[SourceChunk]:
     """Hybrid retrieval entrypoint — loads the committed index, fuses, falls back to keyword.
 
     Mirrors :func:`agent.retrieval.retrieve`'s contract (same signature shape, same graceful
-    keyword fallback) so it is a drop-in higher-recall alternative.
+    keyword fallback) so it is a drop-in higher-recall alternative. With ``dedupe=True`` the
+    fused pool is over-fetched and near-duplicates are collapsed (`agent.dedup`) before the
+    top-``k`` is taken, so r0/r1 variants and chunk-overlap pairs don't waste result slots.
     """
     try:
         from agent.vector_store import index_dir, load_index
@@ -145,11 +149,16 @@ def retrieve_hybrid(query: str, *, top_k: int = 8, over_fetch: int = 30) -> list
         if indexed:
             has_embeddings = indexed[0].embedding is not None
             query_embedding = embed_query_for_index(query, idir, has_embeddings=has_embeddings)
+            pool_k = max(top_k, over_fetch) if dedupe else top_k
             hits = hybrid_search(
-                query, indexed, top_k=top_k, query_embedding=query_embedding, over_fetch=over_fetch
+                query, indexed, top_k=pool_k, query_embedding=query_embedding, over_fetch=over_fetch
             )
             if hits:
-                return hits
+                if dedupe:
+                    from agent.dedup import dedupe_chunks
+
+                    hits = dedupe_chunks(hits)[:top_k]
+                return hits[:top_k]
     except Exception:
         pass
     return _retrieve_keyword(query, top_k=top_k)

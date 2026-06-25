@@ -15,9 +15,14 @@
     "vector": {
       "recall@5": 0.5167,
       "mrr": 0.3281,
-      "ndcg@5": 0.6197
+      "ndcg@5": 0.6191
     },
     "hybrid": {
+      "recall@5": 0.2667,
+      "mrr": 0.1428,
+      "ndcg@5": 0.4828
+    },
+    "hybrid_dedup": {
       "recall@5": 0.2667,
       "mrr": 0.1428,
       "ndcg@5": 0.4828
@@ -58,5 +63,5 @@
       ]
     }
   },
-  "honestBound": "Self-authored probes over the live corpus; exact-match scorer (no LLM judge). nDCG IDCG is POOLED (ideal = best gain ordering any of the three backends surfaced), so metrics validate the ranking deltas + the harness, not a third-party headline. All three backends search the SAME committed index."
+  "honestBound": "Self-authored probes over the live corpus; exact-match scorer (no LLM judge). nDCG IDCG is POOLED (ideal = best gain ordering any backend surfaced), so metrics validate the ranking deltas + the harness, not a third-party headline. hybrid_dedup = hybrid + near-duplicate collapse (ablation). All backends search the SAME committed index."
 }
