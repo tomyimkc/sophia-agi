@@ -120,6 +120,31 @@ model and no multi-family gate — the remaining honesty caveat is **label
 provenance** (first-party), disclosed in the pack and report. The OPEN item is a
 **third-party trajectory pack** to remove that caveat.
 
+## Judged held-out benchmark (entailment judge, under the gate)
+
+The deterministic bench proves the wiring; it cannot settle whether a claim is
+*entailed* by evidence when surface forms diverge. That tier now exists:
+
+- **Sealed held-out pack:** `benchmark/agent_faithfulness_heldout.json` (N=9),
+  sha256-committed in `agi-proof/hidden-reviewer-packs/agent-faithfulness-heldout.seal.json`.
+  Designed to be judge-discriminating in **both** directions — paraphrase /
+  multi-hop cases (lexically divergent but entailed) and negation / scope
+  distractors (lexically overlapping but NOT entailed).
+- **Judged scorer:** `provenance_bench/agent_faithfulness_judged.py` — a binary
+  *certify* decision per case, scored under the **same no-overclaim gate as the
+  legal pack** (≥2 judge families + Cohen's κ ≥ 0.40 + ≥3 runs + CI above chance),
+  reusing `provenance_bench/aggregate` + `consensus`.
+- **Measured value of the judge:** the deterministic lexical baseline scores **33%**
+  on this pack (it wrongly abstains on the paraphrase cases and wrongly certifies
+  the distractors); a scripted entailment **oracle** scores **100%** — a +67-point
+  value-add, proving the judge is necessary and the harness measures it. (Tested
+  with deterministic scripted judges; no real model is called in CI.)
+- **Honest status:** the **committed** artifact is the offline **mock** run
+  (`validated=False`); a real multi-family model run and a third-party-authored pack
+  are OPEN (failure ledger: `agent-faithfulness-judged-not-yet-validated-2026-06-25`).
+  Run it for real with:
+  `tools/run_agent_faithfulness_judged.py --judges <2 vendor families> --runs 3 --write`.
+
 ## Capability proof (field requirements)
 
 `agi-proof/field-requirements/` maps the seven DeepSeek hiring categories (and the

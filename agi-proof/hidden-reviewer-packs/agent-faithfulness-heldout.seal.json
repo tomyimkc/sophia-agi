@@ -1,0 +1,8 @@
+{
+  "schema": "sophia.agent_faithfulness.heldout.seal.v1",
+  "pack": "benchmark/agent_faithfulness_heldout.json",
+  "n": 9,
+  "contentHash": "6a9f3653a9ae523c8fcb2bb7f56fbb7932a97c18dd70be68e5c03cb7e8bf6aa4",
+  "hashMethod": "sha256(json(cases, sort_keys=True, separators=(',',':')))",
+  "note": "Tamper-evident commitment. First-party held-out (NOT third-party). Held-out = not used to tune the evaluator or its lexical floor."
+}

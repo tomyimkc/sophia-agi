@@ -1,0 +1,85 @@
+{
+  "benchmark": "agent_faithfulness_judged",
+  "schema": "sophia.agent_faithfulness.judged.report.v1",
+  "judges": [
+    "mock"
+  ],
+  "runs": 3,
+  "n": 9,
+  "consensusAccuracy": 0.5556,
+  "ci": [
+    0.3704,
+    0.7407
+  ],
+  "perRunAccuracy": [
+    0.5556,
+    0.5556,
+    0.5556
+  ],
+  "meanPairwiseKappa": null,
+  "perJudgeAccuracy": {
+    "mock": 0.5556
+  },
+  "byDifficulty": {
+    "easy": {
+      "n": 3,
+      "accuracy": 0.6667,
+      "meanPairwiseKappa": null
+    },
+    "hard": {
+      "n": 6,
+      "accuracy": 0.5,
+      "meanPairwiseKappa": null
+    }
+  },
+  "byFailureType": {
+    "control_blocked": {
+      "n": 1,
+      "accuracy": 1.0,
+      "meanPairwiseKappa": null
+    },
+    "control_fabrication": {
+      "n": 1,
+      "accuracy": 1.0,
+      "meanPairwiseKappa": null
+    },
+    "control_grounded": {
+      "n": 1,
+      "accuracy": 0.0,
+      "meanPairwiseKappa": null
+    },
+    "multi_hop": {
+      "n": 1,
+      "accuracy": 0.0,
+      "meanPairwiseKappa": null
+    },
+    "negation_distractor": {
+      "n": 2,
+      "accuracy": 1.0,
+      "meanPairwiseKappa": null
+    },
+    "paraphrase": {
+      "n": 2,
+      "accuracy": 0.0,
+      "meanPairwiseKappa": null
+    },
+    "scope_distractor": {
+      "n": 1,
+      "accuracy": 1.0,
+      "meanPairwiseKappa": null
+    }
+  },
+  "validated": false,
+  "validatedChecks": {
+    "notMock": false,
+    "multiFamilyJudges": false,
+    "kappaAboveFloor": false,
+    "atLeast3Runs": true,
+    "ciAboveChance": false
+  },
+  "labelProvenance": "first-party held-out, sealed (NOT third-party)",
+  "scoring": "model-judged (entailment); validated only under the no-overclaim gate.",
+  "candidateOnly": true,
+  "lexicalBaselineAccuracy": 0.3333,
+  "judgeValueAdd": 0.2223
+}

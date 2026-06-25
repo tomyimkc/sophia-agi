@@ -23,11 +23,11 @@
       "marketCategory": "Agent Data Evaluation Expert (new role) · Deep-learning research",
       "claim": "Score a whole agent trajectory for mid-plan faithfulness, fail-closed, with a deterministic reproducible benchmark.",
       "status": "demonstrated",
-      "modules": ["agent/trajectory_eval.py", "provenance_bench/agent_faithfulness.py"],
-      "tests": ["tests/test_trajectory_eval.py", "tests/test_agent_faithfulness_bench.py"],
-      "evidence": ["benchmark/agent_faithfulness.json", "agi-proof/benchmark-results/agent-faithfulness.public-report.json"],
-      "measured": "verdict accuracy 1.0 (Wilson-95 [0.77, 1.0], N=13), detection F1 1.0, localization 6/6 — deterministic; labels first-party/seed.",
-      "limits": "Default judge is lexical (no semantic entailment without an injected LLM judge); labels are first-party. Third-party trajectory pack is OPEN."
+      "modules": ["agent/trajectory_eval.py", "provenance_bench/agent_faithfulness.py", "provenance_bench/agent_faithfulness_judged.py"],
+      "tests": ["tests/test_trajectory_eval.py", "tests/test_agent_faithfulness_bench.py", "tests/test_agent_faithfulness_judged.py"],
+      "evidence": ["benchmark/agent_faithfulness.json", "benchmark/agent_faithfulness_heldout.json", "agi-proof/benchmark-results/agent-faithfulness.public-report.json", "agi-proof/hidden-reviewer-packs/agent-faithfulness-heldout.seal.json"],
+      "measured": "Deterministic bench: verdict accuracy 1.0 (Wilson-95 [0.77, 1.0], N=13), detection F1 1.0, localization 6/6. Judged held-out bench (sealed N=9): no-overclaim gate WIRED + tested both ways; entailment judge value-add lexical 33% -> oracle 100% in tests; committed run is offline mock (validated=False).",
+      "limits": "Default judge is lexical (semantic entailment needs an injected LLM judge); labels first-party/seed. A real multi-family judged run AND a third-party pack are OPEN (see failure ledger: agent-faithfulness-judged-not-yet-validated-2026-06-25)."
     },
     {
       "id": "domain-data-law",
