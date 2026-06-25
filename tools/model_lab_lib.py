@@ -190,28 +190,6 @@ tags:
 - **Training examples:** {stats.get('trainingExamples', 'n/a')}
 - **Benchmark total:** {stats.get('benchmarkTotal', 'n/a')}
 
-## Usage
-
-Train locally:
-
-```bash
-pip install -r requirements-lora.txt
-python tools/prepare_lora_dataset.py
-python tools/train_lora.py --4bit --epochs 3
-```
-
-Evaluate:
-
-```bash
-python tools/eval_local_model.py --adapter training/lora/checkpoints/sophia-v1 --with-gate
-```
-
-Ollama:
-
-```bash
-ollama create sophia-7b -f models/ollama/Modelfile
-```
-
 ## Always pair with runtime gate
 
 `sophia_gate_check` (MCP) or `agent/gate.py` — weights alone do not guarantee trap safety.

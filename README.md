@@ -22,7 +22,7 @@ claim  →  verify against sources  →  accept · abstain · block
 **One-sentence problem it solves:** Modern AI confidently merges Confucius with the *Dao De Jing*, credits Freud for ideas from the 1950s, and treats legendary figures as literal authors — then uses those errors as premises for further reasoning.
 
 **Validated proof (clears the no-overclaim gate):**
-- On an 8B local model, Sophia cuts hallucinated attributions from **36.1% → 23.6%** (Δ **12.5%**, 95% CI [5.6%, 19.4%]) at **0% false-positive cost**.
+- On a local model, Sophia cuts hallucinated attributions from **36.1% → 23.6%** (Δ **12.5%**, 95% CI [5.6%, 19.4%]) at **0% false-positive cost**.
 - On genuine "I don't know" traps, Sophia fabricates **0%** while raw models fabricate 17–25%.
 - Every public number requires ≥2 judge families, κ ≥ 0.40, ≥3 runs, and confidence intervals. See [RESULTS.md](RESULTS.md).
 
@@ -43,7 +43,7 @@ Try the gate right now: `python scripts/demo_gate.py` (abstain + provenance verd
 
 ## What it does (main usage)
 
-**Sophia is a fail-closed provenance gate.** It checks each claim against sources it can machine-verify, **abstains instead of fabricating**, and only lets `accepted` output through. Measured effect: on an 8B model it cuts attribution-hallucination Δ12.5% (95% CI [5.6%, 19.4%]) at 0% false-positive cost — but **23.6% still gets through. It is a filter that reduces harm, not a guarantee, and not a substitute for human oversight.**
+**Sophia is a fail-closed provenance gate.** It checks each claim against sources it can machine-verify, **abstains instead of fabricating**, and only lets `accepted` output through. Measured effect: on a local model it cuts attribution-hallucination Δ12.5% (95% CI [5.6%, 19.4%]) at 0% false-positive cost — but **23.6% still gets through. It is a filter that reduces harm, not a guarantee, and not a substitute for human oversight.**
 
 The validated delta above is the one result that has cleared the full no-overclaim gate. See [What Sophia cannot do (yet)](#what-sophia-cannot-do-yet) for the honest limits.
 
@@ -84,7 +84,7 @@ Stated plainly, because owning the limits is the point. Sophia **today**:
 - **Does not generalize like a mind** — the "AGI-shaped" modules (program induction, planner, world model, …) are fail-closed *interfaces with toy reference implementations*, not the capabilities their names describe. See [AGI-Missing-Pillars](docs/11-Platform/AGI-Missing-Pillars.md).
 - **Is not independently replicated** — benchmarks, packs, judges, and corpus are largely first-party. A fully independent claim needs third-party packs + human review.
 
-The single validated result is narrow: **attribution-hallucination reduction on one 8B model, LLM-judged.** Everything else is labelled *illustrative* or *candidate*. The honest deliverable is the machinery + the measured data + the public ledger of what is **not** yet proven.
+The single validated result is narrow: **attribution-hallucination reduction on one local model, LLM-judged.** Everything else is labelled *illustrative* or *candidate*. The honest deliverable is the machinery + the measured data + the public ledger of what is **not** yet proven.
 
 ## Support this work
 
@@ -405,7 +405,7 @@ is "validated" only with multi-judge consensus + CIs; see [RESULTS.md](RESULTS.m
   a semantic **holding-faithfulness** tier. Sophia's **first gate-validated number**
   lives here (RESULTS.md → *Semantic evals*), with honest small-N bounds. Not legal
   advice · [Legal-Industry-Fit.md](docs/08-Domains/Legal-Industry-Fit.md).
-- **Council distillation** — teach a small student (Qwen2.5-7B) the discipline from
+- **Council distillation** — teach a small student model the discipline from
   **gate-filtered** teacher traces, so it stays disciplined without the scaffold ·
   [Council-Distillation.md](docs/11-Platform/Council-Distillation.md).
 - **Cantonese (粵語)** — written-Cantonese detection + output (`agent/cantonese.py`),
@@ -443,19 +443,12 @@ opt-in (`--provider openclaw`) and shells out to the `openclaw` CLI behind a stu
 it adds no knowledge-write path and never bypasses the provenance gate. See
 [docs/11-Platform/OpenClaw.md](docs/11-Platform/OpenClaw.md).
 
-## Build your local LLM (Claude + LoRA)
+## Run locally (open weights)
 
-Claude API builds data and packaging; **open weights** run offline:
-
-```bash
-python tools/claude_model_lab.py run-all          # review, distill, Ollama Modelfile
-pip install -r requirements-lora.txt
-python tools/train_lora.py --4bit --epochs 3      # Qwen2.5-7B QLoRA
-python tools/eval_local_model.py --adapter training/lora/checkpoints/sophia-v1 --with-gate
-ollama create sophia-7b -f models/ollama/Modelfile
-```
-
-See [Model-Lab.md](docs/09-Agent/Model-Lab.md) and [LoRA-Experiment.md](docs/09-Agent/LoRA-Experiment.md).
+Sophia runs fully offline on open weights, always paired with the runtime gate
+(`sophia_gate_check` / `agent/gate.py`) — weights alone do not guarantee trap
+safety. The local-model build and evaluation steps live in the repo for
+contributors rather than on this front page.
 
 ## Hugging Face
 

@@ -253,10 +253,10 @@ def cmd_write_modelfile(args: argparse.Namespace) -> int:
     modelfile_path.write_text(modelfile, encoding="utf-8")
     card_path.write_text(card, encoding="utf-8")
 
+    # Public manifest: base model + adapter path intentionally omitted
+    # (see tools/lint_web_privacy.py — public-surface privacy policy).
     manifest = {
         "version": cfg.get("version"),
-        "baseModel": cfg.get("baseModel"),
-        "adapterPath": cfg.get("adapterPath"),
         "ollamaModelfile": str(modelfile_path.relative_to(ROOT)),
         "hfModelCard": str(card_path.relative_to(ROOT)),
         "stats": stats,

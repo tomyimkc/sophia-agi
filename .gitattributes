@@ -1,1 +1,21 @@
 training/mlx_adapters/**/*.safetensors filter=lfs diff=lfs merge=lfs -text
+
+# --- git-crypt: private files encrypted in this PUBLIC repo ---
+# Files matched below are encrypted before they are pushed. The public sees
+# only ciphertext; locally (after `git-crypt unlock`) they are normal files.
+# Convention: keep private things either under secret/ or with a .secret.* name.
+secret/** filter=git-crypt diff=git-crypt
+*.secret.md filter=git-crypt diff=git-crypt
+*.secret.json filter=git-crypt diff=git-crypt
+*.private.md filter=git-crypt diff=git-crypt
+# NOTE: never add a rule that would encrypt .gitattributes itself.
+
+# --- Specific existing paths the owner chose to make private ---
+# Internal design docs (methodology / how-this-is-built):
+docs/superpowers/** filter=git-crypt diff=git-crypt
+# Agent operating + governance instructions:
+AGENTS.md filter=git-crypt diff=git-crypt
+CONTRACT.md filter=git-crypt diff=git-crypt
+# Local agent/tooling skill definitions:
+.claude/skills/** filter=git-crypt diff=git-crypt
+.grok/** filter=git-crypt diff=git-crypt
