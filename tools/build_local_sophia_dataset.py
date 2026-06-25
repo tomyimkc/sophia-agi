@@ -97,6 +97,7 @@ SFT_SOURCES = [
 DPO_SOURCES = [
     ("training/hard_negatives_dpo.jsonl", "dpo_hard_negatives.jsonl", "dpo"),
     ("training/wiki_provenance_dpo.jsonl", "dpo_wiki_provenance.jsonl", "dpo"),
+    ("training/hk_advisor/dpo_pairs.jsonl", "dpo_hk_advisor.jsonl", "dpo"),
 ]
 HOLDOUT_SRC = "training/lora/holdout.jsonl"
 
