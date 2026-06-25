@@ -3,6 +3,8 @@
   "mode": "real",
   "model": "Qwen/Qwen2.5-3B (GLM-4-9B path)",
   "adapter": "sophia-rlvr-v1",
+  "reward": "shaped (over-refusal penalized)",
+  "podId": "4tq654m7k0uq23",
   "split": {
     "seed": 1,
     "trainSealed": true,
@@ -10,11 +12,11 @@
     "entityIntersection": []
   },
   "base": {
-    "meanReward": 0.6908,
+    "meanReward": 0.6793,
     "trueFalsePositiveRate": 0.0909
   },
   "adapterScore": {
-    "meanReward": 0.8034,
+    "meanReward": 0.7851,
     "trueFalsePositiveRate": 0.1212
   },
   "entityIntersection": []
