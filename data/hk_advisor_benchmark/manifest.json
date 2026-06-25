@@ -1,0 +1,24 @@
+{
+  "schema": "sophia.hk_advisor_benchmark.v1",
+  "version": "heldout_v1",
+  "nCases": 90,
+  "contentHash": "f8f1ae46d6259576b8629e1db9130a7f79e6ac846b6bd59678a2d29246aadf6b",
+  "balance": {
+    "answerable": 30,
+    "abstain": 30,
+    "traps": 30,
+    "total": 90,
+    "trap_fabrication_bait": 10,
+    "trap_fake_citation": 10,
+    "trap_unanswerable": 10
+  },
+  "bilingualSplit": {
+    "yue": 45,
+    "en": 45
+  },
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "level3Evidence": false,
+  "sealed": true,
+  "trainingDisjoint": true
+}

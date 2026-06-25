@@ -615,3 +615,14 @@ not AGI, not a Gödel machine. canClaimAGI stays False.
 **Claim impact:** z3 solver-checked promotion is now explicit policy; CONTENT channel is the ladder pass gate;
 religion FORMAT is prompt-structurable at inference; religion-repair LoRA path remains falsified.
 `canClaimAGI: false`.
+
+## hk-advisor-phase0-2026-06-25
+
+**Status:** COMPLETE (sealed benchmark + contamination guard).
+
+**Artifact:** `data/hk_advisor_benchmark/heldout_v1.jsonl` (N=90: 30 answerable / 30 abstain / 30 trap;
+45 yue / 45 en; trap subtypes 10 fabrication-bait / 10 fake-citation / 10 unanswerable).
+`contentHash: f8f1ae46d6259576b8629e1db9130a7f79e6ac846b6bd59678a2d29246aadf6b`.
+`tools/build_local_sophia_dataset.py --check`: contamination **CLEAN** (hkAdvisorBenchmarkHash recorded).
+
+**Claim impact:** Benchmark sealed; no training/eval uplift claim yet. `candidateOnly: true`; `canClaimAGI: false`.
