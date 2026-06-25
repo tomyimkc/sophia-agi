@@ -148,3 +148,25 @@ python tools/eval_team_agents.py --mode real --model mlx:Qwen/Qwen2.5-3B-Instruc
 Never claim consensus when effective-N < 2.0. Team benchmark scoring uses the external
 scorer in `provenance_bench/team_agents_benchmark.py` (disjoint from the intrinsic gate).
 See failure-ledger entry `team-orchestrator-eval-template-2026-06-25`.
+
+### Long-task benchmark (team vs single)
+
+Sealed pack `data/team_agents_longtask/` — 18 multi-step cases (6 multi-domain chain,
+6 chained sub-questions, 6 long coordination traps). External scorer:
+`provenance_bench/team_agents_longtask_benchmark.py` (sub-step coverage, hand-off
+integrity, false-consensus on traps). `candidateOnly`; `canClaimAGI: false`.
+
+**Mock CI:**
+```bash
+python tools/eval_team_agents_longtask.py --mode mock --dry-run
+python tools/eval_team_agents_longtask.py --mode mock --seeds 0,1,2
+```
+
+**Real eval (when adapter + GPU ready):**
+```bash
+python tools/eval_team_agents_longtask.py --mode real --model mlx:Qwen/Qwen2.5-3B-Instruct \\
+  --adapter training/mlx_adapters/sophia-v3 --backend mlx --seeds 0,1,2
+```
+
+Report: `agi-proof/benchmark-results/team-agents-longtask.public-report.json`.
+See failure-ledger entry `team-agents-longtask-eval-template-2026-06-25`.

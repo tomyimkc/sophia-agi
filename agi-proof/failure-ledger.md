@@ -705,6 +705,35 @@ when N_eff < 2.0.
 
 **Artifact:** `agi-proof/benchmark-results/team-agents.public-report.json`
 
+## team-agents-longtask-eval-template-2026-06-25
+
+**Status:** OPEN (long-task benchmark wired; real eval blocked until promoted adapter + GPU).
+
+**Branch:** `claude/sophia-team-orchestrator`
+
+**Benchmark:** Sealed `team_agents_longtask` heldout_v1 — 18 cases (6/6/6 balance:
+multi_domain_chain / chained_subquestions / long_coordination_trap),
+contentHash=`d84acadbc570e9718a0264adceff5a6a8a0bace089e425ac3e3c566ab7a17dd4`,
+decontam CLEAN (registered in `dataset_guard`).
+
+**Conditions:** `sophia_single` (one advisor pass) vs `sophia_team_orchestrator`
+(`deliberate_team()` via `tools/team_agents_deliberate.py`).
+
+**Metrics:** passRate/composite delta, subStepCoverage, roleFidelity, handoffIntegrity,
+falseConsensus (traps), effectiveN. External scorer disjoint from intrinsic gate.
+
+**Command (when ready):**
+```bash
+python tools/eval_team_agents_longtask.py --mode real --model mlx:Qwen/Qwen2.5-3B-Instruct \\
+  --adapter training/mlx_adapters/sophia-v3 --backend mlx --seeds 0,1,2
+```
+
+**Honest claim:** `canClaimAGI: false`. Never claim consensus when N_eff < 2.0.
+Record sub-step coverage and trap false-consensus — not promotion evidence until
+`promote_adapter.py` clears the Sophia ladder separately.
+
+**Artifact:** `agi-proof/benchmark-results/team-agents-longtask.public-report.json`
+
 ## team-orchestrator-eval-template-2026-06-25
 
 **Status:** OPEN (orchestrator wired; real eval blocked until promoted adapter + GPU).
