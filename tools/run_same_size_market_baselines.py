@@ -246,16 +246,35 @@ def gated(condition: str) -> bool:
     return "gate" in condition
 
 
+def _generate_one(client, system: str, prompt: str) -> str:
+    try:
+        res = client.generate(system, prompt)
+        return getattr(res, "text", "") or ""
+    except Exception as exc:  # never crash a whole run on one case
+        return f"[generation-error: {exc!r}]"
+
+
 def generate_answers(client, condition: str, cases: list) -> list:
+    """Generate one answer per case, preserving input order.
+
+    Generation is network-I/O bound (remote model calls), so cases are fanned
+    out across a small thread pool to keep the M1 sweep tractable (hundreds of
+    cases x conditions x runs). Concurrency is bounded by SOPHIA_BASELINE_CONCURRENCY
+    (default 8); set it to 1 to force the original sequential path. The mock/offline
+    client is instant, so tests are unaffected. Scoring is unchanged — only the
+    transport is parallelised."""
+    import os
     system = system_for(condition)
-    out = []
-    for c in cases:
-        try:
-            res = client.generate(system, c["prompt"])
-            out.append(getattr(res, "text", "") or "")
-        except Exception as exc:  # never crash a whole run on one case
-            out.append(f"[generation-error: {exc!r}]")
-    return out
+    try:
+        workers = max(1, int(os.environ.get("SOPHIA_BASELINE_CONCURRENCY", "8")))
+    except ValueError:
+        workers = 8
+    if workers == 1 or len(cases) <= 1:
+        return [_generate_one(client, system, c["prompt"]) for c in cases]
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        # executor.map preserves input order in its output
+        return list(ex.map(lambda c: _generate_one(client, system, c["prompt"]), cases))
 
 
 def run_condition(client, condition: str, cases: list) -> dict:
