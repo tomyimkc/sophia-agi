@@ -24,7 +24,6 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.council_deliberate import deliberate  # noqa: E402
-from agent.team_agents import deliberate_team  # noqa: E402
 
 
 def main(argv: "list[str] | None" = None) -> int:
@@ -43,7 +42,14 @@ def main(argv: "list[str] | None" = None) -> int:
     if args.adapter:
         os.environ["SOPHIA_MLX_ADAPTER"] = args.adapter
     client = default_client(args.model)
-    fn = deliberate_team if args.team_mode else deliberate
+    if args.team_mode:
+        # Imported lazily: team_agents pulls in numpy, which the base council path
+        # (and the dependency-light CI build job) does not require.
+        from agent.team_agents import deliberate_team
+
+        fn = deliberate_team
+    else:
+        fn = deliberate
     d = fn(args.query, client=client, max_seats=args.max_seats, gate=not args.no_gate)
 
     if args.json:
