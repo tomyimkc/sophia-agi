@@ -4,15 +4,19 @@ A sibling portfolio track to Sophia's trust layer: high-performance GPU kernels 
 against the **hardware's physical limit**, not against a strawman baseline. See the
 roadmap: [`docs/06-Roadmap/HPC-Operator-Compiler-Roadmap.md`](../docs/06-Roadmap/HPC-Operator-Compiler-Roadmap.md).
 
-> **Honest status (M1 skeleton).** The *gate* exists; the kernels do not yet. The point of
-> landing the harness first is that the first real kernel is born already measured.
+> **Honest status (M1).** The *gate* and the *first kernel* exist: a Triton tiled BF16 GEMM
+> (`src/run_kernel.py`) that checks correctness vs `torch.matmul` and prints its own
+> roofline block. It is a straightforward tiled GEMM (one fixed block config, no warp
+> specialization / split-K / autotuned epilogue) — so its % of roofline is the M1 number
+> to report and then close, not a tuned result. Real timing needs a CUDA GPU; on CPU/CI it
+> skips cleanly.
 
 ## Layout
 
 | Path | What |
 |---|---|
 | `bench/roofline.py` | Roofline harness — % of theoretical peak, regime, ridge point, over-100% guard. Offline; no GPU needed for the math. |
-| `src/` | Kernels go here. Drop a `run_kernel.py` and the RunPod orchestrator will `ncu`-profile it. *(empty in M1)* |
+| `src/run_kernel.py` | Triton tiled BF16 GEMM (FP32 accumulate). Correctness-checked, self-rooflines. The RunPod orchestrator `ncu`-profiles it. |
 | `reports/` | Profiling artifacts copied back from the pod (git-ignored). |
 | `../tools/runpod_kernels.py` | Build + profile on a rented CUDA pod; `--dry-run` by default (no pod, no cost). |
 
@@ -40,7 +44,10 @@ with ≥3 runs and dispersion — the same no-overclaim discipline as `RESULTS.m
 "Nx vs naive" headline. Anything above ~95% of roofline is treated as a FLOP/byte
 accounting bug until proven otherwise.
 
-## Next (M1 kernel)
+## Next
 
-Add `kernels/src/run_kernel.py` with a Triton tiled BF16 GEMM that prints its own
-`roofline.analyze(...)` block, then profile it via `tools/runpod_kernels.py --yes`.
+1. Run `tools/runpod_kernels.py --yes` on an H100/A100 to get the **first measured % of
+   roofline** for the tiled GEMM, with an `ncu` SM/memory-utilization report.
+2. Close the gap toward the ceiling: autotune block configs, then warp specialization /
+   split-K / a fused epilogue — re-reporting % of roofline at each step.
+3. Add a FlashAttention-style fused kernel (M1 stretch) under `src/`.
