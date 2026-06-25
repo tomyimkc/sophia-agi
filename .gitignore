@@ -69,6 +69,9 @@ training/wiki_provenance_*.jsonl
 training/local_sophia_v2/*.jsonl
 !training/local_sophia_v2/general_instruct.jsonl
 training/local_sophia_v2/mlx/*.jsonl
+# Local-Sophia v3 (M2): reproducible via tools/build_sophia_wisdom_dataset.py; track only the manifest.
+training/local_sophia_v3/*.jsonl
+training/local_sophia_v3/mlx/*.jsonl
 training/mlx_adapters/**
 !training/mlx_adapters/sophia-v2/
 !training/mlx_adapters/sophia-v2/adapter_config.json
