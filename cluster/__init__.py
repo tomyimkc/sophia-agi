@@ -37,15 +37,24 @@ from cluster.scheduler import (
     fragmentation,
     get_policy,
 )
-from cluster.simulator import SimResult, simulate
+from cluster.simulator import SimResult, calibrated_taxes, simulate
 from cluster.observability import straggler_report, summarize
 from cluster.faults import Fault, FaultResult, inject_faults, simulate_with_faults
+from cluster.netcalib import (
+    Calibration,
+    default_modeled,
+    from_nccl_report,
+    load_calibration,
+    ring_allreduce_time_s,
+)
 
 __all__ = [
     "Cluster", "Device", "Node", "homogeneous_cluster", "heterogeneous_cluster",
     "Job", "JobState", "synthetic_trace",
     "Policy", "FifoFirstFit", "TopologyAware", "BackfillTopo", "get_policy", "fragmentation",
-    "SimResult", "simulate",
+    "SimResult", "simulate", "calibrated_taxes",
     "summarize", "straggler_report",
     "Fault", "FaultResult", "inject_faults", "simulate_with_faults",
+    "Calibration", "default_modeled", "from_nccl_report", "load_calibration",
+    "ring_allreduce_time_s",
 ]

@@ -31,17 +31,41 @@ from cluster.topology import Cluster
 
 
 # Network-tax coefficients (fraction of runtime added per extra island / node hop for
-# collective-heavy jobs). Illustrative defaults — the point is the *shape* of the
-# trade-off, not a calibrated constant. Overridable per run.
+# collective-heavy jobs). These are the FALLBACK defaults used only when no calibration
+# file is present; cluster/netcalib.json (written by tools/calibrate_network_tax.py)
+# overrides them with coefficients derived from all-reduce bandwidth. Overridable per run.
 ISLAND_TAX = 0.06
 NODE_TAX = 0.12
 
 
+def calibrated_taxes() -> tuple[float, float]:
+    """(island_tax, node_tax) from cluster/netcalib.json if present, else the fallbacks."""
+    from cluster.netcalib import load_calibration
+
+    calib = load_calibration()
+    if calib is None:
+        return ISLAND_TAX, NODE_TAX
+    return calib.island_tax, calib.node_tax
+
+
 def effective_runtime(job: Job, node_span: int, island_span: int,
                       island_tax: float = ISLAND_TAX, node_tax: float = NODE_TAX) -> float:
+    """Runtime inflated by the *slowest* link the collective is forced to cross.
+
+    Worst-tier (not linear-in-span): a ring all-reduce runs at the speed of its bottleneck
+    hop, so the penalty is set once by the coarsest boundary the placement straddles —
+    cross-node (NIC) dominates cross-island (NVSwitch) dominates intra-island (NVLink, free).
+    This matches the per-tier semantics of cluster/netcalib.py, so calibrated coefficients
+    plug in directly. Non-collective (eval) jobs pay nothing.
+    """
     if not job.colocate:
         return job.duration_s
-    tax = island_tax * max(0, island_span - 1) + node_tax * max(0, node_span - 1)
+    if node_span > 1:
+        tax = node_tax
+    elif island_span > 1:
+        tax = island_tax
+    else:
+        tax = 0.0
     return job.duration_s * (1.0 + tax)
 
 
@@ -100,10 +124,18 @@ def simulate(
     trace: list[Job],
     policy: Policy,
     *,
-    island_tax: float = ISLAND_TAX,
-    node_tax: float = NODE_TAX,
+    island_tax: float | None = None,
+    node_tax: float | None = None,
 ) -> SimResult:
-    """Run `trace` on `cluster` under `policy`. Mutates the jobs' runtime state."""
+    """Run `trace` on `cluster` under `policy`. Mutates the jobs' runtime state.
+
+    island_tax/node_tax default to the calibrated coefficients (cluster/netcalib.json)
+    when None, so a fresh calibration automatically flows into the simulation.
+    """
+    if island_tax is None or node_tax is None:
+        ci, cn = calibrated_taxes()
+        island_tax = ci if island_tax is None else island_tax
+        node_tax = cn if node_tax is None else node_tax
     jobs = trace
     by_id = {j.id: j for j in jobs}
     pending: list[str] = []

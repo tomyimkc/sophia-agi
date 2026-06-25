@@ -25,8 +25,9 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from cluster.job import synthetic_trace
+from cluster.netcalib import load_calibration
 from cluster.scheduler import POLICIES, get_policy
-from cluster.simulator import simulate
+from cluster.simulator import calibrated_taxes, simulate
 from cluster.topology import homogeneous_cluster
 
 
@@ -39,8 +40,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--jobs", type=int, default=200)
     p.add_argument("--seed", type=int, default=1)
     p.add_argument("--horizon", type=float, default=3600.0, help="arrival window (s)")
-    p.add_argument("--island-tax", type=float, default=0.06)
-    p.add_argument("--node-tax", type=float, default=0.12)
+    p.add_argument("--island-tax", type=float, default=None,
+                   help="override the calibrated island tax (cluster/netcalib.json)")
+    p.add_argument("--node-tax", type=float, default=None,
+                   help="override the calibrated node tax (cluster/netcalib.json)")
     p.add_argument("--policies", default=",".join(POLICIES), help="comma list")
     p.add_argument("--out", default=None, help="write JSON report here")
     p.add_argument("--markdown", action="store_true", help="also print a markdown table")
@@ -57,23 +60,31 @@ def run(args: argparse.Namespace) -> dict:
     base_trace = synthetic_trace(n_jobs=args.jobs, seed=args.seed, horizon_s=args.horizon)
     names = [n.strip() for n in args.policies.split(",") if n.strip()]
 
+    # Resolve the network tax: CLI flags override, else the calibration drives the sim.
+    cal_i, cal_n = calibrated_taxes()
+    island_tax = cal_i if args.island_tax is None else args.island_tax
+    node_tax = cal_n if args.node_tax is None else args.node_tax
+    calib = load_calibration()
+    tax_source = "cli-override" if (args.island_tax is not None or args.node_tax is not None) \
+        else (calib.source if calib else "fallback-default")
+
     results = []
     for name in names:
         # Fresh cluster + trace per policy so they are independent and comparable.
         cl = deepcopy(base_cluster)
         tr = deepcopy(base_trace)
-        res = simulate(cl, tr, get_policy(name),
-                       island_tax=args.island_tax, node_tax=args.node_tax)
+        res = simulate(cl, tr, get_policy(name), island_tax=island_tax, node_tax=node_tax)
         results.append(res.as_dict())
 
     return {
         "schema": "sophia.cluster_scheduler_sim.v1",
-        "scope": "SIMULATED — illustrative network-tax constants; not a real-fleet measurement.",
+        "scope": "SIMULATED — network tax from cluster/netcalib.json; not a real-fleet measurement.",
         "config": {
             "nodes": args.nodes, "gpus_per_node": args.gpus_per_node,
             "total_gpus": base_cluster.total_gpus, "islands_per_node": args.islands,
             "gpus_per_rack": args.gpus_per_rack, "jobs": args.jobs, "seed": args.seed,
-            "horizon_s": args.horizon, "island_tax": args.island_tax, "node_tax": args.node_tax,
+            "horizon_s": args.horizon, "island_tax": round(island_tax, 6),
+            "node_tax": round(node_tax, 6), "tax_source": tax_source,
         },
         "results": results,
     }

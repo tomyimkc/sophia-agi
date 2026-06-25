@@ -116,10 +116,11 @@ def simulate_with_faults(
     is requeued, and its next run starts after `recovery_s`. `committed_s` carries the
     durable progress across restarts so re-runs only redo the remaining nominal work.
     """
-    from cluster.simulator import ISLAND_TAX, NODE_TAX
+    from cluster.simulator import calibrated_taxes
 
-    itax = ISLAND_TAX if island_tax is None else island_tax
-    ntax = NODE_TAX if node_tax is None else node_tax
+    ci, cn = calibrated_taxes()
+    itax = ci if island_tax is None else island_tax
+    ntax = cn if node_tax is None else node_tax
 
     by_id = {j.id: j for j in trace}
     seqof = {jid: i for i, jid in enumerate(by_id)}

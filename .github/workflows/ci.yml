@@ -174,11 +174,15 @@ jobs:
           python tests/test_gateway_roadmap.py
           python tools/run_gateway_demo.py
           python tests/test_hf_space.py
-      - name: Cluster scheduler/observability/fault simulator (topology-aware placement, goodput, stragglers)
+      - name: Cluster scheduler/observability/fault simulator + network-tax calibration
         run: |
           python tests/test_cluster_scheduler.py
           python tests/test_cluster_observability.py
           python tests/test_cluster_faults.py
+          python tests/test_cluster_netcalib.py
+          python tools/calibrate_network_tax.py --no-write
+          python tools/bench_nccl_allreduce.py --dry-run --gpus 8
+          python tools/runpod_nccl_bench.py --dry-run --gpu-count 2
           python tools/run_cluster_sim.py --jobs 120 --seed 1
           python tools/run_cluster_faultsim.py --jobs 80 --seed 1
       - name: Skills layer (MCP-matched, fail-closed) + registry

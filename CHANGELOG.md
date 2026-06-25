@@ -31,6 +31,27 @@ measured-not-claimed style. Deterministic, seeded, pure stdlib (runs in CI, no d
   超算集群研发工程师 responsibilities to repo assets and an honest open-work ledger (RDMA is
   modeled not measured; no live telemetry collection yet; NPU/DPU interface-only).
 
+### Added — network-tax calibration: modeled → measured (RDMA all-reduce)
+
+Turns the simulator's guessed comm penalty into a bandwidth-derived (and measurable) one.
+
+- **`cluster/netcalib.py`** — derives `island_tax` / `node_tax` from ring all-reduce cost
+  per interconnect tier (`T = 2(N-1)/N·size/bw + 2(N-1)·lat`), worst-tier model (collective
+  runs at its slowest hop: NIC ≫ NVSwitch ≫ NVLink). Loads/saves `cluster/netcalib.json`
+  with per-tier provenance (measured vs modeled). `cluster/simulator.py` now consumes it
+  automatically; `effective_runtime` switched from linear-in-span to worst-tier semantics.
+- **`tools/calibrate_network_tax.py`** — writes the committed MODELED calibration
+  (NVLink 400 / NVSwitch 120 / RoCE 50 GB/s, exposed-comm 0.15 → `island_tax≈0.345`,
+  `node_tax≈1.036`); `--from-nccl` ingests a measured report and re-fits the NVLink tier.
+- **`tools/bench_nccl_allreduce.py`** — on-pod NCCL all-reduce bus-bandwidth micro-benchmark
+  (torchrun, one rank per GPU; lazy torch import so dry-run/tests are pure stdlib).
+- **`tools/runpod_nccl_bench.py`** — rents one multi-GPU SXM pod, runs the benchmark, copies
+  the report back, `--calibrate` re-fits the tax (reuses the `runpod_rlvr` pod lifecycle).
+- Calibrated trade-off (128 GPUs, seed 7, simulated): topology packing cuts fragmentation
+  0.48→0.20 and network tax 1.88→1.68x; backfill cuts p50 wait 10203→7467s. Tests:
+  `tests/test_cluster_netcalib.py`. Live measurement blocked in this env (no SSH egress);
+  honest blocker at `agi-proof/benchmark-results/cluster/nccl-measure-blocker.public-report.json`.
+
 ## [0.9.0] - 2026-06-25
 
 ### Added — runtime trust-layer wiring + measurement arc

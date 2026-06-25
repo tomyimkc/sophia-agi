@@ -1,0 +1,36 @@
+{
+  "schema": "sophia.cluster_nccl_blocker.v1",
+  "experimentId": "cluster-network-tax-calibration",
+  "recordedAt": "2026-06-25",
+  "status": "BLOCKED",
+  "blocker": "no_ssh_client_and_no_runpod_api_key_in_execution_environment",
+  "goal": "Replace the simulator's MODELED NVLink tier with a MEASURED intra-node NCCL all-reduce bus bandwidth, then re-fit island_tax/node_tax.",
+  "harness": {
+    "onPodBenchmark": "tools/bench_nccl_allreduce.py (torchrun, one rank per GPU; emits busbw per message size)",
+    "orchestrator": "tools/runpod_nccl_bench.py (reuses tools/runpod_rlvr.py pod lifecycle: create -> poll SSH -> rsync -> run -> copy report -> ALWAYS delete)",
+    "calibrator": "tools/calibrate_network_tax.py --from-nccl <report> (writes cluster/netcalib.json, consumed by cluster/simulator.py)",
+    "dryRunVerified": true,
+    "unitTested": "tests/test_cluster_netcalib.py (command builder, busbw inversion, measured-provenance tagging, sim wiring)"
+  },
+  "environmentProbe": {
+    "sshClient": "MISSING (command -v ssh -> not found)",
+    "scpClient": "MISSING",
+    "runpodApiKeyInShell": "absent (RUNPOD_API_KEY unset)",
+    "torchLocally": "absent (CPU-only container)",
+    "runpodMcpReachable": true,
+    "gpuStock": "NVIDIA H100 80GB HBM3 (SXM) secureCloud stockStatus=High, available=true"
+  },
+  "whyNotRun": "The RunPod MCP can create a pod, but it exposes no pod-exec / pod-logs / file-read tool, so running torchrun on the pod and retrieving the JSON report requires SSH. This container has no ssh client and no RUNPOD_API_KEY in the shell, so the SSH-based orchestrator cannot run. Creating a paid pod whose results cannot be collected would waste money and risk orphaning a billable resource, so no pod was created.",
+  "currentCalibration": {
+    "source": "modeled",
+    "path": "cluster/netcalib.json",
+    "island_tax": 0.345316,
+    "node_tax": 1.036044,
+    "note": "Derived from documented interconnect line rates (NVLink 400 / NVSwitch 120 / RoCE 50 GB/s), exposed-comm-fraction 0.15. Upper-bound, worst-case comm-bound model."
+  },
+  "readyToRunWhenUnblocked": "RUNPOD_API_KEY=... python tools/runpod_nccl_bench.py --yes --gpu-count 2 --branch claude/supercomputing-cluster-job-fdbkks --calibrate",
+  "unblockNeeds": [
+    "A host with an ssh client + RUNPOD_API_KEY (e.g. a local machine or a runner with SSH egress to ssh.runpod.io), OR",
+    "A RunPod MCP pod-exec/log-retrieval capability so the benchmark can run and return its report without SSH."
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "sophia.cluster_netcalib.v1",
+  "source": "modeled",
+  "size_bytes": 268435456,
+  "n_ranks": 8,
+  "comm_fraction": 0.15,
+  "island_tax": 0.345343,
+  "node_tax": 1.036028,
+  "tiers": {
+    "nvlink": {
+      "name": "nvlink",
+      "bandwidth_gbps": 400.0,
+      "latency_us": 2.0,
+      "source": "modeled"
+    },
+    "nvswitch": {
+      "name": "nvswitch",
+      "bandwidth_gbps": 120.0,
+      "latency_us": 4.0,
+      "source": "modeled"
+    },
+    "nic": {
+      "name": "nic",
+      "bandwidth_gbps": 50.0,
+      "latency_us": 8.0,
+      "source": "modeled"
+    }
+  },
+  "notes": "MODELED from documented interconnect line rates \u2014 not a measurement. Run tools/runpod_nccl_bench.py to replace the nvlink tier with measured data.",
+  "provenance": {
+    "nvlink": "modeled",
+    "nvswitch": "modeled",
+    "nic": "modeled"
+  }
+}
