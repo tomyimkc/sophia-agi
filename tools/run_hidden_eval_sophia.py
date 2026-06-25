@@ -35,6 +35,14 @@ if str(TOOLS_DIR) not in sys.path:
 
 from agent.gate import check_response  # noqa: E402
 from agent.coding_council import format_coding_council, route_coding_council  # noqa: E402
+from agent.intake import (  # noqa: E402
+    append_intake_audit,
+    audit_entry,
+    compose_harness_prompt,
+    role_for_case,
+    run_intake,
+    validate_execution_within_contract,
+)
 from agent.llm import complete  # noqa: E402
 from agent.prompts import MODE_PROMPTS, MODE_PROMPTS_NO_COUNCIL  # noqa: E402
 from agent.retrieval import format_context, retrieve  # noqa: E402
@@ -961,13 +969,14 @@ class RunConfig:
     web_provider: str = "off"
     web_search_top_k: int = 5
     local_evidence_top_k: int = 3
+    intake_audit_path: Path | None = None
 
 
 @dataclass(frozen=True)
 class Ablation:
     """Which Sophia components are active for a case.
 
-    Maps 1:1 onto the seven modes in agi-proof/baseline-ablation/README.md.
+    Maps 1:1 onto the ablation modes in agi-proof/baseline-ablation/README.md.
     """
 
     label: str = "sophia-full"
@@ -980,6 +989,7 @@ class Ablation:
     use_tools: bool = True  # operational tool logs
     allow_repair: bool = True  # bounded Sophia repair attempt
     use_context_packing: bool = True  # scored long-context packing when cases provide passages
+    use_intake: bool = True  # Request Triage + Intake Contract front gate
 
 
 SOPHIA_FULL = Ablation()
@@ -995,6 +1005,7 @@ ABLATION_MODES: dict[str, Ablation] = {
         use_memory=False,
         use_tools=False,
         allow_repair=False,
+        use_intake=False,
     ),
     "raw-model-plus-tools": Ablation(
         label="raw-model-plus-tools",
@@ -1006,8 +1017,10 @@ ABLATION_MODES: dict[str, Ablation] = {
         use_memory=False,
         use_tools=True,
         allow_repair=False,
+        use_intake=False,
     ),
     "sophia-full": SOPHIA_FULL,
+    "sophia-no-intake": Ablation(label="sophia-no-intake", use_intake=False),
     "sophia-no-kb": Ablation(label="sophia-no-kb", use_kb=False, use_evidence=False),
     "sophia-no-gate": Ablation(label="sophia-no-gate", use_gate=False),
     "sophia-no-memory": Ablation(label="sophia-no-memory", use_memory=False),
@@ -1046,6 +1059,55 @@ def run_case(
     identical payload shape for score_pack/sanitized_report.
     """
     case_id = case["id"]
+    intake: dict[str, Any] = {}
+    intake_contract: dict[str, Any] = {}
+    intake_audit_entry: dict[str, Any] = {}
+    if ablation.use_intake:
+        role = role_for_case(case, use_tools=ablation.use_tools)
+        intake = run_intake(
+            case["prompt"],
+            role=role,
+            default_blp_level=str(case.get("blp_level", "UNCLASSIFIED")),
+            domain=str(case.get("domain", "")),
+        )
+        intake_contract = intake.get("contract", {})
+        if intake_contract:
+            intake_audit_entry = audit_entry(case_id, intake_contract)
+            append_intake_audit(config.intake_audit_path, intake_audit_entry)
+        action = intake_contract.get("recommended_action")
+        if intake.get("errors") or action in {"clarify", "escalate", "abstain"}:
+            held_reason = "needs_human" if intake.get("errors") or action in {"clarify", "escalate"} else "no_source"
+            reasons = intake.get("errors") or [f"intake recommended {action}; execution held fail-closed"]
+            gate = {
+                "gateApplied": True,
+                "passed": False,
+                "verdict": "held",
+                "held_reason": held_reason,
+                "reasons": reasons,
+            }
+            answer = (
+                "I cannot execute this request yet because the Request Triage + Intake Contract "
+                f"returned `{action or 'invalid'}`. Policy rule: {held_reason}."
+            )
+            return {
+                "answer": answer,
+                "sources": [],
+                "gate": gate,
+                "modelLog": {"intake": intake, "intakeAudit": intake_audit_entry},
+                "toolLog": {},
+                "memoryDiff": {},
+                "repairAttempts": 0,
+                "codingCouncilRoute": {},
+                "webEvidence": {},
+                "rubricReview": {},
+                "contextPackCard": {},
+                "contextPacking": {},
+                "intakeContract": intake_contract,
+                "intakeExecutionGate": gate,
+                "returncode": None,
+                "elapsedSec": 0.0,
+                "ablation": ablation.label,
+            }
 
     context_pack_card: dict[str, Any] = {}
     context_packing_summary: dict[str, Any] = {}
@@ -1136,6 +1198,8 @@ def run_case(
             evidence_context=evidence_context,
             operational_evidence=operational_evidence,
         )
+    if intake_contract:
+        user = compose_harness_prompt(case["prompt"], user, intake_contract)
 
     first = call_model(
         system,
@@ -1186,14 +1250,30 @@ def run_case(
         }
         second = call_model(
             system,
-            build_user_prompt(
-                case,
-                context,
-                repair=repair,
-                coding_council=council_context,
-                evidence_context=evidence_context,
-                operational_evidence=operational_evidence,
-                rubric_review_context=format_rubric_review(review),
+            (
+                compose_harness_prompt(
+                    case["prompt"],
+                    build_user_prompt(
+                        case,
+                        context,
+                        repair=repair,
+                        coding_council=council_context,
+                        evidence_context=evidence_context,
+                        operational_evidence=operational_evidence,
+                        rubric_review_context=format_rubric_review(review),
+                    ),
+                    intake_contract,
+                )
+                if intake_contract
+                else build_user_prompt(
+                    case,
+                    context,
+                    repair=repair,
+                    coding_council=council_context,
+                    evidence_context=evidence_context,
+                    operational_evidence=operational_evidence,
+                    rubric_review_context=format_rubric_review(review),
+                )
             ),
             backend=config.backend,
             timeout_sec=config.timeout_sec,
@@ -1219,6 +1299,35 @@ def run_case(
     model_log = {k: v for k, v in first.items() if k != "answer"}
     if learning_probe:
         model_log["learningProbe"] = learning_probe
+    if intake:
+        model_log["intake"] = intake
+    if intake_audit_entry:
+        model_log["intakeAudit"] = intake_audit_entry
+    intake_execution_gate: dict[str, Any] = {}
+    if intake_contract:
+        used_ops = ["enqueue_task"] if tool_log.get("commands") else []
+        intake_execution_gate = validate_execution_within_contract(
+            intake_contract,
+            {
+                "executed": True,
+                "used_ops": used_ops,
+                "blp_level": intake_contract.get("blp_level", "UNCLASSIFIED"),
+            },
+        )
+        model_log["intakeExecutionGate"] = intake_execution_gate
+        if intake_execution_gate.get("verdict") == "held":
+            answer = (
+                "I am holding this response because execution exceeded the Request Triage + "
+                "Intake Contract. "
+                f"Policy rule: {intake_execution_gate.get('held_reason')}."
+            )
+            gate = {
+                "gateApplied": True,
+                "passed": False,
+                "verdict": "held",
+                "held_reason": intake_execution_gate.get("held_reason"),
+                "reasons": intake_execution_gate.get("reasons", []),
+            }
 
     return {
         "answer": answer,
@@ -1233,6 +1342,8 @@ def run_case(
         "rubricReview": review,
         "contextPackCard": context_pack_card,
         "contextPacking": context_packing_summary,
+        "intakeContract": intake_contract,
+        "intakeExecutionGate": intake_execution_gate,
         "returncode": first.get("returncode"),
         "elapsedSec": first.get("elapsedSec"),
         "ablation": ablation.label,
@@ -1282,6 +1393,12 @@ def main() -> int:
     )
     parser.add_argument("--web-search-top-k", type=int, default=5)
     parser.add_argument("--local-evidence-top-k", type=int, default=3)
+    parser.add_argument(
+        "--intake-audit-out",
+        type=Path,
+        default=ROOT / "private" / "hidden-evals" / "intake_audit.jsonl",
+        help="Append-only Request Triage + Intake Contract audit log.",
+    )
     parser.add_argument(
         "--skip-preflight",
         action="store_true",
@@ -1335,6 +1452,7 @@ def main() -> int:
         web_provider=args.web_provider,
         web_search_top_k=args.web_search_top_k,
         local_evidence_top_k=args.local_evidence_top_k,
+        intake_audit_path=args.intake_audit_out,
     )
 
     for index, case in enumerate(pack["cases"], 1):

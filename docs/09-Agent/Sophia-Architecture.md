@@ -15,9 +15,10 @@ is why the baseline/ablation runner can toggle each one independently.
 
 ```mermaid
 flowchart TD
-    Q[Hidden / benchmark case] --> R[RAG retrieval<br/>agent/retrieval.py]
-    Q --> E[Local + web evidence<br/>agent/web_evidence.py]
-    Q --> C{Coding / figure council?<br/>agent/coding_council.py}
+    Q[Hidden / benchmark case] --> I[Request triage + intake contract<br/>agent/intake]
+    I --> R[RAG retrieval<br/>agent/retrieval.py]
+    I --> E[Local + web evidence<br/>agent/web_evidence.py]
+    I --> C{Coding / figure council?<br/>agent/coding_council.py}
     R --> P[Compose prompt<br/>MODE_PROMPTS or RAW_SYSTEM_PROMPT]
     E --> P
     C -->|coding/tool/planning/learning| P
@@ -55,6 +56,7 @@ flowchart LR
 
 | Component | Implementation | Ablation flag |
 |---|---|---|
+| Request triage + intake contract | `agent/intake/`, `sophia_contract/intake.py`, `schema/intake-contract-1.0.0.json` | `use_intake` |
 | RAG retrieval | `agent/retrieval.py` | `use_kb` |
 | Local/web evidence | `agent/web_evidence.py` | `use_evidence` |
 | Coding/figure council | `agent/coding_council.py` | `use_council` |
