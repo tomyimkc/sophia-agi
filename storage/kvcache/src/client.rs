@@ -3,7 +3,7 @@
 //! Async client. One TCP connection, request/response. Cheap to create per
 //! task; the benchmark and integration tests open many in parallel.
 
-use tokio::io::{BufReader, BufWriter};
+use tokio::io::{AsyncWriteExt, BufReader, BufWriter};
 use tokio::net::{TcpStream, ToSocketAddrs};
 use tokio::net::tcp::{OwnedReadHalf, OwnedWriteHalf};
 
@@ -27,7 +27,24 @@ impl Client {
 
     async fn call(&mut self, req: Request) -> std::io::Result<Response> {
         write_request(&mut self.writer, &req).await?;
+        self.writer.flush().await?;
         read_response(&mut self.reader).await
+    }
+
+    /// Pipeline a batch: write every request in one flush, then read every
+    /// response in order. Amortizes per-request round-trip latency across the
+    /// batch — the lever for raising throughput past the one-in-flight ceiling.
+    /// Responses are positional (`out[i]` answers `reqs[i]`).
+    pub async fn pipeline(&mut self, reqs: &[Request]) -> std::io::Result<Vec<Response>> {
+        for req in reqs {
+            write_request(&mut self.writer, req).await?;
+        }
+        self.writer.flush().await?;
+        let mut out = Vec::with_capacity(reqs.len());
+        for _ in reqs {
+            out.push(read_response(&mut self.reader).await?);
+        }
+        Ok(out)
     }
 
     pub async fn get(&mut self, key: &[u8]) -> std::io::Result<Option<Vec<u8>>> {

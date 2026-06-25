@@ -5,7 +5,7 @@
 use std::sync::Arc;
 use std::time::Duration;
 
-use kvcache::{serve, Client, ShardedCache};
+use kvcache::{serve, Client, Request, Response, ShardedCache};
 use tokio::net::TcpListener;
 
 async fn start(shards: usize, cap: usize) -> std::net::SocketAddr {
@@ -69,6 +69,26 @@ async fn concurrent_clients_share_state() {
     let mut c = Client::connect(addr).await.unwrap();
     let stats = c.stats().await.unwrap();
     assert_eq!(stats.entries, 16 * 200);
+}
+
+#[tokio::test]
+async fn pipelined_batch_preserves_order() {
+    let addr = start(4, 10_000).await;
+    let mut c = Client::connect(addr).await.unwrap();
+    // Seed even keys only; odd keys are absent.
+    for i in (0..20).step_by(2) {
+        c.set(format!("k{i}").as_bytes(), format!("v{i}").as_bytes(), 0).await.unwrap();
+    }
+    let reqs: Vec<Request> = (0..20).map(|i| Request::Get(format!("k{i}").into_bytes())).collect();
+    let resp = c.pipeline(&reqs).await.unwrap();
+    assert_eq!(resp.len(), 20);
+    for (i, r) in resp.iter().enumerate() {
+        if i % 2 == 0 {
+            assert_eq!(r, &Response::Value(format!("v{i}").into_bytes()), "pos {i}");
+        } else {
+            assert_eq!(r, &Response::NotFound, "pos {i}");
+        }
+    }
 }
 
 #[tokio::test]

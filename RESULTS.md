@@ -96,23 +96,27 @@ in-memory map. Numbers vary by host; reproduce with the command below.
 Representative run — 32 clients × 30,000 GETs, 100,000 keys, 256-byte values,
 16 shards, 100% read, no evictions (all hits):
 
-| metric | value |
-|---|---|
-| throughput | ~195,000 ops/sec |
-| latency p50 | ~161 µs |
-| latency p99 | ~282 µs |
-| latency p99.9 | ~374 µs |
+| pipeline depth | throughput | latency p50 | latency p99 |
+|---|---|---|---|
+| 1 (no pipelining) | ~186k ops/sec | ~168 µs (per-op) | ~300 µs (per-op) |
+| 16 | ~1.60M ops/sec | ~306 µs (per-batch) | ~546 µs (per-batch) |
+| 64 | ~2.13M ops/sec | ~920 µs (per-batch) | ~1602 µs (per-batch) |
 
-Honest caveats: single node, in-memory only, one in-flight request per connection
-(no pipelining — the primary throughput limiter, deferred to Phase 1b). These are a
-**baseline to optimize against**, not a claim of being fast yet. 13 unit + 5
-integration tests cover LRU eviction, TTL expiry, binary-safe framing, concurrent
+Phase 1b added request **pipelining**: the client packs a batch into one flush and
+the server coalesces responses (flush only when no further request is already
+buffered), turning N round trips into ~one. The result is the textbook
+throughput-for-latency trade — **8.6× throughput at depth 16** for a higher
+per-batch latency. The depth-1 row is the honest single-request baseline.
+
+Remaining caveats: single node, in-memory only. Persistence (io_uring on-disk
+engine) and replication (Raft) are Phases 2–3. 14 unit + 6 integration tests cover
+LRU eviction, TTL expiry, binary-safe framing, pipelined-batch ordering, concurrent
 shared state, and clean-EOF handling; all run offline in CI.
 
 ```bash
 cd storage
-cargo test                                                          # correctness
-cargo run --release --bin kvcache-bench -- --clients 32 --ops 30000 # numbers above
+cargo test                                                                     # correctness
+cargo run --release --bin kvcache-bench -- --clients 32 --ops 30000 --pipeline 16
 ```
 
 ## Reproduce

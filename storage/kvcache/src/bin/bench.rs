@@ -15,7 +15,7 @@
 use std::sync::Arc;
 use std::time::Instant;
 
-use kvcache::{serve, Client, ShardedCache};
+use kvcache::{serve, Client, Request, ShardedCache};
 use tokio::net::TcpListener;
 
 struct Args {
@@ -25,6 +25,7 @@ struct Args {
     value_size: usize,
     shards: usize,
     write_frac: f64,
+    pipeline: usize,
 }
 
 fn parse() -> Args {
@@ -35,6 +36,7 @@ fn parse() -> Args {
         value_size: 256,
         shards: 16,
         write_frac: 0.0,
+        pipeline: 1,
     };
     let mut it = std::env::args().skip(1);
     while let Some(flag) = it.next() {
@@ -45,9 +47,10 @@ fn parse() -> Args {
             "--keys" => a.keys = next_usize(),
             "--value-size" => a.value_size = next_usize(),
             "--shards" => a.shards = next_usize(),
+            "--pipeline" => a.pipeline = next_usize().max(1),
             "--write-frac" => a.write_frac = it.next().and_then(|v| v.parse().ok()).expect("float"),
             "-h" | "--help" => {
-                println!("usage: kvcache-bench [--clients N] [--ops N] [--keys N] [--value-size N] [--shards N] [--write-frac F]");
+                println!("usage: kvcache-bench [--clients N] [--ops N] [--keys N] [--value-size N] [--shards N] [--pipeline DEPTH] [--write-frac F]");
                 std::process::exit(0);
             }
             other => panic!("unknown arg {other}"),
@@ -101,46 +104,60 @@ async fn main() -> std::io::Result<()> {
     let mut handles = Vec::with_capacity(args.clients);
     for cid in 0..args.clients {
         let value = value.clone();
-        let (ops, keys, write_frac) = (args.ops, args.keys, args.write_frac);
+        let (ops, keys, write_frac, depth) = (args.ops, args.keys, args.write_frac, args.pipeline);
         handles.push(tokio::spawn(async move {
             let mut client = Client::connect(addr).await.expect("connect");
             let mut rng = Lcg(0x9e3779b97f4a7c15 ^ (cid as u64).wrapping_mul(0xbf58476d1ce4e5b9));
-            let mut lats = Vec::with_capacity(ops);
+            let mut lats = Vec::with_capacity(ops / depth + 1);
             let write_cut = (write_frac * u32::MAX as f64) as u64;
-            for _ in 0..ops {
-                let r = rng.next();
-                let key = format!("key-{}", r % keys as u64);
+            let mut done = 0;
+            while done < ops {
+                let batch = depth.min(ops - done);
+                // Build a batch of requests; depth==1 degenerates to one op.
+                let reqs: Vec<Request> = (0..batch)
+                    .map(|_| {
+                        let r = rng.next();
+                        let key = format!("key-{}", r % keys as u64).into_bytes();
+                        if (r & 0xffff_ffff) < write_cut {
+                            Request::Set { key, val: value.clone(), ttl_ms: 0 }
+                        } else {
+                            Request::Get(key)
+                        }
+                    })
+                    .collect();
                 let t0 = Instant::now();
-                if (r & 0xffff_ffff) < write_cut {
-                    client.set(key.as_bytes(), &value, 0).await.expect("set");
-                } else {
-                    let _ = client.get(key.as_bytes()).await.expect("get");
-                }
-                lats.push(t0.elapsed().as_micros() as u64);
+                client.pipeline(&reqs).await.expect("pipeline");
+                lats.push(t0.elapsed().as_micros() as u64); // per-batch latency
+                done += batch;
             }
             lats
         }));
     }
 
-    let mut all = Vec::with_capacity(args.clients * args.ops);
+    let mut all = Vec::new(); // per-batch latencies (== per-op when depth==1)
     for h in handles {
         all.extend(h.await.expect("client task"));
     }
     let elapsed = started.elapsed();
     all.sort_unstable();
 
-    let total = all.len() as f64;
-    let qps = total / elapsed.as_secs_f64();
+    let total_ops = (args.clients * args.ops) as f64;
+    let qps = total_ops / elapsed.as_secs_f64();
     let stats = cache.stats();
+    let lat_unit = if args.pipeline == 1 {
+        "per-op".to_string()
+    } else {
+        format!("per-batch (depth={})", args.pipeline)
+    };
 
     println!("--- results ---");
-    println!("total ops      : {}", all.len());
+    println!("total ops      : {}", args.clients * args.ops);
     println!("wall time      : {:.3} s", elapsed.as_secs_f64());
     println!("throughput     : {:.0} ops/sec", qps);
-    println!("latency p50    : {} us", percentile(&all, 50.0));
-    println!("latency p99    : {} us", percentile(&all, 99.0));
-    println!("latency p99.9  : {} us", percentile(&all, 99.9));
-    println!("latency max    : {} us", all.last().copied().unwrap_or(0));
+    println!("latency p50    : {} us ({lat_unit})", percentile(&all, 50.0));
+    println!("latency p99    : {} us ({lat_unit})", percentile(&all, 99.0));
+    println!("latency p99.9  : {} us ({lat_unit})", percentile(&all, 99.9));
+    println!("latency max    : {} us ({lat_unit})", all.last().copied().unwrap_or(0));
     println!(
         "server stats   : hits={} misses={} sets={} evictions={} entries={}",
         stats.hits, stats.misses, stats.sets, stats.evictions, stats.entries

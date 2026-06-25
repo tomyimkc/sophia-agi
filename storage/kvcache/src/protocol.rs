@@ -106,6 +106,9 @@ pub async fn read_request<R: AsyncRead + Unpin>(r: &mut R) -> io::Result<Option<
     Ok(Some(req))
 }
 
+/// Encode a request into the writer **without flushing**. The caller flushes —
+/// this lets a pipelining client pack many requests into one write/syscall
+/// batch before a single `flush().await`.
 pub async fn write_request<W: AsyncWrite + Unpin>(w: &mut W, req: &Request) -> io::Result<()> {
     match req {
         Request::Get(k) => {
@@ -125,7 +128,7 @@ pub async fn write_request<W: AsyncWrite + Unpin>(w: &mut W, req: &Request) -> i
         Request::Ping => w.write_u8(OP_PING).await?,
         Request::Stats => w.write_u8(OP_STATS).await?,
     }
-    w.flush().await
+    Ok(())
 }
 
 pub async fn write_response<W: AsyncWrite + Unpin>(w: &mut W, resp: &Response) -> io::Result<()> {
@@ -151,7 +154,7 @@ pub async fn write_response<W: AsyncWrite + Unpin>(w: &mut W, resp: &Response) -
             write_bytes(w, msg.as_bytes()).await?;
         }
     }
-    w.flush().await
+    Ok(())
 }
 
 pub async fn read_response<R: AsyncRead + Unpin>(r: &mut R) -> io::Result<Response> {

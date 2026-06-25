@@ -40,7 +40,14 @@ async fn handle_conn(stream: TcpStream, cache: Arc<ShardedCache>) -> std::io::Re
     while let Some(req) = read_request(&mut reader).await? {
         let resp = dispatch(&cache, req);
         write_response(&mut writer, &resp).await?;
-        writer.flush().await?;
+        // Coalesce responses for pipelined batches: only flush once no further
+        // request is already sitting in the read buffer, so a batch of N
+        // requests turns into ~one writev instead of N. (The BufWriter also
+        // auto-flushes when full, bounding memory.) Correctness is unaffected —
+        // a client awaiting N responses has already sent all N requests.
+        if reader.buffer().is_empty() {
+            writer.flush().await?;
+        }
     }
     Ok(())
 }

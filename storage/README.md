@@ -59,16 +59,17 @@ Representative run (32 clients × 30k GETs, 100k keys, 256-byte values, 16 shard
 loopback, results vary by host — these are from CI-class hardware, recorded in
 [../RESULTS.md](../RESULTS.md)):
 
-| metric | value |
-|---|---|
-| throughput | ~195k ops/sec |
-| latency p50 | ~161 µs |
-| latency p99 | ~282 µs |
-| latency p99.9 | ~374 µs |
+| pipeline depth | throughput | p50 | p99 |
+|---|---|---|---|
+| 1 | ~186k ops/sec | ~168 µs/op | ~300 µs/op |
+| 16 | ~1.60M ops/sec | ~306 µs/batch | ~546 µs/batch |
+| 64 | ~2.13M ops/sec | ~920 µs/batch | ~1602 µs/batch |
 
-The headline limiter is the **one-in-flight-request-per-connection** design;
-request pipelining (Phase 1b) is the next throughput lever. These numbers exist
-to make later optimizations measurable, not to claim they are good yet.
+Phase 1b added **pipelining** (`Client::pipeline`, `--pipeline DEPTH`): the client
+batches requests into one flush and the server coalesces responses, trading
+per-batch latency for ~8.6× throughput at depth 16. The depth-1 row is the honest
+single-request baseline. These numbers exist to make later optimizations
+measurable, not to claim they are good yet.
 
 ## Using it from Sophia (Python)
 
