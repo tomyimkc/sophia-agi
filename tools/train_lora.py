@@ -48,6 +48,8 @@ if str(ROOT) not in sys.path:
 TRAIN_JSONL = ROOT / "training" / "lora" / "train.jsonl"
 HOLDOUT_JSONL = ROOT / "training" / "lora" / "holdout.jsonl"
 DISTILL_JSONL = ROOT / "training" / "council" / "traces.jsonl"
+MATH_CODE_PACK_DIR = ROOT / "training" / "sophia-math-code-curriculum"
+MATH_CODE_SFT = MATH_CODE_PACK_DIR / "sft_all.jsonl"
 DEFAULT_MODEL = "Qwen/Qwen2.5-3B-Instruct"
 REQUIRED_ADAPTER_FILES = ("adapter_config.json", "adapter_model.safetensors")
 DONE_MARKER = ".train_complete"
@@ -62,6 +64,21 @@ def load_rows(path: Path) -> list[dict]:
         if line.strip():
             rows.append(json.loads(line))
     return rows
+
+
+def resolve_train_path(path: Path) -> Path:
+    """Resolve a training JSONL path or pack directory to a concrete JSONL file.
+
+    When ``path`` is a directory containing ``manifest.json`` with schema
+    ``sophia.math_code_curriculum.v1``, returns ``sft_all.jsonl`` inside that pack.
+    """
+    if path.is_dir():
+        manifest_path = path / "manifest.json"
+        if manifest_path.exists():
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            if manifest.get("schema") == "sophia.math_code_curriculum.v1":
+                return path / "sft_all.jsonl"
+    return path
 
 
 def scaffold_rows(rows: list[dict]) -> int:
@@ -670,7 +687,11 @@ def verify_checkpoint(output: Path) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="LoRA fine-tune on Sophia corpus")
     parser.add_argument("--model", default=DEFAULT_MODEL)
-    parser.add_argument("--train", type=Path, default=TRAIN_JSONL)
+    parser.add_argument(
+        "--train", "--data", type=Path, default=TRAIN_JSONL, dest="train",
+        help="Training JSONL or math-code curriculum pack directory "
+             f"(default: {TRAIN_JSONL.relative_to(ROOT)}; pack dir → sft_all.jsonl)",
+    )
     parser.add_argument("--output", type=Path, default=ROOT / "training" / "lora" / "checkpoints" / "sophia-v1")
     parser.add_argument(
         "--resume-adapter",
@@ -753,8 +774,12 @@ def main() -> int:
             flush=True,
         )
 
+    args.train = resolve_train_path(args.train)
     if not args.train.exists():
-        print(f"Missing {args.train}. Run: python tools/prepare_lora_dataset.py")
+        hint = "python tools/prepare_lora_dataset.py"
+        if MATH_CODE_PACK_DIR.exists():
+            hint += f" or point --data at {MATH_CODE_SFT.relative_to(ROOT)}"
+        print(f"Missing {args.train}. Run: {hint}")
         return 1
 
     rows = load_rows(args.train)

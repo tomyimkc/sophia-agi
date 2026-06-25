@@ -649,3 +649,22 @@ excluded from training pack. `canClaimAGI` stays **False**.
 recipe wired to `training/sophia-math-code-curriculum/`; evidence-oracle
 thresholds untested; protected-suite regression gate not run post-adapter.
 
+**Stage 3 prep (QLoRA wiring) — 2026-06-25:** Stage 3 GPU run **not executed**
+(no `RUNPOD_API_KEY` / no local CUDA in prep session). Wired:
+
+| Artifact | Purpose |
+|----------|---------|
+| `training/sophia-math-code-curriculum/README.md` | Local + RunPod train commands (QLoRA 4-bit, `--mask-prompt`, 2 epochs, seeds 0–2) |
+| `agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh` | 3-seed RunPod launcher → `sft_all.jsonl` |
+| `tools/train_lora.py` | `--data` alias + pack-dir manifest hook → `sft_all.jsonl` |
+| `tools/runpod_train.py` | `--train-data`, `--train-only`, `--adapter-dir` for sealed-pack SFT |
+| `tools/prepare_math_code_mlx.py` | Optional MLX chat-data materialization (not committed) |
+| `tests/test_train_lora_math_code_pack.py` | Pack format + resolve hook |
+
+`train_lora.py --dry-run --data training/sophia-math-code-curriculum/` → **144 rows**.
+`guard_filter` on pack → **0 dropped**. `canClaimAGI` stays **False**.
+
+**Blockers for Stage 3 GPU run:** `RUNPOD_API_KEY` or local CUDA GPU; Qwen2.5-7B-Instruct
+base weights download; post-train held-out evidence-oracle eval + 7B baseline ladder;
+`promote_adapter` protected-floor after adapter exists.
+

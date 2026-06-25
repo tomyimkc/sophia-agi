@@ -64,6 +64,42 @@ ADAPTER_DIR = "/workspace/sophia-runpod/sophia-agi/training/lora/checkpoints/sop
 
 def _remote_train_script(args: argparse.Namespace) -> str:
     branch_flag = (" --branch " + shlex.quote(args.branch)) if args.branch else ""
+    adapter_dir = shlex.quote(args.adapter_dir)
+    train_data = getattr(args, "train_data", None)
+    train_only = getattr(args, "train_only", False)
+
+    if train_data:
+        prepare_step = f"# 1) sealed curriculum pack (no prepare_lora_dataset)\nTRAIN_DATA={shlex.quote(str(train_data))}"
+        train_cmd = f"""python tools/train_lora.py \\
+  --model "$SOPHIA_MODEL" --train "$TRAIN_DATA" --4bit \\
+  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" \\
+  --output {adapter_dir}"""
+    else:
+        prepare_step = "# 1) data (decontaminated train/holdout + pre-split)\npython tools/prepare_lora_dataset.py"
+        train_cmd = f"""python tools/train_lora.py \\
+  --model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 \\
+  --scaffold --guard --eval-every 25 --patience 4 \\
+  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" \\
+  --output {adapter_dir}"""
+
+    eval_block = ""
+    if not train_only:
+        eval_block = f"""
+# 3) eval ladder: base · base+gate · adapter · adapter+gate (writes eval_ladder_adapter.json)
+python tools/eval_ladder.py --backend hf --model "$SOPHIA_MODEL" --adapter {adapter_dir} \\
+  || echo "[train] eval_ladder failed (non-fatal); adapter still returned"
+cp training/local_sophia_v2/eval_ladder_adapter.json /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
+
+# 4) W2 promotion gate (protected-floor proof; reads the eval ladder + adapter seed)
+python tools/promote_adapter.py \\
+  --adapter-config {adapter_dir}/sophia_lora_config.json \\
+  --out /workspace/sophia-runpod/promotion.public-report.json \\
+  || echo "[train] promote_adapter failed (non-fatal)"
+
+echo "===== sophia_lora_config.json ====="; cat /workspace/sophia-runpod/sophia_lora_config.json 2>/dev/null || true
+echo "===== eval_ladder_adapter.json ====="; cat /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
+echo "===== promotion.public-report.json ====="; cat /workspace/sophia-runpod/promotion.public-report.json 2>/dev/null || true"""
+
     return f"""
 set -Eeuo pipefail
 export DEBIAN_FRONTEND=noninteractive
@@ -84,35 +120,16 @@ nvidia-smi || true
 python -m pip install --upgrade pip setuptools wheel
 python -m pip install -r requirements-lora.txt   # torch pinned <2.9 -> ABI stable
 
-# 1) data (decontaminated train/holdout + pre-split)
-python tools/prepare_lora_dataset.py
+{prepare_step}
 
-# 2) REAL training — the research-backed gate-disciplined recipe. Adapter is tarred
-#    immediately after so it always comes back even if eval/promote later fail.
-python tools/train_lora.py \
-  --model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 \
-  --scaffold --guard --eval-every 25 --patience 4 \
-  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" \
-  --output {ADAPTER_DIR}
-if [ -d {ADAPTER_DIR} ]; then
-  tar -czf /workspace/sophia-runpod/sophia-cuda-v1.tar.gz -C $(dirname {ADAPTER_DIR}) $(basename {ADAPTER_DIR})
-  cp {ADAPTER_DIR}/sophia_lora_config.json /workspace/sophia-runpod/sophia_lora_config.json || true
+# 2) REAL training — adapter is tarred immediately after so it always comes back
+#    even if eval/promote later fail.
+{train_cmd}
+if [ -d {adapter_dir} ]; then
+  tar -czf /workspace/sophia-runpod/sophia-cuda-v1.tar.gz -C $(dirname {adapter_dir}) $(basename {adapter_dir})
+  cp {adapter_dir}/sophia_lora_config.json /workspace/sophia-runpod/sophia_lora_config.json || true
 fi
-
-# 3) eval ladder: base · base+gate · adapter · adapter+gate (writes eval_ladder_adapter.json)
-python tools/eval_ladder.py --backend hf --model "$SOPHIA_MODEL" --adapter {ADAPTER_DIR} \
-  || echo "[train] eval_ladder failed (non-fatal); adapter still returned"
-cp training/local_sophia_v2/eval_ladder_adapter.json /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
-
-# 4) W2 promotion gate (protected-floor proof; reads the eval ladder + adapter seed)
-python tools/promote_adapter.py \
-  --adapter-config {ADAPTER_DIR}/sophia_lora_config.json \
-  --out /workspace/sophia-runpod/promotion.public-report.json \
-  || echo "[train] promote_adapter failed (non-fatal)"
-
-echo "===== sophia_lora_config.json ====="; cat /workspace/sophia-runpod/sophia_lora_config.json 2>/dev/null || true
-echo "===== eval_ladder_adapter.json ====="; cat /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
-echo "===== promotion.public-report.json ====="; cat /workspace/sophia-runpod/promotion.public-report.json 2>/dev/null || true
+{eval_block}
 echo "Sophia real training run complete."
 """
 
@@ -132,6 +149,22 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--model", default="Qwen/Qwen2.5-3B-Instruct")
     ap.add_argument("--epochs", type=int, default=1)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument(
+        "--train-data",
+        type=Path,
+        default=None,
+        help="Training JSONL for SFT-only runs (skips prepare_lora_dataset; uses --train-only recipe)",
+    )
+    ap.add_argument(
+        "--adapter-dir",
+        default=ADAPTER_DIR,
+        help="Remote adapter output directory inside the pod",
+    )
+    ap.add_argument(
+        "--train-only",
+        action="store_true",
+        help="Skip eval_ladder and promote_adapter on the pod (curriculum / sealed-pack SFT)",
+    )
     ap.add_argument("--gpu-type", default=",".join(DEFAULT_GPU_TYPES))
     ap.add_argument("--gpu-count", type=int, default=1)
     ap.add_argument("--cloud-type", choices=["SECURE", "COMMUNITY"], default="SECURE")
@@ -187,6 +220,8 @@ def main(argv: list[str] | None = None) -> int:
     import os
 
     args = parse_args(argv)
+    if args.train_data and not args.train_only:
+        args.train_only = True
     api_key = os.environ.get(args.api_key_env, "")
     if not api_key and args.api_key_file:
         api_key = args.api_key_file.read_text(encoding="utf-8").strip()
