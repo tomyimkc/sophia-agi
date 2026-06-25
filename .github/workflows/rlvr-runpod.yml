@@ -123,7 +123,8 @@ jobs:
           for f in agi-proof/benchmark-results/runpod-rlvr/**/*adapter-eval*.json; do found="$f"; break; done
           if [ -n "$found" ]; then
             echo "Ingesting FRESH pod report: $found"
-            python tools/ingest_rlvr_eval.py "$found" --print
+            python tools/ingest_rlvr_eval.py "$found" --print \
+              --hardened --registry agi-proof/benchmark-results/rlvr-replication/registry.jsonl
           else
             echo "::warning::No fresh adapter-eval was copied back from the pod. NOT gating any"
             echo "committed archive (fail-closed). The live run produces sophia-rlvr-v1.adapter-eval.json"

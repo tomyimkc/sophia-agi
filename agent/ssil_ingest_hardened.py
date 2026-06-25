@@ -85,12 +85,22 @@ _BOUNDARY = (
 
 def _ensure_builtin_probes() -> None:
     """Register the real, validated dangerous-capability probes that ship today. Idempotent.
-    Currently just monitor_subversion; this is where future real probes get wired in. It
-    does NOT make G8 fully provisioned (5 placeholders remain), but it lets a measured
-    monitor-subversion danger HALT the loop."""
-    from agent import ssil_probe_monitor_subversion as monitor_subversion
+    All six required probes are now behavioural (refusal-style) proxies — see the
+    agent/ssil_probe_*.py modules and their shared honest boundary in ssil_probe_common.
+    Registering them makes G8 *fully provisioned*, but the ingest only ENFORCES G8 when this
+    run's report actually carries all six measurements (or any one measures a HALT); a built
+    battery with no measurements in the report does not block a promote."""
+    from agent import (
+        ssil_probe_autonomous_replication as autonomous_replication,
+        ssil_probe_bio_uplift as bio_uplift,
+        ssil_probe_cyber_offense as cyber_offense,
+        ssil_probe_deception as deception,
+        ssil_probe_monitor_subversion as monitor_subversion,
+        ssil_probe_persuasion as persuasion,
+    )
 
-    monitor_subversion.register(validated=True)
+    for module in (monitor_subversion, cyber_offense, deception, persuasion, bio_uplift, autonomous_replication):
+        module.register(validated=True)
 
 
 def _base_checkpoint() -> dict[str, Any]:
@@ -186,17 +196,21 @@ def harden(
     # is not built. ---
     pending = dict(PENDING_GATES)
     measured = {k: float(v) for k, v in (probe_report or {}).items() if isinstance(v, (int, float))}
+    all_measured = len(measured) == len(capability_ceiling.REQUIRED_PROBES)
     any_halt = any(v >= capability_ceiling.HALT_THRESHOLD_DEFAULT for v in measured.values())
-    if probe_report is not None and (probes.is_g8_provisioned() or any_halt):
+    if probe_report is not None and (all_measured or any_halt):
+        # Enforce G8 when this run actually measured the whole battery (the ceiling can be
+        # cleared) OR when any single probe measures a HALT (a measured danger stops the loop
+        # regardless of how many other probes ran — G8's halt condition wins outright).
         enforced["G8"] = capability_ceiling.evaluate({"probeScores": probe_report}, candidate_id=candidate_id)
         pending.pop("G8", None)
     else:
-        validated = probes.validated_probes()
         pending["G8"] = (
-            "dangerous-capability ceiling not fully provisioned "
-            f"(validated probes: {validated or 'none'}; measured this run: {sorted(measured)}); "
-            "no measured HALT — advisory only. Register the remaining probes "
-            "(agent/ssil_capability_probes.register_probe / ssil_probe_*.register) to enforce."
+            f"dangerous-capability ceiling not measured this run (validated battery: "
+            f"{probes.validated_probes() or 'none'}; measured: {sorted(measured)} / "
+            f"{len(capability_ceiling.REQUIRED_PROBES)} required); no measured HALT — advisory only. "
+            "The pod must run the probes (ssil_probe_*.run) and emit scores under report['probes'] "
+            "to enforce the ceiling."
         )
 
     # --- Combine fail-closed (worst-wins) with the Layer-1 verdict. ---
