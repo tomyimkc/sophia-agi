@@ -230,7 +230,16 @@ def _recall_line(page, graph) -> str:
     return f"- [[{page.id}]]{note}"
 
 
-def plan(task: AgentTask, client: ModelClient, *, max_steps: int = 4) -> list[dict]:
+def _scoped_catalog(allowed_tools: "set[str] | None") -> list[str]:
+    """Tool names this run may use: all of TOOL_CATALOG, or the allowed subset
+    (least-privilege scoping for subagents). An unknown name in the scope is
+    ignored — the scope can only ever *narrow* the catalog, never widen it."""
+    if allowed_tools is None:
+        return list(TOOL_CATALOG)
+    return [t for t in TOOL_CATALOG if t in allowed_tools]
+
+
+def plan(task: AgentTask, client: ModelClient, *, max_steps: int = 4, allowed_tools: "set[str] | None" = None) -> list[dict]:
     """Ask the model for a compact JSON plan; fall back to a single answer step."""
     skill_block = ""
     if task.skill:
@@ -239,24 +248,26 @@ def plan(task: AgentTask, client: ModelClient, *, max_steps: int = 4) -> list[di
             + "\n".join(f"- step: {s}" for s in task.skill.get("workflow", []))
         )
     memory_block = _memory_recall(task.goal)
+    catalog = _scoped_catalog(allowed_tools)
     system = "You are a planner. Output ONLY a JSON array of steps."
     parts = [f"Goal: {task.goal}\nMode: {task.mode}\n{task.context}{skill_block}"]
     if memory_block:
         parts.append(memory_block)
     parts.append(
-        f"Available repo tools: {', '.join(TOOL_CATALOG)}.\n"
+        f"Available repo tools: {', '.join(catalog) or '(none)'}.\n"
         f"Return up to {max_steps} steps as JSON: "
         '[{"id":"s1","description":"...","action":"model|tool","tool":"<tool name or empty>"}].'
     )
     user = "\n\n".join(parts)
     result = client.generate(system, user)
-    steps = _parse_plan(result.text, max_steps=max_steps)
+    steps = _parse_plan(result.text, max_steps=max_steps, catalog=catalog)
     if not steps:
         steps = [{"id": "s1", "description": task.goal, "action": "model", "tool": ""}]
     return steps
 
 
-def _parse_plan(text: str, *, max_steps: int) -> list[dict]:
+def _parse_plan(text: str, *, max_steps: int, catalog: "list[str] | None" = None) -> list[dict]:
+    allowed = TOOL_CATALOG if catalog is None else set(catalog)
     candidate = text
     fence = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", text, re.DOTALL)
     if fence:
@@ -279,8 +290,8 @@ def _parse_plan(text: str, *, max_steps: int) -> list[dict]:
             {
                 "id": str(item.get("id") or f"s{index}"),
                 "description": str(item.get("description") or item.get("desc") or "step"),
-                "action": "tool" if str(item.get("action")) == "tool" and item.get("tool") in TOOL_CATALOG else "model",
-                "tool": item.get("tool") if item.get("tool") in TOOL_CATALOG else "",
+                "action": "tool" if str(item.get("action")) == "tool" and item.get("tool") in allowed else "model",
+                "tool": item.get("tool") if item.get("tool") in allowed else "",
             }
         )
     return steps
@@ -317,6 +328,7 @@ def _execute_step(
     prior: str,
     max_retries: int,
     approve_tools: bool,
+    allowed_tools: "set[str] | None" = None,
 ) -> StepResult:
     result = StepResult(step_id=step["id"], description=step["description"], action=step["action"])
     reflection: str | None = None
@@ -333,8 +345,17 @@ def _execute_step(
         tool_results: list[dict] = []
         if step["action"] == "tool" or "{\"tools\"" in text or "```json" in text:
             requested = parse_tool_requests(text)
+            # Least-privilege: a tool requested outside this run's scope is refused
+            # fail-closed (recorded as a failed result so the step does not pass).
+            if allowed_tools is not None and requested:
+                blocked = [t for t in requested if t not in allowed_tools]
+                requested = [t for t in requested if t in allowed_tools]
+                if blocked:
+                    store.log("tool_scope_block", step=step["id"], blocked=blocked)
+                    tool_results.extend({"tool": t, "ok": False, "error": "out of subagent tool scope"} for t in blocked)
             if requested:
-                tool_results = run_tools(requested, approved=approve_tools)
+                tool_results.extend(run_tools(requested, approved=approve_tools))
+            if tool_results:
                 store.log("tool_call", step=step["id"], requested=requested, results=tool_results)
         result.tool_results = tool_results
 
@@ -382,6 +403,7 @@ def run_agent(
     approve_tools: bool = False,
     resume: bool = False,
     consolidate: bool = False,
+    allowed_tools: "set[str] | None" = None,
 ) -> AgentResult:
     """Run the full plan -> execute -> critic -> reflect/retry loop.
 
@@ -394,7 +416,7 @@ def run_agent(
     store.resume() if resume else store.fresh()
     store.log("task_start", goal=task.goal, mode=task.mode, skill=(task.skill or {}).get("name"), resumed=resume)
 
-    steps = plan(task, client, max_steps=max_steps)
+    steps = plan(task, client, max_steps=max_steps, allowed_tools=allowed_tools)
     store.log("plan", steps=[s["id"] for s in steps], detail=steps)
 
     completed = set(store.state.get("completedSteps", [])) if resume else set()
@@ -416,6 +438,7 @@ def run_agent(
         outcome = _execute_step(
             task, step, client=client, store=store, verifier=verifier,
             prior=prior_text, max_retries=max_retries, approve_tools=approve_tools,
+            allowed_tools=allowed_tools,
         )
         step_results.append(outcome)
         total_cost += outcome.cost_usd
