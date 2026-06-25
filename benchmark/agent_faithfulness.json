@@ -1,0 +1,173 @@
+{
+  "schema": "sophia.agent_faithfulness.bench.v1",
+  "status": "SEED — first-party, hand-labelled by intent; deterministic scoring (no LLM judge). Labels are independent of the evaluator (set from the case's design, not by running it); a perfect score therefore means the evaluator agrees with the intended semantics, NOT that labels were back-fitted.",
+  "scoring": "Deterministic: agent.trajectory_eval.evaluate_trajectory with the default lexical support judge. No model is called, so there is no judge variance and no multi-family gate; the honesty risk here is LABEL PROVENANCE (first-party), disclosed above.",
+  "verdicts": ["accept", "abstain", "blocked"],
+  "cases": [
+    {
+      "id": "G1-grounded-own",
+      "category": "grounded",
+      "expectVerdict": "accept",
+      "expectFirstUnfaithfulStep": null,
+      "note": "Claim is supported by the step's own observation.",
+      "trajectory": [
+        {"id": "s1", "role": "tool_call", "tool": "search",
+         "observation": "The Treaty of Westphalia ended the Thirty Years War in Europe."},
+        {"id": "s2", "role": "assertion",
+         "claim": "The Treaty of Westphalia ended the Thirty Years War."}
+      ]
+    },
+    {
+      "id": "G2-grounded-backward-cite",
+      "category": "grounded",
+      "expectVerdict": "accept",
+      "expectFirstUnfaithfulStep": null,
+      "note": "Claim cites an earlier observation that supports it.",
+      "trajectory": [
+        {"id": "s1", "role": "observation",
+         "observation": "Patient temperature recorded at thirty-nine degrees celsius."},
+        {"id": "s2", "role": "tool_call", "tool": "noop"},
+        {"id": "s3", "role": "assertion",
+         "claim": "Patient temperature was thirty-nine degrees celsius.", "cites": ["s1"]}
+      ]
+    },
+    {
+      "id": "G3-grounded-multistep",
+      "category": "grounded",
+      "expectVerdict": "accept",
+      "expectFirstUnfaithfulStep": null,
+      "note": "Two claims, each grounded in available evidence.",
+      "trajectory": [
+        {"id": "s1", "role": "observation",
+         "observation": "The library opens at nine in the morning on weekdays."},
+        {"id": "s2", "role": "assertion",
+         "claim": "The library opens at nine on weekdays."},
+        {"id": "s3", "role": "observation",
+         "observation": "Members may borrow up to ten books at a time."},
+        {"id": "s4", "role": "assertion",
+         "claim": "Members may borrow up to ten books.", "cites": ["s3"]}
+      ]
+    },
+    {
+      "id": "U1-fabrication-no-evidence",
+      "category": "fabrication",
+      "expectVerdict": "abstain",
+      "expectFirstUnfaithfulStep": "s1",
+      "note": "A free-floating claim: no observation supports it at all.",
+      "trajectory": [
+        {"id": "s1", "role": "assertion",
+         "claim": "Quarterly revenue grew forty-two percent year over year."}
+      ]
+    },
+    {
+      "id": "U2-fabrication-midplan-empty-cite",
+      "category": "fabrication",
+      "expectVerdict": "abstain",
+      "expectFirstUnfaithfulStep": "s4",
+      "note": "Mid-plan fabrication: cites a tool step that returned no observation, so the warrant is empty.",
+      "trajectory": [
+        {"id": "s1", "role": "observation",
+         "observation": "The endpoint returns a list of user records."},
+        {"id": "s2", "role": "assertion",
+         "claim": "The endpoint returns user records."},
+        {"id": "s3", "role": "tool_call", "tool": "calculate"},
+        {"id": "s4", "role": "assertion",
+         "claim": "The computation shows a sixty percent failure rate.", "cites": ["s3"]}
+      ]
+    },
+    {
+      "id": "U3-forward-citation",
+      "category": "fabrication",
+      "expectVerdict": "abstain",
+      "expectFirstUnfaithfulStep": "s1",
+      "note": "Cites a LATER step; a forward citation earns no warrant (fail-closed).",
+      "trajectory": [
+        {"id": "s1", "role": "assertion",
+         "claim": "Widget sales doubled in the third quarter.", "cites": ["s2"]},
+        {"id": "s2", "role": "observation",
+         "observation": "Widget sales doubled in the third quarter versus the second."}
+      ]
+    },
+    {
+      "id": "V1-weak-overlap-cite",
+      "category": "weak_evidence",
+      "expectVerdict": "abstain",
+      "expectFirstUnfaithfulStep": null,
+      "note": "Evidence exists but is unrelated; the offline judge abstains (UNVERIFIED), not a fabrication.",
+      "trajectory": [
+        {"id": "s1", "role": "observation", "observation": "Mitochondria produce ATP in the cell."},
+        {"id": "s2", "role": "assertion",
+         "claim": "The defendant breached the lease covenant in March.", "cites": ["s1"]}
+      ]
+    },
+    {
+      "id": "V2-weak-overlap-lenient",
+      "category": "weak_evidence",
+      "expectVerdict": "abstain",
+      "expectFirstUnfaithfulStep": null,
+      "note": "No citation; the only prior observation is unrelated, so the claim is unverified.",
+      "trajectory": [
+        {"id": "s1", "role": "observation",
+         "observation": "Photosynthesis converts sunlight into chemical energy."},
+        {"id": "s2", "role": "assertion",
+         "claim": "The quarterly budget was approved by the steering committee."}
+      ]
+    },
+    {
+      "id": "B1-provenance-violation-cited",
+      "category": "provenance_violation",
+      "expectVerdict": "blocked",
+      "expectFirstUnfaithfulStep": "s2",
+      "note": "A merged-lineage attribution the gate knows is wrong, even with an observation present.",
+      "trajectory": [
+        {"id": "s1", "role": "observation",
+         "observation": "Confucius and Laozi founded distinct traditions."},
+        {"id": "s2", "role": "assertion",
+         "claim": "Confucius wrote the Dao De Jing.", "cites": ["s1"]}
+      ]
+    },
+    {
+      "id": "B2-provenance-violation-no-evidence",
+      "category": "provenance_violation",
+      "expectVerdict": "blocked",
+      "expectFirstUnfaithfulStep": "s1",
+      "note": "A hard provenance violation takes precedence over the missing-evidence check.",
+      "trajectory": [
+        {"id": "s1", "role": "assertion", "claim": "Laozi wrote the Analects."}
+      ]
+    },
+    {
+      "id": "B3-provenance-violation-midplan",
+      "category": "provenance_violation",
+      "expectVerdict": "blocked",
+      "expectFirstUnfaithfulStep": "s3",
+      "note": "First two steps fine; the third asserts a known-false attribution.",
+      "trajectory": [
+        {"id": "s1", "role": "observation",
+         "observation": "Scholars attribute the Analects to the disciples of Confucius."},
+        {"id": "s2", "role": "assertion",
+         "claim": "Scholars attribute the Analects to the disciples of Confucius."},
+        {"id": "s3", "role": "assertion", "claim": "The Dao De Jing was written by Confucius."}
+      ]
+    },
+    {
+      "id": "N1-no-claims",
+      "category": "no_claims",
+      "expectVerdict": "abstain",
+      "expectFirstUnfaithfulStep": null,
+      "note": "Only tool calls; nothing asserted to certify.",
+      "trajectory": [
+        {"id": "s1", "role": "tool_call", "tool": "search", "observation": "some results"},
+        {"id": "s2", "role": "tool_call", "tool": "open"}
+      ]
+    },
+    {
+      "id": "E1-empty",
+      "category": "empty",
+      "expectVerdict": "abstain",
+      "expectFirstUnfaithfulStep": null,
+      "note": "Empty trajectory abstains (nothing to certify).",
+      "trajectory": []
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "schema": "sophia.field_requirements.manifest.v1",
+  "title": "Field-requirements capability proof",
+  "purpose": "A machine-checkable map from frontier-lab field requirements (DeepSeek / High-Flyer's 2026 hiring categories) to concrete, existing artifacts in THIS repo: modules, passing tests, and measured evidence. tools/verify_field_requirements.py walks this file and fails CI if any cited artifact is missing or does not compile — so the proof is enforced, not asserted.",
+  "marketSource": {
+    "drive": "DeepSeek / High-Flyer 2026 recruitment — ~33 roles across 7 categories; pivot to agentic AI + owning the data/eval/infra stack.",
+    "newRoleTitles": ["Agent Data Evaluation Expert", "Agent Deep Learning Algorithm Researcher", "Agent Infrastructure Engineer"],
+    "citations": [
+      "https://www.bloomberg.com/news/articles/2026-03-24/deepseek-s-latest-job-postings-highlight-pivot-to-agentic-ai",
+      "https://www.scmp.com/tech/big-tech/article/3358394/deepseek-hiring-spree-chinese-ai-firm-seeks-newcomers-it-pursues-agi",
+      "https://www.digitimes.com/news/a20260611PD231/deepseek-infrastructure-data-capacity-training.html"
+    ]
+  },
+  "statusLegend": {
+    "demonstrated": "Module(s) + passing tests, and — where the capability is a measurable claim — a committed measured artifact. The strongest tier this repo offers.",
+    "candidate": "Built and tested, but the evidence is first-party / seed / not-yet-independently-validated, OR the underlying scientific claim is explicitly unproven (see the failure ledger).",
+    "interface-only": "A fail-closed interface with a toy reference implementation; the name describes the slot, not a proven capability (see docs/11-Platform/AGI-Missing-Pillars.md)."
+  },
+  "honesty": "Statuses are deliberately conservative. 'demonstrated' is about the ENGINEERING (the function exists, is tested, and where applicable produces a measured number under the repo's gate), never a claim that the broader research goal (AGI, beating a frontier lab) is achieved. Most market-facing value sits in agent evaluation + domain data discipline, which is where the repo is strongest.",
+  "capabilities": [
+    {
+      "id": "agent-data-evaluation",
+      "marketCategory": "Agent Data Evaluation Expert (new role) · Deep-learning research",
+      "claim": "Score a whole agent trajectory for mid-plan faithfulness, fail-closed, with a deterministic reproducible benchmark.",
+      "status": "demonstrated",
+      "modules": ["agent/trajectory_eval.py", "provenance_bench/agent_faithfulness.py", "provenance_bench/agent_faithfulness_judged.py"],
+      "tests": ["tests/test_trajectory_eval.py", "tests/test_agent_faithfulness_bench.py", "tests/test_agent_faithfulness_judged.py"],
+      "evidence": ["benchmark/agent_faithfulness.json", "benchmark/agent_faithfulness_heldout.json", "agi-proof/benchmark-results/agent-faithfulness.public-report.json", "agi-proof/hidden-reviewer-packs/agent-faithfulness-heldout.seal.json"],
+      "measured": "Deterministic bench: verdict accuracy 1.0 (Wilson-95 [0.77, 1.0], N=13), detection F1 1.0, localization 6/6. Judged held-out bench (sealed N=9): no-overclaim gate WIRED + tested both ways; entailment judge value-add lexical 33% -> oracle 100% in tests; committed run is offline mock (validated=False).",
+      "limits": "Default judge is lexical (semantic entailment needs an injected LLM judge); labels first-party/seed. A real multi-family judged run AND a third-party pack are OPEN (see failure ledger: agent-faithfulness-judged-not-yet-validated-2026-06-25)."
+    },
+    {
+      "id": "domain-data-law",
+      "marketCategory": "Specialized-domain data (law)",
+      "claim": "Detect fake legal citations (existence) and misstated authorities (holding faithfulness), fail-closed, measured under the no-overclaim gate.",
+      "status": "demonstrated",
+      "modules": ["agent/legal_faithfulness.py", "agent/legal_citations.py"],
+      "tests": ["tests/test_legal_faithfulness.py", "tests/test_legal_faithfulness_bench.py"],
+      "evidence": ["data/legal_authorities.json", "agi-proof/benchmark-results/legal-faithfulness-bench.json"],
+      "measured": "legal_holding_faithful bench: validated=true under >=2 judge families + kappa>=0.40 + 3 runs (see artifact).",
+      "limits": "Bundled register is an illustrative snapshot, not a citator; production needs the live resolver."
+    },
+    {
+      "id": "domain-data-medicine",
+      "marketCategory": "Specialized-domain data (medicine)",
+      "claim": "Verify medical citations (PMID/DOI/guideline existence) and recommendation faithfulness, fail-closed; not clinical advice.",
+      "status": "candidate",
+      "modules": ["agent/medical_faithfulness.py"],
+      "tests": ["tests/test_medical_faithfulness.py"],
+      "evidence": ["data/medical_register.json"],
+      "measured": "Wiring proven offline (existence deterministic; faithfulness judge abstains without a model). No measured faithfulness number yet.",
+      "limits": "Register is a tiny seed snapshot; live PubMed/Crossref resolver + a judged bench are OPEN."
+    },
+    {
+      "id": "domain-data-multilingual",
+      "marketCategory": "Specialized-domain data (non-English languages)",
+      "claim": "Bilingual corpus + Cantonese/Chinese handling in the gate and corpus.",
+      "status": "candidate",
+      "modules": ["agent/cantonese.py"],
+      "tests": ["tests/test_gate.py"],
+      "evidence": ["training/corpus.jsonl"],
+      "measured": "528 bilingual (EN/中文) corpus examples; gate scores a 中文 summary section. No separate multilingual benchmark number.",
+      "limits": "Two languages only; not a broad multilingual data-quality program."
+    },
+    {
+      "id": "model-data-strategy",
+      "marketCategory": "Model data strategy (PM + engineering) · Pre-training data engineering",
+      "claim": "Data-quality discipline as code: schema validation, poison-resistant ingestion, sealed held-out splits.",
+      "status": "demonstrated",
+      "modules": ["tools/validate_attribution.py", "agent/poison_resistant_ingestion.py", "provenance_bench/dataset_guard.py", "provenance_bench/holdout_seal.py"],
+      "tests": ["tests/test_gate.py"],
+      "evidence": ["data/attributions.json", "agi-proof/evidence-manifest.json"],
+      "measured": "Corpus validation + holdout sealing run in CI; see evidence-manifest.json for corpus/leaderboard counts.",
+      "limits": "Demonstrates the discipline on a small first-party corpus, not at pre-training scale; a dataset-filter pass over a large corpus is OPEN."
+    },
+    {
+      "id": "ai-core-system",
+      "marketCategory": "AI core-system R&D",
+      "claim": "A fail-closed verifier/gate kernel + MCP server: provenance gate, proof-carrying reasoning, formal contradiction check, exposed as tools.",
+      "status": "demonstrated",
+      "modules": ["agent/gate.py", "agent/verifiers.py", "agent/proof_carrying_reasoning.py", "agent/formal_verifier.py", "sophia_mcp/server.py"],
+      "tests": ["tests/test_gate.py", "tests/test_proof_carrying_reasoning.py", "tests/test_mcp_tools.py"],
+      "evidence": ["CONTRACT.md"],
+      "measured": "Provenance gate: attribution-hallucination 36.1%->23.6% (Δ12.5%, 95% CI [5.6%,19.4%]) at 0% FP — the one result that clears the gate (RESULTS.md).",
+      "limits": "Verifier kernel is real; the broader 'reasoning system' still abstains on much it cannot machine-check."
+    },
+    {
+      "id": "deep-learning-research-agi",
+      "marketCategory": "Deep-learning research (AGI)",
+      "claim": "An honest AGI-candidate research program: RSI/continual-learning scaffolds, pre-registered thresholds, a public failure ledger.",
+      "status": "candidate",
+      "modules": ["agent/governed_rsi.py"],
+      "tests": ["tests/test_gate.py"],
+      "evidence": ["agi-proof/failure-ledger.md", "agi-proof/preregistered-thresholds.md", "agi-proof/benchmark-results/published-results.json", "RESULTS.md"],
+      "measured": "One validated provenance-delta result; all AGI-shaped modules labelled candidate/interface-only and thresholds honestly NOT yet met.",
+      "limits": "Not a claim of AGI. No third-party hidden-eval win yet; weight-updating RSI is OPEN (needs GPU)."
+    },
+    {
+      "id": "agent-infrastructure",
+      "marketCategory": "Agent Infrastructure Engineer (new role) · Supercomputing infrastructure",
+      "claim": "GPU orchestration for train/eval: RunPod pod/endpoint orchestration, parallel seeds, ETA, CI path-selection.",
+      "status": "candidate",
+      "modules": ["tools/runpod_train.py", "tools/runpod_rlvr.py", "tools/runpod_speedup.py", "tools/estimate_runpod_eta.py"],
+      "tests": ["tests/test_gate.py"],
+      "evidence": [".github/workflows/rlvr-runpod.yml", "agi-proof/benchmark-results/runpod-train"],
+      "measured": "Orchestration runs and produces artifacts; demonstrates the path, not a frontier-scale cluster.",
+      "limits": "Rented compute orchestration, not owned-IDC operation; the most commoditized of the categories."
+    },
+    {
+      "id": "server-side-development",
+      "marketCategory": "Server-side development",
+      "claim": "A shippable server surface: MCP server, gateway with least-privilege governance, service wiring.",
+      "status": "demonstrated",
+      "modules": ["sophia_mcp/server.py", "sophia_mcp/gateway_wiring.py"],
+      "tests": ["tests/test_mcp_tools.py", "tests/test_gateway.py"],
+      "evidence": ["gateway", "services"],
+      "measured": "MCP tools + gateway covered by passing tests.",
+      "limits": "Reference implementation, not a hardened production platform."
+    }
+  ]
+}

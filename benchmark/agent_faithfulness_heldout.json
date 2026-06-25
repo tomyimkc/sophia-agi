@@ -1,0 +1,125 @@
+{
+  "schema": "sophia.agent_faithfulness.heldout.v1",
+  "status": "SEALED HELD-OUT — first-party, hand-labelled, sha256-committed (see agi-proof/hidden-reviewer-packs/agent-faithfulness-heldout.seal.json). 'Held-out' means it was NOT used to tune the evaluator or its lexical floor; it is NOT third-party (the author is the same). True third-party authorship remains OPEN — see agi-proof/failure-ledger.md.",
+  "purpose": "A harder pack that the DEFAULT lexical judge cannot solve, designed to be judge-discriminating in BOTH directions: paraphrase/multi-hop cases (lexically divergent but genuinely entailed -> lexical wrongly abstains) and distractor cases (lexically overlapping but NOT entailed, often via negation/scope -> lexical wrongly certifies). An entailment judge should recover both; the gap between lexical-baseline and judged accuracy is the measured value of the judge.",
+  "scoring": "Binary certify decision per case: verdict=='accept' -> 1 (certify), else 0. Gold certify = (expectVerdict=='accept'). Judged consensus + Cohen's kappa + CI under the no-overclaim gate.",
+  "cases": [
+    {
+      "id": "P1-paraphrase-revenue",
+      "difficulty": "hard",
+      "failureType": "paraphrase",
+      "judgeDependent": true,
+      "expectVerdict": "accept",
+      "note": "Entailed paraphrase with low lexical overlap (two fifths == forty percent).",
+      "trajectory": [
+        {"id": "s1", "role": "observation",
+         "observation": "Revenue climbed sharply, rising by roughly two fifths compared with the previous year."},
+        {"id": "s2", "role": "assertion",
+         "claim": "Sales grew about forty percent year over year.", "cites": ["s1"]}
+      ]
+    },
+    {
+      "id": "P2-multihop-dolphin",
+      "difficulty": "hard",
+      "failureType": "multi_hop",
+      "judgeDependent": true,
+      "expectVerdict": "accept",
+      "note": "Two-hop syllogism; the conclusion shares little surface form with either premise.",
+      "trajectory": [
+        {"id": "s1", "role": "observation", "observation": "All mammals are warm-blooded animals."},
+        {"id": "s2", "role": "observation", "observation": "A dolphin is a mammal."},
+        {"id": "s3", "role": "assertion",
+         "claim": "Therefore dolphins are warm-blooded.", "cites": ["s1", "s2"]}
+      ]
+    },
+    {
+      "id": "P3-paraphrase-lease",
+      "difficulty": "hard",
+      "failureType": "paraphrase",
+      "judgeDependent": true,
+      "expectVerdict": "accept",
+      "note": "Legal paraphrase: 'failed to pay rent ... violating the lease' entails 'breached the lease'.",
+      "trajectory": [
+        {"id": "s1", "role": "observation",
+         "observation": "The defendant failed to pay rent for three consecutive months, violating the lease terms."},
+        {"id": "s2", "role": "assertion",
+         "claim": "The tenant breached the lease by not paying rent.", "cites": ["s1"]}
+      ]
+    },
+    {
+      "id": "D1-negation-budget",
+      "difficulty": "hard",
+      "failureType": "negation_distractor",
+      "judgeDependent": true,
+      "expectVerdict": "abstain",
+      "note": "High lexical overlap but the evidence NEGATES the claim (rejected vs approved).",
+      "trajectory": [
+        {"id": "s1", "role": "observation",
+         "observation": "The committee rejected the quarterly budget proposal in March."},
+        {"id": "s2", "role": "assertion",
+         "claim": "The committee approved the quarterly budget proposal in March.", "cites": ["s1"]}
+      ]
+    },
+    {
+      "id": "D2-scope-aspirin",
+      "difficulty": "hard",
+      "failureType": "scope_distractor",
+      "judgeDependent": true,
+      "expectVerdict": "abstain",
+      "note": "Evidence is about adults; the claim silently changes the population to infants.",
+      "trajectory": [
+        {"id": "s1", "role": "observation", "observation": "Aspirin reduces fever in adults."},
+        {"id": "s2", "role": "assertion",
+         "claim": "Aspirin reduces fever in infants.", "cites": ["s1"]}
+      ]
+    },
+    {
+      "id": "D3-negation-study",
+      "difficulty": "hard",
+      "failureType": "negation_distractor",
+      "judgeDependent": true,
+      "expectVerdict": "abstain",
+      "note": "Near-identical surface form, opposite meaning ('no significant link' vs 'a significant link').",
+      "trajectory": [
+        {"id": "s1", "role": "observation",
+         "observation": "The study found no significant link between coffee and cancer."},
+        {"id": "s2", "role": "assertion",
+         "claim": "The study found a significant link between coffee and cancer.", "cites": ["s1"]}
+      ]
+    },
+    {
+      "id": "C1-control-grounded",
+      "difficulty": "easy",
+      "failureType": "control_grounded",
+      "judgeDependent": false,
+      "expectVerdict": "accept",
+      "note": "Judge-independent control: high overlap, genuinely grounded.",
+      "trajectory": [
+        {"id": "s1", "role": "observation", "observation": "The Eiffel Tower is located in Paris."},
+        {"id": "s2", "role": "assertion", "claim": "The Eiffel Tower is in Paris.", "cites": ["s1"]}
+      ]
+    },
+    {
+      "id": "C2-control-fabrication",
+      "difficulty": "easy",
+      "failureType": "control_fabrication",
+      "judgeDependent": false,
+      "expectVerdict": "abstain",
+      "note": "Judge-independent control: no evidence at all.",
+      "trajectory": [
+        {"id": "s1", "role": "assertion", "claim": "The merger closed at a valuation of nine billion."}
+      ]
+    },
+    {
+      "id": "C3-control-provenance-violation",
+      "difficulty": "easy",
+      "failureType": "control_blocked",
+      "judgeDependent": false,
+      "expectVerdict": "blocked",
+      "note": "Judge-independent control: hard provenance violation fires before any judge.",
+      "trajectory": [
+        {"id": "s1", "role": "assertion", "claim": "Confucius wrote the Dao De Jing."}
+      ]
+    }
+  ]
+}
