@@ -1,0 +1,118 @@
+name: train-runpod
+
+# Manual-only RunPod launcher for a REAL gate-disciplined LoRA training run.
+#
+# Unlike speedup-runpod (a timing micro-benchmark), this trains an actual adapter and
+# measures real quality end-to-end on one pod:
+#   prepare_lora_dataset -> train_lora (--4bit --rslora --neftune --scaffold --guard,
+#   holdout early-stop) -> eval_ladder (base/adapter x gate) -> promote_adapter (W2 gate)
+#   -> copy adapter + reports back.
+#
+# Dispatch-only. Uses tools/runpod_train.py (rent pod -> run over SSH -> copy artifacts
+# -> ALWAYS delete pod). RUNPOD_API_KEY secret required; never printed.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to confirm you accept renting a paid GPU pod'
+        required: true
+        default: ''
+      model:
+        description: 'Base model to fine-tune'
+        required: false
+        default: 'Qwen/Qwen2.5-3B-Instruct'
+      epochs:
+        description: 'Training epochs (1 recommended for small curated data)'
+        required: false
+        default: '1'
+      seed:
+        description: 'Training + eval seed'
+        required: false
+        default: '0'
+      gpu_type:
+        description: 'Comma-separated RunPod GPU type preference'
+        required: false
+        default: 'NVIDIA GeForce RTX 4090,NVIDIA A100 80GB PCIe'
+      interruptible:
+        description: 'Use cheaper spot pod (on-demand default for reliability)'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['true', 'false']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: train-runpod
+  cancel-in-progress: false
+
+jobs:
+  runpod:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — confirm + secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "RUN" ]; then
+            echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
+            exit 1
+          fi
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set (or empty). Add it in Settings -> Secrets and variables -> Actions. Aborting (no pod created)."
+            exit 1
+          fi
+          echo "Preflight OK: confirmed, secret present. GPU runs on the rented pod, not this runner."
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Dry-run payload (no pod, no cost — sanity check the request)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          python tools/runpod_train.py --dry-run \
+            --source git --branch "${{ github.ref_name }}" \
+            --model "${{ github.event.inputs.model }}" \
+            --epochs "${{ github.event.inputs.epochs }}" \
+            --seed "${{ github.event.inputs.seed }}" \
+            --gpu-type "${{ github.event.inputs.gpu_type }}"
+
+      - name: Launch RunPod training (rents GPU, runs over SSH, deletes pod)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          INTERRUPTIBLE=""
+          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
+          python tools/runpod_train.py --yes \
+            --source git --branch "${{ github.ref_name }}" \
+            --model "${{ github.event.inputs.model }}" \
+            --epochs "${{ github.event.inputs.epochs }}" \
+            --seed "${{ github.event.inputs.seed }}" \
+            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            $INTERRUPTIBLE
+
+      - name: Show the eval ladder + promotion report in the run log
+        if: always()
+        run: |
+          shopt -s nullglob
+          for f in agi-proof/benchmark-results/runpod-train/*.eval_ladder_adapter.json \
+                   agi-proof/benchmark-results/runpod-train/*.promotion.public-report.json; do
+            echo "===== $f ====="
+            cat "$f"
+          done
+
+      - name: Upload training artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: train-runpod-artifacts
+          path: agi-proof/benchmark-results/runpod-train/**
+          if-no-files-found: warn
