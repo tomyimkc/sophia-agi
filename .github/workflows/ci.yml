@@ -116,6 +116,7 @@ jobs:
           python tests/test_grounded_agent.py
           python tests/test_grounded_agent_graded.py
           python tests/test_grounded_confidence.py
+          python tests/test_calibrate_graded_thresholds.py
           python tests/test_temporal_validity.py
           python tests/test_knowledge_gap_log.py
           python tests/test_forgetting_curve.py
