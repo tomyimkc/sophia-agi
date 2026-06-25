@@ -152,7 +152,33 @@ def parse_args(argv=None):
     ap.add_argument("--volume-gb", type=int, default=60)
     ap.add_argument("--yes", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--wait", action="store_true",
+                    help="block until the pod self-deletes (keeps the caller/job alive so a "
+                         "workflow GITHUB_TOKEN stays valid for the pod's push)")
+    ap.add_argument("--wait-timeout-min", type=int, default=200)
     return ap.parse_args(argv)
+
+
+def _wait_for_pod_gone(api_key: str, pod_id: str, timeout_min: int) -> int:
+    import time
+    deadline = time.time() + timeout_min * 60
+    while time.time() < deadline:
+        try:
+            _api_request("GET", f"/pods/{pod_id}", api_key, timeout=30)
+            status = "running"
+        except RunPodError as exc:
+            if "404" in str(exc) or "not found" in str(exc).lower():
+                print(f"[selfreport] pod {pod_id} is gone (self-deleted after pushing). Done.")
+                return 0
+            status = f"poll-error: {exc}"
+        print(f"[selfreport] pod {pod_id} still {status}; waiting ...", flush=True)
+        time.sleep(45)
+    print(f"[selfreport] wait timed out after {timeout_min} min; deleting pod {pod_id} to be safe.")
+    try:
+        _api_request("DELETE", f"/pods/{pod_id}", api_key, timeout=60)
+    except RunPodError:
+        pass
+    return 2
 
 
 def main(argv=None) -> int:
@@ -178,7 +204,9 @@ def main(argv=None) -> int:
                       "name": args.name, "branch": args.branch,
                       "expectResultAt": RESULT_PATH, "expectLogAt": LOG_PATH}, indent=2))
     print("[selfreport] pod is running the job autonomously; it will push the result + log to "
-          "the branch and self-delete. Poll the branch for the result.")
+          "the branch and self-delete.")
+    if args.wait:
+        return _wait_for_pod_gone(api_key, pod_id, args.wait_timeout_min)
     return 0
 
 
