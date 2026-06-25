@@ -1,0 +1,17 @@
+{
+  "schema": "sophia.team_agents_longtask.v1",
+  "sealed": true,
+  "trainingDisjoint": true,
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "nCases": 18,
+  "balance": {
+    "multi_domain_chain": 6,
+    "chained_subquestions": 6,
+    "long_coordination_trap": 6
+  },
+  "files": {
+    "heldout": "heldout_v1.jsonl"
+  },
+  "contentHash": "d84acadbc570e9718a0264adceff5a6a8a0bace089e425ac3e3c566ab7a17dd4"
+}

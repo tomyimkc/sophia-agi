@@ -1,0 +1,133 @@
+{
+  "schema": "sophia.local_sophia_dataset.v2",
+  "trainingGoal": "local verifier-gated wisdom model — NOT AGI",
+  "baseModel": "Qwen/Qwen2.5-7B-Instruct",
+  "packs": {
+    "sft_source_discipline.jsonl": {
+      "source": "training/corpus.jsonl",
+      "kind": "sft",
+      "rows": 439,
+      "present": true,
+      "droppedForDecontamination": 89
+    },
+    "sft_wiki_provenance.jsonl": {
+      "source": "training/wiki_provenance_sft.jsonl",
+      "kind": "sft",
+      "rows": 34,
+      "present": true,
+      "droppedForDecontamination": 0
+    },
+    "sft_council_traces.jsonl": {
+      "source": "training/council/traces.jsonl",
+      "kind": "sft",
+      "rows": 125,
+      "present": true,
+      "droppedForDecontamination": 0
+    },
+    "sft_religion_repair_c4.jsonl": {
+      "source": "training/council/religion_repair_c4.jsonl",
+      "kind": "sft",
+      "rows": 12,
+      "present": true,
+      "droppedForDecontamination": 0
+    },
+    "sft_moral_gate.jsonl": {
+      "source": "training/moral_gate_sft.jsonl",
+      "kind": "sft",
+      "rows": 35,
+      "present": true,
+      "droppedForDecontamination": 0
+    },
+    "general_instruct.jsonl": {
+      "source": "training/local_sophia_7b/general_instruct.jsonl",
+      "kind": "sft",
+      "rows": 120,
+      "present": true,
+      "droppedForDecontamination": 0
+    },
+    "sft_from_feedback.jsonl": {
+      "source": "training/feedback/sft_from_feedback.jsonl",
+      "kind": "sft",
+      "rows": 0,
+      "present": false,
+      "droppedForDecontamination": 0
+    },
+    "dpo_hard_negatives.jsonl": {
+      "source": "training/hard_negatives_dpo.jsonl",
+      "kind": "dpo",
+      "rows": 590,
+      "present": true,
+      "droppedForDecontamination": 25
+    },
+    "dpo_wiki_provenance.jsonl": {
+      "source": "training/wiki_provenance_dpo.jsonl",
+      "kind": "dpo",
+      "rows": 34,
+      "present": true,
+      "droppedForDecontamination": 0
+    }
+  },
+  "holdout": {
+    "source": "training/lora/holdout.jsonl",
+    "rows": 89
+  },
+  "trainRowsTotal": 1389,
+  "recommendedMix": {
+    "sft_source_discipline": 0.3,
+    "sft_council_traces": 0.2,
+    "moral_gate_sft": 0.15,
+    "tool_use_mcp": 0.15,
+    "dpo_hard_negatives": 0.1,
+    "general_instruction_retention": 0.1
+  },
+  "missingRequiredInputs": {},
+  "excluded": [
+    "benchmark/eval holdouts",
+    "hidden-eval packs",
+    "API keys",
+    "unverified self-generated answers"
+  ],
+  "baseline": null,
+  "promotionRule": "promote only if provenance/citation improves at acceptable false-positive cost (no useful-correctness regression).",
+  "contamination": {
+    "droppedForDecontamination": 114,
+    "vsEval": {
+      "clean": true,
+      "nTrain": 1389,
+      "nEval": 210,
+      "overlap": [],
+      "overlapCount": 0
+    },
+    "vsHoldoutOverlapCount": 0,
+    "clean": true
+  },
+  "mlx": {
+    "trainRows": 754,
+    "validRows": 89,
+    "path": "training/local_sophia_7b/mlx",
+    "maxTokens": 1024,
+    "fit": {
+      "train": {
+        "maxTokens": 1024,
+        "rowsIn": 765,
+        "rowsKeptUnchanged": 754,
+        "rowsSplit": 0,
+        "subRowsFromSplits": 0,
+        "rowsDroppedUnsplittable": 11,
+        "turnsDroppedOverlong": 11,
+        "rowsOut": 754
+      },
+      "valid": {
+        "maxTokens": 1024,
+        "rowsIn": 89,
+        "rowsKeptUnchanged": 89,
+        "rowsSplit": 0,
+        "subRowsFromSplits": 0,
+        "rowsDroppedUnsplittable": 0,
+        "turnsDroppedOverlong": 0,
+        "rowsOut": 89
+      }
+    }
+  },
+  "claimBoundary": "Trains behavioral discipline, not general intelligence. External MCP/verifier gates enforce correctness at runtime."
+}

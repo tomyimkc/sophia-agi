@@ -77,6 +77,46 @@ Training-oracle passes must **never** be cited as MATH/GSM8K/HumanEval/MBPP proo
 - **Failure:** protected regression → reject; seal/contamination break → abort; evidence thresholds
   not met → honest negative in failure-ledger; training-oracle cited as benchmark → violation.
 
+## sophia-7b-train-verify (Qwen2.5-7B SFT + DPO + disjoint evidence)
+
+**Status:** OPEN — registered 2026-06-25 on branch `claude/sophia-7b-train-verify` **before**
+any GPU training run. Structured manifest:
+`agi-proof/sophia-7b-train-verify/preregistration.json`. Oracle split:
+`agi-proof/sophia-7b-train-verify/oracle-split.md`.
+
+### Base model and recipe
+
+- Base: `Qwen/Qwen2.5-7B-Instruct`
+- QLoRA 4-bit, ~2 epochs, `--mask-prompt`, seeds `{0, 1, 2}` (≥3 for cited numbers)
+- Data: `training/local_sophia_7b/` after `build_local_sophia_dataset.py --check` → **CLEAN**
+- Holdout seal: `agi-proof/sophia-7b-train-verify/heldout-seal.manifest.json`
+  (`python tools/seal_sophia_7b_holdout.py --check`)
+
+### Training oracle vs evidence oracle (THE ONE RULE)
+
+| Family | Purpose | May cite as third-party evidence? |
+|---|---|---|
+| **Training oracle** | Moral Gate, eval ladder CONTENT, `promote_adapter`, invariant suite (`solverChecked`), positive control, DPO hard-negatives | **No** — release gate only |
+| **Evidence oracle** | Vectara HHEM (lead), hidden reviewer pack, HF Open LLM + Artificial Analysis (context) | **Yes** — when run with keys and ≥3 seeds |
+
+Training-oracle passes must **never** be cited as Vectara/hidden-pack/leaderboard proof.
+
+### Pre-registered evidence thresholds
+
+| Metric | Threshold | Notes |
+|---|---|---|
+| Vectara HHEM hallucination rate | ≤ **12.0%** mean across ≥3 seeds | Baseline recorded before training |
+| Hidden-pack calibration Δ | ≥ **+10.0%** with 95% CI excluding 0 | Reviewer-controlled / third-party pack |
+| MMLU-Pro vs base | regression ≤ **2.0** points | Honest abstention tradeoff — report even if gate passes |
+| Internal release gate | `promote_adapter` promote + `solverChecked: true` | **Not** counted toward evidence thresholds |
+
+### Success / failure
+
+- **Success (headline):** all evidence-oracle thresholds met; contamination CLEAN; holdout seal OK;
+  `lint_claims.py` OK; `canClaimAGI` stays **False**.
+- **Failure:** protected-suite regression → reject; seal/contamination break → abort; evidence
+  blocked → ledger blocker (no training-oracle substitute); MMLU-Pro regression >2.0 → withdraw headline.
+
 ## RLVR experiment (verifier-as-reward GRPO)
 
 A separate, narrower pre-registration for `tools/run_rlvr.py` (RLVR: the

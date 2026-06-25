@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -29,13 +30,27 @@ def main(argv: "list[str] | None" = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("query")
     ap.add_argument("--model", default="mock", help="model spec (mock, ollama:.., anthropic:.., openrouter:..)")
+    ap.add_argument("--adapter", default=None, help="LoRA adapter path (sets SOPHIA_MLX_ADAPTER)")
+    ap.add_argument("--team-mode", action="store_true", help="use deliberate_team() orchestrator")
     ap.add_argument("--max-seats", type=int, default=4)
     ap.add_argument("--no-gate", action="store_true", help="disable per-seat gating")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
 
     from agent.model import default_client
-    d = deliberate(args.query, client=default_client(args.model), max_seats=args.max_seats, gate=not args.no_gate)
+
+    if args.adapter:
+        os.environ["SOPHIA_MLX_ADAPTER"] = args.adapter
+    client = default_client(args.model)
+    if args.team_mode:
+        # Imported lazily: team_agents pulls in numpy, which the base council path
+        # (and the dependency-light CI build job) does not require.
+        from agent.team_agents import deliberate_team
+
+        fn = deliberate_team
+    else:
+        fn = deliberate
+    d = fn(args.query, client=client, max_seats=args.max_seats, gate=not args.no_gate)
 
     if args.json:
         print(json.dumps(d.to_dict(), ensure_ascii=False, indent=2))
