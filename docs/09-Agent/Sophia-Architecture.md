@@ -62,6 +62,7 @@ flowchart LR
 | Append-only memory | `agent/memory.py`, `run_learning_probe` | `use_memory` |
 | Operational tools | `run_operational_tools` | `use_tools` |
 | Bounded repair | `agent/correction_loop.py` | `allow_repair` |
+| Long-context packing cards | `tools/run_hidden_eval_sophia.py` (`_pack_long_context`), `schema/context-pack-card-1.0.0.json` | `use_context_packing` |
 | Prompt discipline | `agent/prompts.py` (`MODE_PROMPTS`) vs `RAW_SYSTEM_PROMPT` | `raw_system` |
 
 ## Proof harnesses
@@ -71,5 +72,16 @@ flowchart LR
 | Hidden eval | `tools/run_hidden_eval_sophia.py` | `agi-proof/benchmark-results/*.public-report.json` |
 | Baseline/ablation | `tools/run_ablation_sophia.py` | `agi-proof/baseline-ablation/ablation-deltas-*.public-report.json` |
 | Learning-under-shift | `tools/run_learning_shift.py` | `agi-proof/learning-under-shift/shift-result-*.public-report.json` |
+| Long-context candidate | `tools/run_long_context_sophia.py` | `agi-proof/long-context/*.public-report.json` |
 | Long-horizon autonomy | `tools/run_long_horizon.py` | `agi-proof/long-horizon-runs/*.public-report.json` |
 | Third-party replication | `tools/run_replication_check.py` | `agi-proof/third-party-replication/replication-check-*.json` |
+
+## Long-Context Status Boundary
+
+The long-context harness is measurable before it is trainable: it runs a frozen
+offline mock backend through the same `run_case()` path and varies context size,
+needle depth, multi-needle count, distractors, verifier use, retrieval use, and
+context-packing use. Its reports are `candidate` self-authored measurements, not
+validated benchmark evidence. The machine-readable architecture bet map is
+`agi-proof/architecture-bets.json`; every bet records implementation files,
+ablation flag, honest status, evidence report if any, and blockers.

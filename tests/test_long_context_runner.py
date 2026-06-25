@@ -1,0 +1,141 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+"""Offline tests for the Sophia long-context candidate runner."""
+
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from tools import run_long_context_sophia as long_context  # noqa: E402
+
+
+def test_context_pack_card_validator_accepts_runner_card() -> None:
+    modes = long_context.long_context_modes("sophia-full")
+    matrix = long_context.run_matrix(
+        context_sizes=[512],
+        depths=[50],
+        needle_counts=[1],
+        modes=modes,
+        seed=7,
+        budget_tokens=512,
+    )
+    card = matrix["caseResults"][0]["contextPackCard"]
+    assert long_context.validate_context_pack_card(card) == []
+    assert card["status"] == "candidate"
+    assert card["candidateOnly"] is True
+    assert card["canClaimAGI"] is False
+    assert isinstance(card["answerBearingSpanIncluded"], bool)
+
+
+def test_context_pack_card_validator_rejects_missing_required_field() -> None:
+    case = long_context.build_synthetic_case(
+        context_size=512,
+        depth_pct=25,
+        needle_count=1,
+        seed=11,
+        budget_tokens=512,
+    )
+    modes = long_context.long_context_modes("sophia-full")
+    matrix = long_context.run_matrix(
+        context_sizes=[512],
+        depths=[25],
+        needle_counts=[1],
+        modes=modes,
+        seed=11,
+        budget_tokens=512,
+    )
+    assert case["answerTokens"]
+    card = dict(matrix["caseResults"][0]["contextPackCard"])
+    card.pop("budgetTokens")
+    errors = long_context.validate_context_pack_card(card)
+    assert any("budgetTokens" in error for error in errors)
+
+
+def test_long_context_cli_writes_candidate_report_offline() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "long-context.public-report.json"
+        proc = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "tools" / "run_long_context_sophia.py"),
+                "--context-sizes",
+                "512",
+                "--depths",
+                "0,50",
+                "--needle-counts",
+                "1",
+                "--modes",
+                "sophia-full,sophia-no-kb,sophia-no-context-packing",
+                "--budget-tokens",
+                "512",
+                "--out",
+                str(out),
+            ],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            timeout=30,
+            check=False,
+        )
+        assert proc.returncode == 0, proc.stderr + proc.stdout
+        report = json.loads(out.read_text(encoding="utf-8"))
+
+    assert report["reportStatus"] == "candidate"
+    assert report["claimStatus"] == "candidate_not_validated"
+    assert report["candidateOnly"] is True
+    assert report["canClaimAGI"] is False
+    assert report["backend"] == "mock"
+    assert report["cardValidation"]["valid"] is True
+    assert len(report["contextPackCards"]) == len(report["summaryByMode"]) * 2
+    assert set(report["metricFamilies"]) == {
+        "multiNeedleRecall",
+        "positionSensitivity",
+        "distractorRobustness",
+        "costLatencyVsRecall",
+    }
+    assert "measured" in report["measuredVsAsserted"]
+    assert "stillAssertedOrBlocked" in report["measuredVsAsserted"]
+
+
+def test_architecture_bets_root_map_has_required_fields() -> None:
+    bets = json.loads((ROOT / "agi-proof" / "architecture-bets.json").read_text(encoding="utf-8"))
+    assert bets["candidateOnly"] is True
+    assert bets["canClaimAGI"] is False
+    required = {
+        "verifier-gated-long-context",
+        "hybrid-memory",
+        "selective-tool-router",
+        "council-small-models",
+        "verifier-as-reward",
+        "long-context-compression-recall",
+        "ablation-harness",
+    }
+    by_id = {bet["id"]: bet for bet in bets["bets"]}
+    assert set(by_id) == required
+    for bet in by_id.values():
+        assert bet["implementation_files"]
+        assert bet["ablation_flag"]
+        assert bet["honest_status"] in {"scaffold", "partial", "live"}
+        assert "blocked_on" in bet
+
+
+def main() -> int:
+    test_context_pack_card_validator_accepts_runner_card()
+    test_context_pack_card_validator_rejects_missing_required_field()
+    test_long_context_cli_writes_candidate_report_offline()
+    test_architecture_bets_root_map_has_required_fields()
+    print("test_long_context_runner: OK")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sophia Context Pack Card",
+  "type": "object",
+  "required": [
+    "schema",
+    "schemaVersion",
+    "cardId",
+    "caseId",
+    "status",
+    "claimStatus",
+    "candidateOnly",
+    "canClaimAGI",
+    "budgetTokens",
+    "candidatePassagesConsidered",
+    "packedPassages",
+    "answerBearingSpanIds",
+    "answerBearingSpanIncluded",
+    "ablationFlags",
+    "claimBoundary"
+  ],
+  "properties": {
+    "schema": { "const": "sophia.context_pack_card.v1" },
+    "schemaVersion": { "const": "1.0.0" },
+    "cardId": { "type": "string", "minLength": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "status": { "const": "candidate" },
+    "claimStatus": { "const": "candidate" },
+    "candidateOnly": { "const": true },
+    "canClaimAGI": { "const": false },
+    "budgetTokens": { "type": "integer", "minimum": 1 },
+    "candidatePassagesConsidered": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "passageId",
+          "sourceId",
+          "depthPct",
+          "tokenEstimate",
+          "relevanceScore",
+          "verifierScore",
+          "containsAnswerBearingSpan",
+          "selected",
+          "selectionReason"
+        ],
+        "properties": {
+          "passageId": { "type": "string", "minLength": 1 },
+          "sourceId": { "type": "string", "minLength": 1 },
+          "depthPct": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "tokenEstimate": { "type": "integer", "minimum": 0 },
+          "relevanceScore": { "type": "number", "minimum": 0 },
+          "verifierScore": { "type": "number", "minimum": 0 },
+          "containsAnswerBearingSpan": { "type": "boolean" },
+          "selected": { "type": "boolean" },
+          "selectionReason": { "type": "string" }
+        }
+      }
+    },
+    "packedPassages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "passageId",
+          "rank",
+          "tokenEstimate",
+          "reason"
+        ],
+        "properties": {
+          "passageId": { "type": "string", "minLength": 1 },
+          "rank": { "type": "integer", "minimum": 1 },
+          "tokenEstimate": { "type": "integer", "minimum": 0 },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "answerBearingSpanIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "answerBearingSpanIncluded": { "type": "boolean" },
+    "ablationFlags": {
+      "type": "object",
+      "required": [
+        "use_kb",
+        "use_gate",
+        "use_context_packing"
+      ],
+      "properties": {
+        "use_kb": { "type": "boolean" },
+        "use_gate": { "type": "boolean" },
+        "use_context_packing": { "type": "boolean" }
+      }
+    },
+    "claimBoundary": { "type": "string", "minLength": 1 }
+  }
+}

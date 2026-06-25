@@ -339,6 +339,39 @@ def run_deepseek(system: str, user: str, *, timeout_sec: int) -> dict[str, Any]:
     }
 
 
+def run_mock_model(system: str, user: str, *, timeout_sec: int) -> dict[str, Any]:
+    """Deterministic offline backend for proof-harness plumbing tests."""
+    started = time.time()
+    marker = "SOPHIA_PREFLIGHT_OK"
+    if marker in user:
+        answer = f"{marker}\nDecision: ok\n中文摘要: mock backend ready."
+    else:
+        tokens = sorted(set(re.findall(r"LC_NEEDLE_[A-Z0-9_]+", user)))
+        if tokens:
+            answer = (
+                "Decision: answer from packed verifier context.\n"
+                f"Recovered tokens: {', '.join(tokens)}.\n"
+                "中文摘要: 离线模拟后端只复述已打包上下文中的验证针。"
+            )
+        else:
+            answer = (
+                "Decision: abstain.\n"
+                "No verified long-context needle token was present in the packed context.\n"
+                "中文摘要: 未找到可验证针。"
+            )
+    return {
+        "backend": "mock",
+        "returncode": 0,
+        "elapsedSec": round(time.time() - started, 6),
+        "answer": answer,
+        "stderrTail": "",
+        "promptTokens": estimate_tokens(system) + estimate_tokens(user),
+        "completionTokens": estimate_tokens(answer),
+        "costUsd": 0.0,
+        "timeoutSec": timeout_sec,
+    }
+
+
 def call_model(
     system: str,
     user: str,
@@ -348,6 +381,8 @@ def call_model(
     grok_cwd: Path | None = None,
 ) -> dict[str, Any]:
     started = time.time()
+    if backend == "mock":
+        return run_mock_model(system, user, timeout_sec=timeout_sec)
     if backend == "anthropic":
         try:
             answer = complete(system, user)
@@ -789,6 +824,131 @@ NEUTRAL_GATE: dict[str, Any] = {
 }
 
 
+def estimate_tokens(text: str) -> int:
+    """Cheap deterministic token estimate for offline harness accounting."""
+    words = re.findall(r"\S+", text)
+    return max(1, len(words)) if text.strip() else 0
+
+
+def _long_passage_tokens(passage: dict[str, Any]) -> int:
+    token_estimate = passage.get("tokenEstimate")
+    if isinstance(token_estimate, int) and token_estimate >= 0:
+        return token_estimate
+    return estimate_tokens(str(passage.get("text", "")))
+
+
+def _pack_long_context(
+    case: dict[str, Any],
+    *,
+    use_kb: bool,
+    use_gate: bool,
+    use_context_packing: bool,
+) -> dict[str, Any]:
+    passages = list(case.get("longContextPassages", []))
+    budget = int(case.get("contextBudgetTokens") or 2048)
+    answer_tokens = set(str(token) for token in case.get("answerTokens", []))
+
+    considered: list[dict[str, Any]] = []
+    for index, passage in enumerate(passages):
+        relevance = float(passage.get("relevanceScore", 0.0))
+        verifier = float(passage.get("verifierScore", 0.5 if use_gate else 0.0)) if use_gate else 0.0
+        contains_answer = bool(set(passage.get("answerTokens", [])) & answer_tokens)
+        considered.append(
+            {
+                "passageId": str(passage.get("id", f"passage-{index}")),
+                "sourceId": str(passage.get("sourceId", passage.get("id", f"passage-{index}"))),
+                "depthPct": int(passage.get("depthPct", case.get("needleDepthPct", 0))),
+                "tokenEstimate": _long_passage_tokens(passage),
+                "relevanceScore": round(relevance, 6),
+                "verifierScore": round(verifier, 6),
+                "containsAnswerBearingSpan": contains_answer,
+                "selected": False,
+                "selectionReason": "not selected",
+                "_text": str(passage.get("text", "")),
+                "_rankScore": relevance + verifier,
+            }
+        )
+
+    if not use_kb:
+        ordered = []
+        strategy = "kb_disabled"
+    elif use_context_packing:
+        ordered = sorted(considered, key=lambda item: (-float(item["_rankScore"]), item["passageId"]))
+        strategy = "relevance_plus_verifier_score"
+    else:
+        ordered = considered
+        strategy = "original_order_truncation"
+
+    packed: list[dict[str, Any]] = []
+    used = 0
+    for item in ordered:
+        token_count = int(item["tokenEstimate"])
+        if used + token_count > budget and packed:
+            continue
+        if token_count > budget:
+            continue
+        item["selected"] = True
+        item["selectionReason"] = strategy
+        used += token_count
+        packed.append(item)
+
+    selected_ids = {item["passageId"] for item in packed}
+    packed_passages = [
+        {
+            "passageId": item["passageId"],
+            "rank": index,
+            "tokenEstimate": item["tokenEstimate"],
+            "reason": item["selectionReason"],
+        }
+        for index, item in enumerate(packed, 1)
+    ]
+    answer_ids = [
+        item["passageId"]
+        for item in considered
+        if item["containsAnswerBearingSpan"]
+    ]
+    answer_included = any(item["passageId"] in selected_ids for item in considered if item["containsAnswerBearingSpan"])
+    context_parts = [
+        f"### Synthetic Source {index}: {item['sourceId']} (relevance {item['relevanceScore']:.2f}, verifier {item['verifierScore']:.2f})\n{item['_text']}"
+        for index, item in enumerate(packed, 1)
+    ]
+    public_considered = [
+        {key: value for key, value in item.items() if not key.startswith("_")}
+        for item in considered
+    ]
+    card = {
+        "schema": "sophia.context_pack_card.v1",
+        "schemaVersion": "1.0.0",
+        "cardId": f"context-pack-{case['id']}",
+        "caseId": case["id"],
+        "status": "candidate",
+        "claimStatus": "candidate",
+        "candidateOnly": True,
+        "canClaimAGI": False,
+        "budgetTokens": budget,
+        "candidatePassagesConsidered": public_considered,
+        "packedPassages": packed_passages,
+        "answerBearingSpanIds": answer_ids,
+        "answerBearingSpanIncluded": answer_included,
+        "ablationFlags": {
+            "use_kb": use_kb,
+            "use_gate": use_gate,
+            "use_context_packing": use_context_packing,
+        },
+        "claimBoundary": (
+            "Synthetic self-authored context-packing card for candidate measurement only; "
+            "not validated evidence and not an AGI/capability claim."
+        ),
+    }
+    return {
+        "context": "\n\n".join(context_parts) if context_parts else "(No packed long-context passages.)",
+        "sources": [item["sourceId"] for item in packed],
+        "card": card,
+        "packedTokenEstimate": used,
+        "candidateTokenEstimate": sum(int(item["tokenEstimate"]) for item in considered),
+    }
+
+
 @dataclass(frozen=True)
 class RunConfig:
     """Backend/runtime configuration shared by every case in a run."""
@@ -819,6 +979,7 @@ class Ablation:
     use_memory: bool = True  # append-only learning probe + memory diff
     use_tools: bool = True  # operational tool logs
     allow_repair: bool = True  # bounded Sophia repair attempt
+    use_context_packing: bool = True  # scored long-context packing when cases provide passages
 
 
 SOPHIA_FULL = Ablation()
@@ -886,7 +1047,25 @@ def run_case(
     """
     case_id = case["id"]
 
-    if ablation.use_kb:
+    context_pack_card: dict[str, Any] = {}
+    context_packing_summary: dict[str, Any] = {}
+    if case.get("longContextPassages"):
+        packed_context = _pack_long_context(
+            case,
+            use_kb=ablation.use_kb,
+            use_gate=ablation.use_gate,
+            use_context_packing=ablation.use_context_packing,
+        )
+        context = packed_context["context"] if ablation.use_kb else ""
+        case_sources = packed_context["sources"] if ablation.use_kb else []
+        context_pack_card = packed_context["card"]
+        context_packing_summary = {
+            "packedTokenEstimate": packed_context["packedTokenEstimate"],
+            "candidateTokenEstimate": packed_context["candidateTokenEstimate"],
+            "budgetTokens": context_pack_card.get("budgetTokens"),
+            "answerBearingSpanIncluded": context_pack_card.get("answerBearingSpanIncluded"),
+        }
+    elif ablation.use_kb:
         chunks = retrieve(case["prompt"], top_k=8)
         context = format_context(chunks)
         case_sources = [chunk.path for chunk in chunks]
@@ -1052,6 +1231,8 @@ def run_case(
         "codingCouncilRoute": council_route,
         "webEvidence": evidence,
         "rubricReview": review,
+        "contextPackCard": context_pack_card,
+        "contextPacking": context_packing_summary,
         "returncode": first.get("returncode"),
         "elapsedSec": first.get("elapsedSec"),
         "ablation": ablation.label,
@@ -1063,7 +1244,7 @@ def main() -> int:
     parser.add_argument("pack", type=Path)
     parser.add_argument(
         "--backend",
-        choices=["anthropic", "grok", "deepseek", "adapter"],
+        choices=["anthropic", "grok", "deepseek", "adapter", "mock"],
         default=os.environ.get("SOPHIA_HIDDEN_BACKEND", "grok"),
     )
     parser.add_argument("--responses-out", type=Path, required=True)
