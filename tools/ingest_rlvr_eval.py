@@ -120,9 +120,26 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--adapter-id", default=None)
     ap.add_argument("--out", default=str(DEFAULT_OUT))
     ap.add_argument("--print", action="store_true")
+    ap.add_argument("--hardened", action="store_true",
+                    help="also run the feedable SSIL hardening gates (GUARD/GOOD, +G8 if a validated "
+                         "probe exists) and combine worst-wins with Layer-1; lists the pending gates")
+    ap.add_argument("--registry", default=None,
+                    help="registry.jsonl path; canonical-promote entries seed GUARD rollback targets")
     args = ap.parse_args(argv)
 
     record = ingest(args.report, adapter_id=args.adapter_id)
+
+    # Optional hardening pass (default OFF so the live ingest path is unchanged). Additive:
+    # attaches a combined fail-closed verdict over the gates a provenance eval can actually
+    # feed, and lists the rest as pending. Only --hardened changes the exit code.
+    hardened = None
+    if args.hardened:
+        from agent.ssil_ingest_hardened import harden_from_report
+
+        report = json.loads(Path(args.report).read_text(encoding="utf-8"))
+        hardened = harden_from_report(report, record, adapter_id=args.adapter_id, registry_path=args.registry)
+        record["hardened"] = hardened
+
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -132,6 +149,11 @@ def main(argv: list[str] | None = None) -> int:
     print(f"adapter={m['id']} capability {m['before']}->{m['after']} "
           f"integrity {m['protected_before']}->{m['protected_after']} contaminated={m['contaminated']}")
     print(f"SSIL VERDICT={record['verdict']} blocking={record['blockingGates']} -> {args.out}")
+    if hardened is not None:
+        print(f"HARDENED combinedVerdict={hardened['combinedVerdict']} "
+              f"enforced={hardened['enforcedGates']} pending={sorted(hardened['pendingGates'])}")
+        # Under --hardened the combined fail-closed verdict is authoritative for the exit code.
+        return 0 if hardened["combinedVerdict"] == "promote" else 1
     return 0
 
 

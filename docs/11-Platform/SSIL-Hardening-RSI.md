@@ -581,6 +581,47 @@ discard the current candidate.
 
 ---
 
+## 3a. Live ingest integration — what is actually wired today
+
+The twelve gates are a stack you *can* run; the honest question is which ones a **real RunPod
+adapter-eval can feed right now**. Wiring all twelve into the per-adapter ingest path would force
+every live run to fail closed (most gates would quarantine on absent inputs and nothing would ever
+promote), which is not useful and would tempt someone to fake inputs. So the live integration
+(`agent/ssil_ingest_hardened.py`, opt-in via `tools/ingest_rlvr_eval.py --hardened`) **enforces only
+the gates a provenance adapter-eval genuinely carries inputs for, and lists the rest as pending**:
+
+| Gate | In live ingest | Fed from |
+|------|----------------|----------|
+| **GUARD** | **enforced** | raw `before/after/protected_*` → independent recompute; rollback target = the base model (dropping the LoRA adapter is always a safe revert) + registry canonical entries |
+| **GOOD** | **enforced** | `capability_after / gain / protected_after` vs a documented conservative `VALIDATED_REGIME`; a suspicious jump *quarantines* (re-validate), never rejects |
+| **G8** | **enforced once provisioned** | `probeScores` — only when a real probe is registered `validated=True` via `agent/ssil_capability_probes`; otherwise listed pending (fail-closed by absence) |
+| G0, G7, GRED | pending | CI / dispatch surfaces, not per-adapter |
+| G8E, G9D, G4W | pending | need pod-side elicitation / dual-context / delta-statistics outputs |
+| GSO, G1P, G9C | pending | need anchors / action summaries / a hash-chained registry |
+
+The combined verdict is **worst-wins over {Layer-1, GUARD, GOOD, [G8 if provisioned]}**; pending gates
+are reported (`pendingGates`, each tagged with the input it needs) but **never block**. A clean
+`--hardened` ingest therefore reads as *"Layer-1 plus the two feedable hardening gates agreed,"* not
+*"all twelve hardening gates passed."* `candidateOnly=true`, `canClaimAGI=false`.
+
+It is **opt-in and additive**: the default ingest path is unchanged, so this can be adopted without
+disturbing an in-flight replication. To turn it on in CI, add `--hardened --registry <registry.jsonl>`
+to the ingest step in `.github/workflows/rlvr-runpod.yml`.
+
+### Provisioning the pending gates — the dangerous-capability probe protocol
+
+`agent/ssil_capability_probes.py` is the input layer for G8/G8E. It ships **one unvalidated
+placeholder per required dangerous capability** (`autonomous_replication`, `cyber_offense`,
+`deception`, `persuasion`, `monitor_subversion`, `bio_uplift`), each returning `None` ("unmeasured"),
+so G8 correctly stays fail-closed and listed pending. A real probe is wired with
+`register_probe(name, fn, validated=True)` — only a `validated=True` probe contributes a score, so a
+placeholder can never silently certify danger away, and a crashing probe degrades to "unmeasured"
+rather than a passing number. This ships the *protocol and the fail-closed default*, not faked danger
+measurements; building the real probes (which need the model in the loop, on the pod) is the next
+provisioning step, not something this CI-side module pretends to do.
+
+---
+
 ## 4. What is genuinely solved vs scaffolded vs open
 
 | Concern | Status | What that means here |
