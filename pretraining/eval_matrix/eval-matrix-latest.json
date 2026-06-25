@@ -1,0 +1,327 @@
+{
+  "study": "multi-dimensional eval coverage matrix",
+  "dimensions": [
+    "knowledge",
+    "reasoning",
+    "provenance",
+    "calibration",
+    "safety",
+    "code",
+    "math",
+    "agentic",
+    "multilingual"
+  ],
+  "domains": [
+    "general",
+    "philosophy",
+    "psychology",
+    "history",
+    "religion",
+    "law",
+    "finance",
+    "code",
+    "math",
+    "multimodal"
+  ],
+  "n_packs": 22,
+  "total_cases": 451,
+  "covered_cells": 9,
+  "total_cells": 90,
+  "coverage_fraction": 0.1,
+  "covered": {
+    "agentic|general": {
+      "cases": 30,
+      "packs": 1,
+      "automatic": 30,
+      "human_or_judge": 0
+    },
+    "knowledge|general": {
+      "cases": 130,
+      "packs": 3,
+      "automatic": 110,
+      "human_or_judge": 20
+    },
+    "reasoning|general": {
+      "cases": 60,
+      "packs": 3,
+      "automatic": 60,
+      "human_or_judge": 0
+    },
+    "provenance|code": {
+      "cases": 30,
+      "packs": 1,
+      "automatic": 30,
+      "human_or_judge": 0
+    },
+    "code|code": {
+      "cases": 14,
+      "packs": 3,
+      "automatic": 14,
+      "human_or_judge": 0
+    },
+    "calibration|general": {
+      "cases": 15,
+      "packs": 1,
+      "automatic": 0,
+      "human_or_judge": 15
+    },
+    "safety|general": {
+      "cases": 32,
+      "packs": 5,
+      "automatic": 8,
+      "human_or_judge": 24
+    },
+    "math|math": {
+      "cases": 12,
+      "packs": 1,
+      "automatic": 12,
+      "human_or_judge": 0
+    },
+    "provenance|general": {
+      "cases": 128,
+      "packs": 4,
+      "automatic": 128,
+      "human_or_judge": 0
+    }
+  },
+  "uncovered_cells": [
+    "knowledge|philosophy",
+    "knowledge|psychology",
+    "knowledge|history",
+    "knowledge|religion",
+    "knowledge|law",
+    "knowledge|finance",
+    "knowledge|code",
+    "knowledge|math",
+    "knowledge|multimodal",
+    "reasoning|philosophy",
+    "reasoning|psychology",
+    "reasoning|history",
+    "reasoning|religion",
+    "reasoning|law",
+    "reasoning|finance",
+    "reasoning|code",
+    "reasoning|math",
+    "reasoning|multimodal",
+    "provenance|philosophy",
+    "provenance|psychology",
+    "provenance|history",
+    "provenance|religion",
+    "provenance|law",
+    "provenance|finance",
+    "provenance|math",
+    "provenance|multimodal",
+    "calibration|philosophy",
+    "calibration|psychology",
+    "calibration|history",
+    "calibration|religion",
+    "calibration|law",
+    "calibration|finance",
+    "calibration|code",
+    "calibration|math",
+    "calibration|multimodal",
+    "safety|philosophy",
+    "safety|psychology",
+    "safety|history",
+    "safety|religion",
+    "safety|law",
+    "safety|finance",
+    "safety|code",
+    "safety|math",
+    "safety|multimodal",
+    "code|general",
+    "code|philosophy",
+    "code|psychology",
+    "code|history",
+    "code|religion",
+    "code|law",
+    "code|finance",
+    "code|math",
+    "code|multimodal",
+    "math|general",
+    "math|philosophy",
+    "math|psychology",
+    "math|history",
+    "math|religion",
+    "math|law",
+    "math|finance",
+    "math|code",
+    "math|multimodal",
+    "agentic|philosophy",
+    "agentic|psychology",
+    "agentic|history",
+    "agentic|religion",
+    "agentic|law",
+    "agentic|finance",
+    "agentic|code",
+    "agentic|math",
+    "agentic|multimodal",
+    "multilingual|general",
+    "multilingual|philosophy",
+    "multilingual|psychology",
+    "multilingual|history",
+    "multilingual|religion",
+    "multilingual|law",
+    "multilingual|finance",
+    "multilingual|code",
+    "multilingual|math",
+    "multilingual|multimodal"
+  ],
+  "packs": [
+    {
+      "path": "eval/agentbench_sophia/agentbench_sophia_30_v1.jsonl",
+      "dimension": "agentic",
+      "domain": "general",
+      "scoring": "automatic",
+      "cases": 30
+    },
+    {
+      "path": "eval/arena/arena_20_v1.jsonl",
+      "dimension": "knowledge",
+      "domain": "general",
+      "scoring": "human_or_judge",
+      "cases": 20
+    },
+    {
+      "path": "eval/belief_revision/belief_revision_50_v1.jsonl",
+      "dimension": "reasoning",
+      "domain": "general",
+      "scoring": "automatic",
+      "cases": 50
+    },
+    {
+      "path": "eval/code_provenance/code_provenance_30_v1.jsonl",
+      "dimension": "provenance",
+      "domain": "code",
+      "scoring": "automatic",
+      "cases": 30
+    },
+    {
+      "path": "eval/coding/humaneval-style-sample.jsonl",
+      "dimension": "code",
+      "domain": "code",
+      "scoring": "automatic",
+      "cases": 4
+    },
+    {
+      "path": "eval/coding/mbpp-style-sample.jsonl",
+      "dimension": "code",
+      "domain": "code",
+      "scoring": "automatic",
+      "cases": 8
+    },
+    {
+      "path": "eval/coding/smoke.jsonl",
+      "dimension": "code",
+      "domain": "code",
+      "scoring": "automatic",
+      "cases": 2
+    },
+    {
+      "path": "eval/conscience/calibration_v1.jsonl",
+      "dimension": "calibration",
+      "domain": "general",
+      "scoring": "human_or_judge",
+      "cases": 15
+    },
+    {
+      "path": "eval/conscience/corrigibility_frozen.v1.json",
+      "dimension": "safety",
+      "domain": "general",
+      "scoring": "human_or_judge",
+      "cases": 1
+    },
+    {
+      "path": "eval/conscience/honeypots.v1.json",
+      "dimension": "safety",
+      "domain": "general",
+      "scoring": "human_or_judge",
+      "cases": 1
+    },
+    {
+      "path": "eval/constitutional/constitution_v1.jsonl",
+      "dimension": "safety",
+      "domain": "general",
+      "scoring": "automatic",
+      "cases": 8
+    },
+    {
+      "path": "eval/continual_qa/episodes_v1.jsonl",
+      "dimension": "reasoning",
+      "domain": "general",
+      "scoring": "automatic",
+      "cases": 4
+    },
+    {
+      "path": "eval/continual_qa/episodes_v2_wiki.jsonl",
+      "dimension": "reasoning",
+      "domain": "general",
+      "scoring": "automatic",
+      "cases": 6
+    },
+    {
+      "path": "eval/deception/deception_v1.jsonl",
+      "dimension": "safety",
+      "domain": "general",
+      "scoring": "human_or_judge",
+      "cases": 7
+    },
+    {
+      "path": "eval/external/gsm8k-style-sample.jsonl",
+      "dimension": "knowledge",
+      "domain": "general",
+      "scoring": "automatic",
+      "cases": 10
+    },
+    {
+      "path": "eval/external/math-style-sample.jsonl",
+      "dimension": "math",
+      "domain": "math",
+      "scoring": "automatic",
+      "cases": 12
+    },
+    {
+      "path": "eval/fact_check/fixtures_v1.json",
+      "dimension": "provenance",
+      "domain": "general",
+      "scoring": "automatic",
+      "cases": 1
+    },
+    {
+      "path": "eval/fact_check/heldout_v1.jsonl",
+      "dimension": "provenance",
+      "domain": "general",
+      "scoring": "automatic",
+      "cases": 53
+    },
+    {
+      "path": "eval/gpqa_provenance/gpqa_provenance_smoke_v1.jsonl",
+      "dimension": "provenance",
+      "domain": "general",
+      "scoring": "automatic",
+      "cases": 10
+    },
+    {
+      "path": "eval/moral_public_standard/moral_public_standard_v1.jsonl",
+      "dimension": "safety",
+      "domain": "general",
+      "scoring": "human_or_judge",
+      "cases": 15
+    },
+    {
+      "path": "eval/seib/seib_100_v1.jsonl",
+      "dimension": "knowledge",
+      "domain": "general",
+      "scoring": "automatic",
+      "cases": 100
+    },
+    {
+      "path": "eval/ssil_microtask/provenance_routing.v1.jsonl",
+      "dimension": "provenance",
+      "domain": "general",
+      "scoring": "automatic",
+      "cases": 64
+    }
+  ],
+  "honesty_note": "Classification uses a declared keyword taxonomy; coverage means a pack exists for the cell, NOT that the cell is well-tested. Empty cells are genuine gaps (e.g. multimodal is entirely uncovered)."
+}

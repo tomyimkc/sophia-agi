@@ -1,0 +1,150 @@
+{
+  "study": "data mixture-ratio (\u914d\u6bd4) sweep at fixed token budget",
+  "honesty_note": "Toy two-source mix; demonstrates fixed-budget, target-driven optimum methodology, not a production data recipe.",
+  "config": {
+    "vocab": 8,
+    "context": 2,
+    "hidden": 16,
+    "budget": 1600,
+    "epochs": 14,
+    "seeds": 2,
+    "ratios": [
+      0.0,
+      0.2,
+      0.4,
+      0.5,
+      0.6,
+      0.8,
+      1.0
+    ]
+  },
+  "targets": {
+    "A": {
+      "curve": [
+        {
+          "weight_A": 0.0,
+          "loss": 5.27447,
+          "sd": 0.25906
+        },
+        {
+          "weight_A": 0.2,
+          "loss": 1.97734,
+          "sd": 0.15858
+        },
+        {
+          "weight_A": 0.4,
+          "loss": 1.52714,
+          "sd": 0.0193
+        },
+        {
+          "weight_A": 0.5,
+          "loss": 1.52849,
+          "sd": 0.01848
+        },
+        {
+          "weight_A": 0.6,
+          "loss": 1.23988,
+          "sd": 0.02825
+        },
+        {
+          "weight_A": 0.8,
+          "loss": 1.16788,
+          "sd": 0.05316
+        },
+        {
+          "weight_A": 1.0,
+          "loss": 1.11691,
+          "sd": 0.01892
+        }
+      ],
+      "best_weight_A": 1.0,
+      "best_loss": 1.11691,
+      "interior_optimum": false
+    },
+    "B": {
+      "curve": [
+        {
+          "weight_A": 0.0,
+          "loss": 0.79965,
+          "sd": 0.01306
+        },
+        {
+          "weight_A": 0.2,
+          "loss": 0.93876,
+          "sd": 0.0728
+        },
+        {
+          "weight_A": 0.4,
+          "loss": 1.05803,
+          "sd": 0.0846
+        },
+        {
+          "weight_A": 0.5,
+          "loss": 1.06598,
+          "sd": 0.0532
+        },
+        {
+          "weight_A": 0.6,
+          "loss": 1.16428,
+          "sd": 0.08239
+        },
+        {
+          "weight_A": 0.8,
+          "loss": 1.34167,
+          "sd": 0.09302
+        },
+        {
+          "weight_A": 1.0,
+          "loss": 2.56026,
+          "sd": 0.18773
+        }
+      ],
+      "best_weight_A": 0.0,
+      "best_loss": 0.79965,
+      "interior_optimum": false
+    },
+    "blend": {
+      "curve": [
+        {
+          "weight_A": 0.0,
+          "loss": 3.12513,
+          "sd": 0.17878
+        },
+        {
+          "weight_A": 0.2,
+          "loss": 1.46399,
+          "sd": 0.03381
+        },
+        {
+          "weight_A": 0.4,
+          "loss": 1.30582,
+          "sd": 0.05971
+        },
+        {
+          "weight_A": 0.5,
+          "loss": 1.33018,
+          "sd": 0.04748
+        },
+        {
+          "weight_A": 0.6,
+          "loss": 1.26764,
+          "sd": 0.06271
+        },
+        {
+          "weight_A": 0.8,
+          "loss": 1.34692,
+          "sd": 0.11585
+        },
+        {
+          "weight_A": 1.0,
+          "loss": 2.0134,
+          "sd": 0.07369
+        }
+      ],
+      "best_weight_A": 0.6,
+      "best_loss": 1.26764,
+      "interior_optimum": true
+    }
+  },
+  "lesson": "Best mix tracks the target distribution and the blended target's optimum is interior \u2014 pure single-source data is suboptimal when the deployment distribution is mixed."
+}

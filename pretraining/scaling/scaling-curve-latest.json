@@ -1,0 +1,81 @@
+{
+  "study": "nano data-scaling law L(D) = E + A\u00b7D^-p",
+  "honesty_note": "Toy pure-Python LM on a synthetic order-2 Markov source. The point is verifiable METHODOLOGY (known floor, pre-registered prediction), not a frontier scaling law.",
+  "config": {
+    "vocab": 8,
+    "order": 2,
+    "context": 2,
+    "hidden": 16,
+    "epochs": 15,
+    "seeds": 3,
+    "lr": 0.03,
+    "optimizer": "adam",
+    "holdout_size": 1600
+  },
+  "analytic_floor_E": 0.90938,
+  "points": [
+    {
+      "D": 200,
+      "loss": 1.40983,
+      "sd": 0.08486,
+      "seeds": 3
+    },
+    {
+      "D": 400,
+      "loss": 1.31009,
+      "sd": 0.0365,
+      "seeds": 3
+    },
+    {
+      "D": 800,
+      "loss": 1.11696,
+      "sd": 0.05727,
+      "seeds": 3
+    },
+    {
+      "D": 1600,
+      "loss": 0.98607,
+      "sd": 0.02897,
+      "seeds": 3
+    },
+    {
+      "D": 3200,
+      "loss": 0.9894,
+      "sd": 0.08996,
+      "seeds": 3
+    }
+  ],
+  "fit_free_floor": {
+    "E": 0.0,
+    "A": 2.99496,
+    "p": 0.14317,
+    "r2_logspace": 0.93249,
+    "n_points": 5,
+    "floor_mode": "free"
+  },
+  "recovered_floor_error": 0.90938,
+  "recovered_floor_within_15pct": false,
+  "min_excess_ratio": 0.08433,
+  "floor_identifiability": "UNDER-IDENTIFIED: data has not approached saturation (min excess/floor = 0.084); free-floor fit collapses E toward 0. Use the known-floor fit + the pre-registered prediction gate as the result. This is the headline lesson: you cannot read off the irreducible loss without runs near the floor.",
+  "prediction": {
+    "fit_on_D": [
+      200,
+      400,
+      800,
+      1600
+    ],
+    "target_D": 3200,
+    "predicted_loss": 0.95877,
+    "measured_loss": 0.9894,
+    "relative_error": 0.03096,
+    "passes_10pct_gate": true,
+    "fit_small": {
+      "E": 0.90938,
+      "A": 74.4485,
+      "p": 0.90672,
+      "r2_logspace": 0.92939,
+      "n_points": 4,
+      "floor_mode": "known"
+    }
+  }
+}
