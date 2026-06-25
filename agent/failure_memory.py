@@ -188,6 +188,32 @@ def stable_id(stable_key_value: str) -> str:
     return hashlib.sha256(stable_key_value.encode("utf-8")).hexdigest()[:16]
 
 
+def _version_num(version: str) -> int:
+    """Parse ``vN`` version labels for numeric ordering (v10 > v2)."""
+    text = str(version or "").strip()
+    if text.startswith("v") and text[1:].isdigit():
+        return int(text[1:])
+    return 0
+
+
+def _heldout_pack_hash(path: Path) -> str:
+    """Stable hash of held-out pack rows (canonical JSON, sorted by id)."""
+    if not path.exists():
+        return ""
+    rows: list[dict] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line:
+            rows.append(json.loads(line))
+    rows.sort(key=lambda row: str(row.get("id", "")))
+    canonical = [
+        json.dumps(row, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+        for row in rows
+    ]
+    payload = "\n".join(canonical)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
+
+
 def heldout_prompt_hash(*, root: Path = ROOT) -> str:
     """Stable hash of the sealed held-out eval prompt set (decontam guard)."""
     prompts = sorted(eval_prompt_set(root=root))
@@ -198,28 +224,12 @@ def heldout_prompt_hash(*, root: Path = ROOT) -> str:
 def error_memory_heldout_hash(path: Path | None = None) -> str:
     """Stable hash of the error-memory held-out pack (stored outside eval/ globs)."""
     target = path or (ROOT / "data" / "error_memory_heldout_v1.jsonl")
-    if not target.exists():
-        return ""
-    ids: list[str] = []
-    for line in target.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if line:
-            row = json.loads(line)
-            ids.append(str(row.get("id", "")))
-    return hashlib.sha256("|".join(sorted(ids)).encode("utf-8")).hexdigest()[:16]
+    return _heldout_pack_hash(target)
 
 
 def error_memory_heldout_v2_hash(path: Path | None = None) -> str:
     target = path or (ROOT / "data" / "error_memory_heldout_v2.jsonl")
-    if not target.exists():
-        return ""
-    ids: list[str] = []
-    for line in target.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if line:
-            row = json.loads(line)
-            ids.append(str(row.get("id", "")))
-    return hashlib.sha256("|".join(sorted(ids)).encode("utf-8")).hexdigest()[:16]
+    return _heldout_pack_hash(target)
 
 
 def check_heldout_pack_disjoint(
@@ -416,14 +426,16 @@ class FailureMemoryStore:
             if not nid:
                 continue
             prev = by_id.get(nid)
-            if prev is None or str(row.get("version", "")) > str(prev.get("version", "")):
+            if prev is None or _version_num(str(row.get("version", ""))) > _version_num(
+                str(prev.get("version", ""))
+            ):
                 by_id[nid] = row
         return sorted(by_id.values(), key=lambda r: r.get("id", ""))
 
     def versions_of(self, node_id: str) -> list[dict]:
         return sorted(
             [r for r in self._read_all() if r.get("id") == node_id],
-            key=lambda r: str(r.get("version", "")),
+            key=lambda r: _version_num(str(r.get("version", ""))),
         )
 
     def ingest(

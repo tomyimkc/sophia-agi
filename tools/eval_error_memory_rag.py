@@ -5,7 +5,8 @@
 
 Sweep precision gates on the DEV split (v1, 6 cases — not test evidence). Pick a
 config with precision 1.0 and zero false-corrections on dev, then run ONCE on the
-sealed v2 test pack (≥40 cases, ≥3 seeds).
+sealed v2 test pack (≥40 cases). Net-value CIs use case-level bootstrap resampling
+on the deterministic oracle (not multi-seed model stochasticity).
 
     python tools/eval_error_memory_rag.py
     python tools/eval_error_memory_rag.py --dev-only
@@ -223,21 +224,6 @@ def _load_jsonl(path: Path) -> list[dict]:
     return rows
 
 
-def _bootstrap_ci(samples: list[float], *, n_boot: int = 2000, seed: int = 0) -> list[float]:
-    if not samples:
-        return [0.0, 0.0]
-    rng = random.Random(seed)
-    n = len(samples)
-    means: list[float] = []
-    for _ in range(n_boot):
-        draw = [samples[rng.randrange(n)] for _ in range(n)]
-        means.append(sum(draw) / n)
-    means.sort()
-    lo = means[max(0, int(0.025 * len(means)))]
-    hi = means[min(len(means) - 1, int(0.975 * len(means)))]
-    return [round(lo, 4), round(hi, 4)]
-
-
 def _answers_match(pred: str, gold: str) -> bool:
     return normalize(pred) == normalize(gold)
 
@@ -397,6 +383,69 @@ def _rate(cases: list[dict], preds: list[str], *, repeat: bool) -> float:
     return errs / len(cases)
 
 
+def _percentile_ci(samples: list[float]) -> list[float]:
+    if not samples:
+        return [0.0, 0.0]
+    ordered = sorted(samples)
+    lo = ordered[max(0, int(0.025 * len(ordered)))]
+    hi = ordered[min(len(ordered) - 1, int(0.975 * len(ordered)))]
+    return [round(lo, 4), round(hi, 4)]
+
+
+def _case_repeat_error(case: dict, pred: str) -> int:
+    return int(_answers_match(pred, case["wrongAnswer"]))
+
+
+def _case_false_correction(case: dict, pred: str) -> int:
+    return int(not _answers_match(pred, case["correctAnswer"]))
+
+
+def _bootstrap_case_metrics(
+    repeat_cases: list[dict],
+    right_cases: list[dict],
+    base_repeat: list[str],
+    rag_repeat: list[str],
+    base_right: list[str],
+    rag_right: list[str],
+    *,
+    n_boot: int,
+    seed: int,
+) -> tuple[list[float], list[float], list[float]]:
+    rng = random.Random(seed)
+    gains: list[float] = []
+    costs: list[float] = []
+    nets: list[float] = []
+    n_repeat = len(repeat_cases)
+    n_right = len(right_cases)
+    for _ in range(n_boot):
+        if n_repeat:
+            repeat_idx = [rng.randrange(n_repeat) for _ in range(n_repeat)]
+            repeat_without = sum(
+                _case_repeat_error(repeat_cases[i], base_repeat[i]) for i in repeat_idx
+            ) / n_repeat
+            repeat_with = sum(
+                _case_repeat_error(repeat_cases[i], rag_repeat[i]) for i in repeat_idx
+            ) / n_repeat
+            gain = repeat_without - repeat_with
+        else:
+            gain = 0.0
+        if n_right:
+            right_idx = [rng.randrange(n_right) for _ in range(n_right)]
+            cost_without = sum(
+                _case_false_correction(right_cases[i], base_right[i]) for i in right_idx
+            ) / n_right
+            cost_with = sum(
+                _case_false_correction(right_cases[i], rag_right[i]) for i in right_idx
+            ) / n_right
+            cost_delta = cost_with - cost_without
+        else:
+            cost_delta = 0.0
+        gains.append(gain)
+        costs.append(cost_delta)
+        nets.append(gain - cost_delta)
+    return gains, costs, nets
+
+
 def run_net_eval(
     heldout: list[dict],
     store: FailureMemoryStore,
@@ -408,38 +457,33 @@ def run_net_eval(
     repeat_cases = [c for c in heldout if c.get("wouldRepeat")]
     right_cases = [c for c in heldout if not c.get("wouldRepeat")]
 
-    per_seed: list[dict] = []
-    for seed in range(seeds):
-        base_repeat = [_baseline_answer(c) for c in repeat_cases]
-        base_right = [_baseline_answer(c) for c in right_cases]
-        rag_repeat = [_with_rag_answer(c, store, gates) for c in repeat_cases]
-        rag_right = [_with_rag_answer(c, store, gates) for c in right_cases]
+    base_repeat = [_baseline_answer(c) for c in repeat_cases]
+    base_right = [_baseline_answer(c) for c in right_cases]
+    rag_repeat = [_with_rag_answer(c, store, gates) for c in repeat_cases]
+    rag_right = [_with_rag_answer(c, store, gates) for c in right_cases]
 
-        repeat_without = _rate(repeat_cases, base_repeat, repeat=True)
-        repeat_with = _rate(repeat_cases, rag_repeat, repeat=True)
-        cost_without = _rate(right_cases, base_right, repeat=False)
-        cost_with = _rate(right_cases, rag_right, repeat=False)
+    repeat_without = _rate(repeat_cases, base_repeat, repeat=True)
+    repeat_with = _rate(repeat_cases, rag_repeat, repeat=True)
+    cost_without = _rate(right_cases, base_right, repeat=False)
+    cost_with = _rate(right_cases, rag_right, repeat=False)
 
-        per_seed.append({
-            "seed": seed,
-            "repeatErrorRateWithout": round(repeat_without, 4),
-            "repeatErrorRateWith": round(repeat_with, 4),
-            "repeatErrorReduction": round(repeat_without - repeat_with, 4),
-            "falseCorrectionCostWithout": round(cost_without, 4),
-            "falseCorrectionCostWith": round(cost_with, 4),
-            "falseCorrectionDelta": round(cost_with - cost_without, 4),
-            "netValue": round((repeat_without - repeat_with) - (cost_with - cost_without), 4),
-        })
+    repeat_reduction = repeat_without - repeat_with
+    cost_delta = cost_with - cost_without
+    net_value = repeat_reduction - cost_delta
 
-    gains = [s["repeatErrorReduction"] for s in per_seed]
-    costs = [s["falseCorrectionDelta"] for s in per_seed]
-    nets = [s["netValue"] for s in per_seed]
-    ci_gain = _bootstrap_ci(gains, n_boot=n_boot, seed=42)
-    ci_cost = _bootstrap_ci(costs, n_boot=n_boot, seed=43)
-    ci_net = _bootstrap_ci(nets, n_boot=n_boot, seed=44)
-    mean_gain = round(sum(gains) / len(gains), 4)
-    mean_cost = round(sum(costs) / len(costs), 4)
-    mean_net = round(sum(nets) / len(nets), 4)
+    boot_gains, boot_costs, boot_nets = _bootstrap_case_metrics(
+        repeat_cases,
+        right_cases,
+        base_repeat,
+        rag_repeat,
+        base_right,
+        rag_right,
+        n_boot=n_boot,
+        seed=seeds,
+    )
+    ci_gain = _percentile_ci(boot_gains)
+    ci_cost = _percentile_ci(boot_costs)
+    ci_net = _percentile_ci(boot_nets)
 
     if ci_net[0] > 0:
         verdict = "helps"
@@ -448,15 +492,35 @@ def run_net_eval(
     else:
         verdict = "within_noise"
 
+    point = {
+        "repeatErrorRateWithout": round(repeat_without, 4),
+        "repeatErrorRateWith": round(repeat_with, 4),
+        "repeatErrorReduction": round(repeat_reduction, 4),
+        "falseCorrectionCostWithout": round(cost_without, 4),
+        "falseCorrectionCostWith": round(cost_with, 4),
+        "falseCorrectionDelta": round(cost_delta, 4),
+        "netValue": round(net_value, 4),
+    }
+
     return {
         "repeatEligibleCount": len(repeat_cases),
         "alreadyRightCount": len(right_cases),
+        "bootstrapMethod": "case_resample",
         "metrics": {
-            "repeatErrorReduction": {"mean": mean_gain, "ci95": ci_gain, "perSeed": gains},
-            "falseCorrectionCost": {"mean": mean_cost, "ci95": ci_cost, "perSeed": costs},
-            "netValue": {"mean": mean_net, "ci95": ci_net, "perSeed": nets},
+            "repeatErrorReduction": {
+                "mean": round(repeat_reduction, 4),
+                "ci95": ci_gain,
+            },
+            "falseCorrectionCost": {
+                "mean": round(cost_delta, 4),
+                "ci95": ci_cost,
+            },
+            "netValue": {
+                "mean": round(net_value, 4),
+                "ci95": ci_net,
+            },
         },
-        "perSeed": per_seed,
+        "pointEstimate": point,
         "verdict": verdict,
     }
 
@@ -532,7 +596,7 @@ def _report_envelope(
             "path": str(TEST_HELDOUT.relative_to(ROOT)),
             "caseCount": len(test_cases),
         },
-        "seeds": seeds,
+        "bootstrapSeed": seeds,
         "evaluator": "disjoint-oracle (held-out labels; independent of store/gate)",
         "decontamination": {
             "storeNeverSawHeldout": True,

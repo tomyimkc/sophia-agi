@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import json
 import sys
 import tempfile
 from pathlib import Path
@@ -109,6 +110,40 @@ def test_append_only_versioning() -> None:
         assert versions[0]["version"] == "v1"
         assert versions[1]["version"] == "v2"
         assert versions[0]["correction"]["claim"] != versions[1]["correction"]["claim"]
+
+
+def test_version_sort_numeric_not_lexicographic() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        store = _store(tmp)
+        path = store.path
+        base = {
+            "schema": "sophia.failure_memory.v1",
+            "candidateOnly": True,
+            "level3Evidence": False,
+            "id": "version-sort-test",
+            "createdAt": "2026-06-25T10:00:00Z",
+            "stableKey": "k",
+            "sourceEvent": {"runId": "r", "question": "q"},
+            "verifier": {"name": "eval_label", "verdict": "label:false"},
+            "wrongClaim": "w",
+            "correction": {
+                "claim": "c",
+                "citation": "data/attributions.json#dao_de_jing",
+                "source": "s",
+            },
+        }
+        for version in ("v2", "v10", "v1"):
+            row = {**base, "version": version, "correction": {**base["correction"], "claim": version}}
+            path.write_text(
+                (path.read_text(encoding="utf-8") if path.exists() else "")
+                + json.dumps(row, ensure_ascii=False)
+                + "\n",
+                encoding="utf-8",
+            )
+        versions = store.versions_of("version-sort-test")
+        assert [v["version"] for v in versions] == ["v1", "v2", "v10"]
+        latest = store.list_nodes()[0]
+        assert latest["version"] == "v10"
 
 
 def test_heldout_overlap_rejected() -> None:

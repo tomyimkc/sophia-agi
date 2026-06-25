@@ -6,12 +6,12 @@
   "caseCount": 40,
   "repeatEligible": 20,
   "alreadyRight": 20,
-  "sealedHash": "9a97e3ca4ea0ad6f",
+  "sealedHash": "ef2d19ef437ff4f1",
   "decontamination": {
     "clean": true,
     "overlapCount": 0,
     "overlappingIds": [],
-    "packHash": "9a97e3ca4ea0ad6f"
+    "packHash": "ef2d19ef437ff4f1"
   },
   "note": "Test pack — tune gates on v1/dev only; evaluate net value once on v2."
 }

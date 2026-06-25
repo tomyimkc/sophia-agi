@@ -11,7 +11,6 @@ test pack — never tune parameters on it; sweep on v1/dev only.
 
 from __future__ import annotations
 
-import hashlib
 import json
 import sys
 from pathlib import Path
@@ -23,7 +22,6 @@ if str(ROOT) not in sys.path:
 from agent.failure_memory import (  # noqa: E402
     _load_attributions,
     check_heldout_pack_disjoint,
-    infer_error_class,
 )
 
 OUT = ROOT / "data" / "error_memory_heldout_v2.jsonl"

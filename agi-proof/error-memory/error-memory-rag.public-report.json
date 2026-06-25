@@ -119,15 +119,11 @@
     },
     "repeatEligibleCount": 20,
     "alreadyRightCount": 20,
+    "bootstrapMethod": "case_resample",
     "metrics": {
       "repeatErrorReduction": {
         "mean": 1.0,
         "ci95": [
-          1.0,
-          1.0
-        ],
-        "perSeed": [
-          1.0,
           1.0,
           1.0
         ]
@@ -137,11 +133,6 @@
         "ci95": [
           0.0,
           0.0
-        ],
-        "perSeed": [
-          0.0,
-          0.0,
-          0.0
         ]
       },
       "netValue": {
@@ -149,55 +140,27 @@
         "ci95": [
           1.0,
           1.0
-        ],
-        "perSeed": [
-          1.0,
-          1.0,
-          1.0
         ]
       }
     },
-    "perSeed": [
-      {
-        "seed": 0,
-        "repeatErrorRateWithout": 1.0,
-        "repeatErrorRateWith": 0.0,
-        "repeatErrorReduction": 1.0,
-        "falseCorrectionCostWithout": 0.0,
-        "falseCorrectionCostWith": 0.0,
-        "falseCorrectionDelta": 0.0,
-        "netValue": 1.0
-      },
-      {
-        "seed": 1,
-        "repeatErrorRateWithout": 1.0,
-        "repeatErrorRateWith": 0.0,
-        "repeatErrorReduction": 1.0,
-        "falseCorrectionCostWithout": 0.0,
-        "falseCorrectionCostWith": 0.0,
-        "falseCorrectionDelta": 0.0,
-        "netValue": 1.0
-      },
-      {
-        "seed": 2,
-        "repeatErrorRateWithout": 1.0,
-        "repeatErrorRateWith": 0.0,
-        "repeatErrorReduction": 1.0,
-        "falseCorrectionCostWithout": 0.0,
-        "falseCorrectionCostWith": 0.0,
-        "falseCorrectionDelta": 0.0,
-        "netValue": 1.0
-      }
-    ],
+    "pointEstimate": {
+      "repeatErrorRateWithout": 1.0,
+      "repeatErrorRateWith": 0.0,
+      "repeatErrorReduction": 1.0,
+      "falseCorrectionCostWithout": 0.0,
+      "falseCorrectionCostWith": 0.0,
+      "falseCorrectionDelta": 0.0,
+      "netValue": 1.0
+    },
     "verdict": "helps"
   },
-  "seeds": 3,
+  "bootstrapSeed": 3,
   "evaluator": "disjoint-oracle (held-out labels; independent of store/gate)",
   "decontamination": {
     "storeNeverSawHeldout": true,
     "evalPromptHash": "8e66094e8852ca35",
-    "devHeldoutHash": "930c9ad140975839",
-    "testHeldoutHash": "9a97e3ca4ea0ad6f",
+    "devHeldoutHash": "fdabfe517ef672ca",
+    "testHeldoutHash": "ef2d19ef437ff4f1",
     "contaminationGuardClean": true
   },
   "verdictRule": "helps if net CI lower > 0; harms if net CI upper < 0; else within_noise"
