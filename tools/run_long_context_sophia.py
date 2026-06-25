@@ -29,7 +29,13 @@ TOOLS_DIR = ROOT / "tools"
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
 
-from tools.run_hidden_eval_sophia import ABLATION_MODES, RunConfig, SOPHIA_FULL, run_case  # noqa: E402
+from tools.run_hidden_eval_sophia import (  # noqa: E402
+    ABLATION_MODES,
+    RunConfig,
+    SOPHIA_FULL,
+    backend_preflight,
+    run_case,
+)
 
 CARD_SCHEMA = ROOT / "schema" / "context-pack-card-1.0.0.json"
 REPORT_DIR = ROOT / "agi-proof" / "long-context"
@@ -363,8 +369,10 @@ def run_matrix(
     modes: dict[str, Any],
     seed: int,
     budget_tokens: int,
+    backend: str = "mock",
+    timeout_sec: int = 5,
 ) -> dict[str, Any]:
-    config = RunConfig(backend="mock", timeout_sec=5)
+    config = RunConfig(backend=backend, timeout_sec=timeout_sec)
     pack_id = f"long-context-synthetic-seed-{seed}"
     case_results: list[dict[str, Any]] = []
     card_errors: dict[str, list[str]] = {}
@@ -698,12 +706,14 @@ def build_report(
     full_matrix_available: bool,
     budget_tokens: int,
     seed_plan: dict[str, Any] | None = None,
+    backend: str = "mock",
 ) -> dict[str, Any]:
     results = matrix["caseResults"]
     headline = build_headline_metric(results)
     ablation_matrix = build_ablation_matrix(results)
     control_sanity = build_control_sanity(results)
     distractor_by_arm = build_distractor_robustness_by_arm(results)
+    is_mock = backend == "mock"
     return {
         "schema": "sophia.long_context.public_report.v1",
         "reportStatus": "candidate",
@@ -711,16 +721,23 @@ def build_report(
         "candidateOnly": True,
         "canClaimAGI": False,
         "claimBoundary": (
-            "CANDIDATE only: deterministic synthetic corpus, mock backend, no hidden non-synthetic eval, "
-            "and no model-ability or AGI claim."
+            "CANDIDATE only: deterministic synthetic corpus, "
+            + ("mock backend" if is_mock else f"single local model backend ({backend})")
+            + ", no hidden non-synthetic eval, and no model-ability or AGI claim."
         ),
         "packId": matrix["packId"],
         "runAt": datetime.now().isoformat(timespec="seconds"),
         "visibility": "public-aggregate-no-prompts",
-        "backend": "mock",
+        "backend": backend,
         "backendClaimBoundary": (
             "Recall came from the offline MOCK backend. It validates harness wiring, context packing, "
             "and deterministic scoring only; it is not evidence of model long-context ability."
+            if is_mock
+            else (
+                f"Recall came from a single local model backend ({backend}) within its native context "
+                "window. CANDIDATE only: one self-hosted model, self-authored synthetic corpus, no "
+                "third-party benchmark and no external replication; not a validated long-context claim."
+            )
         ),
         "corpus": {
             "kind": "deterministic synthetic",
@@ -759,14 +776,22 @@ def build_report(
         ),
         "distractorRobustnessByArm": distractor_by_arm,
         "controls": control_sanity,
-        # F4: under a span-extractive mock, packed-but-unrecalled collapses cannot occur.
+        # F4: under a span-extractive mock, packed-but-unrecalled collapses cannot occur;
+        # a real generative model arm makes all four classes reachable.
         "taxonomyCoverage": {
-            "reachable": ["retrieval_miss", "packer_eviction"],
-            "unreachable": ["model_ignored_packed_span", "gate_suppressed"],
+            "reachable": ["retrieval_miss", "packer_eviction"]
+            if is_mock
+            else ["retrieval_miss", "packer_eviction", "model_ignored_packed_span", "gate_suppressed"],
+            "unreachable": ["model_ignored_packed_span", "gate_suppressed"] if is_mock else [],
             "why": (
                 "The offline mock backend is span-extractive from accepted packed spans: if the "
                 "answer span is packed, recall is 1.0, so model_ignored_packed_span and "
                 "gate_suppressed cannot fire. Those classes require a generative model arm."
+                if is_mock
+                else (
+                    f"A real generative model backend ({backend}) can ignore a packed span or be "
+                    "suppressed by the gate, so all four failure classes are reachable and measured."
+                )
             ),
         },
         "positionLengthCrossTab": build_position_length_cross_tab(results),
@@ -817,6 +842,11 @@ def build_report(
                 "The mock backend is span-extractive from accepted packed spans, so wrong-token output is not "
                 "a model distractor-robustness signal. Distractors are measured as budget/ranking pressure "
                 "and recall delta, not as validated adversarial robustness."
+                if is_mock
+                else (
+                    f"A real generative model backend ({backend}) can emit a distractor token, so wrong-token "
+                    "rate is now a genuine (candidate) distractor-robustness signal, not just ranking pressure."
+                )
             ),
         },
         "measuredVsAsserted": {
@@ -846,10 +876,15 @@ def build_report(
             ],
         },
         "notes": [
-            "Candidate only: self-authored synthetic corpus and mock backend.",
+            "Candidate only: self-authored synthetic corpus and "
+            + ("mock backend." if is_mock else f"single local model backend ({backend})."),
             "Every case result carries a schema-validated context-pack card.",
             "Quick 4k/16k runs are labeled smoke matrix; use --full for the separate 4k/16k/64k/128k measurement.",
-            "Mock backend reads only the context block assembled by the packer/raw-budget arm.",
+            (
+                "Mock backend reads only the context block assembled by the packer/raw-budget arm."
+                if is_mock
+                else f"Real model backend ({backend}) answers only from the assembled context block; use sizes within its window."
+            ),
             "No hidden prompts, private answers, API keys, or external gold data are published.",
         ],
     }
@@ -865,6 +900,14 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=1729)
     parser.add_argument("--seeds", default="", help="Comma-separated seeds; overrides --seed for multi-seed aggregation")
     parser.add_argument("--full", action="store_true", help="Run 4k, 16k, 64k, and 128k+ context sizes")
+    parser.add_argument(
+        "--backend",
+        default="mock",
+        help="Model backend: 'mock' (default, offline plumbing) or 'adapter' for a real local model "
+        "(set via SOPHIA_MODEL_PROVIDER, e.g. ollama/mlx). Real backends make the gate, distractor "
+        "tokens, and model_ignored_packed_span measurable.",
+    )
+    parser.add_argument("--timeout-sec", type=int, default=5, help="Per-case backend timeout (raise for real models)")
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args()
 
@@ -873,6 +916,22 @@ def main() -> int:
     needle_counts = parse_ints(args.needle_counts)
     modes = long_context_modes(args.modes)
     seeds = parse_ints(args.seeds) if args.seeds else [args.seed]
+
+    # A real local-model arm only produces evidence if the backend actually answers. Preflight
+    # it; if no local model is reachable (e.g. offline CI), skip without faking numbers or
+    # clobbering the committed candidate report.
+    if args.backend != "mock":
+        preflight = backend_preflight(backend=args.backend, timeout_sec=max(args.timeout_sec, 30))
+        if not preflight.get("ok"):
+            print(json.dumps({
+                "ok": False,
+                "stage": "backend-preflight",
+                "backend": args.backend,
+                "localModelUnavailable": True,
+                "note": "No reachable local model; skipping real-model arm (offline-safe). No report written.",
+                "preflight": {k: preflight.get(k) for k in ("returncode", "answerPreview", "stderrTail")},
+            }, indent=2))
+            return 0
 
     # F6: run the full matrix per seed and merge. Case ids embed the seed, so rows stay
     # distinct; downstream aggregation (delta, dispersion, controls) spans all seeds.
@@ -884,6 +943,8 @@ def main() -> int:
             modes=modes,
             seed=seed,
             budget_tokens=args.budget_tokens,
+            backend=args.backend,
+            timeout_sec=args.timeout_sec,
         )
         for seed in seeds
     ]
@@ -914,15 +975,19 @@ def main() -> int:
         full_matrix_available=args.full,
         budget_tokens=args.budget_tokens,
         seed_plan=seed_plan,
+        backend=args.backend,
     )
     if not report["cardValidation"]["valid"]:
         print(json.dumps({"ok": False, "stage": "context-card-validation", "errors": report["cardValidation"]["errors"]}, indent=2))
         return 1
     controls = report["controls"]
+    # Broken-packer must yield ~0 for any backend (a model won't emit a unique synthetic token
+    # absent from context). Oracle-high is a HARNESS check under the mock; for a real model it is
+    # a capability check, so it is recorded but not a hard gate.
     if controls["brokenPackerPresent"] and not controls["brokenPackerAssertApproxZero"]:
         print(json.dumps({"ok": False, "stage": "broken-packer-control", "controls": controls}, indent=2))
         return 1
-    if controls["oraclePackerPresent"] and not controls["oraclePackerAssertHigh"]:
+    if args.backend == "mock" and controls["oraclePackerPresent"] and not controls["oraclePackerAssertHigh"]:
         print(json.dumps({"ok": False, "stage": "oracle-packer-control", "controls": controls}, indent=2))
         return 1
 

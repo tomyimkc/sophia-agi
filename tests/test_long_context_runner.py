@@ -168,6 +168,42 @@ def test_long_context_matrix_has_raw_baseline_controls_and_headline_delta() -> N
     }
 
 
+def test_real_backend_arm_skips_offline_safe_when_no_local_model() -> None:
+    # A real-model arm must not fake numbers or clobber the report when no local model is
+    # reachable. Force a closed endpoint so preflight fails deterministically everywhere.
+    import os
+
+    env = dict(os.environ)
+    env["SOPHIA_MODEL_PROVIDER"] = "ollama"
+    env["SOPHIA_MODEL_BASE_URL"] = "http://127.0.0.1:1/v1"  # guaranteed-closed port
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "should-not-exist.json"
+        proc = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "tools" / "run_long_context_sophia.py"),
+                "--context-sizes", "512",
+                "--depths", "0",
+                "--needle-counts", "1",
+                "--budget-tokens", "512",
+                "--backend", "adapter",
+                "--timeout-sec", "5",
+                "--out", str(out),
+            ],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            timeout=60,
+            env=env,
+            check=False,
+        )
+        assert proc.returncode == 0, proc.stderr + proc.stdout
+        payload = json.loads(proc.stdout)
+        assert payload["localModelUnavailable"] is True
+        assert payload["stage"] == "backend-preflight"
+        assert not out.exists(), "no report should be written when the local model is unavailable"
+
+
 def test_architecture_bets_root_map_has_required_fields() -> None:
     bets = json.loads((ROOT / "agi-proof" / "architecture-bets.json").read_text(encoding="utf-8"))
     assert bets["candidateOnly"] is True
@@ -195,6 +231,7 @@ def main() -> int:
     test_context_pack_card_validator_rejects_missing_required_field()
     test_long_context_cli_writes_candidate_report_offline()
     test_long_context_matrix_has_raw_baseline_controls_and_headline_delta()
+    test_real_backend_arm_skips_offline_safe_when_no_local_model()
     test_architecture_bets_root_map_has_required_fields()
     print("test_long_context_runner: OK")
     return 0
