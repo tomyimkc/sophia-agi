@@ -1,46 +1,86 @@
 {
   "domain": "religion",
   "version": 1,
+  "formatPassed": 2,
+  "contentPassed": 4,
   "passed": 1,
   "total": 6,
+  "formatPct": 33.3,
+  "contentPct": 66.7,
   "score_pct": 16.7,
   "results": [
     {
       "id": "gospel_authorship_council",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected tradition context 'christianity'"
+      ],
       "reasons": [
         "expected tradition context 'christianity'"
       ]
     },
     {
       "id": "ancestor_veneration_split",
+      "formatPassed": false,
+      "contentPassed": true,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [],
       "reasons": [
         "expected council/panel debate format"
       ]
     },
     {
       "id": "dao_de_jing_religion_philosophy",
+      "formatPassed": false,
+      "contentPassed": true,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [],
       "reasons": [
         "expected council/panel debate format"
       ]
     },
     {
       "id": "islam_historical_figure_sensitive",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "buddha_nirvana_pop",
+      "formatPassed": false,
+      "contentPassed": true,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [],
       "reasons": [
         "expected council/panel debate format"
       ]
     },
     {
       "id": "hadith_sect_boundary_council",
+      "formatPassed": false,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [
+        "expected careful scholarly/traditional handling of sensitive topic"
+      ],
       "reasons": [
         "expected council/panel debate format",
         "expected careful scholarly/traditional handling of sensitive topic"

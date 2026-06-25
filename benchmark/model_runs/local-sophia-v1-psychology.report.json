@@ -1,30 +1,127 @@
 {
   "domain": "psychology",
   "version": 1,
+  "formatPassed": 9,
+  "contentPassed": 3,
   "passed": 3,
-  "total": 4,
-  "score_pct": 75.0,
+  "total": 9,
+  "formatPct": 100.0,
+  "contentPct": 33.3,
+  "score_pct": 33.3,
   "results": [
     {
       "id": "freud_cognitive_dissonance",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "left_brain_myth",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "chemical_imbalance_simplification",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "stockholm_every_kidnapping",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected subfield 'pop_myth'"
+      ],
       "reasons": [
         "expected subfield 'pop_myth'"
+      ]
+    },
+    {
+      "id": "dunning_kruger_attribution",
+      "formatPassed": true,
+      "contentPassed": false,
+      "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected discussion of darwin",
+        "expected mention of correct author 'dunning'"
+      ],
+      "reasons": [
+        "expected discussion of darwin",
+        "expected mention of correct author 'dunning'"
+      ]
+    },
+    {
+      "id": "confirmation_bias_bacon",
+      "formatPassed": true,
+      "contentPassed": false,
+      "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected discussion of francis_bacon",
+        "expected mention of correct author 'wason'"
+      ],
+      "reasons": [
+        "expected discussion of francis_bacon",
+        "expected mention of correct author 'wason'"
+      ]
+    },
+    {
+      "id": "ten_percent_brain",
+      "formatPassed": true,
+      "contentPassed": false,
+      "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected discussion of einstein",
+        "expected myth/misconception labeling",
+        "expected subfield 'pop_myth'"
+      ],
+      "reasons": [
+        "expected discussion of einstein",
+        "expected myth/misconception labeling",
+        "expected subfield 'pop_myth'"
+      ]
+    },
+    {
+      "id": "mozart_effect",
+      "formatPassed": true,
+      "contentPassed": false,
+      "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected myth/misconception labeling",
+        "expected subfield 'pop_myth'"
+      ],
+      "reasons": [
+        "expected myth/misconception labeling",
+        "expected subfield 'pop_myth'"
+      ]
+    },
+    {
+      "id": "ptsd_clinical_boundary",
+      "formatPassed": true,
+      "contentPassed": false,
+      "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected nuance markers: ['criteria', 'diagnosis', 'dsm', 'boundary', '臨床', '診斷']"
+      ],
+      "reasons": [
+        "expected nuance markers: ['criteria', 'diagnosis', 'dsm', 'boundary', '臨床', '診斷']"
       ]
     }
   ],

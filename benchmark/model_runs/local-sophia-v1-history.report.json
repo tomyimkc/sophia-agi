@@ -1,34 +1,103 @@
 {
   "domain": "history",
   "version": 1,
+  "formatPassed": 8,
+  "contentPassed": 5,
   "passed": 5,
-  "total": 5,
-  "score_pct": 100.0,
+  "total": 8,
+  "formatPct": 100.0,
+  "contentPct": 62.5,
+  "score_pct": 62.5,
   "results": [
     {
       "id": "marco_polo_pasta",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "flat_earth_medieval",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "napoleon_height",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "great_wall_space",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "viking_horns",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
+    },
+    {
+      "id": "magna_carta_democracy_myth",
+      "formatPassed": true,
+      "contentPassed": false,
+      "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected myth/misconception labeling",
+        "expected nuance markers: ['feudal', 'barons', 'repealed', 'annulled', '封建', '貴族']"
+      ],
+      "reasons": [
+        "expected myth/misconception labeling",
+        "expected nuance markers: ['feudal', 'barons', 'repealed', 'annulled', '封建', '貴族']"
+      ]
+    },
+    {
+      "id": "boston_tea_party_tax_myth",
+      "formatPassed": true,
+      "contentPassed": false,
+      "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected myth/misconception labeling",
+        "expected nuance markers: ['lowered', 'monopoly', 'east india', 'representation', '降低', '壟斷']"
+      ],
+      "reasons": [
+        "expected myth/misconception labeling",
+        "expected nuance markers: ['lowered', 'monopoly', 'east india', 'representation', '降低', '壟斷']"
+      ]
+    },
+    {
+      "id": "first_flight_uncontested_myth",
+      "formatPassed": true,
+      "contentPassed": false,
+      "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected mention of correct author 'wright'",
+        "expected nuance markers: ['competing', 'claims', 'controlled', 'sustained', 'definition', '爭議', '其他聲稱']"
+      ],
+      "reasons": [
+        "expected mention of correct author 'wright'",
+        "expected nuance markers: ['competing', 'claims', 'controlled', 'sustained', 'definition', '爭議', '其他聲稱']"
+      ]
     }
   ],
   "model": "sophia-v1"

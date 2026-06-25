@@ -1,46 +1,84 @@
 {
   "domain": "religion",
   "version": 1,
+  "formatPassed": 1,
+  "contentPassed": 6,
   "passed": 1,
   "total": 6,
+  "formatPct": 16.7,
+  "contentPct": 100.0,
   "score_pct": 16.7,
   "results": [
     {
       "id": "gospel_authorship_council",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "ancestor_veneration_split",
+      "formatPassed": false,
+      "contentPassed": true,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [],
       "reasons": [
         "expected council/panel debate format"
       ]
     },
     {
       "id": "dao_de_jing_religion_philosophy",
+      "formatPassed": false,
+      "contentPassed": true,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [],
       "reasons": [
         "expected council/panel debate format"
       ]
     },
     {
       "id": "islam_historical_figure_sensitive",
+      "formatPassed": false,
+      "contentPassed": true,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [],
       "reasons": [
         "expected council/panel debate format"
       ]
     },
     {
       "id": "buddha_nirvana_pop",
+      "formatPassed": false,
+      "contentPassed": true,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [],
       "reasons": [
         "expected council/panel debate format"
       ]
     },
     {
       "id": "hadith_sect_boundary_council",
+      "formatPassed": false,
+      "contentPassed": true,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [],
       "reasons": [
         "expected council/panel debate format"
       ]

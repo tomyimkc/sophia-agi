@@ -62,24 +62,53 @@ def _load_reports(label: str) -> list[dict[str, Any]]:
     return reports
 
 
+def _channel_block(report: dict[str, Any]) -> dict[str, Any]:
+    """Extract FORMAT / CONTENT / COMBINED headline block from a domain report."""
+    total = int(report.get("total", 0))
+    fmt = int(report.get("formatPassed", report.get("passed", 0)))
+    content = int(report.get("contentPassed", report.get("passed", 0)))
+    combined = int(report.get("passed", 0))
+    pct = lambda n: round(100.0 * n / total, 1) if total else 0.0
+    block = {
+        "format": {"passed": fmt, "total": total, "score_pct": report.get("formatPct", pct(fmt))},
+        "content": {"passed": content, "total": total, "score_pct": report.get("contentPct", pct(content))},
+        "combined": {"passed": combined, "total": total, "score_pct": report.get("score_pct", pct(combined))},
+        # Legacy combined fields for continuity
+        "passed": combined,
+        "total": total,
+        "score_pct": report.get("score_pct", pct(combined)),
+    }
+    if "gateFailures" in report:
+        block["gateFailures"] = report["gateFailures"]
+    return block
+
+
 def _summarize_reports(reports: list[dict[str, Any]]) -> dict[str, Any] | None:
     if not reports:
         return None
-    total = sum(int(r.get("total", 0)) for r in reports)
-    passed = sum(int(r.get("passed", 0)) for r in reports)
-    gate_failures = sum(int(r.get("gateFailures", 0)) for r in reports if "gateFailures" in r)
-    return {
-        "domains": {r.get("domain", "unknown"): {
-            "passed": r.get("passed"),
-            "total": r.get("total"),
-            "score_pct": r.get("score_pct"),
-            **({"gateFailures": r.get("gateFailures")} if "gateFailures" in r else {}),
-        } for r in reports},
-        "passed": passed,
+    domains = {r.get("domain", "unknown"): _channel_block(r) for r in reports}
+    fmt_passed = sum(d["format"]["passed"] for d in domains.values())
+    content_passed = sum(d["content"]["passed"] for d in domains.values())
+    combined_passed = sum(d["combined"]["passed"] for d in domains.values())
+    total = sum(d["total"] for d in domains.values())
+    pct = lambda n: round(100.0 * n / total, 1) if total else 0.0
+    gate_failures = sum(
+        int(r.get("gateFailures", 0)) for r in reports if "gateFailures" in r
+    )
+    summary: dict[str, Any] = {
+        "domains": domains,
+        "channels": {
+            "format": {"passed": fmt_passed, "total": total, "score_pct": pct(fmt_passed)},
+            "content": {"passed": content_passed, "total": total, "score_pct": pct(content_passed)},
+            "combined": {"passed": combined_passed, "total": total, "score_pct": pct(combined_passed)},
+        },
+        "passed": combined_passed,
         "total": total,
-        "score_pct": round(100.0 * passed / total, 1) if total else 0.0,
-        "gateFailures": gate_failures,
+        "score_pct": pct(combined_passed),
     }
+    if any("gateFailures" in r for r in reports):
+        summary["gateFailures"] = gate_failures
+    return summary
 
 
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
@@ -141,7 +170,8 @@ def main(argv=None) -> int:
         return 0
 
     payload = {
-        "schema": "sophia.eval_ladder.v1",
+        "schema": "sophia.eval_ladder.v2",
+        "headline": "FORMAT / CONTENT / COMBINED per suite; protected gate uses CONTENT channel.",
         "createdAt": datetime.now(timezone.utc).isoformat(),
         "candidateOnly": True,
         "level3Evidence": False,

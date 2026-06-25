@@ -1,63 +1,113 @@
 {
   "domain": "psychology",
   "version": 1,
+  "formatPassed": 9,
+  "contentPassed": 4,
   "passed": 4,
   "total": 9,
+  "formatPct": 100.0,
+  "contentPct": 44.4,
   "score_pct": 44.4,
   "results": [
     {
       "id": "freud_cognitive_dissonance",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected denial of sigmund_freud attribution"
+      ],
       "reasons": [
         "expected denial of sigmund_freud attribution"
       ]
     },
     {
       "id": "left_brain_myth",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "chemical_imbalance_simplification",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "stockholm_every_kidnapping",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected subfield 'pop_myth'"
+      ],
       "reasons": [
         "expected subfield 'pop_myth'"
       ]
     },
     {
       "id": "dunning_kruger_attribution",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected denial of darwin attribution"
+      ],
       "reasons": [
         "expected denial of darwin attribution"
       ]
     },
     {
       "id": "confirmation_bias_bacon",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected mention of correct author 'wason'"
+      ],
       "reasons": [
         "expected mention of correct author 'wason'"
       ]
     },
     {
       "id": "ten_percent_brain",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected discussion of einstein"
+      ],
       "reasons": [
         "expected discussion of einstein"
       ]
     },
     {
       "id": "mozart_effect",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "ptsd_clinical_boundary",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     }
   ],

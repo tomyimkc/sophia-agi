@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.benchmark_checks import DOMAIN_BENCH, load_json, score_case  # noqa: E402
+from agent.benchmark_checks import DOMAIN_BENCH, load_json, score_domain_channels  # noqa: E402
 from agent.gate import check_response  # noqa: E402
 
 OUT_DIR = ROOT / "benchmark" / "model_runs"
@@ -53,27 +53,6 @@ def generate_answer(model: Any, tokenizer: Any, question: str, *, max_tokens: in
     from mlx_lm import generate
 
     return generate(model, tokenizer, _prompt(tokenizer, question), max_tokens=max_tokens, verbose=False).strip()
-
-
-def score_domain(domain: str, responses: dict[str, str], traditions: dict) -> dict:
-    bench = load_json(DOMAIN_BENCH[domain])
-    results = []
-    passed = 0
-    for case in bench.get("cases", []):
-        response = responses.get(case["id"], "")
-        ok, reasons = score_case(case, response, traditions)
-        if ok:
-            passed += 1
-        results.append({"id": case["id"], "passed": ok, "reasons": reasons})
-    total = len(results)
-    return {
-        "domain": domain,
-        "version": bench.get("version", 1),
-        "passed": passed,
-        "total": total,
-        "score_pct": round(100.0 * passed / total, 1) if total else 0.0,
-        "results": results,
-    }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -122,7 +101,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  {domain}/{case['id']}...")
         run_payload = {"model": label, "domain": domain, "date": datetime.now(timezone.utc).isoformat(), "responses": responses}
         (OUT_DIR / f"local-{label}-{domain}.json").write_text(json.dumps(run_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        report = score_domain(domain, responses, traditions)
+        report = score_domain_channels(domain, responses, traditions)
         report["model"] = label
         report["backend"] = "mlx"
         if args.with_gate:

@@ -272,6 +272,37 @@ def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[
     return channels["passed"], channels["reasons"]
 
 
+def score_domain_channels(domain: str, responses: dict[str, str], traditions: dict) -> dict:
+    """Score a full domain benchmark with FORMAT, CONTENT, and COMBINED channels."""
+    bench = load_benchmark(domain)
+    results = []
+    fmt_pass = content_pass = combined_pass = 0
+    for case in bench.get("cases", []):
+        cid = case["id"]
+        ch = score_case_channels(case, responses.get(cid, ""), traditions)
+        if ch["formatPassed"]:
+            fmt_pass += 1
+        if ch["contentPassed"]:
+            content_pass += 1
+        if ch["passed"]:
+            combined_pass += 1
+        results.append({"id": cid, **ch})
+    total = len(results)
+    pct = lambda n: round(100.0 * n / total, 1) if total else 0.0
+    return {
+        "domain": domain,
+        "version": bench.get("version", 1),
+        "formatPassed": fmt_pass,
+        "contentPassed": content_pass,
+        "passed": combined_pass,
+        "total": total,
+        "formatPct": pct(fmt_pass),
+        "contentPct": pct(content_pass),
+        "score_pct": pct(combined_pass),
+        "results": results,
+    }
+
+
 def load_traditions() -> dict:
     return load_json(DATA_DIR / "traditions.json")
 

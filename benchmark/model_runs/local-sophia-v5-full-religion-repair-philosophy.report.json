@@ -1,55 +1,97 @@
 {
   "domain": "philosophy",
   "version": 1,
+  "formatPassed": 9,
+  "contentPassed": 8,
   "passed": 8,
   "total": 9,
+  "formatPct": 100.0,
+  "contentPct": 88.9,
   "score_pct": 88.9,
   "results": [
     {
       "id": "trap_confucius_ddj",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "socrates_republic",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "analects_compiled",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "laozi_uncertainty",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "trap_confucius_mencius",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "trap_laozi_zhuangzi",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected tradition context 'daoist'"
+      ],
       "reasons": [
         "expected tradition context 'daoist'"
       ]
     },
     {
       "id": "socrates_symposium",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "zhuangzi_analects_boundary",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "symposium_dialogue_not_autograph",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     }
   ],

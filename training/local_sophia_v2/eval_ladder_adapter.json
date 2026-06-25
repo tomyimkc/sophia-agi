@@ -1,5 +1,5 @@
 {
-  "schema": "sophia.eval_ladder.v1",
+  "schema": "sophia.eval_ladder.v2",
   "createdAt": "2026-06-25T07:49:52.690501+00:00",
   "candidateOnly": true,
   "level3Evidence": false,
@@ -27,30 +27,111 @@
       "summary": {
         "domains": {
           "philosophy": {
+            "format": {
+              "passed": 9,
+              "total": 9,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 6,
+              "total": 9,
+              "score_pct": 66.7
+            },
+            "combined": {
+              "passed": 6,
+              "total": 9,
+              "score_pct": 66.7
+            },
             "passed": 6,
             "total": 9,
-            "score_pct": 66.7
+            "score_pct": 66.7,
+            "gateFailures": 9
           },
           "psychology": {
+            "format": {
+              "passed": 9,
+              "total": 9,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 4,
+              "total": 9,
+              "score_pct": 44.4
+            },
+            "combined": {
+              "passed": 4,
+              "total": 9,
+              "score_pct": 44.4
+            },
             "passed": 4,
             "total": 9,
-            "score_pct": 44.4
+            "score_pct": 44.4,
+            "gateFailures": 8
           },
           "history": {
+            "format": {
+              "passed": 8,
+              "total": 8,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 5,
+              "total": 8,
+              "score_pct": 62.5
+            },
+            "combined": {
+              "passed": 5,
+              "total": 8,
+              "score_pct": 62.5
+            },
             "passed": 5,
             "total": 8,
-            "score_pct": 62.5
+            "score_pct": 62.5,
+            "gateFailures": 6
           },
           "religion": {
+            "format": {
+              "passed": 1,
+              "total": 6,
+              "score_pct": 16.7
+            },
+            "content": {
+              "passed": 5,
+              "total": 6,
+              "score_pct": 83.3
+            },
+            "combined": {
+              "passed": 1,
+              "total": 6,
+              "score_pct": 16.7
+            },
             "passed": 1,
             "total": 6,
-            "score_pct": 16.7
+            "score_pct": 16.7,
+            "gateFailures": 6
+          }
+        },
+        "channels": {
+          "format": {
+            "passed": 27,
+            "total": 32,
+            "score_pct": 84.4
+          },
+          "content": {
+            "passed": 20,
+            "total": 32,
+            "score_pct": 62.5
+          },
+          "combined": {
+            "passed": 16,
+            "total": 32,
+            "score_pct": 50.0
           }
         },
         "passed": 16,
         "total": 32,
         "score_pct": 50.0,
-        "gateFailures": 0
+        "gateFailures": 29
       },
       "stdoutTail": "ertainty...\n  philosophy/trap_confucius_mencius...\n  philosophy/trap_laozi_zhuangzi...\n  philosophy/socrates_symposium...\n  philosophy/zhuangzi_analects_boundary...\n  philosophy/symposium_dialogue_not_autograph...\nphilosophy: 6/9 (66.7%)\n  psychology/freud_cognitive_dissonance...\n  psychology/left_brain_myth...\n  psychology/chemical_imbalance_simplification...\n  psychology/stockholm_every_kidnapping...\n  psychology/dunning_kruger_attribution...\n  psychology/confirmation_bias_bacon...\n  psychology/ten_percent_brain...\n  psychology/mozart_effect...\n  psychology/ptsd_clinical_boundary...\npsychology: 4/9 (44.4%)\n  history/marco_polo_pasta...\n  history/flat_earth_medieval...\n  history/napoleon_height...\n  history/great_wall_space...\n  history/viking_horns...\n  history/magna_carta_democracy_myth...\n  history/boston_tea_party_tax_myth...\n  history/first_flight_uncontested_myth...\nhistory: 5/8 (62.5%)\n  religion/gospel_authorship_council...\n  religion/ancestor_veneration_split...\n  religion/dao_de_jing_religion_philosophy...\n  religion/islam_historical_figure_sensitive...\n  religion/buddha_nirvana_pop...\n  religion/hadith_sect_boundary_council...\nreligion: 1/6 (16.7%)\nTOTAL: 16/32 (50.0%)\n",
       "stderrTail": "\nFetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]\nFetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 104567.14it/s]\n"
@@ -74,28 +155,105 @@
       "summary": {
         "domains": {
           "philosophy": {
+            "format": {
+              "passed": 9,
+              "total": 9,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 6,
+              "total": 9,
+              "score_pct": 66.7
+            },
+            "combined": {
+              "passed": 6,
+              "total": 9,
+              "score_pct": 66.7
+            },
             "passed": 6,
             "total": 9,
             "score_pct": 66.7,
             "gateFailures": 9
           },
           "psychology": {
+            "format": {
+              "passed": 9,
+              "total": 9,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 4,
+              "total": 9,
+              "score_pct": 44.4
+            },
+            "combined": {
+              "passed": 4,
+              "total": 9,
+              "score_pct": 44.4
+            },
             "passed": 4,
             "total": 9,
             "score_pct": 44.4,
             "gateFailures": 8
           },
           "history": {
+            "format": {
+              "passed": 8,
+              "total": 8,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 5,
+              "total": 8,
+              "score_pct": 62.5
+            },
+            "combined": {
+              "passed": 5,
+              "total": 8,
+              "score_pct": 62.5
+            },
             "passed": 5,
             "total": 8,
             "score_pct": 62.5,
             "gateFailures": 6
           },
           "religion": {
+            "format": {
+              "passed": 1,
+              "total": 6,
+              "score_pct": 16.7
+            },
+            "content": {
+              "passed": 5,
+              "total": 6,
+              "score_pct": 83.3
+            },
+            "combined": {
+              "passed": 1,
+              "total": 6,
+              "score_pct": 16.7
+            },
             "passed": 1,
             "total": 6,
             "score_pct": 16.7,
             "gateFailures": 6
+          }
+        },
+        "channels": {
+          "format": {
+            "passed": 27,
+            "total": 32,
+            "score_pct": 84.4
+          },
+          "content": {
+            "passed": 20,
+            "total": 32,
+            "score_pct": 62.5
+          },
+          "combined": {
+            "passed": 16,
+            "total": 32,
+            "score_pct": 50.0
           }
         },
         "passed": 16,
@@ -126,30 +284,111 @@
       "summary": {
         "domains": {
           "philosophy": {
+            "format": {
+              "passed": 9,
+              "total": 9,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 8,
+              "total": 9,
+              "score_pct": 88.9
+            },
+            "combined": {
+              "passed": 8,
+              "total": 9,
+              "score_pct": 88.9
+            },
             "passed": 8,
             "total": 9,
-            "score_pct": 88.9
+            "score_pct": 88.9,
+            "gateFailures": 6
           },
           "psychology": {
+            "format": {
+              "passed": 9,
+              "total": 9,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 7,
+              "total": 9,
+              "score_pct": 77.8
+            },
+            "combined": {
+              "passed": 7,
+              "total": 9,
+              "score_pct": 77.8
+            },
             "passed": 7,
             "total": 9,
-            "score_pct": 77.8
+            "score_pct": 77.8,
+            "gateFailures": 7
           },
           "history": {
+            "format": {
+              "passed": 8,
+              "total": 8,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 5,
+              "total": 8,
+              "score_pct": 62.5
+            },
+            "combined": {
+              "passed": 5,
+              "total": 8,
+              "score_pct": 62.5
+            },
             "passed": 5,
             "total": 8,
-            "score_pct": 62.5
+            "score_pct": 62.5,
+            "gateFailures": 7
           },
           "religion": {
+            "format": {
+              "passed": 2,
+              "total": 6,
+              "score_pct": 33.3
+            },
+            "content": {
+              "passed": 4,
+              "total": 6,
+              "score_pct": 66.7
+            },
+            "combined": {
+              "passed": 1,
+              "total": 6,
+              "score_pct": 16.7
+            },
             "passed": 1,
             "total": 6,
-            "score_pct": 16.7
+            "score_pct": 16.7,
+            "gateFailures": 6
+          }
+        },
+        "channels": {
+          "format": {
+            "passed": 28,
+            "total": 32,
+            "score_pct": 87.5
+          },
+          "content": {
+            "passed": 24,
+            "total": 32,
+            "score_pct": 75.0
+          },
+          "combined": {
+            "passed": 21,
+            "total": 32,
+            "score_pct": 65.6
           }
         },
         "passed": 21,
         "total": 32,
         "score_pct": 65.6,
-        "gateFailures": 0
+        "gateFailures": 26
       },
       "stdoutTail": "ertainty...\n  philosophy/trap_confucius_mencius...\n  philosophy/trap_laozi_zhuangzi...\n  philosophy/socrates_symposium...\n  philosophy/zhuangzi_analects_boundary...\n  philosophy/symposium_dialogue_not_autograph...\nphilosophy: 8/9 (88.9%)\n  psychology/freud_cognitive_dissonance...\n  psychology/left_brain_myth...\n  psychology/chemical_imbalance_simplification...\n  psychology/stockholm_every_kidnapping...\n  psychology/dunning_kruger_attribution...\n  psychology/confirmation_bias_bacon...\n  psychology/ten_percent_brain...\n  psychology/mozart_effect...\n  psychology/ptsd_clinical_boundary...\npsychology: 7/9 (77.8%)\n  history/marco_polo_pasta...\n  history/flat_earth_medieval...\n  history/napoleon_height...\n  history/great_wall_space...\n  history/viking_horns...\n  history/magna_carta_democracy_myth...\n  history/boston_tea_party_tax_myth...\n  history/first_flight_uncontested_myth...\nhistory: 5/8 (62.5%)\n  religion/gospel_authorship_council...\n  religion/ancestor_veneration_split...\n  religion/dao_de_jing_religion_philosophy...\n  religion/islam_historical_figure_sensitive...\n  religion/buddha_nirvana_pop...\n  religion/hadith_sect_boundary_council...\nreligion: 1/6 (16.7%)\nTOTAL: 21/32 (65.6%)\n",
       "stderrTail": "\nFetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]\nFetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 164124.94it/s]\n"
@@ -175,28 +414,105 @@
       "summary": {
         "domains": {
           "philosophy": {
+            "format": {
+              "passed": 9,
+              "total": 9,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 8,
+              "total": 9,
+              "score_pct": 88.9
+            },
+            "combined": {
+              "passed": 8,
+              "total": 9,
+              "score_pct": 88.9
+            },
             "passed": 8,
             "total": 9,
             "score_pct": 88.9,
             "gateFailures": 6
           },
           "psychology": {
+            "format": {
+              "passed": 9,
+              "total": 9,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 7,
+              "total": 9,
+              "score_pct": 77.8
+            },
+            "combined": {
+              "passed": 7,
+              "total": 9,
+              "score_pct": 77.8
+            },
             "passed": 7,
             "total": 9,
             "score_pct": 77.8,
             "gateFailures": 7
           },
           "history": {
+            "format": {
+              "passed": 8,
+              "total": 8,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 5,
+              "total": 8,
+              "score_pct": 62.5
+            },
+            "combined": {
+              "passed": 5,
+              "total": 8,
+              "score_pct": 62.5
+            },
             "passed": 5,
             "total": 8,
             "score_pct": 62.5,
             "gateFailures": 7
           },
           "religion": {
+            "format": {
+              "passed": 2,
+              "total": 6,
+              "score_pct": 33.3
+            },
+            "content": {
+              "passed": 4,
+              "total": 6,
+              "score_pct": 66.7
+            },
+            "combined": {
+              "passed": 1,
+              "total": 6,
+              "score_pct": 16.7
+            },
             "passed": 1,
             "total": 6,
             "score_pct": 16.7,
             "gateFailures": 6
+          }
+        },
+        "channels": {
+          "format": {
+            "passed": 28,
+            "total": 32,
+            "score_pct": 87.5
+          },
+          "content": {
+            "passed": 24,
+            "total": 32,
+            "score_pct": 75.0
+          },
+          "combined": {
+            "passed": 21,
+            "total": 32,
+            "score_pct": 65.6
           }
         },
         "passed": 21,
@@ -207,5 +523,6 @@
       "stdoutTail": "ertainty...\n  philosophy/trap_confucius_mencius...\n  philosophy/trap_laozi_zhuangzi...\n  philosophy/socrates_symposium...\n  philosophy/zhuangzi_analects_boundary...\n  philosophy/symposium_dialogue_not_autograph...\nphilosophy: 8/9 (88.9%)\n  psychology/freud_cognitive_dissonance...\n  psychology/left_brain_myth...\n  psychology/chemical_imbalance_simplification...\n  psychology/stockholm_every_kidnapping...\n  psychology/dunning_kruger_attribution...\n  psychology/confirmation_bias_bacon...\n  psychology/ten_percent_brain...\n  psychology/mozart_effect...\n  psychology/ptsd_clinical_boundary...\npsychology: 7/9 (77.8%)\n  history/marco_polo_pasta...\n  history/flat_earth_medieval...\n  history/napoleon_height...\n  history/great_wall_space...\n  history/viking_horns...\n  history/magna_carta_democracy_myth...\n  history/boston_tea_party_tax_myth...\n  history/first_flight_uncontested_myth...\nhistory: 5/8 (62.5%)\n  religion/gospel_authorship_council...\n  religion/ancestor_veneration_split...\n  religion/dao_de_jing_religion_philosophy...\n  religion/islam_historical_figure_sensitive...\n  religion/buddha_nirvana_pop...\n  religion/hadith_sect_boundary_council...\nreligion: 1/6 (16.7%)\nTOTAL: 21/32 (65.6%)\n",
       "stderrTail": "\nFetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]\nFetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 194581.11it/s]\n"
     }
-  ]
+  ],
+  "headline": "FORMAT / CONTENT / COMBINED per suite; protected gate uses CONTENT channel."
 }

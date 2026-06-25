@@ -1,22 +1,53 @@
 {
   "domain": "personality",
   "version": 1,
+  "formatPassed": 3,
+  "contentPassed": 0,
   "passed": 0,
-  "total": 2,
+  "total": 3,
+  "formatPct": 100.0,
+  "contentPct": 0.0,
   "score_pct": 0.0,
   "results": [
     {
-      "id": "steer_e",
+      "id": "express_high_extraversion",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected target expression markers: ['part(y|ies)', '\\\\bpeople\\\\b', 'energ', 'social', 'excit']"
+      ],
       "reasons": [
-        "steer_not_beats_baseline"
+        "expected target expression markers: ['part(y|ies)', '\\\\bpeople\\\\b', 'energ', 'social', 'excit']"
       ]
     },
     {
-      "id": "steer_o",
+      "id": "express_high_openness",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected target expression markers: ['imagin', 'curio', 'novel', 'abstract', 'idea', 'creativ']"
+      ],
       "reasons": [
-        "steer_not_beats_baseline"
+        "expected target expression markers: ['imagin', 'curio', 'novel', 'abstract', 'idea', 'creativ']"
+      ]
+    },
+    {
+      "id": "mbti_is_not_big_five",
+      "formatPassed": true,
+      "contentPassed": false,
+      "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected myth/misconception labeling",
+        "expected target expression markers: ['big five|five[- ]factor|ocean', 'separate|not the same|different|lower[- ]validity']"
+      ],
+      "reasons": [
+        "expected myth/misconception labeling",
+        "expected target expression markers: ['big five|five[- ]factor|ocean', 'separate|not the same|different|lower[- ]validity']"
       ]
     }
   ],

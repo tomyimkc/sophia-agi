@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.benchmark_checks import DOMAIN_BENCH, load_json, score_case  # noqa: E402
+from agent.benchmark_checks import DOMAIN_BENCH, load_json, score_domain_channels  # noqa: E402
 from agent.gate import check_response  # noqa: E402
 
 OUT_DIR = ROOT / "benchmark" / "model_runs"
@@ -67,28 +67,6 @@ def generate_answer(model, tokenizer, question: str, *, max_new_tokens: int) -> 
         )
     text = tokenizer.decode(out[0][inputs["input_ids"].shape[-1] :], skip_special_tokens=True)
     return text.strip()
-
-
-def score_domain(domain: str, responses: dict[str, str], traditions: dict) -> dict:
-    bench = load_json(DOMAIN_BENCH[domain])
-    results = []
-    passed = 0
-    for case in bench.get("cases", []):
-        case_id = case["id"]
-        response = responses.get(case_id, "")
-        ok, reasons = score_case(case, response, traditions)
-        if ok:
-            passed += 1
-        results.append({"id": case_id, "passed": ok, "reasons": reasons})
-    total = len(results)
-    return {
-        "domain": domain,
-        "version": bench.get("version", 1),
-        "passed": passed,
-        "total": total,
-        "score_pct": round(100.0 * passed / total, 1) if total else 0.0,
-        "results": results,
-    }
 
 
 def slug(name: str) -> str:
@@ -206,7 +184,7 @@ def main() -> int:
         run_path = OUT_DIR / f"local-{label}-{domain}.json"
         run_path.write_text(json.dumps(run_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
-        report = score_domain(domain, responses, traditions)
+        report = score_domain_channels(domain, responses, traditions)
         report["model"] = label
         if args.with_gate:
             report["gateFailures"] = gate_failures

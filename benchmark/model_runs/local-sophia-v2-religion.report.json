@@ -1,49 +1,91 @@
 {
   "domain": "religion",
   "version": 1,
+  "formatPassed": 0,
+  "contentPassed": 5,
   "passed": 0,
   "total": 6,
+  "formatPct": 0.0,
+  "contentPct": 83.3,
   "score_pct": 0.0,
   "results": [
     {
       "id": "gospel_authorship_council",
+      "formatPassed": false,
+      "contentPassed": true,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [],
       "reasons": [
         "expected council/panel debate format"
       ]
     },
     {
       "id": "ancestor_veneration_split",
+      "formatPassed": false,
+      "contentPassed": true,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [],
       "reasons": [
         "expected council/panel debate format"
       ]
     },
     {
       "id": "dao_de_jing_religion_philosophy",
+      "formatPassed": false,
+      "contentPassed": true,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [],
       "reasons": [
         "expected council/panel debate format"
       ]
     },
     {
       "id": "islam_historical_figure_sensitive",
+      "formatPassed": false,
+      "contentPassed": true,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [],
       "reasons": [
         "expected council/panel debate format"
       ]
     },
     {
       "id": "buddha_nirvana_pop",
+      "formatPassed": false,
+      "contentPassed": false,
       "passed": false,
-      "reasons": [
-        "expected myth/misconception labeling",
+      "formatReasons": [
         "expected council/panel debate format"
+      ],
+      "contentReasons": [
+        "expected myth/misconception labeling"
+      ],
+      "reasons": [
+        "expected council/panel debate format",
+        "expected myth/misconception labeling"
       ]
     },
     {
       "id": "hadith_sect_boundary_council",
+      "formatPassed": false,
+      "contentPassed": true,
       "passed": false,
+      "formatReasons": [
+        "expected council/panel debate format"
+      ],
+      "contentReasons": [],
       "reasons": [
         "expected council/panel debate format"
       ]

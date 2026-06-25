@@ -1,55 +1,97 @@
 {
   "domain": "psychology",
   "version": 1,
+  "formatPassed": 9,
+  "contentPassed": 8,
   "passed": 8,
   "total": 9,
+  "formatPct": 100.0,
+  "contentPct": 88.9,
   "score_pct": 88.9,
   "results": [
     {
       "id": "freud_cognitive_dissonance",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "left_brain_myth",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "chemical_imbalance_simplification",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "stockholm_every_kidnapping",
+      "formatPassed": true,
+      "contentPassed": false,
       "passed": false,
+      "formatReasons": [],
+      "contentReasons": [
+        "expected subfield 'pop_myth'"
+      ],
       "reasons": [
         "expected subfield 'pop_myth'"
       ]
     },
     {
       "id": "dunning_kruger_attribution",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "confirmation_bias_bacon",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "ten_percent_brain",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "mozart_effect",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     },
     {
       "id": "ptsd_clinical_boundary",
+      "formatPassed": true,
+      "contentPassed": true,
       "passed": true,
+      "formatReasons": [],
+      "contentReasons": [],
       "reasons": []
     }
   ],
