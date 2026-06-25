@@ -76,7 +76,9 @@ def load_base(model_id: str, *, dtype="bfloat16"):
 
 def _chat_ids(tok, messages, *, max_len, add_generation_prompt):
     """Tokenize a chat. Gemma's template has no system role — fold any system text into
-    the first user turn so apply_chat_template never raises."""
+    the first user turn so apply_chat_template never raises. Returns a flat list[int]
+    regardless of whether the template yields a list, a nested list, a tensor, or a
+    BatchEncoding/dict (gemma-3's multimodal template returns the latter)."""
     msgs = [dict(m) for m in messages]
     if msgs and msgs[0].get("role") == "system":
         sys_txt = msgs.pop(0)["content"]
@@ -84,8 +86,21 @@ def _chat_ids(tok, messages, *, max_len, add_generation_prompt):
             if m.get("role") == "user":
                 m["content"] = f"{sys_txt}\n\n{m['content']}"
                 break
-    return tok.apply_chat_template(msgs, tokenize=True, add_generation_prompt=add_generation_prompt,
-                                   truncation=True, max_length=max_len)
+    out = tok.apply_chat_template(msgs, tokenize=True, add_generation_prompt=add_generation_prompt,
+                                  truncation=True, max_length=max_len)
+    if hasattr(out, "input_ids"):          # BatchEncoding
+        out = out["input_ids"]
+    if isinstance(out, dict):              # plain dict
+        out = out["input_ids"]
+    try:
+        import torch
+        if isinstance(out, torch.Tensor):
+            out = out.tolist()
+    except Exception:
+        pass
+    if out and isinstance(out[0], (list, tuple)):  # nested [[...]] -> first row
+        out = out[0]
+    return [int(t) for t in out]
 
 
 # --------------------------------------------------------------------------- #
