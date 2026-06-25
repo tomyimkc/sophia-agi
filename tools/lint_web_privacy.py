@@ -1,23 +1,30 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (c) 2026 tomyimkc
-"""Web privacy guard: block training/architecture details from the public site.
+"""Public-surface privacy guard: block training/architecture details from the
+public front door.
 
-The thesis site under web/ is published to GitHub Pages on every push to main
-(see .github/workflows/pages.yml). It must stay aligned with the repo but must
-NOT expose important training or architecture details. This linter scans the
-published web/ files and fails (exit 1) if any forbidden pattern appears, so a
-leak blocks the deploy instead of going live.
+Two scopes are enforced (exit 1 on any match):
 
-Policy (owner decision): off-limits on the public site are
-  - base-model identity (e.g. Qwen2.5-3B) and parameter scale
-  - the internal module/architecture map (agent/*.py, provenance_bench/*.py, ...)
-  - training recipe + hyperparameters (LoRA rank, learning rate, epochs, ...)
-  - training/RLVR pipeline runner references
+1. The published thesis site under web/ — the full ruleset. The site is
+   marketing/thesis copy and was aggressively scrubbed, so even conceptual
+   architecture/training references (module map, RLVR) are blocked there.
+   web/ is deployed to GitHub Pages on every push to main (pages.yml).
 
-To adjust the policy, edit PATTERNS below. Keep patterns specific to avoid
-false positives on legitimate public content (benchmark results, the corpus,
-the claim boundary, competitor/comparison model names in leaderboards).
+2. The repo "front door" — README.md and models/manifest.json — a NARROW
+   ruleset that blocks only the concrete, reproducible training/model secrets:
+   base-model identity, parameter scale, the LoRA/fine-tune recipe and its
+   hyperparameters, training-runner scripts, the adapter checkpoint path, and
+   the published HF adapter repo. It intentionally does NOT block conceptual
+   open-research mentions (e.g. `agent/*.py`, `RLVR`) — those files are public
+   in the repo anyway, so hiding their names in docs is theatre.
+
+The Hugging Face model card (models/hf-model-card/README.md) is deliberately
+NOT guarded for base-model identity: a published LoRA adapter is unusable
+without naming its base model, which is also embedded in the live adapter's
+config. Truly hiding it requires unpublishing the model on Hugging Face.
+
+To adjust policy, edit WEB_PATTERNS / DOC_PATTERNS below.
 """
 
 from __future__ import annotations
@@ -29,51 +36,52 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
 
-# Files to scan (text the public can read). Skip styles and the search-console
-# verification stub.
 SCAN_SUFFIXES = {".html", ".js", ".json", ".md", ".txt"}
 SKIP_NAMES = {".nojekyll"}
+
+# Front-door repo files scanned with the narrow ruleset.
+DOC_FILES = [ROOT / "README.md", ROOT / "models" / "manifest.json"]
 
 
 def _should_skip(path: Path) -> bool:
     name = path.name
     if name in SKIP_NAMES:
         return True
-    # Google site-verification stub, e.g. googleac774deb185370e2.html
     if name.startswith("google") and name.endswith(".html"):
         return True
     return False
 
 
-# (compiled pattern, human label). All matched case-insensitively.
-PATTERNS: list[tuple[re.Pattern[str], str]] = [
-    # --- base-model identity ---
+# --- narrow ruleset: concrete, reproducible training/model secrets ---
+DOC_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"\bQwen\b", re.I), "base-model identity (Qwen)"),
-    (re.compile(r"\bLlama\b", re.I), "base-model identity (Llama)"),
+    (re.compile(r"\bLlama\b(?!\.cpp)", re.I), "base-model identity (Llama)"),
     (re.compile(r"\bMistral\b", re.I), "base-model identity (Mistral)"),
     (re.compile(r"\bMixtral\b", re.I), "base-model identity (Mixtral)"),
     (re.compile(r"\bGemma\b", re.I), "base-model identity (Gemma)"),
-    (re.compile(r"baseModel|base[\s\-]model", re.I), "base-model field/phrase"),
-    # --- model parameter scale (latin + CJK forms): '8B local model', '8B 模型' ---
+    (re.compile(r"base[_\s\-]?model", re.I), "base-model field/phrase"),
     (re.compile(r"\b\d{1,3}\s?B\b\s+(?:local\s+)?model", re.I), "model parameter-scale"),
-    (re.compile(r"\b\d{1,3}\s?B\s*模型"), "model parameter-scale (zh)"),
-    # --- adapter / fine-tune method ---
-    (re.compile(r"\bLoRA\b", re.I), "training/adapter method (LoRA)"),
+    (re.compile(r"\bQ?LoRA\b", re.I), "training/adapter method (LoRA)"),
     (re.compile(r"fine[\s\-]?tun(?:e|ing|ed)", re.I), "training method (fine-tune)"),
-    # --- training recipe / hyperparameters ---
     (re.compile(r"learning[\s\-]rate", re.I), "hyperparameter (learning rate)"),
-    (re.compile(r"\blora[_\s]?rank\b|\badapter[\s\-]rank\b", re.I), "hyperparameter (rank)"),
     (re.compile(r"\bepochs?\b", re.I), "hyperparameter (epochs)"),
+    (re.compile(r"--?\d{1,2}bit\b", re.I), "hyperparameter (quantization)"),
+    (re.compile(r"\blora[_\s]?rank\b|\badapter[\s\-]rank\b", re.I), "hyperparameter (rank)"),
     (re.compile(r"\bbatch[\s\-]size\b", re.I), "hyperparameter (batch size)"),
-    (re.compile(r"\boptimizer\b", re.I), "hyperparameter (optimizer)"),
+    (re.compile(r"train_lora|prepare_lora_dataset", re.I), "training-runner script"),
+    (re.compile(r"training/lora/checkpoints", re.I), "adapter checkpoint path"),
+    (re.compile(r"sophia-agi-lora", re.I), "published HF adapter repo"),
+]
+
+# --- full ruleset for the thesis site (narrow rules + the conceptual ones) ---
+WEB_PATTERNS: list[tuple[re.Pattern[str], str]] = DOC_PATTERNS + [
+    (re.compile(r"\b\d{1,3}\s?B\s*模型"), "model parameter-scale (zh)"),
     (re.compile(r"gradient[\s\-]accumulation", re.I), "hyperparameter (grad accumulation)"),
     (re.compile(r"\bhyper[\s\-]?parameter", re.I), "hyperparameter"),
-    # --- internal module / architecture map ---
     (re.compile(r"\bagent/[A-Za-z0-9_]+\.py", re.I), "internal module path (agent/*.py)"),
     (re.compile(r"\bprovenance_bench/[A-Za-z0-9_]+\.py", re.I), "internal module path"),
     (re.compile(r"\bselfextend/[A-Za-z0-9_]+", re.I), "internal module path"),
     (re.compile(r"Sophia-Architecture\.md|architectureDiagram", re.I), "architecture map"),
-    # --- training / RLVR pipeline runners ---
     (re.compile(r"\bRLVR\b", re.I), "training pipeline (RLVR)"),
     (
         re.compile(
@@ -88,48 +96,52 @@ PATTERNS: list[tuple[re.Pattern[str], str]] = [
 ]
 
 
-def scan_file(path: Path) -> list[tuple[int, str, str]]:
+def scan_file(path: Path, patterns: list[tuple[re.Pattern[str], str]]) -> list[tuple[int, str, str]]:
     hits: list[tuple[int, str, str]] = []
     try:
         text = path.read_text(encoding="utf-8")
     except (UnicodeDecodeError, OSError):
         return hits
     for lineno, line in enumerate(text.splitlines(), 1):
-        for pattern, label in PATTERNS:
+        for pattern, label in patterns:
             m = pattern.search(line)
             if m:
                 hits.append((lineno, label, m.group(0)))
     return hits
 
 
+def _targets() -> list[tuple[Path, list[tuple[re.Pattern[str], str]]]]:
+    targets: list[tuple[Path, list[tuple[re.Pattern[str], str]]]] = []
+    if WEB.exists():
+        for path in sorted(WEB.rglob("*")):
+            if path.is_file() and path.suffix.lower() in SCAN_SUFFIXES and not _should_skip(path):
+                targets.append((path, WEB_PATTERNS))
+    for path in DOC_FILES:
+        if path.exists():
+            targets.append((path, DOC_PATTERNS))
+    return targets
+
+
 def main() -> int:
-    if not WEB.exists():
-        print(f"web/ not found at {WEB}; nothing to scan.")
-        return 0
     violations: list[str] = []
-    scanned = 0
-    for path in sorted(WEB.rglob("*")):
-        if not path.is_file() or path.suffix.lower() not in SCAN_SUFFIXES:
-            continue
-        if _should_skip(path):
-            continue
-        scanned += 1
-        for lineno, label, snippet in scan_file(path):
+    targets = _targets()
+    for path, patterns in targets:
+        for lineno, label, snippet in scan_file(path, patterns):
             rel = path.relative_to(ROOT)
             violations.append(f"{rel}:{lineno}: {label} — matched {snippet!r}")
 
     if violations:
-        print("Web privacy guard FAILED: training/architecture details found in the public site.\n")
+        print("Public-surface privacy guard FAILED: training/architecture details found.\n")
         for v in violations:
             print(f"  {v}")
         print(
-            f"\n{len(violations)} violation(s) across {scanned} scanned file(s). "
-            "Remove the detail from web/ (and re-run the builders) or, if it is a "
-            "false positive, refine PATTERNS in tools/lint_web_privacy.py."
+            f"\n{len(violations)} violation(s) across {len(targets)} scanned file(s). "
+            "Remove the detail (and re-run the builders) or, if it is a false "
+            "positive, refine the patterns in tools/lint_web_privacy.py."
         )
         return 1
 
-    print(f"Web privacy guard passed: no training/architecture leaks in {scanned} web file(s).")
+    print(f"Public-surface privacy guard passed: no leaks in {len(targets)} scanned file(s).")
     return 0
 
 

@@ -20,6 +20,25 @@ abstaining gate, benchmark **results**, the claim boundary, and the failure
 ledger. Competitor/comparison model names in leaderboards are results, not our
 architecture, so they stay.
 
+## Scope: the site *and* the repo front door
+
+The same policy is enforced on two surfaces:
+
+- **The thesis site** (`web/`) — full ruleset (even conceptual architecture/RLVR
+  mentions are blocked; the site is marketing copy).
+- **The repo front door** — `README.md` and `models/manifest.json` — a **narrow**
+  ruleset that blocks only concrete, reproducible secrets: base-model identity,
+  parameter scale, the LoRA/fine-tune recipe + hyperparameters, training-runner
+  scripts, the adapter checkpoint path, and the published HF adapter repo. It
+  deliberately allows conceptual open-research mentions (`agent/*.py`, `RLVR`),
+  which are public in the repo anyway.
+
+**Not hidden (by design):** the Hugging Face model card names the base model,
+because a published LoRA adapter is unusable without it and the base model is
+already embedded in the live adapter's config. Truly hiding it requires
+unpublishing the model on Hugging Face. The reproducible *training recipe* is
+still stripped from the card.
+
 ## How it is enforced (automatically)
 
 1. **Sanitized manifest.** [`tools/build_web_data.py`](../tools/build_web_data.py)
