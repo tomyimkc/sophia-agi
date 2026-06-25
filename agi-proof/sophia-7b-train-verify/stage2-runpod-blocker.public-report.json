@@ -2,15 +2,30 @@
   "schema": "sophia.runpod_stage2_blocker.v1",
   "experimentId": "sophia-7b-train-verify",
   "recordedAt": "2026-06-25",
-  "head": "70006d8b71f1ade2e9cafb9d4c9d22a0b8938cd1",
+  "head": "868fa319557b675d2aa8b09b8b5b120e6cdcdc5b",
   "stage": 2,
   "status": "BLOCKED",
-  "blocker": "outbound_ssh_timeout",
-  "detail": "RunPod API created pods and mapped SSH ports, but TCP/SSH from Cursor agent host timed out before login.",
-  "attempts": [
-    {"podId": "crdl0788rpc98m", "mapped": "157.157.221.29:31790", "deleted": true},
-    {"podId": "8k7vqe3m5nbynv", "mapped": "213.181.111.2:43206", "deleted": true}
+  "blocker": "runpod_api_key_unset",
+  "detail": "RUNPOD_API_KEY not present in agent environment (.env absent; shell env empty). Cannot create probe pod or launch 3-seed SFT. Prior session (same day) had key but outbound SSH to mapped pod ports timed out from Cursor agent host.",
+  "host": {
+    "label": "local Mac (darwin 27.0.0, Cursor agent shell)",
+    "outboundSshPort22": {
+      "github.com": "pass",
+      "ssh.runpod.io": "pass"
+    },
+    "runpodPodSshSmoke": "not_attempted_no_api_key"
+  },
+  "priorAttempts": [
+    {"podId": "crdl0788rpc98m", "mapped": "157.157.221.29:31790", "outcome": "ssh_login_timeout", "deleted": true},
+    {"podId": "8k7vqe3m5nbynv", "mapped": "213.181.111.2:43206", "outcome": "ssh_login_timeout", "deleted": true}
   ],
+  "currentSession": {
+    "recordedAt": "2026-06-25T10:52Z",
+    "runpodApiKey": "unset",
+    "sftSeedsCompleted": 0,
+    "dpoSeedsCompleted": 0,
+    "dryRunOnly": true
+  },
   "logs": [
     "agi-proof/benchmark-results/runpod-train/sft-3seed-20260625-095511.log",
     "agi-proof/benchmark-results/runpod-train/sft-seed0-retry.log"
@@ -21,6 +36,7 @@
     "positive_control": "OK",
     "lint_claims": "OK"
   },
+  "nextStep": "Export RUNPOD_API_KEY to shell or .env (gitignored), run SSH smoke probe via runpod_train.py --yes (single seed 0), then runpod-sft-3seed.sh from host with RunPod mapped-port SSH egress.",
   "canClaimAGI": false,
   "label": "infrastructure blocker — not a training verdict"
 }

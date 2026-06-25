@@ -618,7 +618,7 @@ religion FORMAT is prompt-structurable at inference; religion-repair LoRA path r
 
 ## sophia-7b-train-verify-data-flywheel-2026-06-25
 
-**Status:** STAGE 0–1 COMPLETE; STAGE 2+ BLOCKED (no `RUNPOD_API_KEY`).
+**Status:** STAGE 0–1 COMPLETE; STAGE 2+ BLOCKED (`RUNPOD_API_KEY` unset this session; prior SSH egress timeout when key was present).
 
 **Pre-registration (Stage 0):** `agi-proof/sophia-7b-train-verify/preregistration.json`,
 oracle split `oracle-split.md`, holdout seal `heldout-seal.manifest.json`
@@ -644,14 +644,20 @@ Commit `9f00733`.
 `build_local_sophia_dataset.py --check`: contamination **CLEAN** (0 eval overlap, 0 holdout overlap).
 Hard-negative miner: 615 pairs (gate-validated). Moral Gate SFT: 35 rows.
 
-**Stage 2 blocker (2026-06-25, updated):** `RUNPOD_API_KEY` **present**; two pod-create attempts
-(`sophia-7b-sft-seed0`, pods `crdl0788rpc98m` / `8k7vqe3m5nbynv`) reached SSH **port mapping**
-but **outbound SSH from the Cursor agent host timed out** (`Operation timed out` to mapped
-`ip:port` after 300s login wait). Pods deleted (cost control). Logs:
-`agi-proof/benchmark-results/runpod-train/sft-3seed-20260625-095511.log`,
-`sft-seed0-retry.log`. **Next step:** re-run `runpod-sft-3seed.sh` from a host with outbound
-SSH to RunPod (local Mac / CI runner); `runpod_train.py` now retries SSH **login** failures
-across pod recreates (`--ssh-login-timeout-s`, `--ssh-attempts`).
+**Stage 2 blocker (2026-06-25, updated @ `868fa31`):**
+
+1. **This session:** `RUNPOD_API_KEY` **unset** (no `.env`; shell env empty). Dry-run only;
+   0/3 SFT seeds; SSH pod smoke **not attempted**. Local Mac outbound TCP/22 to `github.com`
+   and `ssh.runpod.io` **passes**.
+2. **Prior session (same day):** key **present**; two pod-create attempts (`sophia-7b-sft-seed0`,
+   pods `crdl0788rpc98m` / `8k7vqe3m5nbynv`) reached SSH **port mapping** but **outbound SSH
+   to mapped `ip:port` timed out** (300s login wait). Pods deleted (cost control). Logs:
+   `agi-proof/benchmark-results/runpod-train/sft-3seed-20260625-095511.log`,
+   `sft-seed0-retry.log`.
+
+**Next step:** export `RUNPOD_API_KEY`, SSH smoke probe (seed 0), then `runpod-sft-3seed.sh`
+from host with RunPod mapped-port egress; `runpod_train.py` retries SSH login across pod
+recreates (`--ssh-login-timeout-s`, `--ssh-attempts`).
 
 **Stage 3 prep (no GPU):** `tools/train_dpo.py` (TRL `DPOTrainer`), `runpod-dpo-3seed.sh`
 (DPO on `dpo_hard_negatives.jsonl`, 590 pairs in pack / 615 mined), pre/post internal
@@ -663,8 +669,9 @@ across pod recreates (`--ssh-login-timeout-s`, `--ssh-attempts`).
 **Stage 7 blockers:** `VECTARA_*` credentials absent; hidden reviewer pack needs served model +
 backend credentials. Do **not** substitute internal gate for third-party evidence.
 
-**Headline (falsifiable, OPEN):** Qwen2.5-7B QLoRA SFT (≥3 seeds) has **not** yet cleared the
-internal release gate on RunPod — SSH egress blocked this session, not a training verdict.
+**Headline (falsifiable, OPEN):** Qwen2.5-7B QLoRA SFT (≥3 seeds) has **not** started — blocked
+on missing `RUNPOD_API_KEY` (this session) and prior SSH egress timeout to mapped pod ports;
+**0/3 seeds**, not a training verdict.
 
 **Tradeoff (pre-registered, not yet measured):** abstention/MMLU-Pro regression ≤2.0 points vs base;
 honest reporting required even if internal release gate passes.
