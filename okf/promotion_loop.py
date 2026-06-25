@@ -5,7 +5,7 @@
 Bulk projection yields ``PromotionCandidate`` records. This module stages them in a
 pending JSONL queue (``promoted: false``) and optionally commits human-approved rows
 to the wiki boundary via ``wiki_store.upsert``. Bulk/projection output is never
-shipped raw.
+shipped raw. Default-deny: unapproved candidates are never committed.
 """
 
 from __future__ import annotations
@@ -37,8 +37,19 @@ def _read_jsonl(path: Path) -> list[dict]:
     return rows
 
 
+def _write_jsonl(path: Path, rows: list[dict]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as fh:
+        for row in rows:
+            fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
 def _candidate_key(row: dict) -> tuple:
     return (str(row.get("nodeId", "")), str(row.get("submittedAt", ""))[:10])
+
+
+def _body_store_path(pending: Path, node_id: str) -> Path:
+    return pending.parent / f"_body_{node_id}.md"
 
 
 def submit_projection_candidates(
@@ -66,11 +77,14 @@ def submit_projection_candidates(
             "source": source,
             "candidateOnly": projection.candidateOnly,
             "promoted": False,
+            "approved": False,
+            "committed": False,
             "submittedAt": now,
         }
         key = _candidate_key(row)
         if key in seen:
             continue
+        _body_store_path(out, cand.node_id).write_text(cand.body, encoding="utf-8")
         with out.open("a", encoding="utf-8") as fh:
             fh.write(json.dumps(row, ensure_ascii=False) + "\n")
         seen.add(key)
@@ -86,6 +100,41 @@ def submit_projection_candidates(
     }
 
 
+def approve_projection_candidate(
+    node_id: str,
+    *,
+    path: Path | None = None,
+    reviewer: str = "human",
+    note: str = "",
+) -> dict:
+    """Human gate: mark one pending candidate approved (still not wiki-committed)."""
+    pending = path or PENDING_PATH
+    rows = _read_jsonl(pending)
+    found = False
+    now = datetime.now(timezone.utc).isoformat()
+    for row in rows:
+        if row.get("nodeId") != node_id:
+            continue
+        if row.get("committed"):
+            return {
+                "ok": True,
+                "alreadyApproved": True,
+                "nodeId": node_id,
+                "committed": True,
+            }
+        row["approved"] = True
+        row["promoted"] = True
+        row["reviewer"] = reviewer
+        row["reviewNote"] = note
+        row["approvedAt"] = now
+        found = True
+        break
+    if not found:
+        return {"ok": False, "error": f"no pending candidate for nodeId '{node_id}'"}
+    _write_jsonl(pending, rows)
+    return {"ok": True, "nodeId": node_id, "approved": True}
+
+
 def commit_approved_candidate(
     node_id: str,
     *,
@@ -94,35 +143,82 @@ def commit_approved_candidate(
     reviewer: str = "human",
     note: str = "",
 ) -> dict:
-    """Upsert one human-approved pending candidate to the wiki boundary."""
+    """Upsert one human-approved pending candidate to the wiki boundary (default-deny)."""
     from agent import wiki_store
 
     pending = path or PENDING_PATH
     rows = _read_jsonl(pending)
     target: dict | None = None
     for row in rows:
-        if row.get("nodeId") == node_id and row.get("promoted") is True:
-            target = row
-            break
+        if row.get("nodeId") != node_id:
+            continue
+        target = row
+        break
     if target is None:
-        return {"ok": False, "error": f"no promoted pending candidate for nodeId '{node_id}'"}
+        return {"ok": False, "error": f"no pending candidate for nodeId '{node_id}'", "defaultDeny": True}
+
+    if not target.get("approved") and not target.get("promoted"):
+        return {
+            "ok": False,
+            "error": "candidate not approved — default-deny",
+            "defaultDeny": True,
+            "nodeId": node_id,
+        }
+
+    if target.get("committed"):
+        return {
+            "ok": True,
+            "idempotent": True,
+            "nodeId": node_id,
+            "alreadyCommitted": True,
+        }
 
     meta = dict(target.get("meta") or {})
     meta.setdefault("pageType", "concept")
     meta["projectionApproved"] = True
-    meta["reviewer"] = reviewer
-    if note:
-        meta["reviewNote"] = note
+    meta["reviewer"] = reviewer or target.get("reviewer", "human")
+    if note or target.get("reviewNote"):
+        meta["reviewNote"] = note or target.get("reviewNote", "")
 
-    body_path = pending.parent / f"_body_{node_id}.md"
+    body_path = _body_store_path(pending, node_id)
     body = body_path.read_text(encoding="utf-8") if body_path.exists() else str(target.get("bodyPreview", ""))
     result = wiki_store.upsert(node_id, meta=meta, body=body, tier=tier)
-    return {"ok": bool(result.get("ok")), "wiki": result, "nodeId": node_id}
+    if not result.get("ok"):
+        return {"ok": False, "wiki": result, "nodeId": node_id}
+
+    for row in rows:
+        if row.get("nodeId") == node_id:
+            row["committed"] = True
+            row["committedAt"] = datetime.now(timezone.utc).isoformat()
+            break
+    _write_jsonl(pending, rows)
+    return {"ok": True, "wiki": result, "nodeId": node_id, "committed": True}
+
+
+def promotion_loop_report(path: Path | None = None) -> dict:
+    """Summarize pending queue for agi-proof artifacts."""
+    pending = path or PENDING_PATH
+    rows = _read_jsonl(pending)
+    submitted = len(rows)
+    approved = sum(1 for r in rows if r.get("approved") or r.get("promoted"))
+    committed = sum(1 for r in rows if r.get("committed"))
+    return {
+        "schema": "sophia.promotion_loop_report.v1",
+        "candidateOnly": True,
+        "level3Evidence": False,
+        "path": str(pending),
+        "submitted": submitted,
+        "approved": approved,
+        "committed": committed,
+        "defaultDeny": True,
+    }
 
 
 __all__ = [
     "PENDING_PATH",
     "submit_projection_candidates",
+    "approve_projection_candidate",
     "commit_approved_candidate",
+    "promotion_loop_report",
     "_FAIL_CLOSED_VERDICTS",
 ]
