@@ -688,3 +688,134 @@ reproduced 2026-06-25); **0/3 seeds**, not a training verdict.
 honest reporting required even if internal release gate passes.
 
 **canClaimAGI:** False.
+## hk-advisor-phase0-2026-06-25
+
+**Status:** COMPLETE (sealed benchmark + contamination guard).
+
+**Artifact:** `data/hk_advisor_benchmark/heldout_v1.jsonl` (N=90: 30 answerable / 30 abstain / 30 trap;
+45 yue / 45 en; trap subtypes 10 fabrication-bait / 10 fake-citation / 10 unanswerable).
+`contentHash: f8f1ae46d6259576b8629e1db9130a7f79e6ac846b6bd59678a2d29246aadf6b`.
+`tools/build_local_sophia_dataset.py --check`: contamination **CLEAN** (hkAdvisorBenchmarkHash recorded).
+
+**Claim impact:** Benchmark sealed; no training/eval uplift claim yet. `candidateOnly: true`; `canClaimAGI: false`.
+
+## hk-advisor-phase1-2026-06-25
+
+**Status:** COMPLETE (verifier + verified SFT traces).
+
+**Artifacts:** `agent/hk_advisor/{policy,verifier}.py`, `training/hk_advisor/sft_traces.jsonl` (25 verified rows,
+disjoint from held-out benchmark). All rows pass `verify_trace` (advisory boundary, citation, abstention,
+no-fabrication, bilingual fidelity).
+
+**Claim impact:** Training substrate ready; no adapter/eval uplift yet. `canClaimAGI: false`.
+
+## hk-advisor-phase2-2026-06-25
+
+**Status:** OPEN (SFT wiring verified; GPU training blocked locally).
+
+**Smoke:** `python tools/train_lora.py --model Qwen/Qwen2.5-3B-Instruct --train training/hk_advisor/sft_traces.jsonl --output training/hk_advisor/checkpoints/sft-seed0 --dry-run` → 25 rows OK.
+**Blocker:** `torch` not available in local agent shell; seeds 0/1/2 SFT **not run**. Weights gitignored under `training/hk_advisor/checkpoints/`.
+
+**Next:** Run 3-seed QLoRA SFT on RunPod/local GPU host when available.
+
+**Claim impact:** No adapter weights; no uplift claim. `canClaimAGI: false`.
+
+## hk-advisor-phase3-2026-06-25
+
+**Status:** COMPLETE (DPO pairs mined).
+
+**Artifact:** `training/hk_advisor/dpo_pairs.jsonl` — 49 pairs.
+By rejected_type: wrong_abstain 19, uncited_claim 19, overconfident_trap 9,
+fabricated_regulation 1, fake_citation 1.
+
+**Claim impact:** Preference data ready; DPO training blocked on P2 GPU blocker. `canClaimAGI: false`.
+
+## hk-advisor-phase4-2026-06-25
+
+**Status:** COMPLETE (mock eval); adapter training NOT RUN.
+
+**Artifact:** `agi-proof/hk-advisor/eval-hk-advisor.public-report.json` (mock mode, 3 seeds).
+Mock adapter vs base: fabrication on traps 44.4% → 0%, calibration +0.58, useful-answer +0.26 (CI excludes 0).
+**Honest scope:** mock ScriptedClient-style responses — NOT real adapter weights; illustrative direction only.
+
+**promote_adapter:** Ran `--dry-run` on existing sophia-v2 ladder → **reject** (protected_floor_content religion regression);
+`solverChecked: true`. No HK-advisor-specific adapter to promote (0/3 SFT seeds).
+
+**Claim impact:** Mock eval shows intended metric direction; no validated adapter uplift. `canClaimAGI: false`.
+
+## team-agents-mode-mock-eval-2026-06-25
+
+**Status:** OPEN (mock eval only — not real-model evidence).
+
+**Branch:** `claude/team-agents-mode`
+
+**Benchmark:** Sealed `team_agents_benchmark` heldout_v1 — 36 cases (12/12/12 balance),
+12 probe_divisive cases, contentHash=`50a0bfab6b9690aabdc7d9346a2487b900e87bd77647e81e81d292d06ace7e7b`,
+decontam CLEAN.
+
+**Traces:** 8 externally verified rows in `training/team_agents/sft_traces.jsonl`
+(mock teacher, 0 overlap with heldout, 0 gate-only drops in sample).
+
+**Independence (mock, 3 seeds):** homogeneous panel mean ρ≈0.56, N_eff≈1.41;
+heterogeneous mock panel ρ≈0.56, N_eff≈1.41 — **below** pre-registered consensus
+threshold (N_eff ≥ 2.0). Reports use **"correlated panel — not consensus"** wording.
+
+**Eval vs baseline (mock, 3 seeds):** team_agents composite pass rate beats single_agent
+by +0.056 (95% CI [0.056, 0.056], excludes 0 on this deterministic stub). Trap
+false-consensus: team ≤ single. External scorer disjoint from intrinsic gate.
+
+**SFT (P2):** No GPU run in this session — `train_lora.py --dry-run` on team traces
+passes; real 3-seed SFT blocked pending GPU.
+
+**Promotion gate:** Not attempted — no adapter ladder artifact. Positive control
+promotes with `solverChecked: true`; team-agents adapter promotion requires a gated
+ladder run via `tools/promote_adapter.py`.
+
+**Honest claim:** Verifier-gated deliberation policy **candidate** only.
+`canClaimAGI: false` — not AGI, not validated uplift, not independent consensus
+when N_eff < 2.0.
+
+**Artifact:** `agi-proof/benchmark-results/team-agents.public-report.json`
+
+## team-agents-longtask-eval-template-2026-06-25
+
+**Status:** OPEN (long-task benchmark wired; real eval blocked until promoted adapter + GPU).
+
+**Branch:** `claude/sophia-team-orchestrator`
+
+**Benchmark:** Sealed `team_agents_longtask` heldout_v1 — 18 cases (6/6/6 balance:
+multi_domain_chain / chained_subquestions / long_coordination_trap),
+contentHash=`d84acadbc570e9718a0264adceff5a6a8a0bace089e425ac3e3c566ab7a17dd4`,
+decontam CLEAN (registered in `dataset_guard`).
+
+**Conditions:** `sophia_single` (one advisor pass) vs `sophia_team_orchestrator`
+(`deliberate_team()` via `tools/team_agents_deliberate.py`).
+
+**Metrics:** passRate/composite delta, subStepCoverage, roleFidelity, handoffIntegrity,
+falseConsensus (traps), effectiveN. External scorer disjoint from intrinsic gate.
+
+**Command (when ready):**
+```bash
+python tools/eval_team_agents_longtask.py --mode real --model mlx:Qwen/Qwen2.5-3B-Instruct \\
+  --adapter training/mlx_adapters/sophia-v3 --backend mlx --seeds 0,1,2
+```
+
+**Honest claim:** `canClaimAGI: false`. Never claim consensus when N_eff < 2.0.
+Record sub-step coverage and trap false-consensus — not promotion evidence until
+`promote_adapter.py` clears the Sophia ladder separately.
+
+**Artifact:** `agi-proof/benchmark-results/team-agents-longtask.public-report.json`
+
+## team-orchestrator-eval-template-2026-06-25
+
+**Status:** OPEN (orchestrator wired; real eval blocked until promoted adapter + GPU).
+
+**Command (when ready):**
+```bash
+python tools/eval_team_agents.py --mode real --model mlx:Qwen/Qwen2.5-3B-Instruct \\
+  --adapter training/mlx_adapters/sophia-v3 --backend mlx --seeds 0,1,2
+```
+
+**Honest claim:** `canClaimAGI: false`. Never claim consensus when N_eff < 2.0.
+Record effective-N, trap false-consensus, and bootstrap CI — not promotion evidence
+until `promote_adapter.py` clears the Sophia ladder separately.

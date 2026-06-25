@@ -20,6 +20,8 @@ ROOT = Path(__file__).resolve().parents[1]
 # Held-out sets that training must never overlap.
 EVAL_GLOBS = ["eval/**/*.jsonl"]
 EVAL_PACKS = ["agi-proof/baseline-ablation/abstain-pack-2026-06-22.json"]
+TEAM_AGENTS_MANIFEST = ROOT / "data" / "team_agents_benchmark" / "manifest.json"
+TEAM_AGENTS_LONGTASK_MANIFEST = ROOT / "data" / "team_agents_longtask" / "manifest.json"
 
 
 def normalize(text: str) -> str:
@@ -54,6 +56,30 @@ def _load_jsonl(path: Path) -> list[dict]:
     return rows
 
 
+def tool_use_benchmark_prompt_set(*, root: Path = ROOT) -> set[str]:
+    """Normalized prompts from sealed tool-use benchmark (NOT in eval_prompt_set)."""
+    out: set[str] = set()
+    bench = root / "data" / "tool_use_benchmark" / "heldout_v1.jsonl"
+    if bench.exists():
+        for row in _load_jsonl(bench):
+            pr = prompt_of(row)
+            if pr:
+                out.add(normalize(pr))
+    return out
+
+
+def hk_advisor_benchmark_prompt_set(*, root: Path = ROOT) -> set[str]:
+    """Normalized prompts from sealed HK advisor benchmark (NOT in eval_prompt_set)."""
+    out: set[str] = set()
+    bench = root / "data" / "hk_advisor_benchmark" / "heldout_v1.jsonl"
+    if bench.exists():
+        for row in _load_jsonl(bench):
+            pr = prompt_of(row)
+            if pr:
+                out.add(normalize(pr))
+    return out
+
+
 def eval_prompt_set(*, root: Path = ROOT) -> set[str]:
     """All normalized prompts from the held-out eval/benchmark surfaces."""
     out: set[str] = set()
@@ -71,6 +97,20 @@ def eval_prompt_set(*, root: Path = ROOT) -> set[str]:
                 pr = prompt_of(case) if isinstance(case, dict) else None
                 if pr:
                     out.add(normalize(pr))
+    for manifest_path in (
+        root / "data" / "team_agents_benchmark" / "manifest.json",
+        root / "data" / "team_agents_longtask" / "manifest.json",
+    ):
+        if manifest_path.exists():
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            bench_dir = manifest_path.parent
+            for key in ("heldout", "probe"):
+                rel = manifest.get("files", {}).get(key)
+                if rel:
+                    for row in _load_jsonl(bench_dir / rel):
+                        pr = prompt_of(row)
+                        if pr:
+                            out.add(normalize(pr))
     return out
 
 

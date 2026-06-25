@@ -95,7 +95,10 @@ def _sft_sources(out: Path) -> list[tuple[str, str, str]]:
         ("training/council/religion_repair_c4.jsonl", "sft_religion_repair_c4.jsonl", "sft"),
         ("training/moral_gate_sft.jsonl", "sft_moral_gate.jsonl", "sft"),
         (gi_rel, "general_instruct.jsonl", "sft"),
+        # C4: human-reviewed, promoted gate-feedback misses (optional; absent → skipped).
+        # Decontaminated like any source, so it cannot leak eval/holdout prompts.
         ("training/feedback/sft_from_feedback.jsonl", "sft_from_feedback.jsonl", "sft"),
+        ("training/hk_advisor/sft_traces.jsonl", "sft_hk_advisor.jsonl", "sft"),
     ]
 
 
@@ -119,6 +122,7 @@ SFT_SOURCES = _sft_sources(ROOT / "training" / "local_sophia_v2")
 DPO_SOURCES = [
     ("training/hard_negatives_dpo.jsonl", "dpo_hard_negatives.jsonl", "dpo"),
     ("training/wiki_provenance_dpo.jsonl", "dpo_wiki_provenance.jsonl", "dpo"),
+    ("training/hk_advisor/dpo_pairs.jsonl", "dpo_hk_advisor.jsonl", "dpo"),
 ]
 
 REQUIRED_INPUTS = _required_inputs(ROOT / "training" / "local_sophia_v2")

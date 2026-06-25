@@ -57,6 +57,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     revise,
     rubric_review,
     sector_council,
+    team_agents_deliberate,
     uncertainty_score,
     validate_corpus,
     verify_claim,
@@ -351,6 +352,38 @@ def sophia_council_deliberate(
         return dumps({"error": "models_json must be a JSON array"})
     return dumps(council_deliberate(query, model=model, models=models or None,
                                     max_seats=max_seats, gate=gate))
+
+
+@mcp.tool()
+def sophia_team_agents_deliberate(
+    query: str,
+    model: str = "mock",
+    adapter_path: str = "",
+    seat_models_json: str = "[]",
+    max_seats: int = 4,
+    gate: bool = True,
+) -> str:
+    """Runtime team orchestrator: deliberate_team() map-reduce with optional Sophia LoRA adapter.
+
+    ``adapter_path`` sets SOPHIA_MLX_ADAPTER before inference. ``seat_models_json`` is an
+    optional JSON array of model specs for heterogeneous seats. ``canClaimAGI: false``.
+    """
+    try:
+        seat_models = json.loads(seat_models_json or "[]")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid seat_models_json: {exc}"})
+    if not isinstance(seat_models, list):
+        return dumps({"error": "seat_models_json must be a JSON array"})
+    return dumps(
+        team_agents_deliberate(
+            query,
+            model=model,
+            adapter_path=adapter_path,
+            seat_models=seat_models or None,
+            max_seats=max_seats,
+            gate=gate,
+        )
+    )
 
 
 @mcp.tool()
