@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "sophia.pipeline.document.v1",
+  "title": "Sophia pipeline document record",
+  "description": "Canonical record for a candidate pretraining document flowing through the pipeline (collect -> clean -> dedup -> score -> shard). Provenance and quality blocks are authoritative; dedup is filled in by the dedup stage.",
+  "type": "object",
+  "required": ["url", "content"],
+  "additionalProperties": true,
+  "properties": {
+    "url": {"type": "string", "description": "Source URL (pre- or post-canonicalization)."},
+    "canonical_url": {"type": "string", "description": "URL after pipeline.url_canonical (Phase 2)."},
+    "fetched_at": {"type": "string", "description": "ISO-8601 fetch timestamp (UTC)."},
+    "content": {"type": "string", "description": "Extracted plain text."},
+    "lang": {"type": "string", "description": "Detected/declared language code (e.g. 'en', 'zh')."},
+    "mime": {"type": "string", "description": "Content MIME type, e.g. text/html."},
+    "provenance": {
+      "type": "object",
+      "description": "Where the content came from and how trustworthy each source is. Feeds pipeline.quality_score and agent.poison_resistant_ingestion.",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "description": "One entry per independent source asserting this document/claim.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sourceId": {"type": "string"},
+              "trust": {"type": "number", "minimum": 0, "maximum": 1},
+              "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+              "independenceGroup": {"type": "string"}
+            }
+          }
+        },
+        "authorConfidence": {
+          "type": "string",
+          "description": "OKF authorConfidence tier, mapped to a prior by agent.grounded_confidence.AUTHOR_CONFIDENCE_PRIOR.",
+          "enum": ["consensus", "attributed", "compiled", "layered", "disputed", "legendary", "anachronism_risk", "none_extant"]
+        }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "description": "Filled in by pipeline.quality_score.score_document.",
+      "properties": {
+        "score": {"type": "number", "minimum": 0, "maximum": 1},
+        "keep": {"type": "boolean"},
+        "signals": {"type": "object"},
+        "reasons": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "dedup": {
+      "type": "object",
+      "description": "Filled in by pipeline.dedup (Phase 2).",
+      "properties": {
+        "minhash_sig": {"type": "array", "items": {"type": "integer"}},
+        "sim_cluster": {"type": "string"},
+        "is_duplicate": {"type": "boolean"}
+      }
+    }
+  }
+}
