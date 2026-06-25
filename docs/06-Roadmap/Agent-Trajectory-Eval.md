@@ -98,10 +98,39 @@ hiring domain-data discipline for *both* law and medicine. Same two failure mode
   step (see `agi-proof/`) is a held-out trajectory pack + ≥2 judge families to put
   a measured number behind the evaluator.
 
+## Tier 2 — shipped: agent-faithfulness benchmark
+
+A deterministic, reproducible benchmark now scores the evaluator itself:
+
+- **Pack:** `benchmark/agent_faithfulness.json` — 13 hand-labelled trajectories
+  (grounded / fabrication / weak-evidence / provenance-violation / no-claims /
+  empty). Labels are set by case *design*, independent of the evaluator, and the
+  pack is stamped first-party seed.
+- **Scorer:** `provenance_bench/agent_faithfulness.py` — verdict accuracy (+ Wilson
+  95% CI), detection precision/recall/F1 on the "should-not-certify" class, and
+  culprit-step localization accuracy.
+- **Runner / report:** `tools/run_agent_faithfulness_bench.py --write` →
+  `agi-proof/benchmark-results/agent-faithfulness.public-report.json`.
+- **Result (seed):** verdict accuracy **1.0** (Wilson-95 **[0.77, 1.0]**, N=13),
+  detection **F1 1.0**, localization **6/6** — deterministic, no judge. The wide CI
+  lower bound is the honest cost of N=13; this is *not* a multi-family-gated headline.
+
+Because the default judge is lexical and deterministic, this benchmark needs no
+model and no multi-family gate — the remaining honesty caveat is **label
+provenance** (first-party), disclosed in the pack and report. The OPEN item is a
+**third-party trajectory pack** to remove that caveat.
+
+## Capability proof (field requirements)
+
+`agi-proof/field-requirements/` maps the seven DeepSeek hiring categories (and the
+three new "Agent" role titles) to concrete repo artifacts, and makes the map
+**machine-checkable**: `tools/verify_field_requirements.py` fails CI if any cited
+module, test, or evidence file is missing. See that directory's README.
+
 ## Next
 
-- A public **agent-faithfulness benchmark + leaderboard** under the same
-  no-overclaim gate as the attribution benchmark (Tier-2 in the roadmap brainstorm).
+- A **third-party / held-out trajectory pack** + a second (LLM-entailment) judge to
+  put a gated number behind the evaluator and lift the first-party caveat.
 - Live PubMed/Crossref resolver for the medical pack; the same shape extends to
   other specialized domains (finance, non-English sources).
 - A corpus-cleaning pass: run the gate over a dataset and emit accept/abstain/block
