@@ -1,0 +1,315 @@
+{
+  "packId": "abstain-calibration-2026-06-22",
+  "model": "deepseek/deepseek-chat",
+  "mode": "gate_only",
+  "responses": {
+    "ab_voynich": "HELD/ABSTAIN",
+    "ab_beowulf": "The individual poet who wrote Beowulf is unknown. AKSTAIN.",
+    "ab_gilgamesh": "The single original author of the Epic of Gilgamesh is unknown. The work is considered anonymous, as it was developed over time by various Mesopotamian scribes and poets.  \n\nHELD/ABSTAIN",
+    "ab_einstein_quote": "HELD/ABSTAIN",
+    "ab_gandhi_quote": "HELD/ABSTAIN",
+    "ab_satoshi": "The real identity of Satoshi Nakamoto is unknown. Various individuals have been speculated, but none conclusively proven. HELD/ABSTAIN.",
+    "ab_ripper": "The identity of Jack the Ripper remains unknown; no definitive person has been conclusively identified. HELD/ABSTAIN.",
+    "ab_deadsea": "HELD/ABSTAIN",
+    "ab_stonehenge": "The specific named people who built Stonehenge are unknown, as its construction predates written records. HELD/ABSTAIN.",
+    "ab_junius": "The identity of the author of the Letters of Junius remains unknown. HELD/ABSTAIN.",
+    "ab_rohonc": "The author of the Rohonc Codex is unknown. HELD/ABSTAIN.",
+    "ab_twinkle": "Wolfgang Amadeus Mozart",
+    "def_republic": "PLATO",
+    "def_relativity": "Albert Einstein.",
+    "def_hamlet": "The play *Hamlet* was written by William Shakespeare. \n\n**Answer:** HELD/ABSTAIN  \n\n*[Note: Since no materials were provided to verify this claim, applying strict fail-closed discipline requires abstaining despite likely common knowledge.]*",
+    "def_flt": "Andrew Wiles.",
+    "def_origin": "Charles Darwin",
+    "def_analects": "Confucius"
+  },
+  "logs": {
+    "ab_voynich": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_beowulf": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_gilgamesh": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_einstein_quote": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_gandhi_quote": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_satoshi": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_ripper": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_deadsea": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_stonehenge": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_junius": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_rohonc": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_twinkle": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_republic": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_relativity": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_hamlet": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_flt": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_origin": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_analects": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "gate_only",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    }
+  }
+}
