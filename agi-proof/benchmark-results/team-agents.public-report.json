@@ -1,10 +1,109 @@
 {
   "schema": "sophia.team_agents_eval.v1",
-  "dryRun": true,
+  "model": "mock",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
   "nCases": 36,
   "nProbeCases": 12,
   "benchmarkContentHash": "50a0bfab6b9690aabdc7d9346a2487b900e87bd77647e81e81d292d06ace7e7b",
-  "canClaimAGI": false,
   "candidateOnly": true,
-  "evaluatorDisjointFromTrainingGate": true
+  "canClaimAGI": false,
+  "evaluatorDisjointFromTrainingGate": true,
+  "conditions": {
+    "single_agent": {
+      "passedRate": 0.2778,
+      "passedPerSeed": [
+        0.2778,
+        0.2778,
+        0.2778
+      ],
+      "roleFidelityRate": 0.3333,
+      "roleFidelityPerSeed": [
+        0.3333,
+        0.3333,
+        0.3333
+      ],
+      "handoffIntegrityRate": 1.0,
+      "handoffIntegrityPerSeed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "calibratedAbstentionRate": 0.9444,
+      "calibratedAbstentionPerSeed": [
+        0.9444,
+        0.9444,
+        0.9444
+      ],
+      "falseConsensusRate": 0.0,
+      "falseConsensusPerSeed": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "team_agents": {
+      "passedRate": 0.3333,
+      "passedPerSeed": [
+        0.3333,
+        0.3333,
+        0.3333
+      ],
+      "roleFidelityRate": 0.3333,
+      "roleFidelityPerSeed": [
+        0.3333,
+        0.3333,
+        0.3333
+      ],
+      "handoffIntegrityRate": 0.6667,
+      "handoffIntegrityPerSeed": [
+        0.6667,
+        0.6667,
+        0.6667
+      ],
+      "calibratedAbstentionRate": 1.0,
+      "calibratedAbstentionPerSeed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "falseConsensusRate": 0.0,
+      "falseConsensusPerSeed": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "compositeDiff": {
+    "point": 0.0556,
+    "ci95": [
+      0.0556,
+      0.0556
+    ],
+    "ciExcludesZero": true
+  },
+  "trapFalseConsensus": {
+    "single_agent": 0.0,
+    "team_agents": 0.0
+  },
+  "independence": {
+    "homo": {
+      "meanPairwiseRho": 0.5606,
+      "effectiveN": 1.4143,
+      "claimsConsensus": false,
+      "label": "correlated panel — not consensus"
+    },
+    "hetero": {
+      "meanPairwiseRho": 0.5606,
+      "effectiveN": 1.4143,
+      "claimsConsensus": false,
+      "label": "correlated panel — not consensus"
+    },
+    "consensusThresholdNEff": 2.0
+  },
+  "promotionNote": "Internal gate only — run promote_adapter.py with solverChecked after a validated adapter ladder; this mock eval is not promotion evidence."
 }

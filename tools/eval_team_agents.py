@@ -247,7 +247,11 @@ def main(argv: list[str] | None = None) -> int:
     print(json.dumps({k: report[k] for k in (
         "nCases", "benchmarkContentHash", "compositeDiff", "independence", "canClaimAGI",
     ) if k in report}, indent=2))
-    print(f"wrote {out.relative_to(ROOT)}")
+    try:
+        shown = out.relative_to(ROOT)
+    except ValueError:
+        shown = out
+    print(f"wrote {shown}")
     return 0
 
 
