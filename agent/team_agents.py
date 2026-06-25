@@ -161,10 +161,11 @@ def deliberate_team(
     materials=None,
     gold: dict | None = None,
     gate: bool = True,
+    council_id: str | None = None,
 ) -> Deliberation:
     """Map-reduce deliberation with calibrated synthesis on divergence."""
     d = deliberate(query, client=client, seat_clients=seat_clients, max_seats=max_seats,
-                   materials=materials, gate=gate)
+                   materials=materials, gate=gate, council_id=council_id)
     trap_gold = gold and gold.get("expectedSynthesis") == "abstain_or_flag_conflict"
     if trap_gold or detect_seat_divergence(d.seats, gold=gold).divergent:
         d = apply_calibrated_synthesis(d, gold=gold)

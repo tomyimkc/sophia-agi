@@ -1,0 +1,10 @@
+{
+  "schema": "sophia.team_agents_eval.v1",
+  "dryRun": true,
+  "nCases": 36,
+  "nProbeCases": 12,
+  "benchmarkContentHash": "50a0bfab6b9690aabdc7d9346a2487b900e87bd77647e81e81d292d06ace7e7b",
+  "canClaimAGI": false,
+  "candidateOnly": true,
+  "evaluatorDisjointFromTrainingGate": true
+}

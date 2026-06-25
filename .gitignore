@@ -82,3 +82,8 @@ training/feedback/*.jsonl
 
 # SSIL runtime registry (mutable append log)
 agi-proof/self-extension/ssil-registry.jsonl
+
+# Team-agents generated weights (never commit adapters)
+training/team_agents/checkpoints/
+training/team_agents/*.safetensors
+training/team_agents/adapter_model/

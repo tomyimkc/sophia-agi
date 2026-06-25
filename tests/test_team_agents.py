@@ -132,6 +132,45 @@ def test_trace_prompts_disjoint_from_benchmark() -> None:
             assert dataset_guard.normalize(pr) not in evalset
 
 
+def test_effective_n_correlated_panel() -> None:
+    from agent.team_agents import effective_n, mean_pairwise_correlation
+
+    vectors = [[1, 1, 1], [1, 1, 1], [1, 1, 1]]
+    rho = mean_pairwise_correlation(vectors)
+    n_eff = effective_n(3, rho)
+    assert rho > 0.9
+    assert n_eff < 2.0
+
+
+def test_eval_report_schema() -> None:
+    import subprocess
+
+    rc = subprocess.run(
+        [sys.executable, str(ROOT / "tools" / "eval_team_agents.py"), "--model", "mock", "--dry-run"],
+        cwd=ROOT, capture_output=True, text=True,
+    )
+    assert rc.returncode == 0
+    report_path = ROOT / "agi-proof" / "benchmark-results" / "team-agents.public-report.json"
+    assert report_path.exists()
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    assert report.get("canClaimAGI") is False
+    assert report.get("evaluatorDisjointFromTrainingGate") is True
+    assert "benchmarkContentHash" in report
+
+
+def test_train_lora_dry_run_team_traces() -> None:
+    import subprocess
+
+    traces = ROOT / "training" / "team_agents" / "sft_traces.jsonl"
+    assert traces.exists()
+    rc = subprocess.run(
+        [sys.executable, str(ROOT / "tools" / "train_lora.py"),
+         "--dry-run", "--train", str(traces)],
+        cwd=ROOT, capture_output=True, text=True,
+    )
+    assert rc.returncode == 0, rc.stderr or rc.stdout
+
+
 def main() -> int:
     import inspect
     for nm, fn in sorted(globals().items()):
