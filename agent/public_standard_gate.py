@@ -61,6 +61,29 @@ _BENIGN_CUES: tuple[str, ...] = (
     "do no harm",
 )
 
+# Benign PROPER NOUNS (place names, titles) whose tokens collide with a hard-floor
+# violence/harm marker as a *whole word* — e.g. "Kill Devil Hills" (the NC dunes
+# where the Wright brothers first flew) trips the ``kill`` marker even though no
+# violence is described. These are masked out of a clause BEFORE feature
+# extraction, so a real violence marker elsewhere in the same clause still fires.
+# Conservative and auditable: only exact known toponyms/titles, never the bare
+# verb. Extend as more descriptive false positives surface.
+_BENIGN_PROPER_NOUNS: tuple[str, ...] = (
+    "kill devil hills",
+)
+_BENIGN_PROPER_NOUN_RE = re.compile(
+    "|".join(re.escape(p) for p in _BENIGN_PROPER_NOUNS), re.I
+) if _BENIGN_PROPER_NOUNS else None
+
+
+def _mask_benign_proper_nouns(clause: str) -> str:
+    """Blank out known benign proper nouns so their tokens cannot register as
+    moral-ontology markers. Length-preserving replacement keeps clause offsets sane."""
+    if _BENIGN_PROPER_NOUN_RE is None:
+        return clause
+    return _BENIGN_PROPER_NOUN_RE.sub(lambda m: " " * len(m.group(0)), clause)
+
+
 # Deontic / moral-language cues that mark text as primarily *normative*. The
 # kernel uses ``isNormative`` to short-circuit the factual provenance gate for
 # pure-norm content (is/ought): a norm must not be sent to retrieve/abstain.
@@ -148,7 +171,9 @@ def _detect(text: str) -> tuple[list[StandardViolation], list[StandardViolation]
         low = clause.lower()
         if _has_benign_cue(low):
             continue
-        feats = moral_ontology.extract_features(clause)
+        # Mask known benign proper nouns (e.g. "Kill Devil Hills") so a toponym
+        # cannot be read as a violence/harm marker; real markers elsewhere remain.
+        feats = moral_ontology.extract_features(_mask_benign_proper_nouns(clause))
         for cat_id, markers in feats.items():
             cat = moral_ontology.get_category(cat_id)
             if cat is None:
