@@ -17,9 +17,14 @@ name = "engine_bench"
 path = "../../benches/engine_bench.rs"
 harness = false
 
+[dependencies]
+# Optional: only pulled in when the `io_uring` feature is on, so the default
+# build stays std-only and offline-buildable.
+io-uring = { version = "0.7", optional = true }
+
 [features]
 default = []
-# When enabled (Linux only), routes I/O through an io_uring backend. Off by
-# default so the crate builds everywhere on the std backend. The uring backend
-# is a documented seam (io.rs), not yet wired to the `io-uring` crate.
-io_uring = []
+# When enabled (Linux 5.1+), routes WAL/SSTable I/O through a real io_uring
+# backend (io::IoUringIo) that submits Write/Read/Fsync SQEs and batches the
+# group commit. Off by default so the crate builds everywhere on the std backend.
+io_uring = ["dep:io-uring"]

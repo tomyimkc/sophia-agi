@@ -70,6 +70,39 @@ impl Options {
     }
 }
 
+/// A set of mutations committed atomically with a *single* fsync (group
+/// commit). Build it up, then hand it to [`Engine::write_batch`]. This is the
+/// RocksDB `WriteBatch` shape and the primitive that amortizes the durability
+/// cost the per-op `put`/`delete` path pays on every call.
+#[derive(Debug, Default, Clone)]
+pub struct WriteBatch {
+    records: Vec<Record>,
+}
+
+impl WriteBatch {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn put(&mut self, key: &[u8], value: &[u8]) -> &mut Self {
+        self.records.push(Record::put(key.to_vec(), value.to_vec()));
+        self
+    }
+
+    pub fn delete(&mut self, key: &[u8]) -> &mut Self {
+        self.records.push(Record::delete(key.to_vec()));
+        self
+    }
+
+    pub fn len(&self) -> usize {
+        self.records.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.records.is_empty()
+    }
+}
+
 /// The engine, generic over the I/O backend (std today, io_uring tomorrow).
 pub struct Engine<B: IoBackend = StdIo> {
     opts: Options,
@@ -124,6 +157,23 @@ impl<B: IoBackend> Engine<B> {
         let rec = Record::put(key.to_vec(), value.to_vec());
         self.wal.append(&rec)?;
         self.mem.put(key.to_vec(), value.to_vec());
+        self.maybe_flush()
+    }
+
+    /// Commit a batch with a single fsync (group commit), then apply all
+    /// mutations to the memtable and flush at most once. Same durability as N
+    /// separate `put`/`delete` calls; one fsync instead of N.
+    pub fn write_batch(&mut self, batch: &WriteBatch) -> stdio::Result<()> {
+        if batch.is_empty() {
+            return Ok(());
+        }
+        self.wal.append_batch(&batch.records)?;
+        for rec in &batch.records {
+            match rec.kind {
+                record::KIND_DELETE => self.mem.delete(rec.key.clone()),
+                _ => self.mem.put(rec.key.clone(), rec.value.clone()),
+            }
+        }
         self.maybe_flush()
     }
 
@@ -249,6 +299,65 @@ mod tests {
         // Compaction should have collapsed the runs.
         assert!(db.table_count() <= 3, "tables={}", db.table_count());
         assert_eq!(db.get(b"k7").unwrap().as_deref(), Some(&b"v7"[..]));
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn write_batch_is_durable_and_atomic() {
+        let dir = tmp("batch");
+        std::fs::remove_dir_all(&dir).ok();
+        {
+            let mut db = Engine::open(Options::new(&dir)).unwrap();
+            let mut wb = WriteBatch::new();
+            wb.put(b"a", b"1").put(b"b", b"2").delete(b"a");
+            assert_eq!(wb.len(), 3);
+            db.write_batch(&wb).unwrap();
+            // within the same engine: delete shadows the put
+            assert_eq!(db.get(b"a").unwrap(), None);
+            assert_eq!(db.get(b"b").unwrap().as_deref(), Some(&b"2"[..]));
+        }
+        // after reopen (WAL replay of the batch): same view
+        let mut db = Engine::open(Options::new(&dir)).unwrap();
+        assert_eq!(db.get(b"a").unwrap(), None);
+        assert_eq!(db.get(b"b").unwrap().as_deref(), Some(&b"2"[..]));
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[cfg(feature = "io_uring")]
+    #[test]
+    fn io_uring_backend_round_trips() {
+        use crate::io::IoUringIo;
+        let dir = tmp("uring");
+        std::fs::remove_dir_all(&dir).ok();
+        let opts = Options::new(&dir).flush_threshold_bytes(1).compaction_trigger(100);
+        {
+            let mut db = Engine::open_with(opts.clone(), IoUringIo).unwrap();
+            // single writes
+            db.put(b"a", b"1").unwrap();
+            db.put(b"b", b"2").unwrap();
+            db.flush().unwrap(); // forces an SSTable write+read through the ring
+            // group commit through the ring (one submission, one fsync)
+            let mut wb = WriteBatch::new();
+            wb.put(b"c", b"3").put(b"d", b"4").delete(b"a");
+            db.write_batch(&wb).unwrap();
+            assert_eq!(db.get(b"a").unwrap(), None);
+            assert_eq!(db.get(b"b").unwrap().as_deref(), Some(&b"2"[..]));
+            assert_eq!(db.get(b"c").unwrap().as_deref(), Some(&b"3"[..]));
+        }
+        // reopen on the ring backend: WAL replay + SSTable reads must agree
+        let mut db = Engine::open_with(opts, IoUringIo).unwrap();
+        assert_eq!(db.get(b"d").unwrap().as_deref(), Some(&b"4"[..]));
+        assert_eq!(db.get(b"b").unwrap().as_deref(), Some(&b"2"[..]));
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn empty_batch_is_noop() {
+        let dir = tmp("emptybatch");
+        std::fs::remove_dir_all(&dir).ok();
+        let mut db = Engine::open(Options::new(&dir)).unwrap();
+        db.write_batch(&WriteBatch::new()).unwrap();
+        assert_eq!(db.get(b"x").unwrap(), None);
         std::fs::remove_dir_all(&dir).ok();
     }
 

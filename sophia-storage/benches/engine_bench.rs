@@ -10,7 +10,7 @@
 
 use std::time::Instant;
 
-use sophia_lsm::{Engine, Options};
+use sophia_lsm::{Engine, Options, WriteBatch};
 
 fn percentile(sorted_nanos: &[u128], p: f64) -> u128 {
     if sorted_nanos.is_empty() {
@@ -71,6 +71,33 @@ fn main() {
     report("put+fsync", put_lat, put_total);
     report("get", get_lat, get_total);
     println!("tables on disk: {}  (checksum sink={sink})", db.table_count());
+
+    // --- GROUP COMMIT: same N writes, one fsync per batch of `batch` ---
+    println!("\ngroup commit (one fsync per batch):");
+    for batch in [1usize, 8, 64, 512] {
+        let bdir = std::env::temp_dir().join(format!("sophia-lsm-gc-{}-{batch}", std::process::id()));
+        std::fs::remove_dir_all(&bdir).ok();
+        let mut gdb =
+            Engine::open(Options::new(&bdir).flush_threshold_bytes(64 * 1024 * 1024)).unwrap();
+        let t = Instant::now();
+        let mut i = 0usize;
+        while i < n {
+            let mut wb = WriteBatch::new();
+            for _ in 0..batch.min(n - i) {
+                let key = format!("k:{i:010}");
+                wb.put(key.as_bytes(), b"verdict=accepted;conf=0.7");
+                i += 1;
+            }
+            gdb.write_batch(&wb).unwrap();
+        }
+        let dt = t.elapsed();
+        println!(
+            "  batch={batch:<4} {:>12.0} writes/s   ({:.2}x vs per-write fsync)",
+            n as f64 / dt.as_secs_f64(),
+            (n as f64 / dt.as_secs_f64()) / (n as f64 / put_total.as_secs_f64()),
+        );
+        std::fs::remove_dir_all(&bdir).ok();
+    }
 
     std::fs::remove_dir_all(&dir).ok();
 }

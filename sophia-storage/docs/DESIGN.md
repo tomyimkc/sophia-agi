@@ -140,29 +140,47 @@ there) and the `record` torn-tail / bit-flip tests.
 
 | Real (tested) | Seam (documented) |
 |---|---|
-| WAL append+fsync+replay | io_uring backend (`io::IoUringIo`) — submit batched SQEs, `O_DIRECT`, registered buffers |
-| Memtable, SSTable write/read, sparse index | Bloom filter per SSTable (skip tables that can't hold the key) |
-| Full-merge compaction + tombstone reap | Leveled / size-tiered compaction to bound write-amp |
-| CRC framing, torn-tail recovery | Block cache for hot SSTable reads |
-| Pluggable `IoBackend` trait | Concurrent readers / MVCC snapshot reads |
+| WAL append+fsync+replay | Bloom filter per SSTable (skip tables that can't hold the key) |
+| **Group-commit `WriteBatch`** (one fsync per batch) | `O_DIRECT` + page-aligned registered buffers (true zero-copy) |
+| **Real io_uring backend** (`io::IoUringIo`: Write/Read/Fsync SQEs) | SQPOLL (drop the submit syscall); concurrent commit thread |
+| Memtable, SSTable write/read, sparse index | Leveled / size-tiered compaction to bound write-amp |
+| Full-merge compaction + tombstone reap | Block cache for hot SSTable reads |
+| CRC framing, torn-tail recovery | Concurrent readers / MVCC snapshot reads |
+| Pluggable `IoBackend` trait | |
 
-### 3.4 What the benchmark says, and what to do about it
+### 3.4 What the benchmark said, and what we did about it
+
+The first measurement:
 
 ```
-put+fsync   1,111 ops/s   p50 0.79 ms      get   3.35M ops/s   p50 128 ns
+put+fsync   1,212 ops/s   p50 0.71 ms      get   3.56M ops/s   p50 128 ns
 ```
 
-The read path is already memory-fast. The write path is **fsync-per-write
-bound** — every `put` forces the platter. That single number justifies the next
-two pieces of work precisely:
+The read path is already memory-fast. The write path was **fsync-per-write
+bound** — every `put` forced the platter. So we built the two things that single
+number pointed at:
 
-- **Group commit:** batch many records into one `fsync`; throughput scales with
-  batch size with no durability loss.
-- **io_uring backend:** submit the WAL append + fsync as linked SQEs and let
-  several commits be in flight, instead of a blocking `write()+fsync()` per op.
+- **Group commit (`WriteBatch`, `wal.rs::append_batch`):** N records, one
+  `fsync`. Same durability; the platter sync is amortized across the batch.
+  Measured:
 
-This is the RocksDB design lineage the JD names — and the point of building it is
-to show you reach for the *measured* bottleneck, not a guessed one.
+  ```
+  batch=1        1,164 writes/s    1.0x
+  batch=8        8,639 writes/s    7.1x
+  batch=64      55,491 writes/s   45.8x
+  batch=512    247,053 writes/s  203.8x   (one fsync per 512 writes)
+  ```
+
+- **io_uring backend (`io::IoUringIo`):** each batched record becomes a `Write`
+  SQE submitted in a single `io_uring_enter`, followed by one `Fsync` SQE — so
+  the append side of the group commit collapses to one submission too, and reads
+  go through `Read` SQEs. Exercised end-to-end (`io_uring_backend_round_trips`):
+  the same engine — WAL replay, SSTable write+read, group-commit batch — runs on
+  the ring. `O_DIRECT` + registered buffers and SQPOLL are the documented next
+  steps for true zero-copy.
+
+This is the RocksDB design lineage the JD names, and the point of building it
+this way is to show the reflex: measure, find the real bottleneck, fix *that*.
 
 ---
 

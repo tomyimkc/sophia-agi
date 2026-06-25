@@ -29,6 +29,20 @@ impl<H: FileHandle> Wal<H> {
         self.handle.sync()
     }
 
+    /// Group commit: append every record, then a **single** fsync for the whole
+    /// batch. Durability cost (the fsync) is amortized across `records.len()`
+    /// writes — the lever that lifts the fsync-per-write throughput ceiling. On
+    /// the io_uring backend the appends also collapse into one ring submission.
+    pub fn append_batch(&mut self, records: &[Record]) -> io::Result<()> {
+        if records.is_empty() {
+            return Ok(());
+        }
+        let encoded: Vec<Vec<u8>> = records.iter().map(Record::encode).collect();
+        let bufs: Vec<&[u8]> = encoded.iter().map(Vec::as_slice).collect();
+        self.handle.append_many(&bufs)?;
+        self.handle.sync()
+    }
+
     /// Replay the whole log, invoking `apply` for each surviving record in
     /// order. Stops at the first torn/corrupt frame.
     pub fn replay<F: FnMut(Record)>(&mut self, mut apply: F) -> io::Result<()> {

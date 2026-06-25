@@ -27,45 +27,56 @@ features. See [`docs/DESIGN.md`](docs/DESIGN.md) and the roadmap below.
 | [`sophia-kvcache`](crates/sophia-kvcache) | Disaggregated, prefix-sharing KV-cache: paged content-addressed blocks, HBM→DRAM→NVMe tiering, ref-counted LRU eviction | 高性能 KVCache 存储系统; RDMA 零拷贝 (seam) |
 | [`sophia-lsm`](crates/sophia-lsm) | Log-structured local engine: WAL + memtable + SSTable + compaction, pluggable I/O backend, CRC-framed crash recovery | SSD 本地存储引擎; io_uring (seam); RocksDB 设计范式 |
 
-## Build & test (zero external dependencies)
+## Build & test
 
 ```bash
 cd sophia-storage
-cargo test --workspace        # 22 tests: framing, recovery, compaction, prefix reuse, eviction
-cargo bench -p sophia-lsm     # put/get latency + ops/sec
-cargo bench -p sophia-kvcache # prefix hit-ratio + prefill avoided
+cargo test --workspace                      # 24 tests (std backend)
+cargo test -p sophia-lsm --features io_uring # +1 test through the real ring (Linux 5.1+)
+cargo bench -p sophia-lsm                   # put/get latency + group-commit scaling
+cargo bench -p sophia-kvcache               # prefix hit-ratio + prefill avoided
 ```
 
-The whole workspace is **std-only** on purpose, so it clones and runs anywhere
-with no network — the I/O-backend and tier abstractions are where real
-dependencies (`io-uring`, CUDA, RDMA verbs) plug in later without touching the
-algorithms.
+The **default** build is std-only and offline — it clones and runs anywhere. The
+`io_uring` feature is the one place an external dependency (`io-uring`) and a real
+kernel facility enter; the tier abstractions are where CUDA / RDMA verbs plug in
+later, without touching the algorithms.
 
 ## Measured today (4-core container, see benches/)
 
 ```
 sophia-lsm:
-  put+fsync   1,111 ops/s   p50 0.79 ms   p99 2.99 ms   (fsync-per-write bound)
-  get         3,355,089 ops/s   p50 128 ns   p99 820 ns  (memtable hits)
+  put+fsync   1,212 ops/s   p50 0.71 ms   p99 2.70 ms   (fsync-per-write floor)
+  get         3,563,013 ops/s   p50 128 ns   p99 679 ns  (memtable hits)
+
+  group commit (one fsync per batch) — lifting the fsync-per-write floor:
+    batch=1        1,164 writes/s    1.0x
+    batch=8        8,639 writes/s    7.1x
+    batch=64      55,491 writes/s   45.8x
+    batch=512    247,053 writes/s  203.8x
 
 sophia-kvcache  (512-tok prompt, fan-out 16, 200 rounds — the council/best-of-N shape):
   avg prefix hit-ratio   0.970
   prefill blocks avoided 97.0%   (105,600 → 3,200 blocks computed)
 ```
 
-The put number is deliberately unflattering: it fsyncs on **every** write, which
-is precisely the motivation for the group-commit + io_uring work in the roadmap.
-Honest baselines first, optimization second — the same measurement discipline as
-the rest of the repo ([RESULTS.md](../RESULTS.md)).
+We published the unflattering per-write number first, identified the fsync as the
+bottleneck, then built group commit to amortize it — **204× at batch 512**, with
+identical durability. Honest baseline, then optimize at the measured bottleneck —
+the same discipline as the rest of the repo ([RESULTS.md](../RESULTS.md)).
 
 ## Roadmap (priority order)
 
-1. **KVCache zero-copy tiers** — back `tier::Arena` with real HBM/DRAM/NVMe;
+1. ~~**LSM group-commit + io_uring backend**~~ — ✅ done: `WriteBatch` one-fsync
+   group commit (204× at batch 512) and a real `io::IoUringIo` submitting
+   Write/Read/Fsync SQEs, exercised end-to-end through the engine.
+2. **KVCache zero-copy tiers** — back `tier::Arena` with real HBM/DRAM/NVMe;
    `cudaMemcpyAsync` + RDMA reads for the transfer path. *(biggest inference win)*
-2. **LSM io_uring backend** — implement `io::IoUringIo`; group-commit the WAL.
-3. **Bloom filters + leveled compaction** — bound read- and write-amplification.
-4. **Raft-replicated log** — replicate the decision log / task queue for HA.
-5. **Python binding** — expose `sophia-lsm` under a `SOPHIA_STORAGE_ENGINE=lsm`
+3. **O_DIRECT + registered buffers + SQPOLL** on the io_uring backend; concurrent
+   group commit (a commit thread coalescing per-op sync requests).
+4. **Bloom filters + leveled compaction** — bound read- and write-amplification.
+5. **Raft-replicated log** — replicate the decision log / task queue for HA.
+6. **Python binding** — expose `sophia-lsm` under a `SOPHIA_STORAGE_ENGINE=lsm`
    flag behind the existing store interface; JSONL stays the default.
 
 See [`docs/DESIGN.md`](docs/DESIGN.md) for the rationale and the disaggregated /
