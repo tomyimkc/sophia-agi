@@ -190,6 +190,33 @@ Trainable data today is small — ~1.3k rows total:
 
 ---
 
+## Running M1 (when model access is available)
+
+The M1 instrument is built and pipeline-validated in `mock` mode. The exec container is
+CPU-only with no keys/GPU, so the same-size comparison has **not** been run. To run it,
+set `OPENROUTER_API_KEY` in the environment (the chosen path) and:
+
+```bash
+python3 tools/run_same_size_market_baselines.py \
+  --benchmark data/wisdom_market_benchmark/heldout_v1.jsonl \
+  --models openrouter:qwen/qwen3-4b,openrouter:microsoft/phi-4-multimodal-instruct,\
+openrouter:meta-llama/llama-3.2-3b-instruct,openrouter:google/gemma-2-9b-it \
+  --conditions raw,prompt,prompt_gate \
+  --runs 3
+```
+
+> **Verify the OpenRouter model slugs first** (`microsoft/phi-4-*`, `qwen/qwen3-4b`, the
+> Gemma size) against the live OpenRouter catalogue — they change, and a wrong slug fails
+> the client build. Judges for the two semantic metrics need ≥2 distinct families
+> (e.g. `openrouter:deepseek/deepseek-chat,openrouter:meta-llama/llama-3.3-70b-instruct`),
+> distinct from each subject.
+
+**Reading the result for the go/no-go:** look at each base's `prompt_gate` block,
+`deltasVsRaw`. A base PASSES M1 iff, on the source/moral metrics, the improvement CI
+excludes 0 (`improves: true`), `over_abstention_rate` ≤ 0.10, and there is no
+protected-suite regression — AND raw accuracy is low enough to leave headroom. If no base
+clears this, **STOP and report; do not train** (the niche may not exist on these axes).
+
 ## Decision protocol
 
 When a real decision the plan doesn't cover arises (a base ties, a metric is borderline), **STOP
