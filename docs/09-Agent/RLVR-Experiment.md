@@ -189,15 +189,16 @@ python tools/run_rlvr.py --task math --model zai-org/glm-4-9b-chat-hf --vllm ser
 python tools/run_rlvr.py --task math --model zai-org/glm-4-9b-chat-hf --quant bf16    # 1x80GB
 ```
 
-> **Performance / dependency note (2026-06-24).** The RunPod launcher
-> (`.github/workflows/rlvr-runpod.yml`) runs `--vllm none` because the pinned
-> RLVR stack (`tools/runpod_rlvr.py`: trl 0.16.1) predates trl's `vllm_mode`
-> selector (added in trl ≥ 0.17). `--vllm none` is generation-bound: a 3-seed,
-> epochs=3 sweep over the 164-train/60-held-out pack is ~1.5 h per pod. To get
-> vLLM-accelerated generation (~10×, single A100 80GB) bump the pod's pinned set
-> to a mutually-compatible **trl ≥ 0.17 + vllm + torch + transformers**, then
-> switch the workflow launch to `--vllm colocate`. `run_rlvr` already field-gates
-> `vllm_mode`, so it is correct on either trl; the blocker is purely the dep pin.
+> **Performance / dependency note (2026-06-25).** The RunPod launcher now runs
+> `--vllm colocate` on a working fast stack: **trl 0.19.1 + vllm 0.9.1 +
+> transformers 4.53.2** (pinned in `tools/runpod_rlvr.py`), launched via
+> `accelerate launch --num_processes 1`. Three gotchas, all fixed: (1) `vllm_mode`
+> needs trl ≥ 0.18 (`run_rlvr` field-gates it); (2) transformers must stay on 4.53.x
+> — vllm 0.9.1 registers an `aimv2` AutoConfig that collides with transformers ≥ 5.x;
+> (3) vLLM's colocate executor reads `RANK`/`WORLD_SIZE`/`LOCAL_RANK`, set by
+> `accelerate launch` (and defaulted in `run_rlvr` as a fallback). Colocate runs an
+> epochs=3 N=60 seed in ~42 min (vs ~1.5 h for `--vllm none`). `--vllm none` remains
+> the dependency-free fallback (plain `python`, slower).
 
 After training, the live capability claim is **held-out pass@1 on the eval families
 rises vs the base adapter**, scored deterministically by `math_equivalent`
