@@ -79,12 +79,18 @@ Wherever you're at 0–1 on a **Core** row, that's your next month.
 
 Each phase ends with a runnable artifact + benchmark numbers committed to the repo.
 
-### Phase 1 — Single-node KV cache server (weeks 1–4) → proves Rust + async
-- `storage/` Cargo workspace; `kvcache-server` (Tokio) + `kvcache-client`.
-- Sharded in-memory map, consistent hashing, binary or gRPC (`tonic`) protocol.
-- Wire `agent/vector_store.py` to *optionally* fetch from it (feature-flagged,
-  fail-closed to the existing in-memory path — consistent with Sophia's ethos).
-- **Deliverable:** `cargo bench` + a `criterion` report; p50/p99 vs Python path.
+### Phase 1 — Single-node KV cache server ✅ SHIPPED → proves Rust + async
+- ✅ `storage/` Cargo workspace; `kvcache-server` (Tokio) + async `Client`.
+- ✅ Sharded in-memory map (FNV-1a routing, N shards), O(1) LRU+TTL eviction,
+  length-prefixed binary-safe protocol (GET/SET/DEL/PING/STATS).
+- ✅ `agent/vector_store.py:search()` optionally fetches from it via
+  `SOPHIA_KVCACHE_ADDR`, fail-closed to the in-memory path — consistent with
+  Sophia's ethos. Pure-Python client in `agent/kvcache_client.py`.
+- ✅ **Delivered:** `kvcache-bench` (full loopback round-trip) — ~195k ops/sec,
+  p50 161 µs / p99 282 µs; numbers + caveats in `RESULTS.md`. 13 unit + 5
+  integration tests, clippy-clean.
+- ⏭ **Phase 1b (next):** request pipelining (the throughput limiter), value-size
+  histograms, admission control.
 
 ### Phase 2 — On-disk engine with io_uring (weeks 5–10) → proves storage-hardware skill
 - Bitcask-style append log + in-memory keydir, then a tiny leveled LSM.

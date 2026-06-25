@@ -87,6 +87,34 @@ Continual Provenance QA (CPQA): a frozen LLM answers either from the retrieved O
   - 3-FAMILY VALIDATION (DeepSeek+Meta+Qwen, full-92, 3 runs). The grounded-vs-raw finding is robust across three independent families: mean pairwise kappa 0.88 (grounded) / 0.81 (raw), per-judge spread tight. Key behavioral result: vs the thin-corpus hybrid (141 parametric fallbacks), enrichment shifts the hybrid to 237 strict / 24 fallback — SAME recall (~0.67) with ~6x LESS parametric reliance (more grounded, not just more accurate). Traps behaviorally 1.0 (all 15 took the hard-abstain policy; the 0.933 score is judge noise on the fixed abstention string). raw still wins overall (0.895) — the residual gap is corpus coverage (terse field-derived summaries), not method.
 - ⚠ CANDIDATE, not validated (self-authored benchmark, keys held by one operator, no external replication). FULL 92-query cross-gateway run, 3 runs. Honest headline: on attribution-traps/retractions grounded scores 1.0 vs raw 0.0 (perfect fail-closed abstention), but on plain recall grounded collapses to 0.50 vs raw 0.93 because answers are constrained to the retrieved wiki page and many pages are thin provenance stubs that don't contain the answer. Net, the raw model wins OVERALL (0.88 vs 0.53) on this recall-heavy, thin-source corpus. This is the predicted coverage-vs-fabrication tradeoff: grounding buys trap-safety at a recall cost, not a blanket win. Inter-judge kappa is now healthy (0.94/0.67; the earlier degeneracy was a small-subset artifact). UPDATE: a Step 1+2 hybrid (graph-neighborhood + typed gate with attribution-safe fallback) recovers recall to 0.68 and overall to 0.685 while keeping all traps on the hard-abstain path (see continualGroundedEvals.hybrid).
 
+## Storage — kvcache (Phase 1)
+
+Sharded async in-memory KV cache (`storage/kvcache`, Rust/Tokio). `kvcache-bench`
+measures the **full loopback TCP round trip** (client→server→client), not the bare
+in-memory map. Numbers vary by host; reproduce with the command below.
+
+Representative run — 32 clients × 30,000 GETs, 100,000 keys, 256-byte values,
+16 shards, 100% read, no evictions (all hits):
+
+| metric | value |
+|---|---|
+| throughput | ~195,000 ops/sec |
+| latency p50 | ~161 µs |
+| latency p99 | ~282 µs |
+| latency p99.9 | ~374 µs |
+
+Honest caveats: single node, in-memory only, one in-flight request per connection
+(no pipelining — the primary throughput limiter, deferred to Phase 1b). These are a
+**baseline to optimize against**, not a claim of being fast yet. 13 unit + 5
+integration tests cover LRU eviction, TTL expiry, binary-safe framing, concurrent
+shared state, and clean-EOF handling; all run offline in CI.
+
+```bash
+cd storage
+cargo test                                                          # correctness
+cargo run --release --bin kvcache-bench -- --clients 32 --ops 30000 # numbers above
+```
+
 ## Reproduce
 
 ```bash

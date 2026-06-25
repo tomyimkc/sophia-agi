@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+#
+# Sophia distributed-storage workspace. Phase 1 (this commit) ships a single
+# member — `kvcache`, a sharded async KV cache. Later phases (an io_uring
+# on-disk engine, a Raft-replicated control plane) are added as new members
+# here. See ../docs/storage/STORAGE_ROADMAP.md.
+
+[workspace]
+resolver = "2"
+members = ["kvcache"]
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
