@@ -354,7 +354,7 @@ def run_mock_model(system: str, user: str, *, timeout_sec: int) -> dict[str, Any
     if marker in user:
         answer = f"{marker}\nDecision: ok\n中文摘要: mock backend ready."
     else:
-        tokens = sorted(set(re.findall(r"LC_NEEDLE_[A-Z0-9_]+", user)))
+        tokens = sorted(set(re.findall(r"The only accepted answer token is (LC_NEEDLE_[A-Z0-9_]+)", user)))
         if tokens:
             answer = (
                 "Decision: answer from packed verifier context.\n"
@@ -851,14 +851,19 @@ def _pack_long_context(
     use_kb: bool,
     use_gate: bool,
     use_context_packing: bool,
+    context_packing_policy: str = "score",
 ) -> dict[str, Any]:
     passages = list(case.get("longContextPassages", []))
     budget = int(case.get("contextBudgetTokens") or 2048)
     answer_tokens = set(str(token) for token in case.get("answerTokens", []))
+    valid_policies = {"score", "broken", "oracle"}
+    if context_packing_policy not in valid_policies:
+        raise ValueError(f"unknown context_packing_policy: {context_packing_policy}")
 
     considered: list[dict[str, Any]] = []
     for index, passage in enumerate(passages):
-        relevance = float(passage.get("relevanceScore", 0.0))
+        raw_relevance = float(passage.get("relevanceScore", 0.0))
+        relevance = raw_relevance if use_kb else 0.0
         verifier = float(passage.get("verifierScore", 0.5 if use_gate else 0.0)) if use_gate else 0.0
         contains_answer = bool(set(passage.get("answerTokens", [])) & answer_tokens)
         considered.append(
@@ -872,31 +877,49 @@ def _pack_long_context(
                 "containsAnswerBearingSpan": contains_answer,
                 "selected": False,
                 "selectionReason": "not selected",
+                "evictionReason": "low_score",
                 "_text": str(passage.get("text", "")),
                 "_rankScore": relevance + verifier,
+                "_passageIndex": index,
             }
         )
 
-    if not use_kb:
-        ordered = []
-        strategy = "kb_disabled"
+    if context_packing_policy == "broken":
+        ordered = sorted(
+            considered,
+            key=lambda item: (bool(item["containsAnswerBearingSpan"]), -float(item["_rankScore"]), item["passageId"]),
+        )
+        strategy = "broken_packer_excludes_answer"
+    elif context_packing_policy == "oracle":
+        ordered = sorted(
+            considered,
+            key=lambda item: (not bool(item["containsAnswerBearingSpan"]), -float(item["_rankScore"]), item["passageId"]),
+        )
+        strategy = "oracle_answer_span_first"
     elif use_context_packing:
         ordered = sorted(considered, key=lambda item: (-float(item["_rankScore"]), item["passageId"]))
         strategy = "relevance_plus_verifier_score"
     else:
         ordered = considered
-        strategy = "original_order_truncation"
+        strategy = "raw_original_order_truncation"
 
     packed: list[dict[str, Any]] = []
     used = 0
     for item in ordered:
+        if context_packing_policy == "broken" and item["containsAnswerBearingSpan"]:
+            item["selectionReason"] = strategy
+            item["evictionReason"] = "low_score"
+            continue
         token_count = int(item["tokenEstimate"])
         if used + token_count > budget and packed:
+            item["evictionReason"] = "budget"
             continue
         if token_count > budget:
+            item["evictionReason"] = "budget"
             continue
         item["selected"] = True
         item["selectionReason"] = strategy
+        item["evictionReason"] = None
         used += token_count
         packed.append(item)
 
@@ -915,13 +938,37 @@ def _pack_long_context(
         for item in considered
         if item["containsAnswerBearingSpan"]
     ]
+    answer_positions = [
+        int(item["_passageIndex"])
+        for item in considered
+        if item["containsAnswerBearingSpan"]
+    ]
     answer_included = any(item["passageId"] in selected_ids for item in considered if item["containsAnswerBearingSpan"])
+    answer_span_tokens = sum(
+        estimate_tokens(" ".join(str(token) for token in passage.get("answerTokens", [])))
+        for passage in passages
+        if set(passage.get("answerTokens", [])) & answer_tokens
+    )
     context_parts = [
         f"### Synthetic Source {index}: {item['sourceId']} (relevance {item['relevanceScore']:.2f}, verifier {item['verifierScore']:.2f})\n{item['_text']}"
         for index, item in enumerate(packed, 1)
     ]
     public_considered = [
         {key: value for key, value in item.items() if not key.startswith("_")}
+        for item in considered
+    ]
+    candidates_considered = [
+        {
+            "passage_id": item["passageId"],
+            "source_id": item["sourceId"],
+            "depth_pct": item["depthPct"],
+            "token_estimate": item["tokenEstimate"],
+            "relevance_score": item["relevanceScore"],
+            "verifier_score": item["verifierScore"],
+            "contains_answer_bearing_span": item["containsAnswerBearingSpan"],
+            "included": item["selected"],
+            "eviction_reason": item["evictionReason"],
+        }
         for item in considered
     ]
     card = {
@@ -934,14 +981,37 @@ def _pack_long_context(
         "candidateOnly": True,
         "canClaimAGI": False,
         "budgetTokens": budget,
+        "budget_tokens": budget,
+        "tokensUsed": used,
+        "tokens_used": used,
+        "tokensOfAnswerSpan": answer_span_tokens,
+        "tokens_of_answer_span": answer_span_tokens,
+        "needlePosition": {
+            "passageIndexes": answer_positions,
+            "depthPct": int(case.get("needleDepthPct", 0)),
+        },
+        "needle_position": {
+            "passage_indexes": answer_positions,
+            "depth_pct": int(case.get("needleDepthPct", 0)),
+        },
+        "needleDepthPct": int(case.get("needleDepthPct", 0)),
+        "needle_depth": int(case.get("needleDepthPct", 0)),
+        "packingPolicy": context_packing_policy if use_context_packing else "raw_original_order_truncation",
+        "packing_policy": context_packing_policy if use_context_packing else "raw_original_order_truncation",
+        "retrievalPolicy": "score_retrieval" if use_kb else "raw_order_no_retrieval",
+        "retrieval_policy": "score_retrieval" if use_kb else "raw_order_no_retrieval",
         "candidatePassagesConsidered": public_considered,
+        "candidates_considered": candidates_considered,
         "packedPassages": packed_passages,
         "answerBearingSpanIds": answer_ids,
         "answerBearingSpanIncluded": answer_included,
+        "answer_span_present_in_corpus": bool(answer_ids),
+        "answer_span_present_in_pack": answer_included,
         "ablationFlags": {
             "use_kb": use_kb,
             "use_gate": use_gate,
             "use_context_packing": use_context_packing,
+            "context_packing_policy": context_packing_policy,
         },
         "claimBoundary": (
             "Synthetic self-authored context-packing card for candidate measurement only; "
@@ -989,6 +1059,7 @@ class Ablation:
     use_tools: bool = True  # operational tool logs
     allow_repair: bool = True  # bounded Sophia repair attempt
     use_context_packing: bool = True  # scored long-context packing when cases provide passages
+    context_packing_policy: str = "score"  # score | broken | oracle
     use_intake: bool = True  # Request Triage + Intake Contract front gate
 
 
@@ -1028,7 +1099,7 @@ ABLATION_MODES: dict[str, Ablation] = {
 }
 
 
-def build_raw_user_prompt(case: dict[str, Any], *, operational_evidence: str = "") -> str:
+def build_raw_user_prompt(case: dict[str, Any], *, operational_evidence: str = "", context: str = "") -> str:
     """Minimal task prompt with no Sophia source-discipline contract.
 
     Used by the raw-model baselines so the comparison does not leak Sophia
@@ -1038,11 +1109,15 @@ def build_raw_user_prompt(case: dict[str, Any], *, operational_evidence: str = "
     tool_block = ""
     if operational_evidence:
         tool_block = f"\n\n## Tool output available to you\n{operational_evidence}\n"
+    context_block = ""
+    if context:
+        context_block = f"\n\n## Context at the same token budget\n{context}\n"
     return f"""Task ({case["domain"]}):
 {case["prompt"]}
 
 Materials:
 {materials}
+{context_block}
 {tool_block}"""
 
 
@@ -1117,9 +1192,10 @@ def run_case(
             use_kb=ablation.use_kb,
             use_gate=ablation.use_gate,
             use_context_packing=ablation.use_context_packing,
+            context_packing_policy=ablation.context_packing_policy,
         )
-        context = packed_context["context"] if ablation.use_kb else ""
-        case_sources = packed_context["sources"] if ablation.use_kb else []
+        context = packed_context["context"]
+        case_sources = packed_context["sources"]
         context_pack_card = packed_context["card"]
         context_packing_summary = {
             "packedTokenEstimate": packed_context["packedTokenEstimate"],
@@ -1189,6 +1265,7 @@ def run_case(
         user = build_raw_user_prompt(
             case,
             operational_evidence=operational_evidence if ablation.use_tools else "",
+            context=context,
         )
     else:
         user = build_user_prompt(

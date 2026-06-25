@@ -34,6 +34,14 @@ def test_context_pack_card_validator_accepts_runner_card() -> None:
     assert card["candidateOnly"] is True
     assert card["canClaimAGI"] is False
     assert isinstance(card["answerBearingSpanIncluded"], bool)
+    assert card["answer_span_present_in_corpus"] is True
+    assert isinstance(card["answer_span_present_in_pack"], bool)
+    assert card["budget_tokens"] == card["budgetTokens"]
+    assert card["tokens_used"] == card["tokensUsed"]
+    assert "tokens_of_answer_span" in card
+    assert "needle_position" in card
+    candidate = card["candidates_considered"][0]
+    assert {"relevance_score", "verifier_score", "included", "eviction_reason"} <= set(candidate)
 
 
 def test_context_pack_card_validator_rejects_missing_required_field() -> None:
@@ -104,6 +112,47 @@ def test_long_context_cli_writes_candidate_report_offline() -> None:
     }
     assert "measured" in report["measuredVsAsserted"]
     assert "stillAssertedOrBlocked" in report["measuredVsAsserted"]
+    assert report["matrix"]["label"] == "smoke matrix"
+    assert report["reportStatus"] == "candidate"
+    assert "MOCK backend" in report["backendClaimBoundary"]
+
+
+def test_long_context_matrix_has_raw_baseline_controls_and_headline_delta() -> None:
+    modes = long_context.long_context_modes("all")
+    matrix = long_context.run_matrix(
+        context_sizes=[4096],
+        depths=[0,50],
+        needle_counts=[1],
+        modes=modes,
+        seed=13,
+        budget_tokens=2048,
+    )
+    report = long_context.build_report(
+        matrix,
+        context_sizes=[4096],
+        depths=[0,50],
+        needle_counts=[1],
+        full_matrix_available=False,
+        budget_tokens=2048,
+    )
+
+    assert report["cardValidation"]["valid"] is True
+    assert report["tokenBudget"]["identicalAcrossArms"] is True
+    assert report["matrix"]["ablationCells"] == 8
+    assert report["matrix"]["allOffCellEqualsRawLongContextBaseline"] is True
+    assert report["headlineMetric"]["metric"] == "gated_recall - raw_recall"
+    assert report["headlineMetric"]["pairedCases"] == 2
+    assert report["headlineMetric"]["gatedRecall"] >= report["headlineMetric"]["rawRecall"]
+    assert report["controls"]["brokenPackerAssertApproxZero"] is True
+    assert report["controls"]["oraclePackerAssertHigh"] is True
+    assert report["trainingFirebreak"]["eligibleAsTrainingTarget"] is False
+    assert "Distractor robustness against real model behavior" in " ".join(report["measuredVsAsserted"]["stillAssertedOrBlocked"])
+    assert set(report["failureTaxonomy"]["allowedValues"]) == {
+        "retrieval_miss",
+        "packer_eviction",
+        "model_ignored_packed_span",
+        "gate_suppressed",
+    }
 
 
 def test_architecture_bets_root_map_has_required_fields() -> None:
@@ -132,6 +181,7 @@ def main() -> int:
     test_context_pack_card_validator_accepts_runner_card()
     test_context_pack_card_validator_rejects_missing_required_field()
     test_long_context_cli_writes_candidate_report_offline()
+    test_long_context_matrix_has_raw_baseline_controls_and_headline_delta()
     test_architecture_bets_root_map_has_required_fields()
     print("test_long_context_runner: OK")
     return 0

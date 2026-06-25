@@ -16,7 +16,7 @@
       ],
       "ablation_flag": "use_gate",
       "honest_status": "partial",
-      "evidence_report": "agi-proof/long-context/long-context-candidate-2026-06-26.public-report.json",
+      "evidence_report": "agi-proof/long-context/long-context-candidate-full-2026-06-26.public-report.json",
       "blocked_on": [
         "independent long-context corpus",
         "non-mock backend run",
@@ -98,7 +98,7 @@
       ],
       "ablation_flag": "use_context_packing",
       "honest_status": "partial",
-      "evidence_report": "agi-proof/long-context/long-context-candidate-2026-06-26.public-report.json",
+      "evidence_report": "agi-proof/long-context/long-context-candidate-full-2026-06-26.public-report.json",
       "blocked_on": [
         "synthetic corpus must be replaced or replicated independently before validation",
         "embedding retrieval is not yet the live default for this harness"
@@ -115,7 +115,7 @@
       ],
       "ablation_flag": "run_case_flags",
       "honest_status": "live",
-      "evidence_report": "agi-proof/long-context/long-context-candidate-2026-06-26.public-report.json",
+      "evidence_report": "agi-proof/long-context/long-context-candidate-full-2026-06-26.public-report.json",
       "blocked_on": [
         "candidate synthetic reports are not independently validated"
       ]
