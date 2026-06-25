@@ -429,3 +429,37 @@ rather than substantive content repair:
 
 **Claim impact:** Full retrain does not validate religion repair; format/content split exposed
 content regression. Not AGI. Do not retrain-to-fit without new content-focused traces.
+
+## okf-local-global-consistency-2026-06-25
+
+**Status:** CANDIDATE INFRASTRUCTURE (`candidateOnly: true`, `level3Evidence: false`).
+
+**Scope:** Syntactic local-global consistency over OKF pages — finds undeclared
+cross-context disagreements (epistemic holes) when the same entity carries
+different asserted claims in different tradition partitions. Declared ``contradicts``
+edges defer to ``contradiction_ledger`` (no double-report). Does **not** decide
+truth or auto-generate training facts.
+
+**Wiki run** (`python3 tools/run_consistency_check.py`):
+
+| Metric | Count |
+|---|---|
+| Contexts (tradition partition) | 17 |
+| Entities spanning >1 context | 0 |
+| Undeclared epistemic holes | 0 |
+| Declared contradictions deferred | 0 |
+
+**Synthetic unit-test gate** (`tests/test_consistency_check.py`):
+
+| Metric | Count |
+|---|---|
+| Holes in fixture graph | 1 |
+| Patch candidates passed provenance gate | 1 |
+| Rejected (no source citation) | 1 |
+
+**Artifacts:** `okf/consistency_check.py`, `tools/run_consistency_check.py`,
+`agi-proof/okf-consistency/consistency.public-report.json`,
+`training/feedback/epistemic_holes.jsonl` (queue; empty on wiki until holes appear).
+
+**Claim impact:** Consistency escalation only; `canClaimAGI: false`. No adapter
+promotion or protected-suite change.
