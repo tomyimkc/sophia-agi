@@ -42,7 +42,7 @@
     "positive_control": "OK",
     "lint_claims": "OK"
   },
-  "nextStep": "Run runpod-sft-3seed.sh from a host with outbound TCP egress to RunPod mapped pod ports (not Cursor agent sandbox). Alternatives: RunPod web terminal, GitHub Actions with RunPod secret, or local CUDA if available.",
+  "nextStep": "Dispatch .github/workflows/runpod-sophia-7b-sft.yml (GitHub Actions, RUNPOD_API_KEY secret). Do NOT run runpod-sft-3seed.sh from local Mac/Cursor agent shell. See agi-proof/sophia-7b-train-verify/README.md.",
   "canClaimAGI": false,
   "label": "infrastructure blocker — not a training verdict"
 }

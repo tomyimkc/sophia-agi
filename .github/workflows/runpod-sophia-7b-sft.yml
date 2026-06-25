@@ -1,0 +1,198 @@
+name: runpod-sophia-7b-sft
+
+# Manual-only RunPod launcher for sophia-7b-train-verify Stage 2 (QLoRA SFT) and
+# Stage 3 (DPO on hard negatives).
+#
+# POLICY: RunPod GPU jobs for this experiment MUST run via GitHub Actions (this workflow
+# or the generic train-runpod / speedup-runpod / rlvr-runpod workflows) — NOT from a local
+# Mac or Cursor agent shell. Outbound SSH to RunPod mapped pod high-ports times out from
+# local Cursor egress; GHA ubuntu runners have reliable pod SSH (see
+# agi-proof/sophia-7b-train-verify/stage2-runpod-blocker.public-report.json).
+#
+# PREREQUISITES (maintainer only):
+#   1. Repo secret RUNPOD_API_KEY (Settings -> Secrets and variables -> Actions).
+#   2. RunPod account GPU credit. Each seed rents a paid pod until training completes.
+#
+# Artifacts: logs, eval_ladder JSON, promotion reports, repo-head, manifests. Adapter
+# tarballs (~hundreds of MB per seed) are included when present; retention-days limits cost.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to confirm you accept renting paid GPU pod(s)'
+        required: true
+        default: ''
+      stage:
+        description: 'Training stage'
+        required: true
+        default: 'sft'
+        type: choice
+        options: ['sft', 'dpo']
+      seed:
+        description: 'Single seed (0, 1, or 2). Leave empty to run all three seeds.'
+        required: false
+        default: ''
+      branch:
+        description: 'Git branch cloned on the pod'
+        required: false
+        default: 'claude/sophia-7b-train-verify'
+      epochs:
+        description: 'Training epochs (empty = 2 for SFT, 1 for DPO)'
+        required: false
+        default: ''
+      sft_workflow_run_id:
+        description: 'DPO only — GitHub Actions run ID of a completed SFT workflow whose adapter tarballs should be downloaded'
+        required: false
+        default: ''
+      interruptible:
+        description: 'Use cheaper spot pod (on-demand default for reliability)'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['true', 'false']
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: runpod-sophia-7b-sft
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Contamination guard (build_local_sophia_dataset --check)
+        run: python tools/build_local_sophia_dataset.py --check
+
+      - name: Holdout seal (seal_sophia_7b_holdout --check)
+        run: python tools/seal_sophia_7b_holdout.py --check
+
+      - name: Claims linter (no-overclaim copy gate)
+        run: python tools/lint_claims.py
+
+  runpod:
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 480
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — confirm + secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "RUN" ]; then
+            echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
+            exit 1
+          fi
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set. Add it in Settings -> Secrets and variables -> Actions. Aborting (no pod created)."
+            exit 1
+          fi
+          echo "Preflight OK: confirmed, secret present. GPU runs on the rented pod, not this runner."
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Download Stage-2 SFT artifacts (DPO only)
+        if: github.event.inputs.stage == 'dpo' && github.event.inputs.sft_workflow_run_id != ''
+        uses: actions/download-artifact@v6
+        with:
+          name: runpod-sophia-7b-artifacts
+          run-id: ${{ github.event.inputs.sft_workflow_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Launch RunPod sophia-7b training
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          BRANCH: ${{ github.event.inputs.branch }}
+          STAGE: ${{ github.event.inputs.stage }}
+          SEED_INPUT: ${{ github.event.inputs.seed }}
+          EPOCHS_INPUT: ${{ github.event.inputs.epochs }}
+          INTERRUPTIBLE_INPUT: ${{ github.event.inputs.interruptible }}
+        run: |
+          set -euo pipefail
+          ROOT="$GITHUB_WORKSPACE"
+          cd "$ROOT"
+          MODEL="Qwen/Qwen2.5-7B-Instruct"
+          TRAIN_DATA="training/local_sophia_7b/mlx/train.jsonl"
+          DPO_PAIRS="training/local_sophia_7b/dpo_hard_negatives.jsonl"
+          ARTIFACTS="agi-proof/benchmark-results/runpod-train"
+          mkdir -p "$ARTIFACTS"
+
+          if [ -n "$EPOCHS_INPUT" ]; then
+            export EPOCHS="$EPOCHS_INPUT"
+          elif [ "$STAGE" = "sft" ]; then
+            export EPOCHS="2"
+          else
+            export EPOCHS="1"
+          fi
+
+          INTERRUPTIBLE_FLAG=""
+          if [ "$INTERRUPTIBLE_INPUT" = "true" ]; then INTERRUPTIBLE_FLAG="--interruptible"; fi
+
+          run_one_seed() {
+            local seed="$1"
+            if [ "$STAGE" = "sft" ]; then
+              echo "===== SFT seed $seed ====="
+              python3 tools/runpod_train.py --yes --branch "$BRANCH" --model "$MODEL" \
+                --epochs "$EPOCHS" --seed "$seed" --train-data "$TRAIN_DATA" \
+                --name "sophia-7b-sft-seed${seed}" $INTERRUPTIBLE_FLAG
+            else
+              local sft_tar
+              sft_tar="$(ls -1 "$ARTIFACTS"/*seed${seed}*.sophia-cuda-v1.tar.gz 2>/dev/null | head -1 || true)"
+              if [ -z "$sft_tar" ] || [ ! -f "$sft_tar" ]; then
+                sft_tar="$(ls -1 "$ARTIFACTS"/*seed${seed}*.tar.gz 2>/dev/null | head -1 || true)"
+              fi
+              if [ -z "$sft_tar" ] || [ ! -f "$sft_tar" ]; then
+                echo "::error:: missing SFT adapter tarball for seed $seed under $ARTIFACTS (run SFT workflow first or supply sft_workflow_run_id)"
+                exit 1
+              fi
+              echo "===== DPO seed $seed (SFT archive: $sft_tar) ====="
+              python3 tools/runpod_train.py --yes --branch "$BRANCH" --model "$MODEL" \
+                --epochs "$EPOCHS" --seed "$seed" --dpo-pairs "$DPO_PAIRS" \
+                --sft-adapter-archive "$sft_tar" --name "sophia-7b-dpo-seed${seed}" \
+                $INTERRUPTIBLE_FLAG
+            fi
+          }
+
+          if [ -n "$SEED_INPUT" ]; then
+            run_one_seed "$SEED_INPUT"
+          elif [ "$STAGE" = "sft" ]; then
+            bash agi-proof/sophia-7b-train-verify/runpod-sft-3seed.sh
+          else
+            bash agi-proof/sophia-7b-train-verify/runpod-dpo-3seed.sh
+          fi
+
+      - name: Show eval ladder + promotion reports in the run log
+        if: always()
+        run: |
+          shopt -s nullglob
+          for f in agi-proof/benchmark-results/runpod-train/*.eval_ladder*.json \
+                   agi-proof/benchmark-results/runpod-train/*.promotion.public-report.json; do
+            echo "===== $f ====="
+            cat "$f"
+          done
+
+      - name: Upload training artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: runpod-sophia-7b-artifacts
+          path: |
+            agi-proof/benchmark-results/runpod-train/**
+            agi-proof/sophia-7b-train-verify/heldout-seal.manifest.json
+          retention-days: 14
+          if-no-files-found: warn

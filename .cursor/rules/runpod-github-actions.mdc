@@ -1,0 +1,21 @@
+---
+description: RunPod GPU jobs must use GitHub Actions, not local SSH
+alwaysApply: true
+---
+
+# RunPod GPU jobs: GitHub Actions only
+
+Never launch RunPod training from a local Mac or Cursor agent shell (`tools/runpod_train.py --yes`,
+`runpod-sft-3seed.sh`, `runpod-dpo-3seed.sh`, etc.). Outbound SSH to RunPod mapped pod
+high-ports times out from local Cursor egress.
+
+Use GitHub Actions instead:
+
+- **sophia-7b SFT/DPO:** `.github/workflows/runpod-sophia-7b-sft.yml`
+- **Generic LoRA train:** `.github/workflows/train-runpod.yml`
+- **Speedup bench:** `.github/workflows/speedup-runpod.yml`
+- **RLVR:** `.github/workflows/rlvr-runpod.yml`
+
+Requires repo secret `RUNPOD_API_KEY`. Trigger via Actions → workflow → Run workflow (confirm=`RUN`).
+
+Evidence: `agi-proof/sophia-7b-train-verify/stage2-runpod-blocker.public-report.json`.

@@ -658,10 +658,14 @@ Hard-negative miner: 615 pairs (gate-validated). Moral Gate SFT: 35 rows.
    `ssh_login_timeout` pattern. Logs: `sft-3seed-20260625-095511.log`, `sft-seed0-retry.log`.
 3. **Earlier session:** `RUNPOD_API_KEY` unset — dry-run only (`868fa31`).
 
-**Next step:** run `runpod-sft-3seed.sh` from a host with outbound egress to RunPod mapped pod
-ports (not Cursor agent shell): e.g. local Terminal outside agent, GitHub Actions
-`speedup-runpod` workflow pattern, or RunPod web terminal. Do **not** cite 0/3 seeds as a
-training verdict.
+**Policy (2026-06-25):** RunPod GPU jobs for this experiment **must** run via GitHub Actions
+(`.github/workflows/runpod-sophia-7b-sft.yml`; secret `RUNPOD_API_KEY`). Do **not** invoke
+`runpod-sft-3seed.sh` / `runpod_train.py --yes` from local Mac or Cursor agent shells — SSH to
+mapped pod ports times out there. See `agi-proof/sophia-7b-train-verify/README.md`.
+
+**Next step:** dispatch **runpod-sophia-7b-sft** (stage `sft`, confirm `RUN`) on branch
+`claude/sophia-7b-train-verify`. Do **not** cite 0/3 seeds as a training verdict until a GHA
+run completes.
 
 **Stage 3 prep (no GPU):** `tools/train_dpo.py` (TRL `DPOTrainer`), `runpod-dpo-3seed.sh`
 (DPO on `dpo_hard_negatives.jsonl`, 590 pairs in pack / 615 mined), pre/post internal

@@ -28,6 +28,8 @@ Open corpus for **provenance-aware philosophy** and AGI-shaped epistemic reasoni
   `tools/build_local_sophia_dataset.py` decontaminates and fails closed.
 - **Record runs (including failures) in `agi-proof/failure-ledger.md`** with the numbers and
   what is not yet proven.
+- **RunPod GPU jobs: GitHub Actions only** (local SSH egress to mapped pod ports is unreliable).
+  Use `.github/workflows/runpod-sophia-7b-sft.yml` or `train-runpod` / `speedup-runpod` / `rlvr-runpod`.
 
 ## Agents
 
