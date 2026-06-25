@@ -124,6 +124,43 @@ def test_flag_on_calls_gate_with_route_claims_true() -> None:
     assert all(v is True for v in seen), f"expected route_claims=True, saw {seen}"
 
 
+def test_repair_path_preserves_route_claims_flag() -> None:
+    """The second gate call after bounded repair must receive the same W4 flag."""
+    seen: list[bool] = []
+    calls = {"n": 0}
+
+    def fake_call_model(system, user, *, backend, timeout_sec, grok_cwd=None):
+        calls["n"] += 1
+        return {
+            **_fake_answer(),
+            "answer": f"Source discipline applies. Decision: repair-pass-{calls['n']}. 中文摘要: 好.",
+            "_system": system,
+            "_user": user,
+        }
+
+    def fake_check_response(text, **kwargs):
+        seen.append(kwargs.get("route_claims"))
+        # First gate fails to trigger a repair; repaired answer passes.
+        return {**dict(runner.NEUTRAL_GATE), "passed": len(seen) > 1}
+
+    saved = _stub_pipeline()
+    try:
+        runner.call_model = fake_call_model
+        with mock.patch.object(runner, "check_response", side_effect=fake_check_response):
+            result = runner.run_case(
+                CODING_CASE,
+                "unit",
+                config=runner.RunConfig(backend="fake", timeout_sec=1, repair=True),
+                ablation=runner.ABLATION_MODES["sophia-claim-router"],
+            )
+    finally:
+        _restore(saved)
+
+    assert result["repairAttempts"] == 1
+    assert calls["n"] == 2
+    assert seen == [True, True], f"repair path must preserve route_claims=True, saw {seen}"
+
+
 def test_router_seam_reached_only_when_flag_on() -> None:
     """At the gate boundary, ``route_and_check`` must be entered iff route_claims=True."""
     import agent.claim_router as claim_router
@@ -145,6 +182,7 @@ def main() -> int:
     test_router_mode_registered_but_not_canonical()
     test_flag_off_calls_gate_with_route_claims_false()
     test_flag_on_calls_gate_with_route_claims_true()
+    test_repair_path_preserves_route_claims_flag()
     test_router_seam_reached_only_when_flag_on()
     print("test_claim_router_ablation: OK")
     return 0
