@@ -66,5 +66,6 @@
   },
   "level3Evidence": false,
   "promote": true,
-  "schema": "sophia.invariant_suite_proof.v1"
+  "schema": "sophia.invariant_suite_proof.v1",
+  "solverChecked": true
 }

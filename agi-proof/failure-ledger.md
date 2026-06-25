@@ -562,3 +562,56 @@ to REJECT (v5 still correctly rejects on `protected_floor_content`). Artifact:
 **Claim impact:** the self-gate's formal proofs are now actually solver-checked,
 not silently fallback-only. Decidable numeric invariants only; not alignment,
 not AGI, not a Gödel machine. canClaimAGI stays False.
+
+## agi-pilots-way-forward-gate-rollup-2026-06-25
+
+**Status:** CANDIDATE INFRASTRUCTURE (`candidateOnly: true`, `level3Evidence: false`).
+
+**Task 1 — z3 hard promotion requirement (`solverChecked`):**
+
+- `build_proof_bundle` / promotion reports stamp top-level `solverChecked` (= every invariant `backend == "z3"`).
+- Default: promotion blocked when `solver_attestation` is `held` (no z3) or any invariant uses fallback.
+- `--allow-fallback-proof` (OFF by default): may promote with `solverChecked: false` + note
+  `fallback proof — not solver-checked`.
+- Fixed z3 `dict.get` eager-default bug in `agent/formal_verifier.py`.
+- Positive control (`tools/run_positive_control.py`): **promote True**, all five invariants **z3**, `solverChecked: true`.
+
+**Task 2 — CONTENT is pass gate:**
+
+- `tools/eval_ladder.py`: headline `passed` / `score_pct` = **CONTENT** channel; FORMAT + COMBINED reported only.
+- Regenerated `training/local_sophia_v2/eval_ladder_{baseline,adapter}.json` with `passGate: content`.
+- Baseline religion CONTENT **5/6** unchanged; no training improved it — measurement artifact fix, **not** capability uplift.
+
+**Task 3 — Council-panel format at inference (no weights):**
+
+- `agent/council_format.py` + `--religion-council-panel` on `eval_local_model.py` / `eval_mlx_model.py`.
+- Qwen2.5-3B base, same model, religion N=6 (`benchmark/model_runs/local-qwen-qwen2.5-3b-instruct-council-panel-religion.report.json`):
+
+| Template | FORMAT | CONTENT | COMBINED |
+|---|---|---|---|
+| WITHOUT | 1/6 | 5/6 | 1/6 |
+| WITH council panel | 6/6 | 5/6 | 5/6 |
+
+- **Honest finding:** FORMAT uplift is inference-time structure, not LoRA weights. CONTENT flat (no regression); ship template.
+- N=6 ⇒ ±1/6 within noise; **no religion uplift claim**.
+
+**Task 4 — `provenance_complete` on 12 religion repair traces:**
+
+| | lackingCount | verdict |
+|---|---|---|
+| Before (`religion_repair_c4.jsonl` without `metadata.sourceCitation`) | 12 | rejected |
+| After (citations → `data/attributions.json` / `data/traditions.json` keys) | 0 | accepted (z3) |
+
+- `tools/build_local_sophia_dataset.py --check`: contamination **CLEAN**.
+
+**Task 5 — End-to-end gate re-confirmation (z3 installed):**
+
+| Candidate | oracle promote | solverChecked | FINAL |
+|---|---|---|---|
+| Positive control | True | True | accept |
+| v5 full religion repair | False (`protected_floor_content`) | True | **reject** |
+| Known-good cited fixture | True | True | **promote** |
+
+**Claim impact:** z3 solver-checked promotion is now explicit policy; CONTENT channel is the ladder pass gate;
+religion FORMAT is prompt-structurable at inference; religion-repair LoRA path remains falsified.
+`canClaimAGI: false`.
