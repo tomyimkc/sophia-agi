@@ -645,10 +645,6 @@ Decontam: `build_local_sophia_dataset.py --check` → **CLEAN**; held-out seal
 RLVR eval families (`derivative_chain`, `integrate_func`, `second_derivative`)
 excluded from training pack. `canClaimAGI` stays **False**.
 
-**Blockers for Stage 3 (GPU SFT):** Qwen2.5-7B baseline not recorded; no QLoRA
-recipe wired to `training/sophia-math-code-curriculum/`; evidence-oracle
-thresholds untested; protected-suite regression gate not run post-adapter.
-
 **Stage 3 prep (QLoRA wiring) — 2026-06-25:** Stage 3 GPU run **not executed**
 (no `RUNPOD_API_KEY` / no local CUDA in prep session). Wired:
 
@@ -664,7 +660,34 @@ thresholds untested; protected-suite regression gate not run post-adapter.
 `train_lora.py --dry-run --data training/sophia-math-code-curriculum/` → **144 rows**.
 `guard_filter` on pack → **0 dropped**. `canClaimAGI` stays **False**.
 
-**Blockers for Stage 3 GPU run:** `RUNPOD_API_KEY` or local CUDA GPU; Qwen2.5-7B-Instruct
-base weights download; post-train held-out evidence-oracle eval + 7B baseline ladder;
-`promote_adapter` protected-floor after adapter exists.
+**Stage 0 env gate re-verify — 2026-06-25 (agent session):** repo
+`897930a9842f172bf042e9c1c470aa80aa3e6ac0` == remote
+`origin/claude/sophia-math-code-curriculum`. Gates re-run:
 
+| Gate | Result |
+|------|--------|
+| `build_local_sophia_dataset.py --check` | **CLEAN** (overlap 0) |
+| `seal_math_code_heldout.py --check` | **OK** (6 files) |
+| `lint_claims.py` | **OK** (24 files) |
+| pytest (math/code/curriculum/train_lora pack) | **21 passed** |
+| `train_lora.py --dry-run` on pack | **144 rows** |
+| `RUNPOD_API_KEY` | **UNSET** |
+| local CUDA / torch | **unavailable** (torch not installed) |
+| RunPod SSH smoke | **NOT RUN** (no API key) |
+
+Artifact: `agi-proof/sophia-math-code-curriculum/stage0-env-gate.public-report.json`.
+`canClaimAGI` stays **False**.
+
+**Stage 3 GPU SFT — BLOCKED 2026-06-25:** `runpod-sft-3seed.sh` dry-run exit 2
+(`RUNPOD_API_KEY` unset). No pods provisioned; seeds 0/1/2 **not executed**; no
+adapters produced. Remaining blockers: Qwen2.5-7B-Instruct base weights download;
+post-train held-out evidence-oracle eval + 7B baseline ladder; `promote_adapter`
+protected-floor after adapter exists. Downstream blocked: baseline ladder (3b),
+RLVR/DPO (4), internal gate (5), evidence oracles (6), prereg threshold
+reconciliation (7). Artifact:
+`agi-proof/sophia-math-code-curriculum/stage3-runpod-blocker.public-report.json`.
+
+**Honest headline:** Curriculum pack (144 sympy/exec-verified rows) and Stage 3
+wiring verified locally; GPU training blocked pending `RUNPOD_API_KEY` on a host
+with RunPod SSH egress (or local CUDA). No MATH/GSM8K/HumanEval/MBPP uplift claimed.
+`canClaimAGI: false`.

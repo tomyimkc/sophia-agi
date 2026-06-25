@@ -1,0 +1,98 @@
+{
+  "schema": "sophia.math_code_curriculum_stage3_blocker.v1",
+  "experimentId": "sophia-math-code-curriculum",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "claimBoundary": "Honest blocker report — Stage 3 QLoRA SFT not executed. No adapter exists; no uplift may be cited.",
+  "recordedAt": "2026-06-25T10:54:00Z",
+  "branch": "claude/sophia-math-code-curriculum",
+  "repoHead": "897930a9842f172bf042e9c1c470aa80aa3e6ac0",
+  "status": "BLOCKED",
+  "stage": 3,
+  "stageName": "3-seed QLoRA SFT",
+  "baseModel": "Qwen/Qwen2.5-7B-Instruct",
+  "trainData": "training/sophia-math-code-curriculum/sft_all.jsonl",
+  "trainRows": 144,
+  "recipe": {
+    "method": "QLoRA 4-bit SFT",
+    "epochs": 2,
+    "maskPrompt": true,
+    "seeds": [0, 1, 2],
+    "launcher": "agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh"
+  },
+  "blockers": [
+    {
+      "id": "runpod_api_key_unset",
+      "severity": "hard",
+      "detail": "RUNPOD_API_KEY not set in environment"
+    },
+    {
+      "id": "no_local_cuda",
+      "severity": "hard",
+      "detail": "torch not installed; no local CUDA GPU path in agent session"
+    },
+    {
+      "id": "ssh_smoke_not_run",
+      "severity": "hard",
+      "detail": "RunPod SSH egress smoke test skipped — cannot provision pod without API key"
+    }
+  ],
+  "dryRun": {
+    "command": "bash agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh",
+    "exitCode": 2,
+    "outcome": "Dry-run payload printed; no pod created"
+  },
+  "seedsExecuted": [],
+  "pods": [],
+  "adapters": [],
+  "downstreamBlocked": {
+    "stage3b_baseline": "BLOCKED — no base-model evidence-oracle ladder recorded",
+    "stage4_rlvr_dpo": "BLOCKED — no SFT adapters",
+    "stage5_internalGate": "BLOCKED — promote_adapter requires adapter artifacts",
+    "stage6_evidence": "BLOCKED — no adapters; thresholds untested",
+    "stage7_preregReconciliation": "OPEN — thresholds remain UNTESTED (see preregistration.json)",
+    "stage8_headline": "BLOCKED — honest negative: curriculum pack ready; GPU SFT not run"
+  },
+  "preregThresholds": [
+    {
+      "metric": "MATH-style accuracy Δ vs base",
+      "threshold": 0.05,
+      "status": "UNTESTED",
+      "reason": "No baseline or adapter eval"
+    },
+    {
+      "metric": "GSM8K-style accuracy Δ vs base",
+      "threshold": 0.03,
+      "status": "UNTESTED",
+      "reason": "No baseline or adapter eval"
+    },
+    {
+      "metric": "HumanEval-style pass@1 Δ vs base",
+      "threshold": 0.05,
+      "status": "UNTESTED",
+      "reason": "No baseline or adapter eval"
+    },
+    {
+      "metric": "MBPP-style pass@1 Δ vs base",
+      "threshold": 0.03,
+      "status": "UNTESTED",
+      "reason": "No baseline or adapter eval"
+    },
+    {
+      "metric": "provenance protected suites (religion/history)",
+      "threshold": 0.0,
+      "direction": "no_regression",
+      "status": "UNTESTED",
+      "reason": "promote_adapter not run — no adapter"
+    }
+  ],
+  "headline": "Stage 0 local gates PASS; Stage 3 GPU SFT BLOCKED (RUNPOD_API_KEY unset, no local CUDA). 144-row sympy/exec-verified curriculum pack ready. No benchmark uplift claimed. canClaimAGI: false.",
+  "unblockSteps": [
+    "On local Mac (or host with RunPod SSH egress): export RUNPOD_API_KEY",
+    "Verify SSH smoke: python3 tools/runpod_train.py --dry-run (with key set) then single-seed probe",
+    "bash agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh",
+    "Record base Qwen2.5-7B-Instruct on sealed held-out oracles (stage 3b)",
+    "Run evidence-oracle eval ≥3 seeds with 95% CI excluding 0 before any headline"
+  ]
+}
