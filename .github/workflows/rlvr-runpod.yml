@@ -55,7 +55,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: rlvr-runpod
+  # Per-seed group: GitHub keeps only ONE pending run per group, so a single shared group
+  # silently cancels a queued seed when the next is dispatched (this evicted seed 1 in the
+  # first replication). Keying on the seed lets independent seeds queue/run without evicting
+  # each other; the same seed is still serialized.
+  group: rlvr-runpod-${{ github.event.inputs.seed }}
   cancel-in-progress: false
 
 jobs:
