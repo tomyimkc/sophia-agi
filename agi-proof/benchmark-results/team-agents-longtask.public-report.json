@@ -1,0 +1,138 @@
+{
+  "schema": "sophia.team_agents_longtask_eval.v1",
+  "mode": "mock",
+  "model": "mock",
+  "baseModel": "mock",
+  "adapterPath": null,
+  "backend": "mlx",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "nCases": 18,
+  "benchmarkContentHash": "d84acadbc570e9718a0264adceff5a6a8a0bace089e425ac3e3c566ab7a17dd4",
+  "samePromptBothConditions": true,
+  "promptParity": {
+    "samePromptBothConditions": true,
+    "nCasesChecked": 18,
+    "mismatches": []
+  },
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "evaluatorDisjointFromTrainingGate": true,
+  "conditions": {
+    "sophia_single": {
+      "passedRate": 0.0,
+      "passedPerSeed": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "taskCompletionRate": 0.1111,
+      "taskCompletionPerSeed": [
+        0.1111,
+        0.1111,
+        0.1111
+      ],
+      "subStepCoverageOkRate": 0.1111,
+      "subStepCoverageOkPerSeed": [
+        0.1111,
+        0.1111,
+        0.1111
+      ],
+      "roleFidelityRate": 0.3333,
+      "roleFidelityPerSeed": [
+        0.3333,
+        0.3333,
+        0.3333
+      ],
+      "handoffIntegrityRate": 1.0,
+      "handoffIntegrityPerSeed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "calibratedAbstentionRate": 0.7778,
+      "calibratedAbstentionPerSeed": [
+        0.7778,
+        0.7778,
+        0.7778
+      ],
+      "falseConsensusRate": 0.0,
+      "falseConsensusPerSeed": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "subStepCoverageMean": 0.2222
+    },
+    "sophia_team_orchestrator": {
+      "passedRate": 0.0556,
+      "passedPerSeed": [
+        0.0556,
+        0.0556,
+        0.0556
+      ],
+      "taskCompletionRate": 0.3333,
+      "taskCompletionPerSeed": [
+        0.3333,
+        0.3333,
+        0.3333
+      ],
+      "subStepCoverageOkRate": 0.0556,
+      "subStepCoverageOkPerSeed": [
+        0.0556,
+        0.0556,
+        0.0556
+      ],
+      "roleFidelityRate": 0.3333,
+      "roleFidelityPerSeed": [
+        0.3333,
+        0.3333,
+        0.3333
+      ],
+      "handoffIntegrityRate": 0.3333,
+      "handoffIntegrityPerSeed": [
+        0.3333,
+        0.3333,
+        0.3333
+      ],
+      "calibratedAbstentionRate": 1.0,
+      "calibratedAbstentionPerSeed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "falseConsensusRate": 0.0,
+      "falseConsensusPerSeed": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "subStepCoverageMean": 0.1204
+    }
+  },
+  "compositeDiff": {
+    "point": 0.0556,
+    "ci95": [
+      0.0556,
+      0.0556
+    ],
+    "ciExcludesZero": true
+  },
+  "trapFalseConsensus": {
+    "sophia_single": 0.0,
+    "sophia_team_orchestrator": 0.0
+  },
+  "independence": {
+    "homo": {
+      "meanPairwiseRho": 0.5606,
+      "effectiveN": 1.4143,
+      "claimsConsensus": false,
+      "label": "correlated panel — not consensus"
+    },
+    "consensusThresholdNEff": 2.0
+  },
+  "promotionNote": "Internal gate only — run promote_adapter.py with solverChecked after a validated adapter ladder; this mock eval is not promotion evidence."
+}

@@ -91,10 +91,12 @@ SFT_SOURCES = [
     # C4: human-reviewed, promoted gate-feedback misses (optional; absent → skipped).
     # Decontaminated like any source, so it cannot leak eval/holdout prompts.
     ("training/feedback/sft_from_feedback.jsonl", "sft_from_feedback.jsonl", "sft"),
+    ("training/hk_advisor/sft_traces.jsonl", "sft_hk_advisor.jsonl", "sft"),
 ]
 DPO_SOURCES = [
     ("training/hard_negatives_dpo.jsonl", "dpo_hard_negatives.jsonl", "dpo"),
     ("training/wiki_provenance_dpo.jsonl", "dpo_wiki_provenance.jsonl", "dpo"),
+    ("training/hk_advisor/dpo_pairs.jsonl", "dpo_hk_advisor.jsonl", "dpo"),
 ]
 HOLDOUT_SRC = "training/lora/holdout.jsonl"
 
