@@ -118,6 +118,7 @@ that Sophia is proven AGI.
 - [x] `agi-proof/third-party-replication/`
 - [x] `agi-proof/evidence-manifest.json`
 - [x] `agi-proof/TODO.md`
+- [x] `agi-proof/mlops/checkpoint-registry.json` (W6, created 2026-06-26: 1 entry referencing the RLVR-math 3-seed N=60 artifact; verdict promote; `canClaimAGI:false`; self-extension rung / not benchmark evidence).
 
 ## Current Blocking Gaps
 
