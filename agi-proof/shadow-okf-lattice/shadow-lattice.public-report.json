@@ -1,0 +1,100 @@
+{
+  "schema": "sophia.shadow_okf_lattice.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "claimBoundary": "Shadow OKF bulk-boundary lattice pilot. Bulk states are quarantined; only projection-passing nodes are promotion candidates. Not AGI.",
+  "bulkAudit": {
+    "schema": "sophia.okf.bulk_graph.v1",
+    "candidateOnly": true,
+    "bulkNodeCount": 3,
+    "hypothesisCount": 1,
+    "relaxTradition": true,
+    "nodeIds": [
+      "bulk_hypothesis_clean",
+      "bulk_lineage_trap",
+      "bulk_tradition_explore"
+    ],
+    "hypotheses": [
+      {
+        "source": "bulk_tradition_explore",
+        "edge": "links",
+        "target": "great_learning",
+        "note": "cross-tradition probe"
+      }
+    ]
+  },
+  "projection": {
+    "schema": "sophia.okf.projection.v1",
+    "candidateOnly": true,
+    "promoted": [
+      {
+        "nodeId": "bulk_hypothesis_clean",
+        "meta": {
+          "id": "bulk_hypothesis_clean",
+          "pageType": "concept",
+          "tradition": "daoist",
+          "authorConfidence": "disputed",
+          "derivesFrom": [
+            "dao_de_jing"
+          ],
+          "bulkOnly": true
+        },
+        "body": "Hypothesis (bulk only, candidateOnly): the Dao De Jing may be read philosophically and religiously without collapsing the two receptions. This is a tentative cross-reading, not a settled attribution. Sophia is an AGI-candidate verifier-gated epistemic framework; this bulk note is candidate infrastructure only. 中文：試探性閱讀。",
+        "checks": {
+          "schemaValid": true,
+          "provenanceFaithful": false,
+          "conscienceChecked": true,
+          "conscienceVerdict": "allow",
+          "traditionRelaxed": true
+        }
+      },
+      {
+        "nodeId": "bulk_tradition_explore",
+        "meta": {
+          "id": "bulk_tradition_explore",
+          "pageType": "concept",
+          "tradition": "daoist",
+          "authorConfidence": "disputed",
+          "allowTraditionExploration": true,
+          "links": [
+            "great_learning"
+          ],
+          "bulkOnly": true
+        },
+        "body": "Bulk exploration (candidateOnly): a hypothetical link between Daoist and Confucian ritual concepts for counterfactual study only — not boundary truth. Sophia is an AGI-candidate verifier-gated epistemic framework; this bulk note is candidate infrastructure only.",
+        "checks": {
+          "schemaValid": true,
+          "provenanceFaithful": false,
+          "conscienceChecked": true,
+          "conscienceVerdict": "allow",
+          "traditionRelaxed": true
+        }
+      }
+    ],
+    "abstained": [
+      {
+        "nodeId": "bulk_lineage_trap",
+        "reasons": [
+          "lineage-merge: attributedAuthor 'confucius' is in doNotAttributeTo",
+          "self-merge on page 'bulk_lineage_trap'"
+        ]
+      }
+    ],
+    "promotedCount": 2,
+    "abstainedCount": 1
+  },
+  "promotion": {
+    "schema": "sophia.submit_projection_candidates.v1",
+    "candidateOnly": true,
+    "path": "/Users/tom/Documents/GitHub/sophia-agi/training/feedback/pending_projection_candidates.jsonl",
+    "submitted": 0,
+    "pendingTotal": 2,
+    "promotedCount": 2
+  },
+  "invariants": {
+    "bulk_never_committed_raw": true,
+    "lineage_trap_abstained": true,
+    "at_least_one_promoted": true
+  },
+  "ok": true
+}

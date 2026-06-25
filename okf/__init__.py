@@ -16,6 +16,8 @@ Public API:
 
 from __future__ import annotations
 
+from okf.bulk_graph import BulkGraph
+from okf.projection import ProjectionResult, project_to_boundary
 from okf.counterfactual import (
     Retraction,
     counterfactual_remove,
@@ -62,4 +64,7 @@ __all__ = [
     "PAGE_TYPES",
     "AUTHOR_CONFIDENCE",
     "CONFIDENCE_RANK",
+    "BulkGraph",
+    "ProjectionResult",
+    "project_to_boundary",
 ]

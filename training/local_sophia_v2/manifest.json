@@ -24,6 +24,13 @@
       "present": true,
       "droppedForDecontamination": 0
     },
+    "sft_religion_repair_c4.jsonl": {
+      "source": "training/council/religion_repair_c4.jsonl",
+      "kind": "sft",
+      "rows": 12,
+      "present": true,
+      "droppedForDecontamination": 0
+    },
     "sft_moral_gate.jsonl": {
       "source": "training/moral_gate_sft.jsonl",
       "kind": "sft",
@@ -64,7 +71,7 @@
     "source": "training/lora/holdout.jsonl",
     "rows": 89
   },
-  "trainRowsTotal": 1356,
+  "trainRowsTotal": 1368,
   "recommendedMix": {
     "sft_source_discipline": 0.3,
     "sft_council_traces": 0.2,
@@ -195,8 +202,8 @@
     "droppedForDecontamination": 114,
     "vsEval": {
       "clean": true,
-      "nTrain": 1356,
-      "nEval": 190,
+      "nTrain": 1368,
+      "nEval": 210,
       "overlap": [],
       "overlapCount": 0
     },
@@ -204,20 +211,20 @@
     "clean": true
   },
   "mlx": {
-    "trainRows": 739,
+    "trainRows": 751,
     "validRows": 89,
     "path": "training/local_sophia_v2/mlx",
     "maxTokens": 1024,
     "fit": {
       "train": {
         "maxTokens": 1024,
-        "rowsIn": 750,
-        "rowsKeptUnchanged": 739,
+        "rowsIn": 762,
+        "rowsKeptUnchanged": 751,
         "rowsSplit": 0,
         "subRowsFromSplits": 0,
         "rowsDroppedUnsplittable": 11,
         "turnsDroppedOverlong": 11,
-        "rowsOut": 739
+        "rowsOut": 751
       },
       "valid": {
         "maxTokens": 1024,

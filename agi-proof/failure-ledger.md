@@ -270,3 +270,89 @@ Apple Silicon run.
 **Claim impact:** v3 is a locally trained adapter with a W2 promotion-gate verdict on first-party
 benchmarks. It is **not** validated external evidence, not a promotion-grade result, not an AGI
 claim, and not a hallucination guarantee.
+
+## agi-shaped-architecture-pilots-2026-06-25
+
+**Status:** CANDIDATE INFRASTRUCTURE ONLY (`candidateOnly: true`, `level3Evidence: false`).
+
+Implemented three verifier-gated research harnesses from the feasibility plan. **Not AGI claims.**
+
+**Phase 1 — Shadow OKF bulk-boundary lattice:**
+
+- Modules: `okf/bulk_graph.py`, `okf/projection.py`, `tools/run_shadow_lattice.py`
+- Artifact: `agi-proof/shadow-okf-lattice/shadow-lattice.public-report.json`
+- Demo: promoted `2/3` bulk nodes; lineage trap abstained (`bulk_lineage_trap`)
+- Honest bound: quarantined cross-tradition exploration; bulk never shipped raw
+
+**Phase 2 — REM dream collective + symbiosis network:**
+
+- Modules: `agent/dream_collective.py`, `skills/symbiosis_network.py`, `tools/run_dream_collective.py`
+- Artifact: `agi-proof/dream-collective/dream-collective.public-report.json`
+- Demo: REM blocked `1/2` eval-leak dreams; symbiosis held bad nutrient packets
+- Honest bound: offline consolidation seam; wake uses conscience + `memory_consolidation`
+
+**Phase 3 — Embryogenesis crucible arena:**
+
+- Modules: `agent/embryogenesis/`, `tools/run_crucible_arena.py`
+- Artifact: `agi-proof/embryogenesis-crucible/crucible-arena.public-report.json`
+- Demo: population `8`, generations `2`, top fitness `0.8286` (trap-weighted stub scoring)
+- Honest bound: verifier config search only; `weightsFrozen: true` — no LoRA reproduction
+
+**C2 religion repair data (prerequisite for adapter retrain):**
+
+- Added `training/council/religion_repair_c4.jsonl` (12 council-panel traces)
+- Builder: `tools/build_religion_repair_traces.py` — `evalOverlapCount=0`, contamination CLEAN
+- Wired into `tools/build_local_sophia_dataset.py` as `sft_religion_repair_c4.jsonl`
+- **Not yet proven:** religion ladder uplift requires hardware retrain + eval; v3 remains `1/6`
+
+**Claim impact:** Strengthens provenance-aware exploration substrate. Does not prove AGI, validated
+uplift, or zero hallucination. `python tools/lint_claims.py` passes.
+
+## agi-shaped-next-steps-2026-06-25
+
+**Status:** CANDIDATE INFRASTRUCTURE + LOCAL TRAIN/EVAL (`candidateOnly: true`, `level3Evidence: false`).
+
+Closed the feasibility-plan next steps: conscience in projection, promotion loop, REM wake proof,
+and C2 religion-repair retrain on Apple Silicon. **Not AGI claims; not validated external uplift.**
+
+**Phase 1 — Conscience-wired projection:**
+
+- `okf/projection.py` calls `conscience_check` on bulk body text during `project_node`
+- Fail-closed: `block`/`abstain`/`escalate`/`retrieve`/`clarify` abstain; `allow`/`revise` proceed
+- `skip_conscience` for offline CI (mirrors `skip_provenance`)
+- Shadow lattice demo bodies include candidate-only boundary wording so conscience passes offline
+
+**Phase 2 — Promotion loop (projection → boundary queue):**
+
+- `okf/promotion_loop.py`: `submit_projection_candidates()` → `training/feedback/pending_projection_candidates.jsonl` (`promoted: false`)
+- `commit_approved_candidate()` for human-gated `wiki_store.upsert`
+- `tools/run_shadow_lattice.py` logs promotion artifact after projection
+
+**Phase 3 — REM wake consolidation proof:**
+
+- `agent/dream_collective.py` wake uses memory-mode conscience + `trustUpstreamVerdict`
+- Demo dream passes conscience and consolidates: wake `1/1` consolidated, eval-leak `1/2` blocked
+- Artifact: `agi-proof/dream-collective/dream-collective.public-report.json`
+- `tools/run_dream_collective.py --cron` docstring for scheduled runs
+
+**C2 religion repair retrain + eval (Apple Silicon, mlx_lm):**
+
+- `tools/build_religion_repair_traces.py`: 12 rows, `evalOverlapCount=0`, contamination CLEAN
+- `tools/build_local_sophia_dataset.py`: 751 MLX train / 89 valid rows, contamination CLEAN
+- Short MLX LoRA: 50 iters → `training/mlx_adapters/sophia-v4-religion-repair` (gitignored weights)
+- `tools/eval_ladder.py --backend mlx --adapter …/sophia-v4-religion-repair`:
+  - base `16/32 = 50.0%`, adapter `23/32 = 71.9%` (delta `+21.9%`)
+  - religion `1/6 → 2/6` (`16.7% → 33.3%`); history `5/8 → 7/8`; philosophy `6/9 → 8/9`
+- `tools/promote_adapter.py`: `FINAL VERDICT: promote` for `local-sophia-v4-religion-repair-mlx`
+- Honest bounds: 50-iter smoke train only; religion still `2/6` (below aspirational `3/6`);
+  no SEIB / learning-shift re-run; adapter weights not in repo
+
+**Skipped / not proven:**
+
+- Human-approved wiki boundary commit (queue only; default-deny)
+- Full-length train, multi-seed stability, SEIB-100, learning-under-shift post-test
+- CUDA/vLLM live RLVR
+
+**Claim impact:** Wires conscience + promotion seam + REM wake demo; v4 shows first-party ladder
+gain on religion repair data with W2 promote verdict. Not validated external evidence or AGI.
+`python tools/lint_claims.py` passes.

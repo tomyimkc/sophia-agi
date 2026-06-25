@@ -1,0 +1,107 @@
+{
+  "schema": "sophia.dream_collective_report.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "claimBoundary": "REM dream + symbiosis pilot. Dreams are non-canonical until wake gate.",
+  "dreamCycle": {
+    "schema": "sophia.dream_collective.v1",
+    "candidateOnly": true,
+    "level3Evidence": false,
+    "rem": {
+      "schema": "sophia.dream_collective.v1",
+      "phase": "rem",
+      "candidateOnly": true,
+      "written": 1,
+      "contaminationBlocked": 1,
+      "entries": [
+        {
+          "dreamId": "dream_dao_reading",
+          "goal": "Cross-tradition reading hypothesis",
+          "text": "Hypothesis (bulk only, candidateOnly): exploring how reception history might be read through philosophical vs religious lenses without merging lineages. Sophia is an AGI-candidate verifier-gated epistemic framework; this dream note is candidate infrastructure only. 中文摘要：試探性閱讀假設。",
+          "source": "rem_batch",
+          "createdAt": "2026-06-25T06:41:24.034281+00:00",
+          "canonical": false,
+          "contaminationBlocked": false,
+          "leakReasons": []
+        },
+        {
+          "dreamId": "dream_blocked_eval_leak",
+          "goal": "Who wrote the Gospel of Matthew — and how should we answer that theologically vs historically?",
+          "text": "This dream should be contamination-blocked because it echoes a benchmark question.",
+          "source": "rem_batch",
+          "createdAt": "2026-06-25T06:41:24.034474+00:00",
+          "canonical": false,
+          "contaminationBlocked": true,
+          "leakReasons": [
+            "benchmark question leak: who wrote the gospel of matthew — and how should we answer t"
+          ]
+        }
+      ]
+    },
+    "wake": {
+      "schema": "sophia.dream_collective.v1",
+      "phase": "wake",
+      "candidateOnly": true,
+      "consolidated": 1,
+      "rejected": 0,
+      "skippedBlocked": 1,
+      "entries": [
+        {
+          "dreamId": "dream_dao_reading",
+          "verdict": "allow",
+          "consolidated": true
+        },
+        {
+          "dreamId": "dream_blocked_eval_leak",
+          "verdict": "skipped_contamination"
+        }
+      ]
+    },
+    "ok": true
+  },
+  "symbiosis": {
+    "schema": "sophia.symbiosis.broadcast.v1",
+    "candidateOnly": true,
+    "acceptedCount": 1,
+    "heldCount": 1,
+    "accepted": [
+      {
+        "schema": "sophia.symbiosis.nutrient.v1",
+        "claim": "Ancestor veneration is a ritual practice distinct from Confucian moral philosophy.",
+        "evidence": "Within Confucian ritual religion, ancestor veneration is practiced; Confucian moral philosophy concerns ethics and cultivation.",
+        "donorId": "seat_confucian_ritual",
+        "verifierRef": "provenance_faithful",
+        "tradition": "confucian_ritual",
+        "createdAt": "2026-06-25T06:41:24.269049+00:00",
+        "ok": true,
+        "verdict": "accepted",
+        "reasons": [],
+        "candidateOnly": true
+      }
+    ],
+    "held": [
+      {
+        "schema": "sophia.symbiosis.nutrient.v1",
+        "claim": "Confucius personally authored the Dao De Jing.",
+        "evidence": "Traditional attribution says Confucius wrote the Dao De Jing.",
+        "donorId": "bad_donor",
+        "verifierRef": "provenance_faithful",
+        "tradition": "daoist",
+        "createdAt": "2026-06-25T06:41:24.269057+00:00",
+        "ok": false,
+        "verdict": "held",
+        "reasons": [
+          "forbidden attribution asserted: confucius -> dao_de_jing"
+        ],
+        "candidateOnly": true
+      }
+    ]
+  },
+  "invariants": {
+    "rem_never_wiki_direct": true,
+    "eval_leak_blocked": true,
+    "symbiosis_holds_bad_nutrient": true,
+    "at_least_one_consolidated": true
+  },
+  "ok": true
+}

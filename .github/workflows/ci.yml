@@ -85,6 +85,8 @@ jobs:
           python tests/test_mlx_transport.py
           python tests/test_feedback_to_training.py
           python tools/build_local_sophia_dataset.py --check
+          python tools/build_religion_repair_traces.py
+          python tests/test_religion_repair_traces.py
           python tests/test_personality.py
           python tests/test_steering.py
           python tests/test_personality_steering.py
@@ -155,7 +157,9 @@ jobs:
           python tests/test_mcp_check_claim.py
           python tests/test_okf_belief.py
           python tests/test_okf_counterfactual.py
-          python tests/test_okf_revision.py
+          python tests/test_okf_bulk_projection.py
+          python tests/test_promotion_loop.py
+          python tools/run_shadow_lattice.py --skip-provenance --skip-conscience
           python tools/belief_counterfactual.py remove chemical_imbalance_slogan >/dev/null
           python tools/belief_counterfactual.py revise mencius --also xunzi --reason ci-smoke >/dev/null
           python tests/test_best_of.py
@@ -210,6 +214,12 @@ jobs:
           python tests/test_layered_memory.py
           python tests/test_agi_missing_pillars_bundle.py
           python tools/run_agi_missing_pillars.py
+      - name: AGI-shaped architecture pilots (shadow OKF, REM dream, crucible arena)
+        run: |
+          python tests/test_dream_collective.py
+          python tests/test_embryogenesis_arena.py
+          python tools/run_dream_collective.py
+          python tools/run_crucible_arena.py --population 8 --generations 2
       - name: Self-extending verification flywheel (synthesize→validate→cover, causal, transfer, long-horizon)
         run: |
           python tests/test_selfextend.py
