@@ -93,3 +93,6 @@ agi-proof/self-extension/ssil-registry.jsonl
 training/team_agents/checkpoints/
 training/team_agents/*.safetensors
 training/team_agents/adapter_model/
+
+# Rust ANN serving build artifacts
+services/ann_serving/target/

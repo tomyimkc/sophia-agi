@@ -4,6 +4,33 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — AI-search algorithm layer (query understanding + hybrid recall + quality eval)
+
+- **Query understanding** (`agent/query_understanding.py`): deterministic, offline, bilingual
+  (EN+ZH) query layer — normalize, language detect, intent classification (definition /
+  comparison / temporal / navigational / factoid), multi-hop **decomposition** (`"compare A
+  and B"` → `["A", "B"]`; CJK `比较 A 和 B` splits without whitespace), and recall **expansion**
+  via author surface forms (reused from `agent/entity_aliases.py`, incl. cross-lingual aliases)
+  + a curated seed synonym map. Optional HyDE-style `rewrite_with_llm` is additive (`[]` on
+  failure). Tests: `tests/test_query_understanding.py`.
+- **Hybrid retrieval** (`agent/hybrid_retrieval.py`): dense cosine ⨁ sparse BM25-lite over the
+  same committed index, fused by **weighted Reciprocal Rank Fusion** (dense 1.0 / sparse 0.4 —
+  sparse as a minority vote because the near-duplicate teacher corpus makes BM25 low-precision).
+  Index-size-agnostic fusion. Tests: `tests/test_hybrid_retrieval.py`.
+- **AI-search orchestrator** (`agent/ai_search.py`): `search()` runs understand → per-sub-query
+  hybrid recall → cross-sub-query RRF → rerank, returning a `SearchResult` carrying the
+  `AnalyzedQuery` plan so a miss is attributable to a stage. Doc: `docs/09-Agent/AI-Search.md`.
+- **Search-quality eval体系** (`tools/eval_search_quality.py`, `eval/search_quality/`): graded
+  **nDCG@k / recall@k / MRR** across keyword/vector/hybrid + a **badcase taxonomy**
+  (`lexical_gap`, `semantic_gap`, `tied_burial`, `absent_from_pool`). Honest finding: pure dense
+  wins on this corpus (recall@5 0.52 vs hybrid 0.27 vs keyword 0.20); hybrid beats keyword and
+  closes lexical gaps but not dense, because sparse needs near-duplicate dedup first — the
+  harness *revealed* that. Candidate report; not validated. Tests: `tests/test_eval_search_quality.py`.
+- **Rust ANN serving core** (`services/ann_serving/`): dependency-free flat (exact) + NSW
+  (approximate) cosine index — the architecture-track systems artifact. `bench` traces the
+  recall/latency trade-off (e.g. ~0.87 recall@10 at ~6× speedup vs exact, or ~58× speedup at
+  lower recall). Single-layer (HNSW layers + PyO3 binding are documented next steps). `cargo test`.
+
 ## [0.9.0] - 2026-06-25
 
 ### Added — runtime trust-layer wiring + measurement arc
