@@ -54,6 +54,18 @@ def _load_jsonl(path: Path) -> list[dict]:
     return rows
 
 
+def tool_use_benchmark_prompt_set(*, root: Path = ROOT) -> set[str]:
+    """Normalized prompts from sealed tool-use benchmark (NOT in eval_prompt_set)."""
+    out: set[str] = set()
+    bench = root / "data" / "tool_use_benchmark" / "heldout_v1.jsonl"
+    if bench.exists():
+        for row in _load_jsonl(bench):
+            pr = prompt_of(row)
+            if pr:
+                out.add(normalize(pr))
+    return out
+
+
 def eval_prompt_set(*, root: Path = ROOT) -> set[str]:
     """All normalized prompts from the held-out eval/benchmark surfaces."""
     out: set[str] = set()
