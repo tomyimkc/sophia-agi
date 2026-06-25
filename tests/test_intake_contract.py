@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import importlib.util
 import sys
@@ -15,14 +16,18 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.intake import run_intake, scope_for_role, validate_execution_within_contract  # noqa: E402
+import agent.metacognition as metacognition  # noqa: E402
+from agent.metacognition import MetacognitionReport  # noqa: E402
 from sophia_contract import BLP_LEVELS  # noqa: E402
 from sophia_contract.intake import (  # noqa: E402
     INTAKE_CONTRACT_VERSION,
     RECOMMENDED_ACTIONS,
     build_intake_contract,
+    contract_id_for,
     mechanical_normalize_prompt,
     validate_intake_contract,
     validate_monotonic_narrowing,
+    verify_intake_signature,
 )
 from sophia_contract.models import SOURCE_STATUSES  # noqa: E402
 
@@ -79,6 +84,60 @@ def test_contract_id_and_signature_are_deterministic() -> None:
     assert validate_intake_contract(first) == []
 
 
+def _tamper_signed_contract(contract: dict, field: str) -> dict:
+    tampered = copy.deepcopy(contract)
+    if field == "allowed_ops":
+        tampered["tool_policy"]["allowed_ops"] = sorted(set(tampered["tool_policy"]["allowed_ops"]) | {"admin"})
+    elif field == "recommended_action":
+        tampered["recommended_action"] = "allow"
+    elif field == "blp_level":
+        tampered["blp_level"] = "SECRET"
+    else:
+        raise AssertionError(f"unexpected tamper field {field}")
+    tampered["contract_id"] = contract_id_for(tampered)
+    return tampered
+
+
+def test_signed_contract_detects_security_field_tampering() -> None:
+    signing_key = "test-key"
+    contract = build_intake_contract(_sample_fields(), signing_key=signing_key).to_dict()
+    assert verify_intake_signature(contract, signing_key=signing_key) is True
+    for field in ("allowed_ops", "recommended_action", "blp_level"):
+        tampered = _tamper_signed_contract(contract, field)
+        assert validate_intake_contract(tampered) == []
+        assert verify_intake_signature(tampered, signing_key=signing_key) is False
+
+
+def test_execution_gate_fails_closed_on_signed_contract_tamper() -> None:
+    signing_key = "test-key"
+    contract = build_intake_contract(_sample_fields(), signing_key=signing_key).to_dict()
+    assert validate_execution_within_contract(
+        contract,
+        {"executed": True, "used_ops": ["enqueue_task"], "blp_level": "UNCLASSIFIED"},
+        signing_key=signing_key,
+    )["verdict"] == "accepted"
+    tampered = _tamper_signed_contract(contract, "allowed_ops")
+    verdict = validate_execution_within_contract(
+        tampered,
+        {"executed": True, "used_ops": ["admin"], "blp_level": "UNCLASSIFIED"},
+        signing_key=signing_key,
+    )
+    assert verdict["verdict"] == "held"
+    assert verdict["held_reason"] == "needs_human"
+    assert "signature verification failed" in verdict["reasons"][0]
+
+
+def test_metacognition_reuses_intake_recommended_actions() -> None:
+    assert metacognition.RECOMMENDED_ACTIONS is RECOMMENDED_ACTIONS
+    assert MetacognitionReport(recommended_action="retrieve").recommended_action == "retrieve"
+    try:
+        MetacognitionReport(recommended_action="decide")
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("MetacognitionReport accepted a non-canonical recommended_action")
+
+
 def test_live_contract_validates_against_schema_if_available() -> None:
     if Draft202012Validator is None:
         return
@@ -124,6 +183,9 @@ def test_execution_gate_uses_existing_held_reason_codes() -> None:
 def main() -> int:
     test_schema_enums_match_code()
     test_contract_id_and_signature_are_deterministic()
+    test_signed_contract_detects_security_field_tampering()
+    test_execution_gate_fails_closed_on_signed_contract_tamper()
+    test_metacognition_reuses_intake_recommended_actions()
     test_live_contract_validates_against_schema_if_available()
     test_mechanical_normalization_is_flagged_not_hidden()
     test_red_team_scope_escalation_is_intersection_only()

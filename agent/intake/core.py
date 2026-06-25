@@ -22,6 +22,7 @@ from sophia_contract.intake import (
     mechanical_normalize_prompt,
     validate_intake_contract,
     validate_monotonic_narrowing,
+    verify_intake_signature,
 )
 from sophia_contract.models import build_verdict
 from sophia_contract.scopes import DEFAULT_ROLES, OPS, Scope
@@ -321,7 +322,12 @@ def audit_entry(case_id: str, contract: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def validate_execution_within_contract(contract: dict[str, Any], execution: dict[str, Any]) -> dict[str, Any]:
+def validate_execution_within_contract(
+    contract: dict[str, Any],
+    execution: dict[str, Any],
+    *,
+    signing_key: str | None = None,
+) -> dict[str, Any]:
     """Independent deterministic verifier that execution stayed inside contract."""
     errors = validate_intake_contract(contract)
     if errors:
@@ -332,6 +338,15 @@ def validate_execution_within_contract(contract: dict[str, Any], execution: dict
             cited_evidence=[],
             held_reason="needs_human",
         )
+    if contract.get("signature") or signing_key is not None:
+        if signing_key is None or not verify_intake_signature(contract, signing_key=signing_key):
+            return build_verdict(
+                "held",
+                confidence=0.0,
+                reasons=["intake contract signature verification failed"],
+                cited_evidence=[],
+                held_reason="needs_human",
+            )
     allowed_ops = set(contract["tool_policy"].get("allowed_ops", []))
     used_ops = set(execution.get("used_ops", []))
     if used_ops - allowed_ops:

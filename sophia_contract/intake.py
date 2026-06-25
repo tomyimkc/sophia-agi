@@ -11,6 +11,7 @@ validation. It stores references and checkable routing metadata, never answers.
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 from dataclasses import dataclass
 from typing import Any
@@ -81,6 +82,33 @@ def _stable_payload(contract: dict[str, Any]) -> dict[str, Any]:
 def contract_id_for(contract_without_id: dict[str, Any]) -> str:
     stable = _canonical(_stable_payload(contract_without_id))
     return claim_id_for(f"intake:{stable}")
+
+
+def _signature_for_contract(contract: dict[str, Any], signing_key: str) -> str:
+    stable_payload = _stable_payload(contract)
+    signed = build_claim(
+        {
+            "idempotency_key": contract_id_for(stable_payload),
+            "content": _canonical(stable_payload),
+            "sources": [],
+            "parents": [],
+            "blp_level": stable_payload.get("blp_level", "UNCLASSIFIED"),
+        },
+        created_at=SIGNING_CREATED_AT,
+        signing_key=signing_key,
+    )
+    return str(signed.get("signature", ""))
+
+
+def verify_intake_signature(contract: dict[str, Any], *, signing_key: str) -> bool:
+    """Verify a signed contract over all stable payload fields."""
+    if not isinstance(contract, dict) or not contract.get("signature"):
+        return False
+    try:
+        expected = _signature_for_contract(contract, signing_key)
+    except Exception:
+        return False
+    return hmac.compare_digest(str(contract.get("signature", "")), expected)
 
 
 def _list_of_objects(value: Any, field: str, errors: list[str]) -> None:
@@ -240,18 +268,7 @@ def build_intake_contract(fields: dict[str, Any], *, signing_key: str | None = N
     }
     contract["contract_id"] = contract_id_for(contract)
     if signing_key:
-        signed = build_claim(
-            {
-                "idempotency_key": contract["contract_id"],
-                "content": _canonical(_stable_payload(contract)),
-                "sources": [],
-                "parents": [],
-                "blp_level": contract["blp_level"],
-            },
-            created_at=SIGNING_CREATED_AT,
-            signing_key=signing_key,
-        )
-        contract["signature"] = signed["signature"]
+        contract["signature"] = _signature_for_contract(contract, signing_key)
     errors = validate_intake_contract(contract)
     if errors:
         raise ValueError("; ".join(errors))
@@ -271,4 +288,5 @@ __all__ = [
     "prompt_sha256",
     "validate_intake_contract",
     "validate_monotonic_narrowing",
+    "verify_intake_signature",
 ]

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "sophia.intake-eval.v1",
   "status": "candidate",
-  "runAt": "2026-06-25T17:12:01+00:00",
+  "runAt": "2026-06-25T17:56:02+00:00",
   "seed": 1701,
   "visibility": "public-aggregate-no-hidden-prompts",
   "metricDiscipline": "intent-fidelity only; downstream success is reported separately and is not a reward signal",
@@ -9,7 +9,8 @@
     "intentAccuracy": 0.8571,
     "ambiguityRecall": 1.0,
     "falseClarificationRate": 0.0,
-    "silentDriftRate": 0.0
+    "silentDriftRate": 0.0,
+    "unsurfacedRewriteRate": 0.0
   },
   "adversarialSets": {
     "ambiguity": 1,
@@ -88,24 +89,43 @@
     "selectiveRisk": 0.0,
     "selectiveBeatsBase": true
   },
+  "silentDriftControls": {
+    "oracle": "gold_meaning_tokens",
+    "caveat": "needs independent reviewer families; synthetic token oracle only",
+    "noDrift": {
+      "n": 7,
+      "silentDriftRate": 0.0
+    },
+    "plantedDrift": {
+      "n": 7,
+      "silentDriftRate": 0.5714,
+      "unsurfacedRewriteRate": 0.0,
+      "classes": [
+        "entity_swaps",
+        "negation",
+        "quantifier_scope",
+        "scope_escalation_traps"
+      ]
+    }
+  },
   "downstreamDelta": {
     "benchmark": "hidden_eval_protocol_mock_smoke",
     "withIntake": {
       "returncode": 0,
       "answerNonempty": true,
-      "latencySec": 9.2e-05,
+      "latencySec": 0.000109,
       "costUsd": 0.0
     },
     "withoutIntake": {
       "returncode": 0,
       "answerNonempty": true,
-      "latencySec": 0.000112,
+      "latencySec": 0.000137,
       "costUsd": 0.0
     },
     "claimBoundary": "Mock smoke delta only; candidate plumbing signal, not downstream quality evidence."
   },
   "latencyCost": {
-    "totalSec": 0.001024,
+    "totalSec": 0.00102,
     "meanSec": 0.000146,
     "costUsd": 0.0,
     "backend": "deterministic_offline"
@@ -156,7 +176,9 @@
   "measuredVsAsserted": {
     "measured": [
       "intent accuracy on deterministic synthetic labels",
-      "ambiguity recall, false-clarification rate, and silent-drift rate",
+      "ambiguity recall and false-clarification rate",
+      "silent-drift rate over synthetic gold meaning tokens",
+      "unsurfaced rewrite rate from material_rewrites",
       "paraphrase-invariance signatures modulo wording",
       "risk-coverage calibration over intake confidence",
       "mock with-vs-without-intake downstream plumbing delta",
@@ -169,7 +191,8 @@
       "source references carry ids/status only, not memory content"
     ],
     "stillAsserted": [
-      "semantic intent fidelity beyond the synthetic labels needs independent reviewer families",
+      "silentDriftRate needs independent reviewer families; synthetic token oracle only",
+      "semantic intent fidelity beyond the gold synthetic tokens needs independent reviewer families",
       "model-based intake elaboration quality is not validated in this offline candidate report"
     ]
   }
