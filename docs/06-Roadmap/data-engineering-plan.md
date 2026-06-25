@@ -33,7 +33,7 @@ catalog), importable from `agent/` so it stays consistent with the trust-layer v
 | 0 | Foundation & contracts | `pipeline/` pkg, document schema, manifest, fixtures | all | ✅ done |
 | 1 | Quality scoring | `quality_score.py`, `link_priority.py`, `tools/score_corpus.py` | 采集 pipeline (链接质量预估/数据优先级) | ✅ done |
 | 2 | Dedup & URL hygiene | MinHash-LSH, vector near-dup, URL canonicalization | 采集 / 语言数据 (MinHash/向量去重/链接规模控制) | ✅ done |
-| 3 | Columnar & regression | DuckDB/Parquet corpus stats, quality-regression gate | 语言数据处理 (质量回归) | ⏳ |
+| 3 | Columnar & regression | DuckDB/Parquet corpus stats, quality-regression gate | 语言数据处理 (质量回归) | ✅ done |
 | 4 | Acquisition loop | async crawler, priority frontier, CommonCrawl WARC ingest | 采集 pipeline (全网采集环路) | ⏳ |
 | 5 | Scale proof & infra | object-store shards, KV seen-set, queue, RESULTS numbers | 数据基建 (TB tokens) | ⏳ |
 | + | Multimodal slice (stretch) | image-text WebDataset shards w/ perceptual-hash dedup | 多模态数据 | ⏳ |
@@ -64,10 +64,21 @@ catalog), importable from `agent/` so it stays consistent with the trust-layer v
   set `doc['dedup']`, keep one per cluster, report dedup ratio. Wired into `tools/score_corpus.py --dedup`.
 - **Done:** mirror pair in fixtures detected & removed; param-variant URLs collapse; tests green.
 
-### Phase 3 — Columnar & quality regression (duckdb / 质量回归)
-- Rewrite `tools/corpus_stats.py` over DuckDB/Parquet (SQL token/lang/quality histograms).
-- `pipeline/io.py` — Parquet shard read/write + manifest update.
-- `pipeline/quality_regression.py` — diff snapshot vs prior manifest; **fail-closed** on drop.
+### Phase 3 — Columnar & quality regression (duckdb / 质量回归) ✅
+- `pipeline/io.py` — shard read/write; **Parquet when pyarrow present, JSONL fallback** (lazy
+  import, so it runs in a minimal/airgapped env). JSONL stays the deterministic interchange.
+- `pipeline/corpus_table.py` — analytical summary (count, tokens, lang/quality histograms,
+  domain counts, keep/duplicate rates). Uses **DuckDB over Parquet when available**, else a
+  stdlib aggregation returning the identical shape; CI exercises the stdlib path.
+- `pipeline/quality_regression.py` — **fail-closed** gate: flags mean-quality drop, keep-rate
+  drop, duplicate-rate spike, or token-volume collapse vs a committed baseline (mirrors
+  `dataset_guard` discipline).
+- `tools/pipeline_stats.py` — CLI: summarize a shard, write a baseline summary, and gate a
+  build against it (non-zero exit on regression).
+- *Note:* kept `tools/corpus_stats.py` (README badges) intact; added a new pipeline-scoped
+  stats tool rather than break it. Heavy engines (`duckdb`/`pyarrow`) are **optional** — see
+  `requirements-pipeline.txt`; CI currently runs the stdlib fallback path.
+- **Done:** end-to-end score → dedup → shard → stats → gate verified; regression fails closed.
 
 ### Phase 4 — Acquisition loop (全网采集环路)
 - `pipeline/fetch/crawler.py` — polite async fetch, robots, per-host quota, retry/backoff, DNS.
