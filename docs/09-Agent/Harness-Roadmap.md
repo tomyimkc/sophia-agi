@@ -62,23 +62,31 @@ through one calibrated synthesis step.
 Tests: `tests/test_subagent.py`. (Sequential/deterministic today; parallel fan-out is
 a later optimisation that must preserve trace isolation and determinism in tests.)
 
-## Build 3 — Long-horizon execution engine (next)
+## Build 3 — Long-horizon execution engine ✅ shipped
 
-`agent/horizon.py` today *measures* an effective-horizon curve (METR-style) on
-synthetic chained-arithmetic — it is an eval, not an engine. The gap is durable
-execution across hundreds of dependent steps:
+`agent/long_horizon.py`. `agent/horizon.py` *measures* an effective-horizon curve
+(METR-style, oracle-judged); this is the *engine* that survives long, dependent task
+chains:
 
-- **Hierarchical decomposition** — a parent goal → a persistent task tree (re-using
-  Build 2's delegation for sub-tasks), with a durable TODO ledger so progress
-  survives a crash/resume beyond the current per-task checkpoint.
-- **Recovery memory in the loop** — wire `agent/failure_memory.py` and
-  `agent/error_rag.py` into the reflect/retry step so a recurring failure mode is
-  recalled and avoided *within* a long run, not just logged.
-- **Honest headline** — keep `horizon.py`'s external-oracle discipline (never
-  self-judged): report the effective horizon *with the recovery loop on vs off*.
+- **Durable task tree** — `TaskLedger` of `SubtaskNode`s, persisted to JSON after
+  every node transition, so a resumed run skips `done` nodes and re-attempts only
+  `pending`/`failed` ones (multi-task checkpoint beyond the harness's per-task one).
+- **Dependency ordering, fail-closed** — a node runs only once its `deps` are all
+  `done`; a node whose dependency failed is left `blocked` and never executed on an
+  unmet prerequisite.
+- **Recovery memory in the loop** — `RecoveryMemory` (dependency-free, append-only)
+  records a hint keyed by the node's *failure signature*; before re-attempting a
+  similar node the engine recalls the hint and injects it into the child's context.
+  Complementary to the provenance-specific `agent/failure_memory.py`.
+- **Execution via delegation** — each node runs through `subagent.run_subagent`,
+  inheriting isolation, least-privilege tool scope, and per-node budgets.
 
-Acceptance: effective horizon (oracle-judged) improves measurably with the recovery
-loop enabled, under the no-overclaim measurement gate.
+Tests: `tests/test_long_horizon_engine.py` — including a deterministic demonstration
+that a recalled recovery hint flips a failing sibling node to success.
+
+Remaining (measurement): wire the engine into `horizon.py`'s oracle-judged curve and
+report the effective horizon *with the recovery loop on vs off*, under the
+no-overclaim gate. Recovery today is within-run hint injection, not weight learning.
 
 ## Build 4 — Harness↔model co-evolution loop (next)
 
