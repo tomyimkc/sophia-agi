@@ -1,0 +1,19 @@
+{
+  "schema": "sophia.team_agents_benchmark.v1",
+  "sealed": true,
+  "trainingDisjoint": true,
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "nCases": 36,
+  "nProbeCases": 12,
+  "balance": {
+    "coordination_trap": 12,
+    "role_fidelity": 12,
+    "handoff_integrity": 12
+  },
+  "files": {
+    "heldout": "heldout_v1.jsonl",
+    "probe": "probe_divisive_v1.jsonl"
+  },
+  "contentHash": "50a0bfab6b9690aabdc7d9346a2487b900e87bd77647e81e81d292d06ace7e7b"
+}
