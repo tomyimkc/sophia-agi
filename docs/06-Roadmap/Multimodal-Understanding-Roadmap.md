@@ -195,11 +195,35 @@ Build the verifiers first; everything downstream inherits their rigor.
 - Not a path to leaderboard numbers. Every metric here ships with the no-overclaim
   gate, by design — which is the point the job description makes twice.
 
-## First concrete step (smallest honest slice)
+## First concrete step (smallest honest slice) — ✅ landed
 
-Build **Phase 1**: an image-grounded hallucination-trap set (≈30 traps: phantom
-object, miscount, wrong spatial relation, fabricated OCR) plus a gate that scores
-a VLM backend on them with multi-judge consensus and a confidence interval —
-the direct visual analog of `provenance_bench/data/misattributions.json` and the
-existing no-overclaim harness. It is self-contained, CPU-runnable against a hosted
-VLM, and produces exactly the kind of "独立设计的评测流程" the posting rewards.
+**Phase 1 is implemented** as the `multimodal_bench/` package — the direct visual
+analog of `provenance_bench/`:
+
+| Piece | File |
+|---|---|
+| 35 image-grounded traps (phantom object, miscount, spatial relation, fabricated OCR + discrimination controls), each a deterministic scene spec | `multimodal_bench/data/visual_traps.json` |
+| Judge-free verifiers (count / presence / relation / OCR) — machine-derived ground truth, shares no code with the model | `multimodal_bench/verifiers.py` |
+| Independent lexical judge + multi-judge consensus + Cohen's kappa | `multimodal_bench/judge.py` |
+| Bootstrap-CI aggregation + no-overclaim validation flags | `multimodal_bench/runner.py` |
+| Offline mock VLMs + opt-in OpenAI-compatible vision backend | `multimodal_bench/model.py` |
+| Optional scene→PNG rasteriser (Pillow, real-VLM path only) | `multimodal_bench/render.py` |
+| CLI report | `tools/run_multimodal_traps.py` |
+| Tests (15, offline) | `tests/test_multimodal_traps.py` |
+
+It is self-contained, CPU/airgap-runnable (scenes are structured, not binary
+images, so labels are reproducible without shipping pixels), and produces exactly
+the kind of "独立设计的评测流程" the posting rewards. Reference behaviours:
+`mock:credulous` → hallucination 1.00, `mock:grounded` → grounding 1.00 — and a
+mock run is **never** marked `validated` (the no-overclaim gate requires a real
+model, ≥2 distinct-family judges with κ≥0.40, ≥3 runs, and a computed CI).
+
+```
+python tools/run_multimodal_traps.py --answer mock:credulous --runs 3
+python tools/run_multimodal_traps.py --answer openai:gpt-4o --runs 5 \
+    --judge-spec anthropic:claude-... --judge-spec deepseek:deepseek-chat
+```
+
+**Next (Phase 2+):** wire the scene verifiers as RLVR reward terms (workstream B),
+extend scenes to rendered charts/documents with known values (workstream D), and
+add calibration / risk-coverage curves over the abstention signal (workstream C).
