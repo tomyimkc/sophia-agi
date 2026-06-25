@@ -164,7 +164,19 @@ def author_markers(author_id: str, *, expand_surnames: bool = True) -> list[str]
     return list(dict.fromkeys(markers))
 
 
-def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[str]]:
+def score_case_format(case: dict, response: str, traditions: dict) -> tuple[bool, list[str]]:
+    """FORMAT channel: council-panel / debate structure only."""
+    reasons: list[str] = []
+    text = normalize(response)
+    ok = True
+    if case.get("mustUseCouncilPanel") and not matches_any(text, COUNCIL_PATTERNS):
+        ok = False
+        reasons.append("expected council/panel debate format")
+    return ok, reasons
+
+
+def score_case_content(case: dict, response: str, traditions: dict) -> tuple[bool, list[str]]:
+    """CONTENT channel: attribution, tradition, nuance, myth labeling, splits, sensitivity."""
     reasons: list[str] = []
     text = normalize(response)
     ok = True
@@ -225,10 +237,6 @@ def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[
                 ok = False
                 reasons.append(f"expected subfield '{subfield}'")
 
-    if case.get("mustUseCouncilPanel") and not matches_any(text, COUNCIL_PATTERNS):
-        ok = False
-        reasons.append("expected council/panel debate format")
-
     split = case.get("mustSplitWhenAppropriate")
     if split:
         has_ritual = matches_any(text, [r"ancestor", r"veneration", r"祭祖", r"ritual", r"禮"])
@@ -238,11 +246,30 @@ def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[
             reasons.append("expected split between Confucian philosophy and ritual religion when appropriate")
 
     if case.get("mustHandleSensitive"):
-        if not (matches_any(text, COUNCIL_PATTERNS) or matches_any(text, SENSITIVE_OK_PATTERNS)):
+        if not matches_any(text, SENSITIVE_OK_PATTERNS):
             ok = False
             reasons.append("expected careful scholarly/traditional handling of sensitive topic")
 
     return ok, reasons
+
+
+def score_case_channels(case: dict, response: str, traditions: dict) -> dict:
+    """Return separate FORMAT and CONTENT verdicts plus legacy combined pass."""
+    fmt_ok, fmt_reasons = score_case_format(case, response, traditions)
+    content_ok, content_reasons = score_case_content(case, response, traditions)
+    return {
+        "formatPassed": fmt_ok,
+        "contentPassed": content_ok,
+        "passed": fmt_ok and content_ok,
+        "formatReasons": fmt_reasons,
+        "contentReasons": content_reasons,
+        "reasons": fmt_reasons + content_reasons,
+    }
+
+
+def score_case(case: dict, response: str, traditions: dict) -> tuple[bool, list[str]]:
+    channels = score_case_channels(case, response, traditions)
+    return channels["passed"], channels["reasons"]
 
 
 def load_traditions() -> dict:
