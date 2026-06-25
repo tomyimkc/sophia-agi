@@ -57,7 +57,9 @@ permissions:
   actions: read
 
 concurrency:
-  group: runpod-sophia-7b-sft
+  # Per-seed group so each seed can rent its own pod and train concurrently
+  # (empty seed = the sequential all-seeds run keeps its own single group).
+  group: runpod-sophia-7b-sft-${{ github.event.inputs.seed }}
   cancel-in-progress: false
 
 jobs:
