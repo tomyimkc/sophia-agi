@@ -637,6 +637,17 @@ disjoint from held-out benchmark). All rows pass `verify_trace` (advisory bounda
 no-fabrication, bilingual fidelity).
 
 **Claim impact:** Training substrate ready; no adapter/eval uplift yet. `canClaimAGI: false`.
+
+## hk-advisor-phase2-2026-06-25
+
+**Status:** OPEN (SFT wiring verified; GPU training blocked locally).
+
+**Smoke:** `python tools/train_lora.py --model Qwen/Qwen2.5-3B-Instruct --train training/hk_advisor/sft_traces.jsonl --output training/hk_advisor/checkpoints/sft-seed0 --dry-run` → 25 rows OK.
+**Blocker:** `torch` not available in local agent shell; seeds 0/1/2 SFT **not run**. Weights gitignored under `training/hk_advisor/checkpoints/`.
+
+**Next:** Run 3-seed QLoRA SFT on RunPod/local GPU host when available.
+
+**Claim impact:** No adapter weights; no uplift claim. `canClaimAGI: false`.
 =======
 ## team-agents-mode-mock-eval-2026-06-25
 

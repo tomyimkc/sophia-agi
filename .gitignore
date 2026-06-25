@@ -52,6 +52,7 @@ dist/
 build/
 training/lora/checkpoints/
 training/lora/bench/
+training/hk_advisor/checkpoints/
 *-mlx-data/
 training/lab/reviews/*.json
 training/lab/judgements/*.json
