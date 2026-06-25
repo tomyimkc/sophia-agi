@@ -33,6 +33,16 @@ on:
         description: 'Single seed (0, 1, or 2). Leave empty to run all three seeds.'
         required: false
         default: ''
+      on_pod_seeds:
+        description: 'On-pod multi-seed (SFT): comma seeds trained on ONE pod, e.g. 0,1,2. Overrides seed/all-seeds. Empty = off. Skips on-pod eval/promote (offline eval).'
+        required: false
+        default: ''
+      on_pod_mode:
+        description: 'On-pod multi-seed mode: parallel (one seed per GPU, multi-GPU pod) or sequential (one GPU, back-to-back)'
+        required: false
+        default: 'parallel'
+        type: choice
+        options: ['parallel', 'sequential']
       branch:
         description: 'Git branch cloned on the pod'
         required: false
@@ -122,6 +132,8 @@ jobs:
           BRANCH: ${{ github.event.inputs.branch }}
           STAGE: ${{ github.event.inputs.stage }}
           SEED_INPUT: ${{ github.event.inputs.seed }}
+          ON_POD_SEEDS: ${{ github.event.inputs.on_pod_seeds }}
+          ON_POD_MODE: ${{ github.event.inputs.on_pod_mode }}
           EPOCHS_INPUT: ${{ github.event.inputs.epochs }}
           INTERRUPTIBLE_INPUT: ${{ github.event.inputs.interruptible }}
         run: |
@@ -170,7 +182,13 @@ jobs:
             fi
           }
 
-          if [ -n "$SEED_INPUT" ]; then
+          if [ -n "$ON_POD_SEEDS" ] && [ "$STAGE" = "sft" ]; then
+            echo "===== on-pod multi-seed SFT ($ON_POD_MODE): seeds $ON_POD_SEEDS on ONE pod ====="
+            python3 tools/runpod_train.py --yes --branch "$BRANCH" --model "$MODEL" \
+              --epochs "$EPOCHS" --train-data "$TRAIN_DATA" \
+              --seeds "$ON_POD_SEEDS" --on-pod-mode "$ON_POD_MODE" \
+              --name "sophia-7b-sft-multiseed" $INTERRUPTIBLE_FLAG
+          elif [ -n "$SEED_INPUT" ]; then
             run_one_seed "$SEED_INPUT"
           elif [ "$STAGE" = "sft" ]; then
             bash agi-proof/sophia-7b-train-verify/runpod-sft-3seed.sh

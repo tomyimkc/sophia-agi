@@ -89,7 +89,118 @@ def _scp_to_pod(conn: PodConnection, key_path: Path, local: Path, remote: str) -
         raise RunPodError(f"scp to pod failed ({local} -> {remote})")
 
 
+def _seeds_list(args: argparse.Namespace) -> list[int]:
+    """Seeds to train on a single pod. ``--seeds 0,1,2`` (on-pod multi-seed) wins;
+    otherwise the single ``--seed`` (one seed per pod, the default)."""
+    raw = (getattr(args, "seeds", "") or "").strip()
+    if raw:
+        return [int(s) for s in raw.split(",") if s.strip() != ""]
+    return [int(args.seed)]
+
+
+def _effective_gpu_count(args: argparse.Namespace) -> int:
+    """Mode A (parallel on-pod multi-seed) needs one GPU per seed."""
+    seeds = _seeds_list(args)
+    if len(seeds) > 1 and getattr(args, "on_pod_mode", "parallel") == "parallel":
+        return max(args.gpu_count, len(seeds))
+    return args.gpu_count
+
+
+def _seed_train_cmd(args: argparse.Namespace, seed: int, out_dir: str) -> str:
+    """The ``train_lora.py`` invocation for one seed → one adapter dir.
+
+    Mirrors the single-seed recipes: sealed-pack minimal (``--train-only`` + a
+    pre-built ``--train-data``) vs the full source-discipline recipe.
+    """
+    if getattr(args, "train_only", False) and args.train_data:
+        return (
+            'python tools/train_lora.py '
+            '--model "$SOPHIA_MODEL" --train ' + shlex.quote(args.train_data) + ' --4bit '
+            '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir
+        )
+    train_flag = (" --train " + shlex.quote(args.train_data)) if args.train_data else ""
+    return (
+        'python tools/train_lora.py '
+        '--model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 '
+        '--scaffold --guard --eval-every 25 --patience 4' + train_flag + ' '
+        '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir
+    )
+
+
+def _remote_multiseed_script(args: argparse.Namespace, seeds: list[int]) -> str:
+    """Remote script that trains MULTIPLE seeds on ONE pod.
+
+    - ``--on-pod-mode parallel`` (Mode A): one seed per GPU via
+      ``CUDA_VISIBLE_DEVICES``, all backgrounded then ``wait``-ed (needs
+      ``gpuCount >= len(seeds)`` — main() bumps it). Wall-clock ≈ one seed.
+    - ``--on-pod-mode sequential`` (Mode B): seeds run back-to-back on a single
+      GPU. One pod rented once; cheaper than N pods but ≈ N× wall-clock.
+
+    On-pod eval/promote is skipped — each seed's adapter is tarred and returned
+    for offline (CI) eval. DPO is not supported in multi-seed mode.
+    """
+    branch_flag = (" --branch " + shlex.quote(args.branch)) if args.branch else ""
+    mode = getattr(args, "on_pod_mode", "parallel")
+    base = args.adapter_dir
+    data_step = (
+        "python tools/build_local_sophia_dataset.py --check\n"
+        if args.train_data
+        else "python tools/prepare_lora_dataset.py\n"
+    )
+    train_lines: list[str] = []
+    tar_lines: list[str] = []
+    for i, seed in enumerate(seeds):
+        out_dir = shlex.quote(f"{base}-seed{seed}")
+        cmd = _seed_train_cmd(args, seed, out_dir)
+        log = f"/workspace/sophia-runpod/train-seed{seed}.log"
+        if mode == "parallel":
+            train_lines.append(f"CUDA_VISIBLE_DEVICES={i} {cmd} > {log} 2>&1 &")
+        else:
+            train_lines.append(f"{cmd} 2>&1 | tee {log}")
+        tar_lines.append(
+            f"if [ -d {out_dir} ]; then "
+            f"tar -czf /workspace/sophia-runpod/sophia-cuda-v1-seed{seed}.tar.gz "
+            f"-C $(dirname {out_dir}) $(basename {out_dir}); "
+            f"cp {out_dir}/sophia_lora_config.json "
+            f"/workspace/sophia-runpod/sophia_lora_config-seed{seed}.json || true; fi"
+        )
+    train_block = "\n".join(train_lines)
+    wait_line = "wait" if mode == "parallel" else ""
+    tar_block = "\n".join(tar_lines)
+    return f"""
+set -Eeuo pipefail
+export DEBIAN_FRONTEND=noninteractive
+export HF_HOME=/workspace/.cache/huggingface
+export HF_HUB_CACHE=/workspace/.cache/huggingface/hub
+export PIP_CACHE_DIR=/workspace/.cache/pip
+export SOPHIA_MODEL={shlex.quote(args.model)}
+export SOPHIA_EPOCHS={shlex.quote(str(args.epochs))}
+mkdir -p /workspace/sophia-runpod /workspace/.cache/huggingface/hub /workspace/.cache/pip
+cd /workspace/sophia-runpod
+if [ {shlex.quote(args.source)} = "git" ] && [ ! -d sophia-agi/.git ]; then
+  git clone --depth 1{branch_flag} {shlex.quote(args.repo_url)} sophia-agi
+fi
+cd sophia-agi
+(git rev-parse HEAD || true) | tee /workspace/sophia-runpod/repo-head.txt
+nvidia-smi || true
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements-lora.txt   # torch pinned <2.9 -> ABI stable
+
+# 1) sealed pack guard / data prep
+{data_step}
+# 2) on-pod multi-seed training ({mode}); one adapter per seed, no on-pod eval/promote
+{train_block}
+{wait_line}
+# 3) tar each seed's adapter for offline eval
+{tar_block}
+echo "Sophia multi-seed run complete ({mode}; seeds {','.join(str(s) for s in seeds)})."
+"""
+
+
 def _remote_train_script(args: argparse.Namespace) -> str:
+    seeds = _seeds_list(args)
+    if len(seeds) > 1:
+        return _remote_multiseed_script(args, seeds)
     branch_flag = (" --branch " + shlex.quote(args.branch)) if args.branch else ""
     adapter_dir = shlex.quote(args.adapter_dir)
     train_only = getattr(args, "train_only", False)
@@ -211,6 +322,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--train-only", action="store_true",
                     help="skip on-pod eval_ladder + promote_adapter (sealed-pack / curriculum SFT; "
                          "adapter is returned for offline eval)")
+    ap.add_argument("--seeds", default="",
+                    help="comma-separated seeds to train on ONE pod (e.g. '0,1,2'). Empty = single "
+                         "--seed, one pod per seed (default). Multi-seed skips on-pod eval/promote "
+                         "and returns one adapter tarball per seed.")
+    ap.add_argument("--on-pod-mode", choices=["parallel", "sequential"], default="parallel",
+                    help="with --seeds: 'parallel' = one seed per GPU (Mode A, needs a multi-GPU "
+                         "pod; gpu-count auto-bumped to #seeds); 'sequential' = seeds back-to-back "
+                         "on one GPU (Mode B, cheaper, ~N x wall-clock)")
     ap.add_argument("--dpo-pairs", default="",
                     help="if set, run Stage-3 DPO (train_dpo.py) instead of SFT")
     ap.add_argument("--sft-adapter-archive", type=Path, default=None,
@@ -271,6 +390,8 @@ def main(argv: list[str] | None = None) -> int:
     import os
 
     args = parse_args(argv)
+    # Mode A (parallel on-pod multi-seed) needs one GPU per seed.
+    args.gpu_count = _effective_gpu_count(args)
     api_key = os.environ.get(args.api_key_env, "")
     if not api_key and args.api_key_file:
         api_key = args.api_key_file.read_text(encoding="utf-8").strip()

@@ -25,6 +25,16 @@ on:
         description: 'Single seed (0, 1, or 2). Leave empty to run all three seeds.'
         required: false
         default: ''
+      on_pod_seeds:
+        description: 'On-pod multi-seed: comma seeds trained on ONE pod, e.g. 0,1,2. Overrides seed/all-seeds. Empty = off.'
+        required: false
+        default: ''
+      on_pod_mode:
+        description: 'On-pod multi-seed mode: parallel (one seed per GPU, multi-GPU pod) or sequential (one GPU, back-to-back)'
+        required: false
+        default: 'parallel'
+        type: choice
+        options: ['parallel', 'sequential']
       branch:
         description: 'Git branch cloned on the pod'
         required: false
@@ -114,6 +124,8 @@ jobs:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
           BRANCH: ${{ github.event.inputs.branch }}
           SEED_INPUT: ${{ github.event.inputs.seed }}
+          ON_POD_SEEDS: ${{ github.event.inputs.on_pod_seeds }}
+          ON_POD_MODE: ${{ github.event.inputs.on_pod_mode }}
           EPOCHS_INPUT: ${{ github.event.inputs.epochs }}
           INTERRUPTIBLE_INPUT: ${{ github.event.inputs.interruptible }}
         run: |
@@ -133,7 +145,16 @@ jobs:
               $([ "$INTERRUPTIBLE_INPUT" = "true" ] && echo --interruptible)
           }
 
-          if [ -n "$SEED_INPUT" ]; then
+          if [ -n "$ON_POD_SEEDS" ]; then
+            echo "===== on-pod multi-seed math-code SFT ($ON_POD_MODE): seeds $ON_POD_SEEDS on ONE pod ====="
+            python3 tools/runpod_train.py --yes --branch "$BRANCH" \
+              --model "Qwen/Qwen2.5-7B-Instruct" --epochs "$EPOCHS" \
+              --train-data training/sophia-math-code-curriculum/sft_all.jsonl \
+              --adapter-dir "/workspace/sophia-runpod/sophia-agi/training/sophia-math-code-curriculum/checkpoints/sophia-cuda-v1" \
+              --train-only --seeds "$ON_POD_SEEDS" --on-pod-mode "$ON_POD_MODE" \
+              --name "sophia-math-code-sft-multiseed" \
+              $([ "$INTERRUPTIBLE_INPUT" = "true" ] && echo --interruptible)
+          elif [ -n "$SEED_INPUT" ]; then
             run_one_seed "$SEED_INPUT"
           else
             bash agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh
