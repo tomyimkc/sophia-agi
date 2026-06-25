@@ -17,6 +17,8 @@ links: [platonist]
 
 # Republic (理想國)
 
+Republic (理想國) is a philosophy text, in the platonist tradition, attributed to plato (authorship confidence: attributed), dated to classical_greece.
+
 - **Attributed author:** plato (confidence: `attributed`)
 - **Tradition:** platonist
 - **Domain:** philosophy

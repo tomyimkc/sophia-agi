@@ -17,6 +17,8 @@ links: [daoist]
 
 # Zhuangzi (莊子)
 
+Zhuangzi (莊子) is a philosophy text, in the daoist tradition, attributed to zhuangzi (authorship confidence: compiled), dated to warring_states.
+
 - **Attributed author:** zhuangzi (confidence: `compiled`)
 - **Tradition:** daoist
 - **Domain:** philosophy

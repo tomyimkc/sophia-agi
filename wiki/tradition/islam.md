@@ -10,5 +10,7 @@ links: []
 
 # Islam (伊斯蘭教)
 
+Islam (伊斯蘭教) is a tradition.
+
 
 _Provenance frontmatter is authoritative; generated from `data/traditions.json#islam` by `tools/wiki_sync.py`._

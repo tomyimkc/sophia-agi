@@ -10,5 +10,7 @@ links: []
 
 # Christianity (基督教)
 
+Christianity (基督教) is a tradition.
+
 
 _Provenance frontmatter is authoritative; generated from `data/traditions.json#christianity` by `tools/wiki_sync.py`._

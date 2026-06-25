@@ -16,6 +16,8 @@ links: [platonist]
 
 # Timaeus (蒂邁歐篇)
 
+Timaeus (蒂邁歐篇) is a philosophy text, in the platonist tradition, attributed to plato (authorship confidence: attributed).
+
 - **Attributed author:** plato (confidence: `attributed`)
 - **Tradition:** platonist
 - **Domain:** philosophy

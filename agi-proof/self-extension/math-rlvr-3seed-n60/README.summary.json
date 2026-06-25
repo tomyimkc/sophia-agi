@@ -1,0 +1,91 @@
+{
+  "benchmark": "rlvr-math-3seed-heldout-n60-colocate",
+  "date": "2026-06-25",
+  "model": "zai-org/glm-4-9b-chat-hf",
+  "runner": "RunPod on-demand A100 80GB, vLLM colocate (trl 0.19.1 + vllm 0.9.1, accelerate launch)",
+  "reward": "agent.verifiers.math_equivalent (sympy) \u2014 deterministic, judge-free, non-gameable (answer != question)",
+  "pack": "164 train / 60 fixed held-out; held-out families disjoint from train (generalization)",
+  "trainEpochs": 3.0,
+  "seeds": [
+    {
+      "seed": 0,
+      "runId": 28133989026,
+      "pod": "5doy7ujgvqhyy5",
+      "N": 60,
+      "evalFamilies": [
+        "derivative_chain",
+        "integrate_func",
+        "second_derivative"
+      ],
+      "base": 0.0,
+      "adapter": 0.1167,
+      "delta": 0.1167,
+      "checks": {
+        "contaminationFree": true,
+        "adapterImprovesPassAt1": true,
+        "noPassAt1Regression": true
+      },
+      "passed": true
+    },
+    {
+      "seed": 1,
+      "runId": 28135901156,
+      "pod": "i98uc7sp9aah31",
+      "N": 60,
+      "evalFamilies": [
+        "derivative_chain",
+        "integrate_func",
+        "second_derivative"
+      ],
+      "base": 0.0,
+      "adapter": 0.1,
+      "delta": 0.1,
+      "checks": {
+        "contaminationFree": true,
+        "adapterImprovesPassAt1": true,
+        "noPassAt1Regression": true
+      },
+      "passed": true
+    },
+    {
+      "seed": 2,
+      "runId": 28135902018,
+      "pod": "gfcx1qy7sjq12g",
+      "N": 60,
+      "evalFamilies": [
+        "derivative_chain",
+        "integrate_func",
+        "second_derivative"
+      ],
+      "base": 0.0,
+      "adapter": 0.0833,
+      "delta": 0.0833,
+      "checks": {
+        "contaminationFree": true,
+        "adapterImprovesPassAt1": true,
+        "noPassAt1Regression": true
+      },
+      "passed": true
+    }
+  ],
+  "aggregate": {
+    "nSeeds": 3,
+    "meanDelta": 0.1,
+    "minDelta": 0.0833,
+    "allSeedsPositive": true,
+    "stdDelta": 0.0167,
+    "se": 0.0096,
+    "ci95_acrossSeeds": [
+      0.0585,
+      0.1415
+    ],
+    "ci95ExcludesZero": true,
+    "pooledAdapter": "18/180",
+    "pooledBase": "0/180"
+  },
+  "verdict": {
+    "rungGateCleared": true,
+    "statement": "Live GRPO RLVR on GLM-4-9B produces a REPRODUCIBLE, statistically-supported generalization gain on a judge-free, family-disjoint held-out math set: base 0/60 in every seed -> adapter 5-7/60, all three seeds Delta>0 (mean +0.10), 95% across-seed CI excludes 0. Contamination-free, no regression, deterministic non-gameable verifier.",
+    "honestScope": "MODEST, NARROW capability: ~10% absolute on a small held-out math set where the base model floors at 0%. This clears the self-extension RUNG gate (>=3 seeds, all Delta>0, CI excludes 0) \u2014 it is NOT an AGI claim. canClaimAGI stays False."
+  }
+}

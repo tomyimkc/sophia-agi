@@ -17,6 +17,8 @@ links: [confucian]
 
 # Analects (論語)
 
+Analects (論語) is a philosophy text, in the confucian tradition, attributed to confucius (authorship confidence: compiled), dated to warring_states.
+
 - **Attributed author:** confucius (confidence: `compiled`)
 - **Tradition:** confucian
 - **Domain:** philosophy

@@ -15,6 +15,8 @@ links: [confucian_ritual]
 
 # ancestor veneration in Confucian ritual religion (祭祖)
 
+Ancestor veneration in Confucian ritual religion (祭祖) is a religion concept, in the confucian_ritual tradition.
+
 - **Tradition:** confucian_ritual
 - **Domain:** religion
 

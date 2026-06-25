@@ -95,6 +95,35 @@ jobs:
           python tests/test_wiki_librarian.py
           python tests/test_wiki_mcp.py
           python tests/test_memory_consolidation.py
+          python tests/test_continual_retention.py
+          python tests/test_belief_revision_policy.py
+          python tests/test_unlearning.py
+          python tests/test_cls_consolidation.py
+          python tests/test_continual_qa.py
+          python tests/test_continual_qa_controller.py
+          python tests/test_continual_qa_validation.py
+          python tests/test_continual_qa_answer.py
+          python tools/run_continual_qa_benchmark.py
+          python tools/gen_continual_qa_from_wiki.py
+          python tools/run_continual_qa_benchmark.py --episodes eval/continual_qa/episodes_v2_wiki.jsonl --out agi-proof/benchmark-results/continual-qa-wiki.public-report.json
+          python tools/run_continual_qa_validation.py
+          python tests/test_audit_cpqa_recall.py
+          python tools/audit_cpqa_recall.py
+          python tests/test_continual_qa_hybrid.py
+          python tests/test_grounded_answer_policy.py
+          python tests/test_grounded_agent.py
+          python tests/test_temporal_validity.py
+          python tests/test_knowledge_gap_log.py
+          python tests/test_forgetting_curve.py
+          python tests/test_belief_revision_scaling.py
+          python tests/test_symbol_identity.py
+          python tests/test_competence_model.py
+          python tests/test_proof_carrying_reasoning.py
+          python tests/test_poison_resistant_ingestion.py
+          python tests/test_incremental_revision.py
+          python tests/test_skill_library.py
+          python tests/test_governed_rsi.py
+          python tests/test_run_cls_consolidation.py
           python tests/test_wiki_proof.py
           python tests/test_agent_harness.py
       - name: Governance contract conformance (golden vectors + schema)

@@ -14,6 +14,8 @@ links: []
 
 # Vikings wore horned helmets in battle (維京人戴角盔作戰)
 
+Vikings wore horned helmets in battle (維京人戴角盔作戰) is a history event.
+
 - **Domain:** history
 
 19th-century romantic imagery, not typical Viking battle gear

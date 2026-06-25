@@ -17,6 +17,8 @@ links: []
 
 # Meditations (沉思錄)
 
+Meditations (沉思錄) is a philosophy text, in the stoic tradition, attributed to marcus_aurelius (authorship confidence: attributed), dated to roman_imperial.
+
 - **Attributed author:** marcus_aurelius (confidence: `attributed`)
 - **Tradition:** stoic
 - **Domain:** philosophy

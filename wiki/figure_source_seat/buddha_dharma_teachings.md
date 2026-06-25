@@ -15,6 +15,8 @@ links: [buddhism]
 
 # Buddha traditions in Buddhist canons (佛教經藏中的佛陀傳統)
 
+Buddha traditions in Buddhist canons (佛教經藏中的佛陀傳統) is a religion figure_source_seat, in the buddhism tradition.
+
 - **Tradition:** buddhism
 - **Domain:** religion
 

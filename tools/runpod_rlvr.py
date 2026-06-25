@@ -326,11 +326,16 @@ python - <<'PY'
 from pathlib import Path
 p = Path("/tmp/requirements-rl.sophia.txt")
 pins = {
-    "transformers": "transformers==4.51.3",
-    "trl": "trl==0.16.1",
-    "peft": "peft==0.15.2",
+    # Coherent vLLM-colocate stack. trl 0.19 has the vllm_mode selector (colocate is
+    # the DEFAULT: vLLM in-process on one GPU, no server). vllm 0.9.1 is the matching
+    # vLLM API. transformers MUST be pinned to the 4.53.x line: vllm 0.9.1 registers
+    # an `aimv2` AutoConfig that already exists in transformers >=5.x, so an unpinned
+    # transformers (pip picks 5.x) crashes GRPOTrainer import. datasets pinned off the
+    # 5.x line for the same float-too-new reason. peft/accelerate resolve compatibly.
+    "trl": "trl==0.19.1",
+    "vllm": "vllm==0.9.1",
+    "transformers": "transformers==4.53.2",
     "datasets": "datasets==3.6.0",
-    "accelerate": "accelerate==1.6.0",
 }
 out = []
 for line in p.read_text().splitlines():
@@ -352,7 +357,17 @@ PY
     live_cmd = ""
     if args.remote_mode == "live":
         live_cmd = """
-python tools/run_rlvr.py \\
+# vLLM colocate/server runs through vLLM's external-launcher executor, which reads
+# the distributed env (RANK/WORLD_SIZE/LOCAL_RANK) that `accelerate launch` sets.
+# Plain `python` leaves RANK unset -> KeyError: 'RANK'. --vllm none has no such
+# executor and runs fine under plain python.
+if [ "$SOPHIA_VLLM" = "none" ]; then
+  SOPHIA_LAUNCH="python"
+else
+  SOPHIA_LAUNCH="accelerate launch --num_processes 1 --num_machines 1"
+fi
+$SOPHIA_LAUNCH tools/run_rlvr.py \\
+  --task "$SOPHIA_TASK" \\
   --model "$SOPHIA_MODEL" \\
   --quant "$SOPHIA_QUANT" \\
   --vllm "$SOPHIA_VLLM" \\
@@ -368,6 +383,7 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
   # Produce the held-out before/after adapter-eval the SSIL Layer-1 gate ingests.
   # Non-fatal: if eval OOMs or fails, the training artifacts are still copied back.
   python tools/eval_rlvr_adapter.py --mode real \\
+    --task "$SOPHIA_TASK" \\
     --model "$SOPHIA_MODEL" \\
     --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
     --seed "$SOPHIA_SEED" \\
@@ -388,6 +404,7 @@ export HF_HOME=/workspace/.cache/huggingface
 export TRANSFORMERS_CACHE=/workspace/.cache/huggingface/transformers
 export PIP_CACHE_DIR=/workspace/.cache/pip
 export SOPHIA_MODEL={shlex.quote(args.model)}
+export SOPHIA_TASK={shlex.quote(args.task)}
 export SOPHIA_QUANT={shlex.quote(args.quant)}
 export SOPHIA_VLLM={shlex.quote(args.vllm)}
 export SOPHIA_EPOCHS={shlex.quote(str(args.epochs))}
@@ -420,12 +437,17 @@ except Exception as exc:
     print("torch precheck failed:", type(exc).__name__, exc)
 PY
 python -m pip install --upgrade pip setuptools wheel
+# The math task's reward is sympy (math_equivalent); needed in BOTH modes so the
+# offline smoke's math invariants and the live reward can run.
+if [ "$SOPHIA_TASK" = "math" ]; then
+  python -m pip install -r requirements-math.txt
+fi
 if [ {shlex.quote(args.remote_mode)} = "live" ]; then
 {req_cmd}
   python -m pip install -r /tmp/requirements-rl.sophia.txt
 fi
 python tools/validate_attribution.py
-python tools/run_rlvr.py --model mock --dry-run --out /workspace/sophia-runpod/rlvr.offline-report.json
+python tools/run_rlvr.py --task "$SOPHIA_TASK" --model mock --dry-run --out /workspace/sophia-runpod/rlvr.offline-report.json
 {live_cmd}
 echo "Sophia RLVR remote run complete."
 ls -lh /workspace/sophia-runpod/rlvr*.json || true
@@ -532,6 +554,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--branch", default="", help="optional git branch/tag to clone")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--remote-mode", choices=["offline", "live"], default="live", help="run only remote offline smoke test or full live GRPO")
+    ap.add_argument("--task", choices=["provenance", "math"], default="provenance", help="RLVR reward task: provenance (provenance_faithful) or math (sympy math_equivalent)")
     ap.add_argument("--quant", choices=["bf16", "4bit"], default="bf16")
     ap.add_argument("--vllm", choices=["none", "server", "colocate"], default="none")
     ap.add_argument("--epochs", type=float, default=1.0)

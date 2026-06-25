@@ -17,6 +17,8 @@ links: [daoist]
 
 # Liezi (列子)
 
+Liezi (列子) is a philosophy text, in the daoist tradition, attributed to liezi (authorship confidence: legendary), dated to warring_states.
+
 - **Attributed author:** liezi (confidence: `legendary`)
 - **Tradition:** daoist
 - **Domain:** philosophy

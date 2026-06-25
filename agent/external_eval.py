@@ -38,13 +38,40 @@ def score_item(item: dict, answer_text: str, *, tol: float = 1e-6) -> bool:
     return abs(float(got) - float(gold)) <= tol
 
 
-def run_dataset(items: list[dict], solve_fn: Callable[[dict], str], *, tol: float = 1e-6) -> dict:
-    """Score each item by external gold. Returns accuracy + per-item results."""
+def score_item_symbolic(item: dict, answer_text: str) -> bool:
+    """Score a MATH-style item by SYMBOLIC equivalence to gold (sympy).
+
+    For answers that are expressions, not bare numbers (``(x-1)*(x+1)``,
+    ``2*exp(2*x)``): exact-match is too brittle (``x+1`` vs ``1+x``), so we reuse
+    ``agent.verifiers.math_equivalent`` — the same CAS checker the math RLVR reward
+    uses. Fail-closed: without sympy installed it returns False (cannot verify),
+    never a false pass.
+    """
+    from agent.verifiers import math_equivalent
+
+    return bool(math_equivalent(str(item["answer"]))(answer_text or "", None, {})["passed"])
+
+
+def run_dataset(
+    items: list[dict],
+    solve_fn: Callable[[dict], str],
+    *,
+    tol: float = 1e-6,
+    scorer: "Callable[[dict, str], bool] | None" = None,
+) -> dict:
+    """Score each item by external gold. Returns accuracy + per-item results.
+
+    ``scorer`` selects the oracle: the default numeric exact-match
+    (``score_item``, GSM8K-style) or ``score_item_symbolic`` for MATH-style
+    expression answers. Both judge against external gold, independent of the gate.
+    """
+    score = scorer or (lambda it, ans: score_item(it, ans, tol=tol))
+    is_symbolic = scorer is score_item_symbolic
     results = []
     correct = 0
     for it in items:
         ans = solve_fn(it)
-        ok = score_item(it, ans, tol=tol)
+        ok = score(it, ans)
         correct += int(ok)
         results.append({"id": it.get("id"), "correct": ok})
     n = len(items)
@@ -52,6 +79,7 @@ def run_dataset(items: list[dict], solve_fn: Callable[[dict], str], *, tol: floa
         "n": n,
         "correct": correct,
         "accuracy": round(correct / n, 4) if n else 0.0,
-        "oracle": "external gold answer (exact-match) — independent of the provenance gate",
+        "oracle": ("external gold answer (symbolic equivalence, sympy)" if is_symbolic
+                   else "external gold answer (numeric exact-match)") + " — independent of the provenance gate",
         "results": results,
     }

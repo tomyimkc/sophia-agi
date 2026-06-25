@@ -10,6 +10,8 @@ links: []
 
 # Daoist (道家)
 
+Daoist (道家) is a tradition.
+
 
 > **Do not merge with:** confucian.
 

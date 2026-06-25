@@ -1,0 +1,139 @@
+{
+  "schema": "sophia.continual_qa_judged.v2",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "answerModel": "gpt-4o-mini",
+  "answerFamily": "openai",
+  "judges": [
+    "deepseek/deepseek-chat",
+    "meta-llama/llama-3.3-70b-instruct",
+    "qwen/qwen-2.5-72b-instruct"
+  ],
+  "judgeFamilies": [
+    "deepseek",
+    "meta",
+    "qwen"
+  ],
+  "distinctProviderFamilies": true,
+  "selfGradingRisk": false,
+  "groundedMode": "strict",
+  "groundedSystem": "hybrid",
+  "retrieval": "neighborhood",
+  "hops": 1,
+  "hybridPolicyCounts": {
+    "abstain_no_source": 15,
+    "grounded_strict": 237,
+    "grounded_fallback": 24
+  },
+  "runs": 3,
+  "queryCount": 92,
+  "summary": {
+    "grounded": {
+      "perRun": [
+        {
+          "consensusPassRate": 0.663,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.6957,
+            "meta-llama/llama-3.3-70b-instruct": 0.7283,
+            "qwen/qwen-2.5-72b-instruct": 0.7391
+          },
+          "interJudgeKappa": 0.8569,
+          "interJudgePercentAgreement": 0.942
+        },
+        {
+          "consensusPassRate": 0.7065,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.7283,
+            "meta-llama/llama-3.3-70b-instruct": 0.7174,
+            "qwen/qwen-2.5-72b-instruct": 0.7391
+          },
+          "interJudgeKappa": 0.9266,
+          "interJudgePercentAgreement": 0.971
+        },
+        {
+          "consensusPassRate": 0.663,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.7065,
+            "meta-llama/llama-3.3-70b-instruct": 0.7283,
+            "qwen/qwen-2.5-72b-instruct": 0.7283
+          },
+          "interJudgeKappa": 0.8562,
+          "interJudgePercentAgreement": 0.942
+        }
+      ],
+      "meanConsensusPassRate": 0.6775,
+      "consensusCI95": [
+        0.6232,
+        0.7319
+      ],
+      "byExpect": {
+        "assert": {
+          "n": 261,
+          "consensusPassRate": 0.6628
+        },
+        "abstain": {
+          "n": 15,
+          "consensusPassRate": 0.9333
+        }
+      },
+      "meanInterJudgeKappa": 0.8799,
+      "meanInterJudgePercentAgreement": 0.9517
+    },
+    "raw": {
+      "perRun": [
+        {
+          "consensusPassRate": 0.913,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.9348,
+            "meta-llama/llama-3.3-70b-instruct": 0.913,
+            "qwen/qwen-2.5-72b-instruct": 0.9348
+          },
+          "interJudgeKappa": 0.8971,
+          "interJudgePercentAgreement": 0.9855
+        },
+        {
+          "consensusPassRate": 0.8913,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.9348,
+            "meta-llama/llama-3.3-70b-instruct": 0.8913,
+            "qwen/qwen-2.5-72b-instruct": 0.9348
+          },
+          "interJudgeKappa": 0.8185,
+          "interJudgePercentAgreement": 0.971
+        },
+        {
+          "consensusPassRate": 0.8804,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.9348,
+            "meta-llama/llama-3.3-70b-instruct": 0.9022,
+            "qwen/qwen-2.5-72b-instruct": 0.9348
+          },
+          "interJudgeKappa": 0.6995,
+          "interJudgePercentAgreement": 0.9566
+        }
+      ],
+      "meanConsensusPassRate": 0.8949,
+      "consensusCI95": [
+        0.8587,
+        0.9312
+      ],
+      "byExpect": {
+        "assert": {
+          "n": 261,
+          "consensusPassRate": 0.9464
+        },
+        "abstain": {
+          "n": 15,
+          "consensusPassRate": 0.0
+        }
+      },
+      "meanInterJudgeKappa": 0.805,
+      "meanInterJudgePercentAgreement": 0.971
+    }
+  },
+  "caveats": [
+    "Models reached via one gateway (LLMHub) under one key; validated:false pending independent replication and pre-registration, though judges are distinct families.",
+    "abstain-rubric scores confident refutation of a fictional premise as non-abstention, which can understate the raw model on fictional-premise controls; the unambiguous contrast is on RETRACTED real facts (raw asserts the stale fact, grounded abstains)."
+  ]
+}

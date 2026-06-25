@@ -15,6 +15,8 @@ links: []
 
 # First sustained powered flight, Wright brothers (1903) (萊特兄弟首次持續動力飛行（1903）)
 
+First sustained powered flight, Wright brothers (1903) (萊特兄弟首次持續動力飛行（1903）) is a history event, dated to 1903-12-17.
+
 - **Domain:** history
 
 Dated event with the Wrights' diaries and the famous first-flight photograph. Myth-trap: stated as the uncontested 'first flight ever' — competing claims (e.g. Santos-Dumont, Whitehead) and definitional disputes (controlled vs sustained vs powered) require careful wording.

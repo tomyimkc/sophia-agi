@@ -16,6 +16,8 @@ links: []
 
 # I Ching (易經)
 
+I Ching (易經) is a philosophy text, in the zhou_classics tradition, attributed to multiple (authorship confidence: compiled).
+
 - **Attributed author:** multiple (confidence: `compiled`)
 - **Tradition:** zhou_classics
 - **Domain:** philosophy

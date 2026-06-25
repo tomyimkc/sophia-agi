@@ -65,19 +65,20 @@ def _legal_gate(text: str, *, resolver=None, judge=None) -> "dict | None":
 
 
 def _numeric_gate(text: str) -> "dict | None":
-    """Domain-agnostic arithmetic soundness — flags a stated FALSE equality
-    (e.g. a finance/economy answer claiming '100000 / 5000 = 25 months'). Returns
-    None when the answer states no checkable arithmetic (cheap no-op). This is the
-    verifier-gating pattern generalized beyond legal to every quantitative answer.
+    """Domain-agnostic math soundness — flags a stated FALSE equality, arithmetic
+    (e.g. '100000 / 5000 = 25 months') OR algebraic ('(x+1)**2 = x**2 + 1', when
+    sympy is installed). Returns None when the answer states no checkable math
+    (cheap no-op). ``math_sound`` subsumes ``arithmetic_sound`` and degrades to
+    arithmetic-only when sympy is absent, so this never regresses without it.
     """
-    from agent.verifiers import arithmetic_sound
+    from agent.verifiers import math_sound
 
-    r = arithmetic_sound()(text, None, {})
+    r = math_sound()(text, None, {})
     if not r["passed"]:
-        return {"checks": [{"id": "arithmetic_sound", "passed": False, "reasons": r["reasons"]}],
+        return {"checks": [{"id": "math_sound", "passed": False, "reasons": r["reasons"]}],
                 "violations": r["reasons"]}
     if (r.get("detail") or {}).get("checked", 0) > 0:
-        return {"checks": [{"id": "arithmetic_sound", "passed": True, "reasons": []}], "violations": []}
+        return {"checks": [{"id": "math_sound", "passed": True, "reasons": []}], "violations": []}
     return None
 
 

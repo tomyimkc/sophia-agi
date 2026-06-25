@@ -37,6 +37,7 @@ _PROVENANCE_FILES = (
     "psychology_concepts.json",
     "religion_concepts.json",
     "history_events.json",
+    "science.json",
     "learned_attributions.json",
 )
 
@@ -391,6 +392,257 @@ def arithmetic_sound(*, tol: float = 1e-6) -> Verifier:
     return _verify
 
 
+# --------------------------------------------------------------------------- #
+# Symbolic math (optional sympy backend, fail-closed) — the math analogue of
+# code_tests_pass: a deterministic checker, no LLM judge.
+# --------------------------------------------------------------------------- #
+def _sympy_parse(expr: str):
+    """Parse one math expression with sympy. Returns (ok, sympy_expr_or_None).
+
+    Uses ``parse_expr`` (not ``sympify`` / ``eval``) with explicit transformations
+    so ``^`` means power and ``2x`` means ``2*x`` — math notation, not Python.
+    Returns (False, None) when sympy is unavailable OR the string does not parse
+    as a math expression (so prose like ``x = the answer`` is simply skipped, not
+    flagged). Input is length-capped as a cheap guard against pathological strings.
+    """
+    expr = (expr or "").strip()
+    if not expr or len(expr) > 512:
+        return (False, None)
+    try:
+        from sympy.parsing.sympy_parser import (
+            convert_xor,
+            implicit_multiplication_application,
+            parse_expr,
+            standard_transformations,
+        )
+    except Exception:  # noqa: BLE001 - sympy is an optional dependency
+        return (False, None)
+    trans = standard_transformations + (implicit_multiplication_application, convert_xor)
+    try:
+        return (True, parse_expr(expr, transformations=trans, evaluate=True))
+    except Exception:  # noqa: BLE001 - unparseable => "not a math claim", skip
+        return (False, None)
+
+
+def _sympy_equal(a_expr: str, b_expr: str) -> "bool | None":
+    """True/False if a==b symbolically, or None if either side is not parseable.
+
+    Symbolic first (``simplify(a-b)==0``); falls back to a high-precision numeric
+    probe over a few sample points for expressions ``simplify`` cannot close
+    (transcendental tangles). None means "can't decide" (treated as skip/held by
+    callers), never a silent pass.
+    """
+    ok_a, ea = _sympy_parse(a_expr)
+    ok_b, eb = _sympy_parse(b_expr)
+    if not (ok_a and ok_b):
+        return None
+    try:
+        import sympy as sp
+
+        diff = sp.simplify(ea - eb)
+        if diff == 0:
+            return True
+        # simplify can leave a nonzero-looking-but-zero residue; try a second pass.
+        if sp.simplify(sp.expand(diff)) == 0:
+            return True
+        # Numeric fallback over the free symbols (decides most residual cases).
+        syms = sorted(diff.free_symbols, key=str)
+        if not syms:
+            try:
+                return abs(complex(diff)) < 1e-9
+            except Exception:  # noqa: BLE001
+                return False
+        # Bail rather than guess on many-symbol expressions: substituting only a
+        # subset leaves the result symbolic and would let a non-zero residue read
+        # as "equal". Undecidable cheaply => None (held), never a silent True.
+        if len(syms) > 4:
+            return None
+        import itertools
+
+        decided_any = False
+        for combo in itertools.product((0.5, 1.5, 2.5, -1.3), repeat=len(syms)):
+            subs = {s: v for s, v in zip(syms, combo)}
+            try:
+                val = complex(diff.subs(subs))
+            except Exception:  # noqa: BLE001 - undefined at this point, try next
+                continue
+            decided_any = True
+            if abs(val) > 1e-6:
+                return False
+        return True if decided_any else None
+    except Exception:  # noqa: BLE001 - solver error => undecided
+        return None
+
+
+# Multi-letter runs allowed inside a math expression (functions/constants).
+# Anything else multi-letter (e.g. "Note", "apples", "general") means the captured
+# side is prose, not math -> not an identity claim, so math_sound skips it.
+_MATH_WORDS = {
+    "sin", "cos", "tan", "cot", "sec", "csc", "asin", "acos", "atan",
+    "sinh", "cosh", "tanh", "log", "ln", "exp", "sqrt", "abs", "pi", "e",
+    "oo", "re", "im", "deg", "rad", "gcd", "lcm", "mod",
+}
+
+
+def _is_math_atom(tok: str) -> bool:
+    """A token belongs in a math expression: a number, operator, paren, single-letter
+    variable, or a known function/constant. A multi-letter prose word is not."""
+    if not tok.strip():
+        return True  # whitespace is fine inside an expression
+    if re.fullmatch(r"\d+\.?\d*", tok) or tok in ("**", "+", "-", "*", "/", "^", "(", ")"):
+        return True
+    if re.fullmatch(r"[A-Za-z]+", tok):
+        return len(tok) == 1 or tok.lower() in _MATH_WORDS
+    return False
+
+
+_TOK = re.compile(r"\*\*|\d+\.?\d*|[A-Za-z]+|[()+\-*/^]|\s+")
+
+
+def _math_core(side: str, *, keep: str) -> str:
+    """Return the math expression adjacent to the '=' sign, trimming prose.
+
+    ``keep='right'`` keeps the leading math run of a RHS (math is next to '=' on
+    the left of the side); ``keep='left'`` keeps the trailing math run of a LHS.
+    A side that is all prose returns ''. This is what lets math_sound read the
+    algebra out of ``"In general, (x+1)**2 = x**2 + 1 always."`` without choking on
+    the surrounding words."""
+    toks = _TOK.findall(side)
+    if keep == "left":
+        toks = list(reversed(toks))
+    core: list[str] = []
+    for tok in toks:
+        if _is_math_atom(tok):
+            core.append(tok)
+        elif core:
+            break  # hit prose after starting the math run -> stop
+        else:
+            continue  # leading prose before the math run -> skip
+    if keep == "left":
+        core = list(reversed(core))
+    out = "".join(core).strip()
+    # Require real math content, not just a lone variable or stray paren.
+    return out if re.search(r"[\d]|[+\-*/^]|\*\*", out) else ""
+
+
+_BOXED = re.compile(r"\\boxed\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}")
+def _split_equalities(text: str) -> "list[tuple[str, str]]":
+    """Yield (left, right) text segments around each '=' within a sentence.
+
+    Splits on sentence boundaries first so an equality never spans two sentences,
+    then pairs consecutive parts so a chain ``a = b = c`` yields (a,b) and (b,c).
+    The math core is extracted from each segment by ``_math_core``."""
+    pairs: list[tuple[str, str]] = []
+    for sentence in re.split(r"[.\n;:,]", text):
+        if "=" not in sentence:
+            continue
+        # Ignore comparison/relational operators, keep plain '='.
+        clean = re.sub(r"[<>!]=|=>|=<", " ", sentence)
+        parts = clean.split("=")
+        for i in range(len(parts) - 1):
+            pairs.append((parts[i], parts[i + 1]))
+    return pairs
+
+
+def extract_math_answer(text: str) -> "str | None":
+    """Pull a final math answer: a ``\\boxed{...}`` (MATH dataset convention),
+    else a trailing ``answer is X`` / ``= X`` expression, else the last line."""
+    if not text:
+        return None
+    m = list(_BOXED.finditer(text))
+    if m:
+        return m[-1].group(1).strip()
+    # Stop at a SENTENCE-ending period (followed by space/end), not a decimal point.
+    m2 = re.search(r"(?:answer|result)\s*(?:is|:|=)\s*(.+?)(?=\.\s|\.$|$)", text, re.IGNORECASE)
+    if m2:
+        return m2.group(1).strip()
+    last = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    return last[-1] if last else None
+
+
+def math_equivalent(expected: str, *, extract: bool = True) -> Verifier:
+    """Pass iff the answer is SYMBOLICALLY equal to ``expected`` (sympy).
+
+    The math analogue of ``exact_match`` but modulo algebra: ``2*x`` ≡ ``x + x``,
+    ``1/2`` ≡ ``0.5``, ``(x-1)*(x+1)`` ≡ ``x**2 - 1``. By default it first extracts
+    a final answer (``\\boxed{}`` / "answer is …" / last line); pass
+    ``extract=False`` to compare the whole string. Intended as an eval / RLVR
+    reward seam (MATH-style problems).
+
+    **Fail-closed (optional dependency).** When sympy is unavailable the run is not
+    verifiable, so it FAILS with reason ``sympy_unavailable`` (a held verdict),
+    never a silent pass — mirroring the z3 formal verifier.
+    """
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        try:
+            import sympy  # noqa: F401
+        except Exception:  # noqa: BLE001
+            return _fail(["sympy_unavailable: cannot verify math equivalence"],
+                         {"checked": 0, "sympy": False})
+        cand = extract_math_answer(text) if extract else (text or "").strip()
+        if not cand:
+            return _fail(["no math answer found in response"], {"sympy": True})
+        eq = _sympy_equal(cand, expected)
+        if eq is True:
+            return _ok({"expected": expected, "got": cand, "sympy": True})
+        if eq is None:
+            return _fail([f"unparseable math (expected {expected!r}, got {cand!r})"],
+                         {"expected": expected, "got": cand, "sympy": True})
+        return _fail([f"not equivalent: got {cand!r}, expected {expected!r}"],
+                     {"expected": expected, "got": cand, "sympy": True})
+
+    return _verify
+
+
+def math_sound() -> Verifier:
+    """Fail if the text states a FALSE math identity (the symbolic ``arithmetic_sound``).
+
+    Always runs the pure-Python ``arithmetic_sound`` check (no dependency). When
+    sympy is present it ADDITIONALLY verifies stated *algebraic* equalities
+    (``(x+1)**2 = x**2 + 1`` → flagged; ``x**2 - 1 = (x-1)(x+1)`` → fine). When
+    sympy is absent it degrades gracefully to arithmetic-only and records how many
+    algebraic claims went unverified in ``detail.heldClaims`` (so the gate can
+    escalate) — it never blocks a valid answer just because the optional backend is
+    missing, and it never silently passes a false one it actually checked.
+    """
+    arith = arithmetic_sound()
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        base = arith(text, task, step)
+        wrong = list((base.get("detail") or {}).get("wrong") or [])
+        checked = int((base.get("detail") or {}).get("checked") or 0)
+        held = 0
+        try:
+            import sympy  # noqa: F401
+            have_sympy = True
+        except Exception:  # noqa: BLE001
+            have_sympy = False
+        for lhs_raw, rhs_raw in _split_equalities(text or ""):
+            a = _math_core(lhs_raw, keep="left")
+            b = _math_core(rhs_raw, keep="right")
+            if not (a and b):
+                continue
+            # Skip pure-number equalities (arithmetic_sound owns those); we want the
+            # ALGEBRAIC ones (a letter on at least one side).
+            if not re.search(r"[A-Za-z]", a + b):
+                continue
+            if not have_sympy:
+                held += 1
+                continue
+            eq = _sympy_equal(a, b)
+            if eq is None:
+                continue  # not a decidable identity -> not flagged
+            checked += 1
+            if eq is False:
+                wrong.append(f"{a} = {b} (not an identity)")
+        if wrong:
+            return _fail([f"false math: {w}" for w in wrong],
+                         {"wrong": wrong, "checked": checked, "sympy": have_sympy, "heldClaims": held})
+        return _ok({"checked": checked, "sympy": have_sympy, "heldClaims": held})
+
+    return _verify
+
+
 def no_secret_leak(secrets: "list[str]", *, mask: bool = True) -> Verifier:
     """Fail if any classified/canary value appears verbatim in the text.
 
@@ -628,9 +880,17 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
     records = records if records is not None else _load_provenance_records()
     the = r"(?:the\s+)?"
     q = r"[\"“”'’«»]?"                                     # an optional opening/closing quote
-    the_q = q + r"\s*" + the + q + r"\s*"                  # quote/"the"-tolerant lead-in to a title
-    attr = r"(?:wrote|authored|penned|composed)"          # active
-    attr_p = r"(?:written|authored|penned|composed)"      # passive participle
+    # Bounded "theory/phrase/law of …" connector so a DISCOVERY can sit behind it
+    # ("invented the theory of X", "coined the phrase Y"). Optional, so authorship
+    # titles ("wrote the Republic") are unaffected.
+    conn = r"(?:(?:the\s+)?(?:theor(?:y|em)|phrase|concept|idea|principle|law|notion|term|model)\s+of\s+)?"
+    the_q = q + r"\s*" + the + q + r"\s*" + conn           # quote/"the"/connector-tolerant lead-in to a title
+    # Authorship verbs PLUS discovery/coinage verbs, so the gate adjudicates "who
+    # discovered/invented/coined X", not only "who wrote X" — the science domain's
+    # attribution shape. Discovery verbs are conservative (no generic "made/created").
+    _disc = r"|invented|discovered|coined|formulated|devised|originated|conceived|proposed"
+    attr = r"(?:wrote|authored|penned|composed" + _disc + r")"          # active
+    attr_p = r"(?:written|authored|penned|composed|invented|discovered|coined|formulated|devised|originated|conceived|proposed)"  # passive participle
     # Bounded honorific/article lead-in to a name ("to the prophet Daniel").
     nm = r"(?:(?:the|a|an|prophet|apostle|king|saint|st\.?|emperor|biblical|tyrant)\s+){0,3}"
     # Optional bounded appositive/parenthetical between an author and the verb:
@@ -684,8 +944,8 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
                 re.compile(a + r"(?:\s+(?:is|was|being))?\s+" + the + r"(?:author|writer|composer)\s+of\s+" + the_q + t),  # X is the author of Y
                 re.compile(a + app + r"\s*(?:is|was)\s+credited\s+with\s+\w+ing\s+" + the_q + t),        # X (the …) is credited with writing Y
                 re.compile(a + r"['’]s\s+" + the_q + t),                                                 # X's (the) Y
-                re.compile(t + r"(?:\s*,)?(?:\s+(?:was|is|were|been))?\s+(?:" + attr_p + r"|attributed)\s+by\s+" + nm + a),  # Y (was) written by X
-                re.compile(t + r"(?:\s*,)?\s+(?:is|was|are|were|been|being)?\s*attributed\s+to\s+" + nm + a),  # Y is attributed to (the prophet) X
+                re.compile(conn + t + r"(?:\s*,)?(?:\s+(?:was|is|were|been))?\s+(?:" + attr_p + r"|attributed)\s+by\s+" + nm + a),  # Y (was) written/discovered by X
+                re.compile(conn + t + r"(?:\s*,)?\s+(?:is|was|are|were|been|being)?\s*attributed\s+to\s+" + nm + a),  # Y is attributed to (the prophet) X
                 re.compile(t + r"(?:\s*,)?\s+(?:a\s+|the\s+)?(?:work|text|book|composition|treatise)\s+(?:by|of)\s+" + a),  # Y, a work by X
                 re.compile(t + r"\s+(?:was\s+|is\s+)?" + a + r"['’]s\s+(?:\w+\s+)?(?:work|text|masterpiece|composition|book|treatise)\b"),  # Y was X's work
                 re.compile(a + r"\s*著\s*" + title_alt),                                                 # X 著 Y
@@ -879,6 +1139,7 @@ personality_discipline = personality_faithful
 # Parameterless verifiers usable directly by name (CLI / harness registry).
 VERIFIERS: dict[str, Callable[[], Verifier]] = {
     "arithmetic_sound": arithmetic_sound,
+    "math_sound": math_sound,
     "code_tests_pass": code_tests_pass,
     "provenance_faithful": provenance_faithful,
     "temporal_consistent": _temporal_consistent,

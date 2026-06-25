@@ -204,6 +204,63 @@ def render(doc: dict) -> str:
             L += [f"- {x}" for x in audit["robustRegardlessOfJudge"]]
             L.append("")
 
+    cg = doc.get("continualGroundedEvals")
+    if cg:
+        g, r = cg.get("grounded", {}), cg.get("raw", {})
+        gci, rci = g.get("ci", [None, None]), r.get("ci", [None, None])
+        L += [
+            "## Continual / grounded-answering (CANDIDATE — not a headline)",
+            "",
+            "Continual Provenance QA (CPQA): a frozen LLM answers either from the retrieved "
+            "OKF/wiki source (`grounded`) or from parametric memory (`raw`), and a "
+            "cross-provider judge panel scores both. Held to the no-overclaim gate and "
+            "**candidate, not validated** — self-authored benchmark, keys held by one "
+            "operator, no external replication.",
+            "",
+            f"- Benchmark: {cg.get('benchmark')}",
+            f"- Answers: {cg.get('answerModel')} · Judges: {', '.join(cg.get('judges', []))} "
+            f"({cg.get('gateway')}) · {cg.get('runs')} runs · N={cg.get('queryCount')}",
+            f"- Overall consensus pass: grounded **{_pct(g.get('consensus'))}** "
+            f"[{_pct(gci[0])}, {_pct(gci[1])}] vs raw **{_pct(r.get('consensus'))}** "
+            f"[{_pct(rci[0])}, {_pct(rci[1])}]",
+            f"- By expectation — **abstain/attribution-traps: grounded {_pct(g.get('abstain'))} "
+            f"vs raw {_pct(r.get('abstain'))}**; recall: grounded {_pct(g.get('assert'))} "
+            f"vs raw {_pct(r.get('assert'))} (a strong raw model already knows well-known facts; "
+            "grounding's win is fail-closed abstention on traps)",
+            f"- Inter-judge κ {cg.get('interJudgeKappa')} · percent-agreement "
+            f"{_pct(cg.get('interJudgePercentAgreement'))}",
+        ]
+        hy = cg.get("hybrid")
+        if hy:
+            L += [
+                f"- **Recall fix ({hy.get('system')}):** overall **{_pct(hy.get('consensus'))}** "
+                f"[{_pct(hy.get('ci', [None, None])[0])}, {_pct(hy.get('ci', [None, None])[1])}], "
+                f"recall **{_pct(hy.get('assert'))}** (up from strict {_pct(g.get('assert'))}), "
+                f"traps {_pct(hy.get('abstain'))}; policy {hy.get('policyCounts')}",
+                f"  - {hy.get('note', '')}",
+            ]
+        es = cg.get("enrichedStrict")
+        if es:
+            L += [
+                f"- **Corpus enrichment ({es.get('system')}):** overall **{_pct(es.get('consensus'))}** "
+                f"[{_pct(es.get('ci', [None, None])[0])}, {_pct(es.get('ci', [None, None])[1])}], "
+                f"recall **{_pct(es.get('assert'))}** (up from strict {_pct(g.get('assert'))}), "
+                f"traps {_pct(es.get('abstain'))} — pure grounding, no fallback",
+                f"  - {es.get('note', '')}",
+            ]
+        tf = cg.get("threeFamily")
+        if tf:
+            gk = tf.get("meanPairwiseKappa", {})
+            tg, tr = tf.get("grounded", {}), tf.get("raw", {})
+            L += [
+                f"- **3-family validation ({', '.join(tf.get('judges', []))}):** grounded "
+                f"**{_pct(tg.get('consensus'))}** vs raw **{_pct(tr.get('consensus'))}**; "
+                f"traps grounded **{_pct(tg.get('abstain'))}** vs raw {_pct(tr.get('abstain'))}; "
+                f"mean pairwise κ {gk.get('grounded')}/{gk.get('raw')}; policy {tf.get('policyCounts')}",
+                f"  - {tf.get('note', '')}",
+            ]
+        L += [f"- ⚠ {cg.get('note', '')}", ""]
+
     L += [
         "## Reproduce",
         "",

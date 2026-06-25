@@ -14,6 +14,8 @@ links: []
 
 # Great Wall visible from space with naked eye (太空肉眼可見長城)
 
+Great Wall visible from space with naked eye (太空肉眼可見長城) is a history event.
+
 - **Domain:** history
 
 Common modern myth

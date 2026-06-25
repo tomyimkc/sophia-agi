@@ -1,0 +1,115 @@
+{
+  "schema": "sophia.continual_qa_validation.v1",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "note": "Exact-match scoring => no judge subjectivity; LLM-judge families apply to the future LLM-controller path, not this deterministic core.",
+  "episodes": [
+    "ep1_history",
+    "ep2_philosophy",
+    "ep3_psychology",
+    "ep4_religion",
+    "ep5_tradition",
+    "epF_revision"
+  ],
+  "queryCount": 92,
+  "accuracyCI": {
+    "graph_backed": {
+      "n": 92,
+      "pointAccuracy": 1.0,
+      "bootstrapMean": 1.0,
+      "ci95": [
+        1.0,
+        1.0
+      ],
+      "observedErrors": 0,
+      "ruleOfThreeUpperErrorRate": 0.0326
+    },
+    "parametric_baseline": {
+      "n": 92,
+      "pointAccuracy": 0.3696,
+      "bootstrapMean": 0.3706,
+      "ci95": [
+        0.2826,
+        0.4674
+      ],
+      "observedErrors": 58
+    }
+  },
+  "retention": {
+    "unintendedForgetting": 0,
+    "deliberateUnlearning": 2,
+    "unintendedDetail": [],
+    "backwardTransfer": -0.0364,
+    "retentionMatrix": [
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.8182
+      ],
+      [
+        null,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      [
+        null,
+        null,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      [
+        null,
+        null,
+        null,
+        1.0,
+        1.0,
+        1.0
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        1.0,
+        1.0
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        1.0
+      ]
+    ]
+  },
+  "controlFlowSweep": [
+    {
+      "minOverlap": 1,
+      "endToEndAccuracy": 0.913,
+      "controlFlowGap": 0.087,
+      "routingErrors": 6
+    },
+    {
+      "minOverlap": 2,
+      "endToEndAccuracy": 0.6957,
+      "controlFlowGap": 0.3043,
+      "routingErrors": 28
+    },
+    {
+      "minOverlap": 3,
+      "endToEndAccuracy": 0.5543,
+      "controlFlowGap": 0.4457,
+      "routingErrors": 41
+    }
+  ]
+}

@@ -79,7 +79,7 @@ def build_user_prompt(mode: str, question: str, *, online_evidence: bool = False
 
 
 def run_mode(mode: str, question: str, *, approve: bool, execute: bool, online_evidence: bool, web_provider: str,
-             cantonese: bool = False) -> int:
+             cantonese: bool = False, grounded: bool = False) -> int:
     if mode not in MODES:
         print(f"Unknown mode: {mode}. Choose: {', '.join(MODES)}")
         return 1
@@ -94,11 +94,23 @@ def run_mode(mode: str, question: str, *, approve: bool, execute: bool, online_e
         print(f"[Sophia / {mode}] Convening {council_id} sector council")
 
     print(f"[Sophia / {mode}] Thinking...")
-    answer = complete(
-        MODE_PROMPTS[mode],
-        build_user_prompt(mode, question, online_evidence=online_evidence, web_provider=web_provider,
-                          cantonese=cantonese),
-    )
+    if grounded:
+        # OKF-grounded hybrid path: route to a wiki page and answer from its source,
+        # with an attribution-gate-verified parametric fallback; abstain fail-closed.
+        from okf.page import load_pages
+
+        from agent.grounded_agent import grounded_answer
+
+        result = grounded_answer(question, complete, pages=load_pages("wiki"))
+        answer = result["answer"]
+        print(f"[Sophia / {mode}] grounded policy={result['policy']} "
+              f"target={result.get('target')} gated={result.get('gated')}")
+    else:
+        answer = complete(
+            MODE_PROMPTS[mode],
+            build_user_prompt(mode, question, online_evidence=online_evidence, web_provider=web_provider,
+                              cantonese=cantonese),
+        )
     # Legal self-gate: verify any cited authorities (existence always; holding
     # faithfulness only when SOPHIA_LEGAL_FAITHFULNESS is set, since it costs a
     # model call). The resolver respects SOPHIA_LEGAL_SOURCE (off|cache|live).
@@ -236,6 +248,9 @@ def main() -> int:
     parser.add_argument("--must-avoid-json", default="[]", help="JSON array of forbidden items for rubric_review")
     parser.add_argument("--cantonese", action="store_true",
                         help="Respond with a written-Cantonese (粵語) summary (auto-on if the question is Cantonese)")
+    parser.add_argument("--grounded", action="store_true",
+                        help="Answer via the OKF-grounded hybrid gate (route to a wiki page, answer from its "
+                             "source; attribution-safe fallback when thin; abstain when unroutable/ungrounded)")
     args = parser.parse_args()
 
     if args.mode == "tools":
@@ -267,6 +282,7 @@ def main() -> int:
         online_evidence=args.web_evidence,
         web_provider=args.web_provider,
         cantonese=args.cantonese,
+        grounded=args.grounded,
     )
 
 

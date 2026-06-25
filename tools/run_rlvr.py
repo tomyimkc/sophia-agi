@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import traceback
 from pathlib import Path
@@ -42,7 +43,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from provenance_bench import rl_dataset, rl_reward  # noqa: E402
+from provenance_bench import math_dataset, math_reward, rl_dataset, rl_reward  # noqa: E402
 from provenance_bench.dataset import Case  # noqa: E402
 
 OUT_JSON = ROOT / "agi-proof" / "benchmark-results" / "rlvr.public-report.json"
@@ -190,21 +191,37 @@ def _run_gpu(args: argparse.Namespace) -> int:
         )
         return 1
 
+    if use_vllm:
+        # vLLM's colocate/server path runs through its external-launcher executor,
+        # which reads RANK/WORLD_SIZE/LOCAL_RANK from the env (KeyError: 'RANK'
+        # otherwise). `accelerate launch` sets these; default them here too so a
+        # plain `python` single-GPU colocate run also works. setdefault never
+        # overrides a real distributed launch.
+        os.environ.setdefault("RANK", "0")
+        os.environ.setdefault("LOCAL_RANK", "0")
+        os.environ.setdefault("WORLD_SIZE", "1")
+        os.environ.setdefault("MASTER_ADDR", "127.0.0.1")
+        os.environ.setdefault("MASTER_PORT", "12355")
+
     from datasets import Dataset
     from peft import LoraConfig
     from transformers import AutoTokenizer, BitsAndBytesConfig
     from trl import GRPOConfig, GRPOTrainer
 
-    data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
-    if args.reward == "gate":
-        # Gate-as-reward: the intrinsic fail-closed provenance gate IS the reward,
-        # reward-positive on abstention (abstention-collapse fix). Question-free by
-        # design, so it needs no label/gold columns.
-        from agent import gate_reward
-
-        reward_fn = gate_reward.make_grpo_reward()
+    if args.task == "math":
+        data = math_dataset.build_math_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        reward_fn = math_reward.make_grpo_reward()  # gold column -> sympy math_equivalent
     else:
-        reward_fn = rl_reward.make_grpo_reward(records=data["train_gate_records"])
+        data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        if args.reward == "gate":
+            # Gate-as-reward: the intrinsic fail-closed provenance gate IS the reward,
+            # reward-positive on abstention (abstention-collapse fix). Question-free by
+            # design, so it needs no label/gold columns.
+            from agent import gate_reward
+
+            reward_fn = gate_reward.make_grpo_reward()
+        else:
+            reward_fn = rl_reward.make_grpo_reward(records=data["train_gate_records"])
     train_rows = data["train_rows"]
     if args.curriculum:
         train_rows = _gate_curriculum_order(train_rows, samples=args.curriculum_samples)
@@ -237,9 +254,17 @@ def _run_gpu(args: argparse.Namespace) -> int:
         use_vllm=use_vllm,
     )
     if use_vllm:
-        grpo_kwargs["vllm_mode"] = args.vllm
-        grpo_kwargs["vllm_gpu_memory_utilization"] = args.vllm_mem_util
-        grpo_kwargs["vllm_max_model_len"] = args.max_prompt_len + args.max_completion_len
+        # vllm_mode (colocate/server selector) only exists in trl >= 0.17; older
+        # pinned trl (0.16.x) does in-process colocate via use_vllm alone and
+        # rejects the kwarg. Gate on the actual dataclass fields so the config is
+        # valid on whatever trl the pod resolved.
+        cfg_fields = set(getattr(GRPOConfig, "__dataclass_fields__", {}))
+        if "vllm_mode" in cfg_fields:
+            grpo_kwargs["vllm_mode"] = args.vllm
+        if "vllm_gpu_memory_utilization" in cfg_fields:
+            grpo_kwargs["vllm_gpu_memory_utilization"] = args.vllm_mem_util
+        if "vllm_max_model_len" in cfg_fields:
+            grpo_kwargs["vllm_max_model_len"] = args.max_prompt_len + args.max_completion_len
     cfg = GRPOConfig(**grpo_kwargs)
 
     peft_cfg = LoraConfig(
@@ -258,8 +283,11 @@ def _run_gpu(args: argparse.Namespace) -> int:
     trainer.save_model(str(args.output))
 
     # The live run writes its config + an explicit "no capability claim yet" note.
+    n_train = len(data["train_rows"])
+    n_eval = len(data["eval_rows"])
     report = {
-        "benchmark": "rlvr",
+        "benchmark": f"rlvr-{args.task}",
+        "task": args.task,
         "model": args.model,
         "visibility": "public-aggregate",
         "claimStatus": "Open — capability claim requires a gated run (aggregate._is_validated); "
@@ -269,8 +297,8 @@ def _run_gpu(args: argparse.Namespace) -> int:
             "beta": args.beta, "num_generations": args.num_generations,
             "target_modules": GLM_TARGET_MODULES,
         },
-        "trainCases": len(data["train_cases"]),
-        "evalCases": len(data["eval_cases"]),
+        "trainCases": n_train,
+        "evalCases": n_eval,
         "trainSealed": data["train_sealed"],
         "evalSealed": data["eval_sealed"],
         "baseModelLicense": "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)",
@@ -285,6 +313,8 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     ap.add_argument("--model", default="mock", help=f'subject model (default "mock"; GPU: "{DEFAULT_MODEL}")')
+    ap.add_argument("--task", choices=["provenance", "math"], default="provenance",
+                    help="reward task: provenance (provenance_faithful) or math (sympy math_equivalent)")
     ap.add_argument("--dry-run", action="store_true", help="offline reward-wiring check only (no GPU)")
     ap.add_argument("--out", type=Path, default=OUT_JSON)
     # GPU-only args (ignored under --model mock / --dry-run)
@@ -317,13 +347,17 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     if args.model == "mock" or args.dry_run:
-        ok, detail = _offline_invariants()
-        # Also prove the gate-as-reward wiring offline (abstention-collapse fix).
-        gate_ok, gate_detail = _gate_reward_invariants()
-        ok = ok and gate_ok
-        detail["checks"]["gateRewardInvariants"] = gate_ok
-        detail["gateReward"] = gate_detail
-        detail["benchmark"] = "rlvr"
+        if args.task == "math":
+            ok, detail = math_reward.offline_invariants()
+        else:
+            ok, detail = _offline_invariants()
+            # Also prove the gate-as-reward wiring offline (abstention-collapse fix).
+            gate_ok, gate_detail = _gate_reward_invariants()
+            ok = ok and gate_ok
+            detail["checks"]["gateRewardInvariants"] = gate_ok
+            detail["gateReward"] = gate_detail
+        detail["benchmark"] = f"rlvr-{args.task}"
+        detail["task"] = args.task
         detail["mode"] = "mock-offline"
         detail["rewardSelected"] = args.reward
         detail["claim"] = "reward-machinery invariants (NOT a capability claim)"

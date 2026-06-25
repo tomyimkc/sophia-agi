@@ -1,0 +1,72 @@
+{
+  "benchmark": "rlvr-math-3seed-heldout",
+  "date": "2026-06-24",
+  "model": "zai-org/glm-4-9b-chat-hf",
+  "runner": "RunPod on-demand A100 80GB (interruptible=false), via .github/workflows/rlvr-runpod.yml --task math",
+  "reward": "agent.verifiers.math_equivalent (sympy) — deterministic, judge-free",
+  "trainProblems": 16,
+  "epochs": 1.0,
+  "seeds": [
+    {
+      "seed": 0,
+      "runId": 28120313461,
+      "pod": "jv03t9lcwyve6x",
+      "evalFamilies": [
+        "factor",
+        "simplify"
+      ],
+      "evalN": 8,
+      "basePassAt1": 0.25,
+      "adapterPassAt1": 0.25,
+      "deltaPassAt1": 0.0,
+      "checks": {
+        "contaminationFree": true,
+        "adapterImprovesPassAt1": false,
+        "noPassAt1Regression": true
+      }
+    },
+    {
+      "seed": 1,
+      "runId": 28120315328,
+      "pod": "fbwvg1rru4yjj1",
+      "evalFamilies": [
+        "factor",
+        "integrate"
+      ],
+      "evalN": 8,
+      "basePassAt1": 0.0,
+      "adapterPassAt1": 0.125,
+      "deltaPassAt1": 0.125,
+      "checks": {
+        "contaminationFree": true,
+        "adapterImprovesPassAt1": true,
+        "noPassAt1Regression": true
+      }
+    },
+    {
+      "seed": 2,
+      "runId": 28120316801,
+      "pod": "j3yg5hp97od5yt",
+      "evalFamilies": [
+        "factor",
+        "integrate"
+      ],
+      "evalN": 8,
+      "basePassAt1": 0.0,
+      "adapterPassAt1": 0.125,
+      "deltaPassAt1": 0.125,
+      "checks": {
+        "contaminationFree": true,
+        "adapterImprovesPassAt1": true,
+        "noPassAt1Regression": true
+      }
+    }
+  ],
+  "meanDeltaPassAt1": 0.0833,
+  "verdict": {
+    "machineryCloses": true,
+    "capabilityValidated": false,
+    "why": "Live GRPO weight update on a judge-free, family-disjoint held-out math domain closes end-to-end across 3 seeds, contamination-checked, pods auto-deleted — the self-extension rung runs. BUT the uplift (per-seed delta 0.0/+0.125/+0.125, mean +0.083) is WITHIN NOISE at N=8 per seed: the bootstrap CI includes 0, so it does NOT clear the no-overclaim gate (aggregate._is_validated). This is the honest machinery + a non-significant result, not a capability claim. Cause: only 16 training problems / 1 epoch / base model near the tiny-N ceiling. Superseded by a larger-N pack run."
+  },
+  "claimStatus": "Open — capability claim requires larger held-out N (CI excludes 0), >=3 seeds, fixed held-out families."
+}

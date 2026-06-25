@@ -1,0 +1,131 @@
+{
+  "schema": "sophia.continual_qa_judged.v2",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "answerModel": "gpt-4o-mini",
+  "answerFamily": "openai",
+  "judges": [
+    "deepseek/deepseek-chat",
+    "meta-llama/llama-3.3-70b-instruct"
+  ],
+  "judgeFamilies": [
+    "deepseek",
+    "meta"
+  ],
+  "distinctProviderFamilies": true,
+  "selfGradingRisk": false,
+  "groundedMode": "strict",
+  "groundedSystem": "hybrid",
+  "retrieval": "neighborhood",
+  "hops": 1,
+  "hybridPolicyCounts": {
+    "abstain_no_source": 15,
+    "grounded_strict": 120,
+    "grounded_fallback": 141
+  },
+  "runs": 3,
+  "queryCount": 92,
+  "summary": {
+    "grounded": {
+      "perRun": [
+        {
+          "consensusPassRate": 0.7065,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.7283,
+            "meta-llama/llama-3.3-70b-instruct": 0.7391
+          },
+          "interJudgeKappa": 0.8609,
+          "interJudgePercentAgreement": 0.9457
+        },
+        {
+          "consensusPassRate": 0.6848,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.7174,
+            "meta-llama/llama-3.3-70b-instruct": 0.7283
+          },
+          "interJudgeKappa": 0.8101,
+          "interJudgePercentAgreement": 0.9239
+        },
+        {
+          "consensusPassRate": 0.663,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.7065,
+            "meta-llama/llama-3.3-70b-instruct": 0.6848
+          },
+          "interJudgeKappa": 0.8461,
+          "interJudgePercentAgreement": 0.9348
+        }
+      ],
+      "meanConsensusPassRate": 0.6848,
+      "consensusCI95": [
+        0.6304,
+        0.7391
+      ],
+      "byExpect": {
+        "assert": {
+          "n": 261,
+          "consensusPassRate": 0.6782
+        },
+        "abstain": {
+          "n": 15,
+          "consensusPassRate": 0.8
+        }
+      },
+      "meanInterJudgeKappa": 0.839,
+      "meanInterJudgePercentAgreement": 0.9348
+    },
+    "raw": {
+      "perRun": [
+        {
+          "consensusPassRate": 0.913,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.9457,
+            "meta-llama/llama-3.3-70b-instruct": 0.913
+          },
+          "interJudgeKappa": 0.7527,
+          "interJudgePercentAgreement": 0.9674
+        },
+        {
+          "consensusPassRate": 0.9022,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.913,
+            "meta-llama/llama-3.3-70b-instruct": 0.913
+          },
+          "interJudgeKappa": 0.8631,
+          "interJudgePercentAgreement": 0.9783
+        },
+        {
+          "consensusPassRate": 0.9022,
+          "perJudgePassRate": {
+            "deepseek/deepseek-chat": 0.9348,
+            "meta-llama/llama-3.3-70b-instruct": 0.9022
+          },
+          "interJudgeKappa": 0.783,
+          "interJudgePercentAgreement": 0.9674
+        }
+      ],
+      "meanConsensusPassRate": 0.9058,
+      "consensusCI95": [
+        0.8696,
+        0.9384
+      ],
+      "byExpect": {
+        "assert": {
+          "n": 261,
+          "consensusPassRate": 0.9579
+        },
+        "abstain": {
+          "n": 15,
+          "consensusPassRate": 0.0
+        }
+      },
+      "meanInterJudgeKappa": 0.7996,
+      "meanInterJudgePercentAgreement": 0.971
+    }
+  },
+  "caveats": [
+    "Models reached via one gateway (LLMHub) under one key; validated:false pending independent replication and pre-registration, though judges are distinct families.",
+    "abstain-rubric scores confident refutation of a fictional premise as non-abstention, which can understate the raw model on fictional-premise controls; the unambiguous contrast is on RETRACTED real facts (raw asserts the stale fact, grounded abstains)."
+  ]
+}
