@@ -615,3 +615,20 @@ not AGI, not a Gödel machine. canClaimAGI stays False.
 **Claim impact:** z3 solver-checked promotion is now explicit policy; CONTENT channel is the ladder pass gate;
 religion FORMAT is prompt-structurable at inference; religion-repair LoRA path remains falsified.
 `canClaimAGI: false`.
+
+## math-code-curriculum-preregistered-2026-06-25
+
+**Status:** OPEN — pre-registered on branch `claude/sophia-math-code-curriculum` before
+any Qwen2.5-7B MATH/CODE curriculum GPU run. Manifest:
+`agi-proof/sophia-math-code-curriculum/preregistration.json`; oracle split:
+`agi-proof/sophia-math-code-curriculum/oracle-split.md`; held-out seal:
+`agi-proof/sophia-math-code-curriculum/heldout-seal.manifest.json`.
+
+**Scope:** Train on sympy/exec-verified **synthetic** curriculum; cite only sealed
+held-out MATH/GSM8K/HumanEval/MBPP style samples (+ hidden pack when run) with
+≥3 seeds and 95% CI excluding 0. Training-oracle passes are NOT benchmark proof.
+`canClaimAGI` stays **False**.
+
+**Blockers for headline:** baseline not yet recorded on Qwen2.5-7B; no GPU SFT/RLVR
+run; evidence-oracle thresholds untested.
+

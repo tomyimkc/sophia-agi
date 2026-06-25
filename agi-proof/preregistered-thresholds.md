@@ -35,6 +35,48 @@ Sophia must not be marketed as AGI if any of these occur:
 - long-horizon tasks require frequent human steering;
 - external benchmark results are absent but described as achieved.
 
+## sophia-math-code-curriculum (Qwen2.5-7B MATH + CODE)
+
+**Status:** OPEN — registered 2026-06-25 on branch `claude/sophia-math-code-curriculum`
+**before** any GPU curriculum training. Structured manifest:
+`agi-proof/sophia-math-code-curriculum/preregistration.json`. Oracle split:
+`agi-proof/sophia-math-code-curriculum/oracle-split.md`.
+
+### Base model and recipe
+
+- Base: `Qwen/Qwen2.5-7B-Instruct`
+- QLoRA 4-bit, ~2 epochs, `--mask-prompt`, seeds `{0, 1, 2}` (≥3 for cited numbers)
+- Training data: sympy/exec-verified **synthetic** curriculum (NOT sealed benchmarks)
+- Decontamination: `python tools/build_local_sophia_dataset.py --check` → **CLEAN**
+- Holdout seal: `agi-proof/sophia-math-code-curriculum/heldout-seal.manifest.json`
+  (`python tools/seal_math_code_heldout.py --check`)
+
+### Training oracle vs evidence oracle (THE ONE RULE)
+
+| Family | Purpose | May cite as benchmark evidence? |
+|---|---|---|
+| **Training oracle** | `agent/math_verifier.py` (sympy), `agent/code_verifier.py` (sandboxed exec), synthetic packs (`tools/gen_math_pack.py`, verifier-synthesis) | **No** — curriculum gate only |
+| **Evidence oracle** | Sealed MATH/GSM8K/HumanEval/MBPP style samples, `benchmark/code_tasks.json` eval, hidden reviewer pack | **Yes** — when ≥3 seeds, 95% CI excludes 0 |
+
+Training-oracle passes must **never** be cited as MATH/GSM8K/HumanEval/MBPP proof.
+
+### Pre-registered evidence thresholds (≥3 seeds, CI excludes 0)
+
+| Metric | Threshold | Notes |
+|---|---|---|
+| MATH-style accuracy Δ vs base | ≥ **+5.0%** | Style sample until official MATH licensed |
+| GSM8K-style accuracy Δ vs base | ≥ **+3.0%** | Numeric exact-match |
+| HumanEval-style pass@1 Δ vs base | ≥ **+5.0%** | Hidden-test execution |
+| MBPP-style pass@1 Δ vs base | ≥ **+3.0%** | Hidden-test execution |
+| religion/history protected suites | **no regression** | `promote_adapter` protected floor |
+
+### Success / failure
+
+- **Success (headline):** all evidence-oracle thresholds met; contamination CLEAN; holdout seal OK;
+  `lint_claims.py` OK; `canClaimAGI` stays **False**.
+- **Failure:** protected regression → reject; seal/contamination break → abort; evidence thresholds
+  not met → honest negative in failure-ledger; training-oracle cited as benchmark → violation.
+
 ## RLVR experiment (verifier-as-reward GRPO)
 
 A separate, narrower pre-registration for `tools/run_rlvr.py` (RLVR: the
