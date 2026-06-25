@@ -6,10 +6,10 @@
     {
       "id": "claim_router",
       "module": "agent/claim_router.py",
-      "status": "scaffold",
-      "live_caller": null,
+      "status": "wired",
+      "live_caller": "tools/run_hidden_eval_sophia.py:run_case",
       "ablation_flag": "use_claim_router",
-      "closing_experiment": "W4 Option A: thread route_claims into run_case behind use_claim_router; ablation routing/abstention delta CI excludes 0 on the W2 calibration pack.",
+      "closing_experiment": "W4 Option A DONE (wiring): run_case threads route_claims=ablation.use_claim_router into check_response, and the 'sophia-claim-router' mode exercises it. Still OPEN (measured): ablation routing/abstention delta CI excludes 0 on the W2 calibration pack — needs a live backend.",
       "ledger_id": null
     },
     {

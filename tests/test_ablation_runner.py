@@ -88,7 +88,8 @@ LEARNING_CASE = {
 
 
 def test_seven_modes_present() -> None:
-    expected = {
+    # The canonical ablation set consumed by ``--modes all`` (DEFAULT_MODE_ORDER).
+    canonical = {
         "raw-model",
         "raw-model-plus-tools",
         "sophia-full",
@@ -97,7 +98,11 @@ def test_seven_modes_present() -> None:
         "sophia-no-memory",
         "sophia-no-council",
     }
-    assert set(runner.ABLATION_MODES) == expected
+    assert canonical <= set(runner.ABLATION_MODES)
+    assert set(ablation.DEFAULT_MODE_ORDER) == canonical
+    # W4 opt-in lever: registered for A/B but intentionally NOT in the canonical set.
+    assert "sophia-claim-router" in runner.ABLATION_MODES
+    assert "sophia-claim-router" not in ablation.DEFAULT_MODE_ORDER
 
 
 def test_raw_model_suppresses_all_scaffolding() -> None:
@@ -227,7 +232,11 @@ def test_falsification_clear_when_sophia_wins() -> None:
 
 def test_parse_modes_always_includes_sophia_full() -> None:
     assert ablation.parse_modes("raw-model")[0] == "sophia-full"
-    assert set(ablation.parse_modes("all")) == set(runner.ABLATION_MODES)
+    # ``all`` resolves to the canonical DEFAULT_MODE_ORDER, not every registered mode
+    # (the opt-in W4 sophia-claim-router lever is excluded from the canonical set).
+    assert set(ablation.parse_modes("all")) == set(ablation.DEFAULT_MODE_ORDER)
+    # The opt-in lever is still selectable by name.
+    assert "sophia-claim-router" in ablation.parse_modes("sophia-claim-router")
 
 
 def main() -> int:
