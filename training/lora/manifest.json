@@ -4,6 +4,30 @@
   "holdoutCount": 89,
   "benchmarkCaseCount": 35,
   "droppedUnsafe": 0,
+  "presplit": {
+    "enabled": true,
+    "maxTokens": 1024,
+    "train": {
+      "maxTokens": 1024,
+      "rowsIn": 439,
+      "rowsKeptUnchanged": 439,
+      "rowsSplit": 0,
+      "subRowsFromSplits": 0,
+      "rowsDroppedUnsplittable": 0,
+      "turnsDroppedOverlong": 0,
+      "rowsOut": 439
+    },
+    "holdout": {
+      "maxTokens": 1024,
+      "rowsIn": 89,
+      "rowsKeptUnchanged": 89,
+      "rowsSplit": 0,
+      "subRowsFromSplits": 0,
+      "rowsDroppedUnsplittable": 0,
+      "turnsDroppedOverlong": 0,
+      "rowsOut": 89
+    }
+  },
   "holdoutReasons": {
     "exact_benchmark_question": 38,
     "benchmarkCase=trap_confucius_ddj": 3,

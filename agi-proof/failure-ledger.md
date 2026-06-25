@@ -615,3 +615,41 @@ not AGI, not a Gödel machine. canClaimAGI stays False.
 **Claim impact:** z3 solver-checked promotion is now explicit policy; CONTENT channel is the ladder pass gate;
 religion FORMAT is prompt-structurable at inference; religion-repair LoRA path remains falsified.
 `canClaimAGI: false`.
+
+## sophia-7b-train-verify-data-flywheel-2026-06-25
+
+**Status:** STAGE 0–1 COMPLETE; STAGE 2+ BLOCKED (no `RUNPOD_API_KEY`).
+
+**Pre-registration (Stage 0):** `agi-proof/sophia-7b-train-verify/preregistration.json`,
+oracle split `oracle-split.md`, holdout seal `heldout-seal.manifest.json`
+(`contentHash: 84d00bdc36205abdb5a162530d8fc972ee27075c053bfd0615de59d3ed9aeb97`, 89 rows).
+Commit `9f00733`.
+
+**Data flywheel (Stage 1) — `training/local_sophia_7b/`, base `Qwen/Qwen2.5-7B-Instruct`:**
+
+| Pack | Rows | Decontam dropped |
+|---|---:|---:|
+| sft_source_discipline | 439 | 89 |
+| sft_wiki_provenance | 34 | 0 |
+| sft_council_traces | 125 | 0 |
+| sft_religion_repair_c4 | 12 | 0 |
+| sft_moral_gate | 35 | 0 |
+| general_instruct | 120 | 0 |
+| dpo_hard_negatives | 590 | 25 |
+| dpo_wiki_provenance | 34 | 0 |
+| **train total** | **1389** | **114** |
+| holdout (sealed) | 89 | — |
+| MLX SFT train / valid | 754 / 89 | 11 turns dropped overlong |
+
+`build_local_sophia_dataset.py --check`: contamination **CLEAN** (0 eval overlap, 0 holdout overlap).
+Hard-negative miner: 615 pairs (gate-validated). Moral Gate SFT: 35 rows.
+
+**Stage 2 blocker:** `RUNPOD_API_KEY` absent locally. Prepared launch:
+`agi-proof/sophia-7b-train-verify/runpod-sft-3seed.sh` (seeds 0–2, 2 epochs, QLoRA 4-bit).
+
+**Stages 3–7:** NOT RUN — blocked on GPU (SFT) and third-party API keys (Vectara HHEM, hidden pack).
+
+**Tradeoff (pre-registered, not yet measured):** abstention/MMLU-Pro regression ≤2.0 points vs base;
+honest reporting required even if internal release gate passes.
+
+**canClaimAGI:** False.

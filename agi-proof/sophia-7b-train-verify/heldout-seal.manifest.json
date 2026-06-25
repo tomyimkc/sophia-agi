@@ -4,7 +4,7 @@
   "baseModel": "Qwen/Qwen2.5-7B-Instruct",
   "holdoutSource": "training/lora/holdout.jsonl",
   "rowCount": 89,
-  "contentHash": "0f3ba23d18106d1d38fa899d676927ee11f4e5a04e3a2571b00b4aa290c9f8dc",
+  "contentHash": "84d00bdc36205abdb5a162530d8fc972ee27075c053bfd0615de59d3ed9aeb97",
   "digestMethod": "sha256(json({id,prompt,holdoutReason}, sort_keys=True)) per row; contentHash = sha256(sorted row digests joined by |)",
   "assistantGoldPolicy": "withheld from manifest; synthetic builders must not read holdout answers",
   "allowedReaders": [
@@ -18,448 +18,448 @@
   "cases": [
     {
       "id": "002-freud-cognitive-dissonance",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "982a04cf90acbfa0aebc460fe175c01f22b19797d662d6f02691b09fa1883275"
+      "holdoutReason": "",
+      "sha256": "c7298ca783df71b8347d744b2a5a18b8de53255fc7351f61ce8c062dc238ada7"
     },
     {
       "id": "003-marco-polo-pasta-myth",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "1fa38a25f14c4ac7a1186bec836a925c954d36587f03c1deefe3003669ce4481"
+      "holdoutReason": "",
+      "sha256": "561839883b3d02ecaf3d5eb61c443ea4d83c25af88317c7acd8dd67e2b4b65e1"
     },
     {
       "id": "004-confucian-ritual-council",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "6cb70415aceef1bc710da90fd5a4185e09c61f141a23303877d132f094c0c9c9"
+      "holdoutReason": "",
+      "sha256": "e64e256ec1ac2bc37ff40ff24fcfe9c2c7a07cd34b5a65bb390ff8120e2c558b"
     },
     {
       "id": "005-left-brain-right-brain-myth",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "3ebd9563aba00eba017db96b98bb473a45b518b1c0044cc538a07d4db7477dad"
+      "holdoutReason": "",
+      "sha256": "3a0b723487c6273a219825c43c2d9790a56753e4850af5394ba2b070f75c9d51"
     },
     {
       "id": "006-chemical-imbalance-nuance",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "f9df3793f478c95703fa3e5eb9b4f0861cfd5d844ad1b9b45923664f4cf4f1b8"
+      "holdoutReason": "",
+      "sha256": "2f7e4a8b4d9d92270fe1dce00ae169708aaa8cdebfdb309aadaa9e7426794bc3"
     },
     {
       "id": "007-stockholm-syndrome-universal",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "6baf85ea2315092559645fb46d0864cefdf0cea726c2a8556fd4b16a53e674c7"
+      "holdoutReason": "",
+      "sha256": "ffadd0f6e8280f64f17c56e9c8722dad1c1abb5a090a91aeea7ebafa43f99eff"
     },
     {
       "id": "008-napoleon-height-myth",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "4f139f48a70118e28048d93d2f65f5ec494c0198166ca87a4d43ab30f41b99de"
+      "holdoutReason": "",
+      "sha256": "9a83e2e691b6bb737acf868d090c475466c3c98eebdf1cd1b67aca021707b365"
     },
     {
       "id": "009-gospel-matthew-council",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "01493300f27675444c0c35bf1b84a4831e7b6ac7b139f028d8cec04b9484d34e"
+      "holdoutReason": "",
+      "sha256": "b472b33f939c050c7a54b919ab86b2b170e5eb165f54f33535812ed29bbeb6c6"
     },
     {
       "id": "010-islam-early-history-council",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "46227206ea0980e873686175b49a139d64dcc00185fb3faba671b5b7f1cc49d9"
+      "holdoutReason": "",
+      "sha256": "61bc10e0d7d0f7a57d3a9325bc8e85243404acb15c4b14ee359ff4004b3d1782"
     },
     {
       "id": "011-nirvana-pop-myth-council",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "771af57989c43d5ea758240e09eb5f22b592a6094fb6adbb944832afa05b97bd"
+      "holdoutReason": "",
+      "sha256": "1ef86d227f105eb1a251d7aefcf196a73ec55d3d9361b99c5d051a5233d8e4bc"
     },
     {
       "id": "012-flat-earth-medieval-myth",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "37bc68337528189364443b9373e16275580ea5e728636a5b29a55740dece0d35"
+      "holdoutReason": "",
+      "sha256": "5c7d5b992646592e06103766a22f45bc5ae5def9c87ee32144edfe78e1aa9cc5"
     },
     {
       "id": "014-dao-de-jing-religion-philosophy",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "c901a2fa478046b09a7a2cbfd8a78b929d98501dda20bce27c32077debd75797"
+      "holdoutReason": "",
+      "sha256": "ec75774073f5f389ca1ebd2d5e9fa7bd639e027eb54f46872d46e6fa70b3866e"
     },
     {
       "id": "021-socrates-republic",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "9c4229b414a73ebdb3de794fa4eb809b96cdbfeb52154683818cc2e2c6d704e6"
+      "holdoutReason": "",
+      "sha256": "1accbc9e4a7757001f36b7660147a91cc3db484650bc62dca2d3a8b2b9b7ecc7"
     },
     {
       "id": "051-claude-deny-confucius-dao-de-jing-r0",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "3e5309d3a4e6c90a43bc2c5f323f909164704f09f09a1a5f029eb25ff6fa02a0"
+      "holdoutReason": "",
+      "sha256": "bb96f585baa08ea7f2cc2414d5bfcf9e60b7805275f8177eab7d3cad06b87269"
     },
     {
       "id": "060-claude-deny-socrates-republic-r0",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "6bba8d42e217f1272baab89cb3a3f2670f950a2f79f65fb69126d2fec17a07b9"
+      "holdoutReason": "",
+      "sha256": "24f5d5610c81d0e120878e6c2dd1f5dff852955cd704bce7bcbbdc7069e817bf"
     },
     {
       "id": "066-claude-deny-confucius-mencius-r0",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "e86c41d52033495890aa67ad5acef1bb8f40e5b444a85574374caedff2d899f5"
+      "holdoutReason": "",
+      "sha256": "292678a664ed8217420472e4f29e7b514028590fb55d2beefafcd328838f0ad5"
     },
     {
       "id": "123-claude-deny-socrates-phaedo-r0",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "8d4f7e1ee5f0f49a527885c8ab25ee19cb65c9d165b15ba08042455ede35d25f"
+      "holdoutReason": "",
+      "sha256": "31e0123b404abcf984f2ef194dbcc71ec6a404136f23f8ec110ce62630235aec"
     },
     {
       "id": "130-claude-affirm-plato-for-crito-r0",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "e7532e72a50f9edb9980b7787d2003d3be3b408e04b6c126ddf3fb2707d5ffa5"
+      "holdoutReason": "",
+      "sha256": "edf76bc8957672fa416a401f4b4451bd75f4ba88adc907322bb3feaa0cec0a14"
     },
     {
       "id": "136-claude-deny-socrates-categories-r0",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "3e631fb328564bedbfc2721f6bbd47892354dd178bc240f091c55f983d80d635"
+      "holdoutReason": "",
+      "sha256": "a4ad0a4b05a3e220c9ff4f5d64b0b982d39d671a4ab5a98f33cee4e2ad58b4cf"
     },
     {
       "id": "138-claude-deny-confucius-i-ching-r0",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "6a5234ac07f8d7dded1f1a80cb9d55b7ee0296aa8042bc04d39f7572c601f7fe"
+      "holdoutReason": "",
+      "sha256": "478d0ecedb687592616119f8cb2025742fbc9b0fe66c442dfde77777afac1ac3"
     },
     {
       "id": "141-claude-confidence-compiled-for-i-ching-r0",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "f1b519413b410303834caf224d92944c07a6ce971ca61b8ecef6724e556460b6"
+      "holdoutReason": "",
+      "sha256": "561031fdd81ffd89e4f06a877a3d2dffb8ca802ba6e1ed07556cd200fe353d5f"
     },
     {
       "id": "143-claude-deny-laozi-zuo-zhuan-r0",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "e5ea0d03324cf70f66d24a321c7641f597d7e4d9e117c3582b7d71aa38e69ee8"
+      "holdoutReason": "",
+      "sha256": "90a9b52afd6c67aeb32fe3b4eb4703029aef6357981fb9674af714defdf60ef7"
     },
     {
       "id": "154-claude-deny-mozi-great-learning-r0",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "233667c8a4c1e52eac283f7749d30abf4424c6d044dcdd1ba4f60f4cfb0107a3"
+      "holdoutReason": "",
+      "sha256": "9873b93070f6a28e6609afb1fa059453ee4b25598d833c3baa738cda1b49d0df"
     },
     {
       "id": "156-claude-affirm-confucian-school-for-great-learni",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "a63c566fdba9f2991e0f6374178e3f227444a8bcaf69beb3181604a91c6e8fde"
+      "holdoutReason": "",
+      "sha256": "2a9db390b83bd95a7651560c87fe1543d374a9c667e8cf97bc05c988c415c3ee"
     },
     {
       "id": "165-claude-deny-parmenides-parmenides-r0",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "157e355699d8358683ab0c9f8e0b3fc931b9dde0602b7ce97d130243c20d0c66"
+      "holdoutReason": "",
+      "sha256": "ac8990bf3fc8535d99136d207a2b91da596f5cc14c6689a80caeb1703df7ba00"
     },
     {
       "id": "167-claude-deny-plato-heraclitus-fragments-r0",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "d805014a3a87b10fd5843fddf95b6728559a1603c4fb118ea0b491e9dd08514f"
+      "holdoutReason": "",
+      "sha256": "2f68b0d0146aebaf440ef84b30fc958891f32e3e88541dfe86492b915fa3479b"
     },
     {
       "id": "172-claude-trap-confucius-ddj-r0",
-      "holdoutReason": "benchmarkCase=trap_confucius_ddj",
-      "sha256": "e3a5b563f3f44de09207a55573547576462c4f583cf50113eb46d102b128b4ee"
+      "holdoutReason": "",
+      "sha256": "e52647fbdac41ad75bd2762e4e219821d3fb6d9c3cb527e60d49e6a5b6bc7f14"
     },
     {
       "id": "173-claude-socrates-republic-r0",
-      "holdoutReason": "benchmarkCase=socrates_republic",
-      "sha256": "6ce8ce461fb8899dd5376e0527b657f6deca4e39124915e3c93269a41e41736c"
+      "holdoutReason": "",
+      "sha256": "9f9b809affadf6aa529db87f96d63c2c41a2f48865a299819f7aab52a7b74a6a"
     },
     {
       "id": "174-claude-analects-compiled-r0",
-      "holdoutReason": "benchmarkCase=analects_compiled",
-      "sha256": "ff4b471053fcaf8783e3371b811e5490fae0d6759c389996855f37700f4e2e74"
+      "holdoutReason": "",
+      "sha256": "eaeb1aed28970221d1177b3df4e9f1f1c1273f81effd75b05cd5a43262025bbc"
     },
     {
       "id": "175-claude-laozi-uncertainty-r0",
-      "holdoutReason": "benchmarkCase=laozi_uncertainty",
-      "sha256": "3fb0dbdf4625de5227ccce30351418e8d34a1f86ab6aade62effa43cc4cdc31b"
+      "holdoutReason": "",
+      "sha256": "842ad35f8d2363cd06a2cd4c511ddefdde381ca3a0963600d072414cd6f5fd41"
     },
     {
       "id": "176-claude-trap-confucius-mencius-r0",
-      "holdoutReason": "benchmarkCase=trap_confucius_mencius",
-      "sha256": "47d134ef29ad03236127a1fe861448b1b739402f72a4bd36b7c058387310b5d6"
+      "holdoutReason": "",
+      "sha256": "54cafab5fabba91c1b81aa2bdcfa284a3566af3eba527d25c442016cd19c9ba6"
     },
     {
       "id": "177-claude-trap-laozi-zhuangzi-r0",
-      "holdoutReason": "benchmarkCase=trap_laozi_zhuangzi",
-      "sha256": "d31b2666bcedf8c3b5e9c7461409b74668cae8704d9d4ce45dff08f6df5adcc4"
+      "holdoutReason": "",
+      "sha256": "1ef7671556d16253ed1edb701fcd965ab5d04d403e85f76817a56878aab84b37"
     },
     {
       "id": "178-claude-socrates-symposium-r0",
-      "holdoutReason": "benchmarkCase=socrates_symposium",
-      "sha256": "719ceb46fb116f1a2bd095ce00549a8b9fe9c900312a21acc24401be48516a05"
+      "holdoutReason": "",
+      "sha256": "0d12856042c49b3d0f05c5ee9aaa5d9295e96c3b6c75142dc356f9a21afd23ae"
     },
     {
       "id": "179-claude-zhuangzi-analects-boundary-r0",
-      "holdoutReason": "benchmarkCase=zhuangzi_analects_boundary",
-      "sha256": "f0512b25d028ccb14a6a0769d8b8e99919f93e36cfa20ce33c92847d916c7cec"
+      "holdoutReason": "",
+      "sha256": "27ec2fe9f9cea28d470d085104845a6170029a77114a68f6e2ee55e0945d3079"
     },
     {
       "id": "180-claude-symposium-dialogue-not-autograph-r0",
-      "holdoutReason": "benchmarkCase=symposium_dialogue_not_autograph",
-      "sha256": "d5096bb27c1851a1354449541866c707d2b74bc7e5fcc755e4f8af3ca62f5a6c"
+      "holdoutReason": "",
+      "sha256": "2802ef73289cb7c63736d9f4fa88105c32721c66d439872da7ee984db2a9e8b9"
     },
     {
       "id": "181-claude-freud-cognitive-dissonance-r0",
-      "holdoutReason": "benchmarkCase=freud_cognitive_dissonance",
-      "sha256": "9db622fa206a4f3d33444cd1e6f551c6c8d4eaf8ec5510060730f4092fe4233f"
+      "holdoutReason": "",
+      "sha256": "b83218886d1afc7067df03b769a8512fffff875380b6f7091ee16a7cd30393cb"
     },
     {
       "id": "182-claude-left-brain-myth-r0",
-      "holdoutReason": "benchmarkCase=left_brain_myth",
-      "sha256": "b80475ecf83970b635bbe1c9e6baa0673ddb68a29b66492b3e2c9ee4d8f6cb77"
+      "holdoutReason": "",
+      "sha256": "2e04700f3762f4f1533c5782e0ccfd70de4643c8ddf64d9fb5ace525f5599cc5"
     },
     {
       "id": "183-claude-chemical-imbalance-simplification-r0",
-      "holdoutReason": "benchmarkCase=chemical_imbalance_simplification",
-      "sha256": "28fe1af0f49b161deff729b676aaf69068273e0f7b352c9597fa7b3e0d5e089d"
+      "holdoutReason": "",
+      "sha256": "e57a25ef1a09186e0d5a2923047beab8c1fba2ac10d6c90e88d728124fc96562"
     },
     {
       "id": "184-claude-stockholm-every-kidnapping-r0",
-      "holdoutReason": "benchmarkCase=stockholm_every_kidnapping",
-      "sha256": "f48f43bfa7ef82dc6e8a9e19711ee92e2f849bdf26104e60da380d578baf9e28"
+      "holdoutReason": "",
+      "sha256": "25b6991ac7c10d18b98e811fce294d9686f94bdcf0c416e1580b6bdff7c239c4"
     },
     {
       "id": "185-claude-marco-polo-pasta-r0",
-      "holdoutReason": "benchmarkCase=marco_polo_pasta",
-      "sha256": "86aeb5fa7a6c2afd753845337b631647140e57cc7488276d6b5a68a0f30f6a9f"
+      "holdoutReason": "",
+      "sha256": "e933de8285820f07bd4bb2aea8896d4f1f4e56ac245b0370fb6931b636fe1570"
     },
     {
       "id": "186-claude-flat-earth-medieval-r0",
-      "holdoutReason": "benchmarkCase=flat_earth_medieval",
-      "sha256": "4bc1a118d9ad5e6e28acb9d215a534af7f21f78fe918bf733f8b0d530bbaf7a3"
+      "holdoutReason": "",
+      "sha256": "44f0eb455e58223f0f16249ffd5e1a36bff0f30d745b98c0534f5a2f27d65c5a"
     },
     {
       "id": "187-claude-napoleon-height-r0",
-      "holdoutReason": "benchmarkCase=napoleon_height",
-      "sha256": "be870ba6219820f15c2e444419adf9742614551305cce18eaecbb930ce6414b0"
+      "holdoutReason": "",
+      "sha256": "62f31b9f2a751ce5853e1d4747bba6e6f5b3696ca2a513a55a659e2ced39fa41"
     },
     {
       "id": "188-claude-great-wall-space-r0",
-      "holdoutReason": "benchmarkCase=great_wall_space",
-      "sha256": "095276769ee38dd07ce313082a7bea385ea2bc7d56692a165df41c81e20a6a06"
+      "holdoutReason": "",
+      "sha256": "e4f5d1286b1b97d26eeda808f90bea012f7f6afddba24eada9bf400b83e1fcc5"
     },
     {
       "id": "189-claude-viking-horns-r0",
-      "holdoutReason": "benchmarkCase=viking_horns",
-      "sha256": "8d588ae1b46a165d2ad93bd1273903b68d3ca9c463038be35b93ed23e6a33eb2"
+      "holdoutReason": "",
+      "sha256": "821526f2e8d275c2744a00a1f6bfe7785990832a25903b7fe1b0581d423f4da0"
     },
     {
       "id": "190-claude-gospel-authorship-council-r0",
-      "holdoutReason": "benchmarkCase=gospel_authorship_council",
-      "sha256": "7211e3d9aebdc87f15d773bf66bf58188d7e0c719d9ef6667cf8ea68e3f109ee"
+      "holdoutReason": "",
+      "sha256": "c30f6f4b3756c90a039db73fe1c721e2ebcb596c8d3ee0e13f4913e0e5f440b7"
     },
     {
       "id": "191-claude-ancestor-veneration-split-r0",
-      "holdoutReason": "benchmarkCase=ancestor_veneration_split",
-      "sha256": "9651bfda9a99d0187d936163bef4b298fcb5e741c1f86faf419f50a9e92d872c"
+      "holdoutReason": "",
+      "sha256": "17e1ba2b4fe271805e6728cde94da11bc6a38cdb51935e9dbe61dfd1408710fc"
     },
     {
       "id": "192-claude-dao-de-jing-religion-philosophy-r0",
-      "holdoutReason": "benchmarkCase=dao_de_jing_religion_philosophy",
-      "sha256": "206502b5b235bf9122286de0527d2bd986be2eed25c6846d32197dc29649c62a"
+      "holdoutReason": "",
+      "sha256": "2d109e339551dfcc32ffef6568f29369fde2cb37bddf6da739f09c111a07133b"
     },
     {
       "id": "193-claude-islam-historical-figure-sensitive-r0",
-      "holdoutReason": "benchmarkCase=islam_historical_figure_sensitive",
-      "sha256": "f21ab4d59b1623cfd34a20977386ae44fc9a3ef465bf825d6a41906b15add548"
+      "holdoutReason": "",
+      "sha256": "8cf62d7bdea5bb0267546283c6909bb5abbe12f7a697e19a07d5700489ee6876"
     },
     {
       "id": "194-claude-buddha-nirvana-pop-r0",
-      "holdoutReason": "benchmarkCase=buddha_nirvana_pop",
-      "sha256": "415408068dd2038d1186b8823b3a530f8d7d9eee0333fe6f1a0daba63620848b"
+      "holdoutReason": "",
+      "sha256": "2a6394e5673976f2d80260483b16d71b7985ad33d6f432f85ee12e62e2826d3c"
     },
     {
       "id": "196-claude-psychology-deny-carl-jung-cognitive-diss",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "5cafcedaeb29bfcb71e9308796eda6d7956974551bbe2c84cb507481a27f6a91"
+      "holdoutReason": "",
+      "sha256": "82da69b34a980ee673fe815310386a7a191751dd04d9d6853164fa16663ab87c"
     },
     {
       "id": "198-claude-psychology-deny-roger-sperry-left-brain",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "44dabf912657e9b211208024f53ca44a3ba3ba49c1018840996f48c4b11969f7"
+      "holdoutReason": "",
+      "sha256": "7b804ecda0234eed0ab9fc485975ed9db9fe6ce3a86a14f4bc8d597a48851aef"
     },
     {
       "id": "337-claude-trap-confucius-ddj-r1",
-      "holdoutReason": "benchmarkCase=trap_confucius_ddj",
-      "sha256": "54751b23a951153960f48c2d504a9d85e7d488dd1eccc7b8eb15d1e410089c7f"
+      "holdoutReason": "",
+      "sha256": "70458e793a0e1bbec85a392c818463c2436519b3c039bf023fec100d97444758"
     },
     {
       "id": "338-claude-socrates-republic-r1",
-      "holdoutReason": "benchmarkCase=socrates_republic",
-      "sha256": "7b260910e5318d77ace4253eadc8173fc5ef1ae136d1d4502c44795cc05933f4"
+      "holdoutReason": "",
+      "sha256": "84e930f82a510aa3b1fa383ee444d829d0e3a93ca96eda85f267f768d5e95e3c"
     },
     {
       "id": "339-claude-analects-compiled-r1",
-      "holdoutReason": "benchmarkCase=analects_compiled",
-      "sha256": "c6838776a43c5211070b649ce2f009aaa8ac339adcff42d548c12733d6be0838"
+      "holdoutReason": "",
+      "sha256": "10579acbaaa1124c9916fca0d749117da2f1e9095c2567b60512f1dddc3a708d"
     },
     {
       "id": "340-claude-laozi-uncertainty-r1",
-      "holdoutReason": "benchmarkCase=laozi_uncertainty",
-      "sha256": "637ed7c2d5af75679cc2699d793356b044bd4b7ee69154564d791cda11277cc6"
+      "holdoutReason": "",
+      "sha256": "fa42169d1fd04c43016869c5351b6c7ac438f092f9af4abe87378aecceaef29a"
     },
     {
       "id": "341-claude-trap-confucius-mencius-r1",
-      "holdoutReason": "benchmarkCase=trap_confucius_mencius",
-      "sha256": "80238759bce6bdacf4a3bcd778e2513b4afc524f7d2e09ef55a596faf46c6d41"
+      "holdoutReason": "",
+      "sha256": "23ec39a7ded1a9fc4f8c5277edfe31aa6a33a45df3b8ed642cac135044786883"
     },
     {
       "id": "342-claude-trap-laozi-zhuangzi-r1",
-      "holdoutReason": "benchmarkCase=trap_laozi_zhuangzi",
-      "sha256": "c0430388c6b24d7e8f80cddd03511122f040ca7726e5cd5ad5a0156f6c2b2b85"
+      "holdoutReason": "",
+      "sha256": "fdce164bdf748aa0b0c25fbee261b3a1e0f65dc4996f6e525b1f5e252049c155"
     },
     {
       "id": "343-claude-socrates-symposium-r1",
-      "holdoutReason": "benchmarkCase=socrates_symposium",
-      "sha256": "467413c78481d6bd160d0732bbc286ac4efa06d0b73ac88520961c38bc95f902"
+      "holdoutReason": "",
+      "sha256": "552d29027133f9e7a151626f4bfd90a02cf12dfb50b4fc926ee8de99cfad8420"
     },
     {
       "id": "344-claude-zhuangzi-analects-boundary-r1",
-      "holdoutReason": "benchmarkCase=zhuangzi_analects_boundary",
-      "sha256": "48fe765c231289d10beee451c2ab7fdb3229bc6d7da9d68ae09306bc26610f4d"
+      "holdoutReason": "",
+      "sha256": "6a007447d87e34246b1be5b5f845cf623891fe32586eb19cf83c6163219b6a8a"
     },
     {
       "id": "345-claude-symposium-dialogue-not-autograph-r1",
-      "holdoutReason": "benchmarkCase=symposium_dialogue_not_autograph",
-      "sha256": "d538c9a89999fbde227b311b3877c7b2350421fcff814e154b943dbba3bf6c51"
+      "holdoutReason": "",
+      "sha256": "23419fe0a70e2dea2c69adae48a145ec7d9a6ea82ec7b30be61f0d71165d4809"
     },
     {
       "id": "346-claude-freud-cognitive-dissonance-r1",
-      "holdoutReason": "benchmarkCase=freud_cognitive_dissonance",
-      "sha256": "59f79aa22c7a74bd7e9a2d9dbaf6deacd1c58f1625f2e7e7873bcb519ced9537"
+      "holdoutReason": "",
+      "sha256": "1b6e5dc218a2190184f47f39d20169d39a38d858e77d26c2fc26cd09a2807345"
     },
     {
       "id": "347-claude-left-brain-myth-r1",
-      "holdoutReason": "benchmarkCase=left_brain_myth",
-      "sha256": "f83bdc1121a221debee28386e324c430c3f163ceba539df7657eb1f43a28d0e5"
+      "holdoutReason": "",
+      "sha256": "0559bb7b752cc173265891141dbd805b9a884435663d2c2d905e0e3bb90d91df"
     },
     {
       "id": "348-claude-chemical-imbalance-simplification-r1",
-      "holdoutReason": "benchmarkCase=chemical_imbalance_simplification",
-      "sha256": "b40eebc9dc7ad4da30b81324f6342d587e9659d57d87f0fe1b97a0bcfb33e0dd"
+      "holdoutReason": "",
+      "sha256": "3c6043b964d1e9ea3d0a8b757de7612beddb5636cbe1e79172fa12f3db72ecc6"
     },
     {
       "id": "349-claude-stockholm-every-kidnapping-r1",
-      "holdoutReason": "benchmarkCase=stockholm_every_kidnapping",
-      "sha256": "a20d25ff14deff40c68de55d3fdcea160d83ca5d6fa2584208d96b2b0aba786a"
+      "holdoutReason": "",
+      "sha256": "b35909d27924c1b76cc271e4cb6f13526f29718eeabcfa478a9e3b4fcdc21eaf"
     },
     {
       "id": "350-claude-marco-polo-pasta-r1",
-      "holdoutReason": "benchmarkCase=marco_polo_pasta",
-      "sha256": "9f58e02b7f01a693fd82e844ade82102bd64b304743fe5d5d70ab1c7fa7240bf"
+      "holdoutReason": "",
+      "sha256": "8130bcbb276002a1261732f5db1e8d5a32abdae9ac445b5289b8b11d656a104f"
     },
     {
       "id": "351-claude-flat-earth-medieval-r1",
-      "holdoutReason": "benchmarkCase=flat_earth_medieval",
-      "sha256": "c8e227ba1b590b9dcf10c8da5d3cddbed13cf7699523667fb8a2c679c65919fc"
+      "holdoutReason": "",
+      "sha256": "dc2769ca76b0cf577ce3c3ace97223c645a31fe71efe083f46f1de0cfd0f899b"
     },
     {
       "id": "352-claude-napoleon-height-r1",
-      "holdoutReason": "benchmarkCase=napoleon_height",
-      "sha256": "832887c4727604171ce0e3b8d3d33f6a44491a301913edbb81f388479a495b82"
+      "holdoutReason": "",
+      "sha256": "92d9f101bc182f03e1d1fd0bd14740f379acb775701c38900b96c2cb94717b0d"
     },
     {
       "id": "353-claude-great-wall-space-r1",
-      "holdoutReason": "benchmarkCase=great_wall_space",
-      "sha256": "852a8efe830a217517efcfd555e9337cb3f91824beeafdd7412b69f5611c4051"
+      "holdoutReason": "",
+      "sha256": "c3c393e64e7089a6bca9b3b85c878eb9bb9a74aa3e985a5da126c1c5c33fb1d6"
     },
     {
       "id": "354-claude-viking-horns-r1",
-      "holdoutReason": "benchmarkCase=viking_horns",
-      "sha256": "9c809f4b9f0b4d2610aaf173dc5b01a9741a2a2e3ae012f84d148d1607350a2d"
+      "holdoutReason": "",
+      "sha256": "f20864a990c3839f1311fc6dd3f5d6934530b587a63e454785089e1ce914af7d"
     },
     {
       "id": "355-claude-gospel-authorship-council-r1",
-      "holdoutReason": "benchmarkCase=gospel_authorship_council",
-      "sha256": "5ee776b654725f674f5d916b04615dfb54c304672dfcbb8a43fdce76e635a391"
+      "holdoutReason": "",
+      "sha256": "7b4e4c2c44025202a05f6cf21f021a3ab0ecbb1cec75eb7251de07b34fee3baa"
     },
     {
       "id": "356-claude-ancestor-veneration-split-r1",
-      "holdoutReason": "benchmarkCase=ancestor_veneration_split",
-      "sha256": "f8e00c3436c3f38977be5c748107807ef7bde0dc944c6dfc6d434e2d0dc13a4c"
+      "holdoutReason": "",
+      "sha256": "6e16f57195f30143307dc1f761d1763129f95b48f899e7ef6b49227bcc841514"
     },
     {
       "id": "357-claude-dao-de-jing-religion-philosophy-r1",
-      "holdoutReason": "benchmarkCase=dao_de_jing_religion_philosophy",
-      "sha256": "4b18076e786b30e6e5b2b1177af22cd5057ca34512cdcd6fdc4d0de11b72d57b"
+      "holdoutReason": "",
+      "sha256": "469784a07a4769479709de66c64cf6c56af556e3affd81977b79cf4fcc7ff80a"
     },
     {
       "id": "358-claude-islam-historical-figure-sensitive-r1",
-      "holdoutReason": "benchmarkCase=islam_historical_figure_sensitive",
-      "sha256": "f53f30c80d0fa2de3593cfb84e45127d4bb286517b6fdf0309b7371d5d9309b6"
+      "holdoutReason": "",
+      "sha256": "69bd492c62c0780664a7af07225b896c92b6ea17e19f4b30fd1f05fcd6f7b965"
     },
     {
       "id": "359-claude-buddha-nirvana-pop-r1",
-      "holdoutReason": "benchmarkCase=buddha_nirvana_pop",
-      "sha256": "959a6f5e0d3cb619db122385183b31603a7b5f605423b19e216cb94de9254609"
+      "holdoutReason": "",
+      "sha256": "e29cce714363d897a954c34a09ef1467e49d82bd3315948a25bf3a2a72e8ea7b"
     },
     {
       "id": "511-bench-trap-confucius-ddj-v2",
-      "holdoutReason": "benchmarkCase=trap_confucius_ddj",
-      "sha256": "a5f07533b6379e01932372428da3e56addad276bf54bc03ad445207d1359248d"
+      "holdoutReason": "",
+      "sha256": "ddeafcdb8a7a150268e3af214f38d8d65bbdf28355148f40b35f3d8e6a4ddd19"
     },
     {
       "id": "512-bench-symposium-not-autograph-v2",
-      "holdoutReason": "benchmarkCase=symposium_dialogue_not_autograph",
-      "sha256": "995e4cf9c7fd8ba25b222f81b40c725b9f85874f9cd7d6a4b3aa46cbab801dc6"
+      "holdoutReason": "",
+      "sha256": "a2c6c2eb28fbd2b07ad32530d1ce72e3db956add6ed62dd7aa6fc9cd28d6266f"
     },
     {
       "id": "513-bench-stockholm-pop-myth-v2",
-      "holdoutReason": "benchmarkCase=stockholm_every_kidnapping",
-      "sha256": "b5d8961c1997f04f566435e7307f183336524a003263d38a10bae08f850afca3"
+      "holdoutReason": "",
+      "sha256": "2d17d53fd07a46de7faff6110eb682a5811414cf7e2545b7e9f7b6ea16333e09"
     },
     {
       "id": "514-bench-ancestor-veneration-council-v2",
-      "holdoutReason": "benchmarkCase=ancestor_veneration_split",
-      "sha256": "3b18343b6f2d644e3fd34e3a9445ae7cb1ab2a09809dd2be1209dc85612bfbf8"
+      "holdoutReason": "",
+      "sha256": "1977d89e98356b13d596a66c0de88a983c5dba00ee4ff5c313271453c6a9c527"
     },
     {
       "id": "515-bench-buddha-nirvana-council-v2",
-      "holdoutReason": "benchmarkCase=buddha_nirvana_pop",
-      "sha256": "bf63ffd4b58611c491ce4df5589143ccd46fa080c7ec4c96a8a354ad4522bb5a"
+      "holdoutReason": "",
+      "sha256": "1961d049e5e460da9e7e97cf37b58acd384daa4f188c925613ec73217b9f41d0"
     },
     {
       "id": "519-psych-dunning-kruger",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "a985856b5dfd7036ccc0acb32351774c6b36a54ef296ee50badf36556d936f63"
+      "holdoutReason": "",
+      "sha256": "380c7f19d02d5bb5b9fa2727b50c45bfe6a48642412901936985c70bf82c00e4"
     },
     {
       "id": "520-psych-confirmation-bias-bacon",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "79f01867b8a70956d09229c2c9e4d1f68f7ccbd19e0ee315deb445a7c1604636"
+      "holdoutReason": "",
+      "sha256": "3a03146edaf92287d346a35c5adb52ed3028970020d694a297e08b5fc328e34c"
     },
     {
       "id": "521-psych-ten-percent-brain",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "fabc5867fd2fca75b75ec89e8917fae188d1ec407859f02ffed82ea379c61fbf"
+      "holdoutReason": "",
+      "sha256": "7c67f29396162ea1d71cbd6a60ce5b81c6f40295a0b14262b5d8544049841936"
     },
     {
       "id": "522-psych-mozart-effect",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "930b7e676c71b1068b3364294f06efa1ef0e7b71f9e64b1814a51ac61d73732d"
+      "holdoutReason": "",
+      "sha256": "6e23a5aa94516a096dd60f6f6b9c167e25a3999b7ee9ebaa5519c74637146d6d"
     },
     {
       "id": "523-psych-ptsd-clinical",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "6f6ab0275767e77d582f0399cd8531b2d8921dab189ac202e8c465d73650a9dc"
+      "holdoutReason": "",
+      "sha256": "78beb9d9b5e359f1d8ebd13533b7d7f446006bb25135a58c49d5ab732f5a0449"
     },
     {
       "id": "524-history-magna-carta",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "a77b8b197ad2f488e689cd0c00d842c4c1a76f1224a1b8322c63fc2772a6a779"
+      "holdoutReason": "",
+      "sha256": "8a7d2031465fdc56a0979794d91df50ba3b397ef212210687ee82e37a42141c1"
     },
     {
       "id": "525-history-boston-tea-party",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "e41ce075a1f4dfb5e4d638416076e32d56686f36d775004bb38eb5f5d8b0018f"
+      "holdoutReason": "",
+      "sha256": "ee733f77e707b869b0296d34275dc856952d371fcbbcb460df714537fe8ef459"
     },
     {
       "id": "526-history-first-flight",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "f66a989a5a49d646ed837bc81d28879a5b687d98156e23a4ac5447e3c732147f"
+      "holdoutReason": "",
+      "sha256": "4a6ada3eab75d7b262394ee2d244e0b04efa916c4cfa60e1e36c84ebf00a03ef"
     },
     {
       "id": "527-religion-hadith-sect-council",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "45e8c88c77eb9c68defe6745d2f1d5ef7eb98469350ed77b3378338b3877ef98"
+      "holdoutReason": "",
+      "sha256": "7ecf534e5079a6326bf4a8c6a5eec32a14c4a9a95edffbdf0278c58dced846c9"
     },
     {
       "id": "528-personality-extraversion",
-      "holdoutReason": "exact_benchmark_question",
-      "sha256": "295bc09929f14dc325e8650bc8bdbc9adf7f2fb753a79bd00747f14b18c47c42"
+      "holdoutReason": "",
+      "sha256": "1cc2eae8a86841c58978528056b6cbd8b8aaed07609808172386fb1daab9f032"
     }
   ]
 }

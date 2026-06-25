@@ -34,6 +34,8 @@ from provenance_bench.dataset_guard import check_contamination, eval_prompt_set 
 
 DEFAULT_OUT = ROOT / "training" / "local_sophia_v2"
 DEFAULT_BASE_MODEL = "Qwen/Qwen2.5-3B-Instruct"
+OUT = DEFAULT_OUT  # backward compat for tests
+BASE_MODEL = DEFAULT_BASE_MODEL
 MLX_MAX_TOKENS = 1024  # must match the trainer's --max-seq-length; rows are fit to this
 
 
@@ -80,34 +82,46 @@ def _to_mlx_rows(rows: list[dict]) -> list[dict]:
     return out
 
 
-# (source path, output pack name, kind)
-SFT_SOURCES = [
-    ("training/corpus.jsonl", "sft_source_discipline.jsonl", "sft"),
-    ("training/wiki_provenance_sft.jsonl", "sft_wiki_provenance.jsonl", "sft"),
-    ("training/council/traces.jsonl", "sft_council_traces.jsonl", "sft"),
-    ("training/council/religion_repair_c4.jsonl", "sft_religion_repair_c4.jsonl", "sft"),
-    ("training/moral_gate_sft.jsonl", "sft_moral_gate.jsonl", "sft"),
-    ("training/local_sophia_v2/general_instruct.jsonl", "general_instruct.jsonl", "sft"),
-    # C4: human-reviewed, promoted gate-feedback misses (optional; absent → skipped).
-    # Decontaminated like any source, so it cannot leak eval/holdout prompts.
-    ("training/feedback/sft_from_feedback.jsonl", "sft_from_feedback.jsonl", "sft"),
-]
+HOLDOUT_SRC = "training/lora/holdout.jsonl"
+
+
+def _sft_sources(out: Path) -> list[tuple[str, str, str]]:
+    gi = out / "general_instruct.jsonl"
+    gi_rel = str(gi.relative_to(ROOT)) if gi.exists() else "training/local_sophia_v2/general_instruct.jsonl"
+    return [
+        ("training/corpus.jsonl", "sft_source_discipline.jsonl", "sft"),
+        ("training/wiki_provenance_sft.jsonl", "sft_wiki_provenance.jsonl", "sft"),
+        ("training/council/traces.jsonl", "sft_council_traces.jsonl", "sft"),
+        ("training/council/religion_repair_c4.jsonl", "sft_religion_repair_c4.jsonl", "sft"),
+        ("training/moral_gate_sft.jsonl", "sft_moral_gate.jsonl", "sft"),
+        (gi_rel, "general_instruct.jsonl", "sft"),
+        ("training/feedback/sft_from_feedback.jsonl", "sft_from_feedback.jsonl", "sft"),
+    ]
+
+
+def _required_inputs(out: Path) -> dict:
+    gi = out / "general_instruct.jsonl"
+    gi_rel = str(gi.relative_to(ROOT)) if gi.exists() else "training/local_sophia_v2/general_instruct.jsonl"
+    return {
+        "general_instruction_retention": {
+            "source": gi_rel,
+            "message": "Bring a license-clean external instruct slice (~10% of mix) or the model becomes a narrow refusal machine.",
+        },
+        "moral_gate_sft": {
+            "source": "training/moral_gate_sft.jsonl",
+            "message": "Convert moral_corpus/ structured data into routing SFT examples (allow/revise/retrieve/clarify/escalate/abstain/block).",
+        },
+    }
+
+
+# Legacy alias for imports/tests
+SFT_SOURCES = _sft_sources(ROOT / "training" / "local_sophia_v2")
 DPO_SOURCES = [
     ("training/hard_negatives_dpo.jsonl", "dpo_hard_negatives.jsonl", "dpo"),
     ("training/wiki_provenance_dpo.jsonl", "dpo_wiki_provenance.jsonl", "dpo"),
 ]
-HOLDOUT_SRC = "training/lora/holdout.jsonl"
 
-REQUIRED_INPUTS = {
-    "general_instruction_retention": {
-        "source": "training/local_sophia_v2/general_instruct.jsonl",
-        "message": "Bring a license-clean external instruct slice (~10% of mix) or the model becomes a narrow refusal machine.",
-    },
-    "moral_gate_sft": {
-        "source": "training/moral_gate_sft.jsonl",
-        "message": "Convert moral_corpus/ structured data into routing SFT examples (allow/revise/retrieve/clarify/escalate/abstain/block).",
-    },
-}
+REQUIRED_INPUTS = _required_inputs(ROOT / "training" / "local_sophia_v2")
 
 
 def _existing_baseline(out: Path) -> dict | None:
@@ -138,6 +152,7 @@ def build(
             print("::error:: holdout seal mismatch — run tools/seal_sophia_7b_holdout.py", file=sys.stderr)
             return 1
 
+    out = out.resolve()
     holdout = _read_jsonl(ROOT / HOLDOUT_SRC)
     holdout_prompts = {normalize(prompt_of(r)) for r in holdout if prompt_of(r)}
     evalset = eval_prompt_set(root=ROOT)
@@ -149,7 +164,10 @@ def build(
     all_sft: list[dict] = []
     dropped_total = 0
 
-    for rel, name, kind in SFT_SOURCES + DPO_SOURCES:
+    sft_sources = _sft_sources(out)
+    required_inputs = _required_inputs(out)
+
+    for rel, name, kind in sft_sources + DPO_SOURCES:
         rows = _read_jsonl(ROOT / rel)
         # DECONTAMINATE: drop any row whose prompt collides with eval/holdout.
         clean_rows, dropped = [], 0
@@ -191,7 +209,7 @@ def build(
 
     missing_required = {
         key: spec["message"]
-        for key, spec in REQUIRED_INPUTS.items()
+        for key, spec in required_inputs.items()
         if not _read_jsonl(ROOT / spec["source"])
     }
 
