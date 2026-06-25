@@ -2,27 +2,33 @@
   "schema": "sophia.local_sophia_dataset.v3",
   "datasetId": "local_sophia_v3",
   "baseModel": "EXPERIMENT — selected by M1 (do not hard-commit; see training plan)",
-  "teacher": "deterministic-template + human-curated-reuse (NO live LLM — egress blocked)",
+  "teacher": "deterministic-template + human-curated-reuse + live-LLM:openrouter:deepseek/deepseek-chat",
+  "teacherRun": {
+    "used": true,
+    "spec": "openrouter:deepseek/deepseek-chat",
+    "seedPrompts": 156,
+    "generated": 156
+  },
   "admission": "agent.gate.check_response (advisor) + public_standard; reject -> preference/hard-neg",
   "totals": {
-    "candidates": 1177,
-    "accepted": 730,
-    "rejected": 340,
+    "candidates": 1483,
+    "accepted": 965,
+    "rejected": 411,
     "decontaminationDrops": 90,
-    "acceptanceRate": 0.62
+    "acceptanceRate": 0.651
   },
   "byFamily": {
     "council": {
       "rows": 125,
-      "pct": 17.1,
+      "pct": 13.0,
       "targetPct": [
         10.0,
         15.0
       ]
     },
     "general_retention": {
-      "rows": 120,
-      "pct": 16.4,
+      "rows": 270,
+      "pct": 28.0,
       "targetPct": [
         25.0,
         30.0
@@ -30,7 +36,7 @@
     },
     "hk_bilingual": {
       "rows": 8,
-      "pct": 1.1,
+      "pct": 0.8,
       "targetPct": [
         10.0,
         10.0
@@ -38,15 +44,15 @@
     },
     "moral_gate": {
       "rows": 37,
-      "pct": 5.1,
+      "pct": 3.8,
       "targetPct": [
         10.0,
         10.0
       ]
     },
     "source_discipline": {
-      "rows": 431,
-      "pct": 59.0,
+      "rows": 516,
+      "pct": 53.5,
       "targetPct": [
         20.0,
         25.0
@@ -54,7 +60,7 @@
     },
     "tool_mcp": {
       "rows": 9,
-      "pct": 1.2,
+      "pct": 0.9,
       "targetPct": [
         10.0,
         10.0
@@ -62,13 +68,13 @@
     }
   },
   "byLanguage": {
-    "en": 570,
-    "zh": 160
+    "en": 785,
+    "zh": 180
   },
   "preferencePairs": 233,
   "mlx": {
-    "trainRows": 701,
-    "validRows": 29,
+    "trainRows": 927,
+    "validRows": 38,
     "maxTokens": 1024,
     "path": "training/local_sophia_v3/mlx"
   },
@@ -108,9 +114,9 @@
   },
   "go_no_go": {
     "target": ">=10k decontaminated gate-passed rows",
-    "achieved": 730,
+    "achieved": 965,
     "met": false,
-    "honest_note": "Deterministic-template teacher is corpus-bounded. Reaching 10-20k requires the live-LLM teacher (--teacher, needs model egress — blocked here) and/or M2 corpus enrichment. The PIPELINE is complete and fail-closed; yield scales when the teacher is unblocked."
+    "honest_note": "Volume is PROMPT-bound, not teacher-bound: the structured corpus is ~72 records, so even a live LLM teacher (now runnable — egress open, see teacherRun) only raises answer quality/variety per prompt, and the builder dedups by normalized prompt so samples collapse to one row. Reaching 10-20k needs CORPUS ENRICHMENT (more attribution/religion/tradition/history records), not just the teacher. Pipeline complete + fail-closed; live-teacher path proven."
   },
   "boundary": "Habits learned by weights; truth enforced by the EXTERNAL gate. Not an AGI claim. General-retention pack is small — expand with a license-clean instruct slice before any real SFT or the model becomes a narrow refusal machine."
 }
