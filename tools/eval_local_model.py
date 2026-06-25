@@ -25,6 +25,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.benchmark_checks import DOMAIN_BENCH, load_json, score_domain_channels  # noqa: E402
+from agent.council_format import RELIGION_COUNCIL_SYSTEM  # noqa: E402
 from agent.gate import check_response  # noqa: E402
 
 OUT_DIR = ROOT / "benchmark" / "model_runs"
@@ -42,17 +43,24 @@ def load_benchmarks() -> dict[str, list[dict]]:
     return benches
 
 
-def generate_answer(model, tokenizer, question: str, *, max_new_tokens: int) -> str:
+def generate_answer(
+    model,
+    tokenizer,
+    question: str,
+    *,
+    max_new_tokens: int,
+    system: str = SYSTEM,
+) -> str:
     import torch
 
     messages = [
-        {"role": "system", "content": SYSTEM},
+        {"role": "system", "content": system},
         {"role": "user", "content": question},
     ]
     if hasattr(tokenizer, "apply_chat_template"):
         prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     else:
-        prompt = f"<|system|>\n{SYSTEM}\n<|user|>\n{question}\n<|assistant|>\n"
+        prompt = f"<|system|>\n{system}\n<|user|>\n{question}\n<|assistant|>\n"
 
     inputs = tokenizer(prompt, return_tensors="pt")
     if torch.cuda.is_available():
@@ -127,6 +135,11 @@ def main() -> int:
     parser.add_argument("--domains", nargs="*", default=list(DOMAIN_BENCH.keys()))
     parser.add_argument("--max-new-tokens", type=int, default=800)
     parser.add_argument("--with-gate", action="store_true", help="Also run runtime gate per answer")
+    parser.add_argument(
+        "--religion-council-panel",
+        action="store_true",
+        help="Use council-panel system prompt for religion domain (inference-time only)",
+    )
     parser.add_argument("--4bit", dest="four_bit", action="store_true", help="4-bit load (Colab / low VRAM)")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
@@ -136,6 +149,8 @@ def main() -> int:
     benches = load_benchmarks()
     total_cases = sum(len(benches[d]) for d in args.domains if d in benches)
     label = slug(args.adapter.name if args.adapter else args.model)
+    if args.religion_council_panel:
+        label = f"{label}-council-panel"
     print(f"Model: {args.model}" + (f" + adapter {args.adapter}" if args.adapter else ""))
     print(f"Domains: {', '.join(args.domains)} | cases: {total_cases}")
     if args.dry_run:
@@ -167,7 +182,10 @@ def main() -> int:
         gate_failures = 0
         for case in cases:
             question = case["question"]
-            answer = generate_answer(model, tokenizer, question, max_new_tokens=args.max_new_tokens)
+            system = RELIGION_COUNCIL_SYSTEM if domain == "religion" and args.religion_council_panel else SYSTEM
+            answer = generate_answer(
+                model, tokenizer, question, max_new_tokens=args.max_new_tokens, system=system
+            )
             responses[case["id"]] = answer
             if args.with_gate:
                 gate = check_response(answer, mode="advisor", question=question, strict_attribution=True)

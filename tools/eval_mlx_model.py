@@ -22,6 +22,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.benchmark_checks import DOMAIN_BENCH, load_json, score_domain_channels  # noqa: E402
+from agent.council_format import RELIGION_COUNCIL_SYSTEM  # noqa: E402
 from agent.gate import check_response  # noqa: E402
 
 OUT_DIR = ROOT / "benchmark" / "model_runs"
@@ -40,19 +41,23 @@ def load_benchmarks() -> dict[str, list[dict]]:
     return {domain: load_json(path).get("cases", []) for domain, path in DOMAIN_BENCH.items()}
 
 
-def _prompt(tokenizer: Any, question: str) -> str:
-    messages = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": question}]
+def _prompt(tokenizer: Any, question: str, *, system: str = SYSTEM) -> str:
+    messages = [{"role": "system", "content": system}, {"role": "user", "content": question}]
     if hasattr(tokenizer, "apply_chat_template"):
         return tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     if hasattr(tokenizer, "tokenizer") and hasattr(tokenizer.tokenizer, "apply_chat_template"):
         return tokenizer.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    return f"<|system|>\n{SYSTEM}\n<|user|>\n{question}\n<|assistant|>\n"
+    return f"<|system|>\n{system}\n<|user|>\n{question}\n<|assistant|>\n"
 
 
-def generate_answer(model: Any, tokenizer: Any, question: str, *, max_tokens: int) -> str:
+def generate_answer(
+    model: Any, tokenizer: Any, question: str, *, max_tokens: int, system: str = SYSTEM
+) -> str:
     from mlx_lm import generate
 
-    return generate(model, tokenizer, _prompt(tokenizer, question), max_tokens=max_tokens, verbose=False).strip()
+    return generate(
+        model, tokenizer, _prompt(tokenizer, question, system=system), max_tokens=max_tokens, verbose=False
+    ).strip()
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -62,12 +67,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--domains", nargs="*", default=list(DOMAIN_BENCH.keys()))
     parser.add_argument("--max-tokens", type=int, default=700)
     parser.add_argument("--with-gate", action="store_true")
+    parser.add_argument(
+        "--religion-council-panel",
+        action="store_true",
+        help="Use council-panel system prompt for religion domain (inference-time only)",
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
 
     benches = load_benchmarks()
     total_cases = sum(len(benches[d]) for d in args.domains if d in benches)
     label = slug(Path(args.adapter).name if args.adapter else args.model)
+    if args.religion_council_panel:
+        label = f"{label}-council-panel"
     print(f"MLX model: {args.model}" + (f" + adapter {args.adapter}" if args.adapter else ""))
     print(f"Domains: {', '.join(args.domains)} | cases: {total_cases}")
     if args.dry_run:
@@ -92,7 +104,10 @@ def main(argv: list[str] | None = None) -> int:
         responses: dict[str, str] = {}
         gate_failures = 0
         for case in benches.get(domain, []):
-            answer = generate_answer(model, tokenizer, case["question"], max_tokens=args.max_tokens)
+            system = RELIGION_COUNCIL_SYSTEM if domain == "religion" and args.religion_council_panel else SYSTEM
+            answer = generate_answer(
+                model, tokenizer, case["question"], max_tokens=args.max_tokens, system=system
+            )
             responses[case["id"]] = answer
             if args.with_gate:
                 gate = check_response(answer, mode="advisor", question=case["question"], strict_attribution=True)
