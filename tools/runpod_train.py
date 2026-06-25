@@ -53,10 +53,25 @@ from tools.runpod_rlvr import (  # noqa: E402 — reuse the proven pod lifecycle
     _wait_ssh_login,
 )
 
+# Broad fallback list so concurrent seeds don't fail when one GPU type is out of
+# stock — RunPod picks any available type (payload uses gpuTypePriority=availability).
+# All listed cards have >=24 GB VRAM, ample for a 7B QLoRA 4-bit run.
 DEFAULT_GPU_TYPES = [
+    # 24 GB — cheapest, widest availability
     "NVIDIA GeForce RTX 4090",
+    "NVIDIA GeForce RTX 3090",
+    "NVIDIA RTX A5000",
+    # 48 GB — broad availability fallback
+    "NVIDIA RTX A6000",
+    "NVIDIA A40",
+    "NVIDIA L40S",
+    "NVIDIA L40",
+    "NVIDIA RTX 6000 Ada Generation",
+    # 80 GB — last resort (pricier, usually in stock)
     "NVIDIA A100 80GB PCIe",
     "NVIDIA A100-SXM4-80GB",
+    "NVIDIA H100 80GB HBM3",
+    "NVIDIA H100 PCIe",
 ]
 # torch-2.8 base so requirements-lora (pinned <2.9) stays ABI-stable; see runpod_speedup.py.
 DEFAULT_TRAIN_IMAGE = "runpod/pytorch:1.0.7-cu1281-torch280-ubuntu2204"
