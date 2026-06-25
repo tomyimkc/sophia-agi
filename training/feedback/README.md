@@ -58,8 +58,13 @@ Verifier-confirmed errors live in `training/feedback/failure_memory/nodes.jsonl`
 inference guard-rails via `agent/error_rag.py` (optional, fail-closed).
 
 ```bash
-# Stage-3 held-out measurement (disjoint oracle; store never sees held-out)
+# Stage-3 held-out measurement (dev sweep on v1; sealed test on v2)
+python tools/build_error_memory_heldout_v2.py   # regenerate v2 pack + manifest
 python tools/eval_error_memory_rag.py
 ```
 
-Held-out pack: `data/error_memory_heldout_v1.jsonl` (outside `eval/` globs by design).
+Precision gates (default all ON): `min_score`, same `errorClass` match, and
+`would_repeat` (current answer must equal recorded `wrongClaim`). Tune on v1 dev
+only — evaluate net value once on sealed v2.
+
+Held-out packs: `data/error_memory_heldout_v1.jsonl` (dev), `data/error_memory_heldout_v2.jsonl` (test, ≥40).

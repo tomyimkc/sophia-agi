@@ -37,6 +37,142 @@ ALLOWED_VERIFIER_KINDS = frozenset({
 })
 
 _TOKEN_RE = re.compile(r"[a-zA-Z\u4e00-\u9fff]{3,}")
+_ERROR_KIND_DEFAULT = "attribution_trap"
+_ATTRIBUTIONS_PATH = ROOT / "data" / "attributions.json"
+_work_title_index: dict[str, str] | None = None
+_attributions_cache: dict | None = None
+
+
+def _load_attributions() -> dict:
+    global _attributions_cache
+    if _attributions_cache is None:
+        _attributions_cache = json.loads(_ATTRIBUTIONS_PATH.read_text(encoding="utf-8"))
+    return _attributions_cache
+
+
+def _work_title_index() -> dict[str, str]:
+    """Lowercased canonical title token -> textId."""
+    global _work_title_index
+    if _work_title_index is not None:
+        return _work_title_index
+    index: dict[str, str] = {}
+    for text_id, rec in _load_attributions().items():
+        for key in ("canonicalTitleEn", "textId"):
+            title = rec.get(key)
+            if isinstance(title, str) and title.strip():
+                index[normalize(title)] = text_id
+        title = rec.get("canonicalTitleEn")
+        if isinstance(title, str):
+            for variant in (title, title.replace("The ", "")):
+                index[normalize(variant)] = text_id
+    _work_title_index = index
+    return index
+
+
+def parse_citation_work_id(citation: str) -> str | None:
+    if "#" not in citation:
+        return None
+    return citation.rsplit("#", 1)[-1].strip() or None
+
+
+def extract_work_id(text: str) -> str | None:
+    """Resolve attributed work id from question/claim prose (exact title match only)."""
+    hay = normalize(text)
+    index = _work_title_index()
+    # Longest title first to avoid partial collisions.
+    for title in sorted(index, key=len, reverse=True):
+        if title and title in hay:
+            return index[title]
+    return None
+
+
+def _author_in_text(author_id: str, text: str) -> bool:
+    hay = normalize(text)
+    author_key = normalize(author_id.replace("_", " "))
+    if author_key in hay:
+        return True
+    try:
+        from agent.benchmark_checks import author_markers
+
+        for marker in author_markers(author_id):
+            if normalize(marker) in hay:
+                return True
+    except Exception:  # noqa: BLE001
+        pass
+    return False
+
+
+def infer_forbidden_author(wrong_claim: str, work_id: str | None) -> str | None:
+    if not work_id:
+        return None
+    rec = _load_attributions().get(work_id, {})
+    for forbidden in rec.get("doNotAttributeTo") or []:
+        if _author_in_text(str(forbidden), wrong_claim):
+            return str(forbidden)
+    return None
+
+
+def build_error_class(
+    *,
+    work_id: str,
+    forbidden_author: str | None,
+    kind: str = _ERROR_KIND_DEFAULT,
+) -> dict[str, str]:
+    out: dict[str, str] = {"workId": work_id, "kind": kind}
+    if forbidden_author:
+        out["forbiddenAuthor"] = forbidden_author
+    return out
+
+
+def infer_error_class(
+    question: str,
+    wrong_claim: str,
+    citation: str,
+    *,
+    work_id: str | None = None,
+    forbidden_author: str | None = None,
+    kind: str = _ERROR_KIND_DEFAULT,
+) -> dict[str, str] | None:
+    wid = work_id or parse_citation_work_id(citation) or extract_work_id(question)
+    if not wid:
+        return None
+    fauth = forbidden_author or infer_forbidden_author(wrong_claim, wid)
+    return build_error_class(work_id=wid, forbidden_author=fauth, kind=kind)
+
+
+def error_class_matches(
+    query_class: dict[str, str] | None,
+    node_class: dict[str, str] | None,
+) -> bool:
+    if not query_class or not node_class:
+        return False
+    if query_class.get("workId") != node_class.get("workId"):
+        return False
+    if query_class.get("kind") != node_class.get("kind"):
+        return False
+    q_auth = query_class.get("forbiddenAuthor")
+    n_auth = node_class.get("forbiddenAuthor")
+    if q_auth and n_auth and q_auth != n_auth:
+        return False
+    return True
+
+
+def resolve_query_error_class(
+    query: str,
+    *,
+    work_id: str | None = None,
+    forbidden_author: str | None = None,
+    kind: str = _ERROR_KIND_DEFAULT,
+) -> dict[str, str] | None:
+    wid = work_id or extract_work_id(query)
+    if not wid:
+        return None
+    return build_error_class(work_id=wid, forbidden_author=forbidden_author, kind=kind)
+
+
+def would_repeat_answer(candidate: str, wrong_claim: str) -> bool:
+    """True iff the model's current answer is the same verified-wrong claim."""
+    return normalize(candidate) == normalize(wrong_claim)
 
 
 def _tokenize(text: str) -> set[str]:
@@ -72,6 +208,44 @@ def error_memory_heldout_hash(path: Path | None = None) -> str:
             ids.append(str(row.get("id", "")))
     return hashlib.sha256("|".join(sorted(ids)).encode("utf-8")).hexdigest()[:16]
 
+
+def error_memory_heldout_v2_hash(path: Path | None = None) -> str:
+    target = path or (ROOT / "data" / "error_memory_heldout_v2.jsonl")
+    if not target.exists():
+        return ""
+    ids: list[str] = []
+    for line in target.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line:
+            row = json.loads(line)
+            ids.append(str(row.get("id", "")))
+    return hashlib.sha256("|".join(sorted(ids)).encode("utf-8")).hexdigest()[:16]
+
+
+def check_heldout_pack_disjoint(
+    pack_path: Path,
+    *,
+    root: Path = ROOT,
+) -> dict:
+    """Fail-closed: held-out questions must not overlap sealed eval prompts."""
+    forbidden = eval_prompt_set(root=root)
+    overlaps: list[str] = []
+    for line in pack_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        row = json.loads(line)
+        q = normalize(row.get("question", ""))
+        if q and q in forbidden:
+            overlaps.append(str(row.get("id", "")))
+    return {
+        "clean": not overlaps,
+        "overlapCount": len(overlaps),
+        "overlappingIds": overlaps,
+        "packHash": error_memory_heldout_v2_hash(pack_path)
+        if "v2" in pack_path.name
+        else error_memory_heldout_hash(pack_path),
+    }
 
 def deterministic_embed(text: str, *, dim: int = 64, seed: int = 0) -> np.ndarray:
     """Hash-seeded bag-of-token embedding — offline, reproducible."""
@@ -268,6 +442,9 @@ class FailureMemoryStore:
         input_text: str | None = None,
         contradicts_belief_id: str | None = None,
         belief_pages: list | None = None,
+        work_id: str | None = None,
+        forbidden_author: str | None = None,
+        error_kind: str = _ERROR_KIND_DEFAULT,
         force_new_version: bool = False,
     ) -> IngestResult:
         """Ingest a verifier-confirmed error. Fail-closed on missing correction or held-out overlap."""
@@ -325,6 +502,17 @@ class FailureMemoryStore:
                 "source": correction_source.strip(),
             },
         }
+
+        eclass = infer_error_class(
+            question,
+            wrong_claim,
+            correction_citation,
+            work_id=work_id,
+            forbidden_author=forbidden_author,
+            kind=error_kind,
+        )
+        if eclass:
+            node["errorClass"] = eclass
 
         if contradicts_belief_id:
             edge = build_contradiction_edge(

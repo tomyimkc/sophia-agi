@@ -1,0 +1,17 @@
+{
+  "schema": "sophia.error_memory_heldout.v2",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "path": "data/error_memory_heldout_v2.jsonl",
+  "caseCount": 40,
+  "repeatEligible": 20,
+  "alreadyRight": 20,
+  "sealedHash": "9a97e3ca4ea0ad6f",
+  "decontamination": {
+    "clean": true,
+    "overlapCount": 0,
+    "overlappingIds": [],
+    "packHash": "9a97e3ca4ea0ad6f"
+  },
+  "note": "Test pack — tune gates on v1/dev only; evaluate net value once on v2."
+}
