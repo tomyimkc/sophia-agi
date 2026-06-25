@@ -38,7 +38,7 @@ Output: `agi-proof/evidence-manifest.json`
 | Long-horizon autonomy logs | `long-horizon-runs/README.md` |
 | Learning under distribution shift | `learning-under-shift/README.md` |
 | Failure ledger | `failure-ledger.md` |
-| Third-party replication | `third-party-replication/README.md` |
+| Third-party replication | `third-party-replication/README.md`, `third-party-replication/THIRD-PARTY-FACTCHECK-PACK.md`, `third-party-replication/factcheck-pack.schema.json`, `third-party-replication/FACTCHECK-REVIEW-RUBRIC.md`, `third-party-replication/DECONTAMINATION-CHECKLIST.md` |
 | Religion figure council | `../docs/08-Domains/Religion-Figure-Council.md` |
 | Coding council | `../docs/08-Domains/Coding-Council.md` |
 | Manual semantic review | `hidden-reviewer-packs/MANUAL-SEMANTIC-REVIEW.md` |
