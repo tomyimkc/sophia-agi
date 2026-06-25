@@ -1,0 +1,42 @@
+{
+  "runId": "hidden-selfauthored-pack-2026-06-26-deepseek-w1",
+  "status": "invalid_artifact_retention_failure_no_claim",
+  "packId": "selfauthored-fugu-w1-2026-06-26-v1",
+  "packSha256": "d9fba6493f9453ebabe552c21ccba4c3e09f84c1b10630649693b6a8b177ea7c",
+  "packProvenance": "self-authored by executing Fugu worker agent immediately before run; unspent at first execution; not third-party independent",
+  "backend": "deepseek",
+  "backendModelObserved": "deepseek-v4-pro",
+  "seedList": [
+    "single-run-no-explicit-seed"
+  ],
+  "commitHashAtRun": "de52a7786be6fa1bc191c701fc65b89db140160a",
+  "branchAtRun": "claude/agi-gap-audit-roadmap-12ft30",
+  "observedConsoleAggregate": {
+    "source": "assistant/tool transcript console output only; raw artifact files unavailable",
+    "autoScore": 27.34,
+    "maxScore": 40.0,
+    "scorePct": 68.35,
+    "autoPassedCases": 0,
+    "totalCases": 8,
+    "nonemptyAnswers": 8,
+    "backendFailureCount": 0,
+    "strictReadyCount": 0,
+    "manualSemanticPendingOrAdjudicationCount": 8,
+    "validEvidence": false
+  },
+  "diagnosticRerunBoundary": {
+    "autoScorePrinted": 31.21,
+    "maxScore": 40.0,
+    "scorePct": 78.03,
+    "nonemptyAnswers": 8,
+    "backendFailureCount": 0,
+    "validEvidence": false,
+    "reason": "same pack was already spent by the first execution; diagnostic rerun not committed as W1 evidence"
+  },
+  "validationGate": {
+    "validated": false,
+    "reason": "No committed raw response/private/public/manual artifacts for the first unspent execution; self-authored pack; no ≥3 runs, no 2-family judges/κ/CI, manual review pending."
+  },
+  "canClaimAGI": false,
+  "nextStep": "Run a fresh unspent pack with artifact checksums verified before any cleanup."
+}

@@ -25,7 +25,9 @@ that Sophia is proven AGI.
 - [x] Full Sophia hidden runner exists with retrieval, gate, repair, tool logs,
       memory diff, web evidence hooks, and rubric review.
   Evidence: `tools/run_hidden_eval_sophia.py`, `agent/web_evidence.py`, `agent/rubric_review.py`.
-- [ ] Run at least 100 fresh hidden reviewer tasks across four or more domains.
+- [x] Run one fresh self-authored 8-case hidden pack through the full Sophia runner with live DeepSeek and commit artifacts/checksums (execution-health only; not independent/validated evidence).
+  Evidence: `agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.public.json`, `agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.checksums.sha256`.
+- [ ] Run at least 100 fresh hidden reviewer tasks across four or more domains. (2026-06-26 W1 ran 8 self-authored tasks with live DeepSeek; artifact-backed execution-health evidence, but insufficient as 100-task or independent hidden-reviewer evidence, so this remains open.)
 - [ ] Complete two-pass manual semantic review for hidden tasks.
 - [ ] Publish reviewer-signed aggregate hidden results without exposing private prompts.
 
@@ -123,7 +125,7 @@ The Level-3 *harnesses* now exist and are unit-tested (ablation, learning-shift,
 long-horizon, replication, architecture diagram). The remaining gaps are
 evidence runs that need either a live backend or an external human.
 
-- [ ] Fresh independent hidden pack is needed; the current diagnostic packs are spent.
+- [ ] Fresh independent hidden pack is needed; the current diagnostic packs are spent. W1 live-backend execution-health run 2026-06-26 is artifact-backed, but it used a self-authored pack and therefore does **not** close this independent-pack gap (`agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.public.json`). The earlier v1 artifact-retention failure is also recorded (`agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1.invalid-run-summary.json`).
 - [ ] Manual semantic review is still required for strict hidden-test claims.
 - [ ] Ablation and learning-shift deltas not yet produced on a live backend
       (grok token expired / `DEEPSEEK_API_KEY` unset); runners are ready.

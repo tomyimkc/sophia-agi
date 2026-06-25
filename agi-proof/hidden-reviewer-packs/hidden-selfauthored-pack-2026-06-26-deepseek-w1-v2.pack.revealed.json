@@ -1,0 +1,315 @@
+{
+  "packId": "selfauthored-fugu-w1-2026-06-26-v2",
+  "createdAt": "2026-06-26T02:45:00+08:00",
+  "visibility": "revealed-after-eval",
+  "salt": "w1-v2-2026-06-26-fugu-selfauthored-unspent-before-run",
+  "reviewer": {
+    "status": "self-authored-by-runner; not third-party",
+    "note": "Fresh pack created only because v1 artifact retention failed. It is unspent before this run but does not clear the third-party independence caveat."
+  },
+  "cases": [
+    {
+      "id": "w1v2-philosophy-attribution-01",
+      "domain": "philosophy",
+      "prompt": "A catalog card says Laozi authored the Analects and that Confucius authored the Dao De Jing. Write a corrected provenance-aware catalog note.",
+      "materials": [
+        "Correct the crossed attribution without claiming certainty beyond the provided materials.",
+        "Keep Confucian and Daoist lineages distinct."
+      ],
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "Laozi",
+          "Confucius",
+          "Analects",
+          {
+            "match": "Dao De Jing",
+            "aliases": [
+              "Daodejing",
+              "Tao Te Ching"
+            ]
+          },
+          {
+            "match": "lineage",
+            "aliases": [
+              "lineages"
+            ]
+          }
+        ],
+        "mustAvoid": [
+          "Laozi authored the Analects",
+          "Confucius authored the Dao De Jing",
+          "same lineage"
+        ],
+        "semanticChecks": [
+          {
+            "id": "crossed_attribution_corrected",
+            "description": "Corrects both crossed attributions and does not merge lineages."
+          }
+        ],
+        "rubric": [
+          "Correct both attributions",
+          "Keep lineage boundary",
+          "Use source/provenance caution"
+        ],
+        "manualReview": "Check that both crossed attributions are corrected."
+      }
+    },
+    {
+      "id": "w1v2-psychology-risk-01",
+      "domain": "psychology",
+      "prompt": "Rewrite this sentence for a clinical risk memo: “A low agreeableness score proves the patient is dangerous.”",
+      "materials": [
+        "Trait measures are probabilistic and context-dependent.",
+        "Risk memos should avoid stigma and recommend corroborating evidence."
+      ],
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "probabilistic",
+          "context",
+          "corroborating evidence",
+          "risk",
+          "not prove"
+        ],
+        "mustAvoid": [
+          "proves the patient is dangerous",
+          "dangerous person",
+          "deterministic"
+        ],
+        "semanticChecks": [
+          {
+            "id": "risk_measurement_boundary",
+            "description": "Preserves risk-planning utility while rejecting deterministic/stigmatizing inference."
+          }
+        ],
+        "rubric": [
+          "Reject deterministic claim",
+          "Mention corroborating evidence",
+          "Use non-stigmatizing wording"
+        ],
+        "manualReview": "Check measurement boundary and tone."
+      }
+    },
+    {
+      "id": "w1v2-history-source-01",
+      "domain": "history",
+      "prompt": "Two notes say an archive letter was dated before a strike and therefore caused the strike. Draft a source-critical response.",
+      "materials": [
+        "The letter date is before the strike.",
+        "No participant testimony is provided in the materials."
+      ],
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "dated before",
+          "caused",
+          "participant testimony",
+          "source",
+          "cannot conclude"
+        ],
+        "mustAvoid": [
+          "therefore caused",
+          "proves causation",
+          "all participants"
+        ],
+        "semanticChecks": [
+          {
+            "id": "source_critical_causation",
+            "description": "Does not infer sufficient causation from chronology alone."
+          }
+        ],
+        "rubric": [
+          "Separate date from cause",
+          "Name missing evidence",
+          "State bounded conclusion"
+        ],
+        "manualReview": "Check causal caution."
+      }
+    },
+    {
+      "id": "w1v2-logic-converse-01",
+      "domain": "logic",
+      "prompt": "Evaluate: “If a report is audited, it has a checksum. This report has a checksum, so it is audited.” Name the error and repair the inference.",
+      "materials": [
+        "Use concise formal reasoning."
+      ],
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "affirming the consequent",
+          "checksum",
+          "audited",
+          "invalid",
+          "valid"
+        ],
+        "mustAvoid": [
+          "valid as written",
+          "modus ponens as written"
+        ],
+        "semanticChecks": [
+          {
+            "id": "converse_repair",
+            "description": "Names the converse error and gives a valid repaired inference."
+          }
+        ],
+        "rubric": [
+          "Name fallacy",
+          "Explain converse failure",
+          "Give valid form"
+        ],
+        "manualReview": "Verify the repaired inference is valid."
+      }
+    },
+    {
+      "id": "w1v2-coding-guard-01",
+      "domain": "coding",
+      "prompt": "A function `first_item(xs)` currently returns `xs[0]`. Provide a patch plan so empty lists return None, plus tests. Do not edit files.",
+      "materials": [
+        "Expected behavior: `None` for `[]`; first element otherwise.",
+        "Include tests for empty, one item, and multiple items."
+      ],
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "first_item",
+          "None",
+          "empty",
+          "one item",
+          "multiple"
+        ],
+        "mustAvoid": [
+          "raise IndexError",
+          "always return None",
+          "ignore empty"
+        ],
+        "semanticChecks": [
+          {
+            "id": "guard_plan_complete",
+            "description": "Patch plan and tests cover empty and non-empty lists."
+          }
+        ],
+        "rubric": [
+          "State guard",
+          "List tests",
+          "Discuss edge case"
+        ],
+        "manualReview": "Check patch logic."
+      }
+    },
+    {
+      "id": "w1v2-planning-missing-input-01",
+      "domain": "planning",
+      "prompt": "Plan a 30-minute review when a required config file is missing but logs and README are present. State what can be checked and what remains blocked.",
+      "materials": [
+        "Present: run.log, README.md.",
+        "Missing: config.yaml.",
+        "Do not mark the configuration review complete."
+      ],
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "30-minute",
+          "run.log",
+          "README.md",
+          "config.yaml",
+          "blocked"
+        ],
+        "mustAvoid": [
+          "configuration review complete",
+          "assume config",
+          "all checks passed"
+        ],
+        "semanticChecks": [
+          {
+            "id": "blocked_input_plan",
+            "description": "Keeps missing config as a blocked item rather than pretending review is complete."
+          }
+        ],
+        "rubric": [
+          "Time-box work",
+          "Use present files",
+          "Record blocked file"
+        ],
+        "manualReview": "Check honest blocked-state handling."
+      }
+    },
+    {
+      "id": "w1v2-tool-use-evidence-01",
+      "domain": "tool_use",
+      "prompt": "From the runner-provided operational logs only, say what each command demonstrates and one limitation of that evidence.",
+      "materials": [
+        "Do not claim to have run extra commands yourself."
+      ],
+      "requiresToolLog": true,
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "command",
+          "returncode",
+          "limitation",
+          "evidence",
+          "git status"
+        ],
+        "mustAvoid": [
+          "I ran extra",
+          "proves AGI",
+          "guarantees correctness"
+        ],
+        "semanticChecks": [
+          {
+            "id": "operational_log_limits",
+            "description": "Grounds claims in supplied logs and states limitations."
+          }
+        ],
+        "rubric": [
+          "Cite logs",
+          "Mention return codes",
+          "State limits"
+        ],
+        "manualReview": "Check log-grounding."
+      }
+    },
+    {
+      "id": "w1v2-learning-token-01",
+      "domain": "learning",
+      "prompt": "Learn this temporary term: “silver-maple invariant” means “new learning is append-only and protected old hashes remain unchanged.” After the memory step, define it and state the invariant.",
+      "materials": [
+        "silver-maple invariant = new learning is append-only and protected old hashes remain unchanged.",
+        "Do not modify protected old records."
+      ],
+      "learningProtocol": {
+        "preTestPrompt": "Before the memory entry, say whether you know the project-specific meaning of “silver-maple invariant”; do not guess.",
+        "postTestPrompt": "After the append-only memory entry, define “silver-maple invariant” and state the old-hash invariant."
+      },
+      "requiresMemoryDiff": true,
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "silver-maple invariant",
+          "append-only",
+          "protected old hashes",
+          "unchanged",
+          "invariant"
+        ],
+        "mustAvoid": [
+          "overwrite protected",
+          "delete old",
+          "old hashes changed"
+        ],
+        "semanticChecks": [
+          {
+            "id": "learning_invariant_preserved",
+            "description": "Uses the new term while preserving protected old hashes."
+          }
+        ],
+        "rubric": [
+          "Define term",
+          "Cite append-only behavior",
+          "State protected hash invariant"
+        ],
+        "manualReview": "Check learning claim and memory-diff support."
+      }
+    }
+  ]
+}
