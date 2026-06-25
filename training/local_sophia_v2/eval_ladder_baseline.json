@@ -1,6 +1,6 @@
 {
   "schema": "sophia.eval_ladder.v1",
-  "createdAt": "2026-06-24T12:22:21.286812+00:00",
+  "createdAt": "2026-06-25T07:35:19.402861+00:00",
   "candidateOnly": true,
   "level3Evidence": false,
   "model": "Qwen/Qwen2.5-3B-Instruct",
@@ -53,7 +53,7 @@
         "gateFailures": 0
       },
       "stdoutTail": "ertainty...\n  philosophy/trap_confucius_mencius...\n  philosophy/trap_laozi_zhuangzi...\n  philosophy/socrates_symposium...\n  philosophy/zhuangzi_analects_boundary...\n  philosophy/symposium_dialogue_not_autograph...\nphilosophy: 6/9 (66.7%)\n  psychology/freud_cognitive_dissonance...\n  psychology/left_brain_myth...\n  psychology/chemical_imbalance_simplification...\n  psychology/stockholm_every_kidnapping...\n  psychology/dunning_kruger_attribution...\n  psychology/confirmation_bias_bacon...\n  psychology/ten_percent_brain...\n  psychology/mozart_effect...\n  psychology/ptsd_clinical_boundary...\npsychology: 4/9 (44.4%)\n  history/marco_polo_pasta...\n  history/flat_earth_medieval...\n  history/napoleon_height...\n  history/great_wall_space...\n  history/viking_horns...\n  history/magna_carta_democracy_myth...\n  history/boston_tea_party_tax_myth...\n  history/first_flight_uncontested_myth...\nhistory: 5/8 (62.5%)\n  religion/gospel_authorship_council...\n  religion/ancestor_veneration_split...\n  religion/dao_de_jing_religion_philosophy...\n  religion/islam_historical_figure_sensitive...\n  religion/buddha_nirvana_pop...\n  religion/hadith_sect_boundary_council...\nreligion: 1/6 (16.7%)\nTOTAL: 16/32 (50.0%)\n",
-      "stderrTail": "\nFetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]\nFetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 106634.85it/s]\n"
+      "stderrTail": "\nFetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]\nFetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 88197.98it/s]\n"
     },
     {
       "rung": "base+gate",
@@ -104,7 +104,7 @@
         "gateFailures": 29
       },
       "stdoutTail": "ertainty...\n  philosophy/trap_confucius_mencius...\n  philosophy/trap_laozi_zhuangzi...\n  philosophy/socrates_symposium...\n  philosophy/zhuangzi_analects_boundary...\n  philosophy/symposium_dialogue_not_autograph...\nphilosophy: 6/9 (66.7%)\n  psychology/freud_cognitive_dissonance...\n  psychology/left_brain_myth...\n  psychology/chemical_imbalance_simplification...\n  psychology/stockholm_every_kidnapping...\n  psychology/dunning_kruger_attribution...\n  psychology/confirmation_bias_bacon...\n  psychology/ten_percent_brain...\n  psychology/mozart_effect...\n  psychology/ptsd_clinical_boundary...\npsychology: 4/9 (44.4%)\n  history/marco_polo_pasta...\n  history/flat_earth_medieval...\n  history/napoleon_height...\n  history/great_wall_space...\n  history/viking_horns...\n  history/magna_carta_democracy_myth...\n  history/boston_tea_party_tax_myth...\n  history/first_flight_uncontested_myth...\nhistory: 5/8 (62.5%)\n  religion/gospel_authorship_council...\n  religion/ancestor_veneration_split...\n  religion/dao_de_jing_religion_philosophy...\n  religion/islam_historical_figure_sensitive...\n  religion/buddha_nirvana_pop...\n  religion/hadith_sect_boundary_council...\nreligion: 1/6 (16.7%)\nTOTAL: 16/32 (50.0%)\n",
-      "stderrTail": "\nFetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]\nFetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 24576.00it/s]\n"
+      "stderrTail": "\nFetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]\nFetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 34100.03it/s]\n"
     }
   ]
 }

@@ -398,3 +398,34 @@ rather than substantive content repair:
   - **Honest finding:** v4 combined +1 is **format-only**; content channel flat.
 
 **Task 5 — Full retrain:** deferred pending Task 4 completion (now unblocked); requires GPU session.
+
+## agi-pilots-task5-v5-full-retrain-2026-06-25
+
+**Status:** HONEST NEGATIVE on religion CONTENT target (`candidateOnly: true`, `level3Evidence: false`).
+
+**Train (Apple Silicon, mlx_lm, 500 iters):**
+
+- Pack: `training/local_sophia_v2/mlx` (751 train / 89 valid, contamination CLEAN)
+- Adapter: `training/mlx_adapters/sophia-v5-full-religion-repair` (gitignored weights)
+- Final train loss `0.695`, final val loss `1.838`, peak mem `22.203 GB`
+
+**Eval ladder (combined channel, legacy):**
+
+- Base `16/32 = 50.0%` → adapter `21/32 = 65.6%` (delta `+15.6%`)
+- Religion **1/6 → 1/6** (no combined uplift; below aspirational **3/6**)
+- History `5/8 → 5/8` (protected, no regression)
+
+**Split-channel rescore** (`agi-proof/religion-channel-rescore/religion-channels-v5.public-report.json`):
+
+- vs Qwen2.5-3B baseline: FORMAT **1→2**, CONTENT **5→4** (regression), combined **1→1**
+- **Target not met:** CONTENT channel **4/6 < 3/6** goal was wrong direction — content regressed
+- v4 smoke (50 iters) had CONTENT 5/6; full train **hurt** content while adding format cases
+
+**W2 promotion gate:**
+
+- `tools/promote_adapter.py`: **promote** (no protected regression vs baseline ladder)
+- Artifact: `agi-proof/continual-plasticity/sophia-v5-full-religion-repair-promotion.public-report.json`
+- Honest caveat: promote reflects baseline-relative protected floors, not religion CONTENT success
+
+**Claim impact:** Full retrain does not validate religion repair; format/content split exposed
+content regression. Not AGI. Do not retrain-to-fit without new content-focused traces.

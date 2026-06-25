@@ -1,0 +1,88 @@
+{
+  "schema": "sophia.adapter_promotion.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "claimBoundary": "Machine-checked PROMOTION decision for a local adapter; not a validated capability and not an AGI claim. External gates enforce truth.",
+  "candidateId": "local-sophia-v5-full-religion-repair-mlx",
+  "verdict": "promote",
+  "scorecardVerdict": "promote",
+  "formalProof": {
+    "invariant": "no protected suite regresses below (incumbent - tolerance)",
+    "tolerance": 0.01,
+    "protectedSuites": [
+      "religion",
+      "history"
+    ],
+    "verdict": "accepted",
+    "backend": "fallback",
+    "status": "consistent",
+    "reasons": [
+      "fallback: all constraints hold"
+    ],
+    "model": {
+      "after_history": 625,
+      "after_religion": 167
+    }
+  },
+  "decision": {
+    "schema": "sophia.continual_plasticity_decision.v1",
+    "candidateOnly": true,
+    "level3Evidence": false,
+    "candidateId": "local-sophia-v5-full-religion-repair-mlx",
+    "verdict": "promote",
+    "reasons": [
+      "all gates cleared"
+    ],
+    "metrics": {
+      "targetSuite": "total",
+      "targetDelta": 0.156,
+      "maxProtectedRegression": 0.0,
+      "artifactCount": 4,
+      "metricRows": [
+        {
+          "suite": "history",
+          "before": 0.625,
+          "after": 0.625,
+          "protected": true,
+          "delta": 0.0
+        },
+        {
+          "suite": "philosophy",
+          "before": 0.667,
+          "after": 0.889,
+          "protected": false,
+          "delta": 0.222
+        },
+        {
+          "suite": "psychology",
+          "before": 0.444,
+          "after": 0.778,
+          "protected": false,
+          "delta": 0.334
+        },
+        {
+          "suite": "religion",
+          "before": 0.16699999999999998,
+          "after": 0.16699999999999998,
+          "protected": true,
+          "delta": 0.0
+        },
+        {
+          "suite": "total",
+          "before": 0.5,
+          "after": 0.6559999999999999,
+          "protected": false,
+          "delta": 0.156
+        }
+      ]
+    },
+    "timestamp": "2026-06-25T07:56:15.511034+00:00"
+  },
+  "inputs": {
+    "adapterLadder": "training/local_sophia_v2/eval_ladder_adapter.json",
+    "baselineLadder": "training/local_sophia_v2/eval_ladder_baseline.json",
+    "manifest": "training/local_sophia_v2/manifest.json",
+    "datasetContaminated": false,
+    "trainingSeed": null
+  }
+}
