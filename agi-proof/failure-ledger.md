@@ -670,9 +670,7 @@ Mock adapter vs base: fabrication on traps 44.4% → 0%, calibration +0.58, usef
 `solverChecked: true`. No HK-advisor-specific adapter to promote (0/3 SFT seeds).
 
 **Claim impact:** Mock eval shows intended metric direction; no validated adapter uplift. `canClaimAGI: false`.
-=======
-=======
->>>>>>> eeda4d0 (feat(team-agents): eval harness, dataset pack, independence reporting (P3+P4))
+
 ## team-agents-mode-mock-eval-2026-06-25
 
 **Status:** OPEN (mock eval only — not real-model evidence).
@@ -706,7 +704,17 @@ ladder run via `tools/promote_adapter.py`.
 when N_eff < 2.0.
 
 **Artifact:** `agi-proof/benchmark-results/team-agents.public-report.json`
-<<<<<<< HEAD
->>>>>>> eeda4d0 (feat(team-agents): eval harness, dataset pack, independence reporting (P3+P4))
-=======
->>>>>>> eeda4d0 (feat(team-agents): eval harness, dataset pack, independence reporting (P3+P4))
+
+## team-orchestrator-eval-template-2026-06-25
+
+**Status:** OPEN (orchestrator wired; real eval blocked until promoted adapter + GPU).
+
+**Command (when ready):**
+```bash
+python tools/eval_team_agents.py --mode real --model mlx:Qwen/Qwen2.5-3B-Instruct \\
+  --adapter training/mlx_adapters/sophia-v3 --backend mlx --seeds 0,1,2
+```
+
+**Honest claim:** `canClaimAGI: false`. Never claim consensus when N_eff < 2.0.
+Record effective-N, trap false-consensus, and bootstrap CI — not promotion evidence
+until `promote_adapter.py` clears the Sophia ladder separately.

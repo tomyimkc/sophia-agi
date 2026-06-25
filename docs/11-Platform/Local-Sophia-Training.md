@@ -119,3 +119,32 @@ See `training/local_sophia_v2/eval_ladder_adapter.json` and the failure-ledger e
 This trains **behavioral discipline**, not general intelligence. Fine-tuning does not give
 grounded world models, long-horizon autonomy, continual safe learning, or general transfer.
 Honest headline: *"a local, verifier-gated wisdom model — external gates enforce correctness."*
+
+## Team mode (runtime orchestrator)
+
+Team mode runs a **promoted Sophia LoRA adapter** through the map-reduce orchestrator
+(`deliberate_team()` in `agent/team_agents.py`) — one forward pass per seat plus gated
+synthesis. It is **not** a separate base-model team LoRA training pipeline; eval evidence
+is candidate-only (`canClaimAGI: false`).
+
+| Condition | Meaning |
+|---|---|
+| `sophia_single` | Single-agent baseline (same adapter) |
+| `sophia_team_orchestrator` | `deliberate_team()` with adapter on all seats + chair |
+
+**Mock CI (offline):**
+```bash
+python tools/eval_team_agents.py --mode mock --dry-run
+python tools/team_agents_deliberate.py "Model runway" --model mock --json
+python tools/council_deliberate.py "Model runway" --team-mode --model mock --json
+```
+
+**Real eval (when adapter + GPU ready):**
+```bash
+python tools/eval_team_agents.py --mode real --model mlx:Qwen/Qwen2.5-3B-Instruct \\
+  --adapter training/mlx_adapters/sophia-v3 --backend mlx --seeds 0,1,2
+```
+
+Never claim consensus when effective-N < 2.0. Team benchmark scoring uses the external
+scorer in `provenance_bench/team_agents_benchmark.py` (disjoint from the intrinsic gate).
+See failure-ledger entry `team-orchestrator-eval-template-2026-06-25`.
