@@ -183,6 +183,7 @@ jobs:
           python tools/calibrate_network_tax.py --no-write
           python tools/bench_nccl_allreduce.py --dry-run --gpus 8
           python tools/runpod_nccl_bench.py --dry-run --gpu-count 2
+          python tools/runpod_nccl_bench.py --ssh-endpoint root@h:22 --gpu-count 2 --branch main --dry-run
           python tools/run_cluster_sim.py --jobs 120 --seed 1
           python tools/run_cluster_faultsim.py --jobs 80 --seed 1
       - name: Skills layer (MCP-matched, fail-closed) + registry

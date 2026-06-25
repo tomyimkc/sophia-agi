@@ -114,15 +114,69 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--no-remote-delete-watchdog", action="store_true")
     ap.add_argument("--calibrate", action="store_true",
                     help="after copying the report, run tools/calibrate_network_tax.py on it")
+    ap.add_argument("--ssh-endpoint", default="",
+                    help="run on an EXISTING pod instead of creating one, e.g. "
+                         "root@103.207.149.84:12226 (no API key / no create / no delete)")
+    ap.add_argument("--ssh-key", type=Path, default=Path.home() / ".ssh" / "id_ed25519",
+                    help="private key for --ssh-endpoint")
     ap.add_argument("--artifacts-dir", type=Path,
                     default=ROOT / "agi-proof" / "benchmark-results" / "cluster")
     return ap.parse_args(argv)
+
+
+def _parse_ssh_endpoint(endpoint: str) -> tuple[str, str, int]:
+    """'root@host:port' -> (user, host, port). Defaults: user=root, port=22."""
+    user = "root"
+    rest = endpoint
+    if "@" in rest:
+        user, rest = rest.split("@", 1)
+    host, _, port = rest.partition(":")
+    return user, host, int(port) if port else 22
+
+
+def run_on_existing_pod(args: argparse.Namespace) -> int:
+    """Run the benchmark on a pod the caller already owns (no create/delete, no API key).
+
+    This is the path for "I already have a pod" — point the tool at its SSH endpoint and it
+    clones the repo on the pod, runs the torchrun all-reduce sweep, copies the report back,
+    and (optionally) recalibrates. Needs a local ssh/scp client with egress to the pod.
+    """
+    user, host, port = _parse_ssh_endpoint(args.ssh_endpoint)
+    conn = PodConnection(pod_id="existing", public_ip=host, ssh_port=port)
+    args.source = "git"  # an existing pod has no rsynced repo; clone it
+    print(f"[nccl] using existing pod {user}@{host}:{port} (no create/delete)")
+    print("[nccl] remote benchmark script:")
+    print(_remote_bench_script(args))
+    if args.dry_run:
+        print("[nccl] dry-run only; nothing executed")
+        return 0
+
+    for tool in ("ssh", "scp"):
+        if not shutil.which(tool):
+            raise RunPodError(f"{tool} not found on PATH (needed for --ssh-endpoint)")
+    if not args.ssh_key.exists():
+        raise RunPodError(f"ssh key not found: {args.ssh_key}")
+    _wait_ssh_login(conn, args.ssh_key)
+    args.artifacts_dir.mkdir(parents=True, exist_ok=True)
+    log_path = args.artifacts_dir / "existing-pod.nccl.log"
+    cmd = _ssh_base(conn, args.ssh_key) + ["bash", "-s"]
+    exit_code = _stream(cmd, log_path, input_text=_remote_bench_script(args))
+    print(f"[nccl] remote exit code: {exit_code}; log={log_path}")
+    local_report = args.artifacts_dir / "nccl-allreduce.public-report.json"
+    got = _scp_from_pod(conn, args.ssh_key, REMOTE_REPORT, local_report)
+    if got and args.calibrate:
+        from tools.calibrate_network_tax import main as calibrate_main
+        print("[nccl] calibrating network tax from measured report …")
+        calibrate_main(["--from-nccl", str(local_report), "--markdown"])
+    return exit_code
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     if args.gpu_count < 2:
         raise RunPodError("all-reduce needs --gpu-count >= 2")
+    if args.ssh_endpoint:
+        return run_on_existing_pod(args)
     api_key = os.environ.get(args.api_key_env, "")
     if not api_key and args.api_key_file:
         api_key = args.api_key_file.read_text(encoding="utf-8").strip()

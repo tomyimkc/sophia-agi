@@ -13,14 +13,25 @@
     "unitTested": "tests/test_cluster_netcalib.py (command builder, busbw inversion, measured-provenance tagging, sim wiring)"
   },
   "environmentProbe": {
-    "sshClient": "MISSING (command -v ssh -> not found)",
+    "sshClient": "MISSING and NOT installable (apt-get blocked by HTTPS-only proxy)",
     "scpClient": "MISSING",
-    "runpodApiKeyInShell": "absent (RUNPOD_API_KEY unset)",
+    "rawTcpEgressToPod": "BLOCKED (proxy noProxy list is HTTPS endpoints only; TCP to pod :12226 failed)",
+    "httpsToRunpodApi": "OK (rest.runpod.io/v1/pods -> 200 with supplied key)",
     "torchLocally": "absent (CPU-only container)",
     "runpodMcpReachable": true,
     "gpuStock": "NVIDIA H100 80GB HBM3 (SXM) secureCloud stockStatus=High, available=true"
   },
-  "whyNotRun": "The RunPod MCP can create a pod, but it exposes no pod-exec / pod-logs / file-read tool, so running torchrun on the pod and retrieving the JSON report requires SSH. This container has no ssh client and no RUNPOD_API_KEY in the shell, so the SSH-based orchestrator cannot run. Creating a paid pod whose results cannot be collected would waste money and risk orphaning a billable resource, so no pod was created.",
+  "sessionAttempt2026-06-25": {
+    "suppliedByUser": "RunPod API key + ssh root@103.207.149.84:12226 + 'yes to all'",
+    "apiKeyValid": true,
+    "providedPod": {"id": "13x2reegejv7jr", "name": "sophia-wisdom-pilot-sr-20260625-185636",
+                    "gpuCount": 1, "status": "RUNNING", "costPerHr": 3.29},
+    "blocker1": "This web-session container cannot SSH: no ssh client, apt-get install blocked by the HTTPS-only agent proxy, and raw TCP egress to the pod's port is blocked.",
+    "blocker2": "The provided pod has gpuCount=1; NCCL all-reduce needs >=2 ranks, so even with SSH it cannot measure inter-GPU bandwidth.",
+    "decision": "Did NOT create a new multi-GPU pod via the API: without SSH egress the benchmark still could not be driven from here, so a fresh pod would only burn money.",
+    "remedy": "Added an existing-pod mode (tools/runpod_nccl_bench.py --ssh-endpoint) so the user can run the exact measurement from their own machine (which has the key + SSH egress) against any >=2-GPU pod."
+  },
+  "whyNotRun": "The RunPod MCP/API can create and manage pods but exposes no pod-exec / pod-logs / file-read, so running torchrun and retrieving the JSON report requires SSH. This container has no ssh client (apt blocked) and no raw TCP egress to pods. The benchmark must be launched from a host with SSH egress.",
   "currentCalibration": {
     "source": "modeled",
     "path": "cluster/netcalib.json",
@@ -28,9 +39,12 @@
     "node_tax": 1.036044,
     "note": "Derived from documented interconnect line rates (NVLink 400 / NVSwitch 120 / RoCE 50 GB/s), exposed-comm-fraction 0.15. Upper-bound, worst-case comm-bound model."
   },
-  "readyToRunWhenUnblocked": "RUNPOD_API_KEY=... python tools/runpod_nccl_bench.py --yes --gpu-count 2 --branch claude/supercomputing-cluster-job-fdbkks --calibrate",
+  "readyToRunWhenUnblocked": {
+    "createManagedPod": "RUNPOD_API_KEY=... python tools/runpod_nccl_bench.py --yes --gpu-count 2 --source git --branch claude/supercomputing-cluster-job-fdbkks --calibrate",
+    "useExistingPod": "python tools/runpod_nccl_bench.py --ssh-endpoint root@HOST:PORT --ssh-key ~/.ssh/id_ed25519 --gpu-count <#GPUs> --branch claude/supercomputing-cluster-job-fdbkks --calibrate"
+  },
   "unblockNeeds": [
-    "A host with an ssh client + RUNPOD_API_KEY (e.g. a local machine or a runner with SSH egress to ssh.runpod.io), OR",
-    "A RunPod MCP pod-exec/log-retrieval capability so the benchmark can run and return its report without SSH."
+    "Run from a host with an ssh client + SSH egress to the pod (e.g. the user's own machine), on a pod with >=2 GPUs, OR",
+    "A RunPod pod-exec/log-retrieval capability so the benchmark can run and return its report without SSH."
   ]
 }

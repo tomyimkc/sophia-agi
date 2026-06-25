@@ -103,6 +103,18 @@ def test_bench_dryrun_args_parse() -> None:
     assert args.gpus == 8 and args.dry_run and not args.run
 
 
+def test_ssh_endpoint_parse_and_remote_script() -> None:
+    from tools.runpod_nccl_bench import _parse_ssh_endpoint, _remote_bench_script, parse_args as rp_args
+    assert _parse_ssh_endpoint("root@103.207.149.84:12226") == ("root", "103.207.149.84", 12226)
+    assert _parse_ssh_endpoint("1.2.3.4") == ("root", "1.2.3.4", 22)
+    # existing-pod mode clones the repo on the pod and runs torchrun across gpu-count ranks
+    args = rp_args(["--ssh-endpoint", "root@h:22", "--gpu-count", "2", "--branch", "b", "--dry-run"])
+    args.source = "git"
+    script = _remote_bench_script(args)
+    assert "git clone" in script and "--branch b" in script
+    assert "--nproc_per_node=2" in script and "bench_nccl_allreduce.py --run" in script
+
+
 def main() -> int:
     test_ring_allreduce_monotonic_in_bandwidth()
     test_busbw_inverts_time()
@@ -113,6 +125,7 @@ def main() -> int:
     test_calibration_drives_simulator()
     test_torchrun_command_builder()
     test_bench_dryrun_args_parse()
+    test_ssh_endpoint_parse_and_remote_script()
     print("test_cluster_netcalib: OK")
     return 0
 
