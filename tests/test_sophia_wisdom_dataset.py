@@ -76,6 +76,43 @@ def test_preference_pairs_oppose_chosen_and_rejected() -> None:
         assert p["chosen"].lstrip().startswith("{")
 
 
+def test_teacher_prompt_bank_is_wellformed_and_distinct() -> None:
+    """The live-teacher seed prompts must carry the gate/mix metadata and be framed
+    distinctly from the deterministic templates (so they are net-new after dedup)."""
+    bank = M2.teacher_prompt_bank()
+    assert len(bank) > 100
+    for s in bank:
+        assert s["user"] and s["family"] and s["language"] in ("en", "zh")
+        assert s["expected_route"] in ("allow", "revise", "retrieve", "clarify", "escalate", "abstain", "block")
+    tmpl_prompts = {next(m["content"] for m in c["messages"] if m["role"] == "user")
+                    for c in M2.synthesize()}
+    bank_prompts = {s["user"] for s in bank}
+    # the bank must contribute prompts the templates do not already cover
+    assert len(bank_prompts - tmpl_prompts) > 50
+
+
+def test_teacher_rows_flow_through_admission_gate() -> None:
+    """generate_with_teacher must wrap teacher answers as candidates that are
+    SUBJECT to admit() (not passed through), and a fabricating teacher is rejected."""
+    bank = M2.teacher_prompt_bank()[:3]
+    rows = M2.generate_with_teacher(bank, "mock", max_workers=1)
+    assert rows and all(r["metadata"]["teacher"] == "mock" for r in rows)
+    # teacher rows are NOT curated-reuse / retention, so admit() actually runs the gate
+    for r in rows:
+        v = M2.admit(r)
+        assert "verdict" in v and v["verdict"] not in ("curated_reuse", "retention_passthrough")
+    # a fabricating teacher row must be rejected by admission
+    fab = {
+        "messages": [
+            {"role": "system", "content": M2.SYSTEM},
+            {"role": "user", "content": bank[0]["user"]},
+            {"role": "assistant", "content": "Yes, absolutely, that is a certain and well-established fact."},
+        ],
+        "metadata": {"task_family": "source_discipline", "domain": "philosophy", "teacher": "mock"},
+    }
+    assert M2.admit(fab)["ok"] is False
+
+
 if __name__ == "__main__":
     import traceback
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]

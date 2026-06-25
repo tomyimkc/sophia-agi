@@ -480,6 +480,140 @@ def mine_preference_pairs(accepted: list) -> list:
 
 
 # --------------------------------------------------------------------------- #
+# Live-LLM teacher (M2): egress-gated candidate generation                     #
+# --------------------------------------------------------------------------- #
+# The teacher writes route-first candidate ANSWERS to seed prompts; every
+# candidate then flows through the SAME admission gate (admit()) + decontam +
+# dedup as the deterministic rows — nothing the teacher emits is exempt. This is
+# the documented --teacher hook, now runnable because openrouter.ai egress is
+# open. HONEST BOUND: prompt diversity is corpus-bound (~72 structured records),
+# so the live teacher raises ANSWER quality/variety per prompt but does NOT by
+# itself reach the 10-20k volume target — that needs corpus enrichment. The
+# builder dedups by normalized prompt, so multiple samples of one prompt collapse
+# to one row (no silent volume padding).
+
+def teacher_prompt_bank() -> list:
+    """Seed prompts for the live teacher, framed DISTINCTLY from the deterministic
+    templates (different question forms) so they are net-new after dedup. Each
+    carries the metadata the admission gate / mix report need; the assistant turn
+    is left for the teacher to write."""
+    attr = _load("attributions.json")
+    trad = _load("traditions.json")
+    rel = _load("religion_concepts.json")
+    psych = _load("psychology_concepts.json")
+    hist = _load("history_events.json")
+    specs: list = []
+
+    def add(family, domain, language, route, user, source_ids, protected_suite=None, extra=None):
+        specs.append({"family": family, "domain": domain, "language": language,
+                      "expected_route": route, "user": user, "source_ids": source_ids,
+                      "protected_suite": protected_suite, "extra": extra or {}})
+
+    # Attributions — framings the templates do NOT use (composition era, settled-ness,
+    # specific false-author challenge, tradition-of-text).
+    for tid, rec in attr.items():
+        ten = _title_en(tid, rec)
+        tz = rec.get("canonicalTitleZh")
+        conf = rec.get("authorConfidence", "attributed")
+        sid = [f"attributions:{tid}"]
+        add("source_discipline", rec.get("domain", "philosophy"), "en", "allow",
+            f"Is the authorship of {ten} historically settled, or is it traditionally attributed? Be precise about certainty.", sid)
+        add("source_discipline", rec.get("domain", "philosophy"), "en", "allow",
+            f"Which tradition does {ten} belong to, and to whom is it conventionally ascribed?", sid)
+        for bad in (rec.get("doNotAttributeTo") or [])[:1]:
+            b_en = _en(bad) if bad in AUTHOR_EN else bad
+            add("source_discipline", rec.get("domain", "philosophy"), "en", "revise",
+                f"A friend insists {b_en} personally wrote {ten}. Is that historically accurate?", sid,
+                extra={"forbidden_author": bad})
+        if tz:
+            add("source_discipline", rec.get("domain", "philosophy"), "zh", "allow",
+                f"{tz}的作者身份是已確定的史實，還是傳統歸屬？請說明確定程度。", sid)
+
+    # Traditions — doctrinal-difference + interchangeability framings (the 儒/道 axis).
+    for tname, spec in trad.items():
+        en_lab, zh_lab = TRADITION_LABEL.get(tname, (tname, tname))
+        for other in (spec.get("doNotMergeWith") or []):
+            o_en, o_zh = TRADITION_LABEL.get(other, (other, other))
+            sid = [f"traditions:{tname}", f"traditions:{other}"]
+            add("source_discipline", "philosophy", "en", "revise",
+                f"What is the key doctrinal difference between {en_lab} and {o_en}, and is it safe to treat them interchangeably?",
+                sid, extra={"merge_pair": [tname, other]})
+            add("source_discipline", "philosophy", "zh", "revise",
+                f"{zh_lab}與{o_zh}在核心主張上有何關鍵差異？可以互換使用嗎？", sid, extra={"merge_pair": [tname, other]})
+
+    # Religion concepts — meaning + common-misattribution framing.
+    for rid_, rec in rel.items():
+        zh = rec.get("canonicalTitleZh", rid_)
+        sid = [f"religion_concepts:{rid_}"]
+        add("source_discipline", "religion", "en", "allow",
+            f"Briefly: what does the concept '{rid_.replace('_', ' ')}' mean in its own tradition, and what is a common misattribution to avoid?",
+            sid, protected_suite="religion")
+        add("source_discipline", "religion", "zh", "allow",
+            f"「{zh}」這個概念在其本身傳統中是什麼意思？常見的誤歸是什麼？", sid, protected_suite="religion")
+
+    # Myth/misconception — settled-ness challenge (distinct from the template confirm-framing).
+    for src, dom in ((psych, "psychology"), (hist, "history")):
+        for rid_, rec in src.items():
+            conf = rec.get("authorConfidence", "")
+            if not (("myth" in rid_) or conf in ("disputed", "anachronism_risk")):
+                continue
+            zh = rec.get("canonicalTitleZh", rid_)
+            sid = [f"{dom}_concepts:{rid_}"]
+            add("source_discipline", dom, "en", "revise",
+                f"I keep seeing the claim '{zh}'. Is that scientifically/historically settled, or a popular misconception?", sid)
+    return specs
+
+
+def _teacher_row(spec: dict, answer: str, teacher_spec: str) -> dict:
+    return {
+        "messages": [
+            {"role": "system", "content": SYSTEM},
+            {"role": "user", "content": spec["user"]},
+            {"role": "assistant", "content": answer},
+        ],
+        "metadata": {
+            "task_family": spec["family"], "domain": spec["domain"], "language": spec["language"],
+            "expected_route": spec["expected_route"], "source_ids": spec["source_ids"],
+            "protected_suite": spec.get("protected_suite"),
+            "license": "teacher-generated-then-gated", "eval_overlap": False,
+            "teacher": teacher_spec, **(spec.get("extra") or {}),
+        },
+    }
+
+
+def generate_with_teacher(specs: list, teacher_spec: str, *, max_workers: int = 8,
+                          max_calls: int | None = None, temperature: float | None = None) -> list:
+    """Call the live teacher on each seed prompt (concurrently) and wrap the
+    answers as candidate rows. Network-bound, so fan out across a thread pool.
+    A failed/empty generation is dropped (fail-closed), never written blank."""
+    from agent.model import default_client
+    import os
+    client = default_client(teacher_spec)
+    if temperature is not None:
+        os.environ["SOPHIA_TEMPERATURE"] = str(temperature)
+    work = specs[:max_calls] if max_calls else specs
+
+    def one(spec):
+        try:
+            res = client.generate(SYSTEM, spec["user"])
+            txt = (getattr(res, "text", "") or "").strip()
+        except Exception:
+            return None
+        if not txt or txt.startswith("[generation-error"):
+            return None
+        return _teacher_row(spec, txt, teacher_spec)
+
+    rows: list = []
+    if max_workers <= 1:
+        rows = [one(s) for s in work]
+    else:
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=max_workers) as ex:
+            rows = list(ex.map(one, work))
+    return [r for r in rows if r]
+
+
+# --------------------------------------------------------------------------- #
 # Build                                                                       #
 # --------------------------------------------------------------------------- #
 def synthesize() -> list:
@@ -512,14 +646,30 @@ def _split(rows: list) -> tuple:
     return train, valid
 
 
-def build(check_only: bool, stats: bool) -> int:
+def build(check_only: bool, stats: bool, *, teacher_spec: str | None = None,
+          teacher_workers: int = 8, teacher_max_calls: int | None = None,
+          teacher_temperature: float | None = None) -> int:
     forbidden = set(eval_prompt_set(root=ROOT))
     for r in _read_jsonl(HOLDOUT_SRC):
         pr = prompt_of(r)
         if pr:
             forbidden.add(normalize(pr))
 
-    candidates = synthesize() + load_reuse()
+    teacher_rows: list = []
+    teacher_stats: dict = {"used": False}
+    if teacher_spec:
+        bank = teacher_prompt_bank()
+        print(f"[teacher] {teacher_spec}: generating over {len(bank)} seed prompts "
+              f"(workers={teacher_workers}, max_calls={teacher_max_calls or 'all'}) ...")
+        teacher_rows = generate_with_teacher(
+            bank, teacher_spec, max_workers=teacher_workers,
+            max_calls=teacher_max_calls, temperature=teacher_temperature)
+        teacher_stats = {"used": True, "spec": teacher_spec, "seedPrompts": len(bank),
+                         "generated": len(teacher_rows)}
+        print(f"[teacher] generated {len(teacher_rows)} non-empty candidates "
+              f"(these now flow through the SAME admission gate).")
+
+    candidates = synthesize() + load_reuse() + teacher_rows
 
     accepted, rejected, seen = [], [], set()
     n_decontam = 0
@@ -575,7 +725,9 @@ def build(check_only: bool, stats: bool) -> int:
         "schema": "sophia.local_sophia_dataset.v3",
         "datasetId": "local_sophia_v3",
         "baseModel": "EXPERIMENT — selected by M1 (do not hard-commit; see training plan)",
-        "teacher": "deterministic-template + human-curated-reuse (NO live LLM — egress blocked)",
+        "teacher": ("deterministic-template + human-curated-reuse"
+                    + (f" + live-LLM:{teacher_spec}" if teacher_spec else " (no live LLM this run)")),
+        "teacherRun": teacher_stats,
         "admission": "agent.gate.check_response (advisor) + public_standard; reject -> preference/hard-neg",
         "totals": {"candidates": len(candidates), "accepted": total,
                    "rejected": len(rejected), "decontaminationDrops": n_decontam,
@@ -589,10 +741,13 @@ def build(check_only: bool, stats: bool) -> int:
             "target": ">=10k decontaminated gate-passed rows",
             "achieved": total,
             "met": total >= 10000,
-            "honest_note": ("Deterministic-template teacher is corpus-bounded. Reaching 10-20k "
-                            "requires the live-LLM teacher (--teacher, needs model egress — blocked "
-                            "here) and/or M2 corpus enrichment. The PIPELINE is complete and "
-                            "fail-closed; yield scales when the teacher is unblocked."),
+            "honest_note": ("Volume is PROMPT-bound, not teacher-bound: the structured corpus is "
+                            "~72 records, so even a live LLM teacher (now runnable — egress open, "
+                            "see teacherRun) only raises answer quality/variety per prompt, and the "
+                            "builder dedups by normalized prompt so samples collapse to one row. "
+                            "Reaching 10-20k needs CORPUS ENRICHMENT (more attribution/religion/"
+                            "tradition/history records), not just the teacher. Pipeline complete + "
+                            "fail-closed; live-teacher path proven."),
         },
         "boundary": ("Habits learned by weights; truth enforced by the EXTERNAL gate. Not an AGI "
                      "claim. General-retention pack is small — expand with a license-clean instruct "
@@ -637,8 +792,18 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--check", action="store_true", help="synth + gate + decontam, NO writes")
     ap.add_argument("--stats", action="store_true", help="print the full mix report")
+    ap.add_argument("--teacher", default=None,
+                    help="live-LLM teacher spec (e.g. openrouter:google/gemma-3-4b-it). Generates "
+                         "candidate answers that flow through the SAME admission gate. Needs egress.")
+    ap.add_argument("--teacher-workers", type=int, default=8, help="teacher generation concurrency")
+    ap.add_argument("--teacher-max-calls", type=int, default=None,
+                    help="cap teacher generations (budget guard); default = whole prompt bank")
+    ap.add_argument("--teacher-temperature", type=float, default=None,
+                    help="override sampling temperature for the teacher")
     args = ap.parse_args()
-    return build(check_only=args.check, stats=args.stats)
+    return build(check_only=args.check, stats=args.stats, teacher_spec=args.teacher,
+                 teacher_workers=args.teacher_workers, teacher_max_calls=args.teacher_max_calls,
+                 teacher_temperature=args.teacher_temperature)
 
 
 if __name__ == "__main__":
