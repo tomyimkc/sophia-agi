@@ -326,15 +326,16 @@ python - <<'PY'
 from pathlib import Path
 p = Path("/tmp/requirements-rl.sophia.txt")
 pins = {
-    "transformers": "transformers==4.51.3",
-    # trl 0.17.0 is the first with the GRPO vllm_mode (colocate/server) selector,
-    # and is compatible with transformers 4.51.3. Paired with vllm 0.8.5 (the
-    # trl-0.17-era vLLM API) so colocate generation works in-process on one GPU.
-    "trl": "trl==0.17.0",
-    "vllm": "vllm==0.8.5",
-    "peft": "peft==0.15.2",
+    # Coherent vLLM-colocate stack. trl 0.19 has the vllm_mode selector (colocate is
+    # the DEFAULT: vLLM in-process on one GPU, no server). vllm 0.9.1 is the matching
+    # vLLM API. transformers MUST be pinned to the 4.53.x line: vllm 0.9.1 registers
+    # an `aimv2` AutoConfig that already exists in transformers >=5.x, so an unpinned
+    # transformers (pip picks 5.x) crashes GRPOTrainer import. datasets pinned off the
+    # 5.x line for the same float-too-new reason. peft/accelerate resolve compatibly.
+    "trl": "trl==0.19.1",
+    "vllm": "vllm==0.9.1",
+    "transformers": "transformers==4.53.2",
     "datasets": "datasets==3.6.0",
-    "accelerate": "accelerate==1.6.0",
 }
 out = []
 for line in p.read_text().splitlines():
@@ -356,7 +357,16 @@ PY
     live_cmd = ""
     if args.remote_mode == "live":
         live_cmd = """
-python tools/run_rlvr.py \\
+# vLLM colocate/server runs through vLLM's external-launcher executor, which reads
+# the distributed env (RANK/WORLD_SIZE/LOCAL_RANK) that `accelerate launch` sets.
+# Plain `python` leaves RANK unset -> KeyError: 'RANK'. --vllm none has no such
+# executor and runs fine under plain python.
+if [ "$SOPHIA_VLLM" = "none" ]; then
+  SOPHIA_LAUNCH="python"
+else
+  SOPHIA_LAUNCH="accelerate launch --num_processes 1 --num_machines 1"
+fi
+$SOPHIA_LAUNCH tools/run_rlvr.py \\
   --task "$SOPHIA_TASK" \\
   --model "$SOPHIA_MODEL" \\
   --quant "$SOPHIA_QUANT" \\

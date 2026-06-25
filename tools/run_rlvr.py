@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import traceback
 from pathlib import Path
@@ -155,6 +156,18 @@ def _run_gpu(args: argparse.Namespace) -> int:
             "(1x80GB colocate), or --vllm none (single 24GB, slow)."
         )
         return 1
+
+    if use_vllm:
+        # vLLM's colocate/server path runs through its external-launcher executor,
+        # which reads RANK/WORLD_SIZE/LOCAL_RANK from the env (KeyError: 'RANK'
+        # otherwise). `accelerate launch` sets these; default them here too so a
+        # plain `python` single-GPU colocate run also works. setdefault never
+        # overrides a real distributed launch.
+        os.environ.setdefault("RANK", "0")
+        os.environ.setdefault("LOCAL_RANK", "0")
+        os.environ.setdefault("WORLD_SIZE", "1")
+        os.environ.setdefault("MASTER_ADDR", "127.0.0.1")
+        os.environ.setdefault("MASTER_PORT", "12355")
 
     from datasets import Dataset
     from peft import LoraConfig
