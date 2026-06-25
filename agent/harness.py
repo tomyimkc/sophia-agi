@@ -26,6 +26,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from agent.config import ROOT
+from agent.context_manager import compact_history
 from agent.gate import check_response
 from agent.model import ModelClient, ModelResult, default_client
 from agent.prompts import MODE_PROMPTS
@@ -406,9 +407,15 @@ def run_agent(
             store.log("step_skip", step=step["id"], reason="already completed (resume)")
             prior_outputs.append(store.state.get("stepOutputs", {}).get(step["id"], ""))
             continue
+        # Token-budgeted, recency-aware compaction of prior step outputs (replaces
+        # a blunt char chop): keeps recent context whole, compresses/drops older,
+        # and logs exactly what was elided so the context window is auditable.
+        prior_text, prior_pack = compact_history(prior_outputs)
+        if prior_pack.compressed or prior_pack.dropped or prior_pack.over_budget:
+            store.log("context_compact", step=step["id"], **prior_pack.to_log())
         outcome = _execute_step(
             task, step, client=client, store=store, verifier=verifier,
-            prior="\n\n".join(prior_outputs)[-4000:], max_retries=max_retries, approve_tools=approve_tools,
+            prior=prior_text, max_retries=max_retries, approve_tools=approve_tools,
         )
         step_results.append(outcome)
         total_cost += outcome.cost_usd
