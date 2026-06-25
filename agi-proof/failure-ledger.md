@@ -396,6 +396,42 @@ CI excluding 0 on a third-party pack is the first defensible EXTERNAL claim for 
 that, unlike the adapter, already has validated first-party deltas). Plan:
 `docs/06-Roadmap/Hurdles-2-5-Plan.md`.
 
+## gate-external-edge-is-calibrated-abstention-not-fabrication-reduction-2026-06-25
+
+**Status:** OPEN — reframe + the one powered follow-up test (free-generation), machinery built.
+
+The raw-vs-full external run (fresh Wikidata/Crossref/World Bank pack, N=69, 3 runs each, live)
+returned an honest NULL on **fabrication reduction**: raw−full fabrication +0.05, 95% CI
+[0.000, 0.125] (includes 0). Diagnosed correctly: a base model *prompted to classify-with-abstain*
+turns skeptical (rejects 10/29 TRUE claims), so it barely fabricates (2 events) — no power to show
+reduction.
+
+**But a separable external edge IS present — calibration:** FULL vs RAW shows false-reject-on-true
+**0.000 vs 0.345**, correct-abstention-on-unknowable **1.00 vs 0.31**, ECE **0.099 vs 0.228**,
+fabrication **0.00 vs 0.05** — bought at a steep over-abstention cost (**0.667 vs 0.034**, CI
+[0.46, 0.79]). So the gate's demonstrable external value is **calibrated abstention** (never
+fabricate, never falsely reject a true claim, abstain correctly on the unknowable), not
+fabrication-reduction-vs-a-skeptical-baseline.
+
+**Arc-level synthesis (important):** across the trained adapter (GSM8K + TruthfulQA nulls) and now
+the gate's fabrication-reduction (null), the project's externally-demonstrable contribution is
+narrowing to ONE thing — **quantified calibrated abstention at a measured coverage cost** — which
+is exactly the Hurdle-3 thesis from the original report ("calibrated abstention is the principled
+behavior beyond the verifier's reach"). Not capability, not fabrication-reduction; *knowing what it
+doesn't know.*
+
+**The one powered follow-up — free-generation fabrication** (the realistic risk, where the base
+model isn't primed to abstain): `agent/generation_fabrication_score.py` + tests score a free-text
+answer to "Who wrote X?" against EXTERNAL gold (correct = names gold; fabricated = asserts a wrong
+author; hedge/decline = abstention, not fabrication). Run raw (model generates) vs full on an
+external authorship pack, ≥3 runs; raw−full fabrication with a paired item-bootstrap CI. If the CI
+excludes 0 there, the gate's fabrication-reduction is demonstrated where it matters; if null, the
+gate's value is purely calibrated abstention and that is the final honest external scope.
+
+Also hardened `agent/raw_fact_classifier.py` to surface empty/error generations (a concurrent MLX
+run returned empty under contention and was silently scored as 0 fabrication). Plan:
+`docs/06-Roadmap/Hurdles-2-5-Plan.md`.
+
 ## Template
 
 ```text
