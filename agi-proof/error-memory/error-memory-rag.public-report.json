@@ -1,0 +1,167 @@
+{
+  "schema": "sophia.error_memory_rag_eval.v2",
+  "mode": "full",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "claimBoundary": "Inference-time error-RAG guard-rail measurement on a disjoint held-out oracle — NOT capability or AGI evidence.",
+  "claimWording": "reduces repeat errors at acceptable false-correction cost on this held-out pack",
+  "phase1Verdict": "within_noise",
+  "evaluatorBackend": "deterministic-oracle",
+  "liveModelEval": null,
+  "precisionGates": {
+    "default": {
+      "min_score": 0.55,
+      "require_class_match": true,
+      "require_would_repeat": true
+    },
+    "chosen": {
+      "min_score": 0.45,
+      "require_class_match": true,
+      "require_would_repeat": true
+    },
+    "description": {
+      "min_score": "cosine similarity threshold on deterministic embed",
+      "require_class_match": "same workId + kind (+ forbiddenAuthor when set)",
+      "require_would_repeat": "current answer must equal recorded wrongClaim"
+    }
+  },
+  "devSplit": {
+    "path": "data/error_memory_heldout_v1.jsonl",
+    "caseCount": 6,
+    "note": "DEV ONLY — not test evidence",
+    "gateSweep": [
+      {
+        "gates": {
+          "min_score": 0.45,
+          "require_class_match": true,
+          "require_would_repeat": true
+        },
+        "fired": 3,
+        "firedWouldRepeat": 3,
+        "wouldRepeatTotal": 3,
+        "falseCorrections": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "gates": {
+          "min_score": 0.5,
+          "require_class_match": true,
+          "require_would_repeat": true
+        },
+        "fired": 3,
+        "firedWouldRepeat": 3,
+        "wouldRepeatTotal": 3,
+        "falseCorrections": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "gates": {
+          "min_score": 0.55,
+          "require_class_match": true,
+          "require_would_repeat": true
+        },
+        "fired": 3,
+        "firedWouldRepeat": 3,
+        "wouldRepeatTotal": 3,
+        "falseCorrections": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "gates": {
+          "min_score": 0.6,
+          "require_class_match": true,
+          "require_would_repeat": true
+        },
+        "fired": 3,
+        "firedWouldRepeat": 3,
+        "wouldRepeatTotal": 3,
+        "falseCorrections": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "gates": {
+          "min_score": 0.55,
+          "require_class_match": true,
+          "require_would_repeat": false
+        },
+        "fired": 3,
+        "firedWouldRepeat": 3,
+        "wouldRepeatTotal": 3,
+        "falseCorrections": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    ],
+    "retrievalAtChosenGates": {
+      "fired": 3,
+      "firedWouldRepeat": 3,
+      "wouldRepeatTotal": 3,
+      "falseCorrections": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    }
+  },
+  "testSplit": {
+    "path": "data/error_memory_heldout_v2.jsonl",
+    "caseCount": 40,
+    "retrievalAtChosenGates": {
+      "fired": 20,
+      "firedWouldRepeat": 20,
+      "wouldRepeatTotal": 20,
+      "falseCorrections": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "repeatEligibleCount": 20,
+    "alreadyRightCount": 20,
+    "bootstrapMethod": "case_resample",
+    "metrics": {
+      "repeatErrorReduction": {
+        "mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "falseCorrectionCost": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "netValue": {
+        "mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "pointEstimate": {
+      "repeatErrorRateWithout": 1.0,
+      "repeatErrorRateWith": 0.0,
+      "repeatErrorReduction": 1.0,
+      "falseCorrectionCostWithout": 0.0,
+      "falseCorrectionCostWith": 0.0,
+      "falseCorrectionDelta": 0.0,
+      "netValue": 1.0
+    },
+    "verdict": "helps"
+  },
+  "bootstrapSeed": 3,
+  "evaluator": "disjoint-oracle (held-out labels; independent of store/gate)",
+  "decontamination": {
+    "storeNeverSawHeldout": true,
+    "evalPromptHash": "8e66094e8852ca35",
+    "devHeldoutHash": "fdabfe517ef672ca",
+    "testHeldoutHash": "ef2d19ef437ff4f1",
+    "contaminationGuardClean": true
+  },
+  "verdictRule": "helps if net CI lower > 0; harms if net CI upper < 0; else within_noise"
+}
