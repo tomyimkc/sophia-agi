@@ -119,6 +119,22 @@ jobs:
             --adapter-dir "/workspace/sophia-runpod/sophia-agi/training/sophia-math-code-curriculum/checkpoints/sophia-cuda-v1-seed0" \
             --train-only
 
+      - name: Estimate ETA → job summary
+        env:
+          SEED_INPUT: ${{ github.event.inputs.seed }}
+          ON_POD_SEEDS: ${{ github.event.inputs.on_pod_seeds }}
+          ON_POD_MODE: ${{ github.event.inputs.on_pod_mode }}
+          EPOCHS_INPUT: ${{ github.event.inputs.epochs }}
+        run: |
+          set -euo pipefail
+          if [ -n "$EPOCHS_INPUT" ]; then EP="$EPOCHS_INPUT"; else EP=2; fi
+          if [ -n "$ON_POD_SEEDS" ]; then SEEDS="$ON_POD_SEEDS"; MODE="on-pod-$ON_POD_MODE";
+          elif [ -n "$SEED_INPUT" ]; then SEEDS="$SEED_INPUT"; MODE="separate-pods";
+          else SEEDS="0,1,2"; MODE="all-seeds-sequential"; fi
+          python3 tools/estimate_runpod_eta.py --model-params 7 --epochs "$EP" \
+            --train-data training/sophia-math-code-curriculum/sft_all.jsonl \
+            --seeds "$SEEDS" --mode "$MODE" --no-eval --markdown >> "$GITHUB_STEP_SUMMARY"
+
       - name: Launch RunPod math-code SFT (3 seeds or single seed)
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}

@@ -126,6 +126,23 @@ jobs:
           run-id: ${{ github.event.inputs.sft_workflow_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Estimate ETA → job summary
+        env:
+          STAGE: ${{ github.event.inputs.stage }}
+          SEED_INPUT: ${{ github.event.inputs.seed }}
+          ON_POD_SEEDS: ${{ github.event.inputs.on_pod_seeds }}
+          ON_POD_MODE: ${{ github.event.inputs.on_pod_mode }}
+          EPOCHS_INPUT: ${{ github.event.inputs.epochs }}
+        run: |
+          set -euo pipefail
+          if [ -n "$EPOCHS_INPUT" ]; then EP="$EPOCHS_INPUT"; elif [ "$STAGE" = "sft" ]; then EP=2; else EP=1; fi
+          if [ -n "$ON_POD_SEEDS" ]; then SEEDS="$ON_POD_SEEDS"; MODE="on-pod-$ON_POD_MODE";
+          elif [ -n "$SEED_INPUT" ]; then SEEDS="$SEED_INPUT"; MODE="separate-pods";
+          else SEEDS="0,1,2"; MODE="all-seeds-sequential"; fi
+          python3 tools/estimate_runpod_eta.py --model-params 7 --epochs "$EP" \
+            --train-data training/local_sophia_7b/mlx/train.jsonl \
+            --seeds "$SEEDS" --mode "$MODE" --markdown >> "$GITHUB_STEP_SUMMARY"
+
       - name: Launch RunPod sophia-7b training
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
