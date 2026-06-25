@@ -243,31 +243,12 @@
     }
   },
   "rag": {
-    "indexChunks": 541,
-    "backends": [
-      "gemini",
-      "vertex",
-      "claude"
-    ],
-    "webEvidenceProviders": [
-      "brave",
-      "tavily",
-      "serpapi"
-    ],
-    "webEvidenceDefault": "off-for-hidden-evals",
-    "cli": "python tools/sophia_rag.py",
-    "docs": "docs/09-Agent/Online-RAG.md"
+    "indexChunks": 541
   },
   "localModel": {
-    "name": "sophia-v1",
-    "base": "Qwen/Qwen2.5-3B-Instruct",
     "benchmark": {
-      "model": "sophia-v1",
-      "passed": 20,
-      "total": 23,
       "scorePct": 87.0
-    },
-    "hf": "https://huggingface.co/tomyimkc/sophia-agi-lora-v1"
+    }
   },
   "agiProof": {
     "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
@@ -337,136 +318,12 @@
       "long-horizon task logs with intervention counts",
       "learning-under-shift pre/post results with append-only memory records",
       "failure ledger with claim impact",
-      "RLVR held-out pass@1 under the no-overclaim gate (pre-registered; Open until a gated live run)",
       "third-party reproduction on a clean clone"
     ],
-    "artifactIndex": {
-      "todo": "agi-proof/TODO.md",
-      "definition": "agi-proof/definition.md",
-      "thresholds": "agi-proof/preregistered-thresholds.md",
-      "benchmarkResults": "agi-proof/benchmark-results/README.md",
-      "externalBenchmarks": "agi-proof/external-benchmarks/README.md",
-      "baselineAblation": "agi-proof/baseline-ablation/README.md",
-      "baselineAblationRunner": "tools/run_ablation_sophia.py",
-      "learningShiftRunner": "tools/run_learning_shift.py",
-      "longHorizonHarness": "tools/run_long_horizon.py",
-      "replicationHarness": "tools/run_replication_check.py",
-      "architectureDiagram": "docs/09-Agent/Sophia-Architecture.md",
-      "hiddenReview": "agi-proof/hidden-reviewer-packs/README.md",
-      "manualSemanticReview": "agi-proof/hidden-reviewer-packs/MANUAL-SEMANTIC-REVIEW.md",
-      "webEvidence": "docs/09-Agent/Online-RAG.md",
-      "rubricReviewTools": "docs/09-Agent/Sophia-Agent.md",
-      "hiddenPackCommitments": "agi-proof/hidden-reviewer-packs/prepared-pack-2026-06-19.commitments.json",
-      "freshHiddenPackCommitments": "agi-proof/hidden-reviewer-packs/fresh-reviewer-pack-2026-06-19.commitments.json",
-      "longHorizon": "agi-proof/long-horizon-runs/README.md",
-      "learningShift": "agi-proof/learning-under-shift/README.md",
-      "failureLedger": "agi-proof/failure-ledger.md",
-      "replication": "agi-proof/third-party-replication/README.md",
-      "rlvrRunner": "tools/run_rlvr.py",
-      "rlvrReward": "provenance_bench/rl_reward.py",
-      "rlvrDataset": "provenance_bench/rl_dataset.py",
-      "rlvrReport": "agi-proof/benchmark-results/rlvr.public-report.json",
-      "rlvrExperiment": "docs/09-Agent/RLVR-Experiment.md",
-      "localAgentDeltaRunner": "tools/run_local_agent_delta.py",
-      "localAgentCore": "provenance_bench/local_agent.py",
-      "localAgentDeltaReport": "agi-proof/benchmark-results/local-agent-delta.public-report.json",
-      "localAgentDeltaScreenNullReport": "agi-proof/benchmark-results/provenance-delta-dolphin-lexical-screen-null.public-report.json",
-      "unifiedUpliftRunner": "tools/run_unified_uplift.py",
-      "unifiedUpliftReport": "agi-proof/benchmark-results/unified-uplift.public-report.json",
-      "gateEntityAliases": "agent/entity_aliases.py",
-      "gateRetrievalGrounding": "agent/grounded_gate.py",
-      "gateClaimRouter": "agent/claim_router.py",
-      "gateGradedDecision": "agent/graded_decision.py",
-      "gateActiveLearning": "agent/gate_feedback.py",
-      "gateTemporalVerifier": "agent/temporal_verifier.py",
-      "gateActiveLearningPromotion": "tools/promote_pending.py",
-      "codeExecVerifier": "provenance_bench/code_exec.py",
-      "codeReward": "provenance_bench/code_reward.py",
-      "codeBenchmark": "benchmark/code_tasks.json",
-      "codeUpliftRunner": "tools/run_code_uplift.py",
-      "councilPanelRunner": "tools/run_council_panel.py",
-      "religionFigureCouncil": "docs/08-Domains/Religion-Figure-Council.md",
-      "codingCouncil": "docs/08-Domains/Coding-Council.md",
-      "factCheckRealityGapDoc": "docs/11-Platform/Fact-Check-Reality-Gap.md",
-      "factCheckLiveEvalRunner": "tools/run_fact_check_live_eval.py",
-      "factCheckLiveEvalReport": "agi-proof/fact-check-live/fact-check-live-eval.public-report.json",
-      "factCheckFlywheelRunner": "tools/run_fact_check_flywheel.py",
-      "reflexiveSelfGateRunner": "tools/run_reflexive_self_gate.py",
-      "reflexiveSelfGateReport": "agi-proof/self-gate/reflexive-self-gate.public-report.json"
-    },
-    "docs": "agi-proof/README.md",
-    "manifest": "agi-proof/evidence-manifest.json"
-  },
-  "conscienceKernel": {
-    "claimBoundary": "Candidate moral + epistemic control infrastructure; not proof of AGI.",
-    "verdicts": [
-      "allow",
-      "revise",
-      "retrieve",
-      "clarify",
-      "escalate",
-      "abstain",
-      "block"
-    ],
-    "paths": [
-      "agent/conscience.py",
-      "agent/metacognition.py",
-      "constitution/constitution.v1.json",
-      "agent/deontic_verifier.py",
-      "agent/moral_aggregator.py",
-      "agent/constitutional_classifier.py",
-      "agent/deception_signals.py",
-      "sophia_mcp/server.py"
-    ],
-    "docs": "docs/11-Platform/Conscience-Kernel.md",
-    "artifact": "agi-proof/conscience/conscience-eval.public-report.json",
-    "benchmark": "python tools/build_conscience_proof_package.py"
-  },
-  "moralGateV2": {
-    "claimBoundary": "Functional moral-control system grounded in an overlapping-consensus public standard; not subjective moral consciousness and not AGI proof.",
-    "method": "Rawlsian overlapping consensus: cross-tradition hard floor + gray-zone moral parliament (8 theories, Confucian and Daoist kept distinct) + legitimacy provenance (is/ought).",
-    "paths": [
-      "moral_corpus/public_standard.v1.json",
-      "agent/moral_ontology.py",
-      "agent/public_standard_gate.py",
-      "constitution/constitution.v2.json",
-      "agent/moral_aggregator.py"
-    ],
-    "docs": "docs/11-Platform/Public-Moral-Standard.md",
-    "artifact": "agi-proof/conscience/moral-public-standard-eval.public-report.json",
-    "benchmark": "python tools/run_moral_public_standard_eval.py"
-  },
-  "allPhaseBenchmarks": {
-    "claimBoundary": "Candidate all-phase benchmark infrastructure; not AGI proof and not public GPQA/SWE/LiveCodeBench/LMSYS results until real-model validation clears the no-overclaim gate.",
-    "phases": [
-      "SEIB-100",
-      "Belief Revision 50",
-      "AgentBench-Sophia 30",
-      "GPQA-Provenance smoke",
-      "Code Provenance 30",
-      "SEIB-Arena-20 smoke"
-    ],
-    "paths": [
-      "eval/seib/seib_100_v1.jsonl",
-      "eval/belief_revision/belief_revision_50_v1.jsonl",
-      "eval/agentbench_sophia/agentbench_sophia_30_v1.jsonl",
-      "eval/gpqa_provenance/gpqa_provenance_smoke_v1.jsonl",
-      "eval/code_provenance/code_provenance_30_v1.jsonl",
-      "eval/arena/arena_20_v1.jsonl"
-    ],
-    "docs": "docs/11-Platform/Benchmark-Phases.md",
-    "artifact": "agi-proof/benchmark-results/all-phase-benchmarks.public-report.json",
-    "benchmark": "python tools/run_all_phase_benchmarks.py"
-  },
-  "agiKernel": {
-    "claimBoundary": "Missing-pillars mechanisms are candidate infrastructure, not Level-3 AGI evidence.",
-    "docs": "docs/11-Platform/AGI-Missing-Pillars.md",
-    "artifact": "agi-proof/agi-kernel/missing-pillars.public-report.json",
-    "benchmark": "python tools/run_agi_missing_pillars.py"
+    "docs": "agi-proof/README.md"
   },
   "links": {
     "github": "https://github.com/tomyimkc/sophia-agi",
-    "huggingface": "https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus",
-    "hfModel": "https://huggingface.co/tomyimkc/sophia-agi-lora-v1"
+    "huggingface": "https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus"
   }
 }
