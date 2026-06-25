@@ -356,3 +356,45 @@ and C2 religion-repair retrain on Apple Silicon. **Not AGI claims; not validated
 **Claim impact:** Wires conscience + promotion seam + REM wake demo; v4 shows first-party ladder
 gain on religion repair data with W2 promote verdict. Not validated external evidence or AGI.
 `python tools/lint_claims.py` passes.
+
+### Format-fitting caveat (reviewer defect #2, 2026-06-25)
+
+The v4 religion combined uplift **1/6 → 2/6** may reflect **council-panel FORMAT learning**
+rather than substantive content repair:
+
+- On re-score with split channels (`tools/rescore_religion_channels.py`), v4 vs Qwen2.5-3B baseline:
+  - **FORMAT:** 1/6 → 2/6 (+1 case)
+  - **CONTENT:** 5/6 → 5/6 (**no change**)
+  - **Combined:** 1/6 → 2/6 (+1 case)
+- Of 6 religion cases, **4/6** combined failures on v4 are format-graded (`mustUseCouncilPanel`);
+  the 12 `religion_repair_c4.jsonl` traces teach that panel structure explicitly.
+- Entity-level decontamination remains CLEAN (`evalOverlapCount=0`), but the eval conflated
+  format compliance with content correctness until Task 4 split the scorer.
+- **Confidence in religion uplift is lowered** until a retrain targets CONTENT channel ≥3/6
+  without format-only Goodhart. Artifact: `agi-proof/religion-channel-rescore/religion-channels.public-report.json`.
+
+## agi-pilots-feasibility-review-2026-06-25
+
+**Status:** CANDIDATE INFRASTRUCTURE (`candidateOnly: true`, `level3Evidence: false`).
+
+**Task 1 — Crucible determinism:**
+
+- Added `--seed` (default 0) to `tools/run_crucible_arena.py`; generality stub uses `zlib.crc32`
+  instead of salted `hash()`; `seed` recorded in arena report.
+- Two consecutive `--seed 0` runs produce **byte-identical** JSON; `topFitness: 0.8286` reproducible.
+- Regenerated `agi-proof/embryogenesis-crucible/crucible-arena.public-report.json`.
+
+**Task 3 — Promotion loop default-deny:**
+
+- `approve_projection_candidate()` + idempotent `commit_approved_candidate()`; full body stored at submit.
+- Demo: `tools/run_promotion_loop_demo.py` → `agi-proof/promotion-loop/promotion-loop.public-report.json`
+- Tests: default-deny + approve-once idempotent commit.
+
+**Task 4 — Religion FORMAT vs CONTENT channels:**
+
+- `score_case_format` / `score_case_content` / `score_case_channels` in `agent/benchmark_checks.py`
+- `tools/rescore_religion_channels.py` on committed v4 artifacts:
+  - baseline FORMAT 1/6, CONTENT 5/6; v4 FORMAT 2/6, CONTENT 5/6
+  - **Honest finding:** v4 combined +1 is **format-only**; content channel flat.
+
+**Task 5 — Full retrain:** deferred pending Task 4 completion (now unblocked); requires GPU session.
