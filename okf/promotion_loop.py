@@ -10,7 +10,9 @@ shipped raw. Default-deny: unapproved candidates are never committed.
 
 from __future__ import annotations
 
+import hashlib
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -48,8 +50,19 @@ def _candidate_key(row: dict) -> tuple:
     return (str(row.get("nodeId", "")), str(row.get("submittedAt", ""))[:10])
 
 
-def _body_store_path(pending: Path, node_id: str) -> Path:
-    return pending.parent / f"_body_{node_id}.md"
+def _body_store_path(pending: Path, node_id: str, day: str = "") -> Path:
+    """Filename-safe, per-row body path under the pending dir.
+
+    ``node_id`` can originate from content/user input, so it is sanitized to a
+    restricted slug (no path separators or ``..``) plus a short stable hash to
+    avoid slug collisions. A ``day`` segment keys the body to the specific
+    pending row (deduped by nodeId+day), so a resubmission on a different day
+    cannot overwrite an earlier approved body.
+    """
+    slug = re.sub(r"[^A-Za-z0-9._-]+", "_", str(node_id)).strip("._-")[:64] or "node"
+    digest = hashlib.sha1(str(node_id).encode("utf-8")).hexdigest()[:8]
+    stem = f"_body_{slug}_{digest}_{day}" if day else f"_body_{slug}_{digest}"
+    return pending.parent / f"{stem}.md"
 
 
 def submit_projection_candidates(
@@ -67,12 +80,15 @@ def submit_projection_candidates(
     submitted = 0
     now = datetime.now(timezone.utc).isoformat()
 
+    day = now[:10]
     for cand in projection.promoted:
+        body_path = _body_store_path(out, cand.node_id, day)
         row = {
             "schema": "sophia.projection_candidate.v1",
             "nodeId": cand.node_id,
             "meta": cand.meta,
             "bodyPreview": cand.body[:500],
+            "bodyPath": str(body_path),
             "checks": cand.checks,
             "source": source,
             "candidateOnly": projection.candidateOnly,
@@ -84,7 +100,7 @@ def submit_projection_candidates(
         key = _candidate_key(row)
         if key in seen:
             continue
-        _body_store_path(out, cand.node_id).write_text(cand.body, encoding="utf-8")
+        body_path.write_text(cand.body, encoding="utf-8")
         with out.open("a", encoding="utf-8") as fh:
             fh.write(json.dumps(row, ensure_ascii=False) + "\n")
         seen.add(key)
@@ -180,7 +196,12 @@ def commit_approved_candidate(
     if note or target.get("reviewNote"):
         meta["reviewNote"] = note or target.get("reviewNote", "")
 
-    body_path = _body_store_path(pending, node_id)
+    # Read the exact body persisted for THIS pending row (path stored at submit),
+    # falling back to a legacy/computed path then the inline preview.
+    stored = target.get("bodyPath")
+    body_path = Path(stored) if stored else _body_store_path(
+        pending, node_id, str(target.get("submittedAt", ""))[:10]
+    )
     body = body_path.read_text(encoding="utf-8") if body_path.exists() else str(target.get("bodyPreview", ""))
     result = wiki_store.upsert(node_id, meta=meta, body=body, tier=tier)
     if not result.get("ok"):

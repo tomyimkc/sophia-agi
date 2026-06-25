@@ -19,9 +19,15 @@ def test_council_format_without_content_fails_content_channel() -> None:
     bench = load_json(ROOT / "tests" / "benchmark-religion.json")
     case = next(c for c in bench["cases"] if c["id"] == "buddha_nirvana_pop")
     traditions = load_json(ROOT / "data" / "traditions.json")
+    # Council-panel structure present, but the body genuinely omits the required
+    # content markers (no "buddhism" tradition mention, no myth labeling). The
+    # earlier version of this response narrated its own omissions and so leaked
+    # the trigger words ("Buddhism", "myth labeling"), making the deterministic
+    # keyword scorer mark content as present — a self-defeating negative control.
     response = (
-        "**Council panel:** Buddhist voice · Pop critic\n\n"
-        "Nirvana is discussed in council format but without myth labeling or Buddhism tradition markers."
+        "**Council panel:** First voice · Second voice\n\n"
+        "Nirvana is discussed in council format here, but the answer stays vague "
+        "and general without committing to specifics."
     )
     ch = score_case_channels(case, response, traditions)
     assert ch["formatPassed"] is True
@@ -40,3 +46,16 @@ def test_content_without_council_format_fails_format_channel() -> None:
     ch = score_case_channels(case, response, traditions)
     assert ch["formatPassed"] is False
     assert ch["contentPassed"] is True
+
+
+def main() -> int:
+    import inspect
+    for nm, fn in sorted(globals().items()):
+        if nm.startswith("test_") and inspect.isfunction(fn):
+            fn()
+    print("test_religion_channel_scorer: OK")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

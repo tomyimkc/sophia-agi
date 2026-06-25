@@ -77,16 +77,23 @@ def test_approved_commit_is_idempotent() -> None:
     bulk, node_id = _candidate_bulk()
     projection = project_to_boundary(bulk, skip_provenance=True, skip_conscience=True)
 
+    orig_memory_dir = wiki_store.MEMORY_DIR
+    orig_draft_dir = wiki_store.DRAFT_DIR
     with tempfile.TemporaryDirectory() as tmp:
         wiki_tmp = Path(tmp) / "wiki"
         wiki_tmp.mkdir()
         wiki_store.MEMORY_DIR = wiki_tmp
         wiki_store.DRAFT_DIR = wiki_tmp.parent / "drafts"
-
-        pending = Path(tmp) / "pending_projection_candidates.jsonl"
-        submit_projection_candidates(projection, path=pending)
-        approve_projection_candidate(node_id, path=pending, reviewer="test")
-        first = commit_approved_candidate(node_id, path=pending, tier="draft")
-        second = commit_approved_candidate(node_id, path=pending, tier="draft")
-        assert first.get("ok") is True
-        assert second.get("idempotent") is True
+        try:
+            pending = Path(tmp) / "pending_projection_candidates.jsonl"
+            submit_projection_candidates(projection, path=pending)
+            approve_projection_candidate(node_id, path=pending, reviewer="test")
+            first = commit_approved_candidate(node_id, path=pending, tier="draft")
+            second = commit_approved_candidate(node_id, path=pending, tier="draft")
+            assert first.get("ok") is True
+            assert second.get("idempotent") is True
+        finally:
+            # Restore globals so this test can't leak into later tests under the
+            # full pytest sweep (test-order-dependent flakiness otherwise).
+            wiki_store.MEMORY_DIR = orig_memory_dir
+            wiki_store.DRAFT_DIR = orig_draft_dir

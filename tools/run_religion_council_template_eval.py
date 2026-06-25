@@ -44,8 +44,8 @@ def _run_mlx_religion(*, council_panel: bool) -> int:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--live", action="store_true", help="Regenerate responses via MLX (slow)")
-    ap.add_argument("--use-committed", action="store_true", default=True)
+    ap.add_argument("--live", action="store_true",
+                    help="Regenerate responses via MLX (slow). Default: score committed artifacts.")
     ap.add_argument("--out", default=str(DEFAULT_OUT))
     args = ap.parse_args()
 

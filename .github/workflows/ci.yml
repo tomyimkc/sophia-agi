@@ -222,7 +222,7 @@ jobs:
           python tools/run_dream_collective.py
           python tools/run_crucible_arena.py --population 8 --generations 2 --seed 0
           python tools/run_promotion_loop_demo.py
-          python tools/rescore_religion_channels.py --seed 0
+          python tools/rescore_religion_channels.py
       - name: Self-extending verification flywheel (synthesize→validate→cover, causal, transfer, long-horizon)
         run: |
           python tests/test_selfextend.py
