@@ -85,7 +85,6 @@ SFT_SOURCES = [
     ("training/corpus.jsonl", "sft_source_discipline.jsonl", "sft"),
     ("training/wiki_provenance_sft.jsonl", "sft_wiki_provenance.jsonl", "sft"),
     ("training/council/traces.jsonl", "sft_council_traces.jsonl", "sft"),
-    ("training/team_agents/sft_traces.jsonl", "sft_team_agents.jsonl", "sft"),
     ("training/council/religion_repair_c4.jsonl", "sft_religion_repair_c4.jsonl", "sft"),
     ("training/moral_gate_sft.jsonl", "sft_moral_gate.jsonl", "sft"),
     ("training/local_sophia_v2/general_instruct.jsonl", "general_instruct.jsonl", "sft"),
@@ -97,6 +96,7 @@ SFT_SOURCES = [
 DPO_SOURCES = [
     ("training/hard_negatives_dpo.jsonl", "dpo_hard_negatives.jsonl", "dpo"),
     ("training/wiki_provenance_dpo.jsonl", "dpo_wiki_provenance.jsonl", "dpo"),
+    ("training/hk_advisor/dpo_pairs.jsonl", "dpo_hk_advisor.jsonl", "dpo"),
 ]
 HOLDOUT_SRC = "training/lora/holdout.jsonl"
 

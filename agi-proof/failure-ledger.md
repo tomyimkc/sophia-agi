@@ -616,7 +616,6 @@ not AGI, not a Gödel machine. canClaimAGI stays False.
 religion FORMAT is prompt-structurable at inference; religion-repair LoRA path remains falsified.
 `canClaimAGI: false`.
 
-<<<<<<< HEAD
 ## hk-advisor-phase0-2026-06-25
 
 **Status:** COMPLETE (sealed benchmark + contamination guard).
@@ -648,7 +647,32 @@ no-fabrication, bilingual fidelity).
 **Next:** Run 3-seed QLoRA SFT on RunPod/local GPU host when available.
 
 **Claim impact:** No adapter weights; no uplift claim. `canClaimAGI: false`.
+
+## hk-advisor-phase3-2026-06-25
+
+**Status:** COMPLETE (DPO pairs mined).
+
+**Artifact:** `training/hk_advisor/dpo_pairs.jsonl` — 49 pairs.
+By rejected_type: wrong_abstain 19, uncited_claim 19, overconfident_trap 9,
+fabricated_regulation 1, fake_citation 1.
+
+**Claim impact:** Preference data ready; DPO training blocked on P2 GPU blocker. `canClaimAGI: false`.
+
+## hk-advisor-phase4-2026-06-25
+
+**Status:** COMPLETE (mock eval); adapter training NOT RUN.
+
+**Artifact:** `agi-proof/hk-advisor/eval-hk-advisor.public-report.json` (mock mode, 3 seeds).
+Mock adapter vs base: fabrication on traps 44.4% → 0%, calibration +0.58, useful-answer +0.26 (CI excludes 0).
+**Honest scope:** mock ScriptedClient-style responses — NOT real adapter weights; illustrative direction only.
+
+**promote_adapter:** Ran `--dry-run` on existing sophia-v2 ladder → **reject** (protected_floor_content religion regression);
+`solverChecked: true`. No HK-advisor-specific adapter to promote (0/3 SFT seeds).
+
+**Claim impact:** Mock eval shows intended metric direction; no validated adapter uplift. `canClaimAGI: false`.
 =======
+=======
+>>>>>>> eeda4d0 (feat(team-agents): eval harness, dataset pack, independence reporting (P3+P4))
 ## team-agents-mode-mock-eval-2026-06-25
 
 **Status:** OPEN (mock eval only — not real-model evidence).
@@ -682,4 +706,7 @@ ladder run via `tools/promote_adapter.py`.
 when N_eff < 2.0.
 
 **Artifact:** `agi-proof/benchmark-results/team-agents.public-report.json`
+<<<<<<< HEAD
+>>>>>>> eeda4d0 (feat(team-agents): eval harness, dataset pack, independence reporting (P3+P4))
+=======
 >>>>>>> eeda4d0 (feat(team-agents): eval harness, dataset pack, independence reporting (P3+P4))
