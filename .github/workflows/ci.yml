@@ -114,6 +114,7 @@ jobs:
           python tests/test_continual_qa_hybrid.py
           python tests/test_grounded_answer_policy.py
           python tests/test_grounded_agent.py
+          python tests/test_grounded_agent_graded.py
           python tests/test_temporal_validity.py
           python tests/test_knowledge_gap_log.py
           python tests/test_forgetting_curve.py
@@ -426,6 +427,8 @@ jobs:
         # sympy so the math/code curriculum verifier tests run instead of erroring
         # out at import-time collection.
         run: python -m pip install --upgrade pip numpy pytest z3-solver sympy
+      - name: RAG index is reproducible (committed local embeddings match a fresh build)
+        run: python tools/build_rag_index.py --verify
       - name: Full pytest suite
         run: python -m pytest -q
 

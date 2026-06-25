@@ -18,6 +18,7 @@ from agent.retrieval import SourceChunk, _score, _tokenize
 DEFAULT_INDEX_DIR = ROOT / "rag" / "index"
 CHUNKS_FILE = "chunks.jsonl"
 EMBEDDINGS_FILE = "embeddings.npz"
+META_FILE = "embeddings.meta.json"
 
 _LOG = logging.getLogger("sophia.rag")
 _warned_no_embeddings: set[str] = set()
@@ -55,6 +56,21 @@ def index_dir(path: Path | None = None) -> Path:
     if env:
         return Path(env)
     return DEFAULT_INDEX_DIR
+
+
+def embedding_backend_id(index_path: Path | None = None) -> "str | None":
+    """Backend id stamped into the index manifest (e.g. ``local-hash-v1``, ``gemini``).
+
+    Lets retrieval embed the query with the SAME backend that built the index instead of
+    guessing from env. Returns None when no manifest is present (legacy / chunks-only index).
+    """
+    meta_path = (index_path or index_dir()) / META_FILE
+    if not meta_path.exists():
+        return None
+    try:
+        return json.loads(meta_path.read_text(encoding="utf-8")).get("backend")
+    except (ValueError, OSError):
+        return None
 
 
 def save_index(chunks: list[IndexedChunk], out_dir: Path) -> None:

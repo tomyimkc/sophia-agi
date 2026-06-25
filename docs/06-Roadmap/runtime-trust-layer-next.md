@@ -1,5 +1,14 @@
 # Runtime Trust-Layer — next development lanes
 
+> **Status (2026-06-25): all three lanes IMPLEMENTED.** L1 — graded router wired into
+> `agent/grounded_agent.grounded_answer(graded=True)` (`tests/test_grounded_agent_graded.py`).
+> L2 — offline deterministic embeddings (`agent/rag_local_embed.py`), committed reproducible
+> `rag/index/embeddings.npz`, live in `agent/retrieval.retrieve`
+> (`tests/test_rag_local_embed.py`, `tools/build_rag_index.py --verify`). L3 — opt-in served
+> output re-verification (`sophia_mcp/gateway_wiring.verify_output`,
+> `tests/test_gateway_output_reverify.py`). VISION.md pillar rows updated. The sections below
+> are kept as the original design record.
+
 **Context.** The training / GPU / external-eval track (PRs #97, #98; RunPod SFT;
 math-code curriculum) is owned by a parallel effort. These three lanes are the
 **runtime trust-layer** counterpart: pure-Python, offline, CPU/CI-friendly, no GPU,
