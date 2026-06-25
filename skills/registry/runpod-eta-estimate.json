@@ -1,0 +1,35 @@
+{
+  "name": "runpod-eta-estimate",
+  "whenToUse": "Estimate how long a RunPod SFT run will take (wall-clock) so you know how long to wait, and surface the ETA + expected finish time on the GitHub Actions run page. Accounts for model size, seed count, epochs, train rows, and execution mode.",
+  "triggers": ["eta", "estimate", "how long", "wait", "wall-clock", "wallclock", "duration", "runtime", "time estimate", "finish time", "expected finish", "how much time", "training time", "timer"],
+  "requiredTools": ["runpod_train", "filesystem", "github_actions"],
+  "workflow": [
+    "Gather inputs: model size (B params), number of seeds, epochs, train-row count (count the JSONL, or pass --train-data), and execution mode (separate-pods / on-pod-parallel / on-pod-sequential / all-seeds-sequential / single).",
+    "Run: python3 tools/estimate_runpod_eta.py --model-params 7 --epochs E --train-data <pack> --seeds S --mode M [--no-eval] --markdown",
+    "Read the wall-clock point estimate + low/high range; for train-only runs pass --no-eval (on-pod modes already skip eval).",
+    "To show it on GitHub: the launcher workflows append this markdown to $GITHUB_STEP_SUMMARY, so the ETA + expected-finish renders on the Actions run's Summary page. For an ad-hoc estimate, run the tool locally / in any job and echo to $GITHUB_STEP_SUMMARY.",
+    "Report the range and the expected-finish timestamp; treat it as a heuristic (GPU provisioning dominates variance), not a guarantee."
+  ],
+  "ioSchema": {
+    "input": {"modelParamsB": "number", "seeds": "integer", "epochs": "integer", "rows": "integer", "mode": "string", "includeEval": "boolean", "startIso": "string"},
+    "output": {"wallMin": "object", "trainOneMin": "number", "provisionMin": "number", "expectedFinishIso": "string", "markdown": "string"}
+  },
+  "verification": [
+    "Estimate is a RANGE (low < point < high), not a single number — provisioning/capacity variance is real.",
+    "on-pod modes report 0 eval time; separate-pods/single/all-seeds include eval unless --no-eval.",
+    "Mode ordering holds: on-pod-parallel < on-pod-sequential < all-seeds-sequential for N>1 seeds.",
+    "Calibrated on observed runs (single 7B SFT ~27 min); a fresh run that lands far outside the band should recalibrate TRAIN_RATE_MIN/PROVISION_MIN.",
+    "ETA is labelled a heuristic, never reported as a guaranteed completion time."
+  ],
+  "commonFailures": [
+    "Forgetting --no-eval for train-only (math-code) runs, overstating the ETA.",
+    "Counting rows wrong (e.g. blank lines) so train time is off.",
+    "Treating the point estimate as exact when GPU stockout/retries can push past the high bound.",
+    "Estimating on-pod-parallel without a multi-GPU pod actually available (then it degrades to sequential)."
+  ],
+  "examples": [
+    {"input": "3 seeds, 7B, 2 epochs, 754 rows, on-pod-parallel", "output": "~22m (range 15-39m); expected finish stamped; on-pod eval skipped."},
+    {"input": "1 seed, 7B, 2 epochs, 754 rows, single (with eval)", "output": "~27m (range 19-48m) — matches observed seed1/seed2."},
+    {"input": "3 seeds math-code, 144 rows, on-pod-parallel, train-only", "output": "~9m (range 6-16m)."}
+  ]
+}

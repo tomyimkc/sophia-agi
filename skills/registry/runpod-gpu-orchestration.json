@@ -1,0 +1,37 @@
+{
+  "name": "runpod-gpu-orchestration",
+  "whenToUse": "Decide how to run multiple training seeds (or several eval benchmarks) on RunPod: as separate pods, as one multi-GPU pod with one seed per GPU, or as one single-GPU pod running seeds back-to-back. Selects the mode from seed count, GPU VRAM/availability, urgency, concurrent-pod quota, and budget.",
+  "triggers": ["runpod", "pod", "pods", "gpu", "gpus", "multi-gpu", "parallel pods", "concurrent seeds", "seeds", "one pod", "pod mode", "gpu-count", "gpu quota", "stockout", "spot pod", "provision"],
+  "requiredTools": ["github_actions", "runpod_train", "filesystem"],
+  "workflow": [
+    "Count the seeds N and classify the job: training (heavy, ~10-18 GB VRAM for 7B QLoRA 4-bit) vs eval/benchmark (light).",
+    "N == 1 -> separate-pods mode: one pod, one seed (tools/runpod_train.py --seed S). Nothing to parallelize.",
+    "N > 1 and speed matters and budget allows -> Mode A (one multi-GPU pod, one seed per GPU): runpod_train.py --seeds 0,1,2 --on-pod-mode parallel. gpu-count is auto-bumped to N; needs each GPU >= 24 GB. Wall-clock ~= one seed; one provisioning gamble; sidesteps concurrent-pod quota.",
+    "N > 1 and cost-minimizing, or concurrent-pod quota is low, or GPU stock is tight -> Mode B (one single-GPU pod, sequential): runpod_train.py --seeds 0,1,2 --on-pod-mode sequential. One pod rented once, seeds back-to-back; cheaper than N pods but ~N x wall-clock.",
+    "N > 1 and you want full isolation + max parallelism AND have pod quota + GPU stock -> separate-pods: dispatch the per-seed workflow N times (seed=0,1,2). The per-seed concurrency groups let them run as N independent pods. Widen DEFAULT_GPU_TYPES first to avoid single-type stockouts.",
+    "Light eval/benchmarks only -> pack several onto one pod (sequential mode, or a large-VRAM pod running them concurrently) since evals are cheap and don't need a GPU each.",
+    "Emit the chosen mode + the exact runpod_train.py / workflow_dispatch command + a one-line rationale; never claim training success without >=3 completed seeds + CI."
+  ],
+  "ioSchema": {
+    "input": {"seeds": "integer", "jobKind": "string", "gpuVramGb": "integer", "urgency": "string", "budgetSensitivity": "string", "concurrentPodQuota": "integer"},
+    "output": {"mode": "string", "gpuCount": "integer", "command": "string", "rationale": "string"}
+  },
+  "verification": [
+    "Mode A (parallel) only chosen when a multi-GPU pod with >= N GPUs of >= 24 GB is obtainable; gpu-count == N.",
+    "Mode B (sequential) uses gpu-count 1 and trains seeds back-to-back on one pod.",
+    "separate-pods uses per-seed concurrency groups so seeds do not auto-cancel each other.",
+    "Every seed's adapter is tarred and returned; on-pod multi-seed skips on-pod eval/promote (offline CI eval instead).",
+    "Cost/wall-clock trade-off stated; no training-success claim without >=3 seeds + CI excluding 0."
+  ],
+  "commonFailures": [
+    "Choosing Mode A on a single-GPU pod (seeds contend for one GPU and OOM or serialize anyway).",
+    "Dispatching N separate pods with a static concurrency group (older pending runs auto-cancel) or a narrow GPU-type list (one seed stockouts: HTTP 500 'machine does not have the resources').",
+    "Packing two 7B training jobs onto one 24 GB GPU (VRAM overflow) instead of using a 48/80 GB card or sequential mode.",
+    "Citing on-pod internal eval/promote as third-party evidence, or claiming uplift before >=3 seeds finish."
+  ],
+  "examples": [
+    {"input": "3 seeds, 7B QLoRA, urgent, budget ok", "output": "mode=A; gpuCount=3; `runpod_train.py --yes --train-data <pack> --train-only --seeds 0,1,2 --on-pod-mode parallel`; one 3-GPU pod, ~40 min."},
+    {"input": "3 seeds, cost-sensitive, low pod quota", "output": "mode=B; gpuCount=1; `runpod_train.py --yes --train-data <pack> --train-only --seeds 0,1,2 --on-pod-mode sequential`; one pod, seeds back-to-back."},
+    {"input": "3 seeds, want isolation + have quota/stock", "output": "separate-pods; dispatch runpod-sophia-7b-sft.yml 3x (seed=0,1,2); widen GPU fallback first."}
+  ]
+}

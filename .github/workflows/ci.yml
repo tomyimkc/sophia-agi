@@ -22,6 +22,7 @@ jobs:
     timeout-minutes: 3
     outputs:
       code: ${{ steps.filter.outputs.code }}
+      heavy: ${{ steps.filter.outputs.heavy }}
     steps:
       - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v3
@@ -49,6 +50,33 @@ jobs:
               - 'requirements*.txt'
               - 'pyproject.toml'
               - '.github/workflows/**'
+            # Paths that REQUIRE the heavy reasoning/build/safety lanes. Mirrors
+            # `code` but EXCLUDES skills/registry/*.json and .github/workflows/*.yml
+            # (and docs): a PR touching only skill-registry JSON or workflow YAML
+            # still runs fast-ci + validate-core + test (gated on `code`) but skips
+            # the heavy lanes. Any .py / data / requirements change keeps `heavy`
+            # true → full suite (fail-open). See tools/ci_path_select.py.
+            heavy:
+              - 'agent/**'
+              - 'tools/**'
+              - 'tests/**'
+              - 'provenance_bench/**'
+              - 'selfextend/**'
+              - 'sophia_contract/**'
+              - 'sophia_mcp/**'
+              - 'gateway/**'
+              - 'skills/*.py'
+              - 'skills/**/*.py'
+              - 'okf/**'
+              - 'data/**'
+              - 'training/**'
+              - 'benchmark/**'
+              - 'constitution/**'
+              - 'eval/**'
+              - 'scripts/**'
+              - 'wiki/**'
+              - 'requirements*.txt'
+              - 'pyproject.toml'
 
   validate-core:
     # Provenance, OKF, contract, gateway, skills, discipline
@@ -181,7 +209,7 @@ jobs:
     # or when a PR carries the 'full-ci' label. Docs-only PRs skip it.
     if: >-
       github.event_name == 'push' ||
-      needs.changes.outputs.code == 'true' ||
+      needs.changes.outputs.heavy == 'true' ||
       contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -264,7 +292,7 @@ jobs:
     # or when a PR carries the 'full-ci' label. Docs-only PRs skip it.
     if: >-
       github.event_name == 'push' ||
-      needs.changes.outputs.code == 'true' ||
+      needs.changes.outputs.heavy == 'true' ||
       contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -348,7 +376,7 @@ jobs:
     # or when a PR carries the 'full-ci' label. Docs-only PRs skip it.
     if: >-
       github.event_name == 'push' ||
-      needs.changes.outputs.code == 'true' ||
+      needs.changes.outputs.heavy == 'true' ||
       contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
     timeout-minutes: 15
