@@ -719,3 +719,27 @@ oracles (6), prereg reconciliation (7).
 **Honest headline (cb9a782):** Local gates PASS; RunPod API OK; SSH egress FAIL from
 agent env. 144-row curriculum ready; GPU SFT blocked. No MATH/GSM8K/HumanEval/MBPP uplift
 claimed. `canClaimAGI: false`.
+
+## sophia-math-code-curriculum-stage3-ssh-blocked-2026-06-25
+
+**Status:** BLOCKED (`candidateOnly: true`, `level3Evidence: false`, `canClaimAGI: false`).
+
+**Local gates (re-run on branch `claude/sophia-math-code-curriculum`):**
+
+- `python3 tools/build_local_sophia_dataset.py --check` — contamination **CLEAN**
+- `python3 tools/lint_claims.py` — **PASS**
+- Curriculum pack `training/sophia-math-code-curriculum/sft_all.jsonl` — **144 rows** (sealed SFT only)
+
+**RunPod SSH smoke (Mac path `/Users/tom/Documents/GitHub/sophia-agi`, Cursor agent shell):**
+
+- API list/create: **PASS**
+- Probe name `sophia-math-code-ssh-smoke`, 3 attempts, pods `m9atlzki74hsjo`, `64o3crc5yxbqh9`, `5gmtho2z91z1e1` — each **terminated** after **600s** with no public SSH mapping
+- Outbound TCP to `157.157.221.29:42525` (prior mapped port) **hung** — egress to RunPod SSH not reachable from this host
+- **Verdict: FAIL** — `agi-proof/sophia-math-code-curriculum/ssh-smoke.public-report.json`
+
+**Stage 3 SFT (`runpod-sft-3seed.sh`):** **NOT LAUNCHED** (SSH prerequisite failed). **Seeds completed: 0/3**. No adapter artifacts under `training/sophia-math-code-curriculum/checkpoints/`.
+
+**Billing note:** orphan pod `0s40ngsh22llz0` (`sophia-7b-sft-seed0`, RUNNING) observed — not created by this smoke session; left running (possible parallel attempt). Terminate manually if unused.
+
+**Claim impact:** No Stage 3 adapters; no Stage 6 benchmark uplift claims. Artifacts: `stage3-runpod-blocker.public-report.json`.
+

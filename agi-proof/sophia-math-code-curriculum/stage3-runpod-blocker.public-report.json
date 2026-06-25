@@ -4,10 +4,10 @@
   "candidateOnly": true,
   "level3Evidence": false,
   "canClaimAGI": false,
-  "claimBoundary": "Honest blocker report — Stage 3 QLoRA SFT not executed. No adapter exists; no uplift may be cited.",
-  "recordedAt": "2026-06-25T12:15:00Z",
+  "claimBoundary": "Honest blocker \u2014 Stage 3 QLoRA SFT not executed; no adapters; no benchmark uplift.",
+  "recordedAt": "2026-06-25T11:46:40Z",
   "branch": "claude/sophia-math-code-curriculum",
-  "repoHead": "cb9a78268123fb57ccf7c0b20b183d785b5e667d",
+  "repoHead": "e72943717e6c84d3553c8622b908ee56d7e67cb2",
   "status": "BLOCKED",
   "stage": 3,
   "stageName": "3-seed QLoRA SFT",
@@ -17,110 +17,66 @@
   "recipe": {
     "method": "QLoRA 4-bit SFT",
     "epochs": 2,
-    "maskPrompt": true,
-    "seeds": [0, 1, 2],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
     "launcher": "agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh"
   },
   "blockers": [
     {
-      "id": "ssh_egress_timeout",
+      "id": "runpod_ssh_mapping_timeout",
       "severity": "hard",
-      "detail": "RunPod REST API OK; pod provisioned with SSH mapping but SSH login times out from Cursor agent env (Operation timed out)"
+      "detail": "3\u00d7 probe pod: no public SSH mapping within 600s"
     },
     {
-      "id": "no_local_cuda",
+      "id": "ssh_egress_unreachable",
       "severity": "hard",
-      "detail": "torch not installed; no local CUDA GPU path in agent session"
+      "detail": "TCP to mapped RunPod SSH port hung from this host"
     },
     {
       "id": "sft_not_started",
       "severity": "hard",
-      "detail": "runpod-sft-3seed.sh not launched — SSH prerequisite failed"
+      "detail": "runpod-sft-3seed.sh not run"
     }
   ],
-  "runpodApi": {
-    "verdict": "PASS",
-    "listPods": "OK",
-    "createPod": "OK (probe pod 0l6i9hurt74osj created, SSH mapped, deleted after smoke fail)"
+  "localGates": {
+    "datasetCheck": "PASS",
+    "lintClaims": "PASS"
   },
   "sshSmoke": {
-    "verdict": "FAIL",
-    "probePodId": "0l6i9hurt74osj",
-    "sshHost": "213.173.108.232:16786",
-    "error": "Timed out waiting for SSH login — Operation timed out",
-    "durationS": 240
+    "verdict": "FAIL"
   },
-  "dryRun": null,
   "seedsExecuted": [],
-  "seedsPlanned": [0, 1, 2],
+  "seedsCompleted": "0/3",
   "pods": [
     {
-      "id": "0l6i9hurt74osj",
+      "id": "m9atlzki74hsjo",
       "name": "sophia-math-code-ssh-smoke",
-      "role": "ssh-smoke-probe",
-      "status": "terminated",
-      "costPerHr": 0.69
+      "role": "probe",
+      "status": "terminated"
     },
     {
-      "id": "6l4go54e2n4f54",
-      "name": "sophia-7b-ssh-smoke",
+      "id": "64o3crc5yxbqh9",
+      "name": "sophia-math-code-ssh-smoke",
+      "role": "probe",
+      "status": "terminated"
+    },
+    {
+      "id": "5gmtho2z91z1e1",
+      "name": "sophia-math-code-ssh-smoke",
+      "role": "probe",
+      "status": "terminated"
+    },
+    {
+      "id": "0s40ngsh22llz0",
+      "name": "sophia-7b-sft-seed0",
       "role": "orphan-observed",
       "status": "RUNNING",
-      "publicIp": "213.173.107.230",
-      "sshPort": 12881,
-      "costPerHr": 0.69,
-      "notes": "Not created by this session; no ephemeral SSH key available"
+      "notes": "not terminated \u2014 may be external session"
     }
   ],
   "adapters": [],
-  "downstreamBlocked": {
-    "stage3b_baseline": "BLOCKED — no base-model evidence-oracle ladder recorded",
-    "stage4_rlvr_dpo": "BLOCKED — no SFT adapters",
-    "stage5_internalGate": "BLOCKED — promote_adapter requires adapter artifacts",
-    "stage6_evidence": "BLOCKED — no adapters; thresholds untested",
-    "stage7_preregReconciliation": "OPEN — thresholds remain UNTESTED (see preregistration.json)",
-    "stage8_headline": "BLOCKED — honest negative: curriculum pack ready; GPU SFT blocked on SSH egress"
-  },
-  "preregThresholds": [
-    {
-      "metric": "MATH-style accuracy Δ vs base",
-      "threshold": 0.05,
-      "status": "UNTESTED",
-      "reason": "No baseline or adapter eval"
-    },
-    {
-      "metric": "GSM8K-style accuracy Δ vs base",
-      "threshold": 0.03,
-      "status": "UNTESTED",
-      "reason": "No baseline or adapter eval"
-    },
-    {
-      "metric": "HumanEval-style pass@1 Δ vs base",
-      "threshold": 0.05,
-      "status": "UNTESTED",
-      "reason": "No baseline or adapter eval"
-    },
-    {
-      "metric": "MBPP-style pass@1 Δ vs base",
-      "threshold": 0.03,
-      "status": "UNTESTED",
-      "reason": "No baseline or adapter eval"
-    },
-    {
-      "metric": "provenance protected suites (religion/history)",
-      "threshold": 0.0,
-      "direction": "no_regression",
-      "status": "UNTESTED",
-      "reason": "promote_adapter not run — no adapter"
-    }
-  ],
-  "headline": "Stage 0 local gates PASS; RunPod API OK; SSH smoke FAIL (egress timeout). Stage 3 GPU SFT BLOCKED — 0/3 seeds. 144-row curriculum pack ready. No benchmark uplift claimed. canClaimAGI: false.",
-  "unblockSteps": [
-    "From local Mac (or host with RunPod SSH egress): export RUNPOD_API_KEY",
-    "Verify SSH: ephemeral pod + ssh echo sophia-ssh-ok + nvidia-smi -L",
-    "bash agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh",
-    "Record base Qwen2.5-7B-Instruct on sealed held-out oracles (stage 3b)",
-    "Run evidence-oracle eval ≥3 seeds with 95% CI excluding 0 before any headline",
-    "Terminate orphan pod 6l4go54e2n4f54 if no longer needed"
-  ]
+  "headline": "Stage 3 BLOCKED: SSH smoke FAIL; 0/3 seeds; canClaimAGI false."
 }
