@@ -75,6 +75,7 @@ def gap_worklist(gaps, thin_targets=()) -> "dict[str, Any]":
     items.sort(key=lambda x: (x["gapHits"], x["auditThin"]), reverse=True)
     return {
         "schema": "sophia.knowledge_gap_worklist.v1",
+        "candidateOnly": True,
         "totalGaps": len(gaps),
         "unroutableQueries": no_route,
         "distinctTargets": len(items),

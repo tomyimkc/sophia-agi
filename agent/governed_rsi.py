@@ -551,6 +551,11 @@ def _tokenize(s: str) -> list[str]:
     out: list[str] = []
     cur = []
     for ch in str(s).lower():
+        # Treat '-' as equivalent to '_': cage tokens use the underscored form
+        # (e.g. "kill_switch"), so a hyphenated tamper target like "kill-switch"
+        # must NOT slip past the tamper detector by splitting into "kill"/"switch".
+        if ch == "-":
+            ch = "_"
         if ch.isalnum() or ch == "_":
             cur.append(ch)
         else:
@@ -760,7 +765,7 @@ def _anti_forgetting_attack() -> dict:
     We model an adversarial regression by injecting a proposal whose candidate
     state omits the protected fact; the anti-forgetting gate (and the post-commit
     backstop) must reject/rollback while ``anti_forgetting`` stays TRUE."""
-    loop = GovernedRSI()
+    loop = _RedTeamRSI()   # red-team-only subclass; production GovernedRSI has no drop_fact path
     seed = Proposal(
         id="keep_me",
         kind="fact",
@@ -805,19 +810,21 @@ class _RegressingProposal(Proposal):
     drop_fact: str | None = None
 
 
-# Patch GovernedRSI._shadow_apply to honour the adversarial drop_fact, without
-# giving the normal loop any such power. Done by wrapping rather than exposing a
-# public mutator on the cage.
-_orig_shadow_apply = GovernedRSI._shadow_apply
+class _RedTeamRSI(GovernedRSI):
+    """Red-team-only subclass whose ``_shadow_apply`` honours a proposal's
+    adversarial ``drop_fact`` (dropping a protected fact from the candidate),
+    so the anti-forgetting gate + post-commit backstop can be exercised.
 
+    This isolation is deliberate: the production :class:`GovernedRSI` has NO
+    ``drop_fact`` path, so its core gate method carries no adversarial backdoor.
+    The earlier design globally monkey-patched ``GovernedRSI._shadow_apply`` at
+    import time, which left exactly such a backdoor in production; subclassing
+    keeps the cage's core method local and unsurprising.
+    """
 
-def _shadow_apply_with_regress(self, proposal, gate):  # type: ignore[no-redef]
-    cand, accepted = _orig_shadow_apply(self, proposal, gate)
-    drop = getattr(proposal, "drop_fact", None)
-    if drop and drop in cand.facts:
-        # Adversarial regression: remove the protected fact from the candidate.
-        del cand.facts[drop]
-    return cand, accepted
-
-
-GovernedRSI._shadow_apply = _shadow_apply_with_regress
+    def _shadow_apply(self, proposal: Proposal, gate: Any) -> "tuple[_KBState, bool]":
+        cand, accepted = super()._shadow_apply(proposal, gate)
+        drop = getattr(proposal, "drop_fact", None)
+        if drop and drop in cand.facts:
+            del cand.facts[drop]
+        return cand, accepted

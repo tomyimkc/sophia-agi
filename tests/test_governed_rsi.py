@@ -112,6 +112,22 @@ def test_tamper_targeting_gate_token_also_halts():
     assert loop.halted is True
 
 
+def test_tamper_hyphenated_target_not_bypassable():
+    # Regression: a hyphenated spelling ("kill-switch", "cage-invariants") must
+    # tokenize to the underscored cage token and still be caught as tamper, not
+    # split into harmless sub-tokens that slip past the detector.
+    for target in ("kill-switch", "cage-invariants", "check-invariants"):
+        loop = GovernedRSI()
+        verdict = loop.step(
+            Proposal(id="hy", kind="fact", target=target,
+                     examples=_verifiable_examples(), sources=_good_sources())
+        )
+        assert verdict["decision"] == "rejected", (target, verdict)
+        assert verdict["reason"] == "tamper", (target, verdict)
+        assert loop.halted is True
+        assert loop.check_invariants()["invariants_immutable"] is True
+
+
 def test_weight_update_rejected():
     loop = GovernedRSI()
     verdict = loop.step(
