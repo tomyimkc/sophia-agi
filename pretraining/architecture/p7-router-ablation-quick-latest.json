@@ -1,0 +1,76 @@
+{
+  "study": "P7 \u2014 router-policy ablation on fixed nano-MoE experts",
+  "floor_E": 0.69509,
+  "config": {
+    "vocab": 8,
+    "context": 2,
+    "hidden": 16,
+    "n_experts": 4,
+    "epochs": 4,
+    "seed": 0,
+    "n_train": 118,
+    "n_eval": 58
+  },
+  "moe_active_params": 476,
+  "moe_total_params": 1700,
+  "dense": {
+    "hidden_tuned": 19,
+    "params": 483,
+    "held_loss": 1.78785,
+    "excess_over_floor": 1.09275
+  },
+  "compute_equalized": true,
+  "policies": {
+    "handrolled-top1": {
+      "held_loss": 2.08666,
+      "aux_loss": 1.01374,
+      "max_route_share": 0.5,
+      "route_cv": 0.7109,
+      "counts": [
+        13,
+        0,
+        16,
+        29
+      ],
+      "pct_dropped": 0.0,
+      "excess_over_floor": 1.39157
+    },
+    "moerouter-top1-nodrop": {
+      "held_loss": 2.08666,
+      "aux_loss": 1.01374,
+      "max_route_share": 0.5,
+      "route_cv": 0.7109,
+      "counts": [
+        13,
+        0,
+        16,
+        29
+      ],
+      "pct_dropped": 0.0,
+      "excess_over_floor": 1.39157
+    },
+    "moerouter-topk-cap": {
+      "held_loss": 1.95416,
+      "aux_loss": 1.01327,
+      "max_route_share": 0.3558,
+      "route_cv": 0.5877,
+      "counts": [
+        30,
+        0,
+        37,
+        37
+      ],
+      "pct_dropped": 10.345,
+      "excess_over_floor": 1.25907
+    }
+  },
+  "self_consistency": {
+    "native_moe_held_loss": 2.08666,
+    "handrolled_matches_native": true,
+    "experts_frozen": true
+  },
+  "verdict": "moe_router_better",
+  "held_loss_gap_handrolled_minus_topkcap": 0.1325,
+  "p7b_decision_note": "evidence FOR P7-B (provisional): top-k-cap held-out loss is lower AND load is better spread than the hand-rolled top-1 router. CAVEAT: the loss advantage may be partly a mixture-averaging confound (k>1 smooths the output), not the capacity policy \u2014 a trainable bridge is worth building only if the advantage holds after isolating the policy effect.",
+  "honest_scope": "Routing-policy ablation on fixed experts \u2014 a nano-scale methodology study. Measures whether capacity-aware top-k routing (MoERouter + Switch aux loss) gives different load-balance / held-out loss than MoELM's hand-rolled top-1 router, on identical frozen experts against a known entropy floor. NOT a claim that either router scales to frontier MoEs, and NOT that the policy delta implies a capability delta. A 'superior router' claim needs the same measurement on a real model to the kappa >= 0.40 / 2-judge gate. The trainable Gumbel-softmax bridge (P7-B) is a separate, gated follow-up, not included here."
+}
