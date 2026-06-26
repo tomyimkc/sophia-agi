@@ -36,6 +36,8 @@ if str(ROOT) not in sys.path:
 import agent.lean_verifier as lv  # noqa: E402
 from agent.lean_verifier import (  # noqa: E402
     ProofCertificate,
+    _is_tactic_proof,
+    _wrap_lean,
     check_proof,
     lean_available,
     record_certificate,
@@ -148,7 +150,43 @@ def test_require_lean_holds_without_toolchain(monkeypatch) -> None:
 
 
 # --------------------------------------------------------------------------- #
-# 6. Real-kernel path (only when Lean is actually installed; never required)
+# 6. Proof wrapping — tactic vs term detection (regression: lean-kernel lane)
+# --------------------------------------------------------------------------- #
+
+
+def test_is_tactic_proof_detects_tactic_form() -> None:
+    """The smoke loop failed in the lean-kernel CI lane because tactic-style proofs
+    (`intro x; rfl`) were placed in a term-mode slot. The wrapper now detects tactic
+    form and prefixes `by`. Pin the detection so it can't silently regress."""
+    assert _is_tactic_proof("intro x; rfl") is True
+    assert _is_tactic_proof("intros; rfl") is True
+    assert _is_tactic_proof("intros a b ⟨ha, hb⟩; exact ⟨hb, ha⟩") is True
+    assert _is_tactic_proof("by intro x; rfl") is True   # already prefixed
+
+
+def test_is_tactic_proof_treats_terms_as_terms() -> None:
+    """Bare `rfl`/`trivial` and `fun` terms must NOT be over-wrapped — they are valid
+    term-mode proofs and wrapping them in `by` is harmless but unnecessary."""
+    assert _is_tactic_proof("rfl") is False
+    assert _is_tactic_proof("trivial") is False
+    assert _is_tactic_proof("fun x => rfl") is False
+    assert _is_tactic_proof("") is False
+
+
+def test_wrap_lean_prefixes_by_for_tactics() -> None:
+    src = _wrap_lean("∀ (x : Nat), x = x", "intro x; rfl")
+    assert "by intro x; rfl" in src
+    assert src.startswith("example :")
+
+
+def test_wrap_lean_leaves_terms_alone() -> None:
+    src = _wrap_lean("True", "trivial")
+    assert "by" not in src
+    assert "example : True :=\n  trivial" in src
+
+
+# --------------------------------------------------------------------------- #
+# 7. Real-kernel path (only when Lean is actually installed; never required)
 # --------------------------------------------------------------------------- #
 
 

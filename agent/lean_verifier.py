@@ -227,12 +227,45 @@ def _lean_check(claim_id: str, proposition: str, proof_text: str, timeout_s: int
     return _result(cert, extra_reasons=[f"lean: {(stderr or stdout).strip()[:200]}"])
 
 
+_TACITC_LEAD_WORDS = (
+    "intro", "intros", "induction", "cases", "simp", "dsimp", "rw", "rewrite",
+    "apply", "exact", "refine", "decide", "omega", "ring", "linarith", "nlinarith",
+    "have", "obtain", "rcases", "constructor", "left", "right", "ext", "funop",
+    "by_contra", "by_cases", "tauto", "tauto!", "assumption", "trivial", "rfl",
+)
+
+
+def _is_tactic_proof(proof: str) -> bool:
+    """Heuristic: does this proof text read as a tactic sequence rather than a term?
+
+    Lean proofs are either TERM-mode (`example : P := <term>`) or TACTIC-mode
+    (`example : P := by <tactics>`). They are syntactically distinct: a bare
+    `intro x; rfl` is invalid as a term but valid as a tactic block. We detect tactic
+    form by a leading `by `, a tactic-separator `;`, or a leading tactic word, so the
+    wrapper can add `by` when the caller wrote tactics (the common Lean 4 style).
+    """
+    p = proof.strip()
+    if p.startswith("by ") or p.startswith("by\t") or p == "by":
+        return True
+    if ";" in p:
+        return True
+    first = p.split(None, 1)[0] if p else ""
+    # `rfl` and `trivial` are valid as BOTH term and tactic; treat them as terms so
+    # we don't over-wrap a bare `rfl` (which is a perfectly good term-mode proof).
+    if first in _TACITC_LEAD_WORDS and first not in ("rfl", "trivial"):
+        return True
+    return False
+
+
 def _wrap_lean(proposition: str, proof_text: str) -> str:
     """Wrap a proposition + proof into a minimal `example : P := proof` source the
-    kernel can type-check. The caller is responsible for proof_text being a valid proof
-    term / by_tactic for the proposition; we only add the scaffolding."""
+    kernel can type-check. Detects tactic-mode proofs and prefixes `by` so callers may
+    write proofs in either term form (`rfl`, `trivial`, `fun x => ...`) or the common
+    tactic form (`intro x; rfl`, `intros; rfl`)."""
     prop = proposition.strip()
     proof = proof_text.strip()
+    if _is_tactic_proof(proof) and not proof.startswith("by"):
+        proof = "by " + proof
     return f"example : {prop} :=\n  {proof}\n"
 
 
