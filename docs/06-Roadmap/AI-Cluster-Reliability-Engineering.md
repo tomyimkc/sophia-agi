@@ -121,18 +121,34 @@ A first working cut of every slice now ships. Core logic lives in `agent/cluster
 
 | Slice | Modules | CLI / service | Tests |
 |-------|---------|---------------|-------|
-| R1 inspect + MTTR ledger | `agent/cluster/health.py`, `provider.py`, `playbook.py`, `ledger.py` | `tools/cluster/inspect_fleet.py` | `tests/test_cluster_health.py`, `test_cluster_ledger.py` |
+| R1 inspect + MTTR ledger | `agent/cluster/health.py`, `provider.py`, `ssh_provider.py` (live SSH telemetry), `playbook.py`, `ledger.py` | `tools/cluster/inspect_fleet.py` | `tests/test_cluster_health.py`, `test_cluster_ledger.py`, `test_cluster_ssh_provider.py` |
 | R3 observability | `services/cluster_exporter/main.py` (pure-stdlib Prometheus exporter) | `python -m services.cluster_exporter.main` | `tests/test_cluster_exporter_calibrate.py` |
 | R3 dashboards/alerts | — | `observability/grafana/*.json`, `observability/prometheus/alerts.yml` | (JSON/YAML validated) |
 | R2 bring-up gate | `agent/cluster/acceptance.py`, `config/cluster_baselines.json` | `tools/cluster/bringup.py` | `tests/test_cluster_acceptance.py` |
 | R4 gated self-heal | `agent/cluster/heal.py` (audited, fail-closed) | `tools/cluster/heal.py` | `tests/test_cluster_heal.py` |
 | R3/R4 calibrated thresholds | `agent/cluster/calibrate.py` (reuses `agent/calibration.py`) | `tools/cluster/calibrate_alerts.py` | `tests/test_cluster_exporter_calibrate.py` |
 
+**Live telemetry — `SSHProvider` (shipped).** `agent/cluster/ssh_provider.py` fills the
+DCGM-level fields by running a single probe script per node over SSH and parsing real
+`nvidia-smi` / `dmesg` (XID) / `nvidia-smi nvlink` / InfiniBand `state` output into
+`NodeMetrics`. It reuses the repo's trusted SSH lifecycle (`PodConnection`, `_ssh_base`,
+and `_api_request` for RunPod discovery from `tools/runpod_rlvr.py`), sweeps the fleet
+in parallel, and the parser (`parse_probe`) is a pure function so it is fully tested
+offline with canned output (`tests/test_cluster_ssh_provider.py`). Targets come from a
+JSON inventory (`config/cluster_inventory.example.json` /
+`SOPHIA_CLUSTER_INVENTORY`) or live RunPod discovery; the key is
+`SOPHIA_CLUSTER_SSH_KEY`. Drive it with `--source ssh`:
+
+    SOPHIA_CLUSTER_SSH_KEY=~/.ssh/id_ed25519 \
+      python3 tools/cluster/inspect_fleet.py --source ssh \
+      --inventory config/cluster_inventory.example.json --diagnose
+
 **Honest bounds.** Telemetry defaults to a deterministic `MockProvider` (no GPUs, no
-keys, no cost); the `RunPodProvider` maps the live `GET /pods` inventory but leaves
-DCGM-level fields (temp/ECC/XID/NVLink/RDMA) `None`, which the fail-closed evaluator
-treats as "unknown, can't clear" — a real `nvidia-smi`/`dcgmi` SSH agent is the next
-step to fill them. The bring-up baselines are conservative reference numbers and must
+keys, no cost). The `RunPodProvider` maps the live `GET /pods` inventory (status/shape
+only) and leaves DCGM-level fields `None` — the fail-closed evaluator treats those as
+"unknown, can't clear", so use `--source ssh` for real GPU health. A probe section that
+is absent or unparseable (no IB fabric, ECC reported `N/A`) also stays `None` → WARN,
+never a false green. The bring-up baselines are conservative reference numbers and must
 be re-measured against the operator's own reference node before production use.
 Auto-remediation is **dry-run by default** and never executes without explicit opt-in
 (`SOPHIA_CLUSTER_HEAL=1` + a wired executor). `heal.py` ships only a no-op executor.

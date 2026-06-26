@@ -36,8 +36,10 @@ from agent.cluster.provider import get_provider, sweep  # noqa: E402
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Sophia gated auto-remediation (R4).")
-    ap.add_argument("--source", default="mock", choices=["mock", "runpod"])
+    ap.add_argument("--source", default="mock", choices=["mock", "runpod", "ssh"])
     ap.add_argument("--size", type=int, default=6)
+    ap.add_argument("--inventory", default=None, help="JSON node inventory for --source ssh")
+    ap.add_argument("--ssh-key", default=None, help="SSH private key path for --source ssh")
     ap.add_argument("--ledger", action="store_true", help="open + update incidents")
     ap.add_argument("--ledger-path", default=str(ledger_mod.DEFAULT_LEDGER))
     ap.add_argument("--apply", action="store_true",
@@ -47,7 +49,13 @@ def main(argv: list[str] | None = None) -> int:
 
     ledger_path = Path(args.ledger_path)
     plans: list[dict] = []
-    for metrics in sweep(get_provider(args.source, size=args.size)):
+    try:
+        provider = get_provider(args.source, size=args.size,
+                                inventory=args.inventory, ssh_key=args.ssh_key)
+    except (RuntimeError, ValueError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    for metrics in sweep(provider):
         health = evaluate_node(metrics)
         if health.verdict == Verdict.PASS:
             continue

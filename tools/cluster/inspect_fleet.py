@@ -33,8 +33,9 @@ from agent.cluster.provider import get_provider, sweep  # noqa: E402
 _GLYPH = {Verdict.PASS: "PASS", Verdict.WARN: "WARN", Verdict.FAIL: "FAIL"}
 
 
-def run_inspection(source: str, *, size: int, want_diagnose: bool) -> list[dict]:
-    provider = get_provider(source, size=size)
+def run_inspection(source: str, *, size: int, want_diagnose: bool,
+                   inventory: str | None = None, ssh_key: str | None = None) -> list[dict]:
+    provider = get_provider(source, size=size, inventory=inventory, ssh_key=ssh_key)
     out: list[dict] = []
     for metrics in sweep(provider):
         health = evaluate_node(metrics)
@@ -88,16 +89,25 @@ def _record_ledger(records: list[dict], ledger: Path) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Sophia cluster inspection sweep (R1).")
-    ap.add_argument("--source", default="mock", choices=["mock", "runpod"],
+    ap.add_argument("--source", default="mock", choices=["mock", "runpod", "ssh"],
                     help="telemetry source (default: mock, offline)")
     ap.add_argument("--size", type=int, default=6, help="synthetic fleet size (mock only)")
+    ap.add_argument("--inventory", default=None,
+                    help="JSON node inventory for --source ssh (or SOPHIA_CLUSTER_INVENTORY)")
+    ap.add_argument("--ssh-key", default=None,
+                    help="SSH private key path for --source ssh (or SOPHIA_CLUSTER_SSH_KEY)")
     ap.add_argument("--diagnose", action="store_true", help="attach root-cause diagnoses")
     ap.add_argument("--ledger", action="store_true", help="open incidents for WARN/FAIL nodes")
     ap.add_argument("--ledger-path", default=str(ledger_mod.DEFAULT_LEDGER))
     ap.add_argument("--json", action="store_true", help="emit JSON instead of a table")
     args = ap.parse_args(argv)
 
-    records = run_inspection(args.source, size=args.size, want_diagnose=args.diagnose)
+    try:
+        records = run_inspection(args.source, size=args.size, want_diagnose=args.diagnose,
+                                 inventory=args.inventory, ssh_key=args.ssh_key)
+    except (RuntimeError, ValueError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
 
     opened = 0
     if args.ledger:

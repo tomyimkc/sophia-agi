@@ -126,15 +126,31 @@ class RunPodProvider:
         return [_pod_to_metrics(p) for p in pods if isinstance(p, dict)]
 
 
-def get_provider(source: str = "mock", *, size: int = 6) -> FleetProvider:
-    """Factory used by the CLIs. ``mock`` is the safe, offline default."""
+def get_provider(source: str = "mock", *, size: int = 6,
+                 inventory: str | None = None, ssh_key: str | None = None) -> FleetProvider:
+    """Factory used by the CLIs. ``mock`` is the safe, offline default.
+
+    * ``mock``    — deterministic synthetic fleet (offline).
+    * ``runpod``  — live RunPod ``GET /pods`` inventory (status/shape only).
+    * ``ssh``     — live DCGM-level telemetry over SSH. Needs an inventory (or
+      ``SOPHIA_CLUSTER_INVENTORY``) of nodes, or falls back to RunPod discovery; the
+      SSH key comes from ``ssh_key`` / ``SOPHIA_CLUSTER_SSH_KEY``.
+    """
 
     source = (source or "mock").lower()
     if source == "mock":
         return MockProvider(size=size)
     if source == "runpod":
         return RunPodProvider()
-    raise ValueError(f"unknown fleet source: {source!r} (expected 'mock' or 'runpod')")
+    if source == "ssh":
+        from agent.cluster.ssh_provider import SSHProvider
+
+        inv = inventory or os.environ.get("SOPHIA_CLUSTER_INVENTORY")
+        if inv:
+            return SSHProvider.from_inventory(inv, key_path=ssh_key)
+        # No inventory → discover targets from RunPod, probe them over SSH.
+        return SSHProvider.from_runpod(key_path=ssh_key)
+    raise ValueError(f"unknown fleet source: {source!r} (expected 'mock', 'runpod' or 'ssh')")
 
 
 def sweep(provider: FleetProvider) -> list[NodeMetrics]:
