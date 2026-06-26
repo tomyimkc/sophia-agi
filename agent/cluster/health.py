@@ -91,6 +91,9 @@ class NodeMetrics:
     throttled: bool | None = None
     nvlink_down: int | None = None  # count of down NVLink lanes
     rdma_link_down: int | None = None  # count of down RDMA/IB links
+    # dcgmi diag result: None = not run (opt-in deep check), () = ran & all passed,
+    # non-empty = names of FAILED diagnostic tests.
+    dcgm_diag: tuple[str, ...] | None = None
     collected_at: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
@@ -107,6 +110,7 @@ class NodeMetrics:
             "throttled": self.throttled,
             "nvlink_down": self.nvlink_down,
             "rdma_link_down": self.rdma_link_down,
+            "dcgm_diag": list(self.dcgm_diag) if self.dcgm_diag is not None else None,
             "collected_at": self.collected_at,
         }
 
@@ -262,6 +266,13 @@ def evaluate_node(metrics: NodeMetrics, thresholds: Thresholds | None = None) ->
     if metrics.throttled is True:
         reasons.append(HealthReason("throttled", Verdict.WARN,
                                     "GPU is clock-throttled (thermal/power)", True))
+
+    # DCGM diagnostic (opt-in deep check). None = not run → no penalty; any failed
+    # test → FAIL. This is the authoritative hardware-validation signal.
+    if metrics.dcgm_diag:
+        reasons.append(HealthReason("dcgm_diag", Verdict.FAIL,
+                                    f"dcgmi diag failed: {list(metrics.dcgm_diag)}",
+                                    list(metrics.dcgm_diag)))
 
     verdict = max((r.verdict for r in reasons), default=Verdict.PASS)
     return NodeHealth(metrics.node_id, Verdict(verdict), reasons, metrics)

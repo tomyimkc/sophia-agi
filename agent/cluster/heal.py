@@ -157,3 +157,41 @@ def plan_remediation(
                                        note=f"auto-healed via {diag.action}", ledger=ledger)
 
     return plan
+
+
+def execute_manual(
+    node_id: str,
+    action: str,
+    executor: Callable[[str, str], bool],
+    *,
+    operator: str = "operator",
+    approved: bool | None = None,
+    audit_path: Path | None = None,
+    incident_id: str | None = None,
+    ledger: Path = ledger_mod.DEFAULT_LEDGER,
+) -> bool:
+    """Human-approved remediation: run an ESCALATED action a person has signed off on.
+
+    This bypasses the auto-gate *by design* — the human IS the gate for high-risk
+    actions like drain/reboot. It still requires explicit approval (``approved=True`` or
+    ``SOPHIA_CLUSTER_HEAL=1``), audits the action, and records recovery to the ledger
+    (``auto_healed=False`` — a human resolved it). Refuses to run without approval.
+    """
+
+    ok_to_run = approved if approved is not None else (os.environ.get(APPROVE_ENV) == "1")
+    if not ok_to_run:
+        audit_entry = {"tool": "cluster_heal_manual", "node_id": node_id, "action": action,
+                       "operator": operator, "executed": False,
+                       "reason": f"not approved (set {APPROVE_ENV}=1 or pass approved=True)"}
+        audit_log(audit_entry, path=audit_path) if audit_path else audit_log(audit_entry)
+        return False
+
+    executed = bool(executor(node_id, action))
+    audit_entry = {"tool": "cluster_heal_manual", "node_id": node_id, "action": action,
+                   "operator": operator, "executed": executed, "dry_run": False}
+    audit_log(audit_entry, path=audit_path) if audit_path else audit_log(audit_entry)
+
+    if incident_id is not None and executed:
+        ledger_mod.record_recovery(incident_id, auto_healed=False,
+                                   note=f"manual remediation by {operator}: {action}", ledger=ledger)
+    return executed

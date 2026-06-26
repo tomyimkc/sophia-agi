@@ -28,6 +28,7 @@ Targets come from an explicit inventory (``from_inventory``) or live RunPod disc
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import subprocess
@@ -64,6 +65,78 @@ echo '===IB==='
 cat /sys/class/infiniband/*/ports/*/state 2>/dev/null
 echo '===END==='
 """.replace("NAME_TEMP_UTIL_ECC_THROTTLE", _SMI_QUERY)
+
+# Optional deep-diagnostic suffix: dcgmi diag at the requested run level, JSON output.
+# Appended to PROBE_SCRIPT only when deep=True (the run is slow — minutes at -r 3).
+_DCGM_SUFFIX = """
+echo '===DCGM==='
+dcgmi diag -r {level} -j 2>/dev/null
+echo '===DCGM_END==='
+"""
+
+
+def _build_probe(deep: bool, dcgm_level: int) -> str:
+    if not deep:
+        return PROBE_SCRIPT
+    # Insert the DCGM section just before the END marker.
+    body = PROBE_SCRIPT.replace("echo '===END==='", "").rstrip()
+    return body + "\n" + _DCGM_SUFFIX.format(level=dcgm_level) + "echo '===END==='\n"
+
+
+def parse_dcgm_diag(text: str) -> tuple[str, ...] | None:
+    """Parse ``dcgmi diag -j`` JSON → tuple of FAILED test names.
+
+    Returns ``None`` if no parseable diagnostic was produced (not run / unavailable),
+    ``()`` if it ran and every test passed, else the failing test names. Tolerant of
+    the schema variations across DCGM versions (test_categories → tests → results).
+    """
+
+    text = (text or "").strip()
+    if not text:
+        return None
+    try:
+        data = json.loads(text)
+    except (ValueError, TypeError):
+        return None
+
+    # Unwrap the common top-level container key(s).
+    root = data
+    if isinstance(data, dict):
+        for key in ("DCGM GPU Diagnostic", "DCGM Diagnostic", "diagnostic"):
+            if key in data:
+                root = data[key]
+                break
+
+    categories = []
+    if isinstance(root, dict):
+        categories = root.get("test_categories") or root.get("categories") or []
+    if not isinstance(categories, list):
+        return None
+
+    failed: list[str] = []
+    saw_any = False
+    for cat in categories:
+        if not isinstance(cat, dict):
+            continue
+        for test in cat.get("tests", []) or []:
+            if not isinstance(test, dict):
+                continue
+            name = test.get("name") or test.get("test_name") or "unknown"
+            results = test.get("results")
+            statuses = []
+            if isinstance(results, list):
+                statuses = [str(r.get("status", "")) for r in results if isinstance(r, dict)]
+            elif "status" in test:
+                statuses = [str(test["status"])]
+            for st in statuses:
+                saw_any = True
+                if st.strip().lower() in ("fail", "failed", "error"):
+                    failed.append(str(name))
+                    break
+    if not saw_any:
+        return None
+    # De-dup while preserving order.
+    return tuple(dict.fromkeys(failed))
 
 
 @dataclass(frozen=True)
@@ -176,6 +249,9 @@ def parse_probe(node_id: str, raw: str, *, gpu_model: str | None = None,
         if states:
             rdma_link_down = sum(1 for s in states if s != "ACTIVE")
 
+    # --- DCGM deep diagnostic (only present when probed with deep=True) ---
+    dcgm_diag = parse_dcgm_diag(sec["DCGM"]) if "DCGM" in sec else None
+
     return NodeMetrics(
         node_id=node_id,
         gpu_model=name,
@@ -190,6 +266,7 @@ def parse_probe(node_id: str, raw: str, *, gpu_model: str | None = None,
         throttled=throttled_any if throttle_known else None,
         nvlink_down=nvlink_down,
         rdma_link_down=rdma_link_down,
+        dcgm_diag=dcgm_diag,
         collected_at=collected_at,
     )
 
@@ -219,7 +296,8 @@ class SSHProvider:
     """Collect live ``NodeMetrics`` from a fleet over SSH."""
 
     def __init__(self, targets: list[SSHTarget], *, key_path: str | Path | None = None,
-                 timeout_s: int = 25, max_workers: int = 8) -> None:
+                 timeout_s: int = 25, max_workers: int = 8,
+                 deep: bool = False, dcgm_level: int = 1) -> None:
         if not targets:
             raise ValueError("SSHProvider needs at least one target")
         key = key_path or os.environ.get("SOPHIA_CLUSTER_SSH_KEY")
@@ -229,11 +307,13 @@ class SSHProvider:
             )
         self.targets = targets
         self.key_path = Path(key)
-        self.timeout_s = timeout_s
+        # Deep dcgmi diag runs for minutes — give it a much longer timeout.
+        self.timeout_s = timeout_s if not deep else max(timeout_s, 600)
         self.max_workers = max(1, min(max_workers, len(targets)))
+        self.probe_script = _build_probe(deep, dcgm_level)
 
     def _probe_one(self, target: SSHTarget) -> NodeMetrics:
-        argv = _ssh_argv(target, self.key_path) + [PROBE_SCRIPT]
+        argv = _ssh_argv(target, self.key_path) + [self.probe_script]
         try:
             proc = subprocess.run(argv, text=True, capture_output=True, timeout=self.timeout_s)
         except (subprocess.TimeoutExpired, OSError):

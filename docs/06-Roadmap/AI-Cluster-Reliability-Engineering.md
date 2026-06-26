@@ -125,7 +125,9 @@ A first working cut of every slice now ships. Core logic lives in `agent/cluster
 | R3 observability | `services/cluster_exporter/main.py` (pure-stdlib Prometheus exporter) | `python -m services.cluster_exporter.main` | `tests/test_cluster_exporter_calibrate.py` |
 | R3 dashboards/alerts | — | `observability/grafana/*.json`, `observability/prometheus/alerts.yml` | (JSON/YAML validated) |
 | R2 bring-up gate | `agent/cluster/acceptance.py`, `config/cluster_baselines.json` | `tools/cluster/bringup.py` | `tests/test_cluster_acceptance.py` |
+| R1 deep health (DCGM) | `agent/cluster/ssh_provider.py` (`parse_dcgm_diag`, `--deep`) | `tools/cluster/inspect_fleet.py --deep` | `tests/test_cluster_executors.py` |
 | R4 gated self-heal | `agent/cluster/heal.py` (audited, fail-closed) | `tools/cluster/heal.py` | `tests/test_cluster_heal.py` |
+| R4 real executors | `agent/cluster/executors.py` (kube/slurm/ssh/noop) | `tools/cluster/heal.py --backend ... [--node --action]` | `tests/test_cluster_executors.py` |
 | R3/R4 calibrated thresholds | `agent/cluster/calibrate.py` (reuses `agent/calibration.py`) | `tools/cluster/calibrate_alerts.py` | `tests/test_cluster_exporter_calibrate.py` |
 
 **Live telemetry — `SSHProvider` (shipped).** `agent/cluster/ssh_provider.py` fills the
@@ -142,6 +144,23 @@ JSON inventory (`config/cluster_inventory.example.json` /
     SOPHIA_CLUSTER_SSH_KEY=~/.ssh/id_ed25519 \
       python3 tools/cluster/inspect_fleet.py --source ssh \
       --inventory config/cluster_inventory.example.json --diagnose
+
+**Deep health check — `dcgmi diag` (shipped).** `--source ssh --deep` appends
+`dcgmi diag -r {1,2,3} -j` to the probe; `parse_dcgm_diag` folds the JSON into
+`NodeMetrics.dcgm_diag` (None = not run, `()` = all passed, else the failed test names).
+A failed diag is the authoritative hardware-validation FAIL signal and routes to a
+HIGH-risk `drain_and_diag` diagnosis. The deep run is slow (minutes/node) so it is
+opt-in with a longer timeout.
+
+**Real remediation executors (shipped).** `agent/cluster/executors.py` gives the gate
+real hands: `KubeExecutor` (`kubectl cordon`/`drain`), `SlurmExecutor`
+(`scontrol ... state=drain` / `reboot`), `SSHExecutor` (node-local fixes — gc disk,
+restart DCGM, bounce IB), and `NoopExecutor` (simulation). The auto-gate still only
+auto-runs LOW-risk/auto-safe actions; drain/cordon stay ESCALATE-only and are run by a
+human via the **manual path** (`heal.py --node <id> --action drain_and_reboot
+--backend kube --apply`), which audits the action and records a non-auto recovery to the
+ledger. The command runner is injectable, so every backend's command mapping is unit
+-tested without a real cluster.
 
 **Honest bounds.** Telemetry defaults to a deterministic `MockProvider` (no GPUs, no
 keys, no cost). The `RunPodProvider` maps the live `GET /pods` inventory (status/shape

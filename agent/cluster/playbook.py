@@ -77,6 +77,11 @@ def _diagnose_signal(signal: str, value: Any) -> Diagnosis:
         return Diagnosis(signal, f"Non-fatal XID(s) {vals}: transient or app-induced",
                          "Capture nvidia-smi -q and dmesg; watch for recurrence before acting",
                          action="observe", risk=Risk.LOW, confidence=0.55, evidence=vals)
+    if signal == "dcgm_diag":
+        vals = value if isinstance(value, list) else [value]
+        return Diagnosis(signal, f"DCGM diagnostic failed: {vals}",
+                         "Drain the node; review dcgmi diag -r 3 output; RMA/repair the failing component before returning to prod",
+                         action="drain_and_diag", risk=Risk.HIGH, confidence=0.88, evidence=vals)
     if signal == "ecc_uncorrectable":
         return Diagnosis(signal, "Uncorrectable ECC errors on GPU memory",
                          "Drain; run dcgmi diag -r 3; trigger row-remap; RMA if remap is exhausted",

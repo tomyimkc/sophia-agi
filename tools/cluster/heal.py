@@ -28,10 +28,24 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.cluster import ledger as ledger_mod  # noqa: E402
+from agent.cluster.executors import get_executor  # noqa: E402
 from agent.cluster.health import Verdict, evaluate_node  # noqa: E402
 from agent.cluster.heal import Decision, plan_remediation  # noqa: E402
 from agent.cluster.playbook import primary_diagnosis  # noqa: E402
 from agent.cluster.provider import get_provider, sweep  # noqa: E402
+
+
+def _build_executor(args):
+    """Construct the remediation executor for the chosen backend."""
+
+    if args.backend == "ssh":
+        targets = {}
+        if args.inventory:
+            from agent.cluster.ssh_provider import SSHProvider
+            for t in SSHProvider.from_inventory(args.inventory, key_path=args.ssh_key).targets:
+                targets[t.node_id] = t
+        return get_executor("ssh", targets=targets, key_path=args.ssh_key)
+    return get_executor(args.backend)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -43,11 +57,30 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--ledger", action="store_true", help="open + update incidents")
     ap.add_argument("--ledger-path", default=str(ledger_mod.DEFAULT_LEDGER))
     ap.add_argument("--apply", action="store_true",
-                    help="permit real actions (still needs SOPHIA_CLUSTER_HEAL=1 + an executor)")
+                    help="permit real actions (still needs SOPHIA_CLUSTER_HEAL=1)")
+    ap.add_argument("--backend", default="noop", choices=["noop", "ssh", "kube", "slurm"],
+                    help="remediation executor backend (default: noop = simulate)")
+    ap.add_argument("--node", default=None,
+                    help="manual mode: execute --action on this single node (human-approved)")
+    ap.add_argument("--action", default=None,
+                    help="manual mode: the action to execute (e.g. drain_and_reboot, cordon_and_investigate)")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
 
     ledger_path = Path(args.ledger_path)
+
+    executor = _build_executor(args)
+
+    # --- Manual mode: a human runs one approved (often ESCALATED) action ---
+    if args.node and args.action:
+        from agent.cluster.heal import execute_manual
+
+        ok = execute_manual(args.node, args.action, executor,
+                            approved=args.apply or None, ledger=ledger_path)
+        print(f"manual remediation {args.node} / {args.action}: "
+              f"{'executed' if ok else 'NOT executed (need --apply + SOPHIA_CLUSTER_HEAL=1, or unsupported action)'}")
+        return 0 if ok else 1
+
     plans: list[dict] = []
     try:
         provider = get_provider(args.source, size=args.size,
@@ -75,7 +108,8 @@ def main(argv: list[str] | None = None) -> int:
             )
         plan = plan_remediation(
             health.node_id, diag,
-            allow=args.apply or None,  # None → fall back to env flag
+            executor=executor,                 # auto-heals only run if AUTO_HEAL + approved
+            allow=args.apply or None,          # None → fall back to env flag
             incident_id=incident_id, ledger=ledger_path,
         )
         plans.append(plan.to_dict())

@@ -127,7 +127,8 @@ class RunPodProvider:
 
 
 def get_provider(source: str = "mock", *, size: int = 6,
-                 inventory: str | None = None, ssh_key: str | None = None) -> FleetProvider:
+                 inventory: str | None = None, ssh_key: str | None = None,
+                 deep: bool = False, dcgm_level: int = 1) -> FleetProvider:
     """Factory used by the CLIs. ``mock`` is the safe, offline default.
 
     * ``mock``    — deterministic synthetic fleet (offline).
@@ -147,9 +148,9 @@ def get_provider(source: str = "mock", *, size: int = 6,
 
         inv = inventory or os.environ.get("SOPHIA_CLUSTER_INVENTORY")
         if inv:
-            return SSHProvider.from_inventory(inv, key_path=ssh_key)
+            return SSHProvider.from_inventory(inv, key_path=ssh_key, deep=deep, dcgm_level=dcgm_level)
         # No inventory → discover targets from RunPod, probe them over SSH.
-        return SSHProvider.from_runpod(key_path=ssh_key)
+        return SSHProvider.from_runpod(key_path=ssh_key, deep=deep, dcgm_level=dcgm_level)
     raise ValueError(f"unknown fleet source: {source!r} (expected 'mock', 'runpod' or 'ssh')")
 
 
