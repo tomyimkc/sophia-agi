@@ -38,7 +38,9 @@ Offline-safe by default; MLX is an optional upgrade, never a hard dependency.
 """
 from __future__ import annotations
 
+import random
 import re
+from math import comb
 from typing import Callable, Sequence
 
 from agent.verified_trace import VerifiedTrace, record, _trace_id
@@ -188,15 +190,109 @@ def _swap_reasoning_quantifier(cot: str) -> "str | None":
     return f"{new_reasoning} {answer}".strip() if answer else new_reasoning
 
 
-def default_perturbs_reasoning() -> list[Perturb]:
-    """v2 perturbations: touch reasoning only, preserve the answer line.
+# --------------------------------------------------------------------------- #
+# v4: THREE MORE reasoning-only perturbs (reorder, drop-connective,
+# replace-entity-with-distractor). v3 had only 3 perturbs and most v3 CoTs were
+# 2-3 sentences, so the reasoning-only perturbs frequently could not apply
+# (nAttempted<=2 per probe) — the dominant power limit the v3 findingScope
+# diagnosed. v4 pairs >=4-sentence CoTs (so the sentence-level perturbs apply)
+# with these extra perturbs so each probe yields nAttempted>=3 and typically 5+.
+# Each still touches the REASONING only and re-appends the Answer: line verbatim.
+# --------------------------------------------------------------------------- #
+_CONNECTIVES = re.compile(
+    r"\b(therefore|because|since|thus|hence|consequently|so)\b|\bas a result\b",
+    re.IGNORECASE,
+)
+_DISTRACTOR = "something"
 
-    A flip under these perturbs means the reasoning (not the answer token) was
-    causally load-bearing. This is the discriminating set: a load-bearing CoT
-    should flip, a post-hoc (decorative) CoT should not, because its answer
-    doesn't depend on the reasoning text.
+
+def _reorder_reasoning_sentences(cot: str) -> "str | None":
+    """Swap the first two reasoning sentences (NOT the answer line).
+
+    Tests whether the ORDER of the reasoning mattered. A load-bearing chain
+    whose steps build on each other should be sensitive to reordering; decorative
+    filler is order-invariant. Returns None when there are <2 reasoning sentences
+    or the swap is a no-op (the two sentences are identical)."""
+    reasoning, answer = _split_reasoning_answer(cot)
+    sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", reasoning.strip()) if s.strip()]
+    if len(sentences) < 2 or sentences[0] == sentences[1]:
+        return None
+    sentences[0], sentences[1] = sentences[1], sentences[0]
+    new_reasoning = " ".join(sentences)
+    if new_reasoning == reasoning:
+        return None
+    return f"{new_reasoning} {answer}".strip() if answer else new_reasoning
+
+
+def _drop_reasoning_connective(cot: str) -> "str | None":
+    """Remove the first logical connective (therefore/because/since/...) from the
+    REASONING only. Tests whether the explicit logical LINK between premises and
+    conclusion was load-bearing. Returns None when no connective is present."""
+    reasoning, answer = _split_reasoning_answer(cot)
+    new_reasoning, n = _CONNECTIVES.subn("", reasoning, count=1)
+    if n == 0:
+        return None
+    new_reasoning = re.sub(r"\s{2,}", " ", new_reasoning).strip()
+    if new_reasoning == reasoning:
+        return None
+    return f"{new_reasoning} {answer}".strip() if answer else new_reasoning
+
+
+def _first_proper_noun(reasoning: str) -> "str | None":
+    """First mid-sentence capitalized word (a named entity), skipping the
+    sentence-initial word of each sentence (which is capitalized by convention)."""
+    for sent in re.split(r"(?<=[.!?])\s+", reasoning.strip()):
+        words = sent.split()
+        for w in words[1:]:
+            core = re.sub(r"[^A-Za-z]", "", w)
+            if len(core) >= 3 and core[0].isupper():
+                return core
+    return None
+
+
+def _replace_entity_with_distractor(cot: str) -> "str | None":
+    """Replace the first NAMED support in the REASONING with a vague distractor
+    ('something'). Priority: the first number (quantitative support), else the
+    first mid-sentence proper noun (named entity). This is the most direct probe
+    of the v4 question — does removing the SPECIFIC named support drop the gold
+    logprob? Returns None when the reasoning carries no number or named entity
+    (e.g. pure post-hoc filler), which is itself the discriminating signal."""
+    reasoning, answer = _split_reasoning_answer(cot)
+    m = re.search(r"\d[\d,]*", reasoning)
+    if m:
+        new_reasoning = reasoning[: m.start()] + _DISTRACTOR + reasoning[m.end():]
+    else:
+        target = _first_proper_noun(reasoning)
+        if target is None:
+            return None
+        new_reasoning = re.sub(r"\b" + re.escape(target) + r"\b", _DISTRACTOR, reasoning, count=1)
+    if new_reasoning == reasoning:
+        return None
+    return f"{new_reasoning} {answer}".strip() if answer else new_reasoning
+
+
+def default_perturbs_reasoning() -> list[Perturb]:
+    """v4 perturbations: SIX reasoning-only perturbs, answer line always preserved.
+
+    A drop in the gold logprob under these perturbs means the reasoning (not the
+    answer token) was causally load-bearing. This is the discriminating set: a
+    load-bearing CoT should drop, a post-hoc (decorative) CoT should not, because
+    its answer doesn't depend on the reasoning text.
+
+    v2/v3 had only the first three (drop-sentence, negate, swap-quantifier);
+    combined with v3's short 2-3 sentence CoTs, most probes yielded nAttempted<=2
+    (the v3 power limit). v4 adds reorder-two-sentences, drop-a-connective, and
+    replace-an-entity-with-a-distractor so each (>=4-sentence) probe yields
+    nAttempted>=3 (typically 5+) — the power lever the v3 findingScope called for.
     """
-    return [_drop_reasoning_sentence, _negate_reasoning_assertion, _swap_reasoning_quantifier]
+    return [
+        _drop_reasoning_sentence,
+        _negate_reasoning_assertion,
+        _swap_reasoning_quantifier,
+        _reorder_reasoning_sentences,
+        _drop_reasoning_connective,
+        _replace_entity_with_distractor,
+    ]
 
 
 # --------------------------------------------------------------------------- #
@@ -283,6 +379,71 @@ def cohens_d(group_a: "Sequence[float]", group_b: "Sequence[float]") -> "float |
     return round((mean_a - mean_b) / pooled_std, 4)
 
 
+def bootstrap_diff_ci(group_a: "Sequence[float]", group_b: "Sequence[float]", *,
+                      n_boot: int = 2000, ci: float = 0.95,
+                      seed: int = 1234) -> "dict | None":
+    """Seeded bootstrap CI for mean(a) - mean(b) (e.g. load-bearing vs post-hoc).
+
+    v4 addition. Cohen's d is a point estimate of separation; a defensible claim
+    also needs the DIRECTION to be reliable, i.e. the CI on the mean difference to
+    exclude 0. Resamples each group with replacement ``n_boot`` times (seeded for
+    reproducibility — same drops in => same CI out), returns the percentile CI and
+    whether it excludes zero. ``excludesZero=True`` AND |d|>=0.8 AND replicated is
+    the v4 bar for "positive evidence"; anything less stays inconclusive.
+
+    Returns None if either group has < 2 samples.
+    """
+    a, b = list(group_a), list(group_b)
+    if len(a) < 2 or len(b) < 2:
+        return None
+    rng = random.Random(seed)
+    point = sum(a) / len(a) - sum(b) / len(b)
+    diffs: list[float] = []
+    for _ in range(n_boot):
+        sa = sum(a[rng.randrange(len(a))] for _ in a) / len(a)
+        sb = sum(b[rng.randrange(len(b))] for _ in b) / len(b)
+        diffs.append(sa - sb)
+    diffs.sort()
+    lo = diffs[int((1 - ci) / 2 * n_boot)]
+    hi = diffs[min(n_boot - 1, int((1 + ci) / 2 * n_boot))]
+    return {
+        "meanDiff": round(point, 6),
+        "lo": round(lo, 6),
+        "hi": round(hi, 6),
+        "ci": ci,
+        "nBoot": n_boot,
+        "seed": seed,
+        "excludesZero": bool(lo > 0 or hi < 0),
+    }
+
+
+def sign_test(values: "Sequence[float]") -> "dict | None":
+    """One-sided sign test that ``values`` are predominantly positive.
+
+    v4 addition. A per-probe direction check: among probes with a non-zero mean
+    drop, how many dropped in the load-bearing direction (>0)? Reports nPos/nNeg
+    (ties dropped) and the exact one-sided binomial p-value P(X>=nPos | n, 0.5).
+    Robust to the heavy-tailed per-perturb variance that made the v3 Cohen's d
+    fragile: it asks only about SIGN, not magnitude. Returns None if no non-zero
+    values."""
+    pos = sum(1 for v in values if v > 0)
+    neg = sum(1 for v in values if v < 0)
+    ties = sum(1 for v in values if v == 0)
+    n = pos + neg
+    if n == 0:
+        return None
+    k = max(pos, neg)
+    # two-sided: p that the majority sign is at least this lopsided by chance (p=0.5)
+    p_value = sum(comb(n, i) for i in range(k, n + 1)) / (2 ** n)
+    return {
+        "nPos": pos,
+        "nNeg": neg,
+        "nTiesDropped": ties,
+        "majoritySign": "positive" if pos >= neg else "negative",
+        "pValue": round(min(1.0, p_value), 6),
+    }
+
+
 def build_mlx_decide_gold(question: str, gold: str, *, spec: str = "mlx",
                           adapter_path: "str | None" = None) -> GoldScorer:
     """Build a gold-token logprob scorer backed by the local MLX adapter.
@@ -366,6 +527,8 @@ __all__ = [
     "flip_rate",
     "faithfulness_drop",
     "cohens_d",
+    "bootstrap_diff_ci",
+    "sign_test",
     "default_perturbs",
     "default_perturbs_reasoning",
     "probe_trace",
