@@ -15,7 +15,7 @@
       "ok": true,
       "metrics": {
         "raw_to_mcp_accuracy_delta": 0.79,
-        "raw_to_gate_accuracy_delta": 0.31,
+        "raw_to_gate_accuracy_delta": 0.32,
         "raw_to_prompt_accuracy_delta": 0.79,
         "raw_to_full_accuracy_delta": 0.79,
         "prompt_to_full_citation_delta": 1.0,
