@@ -77,6 +77,39 @@ def evaluate_probe(probe: LinearProbe, rows: list[dict[str, Any]]) -> dict[str, 
     return {"schema":"sophia.activation_probe_eval.v1", "candidateOnly": True, "level3Evidence": False, "probe": probe.to_dict(), "n": n, "metrics": {"accuracy": round((tp+tn)/n,4) if n else 0, "precision": round(tp/(tp+fp),4) if tp+fp else 0, "recall": round(tp/(tp+fn),4) if tp+fn else 0, "falsePositiveRate": round(fp/(fp+tn),4) if fp+tn else 0}, "rows": out}
 
 
+def probe_deception_context(probe: "LinearProbe", text: str) -> dict[str, Any]:
+    """Map a probe decision into a context dict for ``deception_signals.detect_deception``.
+
+    The white-box upgrade the deception module anticipated ("white-box activation probes
+    can be added later"): when the probe flags a claim that simultaneously *asserts*
+    verification, that is an internal-vs-stated contradiction — the exact signal
+    ``detect_deception`` already consumes via ``internalTruthContradiction``. The probe is
+    an AUDIT input (raises ``review``/``block``), never a self-report the model emits — a
+    more sensitive probe must not become a more convincing unfaithful narrator.
+    """
+    d = probe.predict_text(text)
+    asserts_verified = bool(re.search(r"\b(?:verified|proven|confirmed|certain|fact)\b", (text or "").lower()))
+    return {
+        "probeScore": d["score"],
+        "probeFlagged": bool(d["flagged"]),
+        "internalTruthContradiction": bool(d["flagged"] and asserts_verified),
+    }
+
+
+def build_hidden_state_featurizer(spec: str = "mlx", *, adapter_path: "str | None" = None):
+    """Seam for residual-stream features (the real introspection upgrade), fail-closed.
+
+    Replaces :func:`featurize_text`'s transparent features with hidden-state vectors from a
+    local model while preserving thresholding/calibration/fail-closed semantics. Lazy and
+    raises ``RuntimeError`` when the backend is unavailable, so the text-feature path stays
+    the offline default and a missing backend never silently degrades the probe.
+    """
+    raise RuntimeError(
+        "hidden-state featurizer requires a local MLX/PyTorch-MPS backend; not available "
+        "offline. Use the transparent featurize_text path until a backend is wired."
+    )
+
+
 def load_jsonl(path: str | Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines() if line.strip()]
 

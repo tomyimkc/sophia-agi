@@ -734,6 +734,20 @@ def uncertainty_score(text: str, *, samples=None, p_true=None, p_ik=None, fact_v
     from agent.metacognition import assess_uncertainty
     return assess_uncertainty(text, samples=samples, p_true=p_true, p_ik=p_ik, fact_verdict=fact_verdict, fact_confidence=fact_confidence, evidence_count=evidence_count, high_risk=high_risk).to_dict()
 
+def cross_trace_mine_tool() -> dict:
+    """Mine the verified-trace log for GLOBAL contradictions (C4 audit signal).
+
+    Two traces that each passed their own gates but assert X vs not-X — the
+    difference between "each step is verified" (local) and "the body of recorded
+    reasoning is globally consistent" (global). Deterministic, read-only, no model.
+    """
+    from agent.cross_trace_consistency import mine_log
+    out = mine_log()
+    out["candidateOnly"] = True
+    out["level3Evidence"] = False
+    return out
+
+
 def conformal_decide_tool(confidence: float, *, gate_passed: bool = True, risk: str = "normal") -> dict:
     """Certified answer/abstain decision via the fitted split-conformal policy (C1).
 

@@ -176,3 +176,58 @@ Implements the first two candidates of
   abstention). `python3 tests/test_abstention_scoring.py`.
 - **Falsification:** not a capability claim; must not be reported as a Sophia advantage
   unless computed on a real model run with {correct, action} labels from a third-party pack.
+
+## CoT faithfulness probe (C4)
+
+**Status:** OPEN — registered 2026-06-26 on branch `claude/agi-asi-research-ideas-g5ss38`.
+
+- **Pre-registered claim (LIVE, gated):** over a third-party labeled set of CoT traces
+  tagged load-bearing vs decorative, the v2 gold-logprob **drop** (under reasoning-only
+  perturbation, `agent.faithfulness_probe.faithfulness_drop`) separates the two classes
+  with AUROC meaningfully above 0.5, measured with the real MLX/model scorer and a CI.
+- **Offline machinery check (CI):** on the deterministic synthetic fixture the drop is
+  strictly larger for load-bearing than decorative CoT (separation > 0, decorative ≈ 0),
+  AUROC = 1.0, and the cross-trace miner recovers a planted X / not-X contradiction across
+  verified traces. `python3 tests/test_faithfulness_bench.py`.
+- **Falsification:** must not be reported as a faithfulness result if (a) only the
+  synthetic token scorer is used; (b) AUROC does not exceed 0.5 beyond CI on real traces;
+  or (c) the labeled set is self-authored. Owns the v1 falsification
+  (`agi-proof/verified-traces/faithfulness-probe.v1-FALSIFIED`). Not an AGI claim — a
+  low drop is not proof of unfaithfulness, only that the answer did not need the CoT.
+
+## Prover-Verifier self-play hardening (C2)
+
+**Status:** OPEN — registered 2026-06-26 on branch `claude/agi-asi-research-ideas-g5ss38`.
+
+- **Pre-registered claim (LIVE, gated):** with a real sneaky-prover model and a
+  time-constrained legibility judge, (a) the gate leak rate falls monotonically over >=3
+  hardening rounds on a third-party attack set, and (b) the legibility delta
+  (helpful-prover − sneaky-prover acceptance by the time-bounded judge) is positive with
+  CI excluding 0, at zero false-positive cost on clean answers.
+- **Offline machinery check (CI):** leak rate is monotone non-increasing and reaches a
+  floor; the zero-false-positive guard holds every round (control-accept = 1.0); there is
+  a real initial leak to mine. `python3 tests/test_prover_verifier.py`.
+- **Falsification:** must not be reported as a hardening/legibility result if (a) only the
+  deterministic fixtures are used; (b) hardening induces any false positive on clean
+  controls; (c) the attack set is self-authored; or (d) the legibility judge is not
+  time/token constrained. Not an AGI claim.
+
+## Truth/deception probe (C5)
+
+**Status:** OPEN — registered 2026-06-26 on branch `claude/agi-asi-research-ideas-g5ss38`.
+
+- **Pre-registered claim (LIVE, gated):** a residual-stream (hidden-state) probe separates
+  verified from fabricated claims with AUROC meaningfully above 0.5 AND above the
+  transparent text-feature baseline, with a bounded ECE, on a third-party labeled set —
+  and survives a causal-bypass check (the self-report shift routes through the internal
+  state, not a side path; Morris & Plunkett 2025).
+- **Offline machinery check (CI):** the text-feature probe separates the synthetic set
+  (AUROC ≥ 0.75) and reports ECE (calibration is measured, not hidden); a probe flag on a
+  verification-asserting claim escalates `deception_signals.detect_deception` to `block`;
+  the hidden-state featurizer fails closed when no backend is present.
+  `python3 tests/test_truth_probe.py`.
+- **Falsification:** must not be reported as introspection/truth-reading if (a) only text
+  features are used; (b) the hidden-state probe gives no AUROC lift over the text baseline;
+  (c) the causal-bypass check fails; or (d) the labeled set is self-authored. Introspection
+  is "limited and highly unreliable" — the probe is an AUDIT signal, never a self-report,
+  and this is explicitly not a consciousness/sentience claim (consistent with VISION).

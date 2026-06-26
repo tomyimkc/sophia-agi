@@ -13,6 +13,25 @@ existing seam → infra to add → benchmark setting → agent/harness/MCP wirin
 loop & prompt/context engineering → pre-registered thresholds → ledger entry →
 language/structure/effort.
 
+## Implementation status (2026-06-26)
+
+All five candidates are **implemented as offline, deterministic, candidate-grade
+machinery** on branch `claude/agi-asi-research-ideas-g5ss38`. Each carries a pre-registration
+entry, an OPEN failure-ledger row (the real-pack / third-party / model-backed gap), tests,
+and a `*.public-report.json` marked `candidateOnly`/`syntheticData`. No model API key was
+present, so every "real-model" path is wired but unrun — that is the standing OPEN gap.
+
+| # | Candidate | Modules / tools | Offline result | Tests |
+|---|---|---|---|---|
+| C1 | Conformal abstention | `graded_decision.decide_conformal`, `guarded on_fail="conformal"`, `tools/fit_conformal_policy.py`, MCP `sophia_conformal_decide` | held-out coverage validity holds for α∈{0.05,0.10,0.20} | `test_conformal_gate`, `test_guarded_conformal` |
+| C3 | Abstention-aware scoring | `agent/abstention_scoring.py`, `tools/run_abstention_scoring.py` | break-even λ* recovered on synthetic | `test_abstention_scoring` |
+| C4 | CoT faithfulness | `tools/run_faithfulness_bench.py`, MCP `sophia_cross_trace_mine` | v2 drop separates load-bearing vs decorative (AUROC 1.0); cross-trace contradiction found | `test_faithfulness_bench` |
+| C2 | Prover-verifier | `agent/prover_verifier.py`, `tools/run_prover_verifier.py` | leak rate 0.70→0.00, 0 false positives, monotone | `test_prover_verifier` |
+| C5 | Truth-probe | `tools/eval_truth_probe.py`, `activation_probes.probe_deception_context` + hidden-state seam | AUROC 1.0 separation but ECE 0.14 (honest "ranks well, miscalibrated"); probe→deception block wiring | `test_truth_probe` |
+
+Phase 0 substrate (`tools/emit_outcome_records.py`) is shared by C1/C3/C5. The sections below
+are the original design rationale.
+
 ---
 
 ## 0. Orienting constraints (read first)

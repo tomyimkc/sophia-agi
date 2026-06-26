@@ -25,6 +25,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     check_claim,
     conformal_decide_tool,
     conscience_benchmark_tool,
+    cross_trace_mine_tool,
     conscience_check_tool,
     constitution_check_tool,
     contract_describe,
@@ -226,6 +227,16 @@ def sophia_conformal_decide(confidence: float, gate_passed: bool = True, risk: s
     if confidence is None or not (0.0 <= float(confidence) <= 1.0):
         return dumps({"error": "confidence must be a number in [0,1]"})
     return dumps(conformal_decide_tool(float(confidence), gate_passed=bool(gate_passed), risk=risk))
+
+
+@mcp.tool()
+def sophia_cross_trace_mine() -> str:
+    """Mine the verified-trace log for GLOBAL contradictions (verified != consistent).
+
+    Surfaces traces that each passed their own gates but assert X vs not-X — a
+    higher-order audit signal than per-trace verification. Deterministic, read-only.
+    """
+    return dumps(cross_trace_mine_tool())
 
 
 @mcp.tool()

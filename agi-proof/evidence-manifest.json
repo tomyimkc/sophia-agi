@@ -1,11 +1,11 @@
 {
   "version": "0.9.1",
-  "generated": "2026-06-26T21:47:44",
+  "generated": "2026-06-26T21:56:55",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "failureLedgerSummary": {
-    "openCount": 55,
+    "openCount": 58,
     "byStatus": {
-      "open": 55,
+      "open": 58,
       "resolved": 26,
       "other": 9
     },
@@ -18,6 +18,7 @@
       "calibration-self-authored-pack-2026-06-22",
       "capability-cell-not-yet-in-live-ssa-2026-06-23",
       "conformal-gate-wired-synthetic-only-2026-06-26",
+      "cot-faithfulness-bench-synthetic-only-2026-06-26",
       "distribution-shift-not-run",
       "error-memory-rag-pr-100-2026-06-25",
       "error-memory-rag-precision-v2-2026-06-25",
@@ -45,6 +46,7 @@
       "path-a-world-model-not-promoted-2026-06-26",
       "path-b-lean-proof-search-blocked-2026-06-26",
       "pif-headline-run-not-yet-gated-2026-06-23",
+      "prover-verifier-selfplay-offline-2026-06-26",
       "rlvr-adapter-kappa-2family-below-bar-2026-06-26",
       "rlvr-live-run-not-yet-gated-2026-06-21",
       "self-extending-loop-closes-offline-2026-06-22",
@@ -57,6 +59,7 @@
       "tool-use-phase2-2026-06-25",
       "tool-use-phase3-2026-06-25",
       "tool-use-phase6-2026-06-25",
+      "truth-probe-textfeatures-only-2026-06-26",
       "v4-adapter-externally-unvalidated-pivot-to-gate-2026-06-24",
       "v4-learning-under-shift-wrong-store-diagnosis-2026-06-24",
       "v4-multiseed-ci-underpowered-not-unstable-2026-06-24",
