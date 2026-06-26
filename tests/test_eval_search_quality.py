@@ -55,17 +55,9 @@ def test_keyword_leads_lexical_attribution_probes() -> None:
     assert all(k["ndcg@5"] >= report["metrics"][b]["ndcg@5"] for b in BACKENDS)
     assert v["recall@5"] >= 0.4
     # Hybrid trails keyword on this query type (sparse view is uninformative here); we do NOT
-    # assert hybrid >= keyword (false). But the do-no-harm guard means hybrid no longer falls
-    # below its dense component — that guarantee is asserted in test_hybrid_guard_does_no_harm.
-
-
-def test_hybrid_guard_does_no_harm() -> None:
-    # The do-no-harm guard (agent.hybrid_retrieval.hybrid_search) protects the dense top-k,
-    # so fused recall can never drop below the dense (vector) view — even when the sparse
-    # view is pure noise, as it is on these probes. Regression guard for the burial bug that
-    # had hybrid recall@5 ≈0.28 vs vector ≈0.52.
-    report = run()
-    v = report["metrics"]["vector"]
+    # assert hybrid >= keyword (false). But the do-no-harm guard means hybrid never falls
+    # below its dense component — asserted here on the SAME report (no extra eval cost) and
+    # unit-tested structurally in tests/test_hybrid_retrieval.py::test_do_no_harm_guard_*.
     h = report["metrics"]["hybrid"]
     assert h["recall@5"] >= v["recall@5"]
     assert h["ndcg@5"] >= v["ndcg@5"] - 1e-9
