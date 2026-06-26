@@ -43,10 +43,12 @@ LOG_PATH = "agi-proof/benchmark-results/runpod-wisdom-pilot/pod-selfreport.log"
 def _job_script(args: argparse.Namespace) -> str:
     eval_flags = f"--runs {int(args.runs)}" + (f" --limit {int(args.limit)}" if args.limit else "")
     seed = int(args.seed)
+    mode = getattr(args, "mode", "sft")
+    prefix, script = ("M4-orpo", "pilot_gemma3_orpo.py") if mode == "orpo" else ("M3-pilot", "pilot_gemma3_run.py")
     # seed-tagged outputs so seeds 0/1/2 don't clobber each other; seed 0 keeps the canonical name.
     sfx = "" if seed == 0 else f"-seed{seed}"
-    result_path = f"agi-proof/benchmark-results/wisdom-market/M3-pilot-eval{sfx}.json"
-    answers_path = f"agi-proof/benchmark-results/wisdom-market/M3-pilot-answers{sfx}.json"
+    result_path = f"agi-proof/benchmark-results/wisdom-market/{prefix}-eval{sfx}.json"
+    answers_path = f"agi-proof/benchmark-results/wisdom-market/{prefix}-answers{sfx}.json"
     # NOTE: no `set -x`; secrets must never reach the pushed log. The PAT lives only in the
     # git credential store on the ephemeral pod. All stdout/stderr -> /workspace/pod.log,
     # which is scrubbed of the token before being pushed.
@@ -116,17 +118,17 @@ git -c user.email=noreply@anthropic.com -c user.name=Claude commit -m "M3 pilot:
 if git push origin HEAD:{args.branch} 2>/tmp/push.err; then echo "[pod] HEARTBEAT PUSH OK — delivery channel works"; else echo "[pod] HEARTBEAT PUSH FAILED:"; cat /tmp/push.err; fi
 
 python -m pip install --upgrade pip >/dev/null
-python -m pip install -U "transformers>=4.52" "peft>=0.13" accelerate datasets sentencepiece protobuf
+python -m pip install -U "transformers>=4.52" "peft>=0.13" "trl>=0.12" accelerate datasets sentencepiece protobuf
 
 # Rebuild the DETERMINISTIC gate-passed dataset (reproducible; no live teacher -> ~730 rows)
 python tools/build_sophia_wisdom_dataset.py --stats
 wc -l training/local_sophia_v3/mlx/train.jsonl
 
-echo "[pod] SMOKE"
-python tools/pilot_gemma3_run.py --smoke
+echo "[pod] SMOKE ({mode})"
+python tools/{script} --smoke
 
-echo "[pod] FULL train + eval ({eval_flags}) seed={seed}"
-python tools/pilot_gemma3_run.py --train --eval --seed {seed} {eval_flags} \
+echo "[pod] FULL {mode} train + eval ({eval_flags}) seed={seed}"
+python tools/{script} --train --eval --seed {seed} {eval_flags} \
   --out {result_path} --save-answers {answers_path}
 echo "[pod] eval + answers written; finish() will commit + push"
 """
@@ -168,6 +170,7 @@ def parse_args(argv=None):
     ap.add_argument("--runs", type=int, default=3)
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--mode", choices=["sft", "orpo"], default="sft")
     ap.add_argument("--name", default=f"sophia-wisdom-pilot-sr-{ts}")
     ap.add_argument("--gpu-type", default=",".join(DEFAULT_GPU_TYPES))
     ap.add_argument("--cloud-type", choices=["SECURE", "COMMUNITY"], default="SECURE")
