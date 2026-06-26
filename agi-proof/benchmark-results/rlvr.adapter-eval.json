@@ -1,0 +1,1736 @@
+{
+  "benchmark": "rlvr-adapter-heldout",
+  "task": "math",
+  "mode": "mock",
+  "model": "mock",
+  "adapter": null,
+  "claimStatus": "Open — per-run held-out comparison on UNSEEN problem families. Capability claim requires >=3 seeds and no-overclaim aggregation (CI excludes 0).",
+  "split": {
+    "evalProblems": 60,
+    "seed": 0,
+    "evalFrac": 0.3,
+    "evalFamilies": [
+      "derivative_chain",
+      "integrate_func",
+      "second_derivative"
+    ],
+    "trainSealed": "aef7296970bada5c",
+    "evalSealed": "d4f2f56ae0e5ae00",
+    "familyIntersection": []
+  },
+  "base": {
+    "n": 60,
+    "meanReward": -1.0,
+    "passAt1": 0.0,
+    "passAt1ByFamily": {
+      "derivative_chain": 0.0,
+      "integrate_func": 0.0,
+      "second_derivative": 0.0
+    }
+  },
+  "adapterScore": {
+    "n": 60,
+    "meanReward": -1.0,
+    "passAt1": 0.0,
+    "passAt1ByFamily": {
+      "derivative_chain": 0.0,
+      "integrate_func": 0.0,
+      "second_derivative": 0.0
+    }
+  },
+  "delta": {
+    "passAt1": 0.0
+  },
+  "checks": {
+    "contaminationFree": true,
+    "adapterImprovesPassAt1": false,
+    "noPassAt1Regression": true
+  },
+  "rows": {
+    "base": [
+      {
+        "problem_id": "dchain-0",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-2*x*sin(x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-1",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "9*(3*x + 1)**2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-2",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "18*x + 6",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-3",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "8*x + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-4",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*x*cos(x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-5",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "3*(x + 1)**2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-6",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "6*(2*x + 1)**2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-7",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "6*x*exp(3*x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-8",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "8*x + 8",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-9",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-6*x*sin(3*x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-10",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "24*(x + 1)**2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-11",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "9*(3*x + 2)**2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-12",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-4*x*sin(2*x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-13",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "4*x*cos(2*x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-14",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*x*exp(x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-15",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "3*(x + 2)**2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-16",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "4*x*exp(2*x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-17",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*x + 2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-18",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "6*x*cos(3*x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "dchain-19",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*x + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-0",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*exp(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-1",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-2*cos(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-2",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-3*cos(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-3",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*exp(3*x)/3",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-4",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-4*cos(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-5",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "exp(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-6",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*sin(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-7",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "sin(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-8",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "4*sin(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-9",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "4*exp(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-10",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*exp(2*x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-11",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "exp(2*x)/2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-12",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "3*exp(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-13",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "3*exp(2*x)/2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-14",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-cos(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-15",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "exp(3*x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-16",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "3*sin(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-17",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "exp(3*x)/3",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-18",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "4*exp(3*x)/3",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "ifunc-19",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "exp(2*x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-4-6-0-2",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "20",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-5-1-3-3",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "30*x + 2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-6-2-6-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "120*x**3 + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-1-3-2-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "20*x**3 + 6",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-2-3-5-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "40*x**3 + 6",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-6-2-0-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "120*x**3 + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-6-4-1-2",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "20",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-5-4-3-4",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "60*x**2 + 8",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-2-1-6-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "40*x**3 + 2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-5-1-2-4",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "60*x**2 + 2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-3-4-6-4",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "36*x**2 + 8",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-5-2-3-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "100*x**3 + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-5-2-6-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "100*x**3 + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-2-2-2-4",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "24*x**2 + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-5-3-3-3",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "30*x + 6",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-1-5-5-2",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "12",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-4-1-4-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "80*x**3 + 2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-2-4-5-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "40*x**3 + 8",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-1-6-3-2",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "14",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      },
+      {
+        "problem_id": "d2-2-5-5-4",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "24*x**2 + 10",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "I'm not sure; maybe \\boxed{0}."
+      }
+    ],
+    "adapter": [
+      {
+        "problem_id": "dchain-0",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-2*x*sin(x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{-2*x*sin(x**2)}."
+      },
+      {
+        "problem_id": "dchain-1",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "9*(3*x + 1)**2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{9*(3*x + 1)**2}."
+      },
+      {
+        "problem_id": "dchain-2",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "18*x + 6",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{18*x + 6}."
+      },
+      {
+        "problem_id": "dchain-3",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "8*x + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{8*x + 4}."
+      },
+      {
+        "problem_id": "dchain-4",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*x*cos(x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{2*x*cos(x**2)}."
+      },
+      {
+        "problem_id": "dchain-5",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "3*(x + 1)**2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{3*(x + 1)**2}."
+      },
+      {
+        "problem_id": "dchain-6",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "6*(2*x + 1)**2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{6*(2*x + 1)**2}."
+      },
+      {
+        "problem_id": "dchain-7",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "6*x*exp(3*x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{6*x*exp(3*x**2)}."
+      },
+      {
+        "problem_id": "dchain-8",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "8*x + 8",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{8*x + 8}."
+      },
+      {
+        "problem_id": "dchain-9",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-6*x*sin(3*x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{-6*x*sin(3*x**2)}."
+      },
+      {
+        "problem_id": "dchain-10",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "24*(x + 1)**2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{24*(x + 1)**2}."
+      },
+      {
+        "problem_id": "dchain-11",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "9*(3*x + 2)**2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{9*(3*x + 2)**2}."
+      },
+      {
+        "problem_id": "dchain-12",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-4*x*sin(2*x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{-4*x*sin(2*x**2)}."
+      },
+      {
+        "problem_id": "dchain-13",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "4*x*cos(2*x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{4*x*cos(2*x**2)}."
+      },
+      {
+        "problem_id": "dchain-14",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*x*exp(x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{2*x*exp(x**2)}."
+      },
+      {
+        "problem_id": "dchain-15",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "3*(x + 2)**2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{3*(x + 2)**2}."
+      },
+      {
+        "problem_id": "dchain-16",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "4*x*exp(2*x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{4*x*exp(2*x**2)}."
+      },
+      {
+        "problem_id": "dchain-17",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*x + 2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{2*x + 2}."
+      },
+      {
+        "problem_id": "dchain-18",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "6*x*cos(3*x**2)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{6*x*cos(3*x**2)}."
+      },
+      {
+        "problem_id": "dchain-19",
+        "family": "derivative_chain",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*x + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{2*x + 4}."
+      },
+      {
+        "problem_id": "ifunc-0",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*exp(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{2*exp(x)}."
+      },
+      {
+        "problem_id": "ifunc-1",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-2*cos(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{-2*cos(x)}."
+      },
+      {
+        "problem_id": "ifunc-2",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-3*cos(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{-3*cos(x)}."
+      },
+      {
+        "problem_id": "ifunc-3",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*exp(3*x)/3",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{2*exp(3*x)/3}."
+      },
+      {
+        "problem_id": "ifunc-4",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-4*cos(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{-4*cos(x)}."
+      },
+      {
+        "problem_id": "ifunc-5",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "exp(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{exp(x)}."
+      },
+      {
+        "problem_id": "ifunc-6",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*sin(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{2*sin(x)}."
+      },
+      {
+        "problem_id": "ifunc-7",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "sin(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{sin(x)}."
+      },
+      {
+        "problem_id": "ifunc-8",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "4*sin(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{4*sin(x)}."
+      },
+      {
+        "problem_id": "ifunc-9",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "4*exp(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{4*exp(x)}."
+      },
+      {
+        "problem_id": "ifunc-10",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "2*exp(2*x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{2*exp(2*x)}."
+      },
+      {
+        "problem_id": "ifunc-11",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "exp(2*x)/2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{exp(2*x)/2}."
+      },
+      {
+        "problem_id": "ifunc-12",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "3*exp(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{3*exp(x)}."
+      },
+      {
+        "problem_id": "ifunc-13",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "3*exp(2*x)/2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{3*exp(2*x)/2}."
+      },
+      {
+        "problem_id": "ifunc-14",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "-cos(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{-cos(x)}."
+      },
+      {
+        "problem_id": "ifunc-15",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "exp(3*x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{exp(3*x)}."
+      },
+      {
+        "problem_id": "ifunc-16",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "3*sin(x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{3*sin(x)}."
+      },
+      {
+        "problem_id": "ifunc-17",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "exp(3*x)/3",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{exp(3*x)/3}."
+      },
+      {
+        "problem_id": "ifunc-18",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "4*exp(3*x)/3",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{4*exp(3*x)/3}."
+      },
+      {
+        "problem_id": "ifunc-19",
+        "family": "integrate_func",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "exp(2*x)",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{exp(2*x)}."
+      },
+      {
+        "problem_id": "d2-4-6-0-2",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "20",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{20}."
+      },
+      {
+        "problem_id": "d2-5-1-3-3",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "30*x + 2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{30*x + 2}."
+      },
+      {
+        "problem_id": "d2-6-2-6-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "120*x**3 + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{120*x**3 + 4}."
+      },
+      {
+        "problem_id": "d2-1-3-2-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "20*x**3 + 6",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{20*x**3 + 6}."
+      },
+      {
+        "problem_id": "d2-2-3-5-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "40*x**3 + 6",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{40*x**3 + 6}."
+      },
+      {
+        "problem_id": "d2-6-2-0-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "120*x**3 + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{120*x**3 + 4}."
+      },
+      {
+        "problem_id": "d2-6-4-1-2",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "20",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{20}."
+      },
+      {
+        "problem_id": "d2-5-4-3-4",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "60*x**2 + 8",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{60*x**2 + 8}."
+      },
+      {
+        "problem_id": "d2-2-1-6-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "40*x**3 + 2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{40*x**3 + 2}."
+      },
+      {
+        "problem_id": "d2-5-1-2-4",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "60*x**2 + 2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{60*x**2 + 2}."
+      },
+      {
+        "problem_id": "d2-3-4-6-4",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "36*x**2 + 8",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{36*x**2 + 8}."
+      },
+      {
+        "problem_id": "d2-5-2-3-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "100*x**3 + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{100*x**3 + 4}."
+      },
+      {
+        "problem_id": "d2-5-2-6-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "100*x**3 + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{100*x**3 + 4}."
+      },
+      {
+        "problem_id": "d2-2-2-2-4",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "24*x**2 + 4",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{24*x**2 + 4}."
+      },
+      {
+        "problem_id": "d2-5-3-3-3",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "30*x + 6",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{30*x + 6}."
+      },
+      {
+        "problem_id": "d2-1-5-5-2",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "12",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{12}."
+      },
+      {
+        "problem_id": "d2-4-1-4-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "80*x**3 + 2",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{80*x**3 + 2}."
+      },
+      {
+        "problem_id": "d2-2-4-5-5",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "40*x**3 + 8",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{40*x**3 + 8}."
+      },
+      {
+        "problem_id": "d2-1-6-3-2",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "14",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{14}."
+      },
+      {
+        "problem_id": "d2-2-5-5-4",
+        "family": "second_derivative",
+        "reward": -1.0,
+        "detail": {
+          "passed": false,
+          "reason": "sympy_unavailable: cannot verify math equivalence",
+          "sympy": false,
+          "gold": "24*x**2 + 10",
+          "got": null,
+          "reward": -1.0
+        },
+        "completion": "After working it out, the answer is \\boxed{24*x**2 + 10}."
+      }
+    ]
+  },
+  "passed": false
+}

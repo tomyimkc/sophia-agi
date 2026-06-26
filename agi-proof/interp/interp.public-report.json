@@ -1,0 +1,47 @@
+{
+  "benchmark": "interp-sae-offline",
+  "mode": "mock-offline",
+  "visibility": "public-aggregate",
+  "claimStatus": "Offline core only — a real SAE capability requires the gated M2 metrics bar on harvested Qwen2.5-7B activations (CE-recovered ≥ ~0.9, L0 in band, dead-% under ceiling). This artifact asserts the machinery, not a capability.",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "metrics": {
+    "fvuInit": 4.552469,
+    "fvuFinal": 0.087988,
+    "explainedVariance": 0.912012,
+    "l0": 2.0,
+    "k": 2,
+    "deadFeatureFraction": 0.625,
+    "lossInit": 6.194295,
+    "lossFinal": 0.118492
+  },
+  "checks": {
+    "metricFvuIdentityZero": true,
+    "reconstructionImproves": true,
+    "reconstructsPlantedSignal": true,
+    "topkExactL0": true,
+    "decoderUnitNorm": true,
+    "deterministic": true,
+    "lossDecreasing": true,
+    "ceRecoveredFormula": true
+  },
+  "config": {
+    "dIn": 12,
+    "dHidden": 16,
+    "kTrue": 2,
+    "nFeatures": 6,
+    "steps": 600,
+    "lr": 0.5,
+    "seed": 0,
+    "samples": 160
+  },
+  "hookpoint": {
+    "model": "Qwen/Qwen2.5-7B-Instruct",
+    "layer": 15,
+    "point": "resid_post",
+    "tlName": "blocks.15.hook_resid_post",
+    "hfModulePath": "model.model.layers.15",
+    "dModel": 3584,
+    "nLayers": 28
+  }
+}
