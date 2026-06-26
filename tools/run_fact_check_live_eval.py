@@ -20,6 +20,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.fact_check_eval import load_jsonl, run_fact_check_eval, write_report  # noqa: E402
+from agent.factcheck_oracle import (  # noqa: E402
+    GoogleFactCheckOracle,
+    combined_retriever,
+    dispatched_entailment,
+)
 from agent.live_sources import FixtureFactBackend, LiveFactBackend  # noqa: E402
 
 DEFAULT_PACK = ROOT / "eval" / "fact_check" / "heldout_v1.jsonl"
@@ -33,6 +38,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--fixtures", default=str(DEFAULT_FIXTURES), help="offline fixture JSON")
     ap.add_argument("--out", default=str(DEFAULT_OUT), help="report output path")
     ap.add_argument("--live", action="store_true", help="use keyless live Wikidata/Crossref/URL/macro/scholarly backend")
+    ap.add_argument("--google-factcheck", action="store_true",
+                    help="compose the keyed Google Fact Check Tools oracle (needs GOOGLE_FACTCHECK_API_KEY)")
+    ap.add_argument("--google-page-size", type=int, default=10)
     ap.add_argument("--target-fabrication-rate", type=float, default=0.01)
     args = ap.parse_args(argv)
 
@@ -42,13 +50,25 @@ def main(argv: list[str] | None = None) -> int:
     else:
         backend = FixtureFactBackend.from_file(args.fixtures)
 
+    retriever = backend.retriever
+    entailment = backend.entailment
+    live_backend = bool(args.live)
+    if args.google_factcheck:
+        oracle = GoogleFactCheckOracle(page_size=args.google_page_size)
+        if not oracle.enabled:
+            print("ERROR: --google-factcheck set but GOOGLE_FACTCHECK_API_KEY is not in the environment", file=sys.stderr)
+            return 2
+        retriever = combined_retriever([backend.retriever, oracle.retriever])
+        entailment = dispatched_entailment(oracle, backend.entailment)
+        live_backend = True  # a keyed network oracle is a live backend
+
     report = run_fact_check_eval(
         rows,
-        retriever=backend.retriever,
-        entailment=backend.entailment,
+        retriever=retriever,
+        entailment=entailment,
         doi_resolver=backend.doi_resolver,
         url_resolver=backend.url_resolver,
-        live_backend=bool(args.live),
+        live_backend=live_backend,
         target_fabrication_rate=args.target_fabrication_rate,
     )
     write_report(report, args.out)

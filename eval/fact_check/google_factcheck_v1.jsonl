@@ -1,0 +1,16 @@
+# Google Fact Check Tools oracle pilot pack (self-authored, public claims).
+# label: true = should be accepted | false = should be rejected OR held | unknowable = should be held.
+# Honest expectation: ClaimReview coverage skews to debunked claims, so the
+# oracle catches FALSE well and is weak at confirming TRUE (true cases likely HOLD).
+{"id": "gfc_false_01", "claim": "The earth is flat", "label": "false", "type": "general", "risk": "normal"}
+{"id": "gfc_false_02", "claim": "Vaccines cause autism", "label": "false", "type": "general", "risk": "normal"}
+{"id": "gfc_false_03", "claim": "5G technology spreads the COVID-19 coronavirus", "label": "false", "type": "general", "risk": "normal"}
+{"id": "gfc_false_04", "claim": "Drinking bleach cures COVID-19", "label": "false", "type": "general", "risk": "high"}
+{"id": "gfc_false_05", "claim": "The COVID-19 vaccine contains a microchip", "label": "false", "type": "general", "risk": "normal"}
+{"id": "gfc_false_06", "claim": "Humans only use 10 percent of their brains", "label": "false", "type": "general", "risk": "normal"}
+{"id": "gfc_false_07", "claim": "Bill Gates created the coronavirus pandemic", "label": "false", "type": "general", "risk": "normal"}
+{"id": "gfc_false_08", "claim": "The Great Wall of China is visible from space with the naked eye", "label": "false", "type": "general", "risk": "normal"}
+{"id": "gfc_unknow_01", "claim": "There are exactly four intelligent alien civilizations in the Milky Way", "label": "unknowable", "type": "general", "risk": "normal"}
+{"id": "gfc_unknow_02", "claim": "The total number of grains of sand on Earth is an even number", "label": "unknowable", "type": "general", "risk": "normal"}
+{"id": "gfc_true_01", "claim": "The earth orbits the sun", "label": "true", "type": "general", "risk": "normal"}
+{"id": "gfc_true_02", "claim": "Water is composed of hydrogen and oxygen", "label": "true", "type": "general", "risk": "normal"}
