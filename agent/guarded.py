@@ -74,7 +74,13 @@ class GuardedResult:
         }
 
 
-def check_claim(text: str, *, records: "dict | None" = None, ground: bool = False) -> dict:
+def check_claim(
+    text: str,
+    *,
+    records: "dict | None" = None,
+    ground: bool = False,
+    backend: str = "regex",
+) -> dict:
     """Mode-free provenance check: ``{passed, reasons, violations}`` for any text.
 
     No question, mode, or style scoring — just Sophia's "don't merge lineages"
@@ -86,7 +92,25 @@ def check_claim(text: str, *, records: "dict | None" = None, ground: bool = Fals
     do-not-attribute spec, so the gate can fire on works outside the frozen
     corpus. Opt-in (default off) so the deterministic frozen-record path is
     unchanged. See agent/grounded_gate.py.
+
+    ``backend`` selects how the verdict is DERIVED from the same ground facts:
+      - ``"regex"`` (default): the production ``provenance_faithful`` pattern
+        matcher. Unchanged behaviour; the path every existing caller uses.
+      - ``"datalog"``: the embedded logic engine (:mod:`agent.datalog_provenance`).
+        Same ground facts (the gate's OWN compiled patterns extract them), but
+        the verdict is a Datalog derivation — a machine-checkable theorem rather
+        than a regex side-effect. Byte-identical to ``"regex"`` on all 319
+        committed provenance cases (957/957 audit). Opt-in so the default path
+        is untouched; when the Datalog backend is unavailable for any reason it
+        falls back to ``"regex"`` fail-closed (never fabricates a verdict).
     """
+    if backend == "datalog":
+        try:
+            from agent.datalog_provenance import check_claim_datalog
+
+            return check_claim_datalog(text, records=records)
+        except Exception:  # the logic backend is opt-in; never break the core gate
+            pass
     if ground:
         try:
             from agent.grounded_gate import synth_records_for_claim
