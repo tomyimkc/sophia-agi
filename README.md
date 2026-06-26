@@ -3,6 +3,7 @@
 > **Wisdom before intelligence.** A provenance-aware reasoning layer that **abstains instead of fabricating**.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20930874.svg)](https://doi.org/10.5281/zenodo.20930874)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
 ![Version](https://img.shields.io/badge/version-0.9.1-blue)
 ![Corpus](https://img.shields.io/badge/corpus-528_bilingual_examples-green)
@@ -159,12 +160,14 @@ sole author and rights holder, **tomyimkc**. Every fork carries [NOTICE.md](NOTI
 
 ### Cite this work & establish provenance
 
-To make Sophia citable and to fix an authorship + priority record (defensive publication):
+Sophia is permanently archived and citable (defensive publication):
 
+- **Archival DOI:** [10.5281/zenodo.20930874](https://doi.org/10.5281/zenodo.20930874) — permanent, timestamped record on Zenodo.
 - **Citation metadata:** [CITATION.cff](CITATION.cff) — GitHub renders a "Cite this repository" button.
 - **Whitepaper (arXiv-ready):** [paper/sophia-whitepaper.md](paper/sophia-whitepaper.md).
-- **Archival DOI:** enable [Zenodo](https://zenodo.org) for this repo and cut a Release to mint a permanent DOI (config in [.zenodo.json](.zenodo.json)).
 - **Full strategy & patent/trademark timing:** [docs/IP-PROTECTION.md](docs/IP-PROTECTION.md).
+
+> **To cite:** Yim, K. C. (2026). *Sophia — the Wisdom Gate: a provenance-aware, verifier-gated reasoning layer that abstains instead of fabricating* (v0.9.1). Zenodo. https://doi.org/10.5281/zenodo.20930874
 
 ## Moral + epistemic Conscience Kernel (seven paths)
 

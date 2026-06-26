@@ -37,5 +37,6 @@ keywords:
   - verifier-gated reasoning
   - trustworthy AI
 license: Apache-2.0
-version: 0.9.0
-date-released: 2026-06-22
+doi: 10.5281/zenodo.20930874
+version: 0.9.1
+date-released: 2026-06-26
