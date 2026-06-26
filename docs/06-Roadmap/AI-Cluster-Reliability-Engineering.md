@@ -43,7 +43,7 @@ of blindly rebooting a node is a uniquely on-brand contribution.
 ### R1 — Daily ops, fault localization, shorten MTTR
 **职责:** 巡检、维修、故障定位与生命周期管理，缩短 MTTR。
 
-- **`tools/cluster/inspect.py` — fleet 巡检 (inspection) sweep.** Build on the
+- **`tools/cluster/inspect_fleet.py` — fleet 巡检 (inspection) sweep.** Build on the
   `runpod` MCP `list-pods`/`get-pod`/`endpoint-health` tools. For each node, collect
   GPU temp, ECC error counts, throttle state, XID errors, disk/mem pressure, NCCL/RDMA
   link health. Emit a structured health record per node with a pass/warn/fail verdict.
@@ -99,7 +99,7 @@ of blindly rebooting a node is a uniquely on-brand contribution.
 
 ## 3. Suggested build order (smallest credible slice first)
 
-1. **`tools/cluster/inspect.py` + incident/MTTR ledger** — pure read path over the
+1. **`tools/cluster/inspect_fleet.py` + incident/MTTR ledger** — pure read path over the
    already-wired `runpod` MCP tools. No new infra, immediate signal. (R1)
 2. **`services/cluster_exporter/` Prometheus endpoint** over those records, plus one
    committed Grafana dashboard JSON. (R3) — gives a visible, demo-able artifact.
@@ -112,6 +112,30 @@ of blindly rebooting a node is a uniquely on-brand contribution.
 
 Each slice is independently shippable, reuses existing repo machinery, and produces a
 measurable artifact rather than a claim.
+
+### Implementation status — all five slices landed (offline-first, tested)
+
+A first working cut of every slice now ships. Core logic lives in `agent/cluster/`
+(offline-testable, injectable providers); CLIs in `tools/cluster/`; the exporter in
+`services/cluster_exporter/`; observability-as-code in `observability/`.
+
+| Slice | Modules | CLI / service | Tests |
+|-------|---------|---------------|-------|
+| R1 inspect + MTTR ledger | `agent/cluster/health.py`, `provider.py`, `playbook.py`, `ledger.py` | `tools/cluster/inspect_fleet.py` | `tests/test_cluster_health.py`, `test_cluster_ledger.py` |
+| R3 observability | `services/cluster_exporter/main.py` (pure-stdlib Prometheus exporter) | `python -m services.cluster_exporter.main` | `tests/test_cluster_exporter_calibrate.py` |
+| R3 dashboards/alerts | — | `observability/grafana/*.json`, `observability/prometheus/alerts.yml` | (JSON/YAML validated) |
+| R2 bring-up gate | `agent/cluster/acceptance.py`, `config/cluster_baselines.json` | `tools/cluster/bringup.py` | `tests/test_cluster_acceptance.py` |
+| R4 gated self-heal | `agent/cluster/heal.py` (audited, fail-closed) | `tools/cluster/heal.py` | `tests/test_cluster_heal.py` |
+| R3/R4 calibrated thresholds | `agent/cluster/calibrate.py` (reuses `agent/calibration.py`) | `tools/cluster/calibrate_alerts.py` | `tests/test_cluster_exporter_calibrate.py` |
+
+**Honest bounds.** Telemetry defaults to a deterministic `MockProvider` (no GPUs, no
+keys, no cost); the `RunPodProvider` maps the live `GET /pods` inventory but leaves
+DCGM-level fields (temp/ECC/XID/NVLink/RDMA) `None`, which the fail-closed evaluator
+treats as "unknown, can't clear" — a real `nvidia-smi`/`dcgmi` SSH agent is the next
+step to fill them. The bring-up baselines are conservative reference numbers and must
+be re-measured against the operator's own reference node before production use.
+Auto-remediation is **dry-run by default** and never executes without explicit opt-in
+(`SOPHIA_CLUSTER_HEAL=1` + a wired executor). `heal.py` ships only a no-op executor.
 
 ## 4. Skills this demonstrates for the role
 

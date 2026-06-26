@@ -1,0 +1,72 @@
+# SPDX-License-Identifier: Apache-2.0
+# Sophia AI compute-cluster alert rules (R3).
+#
+# These rules consume the metrics emitted by services/cluster_exporter. Thresholds
+# marked "calibratable" should be refit against real incident history via
+# tools/cluster/calibrate_alerts.py rather than left at these conservative defaults.
+groups:
+  - name: sophia-cluster-reliability
+    rules:
+      - alert: SophiaNodeFailing
+        expr: sophia_node_health == 2
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node {{ $labels.node }} is FAILING"
+          description: "Fail-closed health verdict is FAIL. See the inspection sweep / incident ledger for the triggering signal."
+
+      - alert: SophiaNodeUnreachable
+        expr: sophia_node_reachable == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node {{ $labels.node }} unreachable"
+          description: "Node did not respond to the inspection sweep — host down or network partition."
+
+      - alert: SophiaGpuUncorrectableEcc
+        expr: sophia_gpu_ecc_uncorrectable > 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Uncorrectable ECC on {{ $labels.node }}"
+          description: "Drain the node and run dcgmi diag; row-remap or RMA before returning to production."
+
+      - alert: SophiaRdmaLinkDown
+        expr: sophia_rdma_links_down > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "RDMA link down on {{ $labels.node }}"
+          description: "Node is isolating from the training fabric; collective ops will stall."
+
+      - alert: SophiaGpuOverTemp
+        # calibratable: refit 86 against incident history with calibrate_alerts.py
+        expr: sophia_gpu_temp_celsius >= 86
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GPU over-temp on {{ $labels.node }}"
+          description: "Check cooling/airflow; power-cap until resolved."
+
+      - alert: SophiaFleetDegraded
+        expr: sophia_fleet_nodes_failing / sophia_fleet_nodes_total > 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "More than 10% of the fleet is failing"
+          description: "{{ $value | humanizePercentage }} of nodes are in FAIL — possible correlated/fabric fault."
+
+      - alert: SophiaMttrRegression
+        expr: sophia_job_mttr_seconds > 3600
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Mean time to recovery exceeds 1h"
+          description: "MTTR is trending up; review open incidents and the self-heal ratio."
