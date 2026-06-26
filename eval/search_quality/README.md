@@ -50,8 +50,10 @@ On this corpus the **dense vector** backend wins outright (highest recall@5 and 
 dense — because the corpus is dominated by near-duplicate teacher examples on which the sparse
 BM25 view is high-recall / low-precision. That finding is the point: the harness *revealed*
 that sparse needs near-duplicate dedup (and weighting) before fusion pays off here, rather
-than assuming hybrid is universally better. Weighted RRF (dense 1.0 / sparse 0.4) is the
-current mitigation; per-corpus tuning is expected.
+than assuming hybrid is universally better. The current mitigation is the **do-no-harm guard**
+(``do_no_harm=True`` default in ``agent.hybrid_retrieval.hybrid_search``), which protects the
+dense top-k from sparse-only eviction so ``recall@k(hybrid) >= recall@k(dense)`` always holds;
+per-corpus sparse-weight tuning remains available.
 
 ## Honest bounds
 

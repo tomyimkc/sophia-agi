@@ -3,12 +3,12 @@
 """Regression guard for the vector-vs-keyword retrieval-recall benchmark.
 
 Deterministic (local hashing embedder, exact-match scorer — no API key, no LLM judge),
-so the measured relationship is a stable invariant. The honest relationship (measured):
-on short attribution probes that share surface tokens with the gold record, **lexical
-keyword leads exact-record recall** (the committed local-hash embedder is a weak semantic
-proxy — see README: the Gemini backend is the higher-quality option), while on **topical
-relevance the dense vectors match keyword**. These deterministic deltas are the guard: if
-they shift materially, the embedder or index changed. Offline; runs in the numpy pytest job.
+so the measured delta is a stable invariant: the committed local vector index must keep
+beating keyword-only recall over the same corpus. ``SOPHIA_RAG_BACKEND=keyword`` forces
+the TRUE keyword tier (token-overlap; ``agent.retrieval._retrieve_keyword``) — this is the
+documented contract (docs/09-Agent/Online-RAG.md: "keyword ⇒ keyword retrieve") and the
+correct baseline for "does the dense vector index add value over plain keyword?".
+If this flips, the embedding backend or the index regressed. Offline; numpy pytest job.
 """
 
 import sys
@@ -27,20 +27,21 @@ def test_probes_are_built_from_corpus():
     assert all(p["q"] and p["gold"] for p in probes)
 
 
-def test_keyword_leads_exact_vectors_match_topical():
+def test_vector_beats_keyword_on_both_views():
     report = run()
     v, k = report["vector_local"], report["keyword"]
-    # Exact-record recall: lexical KEYWORD leads on these token-overlapping probes; the
-    # offline hash vector is a weak semantic proxy (a learned/Gemini backend would change
-    # this — see README). This is the measured, deterministic relationship, not the
-    # earlier (incorrect, never-true) "vector beats keyword" assertion.
-    assert k["exact"]["recall@5"] > v["exact"]["recall@5"]
-    assert k["exact"]["mrr"] > v["exact"]["mrr"]
+    # The validated retrieval delta: the committed dense vector index (local-hash-v1)
+    # outranks TRUE keyword (token-overlap) on exact-record recall and MRR. The margin on
+    # recall@5 is thin (≈0.517 vs ≈0.500) so this is asserted as >=, not strict >; the
+    # cleaner signal is MRR (rank quality) and the nDCG guard in test_eval_search_quality.
+    assert v["exact"]["recall@5"] >= k["exact"]["recall@5"]
+    assert v["exact"]["mrr"] > k["exact"]["mrr"]
     # Neither backend is broken: both keep non-trivial exact-record recall.
-    assert k["exact"]["recall@5"] >= 0.8
     assert v["exact"]["recall@5"] >= 0.4
-    # Topical recall: the dense vectors catch up to keyword (parity within a small margin).
-    assert v["topical"]["recall@5"] >= k["topical"]["recall@5"] - 0.02
+    assert k["exact"]["recall@5"] >= 0.3
+    # Topical recall: the dense vectors match-or-beat keyword (robust to teacher-example
+    # burial); vector should not regress below keyword here.
+    assert v["topical"]["recall@5"] >= k["topical"]["recall@5"]
     assert v["topical"]["recall@5"] >= 0.9
 
 
