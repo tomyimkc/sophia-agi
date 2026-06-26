@@ -102,9 +102,41 @@ def _verify_math(prob: dict) -> dict[str, Any]:
     return verdict
 
 
+def _verify_code_inprocess(solution: str, test: str) -> dict[str, Any]:
+    """Deterministic, self-contained verification of a *repo-authored* solution.
+
+    The curriculum solutions are authored in this repository (NOT untrusted model
+    output), so they do not need the subprocess/seccomp/rlimit sandbox that
+    ``agent.code_verifier`` uses to contain untrusted code. That sandbox relies on
+    ``preexec_fn`` (post-fork ``setrlimit``), ``RLIMIT_AS`` and
+    ``start_new_session`` — all of which are environment/OS-sensitive and can be
+    rejected by restricted CI runners (GitHub-hosted ``ubuntu`` + Python 3.12
+    sandbox), causing the child to exit non-zero and EVERY code row to be dropped
+    (``code_rows == []``). Running the trusted solution + hidden test in-process
+    removes that dependency entirely, so verification is identical on any
+    Python/OS/CI. Pure stdlib, no numpy, fully deterministic.
+    """
+    code = cv.extract_code(_code_response(solution)) if hasattr(cv, "extract_code") else solution
+    if not code.strip():
+        return {"verdict": "rejected", "reasons": ["no code in answer"], "detail": {"executed": False}}
+    program = code.rstrip() + "\n\n" + test.lstrip()
+    try:
+        compiled = compile(program, "<curriculum-solution>", "exec")
+    except SyntaxError as exc:
+        return {"verdict": "rejected", "reasons": [f"syntax error: {exc}"], "detail": {"executed": False}}
+    try:
+        exec(compiled, {"__name__": "__curriculum__", "__builtins__": __builtins__})
+    except Exception as exc:  # noqa: BLE001 — any failing assert/runtime error => rejected
+        return {
+            "verdict": "rejected",
+            "reasons": [f"{type(exc).__name__}: {exc}"],
+            "detail": {"executed": True},
+        }
+    return {"verdict": "accepted", "reasons": [], "detail": {"executed": True, "reason": "tests passed"}}
+
+
 def _verify_code(prob: dict) -> dict[str, Any]:
-    answer = _code_response(prob["solution"])
-    verdict = cv.verify(answer, prob["test"])
+    verdict = _verify_code_inprocess(prob["solution"], prob["test"])
     prob["verdict"] = verdict["verdict"]
     return verdict
 
