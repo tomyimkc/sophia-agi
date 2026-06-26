@@ -4,6 +4,54 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — `cluster/` supercomputer scheduling + resilience simulator (measured, pure-stdlib)
+
+Turns the repo's single-pod RunPod tooling (`tools/runpod_train.py`, the
+`runpod-gpu-orchestration` skill) into an analyzable cluster model, in the
+measured-not-claimed style. Deterministic, seeded, pure stdlib (runs in CI, no deps).
+
+- **`cluster/topology.py`** — heterogeneous `Device/Node/Cluster` with NVLink islands +
+  racks; `homogeneous_cluster()` / `heterogeneous_cluster()` (mixed accelerator classes,
+  e.g. `klass="domestic-x1"`).
+- **`cluster/scheduler.py`** — three placement policies spanning the throughput/latency/
+  utilization trade-off: `FifoFirstFit`, `TopologyAware` (best-fit island packing),
+  `BackfillTopo` (EASY backfill); `fragmentation()` placement-locality score.
+- **`cluster/simulator.py`** — discrete-event replay with a network-tax model (scattering a
+  collective-heavy job across islands/nodes costs runtime, as cross-NIC all-reduce would).
+- **`cluster/observability.py`** — `summarize()` (p50/p90/p99/cv jitter) and
+  `straggler_report()` (the synchronous-step slowdown a single long-pole rank imposes).
+- **`cluster/faults.py`** — Poisson node-failure injection + checkpoint/restart recovery;
+  separates raw busy time from **goodput** and quantifies the wasted-compute tax of an
+  MTBF + checkpoint cadence.
+- **Tools** — `tools/run_cluster_sim.py`, `tools/run_cluster_faultsim.py` →
+  `agi-proof/benchmark-results/cluster/*.public-report.json`. Measured (simulated): topology
+  packing cuts fragmentation 0.43→0.16 and network tax 1.53→1.31x; backfill cuts p50 queue
+  wait 9474→7064s. Tests: `tests/test_cluster_{scheduler,observability,faults}.py`.
+- **Roadmap** — `docs/11-Platform/Cluster-Engineering-Roadmap.md` maps the DeepSeek
+  超算集群研发工程师 responsibilities to repo assets and an honest open-work ledger (RDMA is
+  modeled not measured; no live telemetry collection yet; NPU/DPU interface-only).
+
+### Added — network-tax calibration: modeled → measured (RDMA all-reduce)
+
+Turns the simulator's guessed comm penalty into a bandwidth-derived (and measurable) one.
+
+- **`cluster/netcalib.py`** — derives `island_tax` / `node_tax` from ring all-reduce cost
+  per interconnect tier (`T = 2(N-1)/N·size/bw + 2(N-1)·lat`), worst-tier model (collective
+  runs at its slowest hop: NIC ≫ NVSwitch ≫ NVLink). Loads/saves `cluster/netcalib.json`
+  with per-tier provenance (measured vs modeled). `cluster/simulator.py` now consumes it
+  automatically; `effective_runtime` switched from linear-in-span to worst-tier semantics.
+- **`tools/calibrate_network_tax.py`** — writes the committed MODELED calibration
+  (NVLink 400 / NVSwitch 120 / RoCE 50 GB/s, exposed-comm 0.15 → `island_tax≈0.345`,
+  `node_tax≈1.036`); `--from-nccl` ingests a measured report and re-fits the NVLink tier.
+- **`tools/bench_nccl_allreduce.py`** — on-pod NCCL all-reduce bus-bandwidth micro-benchmark
+  (torchrun, one rank per GPU; lazy torch import so dry-run/tests are pure stdlib).
+- **`tools/runpod_nccl_bench.py`** — rents one multi-GPU SXM pod, runs the benchmark, copies
+  the report back, `--calibrate` re-fits the tax (reuses the `runpod_rlvr` pod lifecycle).
+- Calibrated trade-off (128 GPUs, seed 7, simulated): topology packing cuts fragmentation
+  0.48→0.20 and network tax 1.88→1.68x; backfill cuts p50 wait 10203→7467s. Tests:
+  `tests/test_cluster_netcalib.py`. Live measurement blocked in this env (no SSH egress);
+  honest blocker at `agi-proof/benchmark-results/cluster/nccl-measure-blocker.public-report.json`.
+
 ## [0.9.0] - 2026-06-25
 
 ### Added — runtime trust-layer wiring + measurement arc
