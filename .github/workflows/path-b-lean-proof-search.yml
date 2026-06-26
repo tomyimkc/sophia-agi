@@ -53,7 +53,8 @@ on:
         default: ''
 
 permissions:
-  contents: write   # commit the result report back to the dispatch branch
+  contents: write         # push the result report to an evidence branch
+  pull-requests: write    # open the evidence PR (gh pr create) — branch protection blocks direct push to main
 
 concurrency:
   group: path-b-lean-${{ github.ref }}
