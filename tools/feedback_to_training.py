@@ -85,6 +85,38 @@ def _candidate_key(c: dict) -> tuple:
     return (c.get("rid"), tuple(sorted(c.get("doNotAttributeTo", []))))
 
 
+def _candidate_tokens(c: dict) -> set:
+    """Bag of lowercased word tokens for a candidate's identity (work + author + forbidden)."""
+    import re
+
+    parts = [str(c.get("work", "")), str(c.get("claimedAuthor", "")), *c.get("doNotAttributeTo", [])]
+    text = " ".join(parts).lower()
+    return {t for t in re.split(r"[^a-z0-9一-鿿]+", text) if t}
+
+
+def _jaccard(a: set, b: set) -> float:
+    if not a or not b:
+        return 0.0
+    inter = len(a & b)
+    union = len(a | b)
+    return inter / union if union else 0.0
+
+
+def _novelty_ok(cand: dict, existing_token_sets: list[set], min_novelty: float) -> bool:
+    """Diversity floor (Hurdle 4 — avoid self-data collapse).
+
+    Exact-key dedup cannot stop the queue from *narrowing* onto near-duplicate misses,
+    which is how self-improvement loops accumulate reward bias and lose answer diversity.
+    A candidate passes only if its max token-Jaccard to anything already queued is
+    < (1 - min_novelty). ``min_novelty=0.0`` disables the floor (back-compat default).
+    """
+    if min_novelty <= 0.0:
+        return True
+    tokens = _candidate_tokens(cand)
+    sim_ceiling = 1.0 - min_novelty
+    return all(_jaccard(tokens, prev) <= sim_ceiling for prev in existing_token_sets)
+
+
 def make_candidate(work: str, claimed_author: str, *, mined_from: str) -> dict:
     """A reviewable, flat candidate carrying everything `build-sft` and review need."""
     rec = candidate_record(work, claimed_author)
@@ -146,7 +178,10 @@ def cmd_mine(args: argparse.Namespace) -> int:
     results = _read_jsonl(Path(args.case_results))
     pending = _read_jsonl(PENDING)
     seen = {_candidate_key(c) for c in pending}
+    token_sets = [_candidate_tokens(c) for c in pending]
+    min_novelty = float(getattr(args, "min_novelty", 0.0) or 0.0)
     added = 0
+    skipped_low_novelty = 0
     for case in results:
         rec = detect_miss(case)
         if not rec:
@@ -155,11 +190,16 @@ def cmd_mine(args: argparse.Namespace) -> int:
         cand = make_candidate(body["canonicalTitleEn"], case.get("claimed_author", ""), mined_from=args.case_results)
         if _candidate_key(cand) in seen:
             continue
+        if not _novelty_ok(cand, token_sets, min_novelty):
+            skipped_low_novelty += 1
+            continue
         pending.append(cand)
         seen.add(_candidate_key(cand))
+        token_sets.append(_candidate_tokens(cand))
         added += 1
     _write_jsonl(PENDING, pending)
-    print(json.dumps({"mined": added, "pendingTotal": len(pending),
+    print(json.dumps({"mined": added, "skippedLowNovelty": skipped_low_novelty,
+                      "minNovelty": min_novelty, "pendingTotal": len(pending),
                       "promotedPending": sum(1 for c in pending if c.get("promoted")),
                       "queue": _rel(PENDING)}, indent=2))
     return 0
@@ -219,6 +259,9 @@ def main(argv: list[str] | None = None) -> int:
 
     m = sub.add_parser("mine", help="mine candidates from run/case results into the pending queue")
     m.add_argument("case_results", help="JSONL of run_case-style results")
+    m.add_argument("--min-novelty", type=float, default=0.0,
+                   help="diversity floor in [0,1): reject a candidate whose token-Jaccard to "
+                        "anything already queued exceeds (1 - min_novelty). 0 disables (default).")
     m.set_defaults(func=cmd_mine)
 
     a = sub.add_parser("approve", help="human review: promote specific candidate rid(s)")

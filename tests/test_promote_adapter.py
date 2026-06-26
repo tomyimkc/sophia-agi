@@ -145,12 +145,42 @@ def test_formal_proof_agrees_with_scorecard() -> None:
     assert _formal_protected_floor_proof(list(good.metrics), tolerance=0.01)["verdict"] == "accepted"
 
 
+def test_promotion_gate_generalizes_to_non_provenance_families() -> None:
+    """Hurdle 2 — the SAME promotion gate works on coding/math families with a
+    configurable protected set, not just the provenance suites."""
+    # A coding+math adapter that improves both, with NO provenance protected suite.
+    base = {"coding": 0.40, "math": 0.50}
+    adapter = {"coding": 0.70, "math": 0.75}
+    ladder = _ladder(base, adapter)
+    cand = build_candidate(
+        candidate_id="transfer-coding-math", kind="lora_adapter", baseline_ladder=None,
+        adapter_ladder=ladder, contaminated=False, protected=(),  # empty protected set
+        extra_artifacts=("ladder", "manifest"), proof_tag="formal_verifier:protected_floor[fallback:accepted]",
+    )
+    # Empty protected set -> the formal proof has nothing to constrain -> accepted.
+    assert _formal_protected_floor_proof(list(cand.metrics), tolerance=0.01)["status"] == "no_protected_suites"
+    d = evaluate_update(cand, target_suite="total", min_target_delta=0.03, max_protected_regression=0.01)
+    assert d.verdict == "promote", d.reasons
+
+    # Now mark coding protected and regress it -> the same gate rejects, no provenance involved.
+    regress = _ladder({"coding": 0.70, "math": 0.50}, {"coding": 0.40, "math": 0.75})
+    cand2 = build_candidate(
+        candidate_id="transfer-coding-regress", kind="lora_adapter", baseline_ladder=None,
+        adapter_ladder=regress, contaminated=False, protected=("coding",),
+        extra_artifacts=("a", "b"), proof_tag="",
+    )
+    d2 = evaluate_update(cand2, target_suite="total", min_target_delta=0.03, max_protected_regression=0.01)
+    assert d2.verdict == "reject"
+    assert any("coding" in r for r in d2.reasons)
+
+
 def main() -> int:
     test_v2_adapter_rejects_on_religion_regression()
     test_clean_improving_adapter_promotes()
     test_v3_adapter_rejects_under_retention_gate()
     test_parse_goals_and_multigoal_promotion()
     test_formal_proof_agrees_with_scorecard()
+    test_promotion_gate_generalizes_to_non_provenance_families()
     print("test_promote_adapter: OK")
     return 0
 
