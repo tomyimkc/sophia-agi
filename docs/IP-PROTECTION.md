@@ -81,8 +81,8 @@ This is the path that fits an open, already-public project. Checklist:
       filing to multiple countries. You already assert common-law rights in
       `TRADEMARK-POLICY.md`; registration makes them enforceable.
 - [x] **Fill the author identity** — author of record is **Yim Kin Cheong** (Hong Kong),
-      set in `CITATION.cff`, `.zenodo.json`, and the whitepaper. Remaining: register a
-      free **ORCID** (https://orcid.org) and uncomment the `orcid:` line in `CITATION.cff`.
+      ORCID **0009-0005-9520-0033**, set in `CITATION.cff`, `.zenodo.json`, the whitepaper,
+      and the submission cover note.
 
 ## Optional: exclusivity going forward
 

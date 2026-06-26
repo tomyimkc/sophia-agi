@@ -20,7 +20,7 @@ hard for anyone to later patent the method over you.
 Sophia — the Wisdom Gate: A Provenance-Aware, Verifier-Gated Reasoning Layer That Abstains Instead of Fabricating
 
 ## Authors
-Yim Kin Cheong (tomyimkc), Independent researcher, Hong Kong. *(Add ORCID once registered.)*
+Yim Kin Cheong (tomyimkc), Independent researcher, Hong Kong. ORCID: 0009-0005-9520-0033.
 
 ## arXiv primary/secondary categories
 Primary: **cs.CL** (Computation and Language). Secondary: **cs.AI**, **cs.LG**.

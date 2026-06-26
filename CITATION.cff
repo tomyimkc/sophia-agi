@@ -2,8 +2,7 @@
 # with a fixed authorship + date record. It is part of the project's defensive
 # publication / provenance strategy: it establishes a citable priority claim.
 #
-# Author of record: Yim Kin Cheong (Hong Kong). Remaining: register a free ORCID
-# (https://orcid.org) and uncomment the `orcid:` line so the record is unambiguous.
+# Author of record: Yim Kin Cheong (Hong Kong), ORCID 0009-0005-9520-0033.
 cff-version: 1.2.0
 title: "Sophia — the Wisdom Gate: a provenance-aware, verifier-gated reasoning layer that abstains instead of fabricating"
 message: "If you use this software, dataset, or method, please cite it using this metadata."
@@ -13,7 +12,7 @@ authors:
     given-names: "Kin Cheong"
     family-names: "Yim"
     country: HK
-    # orcid: "https://orcid.org/0000-0000-0000-0000"  # TODO(author): register a free ORCID at orcid.org and add it here
+    orcid: "https://orcid.org/0009-0005-9520-0033"
 repository-code: "https://github.com/tomyimkc/sophia-agi"
 url: "https://tomyimkc.github.io/sophia-agi/"
 abstract: >-
