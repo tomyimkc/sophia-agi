@@ -1,0 +1,5 @@
+[
+  {"node_id": "gpu-node-000", "host": "10.0.0.10", "port": 22, "user": "root"},
+  {"node_id": "gpu-node-001", "host": "10.0.0.11", "port": 22, "user": "root"},
+  {"node_id": "gpu-node-002", "host": "10.0.0.12", "port": 22, "user": "root"}
+]
