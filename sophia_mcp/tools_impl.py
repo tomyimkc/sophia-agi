@@ -862,5 +862,25 @@ def trace_verify(trace_id: str | None = None, *, check_chain: bool = True) -> di
     return out
 
 
+def trace_contradictions() -> dict:
+    """Mine the verified-trace log for CROSS-TRACE contradictions (extension E4).
+
+    A cross-trace contradiction is a pair of traces where one asserts X and
+    another asserts not-X — and BOTH were recorded as verified. Each passed its
+    own fact+logic gates; together they contradict. This is the global
+    consistency invariant no within-trace component enforces. Returns the
+    cross-trace ledger (schema sophia.cross_trace_ledger.v1). Read-only.
+    """
+    from agent.cross_trace_consistency import mine_log
+    ledger = mine_log()
+    return {
+        **ledger,
+        "boundary": (
+            "Sophia is an AGI-candidate verifier-gated epistemic framework; "
+            "structural mining over logged claim text is not proof of AGI."
+        ),
+    }
+
+
 def dumps(payload: dict) -> str:
     return json.dumps(payload, ensure_ascii=False, indent=2)

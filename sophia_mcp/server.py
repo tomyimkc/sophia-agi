@@ -59,6 +59,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     rubric_review,
     sector_council,
     team_agents_deliberate,
+    trace_contradictions,
     trace_query,
     trace_verify,
     trajectory_eval,
@@ -169,6 +170,15 @@ def sophia_trace_verify(trace_id: str = "", check_chain: bool = True) -> str:
     can re-derive any stamp without trusting the logger's word. If trace_id is
     empty, returns only the chain-integrity report over the whole log. Read-only."""
     return dumps(trace_verify(trace_id or None, check_chain=check_chain))
+
+
+@mcp.tool()
+def sophia_trace_contradictions() -> str:
+    """Mine the verified-trace log for CROSS-TRACE contradictions: pairs of traces
+    where one asserts X and another asserts not-X, BOTH verified. Each passed its
+    own gates; together they contradict — the global consistency invariant no
+    within-trace component enforces. Returns the cross-trace ledger. Read-only."""
+    return dumps(trace_contradictions())
 
 
 @mcp.tool()
