@@ -1,0 +1,46 @@
+{
+  "schema": "sophia.calibration_judge.v1",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "benchmark": "W2 calibration - independent LLM judge re-scoring (claude-sonnet-4-6 via llmhub relay)",
+  "date": "2026-06-26",
+  "judgeFamily": "anthropic (claude-sonnet-4-6) via api.llmhub.com.cn relay (OpenAI-compatible); distinct from the deepseek subject",
+  "subject": "deepseek-chat (the W2 ablation responses being re-judged)",
+  "inputs": {
+    "pack": "agi-proof/baseline-ablation/abstain-pack-2026-06-22.json",
+    "dumps": [
+      "w2-ablation-2026-06-26.seed{0,1,2}.private.json"
+    ],
+    "nPairedAnswers": 108
+  },
+  "fabricationRates": {
+    "scorer": {
+      "sophia-full": 0.0,
+      "raw-model": 0.1111,
+      "raw-model-plus-tools": 0.1667
+    },
+    "openai:claude-sonnet-4-6@https://api.llmhub.com.cn/v1": {
+      "sophia-full": 0.1111,
+      "raw-model": 0.1389,
+      "raw-model-plus-tools": 0.1389
+    }
+  },
+  "kappa_scorer_vs_claude": -0.0277,
+  "directionalClaim": {
+    "claim": "sophia-full fabricates LESS than raw-model (the gated pipeline reduces fabrication)",
+    "claude_confirms": true,
+    "claude_delta_sophia_minus_raw": -0.0278,
+    "scorer_delta_sophia_minus_raw": -0.1111
+  },
+  "verdict": "DIRECTIONAL CORROBORATION, NOT VALIDATED",
+  "interpretation": "An independent Claude judge (distinct family from the deepseek subject) CONFIRMS THE DIRECTION of the anti-fabrication claim: it rates sophia-full LOWER fabrication (0.1111) than raw-model (0.1389). However this does NOT meet the validation bar: inter-judge agreement between the deterministic scorer and Claude is kappa=-0.03 (bar >=0.40), i.e. essentially no agreement on ABSOLUTE labels. The disagreement is on what counts as 'fabricated' for contested-attribution answers. The directional effect under Claude is also SMALL (delta -0.028 vs the scorer's -0.111). Net: this is a single-family DIRECTIONAL data point that does not upgrade the existing validated result (calibration-multijudge-corroborated-2026-06-22, openai:gpt-4o + claude-sonnet-4-6 at kappa=0.74).",
+  "honestCaveats": [
+    "Only ONE independent judge family available; the validation bar is >=2 families with kappa>=0.40.",
+    "RELAY FIDELITY: the same model id achieved scorer-vs-judge kappa=0.74 on 2026-06-22 but kappa=-0.03 here. A 6/6 factual-classification probe passed (relay not broken), but behavior drift on the nuanced abstain task cannot be fully ruled out. The relay is an untrusted third-party endpoint with no model-version control.",
+    "Relay is http-redirected-to-https to an untrusted operator; the API key was pasted in chat = compromised; rotate after use.",
+    "The pack is self-authored; judge is distinct from subject but the relay caveat bounds the independence."
+  ],
+  "relationToPriorEvidence": "Does NOT supersede calibration-multijudge-corroborated-2026-06-22 (the high-water validated result). A directional re-confirmation on a fresh family via a relay, weaker than the prior direct-API result due to the relay fidelity caveat and sub-bar kappa."
+}
