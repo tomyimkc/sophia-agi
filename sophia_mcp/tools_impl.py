@@ -89,6 +89,47 @@ def check_claim(text: str) -> dict:
     return _check_claim(text)
 
 
+def trajectory_eval(trajectory: "list | None") -> dict:
+    """Score a whole agent trajectory for mid-plan faithfulness, step by step.
+
+    ``trajectory`` is an ordered list of step dicts (``observation`` = evidence the
+    environment returned; ``claim``/``text`` = what the agent asserted; ``cites`` =
+    ids of earlier steps that support the claim). Returns the
+    ``sophia.trajectory_eval.v1`` record: a fail-closed ``verdict``
+    (accept | abstain | blocked), a ``faithfulnessScore``, the first unfaithful
+    step, and a per-step breakdown. Read-only, offline (deterministic lexical
+    judge). See ``agent.trajectory_eval``.
+    """
+    from agent.trajectory_eval import evaluate_trajectory
+
+    if not isinstance(trajectory, list):
+        return {"error": "trajectory must be a list of step objects"}
+    return evaluate_trajectory(trajectory)
+
+
+def medical_citation_check(text: str) -> dict:
+    """Verify medical citations in ``text``: do the PMIDs / DOIs / guideline IDs
+    EXIST (deterministic, against the bundled register), and — with a judge —
+    whether each is cited faithfully. Without a judge the support tier abstains
+    (fail-closed); fabricated citations are always flagged. Not clinical advice.
+    See ``agent.medical_faithfulness``.
+    """
+    from agent.medical_faithfulness import assess_text, medical_citation_exists
+
+    existence = medical_citation_exists()(text, None, {})
+    assessment = assess_text(text)
+    return {
+        "passed": existence["passed"],
+        "violations": [f"unverifiable medical citation: {c}" for c in existence["detail"]["missing"]],
+        "checked": existence["detail"]["checked"],
+        "fabricated": assessment["fabricated"],
+        "abstained": assessment["abstained"],
+        "contradicted": assessment["contradicted"],
+        "supported": assessment["supported"],
+        "notAdvice": "Citation review only — not medical advice; verify against the primary source.",
+    }
+
+
 def _belief_graph():
     """Build the belief graph from the store tiers + dispute lineage pages."""
     import okf

@@ -148,7 +148,7 @@ _SUBJECTIVE_RE = re.compile(
 # A code-fence artifact line (``` or ```lang) left over after fenced blocks are
 # extracted; must never be treated as an open factual claim.
 _FENCE_ARTIFACT_RE = re.compile(r"^\s*`{3,}\s*[a-z0-9_+-]*\s*$", re.I)
-_AUTHORSHIP_VERB_RE = re.compile(r"\b(?:wrote|authored|penned|composed|author of)\b", re.I)
+_AUTHORSHIP_VERB_RE = re.compile(r"\b(?:wrote|authored|penned|composed|author of|written by)\b", re.I)
 # Interrogative opener (sentence splitting strips the trailing '?', so detect the
 # leading question word instead). A question asserts nothing factual.
 _QUESTION_RE = re.compile(r"^\s*(?:who|what|when|where|why|how|which|should|can|could|would|do|does|is|are)\b", re.I)
@@ -201,6 +201,8 @@ def classify_claim(claim: str) -> str:
         if _CAUSAL_RE.search(claim):
             return "econ_causal"
         return "econ_empirical"
+    if _AUTHORSHIP_VERB_RE.search(claim):
+        return "authorship_external"
     if _CAUSAL_RE.search(claim):
         return "causal_empirical"
     # Pure opinion/meta/question with no checkable signal: non-factual, so it
@@ -348,6 +350,20 @@ def external_ground(
         return LayerResult("external_grounding", "rejected", "one or more independent sources contradict the claim", confidence=0.88,
                            evidence=tuple(_src_dict(s, "contradicts") for s in contradicted),
                            details={"entailed": len(entailed), "irrelevant": len(irrelevant)})
+    structured_authorship = [s for s in entailed if _is_structured_authorship_source(claim, s)]
+    if structured_authorship:
+        return LayerResult(
+            "external_grounding",
+            "accepted",
+            "structured authorship source entails claim",
+            confidence=0.86,
+            evidence=tuple(_src_dict(s, "entails") for s in structured_authorship),
+            details={
+                "independentDomains": sorted(_independent_domains(structured_authorship)),
+                "requiredSources": 1,
+                "entailmentBasis": "structured authorship record",
+            },
+        )
     independent = _independent_domains(entailed)
     required = min_sources_high if claim.risk == "high" else min_sources_normal
     if len(independent) >= required:
@@ -409,6 +425,13 @@ def _stem(token: str) -> str:
 
 def _independent_domains(sources: Iterable[EvidenceSource]) -> set[str]:
     return {s.domain for s in sources if s.domain}
+
+
+def _is_structured_authorship_source(claim: AtomicClaim, source: EvidenceSource) -> bool:
+    if claim.type != "authorship_external":
+        return False
+    text = f"{source.title} {source.snippet}".lower()
+    return (source.source_type == "wikidata" or source.publisher.lower() == "wikidata") and "author(s):" in text
 
 
 def _src_dict(s: EvidenceSource, relation: str) -> dict[str, Any]:

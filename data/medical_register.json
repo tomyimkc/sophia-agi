@@ -1,0 +1,37 @@
+{
+  "registryId": "medical_register",
+  "displayName": "Clinical evidence snapshot (guidelines / indexed literature)",
+  "description": "A SMALL, illustrative snapshot of real clinical references used to demonstrate the medical_citation_exists verifier (the medical analogue of the Mata v. Avianca fake-citation failure) and the recommendation-faithfulness judge. In production this list MUST be populated from authoritative primary sources via a live resolver: PubMed/MEDLINE (pubmed.ncbi.nlm.nih.gov) for PMIDs, Crossref (crossref.org) for DOIs, and the issuing body for guideline IDs (e.g. NICE at nice.org.uk, WHO at who.int). This file is a stand-in, NOT a citator, and is NOT clinical advice. Every entry is a real, publicly reported reference; do not treat the snapshot as exhaustive or current. Verifying a citation against the official source — and never acting on a model's medical claim without a clinician — is the user's non-delegable duty.",
+  "provenance": {
+    "indexedLiterature": "PubMed/MEDLINE (pubmed.ncbi.nlm.nih.gov), U.S. National Library of Medicine",
+    "doi": "Crossref (crossref.org)",
+    "guidelines": "Issuing body (NICE nice.org.uk; WHO who.int)",
+    "note": "Snapshot is illustrative; a fabricated PMID/DOI/guideline-ID is the failure this verifier exists to catch."
+  },
+  "authorities": [
+    {
+      "citation": "PMID 11556298",
+      "name": "Yusuf S, et al. Effects of an angiotensin-converting-enzyme inhibitor, ramipril, on cardiovascular events in high-risk patients (HOPE).",
+      "source": "N Engl J Med 2000",
+      "holding": "In high-risk patients without left-ventricular dysfunction or heart failure, ramipril significantly reduced the rate of death, myocardial infarction, and stroke versus placebo. It does NOT establish a benefit in low-risk primary prevention."
+    },
+    {
+      "citation": "PMID 9054884",
+      "name": "Scandinavian Simvastatin Survival Study (4S).",
+      "source": "Lancet 1994",
+      "holding": "In patients with coronary heart disease and elevated cholesterol, simvastatin reduced all-cause mortality and major coronary events. The trial population is secondary prevention, not asymptomatic adults."
+    },
+    {
+      "citation": "NICE NG136",
+      "name": "Hypertension in adults: diagnosis and management.",
+      "source": "NICE guideline NG136 (2019)",
+      "holding": "Offer antihypertensive drug treatment to adults under 80 with stage 1 hypertension who have an estimated 10-year cardiovascular risk of 10% or more, established disease, or organ damage. It does not recommend treating all stage 1 hypertension regardless of risk."
+    },
+    {
+      "citation": "DOI 10.1056/NEJMoa2034577",
+      "name": "Polack FP, et al. Safety and Efficacy of the BNT162b2 mRNA Covid-19 Vaccine.",
+      "source": "N Engl J Med 2020",
+      "holding": "A two-dose regimen of BNT162b2 conferred 95% efficacy against confirmed Covid-19 in persons 16 years of age or older over the trial follow-up period. It does not establish lifelong immunity or efficacy against all later variants."
+    }
+  ]
+}

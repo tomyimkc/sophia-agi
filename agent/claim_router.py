@@ -33,6 +33,9 @@ from agent import verifiers as _v
 # split conservative so we do not shatter abbreviations into fragments below the
 # verifiers' own min-length guards.
 _SENT_SPLIT = re.compile(r"(?<=[.!?。！？])\s+|\n+")
+_NO_SPLIT_ABBREVIATIONS = {
+    "mr", "mrs", "ms", "dr", "prof", "st", "jr", "sr", "vs", "etc", "e.g", "i.e",
+}
 
 # Light clause split for compound sentences: coordinating connectors that join two
 # independent assertions ("Plato wrote the Republic and 2 + 2 = 5"). Kept narrow
@@ -58,7 +61,7 @@ def split_claims(text: str) -> list[str]:
     normalized; empty fragments dropped. Stdlib only, deterministic.
     """
     claims: list[str] = []
-    for sentence in _SENT_SPLIT.split(text or ""):
+    for sentence in _split_sentences(text or ""):
         sentence = re.sub(r"\s+", " ", sentence).strip()
         if not sentence:
             continue
@@ -71,6 +74,45 @@ def split_claims(text: str) -> list[str]:
             if clause:
                 claims.append(clause)
     return claims
+
+
+def _split_sentences(text: str) -> list[str]:
+    """Split sentences while preserving initials and common abbreviations."""
+    out: list[str] = []
+    start = 0
+    i = 0
+    while i < len(text):
+        ch = text[i]
+        if ch == "\n":
+            if text[start:i].strip():
+                out.append(text[start:i])
+            while i + 1 < len(text) and text[i + 1] == "\n":
+                i += 1
+            start = i + 1
+        elif ch in ".!?。！？":
+            if ch == "." and _protected_period(text, i):
+                i += 1
+                continue
+            j = i + 1
+            if j >= len(text) or text[j].isspace():
+                out.append(text[start:j])
+                while j < len(text) and text[j].isspace() and text[j] != "\n":
+                    j += 1
+                start = j
+                i = j - 1
+        i += 1
+    if text[start:].strip():
+        out.append(text[start:])
+    return out
+
+
+def _protected_period(text: str, idx: int) -> bool:
+    prefix = text[:idx].rstrip()
+    token = re.split(r"\s+", prefix)[-1].strip("([{'\"") if prefix else ""
+    low = token.lower()
+    if len(token) == 1 and token.isalpha() and token.isupper():
+        return True
+    return low in _NO_SPLIT_ABBREVIATIONS
 
 
 # --------------------------------------------------------------------------- #
