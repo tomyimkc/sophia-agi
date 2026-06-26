@@ -117,8 +117,16 @@ git add agi-proof/benchmark-results/runpod-wisdom-pilot/pod-heartbeat.txt
 git -c user.email=noreply@anthropic.com -c user.name=Claude commit -m "M3 pilot: pod heartbeat (seed {seed}) [skip ci]" >/dev/null 2>&1 || true
 if git push origin HEAD:{args.branch} 2>/tmp/push.err; then echo "[pod] HEARTBEAT PUSH OK — delivery channel works"; else echo "[pod] HEARTBEAT PUSH FAILED:"; cat /tmp/push.err; fi
 
-python -m pip install --upgrade pip >/dev/null
-python -m pip install -U "transformers>=4.52" "peft>=0.13" "trl>=0.12" accelerate datasets sentencepiece protobuf
+# Deps: skip the slow pip install when the image is PRE-BAKED (deps already importable).
+# This is the fix for the "pod container dies ~60s into pip install -> restart loop -> GPU
+# wastage" failure. With docker/wisdom-pilot (built by build-wisdom-image.yml) imports
+# succeed and we skip pip entirely; on the stock image we fall back to pip as before.
+if python -c "import transformers,peft,trl,accelerate,datasets,sentencepiece" 2>/dev/null; then
+  echo "[pod] deps pre-baked — skipping pip (no long install to die during)"
+else
+  python -m pip install --upgrade pip >/dev/null
+  python -m pip install -U "transformers>=4.52" "peft>=0.13" "trl>=0.12" accelerate datasets sentencepiece protobuf
+fi
 
 # Rebuild the DETERMINISTIC gate-passed dataset (reproducible; no live teacher -> ~730 rows)
 python tools/build_sophia_wisdom_dataset.py --stats
@@ -186,17 +194,32 @@ def parse_args(argv=None):
     return ap.parse_args(argv)
 
 
-def _wait_for_pod_gone(api_key: str, pod_id: str, timeout_min: int) -> int:
+def _wait_for_pod_gone(api_key: str, pod_id: str, timeout_min: int, *, max_restarts: int = 3) -> int:
+    """Wait until the pod self-deletes. ANTI-WASTAGE: if the pod's container keeps RESTARTING
+    (lastStartedAt advances) without finishing, abort+delete after `max_restarts` so a death
+    loop can't burn GPU until the timeout. Require N consecutive 404s before declaring it gone
+    (a restart briefly 404s)."""
     import time
     deadline = time.time() + timeout_min * 60
     gone_streak = 0
-    # RunPod restarts a pod's container on a fast non-zero exit; during a restart the GET can
-    # briefly 404. Require N CONSECUTIVE 404s before declaring the pod truly gone, so a restart
-    # (which rm-rf-reclones and re-runs the job) isn't mistaken for completion.
+    last_started = None
+    restarts = 0
     while time.time() < deadline:
         try:
-            _api_request("GET", f"/pods/{pod_id}", api_key, timeout=30)
+            pod = _api_request("GET", f"/pods/{pod_id}", api_key, timeout=30)
             gone_streak = 0
+            started = pod.get("lastStartedAt")
+            if last_started is not None and started and started != last_started:
+                restarts += 1
+                print(f"[selfreport] pod {pod_id} RESTARTED ({restarts}/{max_restarts}) — container died mid-job")
+                if restarts >= max_restarts:
+                    print(f"[selfreport] restart loop — deleting pod {pod_id} to stop GPU wastage.")
+                    try:
+                        _api_request("DELETE", f"/pods/{pod_id}", api_key, timeout=60)
+                    except RunPodError:
+                        pass
+                    return 3
+            last_started = started or last_started
             status = "running"
         except RunPodError as exc:
             if "404" in str(exc) or "not found" in str(exc).lower():

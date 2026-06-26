@@ -36,6 +36,10 @@ on:
         description: 'sft (M3 pilot) or orpo (M4 preference)'
         required: false
         default: 'sft'
+      image:
+        description: 'Pod image (use the pre-baked ghcr.io/<owner>/wisdom-pilot:latest to avoid the pip restart-loop)'
+        required: false
+        default: ''
 
 permissions:
   contents: write   # the pod pushes the eval result back with this run's GITHUB_TOKEN
@@ -81,11 +85,13 @@ jobs:
         run: |
           LIMIT=""
           if [ -n "${{ github.event.inputs.limit }}" ]; then LIMIT="--limit ${{ github.event.inputs.limit }}"; fi
+          IMAGE=""
+          if [ -n "${{ github.event.inputs.image }}" ]; then IMAGE="--image-name ${{ github.event.inputs.image }}"; fi
           python tools/runpod_wisdom_pilot_selfreport.py --yes --wait \
             --branch "${{ github.ref_name }}" \
             --seed "${{ github.event.inputs.seed }}" \
             --mode "${{ github.event.inputs.mode }}" \
-            --runs "${{ github.event.inputs.runs }}" $LIMIT
+            --runs "${{ github.event.inputs.runs }}" $LIMIT $IMAGE
 
       - name: Surface the pushed eval result (pull what the pod committed)
         if: always()
