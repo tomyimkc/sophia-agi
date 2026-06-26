@@ -11,7 +11,7 @@
 use std::collections::{BTreeMap, HashSet};
 
 use crate::node::{RaftNode, Timing};
-use crate::types::{Envelope, NodeId, Role};
+use crate::types::{Envelope, NodeId, PersistentState, Role};
 
 struct Scheduled {
     deliver_at: u64,
@@ -61,6 +61,29 @@ impl Sim {
         self.down.remove(&id);
         let now = self.now;
         if let Some(n) = self.nodes.get_mut(&id) {
+            n.restart(now);
+        }
+    }
+
+    // --- persistence hooks (used by a durable driver, e.g. the `raftkv` crate) ---
+
+    /// Whether node `id`'s durable state changed since last checked (clears flag).
+    pub fn take_dirty(&mut self, id: NodeId) -> bool {
+        self.nodes.get_mut(&id).is_some_and(|n| n.take_dirty())
+    }
+
+    /// Snapshot node `id`'s durable state, for writing to stable storage.
+    pub fn export(&self, id: NodeId) -> PersistentState {
+        self.nodes[&id].export()
+    }
+
+    /// Bring a crashed node back up with durable state reloaded from disk:
+    /// overwrite term/vote/log, then reset volatile state (as a real restart does).
+    pub fn restart_from(&mut self, id: NodeId, state: PersistentState) {
+        self.down.remove(&id);
+        let now = self.now;
+        if let Some(n) = self.nodes.get_mut(&id) {
+            n.restore_state(state);
             n.restart(now);
         }
     }

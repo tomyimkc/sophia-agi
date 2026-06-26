@@ -13,6 +13,16 @@ pub struct LogEntry {
     pub command: Vec<u8>,
 }
 
+/// The state Raft requires to be durable before responding to an RPC:
+/// `current_term`, `voted_for`, and the log. Volatile state (role, commit
+/// index, leader bookkeeping) is rebuilt on restart and is deliberately absent.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PersistentState {
+    pub current_term: Term,
+    pub voted_for: Option<NodeId>,
+    pub log: Vec<LogEntry>,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Role {
     Follower,

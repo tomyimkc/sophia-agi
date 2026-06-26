@@ -15,6 +15,12 @@ path = "src/lib.rs"
 name = "diskstore-bench"
 path = "src/bin/bench.rs"
 
+# O_DIRECT cold-I/O comparison (pread vs io_uring). Needs the io_uring feature
+# to build the io_uring side; the pread side always builds.
+[[bin]]
+name = "diskstore-odirect-bench"
+path = "src/bin/odirect_bench.rs"
+
 [features]
 # The io_uring read backend is opt-in: the default build (and CI) uses the
 # portable std pread path. Enable on a Linux host with io_uring available.
@@ -23,3 +29,4 @@ io_uring = ["dep:io-uring"]
 
 [dependencies]
 io-uring = { version = "0.7", optional = true }
+libc = "0.2"

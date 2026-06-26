@@ -11,6 +11,7 @@ multithreading, durable I/O, consensus).
 | [`diskstore`](#diskstore-phase-2) | 2 | bitcask-style durable engine; std + io_uring read backends |
 | [`miniraft`](#miniraft-phase-3) | 3 | clean-room Raft core + deterministic fault-injection simulator |
 | [`infcache`](#infcache-phase-4) | 4 | prefix-keyed, RAM→SSD tiered KV-block cache for LLM inference |
+| `raftkv` | 2×3 | durable Raft: `miniraft` persistent state backed by `diskstore` |
 
 Run everything: `cargo test` (workspace root `storage/`).
 
@@ -194,7 +195,10 @@ serialized K/V). See [../RESULTS.md](../RESULTS.md) for numbers and scope.
 
 ## What's next (see the roadmap)
 
-The four phases are shipped. Remaining productionization — per crate — is tracked
-in the [roadmap](../docs/storage/STORAGE_ROADMAP.md): request pipelining tuning,
-rolling segments + `O_DIRECT` for the engine, snapshots/membership/disk-persistence
-for Raft, and integrating `infcache` under a real inference engine.
+The four phases are shipped, plus two follow-ups: the `diskstore-odirect-bench`
+proving io_uring's real **10.6× win under O_DIRECT** cold I/O, and `raftkv`
+persisting Raft's durable state through the engine. Remaining productionization is
+tracked in the [roadmap](../docs/storage/STORAGE_ROADMAP.md): rolling segments,
+Raft snapshots/membership, and integrating `infcache` under a real inference
+engine. For how this all relates to DeepSeek's production system, see the
+[3FS briefing](../docs/storage/DEEPSEEK_3FS_BRIEFING.md).

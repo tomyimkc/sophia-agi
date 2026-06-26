@@ -16,7 +16,7 @@
 
 use std::collections::{HashMap, HashSet};
 
-use crate::types::{Envelope, Index, LogEntry, Msg, NodeId, Role, Term};
+use crate::types::{Envelope, Index, LogEntry, Msg, NodeId, PersistentState, Role, Term};
 
 /// Timing configuration (in the driver's logical time units).
 #[derive(Clone, Copy)]
@@ -62,6 +62,10 @@ pub struct RaftNode {
 
     /// Commands applied to the state machine, in commit order — for inspection/tests.
     applied: Vec<(Index, Vec<u8>)>,
+
+    /// Set whenever persistent state (term/vote/log) changes; a durable driver
+    /// flushes to disk when this is set. See [`RaftNode::take_dirty`].
+    dirty: bool,
 }
 
 impl RaftNode {
@@ -85,9 +89,34 @@ impl RaftNode {
             // Seed varies per node so randomized timeouts diverge (avoids lockstep split votes).
             rng: 0x9e37_79b9_7f4a_7c15 ^ id.wrapping_mul(0xbf58_476d_1ce4_e5b9),
             applied: Vec::new(),
+            dirty: false,
         };
         node.reset_election_deadline(now);
         node
+    }
+
+    /// Snapshot the durable state (for a persisting driver to write to disk).
+    pub fn export(&self) -> PersistentState {
+        PersistentState {
+            current_term: self.current_term,
+            voted_for: self.voted_for,
+            log: self.log.clone(),
+        }
+    }
+
+    /// Overwrite durable state after a crash (e.g. reloaded from disk). The
+    /// caller should then call [`RaftNode::restart`] to reset volatile state.
+    pub fn restore_state(&mut self, state: PersistentState) {
+        self.current_term = state.current_term;
+        self.voted_for = state.voted_for;
+        self.log = state.log;
+        self.dirty = false;
+    }
+
+    /// Return whether durable state changed since the last call, clearing the
+    /// flag. A durable driver calls this after each event and flushes on `true`.
+    pub fn take_dirty(&mut self) -> bool {
+        std::mem::take(&mut self.dirty)
     }
 
     // --- accessors (for the driver/tests) ---
@@ -185,6 +214,7 @@ impl RaftNode {
         self.role = Role::Candidate;
         self.current_term += 1;
         self.voted_for = Some(self.id);
+        self.dirty = true; // term + vote changed
         self.votes_granted.clear();
         self.votes_granted.insert(self.id);
         self.leader_id = None;
@@ -223,6 +253,7 @@ impl RaftNode {
         self.current_term = term;
         self.role = Role::Follower;
         self.voted_for = None;
+        self.dirty = true; // term + vote changed
         self.votes_granted.clear();
         self.leader_id = None;
     }
@@ -260,6 +291,7 @@ impl RaftNode {
             return (None, Vec::new());
         }
         self.log.push(LogEntry { term: self.current_term, command });
+        self.dirty = true; // log grew
         let index = self.last_log_index();
         let msgs = self.peers.clone().iter().map(|&p| self.append_entries_to(p)).collect();
         (Some(index), msgs)
@@ -299,6 +331,7 @@ impl RaftNode {
             && up_to_date;
         if granted {
             self.voted_for = Some(candidate);
+            self.dirty = true; // vote recorded
             self.reset_election_deadline(now);
         }
         vec![Envelope {
@@ -367,10 +400,12 @@ impl RaftNode {
                 if self.term_at(idx) != entry.term {
                     self.log.truncate((idx - 1) as usize); // drop conflict + everything after
                     self.log.push(entry);
+                    self.dirty = true; // log mutated
                 }
                 // else: already present and matching, skip
             } else {
                 self.log.push(entry);
+                self.dirty = true; // log grew
             }
         }
 

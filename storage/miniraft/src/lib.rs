@@ -39,4 +39,4 @@ pub mod types;
 
 pub use node::{RaftNode, Timing};
 pub use sim::Sim;
-pub use types::{Envelope, Index, LogEntry, Msg, NodeId, Role, Term};
+pub use types::{Envelope, Index, LogEntry, Msg, NodeId, PersistentState, Role, Term};

@@ -114,9 +114,14 @@ Each phase ends with a runnable artifact + benchmark numbers committed to the re
 - ✅ **Delivered:** 5 safety tests proving no-split-brain, quorum-only commit,
   crash re-election, minority-can't-commit, and post-heal log convergence
   (`RESULTS.md`).
-- ⏭ **Next:** snapshots + log compaction; dynamic membership; persist the
-  Raft log to `diskstore`; run the core under a real transport, or integrate
-  `openraft` (v0.9 storage-v2 API already vetted) as the production engine.
+- ✅ **Durability (was "next"):** `storage/raftkv` persists each node's
+  `PersistentState` (term/vote/log) to a per-node `diskstore` Bitcask and reloads
+  it on restart — Phase-2 engine under the Phase-3 core. Tested end-to-end:
+  committed log survives on disk, a crashed follower recovers and converges, a
+  restarted old leader steps down (no split-brain).
+- ⏭ **Next:** snapshots + log compaction; dynamic membership; a real transport;
+  or integrate `openraft` (v0.9 storage-v2 API already vetted) as the production
+  engine. CRAQ (DeepSeek 3FS's choice) vs Raft tradeoff: see the 3FS briefing.
 
 ### Phase 4 — KVCache-for-inference specialization ✅ SHIPPED → the role's core
 - ✅ `storage/infcache`: prefix/blockwise KV-block cache keyed by a token-prefix

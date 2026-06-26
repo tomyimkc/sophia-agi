@@ -135,12 +135,22 @@ Batched random reads — 200k keys × 512 B (≈103 MiB), 3000 batches × 256 ke
 
 **Honest reading of this:** the two are ~equal *because the working set is
 page-cached* — a warm `pread` is a cheap syscall with nothing to block on, so
-collapsing 256 syscalls into one submission saves little. io_uring's advantage
-materializes under real I/O (cold cache, `O_DIRECT`, deep queue depth), which is
-deliberately not yet exercised here. What Phase 2 *does* prove: a correct io_uring
-submission/completion path whose reads are verified **byte-identical** to pread
-(`multi_get_uring_matches_std`), plus durability and recovery. 7 unit + 6/7
-integration tests (the 7th is the io_uring parity test, gated on the feature).
+collapsing 256 syscalls into one submission saves little.
+
+**The real win, under O_DIRECT cold I/O** (`diskstore-odirect-bench`): bypass the
+page cache so every read goes to the device. Now serial `pread` is latency-bound
+(one outstanding I/O) while io_uring keeps the device queue full. 781 MiB file on
+ext4, 100k random 4 KiB reads:
+
+| backend | throughput | bandwidth | p50 |
+|---|---|---|---|
+| pread (serial, O_DIRECT) | ~17.6k reads/sec | ~69 MiB/s | 55 µs/read |
+| io_uring (depth 128, O_DIRECT) | ~187k reads/sec | ~731 MiB/s | 669 µs/batch |
+
+**~10.6× throughput** — this is the regime io_uring is built for. (It needs a
+non-tmpfs filesystem; measured on ext4/virtio here.) The io_uring read path is also
+verified **byte-identical** to pread (`multi_get_uring_matches_std`). 7 unit + 7
+integration tests; the io_uring parity test is gated on the feature.
 
 ```bash
 cd storage
@@ -176,6 +186,23 @@ productionization step).
 
 ```bash
 cd storage && cargo test -p miniraft     # 5 safety tests + doctest, fully deterministic
+```
+
+### Durability — raftkv (Phase 2 × Phase 3)
+
+`storage/raftkv` backs each Raft node's persistent state (term/vote/log) with a
+per-node `diskstore` Bitcask (Phase 2), flushing on every durable-state change
+and reloading on restart — fulfilling Raft's "a completed write is durable"
+requirement with the real on-disk engine. Tested end-to-end:
+
+| property | test |
+|---|---|
+| committed log is persisted to disk (survives as bytes) | `committed_log_is_persisted_to_disk` |
+| a crashed follower recovers its log from disk and converges | `follower_recovers_log_from_disk_after_crash` |
+| a restarted old leader steps down — no split-brain | `restarted_leader_does_not_cause_split_brain` |
+
+```bash
+cd storage && cargo test -p raftkv       # 2 codec + 3 durability tests + doctest
 ```
 
 ## Storage — infcache (Phase 4): LLM inference KVCache
