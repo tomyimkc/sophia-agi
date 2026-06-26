@@ -559,7 +559,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--source", choices=["local", "git"], default="local", help="upload current working tree or clone GitHub")
     ap.add_argument("--repo-url", default=DEFAULT_REPO_URL)
     ap.add_argument("--branch", default="", help="optional git branch/tag to clone")
-    ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
+    ap.add_argument("--model", default="Qwen/Qwen2.5-7B-Instruct")
     ap.add_argument("--remote-mode", choices=["offline", "live"], default="live", help="run only remote offline smoke test or full live GRPO")
     ap.add_argument("--task", choices=["provenance", "math"], default="provenance", help="RLVR reward task: provenance (provenance_faithful) or math (sympy math_equivalent)")
     ap.add_argument("--quant", choices=["bf16", "4bit"], default="bf16")

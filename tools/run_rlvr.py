@@ -25,9 +25,9 @@ docs/09-Agent/RLVR-Experiment.md.
 
     python tools/run_rlvr.py --model mock --dry-run        # CI / M4 Max
     python tools/run_rlvr.py --model mock                  # full offline invariants
-    python tools/run_rlvr.py --model zai-org/glm-4-9b-chat-hf --vllm server      # 2x24GB
-    python tools/run_rlvr.py --model zai-org/glm-4-9b-chat-hf --quant bf16       # 1x80GB
-    python tools/run_rlvr.py --model zai-org/glm-4-9b-chat-hf --vllm none        # 1x24GB, slow
+    python tools/run_rlvr.py --model Qwen/Qwen2.5-7B-Instruct --quant bf16       # 1x80GB (default)
+    python tools/run_rlvr.py --model Qwen/Qwen2.5-7B-Instruct --vllm server      # 2x24GB
+    python tools/run_rlvr.py --model zai-org/glm-4-9b-chat-hf  --quant bf16      # GLM alt (1x80GB)
 """
 
 from __future__ import annotations
@@ -48,16 +48,36 @@ from provenance_bench.dataset import Case  # noqa: E402
 
 OUT_JSON = ROOT / "agi-proof" / "benchmark-results" / "rlvr.public-report.json"
 
-# Dense GLM-4-9B (native transformers GlmForCausalLM; vLLM-supported; no
-# trust_remote_code; needs transformers>=4.46.2). NOTE: glm-4-9b License —
-# commercial use needs Zhipu registration; NOT MIT (unlike GLM-5.2 / GLM-4.5+).
-DEFAULT_MODEL = "zai-org/glm-4-9b-chat-hf"
+# Standard subject model: Qwen2.5-7B-Instruct — Apache-2.0 (commercial use with
+# no registration), native transformers Qwen2ForCausalLM, first-class vLLM
+# support, no trust_remote_code. Standardized across the repo's GPU tracks
+# (RLVR / interp / serving) for a coherent, openly-licensed story.
+DEFAULT_MODEL = "Qwen/Qwen2.5-7B-Instruct"
 
-# GLM-4-9B-Chat in current Transformers exposes split attention projections
-# plus a fused gate/up MLP projection. Older notes claimed fused-QKV names
-# (query_key_value/dense/...), but the published HF weights use these suffixes:
-#   self_attn.{q,k,v,o}_proj, mlp.gate_up_proj, mlp.down_proj
+# LoRA target modules differ by family in the MLP block: GLM-4-9B FUSES gate+up
+# into a single `gate_up_proj`, whereas Qwen2.5 / Llama / Mistral keep them SPLIT
+# (`gate_proj`, `up_proj`). Attention projections (q/k/v/o_proj) are common.
 GLM_TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_up_proj", "down_proj"]
+QWEN_TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+
+
+def target_modules_for(model: str) -> list[str]:
+    """LoRA target modules for the model family (fused-MLP GLM vs split-MLP Qwen/Llama)."""
+    m = (model or "").lower()
+    if "glm" in m:
+        return GLM_TARGET_MODULES
+    # Qwen2.5 / Llama / Mistral and the default subject model.
+    return QWEN_TARGET_MODULES
+
+
+def base_model_license(model: str) -> str:
+    """Honest base-model license string for the report (no overclaim)."""
+    m = (model or "").lower()
+    if "glm-4-9b" in m:
+        return "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)"
+    if "qwen2.5" in m or "qwen2_5" in m:
+        return "Apache-2.0 (Qwen2.5)"
+    return "see model card"
 
 # Synthetic case set for the offline reward-machinery check (decoupled from any
 # corpus quirks, so the invariants are about the code, not the data).
@@ -118,7 +138,7 @@ def _offline_invariants() -> tuple[bool, dict]:
         "trainSealed": data["train_sealed"],
         "evalSealed": data["eval_sealed"],
         "entityIntersection": data["entity_intersection"],
-        "gateTargetModules": GLM_TARGET_MODULES,
+        "gateTargetModules": target_modules_for(DEFAULT_MODEL),
     }
     return all(checks.values()), detail
 
@@ -269,7 +289,7 @@ def _run_gpu(args: argparse.Namespace) -> int:
 
     peft_cfg = LoraConfig(
         r=args.lora_r, lora_alpha=args.lora_alpha, lora_dropout=0.05,
-        bias="none", task_type="CAUSAL_LM", target_modules=GLM_TARGET_MODULES,
+        bias="none", task_type="CAUSAL_LM", target_modules=target_modules_for(args.model),
     )
     tokenizer = AutoTokenizer.from_pretrained(args.model)
     if tokenizer.pad_token is None:
@@ -295,13 +315,13 @@ def _run_gpu(args: argparse.Namespace) -> int:
         "config": {
             "vllm": args.vllm, "quant": args.quant, "epochs": args.epochs, "lr": args.lr,
             "beta": args.beta, "num_generations": args.num_generations,
-            "target_modules": GLM_TARGET_MODULES,
+            "target_modules": target_modules_for(args.model),
         },
         "trainCases": n_train,
         "evalCases": n_eval,
         "trainSealed": data["train_sealed"],
         "evalSealed": data["eval_sealed"],
-        "baseModelLicense": "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)",
+        "baseModelLicense": base_model_license(args.model),
     }
     _write_report(report, args.out)
     print("Live GRPO complete. Held-out pass@1 eval + gating is a separate step.")

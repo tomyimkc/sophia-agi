@@ -111,7 +111,7 @@ def main() -> int:
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     ap.add_argument("--runs-root", type=Path, default=ROOT / "agent" / "memory" / "closed-loop")
     ap.add_argument("--provider", default="mock", help="model provider for --mock (default mock)")
-    ap.add_argument("--base-model", default="zai-org/glm-4-9b-chat-hf", help="base model for --live")
+    ap.add_argument("--base-model", default="Qwen/Qwen2.5-7B-Instruct", help="base model for --live")
     ap.add_argument("--max-retries", type=int, default=2)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--vllm", default="colocate", choices=["colocate", "server", "none"])

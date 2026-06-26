@@ -322,7 +322,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--mode", choices=["mock", "real"], default="mock")
     ap.add_argument("--task", choices=["provenance", "math"], default="provenance",
                     help="provenance (provenance_faithful reward) or math (sympy math_equivalent reward)")
-    ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
+    ap.add_argument("--model", default="Qwen/Qwen2.5-7B-Instruct")
     ap.add_argument("--adapter", type=Path, default=None)
     ap.add_argument("--out", type=Path, default=OUT)
     ap.add_argument("--seed", type=int, default=0)
