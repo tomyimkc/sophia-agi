@@ -77,7 +77,13 @@ def test_kernel_verifier_rejects_non_attempt(monkeypatch) -> None:
 
 
 def test_close_loop_abstains_without_kernel(monkeypatch) -> None:
-    monkeypatch.setattr(lv, "lean_available", lambda: False)
+    # Patch lean_available at its CALL SITE (selfextend.proof_verifier), not at its
+    # definition site (agent.lean_verifier). proof_verifier binds `lean_available`
+    # into its own namespace via `from agent.lean_verifier import ... lean_available`,
+    # so patching lv.lean_available has no effect on the binding pv.close_loop_on_proofs
+    # actually consults. (This was latent — it only passed pre-Lean because both refs
+    # returned False; the lean-kernel CI lane caught it once Lean was actually present.)
+    monkeypatch.setattr(pv, "lean_available", lambda: False)
     r = close_loop_on_proofs("nat-arithmetic", _attempts(), _attempts(), _attempts())
     assert r["loop_closed"] is False
     assert r["promoted"] is False
@@ -92,9 +98,10 @@ def test_close_loop_abstains_without_kernel(monkeypatch) -> None:
 def test_close_loop_promotion_below_threshold_abstains(monkeypatch) -> None:
     """With a kernel present but a low held-out reward, the loop still abstains —
     promotion needs the policy to actually clear the bar."""
-    monkeypatch.setattr(lv, "lean_available", lambda: True)
+    monkeypatch.setattr(pv, "lean_available", lambda: True)
     # Force the kernel backend to reject every attempt (simulate "no proofs found").
-    monkeypatch.setattr(lv, "check_proof",
+    # Patch at the call site (pv), for the same reason as above.
+    monkeypatch.setattr(pv, "check_proof",
                         lambda *a, **k: {"verdict": "held", "status": "unprovable_here"})
     r = close_loop_on_proofs("hard-domain", _attempts(), _attempts(), _attempts(),
                              threshold=1.0)
