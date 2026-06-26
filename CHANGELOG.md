@@ -127,6 +127,32 @@ Turns the simulator's guessed comm penalty into a bandwidth-derived (and measura
   this pipeline on the belief graph + grounded gate + graded abstention + badcase flywheel turns
   it into a verifiable perception organ — search as Sophia's AGI substrate.
 
+## [0.9.1] - 2026-06-26
+
+### Added — IP-protection & defensive-publication package (docs-only)
+
+A provenance/IP package to secure credit, priority, and brand for an already-public,
+Apache-2.0 project. No code or licence changes. This release also serves as the
+**Zenodo-archived, DOI-minted** snapshot of the method.
+
+- **`paper/sophia-whitepaper.md`** — arXiv-ready defensive publication of the
+  provenance-aware, verifier-gated abstention method.
+- **`CITATION.cff`** + **`.zenodo.json`** — citable authorship/date record (author of
+  record: Yim Kin Cheong, Hong Kong, ORCID 0009-0005-9520-0033) and Zenodo archive config.
+- **`docs/IP-PROTECTION.md`** — strategy: patent/trademark timing, commit-signing guide,
+  defensive-publication checklist.
+- **`docs/prior-art-survey.md`** — structured prior-art survey (~40 sources). Key finding:
+  two granted US patents (US 12,468,899; US 12,505,311, priority early 2023) plus NeMo
+  Guardrails / RARR / ALCE / Self-RAG / Conformal Abstention make a broad method patent
+  almost certainly anticipated/obvious.
+- **`docs/trademark-application.md`** — mark descriptions, Nice classes (9/42/41),
+  goods/services wording, HK IPD / USPTO / Madrid clearance checklist.
+- **`docs/submission-cover-note.md`** — arXiv-ready abstract, categories, keywords, venue
+  comparison (Zenodo / OSF / arXiv).
+- **`docs/release-notes-v0.9.0.md`** — release-body template (carried forward for this
+  DOI-minting release).
+- **README** — "Cite this work & establish provenance" section.
+
 ## [0.9.0] - 2026-06-25
 
 ### Added — runtime trust-layer wiring + measurement arc

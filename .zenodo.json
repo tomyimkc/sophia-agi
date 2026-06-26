@@ -1,0 +1,38 @@
+{
+  "title": "Sophia — the Wisdom Gate: a provenance-aware, verifier-gated reasoning layer that abstains instead of fabricating",
+  "description": "<p>Sophia is a provenance-aware, verifier-gated reasoning layer for large language models that abstains instead of fabricating. Given a claim, it verifies the claim against machine-readable sources and then accepts, abstains, or blocks. The system targets attribution hallucination and is evaluated under a pre-registered no-overclaim measurement gate (&ge;2 independent judge families, reported inter-judge agreement, &ge;3 runs, and confidence intervals). Archiving this release on Zenodo mints a permanent DOI and a fixed authorship + date record as part of the project's defensive-publication / provenance strategy.</p>",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "Apache-2.0",
+  "version": "0.9.0",
+  "keywords": [
+    "large language models",
+    "hallucination",
+    "attribution",
+    "abstention",
+    "selective prediction",
+    "provenance",
+    "retrieval-augmented generation",
+    "verifier-gated reasoning",
+    "trustworthy AI"
+  ],
+  "creators": [
+    {
+      "name": "Yim, Kin Cheong",
+      "affiliation": "Independent researcher (tomyimkc), Hong Kong",
+      "orcid": "0009-0005-9520-0033"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "relation": "isSupplementTo",
+      "identifier": "https://github.com/tomyimkc/sophia-agi",
+      "scheme": "url"
+    },
+    {
+      "relation": "isDocumentedBy",
+      "identifier": "https://tomyimkc.github.io/sophia-agi/",
+      "scheme": "url"
+    }
+  ]
+}

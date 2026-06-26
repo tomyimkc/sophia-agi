@@ -4,7 +4,7 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.9.0-blue)
+![Version](https://img.shields.io/badge/version-0.9.1-blue)
 ![Corpus](https://img.shields.io/badge/corpus-528_bilingual_examples-green)
 ![Scope](https://img.shields.io/badge/scope-AGI--candidate%2C_not_proven_AGI-lightgrey)
 [![Thesis site](https://img.shields.io/badge/live-thesis_site-9a7b4f)](https://tomyimkc.github.io/sophia-agi/)
@@ -149,6 +149,15 @@ purpose:
 brand being protected stops someone from shipping an unverified product under the Sophia name and
 eroding the no-overclaim standard the project exists to uphold. Authored and maintained by the
 sole author and rights holder, **tomyimkc**. Every fork carries [NOTICE.md](NOTICE.md).
+
+### Cite this work & establish provenance
+
+To make Sophia citable and to fix an authorship + priority record (defensive publication):
+
+- **Citation metadata:** [CITATION.cff](CITATION.cff) — GitHub renders a "Cite this repository" button.
+- **Whitepaper (arXiv-ready):** [paper/sophia-whitepaper.md](paper/sophia-whitepaper.md).
+- **Archival DOI:** enable [Zenodo](https://zenodo.org) for this repo and cut a Release to mint a permanent DOI (config in [.zenodo.json](.zenodo.json)).
+- **Full strategy & patent/trademark timing:** [docs/IP-PROTECTION.md](docs/IP-PROTECTION.md).
 
 ## Moral + epistemic Conscience Kernel (seven paths)
 
