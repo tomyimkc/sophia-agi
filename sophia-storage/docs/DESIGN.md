@@ -86,9 +86,15 @@ survives.
 Each tier is an `Arena` over a pluggable `BlockStore` (`store.rs`), so the
 placement logic is identical regardless of medium:
 
-- **HBM / DRAM → `MemStore`** (in-memory). A GPU build swaps in a CUDA
-  allocation; the read/write becomes `cudaMemcpyAsync`. **No GPU is needed to
-  run or test the controller** — that is the point of the split.
+- **HBM → `MemStore`** (default) or **`CudaHbmStore`** (feature `cuda`). The
+  CUDA store is the genuine HBM tier: each block's payload lives in GPU device
+  memory (`cudaMalloc` via cudarc) and put/take are real host↔device
+  `cudaMemcpy` transfers. Thanks to cudarc `dynamic-loading` it *compiles* on a
+  GPU-less CI host (dlopens libcuda at runtime) and *runs* on a real GPU — the
+  `.github/workflows/gpu-kvcache.yml` job provisions a RunPod GPU box and runs
+  `bin/gpu_hbm_smoke` (round-trips blocks through HBM, verifies bytes, reports
+  H2D/D2H bandwidth). **No GPU is needed to build or test the controller.**
+- **DRAM → `MemStore`** (in-memory; a pinned host-buffer pool in production).
 - **NVMe → `FileStore`** — **real on-disk persistence**, one file per block
   (`[token_count][payload]`, temp-write+rename so a reader never sees a torn
   block), with an in-memory id index so `contains`/`ids`/`len` never touch the
@@ -107,11 +113,11 @@ written / 2.2 MiB read back** on the disk tier under the council workload.
 
 | Real (tested) | Seam (documented) |
 |---|---|
-| Content-addressed ids, prefix sharing | HBM/DRAM are in-memory (no GPU here) → CUDA alloc + `cudaMemcpyAsync` |
+| Content-addressed ids, prefix sharing | DRAM = in-memory → pinned host-buffer pool |
 | **Real disk NVMe tier** (`FileStore`), persists + reloads | NVMe transfer is `write`/`read` → `io_uring`/SPDK |
-| Promotion / demotion / cascade eviction across media | Disaggregated remote-DRAM pool over RDMA is §4 |
-| Ref-counted pinning; byte-movement accounting | Real KV tensor layout & dtype; per-block CRC |
-| Hit-ratio / prefill-avoided / NVMe-bytes metrics | |
+| **Real GPU HBM tier** (`CudaHbmStore`, feature `cuda`, run on RunPod) | Disaggregated remote-DRAM pool over RDMA |
+| Promotion / demotion / cascade eviction across media | Real KV tensor layout & dtype; per-block CRC |
+| Ref-counted pinning; byte-movement accounting; H2D/D2H bandwidth | `cudaMemcpyAsync` overlap + CUDA streams per copy engine |
 
 ### 2.4 The RDMA / zero-copy seam (加分项)
 

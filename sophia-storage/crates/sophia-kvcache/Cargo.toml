@@ -12,7 +12,31 @@ repository.workspace = true
 [lib]
 name = "sophia_kvcache"
 
+[dependencies]
+# Optional: only with the `cuda` feature. `dynamic-loading` dlopens libcuda at
+# runtime, so the crate still *compiles* on a host with no GPU/toolkit (CI here);
+# it just needs a real GPU to *run*. This is what the RunPod GPU job exercises.
+cudarc = { version = "0.19", optional = true, default-features = false, features = [
+    "driver",
+    "runtime",
+    "dynamic-loading",
+    # Pin the CUDA API version the bindings target; matches the 12.4 image the
+    # RunPod job uses. dynamic-loading dlopens libcuda at runtime regardless.
+    "cuda-12040",
+] }
+
+[features]
+default = []
+# Real GPU HBM tier (store::CudaHbmStore) backed by CUDA device memory with
+# cudaMemcpy host<->device transfers. Off by default; built+run on the GPU box.
+cuda = ["dep:cudarc"]
+
 [[bench]]
 name = "kvcache_bench"
 path = "../../benches/kvcache_bench.rs"
 harness = false
+
+[[bin]]
+name = "gpu_hbm_smoke"
+path = "src/bin/gpu_hbm_smoke.rs"
+required-features = ["cuda"]

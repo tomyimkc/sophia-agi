@@ -189,6 +189,98 @@ impl BlockStore for FileStore {
     }
 }
 
+// ---------------------------------------------------------------------------
+// CUDA HBM store (real GPU device memory). Feature-gated; runs on the GPU box.
+// ---------------------------------------------------------------------------
+//
+// This is the genuine HBM tier the design called a seam: each block's KV payload
+// lives in GPU device memory (cudaMalloc), and put/take are real host<->device
+// cudaMemcpy transfers. `dynamic-loading` means this compiles on a GPU-less CI
+// host; it requires an actual CUDA GPU at runtime (exercised by the RunPod job
+// and `bin/gpu_hbm_smoke`).
+#[cfg(feature = "cuda")]
+mod cuda {
+    use super::{Block, BlockId, BlockStore};
+    use std::collections::HashMap;
+    use std::io;
+    use std::sync::Arc;
+
+    use cudarc::driver::{CudaContext, CudaSlice, CudaStream};
+
+    pub struct CudaHbmStore {
+        stream: Arc<CudaStream>,
+        /// block id -> (device buffer, token_count).
+        blocks: HashMap<BlockId, (CudaSlice<u8>, u32)>,
+        bytes_in: u64,
+        bytes_out: u64,
+    }
+
+    impl CudaHbmStore {
+        /// Open the HBM store on CUDA device `ordinal`.
+        pub fn open(ordinal: usize) -> io::Result<Self> {
+            let ctx = CudaContext::new(ordinal).map_err(to_io)?;
+            let stream = ctx.default_stream();
+            Ok(CudaHbmStore { stream, blocks: HashMap::new(), bytes_in: 0, bytes_out: 0 })
+        }
+    }
+
+    fn to_io<E: std::fmt::Debug>(e: E) -> io::Error {
+        io::Error::other(format!("cuda: {e:?}"))
+    }
+
+    impl BlockStore for CudaHbmStore {
+        fn put(&mut self, block: Block) -> io::Result<()> {
+            // Host -> device cudaMemcpy: the KV payload lands in GPU HBM.
+            let dev = self.stream.clone_htod(&block.payload).map_err(to_io)?;
+            self.stream.synchronize().map_err(to_io)?;
+            self.bytes_in += block.payload.len() as u64;
+            self.blocks.insert(block.id, (dev, block.token_count));
+            Ok(())
+        }
+
+        fn get(&self, id: BlockId) -> io::Result<Option<Block>> {
+            match self.blocks.get(&id) {
+                None => Ok(None),
+                Some((dev, tc)) => {
+                    // Device -> host cudaMemcpy.
+                    let host = self.stream.clone_dtoh(dev).map_err(to_io)?;
+                    Ok(Some(Block::new(id, *tc, host)))
+                }
+            }
+        }
+
+        fn take(&mut self, id: BlockId) -> io::Result<Option<Block>> {
+            match self.blocks.remove(&id) {
+                None => Ok(None),
+                Some((dev, tc)) => {
+                    let host = self.stream.clone_dtoh(&dev).map_err(to_io)?;
+                    self.bytes_out += host.len() as u64;
+                    Ok(Some(Block::new(id, tc, host))) // dev freed on drop here
+                }
+            }
+        }
+
+        fn contains(&self, id: BlockId) -> bool {
+            self.blocks.contains_key(&id)
+        }
+        fn ids(&self) -> Vec<BlockId> {
+            self.blocks.keys().copied().collect()
+        }
+        fn len(&self) -> usize {
+            self.blocks.len()
+        }
+        fn bytes_in(&self) -> u64 {
+            self.bytes_in
+        }
+        fn bytes_out(&self) -> u64 {
+            self.bytes_out
+        }
+    }
+}
+
+#[cfg(feature = "cuda")]
+pub use cuda::CudaHbmStore;
+
 #[cfg(test)]
 mod tests {
     use super::*;

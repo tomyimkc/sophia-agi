@@ -1,0 +1,65 @@
+# SPDX-License-Identifier: Apache-2.0
+# Exercise the real GPU HBM tier (sophia-kvcache `cuda` feature) on a RunPod
+# GPU box. Manual-dispatch only — it provisions a paid GPU pod, so it never runs
+# automatically. Requires repo secret RUNPOD_API_KEY.
+name: gpu-kvcache
+
+on:
+  workflow_dispatch:
+    inputs:
+      gpu_type:
+        description: "RunPod GPU type id (e.g. 'NVIDIA GeForce RTX 4090')"
+        default: "NVIDIA GeForce RTX 4090"
+        required: true
+      block_bytes:
+        description: "Bytes per KV block in the bandwidth probe"
+        default: "262144"
+        required: true
+      blocks:
+        description: "Number of blocks to round-trip through HBM"
+        default: "2048"
+        required: true
+
+jobs:
+  # 1) Prove the cuda feature *builds* on a GPU-less runner (dynamic-loading
+  #    dlopens libcuda at runtime), and that default + tests stay green.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Default workspace tests (no GPU)
+        working-directory: sophia-storage
+        run: cargo test --workspace
+      - name: Build GPU smoke binary (cuda feature, no GPU needed to compile)
+        working-directory: sophia-storage
+        run: cargo build --release -p sophia-kvcache --features cuda --bin gpu_hbm_smoke
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gpu_hbm_smoke
+          path: sophia-storage/target/release/gpu_hbm_smoke
+
+  # 2) Provision a RunPod GPU box, run the smoke test on real HBM, tear down.
+  gpu-run:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: gpu_hbm_smoke
+          path: ./bin
+      - name: Run on RunPod GPU
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          GPU_TYPE: ${{ inputs.gpu_type }}
+          BLOCKS: ${{ inputs.blocks }}
+          BLOCK_BYTES: ${{ inputs.block_bytes }}
+        run: |
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::RUNPOD_API_KEY secret is not set — add it in repo settings."
+            exit 1
+          fi
+          python3 -m pip install --quiet 'runpod>=1.6'
+          chmod +x ./bin/gpu_hbm_smoke
+          python3 scripts/runpod_gpu_run.py ./bin/gpu_hbm_smoke

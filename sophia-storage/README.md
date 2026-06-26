@@ -72,11 +72,12 @@ the same discipline as the rest of the repo ([RESULTS.md](../RESULTS.md)).
 1. ~~**LSM group-commit + io_uring backend**~~ — ✅ done: `WriteBatch` one-fsync
    group commit (204× at batch 512) and a real `io::IoUringIo` submitting
    Write/Read/Fsync SQEs, exercised end-to-end through the engine.
-2. **KVCache tiers** — ◐ partial: `tier::Arena` is now pluggable over a
-   `BlockStore`; the **NVMe tier is real disk** (`store::FileStore`, persists +
-   reloads) with byte-movement accounting. Remaining: HBM/DRAM on CUDA +
-   `cudaMemcpyAsync`, and a remote-DRAM pool over RDMA *(needs GPU/RDMA hardware
-   — not present in CI)*.
+2. **KVCache tiers** — ◐ mostly done: `tier::Arena` is pluggable over a
+   `BlockStore`; the **NVMe tier is real disk** (`store::FileStore`) and the
+   **HBM tier is real GPU memory** (`store::CudaHbmStore`, feature `cuda`, real
+   `cudaMemcpy`), exercised on a RunPod GPU box via
+   `.github/workflows/gpu-kvcache.yml`. Remaining: a remote-DRAM pool over RDMA
+   *(needs RDMA-NIC hardware)*.
 3. **O_DIRECT + registered buffers + SQPOLL** on the io_uring backend; concurrent
    group commit (a commit thread coalescing per-op sync requests); `io_uring` on
    the NVMe `FileStore`.
