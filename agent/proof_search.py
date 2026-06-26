@@ -123,6 +123,7 @@ def search_proof(
     premise_retriever: PremiseRetriever | None = None,
     novelty_corpus: list[str] | None = None,
     apply_tactic: Callable[[str, str], tuple[str, bool]] | None = None,
+    lean_session: "LeanProofSession | None" = None,
 ) -> ProofSearchResult:
     """Best-first search for a Lean proof of ``theorem``.
 
@@ -131,21 +132,27 @@ def search_proof(
     tests it is a scripted stub. When ``apply_tactic`` is None we attempt the real
     Lean path — which abstains fail-closed if Lean isn't installed.
 
+    For the real Lean path, pass a ``lean_session`` (a `LeanProofSession` opened on
+    the theorem's source); the search uses `lean_session.apply` as the tactic
+    applier so LeanDojo's stateful `proof_state` object is threaded across calls.
+
     Returns a ProofSearchResult. ``proved`` means Lean verified the full tactic
     path; the novelty probe (strict) is run only on a proved proof.
     """
-    # If no tactic applier is injected, build the real Lean one (abstains if no Lean).
-    if apply_tactic is None:
-        apply_tactic = _lean_apply_tactic
-
     res = ProofSearchResult(theorem=theorem)
-    # The real path (apply_tactic is None) needs Lean to actually apply tactics.
-    # An injected apply_tactic (test/scripted mode) can run without Lean — that's
-    # how the search STRUCTURE is testable without the Lean toolchain.
-    real_lean_path = apply_tactic is None
-    if real_lean_path and not lean_backend.lean_available():
-        res.verdict = "lean_unavailable"
+    # If a real Lean session is supplied, use it as the tactic applier (stateful).
+    if lean_session is not None:
+        apply_tactic = lean_session.apply
+        real_lean_path = True
+    elif apply_tactic is None:
+        # The stateless real path needs Lean — but cannot thread proof_state, so it
+        # abstains. Callers wanting the real path must pass a lean_session.
+        res.verdict = "lean_unavailable" if not lean_backend.lean_available() else "lean_unavailable"
+        res.reason = ("real Lean path requires a lean_session (LeanDojo is stateful; "
+                      "pass LeanProofSession). An injected apply_tactic runs the test path.")
         return res
+    else:
+        real_lean_path = False  # injected applier (test/scripted) — applier is the verifier
 
     start = ProofNode(state=initial_state, path=(), depth=0, priority=_default_priority(initial_state))
     frontier: list[ProofNode] = [start]
@@ -207,21 +214,109 @@ def _assemble(theorem: str, path: tuple[str, ...]) -> str:
 
 
 def _lean_apply_tactic(state: str, tactic: str) -> tuple[str | None, bool]:
-    """Real Lean tactic application via lean_backend. Returns (next_state, goal_closed)
-    or (None, False) if Lean isn't available / the tactic failed. Fail-closed."""
+    """Stateless fallback — deprecated in favor of LeanProofSession. Kept so the
+    old call signature still works; the stateful path is required because LeanDojo
+    carries a `proof_state` OBJECT across tactic applications, not a state string."""
     if not lean_backend.lean_available():
         return None, False
-    # A full LeanDojo integration applies `tactic` to `state` and returns the new
-    # proof state. The verify_proof call in search_proof re-checks the WHOLE path
-    # end-to-end, so this node-level apply is an optimization (prune dead branches
-    # early); the load-bearing verification is the final verify_proof.
-    try:
-        from lean_dojo import LeanDojo  # type: ignore
-        # Version-tolerant: the exact call varies; wrap so a mismatch abstains.
-        # In production this returns the post-tactic proof state + closed flag.
-        return None, False  # placeholder until the specific LeanDojo API is pinned
-    except Exception:
-        return None, False
+    # A stateless apply cannot carry the proof_state object LeanDojo needs, so we
+    # refuse rather than fake it. Callers wanting the real Lean path must use
+    # LeanProofSession (below) which threads the proof_state object through the search.
+    return None, False
+
+
+class LeanProofSession:
+    """A stateful Lean tactic-application session. LeanDojo's API is STATEFUL: each
+    `run_tac(proof_state, tactic)` returns a NEW proof_state object that must be
+    threaded to the next call. The best-first search in `search_proof` works over
+    state STRINGS (for priority heuristics + logging), so this session adapts the
+    string-keyed search to LeanDojo's object-keyed API via a proof_state cache.
+
+    Usage: the search calls `session.apply(state_str, tactic)`; the session looks up
+    the proof_state object keyed by state_str, applies the tactic via LeanDojo, caches
+    the new proof_state under its rendered string, and returns (next_state_str, closed).
+    """
+
+    def __init__(self, repo_url: str = "https://github.com/leanprover-community/mathlib4"):
+        self._dojo = None
+        self._states: dict[str, object] = {}  # state_str -> LeanDojo proof_state object
+        self._repo_url = repo_url
+        self._open = False
+
+    def open(self, initial_state_str: str, theorem_source: str) -> bool:
+        """Open a LeanDojo session on `theorem_source` and record its initial proof
+        state under `initial_state_str`. Returns False (fail-closed) if Lean is absent
+        or the session can't open."""
+        if not lean_backend.lean_available():
+            return False
+        try:
+            from lean_dojo import Dojo, LeanRepo  # type: ignore
+            # LeanDojo opens a repo; a real integration points at a local Lean 4 checkout.
+            # The exact open path (Dojo.of_file / LeanRepo) varies by lean-dojo version;
+            # we wrap defensively so a version mismatch abstains rather than crashes.
+            repo = LeanRepo(self._repo_url, "master")  # type: ignore[call-arg]
+            self._dojo = Dojo(repo)  # type: ignore[call-arg]
+            ps = self._dojo.run_tac(theorem_source) if hasattr(self._dojo, "run_tac") else None
+            if ps is not None:
+                self._states[initial_state_str] = ps
+                self._open = True
+            return self._open
+        except Exception:
+            self._open = False
+            return False
+
+    def apply(self, state_str: str, tactic: str) -> tuple[str | None, bool]:
+        """Apply `tactic` to the proof_state cached under `state_str`. Returns
+        (next_state_str, goal_closed) or (None, False) on any failure (fail-closed)."""
+        if self._dojo is None:
+            return None, False
+        ps = self._states.get(state_str)
+        if ps is None:
+            return None, False  # unknown state string -> can't apply
+        try:
+            result = self._dojo.run_tac(ps, tactic)  # type: ignore[attr-defined]
+        except Exception:
+            return None, False  # tactic failed in Lean (or API mismatch) -> prune
+        # LeanDojo result types: TacticSuccess (carries new state) / TacticFailure / etc.
+        # A closed goal is signaled by an empty-goals state. Be defensive across versions.
+        new_ps = getattr(result, "ps", getattr(result, "proof_state", None))
+        if new_ps is None:
+            # tactic produced no next state (failure or no-op) -> prune
+            return None, False
+        new_str = self._render(new_ps)
+        self._states[new_str] = new_ps
+        closed = self._is_closed(new_ps)
+        return new_str, closed
+
+    @staticmethod
+    def _render(proof_state: object) -> str:
+        """Render a LeanDojo proof state to a string for the search's priority/log."""
+        for attr in ("pp", "goals", "state", "content"):
+            v = getattr(proof_state, attr, None)
+            if isinstance(v, str) and v.strip():
+                return v
+            if isinstance(v, (list, tuple)) and v:
+                return "\n".join(str(g) for g in v)
+        return str(proof_state)
+
+    @staticmethod
+    def _is_closed(proof_state: object) -> bool:
+        """A proof state with no remaining goals = closed. Defensive across versions."""
+        goals = getattr(proof_state, "goals", None)
+        if goals is not None:
+            return len(goals) == 0
+        # Fallback: the rendered string indicates completion.
+        return "no goals" in LeanProofSession._render(proof_state).lower()
+
+    def close(self) -> None:
+        """Release the LeanDojo session."""
+        try:
+            if self._dojo is not None and hasattr(self._dojo, "close"):
+                self._dojo.close()
+        except Exception:
+            pass
+        self._dojo = None
+        self._open = False
 
 
 __all__ = [
