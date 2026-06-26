@@ -59,6 +59,8 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     rubric_review,
     sector_council,
     team_agents_deliberate,
+    trace_query,
+    trace_verify,
     trajectory_eval,
     uncertainty_score,
     validate_corpus,
@@ -137,6 +139,36 @@ def sophia_trajectory_eval(trajectory: list) -> str:
     breakdown. Catches the fabrication a single-answer gate misses: a claim asserted
     mid-plan that no earlier observation supports. Read-only, offline."""
     return dumps(trajectory_eval(trajectory))
+
+
+@mcp.tool()
+def sophia_trace_query(
+    run_id: str = "",
+    verified: bool | None = None,
+    phase: str = "",
+    limit: int = 200,
+) -> str:
+    """Scan the verified reasoning-trace log (sophia.verified_trace.v1) and return
+    a summary + filtered sample. Each trace is one fact+logic-stamped step.
+
+    Filters (all optional): run_id, verified (only verified/unverified steps),
+    phase (rlvr|sft|curriculum|benchmark|conscience). Reports stepVerifiedRate and
+    factLogicAgreement over the whole log. Read-only — never mutates the log."""
+    return dumps(trace_query(
+        run_id or None,
+        verified=verified,
+        phase=phase or None,
+        limit=limit,
+    ))
+
+
+@mcp.tool()
+def sophia_trace_verify(trace_id: str = "", check_chain: bool = True) -> str:
+    """Re-verify a stored trace: re-derive 'verified' from its fact+logic stamps
+    and check the tamper-evident hash chain. The reproducibility tool — a regulator
+    can re-derive any stamp without trusting the logger's word. If trace_id is
+    empty, returns only the chain-integrity report over the whole log. Read-only."""
+    return dumps(trace_verify(trace_id or None, check_chain=check_chain))
 
 
 @mcp.tool()
