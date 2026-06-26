@@ -1,8 +1,12 @@
 # Continual Governed RL — the async-RL engine under the SSIL gates
 
-**Status:** design (builds on RUNNABLE pieces: `provenance_bench/async_rl.py`,
-`provenance_bench/rl_reward.py`, the SSIL orchestrator `tools/run_ssil*.py`).
-No capability claim; `canClaimAGI` stays `false`.
+**Status:** Phase 0 **RUNNABLE** — the fail-closed replay buffer
+(`provenance_bench/governed_rl.py`, `tools/`-runnable via `python -m
+provenance_bench.governed_rl`) enforces the trust-bound admission policy against
+the repo's *real* seams (the `provenance_faithful` gate + the OKF belief graph),
+proven by 9 offline invariants (`tests/test_governed_rl.py`). Phases 1–2 (live
+model + SSIL wiring) remain design. No capability claim; `canClaimAGI` stays
+`false`.
 
 > **The thesis.** Sophia already has the two hardest ingredients of a *safe*
 > self-improving system: (1) **verifier-as-reward** — a deterministic checker the
@@ -90,9 +94,12 @@ the *cadence*; SSIL keeps the *authority*.
 
 ## Phasing
 
-- **Phase 0 (offline, CI):** `FailClosedReplayBuffer` = `ReplayBuffer` + an
-  `admit()` predicate calling the gate and `okf.is_grounded`; invariants 1–4 on
-  the mock policy. Pure-Python/numpy — runs anywhere.
+- **Phase 0 (offline, CI) — DONE:** `FailClosedReplayBuffer` = `ReplayBuffer` + an
+  `admit()` predicate calling the real `provenance_faithful` gate and
+  `okf.is_grounded`; invariants 1–5 in `tests/test_governed_rl.py` (incl. a
+  red-team "high-reward fabrication is dropped", an off-corpus/orphaned-belief
+  drop via a real OKF graph, fail-closed-on-exception, and agreement with the
+  real RLVR reward seam). Runs anywhere — no torch/GPU.
 - **Phase 1 (gated, GPU):** swap `generate_fn` for a live model (`agent/model.py`,
   DeepSeek/any provider) and feed admitted trajectories into
   `run_ssil_compound.py --live`; pre-register the held-out gain claim in
