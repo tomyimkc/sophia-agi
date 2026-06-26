@@ -68,13 +68,13 @@ feat/activation-steering-pif, feat/capability-retention-mcp, feat/personality-co
 
 ## Unmerged branches — report only (no deletion, per request)
 
-### Open PRs left untouched (4)
+### Open PRs
 | PR | Branch | Note |
 |----|--------|------|
-| #131 | `claude/agi-repo-optimization-5kpqbc` | **Not fully folded into #133** — has 5 new commits (hybrid do-no-harm guard, retrieval/curriculum fixes, CI-timeout fix). Worth landing. |
-| #135 | `feat/two-paths-to-novelty` | DreamerV3 world model + Lean proof search |
-| #136 | `claude/repo-ip-protection-qvsxyv` | docs-only: wire Zenodo DOI |
-| #137 | `claude/runpod-pod-stall-8rcxvz` | RunPod connection + stop EXITED pod leak |
+| #131 | `claude/agi-repo-optimization-5kpqbc` | **Absorbed into this PR** — its net-new work (hybrid do-no-harm guard, retrieval/curriculum fixes, CI-timeout bump) fixes the 3 tests the hang was masking. Close once this lands. |
+| #135 | `feat/two-paths-to-novelty` | DreamerV3 world model + Lean proof search — left open |
+| #136 | `claude/repo-ip-protection-qvsxyv` | docs-only: wire Zenodo DOI — left open |
+| #137 | `claude/runpod-pod-stall-8rcxvz` | RunPod connection + stop EXITED pod leak — left open |
 
 ### Unmerged, NO open PR (~38) — candidates for PR-or-prune
 Recent & substantive (review for a PR):
