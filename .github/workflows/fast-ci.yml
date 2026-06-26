@@ -52,3 +52,4 @@ jobs:
           python tests/test_fact_check_gate.py
           python tests/test_proof_search.py
           python tests/test_novelty_dag.py
+          python tests/test_wisdom_internalization.py
