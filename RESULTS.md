@@ -149,6 +149,35 @@ cargo test -p diskstore --features io_uring               # + io_uring parity
 cargo run --release -p diskstore --features io_uring --bin diskstore-bench
 ```
 
+## Storage — miniraft (Phase 3)
+
+Clean-room **Raft consensus** core (`storage/miniraft`, Rust, dependency-free)
+built from the paper rather than wrapped over a library — the job description
+explicitly values first-principles work, and the roadmap's own advice was
+"reproduce Raft". The node is a pure state machine (no I/O, no clock); a
+deterministic, event-driven simulator drives N nodes and can crash, restart, and
+partition them, so the **safety properties are tested, not asserted by hand**:
+
+| property | test |
+|---|---|
+| exactly one leader per term (no split-brain) | `elects_exactly_one_leader` |
+| writes commit only on a quorum, applied in order on all nodes | `replicates_and_commits_on_quorum` |
+| leadership + progress recover after the leader crashes | `re_elects_after_leader_crash` |
+| an isolated minority cannot commit; majority does | `minority_partition_cannot_commit` |
+| logs converge after heal; uncommitted writes are dropped | `minority_partition_cannot_commit` |
+| applied prefixes never diverge across nodes | `logs_never_disagree_on_committed_prefix` |
+
+Implements election (randomized timeouts + up-to-date-log voting restriction),
+log replication (consistency check + conflict truncation), and the commit rule
+(quorum **and** current-term). Out of scope, documented not faked: snapshots,
+dynamic membership, on-disk persistence (the node marks which state is
+persistent; wiring it to `diskstore` / a real transport / `openraft` is the
+productionization step).
+
+```bash
+cd storage && cargo test -p miniraft     # 5 safety tests + doctest, fully deterministic
+```
+
 ## Reproduce
 
 ```bash

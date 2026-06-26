@@ -9,7 +9,7 @@ multithreading, durable I/O, consensus).
 |---|---|---|
 | [`kvcache`](#kvcache-phase-1) | 1 / 1b | sharded async in-memory KV cache + pipelining |
 | [`diskstore`](#diskstore-phase-2) | 2 | bitcask-style durable engine; std + io_uring read backends |
-| `raftkv` | 3 | Raft-replicated KV (see roadmap) |
+| [`miniraft`](#miniraft-phase-3) | 3 | clean-room Raft core + deterministic fault-injection simulator |
 
 Run everything: `cargo test` (workspace root `storage/`).
 
@@ -133,8 +133,36 @@ Benchmark numbers and an **honest** note on when io_uring actually wins (it ties
 pread on a page-cached set; the win needs real I/O) are in
 [../RESULTS.md](../RESULTS.md).
 
+---
+
+## `miniraft` (Phase 3)
+
+A **clean-room Raft** consensus core, built from the paper (not wrapped over a
+library), plus a deterministic simulator that proves its safety properties under
+faults. The node is a pure state machine — no I/O, no clock — so the driver
+(`Sim`) can advance logical time, crash/restart nodes, and partition the network,
+making the hard properties reproducibly testable:
+
+```
+Sim::new(5) ─► run_until(leader) ─► propose ─► replicate to quorum ─► commit
+   │ crash(leader)  ─► remaining quorum re-elects, keeps committing
+   │ partition([2],[3]) ─► minority CANNOT commit; majority does
+   │ heal() ─► minority converges, uncommitted writes dropped
+```
+
+Implements election (randomized timeouts + up-to-date-log voting restriction),
+log replication (consistency check + conflict truncation), and the commit rule
+(quorum **and** current term). Snapshots, membership changes, and on-disk
+persistence are explicitly out of scope (the node marks which state is
+persistent; wiring it to `diskstore` is the next step).
+
+```bash
+cargo test -p miniraft     # 5 safety tests + doctest, fully deterministic
+```
+
+See [../RESULTS.md](../RESULTS.md) for the property → test table.
+
 ## What's next (see the roadmap)
 
-- **3** — Raft replication (`openraft`) for a strongly-consistent control plane.
 - **4** — specialize as an **LLM inference KVCache** (prefix-keyed blocks,
   RAM→SSD tiering over `kvcache` + `diskstore`) — the role's core responsibility.

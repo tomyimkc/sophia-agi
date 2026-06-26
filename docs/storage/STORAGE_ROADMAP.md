@@ -105,13 +105,18 @@ Each phase ends with a runnable artifact + benchmark numbers committed to the re
   the io_uring win; a leveled-LSM variant for write amplification study; RocksDB
   baseline + the *first-principles* tradeoff writeup.
 
-### Phase 3 — Replication & consensus (weeks 11–16) → proves Raft/Paxos
-- 3-node cluster via `openraft`: leader election, log replication, snapshots,
-  dynamic membership.
-- Strong-consistency read/write path for the cache metadata/manifest.
-- Jepsen-style fault injection (kill leader, partition, clock skew) → show
-  linearizability holds / where it breaks.
-- **Deliverable:** chaos-test report; recovery-time-objective numbers.
+### Phase 3 — Replication & consensus ✅ SHIPPED → proves Raft/Paxos
+- ✅ `storage/miniraft`: clean-room Raft core (election w/ up-to-date-log
+  restriction, log replication w/ consistency check + truncation, quorum +
+  current-term commit rule) built from the paper, dependency-free.
+- ✅ Deterministic event-driven simulator with crash / restart / **partition**
+  injection — the Jepsen-style faults, made reproducible.
+- ✅ **Delivered:** 5 safety tests proving no-split-brain, quorum-only commit,
+  crash re-election, minority-can't-commit, and post-heal log convergence
+  (`RESULTS.md`).
+- ⏭ **Next:** snapshots + log compaction; dynamic membership; persist the
+  Raft log to `diskstore`; run the core under a real transport, or integrate
+  `openraft` (v0.9 storage-v2 API already vetted) as the production engine.
 
 ### Phase 4 — KVCache-for-inference specialization (weeks 17–22) → the role's core
 - Prefix/blockwise KV-block cache keyed by token-prefix hash; RAM→SSD tiering;
