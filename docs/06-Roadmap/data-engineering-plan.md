@@ -36,7 +36,7 @@ catalog), importable from `agent/` so it stays consistent with the trust-layer v
 | 3 | Columnar & regression | DuckDB/Parquet corpus stats, quality-regression gate | 语言数据处理 (质量回归) | ✅ done |
 | 4 | Acquisition loop | async crawler, priority frontier, CommonCrawl WARC ingest | 采集 pipeline (全网采集环路) | ✅ done |
 | 5 | Scale proof & infra | object-store shards, KV seen-set, queue, RESULTS numbers | 数据基建 (TB tokens) | ✅ harness done |
-| + | Multimodal slice (stretch) | image-text WebDataset shards w/ perceptual-hash dedup | 多模态数据 | ⏳ |
+| + | Multimodal slice (stretch) | image-text WebDataset shards w/ perceptual-hash dedup | 多模态数据 | ✅ done |
 
 ### Phase 0 — Foundation & contracts
 - `pipeline/schemas/document.schema.json` — canonical document record.
@@ -116,6 +116,15 @@ come from running it on real infra (see `scale-runbook.md`).
 - **Remaining (needs real infra, not code):** run on a multi-GB dump and fill `RESULTS.md`
   with measured TB-token numbers + cost; implement the S3/RocksDB/Redis adapters for prod.
 
-### Stretch — Multimodal slice
-- One image-text pipeline → perceptual-hash dedup → quality filter → WebDataset/Parquet shards,
-  each sample carrying `okf/` provenance lineage.
+### Stretch — Multimodal slice ✅
+One image-text vertical, stdlib-core and testable offline (image *decoding* optional via PIL):
+- `pipeline/multimodal/phash.py` — average/difference perceptual hash over a grayscale matrix
+  + Hamming distance; `image_to_matrix` (PIL) optional behind `decode_available()`.
+- `pipeline/multimodal/sample.py` — image-text sample contract (stdlib validator).
+- `pipeline/multimodal/process.py` — `dedup_samples` (phash single-linkage near-dup) +
+  `score_sample` (caption quality + provenance prior, fail-closed on empty caption).
+- `pipeline/multimodal/shards.py` — real WebDataset tar writer/reader (`<key>.jpg/.txt/.json`,
+  provenance + dedup + quality in the JSON sidecar).
+- `tools/build_multimodal_shards.py` — pairs JSONL → dedup → score → WebDataset shard.
+- **Done:** synthetic-image tests green; CLI removed a near-dup (perceptual), dropped a spam
+  caption, and wrote a loadable WebDataset tar with provenance.
