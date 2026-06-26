@@ -44,6 +44,26 @@ Main aggregate artifact:
 agi-proof/benchmark-results/capability-panel.public-report.json   (axes.verifiedTraces)
 ```
 
+## Falsification test (the killer experiment)
+
+```bash
+python tools/run_verified_trace_recall.py
+```
+
+Main artifact:
+
+```text
+agi-proof/verified-traces/verified-trace-recall.public-report.json
+```
+
+Runs the reasoning compiler's seeded synthetic experiment (400 graphs, 200 with
+planted live contradictions) WITH the trace hook active, then asserts four
+falsifiable invariants: (1) the log's `contradictionRecall` equals the
+compiler's planted-ground-truth recall, (2) it is 1.0 (no contradiction slipped
+through), (3) the hash chain survives a 400-trace run, (4) every record carries
+the no-overclaim triad. `VERDICT: CONFIRMED` on synthetic graphs; real-world
+recall is bounded by the fact gate's external (recall, fpr).
+
 ## Honest scope
 
 The verified-trace layer is deterministic, offline candidate infrastructure. It

@@ -241,10 +241,12 @@ def compile_graph(g: ReasoningGraph) -> CompileResult:
 
     # Verified-trace hook (observer-only): emit one fact+logic-stamped trace per
     # compile. The logic stamp IS the compiler's own type-check (emittable /
-    # contradictions / laundered / semanticsPreserved); the fact stamp reuses the
-    # grounded-conclusion provenance verdict. A logger fault can never break a
-    # compile (``emit`` swallows exceptions per the repo's audit convention), and
-    # the compiler's fail-closed behaviour is untouched.
+    # contradictions / laundered / semanticsPreserved). The fact stamp matches the
+    # compiler's emittable definition exactly — a goal is fact-OK iff it is grounded
+    # AND free of live contradictions — so fact and logic agree by construction
+    # (a contradiction must lower BOTH stamps, never one alone). A logger fault can
+    # never break a compile (``emit`` swallows exceptions per the repo's audit
+    # convention), and the compiler's fail-closed behaviour is untouched.
     try:
         from agent.verified_trace import VerifiedTrace, emit, _trace_id
         emit(VerifiedTrace(
@@ -255,7 +257,9 @@ def compile_graph(g: ReasoningGraph) -> CompileResult:
             claimText=g.claims[g.goal].statement,
             claimKind="goal",
             fact={
-                "verdict": "allow" if grounded_after else "abstain",
+                # grounded alone is not enough: a contradiction must also be absent,
+                # matching emittable = grounded_after and not diags["contradictions"].
+                "verdict": "allow" if emittable else "abstain",
                 "source": "propagate_confidence",
                 "authorConfidence": "compiled",
                 "effectiveConfidenceRank": conf_after,
