@@ -100,10 +100,15 @@ the *cadence*; SSIL keeps the *authority*.
   red-team "high-reward fabrication is dropped", an off-corpus/orphaned-belief
   drop via a real OKF graph, fail-closed-on-exception, and agreement with the
   real RLVR reward seam). Runs anywhere — no torch/GPU.
-- **Phase 1 (gated, GPU):** swap `generate_fn` for a live model (`agent/model.py`,
-  DeepSeek/any provider) and feed admitted trajectories into
-  `run_ssil_compound.py --live`; pre-register the held-out gain claim in
-  `agi-proof/failure-ledger.md` (open until a gated run, per repo policy).
+- **Phase 1 (wiring DONE; live gated):** `provenance_bench/continual_rl.py` +
+  `tools/run_continual_rl.py` run the loop end-to-end — `agent.model` generation
+  (mock backend offline, live provider gated by env) → real verifier-as-reward →
+  `FailClosedReplayBuffer` → trainer step. 6 offline invariants
+  (`tests/test_continual_rl.py`): the pipeline composes, a fabricating policy is
+  admitted 0 times, the admitted-rate rises as the (synthetic) policy improves,
+  and the real model adapter seam returns text offline. **Still gated:** the GPU
+  GRPO update and feeding admitted trajectories into `run_ssil_compound.py --live`;
+  pre-register the held-out gain claim in `agi-proof/failure-ledger.md`.
 - **Phase 2:** make a rollout a full tool-using **Agent-RL** episode (the rollout
   IS a gated agent trace through `agent/harness.py`), so self-improvement is over
   *behavior*, not just text.

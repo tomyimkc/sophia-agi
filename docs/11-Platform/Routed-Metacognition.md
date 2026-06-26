@@ -1,8 +1,12 @@
 # Routed Metacognition — MoE routing as a compute-proportional council
 
-**Status:** design (builds on `moe/router.py`, `agent/sector_council.py`,
-`agent/council_deliberate.py`, `agent/calibration.py`, `agent/graded_decision.py`).
-No capability claim.
+**Status:** Phase 0 **RUNNABLE** — `agent/routed_metacognition.py` (`python -m
+agent.routed_metacognition`) routes over the real `sector_council` seats with the
+`moe.router` top-k + load-balancing-loss machinery: difficulty-gated `k`, a
+high-stakes (law) safety floor, fail-toward-more-deliberation under uncertainty,
+and a live monoculture meter; 7 offline invariants in
+`tests/test_routed_metacognition.py`. Phases 1–2 (calibration on a real eval, RL
+penalty wiring) remain design. No capability claim.
 
 > **The insight.** MoE's top-k router is *resource allocation under uncertainty*,
 > and its load-balancing auxiliary loss is a *metacognitive alarm*. Sophia already

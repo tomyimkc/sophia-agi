@@ -1,8 +1,12 @@
 # Fail-Closed Memory — a verification-gated tiered belief store
 
-**Status:** design (builds on `serving/kv_cache.py`, `okf/graph.py`,
-`okf/counterfactual.py`, `agent/memory.py`, `agent/gate.py`). Fills the repo's
-weakest pillar — memory is marked ⚠️ partial in [VISION.md](../../VISION.md).
+**Status:** Phase 0 **RUNNABLE** — `agent/belief_store.py` (`python -m
+agent.belief_store`) implements the gate-on-promote tiered store against the real
+`provenance_faithful` gate + a real OKF graph, with provenance-preserving,
+audited eviction and belief reuse; 12 offline invariants in
+`tests/test_belief_store.py`. Phases 1–2 (live grounded-path wiring + background
+consolidation) remain design. Fills the repo's weakest pillar — memory is marked
+⚠️ partial in [VISION.md](../../VISION.md).
 
 > **The insight.** The [systems track](Systems-Track.md)'s tiered KV cache *is* a
 > memory architecture. Two of its mechanisms map directly onto cognition, and the
