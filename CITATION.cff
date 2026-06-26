@@ -2,17 +2,18 @@
 # with a fixed authorship + date record. It is part of the project's defensive
 # publication / provenance strategy: it establishes a citable priority claim.
 #
-# TODO(author): replace `given-names`/`family-names` with your legal name and add
-# your ORCID (https://orcid.org, free) so the authorship record is unambiguous.
+# Author of record: Yim Kin Cheong (Hong Kong). Remaining: register a free ORCID
+# (https://orcid.org) and uncomment the `orcid:` line so the record is unambiguous.
 cff-version: 1.2.0
 title: "Sophia — the Wisdom Gate: a provenance-aware, verifier-gated reasoning layer that abstains instead of fabricating"
 message: "If you use this software, dataset, or method, please cite it using this metadata."
 type: software
 authors:
   - alias: tomyimkc
-    given-names: "FIRST"      # TODO(author): your legal given name
-    family-names: "LAST"       # TODO(author): your legal family name
-    # orcid: "https://orcid.org/0000-0000-0000-0000"  # TODO(author): register + add
+    given-names: "Kin Cheong"
+    family-names: "Yim"
+    country: HK
+    # orcid: "https://orcid.org/0000-0000-0000-0000"  # TODO(author): register a free ORCID at orcid.org and add it here
 repository-code: "https://github.com/tomyimkc/sophia-agi"
 url: "https://tomyimkc.github.io/sophia-agi/"
 abstract: >-

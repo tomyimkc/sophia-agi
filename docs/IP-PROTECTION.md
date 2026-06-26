@@ -75,12 +75,14 @@ This is the path that fits an open, already-public project. Checklist:
       category; alternatively post to **Zenodo** or **OSF**, which need no endorsement.)
 - [ ] **Sign your commits** — see below; cryptographically binds the authorship record.
 - [ ] **Register the trademark** — for "Sophia AGI" / "Wisdom Gate" / "Moral Gate" /
-      "Conscience Kernel" with your national office (e.g. USPTO, or IP Australia) if the
-      brand has commercial value. You already assert common-law rights in
+      "Conscience Kernel" with the **Hong Kong Intellectual Property Department (IPD)**
+      (https://www.ipd.gov.hk) if the brand has commercial value; consider also the
+      **USPTO** if you target the US market, and **WIPO's Madrid System** to extend one
+      filing to multiple countries. You already assert common-law rights in
       `TRADEMARK-POLICY.md`; registration makes them enforceable.
-- [ ] **Fill the author identity** — replace the `FIRST/LAST` placeholders in
-      `CITATION.cff`, `.zenodo.json`, and the whitepaper with your legal name, and add a
-      free **ORCID** so the authorship record is unambiguous.
+- [x] **Fill the author identity** — author of record is **Yim Kin Cheong** (Hong Kong),
+      set in `CITATION.cff`, `.zenodo.json`, and the whitepaper. Remaining: register a
+      free **ORCID** (https://orcid.org) and uncomment the `orcid:` line in `CITATION.cff`.
 
 ## Optional: exclusivity going forward
 

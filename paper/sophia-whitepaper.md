@@ -1,6 +1,6 @@
 # Sophia — the Wisdom Gate: A Provenance-Aware, Verifier-Gated Reasoning Layer That Abstains Instead of Fabricating
 
-**Author:** FIRST LAST (tomyimkc) — *TODO: legal name + ORCID*
+**Author:** Yim Kin Cheong (tomyimkc), Hong Kong — *ORCID: TODO (register free at orcid.org)*
 **Version:** 0.9.0 · **Date:** 2026-06-22 (first public release)
 **Code:** https://github.com/tomyimkc/sophia-agi · **Site:** https://tomyimkc.github.io/sophia-agi/
 **Dataset:** https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus
