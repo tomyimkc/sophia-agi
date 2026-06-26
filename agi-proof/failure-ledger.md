@@ -1454,3 +1454,76 @@ corrected gate, v3 does not promote.** Closing the loop without forgetting (repl
 old domain or a smaller weight delta, then re-running learning-under-shift to `passingSignal=true`)
 is now a precondition for any future promotion — this remains open and hardware-bound (MLX/GPU).
 **Claim impact:** Mock eval shows metric direction; no validated uplift. `canClaimAGI: false`.
+
+## provenance-delta-survives-judge-free-2026-06-27
+
+**Status:** RAN — the validated anti-fabrication advantage SURVIVES judge-free.
+Candidate-grade (one deterministic judge family); does NOT by itself clear the
+multi-judge validation bar. `canClaimAGI` stays **False**.
+
+**Why this is the highest-information experiment of the phase.** The Verifiable-
+Sophia plan (commit cb887e5) pre-registered a binary falsifiable question for the
+whole phase: is Sophia's one validated claim (−12.5pt hallucination Δ on
+dolphin-llama3:8b) a *real* abstention property, or partly an LLM-judge artifact?
+The plan was explicit: *"If the Datalog reproduction fails, the implication is
+serious — the advantage may be partly an LLM-judge artifact."* This entry answers
+that question directly on the **model side** (the Datalog port answered it on the
+gate side — see `datalog-provenance-faithful-port-preregistered-2026-06-27`).
+
+**Setup (judge-free, deterministic labeler).** Ran `tools/run_unified_uplift.py
+--model ollama:dolphin-llama3:8b --runs 3 --limit 48 --levers +gate` with **no
+`--judges`** — so `judge_answer` falls back to the deterministic **lexical judge**
+(`provenance_bench/judge.py::lexical_judge`), which labels each model answer
+hallucinated/abstained/correct against external gold and shares NO code with the
+gate. dolphin-llama3:8b was available locally (Ollama HTTP 200, model pulled),
+so this ran live on the host — NOT via RunPod/GHA, NOT blocked.
+
+**Result.**
+- `+gate` hallucination Δ = **+9.0%** (raw-alone 0.0903 → +gate 0.0000),
+  paired-bootstrap 95% CI **[+4.9%, +13.9%], EXCLUDES ZERO**.
+- per-run Δ: [0.0625, 0.1250, 0.0833] (all positive, consistent direction).
+- false-positive cost **0.0%**; coverage recall **100%** (gate fired on every
+  case it should have, broke no correct answer).
+- 3 runs, N=48 (24 false + 24 true controls), lexical judge only.
+
+**Interpretation (honest).** The validated number was **+12.5% [+5.6%, +19.4%]**
+scored by TWO LLM judge families (deepseek + llama-3.3-70b, κ=0.74) on N=24 false
+cases. My judge-free reproduction is **+9.0% [+4.9%, +13.9%]** — a smaller point
+estimate (different case subset: 48 cases incl. true controls vs the validated
+24 false-only) with an **overlapping** CI that **also excludes zero**. The
+direction and statistical significance survive removing every LLM judge from the
+labeling loop. **The advantage is NOT an LLM-judge artifact.** This is the
+decisive falsifiable outcome the phase was designed to produce — and it is the
+non-decaying direction (a deterministic lexical labeler + a deterministic gate,
+no judge vote anywhere in the loop).
+
+**Boundary conditions / what this does NOT clear.**
+- This judge-free run is **`validated: False`** by the repo's own bar, correctly:
+  the multi-judge gate (`_is_validated`) requires ≥2 DISTINCT judge families with
+  κ≥0.40. A single deterministic lexical judge is one family, not corroboration.
+  This run STRENGTHENS the validated claim (the effect survives judge-free) but
+  does NOT replace the multi-judge run; the existing +12.5% multi-judge result
+  remains the headline.
+- The validated −12.5pt model-side delta is STILL a decaying asset
+  (`calibration-advantage-is-model-dependent-2026-06-25`: it vanishes on strong
+  base models). This judge-free reproduction was on the WEAK subject (dolphin).
+  A judge-free run on a strong base (deepseek-v3, where raw already fabricates
+  ~0) is the natural companion and is expected to be a null.
+- N=48, 3 runs, self-authored pack — the residual independence caveat stands.
+  One real third-party pack is still worth more than this.
+- Non-overlapping CI region: judge-free [+4.9, +13.9] vs validated [+5.6, +19.4]
+  overlap heavily but the judge-free upper bound (13.9) is below the validated
+  midpoint (12.5) — consistent with the lexical judge being slightly stricter
+  than the LLM judges, NOT with the effect disappearing.
+
+**Artifact.** `agi-proof/baseline-ablation/judge-free-reproduction-2026-06-27/
+uplift-dolphin-3run-lexical.json` (SHA-256
+`da48f2a54f61f081287601ac29fe07f3400e9e1c0024b7565bfa29519feacad8`). 3 runs,
+N=48, lexical judge, +gate lever.
+
+**Next experiments (in priority order).** (1) The same judge-free run on a STRONG
+base model — does the effect vanish (expected) or survive? Directly tests the
+decaying-asset boundary. (2) Scale N toward 100+ for a tighter judge-free CI.
+(3) A real third-party pack scored judge-free — the only thing that closes the
+independence gap.
+
