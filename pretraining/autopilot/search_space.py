@@ -25,9 +25,11 @@ SPACE = {
     "epochs": [1, 2, 3],
 }
 
-# Which knobs runpod_train.py accepts TODAY vs needs a Step-2 passthrough arg.
-WIRED_TODAY = {"epochs", "seed", "model"}
-NEEDS_PASSTHROUGH = {"lora_rank", "lora_alpha", "lr", "neftune_alpha"}
+# Which knobs runpod_train.py accepts. The LoRA passthrough (lr/rank/alpha/dropout/neftune/
+# weight-decay) is now WIRED via $SOPHIA_HPARAMS, so the whole space transfers to GPU today.
+WIRED_TODAY = {"epochs", "seed", "model", "lr", "lora_rank", "lora_alpha",
+               "lora_dropout", "neftune_alpha", "weight_decay"}
+NEEDS_PASSTHROUGH: set[str] = set()
 
 
 def sample_configs(n: int, *, seed: int = 0, model: str = "Qwen/Qwen2.5-3B-Instruct"
@@ -46,22 +48,22 @@ def sample_configs(n: int, *, seed: int = 0, model: str = "Qwen/Qwen2.5-3B-Instr
         seen.add(key)
         cfg["model"] = model
         cfg["seed"] = 0
-        # honesty tag: can this config be run as-is, or does it need the passthrough work?
-        cfg["_transfers_today"] = all(
-            k in WIRED_TODAY for k in cfg if k not in NEEDS_PASSTHROUGH or cfg[k] == SPACE[k][0]
-        )
+        # honesty tag: every knob now transfers to GPU (LoRA passthrough is wired).
+        cfg["_transfers_today"] = all(k in WIRED_TODAY for k in SPACE)
         out.append(cfg)
     return out
 
 
 def passthrough_gap() -> dict:
-    """Report what Step 2 must add to runpod_train.py for full-space search to transfer."""
+    """Report the GPU passthrough status (the C2 change is now complete)."""
     return {
         "wired_today": sorted(WIRED_TODAY),
         "needs_passthrough": sorted(NEEDS_PASSTHROUGH),
-        "note": ("train_lora.py already accepts --lora-rank/--lr/--neftune-alpha; the Step-2 "
-                 "change is threading these through runpod_train.py's remote command builder. "
-                 "Until then, the sweep can only vary epochs/seed/model on real GPU."),
+        "complete": not NEEDS_PASSTHROUGH,
+        "note": ("DONE — runpod_train.py threads --lr/--lora-r/--lora-alpha/--lora-dropout/"
+                 "--neftune-alpha/--weight-decay through $SOPHIA_HPARAMS, so the full LoRA "
+                 "search space transfers to a real GPU run. Default (no overrides) leaves the "
+                 "remote command byte-identical to before."),
     }
 
 

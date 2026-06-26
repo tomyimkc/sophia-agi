@@ -47,6 +47,13 @@ class RunPodLoRABackend:
         train_data = config.get("train_data", self.train_data)
         if train_data:
             cmd += ["--train-data", train_data]
+        # LoRA hyperparameter overrides (now threaded through runpod_train.py via
+        # $SOPHIA_HPARAMS). Search-space key -> runpod_train.py flag.
+        for key, flag in (("lr", "--lr"), ("lora_rank", "--lora-r"),
+                          ("lora_alpha", "--lora-alpha"), ("lora_dropout", "--lora-dropout"),
+                          ("neftune_alpha", "--neftune-alpha"), ("weight_decay", "--weight-decay")):
+            if config.get(key) is not None:
+                cmd += [flag, str(config[key])]
         if config.get("interruptible"):
             cmd += ["--interruptible"]   # cheaper spot pod
         cmd += ["--yes"] if execute else ["--dry-run"]

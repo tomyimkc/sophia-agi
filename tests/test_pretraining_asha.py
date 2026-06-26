@@ -72,12 +72,25 @@ def test_search_space_sampler_is_deterministic_and_distinct() -> None:
         assert cfg["model"].startswith("Qwen")
 
 
-def test_passthrough_gap_is_honest() -> None:
+def test_passthrough_gap_is_complete() -> None:
     gap = passthrough_gap()
-    # epochs transfers today; lora_rank/lr do not (need Step-2 passthrough)
-    assert "epochs" in WIRED_TODAY
-    assert "lora_rank" in NEEDS_PASSTHROUGH and "lr" in NEEDS_PASSTHROUGH
-    assert set(gap["needs_passthrough"]) == NEEDS_PASSTHROUGH
+    # the LoRA passthrough is now wired -> the whole space transfers to GPU
+    assert "epochs" in WIRED_TODAY and "lr" in WIRED_TODAY and "lora_rank" in WIRED_TODAY
+    assert NEEDS_PASSTHROUGH == set()
+    assert gap["complete"] is True
+    assert set(gap["needs_passthrough"]) == set()
+
+
+def test_searched_config_transfers_to_runpod_command() -> None:
+    # A sampled LoRA config must produce real runpod_train.py override flags (dry-run).
+    from pretraining.autopilot.cost_governor import CostGovernor
+    from pretraining.autopilot.runpod_backend import RunPodLoRABackend
+    cfg = {"lr": 2e-4, "lora_rank": 32, "lora_alpha": 64, "neftune_alpha": 10,
+           "epochs": 1, "seed": 0}
+    cmd = RunPodLoRABackend(CostGovernor(25.0), branch="b").build_command(cfg)
+    s = " ".join(cmd)
+    assert "--lr 0.0002" in s and "--lora-r 32" in s and "--lora-alpha 64" in s
+    assert "--neftune-alpha 10" in s and "--dry-run" in s
 
 
 def test_empty_inputs_fail_closed() -> None:

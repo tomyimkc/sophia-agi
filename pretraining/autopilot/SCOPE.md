@@ -25,17 +25,21 @@ capped, spending always a deliberate human action.
 | **C1** | Real RunPod backend: config→`runpod_train.py` argv + eval-ladder→objective parser | ✅ Step 1 (`runpod_backend.py`, `eval_ladder_objective.py`) |
 | **C4** | Cost governor: hard USD ceiling, projected/actual spend, fail-closed guard | ✅ Step 1 (`cost_governor.py`) |
 | **—** | Calibration harness + gated CI launch (1 real trial → measured cost) | ✅ Step 1 (`calibrate.py`, `.github/workflows/calibrate-runpod.yml`) |
-| **C2** | Search space + objective: LoRA rank/alpha/lr/epochs/NEFTune knobs + sampler | 🟡 Step 2 — space + sampler built (`search_space.py`); `runpod_train.py` passthrough args still TODO |
+| **C2** | Search space + objective: LoRA rank/alpha/lr/epochs/NEFTune knobs + sampler + GPU passthrough | ✅ Step 2 (`search_space.py` + `runpod_train.py` `$SOPHIA_HPARAMS`) |
 | **C3** | Trial-efficient strategy: ASHA / successive-halving over expensive trials | ✅ Step 2 (`asha.py`, demo `run_asha_demo.py`) — cost-governed, fail-closed |
 | **C5** | Orchestration: parallel pods, spot-eviction retries, idempotent resume, provenance | ⬜ Step 2 |
 
 **C2/C3 status (built, offline-verified):** the ASHA scheduler prunes bad configs on real
 measured results (nano demo: ~39 % fewer runs than naive, converges to the best learning
 rate) and is **fail-closed on the cost ceiling** — it refuses to start a rung it cannot fully
-afford, spending $0 past the ceiling. The LoRA search space + deterministic sampler exist and
-tag each knob as *transfers-today* (epochs/seed/model) vs *needs-passthrough* (rank/alpha/lr/
-NEFTune). The one remaining Step-2 code change before a full-space GPU sweep is threading the
-passthrough knobs through `runpod_train.py`'s remote command builder.
+afford, spending $0 past the ceiling. The LoRA search space + deterministic sampler exist, and
+the GPU passthrough is now **complete**: `runpod_train.py` threads
+`--lr/--lora-r/--lora-alpha/--lora-dropout/--neftune-alpha/--weight-decay` through a new
+`$SOPHIA_HPARAMS` env var appended to every `train_lora` invocation. With no overrides the
+remote command is **byte-identical** to before (verified), so there is zero regression; with
+overrides, a searched config transfers directly to a real GPU run. The only remaining Step-2
+component is **C5** (parallel-pod orchestration, eviction retries, resume) — and the actual
+paid calibration/sweep, which is yours to trigger via `calibrate-runpod.yml`.
 
 ## Cost estimate (anchored at $0.69/hr)
 

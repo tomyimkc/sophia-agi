@@ -106,6 +106,28 @@ def _effective_gpu_count(args: argparse.Namespace) -> int:
     return args.gpu_count
 
 
+def _hparams_flags(args: argparse.Namespace) -> str:
+    """Build the LoRA hyperparameter-override flag string for train_lora.py.
+
+    Returns the flags for whichever of ``--lr / --lora-r / --lora-alpha / --lora-dropout /
+    --neftune-alpha / --weight-decay`` were explicitly set on the CLI (others default to
+    None and are omitted). Exported as ``$SOPHIA_HPARAMS`` and appended to every train_lora
+    invocation, so an autonomous sweep (pretraining/autopilot) can vary these knobs. Empty
+    when nothing is overridden → the remote command is byte-identical to the prior behaviour.
+    Appended AFTER the recipe's own flags, so argparse last-value-wins lets an override beat a
+    hardcoded default (e.g. the full recipe's ``--neftune-alpha 5``).
+    """
+    overrides = [
+        ("--lr", getattr(args, "lr", None)),
+        ("--lora-r", getattr(args, "lora_r", None)),
+        ("--lora-alpha", getattr(args, "lora_alpha", None)),
+        ("--lora-dropout", getattr(args, "lora_dropout", None)),
+        ("--neftune-alpha", getattr(args, "neftune_alpha", None)),
+        ("--weight-decay", getattr(args, "weight_decay", None)),
+    ]
+    return " ".join(f"{flag} {val}" for flag, val in overrides if val is not None)
+
+
 def _seed_train_cmd(args: argparse.Namespace, seed: int, out_dir: str) -> str:
     """The ``train_lora.py`` invocation for one seed → one adapter dir.
 
@@ -116,14 +138,14 @@ def _seed_train_cmd(args: argparse.Namespace, seed: int, out_dir: str) -> str:
         return (
             'python tools/train_lora.py '
             '--model "$SOPHIA_MODEL" --train ' + shlex.quote(args.train_data) + ' --4bit '
-            '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir
+            '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' $SOPHIA_HPARAMS --output ' + out_dir
         )
     train_flag = (" --train " + shlex.quote(args.train_data)) if args.train_data else ""
     return (
         'python tools/train_lora.py '
         '--model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 '
         '--scaffold --guard --eval-every 25 --patience 4' + train_flag + ' '
-        '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir
+        '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' $SOPHIA_HPARAMS --output ' + out_dir
     )
 
 
@@ -175,6 +197,7 @@ export HF_HUB_CACHE=/workspace/.cache/huggingface/hub
 export PIP_CACHE_DIR=/workspace/.cache/pip
 export SOPHIA_MODEL={shlex.quote(args.model)}
 export SOPHIA_EPOCHS={shlex.quote(str(args.epochs))}
+export SOPHIA_HPARAMS={shlex.quote(_hparams_flags(args))}
 mkdir -p /workspace/sophia-runpod /workspace/.cache/huggingface/hub /workspace/.cache/pip
 cd /workspace/sophia-runpod
 if [ {shlex.quote(args.source)} = "git" ] && [ ! -d sophia-agi/.git ]; then
@@ -226,7 +249,7 @@ python tools/train_dpo.py --model "$SOPHIA_MODEL" --4bit --rslora \\
         train_block = f"""
 python tools/train_lora.py \\
   --model "$SOPHIA_MODEL" --train {shlex.quote(args.train_data)} --4bit \\
-  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" \\
+  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" $SOPHIA_HPARAMS \\
   --output {adapter_dir}
 """
     else:
@@ -242,7 +265,7 @@ python tools/train_lora.py \\
 python tools/train_lora.py \\
   --model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 \\
   --scaffold --guard --eval-every 25 --patience 4{train_flag} \\
-  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" \\
+  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" $SOPHIA_HPARAMS \\
   --output {adapter_dir}
 """
     # Eval ladder + W2 promotion gate run after training UNLESS --train-only
@@ -272,6 +295,7 @@ export HF_HUB_CACHE=/workspace/.cache/huggingface/hub
 export PIP_CACHE_DIR=/workspace/.cache/pip
 export SOPHIA_MODEL={shlex.quote(args.model)}
 export SOPHIA_EPOCHS={shlex.quote(str(args.epochs))}
+export SOPHIA_HPARAMS={shlex.quote(_hparams_flags(args))}
 export SOPHIA_SEED={shlex.quote(str(args.seed))}
 mkdir -p /workspace/sophia-runpod /workspace/.cache/huggingface/hub /workspace/.cache/pip
 cd /workspace/sophia-runpod
@@ -311,6 +335,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--model", default="Qwen/Qwen2.5-3B-Instruct")
     ap.add_argument("--epochs", type=int, default=1)
     ap.add_argument("--seed", type=int, default=0)
+    # LoRA hyperparameter overrides for autonomous sweeps (pretraining/autopilot). Each is
+    # None by default -> omitted -> the remote train_lora command is unchanged. When set,
+    # they are appended via $SOPHIA_HPARAMS and win over the recipe's hardcoded defaults.
+    ap.add_argument("--lr", type=float, default=None, help="override train_lora --lr")
+    ap.add_argument("--lora-r", type=int, default=None, help="override LoRA rank")
+    ap.add_argument("--lora-alpha", type=int, default=None, help="override LoRA alpha")
+    ap.add_argument("--lora-dropout", type=float, default=None, help="override LoRA dropout")
+    ap.add_argument("--neftune-alpha", type=float, default=None, help="override NEFTune alpha")
+    ap.add_argument("--weight-decay", type=float, default=None, help="override weight decay")
     ap.add_argument("--train-data", default="",
                     help="path to a pre-built sealed train split (e.g. "
                          "training/local_sophia_7b/mlx/train.jsonl or "

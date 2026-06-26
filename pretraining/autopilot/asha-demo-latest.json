@@ -45,15 +45,17 @@
   "c2_passthrough_gap": {
     "wired_today": [
       "epochs",
-      "model",
-      "seed"
-    ],
-    "needs_passthrough": [
       "lora_alpha",
+      "lora_dropout",
       "lora_rank",
       "lr",
-      "neftune_alpha"
+      "model",
+      "neftune_alpha",
+      "seed",
+      "weight_decay"
     ],
-    "note": "train_lora.py already accepts --lora-rank/--lr/--neftune-alpha; the Step-2 change is threading these through runpod_train.py's remote command builder. Until then, the sweep can only vary epochs/seed/model on real GPU."
+    "needs_passthrough": [],
+    "complete": true,
+    "note": "DONE — runpod_train.py threads --lr/--lora-r/--lora-alpha/--lora-dropout/--neftune-alpha/--weight-decay through $SOPHIA_HPARAMS, so the full LoRA search space transfers to a real GPU run. Default (no overrides) leaves the remote command byte-identical to before."
   }
 }
