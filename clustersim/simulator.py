@@ -2,8 +2,8 @@
 # Copyright (c) 2026 tomyimkc
 """Discrete-event cluster simulator — replays a job trace under a placement policy.
 
-This is the measured core: feed it a Cluster (cluster/topology.py), a job trace
-(cluster/job.py), and a Policy (cluster/scheduler.py); it advances an event clock
+This is the measured core: feed it a Cluster (clustersim/topology.py), a job trace
+(clustersim/job.py), and a Policy (clustersim/scheduler.py); it advances an event clock
 (arrivals + completions), asks the policy to place pending jobs whenever resources
 change, and records the trade-off the JD cares about:
 
@@ -24,23 +24,23 @@ from __future__ import annotations
 import heapq
 from dataclasses import dataclass, field
 
-from cluster.job import Job, JobState
-from cluster.observability import summarize
-from cluster.scheduler import Policy, fragmentation, placement_span
-from cluster.topology import Cluster
+from clustersim.job import Job, JobState
+from clustersim.observability import summarize
+from clustersim.scheduler import Policy, fragmentation, placement_span
+from clustersim.topology import Cluster
 
 
 # Network-tax coefficients (fraction of runtime added per extra island / node hop for
 # collective-heavy jobs). These are the FALLBACK defaults used only when no calibration
-# file is present; cluster/netcalib.json (written by tools/calibrate_network_tax.py)
+# file is present; clustersim/netcalib.json (written by tools/calibrate_network_tax.py)
 # overrides them with coefficients derived from all-reduce bandwidth. Overridable per run.
 ISLAND_TAX = 0.06
 NODE_TAX = 0.12
 
 
 def calibrated_taxes() -> tuple[float, float]:
-    """(island_tax, node_tax) from cluster/netcalib.json if present, else the fallbacks."""
-    from cluster.netcalib import load_calibration
+    """(island_tax, node_tax) from clustersim/netcalib.json if present, else the fallbacks."""
+    from clustersim.netcalib import load_calibration
 
     calib = load_calibration()
     if calib is None:
@@ -55,7 +55,7 @@ def effective_runtime(job: Job, node_span: int, island_span: int,
     Worst-tier (not linear-in-span): a ring all-reduce runs at the speed of its bottleneck
     hop, so the penalty is set once by the coarsest boundary the placement straddles —
     cross-node (NIC) dominates cross-island (NVSwitch) dominates intra-island (NVLink, free).
-    This matches the per-tier semantics of cluster/netcalib.py, so calibrated coefficients
+    This matches the per-tier semantics of clustersim/netcalib.py, so calibrated coefficients
     plug in directly. Non-collective (eval) jobs pay nothing.
     """
     if not job.colocate:
@@ -129,7 +129,7 @@ def simulate(
 ) -> SimResult:
     """Run `trace` on `cluster` under `policy`. Mutates the jobs' runtime state.
 
-    island_tax/node_tax default to the calibrated coefficients (cluster/netcalib.json)
+    island_tax/node_tax default to the calibrated coefficients (clustersim/netcalib.json)
     when None, so a fresh calibration automatically flows into the simulation.
     """
     if island_tax is None or node_tax is None:

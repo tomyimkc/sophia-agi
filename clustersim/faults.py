@@ -24,10 +24,10 @@ import heapq
 import random
 from dataclasses import dataclass, field
 
-from cluster.job import Job, JobState
-from cluster.observability import summarize
-from cluster.scheduler import Policy, placement_span
-from cluster.simulator import effective_runtime
+from clustersim.job import Job, JobState
+from clustersim.observability import summarize
+from clustersim.scheduler import Policy, placement_span
+from clustersim.simulator import effective_runtime
 
 
 @dataclass(frozen=True)
@@ -116,7 +116,7 @@ def simulate_with_faults(
     is requeued, and its next run starts after `recovery_s`. `committed_s` carries the
     durable progress across restarts so re-runs only redo the remaining nominal work.
     """
-    from cluster.simulator import calibrated_taxes
+    from clustersim.simulator import calibrated_taxes
 
     ci, cn = calibrated_taxes()
     itax = ci if island_tax is None else island_tax

@@ -24,8 +24,8 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass
 
-from cluster.job import Job
-from cluster.topology import Cluster, Device
+from clustersim.job import Job
+from clustersim.topology import Cluster, Device
 
 
 # ---------------------------------------------------------------------------

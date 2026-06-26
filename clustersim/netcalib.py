@@ -2,7 +2,7 @@
 # Copyright (c) 2026 tomyimkc
 """Network-tax calibration — turn the simulator's modeled comm penalty into a measured one.
 
-The simulator (cluster/simulator.py) inflates a collective-heavy job's runtime when it is
+The simulator (clustersim/simulator.py) inflates a collective-heavy job's runtime when it is
 spread across NVLink islands / nodes: effective = nominal * (1 + island_tax*(islands-1) +
 node_tax*(nodes-1)). Until now island_tax/node_tax were guessed constants. This module
 *derives* them from all-reduce cost at each interconnect tier, so the coefficients are
@@ -31,7 +31,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_CALIB_PATH = ROOT / "cluster" / "netcalib.json"
+DEFAULT_CALIB_PATH = ROOT / "clustersim" / "netcalib.json"
 
 # Documented, illustrative interconnect bandwidths (GB/s) and latencies (microseconds).
 # These are the MODELED defaults; `source` records whether a tier was measured instead.

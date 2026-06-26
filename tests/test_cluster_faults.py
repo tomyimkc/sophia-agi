@@ -12,10 +12,10 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from cluster.faults import Fault, by_id_dev, inject_faults, simulate_with_faults
-from cluster.job import JobState, synthetic_trace
-from cluster.scheduler import get_policy
-from cluster.topology import homogeneous_cluster
+from clustersim.faults import Fault, by_id_dev, inject_faults, simulate_with_faults
+from clustersim.job import JobState, synthetic_trace
+from clustersim.scheduler import get_policy
+from clustersim.topology import homogeneous_cluster
 
 
 def test_dev_node_membership() -> None:

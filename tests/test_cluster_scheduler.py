@@ -12,15 +12,15 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from cluster.job import Job, JobState, synthetic_trace
-from cluster.scheduler import (
+from clustersim.job import Job, JobState, synthetic_trace
+from clustersim.scheduler import (
     fragmentation,
     get_policy,
     pack_topo,
     placement_span,
 )
-from cluster.simulator import effective_runtime, simulate
-from cluster.topology import heterogeneous_cluster, homogeneous_cluster
+from clustersim.simulator import effective_runtime, simulate
+from clustersim.topology import heterogeneous_cluster, homogeneous_cluster
 
 
 def test_topology_shape() -> None:

@@ -10,7 +10,7 @@ single-pod RunPod tooling (tools/runpod_train.py, the gpu-orchestration skill) i
 analyzable cluster, in the repo's measured-not-claimed style: deterministic, seeded,
 and emitted as *.public-report.json.
 
-    from cluster import homogeneous_cluster, synthetic_trace, get_policy, simulate
+    from clustersim import homogeneous_cluster, synthetic_trace, get_policy, simulate
     cl = homogeneous_cluster(nodes=8, gpus_per_node=8, islands_per_node=2)
     res = simulate(cl, synthetic_trace(n_jobs=200, seed=1), get_policy("backfill-topo"))
     res.utilization, res.wait_p99_s, res.mean_fragmentation
@@ -21,15 +21,15 @@ and failure constants are illustrative; the deliverable is the honest machinery 
 shape of the trade-off curves it produces. See docs/11-Platform/Cluster-Engineering-Roadmap.md.
 """
 
-from cluster.topology import (
+from clustersim.topology import (
     Cluster,
     Device,
     Node,
     heterogeneous_cluster,
     homogeneous_cluster,
 )
-from cluster.job import Job, JobState, synthetic_trace
-from cluster.scheduler import (
+from clustersim.job import Job, JobState, synthetic_trace
+from clustersim.scheduler import (
     BackfillTopo,
     FifoFirstFit,
     Policy,
@@ -37,10 +37,10 @@ from cluster.scheduler import (
     fragmentation,
     get_policy,
 )
-from cluster.simulator import SimResult, calibrated_taxes, simulate
-from cluster.observability import straggler_report, summarize
-from cluster.faults import Fault, FaultResult, inject_faults, simulate_with_faults
-from cluster.netcalib import (
+from clustersim.simulator import SimResult, calibrated_taxes, simulate
+from clustersim.observability import straggler_report, summarize
+from clustersim.faults import Fault, FaultResult, inject_faults, simulate_with_faults
+from clustersim.netcalib import (
     Calibration,
     default_modeled,
     from_nccl_report,
