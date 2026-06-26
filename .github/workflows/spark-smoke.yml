@@ -25,19 +25,26 @@ on:
         default: 'off'
         type: choice
         options: [off, run]
-  pull_request:
-    branches: [main]
-    paths:
-      - 'agent/**'
-      - 'tools/**'
-      - 'tests/**'
-      - 'provenance_bench/**'
-      - 'selfextend/**'
-      - 'scripts/**'
-      - 'training/**'
-      - 'requirements*.txt'
-      - 'pyproject.toml'
-      - '.github/workflows/spark-smoke.yml'
+  # NOTE: pull_request trigger REMOVED until a self-hosted dgx-spark runner is registered
+  # (as of 2026-06-27: zero self-hosted runners are registered, gh api .../actions/runners
+  # -> total:0/online:0). With no runner matching `runs-on: [self-hosted, dgx-spark, arm64]`,
+  # every PR-triggered job queued forever (status: pending) — polluting merge-state as
+  # "BLOCKED" and forcing admin-merges, even though this lane is explicitly best-effort and
+  # NOT a branch-protection required check. Re-add the pull_request block (paths below) once a
+  # dgx-spark runner is online:
+  #   pull_request:
+  #     branches: [main]
+  #     paths:
+  #       - 'agent/**'
+  #       - 'tools/**'
+  #       - 'tests/**'
+  #       - 'provenance_bench/**'
+  #       - 'selfextend/**'
+  #       - 'scripts/**'
+  #       - 'training/**'
+  #       - 'requirements*.txt'
+  #       - 'pyproject.toml'
+  #       - '.github/workflows/spark-smoke.yml'
 
 permissions:
   contents: read
