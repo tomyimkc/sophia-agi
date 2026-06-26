@@ -51,7 +51,8 @@ def read_webdataset(path: str | Path) -> list[dict]:
     by_key: dict[str, dict] = {}
     with tarfile.open(path, "r") as tar:
         for member in tar.getmembers():
-            key, _, ext = member.name.partition(".")
+            # Split on the LAST dot so sample ids containing dots survive the round-trip.
+            key, _, ext = member.name.rpartition(".")
             entry = by_key.setdefault(key, {"id": key})
             data = tar.extractfile(member).read()
             if ext == "txt":

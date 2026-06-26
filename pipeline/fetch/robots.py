@@ -42,7 +42,8 @@ class RobotsCache:
         try:
             status, _headers, body = await self._transport(self._robots_url(url))
         except Exception:
-            self._cache[key] = None  # robots fetch errored -> conservative disallow
+            # Robots fetch errored -> conservative disallow, but do NOT cache: a transient
+            # failure must not block the host forever; the next call retries the fetch.
             return None
         if status == 200 and body:
             rp.parse(body.splitlines())

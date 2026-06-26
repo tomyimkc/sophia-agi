@@ -108,6 +108,21 @@ def test_file_queue_durable_across_reopen():
         assert q2.pop() == {"u": 2}
 
 
+def test_file_queue_skips_poison_line():
+    # A torn write / corrupt line must not make pop() loop forever.
+    with tempfile.TemporaryDirectory() as td:
+        path = Path(td) / "q.jsonl"
+        q = FileQueue(path)
+        q.push({"u": 1})
+        # Append a corrupt line directly (simulating a crash mid-write).
+        with path.open("a", encoding="utf-8") as fh:
+            fh.write("{not valid json\n")
+        q.push({"u": 2})
+        assert q.pop() == {"u": 1}
+        assert q.pop() == {"u": 2}  # poison line skipped, not re-popped forever
+        assert q.pop() is None
+
+
 def test_file_queue_compact():
     with tempfile.TemporaryDirectory() as td:
         q = FileQueue(Path(td) / "q.jsonl")

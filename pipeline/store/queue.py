@@ -61,11 +61,19 @@ class FileQueue:
     def pop(self) -> dict | None:
         lines = self._lines()
         consumed = self._consumed()
-        if consumed >= len(lines):
-            return None
-        item = json.loads(lines[consumed])
-        self._set_consumed(consumed + 1)
-        return item
+        while consumed < len(lines):
+            raw = lines[consumed]
+            consumed += 1
+            try:
+                item = json.loads(raw)
+            except json.JSONDecodeError:
+                # Poison line (e.g. a torn write on crash) -> skip it rather than re-popping
+                # the same unparseable item forever. Advance the cursor past it.
+                self._set_consumed(consumed)
+                continue
+            self._set_consumed(consumed)
+            return item
+        return None
 
     def __len__(self) -> int:
         return max(0, len(self._lines()) - self._consumed())

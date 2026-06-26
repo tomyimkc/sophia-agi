@@ -73,6 +73,21 @@ def test_robots_missing_allows():
     assert asyncio.run(rc.allowed("https://nope.com/anything")) is True
 
 
+def test_robots_transient_error_is_not_cached():
+    # Regression: a transient robots-fetch error must not permanently block the host.
+    state = {"fail": True}
+
+    async def flaky_transport(url):
+        if state["fail"]:
+            raise ConnectionError("boom")
+        return 200, {}, "User-agent: *\nDisallow:\n"
+
+    rc = RobotsCache(flaky_transport, user_agent="SophiaBot")
+    assert asyncio.run(rc.allowed("https://a.com/x")) is False  # errored -> conservative deny
+    state["fail"] = False
+    assert asyncio.run(rc.allowed("https://a.com/x")) is True  # retried, not cached as blocked
+
+
 # -------------------------------- crawler ---------------------------------- #
 
 def _collect(crawler):

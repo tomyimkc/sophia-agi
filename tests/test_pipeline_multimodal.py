@@ -122,6 +122,20 @@ def test_webdataset_roundtrip():
         assert back["a"]["provenance"]["authorConfidence"] == "attributed"
 
 
+def test_webdataset_key_with_dots():
+    # Regression: a sample id containing dots must survive the tar round-trip.
+    samples = [{"id": "n02129165.snow.leopard.0001", "caption": "cat",
+                "image_bytes": b"\xff\xd8img"}]
+    with tempfile.TemporaryDirectory() as td:
+        tar = Path(td) / "p.tar"
+        shards.write_webdataset(samples, tar)
+        back = shards.read_webdataset(tar)
+        assert len(back) == 1
+        assert back[0]["id"] == "n02129165.snow.leopard.0001"
+        assert back[0]["caption"] == "cat"
+        assert back[0]["image_bytes"] == b"\xff\xd8img"
+
+
 if __name__ == "__main__":
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):

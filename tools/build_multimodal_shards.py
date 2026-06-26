@@ -36,7 +36,11 @@ def _load(path: str) -> list[dict]:
         s = json.loads(line)
         # Support base64 image bytes in JSONL, and on-disk image_path.
         if isinstance(s.get("image_b64"), str):
-            s["image_bytes"] = base64.b64decode(s.pop("image_b64"))
+            try:
+                s["image_bytes"] = base64.b64decode(s.pop("image_b64"), validate=True)
+            except Exception:  # malformed base64 -> skip this sample, keep going
+                print(f"[skip] sample {s.get('id')!r}: bad base64 image", file=sys.stderr)
+                continue
         elif s.get("image_path") and Path(s["image_path"]).is_file():
             s["image_bytes"] = Path(s["image_path"]).read_bytes()
         out.append(s)
