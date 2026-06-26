@@ -8,8 +8,8 @@ drives placement quality: which GPUs share a fast intra-node link (an NVLink/NVS
 "island"), which nodes share a rack (cheaper cross-node hop), and the fact that a
 real cluster mixes device *classes* (H100 / A100 / domestic NPU) with different VRAM.
 
-The scheduler (cluster/scheduler.py) consumes this to make topology-aware placement
-decisions; the simulator (cluster/simulator.py) replays jobs against it.
+The scheduler (clustersim/scheduler.py) consumes this to make topology-aware placement
+decisions; the simulator (clustersim/simulator.py) replays jobs against it.
 
     cl = homogeneous_cluster(nodes=4, gpus_per_node=8, vram_gb=80, klass="H100")
     cl.total_gpus          # 32

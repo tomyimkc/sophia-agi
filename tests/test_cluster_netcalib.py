@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from cluster.netcalib import (
+from clustersim.netcalib import (
     DEFAULT_SIZE_BYTES,
     LinkTier,
     bus_bandwidth_gbps,
@@ -72,7 +72,7 @@ def test_from_nccl_report_marks_measured() -> None:
 
 def test_save_load_roundtrip(tmp_path_factory=None) -> None:
     calib = default_modeled()
-    out = ROOT / "cluster" / "netcalib.json"
+    out = ROOT / "clustersim" / "netcalib.json"
     assert out.exists(), "committed modeled calibration should be present"
     loaded = load_calibration(out)
     assert loaded is not None
@@ -82,7 +82,7 @@ def test_save_load_roundtrip(tmp_path_factory=None) -> None:
 
 def test_calibration_drives_simulator() -> None:
     # The simulator must pick up calibrated coefficients when tax args are None.
-    from cluster.simulator import calibrated_taxes
+    from clustersim.simulator import calibrated_taxes
     loaded = load_calibration()
     assert loaded is not None
     ci, cn = calibrated_taxes()

@@ -24,11 +24,11 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from cluster.job import synthetic_trace
-from cluster.netcalib import load_calibration
-from cluster.scheduler import POLICIES, get_policy
-from cluster.simulator import calibrated_taxes, simulate
-from cluster.topology import homogeneous_cluster
+from clustersim.job import synthetic_trace
+from clustersim.netcalib import load_calibration
+from clustersim.scheduler import POLICIES, get_policy
+from clustersim.simulator import calibrated_taxes, simulate
+from clustersim.topology import homogeneous_cluster
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -41,9 +41,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--seed", type=int, default=1)
     p.add_argument("--horizon", type=float, default=3600.0, help="arrival window (s)")
     p.add_argument("--island-tax", type=float, default=None,
-                   help="override the calibrated island tax (cluster/netcalib.json)")
+                   help="override the calibrated island tax (clustersim/netcalib.json)")
     p.add_argument("--node-tax", type=float, default=None,
-                   help="override the calibrated node tax (cluster/netcalib.json)")
+                   help="override the calibrated node tax (clustersim/netcalib.json)")
     p.add_argument("--policies", default=",".join(POLICIES), help="comma list")
     p.add_argument("--out", default=None, help="write JSON report here")
     p.add_argument("--markdown", action="store_true", help="also print a markdown table")
@@ -78,7 +78,7 @@ def run(args: argparse.Namespace) -> dict:
 
     return {
         "schema": "sophia.cluster_scheduler_sim.v1",
-        "scope": "SIMULATED — network tax from cluster/netcalib.json; not a real-fleet measurement.",
+        "scope": "SIMULATED — network tax from clustersim/netcalib.json; not a real-fleet measurement.",
         "config": {
             "nodes": args.nodes, "gpus_per_node": args.gpus_per_node,
             "total_gpus": base_cluster.total_gpus, "islands_per_node": args.islands,

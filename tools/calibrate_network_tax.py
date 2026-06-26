@@ -5,11 +5,11 @@
 
 Two modes:
   (default) MODELED — derive island_tax/node_tax from documented interconnect line rates
-                      (NVLink / NVSwitch / RoCE), writing a reproducible cluster/netcalib.json.
+                      (NVLink / NVSwitch / RoCE), writing a reproducible clustersim/netcalib.json.
   --from-nccl FILE   MEASURED — ingest a tools/bench_nccl_allreduce.py report and replace the
                       NVLink tier with the measured bus bandwidth (cross-node stays modeled).
 
-The written cluster/netcalib.json is consumed automatically by cluster/simulator.py, so a
+The written clustersim/netcalib.json is consumed automatically by clustersim/simulator.py, so a
 fresh calibration flows straight into the scheduler and fault simulations.
 
     python tools/calibrate_network_tax.py --markdown                      # modeled
@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from cluster.netcalib import (
+from clustersim.netcalib import (
     DEFAULT_CALIB_PATH,
     DEFAULT_COMM_FRACTION,
     DEFAULT_N_RANKS,
