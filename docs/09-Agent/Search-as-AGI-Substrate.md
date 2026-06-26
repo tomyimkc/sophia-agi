@@ -36,12 +36,13 @@ agent's plan→gather→fuse→verify loop. Scaled, search becomes the **tool-us
 (the JD's "为 Agent 提供更强大的信息检索工具"): a goal expands into evidence needs, each need is
 perceived, and the results are reconciled.
 
-### 4. A verification gate between retrieval and use
-Sophia re-verifies served output (`sophia_mcp/gateway_wiring.verify_output`) and scores citation
-faithfulness (`agent/rerank.citation_faithfulness`). Wiring those onto the search path means
-retrieved evidence is **checked before it is allowed to ground a claim** — "verification over
-generation" applied to perception, so "retrieved" only becomes "believed" after it survives a
-check.
+### 4. A verification gate between retrieval and use ✅
+`agent/verified_search.py` wires this onto the live path: a *generated* answer is re-checked —
+citation faithfulness (`agent/rerank.citation_faithfulness`), the epistemic gate
+(`agent/gate.check_response`), and source discipline (an answer that affirmatively attributes a
+work to a `doNotAttributeTo` author is rejected, negation-aware) — and **withheld fail-closed**
+if it does not pass. So "retrieved" only becomes "served" after the answer itself survives the
+gate. "Verification over generation" applied to perception.
 
 ### 5. A badcase flywheel → metacognitive self-correction
 The search-quality eval (`tools/eval_search_quality.py`) emits a badcase taxonomy
@@ -64,8 +65,8 @@ Sophia's charter exists to build, expressed as the organ the DeepSeek charter ca
 |------|-----------|-------|--------|
 | Ground | search results → OKF belief (entity-link + lineage/laundering/contradicts) | `agent/grounded_search.py` → `okf/graph.belief` | ✅ shipped |
 | Calibrate + Abstain | search path → provenance confidence → graded answer/hedge/abstain | `agent/grounded_search.py`, `agent/grounded_confidence.py`, `agent/graded_decision.py` | ✅ shipped |
-| Self-correct | hedged/abstained queries → knowledge-gap worklist → corpus enrichment | `agent/grounded_search.py` → `agent/knowledge_gap_log.gap_worklist` | ✅ shipped (worklist); ⚠️ auto-ingest pending |
-| Verify | search path → grounded gate + citation faithfulness on the generated answer | `agent/grounded_gate.py`, `agent/rerank.citation_faithfulness` | ⚠️ partial — gate exists, not yet on the served answer |
+| Verify | generated answer → citation faithfulness + epistemic gate + source-discipline before serving | `agent/verified_search.py` (`agent/rerank.citation_faithfulness`, `agent/gate.check_response`) | ✅ shipped |
+| Self-correct | hedged/abstained/withheld queries → knowledge-gap worklist → corpus enrichment | `agent/grounded_search.py`, `agent/verified_search.py` → `agent/knowledge_gap_log.gap_worklist` | ✅ shipped (worklist); ⚠️ auto-ingest pending |
 | Perceive widely | learned multilingual/**multimodal** embedder via the registry | `agent/embedding_backends.py` | ⚠️ seam shipped; learned weights pending |
 | Serve at scale | Rust HNSW dense view via the bridge → sharding/RDMA | `services/ann_serving/`, `agent/ann_client.py` | ⚠️ single-node shipped; sharding/RDMA pending |
 
@@ -86,6 +87,12 @@ Sophia's charter exists to build, expressed as the organ the DeepSeek charter ca
   pluggable embedder registry (multilingual/multimodal), and a Rust HNSW serving core with a
   Python bridge.
 
-Honest status: the remaining high-leverage step is **verification on the served answer** — run
-the generated response through the grounded gate + citation-faithfulness before it reaches the
-caller — and **closing the self-correction loop** from worklist to automatic corpus ingestion.
+- **Served-answer verification.** `agent/verified_search.py` runs the *generated* answer through
+  citation faithfulness + the epistemic gate + a negation-aware source-discipline check, and
+  **withholds it fail-closed** if it does not pass — so "retrieved" only becomes "served" after
+  the answer survives the gate.
+
+Honest status: the four properties (ground · calibrate/abstain · verify · self-correct) are now
+wired end-to-end on the live path. The remaining step is **closing the self-correction loop**
+from the knowledge-gap worklist to automatic corpus ingestion (today it produces the ranked
+worklist; ingestion is still a manual curation step).

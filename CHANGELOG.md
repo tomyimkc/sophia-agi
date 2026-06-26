@@ -4,6 +4,20 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — served-answer verification: "retrieved" becomes "served" only after the answer passes
+
+- **Verified search** (`agent/verified_search.py`): ground → generate → **verify** → serve-or-
+  withhold. A *generated* answer (caller-supplied `generate(question, context)`) is re-checked
+  before serving — citation faithfulness (`agent/rerank.citation_faithfulness`), the epistemic
+  gate (`agent/gate.check_response`, gating on hard violations not style warnings), and a
+  negation-aware **source-discipline** check (an answer that affirmatively attributes a work to
+  a `doNotAttributeTo` author is rejected; denials/incidental mentions are not). Failing answers
+  are **withheld fail-closed** (raw kept for audit); a verified weak-source answer is hedged, a
+  verified strong-source answer committed; an abstaining grounding never spends a generation.
+  Withheld/hedged queries feed the knowledge-gap worklist. Tests: `tests/test_verified_search.py`.
+- **Substrate doc**: the Verify property is now marked shipped; the four properties (ground ·
+  calibrate/abstain · verify · self-correct) are wired end-to-end. Remaining: worklist→auto-ingest.
+
 ### Added — grounded search: the AI-search pipeline becomes a verifiable perception organ
 
 - **Grounded, calibrated search** (`agent/grounded_search.py`): wraps `ai_search` and overlays
