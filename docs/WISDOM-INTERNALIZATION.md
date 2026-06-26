@@ -21,7 +21,7 @@ training runs on the **DGX Spark** (hf/cuda, compute-bound FP4).
 |---|---|
 | `tools/model_backends.py` | the single model seam: `make_generate(backend, model, adapter)` → `generate(system,user)->ModelResult`. backends: `mock` / `mlx` / `hf`. |
 | `tools/gen_distill_traces.py` | teacher farm: harvest the gated arm (SFT traces) **and** emit real DPO pairs from the same pass; double-firewall re-check, gold-verify, passport-stamp, held-out seal. |
-| `tools/train_lora.py` | existing trainer; `--guard --scaffold --distill` folds the gated SFT traces in. `--anchor-kl` adds the anti-forgetting KL to the adapter-disabled reference on the moral-gate replay buffer (preserves abstain calibration through KD). |
+| `tools/train_lora.py` | existing trainer; `--guard --scaffold --distill` folds the gated SFT traces in. `--anchor-kl` adds the anti-forgetting KL to the adapter-disabled reference (preserves abstain calibration through KD). `--selective-risk-stop` makes the gate supervise training: it GENERATES on a trap probe each eval and stops if fabrication regresses, even while val-loss falls. |
 | `tools/train_dpo.py` | optional preference stage; consumes `training/council/distill_dpo_pairs.jsonl`. |
 | `tools/run_wisdom_ablation.py` | proof matrix + fabrication-vs-compute curve over the sealed held-out split. |
 | `scripts/wisdom_internalization.sh` | stage driver: `trace` / `train` / `ablate` / `all`. |
@@ -104,3 +104,9 @@ BACKEND=mlx BASE=Qwen/Qwen3-4B bash scripts/wisdom_internalization.sh ablate
   adapter disabled as the frozen reference (no second model loaded). Without it, distilling
   teacher reasoning tends to overwrite the calibrated fail-closed abstain — the thesis
   inversion this term exists to prevent.
+- **Gate supervises training** — `--selective-risk-stop` (driver default on) generates on a
+  small provenance-trap probe each eval and measures fabrication via the *same* deterministic
+  gate (`agent.gate.check_response`). Training stops if fabrication regresses more than
+  `--risk-regress-tol` (0.05) above the best seen — so a checkpoint is "best" only when it
+  improves loss AND does not start fabricating. Early-stop is on behavior under generation,
+  not just teacher-forced loss.

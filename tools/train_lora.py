@@ -555,6 +555,55 @@ def masked_kl(student_logits: Any, ref_logits: Any, labels: Any) -> Any:
     return kl_tok[mask].mean()
 
 
+def load_risk_probe(path: "Path | None", size: int) -> list[dict]:
+    """A small fixed set of provenance-trap prompts for the in-loop selective-risk eval.
+    From ``path`` (JSONL of {prompt}) if given, else the provenance_bench FALSE cases
+    (lazy import so train_lora stays light when the probe is off)."""
+    if path and path.exists():
+        rows = [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
+        return [{"prompt": r["prompt"]} for r in rows if r.get("prompt")][:size]
+    from provenance_bench.dataset import build_cases
+    return [{"prompt": c.prompt} for c in build_cases() if c.label == "false"][:size]
+
+
+def selective_risk(model: Any, tokenizer: Any, probe: list[dict], device: Any,
+                   *, max_new: int = 24) -> float:
+    """Fraction of trap prompts the model FABRICATES on when generating — judged by the
+    SAME deterministic gate the reasoning loop uses (agent.gate.check_response, advisor
+    mode). This is the gate supervising training: it measures behavior under generation,
+    not teacher-forced loss. Greedy decode; model flipped to eval and back."""
+    import torch
+
+    from agent.gate import check_response
+
+    if not probe:
+        return 0.0
+    was_training = model.training
+    model.eval()
+    fabricated = 0
+    with torch.no_grad():
+        for ex in probe:
+            prompt = ex["prompt"]
+            ids = tokenizer.apply_chat_template(
+                [{"role": "user", "content": prompt}], add_generation_prompt=True,
+                return_tensors="pt").to(device)
+            out = model.generate(ids, max_new_tokens=max_new, do_sample=False,
+                                 pad_token_id=tokenizer.eos_token_id)
+            text = tokenizer.decode(out[0][ids.shape[1]:], skip_special_tokens=True)
+            if check_response(text, mode="advisor", question=prompt).get("violations"):
+                fabricated += 1
+    if was_training:
+        model.train()
+    return round(fabricated / len(probe), 4)
+
+
+def risk_regressed(risk: "float | None", best_risk: "float | None", *, tol: float) -> bool:
+    """Pure decision: has trap-fabrication regressed materially above the best seen?
+    Fail-closed gate so KD that re-introduces fabrication stops the run even while
+    val-loss keeps falling."""
+    return risk is not None and best_risk is not None and risk > best_risk + tol
+
+
 def run_manual_train(
     model: Any,
     tokenizer: Any,
@@ -579,6 +628,8 @@ def run_manual_train(
     pack: bool = False,
     anchor_records: list[dict] | None = None,
     anchor_kl: float = 0.0,
+    risk_probe: list[dict] | None = None,
+    risk_regress_tol: float = 0.05,
 ) -> dict:
     import torch
     from torch.utils.data import DataLoader
@@ -641,6 +692,12 @@ def run_manual_train(
     stop = False
     last_train_loss = float("nan")
     last_anchor_kl = float("nan")
+    use_risk = bool(risk_probe)
+    best_risk = float("inf")
+    last_risk = float("nan")
+    if use_risk:
+        print(f"Selective-risk stop active: {len(risk_probe)} trap probe(s), "
+              f"regress_tol={risk_regress_tol}", flush=True)
 
     print(
         f"Manual SFT: {epochs} epoch(s), batch={batch_size}, grad_accum={grad_accum}, "
@@ -682,26 +739,59 @@ def run_manual_train(
                         flush=True,
                     )
 
-                if eval_loader and eval_every and global_step % eval_every == 0:
-                    val = evaluate(model, eval_loader, device, eval_batches)
-                    ratio = val / last_train_loss if last_train_loss else float("nan")
-                    print(
-                        f"  [eval] step {global_step} val_loss={val:.4f} "
-                        f"train_loss={last_train_loss:.4f} val/train={ratio:.2f}",
-                        flush=True,
-                    )
-                    if val < best_val - min_delta:
-                        best_val = val
+                if eval_every and global_step % eval_every == 0 and (eval_loader or use_risk):
+                    # (1) loss-based val (only when a holdout loader is present)
+                    val = ratio = None
+                    improved = True
+                    if eval_loader:
+                        val = evaluate(model, eval_loader, device, eval_batches)
+                        ratio = val / last_train_loss if last_train_loss else float("nan")
+                        print(
+                            f"  [eval] step {global_step} val_loss={val:.4f} "
+                            f"train_loss={last_train_loss:.4f} val/train={ratio:.2f}",
+                            flush=True,
+                        )
+                        improved = val < best_val - min_delta
+
+                    # (2) selective risk — the gate supervises training (generation, not loss)
+                    risk = None
+                    if use_risk:
+                        risk = selective_risk(model, tokenizer, risk_probe, device)
+                        last_risk = risk
+                        shown = "-" if best_risk == float("inf") else f"{best_risk:.4f}"
+                        print(f"  [eval] step {global_step} trap_fabrication={risk:.4f} "
+                              f"(best={shown})", flush=True)
+                    prev_best_risk = None if best_risk == float("inf") else best_risk
+                    regressed = risk_regressed(risk, prev_best_risk, tol=risk_regress_tol)
+                    risk_ok = risk is None or prev_best_risk is None or risk <= prev_best_risk
+
+                    # (3) save-best needs BOTH an improved loss and no risk regression
+                    if improved and risk_ok:
+                        if val is not None:
+                            best_val = val
                         bad_evals = 0
                         if save_best:
-                            save_best({"bestValLoss": round(best_val, 4), "atStep": global_step})
+                            meta = {"atStep": global_step}
+                            if val is not None:
+                                meta["bestValLoss"] = round(best_val, 4)
+                            if risk is not None:
+                                meta["trapFabrication"] = risk
+                            save_best(meta)
                             saved_any = True
-                            print(f"  [eval] new best val_loss — checkpoint saved at step {global_step}", flush=True)
+                            print(f"  [eval] new best — checkpoint saved at step {global_step}", flush=True)
                     else:
                         bad_evals += 1
-                        print(f"  [eval] no improvement ({bad_evals}/{patience})", flush=True)
-                    if overfit_ratio and ratio > overfit_ratio:
+                        why = "risk regressed" if not risk_ok else "no improvement"
+                        print(f"  [eval] {why} ({bad_evals}/{patience})", flush=True)
+
+                    if risk is not None and risk < best_risk:
+                        best_risk = risk
+                    if overfit_ratio and ratio is not None and ratio > overfit_ratio:
                         print(f"  [eval] STOP: val/train {ratio:.2f} > overfit ratio {overfit_ratio}", flush=True)
+                        stop = True
+                    if regressed:
+                        print(f"  [eval] STOP: trap_fabrication {risk:.4f} regressed "
+                              f">{risk_regress_tol} above best — gate halts KD", flush=True)
                         stop = True
                     if bad_evals >= patience:
                         print(f"  [eval] EARLY STOP: no improvement for {patience} evals", flush=True)
@@ -726,6 +816,8 @@ def run_manual_train(
         "savedBest": saved_any,
         "anchorKl": anchor_kl if use_anchor else 0.0,
         "finalAnchorKl": round(last_anchor_kl, 4) if last_anchor_kl == last_anchor_kl else None,
+        "bestTrapFabrication": round(best_risk, 4) if best_risk != float("inf") else None,
+        "finalTrapFabrication": round(last_risk, 4) if last_risk == last_risk else None,
     }
 
 
@@ -811,6 +903,15 @@ def main() -> int:
                              "calibration through KD. peft backend only.")
     parser.add_argument("--anchor-data", type=Path, default=DEFAULT_ANCHOR,
                         help="Replay rows for the anchor KL (default: the moral-gate SFT exemplars)")
+    parser.add_argument("--selective-risk-stop", action="store_true",
+                        help="At each eval, GENERATE on a trap probe and stop if fabrication "
+                             "regresses — the gate supervises training, not just val-loss. peft only.")
+    parser.add_argument("--risk-probe", type=Path, default=None,
+                        help="JSONL of {prompt} trap prompts (default: provenance_bench false cases)")
+    parser.add_argument("--risk-probe-size", type=int, default=24,
+                        help="How many trap prompts to generate on per eval (keep small — it costs decode)")
+    parser.add_argument("--risk-regress-tol", type=float, default=0.05,
+                        help="Stop if trap fabrication rises more than this above the best seen")
     parser.add_argument("--no-mask-prompt", dest="mask_prompt", action="store_false",
                         help="Train on prompt tokens too (default: completion-only loss)")
     # eval ladder / early stopping
@@ -975,6 +1076,16 @@ def main() -> int:
         else:
             print(f"--anchor-kl set but {args.anchor_data} missing; anchor disabled", flush=True)
 
+    # Selective-risk probe (gate-supervised early stop). Built only when the flag is on.
+    risk_probe: list[dict] = []
+    if args.selective_risk_stop:
+        if args.backend != "peft":
+            print(f"--selective-risk-stop is peft-backend only; ignored on --backend {args.backend}", flush=True)
+        else:
+            risk_probe = load_risk_probe(args.risk_probe, args.risk_probe_size)
+            print(f"Selective-risk: {len(risk_probe)} trap prompt(s)"
+                  f"{' from ' + str(args.risk_probe) if args.risk_probe else ' from provenance_bench'}", flush=True)
+
     base_meta = {
         "trainRows": len(train_records),
         "epochs": args.epochs,
@@ -1020,12 +1131,14 @@ def main() -> int:
         patience=args.patience,
         min_delta=args.min_delta,
         overfit_ratio=args.overfit_ratio,
-        save_best=save_best if eval_records else None,
+        save_best=save_best if (eval_records or risk_probe) else None,
         pad_to=args.max_seq_len if args.pad_to_max else None,
         weight_decay=args.weight_decay,
         pack=args.pack,
         anchor_records=anchor_records or None,
         anchor_kl=args.anchor_kl,
+        risk_probe=risk_probe or None,
+        risk_regress_tol=args.risk_regress_tol,
     )
 
     # Remove the NEFTune noise hook before persisting so inference is noise-free.

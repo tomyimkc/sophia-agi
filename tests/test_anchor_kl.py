@@ -1,11 +1,13 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (c) 2026 tomyimkc
-"""Guard for the anchor-KL anti-forgetting term in tools/train_lora.py.
+"""Guard for the two thesis-protective training terms in tools/train_lora.py: the
+anchor-KL anti-forgetting term and the selective-risk (gate-supervised) early stop.
 
 train_lora's torch path is hardware code (no GPU in CI), so this test stays dependency-
-free: it asserts the wiring (run_manual_train accepts the anchor kwargs; masked_kl is
-exposed) and, only when torch happens to be importable, checks the KL numerics. Importing
-tools.train_lora is safe with no torch — its torch/peft imports are all lazy inside funcs.
+free: it asserts the wiring (run_manual_train accepts the kwargs; the helpers are exposed),
+checks the pure decision logic (risk_regressed) and the probe builder, and only when torch
+happens to be importable checks the KL numerics. Importing tools.train_lora is safe with no
+torch — its torch/peft imports are all lazy inside functions.
 """
 from __future__ import annotations
 
@@ -48,6 +50,28 @@ def test_masked_kl_numerics_when_torch_present() -> None:
     # all-masked batch -> exactly 0 (and no NaN)
     allmask = torch.full((B, T), -100)
     assert train_lora.masked_kl(logits, other, allmask).item() == 0.0
+
+
+def test_run_manual_train_accepts_risk_kwargs() -> None:
+    params = inspect.signature(train_lora.run_manual_train).parameters
+    assert "risk_probe" in params and "risk_regress_tol" in params
+    assert params["risk_regress_tol"].default == 0.05
+    assert callable(train_lora.selective_risk) and callable(train_lora.load_risk_probe)
+
+
+def test_risk_regressed_decision_logic() -> None:
+    r = train_lora.risk_regressed
+    assert r(0.20, 0.10, tol=0.05) is True       # +0.10 > tol -> regressed -> stop
+    assert r(0.12, 0.10, tol=0.05) is False       # +0.02 within tol -> ok
+    assert r(0.05, 0.10, tol=0.05) is False       # improved -> ok
+    assert r(None, 0.10, tol=0.05) is False        # no measurement -> never stop
+    assert r(0.20, None, tol=0.05) is False        # first eval (no baseline) -> never stop
+
+
+def test_risk_probe_defaults_to_provenance_traps() -> None:
+    probe = train_lora.load_risk_probe(None, 6)
+    assert probe and all("prompt" in p for p in probe)
+    assert len(probe) <= 6
 
 
 def main() -> int:
