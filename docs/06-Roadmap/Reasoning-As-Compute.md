@@ -173,6 +173,60 @@ the system's quality ceiling is a function of its *verifier*, and beyond a measu
 point, the right move is not more compute but a better check — or principled abstention.
 That is exactly the discipline `VISION.md` already commits to, now with a budget attached.
 
+## Tested: the reasoning compiler preserves semantics while cutting cost
+
+Feature #3 is implemented and **run** as a second falsifiable experiment in
+[`reasoning/reasoning_compiler.py`](../../reasoning/reasoning_compiler.py): a belief-graph IR
+whose confidence semantics are the **min-over-derivesFrom-chain** weakest-link rule
+`okf/graph.py` already uses. It lowers a goal through optimization passes — **CSE** (merge
+duplicate claims), **dead-code elimination** (keep only the live cone backward-reachable
+from the goal), and a **type-check** (contradictions `X ∧ ¬X`, confidence-laundering) — then
+emits. Saved output:
+[`reasoning/results/reasoning_compiler.txt`](../../reasoning/results/reasoning_compiler.txt).
+
+The claim under test is the core compiler-correctness property: *optimization changes cost,
+never output.* Over 400 synthetic graphs with planted ground truth (duplicates, dead
+branches, and a live contradiction in half), seed=2026:
+
+| Measure | Result |
+|---|---|
+| Verification-cost reduction (CSE + DCE) | **52.9%** fewer claims to verify |
+| Semantics preserved (goal confidence **and** grounded status invariant) | **100.0%** |
+| DCE kept exactly the live ground-truth set | **100.0%** |
+| Contradiction recall in the live cone (200 planted) | **100.0%** |
+| Fail-closed on a contradicted goal | **100.0%** |
+| **False** contradictions on clean graphs (200 clean) | **0.0%** |
+
+- **H1 — cost down:** confirmed — the passes roughly halve the claims that need verifying.
+- **H2 — semantics preserved:** confirmed — across every graph the goal's effective
+  confidence and grounded status are identical before and after optimization. This is the
+  load-bearing result: the optimizer is *safe*.
+- **H3 — fail-closed + no false alarms:** confirmed — every contradicted goal is refused
+  (never reasoned upon), and not one clean graph is falsely blocked.
+
+Reproduce:
+
+```bash
+python reasoning/reasoning_compiler.py --run        # the experiment + verdict
+python reasoning/reasoning_compiler.py --self-test   # assert the invariants
+```
+
+**Implication for Sophia.** The belief graph in `okf/graph.py` can be treated as an
+optimizing, checkable reasoning IR: dedup and dead-branch pruning cut verification cost ~2×
+*provably without changing the grounded conclusion*, while the type-check turns
+contradiction-detection and confidence-laundering into a compile-time gate that fails closed
+before emission — the verifiability axis, now with the efficiency axis bolted on.
+
+## Status of the thesis
+
+| # | Feature | State |
+|---|---------|-------|
+| 1 | Reasoning roofline | design (denominator for the experiments below) |
+| 2 | Deliberation budgeting | **implemented + tested** — `reasoning/deliberation_roofline.py` |
+| 3 | Reasoning compiler / IR | **implemented + tested** — `reasoning/reasoning_compiler.py` |
+| 4 | Cost-modeled memory hierarchy | design |
+| 5 | Communication-efficient collectives | design |
+
 ## Non-goals
 
 - No claim that any of this constitutes AGI, sentience, or general intelligence.
