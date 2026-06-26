@@ -1,0 +1,69 @@
+{
+  "pilot": "sophia-wisdom-4b-m3-retention",
+  "criterion": "learning-shift stability: adapter general-capability >= base - 5pts",
+  "baseModel": "google/gemma-3-4b-it",
+  "adapter": "training/adapters/sophia-wisdom-4b-pilot",
+  "probe": "data/generality_tasks.json",
+  "nTasks": 34,
+  "scoring": "deterministic (numeric/exact/regex) — NO LLM judge",
+  "contaminationLeaks": [],
+  "base_accuracy": 0.7353,
+  "adapter_accuracy": 0.6176,
+  "delta": -0.1176,
+  "retains": false,
+  "byCategoryBase": {
+    "abstraction_pattern": {
+      "correct": 4,
+      "n": 7,
+      "acc": 0.571
+    },
+    "multistep_arithmetic": {
+      "correct": 4,
+      "n": 7,
+      "acc": 0.571
+    },
+    "logic_wordproblem": {
+      "correct": 5,
+      "n": 6,
+      "acc": 0.833
+    },
+    "analogy": {
+      "correct": 6,
+      "n": 6,
+      "acc": 1.0
+    },
+    "out_of_domain": {
+      "correct": 6,
+      "n": 8,
+      "acc": 0.75
+    }
+  },
+  "byCategoryAdapter": {
+    "abstraction_pattern": {
+      "correct": 3,
+      "n": 7,
+      "acc": 0.429
+    },
+    "multistep_arithmetic": {
+      "correct": 3,
+      "n": 7,
+      "acc": 0.429
+    },
+    "logic_wordproblem": {
+      "correct": 4,
+      "n": 6,
+      "acc": 0.667
+    },
+    "analogy": {
+      "correct": 5,
+      "n": 6,
+      "acc": 0.833
+    },
+    "out_of_domain": {
+      "correct": 6,
+      "n": 8,
+      "acc": 0.75
+    }
+  },
+  "boundary": "Held-out generality probe; deterministic scoring; small N=34 so treat the delta as a coarse forgetting guardrail, not a precise capability claim."
+}
