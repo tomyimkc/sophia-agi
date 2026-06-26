@@ -117,6 +117,7 @@ jobs:
           python tools/build_local_sophia_dataset.py --check
           python tools/build_religion_repair_traces.py
           python tests/test_religion_repair_traces.py
+          python tools/build_local_sophia_dataset.py --check
           python tests/test_personality.py
           python tests/test_steering.py
           python tests/test_personality_steering.py
