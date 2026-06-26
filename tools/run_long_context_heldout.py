@@ -188,9 +188,14 @@ def main() -> int:
 
     if args.backend != "mock":
         preflight = backend_preflight(backend=args.backend, timeout_sec=max(args.timeout_sec, 30))
-        if not preflight.get("ok"):
+        resolved = str(preflight.get("backend", ""))
+        # A real-model run must NOT silently resolve to the mock provider (adapter:mock),
+        # or we'd present mock numbers under a "real model" label. Skip if so.
+        if not preflight.get("ok") or "mock" in resolved:
             print(json.dumps({"ok": False, "stage": "backend-preflight", "backend": args.backend,
-                              "localModelUnavailable": True, "note": "no reachable local model; no report written"}, indent=2))
+                              "resolvedBackend": resolved, "localModelUnavailable": True,
+                              "note": "no reachable REAL local model (adapter resolved to mock or preflight failed); "
+                                      "set SOPHIA_MODEL_PROVIDER=ollama|mlx with a running model. No report written."}, indent=2))
             return 0
 
     items = load_items()

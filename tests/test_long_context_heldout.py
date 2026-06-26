@@ -63,11 +63,37 @@ def test_report_is_candidate_with_mock_boundary() -> None:
     assert "MOCK backend cannot read prose" in report["backendClaimBoundary"]
 
 
+def test_adapter_skips_when_it_resolves_to_mock_fallback() -> None:
+    # With no SOPHIA_MODEL_PROVIDER, --backend adapter resolves to adapter:mock. A real-model
+    # run must NOT present those mock numbers as real: it must skip and write no report.
+    import json
+    import os
+    import subprocess
+    import tempfile
+
+    env = dict(os.environ)
+    env.pop("SOPHIA_MODEL_PROVIDER", None)
+    env.pop("SOPHIA_MODEL_BASE_URL", None)
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "should-not-exist.json"
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / "tools" / "run_long_context_heldout.py"),
+             "--backend", "adapter", "--timeout-sec", "10", "--out", str(out)],
+            cwd=ROOT, text=True, capture_output=True, timeout=60, env=env, check=False,
+        )
+        assert proc.returncode == 0, proc.stderr + proc.stdout
+        payload = json.loads(proc.stdout)
+        assert payload["localModelUnavailable"] is True
+        assert "mock" in payload["resolvedBackend"]
+        assert not out.exists()
+
+
 def main() -> int:
     test_corpus_is_nonsynthetic_and_integrity_holds()
     test_gold_doc_is_the_unique_answer_source()
     test_heldout_runs_offline_under_mock_and_emits_valid_cards()
     test_report_is_candidate_with_mock_boundary()
+    test_adapter_skips_when_it_resolves_to_mock_fallback()
     print("test_long_context_heldout: OK")
     return 0
 

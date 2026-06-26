@@ -940,13 +940,18 @@ def main() -> int:
     # clobbering the committed candidate report.
     if args.backend != "mock":
         preflight = backend_preflight(backend=args.backend, timeout_sec=max(args.timeout_sec, 30))
-        if not preflight.get("ok"):
+        resolved = str(preflight.get("backend", ""))
+        # Guard against a silent mock fallback: with no SOPHIA_MODEL_PROVIDER the adapter
+        # resolves to adapter:mock, which would mislabel mock numbers as a real-model arm.
+        if not preflight.get("ok") or "mock" in resolved:
             print(json.dumps({
                 "ok": False,
                 "stage": "backend-preflight",
                 "backend": args.backend,
+                "resolvedBackend": resolved,
                 "localModelUnavailable": True,
-                "note": "No reachable local model; skipping real-model arm (offline-safe). No report written.",
+                "note": "No reachable REAL local model (adapter resolved to mock or preflight failed); "
+                        "skipping real-model arm (offline-safe). Set SOPHIA_MODEL_PROVIDER=ollama|mlx. No report written.",
                 "preflight": {k: preflight.get(k) for k in ("returncode", "answerPreview", "stderrTail")},
             }, indent=2))
             return 0
