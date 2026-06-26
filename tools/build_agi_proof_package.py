@@ -301,11 +301,14 @@ def check_manifest(output: Path = OUTPUT) -> int:
         return 1
     existing = output.read_text(encoding="utf-8")
     try:
-        committed_generated = json.loads(existing).get("generated")
+        parsed = json.loads(existing)
     except json.JSONDecodeError:
-        committed_generated = None
+        parsed = None
+    # Fail-closed on any malformed/non-object manifest: a list/scalar/None counts as
+    # drift, not a crash (committed_generated stays None so the rebuild diverges).
+    committed_generated = parsed.get("generated") if isinstance(parsed, dict) else None
     if manifest_text(build_manifest(generated=committed_generated)) != existing:
-        print("DRIFT: agi-proof/evidence-manifest.json is stale — run tools/build_agi_proof_package.py", file=sys.stderr)
+        print(f"DRIFT: {output} is stale — run tools/build_agi_proof_package.py", file=sys.stderr)
         return 1
     return 0
 
