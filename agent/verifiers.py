@@ -866,7 +866,7 @@ def _carveout_clauses(low: str) -> list:
     return [c for c in (head + _CLAUSE_SPLIT.split(low)) if c and c.strip()]
 
 
-def provenance_faithful(records: "dict | None" = None) -> Verifier:
+def provenance_faithful(records: "dict | None" = None, *, return_specs: bool = False) -> Verifier:
     """Fail if the text asserts an attribution forbidden by a record's
     doNotAttributeTo — Sophia's core "don't merge lineages" rule, machine-checked.
 
@@ -874,6 +874,12 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
     DENY/MYTH markers), so a page that CORRECTLY says "Confucius did not write the
     Dao De Jing" passes while "Confucius wrote the Dao De Jing" fails. Works on
     agent answers and on wiki page bodies alike.
+
+    With ``return_specs=True`` the returned verifier carries a ``.specs``
+    attribute — the compiled ``(rid, author, patterns)`` tuples it built. This is
+    a read-only hook for the Datalog port (:mod:`agent.datalog_provenance`) to
+    extract ground facts using the gate's OWN patterns; it changes nothing about
+    the verdict path and stays out of the production decision.
     """
     from agent.benchmark_checks import DENY_PATTERNS, MYTH_PATTERNS, author_markers, matches_any
 
@@ -972,6 +978,8 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
             return _fail([f"forbidden attribution asserted: {v}" for v in violations], {"violations": violations})
         return _ok({"recordsChecked": len(records)})
 
+    if return_specs:
+        _verify.specs = specs  # type: ignore[attr-defined]  # read-only hook for the Datalog port
     return _verify
 
 
