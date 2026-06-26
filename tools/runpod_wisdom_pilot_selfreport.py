@@ -267,6 +267,31 @@ def _delete_pod(api_key: str, pod_id: str) -> None:
         pass
 
 
+def _sweep_leaked_pods(api_key: str, name_prefix: str) -> int:
+    """Delete any pre-existing pods whose name starts with name_prefix BEFORE creating a new
+    one. This reaps leaks from earlier runs (e.g. a restart-loop pod whose GH run was cancelled,
+    so it can no longer be cleaned up by that run) so a relaunch never stacks a 2nd paid pod on
+    a runaway. Safe: runs before this run's own pod exists, and only touches the sophia-wisdom
+    pilot name prefix."""
+    try:
+        resp = _api_request("GET", "/pods", api_key, timeout=30)
+    except RunPodError as exc:
+        print(f"[selfreport] could not list pods for leak sweep ({exc}); continuing.")
+        return 0
+    pods = resp.get("pods", resp) if isinstance(resp, dict) else resp
+    killed = 0
+    for p in (pods or []):
+        pid = p.get("id") or p.get("podId")
+        nm = p.get("name", "")
+        if pid and isinstance(nm, str) and nm.startswith(name_prefix):
+            print(f"[selfreport] LEAK SWEEP: deleting pre-existing pod {pid} ({nm})")
+            _delete_pod(api_key, pid)
+            killed += 1
+    if killed:
+        print(f"[selfreport] leak sweep removed {killed} stale sophia-wisdom pod(s).")
+    return killed
+
+
 def _wait_for_pod_gone(api_key: str, pod_id: str, timeout_min: int, *, branch: str = "",
                        result_rel: str = "", baseline_blob=None, max_restarts: int = 3) -> int:
     """Wait until the job is DONE, then ensure the pod is deleted. Completion is detected
@@ -346,6 +371,10 @@ def main(argv=None) -> int:
             raise RunPodError(f"missing env {name}")
     if not args.yes:
         raise RunPodError("Refusing to create a paid pod without --yes (use --dry-run first).")
+
+    # Reap any leaked sophia-wisdom pods (e.g. a restart-loop pod whose GH run was cancelled)
+    # BEFORE creating a new one, so a relaunch never stacks a 2nd paid pod on a runaway.
+    _sweep_leaked_pods(api_key, "sophia-wisdom-pilot")
 
     # Baseline the result blob BEFORE launch so --wait can tell THIS run's fresh result from a
     # stale prior one (the file usually already exists on the branch from an earlier run).
