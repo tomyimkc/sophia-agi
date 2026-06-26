@@ -1,0 +1,118 @@
+name: storage-bench-runpod
+
+# Manual-only RunPod launcher for the storage/ Rust benchmarks on REAL NVMe.
+#
+# The dev sandbox has only virtio ext4 + few cores, so the storage numbers in
+# RESULTS.md are honest-but-modest. This rents a pod, runs the diskstore (incl.
+# the O_DIRECT pread-vs-io_uring comparison), kvcache, and infcache benches on
+# real datacenter NVMe, copies the markdown report back, and ALWAYS deletes the
+# pod (finally block + on-pod watchdog). RUNPOD_API_KEY is read from secrets and
+# never printed.
+#
+# Dispatch-only: never runs on push/PR/schedule.
+#
+# PREREQUISITES (maintainer only):
+#   1. Repo secret RUNPOD_API_KEY (Settings -> Secrets and variables -> Actions).
+#   2. RunPod credit. A pod costs real money while it runs (a few cents here:
+#      cheapest GPU box, rented only for its NVMe + CPUs, ~minutes).
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to confirm you accept renting a paid pod'
+        required: true
+        default: ''
+      gpu_type:
+        description: 'Comma-separated GPU type preference (box rented for NVMe; GPU unused; cheapest first)'
+        required: false
+        default: 'NVIDIA GeForce RTX 4090,NVIDIA RTX A4000,NVIDIA GeForce RTX 3090'
+      cloud_type:
+        description: 'COMMUNITY (cheapest) or SECURE (more consistent NVMe)'
+        required: false
+        default: 'COMMUNITY'
+        type: choice
+        options: ['COMMUNITY', 'SECURE']
+      interruptible:
+        description: 'Use cheaper spot/interruptible pod'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['true', 'false']
+      odirect_blocks:
+        description: 'O_DIRECT data-file size in 4 KiB blocks (500000 ~= 2 GiB)'
+        required: false
+        default: '500000'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: storage-bench-runpod
+  cancel-in-progress: false
+
+jobs:
+  runpod:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — confirm + secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "RUN" ]; then
+            echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge pod cost. Aborting (no pod created)."
+            exit 1
+          fi
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set (or empty). Add it in Settings -> Secrets and variables -> Actions. Aborting (no pod created)."
+            exit 1
+          fi
+          echo "Preflight OK: confirmed, secret present. Benches run on the rented pod, not this runner."
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Dry-run payload (no pod, no cost — sanity check the request)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          python tools/runpod_storage_bench.py --dry-run \
+            --source git --branch "${{ github.ref_name }}" \
+            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            --cloud-type "${{ github.event.inputs.cloud_type }}" \
+            --odirect-blocks "${{ github.event.inputs.odirect_blocks }}"
+
+      - name: Launch RunPod storage bench (rents box, runs over SSH, deletes pod)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          INTERRUPTIBLE=""
+          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
+          python tools/runpod_storage_bench.py --yes \
+            --source git --branch "${{ github.ref_name }}" \
+            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            --cloud-type "${{ github.event.inputs.cloud_type }}" \
+            --odirect-blocks "${{ github.event.inputs.odirect_blocks }}" \
+            $INTERRUPTIBLE
+
+      - name: Show the storage report in the run log
+        if: always()
+        run: |
+          shopt -s nullglob
+          for f in agi-proof/benchmark-results/runpod-storage/*.storage_bench_report.md; do
+            echo "===== $f ====="
+            cat "$f"
+          done
+
+      - name: Upload storage bench artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: storage-bench-runpod-reports
+          path: agi-proof/benchmark-results/runpod-storage/**
+          if-no-files-found: warn

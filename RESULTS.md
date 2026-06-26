@@ -239,6 +239,26 @@ This is the storage/reuse layer, not an attention kernel — block payloads are
 opaque serialized K/V; wiring it under a real engine (vLLM/SGLang-style) is the
 integration step.
 
+### Real-hardware runs (RunPod)
+
+All numbers above were measured in the dev sandbox (virtio ext4, few cores), so
+they are honest-but-modest. To re-measure on **real datacenter NVMe + many
+cores**, `tools/runpod_storage_bench.py` rents the cheapest available pod, builds
+the workspace, runs every bench (incl. the O_DIRECT pread-vs-io_uring comparison)
+on the pod's NVMe, copies a markdown report back, and **always deletes the pod**.
+It reuses the repo's proven RunPod lifecycle (`tools/runpod_rlvr.py`).
+
+```bash
+python tools/runpod_storage_bench.py --dry-run                 # offline: inspect payload, no cost
+RUNPOD_API_KEY=... python tools/runpod_storage_bench.py --yes --branch <branch>
+```
+
+Or dispatch the `storage-bench-runpod` GitHub Actions workflow (needs the
+`RUNPOD_API_KEY` repo secret) — it runs the same tool from CI, where SSH egress
+and the secret are available, and uploads the report as an artifact. Reports land
+in `agi-proof/benchmark-results/runpod-storage/`. The O_DIRECT result is the one
+to watch: io_uring's win should *widen* on real NVMe under deep queue depth.
+
 ## Reproduce
 
 ```bash
