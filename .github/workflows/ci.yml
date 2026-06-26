@@ -177,6 +177,7 @@ jobs:
           python tests/test_contract_conformance.py
           python tests/test_contract_guardrails.py
           python tests/test_contract_adapters.py
+          python tests/test_otel_export.py
           python tests/test_role_pipeline.py
       - name: Sophia Gateway P0–P5 (intercept pipeline + firewall, federation, skills, knowledge, flywheel, consensus)
         run: |

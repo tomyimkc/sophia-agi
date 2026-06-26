@@ -45,3 +45,6 @@ Next philosophy tasks: GF-06+ attributions for *Xunzi*, *Mozi*, *Aristotle Nicom
 |----|------|--------|
 | GF-40 | Improve benchmark scorer for multilingual markers | ✅ v0.7.38 (`agent/benchmark_checks.py` 中文 deny/myth/affirm markers + regression test, CI-wired) |
 | GF-41 | Add Colab quickstart notebook | `notebooks/` (open) |
+| GF-42 | Export gate verdicts as OpenTelemetry (OTLP) spans | ✅ `sophia_contract/otel_export.py` + `tests/test_otel_export.py` ([doc](docs/09-Agent/Observability-OTel.md)) |
+| GF-43 | Add an OTLP exporter for the standalone MCP gate (`gate_check`/`check_claim`), mirroring GF-42 | `sophia_mcp/` (open) |
+| GF-44 | Worked LangChain/LangGraph RAG-gate integration with a real retriever | `examples/langgraph_rag_gate.py` is the offline skeleton (open) |
