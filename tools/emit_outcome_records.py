@@ -95,42 +95,55 @@ def _fabricated(answer: str, markers: list[str]) -> bool:
     return False
 
 
-def emit_abstain_pack(*, model: str) -> list[dict]:
-    """Labeled path: run a real backend over the abstain pack, score correctness.
+def emit_abstain_pack(*, model: str, samples: int = 5) -> list[dict]:
+    """Labeled path: run a real backend over the abstain pack with self-consistency.
 
-    For an abstain-labeled case, ``correct`` means the model did NOT fabricate an author
-    (it abstained / named no forbidden attribution) — a deterministic marker scorer, no
-    LLM judge. Confidence is the live provenance signal for the case's domain context;
-    when unavailable it falls back to a neutral 0.5 so the row is still usable.
+    For each abstain-labeled case we sample the model ``samples`` times and map each
+    sample to a STANCE: ``answer`` if it trips the case's own fabrication markers (named a
+    forbidden author), else ``abstain``. Then:
+
+      - ``confidence`` = self-consistency agreement on the majority stance (a real,
+        label-free confidence signal; ``agent.calibration.self_consistency``);
+      - ``correct``    = the majority stance is ``abstain`` (the epistemically correct
+        behaviour on an abstention trap) — a deterministic marker scorer, no LLM judge;
+      - ``nonconformity`` = ``1 - confidence``.
+
+    HONEST NOTE: on abstention traps confidence and correctness need not be positively
+    correlated (a model can fabricate *consistently* = high confidence + wrong). The
+    downstream report measures whether confidence predicts correctness rather than
+    assuming it; abstain-traps are an imperfect conformal substrate (a positive-
+    confidence QA pack is the real need) and this is flagged in the fit report.
     """
-    from agent.model import get_client
+    from agent.calibration import self_consistency
+    from agent.model import default_client
 
     cases = json.loads(ABSTAIN_PACK.read_text(encoding="utf-8"))
     if isinstance(cases, dict):
         cases = cases.get("cases") or list(cases.values())
-    client = get_client(model)
+    client = default_client(model)
     rows: list[dict] = []
     for case in cases:
         prompt = case.get("prompt", "")
-        res = client.generate("Answer with source discipline. If unknown, say so.", prompt)
-        answer = getattr(res, "text", "") or ""
-        if not getattr(res, "ok", True):
+        markers = case.get("fabricationMarkers", [])
+        stances: list[str] = []
+        for _ in range(max(1, samples)):
+            res = client.generate("Answer with source discipline. If the answer is unknown or disputed, say so plainly and do not invent an author.", prompt)
+            if not getattr(res, "ok", True):
+                continue
+            answer = getattr(res, "text", "") or ""
+            stances.append("answer" if _fabricated(answer, markers) else "abstain")
+        if not stances:
             continue
-        fabricated = _fabricated(answer, case.get("fabricationMarkers", []))
-        # Confidence proxy: a confident fabrication is high-confidence-wrong; an
-        # abstention is low-confidence by construction. We read the model's own
-        # hedging as the signal here (length-normalised abstention cue), kept simple
-        # and deterministic; the production signal is the grounded provenance one.
-        abstained = bool(re.search(r"\b(unknown|not known|no.{0,3}author|cannot|don'?t know|undeciphered|uncertain)\b", answer, re.I))
-        confidence = 0.3 if abstained else 0.8
+        majority, confidence = self_consistency(stances)
         rows.append({
             "id": case.get("id"),
             "domain": case.get("domain") or "unspecified",
             "risk": "high",
-            "confidence": confidence,
-            "nonconformity": round(1.0 - confidence, 6),
-            "correct": (not fabricated),
-            "action": "abstain" if abstained else "answer",
+            "confidence": round(float(confidence), 6),
+            "nonconformity": round(1.0 - float(confidence), 6),
+            "correct": (majority == "abstain"),
+            "action": majority,
+            "nSamples": len(stances),
             "model": model,
         })
     return rows
@@ -145,6 +158,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Emit canonical labeled-outcome records (Phase 0).")
     ap.add_argument("--source", choices=("okf-wiki", "abstain-pack"), default="okf-wiki")
     ap.add_argument("--model", default=None, help="backend spec for the labeled abstain-pack path")
+    ap.add_argument("--samples", type=int, default=5, help="self-consistency samples per case (labeled path)")
     ap.add_argument("--hops", type=int, default=1)
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args(argv)
@@ -152,7 +166,7 @@ def main(argv=None) -> int:
     if args.source == "abstain-pack":
         if not args.model:
             ap.error("--source abstain-pack requires --model (labeling needs a real backend)")
-        rows = emit_abstain_pack(model=args.model)
+        rows = emit_abstain_pack(model=args.model, samples=args.samples)
     else:
         rows = emit_okf(hops=args.hops)
 
