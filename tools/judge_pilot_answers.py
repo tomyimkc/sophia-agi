@@ -21,6 +21,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
+import random
 import re
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -115,6 +117,97 @@ def _kappa(labels_x: list, labels_y: list) -> "float | None":
     return round((po - pe) / (1 - pe), 4) if pe != 1 else None
 
 
+# --------------------------------------------------------------------------- #
+# Honest-statistics panel. The capability claim is a WIN-RATE (vs 0.5); κ measures
+# only judge RELIABILITY and is provably deflated on same-direction skewed pairwise
+# data (Feinstein & Cicchetti 1990; Warrens 2010). So we report a panel, never a
+# single number: per-judge win-rate (Wilson CI + exact binomial vs 0.5 + bootstrap),
+# the Byrt (1993) 2x2 decomposition (observed agreement, κ, PABAK, bias/prevalence
+# indices), and a majority vote when ≥3 judges. NB: do NOT compare PABAK/AC1 against
+# a κ-derived 0.40 bar — the Landis & Koch cutoffs are not transferable (Zec 2023).
+# --------------------------------------------------------------------------- #
+
+def _wilson_ci(wins: int, n: int, z: float = 1.96) -> "list[float] | None":
+    """Wilson score 95% CI for a binomial proportion (stable at small n / extreme p)."""
+    if n == 0:
+        return None
+    p = wins / n
+    denom = 1 + z * z / n
+    center = (p + z * z / (2 * n)) / denom
+    half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / denom
+    return [round(center - half, 4), round(center + half, 4)]
+
+
+def _binom_two_sided_p(wins: int, n: int, p0: float = 0.5) -> "float | None":
+    """Exact two-sided binomial (sign) test that the win-rate differs from p0."""
+    if n == 0:
+        return None
+    probs = [math.comb(n, k) * p0 ** k * (1 - p0) ** (n - k) for k in range(n + 1)]
+    obs = probs[wins]
+    return round(min(1.0, sum(pr for pr in probs if pr <= obs + 1e-12)), 5)
+
+
+def _bootstrap_winrate_ci(binary: "list[str]", *, B: int = 5000, seed: int = 0) -> "list[float] | None":
+    """Percentile bootstrap 95% CI for adapter win-rate over binary {adapter, base}."""
+    wins = [1 if v == "adapter" else 0 for v in binary]
+    n = len(wins)
+    if n == 0:
+        return None
+    rng = random.Random(seed)
+    means = sorted(sum(wins[rng.randrange(n)] for _ in range(n)) / n for _ in range(B))
+    return [round(means[int(0.025 * B)], 4), round(means[int(0.975 * B) - 1], 4)]
+
+
+def _winrate_stats(labels: "list[str]") -> dict:
+    """Adapter win-rate over base on binary verdicts (ties/None dropped) + honest CIs."""
+    binary = [v for v in labels if v in ("adapter", "base")]
+    n, wins = len(binary), sum(1 for v in labels if v == "adapter")
+    return {
+        "nBinary": n, "adapterWins": wins, "baseWins": n - wins,
+        "adapterWinrate": round(wins / n, 4) if n else None,
+        "wilson95": _wilson_ci(wins, n),
+        "bootstrap95": _bootstrap_winrate_ci(binary),
+        "binomialTwoSidedP_vs_0_5": _binom_two_sided_p(wins, n),
+        "significantVs0_5_at_0_05": (lambda p: p is not None and p < 0.05)(_binom_two_sided_p(wins, n)),
+    }
+
+
+def _pairwise_panel(labels_x: "list[str]", labels_y: "list[str]") -> "dict | None":
+    """Byrt (1993) 2x2 decomposition on binary {adapter, base} for two judges."""
+    pairs = [(x, y) for x, y in zip(labels_x, labels_y)
+             if x in ("adapter", "base") and y in ("adapter", "base")]
+    n = len(pairs)
+    if n < 2:
+        return None
+    a = sum(1 for x, y in pairs if x == "adapter" and y == "adapter")  # both adapter
+    d = sum(1 for x, y in pairs if x == "base" and y == "base")        # both base
+    b = sum(1 for x, y in pairs if x == "adapter" and y == "base")
+    c = sum(1 for x, y in pairs if x == "base" and y == "adapter")
+    p0 = (a + d) / n
+    px1, py1 = (a + b) / n, (a + c) / n
+    pe = px1 * py1 + (1 - px1) * (1 - py1)
+    kappa = (p0 - pe) / (1 - pe) if pe != 1 else None
+    return {
+        "nBinaryPairs": n,
+        "observedAgreement": round(p0, 4),
+        "cohenKappaBinary": round(kappa, 4) if kappa is not None else None,
+        "PABAK": round(2 * p0 - 1, 4),            # Byrt 1993 prevalence-adjusted bias-adjusted κ
+        "biasIndex": round((b - c) / n, 4),       # between-judge marginal asymmetry (signed)
+        "prevalenceIndex": round((a - d) / n, 4),  # both-adapter vs both-base imbalance (drives κ deflation)
+        "table": {"bothAdapter": a, "bothBase": d, "xAdapter_yBase": b, "xBase_yAdapter": c},
+    }
+
+
+def _majority_labels(per_judge: dict, specs: list, n_rows: int) -> "list[str]":
+    """Per-case majority verdict across ≥3 judges (ties in the vote -> 'tie')."""
+    out = []
+    for i in range(n_rows):
+        votes = [per_judge[s][i] for s in specs if per_judge[s][i] in ("adapter", "base")]
+        a, b = votes.count("adapter"), votes.count("base")
+        out.append(None if not votes else "adapter" if a > b else "base" if b > a else "tie")
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--answers", type=Path, required=True)
@@ -163,6 +256,17 @@ def main() -> int:
     consensus_adapter = sum(1 for x, y in both if x == "adapter" and y == "adapter")
     consensus_base = sum(1 for x, y in both if x == "base" and y == "base")
 
+    # --- honest-statistics panel (win-rate is the capability claim; κ is reliability only) ---
+    winrate = {s: _winrate_stats(per_judge[s]) for s in specs}
+    pairwise = ({f"{specs[i]} vs {specs[j]}": _pairwise_panel(per_judge[specs[i]], per_judge[specs[j]])
+                 for i in range(len(specs)) for j in range(i + 1, len(specs))}
+                if len(specs) >= 2 else {})
+    majority = None
+    if len(specs) >= 3:
+        maj = _majority_labels(per_judge, specs, len(rows))
+        majority = {"perCase_winrate": _winrate_stats(maj),
+                    "ties_in_vote": sum(1 for v in maj if v == "tie")}
+
     report = {
         "pilot_judge": "sophia-wisdom-4b-m3",
         "answers": str(args.answers.relative_to(ROOT) if args.answers.is_relative_to(ROOT) else args.answers),
@@ -171,13 +275,32 @@ def main() -> int:
         "perJudge": {s: summary(per_judge[s]) for s in specs},
         "interJudgeKappa": kappa,
         "consensus": {"adapter_better": consensus_adapter, "base_better": consensus_base},
+        # capability claim = win-rate vs 0.5 (Wilson + exact-binomial + bootstrap):
+        "winRate": winrate,
+        # reliability (Byrt 1993 panel) — read PABAK/indices ALONGSIDE κ, never instead-of:
+        "interJudgeReliability": pairwise,
+        "majorityVote": majority,
+        "statsNote": ("Win-rate vs 0.5 (Wilson/binomial/bootstrap) is the capability evidence; "
+                      "κ/PABAK/bias+prevalence indices report JUDGE RELIABILITY (Feinstein & "
+                      "Cicchetti 1990; Byrt 1993; Warrens 2010). Do NOT compare PABAK/AC1 to a "
+                      "κ-derived 0.40 bar — Landis & Koch cutoffs are not transferable (Zec 2023)."),
         "boundary": ("Independent LLM judges (≠ subject, ≠ gate). Validates whether the adapter's "
                      "marker-based source-discipline gains hold up SEMANTICALLY. Single seed's answers; "
                      "not a market or AGI claim."),
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"\nκ={kappa}  consensus adapter-better={consensus_adapter} base-better={consensus_base}")
+    print(f"\nκ(3-cat)={kappa}  consensus adapter-better={consensus_adapter} base-better={consensus_base}")
+    for s in specs:
+        w = winrate[s]
+        print(f"  win-rate [{s}]: {w['adapterWinrate']} (n={w['nBinary']}) "
+              f"Wilson95={w['wilson95']} binomP_vs0.5={w['binomialTwoSidedP_vs_0_5']} "
+              f"sig={w['significantVs0_5_at_0_05']}")
+    for pair, pan in pairwise.items():
+        if pan:
+            print(f"  reliability [{pair}]: obsAgree={pan['observedAgreement']} "
+                  f"κ={pan['cohenKappaBinary']} PABAK={pan['PABAK']} "
+                  f"bias={pan['biasIndex']} prevalence={pan['prevalenceIndex']}")
     print(f"wrote -> {args.out}")
     return 0
 
