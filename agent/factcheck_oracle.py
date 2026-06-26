@@ -288,20 +288,50 @@ def combined_retriever(retrievers: list[Retriever]) -> Retriever:
     return _r
 
 
-def dispatched_entailment(oracle: GoogleFactCheckOracle, base: EntailmentFn | None) -> EntailmentFn:
-    """Route ``factcheck`` sources to the oracle, everything else to ``base``."""
+def dispatched_entailment(
+    oracle: GoogleFactCheckOracle,
+    base: EntailmentFn | None,
+    *,
+    factcheck_entailment: EntailmentFn | None = None,
+) -> EntailmentFn:
+    """Route ``factcheck`` sources to the oracle (or ``factcheck_entailment`` when
+    given, e.g. an NLI backend), everything else to ``base``."""
+    fc = factcheck_entailment or oracle.entailment
     def _e(claim: AtomicClaim, source: EvidenceSource) -> str:
         if (source.source_type or "") == "factcheck":
-            return oracle.entailment(claim, source)
+            return fc(claim, source)
         if base is None:
             return "irrelevant"
         return base(claim, source)
     return _e
 
 
+def compose_live_factcheck(
+    base_retriever: Retriever,
+    base_entailment: EntailmentFn | None,
+    *,
+    oracle: GoogleFactCheckOracle | None = None,
+    factcheck_entailment: EntailmentFn | None = None,
+) -> tuple[Retriever, EntailmentFn, bool]:
+    """Default live composition: add the Google oracle iff it is enabled.
+
+    Returns ``(retriever, entailment, oracle_active)``. When no key is present
+    the oracle is disabled and the base backend is returned unchanged, so
+    offline/CI behaviour is identical. This is the canonical way callers turn the
+    keyed oracle on "by default where a key exists" without a per-call flag.
+    """
+    oracle = oracle if oracle is not None else GoogleFactCheckOracle()
+    if not oracle.enabled:
+        return base_retriever, (base_entailment or (lambda c, s: "irrelevant")), False
+    retriever = combined_retriever([base_retriever, oracle.retriever])
+    entailment = dispatched_entailment(oracle, base_entailment, factcheck_entailment=factcheck_entailment)
+    return retriever, entailment, True
+
+
 __all__ = [
     "GoogleFactCheckOracle",
     "combined_retriever",
+    "compose_live_factcheck",
     "dispatched_entailment",
     "normalize_text",
 ]

@@ -1,0 +1,1640 @@
+{
+  "schema": "sophia.fact_check.live_eval.v1",
+  "candidateOnly": false,
+  "level3Evidence": false,
+  "liveBackendUsed": true,
+  "n": 24,
+  "labelCounts": {
+    "true": 4,
+    "false": 16,
+    "unknowable": 4
+  },
+  "metrics": {
+    "fabricationRate": 0.0,
+    "overAbstentionRate": 1.0,
+    "falseRejectRateOnTrue": 0.0,
+    "correctAbstentionRateOnUnknowable": 1.0,
+    "resolvedAnswerableAccuracy": 0.3,
+    "overallDecisionAccuracy": 0.8333,
+    "calibrationNResolved": 6,
+    "ece": 0.12,
+    "brier": 0.0144
+  },
+  "confidenceIntervals": {
+    "fabricationRateWilson95": {
+      "k": 0,
+      "n": 20,
+      "low": 0.0,
+      "high": 0.1611
+    },
+    "overAbstentionRateWilson95": {
+      "k": 4,
+      "n": 4,
+      "low": 0.5101,
+      "high": 1.0
+    }
+  },
+  "derivedFloors": {
+    "targetFabricationRate": 0.05,
+    "byRisk": {
+      "high": {
+        "floor": 0.82,
+        "nAccepted": 0,
+        "note": "no accepted cases; retain default"
+      },
+      "normal": {
+        "floor": 0.7,
+        "nAccepted": 0,
+        "note": "no accepted cases; retain default"
+      }
+    }
+  },
+  "riskCoverage": [
+    {
+      "coverage": 0.0417,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.0833,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.125,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.1667,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.2083,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.25,
+      "risk": 0.0,
+      "threshold": 0.88
+    },
+    {
+      "coverage": 0.2917,
+      "risk": 0.0,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.3333,
+      "risk": 0.0,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.375,
+      "risk": 0.0,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.4167,
+      "risk": 0.0,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.4583,
+      "risk": 0.0,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.5,
+      "risk": 0.0,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.5417,
+      "risk": 0.0,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.5833,
+      "risk": 0.0714,
+      "threshold": 0.35
+    },
+    {
+      "coverage": 0.625,
+      "risk": 0.0667,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.6667,
+      "risk": 0.0625,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.7083,
+      "risk": 0.0588,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.75,
+      "risk": 0.0556,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.7917,
+      "risk": 0.0526,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.8333,
+      "risk": 0.05,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.875,
+      "risk": 0.0476,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9167,
+      "risk": 0.0909,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9583,
+      "risk": 0.1304,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 1.0,
+      "risk": 0.1667,
+      "threshold": 0.0
+    }
+  ],
+  "cases": [
+    {
+      "id": "v2_false_01",
+      "claim": "The earth is flat",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "The earth is flat",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "factcheck:voanews.com:35528f2757",
+                  "url": "https://www.voanews.com/a/flat-earth-believer-mad-mike-hughes-dies-in-diy-rocket-crash/6742319.html",
+                  "title": "Deadly Disinfo: How the Flat Earth Conspiracy Doomed an Amateur ...",
+                  "publisher": "VOA",
+                  "domain": "voanews.com",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "factcheck:aap.com.au:556f73f828",
+                  "url": "https://www.aap.com.au/factcheck/no-nasa-didnt-admit-the-earth-is-flat/",
+                  "title": "No, NASA didn't admit the earth is flat",
+                  "publisher": "AAP",
+                  "domain": "aap.com.au",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "factcheck:usatoday.com:54b23b52d2",
+                  "url": "https://www.usatoday.com/story/news/factcheck/2024/07/19/shooting-stars-fly-up-flat-earth-fact-check/74431671007/",
+                  "title": "Earth isn't flat, and shooting stars fly every direction | Fact check",
+                  "publisher": "USA Today",
+                  "domain": "usatoday.com",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "factcheck:usatoday.com:ecc417d218",
+                  "url": "https://www.usatoday.com/story/news/factcheck/2023/08/07/false-claim-the-earth-is-flat-and-sea-levels-arent-rising-fact-check/70533704007/",
+                  "title": "Pictures mislead: Ample evidence the Earth is round and sea levels ...",
+                  "publisher": "USA Today",
+                  "domain": "usatoday.com",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "factcheck:usatoday.com:59905bf421",
+                  "url": "https://www.usatoday.com/story/news/factcheck/2022/12/13/fact-check-gravity-pulls-objects-toward-center-earth/10840434002/",
+                  "title": "Fact check: Gravity pulls objects toward the center of the Earth",
+                  "publisher": "USA Today",
+                  "domain": "usatoday.com",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "factcheck:usatoday.com:81e448fd6f",
+                  "url": "https://www.usatoday.com/story/news/factcheck/2023/01/13/fact-check-false-claim-moon-visible-during-day-proof-flat-earth/11022360002/",
+                  "title": "Fact check: False claim moon visible during daytime is proof of flat ...",
+                  "publisher": "USA Today",
+                  "domain": "usatoday.com",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_02",
+      "claim": "Vaccines cause autism",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "Vaccines cause autism",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "factcheck:factcheck.org:8a908ca2ee",
+                  "url": "https://www.factcheck.org/2024/01/scicheck-viral-posts-misuse-rat-study-to-make-unfounded-claims-about-covid-19-vaccines-and-autism/",
+                  "title": "Viral Posts Misuse Rat Study to Make Unfounded Claims About ...",
+                  "publisher": "FactCheck.org",
+                  "domain": "factcheck.org",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 7
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_03",
+      "claim": "5G technology spreads the COVID-19 coronavirus",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "5G technology spreads the COVID-19 coronavirus",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/2",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 8,
+                "requiredSources": 2
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_04",
+      "claim": "Drinking bleach cures COVID-19",
+      "label": "false",
+      "type": "general",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Drinking bleach cures COVID-19",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/2",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 2,
+                "requiredSources": 2
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_05",
+      "claim": "The COVID-19 vaccine contains a microchip",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "The COVID-19 vaccine contains a microchip",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/2",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 8,
+                "requiredSources": 2
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_06",
+      "claim": "Humans only use 10 percent of their brains",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "Humans only use 10 percent of their brains",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "factcheck:snopes.com:1bb0976755",
+                  "url": "https://www.snopes.com/fact-check/the-ten-percent-myth/",
+                  "title": "Do We Only Use 10% of our Brains?",
+                  "publisher": "Snopes.com",
+                  "domain": "snopes.com",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_07",
+      "claim": "Bill Gates created the coronavirus pandemic",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "Bill Gates created the coronavirus pandemic",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "factcheck:factcheck.org:31870fee21",
+                  "url": "https://www.factcheck.org/2020/01/new-coronavirus-wasnt-predicted-in-simulation/",
+                  "title": "New Coronavirus Wasn't 'Predicted' In Simulation",
+                  "publisher": "FactCheck.org",
+                  "domain": "factcheck.org",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "factcheck:factcheck.org:d99c9b7888",
+                  "url": "https://www.factcheck.org/2020/04/conspiracy-theory-misinterprets-goals-of-gates-foundation/",
+                  "title": "Conspiracy Theory Misinterprets Goals of Gates Foundation",
+                  "publisher": "FactCheck.org",
+                  "domain": "factcheck.org",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "factcheck:factcheck.afp.com:7bed49d892",
+                  "url": "https://factcheck.afp.com/gates-foundation-urges-netizens-stop-sharing-fake-bill-gates-coronavirus-letter",
+                  "title": "Gates Foundation urges netizens to stop sharing fake 'Bill Gates ...",
+                  "publisher": "AFP Fact Check",
+                  "domain": "factcheck.afp.com",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "factcheck:rappler.com:a70e2e42b8",
+                  "url": "https://www.rappler.com/newsbreak/fact-check/bill-gates-created-covid-19-moderna-vaccine/",
+                  "title": "FALSE: Bill Gates created COVID-19, Moderna",
+                  "publisher": "Rappler",
+                  "domain": "rappler.com",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 4
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_08",
+      "claim": "The Great Wall of China is visible from space with the naked eye",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "The Great Wall of China is visible from space with the naked eye",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/2",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 1,
+                "requiredSources": 2
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_09",
+      "claim": "The 2020 United States presidential election was stolen through widespread voter fraud",
+      "label": "false",
+      "type": "general",
+      "risk": "high",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "The 2020 United States presidential election was stolen through widespread voter fraud",
+          "type": "open_empirical",
+          "risk": "high",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/3",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 8,
+                "requiredSources": 3
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_10",
+      "claim": "Climate change is a hoax invented by scientists",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "Climate change is a hoax invented by scientists",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "factcheck:factcheck.org:4b3f1b4409",
+                  "url": "https://www.factcheck.org/2024/09/trump-clings-to-inaccurate-climate-change-talking-points/",
+                  "title": "Trump Clings to Inaccurate Climate Change Talking Points",
+                  "publisher": "FactCheck.org",
+                  "domain": "factcheck.org",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 7
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_11",
+      "claim": "Eating carrots dramatically improves your eyesight",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Eating carrots dramatically improves your eyesight",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/2",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 1,
+                "requiredSources": 2
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_12",
+      "claim": "Lightning never strikes the same place twice",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Lightning never strikes the same place twice",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_13",
+      "claim": "Cracking your knuckles causes arthritis",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.88,
+      "correct": true,
+      "reason": "one or more atomic claims were contradicted/impossible",
+      "claims": [
+        {
+          "claim": "Cracking your knuckles causes arthritis",
+          "type": "causal_empirical",
+          "risk": "normal",
+          "verdict": "rejected",
+          "reason": "one or more independent sources contradict the claim",
+          "confidence": 0.88,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "rejected",
+              "reason": "one or more independent sources contradict the claim",
+              "confidence": 0.88,
+              "evidence": [
+                {
+                  "id": "factcheck:snopes.com:0bc51754c0",
+                  "url": "https://www.snopes.com/fact-check/cracking-knuckles-arthritis/",
+                  "title": "Does Cracking Your Knuckles Cause Arthritis?",
+                  "publisher": "Snopes",
+                  "domain": "snopes.com",
+                  "relation": "contradicts"
+                },
+                {
+                  "id": "factcheck:vishvasnews.com:4684171f6e",
+                  "url": "https://www.vishvasnews.com/english/health/fact-check-no-knuckle-cracking-does-not-cause-arthritis/",
+                  "title": "Fact Check: No, Knuckle Cracking Does Not Cause Arthritis ...",
+                  "publisher": "vishvasnews.com",
+                  "domain": "vishvasnews.com",
+                  "relation": "contradicts"
+                }
+              ],
+              "details": {
+                "entailed": 0,
+                "irrelevant": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_14",
+      "claim": "Sharks do not get cancer",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Sharks do not get cancer",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/2",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 1,
+                "requiredSources": 2
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_15",
+      "claim": "Goldfish have a three second memory",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Goldfish have a three second memory",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_false_16",
+      "claim": "Napoleon Bonaparte was extremely short",
+      "label": "false",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Napoleon Bonaparte was extremely short",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_unknow_01",
+      "claim": "There are exactly four intelligent alien civilizations in the Milky Way",
+      "label": "unknowable",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "There are exactly four intelligent alien civilizations in the Milky Way",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_unknow_02",
+      "claim": "The total number of grains of sand on Earth is an even number",
+      "label": "unknowable",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "The total number of grains of sand on Earth is an even number",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_unknow_03",
+      "claim": "A specific unnamed coin flip tomorrow will land on heads",
+      "label": "unknowable",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "A specific unnamed coin flip tomorrow will land on heads",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_unknow_04",
+      "claim": "There is exactly one undiscovered species of beetle in my backyard right now",
+      "label": "unknowable",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "There is exactly one undiscovered species of beetle in my backyard right now",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_true_01",
+      "claim": "The earth orbits the sun",
+      "label": "true",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.35,
+      "correct": false,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "The earth orbits the sun",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.35,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "insufficient independent entailing sources: 0/2",
+              "confidence": 0.35,
+              "evidence": [],
+              "details": {
+                "irrelevant": 1,
+                "requiredSources": 2
+              }
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_true_02",
+      "claim": "Water is composed of hydrogen and oxygen",
+      "label": "true",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": false,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "Water is composed of hydrogen and oxygen",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_true_03",
+      "claim": "The human heart pumps blood through the body",
+      "label": "true",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": false,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "The human heart pumps blood through the body",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "v2_true_04",
+      "claim": "The Great Wall of China is located in China",
+      "label": "true",
+      "type": "general",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": false,
+      "reason": "one or more atomic claims remain unverified; fail-closed hold",
+      "claims": [
+        {
+          "claim": "The Great Wall of China is located in China",
+          "type": "open_empirical",
+          "risk": "normal",
+          "verdict": "held",
+          "reason": "abstain/defer: deterministic checks inconclusive, external grounding insufficient, and no evidence-backed competent consensus",
+          "confidence": 0.0,
+          "learningCandidate": null,
+          "layers": [
+            {
+              "layer": "deterministic",
+              "verdict": "held",
+              "reason": "claim type requires external grounding",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "synthesized_verifier",
+              "verdict": "held",
+              "reason": "no admitted synthesized verifier configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "external_grounding",
+              "verdict": "held",
+              "reason": "active retrieval returned no evidence; abstain/defer",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            },
+            {
+              "layer": "consensus_by_verification",
+              "verdict": "held",
+              "reason": "no judge families configured",
+              "confidence": 0.0,
+              "evidence": [],
+              "details": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

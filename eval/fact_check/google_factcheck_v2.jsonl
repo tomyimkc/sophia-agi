@@ -1,0 +1,27 @@
+# Google Fact Check Tools oracle pilot pack v2 (self-curated from public claims).
+# Larger than v1 but still self-curated, NOT third-party-authored (honest caveat).
+# label: true=should be accepted | false=should be rejected OR held | unknowable=should be held.
+{"id": "v2_false_01", "claim": "The earth is flat", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_false_02", "claim": "Vaccines cause autism", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_false_03", "claim": "5G technology spreads the COVID-19 coronavirus", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_false_04", "claim": "Drinking bleach cures COVID-19", "label": "false", "type": "general", "risk": "high"}
+{"id": "v2_false_05", "claim": "The COVID-19 vaccine contains a microchip", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_false_06", "claim": "Humans only use 10 percent of their brains", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_false_07", "claim": "Bill Gates created the coronavirus pandemic", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_false_08", "claim": "The Great Wall of China is visible from space with the naked eye", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_false_09", "claim": "The 2020 United States presidential election was stolen through widespread voter fraud", "label": "false", "type": "general", "risk": "high"}
+{"id": "v2_false_10", "claim": "Climate change is a hoax invented by scientists", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_false_11", "claim": "Eating carrots dramatically improves your eyesight", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_false_12", "claim": "Lightning never strikes the same place twice", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_false_13", "claim": "Cracking your knuckles causes arthritis", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_false_14", "claim": "Sharks do not get cancer", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_false_15", "claim": "Goldfish have a three second memory", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_false_16", "claim": "Napoleon Bonaparte was extremely short", "label": "false", "type": "general", "risk": "normal"}
+{"id": "v2_unknow_01", "claim": "There are exactly four intelligent alien civilizations in the Milky Way", "label": "unknowable", "type": "general", "risk": "normal"}
+{"id": "v2_unknow_02", "claim": "The total number of grains of sand on Earth is an even number", "label": "unknowable", "type": "general", "risk": "normal"}
+{"id": "v2_unknow_03", "claim": "A specific unnamed coin flip tomorrow will land on heads", "label": "unknowable", "type": "general", "risk": "normal"}
+{"id": "v2_unknow_04", "claim": "There is exactly one undiscovered species of beetle in my backyard right now", "label": "unknowable", "type": "general", "risk": "normal"}
+{"id": "v2_true_01", "claim": "The earth orbits the sun", "label": "true", "type": "general", "risk": "normal"}
+{"id": "v2_true_02", "claim": "Water is composed of hydrogen and oxygen", "label": "true", "type": "general", "risk": "normal"}
+{"id": "v2_true_03", "claim": "The human heart pumps blood through the body", "label": "true", "type": "general", "risk": "normal"}
+{"id": "v2_true_04", "claim": "The Great Wall of China is located in China", "label": "true", "type": "general", "risk": "normal"}

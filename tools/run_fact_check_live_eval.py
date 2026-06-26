@@ -20,11 +20,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.fact_check_eval import load_jsonl, run_fact_check_eval, write_report  # noqa: E402
-from agent.factcheck_oracle import (  # noqa: E402
-    GoogleFactCheckOracle,
-    combined_retriever,
-    dispatched_entailment,
-)
+from agent.factcheck_oracle import GoogleFactCheckOracle, compose_live_factcheck  # noqa: E402
 from agent.live_sources import FixtureFactBackend, LiveFactBackend  # noqa: E402
 
 DEFAULT_PACK = ROOT / "eval" / "fact_check" / "heldout_v1.jsonl"
@@ -39,8 +35,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", default=str(DEFAULT_OUT), help="report output path")
     ap.add_argument("--live", action="store_true", help="use keyless live Wikidata/Crossref/URL/macro/scholarly backend")
     ap.add_argument("--google-factcheck", action="store_true",
-                    help="compose the keyed Google Fact Check Tools oracle (needs GOOGLE_FACTCHECK_API_KEY)")
+                    help="force the keyed Google Fact Check Tools oracle (error if GOOGLE_FACTCHECK_API_KEY is unset)")
+    ap.add_argument("--no-google-factcheck", action="store_true",
+                    help="opt out of the oracle even when a key is present")
     ap.add_argument("--google-page-size", type=int, default=10)
+    ap.add_argument("--nli", action="store_true",
+                    help="use an LLM NLI entailment for ClaimReview sources instead of the lexical screen (needs DEEPSEEK_API_KEY)")
     ap.add_argument("--target-fabrication-rate", type=float, default=0.01)
     args = ap.parse_args(argv)
 
@@ -50,17 +50,30 @@ def main(argv: list[str] | None = None) -> int:
     else:
         backend = FixtureFactBackend.from_file(args.fixtures)
 
-    retriever = backend.retriever
-    entailment = backend.entailment
-    live_backend = bool(args.live)
-    if args.google_factcheck:
-        oracle = GoogleFactCheckOracle(page_size=args.google_page_size)
-        if not oracle.enabled:
+    # The Google oracle is part of the DEFAULT live composition: on automatically
+    # when a key is present (offline/CI with no key is unchanged). --google-factcheck
+    # forces it (error if no key); --no-google-factcheck opts out.
+    oracle = None
+    if not args.no_google_factcheck:
+        candidate = GoogleFactCheckOracle(page_size=args.google_page_size)
+        if args.google_factcheck and not candidate.enabled:
             print("ERROR: --google-factcheck set but GOOGLE_FACTCHECK_API_KEY is not in the environment", file=sys.stderr)
             return 2
-        retriever = combined_retriever([backend.retriever, oracle.retriever])
-        entailment = dispatched_entailment(oracle, backend.entailment)
-        live_backend = True  # a keyed network oracle is a live backend
+        if candidate.enabled:
+            oracle = candidate
+
+    factcheck_entailment = None
+    if args.nli:
+        from agent.factcheck_nli import NLIEntailment
+        factcheck_entailment = NLIEntailment(source_types={"factcheck"})
+
+    retriever, entailment, oracle_active = compose_live_factcheck(
+        backend.retriever, backend.entailment,
+        oracle=oracle, factcheck_entailment=factcheck_entailment,
+    )
+    live_backend = bool(args.live) or oracle_active
+    if oracle_active:
+        print(f"[factcheck] Google ClaimReview oracle ACTIVE (nli={'on' if args.nli else 'off'})", file=sys.stderr)
 
     report = run_fact_check_eval(
         rows,
