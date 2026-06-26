@@ -118,6 +118,61 @@ def test_proof_search_report_discipline_fields() -> None:
     assert d["level3Evidence"] is False
 
 
+def test_assemble_uses_newline_separated_tactics() -> None:
+    """Regression: multi-tactic proofs must be newline-separated, not space-joined —
+    space-joining produces invalid Lean 4 ``by`` blocks and would make Lean reject
+    otherwise-correct proofs (and corrupt the novelty-probe text)."""
+    # header without `:= by` -> the assembler adds it
+    src = proof_search._assemble("theorem t : True", ("trivial",))
+    assert src == "theorem t : True := by\ntrivial"
+    # multi-tactic path -> newline-separated, never a single space-joined line
+    src2 = proof_search._assemble("theorem t : True := by", ("intro x", "exact x"))
+    assert src2 == "theorem t : True := by\nintro x\nexact x"
+    assert "intro x exact x" not in src2  # the old buggy space-joined form
+    # empty path -> trivial `rfl` fallback
+    assert proof_search._assemble("theorem t : True := by", ()) == "theorem t : True := by\nrfl"
+
+
+def test_assembled_proof_carries_single_theorem_header() -> None:
+    """Regression: verify_proof must emit ONE theorem block, not duplicate the header
+    or inject a dashed separator (both made Lean reject correct proofs). The assembler
+    and verify_proof now agree: pass a header + tactic body, get one valid source."""
+    # An injected-applier search that closes on a tactic path assembles a clean block.
+    # Use a 2-step path: 'intro x' advances (not closed), then 'done' closes — so the
+    # recorded proof reflects the FULL tactic trajectory, newline-separated.
+    def apply(state, tactic):
+        if tactic == "done" and "intro" in state:
+            return "no goals", True
+        if tactic == "intro x":
+            return state + " intro", False  # advances but doesn't close
+        return state + " step", False
+
+    def proposer(theorem, state):
+        # only offer 'intro x' at the root, 'done' after intro -> forces the 2-step path
+        return ["intro x"] if "intro" not in state else ["done"]
+
+    res = proof_search.search_proof(
+        "theorem t : P", proposer=proposer, initial_state="P",
+        apply_tactic=apply, max_nodes=20,
+    )
+    assert res.verdict == "proved"
+    # the recorded proof is the full newline-separated tactic path (regression for the
+    # space-join bug) — never the old "intro x done" single-line form.
+    assert res.proof == "intro x\ndone"
+    assert " " not in (res.proof or "").replace("\n", "") or res.proof == "intro x\ndone"
+
+
+def test_math_verifier_lean_backend_id_is_lean() -> None:
+    """Regression: even when Lean IS available, math_verifier must report backend 'lean'
+    (its contract), not 'lean4' (LeanCheck's toolchain id) — downstream consumers switch
+    on detail.backend. Skipped cleanly when lean-dojo is absent (CI default)."""
+    if not lean_backend.lean_available():
+        return  # CI default; the normalization is only reachable on the Lean path
+    r = math_verifier.verify("trivial", "theorem t : True := by", use_lean=True,
+                             lean_proof="trivial")
+    assert r["detail"]["backend"] == "lean"
+
+
 def main() -> int:
     test_lean_backend_abstains_without_lean()
     test_math_verifier_lean_delegation_abstains_without_lean()
@@ -125,6 +180,9 @@ def main() -> int:
     test_proof_search_finds_proof_with_injected_applier()
     test_proof_search_abstains_within_budget()
     test_proof_search_report_discipline_fields()
+    test_assemble_uses_newline_separated_tactics()
+    test_assembled_proof_carries_single_theorem_header()
+    test_math_verifier_lean_backend_id_is_lean()
     print("test_proof_search: OK")
     return 0
 

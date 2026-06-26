@@ -68,21 +68,34 @@ def main() -> int:
     proposer = stub_proposer if args.stub else default_proposer()
     novelty_corpus = [s["stub_tactic"] for s in BUNDLED.values()]  # strict probe corpus
 
-    # --stub path: scripted applier so the search STRUCTURE runs without Lean/LeanDojo.
-    # real path: a LeanProofSession (abstains lean_unavailable without lean-dojo installed).
+    lean_session = None
     apply_tactic = None
     if args.stub:
+        # --stub path: scripted applier so the search STRUCTURE runs without Lean/LeanDojo.
         winning = spec["stub_tactic"]
         def apply_tactic(state, tactic):  # noqa: ANN001
             if tactic.strip() == winning.split(";")[-1].strip() or tactic.strip() == winning:
                 return "no goals", True
             return state + " step", False
+    else:
+        # Real path: open a stateful LeanProofSession so the search threads LeanDojo's
+        # proof_state across tactic applications. Without this, search_proof abstains
+        # `lean_unavailable` even when lean-dojo IS installed (LeanDojo is stateful; the
+        # search cannot fake the proof_state object on a bare apply_tactic). Fail-closed:
+        # if Lean is absent, LeanProofSession.open returns False and search_proof abstains.
+        lean_session = proof_search.LeanProofSession()
+        if not lean_session.open(initial_state_str=spec["initial_state"],
+                                 theorem_source=spec["theorem"]):
+            lean_session = None  # Lean unavailable / open failed -> search abstains cleanly
 
     res = proof_search.search_proof(
         spec["theorem"], proposer=proposer, initial_state=spec["initial_state"],
         max_nodes=args.max_nodes, max_depth=args.max_depth,
         apply_tactic=apply_tactic, novelty_corpus=novelty_corpus,
+        lean_session=lean_session,
     )
+    if lean_session is not None:
+        lean_session.close()
     payload = res.to_dict()
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

@@ -79,7 +79,10 @@ def main() -> int:
     print(f"shift degrad. : {report.shift_degradation:.4f}  (max {args.max_shift_deg})")
     print(f"reason       : {report.reason}")
     print(f"\n{report.to_dict()['interpretation']}")
-    return 0 if report.verdict == "promote" else 1 if report.verdict == "hold-shift-degenerate" else 0
+    # Non-zero for any non-promote verdict: every non-promote outcome (hold-below-bar,
+    # hold-shift-degenerate) is a NOT-promoted canary, so a failed canary must look like
+    # failure in scripts/CI (exit 0 only when the model is actually promoted).
+    return 0 if report.verdict == "promote" else 1
 
 
 if __name__ == "__main__":

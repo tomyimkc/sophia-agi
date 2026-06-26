@@ -69,7 +69,13 @@ def mine_file(path: str | Path) -> list[OutcomePair]:
             by_step.setdefault(str(ev.get("step", "?")), []).append(ev)
     # Track prior failure-class for state bucketing (cheap context cue).
     prior_failure: str | None = None
-    for step_id, attempts in by_step.items():
+    # Iterate steps in numeric (then lexical) order, NOT dict insertion order: a resumed
+    # or interleaved log can emit step_output events out of sequence (e.g. s10 before s2),
+    # which would thread prior_failure against the wrong progression and mis-bucket states.
+    def _step_sort_key(sid: str) -> tuple:
+        m = re.search(r"\d+", sid)
+        return (int(m.group()), sid) if m else (float("inf"), sid)
+    for step_id, attempts in sorted(by_step.items(), key=lambda kv: _step_sort_key(kv[0])):
         if not attempts:
             continue
         success = 1 if any(a.get("passed") for a in attempts) else 0

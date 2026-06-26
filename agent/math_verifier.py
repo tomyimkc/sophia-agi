@@ -76,7 +76,13 @@ def verify(
                 "detail": {"backend": "lean", "lean": True, "lean_proof_supplied": False},
             }
         check = lean_backend.verify_proof(theorem=gold, proof=lean_proof)
-        return check.to_dict()
+        out = check.to_dict()
+        # Normalize the backend id to "lean" (this verifier's contract) — LeanCheck.to_dict
+        # reports "lean4" (the toolchain), but every other branch here and all
+        # callers/tests identify this path as "lean". A consistent id avoids breaking
+        # downstream consumers that switch on detail.backend.
+        (out.get("detail") or {})["backend"] = "lean"
+        return out
     if not sympy_available():
         return {
             "verdict": "abstain",
