@@ -6,7 +6,7 @@
 //! Quantifies the cost/latency/effect trade-off the JD asks for, on deterministic synthetic
 //! data (seeded LCG, no dependencies). Run:  `cargo run --release --bin bench`.
 
-use sophia_ann::{FlatIndex, HnswIndex, NswIndex, ShardedHnsw};
+use sophia_ann::{FlatIndex, HnswIndex, NswIndex, SearchPool, ShardedHnsw};
 use std::time::Instant;
 
 fn normalize(mut v: Vec<f32>) -> Vec<f32> {
@@ -113,6 +113,25 @@ fn main() {
          RECALL — the top-k merge sees more candidates, so recall RISES with shards. The parallel\n   \
          LATENCY win needs per-shard work to exceed thread-spawn cost: at this scale fresh\n   \
          per-query threads cost more than they save, so use larger shards or a persistent pool.)"
+    );
+
+    // --- Persistent pool vs per-query threads vs sequential (same 8-shard index, ef=128) ---
+    println!("  --- dispatch strategy (8 shards, ef=128, same recall) ---");
+    let mut sh8 = ShardedHnsw::new(8, dim, m, 200);
+    for (i, v) in data.iter().enumerate() {
+        sh8.add(i as u32, v);
+    }
+    let (r_seq, us_seq) = measure(&queries, &exact, |q| sh8.search_seq(q, k, ef), k);
+    let (r_thr, us_thr) = measure(&queries, &exact, |q| sh8.search(q, k, ef), k);
+    let pool = SearchPool::new(sh8);
+    let (r_pool, us_pool) = measure(&queries, &exact, |q| pool.search(q, k, ef), k);
+    println!("  {:>22}  {:>9} {:>10}", "strategy", "r@10", "us/query");
+    println!("  {:>22}  {r_seq:>9.3} {us_seq:>10.1}", "sequential");
+    println!("  {:>22}  {r_thr:>9.3} {us_thr:>10.1}", "per-query threads");
+    println!("  {:>22}  {r_pool:>9.3} {us_pool:>10.1}", "persistent pool");
+    println!(
+        "  (the pool reuses long-lived workers, so it pays no per-query spawn cost — the parallel\n   \
+         latency advantage the per-query-threads strategy can't realize at this scale.)"
     );
 }
 

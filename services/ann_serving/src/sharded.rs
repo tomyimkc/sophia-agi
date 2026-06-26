@@ -97,6 +97,12 @@ impl ShardedHnsw {
         merge_topk(partials, k)
     }
 
+    /// Search a single shard's top-`k` — the unit of work a [`SearchPool`](crate::SearchPool)
+    /// worker runs. Out-of-range shard → empty (graceful).
+    pub fn search_shard(&self, shard: usize, query: &[f32], k: usize, ef: usize) -> Vec<(u32, f32)> {
+        self.shards.get(shard).map(|s| s.search(query, k, ef)).unwrap_or_default()
+    }
+
     /// Serialize all shards to one portable blob (build-once, load-fast).
     pub fn to_bytes(&self) -> Vec<u8> {
         let mut out = Vec::new();
@@ -130,8 +136,8 @@ impl ShardedHnsw {
 }
 
 /// Merge per-shard `(id, similarity)` lists into a global top-`k`, sorted by descending
-/// similarity with id as a deterministic tie-break.
-fn merge_topk(partials: Vec<Vec<(u32, f32)>>, k: usize) -> Vec<(u32, f32)> {
+/// similarity with id as a deterministic tie-break. Shared with the persistent pool.
+pub(crate) fn merge_topk(partials: Vec<Vec<(u32, f32)>>, k: usize) -> Vec<(u32, f32)> {
     let mut all: Vec<(u32, f32)> = partials.into_iter().flatten().collect();
     all.sort_by(|a, b| {
         b.1.partial_cmp(&a.1).unwrap_or(Ordering::Equal).then(a.0.cmp(&b.0))

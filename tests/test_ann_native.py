@@ -37,8 +37,14 @@ def _load_native(tmp_path):
     dst = tmp_path / "sophia_ann.so"
     shutil.copy(so, dst)
     spec = importlib.util.spec_from_file_location("sophia_ann", dst)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
+    try:
+        # A plain `cargo build` also emits libsophia_ann.so (a cdylib WITHOUT the PyInit
+        # symbol). Loading it raises ImportError at module_from_spec — skip unless this is the
+        # actual Python extension (cargo build --features python).
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+    except ImportError:
+        pytest.skip("sophia_ann built without the `python` feature (cargo build --features python)")
     return mod
 
 

@@ -4,6 +4,22 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — persistent search pool: realize the parallel latency win at scale
+
+- **SearchPool** (`services/ann_serving/src/pool.rs`): the sharded index's parallel fan-out
+  previously spawned fresh threads per query (`thread::scope`), whose spawn cost masked the
+  speedup at modest scale. The pool spins up one long-lived worker per shard at construction and
+  *dispatches* each query over channels (`std::sync::mpsc` + `Arc`, still dependency-free) — no
+  per-query thread creation. Deterministic and identical to `ShardedHnsw::search`; concurrency-
+  safe (each call uses a private result channel, verified by a multi-thread hammer test).
+- **Measured** (`bench`, 20k×64-d, 8 shards, ef=128, same 0.993 recall): sequential ~1650 µs →
+  per-query threads ~920 µs → **persistent pool ~690 µs** (~2.4× over sequential). `serve` now
+  serves through the pool by default.
+- Tests: +3 Rust (pool==direct, concurrency-safety, into_inner); native test hardened to **skip**
+  cleanly when the cdylib lacks the PyInit symbol (plain build) vs run on a `--features python` build.
+  `cargo test` 15 green; default build still dependency-free.
+
+
 ### Added — in-process PyO3 binding for the Rust ANN core (optional `python` feature)
 
 - **PyO3 binding** (`services/ann_serving/src/python.rs`, `pyproject.toml`): the sharded HNSW

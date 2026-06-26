@@ -22,7 +22,9 @@ use std::cmp::Ordering;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 
+pub mod pool;
 pub mod sharded;
+pub use pool::SearchPool;
 pub use sharded::ShardedHnsw;
 
 #[cfg(feature = "python")]

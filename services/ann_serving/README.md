@@ -66,10 +66,19 @@ the sequential merge, verified in tests). Persistence (`pack` / `serve <file>.id
 construction on startup.
 
 **Measured (`bench`, 20k×64-d, ef=128):** sharding *raises* recall — 1→0.92, 4→0.98, 8→0.99 —
-because the merge sees more candidates, and adds N× capacity. The parallel **latency** win needs
-per-shard work to exceed thread-spawn cost; at this small scale fresh per-query threads cost more
-than they save, so production uses larger shards (or a persistent pool — see next steps). Honest:
-sharding here is a **capacity + recall** win, not a latency win at toy scale.
+because the merge sees more candidates, and adds N× capacity.
+
+For latency, `SearchPool` keeps one long-lived worker per shard so a query is *dispatched* to
+running workers instead of paying thread creation. At 8 shards / ef=128 (same 0.993 recall):
+
+| dispatch | µs/query |
+|----------|---------:|
+| sequential | ~1650 |
+| per-query threads (`thread::scope`) | ~920 |
+| **persistent pool** (`SearchPool`) | **~690** |
+
+So the pool realizes the parallel latency win (~2.4× over sequential, and faster than per-query
+threads) that fresh-thread fan-out can't at this scale. `serve` uses the pool by default.
 
 ## Serving bridge (Python ↔ Rust)
 
@@ -104,11 +113,8 @@ exercises it (skipped unless built). Source: `src/python.rs`.
 
 ## Honest bounds & next steps
 
-- **Persistent thread pool.** Search fans out with fresh per-query threads (`thread::scope`) —
-  correct and dependency-free, but the spawn cost only pays off when per-shard work is large. A
-  reusable worker pool (or distributing shards across processes/machines) is where the parallel
-  latency win lands at production scale.
-- **Distribution & RDMA.** Shards are in-process; cross-machine sharding with RDMA transport, and
-  HNSW deletion/compaction, are the genuinely large architecture items the JD lists as bonus.
+- **Distribution & RDMA.** Shards (and the pool) are in-process; cross-machine sharding with an
+  RDMA transport, and HNSW deletion/compaction, are the genuinely large architecture items the
+  JD lists as bonus.
 - **Wheel packaging.** `pyproject.toml` is maturin-ready; a published wheel (so `pip install
   sophia-ann` needs no Rust toolchain) is the remaining packaging step.

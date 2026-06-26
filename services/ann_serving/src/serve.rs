@@ -15,7 +15,7 @@
 
 use std::io::{self, BufRead, Write};
 
-use sophia_ann::{parse_index_line, ShardedHnsw};
+use sophia_ann::{parse_index_line, SearchPool, ShardedHnsw};
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -50,10 +50,14 @@ fn main() {
         }
     }
 
+    // Serve through the persistent pool: long-lived workers fan each query across shards with
+    // no per-query thread-spawn cost (the lower-latency path; see `bench`).
+    let pool = SearchPool::new(index);
+
     let stdout = io::stdout();
     let mut out = stdout.lock();
     // Handshake: the client waits for READY before sending queries.
-    writeln!(out, "READY {} {}", index.len(), index.dim()).ok();
+    writeln!(out, "READY {} {}", pool.len(), pool.dim()).ok();
     out.flush().ok();
 
     let stdin = io::stdin();
@@ -73,12 +77,12 @@ fn main() {
         let k: usize = it.next().and_then(|s| s.parse().ok()).unwrap_or(10);
         let ef: usize = it.next().and_then(|s| s.parse().ok()).unwrap_or(64);
         let q: Vec<f32> = it.filter_map(|s| s.parse().ok()).collect();
-        if q.len() != index.dim() {
-            writeln!(out, "ERR expected dim {}, got {}", index.dim(), q.len()).ok();
+        if q.len() != pool.dim() {
+            writeln!(out, "ERR expected dim {}, got {}", pool.dim(), q.len()).ok();
             out.flush().ok();
             continue;
         }
-        let hits = index.search(&q, k, ef);
+        let hits = pool.search(&q, k, ef);
         let parts: Vec<String> = hits.iter().map(|(id, sc)| format!("{id}:{sc:.6}")).collect();
         writeln!(out, "{}", parts.join(" ")).ok();
         out.flush().ok();
