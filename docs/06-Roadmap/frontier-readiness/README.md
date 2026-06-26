@@ -35,6 +35,16 @@ Origin: a gap analysis of Anthropic's open technical roles vs this repo, then a 
   FP/FN), bootstrap CIs, fail-closed unmeasured path; proven end-to-end on the lowest-hazard probe
   (`monitor_subversion`) via `tools/run_frontier_eval.py --mode mock`; 7 CI tests. Defensive-only;
   the live G8 registry stays fail-closed (no mock registration).
+- **Wave 2/3 offline cores DONE & green** ($0, no secrets):
+  - **Kernels (#02):** `kernels/reference.py` exact softmax/RMSNorm/SwiGLU + roofline accounting
+    (all three shown memory-bound on GB10 → fusion is the win) + a GPU-only Triton softmax source
+    (`kernels/triton/`, CI-excluded) + `tools/run_kernels.py --mode mock` + 6 tests.
+  - **Inference serving (#04):** `serving/sim/` deterministic static-vs-continuous batching simulator
+    with TTFT/TPOT/throughput/goodput; **×1.52 continuous throughput speedup**; `tools/run_serving_sim.py
+    --mode mock` + 4 tests.
+  - **Data platform (#08):** `pipeline/filters/` Gopher + C4 quality taggers (Dolma-style, fail-closed)
+    + `tools/run_quality_filter`-style corpus filter + 5 tests.
 - **GPU runs:** see [DGX-SPARK-RUNBOOK.md](DGX-SPARK-RUNBOOK.md) — turnkey recipes for Live-RL M1
-  and Interpretability M1/M2 (run on the Spark; paste reports back for gating).
+  and Interpretability M1/M2 (run on the Spark; paste reports back for gating). Kernels Triton bench,
+  serving real-engine, and data-platform at-scale (Spark/Ray) are the GPU/compute next steps.
 - Base model standardized on **Qwen2.5-7B-Instruct (Apache-2.0)** across RLVR + interp tracks.

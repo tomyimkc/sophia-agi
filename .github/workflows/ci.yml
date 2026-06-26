@@ -124,6 +124,9 @@ jobs:
           python tests/test_interp_metrics.py
           python tests/test_interp_sae.py
           python tests/test_frontier_harness.py
+          python tests/test_pipeline_filters.py
+          python tests/test_serving_sim.py
+          python tests/test_kernels_reference.py
           python tests/test_council_diversity.py
           python tests/test_pif_harness.py
           python tests/test_capability.py
