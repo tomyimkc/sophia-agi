@@ -1,0 +1,90 @@
+{
+  "_meta": {
+    "schema": "sophia.arkdistill.profiles.v1",
+    "note": "Deterministic, offline compaction profiles for noisy TOOL output only. Never applied to model claims or provenance. Distilled from AgentArk's ArkDistill idea, rebuilt to the Sophia discipline (deterministic, offline, fail-open-to-original).",
+    "copyright": "Copyright (c) 2026 tomyimkc",
+    "license": "Apache-2.0"
+  },
+  "profiles": {
+    "generic": {
+      "summary": "Conservative default: strip ANSI/control noise, collapse blank-line and duplicate-line runs, keep head+tail.",
+      "strip_patterns": [
+        "\\x1b\\[[0-9;]*[A-Za-z]",
+        "\\r"
+      ],
+      "collapse_blank_lines": true,
+      "max_repeat_lines": 3,
+      "head_lines": 60,
+      "tail_lines": 40,
+      "keep_json_fields": []
+    },
+    "browser_html": {
+      "summary": "Browser/HTML dumps: drop scripts, styles, tags, and SVG/base64 blobs; keep visible text head+tail.",
+      "strip_patterns": [
+        "(?is)<script\\b.*?</script>",
+        "(?is)<style\\b.*?</style>",
+        "(?is)<!--.*?-->",
+        "(?is)<svg\\b.*?</svg>",
+        "data:[a-z0-9.+-]+/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+",
+        "<[^>]+>",
+        "&nbsp;",
+        "\\x1b\\[[0-9;]*[A-Za-z]",
+        "\\r"
+      ],
+      "collapse_blank_lines": true,
+      "max_repeat_lines": 2,
+      "head_lines": 50,
+      "tail_lines": 25,
+      "keep_json_fields": []
+    },
+    "log_dump": {
+      "summary": "Build/CI/server logs: strip ANSI + leading ISO timestamps, collapse repeated lines, keep head+tail (tail holds the error).",
+      "strip_patterns": [
+        "\\x1b\\[[0-9;]*[A-Za-z]",
+        "(?m)^\\d{4}-\\d{2}-\\d{2}[T ]\\d{2}:\\d{2}:\\d{2}(?:[.,]\\d+)?(?:Z|[+-]\\d{2}:?\\d{2})?\\s+",
+        "\\r"
+      ],
+      "collapse_blank_lines": true,
+      "max_repeat_lines": 2,
+      "head_lines": 40,
+      "tail_lines": 60,
+      "keep_json_fields": []
+    },
+    "tool_trace": {
+      "summary": "Tool/exec traces: strip ANSI, collapse blank+duplicate lines, keep head+tail.",
+      "strip_patterns": [
+        "\\x1b\\[[0-9;]*[A-Za-z]",
+        "\\r"
+      ],
+      "collapse_blank_lines": true,
+      "max_repeat_lines": 2,
+      "head_lines": 50,
+      "tail_lines": 50,
+      "keep_json_fields": []
+    },
+    "json_response": {
+      "summary": "Structured JSON: keep only high-signal top-level fields when present, else fall through to head+tail. Compacts pretty-printing.",
+      "strip_patterns": [],
+      "collapse_blank_lines": true,
+      "max_repeat_lines": 0,
+      "head_lines": 120,
+      "tail_lines": 40,
+      "keep_json_fields": [
+        "error",
+        "errors",
+        "message",
+        "status",
+        "ok",
+        "result",
+        "results",
+        "data",
+        "items",
+        "title",
+        "url",
+        "content",
+        "text",
+        "summary"
+      ]
+    }
+  }
+}
