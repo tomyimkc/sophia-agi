@@ -15,8 +15,10 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+import tools.runpod_connect as rc  # noqa: E402
 from tools.runpod_connect import (  # noqa: E402
-    DISPATCH_WORKFLOW, classify_pod, main, resolve_api_key,
+    DISPATCH_WORKFLOW, RunPodError, classify_pod, main, resolve_api_key,
+    terminate_pod,
 )
 
 
@@ -98,6 +100,58 @@ def test_check_without_key_fails_closed(monkeypatch, capsys) -> None:
     assert rc == 2
     assert '"connected": false' in out
     assert DISPATCH_WORKFLOW in out
+
+
+# --- terminate (cost-saving) path -----------------------------------------
+
+def test_terminate_pod_success(monkeypatch) -> None:
+    calls = []
+    monkeypatch.setattr(rc, "_api_request",
+                        lambda m, p, k, *a, **kw: calls.append((m, p)) or None)
+    res = terminate_pod("rpa_x", "111704")
+    assert res == {"id": "111704", "terminated": True, "detail": "deleted"}
+    assert calls == [("DELETE", "/pods/111704")]
+
+
+def test_terminate_pod_404_is_success(monkeypatch) -> None:
+    def boom(*a, **kw):
+        raise RunPodError("RunPod API DELETE /pods/x failed: HTTP 404: gone")
+    monkeypatch.setattr(rc, "_api_request", boom)
+    res = terminate_pod("rpa_x", "111704")
+    assert res["terminated"] is True and "404" in res["detail"]
+
+
+def test_terminate_pod_error_is_failure(monkeypatch) -> None:
+    def boom(*a, **kw):
+        raise RunPodError("HTTP 500: boom")
+    monkeypatch.setattr(rc, "_api_request", boom)
+    res = terminate_pod("rpa_x", "111704")
+    assert res["terminated"] is False
+
+
+def test_cli_terminate_requires_yes(monkeypatch, capsys) -> None:
+    monkeypatch.setenv("RUNPOD_API_KEY", "rpa_present")
+    monkeypatch.setattr(rc, "get_pod", lambda k, pid: {"id": pid, "desiredStatus": "RUNNING",
+                                                       "runtime": {"uptimeInSeconds": 99}})
+    deleted = []
+    monkeypatch.setattr(rc, "terminate_pod", lambda k, pid: deleted.append(pid))
+    rc_code = main(["--terminate", "111704", "--json"])
+    out = capsys.readouterr().out
+    assert rc_code == 2  # blocked without --yes
+    assert deleted == []  # nothing deleted
+    assert "needs --yes" in out
+
+
+def test_cli_terminate_with_yes_deletes(monkeypatch, capsys) -> None:
+    monkeypatch.setenv("RUNPOD_API_KEY", "rpa_present")
+    monkeypatch.setattr(rc, "get_pod", lambda k, pid: {"id": pid, "desiredStatus": "RUNNING",
+                                                       "runtime": {"uptimeInSeconds": 99}})
+    monkeypatch.setattr(rc, "terminate_pod",
+                        lambda k, pid: {"id": pid, "terminated": True, "detail": "deleted"})
+    rc_code = main(["--terminate", "111704", "--yes", "--json"])
+    out = capsys.readouterr().out
+    assert rc_code == 0
+    assert '"terminated": true' in out
 
 
 if __name__ == "__main__":  # allow running without pytest installed

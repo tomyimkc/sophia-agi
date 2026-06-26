@@ -31,6 +31,8 @@ Need RunPod?
 │   │        • RunPod MCP tools (mcp__runpod__*), or
 │   │        • python tools/runpod_connect.py --check        # list + flag stalled pods
 │   │        • python tools/runpod_connect.py --check --restart-stalled
+│   │        • python tools/runpod_connect.py --pod <ID>      # inspect one pod
+│   │        • python tools/runpod_connect.py --terminate <ID> --yes  # delete idle pod (saves $)
 │   │        • python tools/runpod_rlvr.py / runpod_train.py # launch a real run
 │   │
 │   └─ NO  → GITHUB-MEDIATED route (the fallback that always works)
@@ -38,7 +40,11 @@ Need RunPod?
 │            checker with the secret injected:
 │              • Web:  Actions → "runpod-connect" → Run workflow → action=check
 │              • CLI:  gh workflow run runpod-connect.yml -f action=check
-│              • To recover a stuck pod:  -f action=restart-stalled
+│              • Recover a stuck pod:  -f action=restart-stalled
+│              • Terminate an idle pod (saves $):
+│                  gh workflow run runpod-connect.yml \
+│                    -f action=terminate -f pod_id=<ID> -f confirm=<ID>
+│                (confirm must equal pod_id — a guard against accidental deletes)
 │            Read the result from the run log / `runpod-connect-report` artifact.
 ```
 

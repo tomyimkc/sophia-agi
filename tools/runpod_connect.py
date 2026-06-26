@@ -121,6 +121,32 @@ def _list_pods(api_key: str) -> "list[dict[str, Any]]":
     return [p for p in pods if isinstance(p, dict)]
 
 
+def get_pod(api_key: str, pod_id: str) -> "dict[str, Any] | None":
+    """Fetch one pod by id (None if not found)."""
+
+    try:
+        pod = _api_request("GET", f"/pods/{pod_id}", api_key, timeout=30)
+    except RunPodError:
+        return None
+    return pod if isinstance(pod, dict) else None
+
+
+def terminate_pod(api_key: str, pod_id: str) -> "dict[str, Any]":
+    """Delete (terminate) a pod by id — the cost-saving action for an idle pod.
+
+    Uses the same ``DELETE /pods/{id}`` endpoint as the launcher's delete watchdog.
+    A 404 (already gone) is treated as success.
+    """
+
+    try:
+        _api_request("DELETE", f"/pods/{pod_id}", api_key, timeout=60)
+        return {"id": pod_id, "terminated": True, "detail": "deleted"}
+    except RunPodError as exc:
+        if "HTTP 404" in str(exc):
+            return {"id": pod_id, "terminated": True, "detail": "already gone (404)"}
+        return {"id": pod_id, "terminated": False, "detail": str(exc)}
+
+
 def restart_pod(api_key: str, pod_id: str) -> "dict[str, Any]":
     """Recover a stalled pod: stop then start it. Returns a small result dict."""
 
@@ -179,6 +205,14 @@ def main(argv: "list[str] | None" = None) -> int:
                         help="List pods and flag stalled ones (needs a key)")
     parser.add_argument("--restart-stalled", action="store_true",
                         help="Stop+start any stalled pod found by --check")
+    parser.add_argument("--pod", default=None, metavar="POD_ID",
+                        help="Inspect a single pod by id (status/shape verdict)")
+    parser.add_argument("--terminate", default=None, metavar="POD_ID",
+                        help="Terminate (delete) an idle/unused pod by id to save cost. "
+                             "Requires --yes. REST cannot prove idleness (no GPU-util "
+                             "telemetry); the pod's status is printed before deletion.")
+    parser.add_argument("--yes", action="store_true",
+                        help="Confirm a destructive action (--terminate)")
     parser.add_argument("--api-key", default=None,
                         help="Explicit key (prefer RUNPOD_API_KEY env; never commit one)")
     parser.add_argument("--json", action="store_true", help="Machine-readable output")
@@ -210,6 +244,39 @@ def main(argv: "list[str] | None" = None) -> int:
         else:
             print(GITHUB_FALLBACK_HINT, file=sys.stderr)
         return 2
+
+    if args.pod:
+        pod = get_pod(key, args.pod)
+        if pod is None:
+            out = {"connected": True, "found": False, "id": args.pod}
+            print(json.dumps(out, indent=2) if args.json else
+                  f"[runpod] pod {args.pod} not found")
+            return 1
+        verdict = classify_pod(pod)
+        print(json.dumps(verdict, indent=2) if args.json else
+              f"[runpod] {verdict['name']} ({verdict['id']}): "
+              f"{verdict['verdict']} — {verdict['reason']}")
+        return 0
+
+    if args.terminate:
+        pod = get_pod(key, args.terminate)
+        verdict = classify_pod(pod) if pod else {"id": args.terminate, "verdict": "not-found",
+                                                 "reason": "pod not found"}
+        if not args.yes:
+            out = {"terminated": False, "blocked": "needs --yes",
+                   "pod": verdict,
+                   "note": ("REST cannot prove a pod is idle (no GPU-util telemetry). "
+                            "Re-run with --yes to delete; this stops billing immediately.")}
+            print(json.dumps(out, indent=2) if args.json else
+                  f"[runpod] WOULD terminate {verdict['id']} "
+                  f"(status: {verdict.get('reason')}). Re-run with --yes to confirm.")
+            return 2
+        result = terminate_pod(key, args.terminate)
+        result["pod_before"] = verdict
+        print(json.dumps(result, indent=2) if args.json else
+              f"[runpod] terminate {result['id']}: "
+              f"{'OK' if result['terminated'] else 'FAILED'} — {result['detail']}")
+        return 0 if result["terminated"] else 1
 
     if not args.check:
         msg = f"[runpod] key resolved from {source}; pass --check to query pods."

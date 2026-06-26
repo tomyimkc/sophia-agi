@@ -16,7 +16,15 @@ on:
         required: false
         default: 'check'
         type: choice
-        options: ['check', 'restart-stalled']
+        options: ['check', 'restart-stalled', 'terminate']
+      pod_id:
+        description: 'Pod id to inspect/terminate (required for action=terminate)'
+        required: false
+        default: ''
+      confirm:
+        description: 'For action=terminate: retype the pod id to confirm deletion (stops billing)'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -46,17 +54,31 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Connect + check (flag stalled pods)
+      - name: Connect + run requested action
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          ACTION: ${{ github.event.inputs.action }}
+          POD_ID: ${{ github.event.inputs.pod_id }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
         run: |
-          EXTRA=""
-          if [ "${{ github.event.inputs.action }}" = "restart-stalled" ]; then
-            EXTRA="--restart-stalled"
+          set -euo pipefail
+          if [ "$ACTION" = "terminate" ]; then
+            if [ -z "$POD_ID" ]; then
+              echo "::error::action=terminate requires pod_id."; exit 1
+            fi
+            if [ "$CONFIRM" != "$POD_ID" ]; then
+              echo "::error::confirm must exactly equal pod_id ($POD_ID) to delete it. Aborting."; exit 1
+            fi
+            echo "Pod status before termination:"
+            python tools/runpod_connect.py --pod "$POD_ID" || true
+            python tools/runpod_connect.py --terminate "$POD_ID" --yes --json | tee runpod-connect.json
+          else
+            EXTRA=""
+            if [ "$ACTION" = "restart-stalled" ]; then EXTRA="--restart-stalled"; fi
+            python tools/runpod_connect.py --check --json $EXTRA | tee runpod-connect.json
+            # Mirror a human-readable summary into the step log too.
+            python tools/runpod_connect.py --check $EXTRA || true
           fi
-          python tools/runpod_connect.py --check --json $EXTRA | tee runpod-connect.json
-          # Mirror a human-readable summary into the step log too.
-          python tools/runpod_connect.py --check $EXTRA || true
 
       - name: Upload connection report
         if: always()
