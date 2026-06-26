@@ -159,6 +159,37 @@ class LongHorizonRun:
         }
 
 
+def run_objective_gate(run: LongHorizonRun, gate_cmd, *, timeout_sec: int) -> bool | None:
+    """Run the spec's machine-checked objective gate, if any. Execution truth: the
+    objective was met iff this command exits 0 — stronger than the semantic
+    `autonomy.substantive` classification (which only says the run was long / busy).
+
+    Returns ``None`` when the spec has no ``objectiveGate`` (not all objectives are
+    concretely checkable); logs a ``verification`` event with the result either way.
+    Fail-closed: a gate that errors or times out is recorded as not-passed."""
+    if not gate_cmd:
+        return None
+    argv = gate_cmd if isinstance(gate_cmd, list) else ["bash", "-lc", gate_cmd]
+    try:
+        proc = subprocess.run(argv, cwd=ROOT, text=True, capture_output=True, timeout=timeout_sec, check=False)
+        passed = proc.returncode == 0
+        run.log(
+            "verification",
+            f"objective gate {'passed' if passed else 'failed'}",
+            verificationCommand=" ".join(argv),
+            objectivePassed=passed,
+            returncode=proc.returncode,
+            stderrTail=proc.stderr[-300:] if not passed else "",
+        )
+        return passed
+    except subprocess.TimeoutExpired:
+        run.log("verification", "objective gate timed out", verificationCommand=" ".join(argv), objectivePassed=False, timedOut=True)
+        return False
+    except FileNotFoundError as exc:
+        run.log("verification", f"objective gate command not found: {exc}", verificationCommand=" ".join(argv), objectivePassed=False)
+        return False
+
+
 def classify_tier(duration_sec: float) -> str:
     for threshold, name in TIER_THRESHOLDS:
         if duration_sec >= threshold:
@@ -245,6 +276,10 @@ SELF_TEST_SPEC: dict[str, Any] = {
         "validate proof manifest",
         "intentionally fail then self-correct",
     ],
+    # Execution-truth objective gate (Phase B2): the manifest being valid JSON is
+    # the machine-checked objective. objectivePassed=true is stronger evidence than
+    # the semantic autonomy classification alone.
+    "objectiveGate": ["python3", "-m", "json.tool", "agi-proof/evidence-manifest.json"],
     "steps": [
         {"name": "record-env", "cmd": ["bash", "-lc", "python3 --version; uname -a"], "purpose": "capture environment"},
         {"name": "repo-head", "cmd": ["git", "rev-parse", "HEAD"], "purpose": "record commit hash"},
@@ -322,6 +357,13 @@ def main() -> int:
         except subprocess.TimeoutExpired:
             run.log("failed_attempt", f"step timed out: {step['name']}", step=step["name"], timedOut=True)
 
+    # Execution-truth objective gate (Phase B2 wedge): a machine-checked command
+    # the spec can carry whose exit code proves the objective was met — stronger
+    # than the semantic `autonomy.substantive` classification. Optional: specs
+    # without an objectiveGate report objectivePassed=null (not all objectives are
+    # concretely checkable, and that is honest, not a failure).
+    objective_passed = run_objective_gate(run, spec.get("objectiveGate"), timeout_sec=args.timeout_sec)
+
     summary = run.summary()
     report_path = args.report_out or (default_dir / f"{run.run_id}-{date}.public-report.json")
     report = {
@@ -332,6 +374,7 @@ def main() -> int:
             "Counts and classification only; full command output stays in the JSONL log. "
             "Tier 'below-short-demo' means this run was shorter than the 30-minute Short tier."
         ),
+        "objectivePassed": objective_passed,
         **summary,
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)

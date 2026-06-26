@@ -23,6 +23,7 @@ import csv
 import hashlib
 import io
 import json
+import os
 import re
 import time
 from dataclasses import dataclass
@@ -100,6 +101,7 @@ def ranked_sources(sources: list[EvidenceSource]) -> list[EvidenceSource]:
         "scholarly": 88,
         "official_data": 86,
         "openalex": 84,
+        "google_factcheck": 83,
         "wikipedia": 75,
         "web": 40,
         "fixture": 30,
@@ -497,6 +499,173 @@ class LiveFactBackend:
         return label
 
 
+# --------------------------------------------------------------------------- #
+# Google Fact Check Tools backend (ClaimReview) — the first backend that reads
+# GOOGLE_FACTCHECK_API_KEY. Keyed because Google's Fact Check Tools API requires
+# an enabled API key (see .env.example). Offline-deterministic via an injectable
+# fetcher so CI never needs the key or the network.
+# --------------------------------------------------------------------------- #
+
+# Clean-negative ClaimReview ratings. We normalize ONLY unambiguous false-style
+# verdicts (which CONTRADICT a claim asserting the rated proposition) and a small
+# set of true-style verdicts (which ENTAIL it). Everything else — "Misleading",
+# "Not the Whole Story", prose like "We have abundant evidence..." — is dropped
+# (treated as "irrelevant") rather than guessed, because fact-checker rating
+# vocabularies are heterogeneous prose and a wrong normalization would silently
+# flip the gate. This is the fail-closed rule the README's plan specified.
+_NEGATIVE_RATINGS = {
+    # universal clear-false across publishers
+    "false", "incorrect", "wrong", "untrue", "fabrication", "fake",
+    # AFP / PolitiFact / Snopes
+    "pants on fire", "pants fire", "mostly false", "false!", "scam", "hoax",
+    # Washington Post (publisher-scoped below — "Pinocchios" is WaPo-only)
+}
+_POSITIVE_RATINGS = {"true", "correct", "accurate", "mostly true", "half true"}
+# Publisher-scoped ratings: a string that is a clear verdict from ONE publisher but
+# ambiguous from another. Keyed by lowercased publisher name substring.
+_PUBLISHER_RATINGS = {
+    "washington post": {"four pinocchios": "false", "three pinocchios": "false", "two pinocchios": "false"},
+    "snopes": {"false": "false", "mixture": "irrelevant", "mostly false": "false", "true": "true"},
+    "politifact": {"pants on fire!": "false", "pants on fire": "false", "mostly false": "false"},
+    "fullfact": {"incorrect": "false", "false": "false", "true": "true"},
+}
+
+
+def normalize_claimreview_rating(rating: str, publisher: str) -> str:
+    """Map a ClaimReview ``textualRating`` to ``true`` | ``false`` | ``irrelevant``.
+
+    Conservative by design: returns ``irrelevant`` (drop) for anything not a clean
+    binary verdict. A wrong normalization would silently flip the gate; an unknown
+    rating leaves the gate to hold on its other evidence, which is fail-closed."""
+    r = (rating or "").strip().lower()
+    p = (publisher or "").lower()
+    if not r:
+        return "irrelevant"
+    # 1) Publisher-scoped vocabulary first (most specific).
+    for pub_fragment, mapping in _PUBLISHER_RATINGS.items():
+        if pub_fragment in p:
+            mapped = mapping.get(r)
+            if mapped:
+                return mapped
+    # 2) Universal clean verdicts.
+    if r in _POSITIVE_RATINGS:
+        return "true"
+    if r in _NEGATIVE_RATINGS:
+        return "false"
+    return "irrelevant"
+
+
+class GoogleFactCheckBackend:
+    """Google Fact Check Tools (ClaimReview) backend for the out-of-wiki gate.
+
+    Queries ``factchecktools.googleapis.com`` for professional fact-checker
+    verdicts on a claim, maps each ClaimReview to an :class:`EvidenceSource`, and
+    derives entailment from the normalized rating. Fail-closed: a missing key, a
+    network error, or an unnormalizable rating yields ``[]`` / ``irrelevant`` so
+    the gate holds rather than accepting from a broken or ambiguous backend.
+
+    The API key is read from ``GOOGLE_FACTCHECK_API_KEY`` (or passed explicitly).
+    It must NEVER be committed; this class only holds it in memory. Offline-
+    testable via the injected ``fetcher`` (a callable taking the full URL and
+    returning a parsed dict) so CI runs without a key or network.
+    """
+
+    BASE_URL = "https://factchecktools.googleapis.com/v1alpha1/claims:search"
+
+    def __init__(
+        self,
+        *,
+        api_key: str | None = None,
+        timeout: float = DEFAULT_TIMEOUT,
+        max_pages: int = 2,
+        fetcher: Any | None = None,
+        page_size: int = 20,
+        language_code: str = "en",
+    ) -> None:
+        self.api_key = api_key if api_key is not None else os.environ.get("GOOGLE_FACTCHECK_API_KEY", "")
+        self.timeout = timeout
+        self.max_pages = max(1, max_pages)
+        self.page_size = page_size
+        self.language_code = language_code
+        # fetcher(url) -> parsed-JSON dict. Default hits the network via _get_json.
+        self._fetcher = fetcher
+
+    def _fetch(self, url: str) -> dict[str, Any]:
+        if self._fetcher is not None:
+            return self._fetcher(url) or {}
+        return _get_json(url, timeout=self.timeout)
+
+    def _search(self, query: str) -> list[dict[str, Any]]:
+        """Page through ClaimReview claims for ``query`` up to ``max_pages``."""
+        claims: list[dict[str, Any]] = []
+        page_token: str | None = None
+        for _ in range(self.max_pages):
+            params = {
+                "key": self.api_key,
+                "query": query,
+                "languageCode": self.language_code,
+                "pageSize": str(self.page_size),
+            }
+            if page_token:
+                params["pageToken"] = page_token
+            url = f"{self.BASE_URL}?{urlencode(params)}"
+            try:
+                data = self._fetch(url)
+            except Exception:
+                break
+            claims.extend(data.get("claims") or [])
+            page_token = data.get("nextPageToken")
+            if not page_token:
+                break
+        return claims
+
+    def retriever(self, claim: AtomicClaim) -> list[EvidenceSource]:
+        if not self.api_key:
+            return []  # fail-closed: no key => no Google evidence (not an error)
+        out: list[EvidenceSource] = []
+        for entry in self._search(claim.text):
+            claim_text = entry.get("text") or claim.text
+            for cr in entry.get("claimReview") or []:
+                publisher = (cr.get("publisher") or {}).get("name", "")
+                rating = cr.get("textualRating", "")
+                normalized = normalize_claimreview_rating(rating, publisher)
+                # Fail-closed: DROP ClaimReviews whose rating we cannot map to a clean
+                # true/false verdict (per the README spec). An unmappable rating is NOT
+                # weak evidence — it is no signal, so the gate holds on its other
+                # evidence rather than acting on a guessed entailment.
+                if normalized == "irrelevant":
+                    continue
+                relation = "contradicts" if normalized == "false" else "entails"
+                # Encode the normalized relation in the id so entailment() recovers
+                # it deterministically (same convention as FixtureFactBackend).
+                sid = f"google_factcheck:{normalize_text(publisher)}:{_cache_digest({'url': cr.get('url', ''), 'rating': rating})}"
+                out.append(EvidenceSource(
+                    id=f"{sid}#rel={relation}",
+                    url=str(cr.get("url", "")),
+                    title=str(cr.get("title", "") or f"{publisher} fact check"),
+                    snippet=f"ClaimReview by {publisher}: rating='{rating}' (normalized: {normalized}). Reviewed claim: \"{(claim_text or '')[:200]}\".",
+                    publisher=publisher,
+                    retrieved_at=_utc_now(),
+                    source_type="google_factcheck",
+                ))
+        return ranked_sources(out)
+
+    def entailment(self, claim: AtomicClaim, source: EvidenceSource) -> str:
+        # The retriever encoded the normalized rating as #rel=... in the id.
+        marker = (source.id or "").split("#rel=", 1)
+        if len(marker) == 2 and marker[1] in {"entails", "contradicts", "irrelevant"}:
+            return marker[1]
+        return "irrelevant"
+
+    # A ClaimReview backend resolves neither DOIs nor arbitrary URLs; delegate to
+    # the keyless resolvers so this backend can stand alone in the CLI wiring.
+    def doi_resolver(self, doi: str) -> bool:
+        return LiveFactBackend().doi_resolver(doi)
+
+    def url_resolver(self, url: str) -> bool:
+        return LiveFactBackend().url_resolver(url)
+
+
 def extract_macro_claim(text: str) -> dict[str, Any] | None:
     """Parse simple macro-direction claims, e.g. ``US inflation increased in 2021``."""
     cleaned = normalize_text(text)
@@ -697,6 +866,7 @@ def _utc_now() -> str:
 
 
 __all__ = [
-    "FixtureFactBackend", "LiveFactBackend", "RateLimited", "extract_authorship_claim", "extract_macro_claim",
-    "macro_structured_entailment", "normalize_text", "ranked_sources", "structured_entailment",
+    "FixtureFactBackend", "LiveFactBackend", "GoogleFactCheckBackend", "RateLimited",
+    "extract_authorship_claim", "extract_macro_claim", "macro_structured_entailment",
+    "normalize_claimreview_rating", "normalize_text", "ranked_sources", "structured_entailment",
 ]

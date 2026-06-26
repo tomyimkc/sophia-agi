@@ -430,6 +430,11 @@ def run_candidate_long_horizon(out_dir: Path, date: str, *, timeout_sec: int = 1
         "durationSec": report.get("durationSec"),
         "tier": report.get("tier"),
         "autonomy": report.get("autonomy"),
+        # Phase B2/D: surface the machine-checked objective gate as execution truth,
+        # distinct from the semantic autonomy classification. objectivePassed=true
+        # (while a short self-test reports substantive=false) is the demonstration
+        # that execution truth is a STRONGER signal than "the run was long/busy".
+        "objectivePassed": report.get("objectivePassed"),
     }
 
 

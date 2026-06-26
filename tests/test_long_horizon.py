@@ -105,6 +105,41 @@ def test_summary_survives_corrupt_log_line() -> None:
         assert summary["eventCounts"]["note"] >= 1
 
 
+def test_objective_gate_passes_on_exit_zero() -> None:
+    """Execution truth: the objective gate command exiting 0 => objectivePassed=True."""
+    with tempfile.TemporaryDirectory() as tmp:
+        log = Path(tmp) / "run.jsonl"
+        run = lh.LongHorizonRun("unit", "g", log_path=log)
+        run.start()
+        passed = lh.run_objective_gate(run, ["bash", "-lc", "exit 0"], timeout_sec=10)
+        assert passed is True
+        # a verification event recorded the machine-checked result
+        gate_events = [e for e in run.events if e.get("type") == "verification" and "objective gate" in e.get("message", "")]
+        assert gate_events and gate_events[-1]["objectivePassed"] is True
+
+
+def test_objective_gate_fails_on_nonzero() -> None:
+    """Fail-closed: a non-zero exit is recorded as objectivePassed=False (objective
+    not met), even though the run otherwise proceeded. This is the stronger signal
+    that distinguishes 'autonomous and long' from 'actually achieved the goal'."""
+    with tempfile.TemporaryDirectory() as tmp:
+        log = Path(tmp) / "run.jsonl"
+        run = lh.LongHorizonRun("unit", "g", log_path=log)
+        run.start()
+        passed = lh.run_objective_gate(run, ["bash", "-lc", "exit 4"], timeout_sec=10)
+        assert passed is False
+
+
+def test_objective_gate_absent_is_none_not_false() -> None:
+    """No objectiveGate => objectivePassed=None (honest: the objective was not
+    concretely checkable), NOT False. Distinct from a gate that ran and failed."""
+    with tempfile.TemporaryDirectory() as tmp:
+        log = Path(tmp) / "run.jsonl"
+        run = lh.LongHorizonRun("unit", "g", log_path=log)
+        run.start()
+        assert lh.run_objective_gate(run, None, timeout_sec=10) is None
+
+
 def main() -> int:
     test_classify_tier()
     test_classify_autonomy_levels()
@@ -113,6 +148,9 @@ def main() -> int:
     test_run_step_records_failure_and_self_correction()
     test_resume_skips_completed_steps()
     test_summary_survives_corrupt_log_line()
+    test_objective_gate_passes_on_exit_zero()
+    test_objective_gate_fails_on_nonzero()
+    test_objective_gate_absent_is_none_not_false()
     print("test_long_horizon: OK")
     return 0
 

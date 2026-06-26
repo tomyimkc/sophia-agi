@@ -14,7 +14,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.fact_check_flywheel import append_jsonl, extract_learning_candidates, load_json, run_flywheel_from_report  # noqa: E402
-from agent.live_sources import FixtureFactBackend, LiveFactBackend  # noqa: E402
+from agent.live_sources import FixtureFactBackend, GoogleFactCheckBackend, LiveFactBackend  # noqa: E402
+from tools.run_fact_check_live_eval import _compose  # noqa: E402
 
 DEFAULT_REPORT = ROOT / "agi-proof" / "fact-check-live" / "fact-check-live-eval.public-report.json"
 DEFAULT_FIXTURES = ROOT / "eval" / "fact_check" / "fixtures_v1.json"
@@ -29,9 +30,20 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--quarantine", default=str(DEFAULT_QUARANTINE))
     ap.add_argument("--out", default=str(DEFAULT_OUT))
     ap.add_argument("--live", action="store_true")
+    ap.add_argument(
+        "--google-factcheck", action="store_true",
+        help="add Google Fact Check Tools (ClaimReview) evidence; reads GOOGLE_FACTCHECK_API_KEY. Composes with --live.",
+    )
     args = ap.parse_args(argv)
     report = load_json(args.report)
-    backend = LiveFactBackend() if args.live else FixtureFactBackend.from_file(args.fixtures)
+    backends = [LiveFactBackend() if args.live else FixtureFactBackend.from_file(args.fixtures)]
+    if args.google_factcheck:
+        g = GoogleFactCheckBackend()
+        if g.api_key:
+            backends.append(g)
+        else:
+            print("WARNING: --google-factcheck set but GOOGLE_FACTCHECK_API_KEY is empty; skipped.", file=sys.stderr)
+    backend = _compose(*backends)
     candidates = extract_learning_candidates(report)
     append_jsonl(args.quarantine, candidates)
     flywheel = run_flywheel_from_report(report, retriever=backend.retriever, entailment=backend.entailment,
