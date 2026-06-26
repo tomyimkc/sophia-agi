@@ -95,11 +95,13 @@ def test_hashing_probe_runs_offline_with_ci_and_label():
     assert "not pixels" in r["perceptionNote"]
 
 
-def test_real_encoder_without_weights_is_a_blocker_not_a_result():
-    r = encoder_probe.retrieval_probe("clip:openai/clip-vit-base-patch32")
+def test_real_encoder_unavailable_is_a_blocker_not_a_result():
+    # A nonexistent checkpoint must be recorded as a blocker (no faked number),
+    # whether the gap is missing deps (no torch) or unresolvable weights.
+    r = encoder_probe.retrieval_probe("clip:does-not-exist/no-such-clip-xyz")
     assert r["blocked"] is True
     assert "recallAt1" not in r                 # no number promoted
-    assert r["blocker"]
+    assert r["blocker"].startswith(("deps_unavailable", "weights_unavailable"))
 
 
 def test_unknown_encoder_is_blocked():

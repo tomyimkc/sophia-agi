@@ -252,7 +252,7 @@ python tools/run_multimodal_traps.py --answer mock:grounded --include-synth --ru
 |---|---|---|
 | 4 — live GPU RLVR (prepared, gated) | Offline reward invariants + family-disjoint live-dataset prep + a config-only "Open" report; the GPU path refuses cleanly (needs CUDA + a VLM-GRPO trainer). Registered OPEN in the failure ledger. | `tools/run_visual_rlvr.py`, `agi-proof/failure-ledger.md` (`visual-rlvr-live-run-not-yet-gated`) |
 | E — fail-closed GUI agent | Every proposed GUI action is re-verified against the screenshot's ground-truth elements before dispatch; phantom controls, wrong-coordinate clicks, and ungroundable mutations are **withheld and escalated** to a human. | `multimodal_bench/gui_agent.py`, `verifiers.py` (point-in-element), `tools/run_gui_agent_gate.py` |
-| F — encoder probing | Image→text retrieval recall@1 with bootstrap CI over the suite; a deterministic hashing/caption **stand-in** runs offline (loudly labelled *not pixels*), and real CLIP/SigLIP rungs are recorded as **blockers** (no weights), never faked. | `multimodal_bench/encoder_probe.py`, `tools/probe_vision_encoder.py` |
+| F — encoder probing | Image→text retrieval recall@1 with bootstrap CI over the suite. **Real CLIP + SigLIP run** (locally, CPU, transformers 5.x, joint-space embeds): **SigLIP-base 0.531 [0.388, 0.674] > CLIP-ViT-B/32 0.306 [0.184, 0.449] > chance 0.20**. The hashing/caption stand-in (1.0) is loudly labelled *not pixels*; a missing/bad checkpoint is recorded as a **blocker**, never faked. | `multimodal_bench/encoder_probe.py`, `tools/probe_vision_encoder.py`, `agi-proof/benchmark-results/visual-encoder-probe.public-report.json` |
 
 Reference behaviour (offline): reward invariants hold and prep is family-disjoint
 (train 6 families / eval 3, intersection ∅); the GUI gate dispatches 2/2 grounded
@@ -266,7 +266,9 @@ python tools/probe_vision_encoder.py
 ```
 
 The full `multimodal_bench/` package now covers all six workstreams on an offline,
-no-overclaim footing (37 tests). What remains is genuinely hardware/weights-gated
-and tracked in the failure ledger: a live VLM-GRPO run, real-VLM headline runs
-through the multi-family consensus judge, and real CLIP/SigLIP probes — none of
-which is asserted as a capability here.
+no-overclaim footing (37 tests), and the encoder-probe rung now has **real CLIP +
+SigLIP numbers** (workstream F, ledger `visual-encoder-probe-real-weights-not-run`
+→ RAN). What remains is genuinely hardware/key-gated and tracked in the failure
+ledger: a live VLM-GRPO run (needs a CUDA VLM-GRPO trainer) and real-VLM headline
+runs through the multi-family consensus judge (needs VLM + judge API keys) — neither
+asserted as a capability here.

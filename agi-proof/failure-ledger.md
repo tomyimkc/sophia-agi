@@ -970,14 +970,19 @@ review. `canClaimAGI` stays False.
 
 ## visual-encoder-probe-real-weights-not-run-2026-06-26
 
-**Status:** OPEN. The encoder-probing harness (`multimodal_bench/encoder_probe.py`)
-runs offline on a deterministic hashing/caption stand-in (recall@1 with bootstrap
-CI), but the real CLIP / SigLIP rungs require torch + transformers + checkpoint
-weights and are recorded as BLOCKERS, not results (eval_ladder discipline).
+**Status:** RAN (2026-06-26). Real CLIP + SigLIP probed locally on CPU
+(transformers 5.12.1 + torch 2.12.1, joint-space projected embeds) over the 49
+rendered trap scenes; image→text recall@1, 4 distractors, chance 0.20, bootstrap
+95% CI. Result: **SigLIP-base 0.531 [0.388, 0.674] > CLIP-ViT-B/32 0.306
+[0.184, 0.449] > chance 0.20**; the hashing stand-in is 1.0 (measures
+harness/caption separability, NOT pixels). Artifact:
+`agi-proof/benchmark-results/visual-encoder-probe.public-report.json`.
 
-**Claim impact:** No claim about real vision-encoder retrieval quality. The
-hashing stand-in measures harness plumbing and caption separability, NOT pixel
-perception (the report labels every rung).
+**Claim impact:** A real, honest encoder-retrieval result — SigLIP separates
+these scenes better than CLIP, consistent with its reputation. HONEST SCOPE: the
+scenes are abstract rectangle renderings (OOD for natural-image encoders), so
+recall is modestly-above-chance by construction; this is NOT a headline VLM
+capability claim and does not rank encoders for production. `canClaimAGI` False.
 
-**Required response:** Run `tools/probe_vision_encoder.py --encoder clip:<id>` /
-`siglip:<id>` on a machine with the weights; report recall@1 + CI per encoder.
+**Required response (to harden):** Re-run on a natural-image probe set (real
+photos with captions) to rank encoders for a production VLM stack.
