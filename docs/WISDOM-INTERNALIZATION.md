@@ -21,7 +21,7 @@ training runs on the **DGX Spark** (hf/cuda, compute-bound FP4).
 |---|---|
 | `tools/model_backends.py` | the single model seam: `make_generate(backend, model, adapter)` → `generate(system,user)->ModelResult`. backends: `mock` / `mlx` / `hf`. |
 | `tools/gen_distill_traces.py` | teacher farm: harvest the gated arm (SFT traces) **and** emit real DPO pairs from the same pass; double-firewall re-check, gold-verify, passport-stamp, held-out seal. |
-| `tools/train_lora.py` | existing trainer; `--guard --scaffold --distill <traces>` folds the gated SFT traces in. |
+| `tools/train_lora.py` | existing trainer; `--guard --scaffold --distill` folds the gated SFT traces in. `--anchor-kl` adds the anti-forgetting KL to the adapter-disabled reference on the moral-gate replay buffer (preserves abstain calibration through KD). |
 | `tools/train_dpo.py` | optional preference stage; consumes `training/council/distill_dpo_pairs.jsonl`. |
 | `tools/run_wisdom_ablation.py` | proof matrix + fabrication-vs-compute curve over the sealed held-out split. |
 | `scripts/wisdom_internalization.sh` | stage driver: `trace` / `train` / `ablate` / `all`. |
@@ -99,3 +99,8 @@ BACKEND=mlx BASE=Qwen/Qwen3-4B bash scripts/wisdom_internalization.sh ablate
 - **Anti-gaming** — `reward_is_hackable` flags a student that only looks good behind the
   gate (train verifier) but not with it off (held-out verifier).
 - **Calibration** — ECE + Brier reported per cell, so "confident" must track "correct".
+- **Anti-forgetting** — `--anchor-kl` (driver default 0.05) bounds how far KD can move the
+  policy from its pre-distillation abstain behavior, using the *same* model with the LoRA
+  adapter disabled as the frozen reference (no second model loaded). Without it, distilling
+  teacher reasoning tends to overwrite the calibrated fail-closed abstain — the thesis
+  inversion this term exists to prevent.

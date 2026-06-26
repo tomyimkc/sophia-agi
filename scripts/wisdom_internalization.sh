@@ -48,9 +48,10 @@ train() {
     echo "   (mock) skipping real training; assume checkpoints land in $OUT/checkpoint-*"
     return 0
   fi
-  $PY tools/train_lora.py --backend peft --base "$BASE" --4bit \
-      --mask-prompt --guard --scaffold --distill "$TRACES" \
-      --eval-every 25 --patience 4 --seed "$SEED" --out "$OUT"
+  $PY tools/train_lora.py --backend peft --model "$BASE" --4bit \
+      --guard --scaffold --distill --distill-file "$TRACES" \
+      --anchor-kl "${ANCHOR_KL:-0.05}" \
+      --eval-every 25 --patience 4 --seed "$SEED" --output "$OUT"
   echo ">> adapter/checkpoints -> $OUT   (rsync to the Mac before ablation)"
 }
 

@@ -48,6 +48,7 @@ if str(ROOT) not in sys.path:
 TRAIN_JSONL = ROOT / "training" / "lora" / "train.jsonl"
 HOLDOUT_JSONL = ROOT / "training" / "lora" / "holdout.jsonl"
 DISTILL_JSONL = ROOT / "training" / "council" / "traces.jsonl"
+DEFAULT_ANCHOR = ROOT / "training" / "moral_gate_sft.jsonl"
 MATH_CODE_PACK_DIR = ROOT / "training" / "sophia-math-code-curriculum"
 MATH_CODE_SFT = MATH_CODE_PACK_DIR / "sft_all.jsonl"
 DEFAULT_MODEL = "Qwen/Qwen2.5-3B-Instruct"
@@ -530,6 +531,30 @@ def evaluate(model: Any, loader: Any, device: Any, max_batches: int) -> float:
     return total / max(1, n)
 
 
+def masked_kl(student_logits: Any, ref_logits: Any, labels: Any) -> Any:
+    """Forward KL( p_ref || p_student ) over completion tokens only.
+
+    The anchor (anti-forgetting) term. With LoRA the reference is the SAME model with the
+    adapter disabled, so p_ref is the frozen pre-distillation behavior. Minimizing this on
+    a replay buffer of the moral-gate / abstain exemplars bounds how far the policy can
+    drift from its calibrated fail-closed behavior while KD pulls on reasoning elsewhere.
+    Shift mirrors the causal LM convention (logits[:, :-1] predict labels[:, 1:]); only
+    positions with a real label (-100 mask off) contribute."""
+    import torch
+    import torch.nn.functional as F
+
+    s = student_logits[:, :-1, :]
+    r = ref_logits[:, :-1, :]
+    lbl = labels[:, 1:]
+    mask = lbl != -100
+    if mask.sum() == 0:
+        return (student_logits.sum() * 0.0)  # zero, keeps the graph intact
+    log_p_s = F.log_softmax(s.float(), dim=-1)
+    p_r = F.softmax(r.float(), dim=-1)
+    kl_tok = (p_r * (p_r.clamp_min(1e-12).log() - log_p_s)).sum(-1)
+    return kl_tok[mask].mean()
+
+
 def run_manual_train(
     model: Any,
     tokenizer: Any,
@@ -552,6 +577,8 @@ def run_manual_train(
     pad_to: int | None = None,
     weight_decay: float = 0.0,
     pack: bool = False,
+    anchor_records: list[dict] | None = None,
+    anchor_kl: float = 0.0,
 ) -> dict:
     import torch
     from torch.utils.data import DataLoader
@@ -574,6 +601,25 @@ def run_manual_train(
     if eval_records:
         eval_loader = DataLoader(eval_records, batch_size=batch_size, shuffle=False, collate_fn=eval_collator)
 
+    # Anchor (anti-forgetting): KL to the adapter-disabled reference on a replay buffer of
+    # the moral-gate / abstain exemplars. Needs a PEFT model that can toggle its adapter.
+    anchor_iter = None
+    use_anchor = bool(anchor_kl > 0 and anchor_records and hasattr(model, "disable_adapter"))
+    if anchor_kl > 0 and not use_anchor:
+        why = "no replay rows" if not anchor_records else "model lacks disable_adapter()"
+        print(f"anchor-kl={anchor_kl} requested but disabled ({why})", flush=True)
+    if use_anchor:
+        anchor_loader = DataLoader(anchor_records, batch_size=batch_size, shuffle=True,
+                                   collate_fn=eval_collator)
+
+        def _cycle(dl):
+            while True:
+                for b in dl:
+                    yield b
+
+        anchor_iter = _cycle(anchor_loader)
+        print(f"Anchor-KL active: {len(anchor_records)} replay row(s), coef={anchor_kl}", flush=True)
+
     trainable = [p for p in model.parameters() if p.requires_grad]
     if four_bit:
         import bitsandbytes as bnb
@@ -594,6 +640,7 @@ def run_manual_train(
     saved_any = False
     stop = False
     last_train_loss = float("nan")
+    last_anchor_kl = float("nan")
 
     print(
         f"Manual SFT: {epochs} epoch(s), batch={batch_size}, grad_accum={grad_accum}, "
@@ -607,6 +654,16 @@ def run_manual_train(
             batch = {k: v.to(device) for k, v in batch.items()}
             outputs = model(**batch)
             loss = outputs.loss / grad_accum
+            if use_anchor:
+                a = {k: v.to(device) for k, v in next(anchor_iter).items()}
+                with torch.no_grad(), model.disable_adapter():
+                    ref_logits = model(input_ids=a["input_ids"],
+                                       attention_mask=a["attention_mask"]).logits
+                student_logits = model(input_ids=a["input_ids"],
+                                       attention_mask=a["attention_mask"]).logits
+                kl = masked_kl(student_logits, ref_logits, a["labels"])
+                loss = loss + (anchor_kl * kl) / grad_accum
+                last_anchor_kl = kl.item()
             loss.backward()
             if (step + 1) % grad_accum == 0:
                 torch.nn.utils.clip_grad_norm_(trainable, max_grad_norm)
@@ -617,9 +674,11 @@ def run_manual_train(
                 last_train_loss = loss.item() * grad_accum
                 if global_step % 10 == 0 or global_step == 1:
                     pct = round(100.0 * global_step / total_steps, 1)
+                    anchor_str = f" anchor_kl={last_anchor_kl:.4f}" if use_anchor else ""
                     print(
                         f"epoch {epoch + 1}/{epochs} step {global_step}/{total_steps} "
-                        f"({pct}%) loss={last_train_loss:.4f} lr={scheduler.get_last_lr()[0]:.2e}",
+                        f"({pct}%) loss={last_train_loss:.4f}{anchor_str} "
+                        f"lr={scheduler.get_last_lr()[0]:.2e}",
                         flush=True,
                     )
 
@@ -665,6 +724,8 @@ def run_manual_train(
         "bestValLoss": round(best_val, 4) if best_val != float("inf") else None,
         "earlyStopped": stop,
         "savedBest": saved_any,
+        "anchorKl": anchor_kl if use_anchor else 0.0,
+        "finalAnchorKl": round(last_anchor_kl, 4) if last_anchor_kl == last_anchor_kl else None,
     }
 
 
@@ -744,6 +805,12 @@ def main() -> int:
     parser.add_argument("--distill", action="store_true",
                         help="Fold in gate-clean council-distillation traces as extra SFT targets")
     parser.add_argument("--distill-file", type=Path, default=DISTILL_JSONL)
+    parser.add_argument("--anchor-kl", type=float, default=0.0,
+                        help="Anti-forgetting KL to the adapter-disabled reference on a "
+                             "replay buffer (--anchor-data). 0.03–0.1 preserves the abstain "
+                             "calibration through KD. peft backend only.")
+    parser.add_argument("--anchor-data", type=Path, default=DEFAULT_ANCHOR,
+                        help="Replay rows for the anchor KL (default: the moral-gate SFT exemplars)")
     parser.add_argument("--no-mask-prompt", dest="mask_prompt", action="store_false",
                         help="Train on prompt tokens too (default: completion-only loss)")
     # eval ladder / early stopping
@@ -893,6 +960,21 @@ def main() -> int:
         print(f"--eval-every set but {args.holdout} missing; eval disabled", flush=True)
         eval_every = 0
 
+    # Anchor replay buffer (anti-forgetting). Built only when --anchor-kl > 0.
+    anchor_records: list[dict] = []
+    if args.anchor_kl > 0:
+        if args.backend != "peft":
+            print(f"--anchor-kl is peft-backend only; ignored on --backend {args.backend}", flush=True)
+        elif args.anchor_data.exists():
+            anchor_rows = load_rows(args.anchor_data)
+            if args.scaffold:
+                scaffold_rows(anchor_rows)
+            anchor_records, _ = build_records(tokenizer, anchor_rows, args.max_seq_len,
+                                              mask_prompt=args.mask_prompt)
+            print(f"Anchor-KL: {len(anchor_records)} replay row(s) from {args.anchor_data}", flush=True)
+        else:
+            print(f"--anchor-kl set but {args.anchor_data} missing; anchor disabled", flush=True)
+
     base_meta = {
         "trainRows": len(train_records),
         "epochs": args.epochs,
@@ -942,6 +1024,8 @@ def main() -> int:
         pad_to=args.max_seq_len if args.pad_to_max else None,
         weight_decay=args.weight_decay,
         pack=args.pack,
+        anchor_records=anchor_records or None,
+        anchor_kl=args.anchor_kl,
     )
 
     # Remove the NEFTune noise hook before persisting so inference is noise-free.
