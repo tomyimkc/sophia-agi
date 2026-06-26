@@ -265,6 +265,16 @@ jobs:
           python tests/test_selfextend.py
           python tools/run_selfextend.py
           python tools/run_selfextend_loop.py
+      - name: Self-evolving agent (evolve→no-hack→promote→retain→commit, fail-closed)
+        run: |
+          python tests/test_self_evolving_agent.py
+          python tools/run_self_evolving_agent.py
+          python tools/export_self_evolve_distill.py
+      - name: Auto-research loop + live-optimizer wiring (no-overclaim, gate-clean dispatch)
+        run: |
+          python tests/test_auto_research.py
+          python tools/run_auto_research.py
+          python tools/run_selfevolve_live.py --backend plan
       - name: Runtime policies + model-in-loop + dataset fetcher (offline)
         run: |
           python tests/test_policies.py
