@@ -391,6 +391,9 @@ sophia-agi/
 ├── docs/              # disputes, growth playbook, domains, platform/verticals
 ├── agent/             # verifier-gated core, council deliberate, gate, model
 │   └── legal_sources/ # federated HK/UK/US live citator (HKLII, e-Leg, TNA, CL)
+├── serving/           # systems track: tiered KV cache + cache-aware load balancer
+├── kernels/           # systems track: FlashAttention online-softmax (numpy ref + Triton)
+├── moe/               # systems track: top-k MoE routing + INT8/FP8 quant
 ├── benchmark/         # responses template + leaderboard + gated harnesses
 ├── training/          # JSONL-ready examples + gate-filtered council traces
 ├── agi-proof/         # AGI-candidate proof package and evidence manifest
