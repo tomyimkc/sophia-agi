@@ -1,0 +1,192 @@
+{
+  "agent": "pretraining-researcher reviewer (persona)",
+  "canClaimAGI": false,
+  "honesty_note": "This is a role-conditioned critic over toy studies, not an AGI agent and not a capability claim. Verdicts check pre-registered gates; missing reports are cannot_assess, never pass.",
+  "role": {
+    "title": "预训练（数据/算法）研究员 — pretraining researcher (reviewer persona)",
+    "canClaimAGI": false,
+    "tracks": {
+      "algorithm": [
+        "model-structure innovation (软硬件协同)",
+        "optimizer design + training dynamics/stability",
+        "scientific scaling laws (fit / predict / plan)",
+        "training & inference acceleration",
+        "novel architectures (探索性)"
+      ],
+      "data": [
+        "data pipeline + governance (可追溯/可复现)",
+        "data mixing & filtering strategy (配比)",
+        "synthetic data + its scaling behaviour",
+        "multi-dimensional eval (auto + human)",
+        "vertical data (multimodal / agent / feedback / academic)"
+      ]
+    },
+    "values": [
+      "严谨的科学精神",
+      "出色的研究品味",
+      "对模型能力边界有敏锐判断",
+      "不过度宣称 (no overclaim)"
+    ]
+  },
+  "studies": {
+    "scaling": {
+      "verdict": "pass",
+      "evidence": "extrapolation rel_err=0.03096, r2=0.93249, floor_identified=False",
+      "critiques": [
+        "irreducible floor E is under-identified away from saturation — the report says so, which is the honest call, not a defect"
+      ],
+      "next_experiments": [
+        "extend D to saturation so the free-floor fit can recover E",
+        "joint L(N,D) fit: sweep hidden width with stabilized optimization, fit a 2D law",
+        "Chinchilla-style compute-optimal frontier: trade N vs D at fixed compute budget"
+      ],
+      "track": "algorithm",
+      "rubric_dimension": "scientific scaling laws (fit / predict / plan)"
+    },
+    "optimizer": {
+      "verdict": "pass",
+      "evidence": "sgd: best_loss=0.84365, max_stable_lr=0.3; momentum: best_loss=0.82565, max_stable_lr=0.3; adam: best_loss=0.83375, max_stable_lr=0.3",
+      "critiques": [],
+      "next_experiments": [
+        "add Muon / Lion / Shampoo and a lr warmup+cosine schedule",
+        "measure loss-spike recovery (inject a bad batch; does it recover?)",
+        "report gradient-noise scale to predict the critical batch size"
+      ],
+      "track": "algorithm",
+      "rubric_dimension": "optimizer design + training dynamics/stability"
+    },
+    "architecture": {
+      "verdict": "pass",
+      "evidence": "verdict=dense_better, load_balance_max_share=0.3376, active/token=259 of 675",
+      "critiques": [
+        "MoE does not beat dense at this scale — honest; the order-2 source is captured by one dense block, so experts have nothing to specialize on"
+      ],
+      "next_experiments": [
+        "add shared experts + top-k>1 (fine-grained MoE) and a harder higher-order source",
+        "implement a nano MLA block: low-rank KV latent, measure cache size vs loss",
+        "auxiliary-loss-free load balancing (bias-adjusted routing)"
+      ],
+      "track": "algorithm",
+      "rubric_dimension": "novel architectures (探索性)"
+    },
+    "data_passport": {
+      "verdict": "pass",
+      "evidence": "rows=144, dup_rate=0.6042, mean_quality=0.7657, flagged=144",
+      "critiques": [
+        "duplicate_rate=0.6042 is high — dedup by cluster before training",
+        "144 rows unlicensed — backfill license/provenance, fail-closed"
+      ],
+      "next_experiments": [
+        "semantic (embedding) dedup to catch paraphrase duplicates MinHash misses",
+        "calibrate the quality score against held-out downstream loss",
+        "license/source backfill pipeline so no row ships 'unknown'"
+      ],
+      "track": "data",
+      "rubric_dimension": "data pipeline + governance (可追溯/可复现)"
+    },
+    "data_mixing": {
+      "verdict": "pass",
+      "evidence": "blend best_weight_A=0.6 (interior=True); single-source targets skew to their source",
+      "critiques": [],
+      "next_experiments": [
+        "scale to >2 sources and search the simplex (not just a 1-D ratio)",
+        "curriculum: anneal the mix over training rather than hold it fixed",
+        "proxy→target transfer: does the small-model optimum hold at larger scale?"
+      ],
+      "track": "data",
+      "rubric_dimension": "data mixing & filtering strategy (配比)"
+    },
+    "synthetic_scaling": {
+      "verdict": "pass",
+      "evidence": "high_fidelity collapsed=False (best_mult=16), low_fidelity collapsed=True (best_mult=0)",
+      "critiques": [],
+      "next_experiments": [
+        "sweep drift as a continuum and locate the collapse threshold",
+        "early-warning detector: flag collapse from held-out divergence mid-training",
+        "real+synthetic ratio sweep at fixed budget (anchor synthetic with real data)"
+      ],
+      "track": "data",
+      "rubric_dimension": "synthetic data + its scaling behaviour"
+    },
+    "eval_matrix": {
+      "verdict": "pass",
+      "evidence": "coverage=9/90 (0.1), multimodal_uncovered=True",
+      "critiques": [
+        "low coverage (0.1); most capability×domain cells are untested — this is the gap to fill"
+      ],
+      "next_experiments": [
+        "stand up the multimodal cell (the one entirely-empty modality)",
+        "add a documented human-eval protocol + inter-rater agreement per cell",
+        "weight cells by difficulty so coverage isn't just case-count"
+      ],
+      "track": "data",
+      "rubric_dimension": "multi-dimensional eval (auto + human)"
+    }
+  },
+  "tally": {
+    "pass": 7,
+    "concern": 0,
+    "cannot_assess": 0
+  },
+  "rubric_coverage": {
+    "algorithm": {
+      "model-structure innovation (软硬件协同)": {
+        "studies": [],
+        "status": "absent"
+      },
+      "optimizer design + training dynamics/stability": {
+        "studies": [
+          "optimizer"
+        ],
+        "status": "strong"
+      },
+      "scientific scaling laws (fit / predict / plan)": {
+        "studies": [
+          "scaling"
+        ],
+        "status": "strong"
+      },
+      "training & inference acceleration": {
+        "studies": [],
+        "status": "absent"
+      },
+      "novel architectures (探索性)": {
+        "studies": [
+          "architecture"
+        ],
+        "status": "strong"
+      }
+    },
+    "data": {
+      "data pipeline + governance (可追溯/可复现)": {
+        "studies": [
+          "data_passport"
+        ],
+        "status": "strong"
+      },
+      "data mixing & filtering strategy (配比)": {
+        "studies": [
+          "data_mixing"
+        ],
+        "status": "strong"
+      },
+      "synthetic data + its scaling behaviour": {
+        "studies": [
+          "synthetic_scaling"
+        ],
+        "status": "strong"
+      },
+      "multi-dimensional eval (auto + human)": {
+        "studies": [
+          "eval_matrix"
+        ],
+        "status": "strong"
+      },
+      "vertical data (multimodal / agent / feedback / academic)": {
+        "studies": [],
+        "status": "absent"
+      }
+    }
+  },
+  "overall": "all-gates-pass"
+}

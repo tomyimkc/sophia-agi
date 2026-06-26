@@ -60,6 +60,13 @@ Missing provenance (`source`/`license`), malformed steps, out-of-range reward, a
 record types must all be rejected with explicit errors. *Falsified if* an invalid record
 validates. — `tests/test_pretraining.py::test_vertical_validators_fail_closed`
 
+### G10 — Reviewer agent is honest & fail-closed
+The role-conditioned reviewer agent must (a) carry `canClaimAGI: false` and never name itself
+an AGI agent, (b) return `cannot_assess` (never `pass`) for any missing report, and (c)
+surface the known critiques (high dup rate, low eval coverage) rather than hide them.
+*Falsified if* the agent claims AGI, passes an unassessable study, or suppresses a real
+concern. — `tests/test_pretraining_agent.py`
+
 ## Status
 
 | Gate | Status (2026-06-25) |
@@ -73,6 +80,7 @@ validates. — `tests/test_pretraining.py::test_vertical_validators_fail_closed`
 | G7 passport fail-closed | ✅ PASS |
 | G8 eval gaps surfaced | ✅ PASS |
 | G9 validators fail-closed | ✅ PASS |
+| G10 reviewer agent honest | ✅ PASS |
 
 G4 is intentionally listed as an honest-fail: it is the study's most useful lesson, not a
 defect — you cannot read off the irreducible loss without runs near saturation.

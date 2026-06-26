@@ -80,6 +80,18 @@ that writes a dated-style `*-latest.json` report next to the script.
   for **agent trajectories, user-feedback signals, and multimodal items**, with example
   records. Gives the multimodal/agent/feedback streams a first-class, checkable format.
 
+### Reviewer agent (`agent/`)
+
+- **`agent/` — the pretraining-researcher role, as a *critic*.** Deliberately **not an "AGI
+  agent"** (Sophia's charter forbids AGI claims — every output carries `canClaimAGI: false`).
+  It embodies the data/algorithm researcher role as an auditable rubric and **reviews the
+  studies above**: each is checked against its pre-registered gate, overclaims are flagged,
+  and a next experiment is proposed. Fail-closed — a missing report is `cannot_assess`, never
+  `pass`. Two uses: a **regression harness** (re-run after any change to confirm the gates
+  still hold) and a **persona benchmark** (the role scoring the repo). Deterministic and
+  offline; an optional `--llm` critique is purely additive and degrades gracefully.
+  → `python -m pretraining.agent.run_review` (exit 0 iff every study produced its artifact)
+
 ## Honesty posture
 
 - **No fabricated numbers.** Every `*-latest.json` is produced by running the script.
