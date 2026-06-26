@@ -183,7 +183,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set +e
           ts=$(date -u +%Y-%m-%dT%H-%M-%SZ)
           out="agi-proof/proof-search/path-b-${{ inputs.theorem }}-${ts}.public-report.json"
           mkdir -p agi-proof/proof-search
@@ -201,9 +200,12 @@ jobs:
           verdict="${{ steps.search.outputs.VERDICT || 'no-verdict' }}"
           novel="${{ steps.search.outputs.NOVELTY || 'n/a' }}"
           body=$(printf 'Auto-committed by the `path-b-lean-proof-search` workflow (run %s).\n\n- **Theorem:** `%s`\n- **Provider:** `%s` (stub=%s)\n- **Verdict:** `%s`\n- **Novel:** `%s`\n\n`candidateOnly`/`level3Evidence` = true/false; `canClaimAGI` unchanged. This is additive evidence — no code logic. Merge to record the result.' "${{ github.run_id }}" "${{ inputs.theorem }}" "${{ inputs.provider }}" "${{ inputs.stub != '' && 'yes' || 'no' }}" "$verdict" "$novel")
-          pr_url=$(gh pr create --base main --head "$branch" --title "evidence(path-b): Lean proof search ${{ inputs.theorem }} ($verdict)" --body "$body" 2>&1) || true
-          echo "committed $out"
-          echo "evidence PR: $pr_url"
+          # FAIL LOUDLY if the evidence PR can't be created — a silent skip would mark the
+          # run green while the report never lands. Needs pull-requests: write (granted above).
+          gh pr create --base main --head "$branch" \
+            --title "evidence(path-b): Lean proof search ${{ inputs.theorem }} ($verdict)" \
+            --body "$body"
+          echo "committed $out (evidence PR opened from $branch)"
 
       - name: Job summary
         if: always()
