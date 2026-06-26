@@ -9,7 +9,19 @@ from pathlib import Path
 
 import pytest
 
-os.environ.setdefault("SOPHIA_ALLOW_CODE_EXEC", "1")
+# Module-level set (exec is ON for this whole file — the code-row assertions need it).
+# A sibling test (tests/test_execution_verifiers.py) historically popped this var mid-suite,
+# which leaked past module import into test execution. The autouse fixture below re-enforces
+# exec ON per-test so these tests are correct regardless of any other test's env mutations.
+os.environ["SOPHIA_ALLOW_CODE_EXEC"] = "1"
+
+
+@pytest.fixture(autouse=True)
+def _require_code_exec(monkeypatch):
+    """Every test here asserts on exec-verified code rows; force exec ON per-test so the
+    suite ordering (another test popping SOPHIA_ALLOW_CODE_EXEC between our import and our
+    test run) can never make the code verifier abstain and silently drop all code rows."""
+    monkeypatch.setenv("SOPHIA_ALLOW_CODE_EXEC", "1")
 
 from tools.generate_math_code_curriculum import (  # noqa: E402
     OUT_DIR,

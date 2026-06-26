@@ -66,12 +66,23 @@ def _gain(title: str, path: str, gold: str) -> float:
 
 
 def _hits(backend: str, query: str, *, top_k: int):
-    """Run one backend, returning its top-k hits (objects with .title/.path)."""
+    """Run one backend, returning its top-k hits (objects with .title/.path).
+
+    Sets the retrieval *mode* (``SOPHIA_RETRIEVAL``) to match the backend name, not just
+    ``SOPHIA_RAG_BACKEND``. The latter only gates query embedding; ``retrieve()`` keys its
+    tier selection off ``SOPHIA_RETRIEVAL``, so a bare ``RAG_BACKEND=keyword`` left mode at
+    "auto" and silently fell through to the lexical-vector tier — scoring the vector tier
+    under a "keyword" label. Forcing the mode makes each backend measure the tier it names.
+    ``run()`` restores both env vars after the per-backend loop.
+    """
     if backend in {"hybrid", "hybrid_dedup"}:
         os.environ["SOPHIA_RAG_BACKEND"] = "auto"
+        os.environ.pop("SOPHIA_RETRIEVAL", None)
         from agent.hybrid_retrieval import retrieve_hybrid
 
         return retrieve_hybrid(query, top_k=top_k, dedupe=(backend == "hybrid_dedup"))
+    # "vector" = the learned/auto vector tier; "keyword" = true lexical overlap only.
+    os.environ["SOPHIA_RETRIEVAL"] = "keyword" if backend == "keyword" else "auto"
     os.environ["SOPHIA_RAG_BACKEND"] = "auto" if backend == "vector" else "keyword"
     from agent.retrieval import retrieve
 
@@ -104,7 +115,8 @@ def _metrics(gains_by_probe: "list[list[float]]", pooled_by_probe: "list[list[fl
 
 
 def run(*, limit: int | None = None, top_k: int = 5) -> dict:
-    saved = os.environ.get("SOPHIA_RAG_BACKEND")
+    saved_be = os.environ.get("SOPHIA_RAG_BACKEND")
+    saved_re = os.environ.get("SOPHIA_RETRIEVAL")
     probes = build_probes(limit=limit)
     # Pool depth ≥ top_k so IDCG can see relevant chunks a backend buried just past top_k.
     pool_k = max(top_k * 4, 20)
@@ -118,10 +130,13 @@ def run(*, limit: int | None = None, top_k: int = 5) -> dict:
                 rows.append([_gain(getattr(h, "title", ""), getattr(h, "path", ""), p["gold"]) for h in hits])
             per_backend[backend] = rows
     finally:
-        if saved is None:
-            os.environ.pop("SOPHIA_RAG_BACKEND", None)
-        else:
-            os.environ["SOPHIA_RAG_BACKEND"] = saved
+        # Restore both the backend and the retrieval mode (``_hits`` sets both) so the
+        # per-backend loop doesn't leak a forced "keyword" mode into later callers.
+        for key, val in (("SOPHIA_RAG_BACKEND", saved_be), ("SOPHIA_RETRIEVAL", saved_re)):
+            if val is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = val
 
     # Pooled ideal gains per probe = best (highest) gain seen at each position across backends,
     # collapsed to the multiset of distinct relevant grades any backend surfaced.

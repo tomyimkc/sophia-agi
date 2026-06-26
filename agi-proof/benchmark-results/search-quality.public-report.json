@@ -8,33 +8,33 @@
   "probes": 60,
   "metrics": {
     "keyword": {
-      "recall@5": 0.2,
-      "mrr": 0.0808,
-      "ndcg@5": 0.4091
+      "recall@5": 0.5,
+      "mrr": 0.2314,
+      "ndcg@5": 0.453
     },
     "vector": {
       "recall@5": 0.5167,
       "mrr": 0.3281,
-      "ndcg@5": 0.6191
+      "ndcg@5": 0.5423
     },
     "hybrid": {
-      "recall@5": 0.2667,
-      "mrr": 0.1428,
-      "ndcg@5": 0.4828
+      "recall@5": 0.2833,
+      "mrr": 0.1492,
+      "ndcg@5": 0.4187
     },
     "hybrid_dedup": {
-      "recall@5": 0.2667,
-      "mrr": 0.1428,
-      "ndcg@5": 0.4828
+      "recall@5": 0.2833,
+      "mrr": 0.1492,
+      "ndcg@5": 0.4187
     }
   },
   "bestBackend": "vector",
   "badcaseTaxonomy": {
     "counts": {
-      "lexical_gap": 20,
-      "semantic_gap": 1,
-      "tied_burial": 9,
-      "absent_from_pool": 19
+      "lexical_gap": 16,
+      "semantic_gap": 15,
+      "tied_burial": 13,
+      "absent_from_pool": 1
     },
     "examples": {
       "lexical_gap": [
@@ -45,21 +45,21 @@
         "Which tradition does Xunzi belong to?"
       ],
       "semantic_gap": [
-        "Who is the author of Apology?"
+        "Who is the author of Socratic corpus?",
+        "Who is the author of Mencius?",
+        "Who is the author of Liezi?",
+        "Who is the author of Han Feizi?",
+        "Who is the author of Art of War?"
       ],
       "tied_burial": [
+        "Who is the author of Analects?",
         "Which tradition does Analects belong to?",
-        "Who is the author of Socratic corpus?",
-        "Who is the author of Symposium?",
-        "Which tradition does Symposium belong to?",
-        "Which tradition does Mozi belong to?"
+        "Who is the author of Republic?",
+        "Who is the author of Zhuangzi?",
+        "Who is the author of Symposium?"
       ],
       "absent_from_pool": [
-        "Who is the author of Dao De Jing?",
-        "Who is the author of Analects?",
-        "Who is the author of Republic?",
-        "Who is the author of Mencius?",
-        "Who is the author of Zhuangzi?"
+        "Who is the author of Dao De Jing?"
       ]
     }
   },

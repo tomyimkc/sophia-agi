@@ -92,14 +92,37 @@ def _metrics(ranks: "list[int]") -> dict:
 
 
 def score_backend(backend: str, probes: "list[dict]", *, top_k: int = 5) -> dict:
-    """Run all probes through one backend; return exact-record and topical metrics."""
+    """Run all probes through one backend; return exact-record and topical metrics.
+
+    Forces the retrieval *mode* (``SOPHIA_RETRIEVAL``) to match the backend name, not just
+    ``SOPHIA_RAG_BACKEND``. The latter only gates query *embedding*; ``retrieve()`` keys its
+    tier selection off ``SOPHIA_RETRIEVAL``. So a bare ``RAG_BACKEND=keyword`` left mode at
+    "auto", which (with the query embedding disabled) silently fell through to the
+    lexical-vector tier — scoring the *vector* tier under a "keyword" label and inverting the
+    measured delta once the live corpus grew. Setting the mode makes each backend measure the
+    tier it names.
+    """
+    saved_be = os.environ.get("SOPHIA_RAG_BACKEND")
+    saved_re = os.environ.get("SOPHIA_RETRIEVAL")
+    os.environ["SOPHIA_RETRIEVAL"] = "keyword" if backend == "keyword" else "auto"
     os.environ["SOPHIA_RAG_BACKEND"] = backend
-    exact_ranks: list[int] = []
-    topical_ranks: list[int] = []
-    for p in probes:
-        e, t = _ranks_for(p["q"], p["gold"], top_k=top_k)
-        exact_ranks.append(e)
-        topical_ranks.append(t)
+    try:
+        exact_ranks: list[int] = []
+        topical_ranks: list[int] = []
+        for p in probes:
+            e, t = _ranks_for(p["q"], p["gold"], top_k=top_k)
+            exact_ranks.append(e)
+            topical_ranks.append(t)
+    finally:
+        # Restore so direct callers (e.g. tests) don't leak the backend/mode selection into
+        # the rest of the process — ``run()`` already wraps this, but ``score_backend`` is
+        # also called standalone and a leaked ``keyword`` mode would silently change every
+        # later ``retrieve()``'s tier.
+        for key, val in (("SOPHIA_RAG_BACKEND", saved_be), ("SOPHIA_RETRIEVAL", saved_re)):
+            if val is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = val
     return {"backend": backend, "n": len(probes),
             "exact": _metrics(exact_ranks), "topical": _metrics(topical_ranks)}
 

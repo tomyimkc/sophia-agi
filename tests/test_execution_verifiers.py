@@ -98,6 +98,11 @@ def test_closed_loop_routes_coding_case_to_execution_truth() -> None:
             text = "Here is the code:\n```python\nassert 2 + 2 == 4\n```"
             return m.ModelResult(text=text, provider="stub", model="stub", ok=True)
 
+    # Save/restore the ORIGINAL value (do not pop): popping a var a sibling test set
+    # leaks across the suite — e.g. tests/test_generate_math_code_curriculum.py needs exec
+    # ON for its code-row assertions, and an unconditional pop here deleted it, making that
+    # test abstain (0 code rows) and spuriously fail in the full-suite ordering.
+    _saved = os.environ.get("SOPHIA_ALLOW_CODE_EXEC")
     os.environ["SOPHIA_ALLOW_CODE_EXEC"] = "1"
     try:
         suite = [{"id": "code1", "goal": "Return Python code that asserts 2+2==4.", "mode": "repo"}]
@@ -114,7 +119,10 @@ def test_closed_loop_routes_coding_case_to_execution_truth() -> None:
                 task_spec_for=spec_for,
             )
     finally:
-        os.environ.pop("SOPHIA_ALLOW_CODE_EXEC", None)
+        if _saved is None:
+            os.environ.pop("SOPHIA_ALLOW_CODE_EXEC", None)
+        else:
+            os.environ["SOPHIA_ALLOW_CODE_EXEC"] = _saved
     # The case passed under execution truth (code ran, exit 0) => harness rate 1.0.
     assert report.cycles[0].baseline_harness_rate == 1.0
 
