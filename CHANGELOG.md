@@ -4,6 +4,20 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — closed self-correction loop: knowledge gaps auto-grow the corpus (fail-closed)
+
+- **Gap → draft-stub ingestion** (`agent/gap_ingest.py`, `tools/close_gap_loop.py`): the gap
+  ledger written by grounded/verified search is planned into **missing-topic** vs **enrichment**
+  candidates, and missing-topic gaps are materialized into **provenance-skeleton draft pages** —
+  `authorConfidence: none_extant`, `needsReview`, `provenance: knowledge_gap`, **no claims** — in
+  the quarantined draft tier (`agent.wiki_store`, gated). Dry-run by default; `--write` to
+  materialize. Verified end-to-end: an ungrounded query becomes a stub the **same query then
+  routes to and abstains on** (a known unknown), so the corpus scaffolding grows exactly where
+  perception failed, with zero fabrication. Sourced fill stays human/librarian-gated. Tests:
+  `tests/test_gap_ingest.py` (incl. the closed-loop assertion).
+- **Substrate doc**: the self-correction property is now marked shipped; all five properties
+  (ground · calibrate/abstain · verify · self-correct · perceive-widely) are wired end-to-end.
+
 ### Added — served-answer verification: "retrieved" becomes "served" only after the answer passes
 
 - **Verified search** (`agent/verified_search.py`): ground → generate → **verify** → serve-or-

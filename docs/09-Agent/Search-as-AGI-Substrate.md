@@ -44,12 +44,17 @@ work to a `doNotAttributeTo` author is rejected, negation-aware) — and **withh
 if it does not pass. So "retrieved" only becomes "served" after the answer itself survives the
 gate. "Verification over generation" applied to perception.
 
-### 5. A badcase flywheel → metacognitive self-correction
-The search-quality eval (`tools/eval_search_quality.py`) emits a badcase taxonomy
-(`lexical_gap` / `semantic_gap` / `tied_burial` / `absent_from_pool`); the fact-check flywheel
-(`agent/fact_check_flywheel.py`) can turn each labeled failure into a corrective signal for the
-index/embedder. An AGI that **measures its own perceptual errors and closes them** is exhibiting
-the operational core of metacognition — knowing what it doesn't know, and fixing it.
+### 5. A badcase flywheel → metacognitive self-correction ✅
+Hedged/abstained/withheld queries are logged as knowledge gaps (`agent/knowledge_gap_log.py`)
+and ranked into an enrichment worklist; `agent/gap_ingest.py` then **materializes the
+missing-topic gaps into provenance-skeleton draft stubs** (`none_extant`, `needsReview`, *no
+claims*) in the quarantined draft tier. The loop closes: a query Sophia couldn't ground now
+creates a routable, auto-abstaining **known-unknown** stub, ready for a sourced fill — so the
+corpus scaffolding grows exactly where perception failed, with zero fabrication. The
+search-quality eval (`tools/eval_search_quality.py`) supplies the complementary badcase taxonomy
+(`lexical_gap` / `semantic_gap` / `tied_burial` / `absent_from_pool`). An AGI that **measures its
+own perceptual errors and grows to close them** is exhibiting the operational core of
+metacognition — knowing what it doesn't know, and acting to fix it.
 
 ## Why this is an AGI-*key* feature, not just better search
 
@@ -66,7 +71,7 @@ Sophia's charter exists to build, expressed as the organ the DeepSeek charter ca
 | Ground | search results → OKF belief (entity-link + lineage/laundering/contradicts) | `agent/grounded_search.py` → `okf/graph.belief` | ✅ shipped |
 | Calibrate + Abstain | search path → provenance confidence → graded answer/hedge/abstain | `agent/grounded_search.py`, `agent/grounded_confidence.py`, `agent/graded_decision.py` | ✅ shipped |
 | Verify | generated answer → citation faithfulness + epistemic gate + source-discipline before serving | `agent/verified_search.py` (`agent/rerank.citation_faithfulness`, `agent/gate.check_response`) | ✅ shipped |
-| Self-correct | hedged/abstained/withheld queries → knowledge-gap worklist → corpus enrichment | `agent/grounded_search.py`, `agent/verified_search.py` → `agent/knowledge_gap_log.gap_worklist` | ✅ shipped (worklist); ⚠️ auto-ingest pending |
+| Self-correct | hedged/abstained/withheld queries → worklist → **auto-materialized draft stubs** | `agent/grounded_search.py`, `agent/verified_search.py` → `agent/knowledge_gap_log` → `agent/gap_ingest.py` | ✅ shipped (stubs); ⚠️ sourced fill stays human |
 | Perceive widely | learned multilingual/**multimodal** embedder via the registry | `agent/embedding_backends.py` | ⚠️ seam shipped; learned weights pending |
 | Serve at scale | Rust HNSW dense view via the bridge → sharding/RDMA | `services/ann_serving/`, `agent/ann_client.py` | ⚠️ single-node shipped; sharding/RDMA pending |
 
@@ -91,8 +96,14 @@ Sophia's charter exists to build, expressed as the organ the DeepSeek charter ca
   citation faithfulness + the epistemic gate + a negation-aware source-discipline check, and
   **withholds it fail-closed** if it does not pass — so "retrieved" only becomes "served" after
   the answer survives the gate.
+- **Closed self-correction loop.** `agent/gap_ingest.py` + `tools/close_gap_loop.py` turn logged
+  gaps into auto-materialized draft stubs (`none_extant`, no claims) in the quarantined draft
+  tier — verified end-to-end: an ungrounded query becomes a stub the same query then routes to
+  and abstains on.
 
-Honest status: the four properties (ground · calibrate/abstain · verify · self-correct) are now
-wired end-to-end on the live path. The remaining step is **closing the self-correction loop**
-from the knowledge-gap worklist to automatic corpus ingestion (today it produces the ranked
-worklist; ingestion is still a manual curation step).
+Honest status: all five properties (ground · calibrate/abstain · verify · self-correct ·
+perceive-widely) are wired end-to-end on the live path. The one deliberately-human step that
+remains is **sourced fill** — turning a `none_extant` stub into a sourced page requires real
+evidence, which the system queues but never fabricates (the charter constraint). Auto-fill from
+*trusted* sources (via the existing librarian, `agent/wiki_librarian.py`) is the natural
+extension, gated by the same provenance verifiers.
