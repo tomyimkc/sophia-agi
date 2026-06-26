@@ -15,6 +15,7 @@ import os
 import re
 import subprocess
 import warnings
+from collections import OrderedDict
 from glob import glob as _glob
 from pathlib import Path
 from typing import Any, Callable
@@ -866,6 +867,76 @@ def _carveout_clauses(low: str) -> list:
     return [c for c in (head + _CLAUSE_SPLIT.split(low)) if c and c.strip()]
 
 
+# Compiled-spec cache for provenance_faithful. Building the per-(record, author)
+# patterns is ~0.3s / 765 re.compile calls for the 36-record corpus, and the gate
+# is invoked once *per claim* (e.g. provenance_bench scores 300+ cases × 2 arms ×
+# several tests), so rebuilding every call turned a fast verifier into a multi-minute
+# CI hang. The compiled patterns depend only on the records' titles + doNotAttributeTo,
+# so we memoise them under a content key. LRU-bounded so grounded mode (which
+# synthesises fresh per-claim records) cannot grow the cache without limit.
+_PROV_SPEC_CACHE: "OrderedDict[tuple, list]" = OrderedDict()
+_PROV_SPEC_CACHE_MAX = 256
+
+
+def _provenance_spec_key(records: dict) -> tuple:
+    """Hashable key over exactly the record fields that determine the compiled specs."""
+    return tuple(
+        (
+            rid,
+            (records[rid] or {}).get("canonicalTitleEn"),
+            (records[rid] or {}).get("canonicalTitleZh"),
+            tuple((records[rid] or {}).get("altTitlesEn") or ()),
+            tuple((records[rid] or {}).get("doNotAttributeTo") or ()),
+        )
+        for rid in sorted(records)
+    )
+
+
+def _build_provenance_specs(
+    records: dict, *, attr: str, attr_p: str, app: str, the: str, the_q: str,
+    conn: str, nm: str, author_markers: "Callable",
+) -> list[tuple]:
+    """Compile the per-(record, author) attribution patterns. Pure function of
+    records + the (constant) regex fragments — safe to memoise by content key."""
+    specs: list[tuple] = []
+    for rid, record in records.items():
+        titles = [
+            str(t).lower()
+            for t in (
+                record.get("canonicalTitleEn"),
+                record.get("canonicalTitleZh"),
+                rid.replace("_", " "),
+                *(record.get("altTitlesEn") or []),
+            )
+            if t and len(str(t)) >= 3
+        ]
+        if not titles:
+            continue
+        # longest titles first so "constitution of the athenians" wins over a substring
+        titles = sorted(dict.fromkeys(titles), key=len, reverse=True)
+        title_alt = "(?:" + "|".join(re.escape(t) for t in titles) + ")"
+        for author in record.get("doNotAttributeTo", []):
+            a = "(?:" + "|".join(re.escape(m.lower()) for m in author_markers(author)) + r")\b"
+            t = title_alt + r"\b"
+            # Explicit grammatical constructions of *asserted authorship*, in both
+            # orders, with tight connectors only (no wildcard gap) so a comparison
+            # ("Plato wrote Republic — not Socrates") or a possessive of a different
+            # noun ("from Epictetus's teachings") does not cross-match.
+            patterns = [
+                re.compile(a + app + r"\s*" + attr + r"\s+" + the_q + t),                                # X (the …) wrote (the) "Y"
+                re.compile(a + r"(?:\s+(?:is|was|being))?\s+" + the + r"(?:author|writer|composer)\s+of\s+" + the_q + t),  # X is the author of Y
+                re.compile(a + app + r"\s*(?:is|was)\s+credited\s+with\s+\w+ing\s+" + the_q + t),        # X (the …) is credited with writing Y
+                re.compile(a + r"['’]s\s+" + the_q + t),                                                 # X's (the) Y
+                re.compile(conn + t + r"(?:\s*,)?(?:\s+(?:was|is|were|been))?\s+(?:" + attr_p + r"|attributed)\s+by\s+" + nm + a),  # Y (was) written/discovered by X
+                re.compile(conn + t + r"(?:\s*,)?\s+(?:is|was|are|were|been|being)?\s*attributed\s+to\s+" + nm + a),  # Y is attributed to (the prophet) X
+                re.compile(t + r"(?:\s*,)?\s+(?:a\s+|the\s+)?(?:work|text|book|composition|treatise)\s+(?:by|of)\s+" + a),  # Y, a work by X
+                re.compile(t + r"\s+(?:was\s+|is\s+)?" + a + r"['’]s\s+(?:\w+\s+)?(?:work|text|masterpiece|composition|book|treatise)\b"),  # Y was X's work
+                re.compile(a + r"\s*著\s*" + title_alt),                                                 # X 著 Y
+            ]
+            specs.append((rid, author, patterns))
+    return specs
+
+
 def provenance_faithful(records: "dict | None" = None) -> Verifier:
     """Fail if the text asserts an attribution forbidden by a record's
     doNotAttributeTo — Sophia's core "don't merge lineages" rule, machine-checked.
@@ -915,42 +986,20 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
         r"\bdisputed\b", r"\bdoubtful\b", r"\bdebated\b", r"scholars?\s+(?:doubt|reject|dispute|question)",
     ]
 
-    specs: list[tuple] = []
-    for rid, record in records.items():
-        titles = [
-            str(t).lower()
-            for t in (
-                record.get("canonicalTitleEn"),
-                record.get("canonicalTitleZh"),
-                rid.replace("_", " "),
-                *(record.get("altTitlesEn") or []),
-            )
-            if t and len(str(t)) >= 3
-        ]
-        if not titles:
-            continue
-        # longest titles first so "constitution of the athenians" wins over a substring
-        titles = sorted(dict.fromkeys(titles), key=len, reverse=True)
-        title_alt = "(?:" + "|".join(re.escape(t) for t in titles) + ")"
-        for author in record.get("doNotAttributeTo", []):
-            a = "(?:" + "|".join(re.escape(m.lower()) for m in author_markers(author)) + r")\b"
-            t = title_alt + r"\b"
-            # Explicit grammatical constructions of *asserted authorship*, in both
-            # orders, with tight connectors only (no wildcard gap) so a comparison
-            # ("Plato wrote Republic — not Socrates") or a possessive of a different
-            # noun ("from Epictetus's teachings") does not cross-match.
-            patterns = [
-                re.compile(a + app + r"\s*" + attr + r"\s+" + the_q + t),                                # X (the …) wrote (the) "Y"
-                re.compile(a + r"(?:\s+(?:is|was|being))?\s+" + the + r"(?:author|writer|composer)\s+of\s+" + the_q + t),  # X is the author of Y
-                re.compile(a + app + r"\s*(?:is|was)\s+credited\s+with\s+\w+ing\s+" + the_q + t),        # X (the …) is credited with writing Y
-                re.compile(a + r"['’]s\s+" + the_q + t),                                                 # X's (the) Y
-                re.compile(conn + t + r"(?:\s*,)?(?:\s+(?:was|is|were|been))?\s+(?:" + attr_p + r"|attributed)\s+by\s+" + nm + a),  # Y (was) written/discovered by X
-                re.compile(conn + t + r"(?:\s*,)?\s+(?:is|was|are|were|been|being)?\s*attributed\s+to\s+" + nm + a),  # Y is attributed to (the prophet) X
-                re.compile(t + r"(?:\s*,)?\s+(?:a\s+|the\s+)?(?:work|text|book|composition|treatise)\s+(?:by|of)\s+" + a),  # Y, a work by X
-                re.compile(t + r"\s+(?:was\s+|is\s+)?" + a + r"['’]s\s+(?:\w+\s+)?(?:work|text|masterpiece|composition|book|treatise)\b"),  # Y was X's work
-                re.compile(a + r"\s*著\s*" + title_alt),                                                 # X 著 Y
-            ]
-            specs.append((rid, author, patterns))
+    # Compiled per-(record, author) patterns are content-memoised (see cache above):
+    # rebuilding ~765 regexes on every claim was an O(claims) CI hang.
+    _spec_key = _provenance_spec_key(records)
+    specs = _PROV_SPEC_CACHE.get(_spec_key)
+    if specs is not None:
+        _PROV_SPEC_CACHE.move_to_end(_spec_key)
+    else:
+        specs = _build_provenance_specs(
+            records, attr=attr, attr_p=attr_p, app=app, the=the, the_q=the_q,
+            conn=conn, nm=nm, author_markers=author_markers,
+        )
+        _PROV_SPEC_CACHE[_spec_key] = specs
+        if len(_PROV_SPEC_CACHE) > _PROV_SPEC_CACHE_MAX:
+            _PROV_SPEC_CACHE.popitem(last=False)
 
     def _verify(text: str, task: Any, step: dict) -> dict:
         violations: list[str] = []

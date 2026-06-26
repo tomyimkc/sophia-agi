@@ -16,25 +16,28 @@ branches** and 6 open PRs from many parallel agent sessions.
      `test_ingest_rlvr_eval.py` (6), `test_rlvr.py` (14), `test_code_rlvr.py` (5).
 2. **Closed PR #129** — fully superseded; `git log origin/main..#129` is empty.
 
-## ⚠️ Pre-existing CI is red on `main` (not caused by this merge)
+## Pre-existing CI hang on `main` — diagnosed and FIXED in this branch
 
-`main`'s required `ci-complete` check has been **failing/cancelled on every recent
-push** (current head `42a817b` = cancelled; #132 merge = failure; and ~10 prior).
-The `test` job (`pytest -q`, `timeout-minutes: 20`) **hangs**: in CI it reached 6%
-then made zero progress for 14 min before being cancelled.
+`main`'s required `ci-complete` check had been **failing/cancelled on every recent
+push** (head `42a817b` = cancelled; #132 merge = failure; ~10 prior). The `test`
+job (`pytest -q`, `timeout-minutes: 20`) **hung**: in CI it reached 6% then made
+zero progress for 14 min before being cancelled.
 
-Root cause (reproduced locally, on **clean `origin/main`** too): catastrophic
-`re.compile` in `agent/verifiers.py:946` `provenance_faithful()`, reached via
-`tests/test_capability_panel.py` → `provenance_bench/runner.py` → `check_claim`.
-`verifiers.py` is byte-identical to `main` — the merge did not introduce this.
+Root cause (reproduced on **clean `origin/main`**): `agent/verifiers.py`
+`provenance_faithful()` recompiled ~765 regexes (9 per record×author, 36-record
+corpus = 0.31s) on **every call**, and the gate is invoked **once per claim**.
+`provenance_bench` scores 319 attribution cases × 2 arms across 5 panel tests
+(`test_capability_panel.py`, `test_eval_rlvr_capability_panel.py`) →
+≈3,190 rebuilds × 0.31s ≈ **16 min** of pure recompilation. Not an infinite loop —
+pathological O(claims) recompilation.
 
-Because the owner has been landing commits on red CI, #133 was merged via the
-same path (the only failing check is this pre-existing hang). **This bug should be
-fixed separately** — it's a real performance/ReDoS-style issue in a faithfulness
-verifier. Note: PR #131 contains a partial CI fix (`fix(ci)`, commit `2398fcd`)
-that bumps the timeout 20→30 and drops a redundant eval, but it targets a
-*different* slow path (a hybrid search-quality eval), so it may not fully resolve
-the `provenance_faithful` hang.
+**Fix (this branch):** memoise the compiled specs under a content key
+(titles + `doNotAttributeTo`), LRU-bounded to 256 so grounded mode can't grow it
+unbounded. 640 build+verify calls dropped from ~200s → **0.18s**; the two panel
+test files now pass in **9.5s** (were a 16-min hang); 281 provenance/verifier
+tests pass with **zero behavior change** (assertion still fails, carve-out/clean
+still pass). PR #131's `fix(ci)` (timeout 20→30 + dropping a redundant
+search-quality eval) is complementary headroom, not the root-cause fix.
 
 ## Branch cleanup — 36 merged branches (action required: run the script)
 
@@ -104,7 +107,8 @@ Other roadmap/infra branches (mostly docs/+1–4 commits):
   `claude/follower-repo-brainstorm-5h8ocf`, `claude/sophia-agi-aipp-integration-57x7ip`.
 
 ## Suggested next steps
-1. Run `scripts/delete-merged-branches.sh` to clear the 36 merged branches.
-2. Fix the `provenance_faithful` regex hang so `main` CI goes green again.
+1. Run `scripts/delete-merged-branches.sh` to clear the 36 merged branches
+   (blocked from the CI environment by egress policy — run where you have push rights).
+2. ~~Fix the `provenance_faithful` regex hang~~ — **done in this branch** (see above).
 3. Land or close #131 (it carries real unmerged work, not just a dupe of #133).
 4. Decide PR-or-prune on the older long-lived branches above.
