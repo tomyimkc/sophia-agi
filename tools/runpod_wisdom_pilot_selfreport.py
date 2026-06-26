@@ -90,6 +90,10 @@ printf 'https://x-access-token:%s@github.com\\n' "$GH_PILOT_PAT" > /root/.git-cr
 chmod 600 /root/.git-credentials
 
 cd /workspace
+# /workspace is a persistent volume; if the container RESTARTS and re-runs this start
+# command, a stale clone would make `git clone` fail (exit 128). Clear it first so a
+# restart re-runs cleanly instead of dirtying the result with a spurious failure.
+rm -rf sophia-agi
 git clone --depth 1 --branch {args.branch} https://github.com/{REPO_SLUG}.git sophia-agi
 cd sophia-agi
 
