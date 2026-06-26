@@ -1,0 +1,246 @@
+{
+  "agent": "autonomous pretraining-experiment runner",
+  "canClaimAGI": false,
+  "honesty_note": "Real closed-loop search over toy nano experiments. Every score is measured, diverged runs are recorded as failures, nothing is simulated. Not an AGI agent and not a capability claim.",
+  "objective": "held_loss",
+  "n_trials": 8,
+  "n_diverged": 0,
+  "stop_reason": "converged",
+  "best": {
+    "trial": 6,
+    "config": {
+      "vocab": 8,
+      "order": 2,
+      "context": 2,
+      "hidden": 16,
+      "D": 1200,
+      "epochs": 12,
+      "seed": 0,
+      "lr": 0.008839
+    },
+    "result": {
+      "held_loss": 0.78007,
+      "train_loss": 0.87251,
+      "diverged": false,
+      "params": 408,
+      "compute_proxy": 489600,
+      "floor_E": 0.90938,
+      "excess": -0.12931
+    },
+    "score": 0.78007,
+    "diverged": false,
+    "is_best_so_far": true,
+    "rationale": "new best 0.78007 at {lr=0.008839, hidden=16, D=1200} -> keep exploring nearby"
+  },
+  "history": [
+    {
+      "trial": 0,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "lr": 0.05
+      },
+      "result": {
+        "held_loss": 1.27203,
+        "train_loss": 1.21655,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": 0.36265
+      },
+      "score": 1.27203,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 1.27203 at {lr=0.05, hidden=16, D=1200} -> keep exploring nearby"
+    },
+    {
+      "trial": 1,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "lr": 0.070711
+      },
+      "result": {
+        "held_loss": 1.72926,
+        "train_loss": 1.57016,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": 0.81988
+      },
+      "score": 1.72926,
+      "diverged": false,
+      "is_best_so_far": false,
+      "rationale": "no improvement over best 1.27203 -> narrowing / counting toward patience"
+    },
+    {
+      "trial": 2,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "lr": 0.035355
+      },
+      "result": {
+        "held_loss": 1.05332,
+        "train_loss": 1.0364,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": 0.14394
+      },
+      "score": 1.05332,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 1.05332 at {lr=0.035355, hidden=16, D=1200} -> keep exploring nearby"
+    },
+    {
+      "trial": 3,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "lr": 0.025
+      },
+      "result": {
+        "held_loss": 0.85477,
+        "train_loss": 0.94305,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": -0.05461
+      },
+      "score": 0.85477,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 0.85477 at {lr=0.025, hidden=16, D=1200} -> keep exploring nearby"
+    },
+    {
+      "trial": 4,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "lr": 0.017678
+      },
+      "result": {
+        "held_loss": 0.81016,
+        "train_loss": 0.88976,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": -0.09922
+      },
+      "score": 0.81016,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 0.81016 at {lr=0.017678, hidden=16, D=1200} -> keep exploring nearby"
+    },
+    {
+      "trial": 5,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "lr": 0.0125
+      },
+      "result": {
+        "held_loss": 0.78946,
+        "train_loss": 0.88099,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": -0.11992
+      },
+      "score": 0.78946,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 0.78946 at {lr=0.0125, hidden=16, D=1200} -> keep exploring nearby"
+    },
+    {
+      "trial": 6,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "lr": 0.008839
+      },
+      "result": {
+        "held_loss": 0.78007,
+        "train_loss": 0.87251,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": -0.12931
+      },
+      "score": 0.78007,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 0.78007 at {lr=0.008839, hidden=16, D=1200} -> keep exploring nearby"
+    },
+    {
+      "trial": 7,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "lr": 0.00625
+      },
+      "result": {
+        "held_loss": 0.80112,
+        "train_loss": 0.8923,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": -0.10826
+      },
+      "score": 0.80112,
+      "diverged": false,
+      "is_best_so_far": false,
+      "rationale": "no improvement over best 0.78007 -> narrowing / counting toward patience"
+    }
+  ],
+  "task": "lr"
+}

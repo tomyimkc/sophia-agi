@@ -92,6 +92,20 @@ that writes a dated-style `*-latest.json` report next to the script.
   offline; an optional `--llm` critique is purely additive and degrades gracefully.
   → `python -m pretraining.agent.run_review` (exit 0 iff every study produced its artifact)
 
+- **`autopilot/` — autonomous experiment runner (propose → run → read back → iterate).** A
+  real closed loop: a search **strategy** proposes a config, the **local backend RUNS it**
+  (real nano training, free, CPU), the loop reads the measured loss, and the strategy decides
+  the next config from that result — until it converges or the trial budget is spent. Three
+  tasks: **learning-rate** tuning (adaptive hill-climb — walks 0.05→0.0125 reading losses),
+  **data-mixture** 配比 (ternary search → interior optimum), and **compute allocation** (N vs
+  D at fixed compute → finds an interior compute-optimal point, Chinchilla-flavoured). Honest
+  by construction: every score is measured, **diverged runs are recorded as failures
+  (score=inf), never fabricated**, and `canClaimAGI: false`. A `--escalate` flag emits a
+  **gated** RunPod plan for the winning config — **dry-run by default, cost-guarded, never
+  auto-spends GPU money** (launching needs explicit `--launch` + `--cost-ceiling` +
+  `RUNPOD_API_KEY`, and even then it only prints the real `tools/runpod_train.py` command for
+  you to run). → `python -m pretraining.autopilot.run_autopilot --task lr`
+
 ## Honesty posture
 
 - **No fabricated numbers.** Every `*-latest.json` is produced by running the script.

@@ -67,6 +67,15 @@ surface the known critiques (high dup rate, low eval coverage) rather than hide 
 *Falsified if* the agent claims AGI, passes an unassessable study, or suppresses a real
 concern. — `tests/test_pretraining_agent.py`
 
+### G11 — Autonomous runner is a real, fail-closed loop
+The autopilot must (a) improve on its starting config by reading measured results (real
+closed loop, not a fixed grid), (b) score a diverged run `inf` and exclude it from `best`
+(never fabricate a finite number), (c) carry `canClaimAGI: false`, and (d) **never launch a
+paid GPU run autonomously** — the RunPod escalation is dry-run by default and `launched` is
+always `False`, gated behind explicit launch + cost ceiling + API key. *Falsified if* the
+loop fabricates a score, the escalation launches without the guard, or it claims AGI.
+— `tests/test_pretraining_autopilot.py`
+
 ## Status
 
 | Gate | Status (2026-06-25) |
@@ -81,6 +90,7 @@ concern. — `tests/test_pretraining_agent.py`
 | G8 eval gaps surfaced | ✅ PASS |
 | G9 validators fail-closed | ✅ PASS |
 | G10 reviewer agent honest | ✅ PASS |
+| G11 autonomous runner fail-closed | ✅ PASS |
 
 G4 is intentionally listed as an honest-fail: it is the study's most useful lesson, not a
 defect — you cannot read off the irreducible loss without runs near saturation.
