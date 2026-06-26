@@ -41,6 +41,34 @@ from provenance_bench import code_dataset, code_reward, math_dataset, math_rewar
 OUT = ROOT / "agi-proof" / "benchmark-results" / "rlvr.adapter-eval.json"
 
 
+def _run_capability_panel(args: argparse.Namespace, model_desc: str) -> dict | None:
+    """Run the capability-delta panel (attribution/hallucination/calibration).
+
+    Returns the panel report (dict), or ``None`` if it could not run. Imported
+    lazily and wrapped so a panel failure never breaks the headline eval report
+    — the legacy ``base``/``adapterScore``/``delta`` numbers are already written
+    by the caller; the panel is additive evidence.
+    """
+    try:
+        import importlib.util as _ilu
+        _spec = _ilu.spec_from_file_location(
+            "eval_capability_panel", Path(__file__).resolve().parent / "eval_capability_panel.py"
+        )
+        _mod = _ilu.module_from_spec(_spec)
+        assert _spec and _spec.loader
+        _spec.loader.exec_module(_mod)
+        return _mod.run(
+            mode=args.mode,
+            model=model_desc if args.mode == "real" else "mock",
+            adapter=str(args.adapter) if args.adapter else None,
+            limit=args.limit,
+            out=None,  # no per-file write; caller embeds the dict in this report
+        )
+    except Exception as exc:  # non-fatal — panel is additive
+        print(f"[capability-panel] skipped: {type(exc).__name__}: {exc}")
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}", "candidateOnly": True}
+
+
 def _write(path: Path, obj: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(obj, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -220,6 +248,13 @@ def run_eval(args: argparse.Namespace) -> dict:
         },
         "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
     }
+    if args.capability_panel:
+        # Optional capability-delta panel (attribution / hallucination / calibration).
+        # Attached as a NEW key only — the legacy base/adapterScore/delta/checks above
+        # are untouched, so ingest_rlvr_eval.map_report and aggregate_rlvr_runs keep
+        # working unchanged. In real mode this reuses the model already loaded above;
+        # in mock mode it uses the panel's own deterministic fixtures.
+        report["capabilityPanel"] = _run_capability_panel(args, model_desc)
     report["passed"] = all(report["checks"].values())
     return report
 
@@ -426,6 +461,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--limit", type=int, default=0, help="debug subset size")
     ap.add_argument("--max-new-tokens", type=int, default=128)
     ap.add_argument("--max-fp-regression", type=float, default=0.0)
+    ap.add_argument("--capability-panel", action="store_true",
+                    help="also run the capability-delta panel (attribution/hallucination/"
+                         "calibration) and attach it under report['capabilityPanel']. "
+                         "Provenance task only; additive evidence (legacy keys unchanged).")
     args = ap.parse_args(argv)
     if args.task == "math":
         report = run_eval_math(args)

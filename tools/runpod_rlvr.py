@@ -356,7 +356,12 @@ PY
 
     live_cmd = ""
     if args.remote_mode == "live":
-        live_cmd = """
+        # --capability-panel threads through to eval_rlvr_adapter.py (provenance task).
+        # When set, the capability-delta panel runs as part of the held-out eval and is
+        # embedded in the .adapter-eval.json (additive; legacy numbers unchanged). The
+        # leading space (or empty string) keeps the bash line well-formed either way.
+        capability_flag = " --capability-panel" if getattr(args, "capability_panel", False) else ""
+        live_cmd = f"""
 # vLLM colocate/server runs through vLLM's external-launcher executor, which reads
 # the distributed env (RANK/WORLD_SIZE/LOCAL_RANK) that `accelerate launch` sets.
 # Plain `python` leaves RANK unset -> KeyError: 'RANK'. --vllm none has no such
@@ -382,12 +387,14 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
     | tee /workspace/sophia-runpod/sophia-rlvr-v1.tar.gz.sha256
   # Produce the held-out before/after adapter-eval the SSIL Layer-1 gate ingests.
   # Non-fatal: if eval OOMs or fails, the training artifacts are still copied back.
+  # --capability-panel (provenance task) runs the capability-delta panel as part of
+  # this eval and embeds it in the .adapter-eval.json (additive; legacy unchanged).
   python tools/eval_rlvr_adapter.py --mode real \\
     --task "$SOPHIA_TASK" \\
     --model "$SOPHIA_MODEL" \\
     --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
     --seed "$SOPHIA_SEED" \\
-    --out /workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json \\
+    --out /workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json{capability_flag} \\
     || echo "[runpod] adapter-eval failed (non-fatal); no SSIL gate input produced"
 fi
 """
@@ -572,6 +579,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--vllm", choices=["none", "server", "colocate"], default="none")
     ap.add_argument("--epochs", type=float, default=1.0)
     ap.add_argument("--seed", type=int, default=0, help="training+eval seed; vary across runs for independent replications")
+    ap.add_argument("--capability-panel", action="store_true",
+                    help="also run the capability-delta panel (attribution/hallucination/calibration) "
+                         "as part of the held-out adapter eval and embed it in the .adapter-eval.json. "
+                         "Provenance task only; additive evidence (legacy numbers unchanged).")
     ap.add_argument("--gpu-type", default=",".join(DEFAULT_GPU_TYPES), help="comma-separated RunPod GPU type preference list")
     ap.add_argument("--gpu-count", type=int, default=1)
     ap.add_argument("--cloud-type", choices=["SECURE", "COMMUNITY"], default="SECURE")
