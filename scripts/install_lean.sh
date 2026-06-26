@@ -59,10 +59,14 @@ if [ -x "$ELAN_DIR/bin/elan" ]; then
   log "elan already installed at $ELAN_DIR/bin/elan"
 else
   log "installing elan (Lean toolchain manager) to $ELAN_DIR ..."
-  ELAN_INIT_URL="https://raw.githubusercontent.com/leanprover/elan-init/master/elan-init.sh"
+  # Canonical URL (https://lean-lang.org/install/manual/). The raw GitHub path is
+  # https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh — note the
+  # repo is `leanprover/elan`, NOT `leanprover/elan-init` (the latter 404s; it was the
+  # wrong repo and broke the lean-kernel CI lane on first run).
+  ELAN_INIT_URL="${ELAN_INIT_URL:-https://elan.lean-lang.org/elan-init.sh}"
   # -y: accept defaults (non-interactive); --no-modify-path: we export PATH ourselves
   # below so this script is self-contained and doesn't touch shell rc files.
-  curl -sSf "$ELAN_INIT_URL" \
+  curl -fsSL "$ELAN_INIT_URL" \
     | sh -s -- -y --default-toolchain none --no-modify-path --prefix "$ELAN_DIR" \
     || err "elan install failed (curl $ELAN_INIT_URL)"
   log "elan installed."
