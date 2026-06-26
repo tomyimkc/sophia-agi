@@ -1,0 +1,29 @@
+{
+  "benchmark": "visual-rlvr",
+  "visibility": "public-aggregate",
+  "claimStatus": "Open — capability claim requires a gated VLM-GRPO run (>=2 judge families, kappa>=0.40, >=3 runs, CI excludes 0); this artifact records the prepared config only",
+  "ledgerItem": "visual-rlvr-live-run-not-yet-gated",
+  "rewardSurface": {
+    "correct": 1.0,
+    "abstain": -0.25,
+    "wrong": -1.0
+  },
+  "trainRows": 36,
+  "evalRows": 13,
+  "trainFamilies": [
+    "chart_qa",
+    "fabricated_ocr",
+    "miscount",
+    "phantom_object",
+    "spatial_control",
+    "table_qa"
+  ],
+  "evalFamilies": [
+    "document_qa",
+    "presence_control",
+    "spatial_relation"
+  ],
+  "familyIntersection": [],
+  "imagesRendered": 0,
+  "renderBlocker": null
+}

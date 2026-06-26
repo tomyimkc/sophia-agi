@@ -72,6 +72,25 @@ def relation(scene: dict, a: str, rel: str, b: str) -> bool:
     return ay > by  # below
 
 
+def point_in_box(box: "list[float]", x: float, y: float) -> bool:
+    """Whether pixel ``(x, y)`` falls inside ``[x, y, w, h]``."""
+    bx, by, bw, bh = box
+    return bx <= x <= bx + bw and by <= y <= by + bh
+
+
+def element_at(scene: dict, x: float, y: float) -> "str | None":
+    """Label of the topmost object whose box contains ``(x, y)`` (None if none)."""
+    for o in reversed(scene.get("objects", [])):  # last drawn == topmost
+        if point_in_box(o["box"], x, y):
+            return o.get("label")
+    return None
+
+
+def point_hits_label(scene: dict, label: str, x: float, y: float) -> bool:
+    """Whether ``(x, y)`` lands on an element carrying ``label``."""
+    return element_at(scene, x, y) == label
+
+
 def _norm_text(s: str) -> str:
     """Lowercase, strip currency/punctuation/space for tolerant OCR matching."""
     return re.sub(r"[^a-z0-9]", "", (s or "").lower())

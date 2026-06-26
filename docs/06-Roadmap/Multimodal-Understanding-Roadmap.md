@@ -246,6 +246,27 @@ python tools/run_multimodal_calibration.py
 python tools/run_multimodal_traps.py --answer mock:grounded --include-synth --runs 3
 ```
 
-**Next (Phase 4+):** a live GPU RLVR run on the visual reward (pre-registered in the
-failure ledger, gated on CUDA), real-VLM headline runs through the multi-family
-consensus judge, and workstreams E/F (fail-closed GUI agent, encoder probing).
+### Phase 4 + workstreams E/F — ✅ landed (prepared / gated)
+
+| Slice | What landed | File(s) |
+|---|---|---|
+| 4 — live GPU RLVR (prepared, gated) | Offline reward invariants + family-disjoint live-dataset prep + a config-only "Open" report; the GPU path refuses cleanly (needs CUDA + a VLM-GRPO trainer). Registered OPEN in the failure ledger. | `tools/run_visual_rlvr.py`, `agi-proof/failure-ledger.md` (`visual-rlvr-live-run-not-yet-gated`) |
+| E — fail-closed GUI agent | Every proposed GUI action is re-verified against the screenshot's ground-truth elements before dispatch; phantom controls, wrong-coordinate clicks, and ungroundable mutations are **withheld and escalated** to a human. | `multimodal_bench/gui_agent.py`, `verifiers.py` (point-in-element), `tools/run_gui_agent_gate.py` |
+| F — encoder probing | Image→text retrieval recall@1 with bootstrap CI over the suite; a deterministic hashing/caption **stand-in** runs offline (loudly labelled *not pixels*), and real CLIP/SigLIP rungs are recorded as **blockers** (no weights), never faked. | `multimodal_bench/encoder_probe.py`, `tools/probe_vision_encoder.py` |
+
+Reference behaviour (offline): reward invariants hold and prep is family-disjoint
+(train 6 families / eval 3, intersection ∅); the GUI gate dispatches 2/2 grounded
+actions and withholds 3/3 hallucinated ones with distinct reasons; the encoder
+probe runs the hashing rung and blocks the CLIP/SigLIP rungs (no torch). Run:
+
+```
+python tools/run_visual_rlvr.py --prepare
+python tools/run_gui_agent_gate.py
+python tools/probe_vision_encoder.py
+```
+
+The full `multimodal_bench/` package now covers all six workstreams on an offline,
+no-overclaim footing (37 tests). What remains is genuinely hardware/weights-gated
+and tracked in the failure ledger: a live VLM-GRPO run, real-VLM headline runs
+through the multi-family consensus judge, and real CLIP/SigLIP probes — none of
+which is asserted as a capability here.

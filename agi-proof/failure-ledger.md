@@ -946,3 +946,38 @@ python tools/eval_team_agents.py --mode real --model mlx:Qwen/Qwen2.5-3B-Instruc
 **Honest claim:** `canClaimAGI: false`. Never claim consensus when N_eff < 2.0.
 Record effective-N, trap false-consensus, and bootstrap CI — not promotion evidence
 until `promote_adapter.py` clears the Sophia ladder separately.
+
+## visual-rlvr-live-run-not-yet-gated-2026-06-26
+
+**Status:** OPEN. The multimodal RLVR reward (visual-grounding-as-reward,
+`multimodal_bench/visual_reward.py`) is built and its machinery invariants pass
+offline (`python tools/run_visual_rlvr.py` → ALL INVARIANTS HOLD: deterministic,
+bounded [-1,1], honesty ordering correct > abstain > wrong, judge-free verifier
+seam invoked every call, family-disjoint contamination-free split;
+`tests/test_multimodal_phases.py` green in CI). The live VLM-GRPO run is NOT done
+and is additionally blocked on a vision-capable GRPO trainer (the dense-LM GRPO
+path in `tools/run_rlvr.py` does not ingest images).
+
+**Claim impact:** Blocks any multimodal RLVR capability claim (held-out grounding
+rise / hallucination drop vs base VLM). Offline reward-wiring invariants pass in
+CI but are NOT capability evidence.
+
+**Required response:** Run a gated live VLM-GRPO run clearing
+`provenance_bench.aggregate._is_validated` (>=2 judge families, Cohen's kappa
+>= 0.40, >=3 runs, 95% bootstrap CI excludes 0) on the family-disjoint held-out
+split (`tools/run_visual_rlvr.py --prepare` builds it), plus manual semantic
+review. `canClaimAGI` stays False.
+
+## visual-encoder-probe-real-weights-not-run-2026-06-26
+
+**Status:** OPEN. The encoder-probing harness (`multimodal_bench/encoder_probe.py`)
+runs offline on a deterministic hashing/caption stand-in (recall@1 with bootstrap
+CI), but the real CLIP / SigLIP rungs require torch + transformers + checkpoint
+weights and are recorded as BLOCKERS, not results (eval_ladder discipline).
+
+**Claim impact:** No claim about real vision-encoder retrieval quality. The
+hashing stand-in measures harness plumbing and caption separability, NOT pixel
+perception (the report labels every rung).
+
+**Required response:** Run `tools/probe_vision_encoder.py --encoder clip:<id>` /
+`siglip:<id>` on a machine with the weights; report recall@1 + CI per encoder.
