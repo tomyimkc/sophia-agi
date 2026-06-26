@@ -61,7 +61,10 @@ Need RunPod?
 The RunPod REST inventory exposes pod **status and shape**, not on-die telemetry.
 A pod is flagged **stalled** when `desiredStatus=RUNNING` but it has **no live
 runtime/uptime** — it is supposed to be up but the container is not actually
-running. Deeper "running but hung" stalls need an on-node agent
+running. A freshly-launched pod legitimately has no runtime for the first minutes,
+so a RUNNING pod younger than the boot grace (`BOOT_GRACE_S`, 5 min) is reported as
+**booting**, not stalled — never reap or restart a booting pod. Deeper "running but
+hung" stalls need an on-node agent
 (`agent/cluster/ssh_provider.py` / DCGM over SSH); this skill does not claim to
 see those. Fail-closed: unknown ≠ healthy.
 

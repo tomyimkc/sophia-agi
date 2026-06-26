@@ -61,10 +61,33 @@ def test_running_with_uptime_is_healthy() -> None:
 
 
 def test_running_without_runtime_is_stalled() -> None:
+    # No timestamp → can't prove it's young → treat as stalled (fail-closed).
     v = classify_pod({"id": "p2", "name": "trainer", "desiredStatus": "RUNNING",
                       "runtime": None})
     assert v["verdict"] == "stalled"
     assert v["id"] == "p2" and v["name"] == "trainer"
+
+
+_CREATED = "2026-06-26 15:50:25.000 +0000 UTC"
+_CREATED_EPOCH = rc._parse_ts(_CREATED).timestamp()
+
+
+def test_young_running_pod_is_booting_not_stalled() -> None:
+    # 60s after createdAt → still inside the boot grace window → not stalled.
+    pod = {"id": "p2b", "desiredStatus": "RUNNING", "runtime": None, "createdAt": _CREATED}
+    assert classify_pod(pod, now_epoch=_CREATED_EPOCH + 60)["verdict"] == "booting"
+
+
+def test_old_running_pod_without_runtime_is_stalled() -> None:
+    # One hour after createdAt with no runtime → genuinely stalled.
+    pod = {"id": "p2c", "desiredStatus": "RUNNING", "runtime": None, "createdAt": _CREATED}
+    assert classify_pod(pod, now_epoch=_CREATED_EPOCH + 3600)["verdict"] == "stalled"
+
+
+def test_parse_ts_handles_runpod_format() -> None:
+    assert rc._parse_ts("2026-06-26 15:50:25.794 +0000 UTC") is not None
+    assert rc._parse_ts("2026-06-26T15:50:25+00:00") is not None
+    assert rc._parse_ts(None) is None and rc._parse_ts("garbage") is None
 
 
 def test_running_with_zero_uptime_is_stalled() -> None:

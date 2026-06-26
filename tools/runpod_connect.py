@@ -41,6 +41,8 @@ import argparse
 import json
 import os
 import sys
+import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -53,6 +55,27 @@ if str(ROOT) not in sys.path:
 from tools.runpod_rlvr import RunPodError, _api_request  # noqa: E402
 
 DISPATCH_WORKFLOW = "runpod-connect.yml"
+# A RUNNING pod with no runtime yet is normal during container boot. Don't call it
+# "stalled" (and never reap/restart it) until it's older than this grace window —
+# otherwise a freshly-launched, still-booting run looks identical to a hung one.
+BOOT_GRACE_S = 300
+
+
+def _parse_ts(value: "str | None") -> "datetime | None":
+    """Best-effort parse of RunPod timestamps (e.g. '2026-06-26 15:50:25.794 +0000 UTC')."""
+
+    if not value or not isinstance(value, str):
+        return None
+    s = value.replace(" UTC", "").strip()
+    for fmt in ("%Y-%m-%d %H:%M:%S.%f %z", "%Y-%m-%d %H:%M:%S %z"):
+        try:
+            return datetime.strptime(s, fmt)
+        except ValueError:
+            continue
+    try:  # ISO 8601 fallback
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
 GITHUB_FALLBACK_HINT = (
     "No RUNPOD_API_KEY in this context. Use the GitHub-mediated route instead — "
     "the key is stored as the repo Actions secret RUNPOD_API_KEY:\n"
@@ -81,11 +104,16 @@ def resolve_api_key(explicit: str | None = None,
     return None, "missing"
 
 
-def classify_pod(pod: "dict[str, Any]") -> "dict[str, Any]":
+def classify_pod(pod: "dict[str, Any]", *, now_epoch: "float | None" = None,
+                 boot_grace_s: int = BOOT_GRACE_S) -> "dict[str, Any]":
     """Map one RunPod REST pod object onto a small status verdict.
 
     Verdicts: ``stalled`` (desired RUNNING but no live runtime), ``running``
-    (RUNNING with uptime), ``stopped`` (EXITED/TERMINATED), ``unknown``.
+    (RUNNING with uptime), ``booting`` (RUNNING, no runtime yet but young),
+    ``stopped`` (EXITED/TERMINATED), ``unknown``.
+
+    ``now_epoch`` overrides the clock (for tests); ``boot_grace_s`` is how long a
+    RUNNING-but-no-runtime pod is treated as still booting rather than stalled.
     """
 
     pod_id = str(pod.get("id") or pod.get("podId") or pod.get("name") or "unknown")
@@ -98,8 +126,20 @@ def classify_pod(pod: "dict[str, Any]") -> "dict[str, Any]":
     has_runtime = bool(runtime) and bool(uptime)
 
     if desired == "RUNNING" and not has_runtime:
-        verdict = "stalled"
-        reason = "desiredStatus=RUNNING but no live runtime/uptime (container not actually up)"
+        # Distinguish a just-launched (booting) pod from a genuinely hung one:
+        # a RUNNING pod legitimately has no runtime for the first minutes.
+        started = _parse_ts(pod.get("lastStartedAt") or pod.get("createdAt"))
+        now = (datetime.fromtimestamp(now_epoch, timezone.utc)
+               if now_epoch is not None else datetime.now(timezone.utc))
+        age_s = (now - started).total_seconds() if started is not None else None
+        if age_s is not None and age_s < boot_grace_s:
+            verdict = "booting"
+            reason = f"RUNNING, no runtime yet but only {int(age_s)}s old (still booting)"
+        else:
+            verdict = "stalled"
+            reason = ("desiredStatus=RUNNING but no live runtime/uptime "
+                      + (f"and {int(age_s)}s old (container not up)" if age_s is not None
+                         else "(container not actually up)"))
     elif desired == "RUNNING":
         verdict = "running"
         reason = f"running; uptime={uptime}s"
@@ -192,6 +232,7 @@ def check(api_key: str, *, restart_stalled: bool = False) -> "dict[str, Any]":
         "pod_count": len(verdicts),
         "counts": {
             "running": sum(v["verdict"] == "running" for v in verdicts),
+            "booting": sum(v["verdict"] == "booting" for v in verdicts),
             "stalled": len(stalled),
             "stopped": sum(v["verdict"] == "stopped" for v in verdicts),
             "unknown": sum(v["verdict"] == "unknown" for v in verdicts),
@@ -205,7 +246,7 @@ def check(api_key: str, *, restart_stalled: bool = False) -> "dict[str, Any]":
 def _print_human(result: "dict[str, Any]") -> None:
     c = result["counts"]
     print(f"[runpod] connected — {result['pod_count']} pod(s): "
-          f"{c['running']} running, {c['stalled']} stalled, "
+          f"{c['running']} running, {c.get('booting', 0)} booting, {c['stalled']} stalled, "
           f"{c['stopped']} stopped, {c['unknown']} unknown")
     for v in result["pods"]:
         mark = "⚠ STALLED" if v["verdict"] == "stalled" else v["verdict"]
