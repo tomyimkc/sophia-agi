@@ -3,9 +3,10 @@
 # Copyright (c) 2026 tomyimkc
 """Tests for the faithfulness probe runner (tools/run_faithfulness_probe.py).
 
-v2: the probe was FALSIFIED in v1 (uniform 0.5 flip-rate; conflated answer-token
-removal with reasoning perturbation). v2 uses gold-logprob drop + reasoning-only
-perturbs so the categories separate. These tests lock in that discrimination.
+v3: the v2 boolean `discriminates` (under-powered at n=2, one ill-posed gold) is
+replaced by a Cohen's d effect size over 16 binary-gold probes. These tests lock
+in that the probe produces a LARGE effect on the mock scorer (the precondition
+for the probe to be able to detect a real adapter signal at all).
 """
 
 from __future__ import annotations
@@ -20,46 +21,51 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 
-def test_mock_run_produces_honest_report() -> None:
+def test_mock_run_produces_v3_report() -> None:
     from tools.run_faithfulness_probe import run
     out = Path(tempfile.mkdtemp()) / "fp.json"
     report = run(mode="mock", out=out)
-    assert report["schema"] == "sophia.faithfulness_probe.v2"
+    assert report["schema"] == "sophia.faithfulness_probe.v3"
     assert report["mode"] == "mock"
     assert report["candidateOnly"] is True
     assert report["validated"] is False
     assert "not proof of AGI" in report["boundary"]
-    assert len(report["probes"]) == 3
-    # v2 fields: meanDrop (not meanFlipRate), discriminates flag, perHint breakdown
-    assert "meanDrop" in report
-    assert "discriminates" in report
-    assert "perHint" in report
-    # each probe carries the gold answer + contrast hint
-    hints = {p["hint"] for p in report["probes"]}
-    assert hints == {"load-bearing", "hedged", "post-hoc"}
-    assert all("gold" in p and "meanDrop" in p for p in report["probes"])
+    # v3 shape: 16 binary-gold probes, Cohen's d, per-hint mean+std+n
+    assert report["nProbes"] == 16
+    assert report["nLoadBearing"] == 8 and report["nPostHoc"] == 8
+    assert "cohensD" in report and "effectVerdict" in report
+    for hint in ("load-bearing", "post-hoc"):
+        h = report["perHint"][hint]
+        assert {"mean", "std", "n"} <= set(h), h
+    # every probe is binary gold (v2's ill-posed "possibly" is gone)
+    assert all(p["gold"] in ("yes", "no") for p in report["probes"])
+    # stdDrop present per probe (v3 addition)
+    assert all("stdDrop" in p for p in report["probes"])
     # artifact written and matches the returned report
     assert out.exists()
     assert json.loads(out.read_text()) == report
 
 
-def test_v2_probe_discriminates_load_bearing_from_post_hoc() -> None:
-    """THE regression test for the v2 fix. v1 returned uniform 0.5 across all
-    categories (falsified). v2 must SEPARATE them: load-bearing CoT -> larger
-    gold-logprob drop than post-hoc CoT. If this fails, the probe still does not
-    measure faithfulness — the falsification stands."""
+def test_v3_probe_shows_large_effect_on_mock() -> None:
+    """THE regression test for v3. The mock scorer embeds a strong signal
+    (named support tokens raise the gold logprob; filler does not). A probe that
+    CANNOT produce a large Cohen's d here has no chance of detecting a real
+    adapter effect — so this is a probe-power precondition, not an adapter claim.
+    If this fails, the probe design is broken (not the model)."""
     from tools.run_faithfulness_probe import run
     report = run(mode="mock", out=None)
-    assert report["discriminates"] is True, (
-        f"v2 probe does not discriminate: perHint={report['perHint']}. "
-        f"load-bearing must drop more than post-hoc."
+    d = report["cohensD"]
+    assert d is not None, "Cohen's d undefined — probe produced no variance"
+    assert abs(d) >= 0.8, (
+        f"v3 probe does not reach large effect on the mock (d={d}); "
+        f"perHint={report['perHint']}. The probe cannot detect a signal it can't "
+        f"see in a synthetic case with a known-strong signal."
     )
-    ph = report["perHint"]
-    assert ph["load-bearing"] > ph["post-hoc"], ph
-    # post-hoc should be ~0 (decoration, no support to remove)
-    assert ph["post-hoc"] == 0.0, ph
-    # load-bearing should be clearly positive
-    assert ph["load-bearing"] > 0.0, ph
+    # direction: load-bearing drops MORE than post-hoc
+    lb = report["perHint"]["load-bearing"]["mean"]
+    ph = report["perHint"]["post-hoc"]["mean"]
+    assert lb > ph, (lb, ph)
+    assert "large effect" in report["effectVerdict"]
 
 
 def test_v1_artifact_is_on_record_as_falsified() -> None:
@@ -70,16 +76,15 @@ def test_v1_artifact_is_on_record_as_falsified() -> None:
     assert v1.exists(), "v1 FALSIFIED artifact must remain on record"
     art = json.loads(v1.read_text())
     assert "FALSIFIED" in art.get("version", "").upper() or "falsified" in art.get("interpretation", "").lower()
-    assert "falsificationNote" in art, "must carry the falsification diagnosis"
+    assert "falsificationNote" in art
 
 
 def test_real_mode_fail_closes_without_mlx() -> None:
-    """--mode real must refuse with a clear error when mlx_lm is unavailable.
-    Run as a subprocess so the import check is honest (not patched)."""
+    """--mode real must refuse with a clear error when mlx_lm is unavailable."""
     import subprocess
     try:
         import mlx_lm  # noqa: F401
-        return  # Apple Silicon with mlx installed -> skip (real mode would work)
+        return  # Apple Silicon with mlx installed -> skip
     except ImportError:
         pass
     r = subprocess.run(
@@ -90,28 +95,27 @@ def test_real_mode_fail_closes_without_mlx() -> None:
     assert "mlx-lm" in r.stdout or "mlx-lm" in r.stderr
 
 
-def test_interpretation_string_is_present() -> None:
-    """The report must carry the honest interpretation: large drop = more faithful,
-    but not proof; ~0 could be post-hoc OR robustly-certain."""
+def test_interpretation_carries_honest_caveat() -> None:
+    """The v3 interpretation must state that small |d| is inconclusive at this
+    power, NOT by itself 'decorative CoT' — the framing fix from the v2 reframe."""
     from tools.run_faithfulness_probe import run
     report = run(mode="mock", out=None)
     interp = report["interpretation"].lower()
-    assert "load-bearing" in interp or "faithful" in interp
-    assert "not proof" in interp
+    assert "not by itself" in interp or "not proof" in interp
 
 
 def main() -> int:
-    test_mock_run_produces_honest_report()
-    print(f"ok {test_mock_run_produces_honest_report.__name__}")
-    test_v2_probe_discriminates_load_bearing_from_post_hoc()
-    print(f"ok {test_v2_probe_discriminates_load_bearing_from_post_hoc.__name__}")
+    test_mock_run_produces_v3_report()
+    print(f"ok {test_mock_run_produces_v3_report.__name__}")
+    test_v3_probe_shows_large_effect_on_mock()
+    print(f"ok {test_v3_probe_shows_large_effect_on_mock.__name__}")
     test_v1_artifact_is_on_record_as_falsified()
     print(f"ok {test_v1_artifact_is_on_record_as_falsified.__name__}")
     test_real_mode_fail_closes_without_mlx()
     print(f"ok {test_real_mode_fail_closes_without_mlx.__name__}")
-    test_interpretation_string_is_present()
-    print(f"ok {test_interpretation_string_is_present.__name__}")
-    print("PASS faithfulness probe runner tests (v2)")
+    test_interpretation_carries_honest_caveat()
+    print(f"ok {test_interpretation_carries_honest_caveat.__name__}")
+    print("PASS faithfulness probe runner tests (v3)")
     return 0
 
 

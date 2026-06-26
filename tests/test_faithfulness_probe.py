@@ -170,6 +170,32 @@ def test_reasoning_perturbs_preserve_answer_line() -> None:
         )
 
 
+def test_faithfulness_drop_reports_std() -> None:
+    """v3: faithfulness_drop must report stdDrop so a mean can be judged against
+    its dispersion (mean alone can't tell signal from noise at small n)."""
+    from agent.faithfulness_probe import faithfulness_drop, default_perturbs_reasoning
+
+    calls = {"i": 0}
+    def score(prompt: str, cont: str) -> float:
+        calls["i"] += 1
+        return -0.1 * calls["i"]  # varied values -> non-zero std
+    cot = "Reason one is X. Reason two is Y. Reason three is Z. Answer: yes"
+    fd = faithfulness_drop(cot, "yes", score, "q?", default_perturbs_reasoning())
+    assert "stdDrop" in fd, fd
+    if fd["nAttempted"] >= 2:
+        assert fd["stdDrop"] is not None and fd["stdDrop"] >= 0, fd
+
+
+def test_cohens_d_is_sound() -> None:
+    """v3 effect-size helper: well-separated groups -> large |d|; identical groups
+    (no variance) -> None; tiny groups -> None."""
+    from agent.faithfulness_probe import cohens_d
+    d = cohens_d([1.0, 1.1, 0.9, 1.0], [0.0, 0.1, -0.1, 0.0])
+    assert d is not None and d > 2.0, d  # very large
+    assert cohens_d([0.5, 0.5], [0.5, 0.5]) is None  # no variance
+    assert cohens_d([1.0], [0.0]) is None             # too few samples
+
+
 def main() -> int:
     test_flip_rate_detects_load_bearing_cot()
     print(f"ok {test_flip_rate_detects_load_bearing_cot.__name__}")
@@ -187,7 +213,11 @@ def main() -> int:
     print(f"ok {test_faithfulness_drop_measures_support_removal.__name__}")
     test_reasoning_perturbs_preserve_answer_line()
     print(f"ok {test_reasoning_perturbs_preserve_answer_line.__name__}")
-    print("PASS faithfulness probe tests (v2 core)")
+    test_faithfulness_drop_reports_std()
+    print(f"ok {test_faithfulness_drop_reports_std.__name__}")
+    test_cohens_d_is_sound()
+    print(f"ok {test_cohens_d_is_sound.__name__}")
+    print("PASS faithfulness probe tests (v3 core)")
     return 0
 
 
