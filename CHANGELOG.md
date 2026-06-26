@@ -4,6 +4,24 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — always-available RunPod connection + stalled-pod checker
+
+Makes reaching RunPod reliable even when `RUNPOD_API_KEY` is absent from the current
+context (public repo / interactive agent session → 401 on every call). Two routes,
+at least one always available; the key never lives anywhere but the environment or
+the GitHub Actions secret.
+
+- **`tools/runpod_connect.py`** — single source of truth for connecting. Resolves the
+  key (env → fail-closed), lists pods and flags **stalled** ones (REST-only heuristic:
+  `desiredStatus=RUNNING` but no live runtime), and can stop+start them
+  (`--restart-stalled`). Offline `--dry-run` reports which route is available.
+- **`.github/workflows/runpod-connect.yml`** — the GitHub-mediated fallback: a
+  `workflow_dispatch` that injects the repo secret and runs the same checker, so RunPod
+  is reachable from GitHub even when the local context has no key.
+- **`skills/portable/sophia-runpod-connect/SKILL.md`** — portable (non-encrypted) skill
+  documenting the connect decision tree (direct key/MCP → else dispatch the workflow).
+- **`tests/test_runpod_connect.py`** — offline tests for key resolution + stall classifier.
+
 ### Added — `cluster/` supercomputer scheduling + resilience simulator (measured, pure-stdlib)
 
 Turns the repo's single-pod RunPod tooling (`tools/runpod_train.py`, the

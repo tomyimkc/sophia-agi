@@ -1,0 +1,67 @@
+# Connect to RunPod from GitHub (the secret RUNPOD_API_KEY lives here).
+#
+# This is the always-available fallback route: when an interactive agent session
+# or a local shell does NOT have RUNPOD_API_KEY, dispatch this workflow. GitHub
+# injects the repo Actions secret and runs tools/runpod_connect.py against the
+# live RunPod REST API to (a) confirm connectivity, (b) list pods, (c) flag any
+# stalled pod (desiredStatus=RUNNING but no live runtime), and optionally restart
+# them. The key is never printed.
+name: runpod-connect
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'What to do once connected'
+        required: false
+        default: 'check'
+        type: choice
+        options: ['check', 'restart-stalled']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: runpod-connect
+  cancel-in-progress: false
+
+jobs:
+  connect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set (or empty). Add it in Settings -> Secrets and variables -> Actions. Aborting."
+            exit 1
+          fi
+          echo "Preflight OK: RUNPOD_API_KEY present."
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Connect + check (flag stalled pods)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          EXTRA=""
+          if [ "${{ github.event.inputs.action }}" = "restart-stalled" ]; then
+            EXTRA="--restart-stalled"
+          fi
+          python tools/runpod_connect.py --check --json $EXTRA | tee runpod-connect.json
+          # Mirror a human-readable summary into the step log too.
+          python tools/runpod_connect.py --check $EXTRA || true
+
+      - name: Upload connection report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: runpod-connect-report
+          path: runpod-connect.json
+          if-no-files-found: warn
