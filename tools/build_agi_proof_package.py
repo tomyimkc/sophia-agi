@@ -9,7 +9,9 @@ evidence and open proof gaps without claiming Sophia is proven AGI.
 
 from __future__ import annotations
 
+import argparse
 import json
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -122,7 +124,7 @@ def hidden_commitments() -> dict[str, Any]:
     }
 
 
-def build_manifest() -> dict[str, Any]:
+def build_manifest(*, generated: str | None = None) -> dict[str, Any]:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     models = load_json(ROOT / "models" / "manifest.json", {})
     rag_summary = load_json(ROOT / "benchmark" / "model_runs" / "rag-claude-summary.json", {})
@@ -133,7 +135,7 @@ def build_manifest() -> dict[str, Any]:
 
     return {
         "version": version,
-        "generated": datetime.now().isoformat(timespec="seconds"),
+        "generated": generated or datetime.now().isoformat(timespec="seconds"),
         "claimBoundary": (
             "Sophia is an AGI-candidate proof package and provenance-aware "
             "reasoning system. This repository does not prove true AGI."
@@ -276,11 +278,46 @@ def build_manifest() -> dict[str, Any]:
     }
 
 
+def manifest_text(manifest: dict[str, Any]) -> str:
+    """Canonical serialisation of a manifest — the exact bytes written to disk."""
+    return json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
+
+
+def write_manifest(output: Path = OUTPUT) -> Path:
+    """Build the manifest and write it to ``output`` (default behaviour). Returns
+    the path written."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(manifest_text(build_manifest()), encoding="utf-8")
+    return output
+
+
+def check_manifest(output: Path = OUTPUT) -> int:
+    """Verify ``output`` is up to date WITHOUT writing. The volatile ``generated``
+    timestamp is normalised out (a fresh manifest is built with the committed file's
+    own ``generated``) so only real content drift counts. Returns 0 if current, 1
+    on drift/missing (with a ``DRIFT`` message on stderr)."""
+    if not output.exists():
+        print(f"DRIFT: {output} is missing — run tools/build_agi_proof_package.py", file=sys.stderr)
+        return 1
+    existing = output.read_text(encoding="utf-8")
+    try:
+        committed_generated = json.loads(existing).get("generated")
+    except json.JSONDecodeError:
+        committed_generated = None
+    if manifest_text(build_manifest(generated=committed_generated)) != existing:
+        print("DRIFT: agi-proof/evidence-manifest.json is stale — run tools/build_agi_proof_package.py", file=sys.stderr)
+        return 1
+    return 0
+
+
 def main() -> int:
-    AGI_PROOF_DIR.mkdir(parents=True, exist_ok=True)
-    manifest = build_manifest()
-    OUTPUT.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"Wrote {OUTPUT}")
+    parser = argparse.ArgumentParser(description="Build (or --check) the AGI-proof evidence manifest")
+    parser.add_argument("--check", action="store_true", help="verify the committed manifest is current without writing")
+    args = parser.parse_args()
+    if args.check:
+        return check_manifest()
+    output = write_manifest()
+    print(f"Wrote {output}")
     return 0
 
 
