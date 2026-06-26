@@ -520,6 +520,25 @@ Sophia runs fully offline on open weights, always paired with the runtime gate
 safety. The local-model build and evaluation steps live in the repo for
 contributors rather than on this front page.
 
+## Hardware (author's local cluster)
+
+Local-first, verifiable runs on two machines — roles assigned by the roofline, not by
+vibes (full setup: [`docs/HARDWARE.md`](docs/HARDWARE.md), source of truth:
+[`config/devices.local.json`](config/devices.local.json)):
+
+| | **DGX Spark** (GB10, aarch64) | **Mac Studio M3 Ultra** |
+|---|---|---|
+| Unified memory | 128 GB LPDDR5x | 96 GB |
+| Memory bandwidth | ~273 GB/s | **~819 GB/s** |
+| Backend | `hf` (CUDA, NVFP4 kernels) | `mlx` |
+| Role | **training** (compute-bound FP4): QLoRA, GRPO, merge | **generation** (bandwidth-bound): teacher farm, evals, judge |
+
+The [wisdom-internalization experiment](docs/WISDOM-INTERNALIZATION.md) maps onto this
+split: the Mac harvests verified, passport-stamped distillation traces from Sophia's own
+gated pipeline; the Spark distills the student; the Mac scores the sealed-held-out
+ablation matrix + the fabrication-vs-compute curve. One driver:
+`bash scripts/wisdom_internalization.sh {trace|train|ablate|all}`.
+
 ## Hugging Face
 
 **Dataset:** [tomyimkc/sophia-agi-corpus](https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus) — 528 bilingual training examples (philosophy · psychology · history · religion).

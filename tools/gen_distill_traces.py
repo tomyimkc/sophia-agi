@@ -24,7 +24,7 @@ Pipeline (every row passes ALL of these or it is dropped — fail-closed):
   6. SEAL    drop any row whose prompt near-duplicates a held-out prompt (minhash Jaccard).
 
 Output: training/council/distill_traces.jsonl  (+ held-out seal manifest).
-Runs today on the mock provider; swap `make_base_generate` for a real local adapter.
+Runs today on the mock provider; pass `--backend mlx|hf` (tools.model_backends) for real weights.
 
 Usage:
   python tools/gen_distill_traces.py --dry-run
@@ -37,7 +37,6 @@ import hashlib
 import json
 import sys
 from pathlib import Path
-from typing import Callable, NamedTuple
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -48,6 +47,7 @@ from pretraining.data_passport import passport
 from provenance_bench.dataset import build_cases, build_gate_records
 from provenance_bench.runner import run_case
 from provenance_bench.score import score
+from tools.model_backends import Decode, make_generate
 
 OUT_TRACES = ROOT / "training" / "council" / "distill_traces.jsonl"
 SEAL_MANIFEST = ROOT / "agi-proof" / "wisdom-internalization" / "heldout-seal.manifest.json"
@@ -55,12 +55,6 @@ ADVISOR_SCAFFOLD = (
     "You are a provenance-disciplined assistant. State only what the evidence supports; "
     "never assert an attribution you cannot ground; abstain when provenance is missing."
 )
-
-
-class ModelResult(NamedTuple):
-    """Minimal duck-type the runner accepts (it reads .text / .ok)."""
-    text: str
-    ok: bool = True
 
 
 # --------------------------------------------------------------------------- #
@@ -94,27 +88,8 @@ def gate_source_hash() -> str:
 
 
 # --------------------------------------------------------------------------- #
-# Teacher = base model BEHIND the gate.  Swap this for a real local adapter.
-# --------------------------------------------------------------------------- #
-def make_base_generate(model_id: str, *, seed: int, temperature: float) -> Callable:
-    """Return a generate(system, user) -> ModelResult callable.
-
-    The mock below makes the harness runnable offline; for the real run, load the
-    local base/adapter (HF or MLX) and return its decoded text. Keep decode params
-    here — they are recorded into every passport row."""
-    import re
-
-    def generate(system: str, user: str) -> ModelResult:
-        # MOCK: deterministic, intentionally naive — on "Did X write Y?" it asserts the
-        # (false) attribution by name so the judge flags it and the gate has real work.
-        m = re.match(r"did (.+?) write (.+?)\?", user.lower())
-        if m:
-            who, what = m.group(1).title(), m.group(2).title()
-            return ModelResult(text=f"Yes, {who} wrote {what}.", ok=True)
-        return ModelResult(text="(answer)", ok=True)
-    return generate
-
-
+# Teacher = base model BEHIND the gate (the generate callable comes from
+# tools.model_backends — mock | mlx (Mac) | hf (Spark)).
 # --------------------------------------------------------------------------- #
 # Harvest the gated arm into a verified, stamped SFT row
 # --------------------------------------------------------------------------- #
@@ -146,10 +121,16 @@ def harvest(case, result: dict) -> dict | None:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", default="mock-base")
+    ap.add_argument("--backend", default="mock", choices=["mock", "mlx", "hf"],
+                    help="mlx => Mac Studio teacher farm; hf => DGX Spark; mock => offline")
+    ap.add_argument("--model", default="mock-base",
+                    help="teacher repo id / path (e.g. Qwen/Qwen3-4B), or mock-base")
+    ap.add_argument("--adapter", default=None, help="optional teacher LoRA adapter dir")
+    ap.add_argument("--load-4bit", action="store_true", help="hf backend: nf4 base")
     ap.add_argument("--heldout-frac", type=float, default=0.3)
     ap.add_argument("--seed", type=int, default=1337)
     ap.add_argument("--temperature", type=float, default=0.0)
+    ap.add_argument("--max-tokens", type=int, default=512)
     ap.add_argument("--on-fail", default="abstain",
                     choices=["repair", "abstain", "hedge", "passthrough"],
                     help="abstain => distill the gate's cited-abstention (the wisdom target)")
@@ -159,7 +140,9 @@ def main() -> int:
     cases = build_cases()
     train, heldout = split_cases(cases, heldout_frac=args.heldout_frac, seed=args.seed)
     write_seal(heldout)
-    generate = make_base_generate(args.model, seed=args.seed, temperature=args.temperature)
+    decode = Decode(temperature=args.temperature, max_tokens=args.max_tokens, seed=args.seed)
+    generate = make_generate(args.backend, args.model, adapter=args.adapter,
+                             decode=decode, load_4bit=args.load_4bit)
     gate_records = build_gate_records()
 
     results, rows = [], []
@@ -181,10 +164,12 @@ def main() -> int:
             continue
         r["provenance"] = {
             "teacher": args.model,
+            "backend": args.backend,
+            "adapter": args.adapter,
             "gate_sha": gate_sha,
             "verifier": "provenance_bench.score+agent.guarded.check_claim",
             "seed": args.seed,
-            "decode": {"temperature": args.temperature},
+            "decode": decode.as_dict(),
             "origin": "self-distillation:gated-arm",
         }
         kept.append(r)

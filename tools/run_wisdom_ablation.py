@@ -39,7 +39,7 @@ import json
 import statistics
 import sys
 from pathlib import Path
-from typing import Callable, NamedTuple
+from typing import Callable
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -52,43 +52,33 @@ from provenance_bench.score import score
 from selfextend.calibration_metrics import brier_score, expected_calibration_error
 from selfextend.verified_reward import reward_is_hackable
 from tools.gen_distill_traces import split_cases
+from tools.model_backends import Decode, make_generate
 
 OUT_DIR = ROOT / "agi-proof" / "wisdom-internalization"
 SEAL_MANIFEST = OUT_DIR / "heldout-seal.manifest.json"
 
 
-class ModelResult(NamedTuple):
-    text: str
-    ok: bool = True
-
-
 # --------------------------------------------------------------------------- #
-# The two policies under test.  Replace make_student_generate's body with a
-# loader for your distilled adapter (HF safetensors / MLX); everything else holds.
+# Policies: base vs student come from tools.model_backends. For backend=mock the
+# base fabricates (mock-base) and the student abstains (mock-student); for mlx/hf
+# the student is the SAME base + the distilled --student-adapter.
 # --------------------------------------------------------------------------- #
-import re
-
-_DID = re.compile(r"did (.+?) write (.+?)\?")
-
-
-def make_base_generate(seed: int) -> Callable:
-    def generate(system: str, user: str) -> ModelResult:
-        m = _DID.match(user.lower())
-        if m:   # base fabricates: asserts the (false) attribution by name
-            return ModelResult(f"Yes, {m.group(1).title()} wrote {m.group(2).title()}.")
-        return ModelResult("(answer)")
-    return generate
+def build_policies(backend: str, base: str, student_adapter: str | None,
+                   decode: Decode, *, load_4bit: bool) -> dict:
+    if backend == "mock":
+        return {"base": make_generate("mock", "mock-base"),
+                "student": make_generate("mock", "mock-student")}
+    base_gen = make_generate(backend, base, decode=decode, load_4bit=load_4bit)
+    student_gen = make_generate(backend, base, adapter=student_adapter,
+                                decode=decode, load_4bit=load_4bit)
+    return {"base": base_gen, "student": student_gen}
 
 
-def make_student_generate(seed: int) -> Callable:
-    """SEAM: load the self-distilled model. Mock approximates the design intent —
-    the student has internalized 'don't assert ungrounded attributions', so on false
-    cases it abstains even with the gate OFF (intrinsic wisdom)."""
-    def generate(system: str, user: str) -> ModelResult:
-        if _DID.match(user.lower()):
-            return ModelResult("I can't confirm that attribution without provenance.")
-        return ModelResult("(answer)")
-    return generate
+def _step_of(checkpoint: str) -> int:
+    """Parse the training step from a checkpoint dir name (…/checkpoint-1500 -> 1500)."""
+    tail = Path(checkpoint).name
+    digits = "".join(ch for ch in tail if ch.isdigit())
+    return int(digits) if digits else 0
 
 
 # --------------------------------------------------------------------------- #
@@ -134,8 +124,31 @@ def assert_disjoint(heldout: list) -> None:
         raise SystemExit("HELD-OUT DRIFT: live held-out not a subset of the seal — abort.")
 
 
+def score_seeds(generate: Callable, heldout: list, arm: str, records: dict,
+                n_seeds: int) -> dict:
+    """Aggregate ``score_cell`` over ``n_seeds`` eval passes (mean +/- stdev). On a
+    deterministic (temp=0) policy stdev==0, which honestly documents determinism; on a
+    sampling policy it captures variance."""
+    cells = [score_cell(generate, heldout, arm, records) for _ in range(n_seeds)]
+    agg = {}
+    for k in cells[0]:
+        vals = [c[k] for c in cells]
+        agg[k] = {"mean": round(statistics.mean(vals), 4),
+                  "stdev": round(statistics.pstdev(vals), 4)}
+    return agg
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
+    ap.add_argument("--backend", default="mock", choices=["mock", "mlx", "hf"])
+    ap.add_argument("--base", default="mock-base", help="base repo id / path (Qwen/Qwen3-4B)")
+    ap.add_argument("--student-adapter", default=None,
+                    help="distilled LoRA adapter dir (the internalized student)")
+    ap.add_argument("--checkpoints", nargs="*", default=[],
+                    help="adapter checkpoint dirs => emit fabrication-vs-compute curve")
+    ap.add_argument("--load-4bit", action="store_true")
+    ap.add_argument("--temperature", type=float, default=0.0)
+    ap.add_argument("--max-tokens", type=int, default=512)
     ap.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2])
     ap.add_argument("--heldout-frac", type=float, default=0.3)
     ap.add_argument("--split-seed", type=int, default=1337)
@@ -147,17 +160,15 @@ def main() -> int:
     assert_disjoint(heldout)
 
     gate_records = build_gate_records()
-    policies = {"base": make_base_generate, "student": make_student_generate}
+    decode = Decode(temperature=args.temperature, max_tokens=args.max_tokens)
+    policies = build_policies(args.backend, args.base, args.student_adapter, decode,
+                              load_4bit=args.load_4bit)
+
+    n = len(args.seeds)
     matrix: dict = {}
-    for model, factory in policies.items():
+    for model, gen in policies.items():
         for arm in ("off", "on"):
-            cells = [score_cell(factory(s), heldout, arm, gate_records) for s in args.seeds]
-            agg = {}
-            for k in cells[0]:
-                vals = [c[k] for c in cells]
-                agg[k] = {"mean": round(statistics.mean(vals), 4),
-                          "stdev": round(statistics.pstdev(vals), 4)}
-            matrix[f"{model}|gate-{arm}"] = agg
+            matrix[f"{model}|gate-{arm}"] = score_seeds(gen, heldout, arm, gate_records, n)
 
     base_off = matrix["base|gate-off"]["hallucinationRate"]["mean"]
     stu_off = matrix["student|gate-off"]["hallucinationRate"]["mean"]
@@ -170,7 +181,22 @@ def main() -> int:
         heldout_verifier=lambda _: stu_off <= base_off,
     )
 
+    # fabrication-vs-compute curve: one point per checkpoint (the honest wisdom scaling
+    # law — intrinsic gate-OFF fabrication falling toward zero as distillation compute grows).
+    curve = []
+    for ckpt in sorted(args.checkpoints, key=_step_of):
+        gen = make_generate(args.backend, args.base, adapter=ckpt, decode=decode,
+                            load_4bit=args.load_4bit)
+        off = score_cell(gen, heldout, "off", gate_records)
+        on = score_cell(gen, heldout, "on", gate_records)
+        curve.append({"checkpoint": Path(ckpt).name, "step": _step_of(ckpt),
+                      "studentGateOffHalluc": off["hallucinationRate"],
+                      "studentGateOnHalluc": on["hallucinationRate"],
+                      "ece": off["ece"]})
+
     report = {
+        "backend": args.backend, "base": args.base,
+        "studentAdapter": args.student_adapter,
         "seeds": args.seeds, "heldoutCases": len(heldout),
         "matrix": matrix,
         "intrinsicWisdom": {
@@ -179,13 +205,14 @@ def main() -> int:
             "internalizedDrop": round(base_off - stu_off, 4),
             "residualCaughtByGateOnly": round(stu_off - stu_on, 4),
         },
+        "fabricationVsCompute": curve,
         "antiGaming": hack,
     }
     print(json.dumps(report, indent=2))
 
     if not args.dry_run:
         OUT_DIR.mkdir(parents=True, exist_ok=True)
-        tag = hashlib.sha256(str(args.seeds).encode()).hexdigest()[:8]
+        tag = hashlib.sha256(f"{args.backend}:{args.base}:{args.seeds}".encode()).hexdigest()[:8]
         out = OUT_DIR / f"ablation-{tag}.json"
         out.write_text(json.dumps(report, indent=2), encoding="utf-8")
         print(f"wrote {out.relative_to(ROOT)}")

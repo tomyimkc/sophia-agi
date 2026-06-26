@@ -1,0 +1,39 @@
+{
+  "schema": "sophia.devices.local.v1",
+  "_comment": "Author's local two-device cluster (single source of truth). Roles are assigned by the roofline, not by vibes: the GB10 ceiling is FP4 COMPUTE, so it owns the training step; the M3 Ultra has ~3x the memory bandwidth, so it owns token GENERATION (teacher farm + evals). Consumed by tools/model_backends.py role routing and the wisdom-internalization driver. Dependency-free config.",
+  "devices": {
+    "spark": {
+      "machine": "NVIDIA DGX Spark (GB10 Grace Blackwell, aarch64)",
+      "arch": "aarch64",
+      "accelerator": "cuda",
+      "unified_memory_gb": 128,
+      "mem_bandwidth_gbps": 273,
+      "fp4_pflops": 1.0,
+      "backend": "hf",
+      "roles": ["train", "qlora", "grpo", "merge", "vllm_serve"],
+      "notes": "Compute-bound FP4 training node. 128GB unified (~273 GB/s LPDDR5x, NOT HBM). LoRA/QLoRA up to ~70B 4-bit; full fine-tune capped ~<=40B. Use the in-repo NVFP4 GEMM kernels (kernels/src/nvfp4_gemm.py) for the frozen base. inference.local.spark.json holds its serving topology."
+    },
+    "mac": {
+      "machine": "Apple Mac Studio M3 Ultra",
+      "arch": "arm64-apple",
+      "accelerator": "metal",
+      "unified_memory_gb": 96,
+      "mem_bandwidth_gbps": 819,
+      "backend": "mlx",
+      "roles": ["teacher", "eval", "flywheel", "trace_gen", "judge"],
+      "notes": "Bandwidth-rich generation node. ~819 GB/s unified memory => faster per-token decode than the Spark. Runs the async teacher farm (gen_distill_traces), evals, and judge passes via MLX. 96GB fits a 4-30B teacher in 4-8bit; keep KV quantized (serving/kv_quant.py) for long context."
+    }
+  },
+  "pipeline_roles": {
+    "trace_gen": "mac",
+    "train": "spark",
+    "ablation_eval": "mac",
+    "merge_export": "spark"
+  },
+  "defaults": {
+    "student_base": "Qwen/Qwen3-4B",
+    "moe_base": "Qwen/Qwen3-30B-A3B",
+    "qlora_base": "Qwen/Qwen3-72B",
+    "decode": { "temperature": 0.0, "top_p": 1.0, "max_tokens": 512, "seed": 1337 }
+  }
+}
