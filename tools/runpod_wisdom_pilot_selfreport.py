@@ -44,7 +44,13 @@ def _job_script(args: argparse.Namespace) -> str:
     eval_flags = f"--runs {int(args.runs)}" + (f" --limit {int(args.limit)}" if args.limit else "")
     seed = int(args.seed)
     mode = getattr(args, "mode", "sft")
-    prefix, script = ("M4-orpo", "pilot_gemma3_orpo.py") if mode == "orpo" else ("M3-pilot", "pilot_gemma3_run.py")
+    # orpo_sft = the canonical SFT->ORPO STACK (train SFT, merge, ORPO on top); orpo = ORPO from base.
+    if mode == "orpo_sft":
+        prefix, script, mode_flags = "M4-orpo-sft", "pilot_gemma3_orpo.py", "--from-sft"
+    elif mode == "orpo":
+        prefix, script, mode_flags = "M4-orpo", "pilot_gemma3_orpo.py", ""
+    else:
+        prefix, script, mode_flags = "M3-pilot", "pilot_gemma3_run.py", ""
     # seed-tagged outputs so seeds 0/1/2 don't clobber each other; seed 0 keeps the canonical name.
     sfx = "" if seed == 0 else f"-seed{seed}"
     result_path = f"agi-proof/benchmark-results/wisdom-market/{prefix}-eval{sfx}.json"
@@ -153,10 +159,10 @@ python tools/build_sophia_wisdom_dataset.py --stats
 wc -l training/local_sophia_v3/mlx/train.jsonl
 
 echo "[pod] SMOKE ({mode})"
-python tools/{script} --smoke
+python tools/{script} --smoke {mode_flags}
 
 echo "[pod] FULL {mode} train + eval ({eval_flags}) seed={seed}"
-python tools/{script} --train --eval --seed {seed} {eval_flags} \
+python tools/{script} --train --eval --seed {seed} {eval_flags} {mode_flags} \
   --out {result_path} --save-answers {answers_path}
 echo "[pod] eval + answers written; finish() will commit + push"
 """
@@ -204,7 +210,7 @@ def parse_args(argv=None):
     ap.add_argument("--runs", type=int, default=3)
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--mode", choices=["sft", "orpo"], default="sft")
+    ap.add_argument("--mode", choices=["sft", "orpo", "orpo_sft"], default="sft")
     ap.add_argument("--registry-auth-id", default=os.environ.get("RUNPOD_REGISTRY_AUTH_ID", ""),
                     help="RunPod container-registry-auth id for pulling a private image")
     ap.add_argument("--name", default=f"sophia-wisdom-pilot-sr-{ts}")
