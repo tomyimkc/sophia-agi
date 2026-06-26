@@ -1,86 +1,33 @@
 {
-  "registryVersion": 1,
-  "createdAt": "2026-06-26",
+  "$schema": "./checkpoint-registry.schema.json",
+  "kind": "checkpoint-registry",
+  "registryVersion": "0.1.0",
+  "status": "scaffolding_only",
+  "candidateOnly": true,
   "canClaimAGI": false,
-  "note": "MLOps checkpoint registry. Each entry records a gated training candidate with config hash, eval-artifact references, and an explicit promotion verdict. Verifier/training-oracle passes are curriculum/self-extension rung gates only and are NOT benchmark (MATH/GSM8K/Vectara/hidden-pack) evidence (see agi-proof/preregistered-thresholds.md, THE ONE RULE).",
-  "checkpoints": [
-    {
-      "id": "math-rlvr-glm4-9b-3seed-n60-2026-06-25",
-      "config_hash": "a859e60deda8d68987d0a476a70801c0d71686152858f3aa20b120a9ab99b4a3",
-      "base_model": "zai-org/glm-4-9b-chat-hf",
-      "recipe": "GRPO RLVR, reward=agent.verifiers.math_equivalent (sympy, deterministic, judge-free), trl 0.19.1 + vllm 0.9.1 colocate, accelerate launch, epochs=3.0",
-      "trainPack": "164 train / 60 fixed held-out; held-out families disjoint from train (generalization)",
-      "trainEpochs": 3.0,
-      "seeds": [
-        0,
-        1,
-        2
-      ],
-      "eval_artifact_refs": [
-        {
-          "path": "agi-proof/self-extension/math-rlvr-3seed-n60/seed0.adapter-eval.json",
-          "sha256": "513c80a7f3fcc6d72eec8364e7bc06f78c43e0c676de934637f83514332542ef"
-        },
-        {
-          "path": "agi-proof/self-extension/math-rlvr-3seed-n60/seed1.adapter-eval.json",
-          "sha256": "6c9fddb7255f5082ac743b02a38b59de25edbd02941b875d3719898b163bcc07"
-        },
-        {
-          "path": "agi-proof/self-extension/math-rlvr-3seed-n60/seed2.adapter-eval.json",
-          "sha256": "44c1a0b2efdce6449a5c688d692115955e678a760f02acf3e7582c8343d39406"
-        },
-        {
-          "path": "agi-proof/self-extension/math-rlvr-3seed-n60/README.md",
-          "sha256": "406ddf9dc16528e8ed6ddd7453ca1234eef584cc1f1a09cb9e238c6900b82d35"
-        },
-        {
-          "path": "agi-proof/self-extension/math-rlvr-3seed-n60/README.summary.json",
-          "sha256": "a271a053566fd33ee72cfd931a845e5c2ff1b8599e271c3e46547b22eb66f129"
-        }
-      ],
-      "metrics": {
-        "evalKind": "self-extension rung; held-out family-disjoint synthetic math pass@1; deterministic sympy verifier (judge-free, non-gameable)",
-        "pooledBase": "0/180",
-        "pooledAdapter": "18/180",
-        "meanDelta": 0.1,
-        "minDelta": 0.0833,
-        "allSeedsPositive": true,
-        "ci95_acrossSeeds": [
-          0.0585,
-          0.1415
-        ],
-        "ci95ExcludesZero": true,
-        "perSeedDelta": [
-          {
-            "seed": 0,
-            "base": 0.0,
-            "adapter": 0.1167,
-            "delta": 0.1167
-          },
-          {
-            "seed": 1,
-            "base": 0.0,
-            "adapter": 0.1,
-            "delta": 0.1
-          },
-          {
-            "seed": 2,
-            "base": 0.0,
-            "adapter": 0.0833,
-            "delta": 0.0833
-          }
-        ]
-      },
-      "promotion_verdict": "promote",
-      "promotionBasis": "Self-extension RUNG gate cleared: >=3 seeds, all Delta>0, base 0/60 every seed, 95% across-seed CI [0.0585,0.1415] excludes 0, contamination-free, no regression, deterministic non-gameable verifier. This is a training-oracle/self-extension rung pass, NOT benchmark evidence.",
-      "honestScope": "MODEST, NARROW: ~10% absolute on a small held-out synthetic math set where base floors at 0%. NOT an AGI claim; NOT citable as MATH/GSM8K proof.",
-      "evidenceOracleClaim": false,
-      "canClaimAGI": false,
-      "sourceArtifact": "agi-proof/self-extension/math-rlvr-3seed-n60/",
-      "registeredCommit": "83112467a9e0dd55eb6a348f071f4aafdf96aa4a",
-      "registeredBranch": "claude/agi-gap-audit-roadmap-12ft30",
-      "checkpointWeightsRetained": false,
-      "checkpointWeightsNote": "177 MB adapter checkpoints stayed on auto-deleted RunPod pods; only JSON eval reports retained."
-    }
-  ]
+  "claimBoundary": "Registry scaffold only. A checkpoint entry is metadata for audit and retention, not benchmark evidence and not an AGI claim.",
+  "retentionPolicy": {
+    "keepMetadataInGit": true,
+    "keepWeightsOutOfGit": true,
+    "requireSha256": true,
+    "requirePromotionVerdict": true,
+    "requireFailureLedgerLink": true
+  },
+  "requiredEntryFields": [
+    "checkpointId",
+    "baseModel",
+    "adapterPath",
+    "trainingConfigHash",
+    "datasetManifest",
+    "dataDecontaminationReport",
+    "trainingRunPath",
+    "weightsSha256",
+    "evalArtifacts",
+    "promotionVerdict",
+    "failureLedgerRef",
+    "modelOrAdapterCard",
+    "candidateOnly",
+    "canClaimAGI"
+  ],
+  "checkpoints": []
 }

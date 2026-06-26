@@ -1,0 +1,140 @@
+{
+  "schema": "sophia.long_context_candidate.v1",
+  "name": "sophia-long-context-candidate-dry-run",
+  "status": "scaffolding_only_not_run",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "claimBoundary": "Candidate architecture configuration only. It is not a trained model, benchmark result, or AGI proof; canClaimAGI=false.",
+  "dryRunDefault": true,
+  "baseModel": {
+    "name": "Qwen/Qwen2.5-3B-Instruct",
+    "parameterClass": "small",
+    "backend": "mlx_or_peft",
+    "weightsArtifact": null,
+    "adapterArtifact": null
+  },
+  "contextWindows": {
+    "targetTokens": 131072,
+    "trainingTokens": 32768,
+    "evaluationTokens": 131072,
+    "fallbackTokens": 32768
+  },
+  "ropePolicy": {
+    "mode": "candidate",
+    "baseContextTokens": 32768,
+    "targetContextTokens": 131072,
+    "scaling": "documented_in_run_artifact",
+    "requiresPerplexitySmoke": true,
+    "requiresRecallSmoke": true
+  },
+  "contextChannels": [
+    "task",
+    "system_contract",
+    "source_evidence",
+    "working_memory",
+    "episodic_memory",
+    "semantic_memory",
+    "tool_trace",
+    "council_notes",
+    "failure_context"
+  ],
+  "routerDecisions": {
+    "schema": "sophia.router_decision.v1",
+    "defaultToolPolicy": "retrieve",
+    "verdictValues": [
+      "accepted",
+      "rejected",
+      "held",
+      "abstain"
+    ],
+    "riskFlags": [
+      "source_conflict",
+      "citation_required",
+      "hidden_benchmark",
+      "tool_error",
+      "privacy_risk",
+      "overclaim_risk"
+    ],
+    "failClosedOnMissingEvidence": true
+  },
+  "memoryLayers": [
+    {
+      "layer": "scratch",
+      "retention": "single_run",
+      "writePolicy": "not_persisted"
+    },
+    {
+      "layer": "episodic",
+      "retention": "append_only",
+      "writePolicy": "requires_accepted_or_held_verifier_state"
+    },
+    {
+      "layer": "semantic",
+      "retention": "durable",
+      "writePolicy": "accepted_evidence_cards_only"
+    },
+    {
+      "layer": "procedural",
+      "retention": "durable",
+      "writePolicy": "reviewed_tool_trace_only"
+    },
+    {
+      "layer": "negative",
+      "retention": "durable",
+      "writePolicy": "rejected_held_or_abstain_cases"
+    }
+  ],
+  "evalSuites": [
+    {
+      "id": "context-packing-smoke",
+      "status": "planned",
+      "artifact": "training/context_packing/manifest.json",
+      "metric": "context_artifact_validity"
+    },
+    {
+      "id": "provenance-delta",
+      "status": "planned",
+      "artifact": "agi-proof/benchmark-results/provenance-delta.public-report.json",
+      "metric": "hallucinated_attribution_delta"
+    },
+    {
+      "id": "tool-use-mcp",
+      "status": "planned",
+      "artifact": "training/tool_use/manifest.json",
+      "metric": "wrong_tool_and_over_call_rate"
+    },
+    {
+      "id": "team-agents-longtask",
+      "status": "planned",
+      "artifact": "agi-proof/benchmark-results/team-agents-longtask.public-report.json",
+      "metric": "substep_coverage_without_false_consensus"
+    }
+  ],
+  "ablationArms": [
+    "raw",
+    "long_context_only",
+    "long_context_plus_memory",
+    "long_context_plus_tools",
+    "verifier_gated",
+    "sophia_full"
+  ],
+  "promotionThresholds": {
+    "minimumSeeds": 3,
+    "minimumAcceptedEvidenceCardRate": 0.95,
+    "maxUnsupportedClaimRate": 0.02,
+    "maxFalsePositiveRegression": 0.02,
+    "maxWrongToolRate": 0.05,
+    "maxMemoryContaminationRate": 0.0,
+    "requireFailureLedgerUpdate": true,
+    "requireAblationAttribution": true,
+    "requireCanClaimAGIFalse": true
+  },
+  "artifactPaths": {
+    "architectureDoc": "docs/09-Agent/Sophia-Long-Context-Architecture.md",
+    "architectureBets": "agi-proof/architecture-bets/manifest.json",
+    "contextPackingManifest": "training/context_packing/manifest.json",
+    "mlopsRunTemplate": "agi-proof/mlops/architecture-run-template.json",
+    "checkpointRegistry": "agi-proof/mlops/checkpoint-registry.json",
+    "failureLedger": "agi-proof/failure-ledger.md"
+  }
+}

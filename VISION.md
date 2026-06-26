@@ -1,33 +1,14 @@
-# Sophia — Vision & Charter
+# Sophia VISION
 
-**A provenance-aware, verifiable, fail-closed reasoning platform.**
+Sophia is a **verifier-gated, provenance-first cognitive system** for building and
+measuring small, auditable, high-trust models and agents.
 
-**Wisdom before intelligence.**
+## Core principles
 
-Sophia's mission is *not* to claim AGI or machine consciousness. 
-
-It exists to build the most trustworthy, verifiable, provenance-aware reasoning system possible — one that traces every claim to its sources, knows when it must abstain, and can prove *why* it believes what it outputs.
-
-> **Guiding principle.** A reasoning system earns trust by being *checkable*, not
-> by being *confident*. Every advance should move Sophia from "probabilistic
-> guessing" toward "verifiable, traceable inference."
-
-This is the canonical statement of intent. The README describes what exists today;
-this file says what Sophia is *for*, and holds new work accountable to it. (Scope
-disclaimers in [README.md](README.md), [SECURITY.md](SECURITY.md), and
-[RESULTS.md](RESULTS.md) remain authoritative — **this is not a claim of AGI**.)
-
-## Core design commitments
-
-1. **Provenance over assertion.** Every belief, claim, or conclusion carries a
-   traceable lineage — its source, the reasoning that derived it, and a confidence
-   estimate. Sophia maintains a belief graph where nodes are claims and edges are
-   justifications, and it supports counterfactual queries
-   (*"what would I conclude if this source were removed?"*).
-2. **Verification over generation.** Raw model output is a *hypothesis*, not an
-   answer. Hypotheses are checked — code execution, logic/constraint solvers,
-   knowledge-graph consistency, self-consistency — before being promoted to
-   confident claims.
+1. **Everything is a claim with sources.** No fluent paragraph leaves the system
+   without an attached, machine-readable attribution trail.
+2. **Verification is first-class.** Detectors, gates, and human-reviewable ledgers
+   decide what may be emitted. The model is not trusted to self-police.
 3. **Fail-closed, not fail-open.** When confidence is low, sources conflict, or
    verification fails, Sophia says "I don't know" or escalates. It never fabricates
    to fill a gap. Confidentiality and integrity boundaries (Bell-LaPadula-style
@@ -46,7 +27,7 @@ disclaimers in [README.md](README.md), [SECURITY.md](SECURITY.md), and
 |--------|--------|----------------|
 | **Reasoning core** — multi-backend LLMs, deliberation (CoT, best-of-N, self-verification, process-reward), councils | ✅ | `agent/model.py` (10+ presets), `agent/best_of.py`, `agent/council_deliberate.py`, `agent/sector_council.py`, `provenance_bench/rl_reward.py` |
 | **Belief graph & provenance engine** — queryable claims/justifications graph; confidence propagation; retraction; **counterfactual analysis**; audit trails | ✅ | `okf/graph.py` (min-over-chain propagation, contradiction ledger), `okf/counterfactual.py` (counterfactual removal + retraction), `agent/wiki_store.py` |
-| **Memory & retrieval** — long-term (vector + structured KG), rolling consolidation, provenance-tagged | ⚠️ partial | `agent/memory_consolidation.py` (85 LOC), `agent/vector_store.py`, `agent/rag_local_embed.py`, `agent/rag_pipeline.py`, `okf/` wiki tiers. **Honest status:** vector recall is now **live in the retrieval path** — a committed, reproducible `rag/index/embeddings.npz` (built offline by `agent/rag_local_embed.py`, a deterministic CPU/airgap hashing embedder; `tools/build_rag_index.py --verify` checks it in CI) drives cosine search in `agent/retrieval.retrieve`, with the index self-describing its backend so queries embed in the same space. Honest bounds: the committed backend is a **lexical-semantic hash** embedding (generalizes surface form, not deep meaning — the Gemini backend remains the higher-quality option when a key is present), and runtime *decision* memory is still a 44-line append-only JSONL log (`agent/memory.py`); structured-KG consolidation is not yet in the live path. |
+| **Memory & retrieval** — long-term (vector + structured KG), rolling consolidation, provenance-tagged | ⚠️ partial | `agent/memory_consolidation.py` (85 LOC), `agent/vector_store.py`, `agent/rag_local_embed.py`, `agent/rag_pipeline.py`, `okf/` wiki tiers. **Honest status:** vector recall is now **live in the retrieval path** — a committed, reproducible `rag/index/embeddings.npz` (built offline by `agent/rag_local_embed.py`, a deterministic CPU/airgap hashing embedder; `tools/build_rag_index.py --verify` checks it in CI) drives cosine search in `agent/retrieval.retrieve`, with the index self-describing its backend so queries embed in the same space. Honest bounds: the committed backend is a **lexical-semantic hash** embedding (generalizes surface form, not deep meaning — the Gemini backend remains the higher-quality option when a key is present), and runtime *decision* memory is still a 44-line append-only JSONL log (`agent/memory.py`); structured-KG consolidation is not yet in the live path. A deterministic **numpy-free lexical vector tier** (`agent/lexical_embed.py`) is also available as an offline middle tier between learned embeddings and keyword when desired via `SOPHIA_RETRIEVAL=lexical` or `vector`. |
 | **Verification layer** — neurosymbolic checks, executable verification, citation/source validation gating claim promotion | ✅ | `agent/verifiers.py`, `agent/verifier_synthesis.py`, `agent/gate.py`, `agent/grounded_gate.py` |
 | **Self-model & calibration** — uncertainty estimation, "I don't know", routing below threshold | ⚠️ partial | `agent/calibration.py` (ECE, risk-coverage), `agent/graded_decision.py`, `agent/corroboration.py`. **Honest status:** metrics run on a synthetic suite. The graded answer/hedge/abstain router is now **wired into the live grounded path** (`agent/grounded_agent.grounded_answer(graded=True)` → `apply_graded_decision` → `graded_decision.decide`): a gate-passing answer is **downgraded** to hedge/abstain when its confidence is low (downgrade-only, fail-closed, opt-in, no-op without a confidence signal; tested in `tests/test_grounded_agent_graded.py`). The confidence *source* is now **live**, not caller-supplied: `agent/grounded_confidence.py` pools the routed page's `authorConfidence` with neighbor corroboration into a provenance-grounded confidence (`grounded_answer(confidence_from_sources=True)`). Measured discrimination over the OKF wiki: weak sources (disputed/legendary/anachronism) downgraded **100%**, strong sources (consensus/attributed) kept **67%** (`tools/eval_graded_confidence.py`, candidate report). A **real stochastic-model calibration run** (deepseek over the 35 in-domain attribution traps, deterministic trap scorer — `tools/run_graded_calibration_live.py`) found the provenance confidence is a **weak, non-monotonic predictor** of answer correctness (balanced accuracy 0.52 at the hi=0.7 default, only 0.58 when fitted to hi=0.74/lo=0.35): it measures *source quality*, not answer correctness, so the hand-picked default `hi=0.7` is already near-optimal and the fitted thresholds (small-N candidate) are **not adopted**. Honest takeaway: this confidence is a sound provenance prior but should not be over-trusted as a correctness signal. |
 | **Security & confidentiality** — Bell-LaPadula classification, confidentiality verifiers, airgap, sandboxed MCP | ✅ | `agent/security/labels.py`, `agent/dataflow/firewall.py`, `agent/policies.py`, `sophia_mcp/audit.py` |
@@ -89,4 +70,3 @@ Sophia succeeds when a skeptical user can:
    (`agent/calibration.py` — ECE, risk-coverage).
 
 The benchmark is **trustworthiness and verifiability**, not breadth of knowledge or
-human-likeness.

@@ -93,6 +93,7 @@ def test_seven_modes_present() -> None:
         "raw-model",
         "raw-model-plus-tools",
         "sophia-full",
+        "sophia-no-intake",
         "sophia-no-kb",
         "sophia-no-gate",
         "sophia-no-memory",
@@ -115,6 +116,7 @@ def test_raw_model_suppresses_all_scaffolding() -> None:
     assert result["codingCouncilRoute"] == {}
     assert result["toolLog"] == {}
     assert result["webEvidence"] == {}
+    assert result["intakeContract"] == {}
     assert result["gate"].get("gateApplied") is False
     # raw modes must not leak the Sophia source-discipline contract
     assert "Rubric Evidence Map" not in result["modelLog"].get("_user", "")
@@ -196,6 +198,7 @@ def test_sophia_full_runs_council_for_coding() -> None:
     assert result["codingCouncilRoute"] != {}
     assert result["sources"] != []
     assert result["gate"].get("gateApplied") is not False  # real gate ran
+    assert result["intakeContract"] != {}
 
 
 def test_compute_deltas_full_minus_mode() -> None:

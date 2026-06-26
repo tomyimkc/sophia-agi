@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sophia Context Packing Evidence Card",
+  "type": "object",
+  "required": [
+    "schema",
+    "cardId",
+    "status",
+    "claimStatus",
+    "candidateOnly",
+    "canClaimAGI",
+    "contextChannel",
+    "source",
+    "summary",
+    "verifier",
+    "tokenEstimate",
+    "claimBoundary"
+  ],
+  "properties": {
+    "schema": { "const": "sophia.context_packing.evidence_card.v1" },
+    "cardId": { "type": "string" },
+    "status": {
+      "enum": [
+        "accepted",
+        "rejected",
+        "held",
+        "abstain"
+      ]
+    },
+    "claimStatus": {
+      "enum": [
+        "illustrative",
+        "not_evidence",
+        "candidate_evidence",
+        "validated"
+      ]
+    },
+    "candidateOnly": { "const": true },
+    "canClaimAGI": { "const": false },
+    "contextChannel": {
+      "enum": [
+        "task",
+        "system_contract",
+        "source_evidence",
+        "working_memory",
+        "episodic_memory",
+        "semantic_memory",
+        "tool_trace",
+        "council_notes",
+        "failure_context"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "kind",
+        "pathOrUri",
+        "sourceId",
+        "license",
+        "checksum"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "repo_doc",
+            "okf_record",
+            "benchmark_source",
+            "tool_trace",
+            "memory_row",
+            "failure_ledger",
+            "illustrative_sample"
+          ]
+        },
+        "pathOrUri": { "type": "string" },
+        "sourceId": { "type": "string" },
+        "license": { "type": ["string", "null"] },
+        "checksum": { "type": ["string", "null"] }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "text",
+        "preservedClaims",
+        "knownLimits"
+      ],
+      "properties": {
+        "text": { "type": "string" },
+        "preservedClaims": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "knownLimits": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "verifier": {
+      "type": "object",
+      "required": [
+        "state",
+        "method",
+        "reasons"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "accepted",
+            "rejected",
+            "held",
+            "abstain"
+          ]
+        },
+        "method": { "type": "string" },
+        "reasons": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "tokenEstimate": {
+      "type": "object",
+      "required": [
+        "rawTokens",
+        "packedTokens",
+        "budgetTokens"
+      ],
+      "properties": {
+        "rawTokens": { "type": "integer", "minimum": 0 },
+        "packedTokens": { "type": "integer", "minimum": 0 },
+        "budgetTokens": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "trainingUse": {
+      "type": "object",
+      "required": [
+        "eligible",
+        "requiresHumanReview",
+        "disjointFromEval"
+      ],
+      "properties": {
+        "eligible": { "type": "boolean" },
+        "requiresHumanReview": { "type": "boolean" },
+        "disjointFromEval": { "type": "boolean" }
+      }
+    },
+    "claimBoundary": { "type": "string" }
+  }
+}

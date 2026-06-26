@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sophia Context Pack Card",
+  "type": "object",
+  "required": [
+    "schema",
+    "schemaVersion",
+    "cardId",
+    "caseId",
+    "status",
+    "claimStatus",
+    "candidateOnly",
+    "canClaimAGI",
+    "budgetTokens",
+    "budget_tokens",
+    "tokensUsed",
+    "tokens_used",
+    "tokensOfAnswerSpan",
+    "tokens_of_answer_span",
+    "needlePosition",
+    "needle_position",
+    "needleDepthPct",
+    "needle_depth",
+    "packingPolicy",
+    "packing_policy",
+    "retrievalPolicy",
+    "retrieval_policy",
+    "candidatePassagesConsidered",
+    "candidates_considered",
+    "packedPassages",
+    "answerBearingSpanIds",
+    "answerBearingSpanIncluded",
+    "answer_span_present_in_corpus",
+    "answer_span_present_in_pack",
+    "ablationFlags",
+    "claimBoundary"
+  ],
+  "properties": {
+    "schema": { "const": "sophia.context_pack_card.v1" },
+    "schemaVersion": { "const": "1.0.0" },
+    "cardId": { "type": "string", "minLength": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "status": { "const": "candidate" },
+    "claimStatus": { "const": "candidate" },
+    "candidateOnly": { "const": true },
+    "canClaimAGI": { "const": false },
+    "budgetTokens": { "type": "integer", "minimum": 1 },
+    "budget_tokens": { "type": "integer", "minimum": 1 },
+    "tokensUsed": { "type": "integer", "minimum": 0 },
+    "tokens_used": { "type": "integer", "minimum": 0 },
+    "tokensOfAnswerSpan": { "type": "integer", "minimum": 0 },
+    "tokens_of_answer_span": { "type": "integer", "minimum": 0 },
+    "needlePosition": {
+      "type": "object",
+      "required": ["passageIndexes", "depthPct"],
+      "properties": {
+        "passageIndexes": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "depthPct": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "needle_position": {
+      "type": "object",
+      "required": ["passage_indexes", "depth_pct"],
+      "properties": {
+        "passage_indexes": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "depth_pct": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "needleDepthPct": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "needle_depth": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "packingPolicy": { "type": "string", "minLength": 1 },
+    "packing_policy": { "type": "string", "minLength": 1 },
+    "retrievalPolicy": { "type": "string", "minLength": 1 },
+    "retrieval_policy": { "type": "string", "minLength": 1 },
+    "candidatePassagesConsidered": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "passageId",
+          "sourceId",
+          "depthPct",
+          "tokenEstimate",
+          "relevanceScore",
+          "verifierScore",
+          "containsAnswerBearingSpan",
+          "selected",
+          "selectionReason"
+        ],
+        "properties": {
+          "passageId": { "type": "string", "minLength": 1 },
+          "sourceId": { "type": "string", "minLength": 1 },
+          "depthPct": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "tokenEstimate": { "type": "integer", "minimum": 0 },
+          "relevanceScore": { "type": "number", "minimum": 0 },
+          "verifierScore": { "type": "number", "minimum": 0 },
+          "containsAnswerBearingSpan": { "type": "boolean" },
+          "selected": { "type": "boolean" },
+          "selectionReason": { "type": "string" }
+        }
+      }
+    },
+    "candidates_considered": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "passage_id",
+          "source_id",
+          "depth_pct",
+          "token_estimate",
+          "relevance_score",
+          "verifier_score",
+          "contains_answer_bearing_span",
+          "included",
+          "eviction_reason"
+        ],
+        "properties": {
+          "passage_id": { "type": "string", "minLength": 1 },
+          "source_id": { "type": "string", "minLength": 1 },
+          "depth_pct": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "token_estimate": { "type": "integer", "minimum": 0 },
+          "relevance_score": { "type": "number", "minimum": 0 },
+          "verifier_score": { "type": "number", "minimum": 0 },
+          "contains_answer_bearing_span": { "type": "boolean" },
+          "included": { "type": "boolean" },
+          "eviction_reason": {
+            "type": ["string", "null"],
+            "enum": ["budget", "low_score", "dedup", null]
+          }
+        }
+      }
+    },
+    "packedPassages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "passageId",
+          "rank",
+          "tokenEstimate",
+          "reason"
+        ],
+        "properties": {
+          "passageId": { "type": "string", "minLength": 1 },
+          "rank": { "type": "integer", "minimum": 1 },
+          "tokenEstimate": { "type": "integer", "minimum": 0 },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "answerBearingSpanIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "answerBearingSpanIncluded": { "type": "boolean" },
+    "answer_span_present_in_corpus": { "type": "boolean" },
+    "answer_span_present_in_pack": { "type": "boolean" },
+    "ablationFlags": {
+      "type": "object",
+      "required": [
+        "use_kb",
+        "use_gate",
+        "use_context_packing",
+        "context_packing_policy"
+      ],
+      "properties": {
+        "use_kb": { "type": "boolean" },
+        "use_gate": { "type": "boolean" },
+        "use_context_packing": { "type": "boolean" },
+        "context_packing_policy": { "type": "string", "minLength": 1 }
+      }
+    },
+    "claimBoundary": { "type": "string", "minLength": 1 }
+  }
+}

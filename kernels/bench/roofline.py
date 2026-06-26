@@ -71,6 +71,13 @@ DEVICE_SPECS: dict[str, DeviceSpec] = {
     "NVIDIA H100 80GB HBM3": DeviceSpec("NVIDIA H100 80GB HBM3", 989.5, 67.0, 3350.0, "Hopper SXM, HBM3"),
     "NVIDIA L40S": DeviceSpec("NVIDIA L40S", 362.0, 91.6, 864.0, "Ada, GDDR6"),
     "NVIDIA GeForce RTX 4090": DeviceSpec("NVIDIA GeForce RTX 4090", 165.2, 82.6, 1008.0, "Ada, GDDR6X"),
+    # Grace Blackwell GB10 (DGX Spark), aarch64. Bandwidth is LPDDR5x UNIFIED memory (~273 GB/s),
+    # NOT HBM — so the roofline ridge point sits far to the right (memory-bound for almost any kernel).
+    # Compute peaks are DENSE estimates: NVIDIA markets GB10 at ~1 PFLOP FP4 / ~250 TFLOP BF16 (sparse);
+    # VERIFY against the datasheet before reporting any headline derived from these denominators.
+    "NVIDIA DGX Spark GB10": DeviceSpec("NVIDIA DGX Spark GB10", 125.0, 31.0, 273.0,
+                                        "Grace Blackwell GB10 (aarch64); 128GB LPDDR5x UNIFIED ~273 GB/s "
+                                        "(NOT HBM); dense compute peaks APPROXIMATE — verify vs datasheet"),
 }
 
 
