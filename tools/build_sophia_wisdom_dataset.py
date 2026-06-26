@@ -646,9 +646,33 @@ def _split(rows: list) -> tuple:
     return train, valid
 
 
+def _oversample_retention(accepted: list, ratio: float) -> list:
+    """REPLAY up-weight (anti-forgetting): duplicate general_retention rows until they are ~`ratio`
+    of the SFT set. Done AFTER decontam/dedup so the replay copies survive into training. Standard
+    rehearsal — the model simply revisits general examples more often; reduces catastrophic
+    forgetting at the cost of diluting discipline rows (a trade-off to measure, not a free win)."""
+    gen = [r for r in accepted if (r.get("metadata") or {}).get("task_family") == "general_retention"]
+    other = [r for r in accepted if (r.get("metadata") or {}).get("task_family") != "general_retention"]
+    if not gen or ratio <= 0:
+        return accepted
+    # solve target_gen so gen/(gen+other) = ratio  ->  target = ratio*other/(1-ratio)
+    ratio = min(ratio, 0.9)
+    target = int(round(ratio * len(other) / (1 - ratio)))
+    if target <= len(gen):
+        return accepted  # already at/above target; don't downsample
+    reps = []
+    i = 0
+    while len(gen) + len(reps) < target:
+        src = dict(gen[i % len(gen)])
+        md = dict(src.get("metadata") or {}); md["replay_copy"] = True
+        reps.append({"messages": src["messages"], "metadata": md})
+        i += 1
+    return other + gen + reps
+
+
 def build(check_only: bool, stats: bool, *, teacher_spec: str | None = None,
           teacher_workers: int = 8, teacher_max_calls: int | None = None,
-          teacher_temperature: float | None = None) -> int:
+          teacher_temperature: float | None = None, retention_ratio: float | None = None) -> int:
     forbidden = set(eval_prompt_set(root=ROOT))
     for r in _read_jsonl(HOLDOUT_SRC):
         pr = prompt_of(r)
@@ -696,6 +720,13 @@ def build(check_only: bool, stats: bool, *, teacher_spec: str | None = None,
 
     pairs = mine_preference_pairs([r for r in accepted if (r.get("metadata") or {}).get("teacher")
                                    == "deterministic-template"])
+
+    # REPLAY up-weight (anti-forgetting): oversample general rows to --retention-ratio AFTER dedup.
+    if retention_ratio:
+        before = len(accepted)
+        accepted = _oversample_retention(accepted, retention_ratio)
+        print(f"[replay] retention up-weight {retention_ratio}: {before} -> {len(accepted)} rows "
+              f"(+{len(accepted) - before} general replay copies)")
 
     # mix report
     fam_counts: dict = {}
@@ -800,10 +831,13 @@ def main() -> int:
                     help="cap teacher generations (budget guard); default = whole prompt bank")
     ap.add_argument("--teacher-temperature", type=float, default=None,
                     help="override sampling temperature for the teacher")
+    ap.add_argument("--retention-ratio", type=float, default=None,
+                    help="REPLAY up-weight: oversample general_retention rows to this fraction of "
+                         "the SFT set (anti-forgetting; e.g. 0.40). Default = no oversampling.")
     args = ap.parse_args()
     return build(check_only=args.check, stats=args.stats, teacher_spec=args.teacher,
                  teacher_workers=args.teacher_workers, teacher_max_calls=args.teacher_max_calls,
-                 teacher_temperature=args.teacher_temperature)
+                 teacher_temperature=args.teacher_temperature, retention_ratio=args.retention_ratio)
 
 
 if __name__ == "__main__":

@@ -240,6 +240,258 @@
       "prompt": "A standard six-sided die shows 6 on top. What number is on the bottom face (opposite faces of a standard die sum to 7)? Reply with only the number.",
       "answer": "1",
       "match": "numeric"
+    },
+    {
+      "id": "pat-008",
+      "category": "abstraction_pattern",
+      "prompt": "Continue this integer sequence with the next single number: 5, 10, 20, 40, 80, ?\nReply with only the number.",
+      "answer": "160",
+      "match": "numeric"
+    },
+    {
+      "id": "pat-009",
+      "category": "abstraction_pattern",
+      "prompt": "Continue this integer sequence with the next single number: 2, 6, 12, 20, 30, ? (each term is n times n+1). Reply with only the number.",
+      "answer": "42",
+      "match": "numeric"
+    },
+    {
+      "id": "pat-010",
+      "category": "abstraction_pattern",
+      "prompt": "Continue this integer sequence with the next single number: 1, 3, 6, 10, 15, ? (triangular numbers). Reply with only the number.",
+      "answer": "21",
+      "match": "numeric"
+    },
+    {
+      "id": "pat-011",
+      "category": "abstraction_pattern",
+      "prompt": "A row of 5 cells is shifted one position to the right; the rightmost cell wraps around to the leftmost position. Input cells: [P, Q, R, S, T]. Output the resulting row as five space-separated letters.",
+      "answer": "T P Q R S",
+      "match": "exact"
+    },
+    {
+      "id": "pat-012",
+      "category": "abstraction_pattern",
+      "prompt": "Continue this integer sequence with the next single number: 100, 81, 64, 49, 36, ? (descending squares). Reply with only the number.",
+      "answer": "25",
+      "match": "numeric"
+    },
+    {
+      "id": "pat-013",
+      "category": "abstraction_pattern",
+      "prompt": "A 3x3 grid is reflected across its vertical axis (left-right mirror). The top row reads 'g h j' from left to right. Give the top row after the mirror as three space-separated letters.",
+      "answer": "j h g",
+      "match": "exact"
+    },
+    {
+      "id": "pat-014",
+      "category": "abstraction_pattern",
+      "prompt": "Continue this integer sequence with the next single number: 1, 2, 4, 7, 11, 16, ? (differences increase by 1 each step). Reply with only the number.",
+      "answer": "22",
+      "match": "numeric"
+    },
+    {
+      "id": "arith-008",
+      "category": "multistep_arithmetic",
+      "prompt": "A book has 320 pages. You read 40 pages a day for 5 days. How many pages are left? Reply with only the number.",
+      "answer": "120",
+      "match": "numeric"
+    },
+    {
+      "id": "arith-009",
+      "category": "multistep_arithmetic",
+      "prompt": "A car uses 6 liters of fuel per 100 km. How many liters does it use over a 250 km trip? Reply with only the number.",
+      "answer": "15",
+      "match": "numeric"
+    },
+    {
+      "id": "arith-010",
+      "category": "multistep_arithmetic",
+      "prompt": "A class has 28 students. Three quarters of them passed a test. How many students passed? Reply with only the number.",
+      "answer": "21",
+      "match": "numeric"
+    },
+    {
+      "id": "arith-011",
+      "category": "multistep_arithmetic",
+      "prompt": "You deposit $500 at 4% simple annual interest. How many dollars of interest do you earn after 3 years? Reply with only the number.",
+      "answer": "60",
+      "match": "numeric"
+    },
+    {
+      "id": "arith-012",
+      "category": "multistep_arithmetic",
+      "prompt": "A recipe needs 3 eggs to make 12 muffins. How many eggs are needed to make 40 muffins? Reply with only the number.",
+      "answer": "10",
+      "match": "numeric"
+    },
+    {
+      "id": "arith-013",
+      "category": "multistep_arithmetic",
+      "prompt": "A worker earns $18 per hour and works 7 hours, then gets a $10 bonus. What are the total earnings in dollars? Reply with only the number.",
+      "answer": "136",
+      "match": "numeric"
+    },
+    {
+      "id": "arith-014",
+      "category": "multistep_arithmetic",
+      "prompt": "A rope is 12 meters long. You cut off two pieces, each 2.5 meters long. How many meters of rope remain? Reply with only the number.",
+      "answer": "7",
+      "match": "numeric"
+    },
+    {
+      "id": "logic-007",
+      "category": "logic_wordproblem",
+      "prompt": "Every dax is a wug. No wug is a fim. Can a dax be a fim? Answer yes or no.",
+      "answer": "no",
+      "match": "regex"
+    },
+    {
+      "id": "logic-008",
+      "category": "logic_wordproblem",
+      "prompt": "Liam is older than Noah. Noah is older than Ava. Ava is older than Mia. Who is the oldest of the four? Reply with only the name.",
+      "answer": "Liam",
+      "match": "regex"
+    },
+    {
+      "id": "logic-009",
+      "category": "logic_wordproblem",
+      "prompt": "If a switch is ON then the light is on. The light is off. Is the switch ON? Answer yes or no.",
+      "answer": "no",
+      "match": "regex"
+    },
+    {
+      "id": "logic-010",
+      "category": "logic_wordproblem",
+      "prompt": "There are 4 red marbles and some blue marbles in a bag. If there are 11 marbles in total, how many are blue? Reply with only the number.",
+      "answer": "7",
+      "match": "numeric"
+    },
+    {
+      "id": "logic-011",
+      "category": "logic_wordproblem",
+      "prompt": "Two pencils and one eraser cost $5 in total. One pencil costs $2. How much does the eraser cost in dollars? Reply with only the number (no dollar sign).",
+      "answer": "1",
+      "match": "numeric"
+    },
+    {
+      "id": "logic-012",
+      "category": "logic_wordproblem",
+      "prompt": "All robins are birds. Some birds cannot fly. Does it follow that some robins cannot fly? Answer yes or no.",
+      "answer": "no",
+      "match": "regex"
+    },
+    {
+      "id": "logic-013",
+      "category": "logic_wordproblem",
+      "prompt": "Four runners finish a race. Beth finishes before Dan. Dan finishes before Eve. Carl finishes after Eve. Who finishes last? Reply with only the name.",
+      "answer": "Carl",
+      "match": "regex"
+    },
+    {
+      "id": "logic-014",
+      "category": "logic_wordproblem",
+      "prompt": "A jar holds only green and yellow buttons. Exactly one third of the buttons are green. If there are 6 green buttons, how many buttons are in the jar total? Reply with only the number.",
+      "answer": "18",
+      "match": "numeric"
+    },
+    {
+      "id": "analogy-007",
+      "category": "analogy",
+      "prompt": "Wet is to dry as full is to ___? Reply with a single word.",
+      "answer": "empty",
+      "match": "regex"
+    },
+    {
+      "id": "analogy-008",
+      "category": "analogy",
+      "prompt": "Bird is to nest as bee is to ___? Reply with a single word.",
+      "answer": "hive",
+      "match": "regex"
+    },
+    {
+      "id": "analogy-009",
+      "category": "analogy",
+      "prompt": "Glove is to hand as sock is to ___? Reply with a single word.",
+      "answer": "foot",
+      "match": "regex"
+    },
+    {
+      "id": "analogy-010",
+      "category": "analogy",
+      "prompt": "Teacher is to school as doctor is to ___? Reply with a single word.",
+      "answer": "hospital|clinic",
+      "match": "regex"
+    },
+    {
+      "id": "analogy-011",
+      "category": "analogy",
+      "prompt": "Loud is to quiet as fast is to ___? Reply with a single word.",
+      "answer": "slow",
+      "match": "regex"
+    },
+    {
+      "id": "analogy-012",
+      "category": "analogy",
+      "prompt": "5 is to 25 as 7 is to ___? (the rule is square). Reply with only the number.",
+      "answer": "49",
+      "match": "numeric"
+    },
+    {
+      "id": "analogy-013",
+      "category": "analogy",
+      "prompt": "Calf is to cow as foal is to ___? Reply with a single word.",
+      "answer": "horse|mare",
+      "match": "regex"
+    },
+    {
+      "id": "ood-009",
+      "category": "out_of_domain",
+      "prompt": "Decode this Caesar-shifted word (each letter shifted forward by 1): 'bnld'. Reply with only the decoded word.",
+      "answer": "come",
+      "match": "regex"
+    },
+    {
+      "id": "ood-010",
+      "category": "out_of_domain",
+      "prompt": "Reverse the string 'level' and reply with only the resulting word.",
+      "answer": "level",
+      "match": "regex"
+    },
+    {
+      "id": "ood-011",
+      "category": "out_of_domain",
+      "prompt": "In the made-up language Florp, 'ka lo' means 'big tree' and 'ka mi' means 'big rock'. What word means 'big'? Reply with a single word.",
+      "answer": "ka",
+      "match": "regex"
+    },
+    {
+      "id": "ood-012",
+      "category": "out_of_domain",
+      "prompt": "Convert binary 1101 to a decimal integer. Reply with only the number.",
+      "answer": "13",
+      "match": "numeric"
+    },
+    {
+      "id": "ood-013",
+      "category": "out_of_domain",
+      "prompt": "How many times does the letter 'o' appear in the word 'kangaroo'? Reply with only the number.",
+      "answer": "2",
+      "match": "numeric"
+    },
+    {
+      "id": "ood-014",
+      "category": "out_of_domain",
+      "prompt": "Sort these numbers in descending order and give them space-separated: 3 7 1 5. ",
+      "answer": "7 5 3 1",
+      "match": "exact"
+    },
+    {
+      "id": "ood-015",
+      "category": "out_of_domain",
+      "prompt": "Convert the decimal number 6 to binary. Reply with only the binary digits.",
+      "answer": "110",
+      "match": "regex"
     }
   ]
 }

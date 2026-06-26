@@ -51,6 +51,8 @@ def _mode_spec(mode: str):
         return "M4-orpo", "pilot_gemma3_orpo.py", ""
     if mode == "retention":
         return "M3-pilot-retention", "pilot_gemma3_run.py", "--retention"
+    if mode == "sft_stable":
+        return "M3-stable", "pilot_gemma3_run.py", ""
     return "M3-pilot", "pilot_gemma3_run.py", ""
 
 
@@ -70,12 +72,26 @@ def _job_script(args: argparse.Namespace) -> str:
     mode = getattr(args, "mode", "sft")
     prefix, script, mode_flags = _mode_spec(mode)
     result_path, answers_path = _artifact_paths(args)
+    # Dataset build: sft_stable up-weights the general replay slice (anti-forgetting).
+    build_cmd = "python tools/build_sophia_wisdom_dataset.py --stats"
+    if mode == "sft_stable":
+        build_cmd += " --retention-ratio 0.40"
     # retention mode trains the SFT adapter then scores base-vs-adapter on the held-out generality
     # probe (criterion #3) — there is NO wisdom benchmark eval, so it omits --eval/--runs/--limit.
     if mode == "retention":
         smoke_cmd = f"python tools/{script} --smoke --retention"
         full_cmd = (f"python tools/{script} --train --retention --seed {seed} "
                     f"--out {result_path} --save-answers {answers_path}")
+    elif mode == "sft_stable":
+        # The stability recipe: HALF-capacity LoRA (rank 8, matched alpha 16 -> same scaling, fewer
+        # params) + KL-anchor on general rows + 0.40 replay (from build_cmd). Measures BOTH primary
+        # (does the discipline gain survive?) AND retention (criterion #3) in one run. rsLoRA is left
+        # OFF here: at low rank its alpha/sqrt(r) scaling would STRENGTHEN the adapter (more
+        # forgetting) — the flag exists for separate sweeps.
+        stable_flags = "--lora-rank 8 --lora-alpha 16 --kl-coef 0.1"
+        smoke_cmd = f"python tools/{script} --smoke --retention {stable_flags}"
+        full_cmd = (f"python tools/{script} --train --eval --retention --seed {seed} {eval_flags} "
+                    f"{stable_flags} --out {result_path} --save-answers {answers_path}")
     else:
         smoke_cmd = f"python tools/{script} --smoke {mode_flags}"
         full_cmd = (f"python tools/{script} --train --eval --seed {seed} {eval_flags} {mode_flags} "
@@ -105,6 +121,8 @@ finish() {{
     git add {LOG_PATH} 2>/dev/null || true
     git add {result_path} 2>/dev/null || true
     git add {answers_path} 2>/dev/null || true
+    # also stage any sibling result files this mode wrote (e.g. sft_stable's M3-stable-retention*.json)
+    git add agi-proof/benchmark-results/wisdom-market/ 2>/dev/null || true
     git -c user.email=noreply@anthropic.com -c user.name=Claude commit \
       -m "M3 pilot: self-reported result (exit $code) [skip ci]" 2>/dev/null || echo "[pod] nothing to commit"
     for i in 1 2 3 4 5 6 7 8; do
@@ -187,7 +205,7 @@ else
 fi
 
 # Rebuild the DETERMINISTIC gate-passed dataset (reproducible; no live teacher -> ~730 rows)
-python tools/build_sophia_wisdom_dataset.py --stats
+{build_cmd}
 wc -l training/local_sophia_v3/mlx/train.jsonl
 
 echo "[pod] SMOKE ({mode})"
@@ -241,7 +259,7 @@ def parse_args(argv=None):
     ap.add_argument("--runs", type=int, default=3)
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--mode", choices=["sft", "orpo", "orpo_sft", "retention"], default="sft")
+    ap.add_argument("--mode", choices=["sft", "orpo", "orpo_sft", "retention", "sft_stable"], default="sft")
     ap.add_argument("--registry-auth-id", default=os.environ.get("RUNPOD_REGISTRY_AUTH_ID", ""),
                     help="RunPod container-registry-auth id for pulling a private image")
     ap.add_argument("--name", default=f"sophia-wisdom-pilot-sr-{ts}")
