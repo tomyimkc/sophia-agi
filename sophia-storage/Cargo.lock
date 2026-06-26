@@ -41,3 +41,7 @@ version = "0.1.0"
 dependencies = [
  "io-uring",
 ]
+
+[[package]]
+name = "sophia-raft"
+version = "0.1.0"

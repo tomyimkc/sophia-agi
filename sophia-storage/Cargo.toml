@@ -12,6 +12,7 @@ resolver = "3"
 members = [
     "crates/sophia-lsm",
     "crates/sophia-kvcache",
+    "crates/sophia-raft",
 ]
 
 [workspace.package]

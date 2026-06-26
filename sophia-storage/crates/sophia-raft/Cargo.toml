@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+[package]
+name = "sophia-raft"
+description = "Deterministic Raft consensus core — replicate the decision log / task queue for HA, with a manually-stepped node and an in-memory cluster harness."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[lib]
+name = "sophia_raft"

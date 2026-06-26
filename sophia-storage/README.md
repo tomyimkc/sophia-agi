@@ -25,7 +25,8 @@ features. See [`docs/DESIGN.md`](docs/DESIGN.md) and the roadmap below.
 | Crate | What it is | JD line it targets |
 |-------|------------|--------------------|
 | [`sophia-kvcache`](crates/sophia-kvcache) | Disaggregated, prefix-sharing KV-cache: paged content-addressed blocks, HBM→DRAM→**real-disk NVMe** tiering, ref-counted LRU eviction, byte-movement accounting | 高性能 KVCache 存储系统; RDMA 零拷贝 (seam) |
-| [`sophia-lsm`](crates/sophia-lsm) | Log-structured local engine: WAL + memtable + SSTable + compaction, pluggable I/O backend, CRC-framed crash recovery | SSD 本地存储引擎; io_uring (seam); RocksDB 设计范式 |
+| [`sophia-lsm`](crates/sophia-lsm) | Log-structured local engine: WAL + memtable + SSTable + bloom filters + leveled compaction, group commit, pluggable I/O backend (real io_uring), CRC-framed crash recovery | SSD 本地存储引擎; io_uring; RocksDB 设计范式 |
+| [`sophia-raft`](crates/sophia-raft) | Deterministic Raft consensus core: leader election, log replication, current-term commit rule, in-memory cluster harness (election / crash / partition / catch-up) | 分布式事务; Paxos/Raft 共识机制 |
 
 ## Build & test
 
@@ -83,7 +84,10 @@ the same discipline as the rest of the repo ([RESULTS.md](../RESULTS.md)).
    filter (skips definite misses with no I/O) and leveled compaction
    (`levels.rs`: L0→L1→… with a manifest and per-level budgets) that bounds
    write amplification to O(levels) rewrites per key.
-5. **Raft-replicated log** — replicate the decision log / task queue for HA.
+5. ~~**Raft-replicated log**~~ — ✅ done (`sophia-raft`): election, replication,
+   current-term commit safety, leader-crash failover, minority-cannot-commit,
+   follower catch-up — all deterministically tested. Production wiring (real
+   transport + durable per-node log on `sophia-lsm`) is the remaining step.
 6. **Python binding** — expose `sophia-lsm` under a `SOPHIA_STORAGE_ENGINE=lsm`
    flag behind the existing store interface; JSONL stays the default.
 

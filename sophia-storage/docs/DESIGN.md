@@ -221,22 +221,36 @@ this way is to show the reflex: measure, find the real bottleneck, fix *that*.
 
 ---
 
-## 4. Distributed durability — Raft (consensus 加分项)
+## 4. Distributed durability — Raft (consensus 加分项) — implemented
 
-The queue/decision log is honestly single-process today (VISION.md flags "a
-concurrent queue" as deferred). The HA design:
+The queue/decision log is single-process JSONL today (VISION.md flags "a
+concurrent queue" as deferred). `sophia-raft` is the HA core that fixes it, built
+from first principles rather than wrapping a library so the safety reasoning is
+visible and tested.
 
-- A **Raft** group (3–5 nodes) where the replicated log *is* the decision/queue
-  log. Each committed entry is a framed record applied to a local `sophia-lsm`
-  state machine; SSTable flushes double as the snapshot mechanism for log
-  compaction.
-- **Linearizable reads** via leader leases; idempotency keys (already in
-  `queue.py`) make at-least-once delivery safe across leader changes.
-- Built on `openraft`/`raft-rs` — the `sophia-lsm` engine slots in directly as
-  the Raft log + state-machine store.
+- **`node::RaftNode`** is the algorithm, driven by explicit `tick()`/`step()` —
+  no threads, no wall-clock — so the cluster is deterministic. It implements the
+  safety-critical parts: leader election with the up-to-date-log vote restriction
+  (§5.4.1), AppendEntries consistency check + conflict truncation (§5.3), and
+  current-term-only commit advancement (§5.4.2).
+- **`cluster::Cluster`** is an in-memory harness routing messages and driving
+  logical time, with crash/restart/partition controls. It's the test substrate;
+  production swaps it for a real transport (TCP/gRPC) and a durable per-node log
+  — **the `sophia-lsm` engine slots straight in as the Raft log + snapshot
+  store**, and idempotency keys (already in `queue.py`) make at-least-once
+  delivery safe across leader changes.
+- **`state_machine::StateMachine`** turns the committed stream into state; the
+  reference `KvStateMachine` mirrors the decision-log / queue shape.
 
-This is where "分布式事务、Paxos/Raft 等共识机制" becomes demonstrable rather
-than asserted.
+What is *proven*, deterministically (`lib.rs` tests): a 3-node cluster elects
+exactly one leader; committed entries replicate to all nodes; a leader crash is
+survived and committed data preserved while the survivors elect a new leader; a
+2-of-5 **minority cannot commit**; and a partitioned follower **catches up** on
+rejoin. That is "分布式事务、Paxos/Raft 等共识机制" demonstrable, not asserted.
+
+Remaining (documented): real network transport, durable log on `sophia-lsm`,
+snapshotting/log-compaction, membership changes, and leader-lease linearizable
+reads.
 
 ## 5. Distributed FS / object store (the larger build)
 
