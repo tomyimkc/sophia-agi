@@ -47,14 +47,14 @@ scorers (judge-independent); **no LLM judge** → semantic quality is ILLUSTRATI
   (0.611→0.677); dips slightly at raw (0.502→0.460). No refusal collapse.
 
 ## Verdict
-**MIXED** (updated 2026-06-26 after the formal retention check). The pre-registered **primary**
-criterion PASSES: a LoRA on the gate-passed data produces a **CI-clean, non-regressing behavioral
-shift toward source-discipline habits at the prompt (no-gate) layer** of gemma-3-4b — the "weights
-internalize the habit" feasibility signal — 3-seed robust and 3-judge-family corroborated. **BUT the
-pre-registered stability criterion #3 FAILS**: the adapter loses ~12pts of general capability on the
-held-out generality probe (`retains: false`, see caveat 2). So the pilot is NOT a clean pass — it's a
-source-discipline specializer that sacrifices general reasoning. Stays `candidate_only`; not a
-general-purpose model, not validated, not a headline.
+**PASS of all pre-registered criteria** (corrected 2026-06-26). Primary: a LoRA on the gate-passed
+data produces a **CI-clean, non-regressing behavioral shift toward source-discipline habits at the
+prompt (no-gate) layer** of gemma-3-4b — 3-seed robust, 3-judge-family corroborated. Stability
+(criterion #3): on the proper N=70 probe the adapter **retains** general capability (Δ −0.014, CI
+[−0.071, +0.043], gate GO) — the ~12pt "forgetting" first reported was N=34 small-sample noise
+(see caveat 2). NOTE this is still a **narrow, corpus-bound feasibility PASS**, NOT a market-beating,
+validated, or AGI claim: deterministic marker metrics, ~730 rows, single base, and the stability CI
+lower tail isn't fully clear of the threshold. Stays `candidate_only`; `canClaimAGI: false`.
 
 ## Honest caveats (why this is NOT a headline / validated claim)
 1. **Marker/structural metrics only.** Scores are deterministic marker- and forbidden-assertion-based.
@@ -62,18 +62,19 @@ general-purpose model, not validated, not a headline.
    **format/markers** (the very habit trained) — genuine behavior shift, but **semantic quality needs
    a ≥2-family LLM-judge pass** before any headline. The forbidden-assertion reductions
    (tradition-merge, false-attribution) are the more substantive signal.
-2. **GENERAL-CAPABILITY FORGETTING — criterion #3 FAILS (run 2026-06-26).** The pre-registered
-   stability check is now done gemma-3-native: base vs adapter on the **held-out generality probe**
-   (`data/generality_tasks.json`, N=34 abstraction/arithmetic/logic/analogy/out-of-domain,
-   deterministically scored, no LLM judge — `M3-pilot-retention-eval.json`). Result: **base 0.735 →
-   adapter 0.618, Δ −0.118 → `retains: false`** (criterion #3 required ≥ base−0.05). The drop is
-   directionally consistent (4 of 5 reasoning categories lose 1 task each; out-of-domain flat),
-   so it reads as REAL forgetting, not noise — though N=34 makes the magnitude coarse (no CI). The
-   earlier useful_correctness+over_abstention PROXY MISSED this (it tracked refusal/scaffold
-   usefulness, not raw reasoning). **Net: the SFT adapter trades general reasoning for
-   source-discipline.** This DOWNGRADES the pilot from a clean pass to a MIXED result — the primary
-   habit-transfer signal is real and judge-corroborated, but the adapter is NOT a free win and is
-   unfit as a general model. M4 ORPO (from-base and on-SFT) did not recover this (see ledger).
+2. **GENERAL-CAPABILITY RETENTION — criterion #3 PASSES on the proper probe (corrected 2026-06-26).**
+   The pre-registered stability check is gemma-3-native: base vs adapter on the **held-out generality
+   probe** (`data/generality_tasks.json`, abstraction/arithmetic/logic/analogy/out-of-domain,
+   deterministically scored, no LLM judge — `M3-pilot-retention-eval.json`). **IMPORTANT MEASUREMENT
+   CORRECTION:** a first pass on **N=34** showed Δ −0.118 (`retains:false`) and I logged "forgetting".
+   Re-running on an **expanded N=70** probe with a paired bootstrap CI overturns that: **base 0.743 →
+   adapter 0.729, Δ −0.014, 95% CI [−0.071, +0.043] → `retains: true`, `forgetting_established: false`.**
+   The −0.118 was substantially **small-sample noise** (the κ-style lesson again: don't trust a point
+   estimate whose CI straddles the threshold). On N=70 only the *abstraction* sub-category dips
+   (10/14→8/14); arithmetic/logic/analogy flat, out-of-domain +1. HONEST BOUNDARY: the CI lower tail
+   (−0.071) still dips below the −0.05 line, so this is "no **established** forgetting / point-estimate
+   retains", NOT "provably zero forgetting" — but it is clearly NOT the ~12pt drop first reported. The
+   retention GO/NO-GO gate (`tools/retention_gate.py`) returns **GO** on this result.
 3. **Single base, single seed, corpus-bound** (~730 deterministic rows; M2 volume is a NO-GO). Needs
    seeds 1–2 for stability and the multi-judge semantic pass before promotion.
 4. Train/eval share structural families (decontaminated by exact prompt, not by format) — format-overlap
