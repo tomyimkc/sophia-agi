@@ -71,7 +71,7 @@ Sophia's charter exists to build, expressed as the organ the DeepSeek charter ca
 | Ground | search results → OKF belief (entity-link + lineage/laundering/contradicts) | `agent/grounded_search.py` → `okf/graph.belief` | ✅ shipped |
 | Calibrate + Abstain | search path → provenance confidence → graded answer/hedge/abstain | `agent/grounded_search.py`, `agent/grounded_confidence.py`, `agent/graded_decision.py` | ✅ shipped |
 | Verify | generated answer → citation faithfulness + epistemic gate + source-discipline before serving | `agent/verified_search.py` (`agent/rerank.citation_faithfulness`, `agent/gate.check_response`) | ✅ shipped |
-| Self-correct | hedged/abstained/withheld queries → worklist → **auto-materialized draft stubs** | `agent/grounded_search.py`, `agent/verified_search.py` → `agent/knowledge_gap_log` → `agent/gap_ingest.py` | ✅ shipped (stubs); ⚠️ sourced fill stays human |
+| Self-correct | gaps → draft stubs → **sourced fill from trusted sources** (allowlist + gate) | `agent/gap_ingest.py` → `agent/source_fill.py` (`agent/wiki_librarian.py`, `agent/source_ranking.py`) | ✅ shipped; ⚠️ canon promotion + LLM extraction stay operator-gated |
 | Perceive widely | learned multilingual/**multimodal** embedder via the registry | `agent/embedding_backends.py` | ⚠️ seam shipped; learned weights pending |
 | Serve at scale | Rust HNSW dense view via the bridge → sharding/RDMA | `services/ann_serving/`, `agent/ann_client.py` | ⚠️ single-node shipped; sharding/RDMA pending |
 
@@ -101,9 +101,17 @@ Sophia's charter exists to build, expressed as the organ the DeepSeek charter ca
   tier — verified end-to-end: an ungrounded query becomes a stub the same query then routes to
   and abstains on.
 
+- **Sourced fill.** `agent/source_fill.py` + `tools/fill_gap_stubs.py` promote a `none_extant`
+  stub into a sourced page by extracting it (via the librarian) from a **trusted source** — two
+  fail-closed boundaries: the source must be allowlisted (operator-curated `raw/` dir or an
+  authority-ranked id, `agent/source_ranking.py`), and the extracted page must pass the
+  provenance gate. A filled page is stamped `provenance: librarian_fill` and keeps `needsReview`
+  (sourced, but still awaiting human sign-off before canon).
+
 Honest status: all five properties (ground · calibrate/abstain · verify · self-correct ·
-perceive-widely) are wired end-to-end on the live path. The one deliberately-human step that
-remains is **sourced fill** — turning a `none_extant` stub into a sourced page requires real
-evidence, which the system queues but never fabricates (the charter constraint). Auto-fill from
-*trusted* sources (via the existing librarian, `agent/wiki_librarian.py`) is the natural
-extension, gated by the same provenance verifiers.
+perceive-widely) are wired end-to-end on the live path, and the self-correction loop now runs
+gap → stub → **sourced fill** → review. The two deliberately-bounded steps that remain human are
+(1) **final canon promotion** — a filled `needsReview` draft becomes canonical only on human
+sign-off, and (2) the fill **extraction** is LLM-gated (operator-run with a key); the model can
+never launder itself past the allowlist + provenance gate, but turning prose into a structured
+page is the one step that still needs a model, by design.

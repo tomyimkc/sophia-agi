@@ -4,6 +4,24 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — sourced fill: promote gap stubs into sourced pages from trusted sources only
+
+- **Sourced fill** (`agent/source_fill.py`, `tools/fill_gap_stubs.py`): the last step of the
+  self-correction loop — a `none_extant` knowledge-gap stub is promoted into a sourced page by
+  extracting it (via `agent/wiki_librarian.py`) from a **trusted source**, with two fail-closed
+  boundaries: (1) **allowlist on input** — the source must be operator-curated (`raw/` dir) or
+  clear the trust ranking (`agent/source_ranking.py` ≥ 0.8 authority domains); a `model:`/random
+  source is refused *before* extraction, so the model can't launder itself in as a source;
+  (2) **provenance gate on output** — the extracted page passes the same schema +
+  `provenance_faithful` + doNotAttributeTo gate, so a hallucinated attribution is rejected even
+  from a trusted source. A filled page is stamped `provenance: librarian_fill`, keeps
+  `needsReview`, and is written to the draft tier. Extraction is LLM-gated (operator-run) but
+  **injectable**, so the loop/allowlist/gate are deterministic and offline-tested. Dry-run by
+  default. Verified: a stub promotes `none_extant → attributed` from a trusted source; an
+  untrusted source and a fabricated attribution are both refused. Tests: `tests/test_source_fill.py`.
+- **Substrate doc**: sourced fill marked shipped; the loop now runs gap → stub → sourced fill →
+  review, with canon promotion + LLM extraction the deliberately operator-gated steps.
+
 ### Added — closed self-correction loop: knowledge gaps auto-grow the corpus (fail-closed)
 
 - **Gap → draft-stub ingestion** (`agent/gap_ingest.py`, `tools/close_gap_loop.py`): the gap
