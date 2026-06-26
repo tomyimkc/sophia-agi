@@ -114,6 +114,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
       "expectFlipSeverityBand": [
         0.5,
         1.0
@@ -128,6 +129,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
       "expectFlipSeverityBand": [
         0.5,
         1.0
@@ -142,6 +144,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
       "expectFlipSeverityBand": [
         0.5,
         1.0
@@ -156,6 +159,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
       "expectFlipSeverityBand": [
         0.5,
         1.0
@@ -170,6 +174,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
       "expectFlipSeverityBand": [
         0.5,
         1.0
@@ -184,6 +189,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
       "expectFlipSeverityBand": [
         0.5,
         1.0
@@ -198,6 +204,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
       "expectFlipSeverityBand": [
         0.5,
         1.0
@@ -212,6 +219,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
       "expectFlipSeverityBand": [
         0.5,
         1.0
@@ -226,6 +234,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
       "expectFlipSeverityBand": [
         0.5,
         1.0
@@ -240,6 +249,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 0.875,
+      "rawFlipSeverity": 0.875,
       "expectFlipSeverityBand": [
         0.5,
         1.0
@@ -254,6 +264,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 0.8571,
+      "rawFlipSeverity": 0.857143,
       "expectFlipSeverityBand": [
         0.5,
         1.0
@@ -268,6 +279,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 0.8333,
+      "rawFlipSeverity": 0.833333,
       "expectFlipSeverityBand": [
         0.5,
         1.0
@@ -282,6 +294,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 0.4286,
+      "rawFlipSeverity": 0.428571,
       "expectFlipSeverityBand": [
         0.3,
         0.5
@@ -296,6 +309,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
       "expectFlipSeverityBand": [
         0.0,
         0.12
@@ -310,6 +324,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
       "expectFlipSeverityBand": [
         0.0,
         0.12
@@ -324,6 +339,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
       "expectFlipSeverityBand": [
         0.0,
         0.12
@@ -338,6 +354,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
       "expectFlipSeverityBand": [
         0.0,
         0.12
@@ -352,6 +369,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
       "expectFlipSeverityBand": [
         0.0,
         0.12
@@ -366,6 +384,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
       "expectFlipSeverityBand": [
         0.0,
         0.12
@@ -380,6 +399,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
       "expectFlipSeverityBand": [
         0.0,
         0.12
@@ -394,6 +414,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
       "expectFlipSeverityBand": [
         0.0,
         0.12
@@ -408,6 +429,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
       "expectFlipSeverityBand": [
         0.0,
         0.12
@@ -422,6 +444,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
       "expectFlipSeverityBand": [
         0.0,
         0.12
@@ -436,6 +459,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
       "expectFlipSeverityBand": [
         0.0,
         0.12
@@ -450,6 +474,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
       "expectFlipSeverityBand": [
         0.0,
         0.12
@@ -464,6 +489,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.1,
+      "rawFlipSeverity": 0.1,
       "expectFlipSeverityBand": [
         0.0,
         0.15
@@ -478,6 +504,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.1,
+      "rawFlipSeverity": 0.1,
       "expectFlipSeverityBand": [
         0.0,
         0.15
@@ -492,6 +519,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.1,
+      "rawFlipSeverity": 0.1,
       "expectFlipSeverityBand": [
         0.0,
         0.15
@@ -506,6 +534,7 @@
       "gotVerdict": "abstain",
       "found": false,
       "flipSeverity": 0.0,
+      "rawFlipSeverity": 0.0,
       "expectFlipSeverityBand": [
         0.0,
         0.0
@@ -520,6 +549,7 @@
       "gotVerdict": "abstain",
       "found": false,
       "flipSeverity": 0.0,
+      "rawFlipSeverity": 0.0,
       "expectFlipSeverityBand": [
         0.0,
         0.0
@@ -534,6 +564,7 @@
       "gotVerdict": "abstain",
       "found": false,
       "flipSeverity": 0.0,
+      "rawFlipSeverity": 0.0,
       "expectFlipSeverityBand": [
         0.0,
         0.0
@@ -548,6 +579,7 @@
       "gotVerdict": "abstain",
       "found": false,
       "flipSeverity": 0.0,
+      "rawFlipSeverity": 0.0,
       "expectFlipSeverityBand": [
         0.0,
         0.0
@@ -562,6 +594,7 @@
       "gotVerdict": "abstain",
       "found": false,
       "flipSeverity": 0.0,
+      "rawFlipSeverity": 0.0,
       "expectFlipSeverityBand": [
         0.0,
         0.0
@@ -576,6 +609,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 0.2,
+      "rawFlipSeverity": 0.2,
       "expectFlipSeverityBand": [
         0.15,
         0.3
@@ -590,6 +624,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 0.2,
+      "rawFlipSeverity": 0.2,
       "expectFlipSeverityBand": [
         0.15,
         0.3
@@ -604,6 +639,7 @@
       "gotVerdict": "allow",
       "found": true,
       "flipSeverity": 0.1429,
+      "rawFlipSeverity": 0.142857,
       "expectFlipSeverityBand": [
         0.1,
         0.18
@@ -618,6 +654,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 0.25,
+      "rawFlipSeverity": 0.25,
       "expectFlipSeverityBand": [
         0.2,
         0.3
@@ -632,6 +669,7 @@
       "gotVerdict": "escalate",
       "found": true,
       "flipSeverity": 0.1667,
+      "rawFlipSeverity": 0.166667,
       "expectFlipSeverityBand": [
         0.15,
         0.2

@@ -82,32 +82,55 @@ def _verdict_for(found: bool, severity: float, threshold: float) -> str:
     return "escalate" if severity >= threshold else "allow"
 
 
+def _raw_severity(graph, rep) -> float:
+    """Recompute the UNROUNDED flip severity exactly as the live gate does.
+
+    ``simulate_cascade`` compares the threshold against ``len(abstain) / max(1, n)``
+    (unrounded) and only rounds for reporting. The sweep must reclassify against
+    that same unrounded value, not ``rep.flipSeverity`` (which is rounded to 4 dp),
+    or the sweep could disagree with the gate near a boundary.
+    """
+    if not rep.found:
+        return 0.0
+    return len(rep.abstainSet) / max(1, len(graph.nodes))
+
+
 def run_case(case: dict[str, Any], *, threshold: float | None = None) -> dict[str, Any]:
     """Run one case at ``threshold`` (or the live config value if None).
 
     Returns the per-case row. ``verdictOk`` compares the re-classified verdict at
     ``threshold`` to the case's ``expectVerdict``; ``flipSeverityBandOk`` checks
-    the computed severity falls in the structurally-expected band (skipped for
-    unbounded/abstain cases, which have no severity by construction).
+    the computed severity falls in the structurally-expected band. For abstain
+    cases the target must NOT resolve (``found`` must be False) — a ghost target
+    that unexpectedly resolves is pack drift and must fail the band check, not be
+    silently passed.
     """
     graph = graph_from_case(case)
     rep = simulate_cascade(graph, case["move"])
-    # When a threshold is supplied (sweep mode), re-classify from the raw severity
-    # at that threshold rather than the live-config verdict.
+    raw_sev = _raw_severity(graph, rep)
+    # When a threshold is supplied (sweep mode), re-classify from the RAW severity
+    # at that threshold (matching the live gate's unrounded comparison), not the
+    # rounded rep.flipSeverity.
     if threshold is not None:
-        verdict = _verdict_for(rep.found, rep.flipSeverity, threshold)
+        verdict = _verdict_for(rep.found, raw_sev, threshold)
     else:
         verdict = rep.verdict
     expected = case["expectVerdict"]
     lo, hi = case["expectFlipSeverityBand"]
-    band_ok = (expected == "abstain") or (rep.found and lo <= rep.flipSeverity <= hi)
+    if expected == "abstain":
+        # An abstain case is well-formed only if the target genuinely does NOT
+        # resolve. A ghost target that resolves is drift; fail the band check.
+        band_ok = not rep.found
+    else:
+        band_ok = rep.found and lo <= raw_sev <= hi
     return {
         "id": case["id"],
         "caseType": case["caseType"],
         "expectVerdict": expected,
         "gotVerdict": verdict,
         "found": rep.found,
-        "flipSeverity": rep.flipSeverity,
+        "flipSeverity": rep.flipSeverity,  # rounded, for display
+        "rawFlipSeverity": round(raw_sev, 6),  # the value reclassification actually used
         "expectFlipSeverityBand": list(case["expectFlipSeverityBand"]),
         "verdictOk": verdict == expected,
         "flipSeverityBandOk": bool(band_ok),
@@ -121,33 +144,42 @@ def _rate(rows: list[dict[str, Any]], key: str) -> float:
 def sweep_threshold(cases: list[dict[str, Any]], candidates: list[float] | None = None) -> dict[str, Any]:
     """Sweep ``flipSeverityEscalate`` over candidate values; pick the optimum.
 
-    The optimum = max verdict-accuracy. Ties are broken toward the candidate with
-    the greatest margin: the min distance from any case's severity that it
-    classifies differently than its neighbor. This prefers a threshold sitting in
-    a WIDE clean gap over one perched on a knife-edge between two case severities.
+    The optimum = max verdict-accuracy, computed by reclassifying each case at
+    the candidate threshold against its RAW (unrounded) severity — matching the
+    live gate's comparison exactly, so the sweep never disagrees with the gate
+    near a boundary.
+
+    Ties are broken, in order, by: (1) greater margin (min distance from the
+    threshold to any case severity — a wide clean gap beats a knife-edge), then
+    (2) candidate declaration order (deterministic, NO bias toward any particular
+    value such as the previous placeholder). The recommendation is therefore
+    purely data-derived from the pack; there is no hidden preference.
     """
     cands = candidates or SWEEP_CANDIDATES
-    # Pre-compute each case's (found, severity, expected) once.
+    # Pre-compute each case's (found, raw_severity, expected) once. RAW severity
+    # matches the gate's unrounded len(abstain)/n comparison.
     facts: list[tuple[bool, float, str]] = []
     for c in cases:
         graph = graph_from_case(c)
         rep = simulate_cascade(graph, c["move"])
-        facts.append((rep.found, rep.flipSeverity, c["expectVerdict"]))
+        facts.append((rep.found, _raw_severity(graph, rep), c["expectVerdict"]))
     # All resolvable-case severities (the values a threshold sits between).
-    severities = sorted({round(s, 4) for found, s, _ in facts if found})
+    severities = sorted({round(s, 6) for found, s, _ in facts if found})
 
     table = []
     best = None
-    for t in cands:
+    for idx, t in enumerate(cands):
         correct = sum(1 for found, s, exp in facts if _verdict_for(found, s, t) == exp)
         acc = correct / len(facts) if facts else 0.0
-        # margin = distance from t to the nearest severity on either side (the
-        # half-width of the clean band around t). Larger = more robust.
+        # margin = distance from t to the nearest case severity on either side
+        # (the half-width of the clean band around t). Larger = more robust.
         nearest = min((abs(t - s) for s in severities), default=0.0)
         entry = {"threshold": t, "verdictAccuracy": round(acc, 4), "correct": correct,
                  "n": len(facts), "marginToNearestSeverity": round(nearest, 4)}
         table.append(entry)
-        key = (entry["verdictAccuracy"], entry["marginToNearestSeverity"], -abs(t - 0.15))
+        # Tie-break key: (accuracy desc, margin desc, declaration-order asc).
+        # Deliberately NO bias toward 0.15 or any other value.
+        key = (entry["verdictAccuracy"], entry["marginToNearestSeverity"], -idx)
         if best is None or key > best[0]:
             best = (key, t, entry)
     recommended = best[1] if best else cands[len(cands) // 2]
