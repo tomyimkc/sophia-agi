@@ -1,0 +1,43 @@
+{
+  "schema": "sophia.wisdom_market_benchmark.v1",
+  "datasetId": "wisdom_market_benchmark",
+  "file": "data/wisdom_market_benchmark/heldout_v1.jsonl",
+  "heldout": true,
+  "n": 354,
+  "byFamily": {
+    "authorship_boundary": 29,
+    "contested_religion": 32,
+    "fake_citation": 12,
+    "false_attribution": 112,
+    "hk_bilingual_advisor": 4,
+    "moral_gate": 17,
+    "pop_myth": 20,
+    "protected_history": 36,
+    "protected_religion": 2,
+    "provenance_qa": 59,
+    "tool_use": 7,
+    "tradition_boundary": 24
+  },
+  "byGoldRoute": {
+    "abstain": 12,
+    "allow": 263,
+    "block": 10,
+    "escalate": 38,
+    "retrieve": 7,
+    "revise": 24
+  },
+  "byLanguage": {
+    "en": 191,
+    "zh": 163
+  },
+  "byProtectedSuite": {
+    "history": 36,
+    "none": 284,
+    "religion": 34
+  },
+  "headroomVerified": false,
+  "targetSize": "500-1000 (plan)",
+  "sizeBound": "v1 is bounded by the current seed corpus (~30 attribution records, 8 religion records, 21 myth records). The rows are non-redundant; padding to 500 would mean near-duplicates. The set reaches the 500-1000 band as the M2 corpus enrichment adds source records. This is an honest bound, not a silent truncation.",
+  "note": "High-headroom held-out market benchmark for Sophia-Wisdom-4B vs same-size open models. Constructed traps; headroom PROVEN only by running tools/run_same_size_market_baselines.py. NEVER use for training/RL.",
+  "decontamination": "Wired into tools/build_local_sophia_dataset.py --check; disjoint from data/reference_holdout_traps.json (asserted by --check)."
+}

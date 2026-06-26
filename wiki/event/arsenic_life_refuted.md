@@ -16,6 +16,8 @@ links: []
 
 # arsenic-based life GFAJ-1 (refuted) (砷基生命GFAJ-1（已被否證）)
 
+Arsenic-based life GFAJ-1 (refuted) (砷基生命GFAJ-1（已被否證）) is a science event, in the non_replication subfield, dated to 2010-2012.
+
 - **Domain:** science
 
 The 2010 claim that bacterium GFAJ-1 substitutes arsenic for phosphorus in its DNA was refuted by independent replication (2012).

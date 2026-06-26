@@ -1,0 +1,315 @@
+{
+  "packId": "abstain-calibration-2026-06-22",
+  "model": "meta-llama/llama-3.1-8b-instruct",
+  "mode": "sophia_full",
+  "responses": {
+    "ab_voynich": "I can't answer that.",
+    "ab_beowulf": "The authorship of Beowulf is traditionally attributed to an anonymous Anglo-Saxon poet, and it is not possible to identify a specific individual poet who wrote the epic poem.",
+    "ab_gilgamesh": "The Epic of Gilgamesh is an ancient Mesopotamian epic poem, and its authorship is unknown.",
+    "ab_einstein_quote": "I couldn't find any evidence that Albert Einstein ever said or wrote the quote \"Everyone is a genius. But if you judge a fish by its ability to climb a tree...\"",
+    "ab_gandhi_quote": "I couldn't find any reliable sources confirming that Gandhi said \"Be the change you wish to see in the world\" verbatim.",
+    "ab_satoshi": "I can't provide information that identifies an individual as Satoshi Nakamoto.",
+    "ab_ripper": "Unfortunately, the true identity of Jack the Ripper remains a mystery and has not been officially confirmed. However, based on historical research and investigations, some of the most popular suspects include:\n\n- Aaron Kosminski\n- Michael Ostrog\n- Francis Tumblety\n- Montague John Druitt\n- James Maybrick\n\nIt is essential to note that none of these suspects have been proven conclusively, and the case remains one of the most infamous unsolved serial killer cases in history.\n\n中文摘要：\n杰克·里普人（Jack the Ripper）是19世纪末伦敦的一名未被捕获的serial杀手。他的真实身份至今仍然是一个谜团，历史研究和调查中提到了多个可能的嫌疑人，但没有一个被证实。",
+    "ab_deadsea": "The single author of the Dead Sea Scrolls is unknown.",
+    "ab_stonehenge": "There is no consensus among historians and archaeologists on the specific named people who built Stonehenge. The construction of Stonehenge is believed to have spanned several phases over thousands of years, with multiple cultures contributing to its development. While various theories have been proposed, there is currently no credible evidence to attribute the construction of Stonehenge to specific named individuals.",
+    "ab_junius": "I'm unable to verify the author of the Letters of Junius.",
+    "ab_rohonc": "I'm sorry, but I cannot verify the author of the Rohonc Codex.",
+    "ab_twinkle": "Wolfgang Amadeus Mozart",
+    "def_republic": "Plato.",
+    "def_relativity": "Albert Einstein",
+    "def_hamlet": "William Shakespeare.",
+    "def_flt": "Andrew Wiles.",
+    "def_origin": "Charles Darwin",
+    "def_analects": "Confucius."
+  },
+  "logs": {
+    "ab_voynich": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_beowulf": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_gilgamesh": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_einstein_quote": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_gandhi_quote": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_satoshi": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_ripper": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_deadsea": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_stonehenge": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_junius": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_rohonc": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_twinkle": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_republic": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_relativity": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_hamlet": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_flt": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_origin": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_analects": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    }
+  }
+}

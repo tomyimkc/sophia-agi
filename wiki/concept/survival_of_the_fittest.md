@@ -17,6 +17,8 @@ links: []
 
 # the phrase survival of the fittest (適者生存（語源）)
 
+The phrase survival of the fittest (適者生存（語源）) is a science concept, in the biology subfield, attributed to herbert_spencer (authorship confidence: attributed), dated to 1864.
+
 - **Attributed author:** herbert_spencer (confidence: `attributed`)
 - **Domain:** science
 

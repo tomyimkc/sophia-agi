@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+[package]
+name = "infcache"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Prefix-keyed, tiered (RAM->SSD) KV-block cache for LLM inference (Sophia storage, phase 4)"
+
+[lib]
+name = "infcache"
+path = "src/lib.rs"
+
+[[bin]]
+name = "infcache-bench"
+path = "src/bin/bench.rs"
+
+[dependencies]
+kvcache = { path = "../kvcache" }
+diskstore = { path = "../diskstore" }

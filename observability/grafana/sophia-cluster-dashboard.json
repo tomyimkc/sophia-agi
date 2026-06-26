@@ -1,0 +1,96 @@
+{
+  "__comment": "Sophia AI compute-cluster reliability dashboard (R3). Import into Grafana; expects a Prometheus datasource scraping services/cluster_exporter.",
+  "title": "Sophia — AI Cluster Reliability",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "tags": ["sophia", "gpu", "reliability", "sre"],
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": {}
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Fleet nodes failing",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "${datasource}"},
+      "fieldConfig": {"defaults": {"thresholds": {"steps": [
+        {"color": "green", "value": null}, {"color": "red", "value": 1}]}}},
+      "targets": [{"expr": "sophia_fleet_nodes_failing", "refId": "A"}]
+    },
+    {
+      "id": 2,
+      "title": "Fleet nodes warning",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "${datasource}"},
+      "targets": [{"expr": "sophia_fleet_nodes_warning", "refId": "A"}]
+    },
+    {
+      "id": 3,
+      "title": "Mean time to recovery (s)",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "${datasource}"},
+      "targets": [{"expr": "sophia_job_mttr_seconds", "refId": "A"}]
+    },
+    {
+      "id": 4,
+      "title": "Self-heal ratio",
+      "type": "gauge",
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "${datasource}"},
+      "fieldConfig": {"defaults": {"min": 0, "max": 1, "unit": "percentunit"}},
+      "targets": [{"expr": "sophia_selfheal_ratio", "refId": "A"}]
+    },
+    {
+      "id": 5,
+      "title": "GPU temperature by node",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "datasource": {"type": "prometheus", "uid": "${datasource}"},
+      "fieldConfig": {"defaults": {"unit": "celsius"}},
+      "targets": [{"expr": "sophia_gpu_temp_celsius", "legendFormat": "{{node}}", "refId": "A"}]
+    },
+    {
+      "id": 6,
+      "title": "Node health verdict (0=PASS,1=WARN,2=FAIL)",
+      "type": "state-timeline",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "datasource": {"type": "prometheus", "uid": "${datasource}"},
+      "targets": [{"expr": "sophia_node_health", "legendFormat": "{{node}}", "refId": "A"}]
+    },
+    {
+      "id": 7,
+      "title": "RDMA links down",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 12},
+      "datasource": {"type": "prometheus", "uid": "${datasource}"},
+      "targets": [{"expr": "sophia_rdma_links_down", "legendFormat": "{{node}}", "refId": "A"}]
+    },
+    {
+      "id": 8,
+      "title": "Uncorrectable ECC errors",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 12},
+      "datasource": {"type": "prometheus", "uid": "${datasource}"},
+      "targets": [{"expr": "sophia_gpu_ecc_uncorrectable", "legendFormat": "{{node}}", "refId": "A"}]
+    },
+    {
+      "id": 9,
+      "title": "Open incidents",
+      "type": "stat",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 12},
+      "datasource": {"type": "prometheus", "uid": "${datasource}"},
+      "targets": [{"expr": "sophia_incidents_open", "refId": "A"}]
+    }
+  ]
+}

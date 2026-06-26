@@ -16,6 +16,8 @@ links: []
 
 # three-second goldfish memory (myth) (金魚三秒記憶（迷思）)
 
+Three-second goldfish memory (myth) (金魚三秒記憶（迷思）) is a science concept, in the myth subfield, dated to 20th_century.
+
 - **Domain:** science
 
 FALSE. Goldfish demonstrably retain learned associations for weeks to months in controlled studies.

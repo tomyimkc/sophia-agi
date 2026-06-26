@@ -16,6 +16,8 @@ links: []
 
 # Einstein failed math (myth) (愛因斯坦數學不及格（迷思）)
 
+Einstein failed math (myth) (愛因斯坦數學不及格（迷思）) is a science concept, in the myth subfield, dated to 20th_century.
+
 - **Domain:** science
 
 FALSE. Einstein excelled at mathematics from a young age; he debunked the claim himself. A motivational-folklore inversion of the record.

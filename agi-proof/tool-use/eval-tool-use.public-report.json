@@ -1,0 +1,181 @@
+{
+  "schema": "sophia.tool_use_eval.v1",
+  "generatedAt": "2026-06-25T12:26:06.388685+00:00",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "mode": "mock",
+  "nCases": 120,
+  "nSeeds": 3,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "benchmarkContentHash": "67ee5152d501164df79c709199927e4037d0c06acb460d5d4edd8f08eb27b289",
+  "balance": {
+    "should_call": 40,
+    "shouldnt_call": 40,
+    "traps": 40,
+    "total": 120
+  },
+  "grammarConstrainedDecode": {
+    "enabled": true
+  },
+  "selectiveGate": {
+    "enabled": true
+  },
+  "bySeed": {
+    "0": {
+      "no_tools": {
+        "s1_decision": 0.6667,
+        "s2_tool_selection": 1.0,
+        "s3_schema_valid": 1.0,
+        "s4_grounding": 0.3333,
+        "false_call": 0.0,
+        "over_call": 0.0,
+        "trap_ok": 1.0,
+        "task_pass_at_1": 0.025
+      },
+      "always_tools": {
+        "s1_decision": 0.6667,
+        "s2_tool_selection": 1.0,
+        "s3_schema_valid": 1.0,
+        "s4_grounding": 0.6667,
+        "false_call": 0.3333,
+        "over_call": 0.3333,
+        "trap_ok": 1.0,
+        "task_pass_at_1": 0.65
+      },
+      "trained": {
+        "s1_decision": 0.6667,
+        "s2_tool_selection": 1.0,
+        "s3_schema_valid": 1.0,
+        "s4_grounding": 0.6667,
+        "false_call": 0.3333,
+        "over_call": 0.3333,
+        "trap_ok": 1.0,
+        "task_pass_at_1": 0.65
+      }
+    },
+    "1": {
+      "no_tools": {
+        "s1_decision": 0.6667,
+        "s2_tool_selection": 1.0,
+        "s3_schema_valid": 1.0,
+        "s4_grounding": 0.3333,
+        "false_call": 0.0,
+        "over_call": 0.0,
+        "trap_ok": 1.0,
+        "task_pass_at_1": 0.025
+      },
+      "always_tools": {
+        "s1_decision": 0.6667,
+        "s2_tool_selection": 1.0,
+        "s3_schema_valid": 1.0,
+        "s4_grounding": 0.6667,
+        "false_call": 0.3333,
+        "over_call": 0.3333,
+        "trap_ok": 1.0,
+        "task_pass_at_1": 0.65
+      },
+      "trained": {
+        "s1_decision": 0.6667,
+        "s2_tool_selection": 1.0,
+        "s3_schema_valid": 1.0,
+        "s4_grounding": 0.6667,
+        "false_call": 0.3333,
+        "over_call": 0.3333,
+        "trap_ok": 1.0,
+        "task_pass_at_1": 0.65
+      }
+    },
+    "2": {
+      "no_tools": {
+        "s1_decision": 0.6667,
+        "s2_tool_selection": 1.0,
+        "s3_schema_valid": 1.0,
+        "s4_grounding": 0.3333,
+        "false_call": 0.0,
+        "over_call": 0.0,
+        "trap_ok": 1.0,
+        "task_pass_at_1": 0.025
+      },
+      "always_tools": {
+        "s1_decision": 0.6667,
+        "s2_tool_selection": 1.0,
+        "s3_schema_valid": 1.0,
+        "s4_grounding": 0.6667,
+        "false_call": 0.3333,
+        "over_call": 0.3333,
+        "trap_ok": 1.0,
+        "task_pass_at_1": 0.65
+      },
+      "trained": {
+        "s1_decision": 0.6667,
+        "s2_tool_selection": 1.0,
+        "s3_schema_valid": 1.0,
+        "s4_grounding": 0.6667,
+        "false_call": 0.3333,
+        "over_call": 0.3333,
+        "trap_ok": 1.0,
+        "task_pass_at_1": 0.65
+      }
+    }
+  },
+  "aggregate": {
+    "no_tools": {
+      "s1_decision": 0.6667,
+      "s2_tool_selection": 1.0,
+      "s3_schema_valid": 1.0,
+      "s4_grounding": 0.3333,
+      "false_call": 0.0,
+      "over_call": 0.0,
+      "trap_ok": 1.0,
+      "task_pass_at_1": 0.025
+    },
+    "always_tools": {
+      "s1_decision": 0.6667,
+      "s2_tool_selection": 1.0,
+      "s3_schema_valid": 1.0,
+      "s4_grounding": 0.6667,
+      "false_call": 0.3333,
+      "over_call": 0.3333,
+      "trap_ok": 1.0,
+      "task_pass_at_1": 0.65
+    },
+    "trained": {
+      "s1_decision": 0.6667,
+      "s2_tool_selection": 1.0,
+      "s3_schema_valid": 1.0,
+      "s4_grounding": 0.6667,
+      "false_call": 0.3333,
+      "over_call": 0.3333,
+      "trap_ok": 1.0,
+      "task_pass_at_1": 0.65
+    }
+  },
+  "deltas": {
+    "trained_vs_no_tools": {
+      "pass_at_1_delta": 0.625,
+      "bootstrap95ci": [
+        0.625,
+        0.625
+      ],
+      "ciExcludesZero": true
+    },
+    "trained_vs_always_tools": {
+      "pass_at_1_delta": 0.0,
+      "bootstrap95ci": [
+        0.0,
+        0.0
+      ],
+      "ciExcludesZero": false
+    }
+  },
+  "overCallRate": {
+    "no_tools": 0.0,
+    "always_tools": 0.3333,
+    "trained": 0.3333
+  },
+  "claimTemplate": "On sealed tool-use benchmark v1 (N>=120, >=3 seeds), DPO adapter [beats/does not beat/within noise of] baselines. candidateOnly; canClaimAGI:false."
+}

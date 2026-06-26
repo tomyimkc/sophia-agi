@@ -85,3 +85,10 @@ def test_sft_traces_disjoint_from_benchmark():
         if line.strip():
             pr = prompt_of(json.loads(line))
             assert pr and normalize(pr) not in forbidden
+
+
+def test_eval_mock_report():
+    from tools.eval_hk_advisor import run_eval
+    r = run_eval(seeds=[0, 1, 2], mode="mock")
+    assert r["nCases"] == 90 and r["canClaimAGI"] is False
+    assert r["deltas"]["adapter_vs_base_fabrication"]["adapterLowersFabrication"]

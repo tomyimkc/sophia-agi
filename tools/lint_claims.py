@@ -13,6 +13,7 @@ Exit: 0 = clean, 1 = violations found.
 """
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -64,6 +65,31 @@ def _files() -> list[Path]:
     return out
 
 
+def _check_architecture_bets() -> list[str]:
+    """Fail if the architecture-bets registry claims AGI or marks a bet ``wired``
+    without naming a concrete ``live_caller``. A registry that says a module is on
+    the live path must point at the caller that proves it. A missing/invalid registry
+    is not an overclaim, so it is silently skipped (W0 owns its own existence test).
+    """
+    registry = ROOT / "agi-proof" / "architecture-bets.json"
+    if not registry.exists():
+        return []
+    try:
+        data = json.loads(registry.read_text(encoding="utf-8"))
+    except Exception as exc:  # malformed JSON is W0's test to catch, not an overclaim
+        return [f"agi-proof/architecture-bets.json: unreadable ({exc})"]
+    problems: list[str] = []
+    if data.get("canClaimAGI") is not False:
+        problems.append("agi-proof/architecture-bets.json: canClaimAGI must be false")
+    for bet in data.get("bets", []):
+        if bet.get("status") == "wired" and not bet.get("live_caller"):
+            problems.append(
+                f"agi-proof/architecture-bets.json: bet '{bet.get('id')}' is 'wired' "
+                "but has no live_caller"
+            )
+    return problems
+
+
 def main() -> int:
     violations: list[str] = []
     for path in _files():
@@ -79,6 +105,8 @@ def main() -> int:
                 if re.search(pat, low):
                     rel = path.relative_to(ROOT)
                     violations.append(f"{rel}:{i}: «{line.strip()[:90]}» — {why}")
+
+    violations.extend(_check_architecture_bets())
 
     if violations:
         print("CLAIMS LINTER: FAIL — overclaims found (fix the copy or add a qualifier):\n")

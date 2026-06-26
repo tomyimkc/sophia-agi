@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+[package]
+name = "raftkv"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Durable Raft: miniraft persistent state backed by the diskstore engine (phase 2 + 3)"
+
+[lib]
+name = "raftkv"
+path = "src/lib.rs"
+
+[dependencies]
+miniraft = { path = "../miniraft" }
+diskstore = { path = "../diskstore" }

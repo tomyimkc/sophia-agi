@@ -17,6 +17,8 @@ links: []
 
 # radio (無線電)
 
+Radio (無線電) is a science concept, in the physics subfield, attributed to guglielmo_marconi (authorship confidence: disputed), dated to 1895-1901.
+
 - **Attributed author:** guglielmo_marconi (confidence: `disputed`)
 - **Domain:** science
 

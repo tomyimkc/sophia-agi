@@ -38,6 +38,7 @@ jobs:
               - 'sophia_contract/**'
               - 'sophia_mcp/**'
               - 'gateway/**'
+              - 'cluster/**'
               - 'skills/**'
               - 'okf/**'
               - 'data/**'
@@ -65,6 +66,7 @@ jobs:
               - 'sophia_contract/**'
               - 'sophia_mcp/**'
               - 'gateway/**'
+              - 'cluster/**'
               - 'skills/*.py'
               - 'skills/**/*.py'
               - 'okf/**'
@@ -115,6 +117,7 @@ jobs:
           python tools/build_local_sophia_dataset.py --check
           python tools/build_religion_repair_traces.py
           python tests/test_religion_repair_traces.py
+          python tools/build_local_sophia_dataset.py --check
           python tests/test_personality.py
           python tests/test_steering.py
           python tests/test_personality_steering.py
@@ -150,6 +153,9 @@ jobs:
           python tests/test_knowledge_gap_log.py
           python tests/test_forgetting_curve.py
           python tests/test_belief_revision_scaling.py
+          python tests/test_pretraining.py
+          python tests/test_pretraining_agent.py
+          python tests/test_pretraining_autopilot.py
           python tests/test_symbol_identity.py
           python tests/test_competence_model.py
           python tests/test_proof_carrying_reasoning.py
@@ -157,6 +163,7 @@ jobs:
           python tests/test_incremental_revision.py
           python tests/test_skill_library.py
           python tests/test_governed_rsi.py
+          python tests/test_lifelong_accumulation.py
           python tests/test_run_cls_consolidation.py
           python tests/test_wiki_proof.py
           python tests/test_agent_harness.py
@@ -177,6 +184,18 @@ jobs:
           python tests/test_gateway_roadmap.py
           python tools/run_gateway_demo.py
           python tests/test_hf_space.py
+      - name: Cluster scheduler/observability/fault simulator + network-tax calibration
+        run: |
+          python tests/test_cluster_scheduler.py
+          python tests/test_cluster_observability.py
+          python tests/test_cluster_faults.py
+          python tests/test_cluster_netcalib.py
+          python tools/calibrate_network_tax.py --no-write
+          python tools/bench_nccl_allreduce.py --dry-run --gpus 8
+          python tools/runpod_nccl_bench.py --dry-run --gpu-count 2
+          python tools/runpod_nccl_bench.py --ssh-endpoint root@h:22 --gpu-count 2 --branch main --dry-run
+          python tools/run_cluster_sim.py --jobs 120 --seed 1
+          python tools/run_cluster_faultsim.py --jobs 80 --seed 1
       - name: Skills layer (MCP-matched, fail-closed) + registry
         run: |
           python tests/test_skills.py
@@ -248,6 +267,7 @@ jobs:
           python tests/test_predictive_world_model.py
           python tests/test_continual_plasticity.py
           python tests/test_promote_adapter.py
+          python tests/test_external_validation.py
           python tests/test_layered_memory.py
           python tests/test_agi_missing_pillars_bundle.py
           python tools/run_agi_missing_pillars.py
@@ -265,6 +285,16 @@ jobs:
           python tests/test_selfextend.py
           python tools/run_selfextend.py
           python tools/run_selfextend_loop.py
+      - name: Self-evolving agent (evolve→no-hack→promote→retain→commit, fail-closed)
+        run: |
+          python tests/test_self_evolving_agent.py
+          python tools/run_self_evolving_agent.py
+          python tools/export_self_evolve_distill.py
+      - name: Auto-research loop + live-optimizer wiring (no-overclaim, gate-clean dispatch)
+        run: |
+          python tests/test_auto_research.py
+          python tools/run_auto_research.py
+          python tools/run_selfevolve_live.py --backend plan
       - name: Runtime policies + model-in-loop + dataset fetcher (offline)
         run: |
           python tests/test_policies.py
