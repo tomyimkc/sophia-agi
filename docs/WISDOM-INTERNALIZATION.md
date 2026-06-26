@@ -20,8 +20,9 @@ training runs on the **DGX Spark** (hf/cuda, compute-bound FP4).
 | File | Role |
 |---|---|
 | `tools/model_backends.py` | the single model seam: `make_generate(backend, model, adapter)` → `generate(system,user)->ModelResult`. backends: `mock` / `mlx` / `hf`. |
-| `tools/gen_distill_traces.py` | teacher farm: harvest the gated arm, double-firewall re-check, gold-verify, passport-stamp, held-out seal. |
-| `tools/train_lora.py` | existing trainer; `--guard --scaffold --distill <traces>` folds the gated traces in. |
+| `tools/gen_distill_traces.py` | teacher farm: harvest the gated arm (SFT traces) **and** emit real DPO pairs from the same pass; double-firewall re-check, gold-verify, passport-stamp, held-out seal. |
+| `tools/train_lora.py` | existing trainer; `--guard --scaffold --distill <traces>` folds the gated SFT traces in. |
+| `tools/train_dpo.py` | optional preference stage; consumes `training/council/distill_dpo_pairs.jsonl`. |
 | `tools/run_wisdom_ablation.py` | proof matrix + fabrication-vs-compute curve over the sealed held-out split. |
 | `scripts/wisdom_internalization.sh` | stage driver: `trace` / `train` / `ablate` / `all`. |
 
@@ -51,12 +52,19 @@ BACKEND=mlx BASE=Qwen/Qwen3-4B bash scripts/wisdom_internalization.sh trace
 rsync -a training/council/distill_traces.jsonl spark:~/sophia-agi/training/council/
 ```
 
-**2. Spark — distill the student**
+**2. Spark — distill the student** (SFT, then optional DPO)
 ```bash
 pip install -r requirements-lora.txt
 BACKEND=hf BASE=Qwen/Qwen3-4B bash scripts/wisdom_internalization.sh train
+# optional preference stage on the pairs trace-gen emitted (chosen=gated, rejected=raw fabrication):
+python tools/train_dpo.py --pairs training/council/distill_dpo_pairs.jsonl --epochs 1
 rsync -a models/sophia-4b-internalized/ mac:~/sophia-agi/models/sophia-4b-internalized/
 ```
+
+> The DPO pairs are the honest, trainable form of "gate as a loss term": the rejected side
+> is the teacher's *real* gate-tripping answer (not a synthetic template), so the student is
+> pushed away from exactly the fabrications the verifier detects. Built for free in the trace
+> pass — no second model call, no `--student-misses` file.
 
 **3. Mac — ablate + curve**
 ```bash

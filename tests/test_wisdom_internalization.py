@@ -61,6 +61,26 @@ def test_split_is_deterministic_and_disjoint() -> None:
     assert held_ids and train_ids                                # both non-empty
 
 
+def test_dpo_pairs_are_real_gate_verified_preferences() -> None:
+    from agent.gate import check_response
+    cases = [c for c in build_cases() if c.label == "false"][:40]
+    records = build_gate_records()
+    generate = mb.make_generate("mock", "mock-base")
+    pairs = []
+    for c in cases:
+        res = run_case(c, generate, on_fail="abstain", records=records)
+        p = gdt.build_dpo_pair(c, res)
+        if p is not None:
+            pairs.append(p)
+    assert pairs, "expected at least one real DPO pair"
+    p = pairs[0]
+    assert p["chosen"] and p["rejected"] and p["chosen"] != p["rejected"]   # non-degenerate
+    assert p["metadata"]["rejectedSource"] == "teacher-raw-gate-tripping"   # real, not synthetic
+    # rejected must actually trip the gate; chosen must pass it.
+    assert check_response(p["rejected"], mode="advisor", question=p["prompt"])["violations"]
+    assert not check_claim(p["chosen"]).get("violations")
+
+
 def test_harvest_yields_clean_cited_abstention_targets() -> None:
     cases = [c for c in build_cases() if c.label == "false"][:8]
     records = build_gate_records()

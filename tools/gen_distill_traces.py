@@ -42,6 +42,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from agent.gate import check_response
 from agent.guarded import check_claim
 from pretraining.data_passport import passport
 from provenance_bench.dataset import build_cases, build_gate_records
@@ -50,6 +51,7 @@ from provenance_bench.score import score
 from tools.model_backends import Decode, make_generate
 
 OUT_TRACES = ROOT / "training" / "council" / "distill_traces.jsonl"
+OUT_DPO = ROOT / "training" / "council" / "distill_dpo_pairs.jsonl"
 SEAL_MANIFEST = ROOT / "agi-proof" / "wisdom-internalization" / "heldout-seal.manifest.json"
 ADVISOR_SCAFFOLD = (
     "You are a provenance-disciplined assistant. State only what the evidence supports; "
@@ -119,6 +121,41 @@ def harvest(case, result: dict) -> dict | None:
     }
 
 
+# --------------------------------------------------------------------------- #
+# DPO pair from the SAME generation — Phase 1.4. The teacher's RAW (un-gated) answer
+# is the real, gate-flagged fabrication (rejected); the gated arm is the clean
+# answer (chosen). No synthetic template, no second model call, no student-misses
+# file — both arms already exist in `result`. The discrete gate becomes a
+# differentiable preference signal.
+# --------------------------------------------------------------------------- #
+def build_dpo_pair(case, result: dict) -> dict | None:
+    raw_text = result.get("raw_text") or ""
+    gated_text = result.get("gated_text") or ""
+    raw = result.get("raw", {})
+    gated = result.get("gated", {})
+    if not raw_text or not gated_text or raw_text.strip() == gated_text.strip():
+        return None
+    # chosen must be a verified-clean answer; rejected must be a real fabrication.
+    if raw.get("hallucinated") is not True or gated.get("hallucinated") is True:
+        return None
+    if case.label == "true" and not gated.get("affirmed_gold"):
+        return None
+    # Anti-circularity firewall (same as tools/build_distill_dpo_pairs.py): the rejected
+    # MUST be gate-flagged for this prompt, else it is not a detected miss — drop it.
+    if not check_response(raw_text, mode="advisor", question=case.prompt).get("violations"):
+        return None
+    return {
+        "prompt": case.prompt,
+        "chosen": gated_text,
+        "rejected": raw_text,
+        "metadata": {
+            "caseId": case.id, "label": case.label,
+            "rejectedSource": "teacher-raw-gate-tripping",
+            "chosenGatePassed": True, "rejectedGateFlagged": True,
+        },
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--backend", default="mock", choices=["mock", "mlx", "hf"],
@@ -145,18 +182,21 @@ def main() -> int:
                              decode=decode, load_4bit=args.load_4bit)
     gate_records = build_gate_records()
 
-    results, rows = [], []
+    results, rows, dpo_pairs = [], [], []
+    held_digests = {passport.content_hash(c.prompt) for c in heldout}
     for c in train:
         res = run_case(c, generate, on_fail=args.on_fail, records=gate_records)
         results.append(res)
         row = harvest(c, res)
         if row is not None:
             rows.append(row)
+        pair = build_dpo_pair(c, res)
+        if pair is not None and passport.content_hash(c.prompt) not in held_digests:
+            dpo_pairs.append(pair)
 
     # (5) passport stamp + dedup, then attach provenance/reproducibility fields.
     stamped = passport.stamp_pack(rows)["rows"]
     gate_sha = gate_source_hash()
-    held_digests = {passport.content_hash(c.prompt) for c in heldout}
     kept = []
     for r in stamped:
         # (6) seal: never emit a row colliding with a held-out prompt.
@@ -178,6 +218,7 @@ def main() -> int:
     print(json.dumps({
         "trainCases": len(train), "heldoutCases": len(heldout),
         "harvested": len(rows), "kept_after_seal_dedup": len(kept),
+        "dpoPairs": len(dpo_pairs),
         "teacherHallucDelta": teacher_delta["delta"],
         "teacherFalsePositiveCost": teacher_delta["falsePositiveCost"],
         "sealManifest": str(SEAL_MANIFEST.relative_to(ROOT)),
@@ -190,6 +231,13 @@ def main() -> int:
         for r in kept:
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
     print(f"wrote {len(kept)} traces -> {OUT_TRACES.relative_to(ROOT)}")
+    if dpo_pairs:
+        OUT_DPO.parent.mkdir(parents=True, exist_ok=True)
+        with OUT_DPO.open("w", encoding="utf-8") as fh:
+            for p in dpo_pairs:
+                fh.write(json.dumps(p, ensure_ascii=False) + "\n")
+        print(f"wrote {len(dpo_pairs)} DPO pairs -> {OUT_DPO.relative_to(ROOT)} "
+              f"(train: python tools/train_dpo.py --pairs {OUT_DPO.relative_to(ROOT)})")
     return 0
 
 
