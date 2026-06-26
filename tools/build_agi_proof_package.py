@@ -142,6 +142,28 @@ def build_manifest(*, generated: str | None = None) -> dict[str, Any]:
     except Exception as exc:  # pragma: no cover - never let the ledger break the package build
         ledger_summary = {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
 
+    # Verified-trace recall verdict (the falsification test for the trace logger).
+    # Read from the committed artifact so the manifest reports what the experiment
+    # actually concluded — never a hardcoded value. Absent artifact -> None (honest).
+    recall_path = ROOT / "agi-proof" / "verified-traces" / "verified-trace-recall.public-report.json"
+    recall_artifact = load_json(recall_path, None) if recall_path.exists() else None
+    verified_traces = (
+        {
+            "recallVerdict": recall_artifact.get("verdict"),
+            "traceRecall": recall_artifact.get("trace", {}).get("contradictionRecall"),
+            "compilerRecall": recall_artifact.get("compiler", {}).get("contradictionRecall"),
+            "factLogicAgreement": recall_artifact.get("trace", {}).get("factLogicAgreement"),
+            "candidateOnly": recall_artifact.get("candidateOnly", True),
+            "scope": (
+                "Process-supervision / TRiSM-audit layer: dual (fact+logic) stamped traces, "
+                "tamper-evident chain, faithfulness probe, cross-trace contradiction mining. "
+                "Auditable reasoning substrate — not a capability claim."
+            ),
+        }
+        if isinstance(recall_artifact, dict)
+        else {"recallVerdict": None, "scope": "verified-trace recall artifact not yet generated"}
+    )
+
     return {
         "version": version,
         "generated": generated or datetime.now().isoformat(timespec="seconds"),
@@ -155,6 +177,7 @@ def build_manifest(*, generated: str | None = None) -> dict[str, Any]:
             "structurallyValid": ledger_summary.get("ok"),
             "openItems": ledger_summary.get("openItems", []),
         },
+        "verifiedTraces": verified_traces,
         "operationalDefinition": {
             "summary": (
                 "For this repo, AGI evidence means broad task competence, transfer, "
@@ -289,6 +312,18 @@ def build_manifest(*, generated: str | None = None) -> dict[str, Any]:
             "factCheckFlywheelRunner": "tools/run_fact_check_flywheel.py",
             "reflexiveSelfGateRunner": "tools/run_reflexive_self_gate.py",
             "reflexiveSelfGateReport": "agi-proof/self-gate/reflexive-self-gate.public-report.json",
+            # Verified reasoning-trace layer (process-supervision / TRiSM-audit).
+            # The recall experiment is the falsification test; the package README
+            # states the honest scope (auditable != smarter).
+            "verifiedTracePackage": "agi-proof/verified-traces/README.md",
+            "verifiedTraceRecallRunner": "tools/run_verified_trace_recall.py",
+            "verifiedTraceRecallReport": "agi-proof/verified-traces/verified-trace-recall.public-report.json",
+            "verifiedTraceLogger": "agent/verified_trace.py",
+            "verifiedTraceSchema": "schema/verified-trace-1.0.0.json",
+            "verifiedTraceRlvrBridge": "agent/verified_trace_rlvr.py",
+            "verifiedTraceFaithfulnessProbe": "agent/faithfulness_probe.py",
+            "verifiedTraceCrossTraceMiner": "agent/cross_trace_consistency.py",
+            "verifiedTraceMcpQuery": "sophia_mcp/tools_impl.py",
         },
     }
 

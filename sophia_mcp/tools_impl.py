@@ -760,5 +760,127 @@ def conscience_benchmark_tool() -> dict:
     return run_conscience_benchmark()
 
 
+# --------------------------------------------------------------------------- #
+# Verified reasoning-trace tools (read-only query + tamper-evidence re-verify).
+# These surface the verified_trace.v1 log: sophia_trace_query scans/summarizes it,
+# sophia_trace_verify re-runs the fact+logic derivation against a stored trace and
+# checks the hash chain. Both are low-risk/read-only — they never mutate the log.
+# --------------------------------------------------------------------------- #
+def trace_query(
+    run_id: str | None = None,
+    *,
+    verified: bool | None = None,
+    phase: str | None = None,
+    limit: int = 200,
+) -> dict:
+    """Scan the verified-trace log and return a summary + filtered sample.
+
+    Filters (all optional): ``run_id`` (runId), ``verified`` (only verified/
+    unverified steps), ``phase``. Returns aggregate counts
+    (``stepVerifiedRate``, ``factLogicAgreement``) and up to ``limit`` trace rows.
+    Read-only — never mutates the log.
+    """
+    from agent.verified_trace import TRACE_LOG, verify_chain
+    from sophia_contract.stores import _read_jsonl
+
+    rows = _read_jsonl(TRACE_LOG)
+    if run_id is not None:
+        rows = [r for r in rows if r.get("runId") == run_id]
+    if verified is not None:
+        rows = [r for r in rows if bool(r.get("verified")) == bool(verified)]
+    if phase is not None:
+        rows = [r for r in rows if r.get("phase") == phase]
+
+    # Aggregate metrics over the FULL log (not the filtered slice) so a filtered
+    # query still reports the honest global verification rate.
+    all_rows = _read_jsonl(TRACE_LOG)
+    n_all = len(all_rows) or 1
+    n_verified = sum(1 for r in all_rows if r.get("verified"))
+    # fact-logic agreement: steps where fact-OK and logic-OK agree (both pass or
+    # both fail). Divergence = one gate passed while the other failed — the
+    # highest-signal events for auditor review.
+    def _fact_ok(r: dict) -> bool:
+        return r.get("fact", {}).get("verdict") in {"allow", "retrieve"}
+
+    agree = sum(
+        1 for r in all_rows
+        if _fact_ok(r) == bool(r.get("logic", {}).get("emittable"))
+    )
+
+    chain = verify_chain(TRACE_LOG)
+    return {
+        "schema": "sophia.trace_query.v1",
+        "nFiltered": len(rows),
+        "nTotal": len(all_rows),
+        "metrics": {
+            "stepVerifiedRate": round(n_verified / n_all, 4),
+            "factLogicAgreement": round(agree / n_all, 4),
+        },
+        "chainIntact": chain.get("chainIntact"),
+        "rows": [{k: v for k, v in r.items() if k != "_selfHash"} for r in rows[:limit]],
+        "boundary": (
+            "Sophia is an AGI-candidate verifier-gated epistemic framework; "
+            "these metrics are not proof of AGI."
+        ),
+    }
+
+
+def trace_verify(trace_id: str | None = None, *, check_chain: bool = True) -> dict:
+    """Re-verify a stored trace: re-derive ``verified`` from its fact+logic stamps
+    and check the hash chain. This is the reproducibility tool — a regulator can
+    re-derive any stamp without trusting the logger's word.
+
+    If ``trace_id`` is given, returns that one record's re-derivation; otherwise
+    returns the chain-integrity report over the whole log. Read-only.
+    """
+    from agent.verified_trace import TRACE_LOG, verify_chain
+    from sophia_contract.stores import _read_jsonl
+
+    rows = _read_jsonl(TRACE_LOG)
+    out: dict = {"schema": "sophia.trace_verify.v1", "check_chain": check_chain}
+
+    if trace_id is not None:
+        match = next((r for r in rows if r.get("traceId") == trace_id), None)
+        if match is None:
+            return {**out, "error": f"no trace with traceId={trace_id!r}"}
+        # re-derive verified from the stored fact+logic (never trust the stored flag)
+        fact_ok = match.get("fact", {}).get("verdict") in {"allow", "retrieve"}
+        logic_ok = bool(match.get("logic", {}).get("emittable"))
+        out["traceId"] = trace_id
+        out["storedVerified"] = bool(match.get("verified"))
+        out["rederivedVerified"] = fact_ok and logic_ok
+        out["recheckMatches"] = out["storedVerified"] == out["rederivedVerified"]
+        out["row"] = {k: v for k, v in match.items() if k != "_selfHash"}
+
+    if check_chain:
+        out["chain"] = verify_chain(TRACE_LOG)
+
+    out["boundary"] = (
+        "Sophia is an AGI-candidate verifier-gated epistemic framework; "
+        "this re-verification is not proof of AGI."
+    )
+    return out
+
+
+def trace_contradictions() -> dict:
+    """Mine the verified-trace log for CROSS-TRACE contradictions (extension E4).
+
+    A cross-trace contradiction is a pair of traces where one asserts X and
+    another asserts not-X — and BOTH were recorded as verified. Each passed its
+    own fact+logic gates; together they contradict. This is the global
+    consistency invariant no within-trace component enforces. Returns the
+    cross-trace ledger (schema sophia.cross_trace_ledger.v1). Read-only.
+    """
+    from agent.cross_trace_consistency import mine_log
+    ledger = mine_log()
+    return {
+        **ledger,
+        "boundary": (
+            "Sophia is an AGI-candidate verifier-gated epistemic framework; "
+            "structural mining over logged claim text is not proof of AGI."
+        ),
+    }
+
+
 def dumps(payload: dict) -> str:
     return json.dumps(payload, ensure_ascii=False, indent=2)

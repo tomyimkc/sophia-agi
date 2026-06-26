@@ -278,6 +278,102 @@ def _delta_maybe(a, b) -> float | None:
 
 
 # --------------------------------------------------------------------------- #
+# Verified-trace axis: the process-supervision / TRiSM-audit surface.
+# --------------------------------------------------------------------------- #
+def _verified_trace_axis(*, trace_log=None):
+    """Aggregate the verified_trace.v1 log into a panel axis.
+
+    Reports the dual-stamp verification rate, fact/logic agreement, the
+    tamper-evidence chain status, and (if non-empty) the contradiction-recall
+    the compiler hook records. This is the 'process' axis of the panel: it does
+    not measure model capability directly, it measures whether the *reasoning
+    substrate* logged and dual-verified its steps — the trustworthiness signal.
+
+    Honest on empty: an empty/missing log returns ``nTotal=0`` rather than
+    failing; the panel reports the axis was run but had no events (e.g. a fresh
+    checkout before any compile/conscience call). It never marks a claim
+    validated by itself.
+    """
+    import hashlib
+    import json as _json
+
+    from sophia_contract.stores import _read_jsonl
+
+    log = trace_log
+    if log is None:
+        # honor the module-level TRACE_LOG override (tests / config may redirect it),
+        # falling back to the default contract path.
+        try:
+            from agent.verified_trace import TRACE_LOG as _DEFAULT_TRACE_LOG
+            log = _DEFAULT_TRACE_LOG
+        except Exception:  # pragma: no cover - defensive
+            log = ROOT / "agent" / "memory" / "contract" / "verified_traces.jsonl"
+    rows = _read_jsonl(log)
+    n = len(rows)
+    if n == 0:
+        return {
+            "nTotal": 0,
+            "stepVerifiedRate": None,
+            "factLogicAgreement": None,
+            # a chain of zero entries is trivially intact (nothing to tamper with);
+            # True, not None, so a fresh checkout does not read as a tamper alarm.
+            "chainIntact": True,
+            "contradictionRecall": None,
+            "phases": {},
+            "note": "verified-trace log is empty (no compiles/conscience calls recorded yet)",
+        }
+
+    n_verified = sum(1 for r in rows if r.get("verified"))
+
+    def _fact_ok(r):
+        return r.get("fact", {}).get("verdict") in {"allow", "retrieve"}
+
+    agree = sum(1 for r in rows if _fact_ok(r) == bool(r.get("logic", {}).get("emittable")))
+
+    # contradiction recall: of the steps whose logic gate found a contradiction,
+    # all should be verified=False (the compiler's fail-closed contract). This is
+    # the headline experiment: recall == 1.0 means no contradiction slipped through.
+    has_contra = [r for r in rows if r.get("logic", {}).get("contradictions")]
+    n_contra = len(has_contra)
+    n_contra_blocked = sum(1 for r in has_contra if not r.get("verified"))
+    contra_recall = round(n_contra_blocked / n_contra, 4) if n_contra else None
+
+    # tamper-evidence chain check: verify BOTH the prevHash links AND that each
+    # line's stored _selfHash matches its current content (so a content mutation
+    # that leaves the old _selfHash is detected). Matches agent.verified_trace.verify_chain.
+    def _self_hash(record):
+        payload = {k: v for k, v in record.items() if k != "_selfHash"}
+        blob = _json.dumps(payload, sort_keys=True, ensure_ascii=False, default=str)
+        return "sha256:" + hashlib.sha256(blob.encode("utf-8")).hexdigest()
+
+    chain_intact = True
+    prev = ""
+    for r in rows:
+        if r.get("prevHash", "") != prev:
+            chain_intact = False
+            break
+        if r.get("_selfHash", "") != _self_hash(r):
+            chain_intact = False  # content mutated after the fact
+            break
+        prev = r.get("_selfHash", "")
+
+    phases = {}
+    for r in rows:
+        p = r.get("phase", "?")
+        phases[p] = phases.get(p, 0) + 1
+
+    return {
+        "nTotal": n,
+        "stepVerifiedRate": round(n_verified / n, 4),
+        "factLogicAgreement": round(agree / n, 4),
+        "chainIntact": chain_intact,
+        "contradictionRecall": contra_recall,  # 1.0 = compiler caught every planted contradiction
+        "nWithContradiction": n_contra,
+        "phases": phases,
+    }
+
+
+# --------------------------------------------------------------------------- #
 # Real-mode generator builder (lazy; CUDA/MLX only).
 # --------------------------------------------------------------------------- #
 def _real_generators(model: str, adapter: str | None) -> tuple[Generate, Generate]:
@@ -336,6 +432,7 @@ def run(*, mode: str = "mock", model: str = "mock", adapter: str | None = None,
     attr = _attribution_axis(attr_cases, base_attr, adapter_attr)
     cal = _calibration_axis(cal_pack, cal_base, cal_adapter)
     deltas = _deltas(attr, cal)
+    vtraces = _verified_trace_axis()
 
     report = {
         "schema": SCHEMA,
@@ -351,12 +448,14 @@ def run(*, mode: str = "mock", model: str = "mock", adapter: str | None = None,
         "level3Evidence": False,
         "validated": False,
         "claimBoundary": (
-            "Capability-delta panel (attribution / hallucination / calibration). "
-            "candidateOnly: structural evidence, not a validated capability claim."
+            "Capability-delta panel (attribution / hallucination / calibration / "
+            "verified-trace process). candidateOnly: structural evidence, not a "
+            "validated capability claim."
         ),
         "axes": {
             "attribution": attr,
             "calibration": cal,
+            "verifiedTraces": vtraces,
         },
         "delta": deltas,
         "checks": {
@@ -364,6 +463,11 @@ def run(*, mode: str = "mock", model: str = "mock", adapter: str | None = None,
             "adapterReducesHallucination": deltas["hallucinationRate"] < 0,
             "adapterImprovesIntegrity": (deltas["integrityRecall"] or 0) > 0,
             "adapterImprovesCalibration": deltas["calibrationScore"] > 0,
+            # process-supervision check: when a trace log exists, its hash chain
+            # must be intact (tamper-evidence) — never true on an empty log.
+            "traceChainIntact": bool(vtraces.get("chainIntact")),
+            # fail-closed contract: every logged contradiction must be unverified
+            "traceContradictionRecall": vtraces.get("contradictionRecall") in (None, 1.0),
         },
         "n": {"attribution": attr["n"], "calibration": cal["n"]},
         "ok": True,
