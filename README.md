@@ -150,6 +150,15 @@ brand being protected stops someone from shipping an unverified product under th
 eroding the no-overclaim standard the project exists to uphold. Authored and maintained by the
 sole author and rights holder, **tomyimkc**. Every fork carries [NOTICE.md](NOTICE.md).
 
+### Cite this work & establish provenance
+
+To make Sophia citable and to fix an authorship + priority record (defensive publication):
+
+- **Citation metadata:** [CITATION.cff](CITATION.cff) — GitHub renders a "Cite this repository" button.
+- **Whitepaper (arXiv-ready):** [paper/sophia-whitepaper.md](paper/sophia-whitepaper.md).
+- **Archival DOI:** enable [Zenodo](https://zenodo.org) for this repo and cut a Release to mint a permanent DOI (config in [.zenodo.json](.zenodo.json)).
+- **Full strategy & patent/trademark timing:** [docs/IP-PROTECTION.md](docs/IP-PROTECTION.md).
+
 ## Moral + epistemic Conscience Kernel (seven paths)
 
 A deterministic, **fail-closed control layer** for AI outputs, tool use, and memory writes.
