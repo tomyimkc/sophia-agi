@@ -49,9 +49,16 @@ def _accuracy(predict, evalset: "list[tuple[str, bool]]") -> float:
     return round(sum(int(predict(t) == lab) for t, lab in evalset) / len(evalset), 4)
 
 
-def close_loop(domain: str, examples: "list[tuple[str, bool]]", *, threshold: float = 0.8) -> dict:
+def close_loop(domain: str, examples: "list[tuple[str, bool]]", *, threshold: float = 0.8,
+               evolve_against: "object | None" = None) -> dict:
     """Run the full cycle on one held-out ``domain``. Returns a report + falsifiable
-    ``invariants`` and a ``loop_closed`` flag."""
+    ``invariants`` and a ``loop_closed`` flag.
+
+    When ``evolve_against`` is a prior :class:`~selfextend.verifier_synthesis.Rule`,
+    the SophiaArk Evolve canary is run on the success path: the freshly synthesised
+    verifier is promoted over the prior one ONLY if it scores strictly better on the
+    held-out split (else the prior is kept). Opt-in; absent it, behaviour is unchanged.
+    """
     ledger = AbstentionLedger()
     competence = CompetenceMap(threshold=threshold)
 
@@ -98,10 +105,21 @@ def close_loop(domain: str, examples: "list[tuple[str, bool]]", *, threshold: fl
         "generalizes_not_gamed": post_acc >= threshold,
         "competence_flips_abstain_to_answer": route_before == "abstain" and route_after == "answer",
     }
+    evolve_block = None
+    if evolve_against is not None:
+        from selfextend.evolve import Candidate, evolve
+
+        evolve_block = evolve(
+            f"verifier:{domain}",
+            [Candidate(target=f"verifier:{domain}", kind="verifier", payload=rule)],
+            heldout, baseline=evolve_against,
+        )
+
     return {
         "domain": domain,
         "loop_closed": all(invariants.values()),
         "promoted": True,
+        "evolve": evolve_block,
         "heldoutAccuracy": heldout_acc,
         "preAccuracy": pre_acc,
         "postAccuracy": post_acc,
