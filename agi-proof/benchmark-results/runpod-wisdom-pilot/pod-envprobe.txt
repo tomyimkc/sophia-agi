@@ -1,0 +1,7 @@
+[probe] Fri Jun 26 17:11:49 UTC 2026
+python 3.12.13 Linux-6.8.0-106-generic-x86_64-with-glibc2.35
+torch 2.8.0+cu128 cuda True
+transformers 5.12.1 peft 0.19.1 trl 1.7.0 accelerate 1.14.0 datasets 5.0.0
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ImportError: cannot import name 'ORPOConfig' from 'trl' (/usr/local/lib/python3.12/dist-packages/trl/__init__.py). Did you mean: 'GRPOConfig'?
