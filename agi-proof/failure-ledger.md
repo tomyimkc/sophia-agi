@@ -1554,4 +1554,32 @@ plan's headline implication — "make the non-decaying asset machine-checkable
 verification" — gains its first concrete substrate; the next planned experiment
 (Lean soundness on sympy verifiers) is the companion.
 
+**Offline snapshot (2026-06-27, post-PASS re-confirmation).** An honest, fully
+reproducible snapshot of the deterministic, no-GPU/no-model surfaces on this
+host (`/usr/bin/python3` 3.9; the repo targets ≥3.12 so two known env-only
+failures — `zip(strict=)` in `run_long_context_sophia.py`/`build_rag_index.py`
+and the `run_eval(mock)` hang — reproduce identically on plain main and are
+NOT regressions):
+
+| Snapshot surface | Result |
+|---|---|
+| `tests/test_datalog_provenance.py` (engine + faithfulness) | **14/14 passed** |
+| `tests/test_math_verifier.py` (sympy 1.14.0 + z3 4.16.0 hard-oracle path) | **5/5 passed** |
+| `tests/test_provenance_bench.py` (provenance benchmark suite) | **19/19 passed** |
+| `tools/eval_ladder.py --dry-run` (wiring, no weights) | **base + base+gate rungs OK**; adapter/adapter+gate correctly absent (no `--adapter`); real rungs need weights (MLX/GPU) |
+| full 319-case × 3 Datalog audit (`run_datalog_provenance_audit.py`) | **957/957 PASS** committed artifact (`agi-proof/datalog-provenance-audit/audit.public-report.json`); the ~25-min full rerun was skipped — it is the known slow path of the naive Datalog engine over 85 static `forbidden` facts/text, and the 14 unit tests re-confirm correctness in seconds |
+
+**Lean soundness on sympy verifiers — DEFERRED (toolchain gated).** The plan's
+headline *next* experiment was NOT run: `lean`/`elan`/`lean-dojo` are not
+installed here, and the `lean_backend` is opt-in/fail-closed by repo policy
+(`use_lean=True` abstains with `lean_unavailable`, never fabricates). Network
+to github.com is reachable (HTTP 200) so an elan install is *plausible*, but it
+is a multi-GB toolchain + mathlib4 pull under a host with documented
+HTTPS-only egress — too risky to attempt under deadline. Per human decision,
+this is gated for a dedicated RunPod/confirmed-clean host and recorded here as
+the next experiment, NOT as done work. `canClaimAGI` stays **False** — no part
+of this snapshot is a capability claim, a −12.5pt reproduction, or third-party
+evidence.
+
+
 
