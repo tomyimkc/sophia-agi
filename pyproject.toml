@@ -23,6 +23,23 @@ classifiers = [
 [project.scripts]
 sophia = "sophia.cli:main"
 
+# Optional dependencies are grouped to mirror the requirements-*.txt files, which
+# document fail-closed optional backends (math/theorem verifiers abstain when their
+# backend is absent — see requirements-math.txt / requirements-theorem.txt).
+#
+# `dev` exists so a contributor can produce a self-contained, correctly-versioned test
+# environment with `uv sync --extra dev` (or `pip install -e ".[dev]"`). Without it, a
+# fresh `uv sync` installs no test dependencies at all, and `uv run pytest` falls back to
+# resolving `pytest` from elsewhere on the machine (often a different Python — observed:
+# Python 3.9 when the project requires >=3.12), silently running the suite on the wrong
+# interpreter and producing collection errors for `okf` / `agent`.
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "numpy>=1.26",   # hard-imported by agent.vector_store (vector index) and several RAG tests
+  "sympy>=1.12",   # hard-imported by tools.generate_math_code_curriculum; optional for the math verifier
+]
+
 [tool.setuptools.packages.find]
 include = ["agent*", "provenance_bench*", "sophia*", "sophia_mcp*"]
 exclude = ["tests*"]
