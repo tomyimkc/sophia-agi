@@ -47,12 +47,24 @@ def _sem(values: list[float]) -> float:
 
 @dataclass(frozen=True)
 class Generation:
-    """One generation: a 3-seed aggregate for an adapter trained on the prior canonical."""
+    """One generation: a multi-seed aggregate for an adapter trained on the prior canonical.
+
+    Optional real-data metadata (set by the live/mock driver; ``None`` in the demo
+    fixtures) is threaded verbatim into the per-generation record so a compounding
+    proof can be audited end-to-end: which win-set size it trained on, whether the
+    contamination guard was clean, whether the formal-verifier backend was live, and
+    the per-generation gate verdict + held-out delta CI.
+    """
 
     gen: int
     adapter_id: str
     trained_on: str            # the base/canonical checkpoint this generation trained on
     aggregate: AdapterAggregate
+    win_set_size: int | None = None
+    contamination_status: dict[str, Any] | None = None
+    solver_checked: bool | None = None
+    gate_verdict: str | None = None
+    heldout_delta_ci: dict[str, float] | None = None
 
 
 def evaluate_generations(
@@ -107,6 +119,12 @@ def evaluate_generations(
             "anyProtectedRegression": summary["anyProtectedRegression"],
             "anyContaminated": summary["anyContaminated"],
             "promoted": promoted,
+            **({"winSetSize": g.win_set_size} if g.win_set_size is not None else {}),
+            **({"contaminationStatus": g.contamination_status}
+               if g.contamination_status is not None else {}),
+            **({"solverChecked": g.solver_checked} if g.solver_checked is not None else {}),
+            **({"gateVerdict": g.gate_verdict} if g.gate_verdict is not None else {}),
+            **({"heldoutDeltaWithCI": g.heldout_delta_ci} if g.heldout_delta_ci is not None else {}),
         })
 
         if promoted:
