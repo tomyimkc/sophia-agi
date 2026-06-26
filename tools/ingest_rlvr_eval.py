@@ -60,34 +60,59 @@ def _dig(report: dict[str, Any], *paths: tuple[str, ...]) -> Any:
 
 
 def map_report(report: dict[str, Any], *, adapter_id: str | None = None) -> dict[str, Any]:
-    before = _dig(report, ("base", "meanReward"), ("baseScore", "meanReward"))
-    after = _dig(report, ("adapterScore", "meanReward"), ("adapter", "meanReward"))
-    base_fp = _dig(report, ("base", "trueFalsePositiveRate"), ("baseScore", "trueFalsePositiveRate"))
-    adapter_fp = _dig(report, ("adapterScore", "trueFalsePositiveRate"), ("adapter", "trueFalsePositiveRate"))
+    task = report.get("task") or "provenance"
+    # Capability metric: passAt1 for math/code (objective, ungameable per-item reward),
+    # meanReward for provenance (the FP-aware aggregate reward).
+    if task in ("math", "code"):
+        before = _dig(report, ("base", "passAt1"), ("baseScore", "passAt1"))
+        after = _dig(report, ("adapterScore", "passAt1"), ("adapter", "passAt1"))
+        capability_metric = "passAt1"
+        contam_key = "familyIntersection"
+    else:
+        before = _dig(report, ("base", "meanReward"), ("baseScore", "meanReward"))
+        after = _dig(report, ("adapterScore", "meanReward"), ("adapter", "meanReward"))
+        capability_metric = "meanReward"
+        contam_key = "entityIntersection"
     if before is None or after is None:
         raise SystemExit(
-            "ERROR: report has no before/after capability pair "
-            "(expected base.meanReward + adapterScore.meanReward). "
+            f"ERROR: report has no before/after capability pair for task={task} "
+            f"(expected base.{capability_metric} + adapterScore.{capability_metric}). "
             "Produce it with: python3 tools/eval_rlvr_adapter.py --mode real --adapter <ckpt>"
         )
-    # False-positive rate: lower is better -> invert to an integrity metric (higher better)
-    # so a rise in FP rate registers as a protected regression. Fail-closed: a MISSING FP
-    # rate is unverified integrity, not perfect integrity — refuse rather than assume 1.0.
-    if base_fp is None or adapter_fp is None:
-        raise SystemExit(
-            "ERROR: report is missing trueFalsePositiveRate on base and/or adapter. "
-            "The Layer-1 gate is fail-closed: unverified integrity cannot promote. "
-            "Re-run tools/eval_rlvr_adapter.py so the eval reports false-positive rates."
-        )
-    prot_before = round(1.0 - float(base_fp), 4)
-    prot_after = round(1.0 - float(adapter_fp), 4)
-    entity_intersection = _dig(report, ("entityIntersection",), ("split", "entityIntersection")) or []
+    entity_intersection = (
+        _dig(report, (contam_key,), ("split", contam_key), ("split", "entityIntersection")) or []
+    )
     contaminated = bool(entity_intersection)
     aid = adapter_id or _dig(report, ("adapter",)) or report.get("model") or "rlvr-adapter"
     aid = str(aid).rsplit("/", 1)[-1]
+    # Protected-integrity axis, task-aware. Provenance has a false-positive rate (lower better
+    # -> invert to integrity); a rise in FP registers as a protected regression. Fail-closed: a
+    # MISSING FP rate is unverified integrity — refuse rather than assume perfect. Code/math
+    # reward is per-item objective (interpreter / sympy = ground truth), so there is NO separate
+    # false-positive axis to protect — the protected floor is a no-op (1.0); the gate's teeth
+    # for those tasks are the capability delta + contamination + the solver-checked invariant
+    # suite. (A per-item-objective reward cannot be "gamed into passing" without actually
+    # passing — that is exactly why these tasks are RLVR-friendly.)
+    if task == "provenance":
+        base_fp = _dig(report, ("base", "trueFalsePositiveRate"), ("baseScore", "trueFalsePositiveRate"))
+        adapter_fp = _dig(report, ("adapterScore", "trueFalsePositiveRate"), ("adapter", "trueFalsePositiveRate"))
+        if base_fp is None or adapter_fp is None:
+            raise SystemExit(
+                "ERROR: provenance report is missing trueFalsePositiveRate on base and/or adapter. "
+                "The Layer-1 gate is fail-closed: unverified integrity cannot promote. "
+                "Re-run tools/eval_rlvr_adapter.py so the eval reports false-positive rates."
+            )
+        prot_before = round(1.0 - float(base_fp), 4)
+        prot_after = round(1.0 - float(adapter_fp), 4)
+        protected_axis = "1_minus_trueFalsePositiveRate"
+    else:
+        prot_before = prot_after = 1.0
+        protected_axis = "none_objective_reward_no_fp_axis"
     mapped = {
-        "id": aid, "before": float(before), "after": float(after),
+        "id": aid, "task": task, "before": float(before), "after": float(after),
+        "capabilityMetric": capability_metric,
         "protected_before": prot_before, "protected_after": prot_after,
+        "protectedAxis": protected_axis,
         "contaminated": contaminated, "entityIntersection": entity_intersection,
     }
     # Capability-panel deltas (attribution / hallucination / calibration), if the

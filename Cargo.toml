@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+#
+# Top-level virtual Rust workspace for sophia-agi.
+#
+# This unifies the Rust trees that are genuinely compatible into ONE workspace
+# (one Cargo.toml, one Cargo.lock, one `cargo build`):
+#   - the `storage/*` crates (the distributed-storage roadmap members), and
+#   - `services/ann_serving` (the dependency-free ANN index/server).
+# All of these are edition-2021 and previously resolved against resolver "2",
+# so they compose without behaviour changes.
+#
+# DELIBERATELY NOT a member: `sophia-storage/` (edition 2024, resolver "3",
+# MSRV 1.85, [workspace.package] inheritance, its own publish story). A Cargo
+# workspace cannot contain another workspace, the editions/resolvers differ, and
+# that tree is intentionally an isolated, separately-publishable library
+# workspace. It keeps its own Cargo.toml / Cargo.lock and is built separately.
+# See docs/11-Platform/Rust-Workspace-Consolidation.md for the full rationale.
+#
+# `kvcache` (here, under storage/) and `sophia-kvcache` (under sophia-storage/)
+# share a name fragment but are DISTINCT crates — a sharded async network KV
+# cache vs. a paged, prefix-sharing, tiered (HBM/DRAM/NVMe) inference KV-cache.
+# They are not duplicates; both are kept. See the doc above for the evidence.
+
+[workspace]
+resolver = "2"
+members = [
+    "storage/kvcache",
+    "storage/diskstore",
+    "storage/miniraft",
+    "storage/infcache",
+    "storage/raftkv",
+    "services/ann_serving",
+]
+# sophia-storage/ is excluded explicitly: it is a separate workspace and must not
+# be pulled in by member globbing if any is added later.
+exclude = ["sophia-storage"]
+
+# Release profile for the whole virtual workspace. This is the storage
+# workspace's former profile (opt-level 3 + thin LTO + 1 codegen-unit). Profiles
+# can only live at the workspace root, so the `services/ann_serving` package's
+# former package-level `[profile.release]` (which used `lto = true` / fat LTO)
+# is now governed here as well; thin LTO is the workspace-wide choice (faster
+# builds, nearly all of the inlining win). A consumer wanting fat LTO for the
+# ann binaries can still set it in a dedicated profile.
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1

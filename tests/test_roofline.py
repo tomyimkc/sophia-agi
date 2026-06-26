@@ -89,6 +89,31 @@ def test_resolve_device_fuzzy_and_unknown():
         resolve_device("Some Made Up GPU")
 
 
+def test_fp4_peak_supported_only_on_blackwell():
+    spark = resolve_device("DGX Spark GB10")
+    # Spark has an FP4 tensor peak; it must exceed its BF16 peak (FP4 is the fast tier).
+    assert spark.peak_flops("fp4") > spark.peak_flops("bf16")
+    assert spark.peak_flops("nvfp4") == spark.peak_flops("fp4")
+    # A pre-Blackwell card has no FP4 peak — requesting it raises, never guesses.
+    with pytest.raises(ValueError):
+        _a100().peak_flops("fp4")
+
+
+def test_spark_decode_is_memory_bound_on_unified_lpddr():
+    # Weight-streaming decode on the Spark: load a big FP4 weight (0.5 B/elem) for a
+    # thin GEMM. The 273 GB/s unified wall dominates, so the regime must be memory-bound
+    # and the headline % is bandwidth utilisation, not compute.
+    spark = resolve_device("DGX Spark GB10")
+    m, n, k = 1, 8192, 8192            # batch-1 token decode against an 8k x 8k weight
+    f = gemm_flops(m, n, k)
+    b = int(0.5 * n * k)               # 4-bit weights, the bytes that actually move
+    t = b / (spark.peak_bw() * 0.7)    # hit 70% of the 273 GB/s wall
+    r = analyze(flops=f, bytes_moved=b, times_s=[t, t, t], device=spark, dtype="fp4")
+    assert r.regime == "memory-bound"
+    assert r.pct_of_bandwidth_peak == pytest.approx(0.7, abs=1e-2)
+    assert r.pct_of_roofline <= 1.0 + 1e-6
+
+
 def test_invalid_inputs_rejected():
     dev = _a100()
     with pytest.raises(ValueError):

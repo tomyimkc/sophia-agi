@@ -26,6 +26,9 @@ def _ci(xs: list[float], alpha: float = 0.05) -> list[float]:
 KAPPA_FLOOR = 0.40   # "moderate" agreement, the minimum for a validated headline
 
 
+_AGGREGATOR_PROVIDERS = ("openrouter", "openai", "vllm", "sglang", "llamacpp")
+
+
 def _distinct_families(judges: "list[str] | None") -> int:
     """Count distinct provider families among judge specs ('anthropic:..' -> 'anthropic').
 
@@ -35,6 +38,13 @@ def _distinct_families(judges: "list[str] | None") -> int:
     OpenRouter key are two independent families — while two models from the SAME
     vendor (e.g. 'openrouter:anthropic/a' and 'openrouter:anthropic/b') collapse to
     one. The independence the gate cares about is the vendor family, not the gateway.
+
+    A self-hosted local server (vllm/sglang/llamacpp) is treated the SAME way: it is an
+    aggregator, and the independence the gate cares about is the MODEL vendor, not the
+    server. So a local "judge farm" of Qwen + Llama served on two vLLM ports counts as
+    TWO distinct families (qwen vs meta-llama) — letting a DGX Spark satisfy the >=2-family
+    no-overclaim gate without metered cloud. The per-server base_url is set via the
+    'provider:model@http://host/v1' spec suffix (see agent.model.resolve_config).
     """
     if not judges:
         return 0
@@ -44,7 +54,7 @@ def _distinct_families(judges: "list[str] | None") -> int:
             continue
         prov, _, model = j.partition(":")
         prov = prov.strip().lower()
-        if prov in ("openrouter", "openai") and "/" in model:
+        if prov in _AGGREGATOR_PROVIDERS and "/" in model:
             fams.add(model.strip().split("/", 1)[0].lower())
         else:
             fams.add(prov)

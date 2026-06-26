@@ -132,6 +132,15 @@ def build_manifest(*, generated: str | None = None) -> dict[str, Any]:
     benchmark_total = sum(item["cases"] for item in leaderboards.values())
     hidden_report = latest_hidden_report()
     commitments = hidden_commitments()
+    # Failure-ledger OPEN/CLOSED summary (the most honest artifact — surfaces what still
+    # blocks the AGI claim). tools.validate_failure_ledger is dependency-free stdlib.
+    try:
+        if str(ROOT) not in sys.path:
+            sys.path.insert(0, str(ROOT))
+        from tools.validate_failure_ledger import validate as _validate_ledger
+        ledger_summary = _validate_ledger()
+    except Exception as exc:  # pragma: no cover - never let the ledger break the package build
+        ledger_summary = {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
 
     return {
         "version": version,
@@ -140,6 +149,12 @@ def build_manifest(*, generated: str | None = None) -> dict[str, Any]:
             "Sophia is an AGI-candidate proof package and provenance-aware "
             "reasoning system. This repository does not prove true AGI."
         ),
+        "failureLedgerSummary": {
+            "openCount": ledger_summary.get("openCount"),
+            "byStatus": ledger_summary.get("byStatus"),
+            "structurallyValid": ledger_summary.get("ok"),
+            "openItems": ledger_summary.get("openItems", []),
+        },
         "operationalDefinition": {
             "summary": (
                 "For this repo, AGI evidence means broad task competence, transfer, "

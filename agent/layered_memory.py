@@ -10,6 +10,11 @@ Memory is split by function and trust level:
 
 Writes to semantic/procedural memory require ``verdict='accepted'`` and evidence,
 so memory growth cannot silently bypass source discipline.
+
+Honest scope (name vs substance): this is a permission-gated, append-only store with
+token-overlap retrieval — NOT learned/associative memory, embeddings, or consolidation.
+It is a small, auditable trust-gated dict behind the AGI-pillar interface; it does not
+learn to retrieve or compress.
 """
 
 from __future__ import annotations
