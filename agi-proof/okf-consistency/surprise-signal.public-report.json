@@ -1,0 +1,105 @@
+{
+  "schema": "sophia.okf_surprise_signal_report.v1",
+  "candidateOnly": true,
+  "liveWired": false,
+  "level3Evidence": true,
+  "level3Scope": "Scoped to the SURPRISE signal only: it is now a real, measured, falsifiably-validated leave-one-out retrieval-likelihood over the OKF graph that never bypasses the anti-forgetting gate. This does NOT make the whole forgetting layer level3: written_at and reinforcement_count are still unrecorded, so time-decay and usage-reinforcement remain no-ops; and it is not yet projected by the live consolidation run (candidateOnly/liveWired above).",
+  "canClaimAGI": false,
+  "generatedAt": "2026-06-26T23:01:16.570993+00:00",
+  "signalDefinition": "surprise(b) = per-token cross-entropy (NLL, nats) of belief b's content under a smoothed interpolated unigram model built from the REST of the corpus (leave-one-out), focused on b's provenance neighbourhood with a global backoff. Normalised via z-score->logistic, RELATIVE to the corpus (0.5 == average predictability). See okf/surprise_signal.py.",
+  "honestyCaveats": [
+    "LEAVE-ONE-OUT, not first-observation: true 'surprise at first observation' needs an arrival-time ordering (written_at), which the frontmatter does not record. This measures P(belief | the rest of memory) instead — a weaker but genuinely measured substitute.",
+    "Retrieval-likelihood, NOT a neural model: a smoothed unigram / count-based estimator (the path RESEARCH_FOLLOWUP scopes). Named for what it is.",
+    "Normalised surprise is RELATIVE to this corpus, not an absolute probability.",
+    "Tokeniser models ASCII word runs only; CJK (mostly titles) is not modelled."
+  ],
+  "pass": true,
+  "panels": [
+    {
+      "panel": "separation",
+      "claim": "near-duplicate scores LOWER surprise than out-of-corpus novelty",
+      "duplicate": {
+        "nodeId": "stoic_virtue_dup",
+        "rawNll": 3.677903,
+        "surprise": 0.307696,
+        "tokenCount": 26,
+        "neighborhoodSize": 5
+      },
+      "novel": {
+        "nodeId": "quantum_chromodynamics",
+        "rawNll": 4.877036,
+        "surprise": 0.892336,
+        "tokenCount": 23,
+        "neighborhoodSize": 5
+      },
+      "rawNllSeparated": true,
+      "normalizedSeparated": true,
+      "midpointSplit": true,
+      "pass": true
+    },
+    {
+      "panel": "corpus-run",
+      "pages": 96,
+      "gateCleared": 88,
+      "surpriseDistribution": {
+        "min": 0.134824,
+        "median": 0.544085,
+        "max": 0.855857,
+        "mean": 0.503238
+      },
+      "rawNllDistribution": {
+        "min": 4.458757,
+        "median": 5.538024,
+        "max": 6.388642,
+        "mean": 5.444286
+      },
+      "leastSurprising": [
+        {
+          "nodeId": "crito",
+          "rawNll": 4.4588
+        },
+        {
+          "nodeId": "timaeus",
+          "rawNll": 4.4862
+        },
+        {
+          "nodeId": "phaedo",
+          "rawNll": 4.5319
+        }
+      ],
+      "mostSurprising": [
+        {
+          "nodeId": "hwang_stem_cell_fraud",
+          "rawNll": 6.345
+        },
+        {
+          "nodeId": "first_powered_flight_1903",
+          "rawNll": 6.374
+        },
+        {
+          "nodeId": "boston_tea_party_1773",
+          "rawNll": 6.3886
+        }
+      ],
+      "measuredNovelCount": 55,
+      "placeholderNovelCount": 0,
+      "auditChainValid": true,
+      "auditRecordCount": 55,
+      "placeholderWasNoOp": true,
+      "measuredIsNonTrivial": true,
+      "pass": true
+    },
+    {
+      "panel": "gate-is-the-floor",
+      "claim": "surprise PROPOSES; the anti-forgetting gate DISPOSES — no verified eval, no promotion",
+      "selectedForConsolidation": 55,
+      "verdict": "quarantine",
+      "reasons": [
+        "insufficient verifier artifacts: 0/2",
+        "missing target suite: okf_consolidation"
+      ],
+      "promoted": false,
+      "pass": true
+    }
+  ]
+}

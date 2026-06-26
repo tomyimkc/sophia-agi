@@ -10,20 +10,27 @@ piece that was missing while the dynamics layer was candidate-only.
 HONESTY CONTRACT — read before trusting any output of this projection.
 ==============================================================================
 The OKF frontmatter today records ONLY provenance (authorConfidence, attributedAuthor,
-tradition, sources, …). It records NO temporal signal and NO epistemic-dynamics signal.
-Concretely, across all wiki pages:
+tradition, sources, …). It records NO temporal signal and (in the frontmatter) NO
+epistemic-dynamics signal. Concretely, across all wiki pages:
 
     written_at            — NOT RECORDED  -> defaulted (see GENESIS_EPOCH)
     last_reinforced_at    — NOT RECORDED  -> defaulted (== GENESIS_EPOCH)
-    surprise              — NOT RECORDED  -> defaulted to 0.0
+    surprise              — NOT in frontmatter; now MEASURABLE (see below)
     reinforcement_count   — NOT RECORDED  -> defaulted to 0
 
-These are UNRECORDED PLACEHOLDERS, NOT MEASURED SIGNALS. A default-0 ``surprise`` does
-not mean "this belief was unsurprising"; it means "we never measured it." A future reader
-(human or agent) MUST NOT read any of these as evidence. Until the real signals are
-captured (see RESEARCH_FOLLOWUP), any decay/quarantine output is driven by
-``author_confidence`` (the one honest field) plus defaults that, by construction, cannot
-themselves move a belief toward suppression — they can only leave it as-is.
+The default values are UNRECORDED PLACEHOLDERS, NOT MEASURED SIGNALS. A default-0
+``surprise`` does not mean "this belief was unsurprising"; it means "we never measured
+it." A future reader (human or agent) MUST NOT read any of these placeholders as evidence.
+
+UPDATE — surprise is now a REAL, MEASURED signal. ``okf.surprise_signal`` computes
+leave-one-out predictive surprise (``P(belief | the rest of memory)``) over the corpus —
+the "retrieval/likelihood over the existing graph" RESEARCH_FOLLOWUP scoped. The MEASURED
+path of this projection (``project_corpus_measured`` / passing ``surprise=`` to
+``project_belief_state``) injects that real value, so ``surprise`` is no longer a
+placeholder when measured. ``written_at``/``last_reinforced_at``/``reinforcement_count``
+remain unrecorded — so time-decay and usage-reinforcement are still no-ops until signals
+#1 and #2 land. The DEFAULT placeholder path (``project_corpus`` with no surprise) is kept
+unchanged for callers that have not adopted measurement yet, and is still loudly honest.
 
 What this projection therefore CANNOT do, honestly: produce a meaningful *time-decay*
 (the timestamps are all equal, so ``age_days`` is always 0 and nothing decays for
@@ -56,11 +63,15 @@ UNRECORDED_SURPRISE: float = 0.0
 UNRECORDED_REINFORCEMENT: int = 0
 
 
-def project_belief_state(node_id: str, author_confidence: str) -> BeliefState:
+def project_belief_state(
+    node_id: str, author_confidence: str, *, surprise: float | None = None,
+) -> BeliefState:
     """Project ONE OKF page to its dynamic ``BeliefState`` view, honestly.
 
-    Only ``node_id`` and ``author_confidence`` come from the corpus; the dynamics fields
-    (timestamps, surprise, reinforcement) are the documented unrecorded placeholders.
+    ``node_id`` and ``author_confidence`` come from the corpus. ``surprise`` is the
+    MEASURED leave-one-out surprise (``okf.surprise_signal``) when supplied; when ``None``
+    it falls back to the documented ``UNRECORDED_SURPRISE`` placeholder. The remaining
+    dynamics fields (timestamps, reinforcement) are still unrecorded placeholders.
     See module docstring's HONESTY CONTRACT.
     """
     return BeliefState(
@@ -70,26 +81,45 @@ def project_belief_state(node_id: str, author_confidence: str) -> BeliefState:
         # belief is ever treated as older than another (we have no arrival-time data).
         written_at=GENESIS_EPOCH,
         last_reinforced_at=GENESIS_EPOCH,
-        # NOT RECORDED — unrecorded placeholders, NOT "zero surprise / never used".
-        surprise=UNRECORDED_SURPRISE,            # 0.0 == unmeasured, not "unsurprising"
-        reinforcement_count=UNRECORDED_REINFORCEMENT,  # 0 == unmeasured, not "never used"
+        # MEASURED when provided (okf.surprise_signal); else the unrecorded placeholder
+        # (0.0 == unmeasured, NOT "unsurprising").
+        surprise=UNRECORDED_SURPRISE if surprise is None else float(surprise),
+        # NOT RECORDED — unrecorded placeholder, NOT "never used".
+        reinforcement_count=UNRECORDED_REINFORCEMENT,
     )
 
 
-def project_corpus(pages) -> "list[BeliefState]":
+def project_corpus(pages, *, surprise_by_id: "dict[str, float] | None" = None) -> "list[BeliefState]":
     """Project all pages to belief states. ``pages`` is an iterable of OKF pages; the
-    page's ``id`` and ``meta["authorConfidence"]`` are the only fields read.
+    page's ``id`` and ``meta["authorConfidence"]`` are read.
+
+    ``surprise_by_id`` (optional) maps node id -> MEASURED surprise. When omitted, the
+    surprise field stays the documented unrecorded placeholder (backward-compatible).
     """
+    sbi = surprise_by_id or {}
     out: list[BeliefState] = []
     for p in pages:
         conf = (p.meta or {}).get("authorConfidence") or "none_extant"
-        out.append(project_belief_state(p.id, conf))
+        out.append(project_belief_state(p.id, conf, surprise=sbi.get(p.id)))
     return out
+
+
+def project_corpus_measured(pages, *, graph=None) -> "list[BeliefState]":
+    """Project all pages with MEASURED surprise from ``okf.surprise_signal``.
+
+    This is the honest, evidence-grade projection: ``surprise`` is the real leave-one-out
+    predictive signal, not a placeholder. Timestamps and reinforcement_count remain
+    unrecorded (signals #1/#2 in RESEARCH_FOLLOWUP), so time-decay and usage-driven
+    reinforcement are still no-ops — only the surprise channel is live.
+    """
+    from okf.surprise_signal import surprise_by_id as _measure
+    return project_corpus(pages, surprise_by_id=_measure(pages, graph=graph))
 
 
 __all__ = [
     "project_belief_state",
     "project_corpus",
+    "project_corpus_measured",
     "GENESIS_EPOCH",
     "UNRECORDED_SURPRISE",
     "UNRECORDED_REINFORCEMENT",
