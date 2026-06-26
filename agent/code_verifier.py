@@ -29,7 +29,15 @@ def _exec_enabled() -> bool:
 
 
 def _child_limits(cpu_sec: int, mem_mb: int) -> None:
-    """Apply rlimits in the child before exec (best-effort; platform-dependent)."""
+    """Apply rlimits in the child before exec (best-effort; platform-dependent).
+
+    ``RLIMIT_AS`` caps the *virtual* address space, not RSS — so on Linux/glibc the cap
+    must be generous enough to absorb Python interpreter startup + glibc's mmap-based
+    malloc arenas (which reserve far more virtual space than the ~15 MB RSS a trivial
+    program uses). 256 MB was tight enough that ``python -I`` children sporadically hit
+    ``MemoryError`` under CI load and silently rejected every verified-code row; 512 MB
+    still caps runaway allocation while reliably allowing a child interpreter to boot.
+    """
     try:
         resource.setrlimit(resource.RLIMIT_CPU, (cpu_sec, cpu_sec + 1))
     except (ValueError, OSError):
@@ -54,7 +62,7 @@ def run_program(
     *,
     timeout_sec: int = 15,
     cpu_sec: int = 10,
-    mem_mb: int = 256,
+    mem_mb: int = 512,
 ) -> dict[str, Any]:
     """Execute ``solution_code`` + hidden ``test_code``; return pass metadata."""
     if not solution_code.strip():
@@ -109,7 +117,7 @@ def verify(
     *,
     timeout_sec: int = 15,
     cpu_sec: int = 10,
-    mem_mb: int = 256,
+    mem_mb: int = 512,
 ) -> dict[str, Any]:
     """Verify ``answer`` code against hidden ``test_code``.
 
