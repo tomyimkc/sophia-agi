@@ -357,8 +357,20 @@ def _execute_step(
             if allowed_requests:
                 tool_results.extend(run_tools(allowed_requests, approved=approve_tools))
             if tool_results:
+                # ArkDistill: compact noisy tool output for the trace/log path only.
+                # The ORIGINAL tool_results (with verbatim `ok`) drive the pass/fail
+                # check below — distillation never touches them, so the gate path is
+                # byte-identical. The distilled view shrinks the SFT/DPO trace logs
+                # and feeds a saved-token accounting (Sentinel savings ledger).
+                from agent.arkdistill import distill_tool_result
+
+                logged = [distill_tool_result(t) for t in tool_results]
+                saved = sum(t.get("arkdistill", {}).get("saved_tokens", 0) for t in logged)
                 # log the ORIGINAL requested list so blocked tools are visible alongside their results
-                store.log("tool_call", step=step["id"], requested=requested, results=tool_results)
+                store.log("tool_call", step=step["id"], requested=requested, results=logged)
+                if saved > 0:
+                    store.log("arkdistill", step=step["id"], savedTokens=saved,
+                              profiles=[t.get("arkdistill", {}).get("profile") for t in logged if t.get("arkdistill")])
         result.tool_results = tool_results
 
         gate_check = gate_verifier(text, task, step)

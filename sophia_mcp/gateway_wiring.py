@@ -228,6 +228,13 @@ def governed(tool_id: str, args: dict) -> dict:
         return _held("blp_violation", reasons=[read_up],
                      suggested_fix="request access at the tool's clearance level")
 
+    # 5b) Approval gate (opt-in via SOPHIA_MCP_APPROVAL=1, default off): a high-risk
+    #     tool is enqueued for human review and HELD before dispatch — no side effect.
+    from sophia_mcp import approval
+
+    if approval.requires_approval(tool_id):
+        return approval.enqueue(tool_id, args, role=role)
+
     # 6) Dispatch — the tool's own internal gate decides its result.
     try:
         result = entry.handler(args)
