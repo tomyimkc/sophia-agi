@@ -82,59 +82,67 @@ def verify_proof(
     proof: str,
     repo_url: str = "https://github.com/leanprover-community/mathlib4",
     timeout_s: int = 120,
+    theorem_name: "str | None" = None,
+    file_path: "str | None" = None,
 ) -> LeanCheck:
     """Verify a Lean 4 ``proof`` of ``theorem``.
 
-    ``theorem`` is a header ending in ``:= by`` (e.g. ``"theorem t : True := by"``) and
-    ``proof`` is the tactic body that follows (one tactic per line). The two are
-    assembled into a SINGLE ``theorem ... := by <tactics>`` source — never concatenated
-    with a separator or a second theorem header, which would produce invalid Lean and
-    cause systematic rejection/abstention even when Lean is available. If ``proof``
-    already contains ``:= by`` (a caller passed a full block), it is used verbatim.
+    Two regimes, both fail-closed:
 
-    Fail-closed at every step: no lean-dojo → abstain(``lean_unavailable``); a Lean
-    error → rejected with the error tail; a closed goal → accepted. We never interpret a
-    partial/errored state as anything but not-yet-proven.
+    * **Repo-keyed (lean-dojo 4.x real path).** When ``theorem_name`` and ``file_path``
+      are supplied, the proof is verified via ``lean_dojo.check_proof(Theorem(repo,
+      file_path, name), proof)``. This is the ONLY stateless verification lean-dojo 4.x
+      exposes — it verifies a proof of a NAMED theorem inside a TRACED Lean repo, not a
+      free-form source string. (The miniF2F eval uses this: miniF2F is distributed as a
+      Lean project whose theorems are name+file keyed.)
+
+    * **Free-form (abstains).** When ``theorem_name``/``file_path`` are NOT supplied,
+      the call abstains with a clear reason: lean-dojo 4.x has no stateless
+      "elaborate this string" API. A previous revision of this function called a
+      ``LeanDojo(repo=...).run_code(...)`` API that does NOT exist in lean-dojo 4.x
+      (the class is ``Dojo``, and verification is repo-keyed via ``check_proof``); that
+      path always returned ``abstain``/``lean-dojo import failed`` and never actually
+      verified anything. This regime makes the limitation explicit instead of silently
+      failing.
+
+    Fail-closed at every step: no lean-dojo → ``abstain``/``lean_unavailable``; a Lean
+    error → ``rejected`` with the error tail; a closed goal → ``accepted``. We never
+    interpret a partial/errored state as anything but not-yet-proven.
     """
     if not lean_available():
         return LeanCheck(verdict="abstain", reason="lean_unavailable: lean-dojo not installed",
                          lean_available=False)
+
+    # Repo-keyed real path requires BOTH a theorem name and its source file — lean-dojo
+    # 4.x's check_proof keys on Theorem(repo, file_path, full_name), never a free string.
+    if theorem_name is None or file_path is None:
+        return LeanCheck(
+            verdict="abstain",
+            reason=("lean_unavailable: lean-dojo 4.x verifies proofs of NAMED theorems in "
+                    f"a TRACED repo via check_proof(Theorem(repo, file_path, name), proof); "
+                    f"supply theorem_name + file_path (got name={theorem_name!r}, "
+                    f"file={file_path!r}). Free-form source verification is not in the API."),
+            lean_available=True,
+            detail={"needs": ["theorem_name", "file_path"]},
+        )
+
     try:
-        from lean_dojo import LeanDojo  # type: ignore
+        from lean_dojo import LeanGitRepo, Theorem, check_proof  # type: ignore
+        import pathlib
     except ImportError:
         return LeanCheck(verdict="abstain", reason="lean_unavailable: lean-dojo import failed",
                          lean_available=False)
 
-    # Assemble ONE Lean 4 source. Accept either a tactic body (the normal call shape)
-    # or a caller's pre-assembled full block, but never emit a duplicate theorem header
-    # or a stray separator — both would make Lean reject an otherwise-correct proof.
-    # Detect a full block ONLY by its leading declaration keyword (not by a `:= by`
-    # substring): a tactic body legitimately contains `have h : P := by ...`, which would
-    # falsely match the substring test and drop the theorem header.
-    _proof_head = proof.lstrip()[:16].lower()
-    _is_full_block = _proof_head.startswith(("theorem ", "lemma ", "def ", "example", "axiom "))
-    if _is_full_block:
-        source = proof  # caller passed a full theorem block; use it verbatim
-    elif ":= by" in theorem:
-        source = f"{theorem}\n{proof}"
-    else:
-        source = f"{theorem} := by\n{proof}"
     try:
-        # LeanDojo's exact API varies by version; the load-bearing call is "does
-        # this source elaborate with no remaining goals / errors". We wrap it so a
-        # version mismatch abstains rather than crashes (fail-closed).
-        dojo = LeanDojo(repo=repo_url, timeout=timeout_s)  # type: ignore[call-arg]
-        result = dojo.run_code(source)  # type: ignore[attr-defined]
-        # Convention: a clean proof closes all goals; an error surfaces a message.
-        errored = bool(getattr(result, "has_errors", False) or getattr(result, "error", None))
-        if errored:
-            msg = str(getattr(result, "error", "") or getattr(result, "trace", ""))[-300:]
-            return LeanCheck(verdict="rejected", reason=f"lean_rejected: {msg}",
-                             lean_available=True, goal_closed=False,
-                             detail={"error_tail": msg})
-        return LeanCheck(verdict="accepted", reason="lean_accepted: goal closed",
-                         lean_available=True, goal_closed=True)
-    except Exception as exc:  # fail-closed: any LeanDojo failure abstains, never lies
+        repo = LeanGitRepo(repo_url, "master")
+        thm = Theorem(repo, pathlib.Path(file_path), theorem_name)
+        ok = bool(check_proof(thm, proof))
+        if ok:
+            return LeanCheck(verdict="accepted", reason="lean_accepted: goal closed",
+                             lean_available=True, goal_closed=True)
+        return LeanCheck(verdict="rejected", reason="lean_rejected: proof did not close the goal",
+                         lean_available=True, goal_closed=False)
+    except Exception as exc:  # fail-closed: any lean-dojo failure abstains, never lies
         return LeanCheck(verdict="abstain",
                          reason=f"lean_error: {type(exc).__name__}: {str(exc)[:200]}",
                          lean_available=True, goal_closed=False,
