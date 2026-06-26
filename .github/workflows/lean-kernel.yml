@@ -7,6 +7,12 @@ name: lean-kernel
 # the two real-kernel test cases that are otherwise SKIPPED, plus the eval
 # harness, so the kernel code path is exercised in CI rather than dead.
 #
+# The lean-dojo-search job additionally installs the lean-dojo extra
+# (requirements-theorem.txt) so the real-lean-dojo paths in test_proof_search.py
+# — which currently early-return when lean-dojo is absent — actually execute. This
+# de-rots agent/proof_search.py + LeanProofSession the same way the one-shot lane
+# de-rots agent/lean_verifier.py.
+#
 # This is NOT a required check (main-protection requires only fast + ci-complete).
 # It is informational: green = the kernel path works; red = the kernel path broke
 # or Lean install failed — neither should block a docs/Python-only PR.
@@ -14,17 +20,24 @@ on:
   pull_request:
     paths:
       - 'agent/lean_verifier.py'
+      - 'agent/proof_search.py'
+      - 'agent/tactic_proposer.py'
+      - 'agent/lean_backend.py'
       - 'selfextend/proof_verifier.py'
       - 'formal_proofs/**'
       - 'tools/run_formal_proofs_eval.py'
       - 'tests/test_lean_verifier.py'
       - 'tests/test_selfextend_proof_verifier.py'
+      - 'tests/test_proof_search.py'
+      - 'tests/test_novelty_dag.py'
       - 'scripts/install_lean.sh'
+      - 'requirements-theorem.txt'
       - '.github/workflows/lean-kernel.yml'
   push:
     branches: [main]
     paths:
       - 'agent/lean_verifier.py'
+      - 'agent/proof_search.py'
       - 'selfextend/proof_verifier.py'
       - 'formal_proofs/**'
 
@@ -83,3 +96,35 @@ jobs:
           assert r["openAbstention"]["allAbstained"] is True, "an open problem earned reward > 0 — review required"
           print(f"OK: smoke loop closed (heldoutReward={cl['heldoutReward']}); all {r['openSplit']['n']} open problems abstained.")
           PY
+
+  lean-dojo-search:
+    # De-rot lane for the STATEFUL tactic-search path (agent/proof_search.py +
+    # LeanProofSession). test_proof_search.py already runs in fast-ci, but its
+    # real-lean-dojo paths early-return when lean-dojo is absent. This job installs
+    # the lean-dojo extra so those paths execute, catching drift in
+    # LeanProofSession / verify_proof / the math_verifier lean delegation BEFORE a
+    # real eval relies on them. Informational; not required.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install pytest + the lean-dojo extra (requirements-theorem.txt)
+        run: |
+          pip install --quiet pytest
+          pip install --quiet -r requirements-theorem.txt
+
+      - name: Verify lean-dojo imports
+        run: |
+          python -c "import lean_dojo; print('lean_dojo OK')"
+          python -c "from agent import lean_backend; print('lean_available:', lean_backend.lean_available())"
+
+      - name: Proof-search + novelty-DAG tests (real-lean-dojo paths now execute)
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          python -m pytest tests/test_proof_search.py tests/test_novelty_dag.py -v
+
