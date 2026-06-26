@@ -72,7 +72,8 @@ Sophia's charter exists to build, expressed as the organ the DeepSeek charter ca
 | Calibrate + Abstain | search path → provenance confidence → graded answer/hedge/abstain | `agent/grounded_search.py`, `agent/grounded_confidence.py`, `agent/graded_decision.py` | ✅ shipped |
 | Verify | generated answer → citation faithfulness + epistemic gate + source-discipline before serving | `agent/verified_search.py` (`agent/rerank.citation_faithfulness`, `agent/gate.check_response`) | ✅ shipped |
 | Self-correct | gaps → draft stubs → **sourced fill from trusted sources** (allowlist + gate) | `agent/gap_ingest.py` → `agent/source_fill.py` (`agent/wiki_librarian.py`, `agent/source_ranking.py`) | ✅ shipped; ⚠️ canon promotion + LLM extraction stay operator-gated |
-| Perceive widely | learned multilingual/**multimodal** embedder via the registry | `agent/embedding_backends.py` | ⚠️ seam shipped; learned weights pending |
+| Perceive widely | learned **multilingual + multimodal** embedders via the registry | `agent/embedding_st.py` → `agent/embedding_backends.py` | ✅ adapter shipped (opt-in); weights operator-fetched |
+| Promote to canon | reviewed draft → consolidated memory tier on human sign-off (re-gated) | `agent/canon_promote.py`, `tools/review_drafts.py` | ✅ shipped (human-gated by design) |
 | Serve at scale | Rust HNSW dense view via the bridge → sharding/RDMA | `services/ann_serving/`, `agent/ann_client.py` | ⚠️ single-node shipped; sharding/RDMA pending |
 
 ## Shipped foundation (this work)
@@ -108,10 +109,20 @@ Sophia's charter exists to build, expressed as the organ the DeepSeek charter ca
   provenance gate. A filled page is stamped `provenance: librarian_fill` and keeps `needsReview`
   (sourced, but still awaiting human sign-off before canon).
 
-Honest status: all five properties (ground · calibrate/abstain · verify · self-correct ·
-perceive-widely) are wired end-to-end on the live path, and the self-correction loop now runs
-gap → stub → **sourced fill** → review. The two deliberately-bounded steps that remain human are
-(1) **final canon promotion** — a filled `needsReview` draft becomes canonical only on human
-sign-off, and (2) the fill **extraction** is LLM-gated (operator-run with a key); the model can
-never launder itself past the allowlist + provenance gate, but turning prose into a structured
-page is the one step that still needs a model, by design.
+- **Canon promotion.** `agent/canon_promote.py` + `tools/review_drafts.py` surface `needsReview`
+  drafts with their provenance + live gate status, and — on explicit **human sign-off** — elevate
+  an approved draft into the consolidated memory tier (re-gated, fail-closed: a draft tampered
+  after creation is rejected at the boundary). The hand-authored canonical wiki is never touched.
+- **Perceive widely.** `agent/embedding_st.py` registers opt-in **learned** backends —
+  `st-multilingual-v1` (cross-lingual meaning) and `clip-multimodal-v1` (text+image in one space)
+  — through the registry, so retrieval uses them with no path change. Deliberately not the
+  committed default (a learned model needs weights + emits platform-sensitive floats, which would
+  break the airgap + deterministic-CI + reproducible-index guarantees); absent the optional
+  dependency the registry falls back to the committed offline backend.
+
+Honest status: the full loop — ground · calibrate/abstain · verify · self-correct (gap → stub →
+sourced fill → **human-reviewed canon promotion**) · perceive-widely — is wired end-to-end. The
+two steps that remain deliberately human/operator-gated, by charter rather than omission, are
+(1) the **human sign-off** on canon promotion, and (2) the fill **extraction** + learned-model
+**weights**, which need a model the operator supplies; neither can launder past the allowlist +
+provenance gate.

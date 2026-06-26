@@ -68,5 +68,21 @@ def _load_gemini():
 register("local-hash-v1", _load_local_hash)
 register("gemini", _load_gemini)
 
+# Opt-in learned backends (multilingual + multimodal). Lazy: the loader imports
+# sentence-transformers only when a query actually needs the backend, so absence of the optional
+# dependency is graceful (`get()` returns None and retrieval falls back to the committed default).
+for _learned_id in ("st-multilingual-v1", "clip-multimodal-v1"):
+    register(_learned_id, (lambda bid: (lambda: _load_learned(bid)))(_learned_id))
+
+
+def _load_learned(backend_id: str):
+    # Probe the optional dependency at load time so `get()` returns None (not a closure that
+    # later explodes) when sentence-transformers is absent — matching the registry contract.
+    from agent.embedding_st import is_available, make_query_embedder
+
+    if not is_available():
+        raise RuntimeError("sentence-transformers not installed (optional learned backend)")
+    return make_query_embedder(backend_id)
+
 
 __all__ = ["available", "get", "register"]

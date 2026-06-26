@@ -44,7 +44,18 @@ def test_report_is_marked_candidate_not_validated():
 
 def test_keyword_backend_runs_over_same_index():
     # Both backends must score; a zero-probe run would silently pass the delta asserts.
-    k = score_backend("keyword", build_probes(limit=4))
+    # score_backend sets SOPHIA_RAG_BACKEND as a side effect (run() normally restores it);
+    # called directly here, so save/restore to avoid leaking the backend into later tests.
+    import os
+
+    saved = os.environ.get("SOPHIA_RAG_BACKEND")
+    try:
+        k = score_backend("keyword", build_probes(limit=4))
+    finally:
+        if saved is None:
+            os.environ.pop("SOPHIA_RAG_BACKEND", None)
+        else:
+            os.environ["SOPHIA_RAG_BACKEND"] = saved
     assert k["n"] == 4 and "exact" in k and "topical" in k
 
 

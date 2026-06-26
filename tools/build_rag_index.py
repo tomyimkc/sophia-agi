@@ -48,6 +48,16 @@ def _embed(indexed: "list[IndexedChunk]", backend: str) -> str:
     elif backend == "gemini":
         from agent.rag_embed import embed_texts
         backend_id = "gemini"
+    elif backend.startswith(("st-", "clip-")):
+        # Opt-in learned multilingual/multimodal backend (needs sentence-transformers).
+        from agent.embedding_st import MODELS
+        from agent.embedding_st import embed_texts as _st_embed
+        if backend not in MODELS:
+            raise SystemExit(f"unknown learned backend {backend!r} (have: {', '.join(MODELS)})")
+
+        def embed_texts(texts, _b=backend):  # noqa: ANN001
+            return _st_embed(texts, backend_id=_b)
+        backend_id = backend
     else:
         raise SystemExit(f"unknown backend {backend!r}")
     vectors = embed_texts(texts)
@@ -125,6 +135,9 @@ def main() -> int:
     parser.add_argument("--embed", action="store_true", help="Compute Gemini/Vertex embeddings")
     parser.add_argument("--local", action="store_true",
                         help="Compute offline deterministic hashing embeddings (airgap-safe)")
+    parser.add_argument("--st", metavar="BACKEND_ID", default=None,
+                        help="Opt-in learned backend, e.g. st-multilingual-v1 / clip-multimodal-v1 "
+                             "(needs sentence-transformers; not airgap/deterministic)")
     parser.add_argument("--verify", action="store_true",
                         help="Rebuild in-memory and assert the committed manifest hash matches")
     parser.add_argument("--dry-run", action="store_true")
@@ -147,7 +160,7 @@ def main() -> int:
 
     indexed = _to_indexed(raw)
 
-    backend = "gemini" if args.embed else ("local" if args.local else None)
+    backend = args.st or ("gemini" if args.embed else ("local" if args.local else None))
     if backend:
         print(f"Embedding with {backend} backend...")
         backend_id = _embed(indexed, backend)

@@ -1,0 +1,7 @@
+# Optional learned embedders (agent/embedding_st.py) — multilingual + multimodal recall.
+# NOT installed by default: a learned model needs weights (a network fetch) and emits
+# platform-sensitive floats, which break the repo's airgap + deterministic-CI guarantees.
+# Install only when an operator wants higher-quality cross-lingual / cross-modal retrieval,
+# then build a learned index with: python tools/build_rag_index.py --st st-multilingual-v1
+sentence-transformers>=2.2
+Pillow>=9.0        # only needed for the clip-multimodal-v1 image path (embed_image)

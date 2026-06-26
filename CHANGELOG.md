@@ -4,6 +4,29 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — canon promotion (human sign-off) + opt-in learned multilingual/multimodal embedders
+
+- **Canon promotion** (`agent/canon_promote.py`, `tools/review_drafts.py`): the human review step
+  that ends the self-correction loop. `pending_reviews` surfaces `needsReview` drafts with their
+  provenance + **live gate status**; `promote` elevates an approved draft into the consolidated
+  **memory tier** — requiring an explicit `approver` (no auto-canon) and **re-running the
+  provenance gate** so a draft tampered after creation is rejected fail-closed. The hand-authored
+  canonical wiki is never written. Tests: `tests/test_canon_promote.py`.
+- **Learned multilingual + multimodal embedders** (`agent/embedding_st.py`, `requirements-st.txt`):
+  the registry seam realized with real models — `st-multilingual-v1` (cross-lingual meaning) and
+  `clip-multimodal-v1` (text+image in one space) — registered lazily so absence of the optional
+  `sentence-transformers` dependency is graceful (`get()` returns None → retrieval falls back to
+  the committed offline backend). **Opt-in, not the default** (learned weights need a network
+  fetch + emit platform-sensitive floats, which would break the airgap + deterministic-CI +
+  reproducible-index guarantees). Build a learned index with
+  `tools/build_rag_index.py --st st-multilingual-v1`. Tests: `tests/test_embedding_st.py`
+  (absence-path is the CI invariant; a live cross-lingual round-trip runs only when installed).
+- **Test isolation fix**: `tests/test_retrieval_recall.py` no longer leaks `SOPHIA_RAG_BACKEND`
+  into later tests (a pre-existing order-dependence the new grounded-search tests surfaced).
+- **Substrate doc**: canon promotion + perceive-widely marked shipped; the loop is now ground ·
+  calibrate/abstain · verify · self-correct (gap → stub → sourced fill → human-reviewed promotion)
+  · perceive-widely, end-to-end.
+
 ### Added — sourced fill: promote gap stubs into sourced pages from trusted sources only
 
 - **Sourced fill** (`agent/source_fill.py`, `tools/fill_gap_stubs.py`): the last step of the
