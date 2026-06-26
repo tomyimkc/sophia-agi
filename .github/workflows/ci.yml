@@ -488,7 +488,12 @@ jobs:
       needs.changes.outputs.code == 'true' ||
       contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # The full suite (2200+ tests) includes index-building retrieval/search-quality
+    # integration evals that take minutes each; at ~12-18 min it was brushing the old
+    # 20-min ceiling and a slow runner could tip it over. 30 gives honest headroom — the
+    # primary speed fix (dropping a redundant full search-quality eval from the hybrid
+    # do-no-harm test) lives in the tests; this is the belt-and-braces margin.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
