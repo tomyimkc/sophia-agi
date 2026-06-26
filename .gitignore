@@ -99,3 +99,6 @@ training/team_agents/adapter_model/
 # Rust build artifacts (storage/ workspace)
 storage/target/
 **/target/
+# Rust ANN serving build artifacts
+services/ann_serving/target/
+rag/index/vectors.txt
