@@ -160,10 +160,11 @@ def register_holdings(holdings: "dict | None" = None) -> Callable[[str], "str | 
     return _get
 
 
-def medical_citation_exists(*, resolver=None) -> dict:
-    """Deterministic existence verifier closure, in the repo's verifier shape:
-    ``(text, _, _) -> {passed, reasons, detail}``. Fail-closed: any unresolvable
-    citation fails."""
+def medical_citation_exists(*, resolver=None) -> Callable[..., dict]:
+    """Return a deterministic existence-verifier closure in the repo's verifier
+    shape: ``verify(text, _, _) -> {passed, reasons, detail}``. (This factory
+    returns the *callable*, not a verdict; call the returned function on text.)
+    Fail-closed: any unresolvable citation fails."""
     exists = register_citations(resolver)
 
     def verify(text: str, _records=None, _ctx=None) -> dict:

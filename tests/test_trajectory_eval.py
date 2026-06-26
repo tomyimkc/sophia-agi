@@ -110,6 +110,25 @@ def test_evidence_present_but_weak_overlap_abstains_not_condemns() -> None:
     assert res["verdict"] == "abstain"
 
 
+def test_empty_cites_list_stays_strict_not_lenient() -> None:
+    # cites: [] means "explicitly no citations" -> the claim may NOT borrow the prior
+    # observation pool; with no own observation it is ungrounded (key-presence, not
+    # truthiness, selects strict mode).
+    traj = [
+        {"id": "s1", "role": "observation", "observation": "alpha beta gamma delta epsilon"},
+        {"id": "s2", "role": "assertion", "claim": "alpha beta gamma delta epsilon", "cites": []},
+    ]
+    res = evaluate_trajectory(traj)
+    assert res["steps"][1]["verdict"] == UNGROUNDED
+    assert res["verdict"] == "abstain"
+    # ... whereas omitting the key entirely grounds against the prior observation.
+    traj_lenient = [
+        {"id": "s1", "role": "observation", "observation": "alpha beta gamma delta epsilon"},
+        {"id": "s2", "role": "assertion", "claim": "alpha beta gamma delta epsilon"},
+    ]
+    assert evaluate_trajectory(traj_lenient)["steps"][1]["verdict"] == GROUNDED
+
+
 def test_no_claims_abstains_with_nothing_to_certify() -> None:
     traj = [
         {"id": "s1", "role": "tool_call", "tool": "search", "observation": "some text"},

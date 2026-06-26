@@ -255,15 +255,21 @@ def _available_evidence(
 
     Two modes, fail-closed in both:
 
-      * **Explicit ``cites``** — strict and scoped: only this step's own observation
-        plus the observations of the EARLIER steps it names. A forward / self /
-        unknown / observation-less citation is a problem and contributes nothing.
-        Citing precisely is rewarded with a narrow, auditable warrant.
-      * **No ``cites``** — the agent gets credit for everything it had actually
-        observed so far: its own observation plus every prior observation in the
-        run (what was in its context). The claim is ungrounded only if NO
+      * **``cites`` key present** (any list, including ``[]``) — strict and scoped:
+        only this step's own observation plus the observations of the EARLIER steps
+        it names. A forward / self / unknown / observation-less citation is a problem
+        and contributes nothing; an empty list means "explicitly no citations", so
+        the claim may rest only on its own observation. Citing precisely (or
+        explicitly not at all) is an auditable, narrow warrant.
+      * **``cites`` key absent** — the agent gets credit for everything it had
+        actually observed so far: its own observation plus every prior observation
+        in the run (what was in its context). The claim is ungrounded only if NO
         observation up to this point supports it — the true mid-plan-fabrication
         test, not a citation-hygiene penalty.
+
+    The distinction is by KEY PRESENCE, not truthiness: a caller that always emits
+    ``"cites": []`` stays in strict mode rather than silently falling back to the
+    lenient all-prior-observations pool.
     """
     chunks: list[str] = []
     problems: list[str] = []
@@ -273,7 +279,7 @@ def _available_evidence(
         chunks.append(own.strip())
 
     cites = step.get("cites")
-    if cites:
+    if cites is not None:  # key present (even if []) -> strict, scoped to named cites
         for ref in cites:
             if ref not in verified_prior_ids:
                 problems.append(f"citation {ref!r} is not an earlier step")
@@ -284,7 +290,7 @@ def _available_evidence(
                 continue
             chunks.append(obs.strip())
     else:
-        # No explicit citation: ground against every prior observation in context.
+        # No cites key: ground against every prior observation in context.
         chunks.extend(observation_by_id.values())
 
     return "\n".join(chunks), problems

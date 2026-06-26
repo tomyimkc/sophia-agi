@@ -68,6 +68,12 @@ def _check_module(rel: str, do_import: bool) -> dict:
     except py_compile.PyCompileError as e:
         out["error"] = str(e).splitlines()[-1][:200]
         return out
+    except (OSError, ValueError) as e:
+        # A manifest path that is a directory / unreadable / non-source file makes
+        # py_compile raise OSError/ValueError. The verifier is a CI gate, so report
+        # a structured FAIL instead of crashing.
+        out["error"] = f"not a compilable source file: {type(e).__name__}: {e}"[:200]
+        return out
     if do_import and rel.endswith(".py"):
         imported, err = _try_import(rel, path)
         out["imported"] = imported
