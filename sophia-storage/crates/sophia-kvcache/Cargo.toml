@@ -5,9 +5,13 @@ name = "sophia-kvcache"
 description = "Disaggregated, prefix-sharing KV-cache for LLM inference — paged blocks tiered across HBM/DRAM/NVMe with reference-counted prefix reuse."
 version.workspace = true
 edition.workspace = true
+rust-version.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
+categories.workspace = true
+keywords.workspace = true
+readme = "README.md"
 
 [lib]
 name = "sophia_kvcache"

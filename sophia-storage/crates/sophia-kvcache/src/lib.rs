@@ -1,5 +1,15 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2026 tomyimkc
+//
+// Lint policy: this crate contains ZERO unsafe in any build (no FFI, no raw
+// pointers), so forbid it unconditionally. A consumer can confirm "this crate
+// contains no unsafe" by inspecting for `#![forbid(unsafe_code)]` here.
+#![forbid(unsafe_code)]
+#![warn(rust_2018_idioms)]
+// NOTE: #![warn(missing_docs)] and #![warn(missing_debug_implementations)] are
+// intentionally NOT enabled yet — ~15 pub items lack /// docs and ~4 pub types
+// (KvCache, FileStore, Arena, TierStack) lack #[derive(Debug)]. Closing both is
+// a tracked follow-up; the load-bearing lint here is forbid(unsafe_code).
 //! # sophia-kvcache
 //!
 //! A disaggregated, prefix-sharing KV-cache for LLM inference — the storage
@@ -65,7 +75,13 @@ pub struct Config {
 }
 
 impl Config {
+    /// Build a cache config. `block_len` is the fixed number of tokens per paged
+    /// block (see `block.rs`) and MUST be >= 1; a zero value is a programmer
+    /// error and panics here at construction time (fail-fast) rather than later
+    /// inside `prefix::block_chain`. The public `block_chain` still returns a
+    /// `Result` for callers that build their own config out-of-band.
     pub fn new(block_len: usize, hbm: usize, dram: usize, nvme: usize) -> Self {
+        assert!(block_len >= 1, "Config::new: block_len must be >= 1, got {block_len}");
         Config { block_len, hbm_blocks: hbm, dram_blocks: dram, nvme_blocks: nvme, nvme_dir: None }
     }
 
@@ -148,7 +164,8 @@ impl KvCache {
         mut compute: F,
     ) -> io::Result<AdmitResult> {
         self.stats.admissions += 1;
-        let chain = prefix::block_chain(tokens, self.cfg.block_len);
+        let chain = prefix::block_chain(tokens, self.cfg.block_len)
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, e))?;
         let resident = self.resident_set();
         let hits = prefix::shared_prefix_len(&chain, &resident);
 
@@ -179,7 +196,11 @@ impl KvCache {
     /// Pin every block in a request's prefix for the duration of its decode, so
     /// concurrent requests cannot evict the shared context. Returns the chain.
     pub fn pin_prefix(&mut self, tokens: &[u32]) -> Vec<BlockId> {
-        let chain = prefix::block_chain(tokens, self.cfg.block_len);
+        // block_len >= 1 is guaranteed by Config::new (fail-fast at construction),
+        // so block_chain cannot return ZeroBlockLen here. Returning Vec (not Result)
+        // preserves this method's signature for callers that pin during decode.
+        let chain = prefix::block_chain(tokens, self.cfg.block_len)
+            .expect("Config::new guarantees block_len >= 1");
         for &id in &chain {
             self.lru.pin(id);
         }

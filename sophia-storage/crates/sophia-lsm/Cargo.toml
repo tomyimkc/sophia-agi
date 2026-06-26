@@ -5,9 +5,13 @@ name = "sophia-lsm"
 description = "Log-structured local storage engine (WAL + memtable + SSTable + compaction) — the durable engine that replaces Sophia's JSONL stores."
 version.workspace = true
 edition.workspace = true
+rust-version.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
+categories.workspace = true
+keywords.workspace = true
+readme = "README.md"
 
 [lib]
 name = "sophia_lsm"

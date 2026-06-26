@@ -31,11 +31,15 @@ features. See [`docs/DESIGN.md`](docs/DESIGN.md) and the roadmap below.
 
 ```bash
 cd sophia-storage
-cargo test --workspace                      # 27 tests (std backend; incl. real-disk NVMe tier)
+cargo test --workspace                      # 35 tests (std backend; incl. real-disk NVMe tier)
 cargo test -p sophia-lsm --features io_uring # +1 test through the real ring (Linux 5.1+)
 cargo bench -p sophia-lsm                   # put/get latency + group-commit scaling
 cargo bench -p sophia-kvcache               # prefix hit-ratio + prefill avoided + NVMe bytes
 ```
+
+The default std build is `#![forbid(unsafe_code)]` in both crates — zero unsafe,
+verifiable with `cargo build`. The only `unsafe` lives behind the opt-in
+`io_uring` feature (`sophia-lsm/src/io.rs`), audited and SAFETY-commented.
 
 The **default** build is std-only and offline — it clones and runs anywhere. The
 `io_uring` feature is the one place an external dependency (`io-uring`) and a real

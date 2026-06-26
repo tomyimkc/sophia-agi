@@ -1,5 +1,21 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2026 tomyimkc
+//
+// Lint policy: the DEFAULT std build is #![forbid(unsafe_code)] — zero unsafe,
+// verifiable by `cargo build`. The io_uring feature downgrades that to
+// #![allow(unsafe_code)] because the io-uring FFI legitimately needs it; that
+// path is isolated in src/io.rs behind #[cfg(feature = "io_uring")], audited,
+// and commented (see the SAFETY note on the SQE submission). So a consumer can
+// confirm "this crate contains no unsafe" by building without the feature.
+#![cfg_attr(not(feature = "io_uring"), forbid(unsafe_code))]
+#![warn(rust_2018_idioms)]
+// NOTE: #![warn(missing_docs)] and #![warn(missing_debug_implementations)] are
+// intentionally NOT enabled yet — ~33 pub items lack /// docs and ~9 pub types
+// (Engine, SsTable, Wal, IoUringIo, ...) lack #[derive(Debug)]. Closing both is
+// a tracked follow-up; enabling them now would fail the clippy -D warnings gate
+// in CI. The load-bearing lint here is forbid(unsafe_code).
+#![cfg_attr(docsrs, feature(doc_cfg))]
+
 //! # sophia-lsm
 //!
 //! A small, honest log-structured storage engine: **WAL → memtable → SSTable →
