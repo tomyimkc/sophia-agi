@@ -28,6 +28,10 @@ on:
         description: 'Optional benchmark case cap (blank = full N=354)'
         required: false
         default: ''
+      seed:
+        description: 'Training+eval seed (0 = canonical; 1,2 for stability)'
+        required: false
+        default: '0'
 
 permissions:
   contents: write   # the pod pushes the eval result back with this run's GITHUB_TOKEN
@@ -75,6 +79,7 @@ jobs:
           if [ -n "${{ github.event.inputs.limit }}" ]; then LIMIT="--limit ${{ github.event.inputs.limit }}"; fi
           python tools/runpod_wisdom_pilot_selfreport.py --yes --wait \
             --branch "${{ github.ref_name }}" \
+            --seed "${{ github.event.inputs.seed }}" \
             --runs "${{ github.event.inputs.runs }}" $LIMIT
 
       - name: Surface the pushed eval result (pull what the pod committed)

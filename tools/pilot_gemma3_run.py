@@ -214,15 +214,19 @@ def _batched_generate(model, tok, systems_users, *, max_new=400, batch_size=32, 
     return outs
 
 
-def _run_conditions_for_model(model, tok, cases, runs):
+def _run_conditions_for_model(model, tok, cases, runs, *, capture=None):
     """Return {condition: [per-run metric dicts]} reusing SSMB scoring. Generates ONCE per
-    (raw, advisor) system per run and scores advisor output as both prompt & prompt_gate."""
+    (raw, advisor) system per run and scores advisor output as both prompt & prompt_gate.
+    If ``capture`` is a list, the run-0 ADVISOR (prompt-condition, no-gate) answers are
+    appended to it for later independent LLM-judge scoring (the primary-signal layer)."""
     raw_sys = SSMB.RAW_SYSTEM
     adv_sys = SSMB.system_for("prompt")
     out = {"raw": [], "prompt": [], "prompt_gate": []}
     for r in range(runs):
         raw_ans = _batched_generate(model, tok, [(raw_sys, c["prompt"]) for c in cases])
         adv_ans = _batched_generate(model, tok, [(adv_sys, c["prompt"]) for c in cases])
+        if capture is not None and r == 0:
+            capture.extend(adv_ans)
         out["raw"].append(SSMB.aggregate_metrics(
             [SSMB.score_case(c, a, gated=False) for c, a in zip(cases, raw_ans)]))
         out["prompt"].append(SSMB.aggregate_metrics(
@@ -233,7 +237,8 @@ def _run_conditions_for_model(model, tok, cases, runs):
     return out
 
 
-def evaluate(model_id: str, adapter_dir: Path, *, runs: int, limit, out_path: Path) -> None:
+def evaluate(model_id: str, adapter_dir: Path, *, runs: int, limit, out_path: Path,
+             answers_path: "Path | None" = None) -> None:
     import torch  # noqa: F401
     from peft import PeftModel
     cases = SSMB.load_cases(BENCH, limit)
@@ -241,12 +246,30 @@ def evaluate(model_id: str, adapter_dir: Path, *, runs: int, limit, out_path: Pa
 
     base, tok = load_base(model_id)
     base.eval()
-    base_runs = _run_conditions_for_model(base, tok, cases, runs)
+    base_cap = [] if answers_path else None
+    base_runs = _run_conditions_for_model(base, tok, cases, runs, capture=base_cap)
 
     log("loading adapter onto base ...")
     adapted = PeftModel.from_pretrained(base, str(adapter_dir))
     adapted.eval()
-    adapter_runs = _run_conditions_for_model(adapted, tok, cases, runs)
+    adapter_cap = [] if answers_path else None
+    adapter_runs = _run_conditions_for_model(adapted, tok, cases, runs, capture=adapter_cap)
+
+    if answers_path is not None:
+        rows = []
+        for i, c in enumerate(cases):
+            rows.append({
+                "id": c.get("id"), "task_family": c.get("task_family"),
+                "language": c.get("language"), "prompt": c["prompt"],
+                "gold_route": c.get("gold_route"),
+                "forbidden_assertions": c.get("forbidden_assertions"),
+                "acceptable_answer_features": c.get("acceptable_answer_features"),
+                "base_answer": base_cap[i] if i < len(base_cap) else "",
+                "adapter_answer": adapter_cap[i] if i < len(adapter_cap) else "",
+            })
+        answers_path.parent.mkdir(parents=True, exist_ok=True)
+        answers_path.write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
+        log(f"wrote {len(rows)} base/adapter answer pairs -> {answers_path}")
 
     def pack(cond_runs):
         return {c: {"metrics": SSMB.aggregate_runs(rs)} for c, rs in cond_runs.items()}
@@ -301,6 +324,8 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--lr", type=float, default=1e-4)
     ap.add_argument("--out", type=Path, default=ROOT / "agi-proof" / "benchmark-results" / "wisdom-market" / "M3-pilot-eval.json")
+    ap.add_argument("--save-answers", type=Path, default=None,
+                    help="also write per-case base/adapter advisor answers here (for the LLM-judge pass)")
     args = ap.parse_args()
 
     if args.smoke:
@@ -314,7 +339,8 @@ def main() -> int:
         train(args.model, args.adapter, rows_path=args.rows, seq_len=args.seq_len,
               epochs=args.epochs, seed=args.seed, lr=args.lr, smoke=False)
     if args.eval:
-        evaluate(args.model, args.adapter, runs=args.runs, limit=args.limit, out_path=args.out)
+        evaluate(args.model, args.adapter, runs=args.runs, limit=args.limit, out_path=args.out,
+                 answers_path=args.save_answers)
     return 0
 
 

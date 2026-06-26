@@ -42,6 +42,11 @@ LOG_PATH = "agi-proof/benchmark-results/runpod-wisdom-pilot/pod-selfreport.log"
 
 def _job_script(args: argparse.Namespace) -> str:
     eval_flags = f"--runs {int(args.runs)}" + (f" --limit {int(args.limit)}" if args.limit else "")
+    seed = int(args.seed)
+    # seed-tagged outputs so seeds 0/1/2 don't clobber each other; seed 0 keeps the canonical name.
+    sfx = "" if seed == 0 else f"-seed{seed}"
+    result_path = f"agi-proof/benchmark-results/wisdom-market/M3-pilot-eval{sfx}.json"
+    answers_path = f"agi-proof/benchmark-results/wisdom-market/M3-pilot-answers{sfx}.json"
     # NOTE: no `set -x`; secrets must never reach the pushed log. The PAT lives only in the
     # git credential store on the ephemeral pod. All stdout/stderr -> /workspace/pod.log,
     # which is scrubbed of the token before being pushed.
@@ -61,7 +66,7 @@ finish() {{
   if [ -d /workspace/sophia-agi/.git ]; then
     mkdir -p "$(dirname {LOG_PATH})"
     cp /workspace/pod.log {LOG_PATH} 2>/dev/null || true
-    git add {RESULT_PATH} {LOG_PATH} 2>/dev/null || true
+    git add {result_path} {answers_path} {LOG_PATH} 2>/dev/null || true
     git -c user.email=noreply@anthropic.com -c user.name=Claude commit \
       -m "M3 pilot: self-reported result (exit $code) [skip ci]" 2>/dev/null || echo "[pod] nothing to commit"
     for i in 1 2 3 4 5; do git push origin HEAD:{args.branch} && break || sleep $((i*5)); done
@@ -107,9 +112,10 @@ wc -l training/local_sophia_v3/mlx/train.jsonl
 echo "[pod] SMOKE"
 python tools/pilot_gemma3_run.py --smoke
 
-echo "[pod] FULL train + eval ({eval_flags})"
-python tools/pilot_gemma3_run.py --train --eval {eval_flags} --out {RESULT_PATH}
-echo "[pod] eval written; finish() will commit + push"
+echo "[pod] FULL train + eval ({eval_flags}) seed={seed}"
+python tools/pilot_gemma3_run.py --train --eval --seed {seed} {eval_flags} \
+  --out {result_path} --save-answers {answers_path}
+echo "[pod] eval + answers written; finish() will commit + push"
 """
 
 
@@ -148,6 +154,7 @@ def parse_args(argv=None):
     ap.add_argument("--branch", default="claude/sophia-wisdom-4b-roadmap-jyesip")
     ap.add_argument("--runs", type=int, default=3)
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--name", default=f"sophia-wisdom-pilot-sr-{ts}")
     ap.add_argument("--gpu-type", default=",".join(DEFAULT_GPU_TYPES))
     ap.add_argument("--cloud-type", choices=["SECURE", "COMMUNITY"], default="SECURE")
