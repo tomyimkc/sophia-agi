@@ -1,9 +1,14 @@
 {
   "mcpServers": {
     "sophia-agi": {
-      "command": "/Users/tom/Documents/GitHub/sophia-agi/.venv-mcp/bin/python",
+      "command": "python",
       "args": ["sophia_mcp/server.py"],
-      "cwd": "/Users/tom/Documents/GitHub/sophia-agi"
+      "cwd": "C:/Users/tomyim/Documents/GitHub/sophia-agi"
+    },
+    "colab-mcp": {
+      "command": "uvx",
+      "args": ["git+https://github.com/googlecolab/colab-mcp"],
+      "timeout": 30000
     }
   }
 }

@@ -18,11 +18,11 @@
       ],
       "details": {
         "cmd": [
-          "/Library/Developer/CommandLineTools/usr/bin/python3",
+          "C:\\Users\\tomyim\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
           "tools/validate_attribution.py"
         ],
         "returncode": 0,
-        "stdoutTail": "Validation OK: 30 attribution(s), 527 training example(s)\n",
+        "stdoutTail": "Validation OK: 30 attribution(s), 528 training example(s)\n",
         "stderrTail": ""
       }
     },
@@ -33,7 +33,7 @@
       "passed": true,
       "summary": "Validated provenance-delta rows: 1",
       "evidence": [
-        "agi-proof/benchmark-results/published-results.json"
+        "agi-proof\\benchmark-results\\published-results.json"
       ],
       "details": {
         "validatedRows": 1,
@@ -72,8 +72,8 @@
       "passed": true,
       "summary": "Calibration/abstention evidence exists.",
       "evidence": [
-        "agi-proof/benchmark-results/published-results.json",
-        "agi-proof/baseline-ablation/calibration-2family-judge-2026-06-22.json"
+        "agi-proof\\benchmark-results\\published-results.json",
+        "agi-proof\\baseline-ablation\\calibration-2family-judge-2026-06-22.json"
       ],
       "details": {
         "summaryRows": 0,
@@ -91,7 +91,7 @@
       ],
       "details": {
         "cmd": [
-          "/Library/Developer/CommandLineTools/usr/bin/python3",
+          "C:\\Users\\tomyim\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
           "tools/run_grounding_gate.py",
           "--runs",
           "3",
@@ -99,7 +99,7 @@
           "40"
         ],
         "returncode": 0,
-        "stdoutTail": "N=285 cases (min 40), runs=3, seeds=0..2\n                         recall   false-positive\n  structural (UNSEEN)   100.0%     100.0%\n  GROUNDED mean         100.0%       0.0%   (coverage 40%, abstain 60%)\n\nExternal grounding flags misattributions on KB-covered entities at near-zero false-positive cost and abstains (fail-closed) where the KB is silent — the low-FP cross-entity generalization that neither memorization nor structure achieved.\n\nFalsifiable invariants:\n  [PASS] N_at_least_min_cases\n  [PASS] grounded_cuts_false_positives\n  [PASS] grounding_beats_structural_FP\n  [PASS] grounded_transfers_on_covered\n  [PASS] grounded_abstains_off_kb\n\nALL INVARIANTS HOLD\n",
+        "stdoutTail": "N=314 cases (min 40), runs=3, seeds=0..2\n                         recall   false-positive\n  structural (UNSEEN)   100.0%     100.0%\n  GROUNDED mean          98.7%       0.0%   (coverage 46%, abstain 54%)\n\nExternal grounding flags misattributions on KB-covered entities at near-zero false-positive cost and abstains (fail-closed) where the KB is silent — the low-FP cross-entity generalization that neither memorization nor structure achieved.\n\nFalsifiable invariants:\n  [PASS] N_at_least_min_cases\n  [PASS] grounded_cuts_false_positives\n  [PASS] grounding_beats_structural_FP\n  [PASS] grounded_transfers_on_covered\n  [PASS] grounded_abstains_off_kb\n\nALL INVARIANTS HOLD\n",
         "stderrTail": ""
       }
     },
@@ -110,12 +110,12 @@
       "passed": true,
       "summary": "Executable coding eval lane passes.",
       "evidence": [
-        "eval/results/coding_eval.json",
+        "eval\\results\\coding_eval.json",
         "tools/run_coding_eval.py"
       ],
       "details": {
         "benchmark": "coding-executable-verifier",
-        "cases": "/Users/tom/Documents/GitHub/sophia-agi/eval/coding/smoke.jsonl",
+        "cases": "C:\\Users\\tomyim\\Documents\\GitHub\\sophia-agi\\eval\\coding\\smoke.jsonl",
         "n": 2,
         "passed": 2,
         "passRate": 1.0,
@@ -152,7 +152,7 @@
       "passed": true,
       "summary": "Memory append-only safety passes.",
       "evidence": [
-        "eval/results/memory_eval.json",
+        "eval\\results\\memory_eval.json",
         "tools/run_memory_eval.py"
       ],
       "details": {
@@ -168,7 +168,7 @@
         "safe": {
           "ok": true,
           "id": "mem_memory_eval_safe",
-          "path": "/var/folders/4h/nzfg6lh153s9c_728t7j63jm0000gn/T/sophia-memory-eval-q_xidvc0/memory/mem_memory_eval_safe.md",
+          "path": "C:\\Users\\tomyim\\AppData\\Local\\Temp\\sophia-memory-eval-7b_ga5ce\\memory\\mem_memory_eval_safe.md",
           "tier": "memory",
           "revisions": 1
         },
@@ -180,8 +180,8 @@
           ],
           "id": "mem_memory_eval_unsafe"
         },
-        "canonicalHashBefore": "987c982b375a3ce1",
-        "canonicalHashAfter": "987c982b375a3ce1",
+        "canonicalHashBefore": "dff3db4d2c574b88",
+        "canonicalHashAfter": "dff3db4d2c574b88",
         "passed": true
       }
     },
@@ -203,7 +203,7 @@
       "passed": true,
       "summary": "Self-extension loop closes with invariants.",
       "evidence": [
-        "agi-proof/self-extension/closed-loop-2026-06-22.json"
+        "agi-proof\\self-extension\\closed-loop-2026-06-22.json"
       ],
       "details": {
         "domain": "danger_intent (held-out)",
@@ -281,7 +281,8 @@
       "passed": false,
       "summary": "No multi-case passing distribution-shift result yet.",
       "evidence": [
-        "agi-proof/learning-under-shift/shift-result-2026-06-22.public-report.json"
+        "agi-proof\\learning-under-shift\\shift-result-2026-06-22.public-report.json",
+        "agi-proof\\learning-under-shift\\shift-result-local-sophia-v3-mlx-2026-06-24.public-report.json"
       ],
       "details": {
         "passingArtifacts": []
@@ -294,7 +295,7 @@
       "passed": false,
       "summary": "No substantive 30-minute autonomy run yet.",
       "evidence": [
-        "agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json"
+        "agi-proof\\long-horizon-runs\\long-horizon-self-test-2026-06-20.public-report.json"
       ],
       "details": {
         "passingArtifacts": []
@@ -307,39 +308,74 @@
       "passed": true,
       "summary": "Live RLVR training completed; still not capability evidence.",
       "evidence": [
-        "agi-proof/benchmark-results/rlvr.public-report.json",
-        "agi-proof/benchmark-results/runpod-rlvr/vl16kbwfexrngj.train.log",
-        "agi-proof/benchmark-results/runpod-rlvr/xcu45skyjv32rv.train.log",
-        "agi-proof/benchmark-results/runpod-rlvr/zw2upm7sl4nbbr.train.log"
+        "agi-proof\\benchmark-results\\rlvr.public-report.json",
+        "agi-proof\\benchmark-results\\runpod-rlvr\\vl16kbwfexrngj.train.log",
+        "agi-proof\\benchmark-results\\runpod-rlvr\\xcu45skyjv32rv.train.log",
+        "agi-proof\\benchmark-results\\runpod-rlvr\\zw2upm7sl4nbbr.train.log"
       ],
       "details": {
         "liveLogFound": true,
         "report": {
-          "benchmark": "rlvr",
-          "model": "zai-org/glm-4-9b-chat-hf",
-          "visibility": "public-aggregate",
-          "claimStatus": "Open — capability claim requires a gated run (aggregate._is_validated); this artifact records the training config only",
-          "config": {
-            "vllm": "none",
-            "quant": "bf16",
-            "epochs": 1.0,
-            "lr": 1e-05,
-            "beta": 0.04,
-            "num_generations": 8,
-            "target_modules": [
-              "q_proj",
-              "k_proj",
-              "v_proj",
-              "o_proj",
-              "gate_up_proj",
-              "down_proj"
-            ]
+          "rewards": {
+            "falseGood": {
+              "label": "false",
+              "passed": true,
+              "denies": true,
+              "namesGold": true,
+              "hedges": 0,
+              "reward": 1.0
+            },
+            "falseBad": {
+              "label": "false",
+              "passed": false,
+              "denies": false,
+              "namesGold": false,
+              "hedges": 0,
+              "assertedForbidden": true
+            },
+            "trueGood": {
+              "label": "true",
+              "passed": true,
+              "denies": false,
+              "namesGold": true,
+              "hedges": 0,
+              "reward": 1.0
+            },
+            "trueBad": {
+              "label": "true",
+              "passed": true,
+              "denies": false,
+              "namesGold": false,
+              "hedges": 0,
+              "reward": 0.0
+            }
+          },
+          "checks": {
+            "deterministic": true,
+            "falseMonotone": true,
+            "trueMonotone": true,
+            "forbiddenNegative": true,
+            "verifierSeamInvoked": true,
+            "bounded": true,
+            "contaminationFree": true
           },
           "trainCases": 203,
           "evalCases": 87,
           "trainSealed": "4efd66c8ff0f9986",
           "evalSealed": "833600c436cce7ca",
-          "baseModelLicense": "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)"
+          "entityIntersection": [],
+          "gateTargetModules": [
+            "q_proj",
+            "k_proj",
+            "v_proj",
+            "o_proj",
+            "gate_up_proj",
+            "down_proj"
+          ],
+          "benchmark": "rlvr",
+          "mode": "mock-offline",
+          "claim": "reward-machinery invariants (NOT a capability claim)",
+          "liveClaimStatus": "Open — see agi-proof/failure-ledger.md rlvr-live-run-not-yet-gated-2026-06-21"
         }
       }
     },
@@ -360,7 +396,11 @@
       "status": "missing",
       "passed": false,
       "summary": "No Sophia-full external benchmark artifact found.",
-      "evidence": [],
+      "evidence": [
+        "agi-proof\\external-benchmarks\\benchmark-run.schema.json",
+        "agi-proof\\external-benchmarks\\manifest.json",
+        "agi-proof\\external-benchmarks\\w5-gsm8k-style-pilot-2026-06-26.json"
+      ],
       "details": {
         "passingArtifacts": []
       }
@@ -372,7 +412,7 @@
       "passed": false,
       "summary": "2h and/or 1d substantive autonomy run missing.",
       "evidence": [
-        "agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json"
+        "agi-proof\\long-horizon-runs\\long-horizon-self-test-2026-06-20.public-report.json"
       ],
       "details": {
         "twoHour": [],
@@ -386,7 +426,7 @@
       "passed": false,
       "summary": "Machine replication artifact missing/failing.",
       "evidence": [
-        "agi-proof/third-party-replication/replication-check-2026-06-20.json"
+        "agi-proof\\third-party-replication\\replication-check-2026-06-20.json"
       ],
       "details": {
         "passingArtifacts": [],
@@ -413,7 +453,8 @@
       "passed": false,
       "summary": "No multi-case passing distribution-shift result yet.",
       "evidence": [
-        "agi-proof/learning-under-shift/shift-result-2026-06-22.public-report.json"
+        "agi-proof\\learning-under-shift\\shift-result-2026-06-22.public-report.json",
+        "agi-proof\\learning-under-shift\\shift-result-local-sophia-v3-mlx-2026-06-24.public-report.json"
       ],
       "details": {
         "passingArtifacts": []
@@ -426,7 +467,7 @@
       "passed": false,
       "summary": "No substantive 30-minute autonomy run yet.",
       "evidence": [
-        "agi-proof/long-horizon-runs/long-horizon-self-test-2026-06-20.public-report.json"
+        "agi-proof\\long-horizon-runs\\long-horizon-self-test-2026-06-20.public-report.json"
       ],
       "details": {
         "passingArtifacts": []

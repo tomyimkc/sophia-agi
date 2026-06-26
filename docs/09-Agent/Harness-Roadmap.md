@@ -119,6 +119,51 @@ actual training run, and run the uplift benchmark on a real-repo / SWE-bench-sty
 suite with a real model under the multi-judge consensus gate in `RESULTS.md`. The
 loop is closed in code; the model-training arc is the next, heavier program.
 
+### Build 4b — Closed-loop engine (the training arc) — candidate, not Level-3
+
+`agent/closed_loop.py` + `tools/run_closed_loop.py`. Composes the two Build 4 halves
+into the one cycle that turns a *designed* loop into a *closing* one:
+
+    measure uplift (paired, bootstrapped) → the harness run writes fail-then-fix traces
+      → distill traces into preference pairs → a train step produces a candidate
+      → gate the candidate through continual_plasticity (hard reject on regression /
+        contamination / catastrophic forgetting; promote only on a clean gain)
+      → re-measure uplift with the promoted model → repeat
+
+Two invariants make this the honest signature of a *closing* loop:
+
+- **NON-DEGENERACY** — a promoted model's uplift never goes negative. The plasticity
+  gate enforces pass-rate non-regression per cycle; this module additionally asserts
+  the harness-vs-bare relationship the DeepSeek thesis depends on, and **halts loud**
+  (rolls back the spec, sets `nonDegenerate=false`) if a promoted model's uplift goes
+  negative — that means reward hacking / regression slipped past the gate, a loop
+  failure, not a data point to publish.
+- **SATURATION IS SUCCESS** — if uplift converges to ~0 *after a promotion*, the
+  harness's rescue behaviour was distilled into the model (the model now does first-try
+  what the harness used to fix). That is a valid terminal state; the next competence
+  gain needs a *harder* harness (a learned world model / planner — see
+  `AGI-Missing-Pillars.md`), not more of the same distillation.
+
+The **train step is injected**: `noop_train_step` in CI (every cycle reports
+`no-candidate` — proves the plumbing, not a model advance), and a live step that
+writes the distilled pairs to JSONL and shells out to `tools/run_rlvr.py` on a CUDA
+pod (DPO/GRPO over the traces). The orchestrator trains nothing itself and changes
+no weights.
+
+Tests: `tests/test_closed_loop.py` (offline, deterministic) — plumbing + RUNS_DIR
+restoration, promotion on a clean gain, gate-blocks-pass-rate-regression, the
+non-degeneracy wall halting on negative post-uplift, saturation-as-success, and the
+no-overclaim payload fields.
+
+> **Claim boundary.** Closing the loop offline (or with the mock trainer) is
+> **rehearsal, not Level-3 evidence.** Real Level-3 evidence needs a private hidden
+> suite (see `AGI-Level3-Execution-Protocol.md`) and a gated run; this artifact
+> carries `candidateOnly=true, level3Evidence=false` until then. The crux that bounds
+> this whole arc is `reasoning/deliberation_roofline.py`: the *verifier* sets the
+> quality ceiling, not the compute — so the next real competence gain runs through
+> strengthening the verifier (Phase B: execution/outcome verification as a first-class
+> family), not through more distillation cycles on a fixed gate.
+
 ## Design invariants (all builds)
 
 - **Deterministic / offline-testable** via the mock model client — every build ships
