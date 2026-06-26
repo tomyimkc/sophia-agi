@@ -30,14 +30,22 @@ class Rule:
         return hit if self.present else (not hit)
 
 
-def _candidate_features(examples: "list[tuple[str, bool]]", max_feats: int = 200) -> "list[str]":
-    """Tokens appearing in the examples — the hypothesis space for the stump."""
+def candidate_features(examples: "list[tuple[str, bool]]", max_feats: int = 200) -> "list[str]":
+    """Tokens appearing in the examples — the hypothesis space for the stump.
+
+    Public so cross-module consumers (e.g. ``selfextend.evolve``'s top-k proposer)
+    depend on a stable API rather than an underscore-prefixed private helper.
+    """
     feats: dict = {}
     for text, _ in examples:
         for tok in re.findall(r"[a-z0-9]+", (text or "").lower()):
             if len(tok) >= 2:
                 feats[tok] = feats.get(tok, 0) + 1
     return [f for f, _ in sorted(feats.items(), key=lambda kv: -kv[1])][:max_feats]
+
+
+# Backward-compat alias for any in-module/private callers.
+_candidate_features = candidate_features
 
 
 def synthesize_verifier(train: "list[tuple[str, bool]]",
