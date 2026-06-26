@@ -150,6 +150,7 @@ class SelfEvolvingAgent:
         self._round = 0
         self._tasks: list[Task] = []          # cumulative committed knowledge stream
         self._knowledge: list = []            # cumulative committed OKF pages
+        self._committed_experiences: list[Experience] = []  # for self-distillation
         self.history: list[RoundOutcome] = []
 
     @property
@@ -214,6 +215,7 @@ class SelfEvolvingAgent:
         if committed:
             self._tasks = trial
             self._knowledge.extend(exp.pages)
+            self._committed_experiences.append(exp)
             pages_added = len(exp.pages)
         # The competence self-model records the round's verified outcome either way.
         self.competence.update(exp.domain, committed)
@@ -297,6 +299,84 @@ class SelfEvolvingAgent:
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         return report
+
+    # ------------------------------------------------------------------ self-distill
+    def distillation_rows(self, *, gate_check: "Any | None" = None) -> "list[dict]":
+        """Render gate-clean self-distillation rows from COMMITTED rounds only.
+
+        Closes the self-distillation loop (the agent's own *verified* skills become a
+        student's training data) with the anti-circularity firewall built in:
+
+          - Only committed rounds are exported -- a self-update that failed any trust
+            gate never becomes training data (rejected ideas can't teach the student).
+          - Within a committed round, only examples the verified rule classifies
+            CORRECTLY are emitted (we distill what was verified, not what was guessed).
+          - If ``gate_check`` is supplied (``(target, question) -> has_violations``),
+            any rendered target with violations is dropped -- a second firewall so no
+            gate-dirty text enters the dataset.
+
+        Output rows match the repo's distillation schema
+        (``{"messages": [...], "metadata": {...}}``), consumable by
+        ``tools/train_lora.py``. Honest scope: this distills the *verified decision
+        rule* (a narrow, gate-clean signal); richer targets come from the live teacher
+        path (``tools/distill_council_traces.py``).
+        """
+        rows: list[dict] = []
+        for exp in self._committed_experiences:
+            rule = synthesize_verifier(list(exp.examples))
+            if rule is None:
+                continue
+            for text, label in exp.examples:
+                if rule.predict(text) != label:
+                    continue  # only distill examples the verified rule gets right
+                target = _render_decision(exp.domain, rule, bool(label))
+                if gate_check is not None and gate_check(target, text):
+                    continue  # firewall: drop any non-gate-clean target
+                rows.append({
+                    "messages": [
+                        {"role": "system", "content": _SELF_DISTILL_SYSTEM},
+                        {"role": "user", "content": text},
+                        {"role": "assistant", "content": target},
+                    ],
+                    "metadata": {
+                        "domain": exp.domain,
+                        "source": "self-evolve",
+                        "verified": True,
+                        "gatePassed": gate_check is not None,
+                        "labelStatus": "self-distilled",
+                    },
+                })
+        return rows
+
+    def write_distillation_jsonl(self, out: "str | Path", *, gate_check: "Any | None" = None) -> dict:
+        """Write self-distillation rows to JSONL and return summary stats."""
+        rows = self.distillation_rows(gate_check=gate_check)
+        p = Path(out)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
+        return {
+            "rows": len(rows),
+            "committedRounds": len(self._committed_experiences),
+            "domains": sorted({e.domain for e in self._committed_experiences}),
+            "gateFirewall": gate_check is not None,
+        }
+
+
+_SELF_DISTILL_SYSTEM = (
+    "You are a source-disciplined agent. Decide whether a request matches a pattern "
+    "you have verifiably learned, and act only within that verified competence. If a "
+    "request falls outside it, say so plainly rather than guess. Do not invent "
+    "authorities or attributions."
+)
+
+
+def _render_decision(domain: str, rule, label: bool) -> str:
+    """Render the verified decision the agent learned for `domain` as the student target."""
+    if label:
+        return (f"This request matches the verified '{domain}' pattern "
+                f"(signal: '{rule.feature}'). Routing to the verified handler.")
+    return (f"This request does not match the verified '{domain}' pattern "
+            f"(signal: '{rule.feature}'). No action: it is outside the verified competence.")
 
 
 __all__ = ["Experience", "RoundOutcome", "SelfEvolvingAgent"]

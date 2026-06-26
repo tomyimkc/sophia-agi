@@ -132,10 +132,42 @@ def test_competence_routes_by_measured_reliability() -> None:
     assert r2.routeAfter == "answer"
 
 
+def test_distillation_exports_only_committed_rounds() -> None:
+    # Two learnable (committed) domains + one rejected; only committed rounds export.
+    agent = SelfEvolvingAgent()
+    agent.run_session([
+        Experience("danger_intent", _learnable("delete", _OBJS),
+                   (_page("danger_skill", authorConfidence="consensus"),)),
+        Experience("question_intent", _learnable("what", _OBJS),
+                   (_page("question_skill", authorConfidence="attributed"),)),
+        _unlearnable_experience(),  # rejected -> contributes no training rows
+    ])
+    rows = agent.distillation_rows()
+    assert rows, "committed rounds should yield training rows"
+    domains = {r["metadata"]["domain"] for r in rows}
+    assert domains == {"danger_intent", "question_intent"}  # noise_domain excluded
+    # schema: chat messages + verified self-distill metadata
+    r0 = rows[0]
+    assert [m["role"] for m in r0["messages"]] == ["system", "user", "assistant"]
+    assert r0["metadata"]["source"] == "self-evolve"
+    assert r0["metadata"]["verified"] is True
+
+
+def test_distillation_gate_firewall_drops_dirty_targets() -> None:
+    # A gate_check that flags everything must drop every row (the firewall holds).
+    agent = SelfEvolvingAgent()
+    agent.evolve(_danger_experience())
+    clean = agent.distillation_rows()
+    dirty_dropped = agent.distillation_rows(gate_check=lambda target, q: True)
+    assert clean and not dirty_dropped
+
+
 if __name__ == "__main__":
     test_clean_learnable_round_commits()
     test_unlearnable_round_is_fail_closed()
     test_rejected_round_does_not_mutate_memory()
     test_multi_round_session_no_forgetting_and_invariants()
     test_competence_routes_by_measured_reliability()
+    test_distillation_exports_only_committed_rounds()
+    test_distillation_gate_firewall_drops_dirty_targets()
     print("ok")

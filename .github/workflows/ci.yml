@@ -264,6 +264,7 @@ jobs:
         run: |
           python tests/test_self_evolving_agent.py
           python tools/run_self_evolving_agent.py
+          python tools/export_self_evolve_distill.py
       - name: Runtime policies + model-in-loop + dataset fetcher (offline)
         run: |
           python tests/test_policies.py
