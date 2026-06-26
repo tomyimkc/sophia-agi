@@ -102,6 +102,29 @@ def _offline_invariants() -> tuple[bool, dict]:
 
     rewards = [r_good_f, r_bad_f, r_good_t, r_bad_t]
 
+    # Emit one verified trace per (case, completion) reward evaluation so the
+    # offline check leaves a per-step provenance record of the learning signal a
+    # GRPO run would optimize. The trace's reward IS the rl_reward value (from the
+    # verifier/gate seam, never a self-score). Observer-only: never changes a reward.
+    trace_rows: list[dict] = []
+    try:
+        from agent.verified_trace_rlvr import rewarded, reward_summary
+        for step, (case, completion, r, d) in enumerate([
+            (_FALSE_CASE, good_false, r_good_f, d_good_f),
+            (_FALSE_CASE, bad_false, r_bad_f, d_bad_f),
+            (_TRUE_CASE, good_true, r_good_t, d_good_t),
+            (_TRUE_CASE, bad_true, r_bad_t, d_bad_t),
+        ]):
+            ack = rewarded(case, completion, reward=r, detail=d, step_idx=step)
+            # read back the emitted row so the summary reflects what was logged
+            from sophia_contract.stores import _read_jsonl
+            from agent.verified_trace import TRACE_LOG
+            rows = _read_jsonl(TRACE_LOG)
+            if rows:
+                trace_rows.append(rows[-1])
+    except Exception:  # noqa: BLE001 - observer-only: tracing must never break the reward check
+        pass
+
     # Real dataset build + contamination-free split.
     data = rl_dataset.build_rl_dataset(eval_frac=0.3, seed=0)
 
@@ -127,6 +150,12 @@ def _offline_invariants() -> tuple[bool, dict]:
         "entityIntersection": data["entity_intersection"],
         "gateTargetModules": GLM_TARGET_MODULES,
     }
+    # Reward-trace summary: what a GRPO run's trace log would surface. Honest on
+    # empty (tracing disabled / failed): the summary reports n=0, not a failure.
+    try:
+        detail["verifiedTraces"] = reward_summary(trace_rows) if trace_rows else {"n": 0}
+    except Exception:  # noqa: BLE001 - observer-only
+        detail["verifiedTraces"] = {"n": 0}
     return all(checks.values()), detail
 
 
