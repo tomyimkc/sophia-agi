@@ -45,14 +45,14 @@
           "values": []
         },
         "qualification_rate_on_contested": {
-          "mean": 0.75,
+          "mean": 0.625,
           "ci": [
-            0.75,
-            0.75
+            0.625,
+            0.625
           ],
           "runs": 1,
           "values": [
-            0.75
+            0.625
           ]
         },
         "tradition_merge_rate": {
@@ -94,14 +94,14 @@
           ]
         },
         "useful_correctness": {
-          "mean": 0.5,
+          "mean": 0.4583,
           "ci": [
-            0.5,
-            0.5
+            0.4583,
+            0.4583
           ],
           "runs": 1,
           "values": [
-            0.5
+            0.4583
           ]
         },
         "protected_history_regression": {
@@ -338,14 +338,14 @@
           ]
         },
         "useful_correctness": {
-          "mean": 0.3333,
+          "mean": 0.375,
           "ci": [
-            0.3333,
-            0.3333
+            0.375,
+            0.375
           ],
           "runs": 1,
           "values": [
-            0.3333
+            0.375
           ]
         },
         "protected_history_regression": {
@@ -913,10 +913,10 @@
       "improves": true
     },
     "useful_correctness": {
-      "delta": -0.0834,
+      "delta": -0.0417,
       "ci": [
-        -0.0834,
-        -0.0834
+        -0.0417,
+        -0.0417
       ],
       "improves": false
     },
