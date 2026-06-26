@@ -173,15 +173,23 @@ def nvfp4_gemm_flops(m: int, n: int, k: int) -> int:
 
 
 def nvfp4_gemm_bytes(m: int, n: int, k: int, *, block_size: int = NVFP4_BLOCK,
-                     act_bytes: int = 2) -> int:
+                     act_bytes: int = 2, weight_bytes_per_elem: float = 0.5) -> int:
     """Lower-bound memory traffic for a weight-only NVFP4 GEMM.
 
-    Weights move at **0.5 byte/elem** (4-bit) plus one FP8 scale (1 byte) per
-    ``block_size`` elements along K; activations/output move at ``act_bytes`` (BF16=2).
-    For decode (m=1) the 4-bit weight term dominates — that is the whole point.
+    Weights move at ``weight_bytes_per_elem`` bytes/elem plus one FP8 scale (1 byte)
+    per ``block_size`` elements along K; activations/output move at ``act_bytes``
+    (BF16=2). For decode (m=1) the weight term dominates — that is the whole point.
+
+    ``weight_bytes_per_elem`` defaults to **0.5** — the *deployment-target* (truly
+    packed 4-bit) accounting, which is the honest denominator a packed kernel earns.
+    The current `run_nvfp4_gemm` reference kernel streams **unpacked 1-byte codes**
+    (it has no in-kernel int4 unpack yet), so it passes ``weight_bytes_per_elem=1.0``
+    and reports its % of roofline against the bytes it *actually* moves — never the
+    0.5 it has not yet earned. `pack_int4` proves the format halves bytes again; wiring
+    that unpack into the Triton K-loop is the next step (then the kernel earns 0.5).
     """
     nblocks_k = (k + block_size - 1) // block_size
-    weight_bytes = (n * k) // 2 + nblocks_k * n            # int4 codes + fp8 scales
+    weight_bytes = int(weight_bytes_per_elem * n * k) + nblocks_k * n   # codes + fp8 scales
     act_bytes_total = act_bytes * (m * k + m * n)          # read x, write out
     return int(weight_bytes + act_bytes_total)
 
@@ -235,7 +243,7 @@ def _build_kernel():
             x = tl.load(x_p, mask=(offs_m[:, None] < M) & (k_idx[None, :] < K), other=0.0)
             c_p = code_ptr + (k_idx[:, None] * sc_k + offs_n[None, :] * sc_n)
             codes = tl.load(c_p, mask=(k_idx[:, None] < K) & (offs_n[None, :] < N), other=0)
-            w = tl.load(book_ptr + codes)                      # int4 code -> E2M1 value
+            w = tl.load(book_ptr + codes.to(tl.int32))         # code -> E2M1 value (cast for gather)
             s_p = scale_ptr + (kb * ss_b + offs_n[None, :] * ss_n)
             s = tl.load(s_p, mask=offs_n[None, :] < N, other=0.0)
             w = w * s                                          # dequant in-register
@@ -268,9 +276,10 @@ def run_nvfp4_gemm(
 ) -> RooflineResult | None:
     """Run + roofline the fused NVFP4 GEMM. Returns None (and prints why) without a GPU."""
     ok, reason = _have_gpu_stack()
-    if not ok:
+    if not ok or not _HAVE_NUMPY:
         if verbose:
-            print(f"[nvfp4_gemm] skipped: {reason} (need torch+CUDA+triton). "
+            why = reason if not ok else "numpy not installed"
+            print(f"[nvfp4_gemm] skipped: {why} (need torch+CUDA+triton+numpy). "
                   f"NumPy reference + accounting are exercised by tests/test_nvfp4_gemm.py.")
         return None
 
@@ -282,7 +291,9 @@ def run_nvfp4_gemm(
     codes_np, scales_np, _ = quantize_nvfp4_weights(W_np)
 
     x = torch.tensor(x_np, device="cuda", dtype=torch.bfloat16)
-    codes = torch.tensor(codes_np, device="cuda", dtype=torch.int32)
+    # Codes are 0..15: upload as uint8 (1 byte/elem), the bytes this reference kernel
+    # actually streams. True 4-bit (0.5 B) needs the in-kernel int4 unpack — the next step.
+    codes = torch.tensor(codes_np, device="cuda", dtype=torch.uint8)
     scales = torch.tensor(scales_np, device="cuda", dtype=torch.float32)
 
     out = matmul(x, codes, scales).float().cpu().numpy()
@@ -311,11 +322,15 @@ def run_nvfp4_gemm(
     device = resolve_device(device_name or detect_device())
     result = analyze(
         flops=nvfp4_gemm_flops(m, n, k),
-        bytes_moved=nvfp4_gemm_bytes(m, n, k),
+        # Honest denominator: this kernel streams unpacked 1-byte codes, so account at
+        # 1.0 B/elem — not the 0.5 B a packed kernel earns. % of roofline reflects what
+        # actually crosses the bus.
+        bytes_moved=nvfp4_gemm_bytes(m, n, k, weight_bytes_per_elem=1.0),
         times_s=times_s, device=device, dtype="fp4",
     )
     if verbose:
-        print(f"\n[nvfp4_gemm] fused NVFP4 dequant-GEMM {m}x{n}x{k} ({iters} timed iters)\n")
+        print(f"\n[nvfp4_gemm] fused NVFP4 dequant-GEMM {m}x{n}x{k} ({iters} timed iters)")
+        print("  NOTE: reference streams unpacked 1-byte codes; packed 4-bit (0.5 B) is the next step.\n")
         print(format_report(result))
     return result
 

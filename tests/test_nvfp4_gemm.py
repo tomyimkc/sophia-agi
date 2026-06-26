@@ -99,9 +99,18 @@ def test_gemm_bytes_weights_are_half_byte_each():
     expect_act = 2 * (m * k + m * n)
     assert ng.nvfp4_gemm_bytes(m, n, k) == expect_w + expect_act
     # FP4 weight bytes are ~4x smaller than the BF16 weight read it replaces.
-    from kernels.bench.roofline import gemm_bytes
     bf16_weight_bytes = 2 * (k * n)
     assert expect_w < bf16_weight_bytes / 3                       # comfortably sub-1/3
+
+
+def test_gemm_bytes_scales_with_weight_width():
+    # The reference kernel streams unpacked 1-byte codes; accounting must reflect that,
+    # and be honestly larger than the 0.5-byte packed deployment target.
+    m, n, k = 1, 4096, 4096
+    packed = ng.nvfp4_gemm_bytes(m, n, k, weight_bytes_per_elem=0.5)
+    unpacked = ng.nvfp4_gemm_bytes(m, n, k, weight_bytes_per_elem=1.0)
+    assert unpacked > packed
+    assert (unpacked - packed) == (n * k) // 2                    # the extra half-byte/elem
 
 
 def test_decode_is_memory_bound_against_spark_roofline():
@@ -147,3 +156,12 @@ def test_harness_dry_run_exits_zero_and_writes_nothing(capsys):
 def test_harness_rejects_unknown_device():
     from tools.spark_roofline_report import main
     assert main(["--device", "Totally Made Up GPU"]) == 2
+
+
+def test_stamp_sanitized_against_path_traversal():
+    from tools.spark_roofline_report import _safe_stamp
+    assert _safe_stamp("../../etc/passwd") == "etc-passwd"        # separators stripped
+    assert _safe_stamp("run-123_v2.1") == "run-123_v2.1"          # safe chars kept
+    assert "/" not in _safe_stamp("a/b/c") and "\\" not in _safe_stamp("a\\b")
+    with pytest.raises(ValueError):
+        _safe_stamp("../../")                                     # nothing safe left -> fail-closed

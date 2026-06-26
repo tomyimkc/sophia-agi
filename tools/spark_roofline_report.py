@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -38,6 +39,19 @@ from kernels.bench.roofline import DEVICE_SPECS, resolve_device  # noqa: E402
 
 SPARK_DEVICE = "NVIDIA DGX Spark GB10"
 REPORTS_DIR = ROOT / "kernels" / "reports"
+
+
+def _safe_stamp(stamp: str) -> str:
+    """Reduce ``stamp`` to a filename-safe token so it cannot escape REPORTS_DIR.
+
+    The stamp is interpolated into the report filename; a raw value could contain
+    path separators (``../../x``) and write outside ``kernels/reports/``. Keep only
+    ``[A-Za-z0-9._-]`` and reject an empty result fail-closed.
+    """
+    safe = re.sub(r"[^A-Za-z0-9._-]", "-", str(stamp)).strip("-.")
+    if not safe:
+        raise ValueError(f"--stamp {stamp!r} has no filename-safe characters")
+    return safe
 
 # The kernels this harness runs, each a decode-or-compute-shaped problem on the Spark.
 PLAN = [
@@ -104,6 +118,7 @@ def _run_live(device_name: str, iters: int, stamp: str) -> int:
         results.append({"kernel": p["kernel"], "shape": s,
                         "roofline": r.to_dict() if r is not None else None})
 
+    stamp = _safe_stamp(stamp)
     report = build_report(results, device_name=device_name, stamp=stamp)
     ran_any = any(x["roofline"] is not None for x in results)
     if not ran_any:
