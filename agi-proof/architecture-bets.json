@@ -65,6 +65,15 @@
       "ablation_flag": "use_hybrid_memory",
       "closing_experiment": "Combine append-only runtime memory with consolidated/semantic memory on the run_case path behind use_hybrid_memory and show a recall delta CI excludes 0 at no trap-safety cost. The live path uses append-only JSONL only today; memory_consolidation.py is not invoked by run_case.",
       "ledger_id": null
+    },
+    {
+      "id": "verifier_synthesis_over_proof_kernel",
+      "module": "selfextend/proof_verifier.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_kernel_proof_verifier",
+      "closing_experiment": "Run selfextend.proof_verifier.close_loop_on_proofs on the formal_proofs/eval split (tools/run_formal_proofs_eval.py) with a live Lean 4 toolchain: show the smoke split closes (held-out proof reward >= threshold, competence abstain->answer) AND every Millennium-class open problem abstains at reward 0.0 (the wisdom-before-intelligence output). Kernel is the held-out sound oracle, so the anti-gaming check is structurally near-vacuous. The verifier (agent/lean_verifier.py) is fail-closed without Lean, so without a toolchain the smoke loop correctly stays abstained (tested). Closing this bet requires the no-overclaim gate: >=3 seeds, CI excludes 0, independent review before any capability claim. The loop wiring + fail-closed contract are in place today; the closing_experiment is a live-kernel run + multi-seed, not new code.",
+      "ledger_id": null
     }
   ]
 }

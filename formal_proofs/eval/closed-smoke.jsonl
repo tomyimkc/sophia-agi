@@ -1,0 +1,5 @@
+{"claim_id": "trivial_true", "proposition": "True", "proof_text": "trivial", "status": "proved", "rung": "smoke", "domain": "logic", "note": "The canonical trivial proof. Kernel-accepted by `trivial`."}
+{"claim_id": "rfl_self", "proposition": "∀ (x : Nat), x = x", "proof_text": "intro x; rfl", "status": "proved", "rung": "smoke", "domain": "equality", "note": "Reflexivity of equality under a binder."}
+{"claim_id": "add_zero", "proposition": "∀ (n : Nat), n + 0 = n", "proof_text": "intros; rfl", "status": "proved", "rung": "smoke", "domain": "arithmetic", "note": "Natural-number addition identity (left zero), by rfl in Lean core."}
+{"claim_id": "zero_add", "proposition": "∀ (n : Nat), 0 + n = n", "proof_text": "intros; rfl", "status": "proved", "rung": "smoke", "domain": "arithmetic", "note": "Right zero identity. Used as a transfer probe across the commutativity family."}
+{"claim_id": "and_comm", "proposition": "∀ (a b : Prop), a ∧ b → b ∧ a", "proof_text": "intros a b ⟨ha, hb⟩; exact ⟨hb, ha⟩", "status": "proved", "rung": "smoke", "domain": "logic", "note": "Conjunction commutativity — a one-step rewrite target."}
