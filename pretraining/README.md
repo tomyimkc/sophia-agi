@@ -115,6 +115,14 @@ that writes a dated-style `*-latest.json` report next to the script.
   Everything is dry-run-testable with no cost: `python -m pretraining.autopilot.calibrate
   --ceiling 1.0`. Full plan + grounded cost table: [`autopilot/SCOPE.md`](autopilot/SCOPE.md).
 
+  **Trial-efficient sweep (Step 2, C2/C3, built):** an **ASHA / successive-halving** scheduler
+  (`autopilot/asha.py`) runs many configs cheaply, keeps the top `1/eta`, and promotes
+  survivors — **cost-governed and fail-closed** (refuses a rung it can't fully afford, $0 over
+  ceiling). Verified on real nano results (~39 % fewer runs than naive, converges to the best
+  LR). A LoRA **search space + sampler** (`search_space.py`) tags each knob *transfers-today*
+  vs *needs-passthrough*. → `python -m pretraining.autopilot.run_asha_demo` (real selection,
+  GPU cost projected, no spend).
+
 ## Honesty posture
 
 - **No fabricated numbers.** Every `*-latest.json` is produced by running the script.

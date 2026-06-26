@@ -25,9 +25,17 @@ capped, spending always a deliberate human action.
 | **C1** | Real RunPod backend: config→`runpod_train.py` argv + eval-ladder→objective parser | ✅ Step 1 (`runpod_backend.py`, `eval_ladder_objective.py`) |
 | **C4** | Cost governor: hard USD ceiling, projected/actual spend, fail-closed guard | ✅ Step 1 (`cost_governor.py`) |
 | **—** | Calibration harness + gated CI launch (1 real trial → measured cost) | ✅ Step 1 (`calibrate.py`, `.github/workflows/calibrate-runpod.yml`) |
-| **C2** | Search space + objective: LoRA rank/alpha/lr/epochs/NEFTune/mixture knobs | ⬜ Step 2 — needs `runpod_train.py` passthrough args |
-| **C3** | Trial-efficient strategy: ASHA / successive-halving over expensive trials | ⬜ Step 2 |
+| **C2** | Search space + objective: LoRA rank/alpha/lr/epochs/NEFTune knobs + sampler | 🟡 Step 2 — space + sampler built (`search_space.py`); `runpod_train.py` passthrough args still TODO |
+| **C3** | Trial-efficient strategy: ASHA / successive-halving over expensive trials | ✅ Step 2 (`asha.py`, demo `run_asha_demo.py`) — cost-governed, fail-closed |
 | **C5** | Orchestration: parallel pods, spot-eviction retries, idempotent resume, provenance | ⬜ Step 2 |
+
+**C2/C3 status (built, offline-verified):** the ASHA scheduler prunes bad configs on real
+measured results (nano demo: ~39 % fewer runs than naive, converges to the best learning
+rate) and is **fail-closed on the cost ceiling** — it refuses to start a rung it cannot fully
+afford, spending $0 past the ceiling. The LoRA search space + deterministic sampler exist and
+tag each knob as *transfers-today* (epochs/seed/model) vs *needs-passthrough* (rank/alpha/lr/
+NEFTune). The one remaining Step-2 code change before a full-space GPU sweep is threading the
+passthrough knobs through `runpod_train.py`'s remote command builder.
 
 ## Cost estimate (anchored at $0.69/hr)
 

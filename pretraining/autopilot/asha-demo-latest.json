@@ -1,0 +1,59 @@
+{
+  "study": "ASHA successive-halving demo (real nano results; GPU cost projected)",
+  "canClaimAGI": false,
+  "honesty_note": "The selection below is REAL — measured nano losses. The GPU section is a projection at the observed $/hr; no pod is created.",
+  "nano_selection": {
+    "n_configs": 6,
+    "runs_executed": 11,
+    "naive_runs": 18,
+    "savings_vs_naive": 0.3889,
+    "best_config": {
+      "lr": 0.01,
+      "hidden": 16,
+      "D": 800
+    },
+    "rungs": [
+      {
+        "rung": 0,
+        "budget": 1,
+        "n_in": 6,
+        "kept": 3,
+        "best_score": 1.17049
+      },
+      {
+        "rung": 1,
+        "budget": 3,
+        "n_in": 3,
+        "kept": 2,
+        "best_score": 0.99822
+      },
+      {
+        "rung": 2,
+        "budget": 6,
+        "n_in": 2,
+        "kept": 1,
+        "best_score": 0.90026
+      }
+    ]
+  },
+  "gpu_projection": {
+    "ceiling_usd": 25.0,
+    "est_cost_per_trial_usd": 0.6727,
+    "max_affordable_trials": 37,
+    "note": "at the observed $0.69/hr, a $25 ceiling funds ~37 real trials — enough for an ASHA sweep over ~10-16 configs with promotions"
+  },
+  "c2_passthrough_gap": {
+    "wired_today": [
+      "epochs",
+      "model",
+      "seed"
+    ],
+    "needs_passthrough": [
+      "lora_alpha",
+      "lora_rank",
+      "lr",
+      "neftune_alpha"
+    ],
+    "note": "train_lora.py already accepts --lora-rank/--lr/--neftune-alpha; the Step-2 change is threading these through runpod_train.py's remote command builder. Until then, the sweep can only vary epochs/seed/model on real GPU."
+  }
+}
