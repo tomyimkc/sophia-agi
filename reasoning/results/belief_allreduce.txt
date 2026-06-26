@@ -1,0 +1,21 @@
+Belief all-reduce experiment  (N=8 agents, seed=7)
+
+H1 topology efficiency (same consensus, fewer messages):
+  all-to-all (naive O(N^2)) :   56 messages
+  ring all-reduce  O(N)     :   14 messages  (25% of naive)  consensus==naive: True
+  recursive-doubling O(NlogN):   24 messages  (43% of naive)  consensus==naive: True
+
+H2 minority preservation (a correct belief held by ONE agent):
+  provenance-preserving reduce keeps it : True
+  majority-vote reduce keeps it         : False  (<- the failure mode the thesis forbids)
+
+H3 confidentiality firewall:
+  forbidden transmissions          : 0
+  secret leaked to uncleared agent : False
+  cleared agents received secret   : True
+  public consensus reached by all  : True
+
+THEORY VERDICT
+  H1 same consensus, O(N)/O(NlogN) messages: CONFIRMED
+  H2 reduce preserves minority (vote loses it): CONFIRMED
+  H3 firewall holds, public consensus intact: CONFIRMED
