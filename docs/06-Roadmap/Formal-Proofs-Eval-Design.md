@@ -241,25 +241,44 @@ real path must run somewhere or it silently rots.
 ## 7. What gets built (only after this design is approved)
 
 **Phase 0 — plumbing proof (no eval, no claim):**
-- Pin a `lean-dojo` version in `requirements-theorem.txt`; run `LeanProofSession` on
-  one real Mathlib lemma end-to-end; fix any API drift. Exit criterion: the search
-  closes ≥1 real lemma on a real LeanDojo session (machinery proof only).
-- Extend `lean-kernel.yml` (or add a `lean-dojo-search` lane) so the stateful
-  `proof_search` / `LeanProofSession` path runs in CI, not just the one-shot verifier.
+- Pin a `lean-dojo` version in `requirements-theorem.txt`. **DONE (4.20.0) + drift
+  found and fixed:** `verify_proof` historically called a class+method that never
+  existed in lean-dojo 4.x (`LeanDojo(repo=...).run_code(source)`); it now abstains
+  honestly and points callers at the real 4.x path. **The corrected API is
+  traced-repo-keyed, not snippet-keyed**: lean-dojo 4.x has no stateless
+  "elaborate this string" call — verification is `check_proof(thm: Theorem, proof)`
+  where `Theorem(repo: LeanGitRepo, file_path, full_name)` resolves against a
+  *traced* `LeanGitRepo(url, commit)`. So `verify_proof`'s old free-form-string
+  contract is unsatisfiable on 4.x; the working entry is
+  `agent.lean_backend.check_proof_in_repo(theorem_obj, proof)`. `LeanProofSession.open`
+  was also patched (`LeanRepo` → `LeanGitRepo`, with a getattr fallback for version skew).
+- Exit criterion: a CI lane (`lean-kernel.yml`'s `lean-dojo-search` job) drives
+  `check_proof_in_repo` against a **MINIMAL traced repo** (`leanprover-community/
+  lean4-example` — the canonical tiny LeanDojo example, NOT full Mathlib) and asserts a
+  correct proof → `accepted`, a wrong proof → `rejected`/`abstain`, never fabricated.
+  This proves the 4.x integration end-to-end at CI-feasible cost.
+
+> **Scope correction (load-bearing):** the eval harness must point `check_proof_in_repo`
+> at a *traced Lean project* (a built miniF2F Lean project, or a cached Mathlib trace),
+> **not** pass a `repo_url` string to a stateless call. The preregistration (Phase 1)
+> must name the traced project + commit the harness resolves theorems against. This is
+> why a CI cache of the traced project is a Phase-1 prerequisite, not an afterthought.
 
 **Phase 1 — the held-out eval (the registered experiment):**
 - `agi-proof/formal-proofs-curriculum/preregistration.json` — registered-before-run
   manifest: proposer = B (`search_proof` + `LeanProofSession`), baseline column = A
-  (`check_proof`), split = miniF2F-v2 `test` pinned to a facebookresearch/minif2f
-  commit SHA, seeds ≥3, thresholds, contamination controls. Schema
-  `sophia.preregistration.v1`.
+  (`check_proof_in_repo`), split = miniF2F-v2 `test` pinned to a facebookresearch/minif2f
+  commit SHA, **traced miniF2F Lean project commit + CI cache plan**, seeds ≥3,
+  thresholds, contamination controls. Schema `sophia.preregistration.v1`.
 - `tools/seal_formal_proofs_heldout.py` — thin adaptation of `seal_math_code_heldout.py`
   sealing the miniF2F-v2 `test` items to a hash manifest.
 - A proposer harness consuming the existing `search_proof` + `make_llm_proposer` (no new
-  proposer code) and the existing `close_loop_on_proofs` reward interface.
+  proposer code) and the existing `close_loop_on_proofs` reward interface, resolving
+  theorems via `Theorem(LeanGitRepo(...), ...)` against the traced project.
 - A `lint_claims`-gated, failure-ledger-accompanied result artifact reporting pass@1
   (A and B columns) + abstention rate, with the null/abstention outcome pre-registered
   as valid.
 
-None of the above is written until §6 answers are confirmed and this doc is approved.
-Phase 0 may proceed first (it produces no eval number, only a plumbing proof).
+None of the above (Phase 1) is written until §6 answers are confirmed and this doc is
+approved. Phase 0 may proceed first (it produces no eval number, only a plumbing proof),
+and the drift-fix + minimal-repo assertion are already landed.

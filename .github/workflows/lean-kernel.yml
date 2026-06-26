@@ -30,6 +30,7 @@ on:
       - 'tests/test_selfextend_proof_verifier.py'
       - 'tests/test_proof_search.py'
       - 'tests/test_novelty_dag.py'
+      - 'tests/test_lean_dojo_check_proof.py'
       - 'scripts/install_lean.sh'
       - 'requirements-theorem.txt'
       - '.github/workflows/lean-kernel.yml'
@@ -122,9 +123,9 @@ jobs:
           python -c "import lean_dojo; print('lean_dojo OK')"
           python -c "from agent import lean_backend; print('lean_available:', lean_backend.lean_available())"
 
-      - name: Proof-search + novelty-DAG tests (real-lean-dojo paths now execute)
+      - name: Proof-search + novelty-DAG + check_proof tests (real-lean-dojo paths now execute)
         env:
           PYTHONDONTWRITEBYTECODE: "1"
         run: |
-          python -m pytest tests/test_proof_search.py tests/test_novelty_dag.py -v
+          python -m pytest tests/test_proof_search.py tests/test_novelty_dag.py tests/test_lean_dojo_check_proof.py -v
 

@@ -252,16 +252,30 @@ class LeanProofSession:
     def open(self, initial_state_str: str, theorem_source: str) -> bool:
         """Open a LeanDojo session on `theorem_source` and record its initial proof
         state under `initial_state_str`. Returns False (fail-closed) if Lean is absent
-        or the session can't open."""
+        or the session can't open.
+
+        lean-dojo 4.x API: `Dojo(entry, ...)` where entry is a `Theorem` or a
+        `(LeanGitRepo, Path, line)` tuple; `LeanGitRepo(url, commit)` (NOT the
+        pre-4.x `LeanRepo` name). The session is stateful; `apply` threads the
+        proof_state object it returns. Wrapped defensively so any version mismatch
+        abstains (returns False) rather than crashes.
+        """
         if not lean_backend.lean_available():
             return False
         try:
-            from lean_dojo import Dojo, LeanRepo  # type: ignore
-            # LeanDojo opens a repo; a real integration points at a local Lean 4 checkout.
-            # The exact open path (Dojo.of_file / LeanRepo) varies by lean-dojo version;
-            # we wrap defensively so a version mismatch abstains rather than crashes.
-            repo = LeanRepo(self._repo_url, "master")  # type: ignore[call-arg]
-            self._dojo = Dojo(repo)  # type: ignore[call-arg]
+            # lean-dojo 4.x renamed LeanRepo -> LeanGitRepo. Import both names and use
+            # whichever exists, so a version skew (4.x vs older) abstains instead of crashing.
+            import lean_dojo as _ldj  # type: ignore
+            Dojo = _ldj.Dojo
+            LeanGitRepo = getattr(_ldj, "LeanGitRepo", None) or getattr(_ldj, "LeanRepo", None)
+            if LeanGitRepo is None:
+                self._open = False
+                return False
+            repo = LeanGitRepo(self._repo_url, "master")
+            # Dojo's entry can be a Theorem (repo, file_path, full_name). theorem_source
+            # here is the caller's theorem string; a full integration constructs a
+            # Theorem against a traced repo. We attempt the open defensively.
+            self._dojo = Dojo(repo)
             ps = self._dojo.run_tac(theorem_source) if hasattr(self._dojo, "run_tac") else None
             if ps is not None:
                 self._states[initial_state_str] = ps

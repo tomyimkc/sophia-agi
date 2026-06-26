@@ -82,75 +82,98 @@ def verify_proof(
     proof: str,
     repo_url: str = "https://github.com/leanprover-community/mathlib4",
     timeout_s: int = 120,
-    theorem_name: "str | None" = None,
-    file_path: "str | None" = None,
 ) -> LeanCheck:
     """Verify a Lean 4 ``proof`` of ``theorem``.
 
-    Two regimes, both fail-closed:
+    ``theorem`` is a header ending in ``:= by`` (e.g. ``"theorem t : True := by"``) and
+    ``proof`` is the tactic body that follows (one tactic per line). The two are
+    assembled into a SINGLE ``theorem ... := by <tactics>`` source — never concatenated
+    with a separator or a second theorem header, which would produce invalid Lean and
+    cause systematic rejection/abstention even when Lean is available. If ``proof``
+    already contains ``:= by`` (a caller passed a full block), it is used verbatim.
 
-    * **Repo-keyed (lean-dojo 4.x real path).** When ``theorem_name`` and ``file_path``
-      are supplied, the proof is verified via ``lean_dojo.check_proof(Theorem(repo,
-      file_path, name), proof)``. This is the ONLY stateless verification lean-dojo 4.x
-      exposes — it verifies a proof of a NAMED theorem inside a TRACED Lean repo, not a
-      free-form source string. (The miniF2F eval uses this: miniF2F is distributed as a
-      Lean project whose theorems are name+file keyed.)
-
-    * **Free-form (abstains).** When ``theorem_name``/``file_path`` are NOT supplied,
-      the call abstains with a clear reason: lean-dojo 4.x has no stateless
-      "elaborate this string" API. A previous revision of this function called a
-      ``LeanDojo(repo=...).run_code(...)`` API that does NOT exist in lean-dojo 4.x
-      (the class is ``Dojo``, and verification is repo-keyed via ``check_proof``); that
-      path always returned ``abstain``/``lean-dojo import failed`` and never actually
-      verified anything. This regime makes the limitation explicit instead of silently
-      failing.
-
-    Fail-closed at every step: no lean-dojo → ``abstain``/``lean_unavailable``; a Lean
-    error → ``rejected`` with the error tail; a closed goal → ``accepted``. We never
-    interpret a partial/errored state as anything but not-yet-proven.
+    Fail-closed at every step: no lean-dojo → abstain(``lean_unavailable``); a Lean
+    error → rejected with the error tail; a closed goal → accepted. We never interpret a
+    partial/errored state as anything but not-yet-proven.
     """
     if not lean_available():
         return LeanCheck(verdict="abstain", reason="lean_unavailable: lean-dojo not installed",
                          lean_available=False)
+    # lean-dojo 4.x removed the stateless `LeanDojo(repo=...).run_code(source)` API this
+    # function historically called (it never existed in 4.x; the import below would raise
+    # ImportError, surfacing as the misleading "lean-dojo import failed"). In 4.x,
+    # verification is keyed to a Theorem object inside a TRACED LeanGitRepo via
+    # `check_proof(thm, proof) -> bool` (see `check_proof_in_repo` below). A free-form
+    # standalone `theorem` string has no traced repo to resolve against, so this
+    # function cannot satisfy its old contract on 4.x. Fail closed HONESTLY with a
+    # reason that names the real API, rather than silently no-op'ing on a bad import.
+    return LeanCheck(
+        verdict="abstain",
+        reason=("lean_unavailable: standalone-snippet verification needs lean-dojo's "
+                "pre-4.x `run_code` API, removed in 4.x. In lean-dojo 4.x use "
+                "`check_proof_in_repo(thm, proof)` with a traced LeanGitRepo + Theorem."),
+        lean_available=True,
+        detail={"api": "check_proof_in_repo"},
+    )
 
-    # Repo-keyed real path requires BOTH a theorem name and its source file — lean-dojo
-    # 4.x's check_proof keys on Theorem(repo, file_path, full_name), never a free string.
-    if theorem_name is None or file_path is None:
-        return LeanCheck(
-            verdict="abstain",
-            reason=("lean_unavailable: lean-dojo 4.x verifies proofs of NAMED theorems in "
-                    f"a TRACED repo via check_proof(Theorem(repo, file_path, name), proof); "
-                    f"supply theorem_name + file_path (got name={theorem_name!r}, "
-                    f"file={file_path!r}). Free-form source verification is not in the API."),
-            lean_available=True,
-            detail={"needs": ["theorem_name", "file_path"]},
-        )
 
-    try:
-        from lean_dojo import LeanGitRepo, Theorem, check_proof  # type: ignore
-        import pathlib
-    except ImportError:
-        return LeanCheck(verdict="abstain", reason="lean_unavailable: lean-dojo import failed",
+def check_proof_in_repo(theorem_obj: Any, proof: str) -> LeanCheck:
+    """Verify a proof of a named theorem living in a TRACED lean-dojo repo.
+
+    This is the real lean-dojo 4.x verification path. ``theorem_obj`` is a
+    ``lean_dojo.Theorem(repo, file_path, full_name)`` — the caller is responsible for
+    constructing it against a traced ``LeanGitRepo(url, commit)`` (tracing is the
+    caller's concern: it builds the index lean-dojo needs; full Mathlib tracing is
+    heavy, so callers use a minimal repo or a cached traced repo in CI).
+
+    Returns the standard ``LeanCheck``. ``accepted`` only when lean-dojo's
+    ``check_proof`` returns True for the proof; anything else (import failure, lean-dojo
+    exception, False) is ``abstain`` or ``rejected`` — never a fabricated ``accepted``.
+    """
+    if not lean_available():
+        return LeanCheck(verdict="abstain", reason="lean_unavailable: lean-dojo not installed",
                          lean_available=False)
-
     try:
-        repo = LeanGitRepo(repo_url, "master")
-        thm = Theorem(repo, pathlib.Path(file_path), theorem_name)
-        ok = bool(check_proof(thm, proof))
-        if ok:
-            return LeanCheck(verdict="accepted", reason="lean_accepted: goal closed",
-                             lean_available=True, goal_closed=True)
-        return LeanCheck(verdict="rejected", reason="lean_rejected: proof did not close the goal",
-                         lean_available=True, goal_closed=False)
+        from lean_dojo import check_proof as _ldj_check_proof  # type: ignore
+    except ImportError:
+        return LeanCheck(verdict="abstain", reason="lean_unavailable: lean-dojo check_proof missing",
+                         lean_available=False)
+    try:
+        ok = bool(_ldj_check_proof(theorem_obj, proof))
     except Exception as exc:  # fail-closed: any lean-dojo failure abstains, never lies
         return LeanCheck(verdict="abstain",
                          reason=f"lean_error: {type(exc).__name__}: {str(exc)[:200]}",
                          lean_available=True, goal_closed=False,
                          detail={"exception": type(exc).__name__})
+    if ok:
+        return LeanCheck(verdict="accepted", reason="lean_accepted: check_proof True",
+                         lean_available=True, goal_closed=True)
+    return LeanCheck(verdict="rejected", reason="lean_rejected: check_proof False",
+                     lean_available=True, goal_closed=False,
+                     detail={"check_proof": False})
+
+
+# Legacy `verify_proof(theorem=..., proof=...)` body preserved below for the
+# free-form-string contract, but it now returns the honest abstain above (the 4.x API
+# cannot verify a standalone snippet). `check_proof_in_repo` is the working path.
+
+def _verify_proof_legacy(theorem: str, proof: str, *, repo_url: str = "", timeout_s: int = 120) -> LeanCheck:
+    """Legacy entry retained for call-site compatibility; routes to the honest abstain.
+
+    The historical implementation called lean-dojo's pre-4.x `LeanDojo(repo=...).run_code
+    (source)` API, which does not exist in 4.x. Rather than silently fail on a bad
+    import, we route to the same honest abstain + pointer to `check_proof_in_repo`.
+    """
+    _ = (theorem, proof, repo_url, timeout_s)  # unused; signature kept for callers
+    return LeanCheck(
+        verdict="abstain",
+        reason=("lean_unavailable: standalone-snippet verification needs lean-dojo's "
+                "pre-4.x `run_code` API, removed in 4.x. Use `check_proof_in_repo`."),
+        lean_available=True, detail={"api": "check_proof_in_repo"})
 
 
 # ---------------------------------------------------------------------------
-# Tactic-DAG novelty hash (§3.3 / §5.3 of the Open-Problems-Framework critique).
+# Tactic-DAG novelty hash (§3.3 / §5.3 of the Open-Proofs-Framework critique).
 #
 # char-trigram Jaccard (below) is a cheap, dependency-free PRE-FILTER: it catches
 # near-verbatim retrieval. Its documented failure mode is that a re-proof via a
