@@ -30,6 +30,11 @@ from typing import Any
 from okf.counterfactual import counterfactual_remove
 from okf.graph import Graph, resolve
 from okf.revision import revise
+# Single source of truth for the ko window lives in the detector; import it here
+# so the config default cannot drift. This is safe now that revise_loop resolves
+# its defaults lazily (no agent.* import at revise_loop's module top) — the
+# reasoning.consequence.__init__ -> revise_loop path no longer re-enters this module.
+from reasoning.consequence.ko_detector import KO_MAX_ROUNDS
 
 # Conservative defaults; the live values are loaded from
 # ``config/consequence.json`` (tunable without code change). Kept as module
@@ -38,7 +43,6 @@ from okf.revision import revise
 # consequence_cascade_40_v1 pack (see agi-proof/consequence-cascade/); it is the
 # conservative default only in the sense that the config loader falls back to it.
 FLIP_SEVERITY_ESCALATE = 0.15
-_KO_MAX_ROUNDS = 4  # mirrors reasoning.consequence.ko_detector.KO_MAX_ROUNDS
 _CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "consequence.json"
 
 
@@ -58,7 +62,7 @@ def _load_consequence_config() -> dict[str, Any]:
     """
     import math
 
-    defaults = {"flipSeverityEscalate": FLIP_SEVERITY_ESCALATE, "koMaxRounds": _KO_MAX_ROUNDS}
+    defaults = {"flipSeverityEscalate": FLIP_SEVERITY_ESCALATE, "koMaxRounds": KO_MAX_ROUNDS}
     try:
         raw = json.loads(_CONFIG_PATH.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError):
@@ -76,11 +80,16 @@ def _load_consequence_config() -> dict[str, Any]:
         pass
     # koMaxRounds: a positive integer (>= 2 — a window of 0 or 1 makes ko
     # detection meaningless: no recurrence is possible within a 1-round window).
+    # Reject non-integral floats BEFORE coercion so a value like 2.9 does not
+    # silently truncate to 2 (which would make the configured window differ from
+    # what was written). bool is a subclass of int in Python; exclude it too.
     try:
-        k = int(raw["koMaxRounds"])
-        if k >= 2:
+        k = raw["koMaxRounds"]
+        if isinstance(k, bool) or not isinstance(k, int):
+            pass  # non-int (incl. 2.9, "4", True) -> default
+        elif k >= 2:
             out["koMaxRounds"] = k
-    except (TypeError, KeyError, ValueError):
+    except (TypeError, KeyError):
         pass
     return out
 

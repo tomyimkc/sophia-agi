@@ -188,7 +188,7 @@ def test_load_consequence_config_is_fully_exception_safe() -> None:
 
     full_default = {
         "flipSeverityEscalate": cg.FLIP_SEVERITY_ESCALATE,
-        "koMaxRounds": cg._KO_MAX_ROUNDS,
+        "koMaxRounds": cg.KO_MAX_ROUNDS,  # single source of truth, imported from ko_detector
     }
 
     # whole-file malformations -> BOTH keys default
@@ -242,17 +242,43 @@ def test_load_consequence_config_is_fully_exception_safe() -> None:
             tmpfile_path.write_text(content, encoding="utf-8")
             out = cg._load_consequence_config()
             assert out["flipSeverityEscalate"] == 0.2, f"{label}: healthy flip leaked -> {out}"
-            assert out["koMaxRounds"] == cg._KO_MAX_ROUNDS, f"{label}: bad ko leaked -> {out}"
+            assert out["koMaxRounds"] == cg.KO_MAX_ROUNDS, f"{label}: bad ko leaked -> {out}"
 
         # a fully-VALID config loads BOTH real values
         tmpfile_path.write_text('{"flipSeverityEscalate": 0.25, "koMaxRounds": 7}', encoding="utf-8")
         out = cg._load_consequence_config()
         assert out == {"flipSeverityEscalate": 0.25, "koMaxRounds": 7}, f"valid config: {out}"
         assert math.isfinite(out["flipSeverityEscalate"])
+
+        # Regression for the float-truncation review thread: a non-integral float
+        # like 2.9 must NOT silently truncate to 2 (which would make the configured
+        # ko window differ from what was written). It must fall back to the default.
+        tmpfile_path.write_text('{"flipSeverityEscalate": 0.2, "koMaxRounds": 2.9}', encoding="utf-8")
+        out = cg._load_consequence_config()
+        assert out["koMaxRounds"] == cg.KO_MAX_ROUNDS, (
+            f"2.9 must not silently truncate to 2; got {out['koMaxRounds']}"
+        )
+        # a string and a bool are also rejected (bool is an int subclass in Python)
+        tmpfile_path.write_text('{"flipSeverityEscalate": 0.2, "koMaxRounds": "4"}', encoding="utf-8")
+        assert cg._load_consequence_config()["koMaxRounds"] == cg.KO_MAX_ROUNDS
+        tmpfile_path.write_text('{"flipSeverityEscalate": 0.2, "koMaxRounds": true}', encoding="utf-8")
+        assert cg._load_consequence_config()["koMaxRounds"] == cg.KO_MAX_ROUNDS
     finally:
         cg._CONFIG_PATH = orig_path
         if tmpfile_path is not None:
             tmpfile_path.unlink(missing_ok=True)
+
+
+def test_ko_max_rounds_constant_is_single_source_of_truth() -> None:
+    # Regression for the duplicate-constant review thread: consequence_gate must
+    # NOT carry its own _KO_MAX_ROUNDS; it must reuse ko_detector.KO_MAX_ROUNDS so
+    # the config default cannot drift from the detector's default.
+    from agent import consequence_gate as cg
+    from reasoning.consequence.ko_detector import KO_MAX_ROUNDS as detector_default
+    assert not hasattr(cg, "_KO_MAX_ROUNDS"), "consequence_gate must not define its own _KO_MAX_ROUNDS"
+    assert cg.KO_MAX_ROUNDS is detector_default, (
+        "consequence_gate.KO_MAX_ROUNDS must BE ko_detector.KO_MAX_ROUNDS (single source)"
+    )
 
 
 def test_consequence_escalates_even_on_benign_boundary_text() -> None:
