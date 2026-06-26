@@ -51,14 +51,31 @@ def test_adapter_card_is_candidate_only() -> None:
 def test_dpo_pairs_synthetic_warning() -> None:
     from tools.build_distill_dpo_pairs import build_pairs
 
+    # A prompt that TRIPS the Confucius/Dao-De-Jing trap -> the synthetic rejected is
+    # gate-flagged for it -> the pair is emitted (synthetic source).
     traces = [{"messages": [
-        {"role": "user", "content": "Who wrote the Dao De Jing?"},
-        {"role": "assistant", "content": "Laozi is traditionally credited; the text is compiled."},
+        {"role": "user", "content": "Did Confucius write the Dao De Jing?"},
+        {"role": "assistant", "content": "No — the Dao De Jing is Daoist, attributed to Laozi."},
     ], "metadata": {"taskId": "t1", "gatePassed": True}}]
     pairs, stats = build_pairs(traces, misses_by_prompt={})
     assert stats["pairs"] == 1 and stats["synthetic"] == 1 and stats["fromStudentMiss"] == 0
     assert pairs[0]["metadata"]["rejectedSource"] == "synthetic-template"
+    assert pairs[0]["metadata"]["rejectedGateFlagged"] is True
     assert stats["syntheticOnly"] is True
+
+
+def test_dpo_pairs_dropped_when_gate_silent() -> None:
+    """The synthetic rejected is NOT 'always flagged' — it's prompt-dependent. A prompt that
+    doesn't trip the attribution trap yields no gate-flagged rejected -> the pair is dropped
+    and counted as droppedSynthNotFlagged (not silently emitted)."""
+    from tools.build_distill_dpo_pairs import build_pairs
+
+    traces = [{"messages": [
+        {"role": "user", "content": "Who wrote the Dao De Jing?"},  # doesn't mention Confucius -> no trap
+        {"role": "assistant", "content": "Laozi is traditionally credited."},
+    ], "metadata": {"taskId": "t9", "gatePassed": True}}]
+    pairs, stats = build_pairs(traces, misses_by_prompt={})
+    assert stats["pairs"] == 0 and stats["droppedSynthNotFlagged"] == 1
 
 
 def test_dpo_pairs_from_real_miss() -> None:
@@ -73,6 +90,20 @@ def test_dpo_pairs_from_real_miss() -> None:
     pairs, stats = build_pairs(traces, misses)
     assert stats["fromStudentMiss"] == 1 and stats["synthetic"] == 0
     assert pairs[0]["metadata"]["rejectedSource"] == "student-miss"
+
+
+def test_dpo_pairs_counts_dropped_real_miss() -> None:
+    """A real miss that doesn't re-trip the advisor gate is reported as droppedRealMiss,
+    not silently relabeled as synthetic."""
+    from tools.build_distill_dpo_pairs import build_pairs
+
+    traces = [{"messages": [
+        {"role": "user", "content": "Who wrote the Dao De Jing?"},  # no trap -> miss won't be flagged
+        {"role": "assistant", "content": "Laozi is traditionally credited."},
+    ], "metadata": {"taskId": "t3", "gatePassed": True}}]
+    misses = {"Who wrote the Dao De Jing?": "Some random wrong answer."}
+    pairs, stats = build_pairs(traces, misses)
+    assert stats["fromStudentMiss"] == 0 and stats["droppedRealMiss"] == 1
 
 
 def main() -> int:

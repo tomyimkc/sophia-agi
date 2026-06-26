@@ -96,7 +96,16 @@ def resolve_tier(topology: dict[str, Any] | None, role: str) -> TierSpec | None:
     provider = _ENGINE_TO_PROVIDER.get(engine)
     if provider is None:
         if engine == "api":
-            provider = str(tier.get("provider", "openai"))
+            # Fail-closed: an `api` tier MUST name its provider (anthropic/openai/...).
+            # Defaulting silently to "openai" would route a self-hosted endpoint through the
+            # wrong client preset (headers/auth/streaming shape) with no error.
+            named = str(tier.get("provider", "")).strip()
+            if not named:
+                raise ValueError(
+                    f"tier '{role}': engine 'api' requires a 'provider' field "
+                    "(e.g. anthropic/openai); refusing fail-open."
+                )
+            provider = named
         else:
             raise ValueError(f"tier '{role}': unknown engine {engine!r}")
     return TierSpec(

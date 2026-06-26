@@ -29,7 +29,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -44,14 +43,14 @@ DEFAULT_ADAPTER = ROOT / "training" / "lora" / "checkpoints" / "local-sophia-dis
 
 
 def _stage(cmd: list[str], *, dry_run: bool, log: Path | None = None) -> int:
+    """Run one pipeline stage. Reuses tools.runpod_rlvr._stream so the console gets a live
+    tee of the stage output (not just the log file) — matching runpod_train --local's UX."""
+    from tools.runpod_rlvr import _stream
+
     print("[distill] " + " ".join(cmd))
     if dry_run:
         return 0
-    if log:
-        log.parent.mkdir(parents=True, exist_ok=True)
-        with log.open("w") as fh:
-            return subprocess.run(cmd, stdout=fh, stderr=subprocess.STDOUT).returncode
-    return subprocess.run(cmd).returncode
+    return _stream(cmd, log if log is not None else Path("/dev/null"))
 
 
 def _adapter_card(args, *, traces_count: int, adapter_dir: Path) -> dict:
@@ -154,7 +153,10 @@ def main(argv: list[str] | None = None) -> int:
         if code != 0:
             print(f"[distill] stage {name} FAILED (exit {code}); see {log_dir / (name + '.log')}")
             return code
-    traces_count = sum(1 for _ in traces.open(encoding="utf-8")) if traces.exists() else 0
+    traces_count = 0
+    if traces.exists():
+        with traces.open(encoding="utf-8") as fh:
+            traces_count = sum(1 for _ in fh)
     card = _adapter_card(args, traces_count=traces_count, adapter_dir=adapter)
     card_path = adapter / "ADAPTER-CARD.json"
     adapter.mkdir(parents=True, exist_ok=True)

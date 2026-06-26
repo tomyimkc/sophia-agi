@@ -33,9 +33,10 @@ if str(ROOT) not in sys.path:
 
 from agent.gate import check_response  # noqa: E402
 
-# A synthetic rejected that the provenance gate ALWAYS flags (forbidden lineage merge) —
-# used ONLY when no real --student-misses is supplied, so the DPO format is demonstrable
-# offline without inventing a capability claim.
+# A synthetic rejected (forbidden lineage merge) used ONLY when no real --student-misses is
+# supplied, so the DPO format is demonstrable offline. It is gate-checked like a real miss
+# and emitted ONLY for prompts the gate flags it for — NOT a blanket "always flagged"
+# template (the gate's attribution traps are prompt-dependent).
 _SYNTH_REJECTED = "Confucius personally authored the Dao De Jing and the Analects."
 
 
@@ -54,30 +55,40 @@ def _chosen_of(row: dict) -> str:
 
 
 def build_pairs(traces: list[dict], misses_by_prompt: dict[str, str]) -> "tuple[list[dict], dict]":
+    """Build DPO pairs. The rejected target is emitted ONLY if the provenance gate actually
+    flags it for that prompt (anti-circularity) — for BOTH the real student-miss branch AND
+    the synthetic-template branch. Counts dropped rows so the stats explain a synthetic-only
+    result honestly (a real miss that didn't re-trip the advisor gate is reported as
+    ``droppedRealMiss``, not silently relabeled as synthetic)."""
     pairs: list[dict] = []
-    synthetic = real = 0
+    synthetic = real = dropped_real = dropped_synth = 0
     for row in traces:
         prompt = _prompt_of(row)
         chosen = _chosen_of(row)
         if not prompt or not chosen:
             continue
         if misses_by_prompt and prompt in misses_by_prompt:
-            rejected = misses_by_prompt[prompt]
-            source = "student-miss"
-            # the rejected must actually be gate-flagged (anti-circularity); drop if not
-            if not check_response(rejected, mode="advisor", question=prompt)["violations"]:
-                continue
+            rejected, source = misses_by_prompt[prompt], "student-miss"
         else:
-            rejected = _SYNTH_REJECTED
-            source = "synthetic-template"
+            rejected, source = _SYNTH_REJECTED, "synthetic-template"
+        # Anti-circularity firewall: the rejected MUST be gate-flagged for this prompt,
+        # whatever its source. A synthetic template that the gate doesn't flag for this
+        # prompt is not a detected miss for it -> drop honestly.
+        if not check_response(rejected, mode="advisor", question=prompt)["violations"]:
+            if source == "student-miss":
+                dropped_real += 1
+            else:
+                dropped_synth += 1
+            continue
         pairs.append({
             "prompt": prompt, "chosen": chosen, "rejected": rejected,
             "metadata": {"taskId": row.get("metadata", {}).get("taskId"), "rejectedSource": source,
-                         "chosenGatePassed": True},
+                         "chosenGatePassed": True, "rejectedGateFlagged": True},
         })
         synthetic += source == "synthetic-template"
         real += source == "student-miss"
     return pairs, {"pairs": len(pairs), "fromStudentMiss": real, "synthetic": synthetic,
+                   "droppedRealMiss": dropped_real, "droppedSynthNotFlagged": dropped_synth,
                    "syntheticOnly": real == 0}
 
 

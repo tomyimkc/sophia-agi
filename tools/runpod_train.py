@@ -402,22 +402,21 @@ def _create_pod_with_ssh(api_key, payload, name, *, attempts, ssh_timeout_s, key
 def _local_seed_cmd(args: argparse.Namespace, seed: int, out_dir: str) -> list[str]:
     """The LOCAL ``train_lora.py`` invocation for one seed (no shell vars, no ``$SOPHIA_MODEL``).
 
-    Mirrors ``_seed_train_cmd`` but as a concrete argv list against ``args.model`` directly,
-    and bf16 by default (no ``--4bit``) — the Spark/Grace-Blackwell-friendly path, since the
-    128 GB unified memory makes bf16 feasible and bitsandbytes 4-bit wheels are the aarch64
-    pain point. ``--four-bit`` opts back into QLoRA 4-bit.
+    Mirrors ``_seed_train_cmd``'s branching: ``--train-only`` (sealed-pack minimal — just
+    data + quant, no scaffold/guard/early-stop, since the holdout isn't set up for it) vs the
+    full source-discipline recipe otherwise. bf16 by default (no ``--4bit``) — the
+    Spark/Grace-Blackwell-friendly path; ``--four-bit`` opts into QLoRA 4-bit.
     """
     cmd = [sys.executable, str(ROOT / "tools" / "train_lora.py"),
            "--model", args.model, "--epochs", str(args.epochs), "--seed", str(seed),
            "--output", out_dir]
-    if getattr(args, "four_bit", False):
-        cmd.append("--4bit")
-    else:
+    minimal = bool(getattr(args, "train_only", False)) and bool(args.train_data)
+    if not minimal:
         cmd += ["--rslora", "--neftune-alpha", "5", "--weight-decay", "0.05",
                 "--scaffold", "--guard", "--eval-every", "25", "--patience", "4"]
-    if getattr(args, "train_only", False) and args.train_data:
-        cmd += ["--train", args.train_data]
-    elif args.train_data:
+    if getattr(args, "four_bit", False):
+        cmd.append("--4bit")
+    if args.train_data:
         cmd += ["--train", args.train_data]
     return cmd
 
@@ -443,6 +442,10 @@ def _run_local(args: argparse.Namespace) -> int:
         base = base.replace("checkpoints/", "checkpoints/local-", 1)
     else:
         base = base.rstrip("/") + "-local"
+    # Resolve relative to ROOT so the adapter lands deterministically regardless of CWD
+    # (train_lora.py resolves --output against ITS cwd).
+    if not Path(base).is_absolute():
+        base = str(ROOT / base)
     plan: list[tuple[int, list[str], Path]] = []
     for seed in seeds:
         out_dir = f"{base.rstrip('/')}-seed{seed}"

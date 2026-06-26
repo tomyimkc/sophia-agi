@@ -47,10 +47,16 @@ def _capability(report: dict) -> tuple[str, float, float]:
 
 def compare(local: dict, runpod: dict) -> dict[str, Any]:
     """Compare two eval reports (same task/config, different hardware tiers)."""
+    if (local.get("task") or "provenance") != (runpod.get("task") or "provenance"):
+        raise ValueError(
+            f"task mismatch: local={local.get('task')!r} runpod={runpod.get('task')!r} — "
+            "an A/B comparison must be the SAME task; comparing across tasks conflates the "
+            "hardware gap with a task-content gap."
+        )
     metric, l_base, l_adapter = _capability(local)
     r_metric, r_base, r_adapter = _capability(runpod)
     if metric != r_metric:
-        raise ValueError(f"task mismatch: local={metric} runpod={r_metric}")
+        raise ValueError(f"metric mismatch: local={metric} runpod={r_metric}")
     l_delta = round(l_adapter - l_base, 4)
     r_delta = round(r_adapter - r_base, 4)
     return {

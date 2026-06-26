@@ -41,6 +41,18 @@ def test_task_mismatch_rejected() -> None:
     raise AssertionError("metric/task mismatch should be rejected")
 
 
+def test_code_vs_math_task_mismatch_rejected() -> None:
+    # both code and math map to passAt1, but they are DIFFERENT tasks — must still reject
+    # (comparing across tasks conflates the hardware gap with a task-content gap)
+    try:
+        compare({"task": "code", "base": {"passAt1": 0}, "adapterScore": {"passAt1": 0.1}},
+                {"task": "math", "base": {"passAt1": 0}, "adapterScore": {"passAt1": 0.1}})
+    except ValueError as exc:
+        assert "task mismatch" in str(exc).lower()
+        return
+    raise AssertionError("code-vs-math task mismatch should be rejected (not just metric)")
+
+
 def main() -> int:
     import inspect
     for nm, fn in sorted(globals().items()):

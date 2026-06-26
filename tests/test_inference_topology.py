@@ -90,6 +90,27 @@ def test_mlx_tier_refused() -> None:
     raise AssertionError("mlx tier should be refused fail-closed")
 
 
+def test_api_tier_without_provider_refused() -> None:
+    # fail-closed: an `api` engine tier with no `provider` must NOT default to openai
+    topo = {"schema": SCHEMA, "tiers": {"x": {"engine": "api", "model": "m"}}}
+    try:
+        resolve_tier(topo, "x")
+    except ValueError as exc:
+        assert "api" in str(exc).lower() and "provider" in str(exc).lower()
+        return
+    raise AssertionError("api tier without provider should be refused fail-closed")
+
+
+def test_unknown_engine_refused() -> None:
+    topo = {"schema": SCHEMA, "tiers": {"x": {"engine": "weirdengine", "model": "m"}}}
+    try:
+        resolve_tier(topo, "x")
+    except ValueError as exc:
+        assert "unknown engine" in str(exc).lower()
+        return
+    raise AssertionError("unknown engine should be refused fail-closed")
+
+
 def main() -> int:
     import inspect
     for nm, fn in sorted(globals().items()):
