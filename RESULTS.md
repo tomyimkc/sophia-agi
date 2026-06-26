@@ -87,6 +87,24 @@ Continual Provenance QA (CPQA): a frozen LLM answers either from the retrieved O
   - 3-FAMILY VALIDATION (DeepSeek+Meta+Qwen, full-92, 3 runs). The grounded-vs-raw finding is robust across three independent families: mean pairwise kappa 0.88 (grounded) / 0.81 (raw), per-judge spread tight. Key behavioral result: vs the thin-corpus hybrid (141 parametric fallbacks), enrichment shifts the hybrid to 237 strict / 24 fallback — SAME recall (~0.67) with ~6x LESS parametric reliance (more grounded, not just more accurate). Traps behaviorally 1.0 (all 15 took the hard-abstain policy; the 0.933 score is judge noise on the fixed abstention string). raw still wins overall (0.895) — the residual gap is corpus coverage (terse field-derived summaries), not method.
 - ⚠ CANDIDATE, not validated (self-authored benchmark, keys held by one operator, no external replication). FULL 92-query cross-gateway run, 3 runs. Honest headline: on attribution-traps/retractions grounded scores 1.0 vs raw 0.0 (perfect fail-closed abstention), but on plain recall grounded collapses to 0.50 vs raw 0.93 because answers are constrained to the retrieved wiki page and many pages are thin provenance stubs that don't contain the answer. Net, the raw model wins OVERALL (0.88 vs 0.53) on this recall-heavy, thin-source corpus. This is the predicted coverage-vs-fabrication tradeoff: grounding buys trap-safety at a recall cost, not a blanket win. Inter-judge kappa is now healthy (0.94/0.67; the earlier degeneracy was a small-subset artifact). UPDATE: a Step 1+2 hybrid (graph-neighborhood + typed gate with attribution-safe fallback) recovers recall to 0.68 and overall to 0.685 while keeping all traps on the hard-abstain path (see continualGroundedEvals.hybrid).
 
+## Systems benchmarks (performance — candidate, host-dependent)
+
+Throughput/latency micro-benchmarks for the systems components. These are **candidate** engineering numbers (single host, vary by machine), not no-overclaim accuracy results — reproduce with the command in each note.
+
+### kvcache (Phase 1) (`storage/kvcache`)
+
+Sharded async in-memory KV cache (Rust/Tokio). kvcache-bench measures the full loopback TCP round trip (client→server→client), not the bare in-memory map. Numbers vary by host.
+
+_Representative run — 32 clients × 30,000 GETs, 100,000 keys, 256-byte values, 16 shards, 100% read, no evictions (all hits):_
+
+| pipeline depth | throughput | latency p50 | latency p99 |
+|---|---|---|---|
+| 1 (no pipelining) | ~186k ops/sec | ~168 µs (per-op) | ~300 µs (per-op) |
+| 16 | ~1.60M ops/sec | ~306 µs (per-batch) | ~546 µs (per-batch) |
+| 64 | ~2.13M ops/sec | ~920 µs (per-batch) | ~1602 µs (per-batch) |
+
+- Phase 1b request pipelining packs a batch into one flush and coalesces responses — the textbook throughput-for-latency trade (8.6× throughput at depth 16 for higher per-batch latency; depth-1 is the honest single-request baseline). Single node, in-memory only; persistence (io_uring) + replication (Raft) are Phases 2–3. Reproduce: `cd storage && cargo run --release --bin kvcache-bench -- --clients 32 --ops 30000 --pipeline 16`
+
 ## Reproduce
 
 ```bash
