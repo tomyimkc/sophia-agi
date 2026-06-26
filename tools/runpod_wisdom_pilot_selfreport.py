@@ -145,7 +145,7 @@ if python -c "import transformers,peft,trl,accelerate,datasets,sentencepiece" 2>
   echo "[pod] deps pre-baked — skipping pip (no long install to die during)"
 else
   python -m pip install --upgrade pip >/dev/null
-  python -m pip install -U "transformers>=4.52" "peft>=0.13" "trl>=0.12" accelerate datasets sentencepiece protobuf
+  python -m pip install -U "transformers>=4.52,<5" "peft>=0.13,<1" "trl>=0.12,<0.15" "accelerate<2" datasets sentencepiece protobuf
 fi
 
 # Rebuild the DETERMINISTIC gate-passed dataset (reproducible; no live teacher -> ~730 rows)

@@ -64,3 +64,24 @@ Then it's not pip — check (a) the GHCR package is actually public (RunPod pull
 like an instant death), (b) the gemma-3 weight download (~8GB) isn't filling the volume — raise
 `--volume-gb` or pre-cache weights on a RunPod network volume, (c) try a different GPU type /
 data center. Do this diagnosis on a `limit=24,runs=1` validation, never a full run.
+
+## Observability: the env probe + log-on-crash (added 2026-06-26, after M4)
+A pod that crashes BEFORE writing a result used to leave a STALE log and look like a silent
+"success". Two fixes make any failure diagnosable in ONE cheap run:
+- `finish()` stages the log FIRST and SEPARATELY (`git add LOG` then result/answers each on its
+  own line). The old `git add RESULT ANSWERS LOG` failed as a whole when result/answers didn't
+  exist yet, dropping the log too. If a run yields no result, read
+  `agi-proof/benchmark-results/runpod-wisdom-pilot/pod-selfreport.log` — it now reflects THIS pod.
+- An ENV PROBE is pushed right after the heartbeat (before the heavy build/smoke):
+  `agi-proof/benchmark-results/runpod-wisdom-pilot/pod-envprobe.txt` with python/torch/
+  transformers/peft/trl/accelerate/datasets versions + a guarded `from trl import ORPOConfig,
+  ORPOTrainer` test. It survives even a hard kill. **Poll for this file first** when a run fails.
+
+## DEP VERSIONS MUST BE UPPER-CAPPED (root cause of the 2nd M4 death)
+Unbounded floors (`transformers>=4.52`, `trl>=0.12`) resolved to **transformers 5.x + trl 1.7.0**,
+and **trl 1.x REMOVED top-level `ORPOConfig`/`ORPOTrainer`** → `ImportError: cannot import name
+'ORPOConfig' from 'trl'`. The SFT pilot never caught it (it doesn't import trl). The standing pins
+are now `transformers>=4.52,<5`, `trl>=0.12,<0.15`, `peft>=0.13,<1`, `accelerate<2` in BOTH the
+Dockerfile and the launcher pip-fallback, and the image BUILD imports `ORPOConfig`/`ORPOTrainer`
+so a bad resolution fails the free build, not a GPU pod. If you bump any dep, keep both places in
+sync and keep the trl cap below the version that drops ORPO.
