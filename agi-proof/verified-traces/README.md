@@ -95,10 +95,15 @@ itself**, and the falsification is kept on record rather than hidden:
   *reasoning* was load-bearing.
 - **v2 fix:** `build_mlx_decide_gold` scores the *gold token's* logprob drop
   under perturbation (answer-agnostic), and `default_perturbs_reasoning` perturbs
-  reasoning sentences only (the `Answer:` line is preserved). A v2 run where the
-  three categories *separate* (load-bearing high, post-hoc low) is the actual
-  discriminating measurement; if they still do not separate, that is a real
-  finding about the adapter (its CoT is decorative).
+  reasoning sentences only (the `Answer:` line is preserved).
+- **v2 first real run** (`d65f64f5`, `faithfulness-probe.public-report.json`):
+  `discriminates=false`. **Do not read this as "the adapter's CoT is
+  decorative."** The run is under-powered (n=2 perturbations/probe, one gold token
+  at −6.6 nats baseline is effectively ill-posed). The mock-based discrimination
+  test passes, so the probe *logic* is sound — the gap to real logprobs is a
+  probe-POWER problem, not an adapter finding. A defensible measurement needs
+  ~15 binary-gold probes × ≥5 perturbs each, reported as mean ± std. See the
+  artifact's `findingScope` field for the full honest framing.
 
 This is the discipline the layer exists to enforce: a probe that overclaims what
 it measures is itself an overclaim, and gets recorded as such.
