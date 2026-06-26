@@ -224,6 +224,28 @@ python tools/run_multimodal_traps.py --answer openai:gpt-4o --runs 5 \
     --judge-spec anthropic:claude-... --judge-spec deepseek:deepseek-chat
 ```
 
-**Next (Phase 2+):** wire the scene verifiers as RLVR reward terms (workstream B),
-extend scenes to rendered charts/documents with known values (workstream D), and
-add calibration / risk-coverage curves over the abstention signal (workstream C).
+### Phases 2–3 — ✅ landed (offline substrate)
+
+The next three slices are implemented on the same offline, no-overclaim footing:
+
+| Phase | Workstream | What landed | File(s) |
+|---|---|---|---|
+| 2 | B (RLVR) | Verifier-as-reward: the judge-free scene verifier IS the reward, shaped `correct(+1) > abstain(−0.25) > wrong(−1)` so the model is trained to prefer honest abstention over confident hallucination. TRL-`GRPOTrainer`-shaped, fail-closed on verifier mismatch, with a contamination-free train/eval **family split**. | `multimodal_bench/visual_reward.py`, `visual_dataset.py`, `tools/run_multimodal_reward.py` |
+| 3 (D) | data synthesis | Verifier-checked synthetic **chart / table / document** traps — deterministic generator, frozen `data/visual_traps_synth.json`, every label re-derivable by the verifier (a test asserts no drift). Distractors are plausible misreads (adjacent bar/cell, runner-up, digit transposition). | `multimodal_bench/synthesize.py`, `verifiers.py` (chart/table/doc), `render.py` |
+| 3 (C) | calibration | Risk-coverage / calibrated abstention for VQA, **reusing `agent/calibration.py`** (ECE, AURC, selective risk). Separates a calibrated VLM (selective-risk < base-risk, low AURC) from an overconfident one (high ECE, flat risk). | `multimodal_bench/calibration.py`, `tools/run_multimodal_calibration.py` |
+
+Reference numbers (offline, illustrative — synthetic backends, not validated headlines):
+reward invariants all hold (ordering + bounded + verifier-seam + contamination-free);
+calibrated A/B shows selective-risk@0.5 = 0.00 vs base-risk 0.16 (AURC 0.016) for the
+calibrated model vs AURC 0.151 for the overconfident one. The full suite is now **49
+traps** across 9 categories. Run:
+
+```
+python tools/run_multimodal_reward.py
+python tools/run_multimodal_calibration.py
+python tools/run_multimodal_traps.py --answer mock:grounded --include-synth --runs 3
+```
+
+**Next (Phase 4+):** a live GPU RLVR run on the visual reward (pre-registered in the
+failure ledger, gated on CUDA), real-VLM headline runs through the multi-family
+consensus judge, and workstreams E/F (fail-closed GUI agent, encoder probing).

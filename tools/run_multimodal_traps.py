@@ -74,10 +74,12 @@ def main(argv=None) -> int:
     ap.add_argument("--judge-spec", action="append", dest="judge_specs",
                     help="LLM judge spec (repeat >=2 for a real consensus judge)")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--include-synth", action="store_true",
+                    help="also include the verifier-checked chart/table/document traps")
     ap.add_argument("--json", action="store_true", help="emit the full report as JSON")
     args = ap.parse_args(argv)
 
-    traps = runner.load_traps()
+    traps = runner.load_all_traps() if args.include_synth else runner.load_traps()
     answer_fn = resolve_answer_fn(args.answer)
     judge_fn, judge_specs = _build_judge(args.judge_specs)
 

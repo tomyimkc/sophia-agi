@@ -17,12 +17,21 @@ import random
 from multimodal_bench import judge as judge_mod
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "visual_traps.json")
+SYNTH_PATH = os.path.join(os.path.dirname(__file__), "data", "visual_traps_synth.json")
 KAPPA_FLOOR = 0.40  # "moderate" agreement — the minimum for a validated headline
 
 
 def load_traps(path: str = DATA_PATH) -> list:
     with open(path, encoding="utf-8") as f:
         return json.load(f)["traps"]
+
+
+def load_all_traps() -> list:
+    """Hand-authored base traps + verifier-checked synthetic chart/table/doc traps."""
+    traps = load_traps(DATA_PATH)
+    if os.path.exists(SYNTH_PATH):
+        traps = traps + load_traps(SYNTH_PATH)
+    return traps
 
 
 def run_cases(traps: list, answer_fn, judge_fn=None) -> list:

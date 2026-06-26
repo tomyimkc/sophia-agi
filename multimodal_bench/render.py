@@ -47,6 +47,53 @@ def render_png(scene: dict, *, scale: int = 1) -> bytes:
         draw.rectangle([x, y, x + bw, y + bh], fill=(255, 255, 255), outline=(0, 0, 0), width=2)
         draw.text((x + 8, y + bh / 2 - 6), t.get("value", ""), fill=(0, 0, 0))
 
+    if scene.get("chart"):
+        _draw_chart(draw, scene["chart"], w, h)
+    if scene.get("table"):
+        _draw_table(draw, scene["table"], w, h)
+    if scene.get("document"):
+        _draw_document(draw, scene["document"], w, h)
+
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     return buf.getvalue()
+
+
+def _draw_chart(draw, chart: dict, w: int, h: int) -> None:
+    """Bar chart: bars scaled to value, with the value printed atop each bar."""
+    bars = chart.get("bars", [])
+    if not bars:
+        return
+    draw.text((20, 16), chart.get("title", ""), fill=(0, 0, 0))
+    base_y, top_y = h - 60, 80
+    vmax = max(b["value"] for b in bars) or 1
+    slot = (w - 80) / len(bars)
+    for i, b in enumerate(bars):
+        bx = 60 + i * slot
+        bh = (b["value"] / vmax) * (base_y - top_y)
+        draw.rectangle([bx, base_y - bh, bx + slot * 0.6, base_y], fill=(80, 110, 200), outline=(20, 20, 20))
+        draw.text((bx, base_y - bh - 16), str(b["value"]), fill=(0, 0, 0))     # value label
+        draw.text((bx, base_y + 8), str(b["label"]), fill=(0, 0, 0))           # axis label
+    draw.line([60, base_y, w - 20, base_y], fill=(0, 0, 0), width=2)
+
+
+def _draw_table(draw, table: dict, w: int, h: int) -> None:
+    cols = table.get("columns", [])
+    rows = table.get("rows", [])
+    cw = (w - 80) / max(1, len(cols))
+    y = 80
+    for j, c in enumerate(cols):
+        draw.text((40 + j * cw + 6, y), str(c), fill=(0, 0, 0))
+    draw.line([40, y + 22, w - 40, y + 22], fill=(0, 0, 0), width=2)
+    for r, row in enumerate(rows):
+        ry = y + 30 + r * 30
+        for j, cell in enumerate(row):
+            draw.text((40 + j * cw + 6, ry), str(cell), fill=(0, 0, 0))
+
+
+def _draw_document(draw, document: dict, w: int, h: int) -> None:
+    y = 80
+    for name, value in document.get("fields", {}).items():
+        draw.text((50, y), f"{name}:", fill=(0, 0, 0))
+        draw.text((230, y), str(value), fill=(0, 0, 0))
+        y += 36

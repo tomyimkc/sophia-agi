@@ -1,0 +1,548 @@
+{
+  "_meta": {
+    "description": "Verifier-checked SYNTHETIC chart/table/document traps, generated deterministically by multimodal_bench/synthesize.py (build_synth_traps). Every label is re-derivable by the scene verifier; a test regenerates this file and asserts equality + gold_matches_check on every row. Distractors are plausible misreads (adjacent bar/cell, runner-up, digit transposition), not random.",
+    "generator": "multimodal_bench.synthesize.build_synth_traps",
+    "seed": 0,
+    "labelSource": "deterministic scene verifier (judge-free)",
+    "schemaVersion": 1,
+    "categories": [
+      "chart_qa",
+      "table_qa",
+      "document_qa"
+    ]
+  },
+  "traps": [
+    {
+      "id": "synth-chart-value-0",
+      "category": "chart_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "chart": {
+          "kind": "bar",
+          "title": "Quarterly revenue",
+          "unit": "$M",
+          "bars": [
+            {
+              "label": "Q1",
+              "value": 59
+            },
+            {
+              "label": "Q2",
+              "value": 63
+            },
+            {
+              "label": "Q3",
+              "value": 15
+            },
+            {
+              "label": "Q4",
+              "value": 43
+            }
+          ]
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In 'Quarterly revenue', what is the value of bar Q4 ($M)?",
+      "answer_type": "count",
+      "gold_answer": "43",
+      "trap_answer": "59",
+      "check": {
+        "type": "chart_value",
+        "label": "Q4",
+        "expect": 43
+      },
+      "reason": "Bar Q4 = 43; reading 59 is the adjacent bar's value (a misread)."
+    },
+    {
+      "id": "synth-chart-value-1",
+      "category": "chart_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "chart": {
+          "kind": "bar",
+          "title": "Site visits by day",
+          "unit": "k",
+          "bars": [
+            {
+              "label": "Mon",
+              "value": 61
+            },
+            {
+              "label": "Tue",
+              "value": 48
+            },
+            {
+              "label": "Wed",
+              "value": 71
+            },
+            {
+              "label": "Thu",
+              "value": 55
+            }
+          ]
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In 'Site visits by day', what is the value of bar Tue (k)?",
+      "answer_type": "count",
+      "gold_answer": "48",
+      "trap_answer": "71",
+      "check": {
+        "type": "chart_value",
+        "label": "Tue",
+        "expect": 48
+      },
+      "reason": "Bar Tue = 48; reading 71 is the adjacent bar's value (a misread)."
+    },
+    {
+      "id": "synth-chart-extreme-2",
+      "category": "chart_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "chart": {
+          "kind": "bar",
+          "title": "Votes per option",
+          "unit": "votes",
+          "bars": [
+            {
+              "label": "A",
+              "value": 74
+            },
+            {
+              "label": "B",
+              "value": 27
+            },
+            {
+              "label": "C",
+              "value": 46
+            }
+          ]
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In 'Votes per option', which bar is the highest?",
+      "answer_type": "text",
+      "gold_answer": "A",
+      "trap_answer": "C",
+      "check": {
+        "type": "chart_extreme",
+        "which": "max"
+      },
+      "reason": "The max bar is A; naming the runner-up C is a chart-reading error."
+    },
+    {
+      "id": "synth-chart-value-3",
+      "category": "chart_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "chart": {
+          "kind": "bar",
+          "title": "Rainfall by month",
+          "unit": "mm",
+          "bars": [
+            {
+              "label": "Jan",
+              "value": 27
+            },
+            {
+              "label": "Feb",
+              "value": 22
+            },
+            {
+              "label": "Mar",
+              "value": 89
+            },
+            {
+              "label": "Apr",
+              "value": 42
+            }
+          ]
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In 'Rainfall by month', what is the value of bar Feb (mm)?",
+      "answer_type": "count",
+      "gold_answer": "22",
+      "trap_answer": "89",
+      "check": {
+        "type": "chart_value",
+        "label": "Feb",
+        "expect": 22
+      },
+      "reason": "Bar Feb = 22; reading 89 is the adjacent bar's value (a misread)."
+    },
+    {
+      "id": "synth-chart-value-4",
+      "category": "chart_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "chart": {
+          "kind": "bar",
+          "title": "Quarterly revenue",
+          "unit": "$M",
+          "bars": [
+            {
+              "label": "Q1",
+              "value": 49
+            },
+            {
+              "label": "Q2",
+              "value": 22
+            },
+            {
+              "label": "Q3",
+              "value": 19
+            },
+            {
+              "label": "Q4",
+              "value": 52
+            }
+          ]
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In 'Quarterly revenue', what is the value of bar Q4 ($M)?",
+      "answer_type": "count",
+      "gold_answer": "52",
+      "trap_answer": "49",
+      "check": {
+        "type": "chart_value",
+        "label": "Q4",
+        "expect": 52
+      },
+      "reason": "Bar Q4 = 52; reading 49 is the adjacent bar's value (a misread)."
+    },
+    {
+      "id": "synth-chart-extreme-5",
+      "category": "chart_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "chart": {
+          "kind": "bar",
+          "title": "Site visits by day",
+          "unit": "k",
+          "bars": [
+            {
+              "label": "Mon",
+              "value": 81
+            },
+            {
+              "label": "Tue",
+              "value": 22
+            },
+            {
+              "label": "Wed",
+              "value": 55
+            },
+            {
+              "label": "Thu",
+              "value": 65
+            }
+          ]
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In 'Site visits by day', which bar is the lowest?",
+      "answer_type": "text",
+      "gold_answer": "Tue",
+      "trap_answer": "Wed",
+      "check": {
+        "type": "chart_extreme",
+        "which": "min"
+      },
+      "reason": "The min bar is Tue; naming the runner-up Wed is a chart-reading error."
+    },
+    {
+      "id": "synth-table-cell-0",
+      "category": "table_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "table": {
+          "columns": [
+            "item",
+            "price"
+          ],
+          "rows": [
+            [
+              "apple",
+              "42"
+            ],
+            [
+              "pear",
+              "80"
+            ],
+            [
+              "plum",
+              "83"
+            ]
+          ]
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In the table, what is the price of 'apple'?",
+      "answer_type": "text",
+      "gold_answer": "42",
+      "trap_answer": "80",
+      "check": {
+        "type": "table_cell",
+        "row": "apple",
+        "col": "price",
+        "expect": "42"
+      },
+      "reason": "The price of apple is 42; 80 is the adjacent row 'pear' (a row-slip)."
+    },
+    {
+      "id": "synth-table-cell-1",
+      "category": "table_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "table": {
+          "columns": [
+            "item",
+            "stock"
+          ],
+          "rows": [
+            [
+              "bolt",
+              "72"
+            ],
+            [
+              "nut",
+              "63"
+            ],
+            [
+              "washer",
+              "58"
+            ],
+            [
+              "screw",
+              "68"
+            ]
+          ]
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In the table, what is the stock of 'washer'?",
+      "answer_type": "text",
+      "gold_answer": "58",
+      "trap_answer": "68",
+      "check": {
+        "type": "table_cell",
+        "row": "washer",
+        "col": "stock",
+        "expect": "58"
+      },
+      "reason": "The stock of washer is 58; 68 is the adjacent row 'screw' (a row-slip)."
+    },
+    {
+      "id": "synth-table-cell-2",
+      "category": "table_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "table": {
+          "columns": [
+            "item",
+            "price"
+          ],
+          "rows": [
+            [
+              "apple",
+              "9"
+            ],
+            [
+              "pear",
+              "72"
+            ],
+            [
+              "plum",
+              "3"
+            ]
+          ]
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In the table, what is the price of 'apple'?",
+      "answer_type": "text",
+      "gold_answer": "9",
+      "trap_answer": "72",
+      "check": {
+        "type": "table_cell",
+        "row": "apple",
+        "col": "price",
+        "expect": "9"
+      },
+      "reason": "The price of apple is 9; 72 is the adjacent row 'pear' (a row-slip)."
+    },
+    {
+      "id": "synth-table-cell-3",
+      "category": "table_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "table": {
+          "columns": [
+            "item",
+            "stock"
+          ],
+          "rows": [
+            [
+              "bolt",
+              "94"
+            ],
+            [
+              "nut",
+              "53"
+            ],
+            [
+              "washer",
+              "92"
+            ],
+            [
+              "screw",
+              "87"
+            ]
+          ]
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In the table, what is the stock of 'bolt'?",
+      "answer_type": "text",
+      "gold_answer": "94",
+      "trap_answer": "53",
+      "check": {
+        "type": "table_cell",
+        "row": "bolt",
+        "col": "stock",
+        "expect": "94"
+      },
+      "reason": "The stock of bolt is 94; 53 is the adjacent row 'nut' (a row-slip)."
+    },
+    {
+      "id": "synth-doc-field-0",
+      "category": "document_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "document": {
+          "fields": {
+            "Invoice No": "INV-726",
+            "Total": "$73.52",
+            "Due": "Net 30"
+          }
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In this document, what is the 'Due'?",
+      "answer_type": "text",
+      "gold_answer": "Net 30",
+      "trap_answer": "Net 03",
+      "check": {
+        "type": "doc_field",
+        "name": "Due",
+        "expect": "Net 30"
+      },
+      "reason": "The Due reads Net 30; Net 03 transposes its digits (an OCR slip)."
+    },
+    {
+      "id": "synth-doc-field-1",
+      "category": "document_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "document": {
+          "fields": {
+            "Order ID": "ORD-433",
+            "Amount": "$18.34",
+            "Items": "3"
+          }
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In this document, what is the 'Order ID'?",
+      "answer_type": "text",
+      "gold_answer": "ORD-433",
+      "trap_answer": "$18.34",
+      "check": {
+        "type": "doc_field",
+        "name": "Order ID",
+        "expect": "ORD-433"
+      },
+      "reason": "The Order ID reads ORD-433; $18.34 transposes its digits (an OCR slip)."
+    },
+    {
+      "id": "synth-doc-field-2",
+      "category": "document_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "document": {
+          "fields": {
+            "Invoice No": "INV-344",
+            "Total": "$28.79",
+            "Due": "Net 2"
+          }
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In this document, what is the 'Invoice No'?",
+      "answer_type": "text",
+      "gold_answer": "INV-344",
+      "trap_answer": "$28.79",
+      "check": {
+        "type": "doc_field",
+        "name": "Invoice No",
+        "expect": "INV-344"
+      },
+      "reason": "The Invoice No reads INV-344; $28.79 transposes its digits (an OCR slip)."
+    },
+    {
+      "id": "synth-doc-field-3",
+      "category": "document_qa",
+      "scene": {
+        "width": 512,
+        "height": 512,
+        "document": {
+          "fields": {
+            "Order ID": "ORD-182",
+            "Amount": "$50.75",
+            "Items": "2"
+          }
+        },
+        "objects": [],
+        "texts": []
+      },
+      "question": "In this document, what is the 'Order ID'?",
+      "answer_type": "text",
+      "gold_answer": "ORD-182",
+      "trap_answer": "ORD-128",
+      "check": {
+        "type": "doc_field",
+        "name": "Order ID",
+        "expect": "ORD-182"
+      },
+      "reason": "The Order ID reads ORD-182; ORD-128 transposes its digits (an OCR slip)."
+    }
+  ]
+}
