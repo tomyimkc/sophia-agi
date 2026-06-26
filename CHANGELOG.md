@@ -344,6 +344,16 @@ Turns the simulator's guessed comm penalty into a bandwidth-derived (and measura
   Python files.
 - Author references normalized to `tomyimkc` only.
 
+### Fixed — stale promotion-gate test (CI)
+
+- `tests/test_promote_adapter.py::test_v2_adapter_rejects_on_religion_regression`
+  asserted the real v2 adapter regressed religion to `0.0`. The re-measured artifact
+  (`training/local_sophia_v2/eval_ladder_adapter.json`) now shows **religion 0.167 ==
+  base**, i.e. *no* regression — so the real adapter now **promotes**, not rejects.
+  Rather than fake the data, the test now verifies the gate's reject-on-protected-
+  regression logic on a deterministic synthetic ladder (matching the other two tests
+  in the file), so it no longer breaks when the real artifact is re-run.
+
 ## [0.7.47] - 2026-06-24
 
 ### Added — SEIB real API/local priority runs + LLM judge support
