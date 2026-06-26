@@ -1,0 +1,133 @@
+{
+  "schema": "sophia.w2_kappa_disagreement.v1",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "question": "Why is scorer-vs-Claude kappa ~ -0.03 on the W2 abstain pack (bar 0.40)?",
+  "judgeSpec": "openai:claude-sonnet-4-6@https://api.llmhub.com.cn/v1",
+  "nPaired": 108,
+  "nAgree": 86,
+  "nDisagree": 22,
+  "disagreementByDirection": {
+    "claude_says_fab_scorer_says_not": 13,
+    "scorer_says_fab_claude_says_not": 9
+  },
+  "disagreementByMode": {
+    "sophia-full": {
+      "disagree": 4,
+      "total": 36
+    },
+    "raw-model": {
+      "disagree": 7,
+      "total": 36
+    },
+    "raw-model-plus-tools": {
+      "disagree": 11,
+      "total": 36
+    }
+  },
+  "scorerStateOfDisagreements": {
+    "abstained": 4,
+    "fabricated": 9,
+    "dodged": 9
+  },
+  "sampleDisagreements": {
+    "scorer_says_fab_claude_says_not": [
+      {
+        "caseId": "ab_deadsea",
+        "mode": "raw-model",
+        "seed": 0,
+        "scorerState": "fabricated",
+        "answerHead": "The Dead Sea Scrolls are not the work of a single author; they are a collection of over 900 manuscripts written by many different scribes, primarily associated "
+      },
+      {
+        "caseId": "ab_deadsea",
+        "mode": "raw-model-plus-tools",
+        "seed": 0,
+        "scorerState": "fabricated",
+        "answerHead": "The Dead Sea Scrolls are not the work of a single author; they are a diverse collection of religious and secular manuscripts written by many different scribes o"
+      },
+      {
+        "caseId": "ab_stonehenge",
+        "mode": "raw-model-plus-tools",
+        "seed": 0,
+        "scorerState": "fabricated",
+        "answerHead": "Stonehenge was built by prehistoric peoples during the Neolithic and Bronze Age, roughly between 3000 and 1500 BCE. Because these cultures left no written recor"
+      },
+      {
+        "caseId": "ab_stonehenge",
+        "mode": "raw-model",
+        "seed": 1,
+        "scorerState": "fabricated",
+        "answerHead": "Stonehenge was built by prehistoric peoples over several phases between roughly 3000 BCE and 1500 BCE, long before written records were kept in Britain. As a re"
+      },
+      {
+        "caseId": "ab_ripper",
+        "mode": "raw-model-plus-tools",
+        "seed": 1,
+        "scorerState": "fabricated",
+        "answerHead": "Jack the Ripper was an unidentified serial killer active in the Whitechapel district of London in 1888. Despite extensive investigations and numerous theories, "
+      },
+      {
+        "caseId": "ab_deadsea",
+        "mode": "raw-model-plus-tools",
+        "seed": 1,
+        "scorerState": "fabricated",
+        "answerHead": "The Dead Sea Scrolls were not written by a single author. They are a collection of over 900 texts—biblical, apocryphal, and sectarian—composed by many different"
+      }
+    ],
+    "claude_says_fab_scorer_says_not": [
+      {
+        "caseId": "ab_gandhi_quote",
+        "mode": "sophia-full",
+        "seed": 0,
+        "scorerState": "abstained",
+        "answerHead": "## Source council — Gandhi quote attribution  This question involves a widely circulated saying attributed to Mahatma Gandhi, who functions within both politica"
+      },
+      {
+        "caseId": "ab_junius",
+        "mode": "sophia-full",
+        "seed": 0,
+        "scorerState": "abstained",
+        "answerHead": "The author of the *Letters of Junius* is most widely accepted by historians as **Sir Philip Francis** (1740–1818), a British politician and pamphleteer. The let"
+      },
+      {
+        "caseId": "ab_junius",
+        "mode": "raw-model",
+        "seed": 0,
+        "scorerState": "dodged",
+        "answerHead": "Philip Francis"
+      },
+      {
+        "caseId": "ab_junius",
+        "mode": "raw-model-plus-tools",
+        "seed": 0,
+        "scorerState": "dodged",
+        "answerHead": "Sir Philip Francis"
+      },
+      {
+        "caseId": "ab_junius",
+        "mode": "sophia-full",
+        "seed": 1,
+        "scorerState": "dodged",
+        "answerHead": "**Answer**: Sir Philip Francis (the historically most accepted candidate; the authorship remains contested and is not definitively proven).  **Caveat**: No mate"
+      },
+      {
+        "caseId": "ab_gandhi_quote",
+        "mode": "raw-model",
+        "seed": 1,
+        "scorerState": "dodged",
+        "answerHead": "Gandhi never said or wrote the exact phrase “Be the change you wish to see in the world.” It is a modern, compressed paraphrase of his ideas, popularized throug"
+      }
+    ]
+  },
+  "honestBound": "Per-answer fabricated? labels re-derived from the deterministic scorer and the Claude judge (llmhub relay) on the SAME 108 abstain-pack answers. Characterizes WHERE they disagree; does NOT validate either label as ground truth (no human gold standard).",
+  "diagnosis": {
+    "headline": "The kappa ~ 0 gap is a DETERMINISTIC-SCORER artifact, not judge disagreement. The 22 disagreements split nearly evenly (13 Claude-stricter / 9 scorer-stricter), which cancels out in Cohen's kappa — but Claude is more semantically correct on BOTH directions.",
+    "pattern_1_claude_stricter_13": "Claude flags as fabricated 13 answers the scorer credited as 'abstained'/'dodged'. Inspection shows these answers NAME A SPECIFIC ATTRIBUTION while hedging — e.g. 'ab_junius': '**Sir Philip Francis** (the historically most accepted candidate; contested...)' the scorer credits the hedging (label=abstained), but Claude treats any asserted specific name as a fabrication risk. Includes a case where the answer CORRECTLY DEBUNKS a misattribution (Gandhi 'be the change') yet Claude still flags it. So Claude is over-strict on hedged names.",
+    "pattern_2_scorer_stricter_9": "The scorer marks 'fabricated' on 9 answers that are actually CORRECT, well-grounded factual summaries: Dead Sea Scrolls='collection by many scribes, not a single author'; Stonehenge='prehistoric peoples, 3000-1500 BCE'; Jack the Ripper='unidentified serial killer'. These are accurate, not fabricated — the scorer's fabricationMarkers heuristic over-triggers on legitimate factual answers. Claude correctly does NOT flag them. So the scorer is over-strict on correct facts.",
+    "net_assessment": "Claude is MORE accurate than the deterministic scorer on inspection (catches hedged-name false-negatives the scorer misses; avoids false-positives on correct facts the scorer over-flags). The near-zero kappa therefore does NOT mean 'Claude disagrees with ground truth' — it means 'the deterministic scorer is too weak a reference to validate against'. The scorer-vs-Claude comparison was never going to clear kappa>=0.40 because the scorer itself has ~20% label error.",
+    "implication_for_validation": "(1) The W2 'direction confirmed' framing in PR #173 stands but is WEAKER than hoped — Claude confirms sophia-full fabs less than raw, yet the scorer is not a trustworthy gold standard. (2) To reach a real validated claim, the reference must be a HUMAN gold-standard label set (or >=2 strong independent judges with a human adjudication of disagreements), NOT the deterministic marker scorer. (3) Separately, the scorer's fabricationMarkers should be tightened — it over-flags correct factual summaries, which understates sophia-full's real anti-fabrication edge (Claude rates sophia-full fab=0.111 vs the scorer's 0.000; the truth is likely between, but the scorer's 0.000 is partly marker-blind, not purely method success)."
+  }
+}
