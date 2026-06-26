@@ -360,12 +360,14 @@ sophia-agi/
 ├── data/              # attributions, domains, schema + sector-council figures
 ├── docs/              # disputes, growth playbook, domains, platform/verticals
 ├── agent/             # verifier-gated core, council deliberate, gate, model
-│   └── legal_sources/ # federated HK/UK/US live citator (HKLII, e-Leg, TNA, CL)
+│   ├── legal_sources/ # federated HK/UK/US live citator (HKLII, e-Leg, TNA, CL)
+│   └── cluster/       # GPU-cluster reliability: health, SSH/DCGM telemetry, heal
 ├── benchmark/         # responses template + leaderboard + gated harnesses
 ├── training/          # JSONL-ready examples + gate-filtered council traces
 ├── agi-proof/         # AGI-candidate proof package and evidence manifest
+├── observability/     # Prometheus alert rules + Grafana dashboard (cluster)
 ├── tools/             # validate, export, score, council + uplift + distill
-├── scripts/           # ops helpers (e.g. safe one-way iCloud backup)
+├── scripts/           # ops helpers + offline demos (gate, cluster loop)
 ├── web/               # thesis UI (council-decided; GitHub Pages)
 ├── tests/             # attribution + verifier + council + legal cases
 └── huggingface/       # HF dataset card (upload corpus.jsonl)
@@ -410,6 +412,48 @@ is "validated" only with multi-judge consensus + CIs; see [RESULTS.md](RESULTS.m
   [Council-Distillation.md](docs/11-Platform/Council-Distillation.md).
 - **Cantonese (粵語)** — written-Cantonese detection + output (`agent/cantonese.py`),
   the Hong Kong access-to-justice niche.
+- **AI compute-cluster reliability** — the same fail-closed/provenance discipline,
+  applied to GPU infrastructure (see the dedicated section below).
+
+## AI compute-cluster reliability & performance (the gate, applied to infrastructure)
+
+The verifier-gated, abstaining core is not limited to *answers* — it is just as useful
+for *operations*. Sophia's `agent/cluster/` layer turns the repo's existing GPU/RunPod
+usage into reliability engineering, reusing the signature discipline: **fail-closed
+verdicts, provenance for every action, and calibrated, risk-proportional remediation
+that escalates instead of guessing.** It maps directly onto an AI-compute-cluster
+performance & reliability (运维/SRE) role.
+
+- **Fleet 巡检 + fault localization + measured MTTR** — fail-closed health verdicts
+  (temp/ECC/XID/NVLink/RDMA), a root-cause playbook, and an event-sourced incident
+  ledger so MTTR and the self-heal ratio are *measured*, not asserted
+  (`agent/cluster/{health,playbook,ledger}.py`, `tools/cluster/inspect_fleet.py`).
+- **Live + deep telemetry** — real `nvidia-smi` / `dmesg` (XID) / NVLink / InfiniBand
+  over the trusted SSH lifecycle, plus opt-in `dcgmi diag` deep validation
+  (`agent/cluster/ssh_provider.py`, `--source ssh --deep`).
+- **Fail-closed bring-up acceptance** — a node ships only if every benchmark clears a
+  committed per-GPU baseline (`agent/cluster/acceptance.py`, `tools/cluster/bringup.py`).
+- **Observability-as-code** — a pure-stdlib Prometheus exporter + Grafana dashboard +
+  alert rules (`services/cluster_exporter/`, `observability/`).
+- **Gated, audited self-heal** — low-risk/auto-safe actions auto-heal; drain/cordon
+  stay human-in-the-loop, run via real executors (`kubectl` / `scontrol` / SSH) and
+  recorded to the ledger (`agent/cluster/{heal,executors}.py`, `tools/cluster/heal.py`).
+- **Calibrated alerting** — alert thresholds fit against real incident history with the
+  same `agent/calibration.py` machinery, to minimize false pages.
+
+See the **[AI-Cluster Reliability Engineering roadmap](docs/06-Roadmap/AI-Cluster-Reliability-Engineering.md)**
+for the full responsibility-by-responsibility mapping, honest bounds, and build order.
+Run the whole loop offline in ~1 second (no GPUs, no keys, deterministic):
+
+```bash
+python scripts/demo_cluster_loop.py
+# bring-up acceptance → fleet 巡检 → inject XID 79 → localize →
+# auto-heal the safe case, escalate the GPU fault to a human → measured MTTR
+```
+
+CI keeps it honest: `.github/workflows/cluster-health-gate.yml` runs the unit suite +
+demo smoke on every PR, and a scheduled fleet inspection sweep that becomes a real
+health alert once a live fleet is wired.
 
 ## Roadmap & growth
 
