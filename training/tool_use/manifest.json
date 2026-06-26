@@ -1,0 +1,51 @@
+{
+  "schema": "sophia.tool_use_curriculum.v1",
+  "curriculumId": "tool-use-mcp-feedback-v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "trainingGoal": "Teach conservative MCP/tool habits for a verifier-gated Sophia candidate model; external gates still enforce correctness.",
+  "claimBoundary": "Curriculum scaffolding only. This is not AGI evidence and does not promote a model; canClaimAGI=false.",
+  "packs": {
+    "dpo_pairs.jsonl": {
+      "source": "training/tool_use/dpo_pairs.jsonl",
+      "kind": "dpo",
+      "rows": 200,
+      "uniquePrompts": 36,
+      "present": true,
+      "rejectedTypes": {
+        "ignored_error": 36,
+        "mis_ground": 28,
+        "over_call": 36,
+        "schema_invalid": 36,
+        "spurious_extra": 36,
+        "wrong_tool": 28
+      },
+      "sourceDiscipline": "Preference pairs contrast grounded answers against unnecessary calls, ignored tool errors, malformed schemas, wrong tools, and mis-grounded answers."
+    }
+  },
+  "mcpTraceSchema": "training/tool_use/mcp_trace_schema.json",
+  "feedbackLoop": {
+    "queue": "training/feedback/pending_candidates.jsonl",
+    "approvedSft": "training/feedback/sft_from_feedback.jsonl",
+    "default": "deny until human promotion",
+    "ingest": "tools/build_local_sophia_dataset.py decontaminates approved feedback and optional tool-use DPO rows before writing local packs"
+  },
+  "contamination": {
+    "trainingDisjoint": true,
+    "guard": "tools/validate_tool_use_curriculum.py plus tools/build_local_sophia_dataset.py",
+    "heldouts": [
+      "eval/**",
+      "training/lora/holdout.jsonl",
+      "data/tool_use_benchmark/heldout_v1.jsonl",
+      "sealed hidden-eval packs"
+    ]
+  },
+  "excluded": [
+    "raw private MCP logs",
+    "API keys or credentials",
+    "benchmark answers",
+    "unreviewed feedback candidates",
+    "unverified self-generated traces"
+  ],
+  "promotionRule": "Treat rows as candidate-only training material. Promote a trained adapter only after disjoint evals show provenance/tool-use gains at acceptable false-positive and over-call cost."
+}

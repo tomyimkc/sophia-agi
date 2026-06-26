@@ -1,0 +1,56 @@
+{
+  "schema": "sophia.mcp_trace_row.v1",
+  "description": "Machine-checkable row shape for future first-class MCP/tool traces. This schema is documentation plus validation target; it is not a benchmark result.",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "requiredTopLevelFields": [
+    "messages",
+    "toolTrace",
+    "metadata"
+  ],
+  "messages": {
+    "description": "Chat messages used for SFT-style tool habit supervision.",
+    "requiredRoles": [
+      "system",
+      "user",
+      "assistant"
+    ]
+  },
+  "toolTrace": {
+    "requiredFields": [
+      "server",
+      "tool",
+      "arguments",
+      "result",
+      "verdict"
+    ],
+    "verdictValues": [
+      "accepted",
+      "rejected",
+      "held",
+      "abstain"
+    ],
+    "notes": [
+      "Arguments and results must be scrubbed of secrets before training.",
+      "A rejected or held trace may train abstention, retry, or correction behavior, but must not be represented as proof."
+    ]
+  },
+  "metadata": {
+    "requiredFields": [
+      "source",
+      "traceKind",
+      "candidateOnly",
+      "trainingDisjoint",
+      "humanReviewed"
+    ],
+    "traceKindValues": [
+      "mcp_call",
+      "mcp_abstain",
+      "mcp_error_recovery",
+      "wrong_tool_negative",
+      "over_call_negative",
+      "feedback_approved"
+    ]
+  },
+  "claimBoundary": "Trace rows teach habits around tool invocation and error recovery. External MCP/verifier gates remain authoritative; canClaimAGI=false."
+}

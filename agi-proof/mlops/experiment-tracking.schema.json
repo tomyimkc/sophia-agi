@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sophia Experiment Tracking and Aggregation Spec",
+  "type": "object",
+  "required": [
+    "kind",
+    "specVersion",
+    "status",
+    "candidateOnly",
+    "canClaimAGI",
+    "claimBoundary",
+    "runRecord",
+    "aggregation",
+    "artifactOutputs"
+  ],
+  "properties": {
+    "kind": { "const": "experiment-tracking-aggregation-spec" },
+    "specVersion": { "type": "string" },
+    "status": { "const": "scaffolding_only" },
+    "candidateOnly": { "const": true },
+    "canClaimAGI": { "const": false },
+    "claimBoundary": { "type": "string" },
+    "runRecord": {
+      "type": "object",
+      "required": ["requiredFields", "metricFields", "provenanceFields"],
+      "properties": {
+        "requiredFields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "metricFields": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "provenanceFields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      }
+    },
+    "aggregation": {
+      "type": "object",
+      "required": [
+        "minimumSeeds",
+        "confidenceInterval",
+        "headlineRule",
+        "judgeRule",
+        "failureRule"
+      ],
+      "properties": {
+        "minimumSeeds": { "type": "integer", "minimum": 3 },
+        "confidenceInterval": { "type": "string" },
+        "headlineRule": { "type": "string" },
+        "judgeRule": { "type": "string" },
+        "failureRule": { "type": "string" }
+      }
+    },
+    "artifactOutputs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    }
+  }
+}

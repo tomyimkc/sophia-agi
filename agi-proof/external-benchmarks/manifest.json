@@ -1,0 +1,197 @@
+{
+  "$schema": "./benchmark-run.schema.json",
+  "kind": "external-benchmark-workflow-manifest",
+  "manifestVersion": "0.1.0",
+  "status": "scaffolding_only_not_run",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "claimBoundary": "Workflow declarations only. No ARC-AGI, GAIA, SWE-bench, METR-style, or third-party hidden-pack benchmark result is declared by this manifest.",
+  "failureLedgerRefs": [
+    "external-benchmarks-not-run",
+    "hidden-review-third-party-not-run"
+  ],
+  "artifactContract": {
+    "requiredForAnyRun": [
+      "run_declaration",
+      "git_commit",
+      "environment",
+      "model_or_adapter_identifier",
+      "solver_or_agent_config",
+      "prompt_or_task_visibility_policy",
+      "per_task_logs",
+      "raw_outputs",
+      "scoring_script_or_official_submission",
+      "aggregate_report",
+      "artifact_checksums",
+      "failure_ledger_update"
+    ],
+    "checksumAlgorithm": "sha256",
+    "resultPromotionRules": {
+      "minimumSeedsForHeadline": 3,
+      "requireFailureLedgerUpdate": true,
+      "requireCanClaimAGIFalse": true
+    }
+  },
+  "benchmarkFamilies": [
+    {
+      "id": "arc-agi-official",
+      "benchmarkFamily": "arc_agi",
+      "status": "not_run",
+      "claimStatus": "not_evidence",
+      "workflow": "Use the official ARC-AGI or ARC-AGI-3 submission path when credentials and rules allow. Store only reproducible solver config, task-level logs permitted by the benchmark license, official score receipt, and checksums.",
+      "minimumArtifacts": [
+        "official_score_or_reproducible_score",
+        "solver_config",
+        "per_task_logs",
+        "submission_receipt",
+        "environment_lock",
+        "failure_ledger_update"
+      ],
+      "promotionGate": {
+        "minimumSeeds": 3,
+        "requiresIndependentReviewer": true,
+        "requiresManualSemanticReview": false,
+        "requiresFailureLedgerUpdate": true
+      },
+      "resultDeclaration": {
+        "score": null,
+        "total": null,
+        "metric": null,
+        "ci95": null,
+        "seeds": [],
+        "canClaimAGI": false
+      }
+    },
+    {
+      "id": "gaia-style-tool-use",
+      "benchmarkFamily": "gaia",
+      "status": "not_run",
+      "claimStatus": "not_evidence",
+      "workflow": "Run GAIA-style tool-use tasks only with exact prompts, tool traces, source citations, final answers, scorer version, and manual adjudication for ambiguous cases.",
+      "minimumArtifacts": [
+        "task_manifest",
+        "exact_prompts",
+        "tool_logs",
+        "source_evidence",
+        "answer_traces",
+        "scoring_script",
+        "manual_adjudication_notes",
+        "failure_ledger_update"
+      ],
+      "promotionGate": {
+        "minimumSeeds": 3,
+        "requiresIndependentReviewer": true,
+        "requiresManualSemanticReview": true,
+        "requiresFailureLedgerUpdate": true
+      },
+      "resultDeclaration": {
+        "score": null,
+        "total": null,
+        "metric": null,
+        "ci95": null,
+        "seeds": [],
+        "canClaimAGI": false
+      }
+    },
+    {
+      "id": "swe-bench-style-repair",
+      "benchmarkFamily": "swe_bench",
+      "status": "not_run",
+      "claimStatus": "not_evidence",
+      "workflow": "Run software-maintenance tasks in isolated worktrees. Preserve patch diffs, failing-to-passing test logs, dependency lock data, and unresolved failures beside successes.",
+      "minimumArtifacts": [
+        "task_ids",
+        "base_commits",
+        "patches",
+        "test_logs",
+        "dependency_lock",
+        "resolved_task_rate_report",
+        "failure_ledger_update"
+      ],
+      "promotionGate": {
+        "minimumSeeds": 3,
+        "requiresIndependentReviewer": true,
+        "requiresManualSemanticReview": true,
+        "requiresFailureLedgerUpdate": true
+      },
+      "resultDeclaration": {
+        "score": null,
+        "total": null,
+        "metric": null,
+        "ci95": null,
+        "seeds": [],
+        "canClaimAGI": false
+      }
+    },
+    {
+      "id": "metr-style-autonomy",
+      "benchmarkFamily": "metr_autonomy",
+      "status": "not_run",
+      "claimStatus": "not_evidence",
+      "workflow": "Run long-horizon autonomy tasks with wall-clock limits, intervention counts, full action logs, safety stops, and reviewer sign-off before any public summary.",
+      "minimumArtifacts": [
+        "task_suite",
+        "wall_clock_limits",
+        "intervention_log",
+        "full_action_logs",
+        "safety_stop_log",
+        "aggregate_horizon_curve",
+        "failure_ledger_update"
+      ],
+      "promotionGate": {
+        "minimumSeeds": 3,
+        "requiresIndependentReviewer": true,
+        "requiresManualSemanticReview": true,
+        "requiresFailureLedgerUpdate": true
+      },
+      "resultDeclaration": {
+        "score": null,
+        "total": null,
+        "metric": null,
+        "ci95": null,
+        "seeds": [],
+        "canClaimAGI": false
+      }
+    },
+    {
+      "id": "third-party-hidden-reviewer-pack",
+      "benchmarkFamily": "third_party_hidden_pack",
+      "status": "not_run",
+      "claimStatus": "not_evidence",
+      "workflow": "An independent reviewer authors a new sealed pack, publishes salted commitments only, runs or supervises the evaluation, then reveals enough aggregate evidence for audit without leaking future hidden tasks.",
+      "minimumArtifacts": [
+        "reviewer_signature",
+        "salted_commitments",
+        "schema_validation_report",
+        "pack_visibility_attestation",
+        "answer_traces",
+        "tool_logs",
+        "memory_diffs",
+        "manual_semantic_review",
+        "baseline_ablation_report",
+        "public_aggregate_report",
+        "failure_ledger_update"
+      ],
+      "hiddenPackPolicy": {
+        "reviewerControlled": true,
+        "promptVisibility": "hidden-until-after-run",
+        "leakageProhibited": true,
+        "commitmentRequired": true
+      },
+      "promotionGate": {
+        "minimumSeeds": 3,
+        "requiresIndependentReviewer": true,
+        "requiresManualSemanticReview": true,
+        "requiresFailureLedgerUpdate": true
+      },
+      "resultDeclaration": {
+        "score": null,
+        "total": null,
+        "metric": null,
+        "ci95": null,
+        "seeds": [],
+        "canClaimAGI": false
+      }
+    }
+  ]
+}

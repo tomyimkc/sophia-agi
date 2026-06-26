@@ -1,0 +1,90 @@
+{
+  "schema": "sophia.context_packing.manifest.v1",
+  "manifestId": "long-context-context-packing-scaffold-v1",
+  "status": "scaffolding_only_not_run",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "claimBoundary": "Context-packing scaffold only. Sample evidence cards are illustrative and not benchmark evidence; canClaimAGI=false.",
+  "evidenceCardSchema": "training/context_packing/evidence_card.schema.json",
+  "contextChannels": [
+    "task",
+    "system_contract",
+    "source_evidence",
+    "working_memory",
+    "episodic_memory",
+    "semantic_memory",
+    "tool_trace",
+    "council_notes",
+    "failure_context"
+  ],
+  "verdictValues": [
+    "accepted",
+    "rejected",
+    "held",
+    "abstain"
+  ],
+  "packingPolicy": {
+    "maxContextTokens": 131072,
+    "defaultEvidenceBudgetTokens": 8192,
+    "requireSourceIds": true,
+    "requireVerifierState": true,
+    "requireClaimBoundary": true,
+    "failClosedOnMissingEvidence": true,
+    "preserveNegativeCases": true
+  },
+  "sampleEvidenceCards": [
+    {
+      "schema": "sophia.context_packing.evidence_card.v1",
+      "cardId": "illustrative-source-discipline-contract",
+      "status": "held",
+      "claimStatus": "illustrative",
+      "candidateOnly": true,
+      "canClaimAGI": false,
+      "contextChannel": "source_evidence",
+      "source": {
+        "kind": "repo_doc",
+        "pathOrUri": "docs/09-Agent/Sophia-Long-Context-Architecture.md",
+        "sourceId": "long-context-architecture-contract",
+        "license": "Apache-2.0",
+        "checksum": null
+      },
+      "summary": {
+        "text": "Illustrative card showing how a source-evidence channel preserves the claim that verifier gates, not model outputs alone, govern promotion.",
+        "preservedClaims": [
+          "Verifier gates are required before promoted factual claims.",
+          "The scaffold does not declare model capability."
+        ],
+        "knownLimits": [
+          "This card is illustrative and has not been used in a benchmark run.",
+          "No model has been trained or evaluated by this manifest."
+        ]
+      },
+      "verifier": {
+        "state": "held",
+        "method": "schema_shape_only",
+        "reasons": [
+          "Illustrative sample, not a validated evidence artifact."
+        ]
+      },
+      "tokenEstimate": {
+        "rawTokens": 320,
+        "packedTokens": 120,
+        "budgetTokens": 8192
+      },
+      "trainingUse": {
+        "eligible": false,
+        "requiresHumanReview": true,
+        "disjointFromEval": true
+      },
+      "claimBoundary": "Illustrative context-packing card only; not evidence of model performance and canClaimAGI=false."
+    }
+  ],
+  "excluded": [
+    "private raw chat logs",
+    "API keys or credentials",
+    "sealed benchmark answers",
+    "unchecked model-generated summaries",
+    "source text without license or provenance metadata"
+  ],
+  "promotionRule": "Only accepted cards with source ids, verifier reasons, and eval-disjoint provenance can support future candidate evidence. Held, rejected, and abstain cards may train uncertainty habits but cannot support a capability claim."
+}
