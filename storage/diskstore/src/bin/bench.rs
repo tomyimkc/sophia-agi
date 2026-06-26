@@ -66,7 +66,16 @@ fn run_backend(name: &str, reader: &dyn BatchReader, db: &Bitcask, args: &Args, 
             .map(|_| keystrings[(rng.next() as usize) % args.keys].as_bytes())
             .collect();
         let t0 = Instant::now();
-        let got = db.multi_get(reader, &batch_keys).unwrap();
+        // io_uring can be seccomp-blocked (EPERM) in hardened containers — report
+        // it and skip this backend rather than aborting the whole benchmark.
+        let got = match db.multi_get(reader, &batch_keys) {
+            Ok(g) => g,
+            Err(e) => {
+                println!("[{name}] ({}) UNAVAILABLE: {e}", reader.name());
+                println!("  (io_uring blocked by container seccomp; the std backend numbers stand.)");
+                return;
+            }
+        };
         lats.push(t0.elapsed().as_micros() as u64);
         ops += got.len();
         std::hint::black_box(&got);

@@ -97,10 +97,10 @@ fn run_pread(fd: RawFd, args: &Args) {
 }
 
 #[cfg(feature = "io_uring")]
-fn run_uring(fd: RawFd, args: &Args) {
+fn run_uring(fd: RawFd, args: &Args) -> std::io::Result<()> {
     use io_uring::{opcode, types, IoUring};
     let depth = args.depth.max(1);
-    let mut ring = IoUring::new(depth.next_power_of_two() as u32).unwrap();
+    let mut ring = IoUring::new(depth.next_power_of_two() as u32)?;
     // One aligned buffer per in-flight slot.
     let mut bufs: Vec<Aligned> = (0..depth).map(|_| Aligned::new(BLOCK)).collect();
     let mut rng = Lcg(0x1234_5678_9abc_def0); // same seed as pread for a fair offset stream
@@ -120,10 +120,15 @@ fn run_uring(fd: RawFd, args: &Args) {
                 .user_data(i as u64);
             unsafe { ring.submission().push(&e).expect("sq full") };
         }
-        ring.submit_and_wait(batch).unwrap();
+        // io_uring_enter can fail with EPERM when a container's seccomp profile
+        // blocks io_uring (common in hardened runtimes) — surface it as an error
+        // rather than panicking, so the pread numbers still report cleanly.
+        ring.submit_and_wait(batch)?;
         let mut done = 0;
         for cqe in ring.completion() {
-            assert_eq!(cqe.result(), BLOCK as i32, "uring read failed");
+            if cqe.result() < 0 {
+                return Err(std::io::Error::from_raw_os_error(-cqe.result()));
+            }
             done += 1;
         }
         assert_eq!(done, batch);
@@ -131,6 +136,7 @@ fn run_uring(fd: RawFd, args: &Args) {
         issued += batch;
     }
     report(&format!("io_uring (depth {depth}, O_DIRECT)"), started.elapsed(), args.reads, &mut lats);
+    Ok(())
 }
 
 fn report(name: &str, elapsed: std::time::Duration, reads: usize, lats: &mut [u64]) {
@@ -178,7 +184,12 @@ fn main() {
     println!("random {}-block reads, {} total:\n", BLOCK, args.reads);
     run_pread(fd, &args);
     #[cfg(feature = "io_uring")]
-    run_uring(fd, &args);
+    if let Err(e) = run_uring(fd, &args) {
+        println!("\n[io_uring] UNAVAILABLE on this host: {e}");
+        println!("  io_uring_enter failing with EPERM means the container seccomp profile");
+        println!("  blocks io_uring (common in hardened runtimes). The pread numbers above");
+        println!("  still stand; run on a host that permits io_uring to compare.");
+    }
     #[cfg(not(feature = "io_uring"))]
     println!("\n(rebuild with --features io_uring to compare the io_uring backend)");
 

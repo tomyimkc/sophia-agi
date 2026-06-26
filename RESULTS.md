@@ -239,14 +239,31 @@ This is the storage/reuse layer, not an attention kernel — block payloads are
 opaque serialized K/V; wiring it under a real engine (vLLM/SGLang-style) is the
 integration step.
 
-### Real-hardware runs (RunPod)
+### Real-hardware run (RunPod, measured 2026-06-26)
 
-All numbers above were measured in the dev sandbox (virtio ext4, few cores), so
-they are honest-but-modest. To re-measure on **real datacenter NVMe + many
-cores**, `tools/runpod_storage_bench.py` rents the cheapest available pod, builds
-the workspace, runs every bench (incl. the O_DIRECT pread-vs-io_uring comparison)
-on the pod's NVMe, copies a markdown report back, and **always deletes the pod**.
-It reuses the repo's proven RunPod lifecycle (`tools/runpod_rlvr.py`).
+The numbers above were measured in the dev sandbox (virtio ext4, few cores). The
+benches were re-run on a rented RunPod box — **AMD EPYC 7702P (64C/128T), 256 GB
+RAM, 4 TB NVMe** — via `tools/runpod_storage_bench.py`. Full report:
+[`agi-proof/benchmark-results/runpod-storage/2026-06-26-epyc-7702p-nvme.md`](agi-proof/benchmark-results/runpod-storage/2026-06-26-epyc-7702p-nvme.md).
+
+| bench | sandbox | RunPod (EPYC, NVMe) |
+|---|---|---|
+| kvcache, no pipelining | ~186k ops/s | **125k ops/s** (64 clients) |
+| kvcache, pipeline depth 16 | ~1.60M ops/s | **2.77M ops/s** (22× over depth-1) |
+| infcache prompt-token reuse | 94.1% | **96.9%** (4096-tok system prompt) |
+| diskstore O_DIRECT pread (real NVMe, cold) | n/a (virtio) | **17.2k reads/s, 67 MiB/s, p50 57 µs** |
+
+**Honest finding — io_uring was seccomp-blocked on the RunPod container.**
+`io_uring_setup` succeeded but `io_uring_enter` returned `EPERM`, so the io_uring
+backend could not run there (hardened-container seccomp profiles commonly block
+io_uring). The pread paths ran fine. So the **io_uring win is measured in the dev
+sandbox (10.6× under O_DIRECT, which *does* permit io_uring), not yet on RunPod
+NVMe** — a real lesson that io_uring deployment depends on the runtime's seccomp
+policy. The benches now degrade gracefully (report "io_uring UNAVAILABLE" instead
+of crashing) when `io_uring_enter` is blocked.
+
+To reproduce (rents the cheapest pod, runs on its NVMe, **always deletes the
+pod**; reuses the proven `tools/runpod_rlvr.py` lifecycle):
 
 ```bash
 python tools/runpod_storage_bench.py --dry-run                 # offline: inspect payload, no cost
@@ -254,10 +271,7 @@ RUNPOD_API_KEY=... python tools/runpod_storage_bench.py --yes --branch <branch>
 ```
 
 Or dispatch the `storage-bench-runpod` GitHub Actions workflow (needs the
-`RUNPOD_API_KEY` repo secret) — it runs the same tool from CI, where SSH egress
-and the secret are available, and uploads the report as an artifact. Reports land
-in `agi-proof/benchmark-results/runpod-storage/`. The O_DIRECT result is the one
-to watch: io_uring's win should *widen* on real NVMe under deep queue depth.
+`RUNPOD_API_KEY` repo secret).
 
 ## Reproduce
 
