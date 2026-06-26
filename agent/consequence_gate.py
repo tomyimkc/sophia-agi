@@ -31,11 +31,14 @@ from okf.counterfactual import counterfactual_remove
 from okf.graph import Graph, resolve
 from okf.revision import revise
 
-# Conservative hand-pick default; the live value is loaded from
-# ``config/consequence.json`` (tunable without code change — TODO: tune against a
-# real benchmark pack). Kept as a module constant so the safe default is visible
-# and importable even if the config file is absent/invalid.
+# Conservative defaults; the live values are loaded from
+# ``config/consequence.json`` (tunable without code change). Kept as module
+# constants so the safe defaults are visible and importable even if the config
+# file is absent/invalid. FLIP_SEVERITY_ESCALATE's 0.15 is data-derived from the
+# consequence_cascade_40_v1 pack (see agi-proof/consequence-cascade/); it is the
+# conservative default only in the sense that the config loader falls back to it.
 FLIP_SEVERITY_ESCALATE = 0.15
+_KO_MAX_ROUNDS = 4  # mirrors reasoning.consequence.ko_detector.KO_MAX_ROUNDS
 _CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "consequence.json"
 
 
@@ -45,24 +48,41 @@ def _load_consequence_config() -> dict[str, Any]:
     Fail-safe: if the file is missing OR malformed in ANY way, fall back to the
     conservative module defaults. A malformed config must NEVER raise into the gate
     path — raising would crash import-time initialization and weaken the gate by
-    failing open via exception. So we catch the full universe of malformed inputs:
-    missing/unreadable file (OSError), bad UTF-8 (UnicodeDecodeError), syntactically
-    invalid JSON (json.JSONDecodeError), valid JSON that is not an object
-    (raw.get AttributeError on a list/str/null), or a value that is not a real
-    number (float() ValueError/TypeError, incl. NaN/Inf which float() accepts but
-    would silently break the threshold comparison). Any of these -> module default.
+    failing open via exception. So we catch the full universe of malformed inputs
+    for BOTH keys: missing/unreadable file (OSError), bad UTF-8 (UnicodeDecodeError),
+    syntactically invalid JSON (json.JSONDecodeError), valid JSON that is not an
+    object (raw[key] TypeError), a missing key (KeyError), or a value that is not a
+    real finite number (float() ValueError/TypeError, incl. NaN/Inf which float()
+    accepts but would silently break a threshold/comparison). Any per-key failure
+    falls back to that key's module default; a healthy key is still loaded.
     """
+    import math
+
+    defaults = {"flipSeverityEscalate": FLIP_SEVERITY_ESCALATE, "koMaxRounds": _KO_MAX_ROUNDS}
     try:
         raw = json.loads(_CONFIG_PATH.read_text(encoding="utf-8"))
-        value = float(raw["flipSeverityEscalate"])
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError, TypeError, KeyError, ValueError, AttributeError):
-        return {"flipSeverityEscalate": FLIP_SEVERITY_ESCALATE}
-    # float("nan")/float("inf") parse but make the >= threshold meaningless; a
-    # non-finite/non-normal threshold is malformed for our purposes -> default.
-    import math
-    if not math.isfinite(value) or not (0.0 <= value <= 1.0):
-        return {"flipSeverityEscalate": FLIP_SEVERITY_ESCALATE}
-    return {"flipSeverityEscalate": value}
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return dict(defaults)
+    if not isinstance(raw, dict):
+        return dict(defaults)
+
+    out = dict(defaults)
+    # flipSeverityEscalate: a real number in [0, 1].
+    try:
+        v = float(raw["flipSeverityEscalate"])
+        if math.isfinite(v) and 0.0 <= v <= 1.0:
+            out["flipSeverityEscalate"] = v
+    except (TypeError, KeyError, ValueError):
+        pass
+    # koMaxRounds: a positive integer (>= 2 — a window of 0 or 1 makes ko
+    # detection meaningless: no recurrence is possible within a 1-round window).
+    try:
+        k = int(raw["koMaxRounds"])
+        if k >= 2:
+            out["koMaxRounds"] = k
+    except (TypeError, KeyError, ValueError):
+        pass
+    return out
 
 
 _CONFIG = _load_consequence_config()
@@ -70,6 +90,9 @@ _CONFIG = _load_consequence_config()
 # than ``allow``. A retraction that would orphan >= this fraction of the belief
 # set is not a routine consequence — it needs stronger process before commitment.
 flip_severity_escalate = float(_CONFIG["flipSeverityEscalate"])
+# The ko window (rounds) used by reasoning.consequence.revise_loop — a belief
+# state recurring within this many rounds of its most recent sighting is a ko.
+ko_max_rounds = int(_CONFIG["koMaxRounds"])
 
 
 @dataclass(frozen=True)
@@ -174,4 +197,4 @@ def simulate_cascade(
     )
 
 
-__all__ = ["FLIP_SEVERITY_ESCALATE", "flip_severity_escalate", "ConsequenceReport", "simulate_cascade"]
+__all__ = ["FLIP_SEVERITY_ESCALATE", "flip_severity_escalate", "ko_max_rounds", "ConsequenceReport", "simulate_cascade"]

@@ -180,23 +180,42 @@ def test_load_consequence_config_is_fully_exception_safe() -> None:
     # Regression for the fail-safe fix: _load_consequence_config must NEVER raise
     # into the gate path, no matter how malformed the config file is. Each of these
     # malformed inputs previously raised and would have crashed import-time init /
-    # failed the gate OPEN via exception.
-    import importlib
+    # failed the gate OPEN via exception. Both keys (flipSeverityEscalate AND
+    # koMaxRounds) must be fail-safe independently; a healthy key must still load
+    # even when the other is malformed.
     import math
     from agent import consequence_gate as cg
 
-    cases = {
+    full_default = {
+        "flipSeverityEscalate": cg.FLIP_SEVERITY_ESCALATE,
+        "koMaxRounds": cg._KO_MAX_ROUNDS,
+    }
+
+    # whole-file malformations -> BOTH keys default
+    whole_file_bad = {
         "not_a_dict (list)": "[0.5]",
         "not_a_dict (str)": '"0.5"',
         "not_a_dict (null)": "null",
-        "non-numeric value": '{"flipSeverityEscalate": "high"}',
-        "missing key": '{"otherKey": 1}',
-        "value NaN": '{"flipSeverityEscalate": "NaN"}',
-        "value Inf": '{"flipSeverityEscalate": "Infinity"}',
-        "out of range >1": '{"flipSeverityEscalate": 1.5}',
-        "out of range <0": '{"flipSeverityEscalate": -0.1}',
         "invalid JSON": "{not json",
     }
+    # per-key malformations -> THAT key defaults, the other keeps its value if healthy
+    flip_bad = {  # flipSeverityEscalate malformed, koMaxRounds healthy
+        "flip non-numeric": '{"flipSeverityEscalate": "high", "koMaxRounds": 5}',
+        "flip missing": '{"koMaxRounds": 5}',
+        "flip NaN": '{"flipSeverityEscalate": "NaN", "koMaxRounds": 5}',
+        "flip Inf": '{"flipSeverityEscalate": "Infinity", "koMaxRounds": 5}',
+        "flip >1": '{"flipSeverityEscalate": 1.5, "koMaxRounds": 5}',
+        "flip <0": '{"flipSeverityEscalate": -0.1, "koMaxRounds": 5}',
+    }
+    ko_bad = {  # koMaxRounds malformed, flipSeverityEscalate healthy
+        "ko non-numeric": '{"flipSeverityEscalate": 0.2, "koMaxRounds": "many"}',
+        "ko missing": '{"flipSeverityEscalate": 0.2}',
+        "ko NaN-str": '{"flipSeverityEscalate": 0.2, "koMaxRounds": "NaN"}',
+        "ko <2": '{"flipSeverityEscalate": 0.2, "koMaxRounds": 1}',
+        "ko zero": '{"flipSeverityEscalate": 0.2, "koMaxRounds": 0}',
+        "ko negative": '{"flipSeverityEscalate": 0.2, "koMaxRounds": -3}',
+    }
+
     orig_path = cg._CONFIG_PATH
     tmpfile_path: Path | None = None
     try:
@@ -205,17 +224,31 @@ def test_load_consequence_config_is_fully_exception_safe() -> None:
         tf.close()
         tmpfile_path = Path(tf.name)
         cg._CONFIG_PATH = tmpfile_path  # redirect the loader at OUR temp file
-        for label, content in cases.items():
+
+        for label, content in whole_file_bad.items():
             tmpfile_path.write_text(content, encoding="utf-8")
             out = cg._load_consequence_config()
-            assert out == {"flipSeverityEscalate": cg.FLIP_SEVERITY_ESCALATE}, (
-                f"{label}: malformed config leaked through fail-safe -> {out}"
+            assert out == full_default, f"{label}: malformed config leaked -> {out}"
+
+        for label, content in flip_bad.items():
+            tmpfile_path.write_text(content, encoding="utf-8")
+            out = cg._load_consequence_config()
+            assert out["koMaxRounds"] == 5, f"{label}: healthy koMaxRounds leaked -> {out}"
+            assert out["flipSeverityEscalate"] == cg.FLIP_SEVERITY_ESCALATE, (
+                f"{label}: bad flip leaked -> {out}"
             )
-        # finally, a VALID config must still load the real value (not silently default).
-        tmpfile_path.write_text('{"flipSeverityEscalate": 0.25}', encoding="utf-8")
-        assert cg._load_consequence_config() == {"flipSeverityEscalate": 0.25}
-        # the loaded value must be finite and in range for the valid path too
-        assert math.isfinite(cg._load_consequence_config()["flipSeverityEscalate"])
+
+        for label, content in ko_bad.items():
+            tmpfile_path.write_text(content, encoding="utf-8")
+            out = cg._load_consequence_config()
+            assert out["flipSeverityEscalate"] == 0.2, f"{label}: healthy flip leaked -> {out}"
+            assert out["koMaxRounds"] == cg._KO_MAX_ROUNDS, f"{label}: bad ko leaked -> {out}"
+
+        # a fully-VALID config loads BOTH real values
+        tmpfile_path.write_text('{"flipSeverityEscalate": 0.25, "koMaxRounds": 7}', encoding="utf-8")
+        out = cg._load_consequence_config()
+        assert out == {"flipSeverityEscalate": 0.25, "koMaxRounds": 7}, f"valid config: {out}"
+        assert math.isfinite(out["flipSeverityEscalate"])
     finally:
         cg._CONFIG_PATH = orig_path
         if tmpfile_path is not None:
