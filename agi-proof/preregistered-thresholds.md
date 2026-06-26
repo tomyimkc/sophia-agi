@@ -138,3 +138,41 @@ deterministic provenance verifier IS the GRPO reward). See
   as headline; (c) the held-out split is not entity-disjoint; or (d) the gate
   (`_is_validated`) is not cleared. It is explicitly **not** an AGI claim — RLVR
   improves pass@1 within the verifier's reach, not the base model's capacity.
+
+## Conformal abstention gate (C1) + abstention-aware scoring (C3)
+
+**Status:** OPEN — registered 2026-06-26 on branch `claude/agi-asi-research-ideas-g5ss38`.
+Implements the first two candidates of
+[Frontier-Research-Implementation-Plan](../docs/11-Platform/Frontier-Research-Implementation-Plan.md).
+
+### C1 — conformal abstention
+
+- **Pre-registered claim (LIVE, gated):** a split-conformal threshold fitted on a
+  third-party labeled outcome pack carries its distribution-free coverage guarantee
+  onto a held-out split — i.e. on held-out data a new correct answer is accepted with
+  probability ≥ 1−α (within finite-sample slack) — and the conformal answer/abstain
+  boundary achieves a strictly better risk-coverage frontier than the hand-picked
+  `DEFAULT_THRESHOLDS` boundary on the same rows. Pre-registered α grid: {0.05, 0.10, 0.20}.
+- **Offline machinery check (asserted in CI today):** `tools/fit_conformal_policy.py
+  --synthetic N` fits, runs the held-out validity check, and reports VALID for all α on a
+  deterministic synthetic set where nonconformity is a noisy predictor of correctness.
+  `decide_conformal` is downgrade-only (gate-failed never yields `answer`) and fails safe
+  to the default boundary with no artifact. `python3 tests/test_conformal_gate.py` and
+  `tests/test_guarded_conformal.py` exit non-zero if any invariant fails.
+- **Falsification:** the C1 claim must not be reported as met if (a) the only evidence is
+  synthetic or a single run; (b) held-out correct-coverage falls below 1−α beyond slack;
+  (c) the conformal boundary shows no risk-coverage gain over the hand-picked boundary at
+  matched risk; or (d) the labeled pack is self-authored (third-party pack required). It is
+  explicitly **not** an AGI claim — it certifies an abstention boundary, not capability.
+
+### C3 — abstention-aware scoring (Kalai reform)
+
+- **Pre-registered claim (methodology):** under a confident-wrong penalty λ ≥ λ*, a
+  fail-closed policy that abstains scores at least as well as always-guessing on a real
+  labeled run; report the λ-curve and the break-even λ* alongside (never replacing) the
+  legacy binary score.
+- **Offline invariants (CI):** an abstention scores 0 (never penalised as wrong); raising
+  λ never raises the score; an unknown action fails closed as answered (never a free
+  abstention). `python3 tests/test_abstention_scoring.py`.
+- **Falsification:** not a capability claim; must not be reported as a Sophia advantage
+  unless computed on a real model run with {correct, action} labels from a third-party pack.

@@ -23,6 +23,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     benchmark_score,
     capability_retention_demo,
     check_claim,
+    conformal_decide_tool,
     conscience_benchmark_tool,
     conscience_check_tool,
     constitution_check_tool,
@@ -212,6 +213,19 @@ def sophia_uncertainty_score(text: str, samples_json: str = "[]", p_true: float 
     if not isinstance(samples, list):
         return dumps({"error": "samples_json must be a JSON array"})
     return dumps(uncertainty_score(text, samples=samples, p_true=p_true, p_ik=p_ik, evidence_count=evidence_count, high_risk=high_risk))
+
+
+@mcp.tool()
+def sophia_conformal_decide(confidence: float, gate_passed: bool = True, risk: str = "normal") -> str:
+    """Certified answer/abstain via a held-out-calibrated split-conformal threshold.
+
+    Routes a confidence in [0,1] against the fitted conformal policy (distribution-free
+    coverage guarantee) instead of a hand-picked cut point. Fails safe to the default
+    boundary when no calibration artifact exists. Fit one with tools/fit_conformal_policy.py.
+    """
+    if confidence is None or not (0.0 <= float(confidence) <= 1.0):
+        return dumps({"error": "confidence must be a number in [0,1]"})
+    return dumps(conformal_decide_tool(float(confidence), gate_passed=bool(gate_passed), risk=risk))
 
 
 @mcp.tool()

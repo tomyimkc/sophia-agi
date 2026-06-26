@@ -25,10 +25,17 @@ guarded loop already understands (``answer`` ≈ clean, ``hedge`` ≈ hedge,
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any, Optional, Sequence
 
 #: Default cut points on the confidence curve. ``hi`` = commit, ``lo`` = floor.
 DEFAULT_THRESHOLDS = {"hi": 0.7, "lo": 0.4}
+
+#: Where a fitted conformal policy artifact lives (written by
+#: ``tools/fit_conformal_policy.py``). Absent by default — the conformal route then
+#: falls back to a threshold derived from ``DEFAULT_THRESHOLDS`` (fail-safe, no-op).
+CONFORMAL_POLICY_PATH = Path(__file__).resolve().parents[1] / "config" / "conformal_policy.json"
 
 
 def _resolve_thresholds(thresholds: Optional[dict]) -> tuple:
@@ -111,6 +118,105 @@ def decide(
         "confidence": round(c, 6),
         "thresholds": {"hi": hi, "lo": lo},
         "n_violations": n_violations,
+    }
+
+
+def load_conformal_policy(path: "str | Path | None" = None):
+    """Load a fitted :class:`agent.conformal_gate.ConformalPolicy` artifact, or ``None``.
+
+    Returns ``None`` (not an error) when no artifact is present — the conformal route
+    is then expected to fall back to a hand-picked boundary, so the system never
+    *requires* a calibration run to function (fail-safe). The artifact is produced by
+    ``tools/fit_conformal_policy.py``.
+    """
+    from agent.conformal_gate import ConformalPolicy
+
+    p = Path(path) if path is not None else CONFORMAL_POLICY_PATH
+    if not p.exists():
+        return None
+    try:
+        d = json.loads(p.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+    try:
+        return ConformalPolicy(
+            alpha=float(d["alpha"]),
+            threshold=float(d["threshold"]),
+            n_calibration=int(d.get("n_calibration", 0)),
+            target_coverage=float(d.get("target_coverage", 1.0 - float(d["alpha"]))),
+            risk_bucket=str(d.get("risk_bucket", "normal")),
+        )
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+def decide_conformal(
+    *,
+    gate_passed: bool,
+    confidence: float,
+    policy=None,
+) -> dict:
+    """Calibrated answer/abstain decision via a split-conformal threshold.
+
+    Unlike :func:`decide` (hand-picked ``hi``/``lo`` cut points), this routes on a
+    nonconformity score ``1 - confidence`` against a threshold ``tau`` that was
+    *calibrated on held-out data* to carry a distribution-free coverage guarantee
+    (see :mod:`agent.conformal_gate`). The contribution is "certified boundary"
+    instead of "heuristic boundary".
+
+    Mapping (stays **fail-closed / downgrade-only**, mirroring :func:`decide`):
+      - ``gate_passed`` and conformal-accept (``1 - confidence <= tau``) -> ``answer``;
+        gate passed but conformal-reject -> ``abstain`` (a low-confidence pass is
+        suspicious).
+      - gate failed and conformal-accept -> ``hedge`` (a high-confidence near-miss,
+        present hedged); gate failed and conformal-reject -> ``abstain``.
+
+    ``policy`` is an :class:`agent.conformal_gate.ConformalPolicy`. When ``None`` the
+    fitted artifact at :data:`CONFORMAL_POLICY_PATH` is loaded; when that is also
+    absent the threshold falls back to ``1 - DEFAULT_THRESHOLDS['hi']`` so the route
+    is a safe no-op without a calibration run.
+    """
+    if confidence is None:
+        raise ValueError("confidence must be a number in [0,1], got None")
+    c = float(confidence)
+    if not (0.0 <= c <= 1.0):
+        raise ValueError(f"confidence must be in [0,1], got {confidence!r}")
+
+    if policy is None:
+        policy = load_conformal_policy()
+
+    nonconformity = 1.0 - c
+    if policy is not None:
+        tau = float(policy.threshold)
+        alpha = float(policy.alpha)
+        source = "fitted-policy"
+        n_calibration = int(policy.n_calibration)
+    else:
+        tau = 1.0 - float(DEFAULT_THRESHOLDS["hi"])
+        alpha = None
+        source = "fallback-default-threshold"
+        n_calibration = 0
+    accept = nonconformity <= tau + 1e-12
+
+    if gate_passed:
+        action = "answer" if accept else "abstain"
+    else:
+        action = "hedge" if accept else "abstain"
+
+    return {
+        "action": action,
+        "reason": (
+            f"conformal[{source}] nonconformity {nonconformity:.3f} "
+            f"{'<=' if accept else '>'} tau {tau:.3f} (gate_passed={gate_passed}) -> {action}"
+        ),
+        "gate_passed": bool(gate_passed),
+        "confidence": round(c, 6),
+        "nonconformity": round(nonconformity, 6),
+        "threshold": round(tau, 6),
+        "alpha": alpha,
+        "coverageGuarantee": round(1.0 - alpha, 6) if alpha is not None else None,
+        "policySource": source,
+        "nCalibration": n_calibration,
     }
 
 

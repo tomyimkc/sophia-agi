@@ -734,6 +734,22 @@ def uncertainty_score(text: str, *, samples=None, p_true=None, p_ik=None, fact_v
     from agent.metacognition import assess_uncertainty
     return assess_uncertainty(text, samples=samples, p_true=p_true, p_ik=p_ik, fact_verdict=fact_verdict, fact_confidence=fact_confidence, evidence_count=evidence_count, high_risk=high_risk).to_dict()
 
+def conformal_decide_tool(confidence: float, *, gate_passed: bool = True, risk: str = "normal") -> dict:
+    """Certified answer/abstain decision via the fitted split-conformal policy (C1).
+
+    Routes ``confidence`` against a held-out-calibrated nonconformity threshold instead
+    of a hand-picked cut point. Fails safe to the default boundary when no calibration
+    artifact is present (``policySource: fallback-default-threshold``).
+    """
+    from agent.graded_decision import decide_conformal, load_conformal_policy
+    policy = load_conformal_policy()
+    out = decide_conformal(gate_passed=bool(gate_passed), confidence=float(confidence), policy=policy)
+    out["riskBucket"] = risk
+    out["candidateOnly"] = True
+    out["level3Evidence"] = False
+    return out
+
+
 def constitution_check_tool(text: str, *, context=None) -> dict:
     from agent.constitutional_gate import check_constitution
     from agent.constitutional_classifier import classify_constitutional

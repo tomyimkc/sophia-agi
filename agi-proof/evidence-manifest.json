@@ -1,21 +1,23 @@
 {
   "version": "0.9.1",
-  "generated": "2026-06-26T17:39:21",
+  "generated": "2026-06-26T21:47:44",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "failureLedgerSummary": {
-    "openCount": 54,
+    "openCount": 55,
     "byStatus": {
-      "open": 54,
-      "resolved": 25,
+      "open": 55,
+      "resolved": 26,
       "other": 9
     },
     "structurallyValid": true,
     "openItems": [
       "ablation-matrix-3seed-fresh-2026-06-26",
+      "abstention-aware-scoring-methodology-only-2026-06-26",
       "agent-faithfulness-judged-not-yet-validated-2026-06-25",
       "calibration-advantage-is-model-dependent-2026-06-25",
       "calibration-self-authored-pack-2026-06-22",
       "capability-cell-not-yet-in-live-ssa-2026-06-23",
+      "conformal-gate-wired-synthetic-only-2026-06-26",
       "distribution-shift-not-run",
       "error-memory-rag-pr-100-2026-06-25",
       "error-memory-rag-precision-v2-2026-06-25",
@@ -40,6 +42,8 @@
       "local-sophia-v3-mlx-promoted-by-w2-but-not-validated-2026-06-24",
       "long-horizon-not-run",
       "math-code-curriculum-preregistered-2026-06-25",
+      "path-a-world-model-not-promoted-2026-06-26",
+      "path-b-lean-proof-search-blocked-2026-06-26",
       "pif-headline-run-not-yet-gated-2026-06-23",
       "rlvr-adapter-kappa-2family-below-bar-2026-06-26",
       "rlvr-live-run-not-yet-gated-2026-06-21",
@@ -63,6 +67,14 @@
       "visual-encoder-probe-real-weights-not-run-2026-06-26",
       "visual-rlvr-live-run-not-yet-gated-2026-06-26"
     ]
+  },
+  "verifiedTraces": {
+    "recallVerdict": "CONFIRMED",
+    "traceRecall": 1.0,
+    "compilerRecall": 1.0,
+    "factLogicAgreement": 1.0,
+    "candidateOnly": true,
+    "scope": "Process-supervision / TRiSM-audit layer: dual (fact+logic) stamped traces, tamper-evident chain, faithfulness probe, cross-trace contradiction mining. Auditable reasoning substrate — not a capability claim."
   },
   "operationalDefinition": {
     "summary": "For this repo, AGI evidence means broad task competence, transfer, tool use, long-horizon autonomy, learning under distribution shift, baseline superiority, and independent reproduction.",
@@ -1712,6 +1724,15 @@
     "factCheckLiveEvalReport": "agi-proof/fact-check-live/fact-check-live-eval.public-report.json",
     "factCheckFlywheelRunner": "tools/run_fact_check_flywheel.py",
     "reflexiveSelfGateRunner": "tools/run_reflexive_self_gate.py",
-    "reflexiveSelfGateReport": "agi-proof/self-gate/reflexive-self-gate.public-report.json"
+    "reflexiveSelfGateReport": "agi-proof/self-gate/reflexive-self-gate.public-report.json",
+    "verifiedTracePackage": "agi-proof/verified-traces/README.md",
+    "verifiedTraceRecallRunner": "tools/run_verified_trace_recall.py",
+    "verifiedTraceRecallReport": "agi-proof/verified-traces/verified-trace-recall.public-report.json",
+    "verifiedTraceLogger": "agent/verified_trace.py",
+    "verifiedTraceSchema": "schema/verified-trace-1.0.0.json",
+    "verifiedTraceRlvrBridge": "agent/verified_trace_rlvr.py",
+    "verifiedTraceFaithfulnessProbe": "agent/faithfulness_probe.py",
+    "verifiedTraceCrossTraceMiner": "agent/cross_trace_consistency.py",
+    "verifiedTraceMcpQuery": "sophia_mcp/tools_impl.py"
   }
 }
