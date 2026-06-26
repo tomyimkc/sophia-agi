@@ -1,0 +1,138 @@
+name: spark-gpu
+
+# Local GPU lane on the NVIDIA DGX Spark (Grace Blackwell GB10, aarch64).
+#
+# ROLE: a free, instant *iteration* lane for RLVR/LoRA on local hardware — the
+# same `tools/run_rlvr.py` the RunPod workflows rent a pod for, but on the Spark
+# via `runpod_rlvr.py --local` (no pod, no SSH, no RunPod cost). Dispatch-only: a
+# personal server is not always up, so this NEVER runs on push/PR/schedule.
+#
+# PROVENANCE BOUNDARY (load-bearing — do not weaken):
+#   The Spark is an ITERATION device, NOT a registered-results producer. aarch64
+#   + forced bf16 + vllm=none (required by the wheel blockers) produces DIFFERENT
+#   numerics than the x86 RunPod A100 path. Headline/registered training numbers
+#   stay on x86 RunPod per config/inference.local.spark.json + REPLICATION.md.
+#   Every artifact this workflow emits is annotated candidateOnly + spark_iteration:
+#   do not cite it as the registered result. The RunPod workflow stays the source
+#   of record for registered numbers.
+#
+# PREREQUISITE (one-time, on the Spark):
+#   1. Register a self-hosted runner with labels [self-hosted, spark, aarch64]:
+#        github.com/tomyimkc/sophia-agi/settings/actions/runners -> New runner -> self-hosted
+#        Run the generated ./config.sh on the Spark, then install as a service.
+#   2. The Spark must have: CUDA-capable driver, torch+trl+peft (requirements-rl.txt),
+#      and run with --quant bf16 --vllm none (this workflow hard-codes that).
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: 'RLVR reward task'
+        required: true
+        default: 'provenance'
+        type: choice
+        options: [provenance, math]
+      remote_mode:
+        description: 'offline = reward-wiring smoke (no model load, fast); live = full GRPO'
+        required: true
+        default: 'offline'
+        type: choice
+        options: [offline, live]
+      epochs:
+        description: 'Training epochs (live mode)'
+        required: false
+        default: '1.0'
+      seed:
+        description: 'Training+eval seed'
+        required: false
+        default: '0'
+      model:
+        description: 'Base model id (must fit Spark 128GB in bf16)'
+        required: false
+        default: 'zai-org/glm-4-9b-chat-hf'
+
+# A self-hosted Spark runner is a single, shared machine. Do NOT cancel an
+# in-flight training run (losing a 30-min GRPO job to a re-dispatch is wasteful).
+concurrency:
+  group: spark-gpu-${{ github.event.inputs.task }}-${{ github.event.inputs.seed }}-${{ github.event.inputs.remote_mode }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  spark:
+    runs-on: [self-hosted, spark, aarch64]
+    timeout-minutes: 240
+    env:
+      HF_HOME: /home/runner/.cache/huggingface
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — confirm runner is the Spark (aarch64 + CUDA)
+        run: |
+          uname -m
+          nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || {
+            echo "::error::nvidia-smi failed — this runner is not CUDA-capable. Register the Spark runner with nvidia drivers.";
+            exit 1;
+          }
+          python - <<'PY'
+          import platform, sys
+          arch = platform.machine()
+          if arch not in ("aarch64", "arm64"):
+              print(f"::warning::runner arch is {arch}, not aarch64 — this may be a non-Spark self-hosted runner.")
+          print(f"python {sys.version.split()[0]} on {arch}")
+          PY
+
+      - name: Reward-wiring precheck (no GPU, no model load)
+        run: |
+          # This is the same offline smoke the RunPod path runs first; it verifies
+          # the reward machinery before spending Spark time on a model load.
+          python tools/run_rlvr.py --task "${{ inputs.task }}" --model mock --dry-run
+
+      - name: "Run RLVR on the Spark (--local: no pod, no SSH, no RunPod cost)"
+        run: |
+          # --quant bf16 --vllm none is HARD-CODED per config/inference.local.spark.json:
+          # these are the only values that work on aarch64/Grace Blackwell (flash-attn,
+          # bitsandbytes, vLLM-colocate, unsloth all lack aarch64 builds). Do not add a
+          # flag that lets a dispatch override this — it would produce un-runnable or
+          # un-registerable numbers.
+          python tools/runpod_rlvr.py --local --yes \
+            --task "${{ inputs.task }}" \
+            --remote-mode "${{ inputs.remote_mode }}" \
+            --model "${{ inputs.model }}" \
+            --epochs "${{ inputs.epochs }}" \
+            --seed "${{ inputs.seed }}" \
+            --quant bf16 --vllm none
+
+      - name: Annotate artifacts with the iteration-only provenance boundary
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          out = pathlib.Path("agi-proof/benchmark-results/runpod-rlvr/local.rlvr.public-report.json")
+          if out.exists():
+              d = json.loads(out.read_text())
+              # Annotate, do NOT strip: any existing provenance fields stay.
+              d.setdefault("provenance", {})
+              d["provenance"].update({
+                  "device": "NVIDIA DGX Spark (aarch64, Grace Blackwell, bf16, vllm=none)",
+                  "sparkIteration": True,
+                  "registeredResult": False,
+                  "boundary": "Iteration-only. Numerics differ from x86 RunPod; do not cite as the registered result. Run rlvr-runpod.yml for the source of record.",
+              })
+              out.write_text(json.dumps(d, indent=2, ensure_ascii=False) + "\n")
+              print("Annotated local report with sparkIteration provenance boundary.")
+          else:
+              print("::warning::no local report found (the run may have failed before producing one)")
+          PY
+
+      - name: Upload Spark artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: spark-gpu-reports
+          path: |
+            agi-proof/benchmark-results/runpod-rlvr/local.rlvr.public-report.json
+            agi-proof/benchmark-results/runpod-rlvr/local.train.log
+          if-no-files-found: warn
