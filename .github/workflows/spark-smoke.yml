@@ -2,10 +2,10 @@ name: spark-smoke
 
 # Self-hosted NVIDIA DGX Spark (GB10 Grace Blackwell, aarch64) lane.
 #
-# Tier A (default, runs on PR + dispatch): the offline RLVR/compounding/flywheel
-# invariants PLUS a CUDA-stack probe on the Spark's REAL aarch64/sm_121a torch+cuda —
-# catches aarch64 wheel breaks (vLLM/bnb/flash-attn) on every code PR, for free, with no
-# overclaim (invariants + a probe are NOT a capability claim). This is the iteration tier.
+# Tier A (dispatch): the offline RLVR/compounding/flywheel invariants PLUS a CUDA-stack
+# probe on the Spark's REAL aarch64/sm_121a torch+cuda — catches aarch64 wheel breaks
+# (vLLM/bnb/flash-attn) for free, with no overclaim (invariants + a probe are NOT a
+# capability claim). This is the iteration tier.
 #
 # Tier B (dispatch only, micro_grpo=run): a real 1-seed micro-GRPO on the Spark.
 # candidateOnly, NEVER auto-published — it bridges "mock invariants green" and "a real
@@ -15,6 +15,26 @@ name: spark-smoke
 # NOTE: this is a BEST-EFFORT lane on a self-hosted runner. It is intentionally NOT a
 # required/branch-protection check — if the Spark is offline the PR is not blocked.
 # Register the runner with labels [self-hosted, dgx-spark, arm64].
+#
+# TRIGGER HISTORY: this lane previously also fired on `pull_request`, which made it
+# QUEUE (and block the PR's "all green" signal) whenever the self-hosted Spark runner
+# was offline — forcing --admin overrides on otherwise-clean PRs. As of this change the
+# lane is MANUAL dispatch only. To re-arm automatic runs on PRs when a Spark runner is
+# reliably online, restore this block under `on:`:
+#
+#   pull_request:
+#     branches: [main]
+#     paths:
+#       - 'agent/**'
+#       - 'tools/**'
+#       - 'tests/**'
+#       - 'provenance_bench/**'
+#       - 'selfextend/**'
+#       - 'scripts/**'
+#       - 'training/**'
+#       - 'requirements*.txt'
+#       - 'pyproject.toml'
+#       - '.github/workflows/spark-smoke.yml'
 
 on:
   workflow_dispatch:
@@ -25,19 +45,6 @@ on:
         default: 'off'
         type: choice
         options: [off, run]
-  pull_request:
-    branches: [main]
-    paths:
-      - 'agent/**'
-      - 'tools/**'
-      - 'tests/**'
-      - 'provenance_bench/**'
-      - 'selfextend/**'
-      - 'scripts/**'
-      - 'training/**'
-      - 'requirements*.txt'
-      - 'pyproject.toml'
-      - '.github/workflows/spark-smoke.yml'
 
 permissions:
   contents: read
