@@ -79,7 +79,10 @@ the same discipline as the rest of the repo ([RESULTS.md](../RESULTS.md)).
 3. **O_DIRECT + registered buffers + SQPOLL** on the io_uring backend; concurrent
    group commit (a commit thread coalescing per-op sync requests); `io_uring` on
    the NVMe `FileStore`.
-4. **Bloom filters + leveled compaction** — bound read- and write-amplification.
+4. ~~**Bloom filters + leveled compaction**~~ — ✅ done: a per-SSTable bloom
+   filter (skips definite misses with no I/O) and leveled compaction
+   (`levels.rs`: L0→L1→… with a manifest and per-level budgets) that bounds
+   write amplification to O(levels) rewrites per key.
 5. **Raft-replicated log** — replicate the decision log / task queue for HA.
 6. **Python binding** — expose `sophia-lsm` under a `SOPHIA_STORAGE_ENGINE=lsm`
    flag behind the existing store interface; JSONL stays the default.

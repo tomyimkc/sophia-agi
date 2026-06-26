@@ -142,13 +142,25 @@ None of these change a line of the placement/eviction logic above.
 4. when the memtable passes its byte threshold, **flush** it to an immutable,
    sorted **SSTable** (`sstable.rs`) and truncate the WAL.
 
-`get` checks memtable, then SSTables newest→oldest, stopping at the first table
-that knows the key (value *or* tombstone). The SSTable has a CRC-checked **sparse
-index** (one entry per 16 records) so a lookup binary-searches to a block and
-scans a bounded window.
+`get` checks memtable, then tables in level read-order (L0 newest→oldest, then
+L1, L2, …), stopping at the first table that knows the key (value *or*
+tombstone). Each SSTable carries a **bloom filter** (`bloom.rs`, ~1% FP, double
+hashing) checked first — a definite miss skips the table with *zero* I/O — and a
+CRC-checked **sparse index** (one entry per 16 records) that narrows a possible
+hit to a bounded scan.
 
-**Compaction** (`compaction.rs`) merges runs newest-wins and reaps tombstones,
-collapsing N tables back to one.
+**Leveled compaction** (`levels.rs` + `Engine::maybe_compact`) bounds write
+amplification. A flush lands in **L0** (a few possibly-overlapping tables); when
+L0 reaches `compaction_trigger` it merges into **L1**; each deeper level holds a
+single sorted run `FANOUT`× larger than the one above and is rewritten only when
+it overflows its record budget, cascading downward. A key is rewritten
+O(levels) times, not O(dataset) as a full merge would. Tombstones are reaped only
+when merging into the **deepest** level (nothing below can resurrect the key). A
+small text **manifest** (temp-write+rename) records which table id sits at which
+level so the layout survives a restart; SSTables absent from the manifest are
+orphans from an interrupted compaction and are ignored on open. Tested by
+`leveled_compaction_cascades_and_stays_correct` (forces L0→L1→L2, checks reads +
+tombstone survival) and `survives_reopen_after_compaction`.
 
 ### 3.2 Crash semantics (the part that must be right)
 
@@ -164,13 +176,14 @@ there) and the `record` torn-tail / bit-flip tests.
 
 | Real (tested) | Seam (documented) |
 |---|---|
-| WAL append+fsync+replay | Bloom filter per SSTable (skip tables that can't hold the key) |
-| **Group-commit `WriteBatch`** (one fsync per batch) | `O_DIRECT` + page-aligned registered buffers (true zero-copy) |
-| **Real io_uring backend** (`io::IoUringIo`: Write/Read/Fsync SQEs) | SQPOLL (drop the submit syscall); concurrent commit thread |
-| Memtable, SSTable write/read, sparse index | Leveled / size-tiered compaction to bound write-amp |
-| Full-merge compaction + tombstone reap | Block cache for hot SSTable reads |
-| CRC framing, torn-tail recovery | Concurrent readers / MVCC snapshot reads |
-| Pluggable `IoBackend` trait | |
+| WAL append+fsync+replay | `O_DIRECT` + page-aligned registered buffers (true zero-copy) |
+| **Group-commit `WriteBatch`** (one fsync per batch) | SQPOLL (drop the submit syscall); concurrent commit thread |
+| **Real io_uring backend** (`io::IoUringIo`: Write/Read/Fsync SQEs) | Block cache for hot SSTable reads |
+| Memtable, SSTable write/read, sparse index | Concurrent readers / MVCC snapshot reads |
+| **Bloom filter per SSTable** (skip definite misses, no I/O) | Per-level key-range partitioning (many runs per level) |
+| **Leveled compaction** (L0→L1→…, manifest, budget cascade) | |
+| Tombstone reap (only at the deepest level) | |
+| CRC framing, torn-tail recovery; pluggable `IoBackend` | |
 
 ### 3.4 What the benchmark said, and what we did about it
 

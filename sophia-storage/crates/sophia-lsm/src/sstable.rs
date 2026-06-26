@@ -3,33 +3,35 @@
 //! Sorted String Table — an immutable, sorted, on-disk run of records.
 //!
 //! Layout: a sequence of framed records ([`crate::record`]) in ascending key
-//! order, ending with a fixed footer holding a CRC-checked sparse index and the
-//! key count. The sparse index lets a `get` binary-search to the right block
-//! and scan a bounded window instead of the whole file.
+//! order, ending with a footer holding a bloom filter, a CRC-checked sparse
+//! index, and the key count. The bloom filter skips the whole table on a
+//! definite miss; the sparse index narrows a possible hit to a bounded scan.
 //!
 //! ```text
-//! [ record* ][ index_entry* ][ index_len: u32-le ][ magic: u32-le ]
+//! [ record* ][ bloom ][ index_entry* ][ crc32 ][ bloom_len ][ index_len ][ magic ]
 //! index_entry := [ klen: u32-le ][ key ][ offset: u64-le ]
 //! ```
 //!
-//! This is a skeleton: one sparse entry every [`INDEX_STRIDE`] records, no
-//! bloom filter yet (documented as the next step in DESIGN.md). It is correct
-//! and crash-checked, which is the part that has to be right first.
+//! The trailing three u32s (bloom_len, index_len, magic) are fixed-size and read
+//! from the file tail; `crc32` covers `bloom ++ index`.
 
 use std::collections::BTreeMap;
 use std::io;
 use std::path::Path;
 
+use crate::bloom::Bloom;
 use crate::io::{FileHandle, IoBackend};
 use crate::record::{crc32, Record};
 
-const SST_MAGIC: u32 = 0x5350_4831; // "SPH1"
+const SST_MAGIC: u32 = 0x5350_4832; // "SPH2" (footer format with bloom)
 const INDEX_STRIDE: usize = 16;
+const TRAILER: u64 = 12; // bloom_len + index_len + magic
 
 pub struct SsTable<H: FileHandle> {
     handle: H,
     /// Sparse index: first key of every Nth record -> byte offset.
     index: Vec<(Vec<u8>, u64)>,
+    bloom: Bloom,
     data_end: u64,
 }
 
@@ -43,7 +45,9 @@ impl<H: FileHandle> SsTable<H> {
         let mut handle = backend.open(path)?;
         let mut offset = 0u64;
         let mut index: Vec<(Vec<u8>, u64)> = Vec::new();
+        let mut bloom = Bloom::with_capacity(sorted.len());
         for (i, (key, val)) in sorted.iter().enumerate() {
+            bloom.add(key);
             let rec = match val {
                 Some(v) => Record::put(key.clone(), v.clone()),
                 None => Record::delete(key.clone()),
@@ -57,51 +61,55 @@ impl<H: FileHandle> SsTable<H> {
         }
         let data_end = offset;
 
-        // Footer: index, then index length, then magic. CRC guards the index.
-        let mut footer = Vec::new();
+        // Footer: bloom ++ index, then crc over both, then the fixed trailer.
+        let bloom_bytes = bloom.encode();
+        let mut footer = bloom_bytes.clone();
+        let mut index_bytes = Vec::new();
         for (key, off) in &index {
-            footer.extend_from_slice(&(key.len() as u32).to_le_bytes());
-            footer.extend_from_slice(key);
-            footer.extend_from_slice(&off.to_le_bytes());
+            index_bytes.extend_from_slice(&(key.len() as u32).to_le_bytes());
+            index_bytes.extend_from_slice(key);
+            index_bytes.extend_from_slice(&off.to_le_bytes());
         }
-        let index_crc = crc32(&footer);
-        footer.extend_from_slice(&index_crc.to_le_bytes());
-        // `index_len` counts [entries][crc] only; the trailing [index_len][magic]
-        // (8 bytes) is fixed-size and read from the file tail.
-        let index_len = footer.len() as u32;
-        footer.extend_from_slice(&index_len.to_le_bytes());
+        footer.extend_from_slice(&index_bytes);
+        let crc = crc32(&footer);
+        footer.extend_from_slice(&crc.to_le_bytes());
+        footer.extend_from_slice(&(bloom_bytes.len() as u32).to_le_bytes());
+        footer.extend_from_slice(&(index_bytes.len() as u32).to_le_bytes());
         footer.extend_from_slice(&SST_MAGIC.to_le_bytes());
         handle.append(&footer)?;
         handle.sync()?;
 
-        Ok(SsTable { handle, index, data_end })
+        Ok(SsTable { handle, index, bloom, data_end })
     }
 
-    /// Open an existing SSTable and load its sparse index from the footer.
+    /// Open an existing SSTable and load its bloom + sparse index.
     pub fn open<B: IoBackend<Handle = H>>(backend: &B, path: &Path) -> io::Result<Self> {
         let mut handle = backend.open(path)?;
         let len = handle.len()?;
-        if len < 8 {
+        if len < TRAILER {
             return Err(io::Error::new(io::ErrorKind::InvalidData, "sstable too small"));
         }
-        let mut tail = [0u8; 8];
-        handle.read_at(len - 8, &mut tail)?;
-        let index_len = u32::from_le_bytes(tail[0..4].try_into().unwrap()) as u64;
-        let magic = u32::from_le_bytes(tail[4..8].try_into().unwrap());
+        let mut tail = [0u8; TRAILER as usize];
+        handle.read_at(len - TRAILER, &mut tail)?;
+        let bloom_len = u32::from_le_bytes(tail[0..4].try_into().unwrap()) as usize;
+        let index_len = u32::from_le_bytes(tail[4..8].try_into().unwrap()) as usize;
+        let magic = u32::from_le_bytes(tail[8..12].try_into().unwrap());
         if magic != SST_MAGIC {
             return Err(io::Error::new(io::ErrorKind::InvalidData, "bad sstable magic"));
         }
-        // [entries][crc] live just before the fixed 8-byte [index_len][magic] tail.
-        let footer_start = len - 8 - index_len;
-        let mut footer = vec![0u8; index_len as usize]; // [entries][crc]
+        // [bloom][index][crc] live just before the fixed trailer.
+        let body_len = bloom_len + index_len + 4;
+        let footer_start = len - TRAILER - body_len as u64;
+        let mut footer = vec![0u8; body_len];
         handle.read_at(footer_start, &mut footer)?;
-        let crc_pos = footer.len() - 4;
-        let stored_crc = u32::from_le_bytes(footer[crc_pos..].try_into().unwrap());
+        let crc_pos = bloom_len + index_len;
+        let stored_crc = u32::from_le_bytes(footer[crc_pos..crc_pos + 4].try_into().unwrap());
         if crc32(&footer[..crc_pos]) != stored_crc {
-            return Err(io::Error::new(io::ErrorKind::InvalidData, "sstable index crc mismatch"));
+            return Err(io::Error::new(io::ErrorKind::InvalidData, "sstable footer crc mismatch"));
         }
+        let bloom = Bloom::decode(&footer[..bloom_len]);
         let mut index = Vec::new();
-        let mut p = 0usize;
+        let mut p = bloom_len;
         while p < crc_pos {
             let klen = u32::from_le_bytes(footer[p..p + 4].try_into().unwrap()) as usize;
             p += 4;
@@ -111,12 +119,20 @@ impl<H: FileHandle> SsTable<H> {
             p += 8;
             index.push((key, off));
         }
-        Ok(SsTable { handle, index, data_end: footer_start })
+        Ok(SsTable { handle, index, bloom, data_end: footer_start })
+    }
+
+    /// Cheap, I/O-free check: can this table possibly hold `key`?
+    pub fn might_contain(&self, key: &[u8]) -> bool {
+        self.bloom.maybe_contains(key)
     }
 
     /// Point lookup. `Some(Some(v))` = value, `Some(None)` = tombstone here,
-    /// `None` = key not in this table.
+    /// `None` = key not in this table. Short-circuits on a bloom miss.
     pub fn get(&mut self, key: &[u8]) -> io::Result<Option<Option<Vec<u8>>>> {
+        if !self.bloom.maybe_contains(key) {
+            return Ok(None); // definitely absent — no I/O
+        }
         // Binary-search the sparse index for the block that could hold `key`.
         let start = match self.index.binary_search_by(|(k, _)| k.as_slice().cmp(key)) {
             Ok(i) => self.index[i].1,
