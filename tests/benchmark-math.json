@@ -1,0 +1,81 @@
+{
+  "domain": "math",
+  "version": 1,
+  "source": "derived from data/capability_arithmetic.json (capability-arithmetic-v0)",
+  "scorerKind": "math",
+  "claimBoundary": "Deterministic numeric capability slice; sound answer-match verifier. First-party, small N.",
+  "cases": [
+    {
+      "id": "ca1",
+      "kind": "math",
+      "question": "A train travels 60 miles in 2 hours. What is its speed in miles per hour? End with 'answer = <number>'.",
+      "expectedAnswer": 30
+    },
+    {
+      "id": "ca2",
+      "kind": "math",
+      "question": "You buy 3 notebooks at 4 dollars each. What is the total cost in dollars? End with 'answer = <number>'.",
+      "expectedAnswer": 12
+    },
+    {
+      "id": "ca3",
+      "kind": "math",
+      "question": "What is 17 plus 25? End with 'answer = <number>'.",
+      "expectedAnswer": 42
+    },
+    {
+      "id": "ca4",
+      "kind": "math",
+      "question": "A rectangle is 5 by 6. What is its area? End with 'answer = <number>'.",
+      "expectedAnswer": 30
+    },
+    {
+      "id": "ca5",
+      "kind": "math",
+      "question": "Half of 48 is what number? End with 'answer = <number>'.",
+      "expectedAnswer": 24
+    },
+    {
+      "id": "ca6",
+      "kind": "math",
+      "question": "There are 7 days in a week. How many days are in 4 weeks? End with 'answer = <number>'.",
+      "expectedAnswer": 28
+    },
+    {
+      "id": "ca7",
+      "kind": "math",
+      "question": "A shirt costs 20 dollars with a 5 dollar discount. What do you pay in dollars? End with 'answer = <number>'.",
+      "expectedAnswer": 15
+    },
+    {
+      "id": "ca8",
+      "kind": "math",
+      "question": "What is 9 times 6? End with 'answer = <number>'.",
+      "expectedAnswer": 54
+    },
+    {
+      "id": "ca9",
+      "kind": "math",
+      "question": "A jar has 50 marbles; you remove 18. How many remain? End with 'answer = <number>'.",
+      "expectedAnswer": 32
+    },
+    {
+      "id": "ca10",
+      "kind": "math",
+      "question": "If 1 box holds 8 cans, how many cans are in 9 boxes? End with 'answer = <number>'.",
+      "expectedAnswer": 72
+    },
+    {
+      "id": "ca11",
+      "kind": "math",
+      "question": "What is 100 divided by 4? End with 'answer = <number>'.",
+      "expectedAnswer": 25
+    },
+    {
+      "id": "ca12",
+      "kind": "math",
+      "question": "You walk 3 km, then 4 km. How far in total in km? End with 'answer = <number>'.",
+      "expectedAnswer": 7
+    }
+  ]
+}

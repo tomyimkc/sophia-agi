@@ -136,6 +136,31 @@ until they clear the candidate → validated gate (≥2–3 distinct judge famil
 CIs, independent replication). "Toward general AI" remains the direction; this is honest, measured,
 gated machinery — not an AGI claim.
 
+## Next milestone: closed-loop lifelong accumulation  ✅ delivered (candidate)
+The seven factors are isolated modules until they are shown to **compound**. This milestone wires all
+seven into one loop and measures, honestly, whether the system **net-accumulates capability over a long
+stream without catastrophic forgetting**.
+→ **`agent/lifelong_accumulation.py`** (`make_lifelong_stream`, `run_accumulation`, `accumulates_cleanly`)
++ `tools/run_lifelong_accumulation.py`; tests in `tests/test_lifelong_accumulation.py` (CI `validate-core`).
+The headline metric is a **net-capability-accumulation curve** measured over a *fixed/growing held-out
+query set* (re-asked every episode, so a rising count means genuine retained+new capability, not a gamed
+just-taught measure). Observed (seed 0, 12 episodes): graph-backed cumulative-correct **2→24 monotone**;
+the frozen `ParametricBaseline` stays flat at the t0 count and **drops** on the deliberate-retraction
+episode (a weight model can't unlearn) — `finalGraphCorrect ≫ finalBaselineCorrect`. **`unintendedForgetting == 0`**
+across the whole stream (catastrophic forgetting separated from `deliberateUnlearning`). The **governed-RSI
+cage is genuinely in the loop**: every fact is admitted via `GovernedRSI.step` (verifiable + poison-clean +
+provenance-clean); the seeded poisoned and forbidden/parametric proposals are **rejected and never enter
+the graph**; `cageBreaches == 0`. Competence-model `learning_priorities` + the gap-log worklist supply the
+measured "what to learn next" signal; `symbol_identity` attaches version-tag citations; the control-flow
+gap is measured separately with a real lexical router. A dedicated anti-gaming honesty audit (run the
+report, check the curve/baseline/forgetting/cage are real) passed with zero violations.
+
+**Open follow-on:** the live multi-judge grading seam (`LLM_JUDGE_HOOK`) is left deliberately uncalled —
+running the accumulation curve under ≥3 independent judge families is the step that moves this from
+`candidate` to `validated`. The control-flow gap is the next capability bottleneck to attack once the
+loop is judged (it is 0 on the clean synthetic stream but tracks router quality — a crippled router shows
+gap ≈ 0.98).
+
 ---
 
 ## Cross-cutting discipline

@@ -248,6 +248,33 @@ python tools/build_agi_proof_package.py
 python tools/build_web_data.py
 ```
 
+## Pretraining research artifacts (`pretraining/`)
+
+A small, self-contained body of **pretraining-direction** research — built to the same
+no-overclaim discipline — that lets Sophia speak the language of a data/algorithm pretraining
+researcher without pretending to out-train a frontier lab. Every study runs in **pure Python
+(no numpy/torch)** on a real, tiny, hand-backpropped LM whose **irreducible loss is known in
+closed form**, so each fit is *checked*, not trusted.
+
+- **Algorithm:** a data-scaling law `L(D)=E+A·D^-p` with a **pre-registered extrapolation**
+  (passes a 10 % gate at ≈3 % error; honestly reports that the irreducible floor is
+  *under-identified* away from saturation); an optimizer dynamics/stability frontier
+  (SGD/momentum/Adam); a top-1 **MoE-vs-dense** routing probe with collapse detection
+  (`pretraining/architecture/ARCHITECTURE.md` documents the real DeepSeek **MLA + MoE**).
+- **Data:** a per-row **data passport** (hash, source, license, quality, MinHash dedup) that
+  found the committed math-code curriculum is **~60 % near-duplicate** and unlicensed; a
+  mixture-ratio (**配比**) sweep; a **synthetic-data scaling & collapse** study; a
+  multi-dimensional **eval coverage matrix** (surfaces that only 9/90 capability×domain cells
+  are covered); and typed, fail-closed schemas for **agent / feedback / multimodal** data.
+
+Pre-registered gates: [`pretraining/PRE-REGISTRATION.md`](pretraining/PRE-REGISTRATION.md) ·
+overview: [`pretraining/README.md`](pretraining/README.md)
+
+```bash
+python tests/test_pretraining.py                 # fast property tests (10/10)
+python -m pretraining.scaling.run_scaling        # + each study has a CLI / --quick mode
+```
+
 ## OKF provenance wiki (new in 0.7.0)
 
 An **Open Knowledge Format / LLM-Wiki** layer that turns Sophia's scattered provenance
@@ -327,6 +354,23 @@ python tools/sophia_rag.py "Did Confucius write the Dao De Jing?"
 
 Cloud Run API: `services/rag_api/` — see [docs/09-Agent/Online-RAG.md](docs/09-Agent/Online-RAG.md).
 
+## AI search pipeline (understand → hybrid recall → verify-ready)
+
+A deterministic, offline AI-search layer over the same index: **query understanding**
+(normalize · intent · multi-hop decomposition · alias/synonym expansion, EN+ZH), **hybrid
+recall** (dense cosine ⨁ sparse BM25-lite fused by weighted Reciprocal Rank Fusion), near-dup
+collapse, and rerank — returning a `SearchResult` that carries the analyzed plan.
+
+```python
+from agent.ai_search import search
+r = search("Compare Plato and Aristotle on virtue")   # intent=comparison, fans out per entity
+```
+
+- Pipeline + honest bounds: [docs/09-Agent/AI-Search.md](docs/09-Agent/AI-Search.md)
+- Quality eval体系 (graded nDCG / recall / MRR + badcase taxonomy): `tools/eval_search_quality.py`, [eval/search_quality/](eval/search_quality/)
+- Scale-out: dependency-free Rust **HNSW** serving core + Python bridge — [services/ann_serving/](services/ann_serving/)
+- **Why it's an AGI substrate** (verifiable, provenance-grounded perception): [docs/09-Agent/Search-as-AGI-Substrate.md](docs/09-Agent/Search-as-AGI-Substrate.md)
+
 ## Thesis web UI (council-decided)
 
 The public face of the project: scholarly thesis with persistent chapter navigation, per-domain leaderboards, council panel explanation, and (when running locally) a live "Ask Sophia" agent panel.
@@ -364,9 +408,13 @@ sophia-agi/
 ├── docs/              # disputes, growth playbook, domains, platform/verticals
 ├── agent/             # verifier-gated core, council deliberate, gate, model
 │   └── legal_sources/ # federated HK/UK/US live citator (HKLII, e-Leg, TNA, CL)
+├── serving/           # systems track: tiered KV cache + cache-aware load balancer
+├── kernels/           # systems track: FlashAttention online-softmax (numpy ref + Triton)
+├── moe/               # systems track: top-k MoE routing + INT8/FP8 quant
 ├── benchmark/         # responses template + leaderboard + gated harnesses
 ├── training/          # JSONL-ready examples + gate-filtered council traces
 ├── agi-proof/         # AGI-candidate proof package and evidence manifest
+├── pretraining/       # honest pretraining-research artifacts (scaling/optimizer/MoE; data passport/mixing/synthetic/eval-matrix)
 ├── tools/             # validate, export, score, council + uplift + distill
 ├── scripts/           # ops helpers (e.g. safe one-way iCloud backup)
 ├── web/               # thesis UI (council-decided; GitHub Pages)

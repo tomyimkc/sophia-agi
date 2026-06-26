@@ -1,0 +1,14 @@
+# Systems track (serving / async-RL / kernels / moe). The CI-tested *references*
+# need only numpy (serving + async_rl are pure-Python; kernels + moe use numpy).
+# The GPU deployment paths are GATED and refuse when their deps/hardware are
+# absent — install these only on a CUDA box to exercise the fused kernels.
+#
+#   offline (CI / any machine):  python -m pytest tests/test_kv_serving.py \
+#       tests/test_async_rl.py tests/test_flash_attention.py tests/test_moe.py
+#
+numpy>=1.26
+# --- gated GPU paths (NVIDIA only; optional) ---
+# triton>=3.0          # kernels.flash_attention_triton (fused FlashAttention)
+# torch>=2.3           # tensor backends for the gated kernel path
+# See requirements-rl.txt for the live GRPO stack (trl/peft/vllm) used by the
+# real async-RL generator+trainer once decoupled across processes.

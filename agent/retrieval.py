@@ -164,46 +164,115 @@ def _retrieve_keyword(query: str, *, top_k: int = 8) -> list[SourceChunk]:
     return ranked[:top_k]
 
 
-def retrieve(query: str, *, top_k: int = 8) -> list[SourceChunk]:
-    """Retrieve sources — prefers curated `rag/index` when present."""
-    try:
-        from agent.vector_store import (
-            embedding_backend_id, index_dir, load_index, search,
-        )
+def embed_query_for_index(query: str, idir, *, has_embeddings: bool = True):
+    """Embed ``query`` with the SAME backend that built the index at ``idir``.
 
-        idir = index_dir()
-        indexed = load_index(idir)
-        if indexed:
-            from agent.config import load_dotenv
+    Returns an embedding vector or ``None`` (keyword mode, no committed vectors, or an
+    embedder error). Shared by :func:`retrieve` and the hybrid retriever so both embed the
+    query in exactly one space — the committed local hashing backend is offline/CPU, so
+    vector recall works under airgap with no API key.
+    """
+    from agent.config import load_dotenv
+    from agent.vector_store import embedding_backend_id
 
-            load_dotenv()
-            backend = (os.environ.get("SOPHIA_RAG_BACKEND") or "auto").strip().lower()
-            query_embedding = None
-            has_embeddings = indexed[0].embedding is not None
-            # Embed the query with the SAME backend that built the index, so the committed
-            # vectors and the query vector share one space. The local hashing backend is
-            # offline/CPU — vector recall works under airgap with no API key.
-            index_backend = embedding_backend_id(idir)
-            if backend != "keyword" and has_embeddings:
-                if index_backend == "local-hash-v1":
-                    try:
-                        from agent.rag_local_embed import embed_query
+    load_dotenv()
+    backend = (os.environ.get("SOPHIA_RAG_BACKEND") or "auto").strip().lower()
+    if backend == "keyword" or not has_embeddings:
+        return None
+    index_backend = embedding_backend_id(idir)
+    if index_backend == "local-hash-v1":
+        try:
+            from agent.rag_local_embed import embed_query
 
-                        query_embedding = embed_query(query)
-                    except Exception:
-                        query_embedding = None
-                elif backend in {"gemini", "vertex", "auto"}:
-                    if backend == "vertex":
-                        os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
-                    try:
-                        from agent.rag_embed import embed_query
+            return embed_query(query)
+        except Exception:
+            return None
+    if index_backend in {"gemini", None} and backend in {"gemini", "vertex", "auto"}:
+        if backend == "vertex":
+            os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
+        try:
+            from agent.rag_embed import embed_query
 
-                        query_embedding = embed_query(query)
-                    except Exception:
-                        query_embedding = None
-            return search(query, indexed, top_k=top_k, query_embedding=query_embedding)
-    except Exception:
-        pass
+            return embed_query(query)
+        except Exception:
+            return None
+    # Any other backend id (e.g. a registered learned multilingual/multimodal embedder) is
+    # resolved through the pluggable registry, so new backends need no change here.
+    if index_backend:
+        try:
+            from agent.embedding_backends import get
+
+            fn = get(index_backend)
+            if fn is not None:
+                return fn(query)
+        except Exception:
+            return None
+    return None
+
+
+def _retrieve_lexical_vector(query: str, *, top_k: int = 8) -> list[SourceChunk]:
+    """Deterministic offline vector retrieval (cosine over hashed n-gram vectors).
+
+    Reproducible, numpy-free, no model/network — the middle tier between the learned
+    embedding path and plain keyword overlap. Preserves the provenance confidence boost.
+    """
+    from agent.lexical_embed import embed, cosine
+
+    query_vec = embed(query)
+    ranked: list[SourceChunk] = []
+    for item in collect_corpus():
+        path_label, title, text = item[0], item[1], item[2]
+        prov = item[3] if len(item) > 3 else None
+        score = cosine(query_vec, embed(f"{title} {text}"))
+        if score <= 0:
+            continue
+        if prov:  # provenance boost: curated, confident wiki pages win over raw dumps
+            score += 0.05 + _CONFIDENCE_BOOST.get(prov.get("author_confidence"), 0.0)
+        excerpt = text[:1200] + ("..." if len(text) > 1200 else "")
+        ranked.append(SourceChunk(
+            path=path_label, title=title, excerpt=excerpt, score=score,
+            page_id=(prov or {}).get("page_id"),
+            tradition=(prov or {}).get("tradition"),
+            author_confidence=(prov or {}).get("author_confidence"),
+            do_not_attribute_to=list((prov or {}).get("do_not_attribute_to") or []),
+        ))
+    ranked.sort(key=lambda c: c.score, reverse=True)
+    return ranked[:top_k]
+
+
+def retrieve(query: str, *, top_k: int = 8, mode: "str | None" = None) -> list[SourceChunk]:
+    """Retrieve sources. Tiers: learned vectors (registry-aware embedder + committed index)
+    → deterministic offline lexical-vector cosine → keyword overlap. ``mode`` or
+    ``SOPHIA_RETRIEVAL`` env forces a tier ("learned"|"vector"|"lexical"|"keyword");
+    default "auto" walks the tiers in quality order."""
+    mode = (mode or os.environ.get("SOPHIA_RETRIEVAL") or "auto").strip().lower()
+
+    if mode in {"auto", "learned", "vertex", "gemini"}:
+        try:
+            from agent.vector_store import index_dir, load_index, search
+
+            idir = index_dir()
+            indexed = load_index(idir)
+            if indexed:
+                has_embeddings = indexed[0].embedding is not None
+                # Registry-aware: embeds with the SAME backend that built the index
+                # (local-hash / gemini / any registered learned embedder).
+                query_embedding = embed_query_for_index(query, idir, has_embeddings=has_embeddings)
+                if query_embedding is not None:
+                    return search(query, indexed, top_k=top_k, query_embedding=query_embedding)
+        except Exception:
+            pass
+        if mode != "auto":  # caller explicitly asked for learned; do not silently fall through
+            return _retrieve_keyword(query, top_k=top_k)
+
+    if mode in {"auto", "vector", "lexical"}:
+        try:
+            ranked = _retrieve_lexical_vector(query, top_k=top_k)
+            if ranked or mode != "auto":
+                return ranked
+        except Exception:
+            pass
+
     return _retrieve_keyword(query, top_k=top_k)
 
 

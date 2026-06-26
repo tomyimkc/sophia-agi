@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+[package]
+name = "kvcache"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Sharded async in-memory KV cache (Sophia storage, phase 1)"
+
+[lib]
+name = "kvcache"
+path = "src/lib.rs"
+
+[[bin]]
+name = "kvcache-server"
+path = "src/bin/server.rs"
+
+[[bin]]
+name = "kvcache-bench"
+path = "src/bin/bench.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "net", "io-util", "macros", "sync", "time"] }

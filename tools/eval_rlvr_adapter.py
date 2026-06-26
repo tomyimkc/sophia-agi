@@ -135,6 +135,32 @@ def _score_cases(cases: list, completions: dict[str, str], *, records: dict) -> 
     }
 
 
+def false_positive_regressions(base_rows: list[dict], adapter_rows: list[dict]) -> list[dict]:
+    """The TRUE-label cases where the adapter regressed integrity: the base did NOT
+    false-positive (reward > 0) but the adapter did (reward <= 0). This is exactly the
+    `trueFalsePositiveRate` regression the SSIL protected metric tracks — surfaced per case
+    so a regression is diagnosable (which cases flipped), not just an aggregate delta."""
+    base_by_id = {r["case_id"]: r for r in base_rows}
+    out: list[dict] = []
+    for ar in adapter_rows:
+        if ar.get("label") != "true":
+            continue
+        br = base_by_id.get(ar["case_id"])
+        if br is None:
+            continue
+        if float(br["reward"]) > 0.0 and float(ar["reward"]) <= 0.0:
+            out.append({
+                "case_id": ar["case_id"],
+                "work": ar.get("work"),
+                "baseReward": br["reward"],
+                "adapterReward": ar["reward"],
+                "baseCompletion": br.get("completion"),
+                "adapterCompletion": ar.get("completion"),
+                "adapterDeniedOnTrueCase": bool(ar.get("detail", {}).get("deniedOnTrueCase")),
+            })
+    return out
+
+
 def run_eval(args: argparse.Namespace) -> dict:
     data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
     cases = data["eval_cases"]
@@ -183,6 +209,10 @@ def run_eval(args: argparse.Namespace) -> dict:
         "base": {k: v for k, v in base_score.items() if k != "rows"},
         "adapterScore": {k: v for k, v in adapter_score.items() if k != "rows"},
         "delta": {"meanReward": delta, "trueFalsePositiveRate": fp_delta},
+        # Self-diagnosis: the exact TRUE cases whose integrity the adapter regressed. When
+        # fp_delta > 0 this names WHICH cases flipped, so a regression (e.g. the seed-1
+        # finding) is diagnosable from the report alone instead of needing the raw rows.
+        "falsePositiveRegressions": false_positive_regressions(base_score["rows"], adapter_score["rows"]),
         "checks": {
             "contaminationFree": not data["entity_intersection"],
             "adapterImprovesMeanReward": delta > 0,

@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sophia Architecture Bet Manifest",
+  "type": "object",
+  "required": [
+    "$schema",
+    "kind",
+    "manifestVersion",
+    "status",
+    "candidateOnly",
+    "canClaimAGI",
+    "claimBoundary",
+    "verdictValues",
+    "promotionRules",
+    "bets"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "kind": { "const": "architecture-bet-manifest" },
+    "manifestVersion": { "type": "string" },
+    "status": {
+      "enum": [
+        "scaffolding_only_not_run",
+        "candidate_runs_recorded",
+        "archived"
+      ]
+    },
+    "candidateOnly": { "const": true },
+    "canClaimAGI": { "const": false },
+    "claimBoundary": { "type": "string" },
+    "verdictValues": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "accepted",
+          "rejected",
+          "held",
+          "abstain"
+        ]
+      },
+      "minItems": 4
+    },
+    "promotionRules": {
+      "type": "object",
+      "required": [
+        "minimumSeeds",
+        "requireAblations",
+        "requireFailureLedgerUpdate",
+        "requireExternalEvidenceForClaims",
+        "requireCanClaimAGIFalse"
+      ],
+      "properties": {
+        "minimumSeeds": { "type": "integer", "minimum": 3 },
+        "requireAblations": { "const": true },
+        "requireFailureLedgerUpdate": { "const": true },
+        "requireExternalEvidenceForClaims": { "const": true },
+        "requireCanClaimAGIFalse": { "const": true }
+      }
+    },
+    "bets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "betId",
+          "title",
+          "status",
+          "claimStatus",
+          "hypothesis",
+          "architectureLever",
+          "ablationArms",
+          "metrics",
+          "verifierGates",
+          "promotionCriteria",
+          "failureLedgerRefs"
+        ],
+        "properties": {
+          "betId": { "type": "string" },
+          "title": { "type": "string" },
+          "status": {
+            "enum": [
+              "planned",
+              "not_run",
+              "running",
+              "accepted",
+              "rejected",
+              "held",
+              "abstain"
+            ]
+          },
+          "claimStatus": {
+            "enum": [
+              "illustrative",
+              "not_evidence",
+              "candidate_evidence",
+              "validated"
+            ]
+          },
+          "hypothesis": { "type": "string" },
+          "architectureLever": { "type": "string" },
+          "ablationArms": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 2
+          },
+          "metrics": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "verifierGates": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "promotionCriteria": {
+            "type": "object",
+            "required": [
+              "minimumSeeds",
+              "mustBeatBaseline",
+              "maxFalsePositiveRegression",
+              "requiresFailureLedgerUpdate"
+            ],
+            "properties": {
+              "minimumSeeds": { "type": "integer", "minimum": 3 },
+              "mustBeatBaseline": { "const": true },
+              "maxFalsePositiveRegression": { "type": "number", "minimum": 0 },
+              "requiresFailureLedgerUpdate": { "const": true }
+            }
+          },
+          "failureLedgerRefs": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          }
+        }
+      }
+    }
+  }
+}

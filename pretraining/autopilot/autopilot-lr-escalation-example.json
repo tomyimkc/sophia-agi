@@ -1,0 +1,243 @@
+{
+  "agent": "autonomous pretraining-experiment runner",
+  "canClaimAGI": false,
+  "honesty_note": "Real closed-loop search over toy nano experiments. Every score is measured, diverged runs are recorded as failures, nothing is simulated. Not an AGI agent and not a capability claim.",
+  "objective": "held_loss",
+  "n_trials": 7,
+  "n_diverged": 0,
+  "stop_reason": "converged",
+  "best": {
+    "trial": 5,
+    "config": {
+      "vocab": 8,
+      "order": 2,
+      "context": 2,
+      "hidden": 16,
+      "D": 1200,
+      "epochs": 8,
+      "seed": 0,
+      "lr": 0.0125
+    },
+    "result": {
+      "held_loss": 0.80948,
+      "train_loss": 0.92211,
+      "diverged": false,
+      "params": 408,
+      "compute_proxy": 489600,
+      "floor_E": 0.90938,
+      "excess": -0.0999
+    },
+    "score": 0.80948,
+    "diverged": false,
+    "is_best_so_far": true,
+    "rationale": "new best 0.80948 at {lr=0.0125, hidden=16, D=1200} -> keep exploring nearby"
+  },
+  "history": [
+    {
+      "trial": 0,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 8,
+        "seed": 0,
+        "lr": 0.05
+      },
+      "result": {
+        "held_loss": 1.11369,
+        "train_loss": 1.2227,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": 0.20431
+      },
+      "score": 1.11369,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 1.11369 at {lr=0.05, hidden=16, D=1200} -> keep exploring nearby"
+    },
+    {
+      "trial": 1,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 8,
+        "seed": 0,
+        "lr": 0.070711
+      },
+      "result": {
+        "held_loss": 1.61918,
+        "train_loss": 1.57241,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": 0.7098
+      },
+      "score": 1.61918,
+      "diverged": false,
+      "is_best_so_far": false,
+      "rationale": "no improvement over best 1.11369 -> narrowing / counting toward patience"
+    },
+    {
+      "trial": 2,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 8,
+        "seed": 0,
+        "lr": 0.035355
+      },
+      "result": {
+        "held_loss": 1.03286,
+        "train_loss": 1.05112,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": 0.12348
+      },
+      "score": 1.03286,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 1.03286 at {lr=0.035355, hidden=16, D=1200} -> keep exploring nearby"
+    },
+    {
+      "trial": 3,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 8,
+        "seed": 0,
+        "lr": 0.025
+      },
+      "result": {
+        "held_loss": 0.87087,
+        "train_loss": 0.95001,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": -0.03851
+      },
+      "score": 0.87087,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 0.87087 at {lr=0.025, hidden=16, D=1200} -> keep exploring nearby"
+    },
+    {
+      "trial": 4,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 8,
+        "seed": 0,
+        "lr": 0.017678
+      },
+      "result": {
+        "held_loss": 0.82699,
+        "train_loss": 0.92629,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": -0.08239
+      },
+      "score": 0.82699,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 0.82699 at {lr=0.017678, hidden=16, D=1200} -> keep exploring nearby"
+    },
+    {
+      "trial": 5,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 8,
+        "seed": 0,
+        "lr": 0.0125
+      },
+      "result": {
+        "held_loss": 0.80948,
+        "train_loss": 0.92211,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": -0.0999
+      },
+      "score": 0.80948,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 0.80948 at {lr=0.0125, hidden=16, D=1200} -> keep exploring nearby"
+    },
+    {
+      "trial": 6,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 8,
+        "seed": 0,
+        "lr": 0.008839
+      },
+      "result": {
+        "held_loss": 0.82598,
+        "train_loss": 0.93348,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": -0.0834
+      },
+      "score": 0.82598,
+      "diverged": false,
+      "is_best_so_far": false,
+      "rationale": "no improvement over best 0.80948 -> narrowing / counting toward patience"
+    }
+  ],
+  "task": "lr",
+  "runpod_escalation": {
+    "launched": false,
+    "mode": "dry_run",
+    "dry_run_command": "python tools/runpod_train.py --branch claude/deepseek-pretraining-alignment-o281ju --epochs 1 --seed 0 --dry-run",
+    "launch_command": "python tools/runpod_train.py --branch claude/deepseek-pretraining-alignment-o281ju --epochs 1 --seed 0 --yes  # requires RUNPOD_API_KEY in env",
+    "gpu_fallback": [
+      "NVIDIA GeForce RTX 4090",
+      "NVIDIA RTX A5000",
+      "NVIDIA A40",
+      "NVIDIA L40S"
+    ],
+    "est_cost_usd": {
+      "gpu": "NVIDIA GeForce RTX 4090",
+      "hours": 1.0,
+      "range": [
+        0.34,
+        0.74
+      ]
+    },
+    "cost_ceiling_usd": null,
+    "guard": "BLOCKED — set launch=True, a cost_ceiling_usd >= est high end, and RUNPOD_API_KEY; cost is a human decision, never autonomous",
+    "honesty_note": "nano search ≠ Qwen LoRA hyperparameters; escalation transfers the methodology and the spend decision, not literal config."
+  }
+}

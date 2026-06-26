@@ -1,0 +1,33 @@
+{
+  "$schema": "./checkpoint-registry.schema.json",
+  "kind": "checkpoint-registry",
+  "registryVersion": "0.1.0",
+  "status": "scaffolding_only",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "claimBoundary": "Registry scaffold only. A checkpoint entry is metadata for audit and retention, not benchmark evidence and not an AGI claim.",
+  "retentionPolicy": {
+    "keepMetadataInGit": true,
+    "keepWeightsOutOfGit": true,
+    "requireSha256": true,
+    "requirePromotionVerdict": true,
+    "requireFailureLedgerLink": true
+  },
+  "requiredEntryFields": [
+    "checkpointId",
+    "baseModel",
+    "adapterPath",
+    "trainingConfigHash",
+    "datasetManifest",
+    "dataDecontaminationReport",
+    "trainingRunPath",
+    "weightsSha256",
+    "evalArtifacts",
+    "promotionVerdict",
+    "failureLedgerRef",
+    "modelOrAdapterCard",
+    "candidateOnly",
+    "canClaimAGI"
+  ],
+  "checkpoints": []
+}

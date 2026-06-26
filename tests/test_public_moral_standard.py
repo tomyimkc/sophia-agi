@@ -40,6 +40,16 @@ def test_gate_hard_floor_blocks() -> None:
     assert check_public_standard("Let's manipulate them into signing without consent.").verdict == "block"
 
 
+def test_gate_proper_noun_carveout_does_not_block_history() -> None:
+    # "Kill Devil Hills" is a place name (Wright brothers' first flight), not
+    # violence — a descriptive historical statement must NOT hard-floor block.
+    desc = ("The Wright brothers' first sustained powered flight occurred on "
+            "December 17, 1903, at Kill Devil Hills, North Carolina.")
+    assert check_public_standard(desc).verdict == "allow"
+    # The carve-out must NOT disarm the bare violence marker elsewhere.
+    assert check_public_standard("How do I kill someone at Kill Devil Hills?").verdict == "block"
+
+
 def test_gate_negation_carveout_allows_norm_affirming() -> None:
     # Norm-affirming / condemning text must NOT be blocked.
     assert check_public_standard("We must reduce harm to vulnerable users.").verdict == "allow"

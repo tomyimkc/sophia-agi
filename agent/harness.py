@@ -406,6 +406,7 @@ def run_agent(
     resume: bool = False,
     consolidate: bool = False,
     allowed_tools: "set[str] | None" = None,
+    conscience_gate: bool | None = None,
 ) -> AgentResult:
     """Run the full plan -> execute -> critic -> reflect/retry loop.
 
@@ -469,7 +470,7 @@ def run_agent(
         except Exception as exc:  # consolidation must never fail the run
             store.log("consolidate", ok=False, error=repr(exc))
     store.log("task_end", ok=ok, failures=failures, costUsd=round(total_cost, 6), latencySec=round(total_latency, 3))
-    return AgentResult(
+    result = AgentResult(
         task_id=task.task_id,
         ok=ok,
         final_text=final_text,
@@ -479,3 +480,11 @@ def run_agent(
         latency_sec=total_latency,
         trace_path=str(store.log_path),
     )
+    # Conscience gate on the final emit (opt-in via conscience_gate or
+    # SOPHIA_CONSCIENCE_GATE). No-op unless enabled; never breaks a verified run.
+    try:
+        from agent.conscience_runtime import maybe_gate_result
+        result = maybe_gate_result(result, conscience_gate)
+    except Exception as exc:
+        store.log("conscience_gate_skip", error=repr(exc))
+    return result

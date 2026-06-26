@@ -88,21 +88,36 @@ Remaining (measurement): wire the engine into `horizon.py`'s oracle-judged curve
 report the effective horizon *with the recovery loop on vs off*, under the
 no-overclaim gate. Recovery today is within-run hint injection, not weight learning.
 
-## Build 4 — Harness↔model co-evolution loop (next)
+## Build 4 — Harness↔model co-evolution loop ✅ shipped
 
-The harness already logs full traces for SFT/DPO (`harness.py` `step_output`) and has
-reward seeds (`agent/gate_reward.py`, `provenance_bench/rl_reward.py`). The missing
-piece is the **closed flywheel**:
+The two halves of the flywheel that turns harness behaviour into a better model:
 
-1. Harness runs on real tasks → traces.
-2. Traces → preference pairs (pass vs failed-then-fixed attempts are already in the
-   log) → training data, gated by the existing provenance/no-overclaim checks.
-3. A **harness-conditioned eval** that measures *model + harness* jointly, reporting
-   **uplift = (model+harness) − (model alone)** — the number the team actually cares
-   about ("is the Agent helping more people in more scenarios?").
+**Eval half — `agent/uplift.py`** (`tools/harness_uplift.py`). Measures, holding the
+model fixed, **uplift = passRate(model+harness) − passRate(model alone)**. Both
+conditions are graded by the SAME external verifier (the harness never grades
+itself), the per-case results are *paired*, and the headline carries a **bootstrap
+95% CI**: a positive point estimate is reported `demonstrated=False` unless the CI
+lower bound clears 0 (no-overclaim). The bare baseline is one single-shot
+generation; the harness condition is the full plan→execute→critic→reflect/retry
+loop, so the delta isolates the harness as the only changing variable.
 
-Acceptance: an uplift benchmark (SWE-/terminal-bench-style or real-repo tasks) with
-confidence intervals through the same multi-judge consensus gate as `RESULTS.md`.
+**Data half — `agent/trace_distill.py`** (`tools/collect_preferences.py`). Turns the
+append-only run logs into preference pairs: a *fail-then-fixed* step is its own
+training signal — the passing attempt is `chosen`, an earlier failing attempt is
+`rejected`, for the same prompt. Fail-closed (a pair is emitted only when chosen
+cleared the critic and rejected did not; blank rejecteds are skipped), deterministic
+(pure JSONL parsing, no model call), and provenance-preserving (each pair records
+its task/step and the rejected attempt's failure class). Produces the dataset only —
+DPO/SFT training is a separate, separately-gated job that consumes `to_jsonl`.
+
+Tests: `tests/test_uplift.py`, `tests/test_trace_distill.py` (offline, deterministic),
+including a stub that demonstrates positive uplift and a live harness trace that
+distills to a usable preference pair.
+
+Remaining (out of scope here, gated separately): wire the distilled pairs into an
+actual training run, and run the uplift benchmark on a real-repo / SWE-bench-style
+suite with a real model under the multi-judge consensus gate in `RESULTS.md`. The
+loop is closed in code; the model-training arc is the next, heavier program.
 
 ## Design invariants (all builds)
 

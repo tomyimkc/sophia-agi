@@ -3,7 +3,7 @@
 # Copyright (c) 2026 tomyimkc
 """Baseline/ablation runner for the Sophia AGI-candidate proof.
 
-Runs the SAME hidden pack through the SAME scorer under each of the seven modes
+Runs the SAME hidden pack through the SAME scorer under each ablation mode
 defined in agi-proof/baseline-ablation/README.md, then publishes per-mode scores
 and deltas vs sophia-full. This is the experiment that tests the falsification
 rule in agi-proof/preregistered-thresholds.md line 32
@@ -51,6 +51,7 @@ DEFAULT_MODE_ORDER = [
     "sophia-full",
     "raw-model",
     "raw-model-plus-tools",
+    "sophia-no-intake",
     "sophia-no-kb",
     "sophia-no-gate",
     "sophia-no-memory",

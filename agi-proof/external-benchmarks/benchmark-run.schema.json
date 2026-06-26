@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sophia External Benchmark Workflow Manifest",
+  "type": "object",
+  "required": [
+    "kind",
+    "manifestVersion",
+    "status",
+    "candidateOnly",
+    "canClaimAGI",
+    "claimBoundary",
+    "failureLedgerRefs",
+    "artifactContract",
+    "benchmarkFamilies"
+  ],
+  "properties": {
+    "kind": { "const": "external-benchmark-workflow-manifest" },
+    "manifestVersion": { "type": "string" },
+    "status": {
+      "enum": [
+        "scaffolding_only_not_run",
+        "planned",
+        "blocked",
+        "completed_candidate",
+        "validated_external"
+      ]
+    },
+    "candidateOnly": { "const": true },
+    "canClaimAGI": { "const": false },
+    "claimBoundary": { "type": "string" },
+    "failureLedgerRefs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "artifactContract": {
+      "type": "object",
+      "required": ["requiredForAnyRun", "checksumAlgorithm", "resultPromotionRules"],
+      "properties": {
+        "requiredForAnyRun": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "checksumAlgorithm": { "enum": ["sha256"] },
+        "resultPromotionRules": {
+          "type": "object",
+          "required": ["minimumSeedsForHeadline", "requireFailureLedgerUpdate", "requireCanClaimAGIFalse"],
+          "properties": {
+            "minimumSeedsForHeadline": { "type": "integer", "minimum": 3 },
+            "requireFailureLedgerUpdate": { "const": true },
+            "requireCanClaimAGIFalse": { "const": true }
+          }
+        }
+      }
+    },
+    "benchmarkFamilies": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "benchmarkFamily",
+          "status",
+          "claimStatus",
+          "workflow",
+          "minimumArtifacts",
+          "resultDeclaration"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "benchmarkFamily": {
+            "enum": [
+              "arc_agi",
+              "gaia",
+              "swe_bench",
+              "metr_autonomy",
+              "third_party_hidden_pack"
+            ]
+          },
+          "status": {
+            "enum": [
+              "not_run",
+              "planned",
+              "blocked",
+              "completed_candidate",
+              "validated_external"
+            ]
+          },
+          "claimStatus": {
+            "enum": [
+              "not_evidence",
+              "candidate_only",
+              "validated_non_agi"
+            ]
+          },
+          "workflow": { "type": "string" },
+          "minimumArtifacts": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "hiddenPackPolicy": {
+            "type": "object",
+            "properties": {
+              "reviewerControlled": { "type": "boolean" },
+              "promptVisibility": { "type": "string" },
+              "leakageProhibited": { "type": "boolean" },
+              "commitmentRequired": { "type": "boolean" }
+            }
+          },
+          "promotionGate": {
+            "type": "object",
+            "properties": {
+              "minimumSeeds": { "type": "integer", "minimum": 1 },
+              "requiresIndependentReviewer": { "type": "boolean" },
+              "requiresManualSemanticReview": { "type": "boolean" },
+              "requiresFailureLedgerUpdate": { "type": "boolean" }
+            }
+          },
+          "resultDeclaration": {
+            "type": "object",
+            "required": ["score", "total", "metric", "ci95", "seeds", "canClaimAGI"],
+            "properties": {
+              "score": { "type": ["number", "null"] },
+              "total": { "type": ["number", "integer", "null"] },
+              "metric": { "type": ["string", "null"] },
+              "ci95": {
+                "type": ["array", "null"],
+                "items": { "type": "number" },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "seeds": {
+                "type": "array",
+                "items": { "type": "integer" }
+              },
+              "canClaimAGI": { "const": false }
+            }
+          }
+        }
+      }
+    }
+  }
+}

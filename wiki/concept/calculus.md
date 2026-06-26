@@ -17,6 +17,8 @@ links: []
 
 # calculus (微積分)
 
+Calculus (微積分) is a science concept, in the mathematics subfield, attributed to newton_and_leibniz (authorship confidence: disputed), dated to 1665-1684.
+
 - **Attributed author:** newton_and_leibniz (confidence: `disputed`)
 - **Domain:** science
 

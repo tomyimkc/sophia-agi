@@ -29,6 +29,7 @@ if str(ROOT) not in sys.path:
 
 from agent.ssil_aggregate import AdapterAggregate, SeedRun  # noqa: E402
 from agent.ssil_generations import Generation, compounding_proof, demo_compounding_report  # noqa: E402
+from agent.plasticity_probe import watch_generations  # noqa: E402
 
 DEFAULT_OUT = ROOT / "agi-proof" / "self-extension" / "ssil-compounding-proof.public-report.json"
 
@@ -52,6 +53,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--min-delta", type=float, default=0.03)
     ap.add_argument("--ci-k", type=float, default=1.0)
     ap.add_argument("--out", default=str(DEFAULT_OUT))
+    ap.add_argument("--plasticity-json", default=None,
+                    help="optional ordered list of per-generation plasticity_report dicts "
+                         "(agent.plasticity_probe) — attaches a loss-of-plasticity early-warning")
     ap.add_argument("--print", action="store_true")
     args = ap.parse_args(argv)
 
@@ -63,6 +67,11 @@ def main(argv: list[str] | None = None) -> int:
         }
     else:
         proof = demo_compounding_report()
+
+    # Hurdle 4: a rising accuracy curve that is simultaneously losing stable rank / gaining
+    # dead units is the signature of degradation. Attach the early-warning when stats exist.
+    if args.plasticity_json:
+        proof["plasticityWatch"] = watch_generations(json.loads(args.plasticity_json))
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)

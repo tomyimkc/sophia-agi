@@ -76,6 +76,9 @@ training/wiki_provenance_*.jsonl
 training/local_sophia_v2/*.jsonl
 !training/local_sophia_v2/general_instruct.jsonl
 training/local_sophia_v2/mlx/*.jsonl
+# Local-Sophia v3 (M2): reproducible via tools/build_sophia_wisdom_dataset.py; track only the manifest.
+training/local_sophia_v3/*.jsonl
+training/local_sophia_v3/mlx/*.jsonl
 training/mlx_adapters/**
 !training/mlx_adapters/sophia-v2/
 !training/mlx_adapters/sophia-v2/adapter_config.json
@@ -95,3 +98,17 @@ agi-proof/self-extension/ssil-registry.jsonl
 training/team_agents/checkpoints/
 training/team_agents/*.safetensors
 training/team_agents/adapter_model/
+
+# Rust build artifacts (storage/ workspace)
+storage/target/
+**/target/
+# Rust ANN serving build artifacts
+services/ann_serving/target/
+rag/index/vectors.txt
+# external-validation: generated per-run outputs (reviewers run their own)
+agi-proof/external-validation/seib-uplift.validation-report.json
+agi-proof/external-validation/_seib-live.raw.json
+training/tool_use/checkpoints/
+training/tool_use/dpo_pairs.jsonl
+!training/tool_use/sft_traces.jsonl
+

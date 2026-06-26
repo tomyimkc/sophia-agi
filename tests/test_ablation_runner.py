@@ -88,16 +88,22 @@ LEARNING_CASE = {
 
 
 def test_seven_modes_present() -> None:
-    expected = {
+    # The canonical ablation set consumed by ``--modes all`` (DEFAULT_MODE_ORDER).
+    canonical = {
         "raw-model",
         "raw-model-plus-tools",
         "sophia-full",
+        "sophia-no-intake",
         "sophia-no-kb",
         "sophia-no-gate",
         "sophia-no-memory",
         "sophia-no-council",
     }
-    assert set(runner.ABLATION_MODES) == expected
+    assert canonical <= set(runner.ABLATION_MODES)
+    assert set(ablation.DEFAULT_MODE_ORDER) == canonical
+    # W4 opt-in lever: registered for A/B but intentionally NOT in the canonical set.
+    assert "sophia-claim-router" in runner.ABLATION_MODES
+    assert "sophia-claim-router" not in ablation.DEFAULT_MODE_ORDER
 
 
 def test_raw_model_suppresses_all_scaffolding() -> None:
@@ -110,6 +116,7 @@ def test_raw_model_suppresses_all_scaffolding() -> None:
     assert result["codingCouncilRoute"] == {}
     assert result["toolLog"] == {}
     assert result["webEvidence"] == {}
+    assert result["intakeContract"] == {}
     assert result["gate"].get("gateApplied") is False
     # raw modes must not leak the Sophia source-discipline contract
     assert "Rubric Evidence Map" not in result["modelLog"].get("_user", "")
@@ -191,6 +198,7 @@ def test_sophia_full_runs_council_for_coding() -> None:
     assert result["codingCouncilRoute"] != {}
     assert result["sources"] != []
     assert result["gate"].get("gateApplied") is not False  # real gate ran
+    assert result["intakeContract"] != {}
 
 
 def test_compute_deltas_full_minus_mode() -> None:
@@ -227,7 +235,11 @@ def test_falsification_clear_when_sophia_wins() -> None:
 
 def test_parse_modes_always_includes_sophia_full() -> None:
     assert ablation.parse_modes("raw-model")[0] == "sophia-full"
-    assert set(ablation.parse_modes("all")) == set(runner.ABLATION_MODES)
+    # ``all`` resolves to the canonical DEFAULT_MODE_ORDER, not every registered mode
+    # (the opt-in W4 sophia-claim-router lever is excluded from the canonical set).
+    assert set(ablation.parse_modes("all")) == set(ablation.DEFAULT_MODE_ORDER)
+    # The opt-in lever is still selectable by name.
+    assert "sophia-claim-router" in ablation.parse_modes("sophia-claim-router")
 
 
 def main() -> int:

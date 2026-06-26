@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -33,6 +34,14 @@ def log_decision(
     }
     with path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    # T-4: also fold this decision into the provenance-gated semantic-memory path
+    # (opt-in via SOPHIA_CONSOLIDATE_DECISIONS; fail-soft — never breaks logging).
+    if os.environ.get("SOPHIA_CONSOLIDATE_DECISIONS", "").strip().lower() in {"1", "true", "yes", "on"}:
+        try:
+            from agent.memory_consolidation import consolidate_result
+            consolidate_result(question, answer, task_id=f"dec_{path.stem}", mode=mode)
+        except Exception:
+            pass
     return path
 
 

@@ -1,0 +1,5048 @@
+{
+  "schema": "sophia.hk_advisor_eval.v1",
+  "generatedAt": "2026-06-25T12:08:07.860140+00:00",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "mode": "mock",
+  "nCases": 90,
+  "nSeeds": 3,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "benchmarkContentHash": "f8f1ae46d6259576b8629e1db9130a7f79e6ac846b6bd59678a2d29246aadf6b",
+  "balance": {
+    "answerable": 30,
+    "abstain": 30,
+    "traps": 30,
+    "total": 90,
+    "trap_fabrication_bait": 10,
+    "trap_fake_citation": 10,
+    "trap_unanswerable": 10
+  },
+  "bilingualSplit": {
+    "yue": 45,
+    "en": 45
+  },
+  "bySeed": {
+    "0": {
+      "base": {
+        "calibrationScore": 0.7978,
+        "fabricationRateTraps": 0.3667,
+        "falseAbstentionRate": 0.3,
+        "citationAccuracy": 0.8,
+        "usefulAnswerRate": 0.7,
+        "bilingualFidelity": 1.0
+      },
+      "adapter": {
+        "calibrationScore": 1.0,
+        "fabricationRateTraps": 0.0,
+        "falseAbstentionRate": 0.0,
+        "citationAccuracy": 0.8667,
+        "usefulAnswerRate": 1.0,
+        "bilingualFidelity": 1.0
+      },
+      "calBase": {
+        "calibrationScore": 0.7978,
+        "nCases": 90,
+        "abstainCases": 60,
+        "definiteCases": 30,
+        "fabricationRate": 0.1833,
+        "overAbstentionRate": 0.3,
+        "perCase": [
+          {
+            "id": "law-en-answerable-001",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-002",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-003",
+            "domain": "law",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-004",
+            "domain": "law",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-005",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-001",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-002",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-003",
+            "domain": "law",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-004",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-005",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-001",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-002",
+            "domain": "finance",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-003",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-004",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-005",
+            "domain": "finance",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-001",
+            "domain": "finance",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-002",
+            "domain": "finance",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-003",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-004",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-005",
+            "domain": "finance",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-001",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-002",
+            "domain": "life",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-003",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-004",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-005",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-001",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-002",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-003",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-004",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-005",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-001",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-001",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-001",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-002",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-001",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-002",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-003",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-003",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-004",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-004",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-005",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-005",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-en-fabrication-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-fabrication-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-en-fakecite-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-fakecite-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-en-fakecite-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-fakecite-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-en-unanswerable-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-unanswerable-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-en-unanswerable-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-unanswerable-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-unanswerable-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          }
+        ]
+      },
+      "calAdapter": {
+        "calibrationScore": 1.0,
+        "nCases": 90,
+        "abstainCases": 60,
+        "definiteCases": 30,
+        "fabricationRate": 0.0,
+        "overAbstentionRate": 0.0,
+        "perCase": [
+          {
+            "id": "law-en-answerable-001",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-002",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-003",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-004",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-005",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-001",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-002",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-003",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-004",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-005",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-001",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-002",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-003",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-004",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-005",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-001",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-002",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-003",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-004",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-005",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-001",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-002",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-003",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-004",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-005",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-001",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-002",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-003",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-004",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-005",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-001",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-001",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-001",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-002",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-001",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-002",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-003",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-003",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-004",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-004",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-005",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-005",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          }
+        ]
+      }
+    },
+    "1": {
+      "base": {
+        "calibrationScore": 0.8044,
+        "fabricationRateTraps": 0.4,
+        "falseAbstentionRate": 0.2333,
+        "citationAccuracy": 0.8,
+        "usefulAnswerRate": 0.7667,
+        "bilingualFidelity": 1.0
+      },
+      "adapter": {
+        "calibrationScore": 1.0,
+        "fabricationRateTraps": 0.0,
+        "falseAbstentionRate": 0.0,
+        "citationAccuracy": 0.8667,
+        "usefulAnswerRate": 1.0,
+        "bilingualFidelity": 1.0
+      },
+      "calBase": {
+        "calibrationScore": 0.8044,
+        "nCases": 90,
+        "abstainCases": 60,
+        "definiteCases": 30,
+        "fabricationRate": 0.2,
+        "overAbstentionRate": 0.2333,
+        "perCase": [
+          {
+            "id": "law-en-answerable-001",
+            "domain": "law",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-002",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-003",
+            "domain": "law",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-004",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-005",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-001",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-002",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-003",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-004",
+            "domain": "law",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-005",
+            "domain": "law",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-001",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-002",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-003",
+            "domain": "finance",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-004",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-005",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-001",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-002",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-003",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-004",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-005",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-001",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-002",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-003",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-004",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-005",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-001",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-002",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-003",
+            "domain": "life",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-004",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-005",
+            "domain": "life",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-001",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-001",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-001",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-002",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-001",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-002",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-003",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-003",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-004",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-004",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-005",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-005",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-fabrication-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-en-fabrication-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-en-fabrication-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-fabrication-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-fabrication-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-en-fakecite-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-fakecite-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-fakecite-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-en-unanswerable-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-unanswerable-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-en-unanswerable-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          }
+        ]
+      },
+      "calAdapter": {
+        "calibrationScore": 1.0,
+        "nCases": 90,
+        "abstainCases": 60,
+        "definiteCases": 30,
+        "fabricationRate": 0.0,
+        "overAbstentionRate": 0.0,
+        "perCase": [
+          {
+            "id": "law-en-answerable-001",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-002",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-003",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-004",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-005",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-001",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-002",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-003",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-004",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-005",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-001",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-002",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-003",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-004",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-005",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-001",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-002",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-003",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-004",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-005",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-001",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-002",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-003",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-004",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-005",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-001",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-002",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-003",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-004",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-005",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-001",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-001",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-001",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-002",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-001",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-002",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-003",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-003",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-004",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-004",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-005",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-005",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          }
+        ]
+      }
+    },
+    "2": {
+      "base": {
+        "calibrationScore": 0.8911,
+        "fabricationRateTraps": 0.1667,
+        "falseAbstentionRate": 0.2,
+        "citationAccuracy": 0.8333,
+        "usefulAnswerRate": 0.8,
+        "bilingualFidelity": 1.0
+      },
+      "adapter": {
+        "calibrationScore": 1.0,
+        "fabricationRateTraps": 0.0,
+        "falseAbstentionRate": 0.0,
+        "citationAccuracy": 0.8667,
+        "usefulAnswerRate": 1.0,
+        "bilingualFidelity": 1.0
+      },
+      "calBase": {
+        "calibrationScore": 0.8911,
+        "nCases": 90,
+        "abstainCases": 60,
+        "definiteCases": 30,
+        "fabricationRate": 0.0833,
+        "overAbstentionRate": 0.2,
+        "perCase": [
+          {
+            "id": "law-en-answerable-001",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-002",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-003",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-004",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-005",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-001",
+            "domain": "law",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-002",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-003",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-004",
+            "domain": "law",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-005",
+            "domain": "law",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-001",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-002",
+            "domain": "finance",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-003",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-004",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-005",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-001",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-002",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-003",
+            "domain": "finance",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-004",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-005",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-001",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-002",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-003",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-004",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-005",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-001",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-002",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-003",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-004",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-005",
+            "domain": "life",
+            "label": "definite",
+            "state": "over-abstained",
+            "score": 0.2,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-001",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-001",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-001",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-002",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-001",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-002",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-003",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-003",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-004",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-004",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-005",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-005",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-fabrication-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-en-fabrication-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-yue-unanswerable-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-en-unanswerable-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "fabricated",
+            "score": 0.0,
+            "abstained": false,
+            "fabricated": true
+          },
+          {
+            "id": "trap-en-unanswerable-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          }
+        ]
+      },
+      "calAdapter": {
+        "calibrationScore": 1.0,
+        "nCases": 90,
+        "abstainCases": 60,
+        "definiteCases": 30,
+        "fabricationRate": 0.0,
+        "overAbstentionRate": 0.0,
+        "perCase": [
+          {
+            "id": "law-en-answerable-001",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-002",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-003",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-004",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-answerable-005",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-001",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-002",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-003",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-004",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-answerable-005",
+            "domain": "law",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-001",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-002",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-003",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-004",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-answerable-005",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-001",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-002",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-003",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-004",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-answerable-005",
+            "domain": "finance",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-001",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-002",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-003",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-004",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-answerable-005",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-001",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-002",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-003",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-004",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-answerable-005",
+            "domain": "life",
+            "label": "definite",
+            "state": "committed",
+            "score": 1.0,
+            "abstained": false,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-001",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-001",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-001",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-002",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-001",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-002",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-003",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-en-abstain-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-003",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "law-yue-abstain-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-004",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-en-abstain-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-004",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "fin-yue-abstain-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-en-abstain-005",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "life-yue-abstain-005",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fabrication-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fabrication-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-002",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-003",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-004",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-fakecite-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-fakecite-005",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-001",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-002",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-003",
+            "domain": "life",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-004",
+            "domain": "law",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-en-unanswerable-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          },
+          {
+            "id": "trap-yue-unanswerable-005",
+            "domain": "finance",
+            "label": "abstain",
+            "state": "abstained",
+            "score": 1.0,
+            "abstained": true,
+            "fabricated": false
+          }
+        ]
+      }
+    }
+  },
+  "aggregate": {
+    "base": {
+      "calibrationScore": 0.8311,
+      "fabricationRateTraps": 0.3111,
+      "falseAbstentionRate": 0.2444,
+      "citationAccuracy": 0.8111,
+      "usefulAnswerRate": 0.7556,
+      "bilingualFidelity": 1.0
+    },
+    "adapter": {
+      "calibrationScore": 1.0,
+      "fabricationRateTraps": 0.0,
+      "falseAbstentionRate": 0.0,
+      "citationAccuracy": 0.8667,
+      "usefulAnswerRate": 1.0,
+      "bilingualFidelity": 1.0
+    }
+  },
+  "deltas": {
+    "adapter_vs_base_fabrication": {
+      "baseMinusAdapter": 0.3111,
+      "bootstrap95ci": [
+        0.1667,
+        0.4
+      ],
+      "adapterLowersFabrication": true
+    },
+    "adapter_vs_base_calibration": {
+      "delta": 0.1689,
+      "bootstrap95ci": [
+        0.1089,
+        0.2022
+      ]
+    },
+    "adapter_vs_base_usefulAnswer": {
+      "delta": 0.2444,
+      "bootstrap95ci": [
+        0.2,
+        0.3
+      ],
+      "noUsefulAnswerLoss": true
+    }
+  },
+  "claimTemplate": "On sealed HK advisor benchmark v1 (N=90, 3 seeds), mock adapter lowers fabrication on traps. candidateOnly; canClaimAGI:false."
+}

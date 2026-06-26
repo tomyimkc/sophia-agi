@@ -1,0 +1,24 @@
+{
+  "packId": "selfauthored-fugu-w1-2026-06-26-v2",
+  "runId": "hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2",
+  "status": "revealed-after-eval-self-authored",
+  "origin": "Self-authored by Fugu worker agent after v1 artifact-retention failure; not third-party/reviewer-independent.",
+  "residualIndependenceGap": "Pack was unspent before this execution but self-authored by the executing agent; does not close third-party independence caveat.",
+  "packPathAtRun": "private/hidden-evals/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2/pack.json",
+  "publicRevealedPackPath": "agi-proof/hidden-reviewer-packs/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.pack.revealed.json",
+  "packSha256": "2fe3b97d42d2e24a8a07b2c67494a996843429db8046836473818ba24c0c39e9",
+  "caseCount": 8,
+  "domains": [
+    "coding",
+    "history",
+    "learning",
+    "logic",
+    "philosophy",
+    "planning",
+    "psychology",
+    "tool_use"
+  ],
+  "createdAt": "2026-06-26T02:45:00+08:00",
+  "commitHashBeforeRun": "de52a7786be6fa1bc191c701fc65b89db140160a",
+  "branchAtRun": "claude/agi-gap-audit-roadmap-12ft30"
+}

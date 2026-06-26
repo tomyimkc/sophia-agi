@@ -1,0 +1,271 @@
+{
+  "$schema": "./architecture-bet.schema.json",
+  "kind": "architecture-bet-manifest",
+  "manifestVersion": "0.1.0",
+  "status": "scaffolding_only_not_run",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "claimBoundary": "Architecture hypotheses only. These bets are not benchmark results, not checkpoint promotion evidence, and not AGI proof; canClaimAGI=false.",
+  "verdictValues": [
+    "accepted",
+    "rejected",
+    "held",
+    "abstain"
+  ],
+  "promotionRules": {
+    "minimumSeeds": 3,
+    "requireAblations": true,
+    "requireFailureLedgerUpdate": true,
+    "requireExternalEvidenceForClaims": true,
+    "requireCanClaimAGIFalse": true
+  },
+  "bets": [
+    {
+      "betId": "verifier-gated-long-context",
+      "title": "Verifier-gated long context",
+      "status": "not_run",
+      "claimStatus": "not_evidence",
+      "hypothesis": "Structured long context improves source-bounded answers only when deterministic verifier gates block unsupported claims before promotion.",
+      "architectureLever": "Long context plus source discipline and evidence-card gates.",
+      "ablationArms": [
+        "raw",
+        "long_context_only",
+        "verifier_gated",
+        "sophia_full"
+      ],
+      "metrics": [
+        "unsupported_claim_rate",
+        "accepted_evidence_card_rate",
+        "false_positive_cost",
+        "abstention_rate"
+      ],
+      "verifierGates": [
+        "source_discipline",
+        "evidence_card",
+        "promotion_no_overclaim"
+      ],
+      "promotionCriteria": {
+        "minimumSeeds": 3,
+        "mustBeatBaseline": true,
+        "maxFalsePositiveRegression": 0.02,
+        "requiresFailureLedgerUpdate": true
+      },
+      "failureLedgerRefs": [
+        "architecture-bets-not-run",
+        "long-context-verifier-gate-pending"
+      ]
+    },
+    {
+      "betId": "hybrid-memory",
+      "title": "Hybrid memory",
+      "status": "not_run",
+      "claimStatus": "not_evidence",
+      "hypothesis": "Separating scratch, episodic, semantic, procedural, and negative memory can improve recall without letting unverified memory override source evidence.",
+      "architectureLever": "Layered memory with accepted/rejected/held/abstain write states.",
+      "ablationArms": [
+        "raw",
+        "long_context_only",
+        "long_context_plus_memory",
+        "sophia_full"
+      ],
+      "metrics": [
+        "memory_recall_accuracy",
+        "memory_contamination_rate",
+        "held_memory_rate",
+        "negative_case_reuse_rate"
+      ],
+      "verifierGates": [
+        "memory_write_verdict",
+        "source_evidence_precedence",
+        "contamination_guard"
+      ],
+      "promotionCriteria": {
+        "minimumSeeds": 3,
+        "mustBeatBaseline": true,
+        "maxFalsePositiveRegression": 0.02,
+        "requiresFailureLedgerUpdate": true
+      },
+      "failureLedgerRefs": [
+        "architecture-bets-not-run",
+        "hybrid-memory-pending"
+      ]
+    },
+    {
+      "betId": "selective-tool-use-router",
+      "title": "Selective tool-use router",
+      "status": "not_run",
+      "claimStatus": "not_evidence",
+      "hypothesis": "A conservative router can reduce wrong-tool and over-call failures while preserving retrieval for evidence-required tasks.",
+      "architectureLever": "Deterministic router records before any learned router policy.",
+      "ablationArms": [
+        "raw",
+        "long_context_plus_tools",
+        "verifier_gated",
+        "sophia_full"
+      ],
+      "metrics": [
+        "wrong_tool_rate",
+        "over_call_rate",
+        "tool_error_recovery_rate",
+        "evidence_retrieval_success_rate"
+      ],
+      "verifierGates": [
+        "tool_trace_verdict",
+        "router_decision_shape",
+        "secret_scrub"
+      ],
+      "promotionCriteria": {
+        "minimumSeeds": 3,
+        "mustBeatBaseline": true,
+        "maxFalsePositiveRegression": 0.02,
+        "requiresFailureLedgerUpdate": true
+      },
+      "failureLedgerRefs": [
+        "architecture-bets-not-run",
+        "tool-router-pending"
+      ]
+    },
+    {
+      "betId": "council-orchestration",
+      "title": "Council orchestration",
+      "status": "not_run",
+      "claimStatus": "not_evidence",
+      "hypothesis": "Domain councils and risk chairs improve error detection when dissent is preserved and verifier gates remain authoritative.",
+      "architectureLever": "Source, memory, tool, domain, compression, and risk council roles.",
+      "ablationArms": [
+        "raw",
+        "long_context_only",
+        "long_context_plus_council",
+        "sophia_full"
+      ],
+      "metrics": [
+        "dissent_preservation_rate",
+        "unsupported_consensus_rate",
+        "domain_boundary_error_rate",
+        "chair_verdict_accuracy"
+      ],
+      "verifierGates": [
+        "council_verdict_shape",
+        "dissent_required_on_conflict",
+        "promotion_no_overclaim"
+      ],
+      "promotionCriteria": {
+        "minimumSeeds": 3,
+        "mustBeatBaseline": true,
+        "maxFalsePositiveRegression": 0.02,
+        "requiresFailureLedgerUpdate": true
+      },
+      "failureLedgerRefs": [
+        "architecture-bets-not-run",
+        "council-orchestration-pending"
+      ]
+    },
+    {
+      "betId": "verifier-as-reward",
+      "title": "Verifier-as-reward",
+      "status": "not_run",
+      "claimStatus": "not_evidence",
+      "hypothesis": "Verifier outcomes can shape training rewards only when the judge is separated from labels and false-positive cost is tracked.",
+      "architectureLever": "Verifier reward signals with independent eval labels.",
+      "ablationArms": [
+        "raw",
+        "sft_only",
+        "verifier_reward",
+        "sophia_full"
+      ],
+      "metrics": [
+        "verifier_pass_rate",
+        "independent_score_delta",
+        "false_positive_cost",
+        "over_abstention_rate"
+      ],
+      "verifierGates": [
+        "reward_label_separation",
+        "minimum_seed_count",
+        "failure_ledger_update"
+      ],
+      "promotionCriteria": {
+        "minimumSeeds": 3,
+        "mustBeatBaseline": true,
+        "maxFalsePositiveRegression": 0.02,
+        "requiresFailureLedgerUpdate": true
+      },
+      "failureLedgerRefs": [
+        "architecture-bets-not-run",
+        "verifier-reward-pending"
+      ]
+    },
+    {
+      "betId": "long-context-compression-recall",
+      "title": "Long-context compression and recall",
+      "status": "not_run",
+      "claimStatus": "not_evidence",
+      "hypothesis": "Evidence-card compression preserves more task-relevant source facts than raw truncation when recall is externally checked.",
+      "architectureLever": "Evidence cards, token budgets, compression summaries, and recall checks.",
+      "ablationArms": [
+        "raw_truncated",
+        "long_context_only",
+        "compressed_evidence_cards",
+        "sophia_full"
+      ],
+      "metrics": [
+        "source_recall_rate",
+        "polarity_preservation_rate",
+        "compression_loss_rate",
+        "accepted_card_rate"
+      ],
+      "verifierGates": [
+        "context_packing_manifest",
+        "evidence_card_verdict",
+        "recall_check"
+      ],
+      "promotionCriteria": {
+        "minimumSeeds": 3,
+        "mustBeatBaseline": true,
+        "maxFalsePositiveRegression": 0.02,
+        "requiresFailureLedgerUpdate": true
+      },
+      "failureLedgerRefs": [
+        "architecture-bets-not-run",
+        "context-compression-recall-pending"
+      ]
+    },
+    {
+      "betId": "architecture-aware-eval-harness",
+      "title": "Architecture-aware eval harness",
+      "status": "not_run",
+      "claimStatus": "not_evidence",
+      "hypothesis": "Ablation-aware eval artifacts can identify which architecture component caused an uplift and keep unmeasured claims out of public summaries.",
+      "architectureLever": "Candidate config, ablation manifest, run template, failure ledger, and promotion verdict.",
+      "ablationArms": [
+        "raw",
+        "long_context_only",
+        "long_context_plus_memory",
+        "long_context_plus_tools",
+        "verifier_gated",
+        "sophia_full"
+      ],
+      "metrics": [
+        "ablation_delta",
+        "artifact_completeness",
+        "promotion_verdict_rate",
+        "failure_preservation_rate"
+      ],
+      "verifierGates": [
+        "candidate_config_shape",
+        "run_template_shape",
+        "promotion_no_overclaim"
+      ],
+      "promotionCriteria": {
+        "minimumSeeds": 3,
+        "mustBeatBaseline": true,
+        "maxFalsePositiveRegression": 0.02,
+        "requiresFailureLedgerUpdate": true
+      },
+      "failureLedgerRefs": [
+        "architecture-bets-not-run",
+        "architecture-eval-harness-pending"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "_comment": "Per-GPU-type acceptance baselines for the bring-up gate (R2). A node is accepted only if EVERY measured metric clears its committed floor. Numbers are conservative reference figures and must be re-measured against the operator's real reference node before production use; they are versioned so regressions are caught against a known reference (mirrors the repo's seal/holdout protocol). Bandwidth in GB/s, TFLOPS for dense matmul at the noted precision, latency in microseconds.",
+  "_version": "0.1.0",
+  "defaults": {
+    "min_gpu_count": 8,
+    "max_gpu_temp_idle_c": 45.0,
+    "max_ecc_uncorrectable": 0,
+    "min_hbm_bandwidth_gbps": 1200.0,
+    "min_gemm_tflops_bf16": 200.0,
+    "min_nvlink_bandwidth_gbps": 200.0,
+    "min_nccl_allreduce_busbw_gbps": 90.0,
+    "min_rdma_ib_write_bw_gbps": 90.0,
+    "max_p2p_latency_us": 12.0
+  },
+  "gpu_types": {
+    "NVIDIA H100 80GB HBM3": {
+      "min_hbm_bandwidth_gbps": 2800.0,
+      "min_gemm_tflops_bf16": 700.0,
+      "min_nvlink_bandwidth_gbps": 700.0,
+      "min_nccl_allreduce_busbw_gbps": 230.0,
+      "min_rdma_ib_write_bw_gbps": 95.0,
+      "max_gpu_temp_idle_c": 45.0
+    },
+    "NVIDIA A100-SXM4-80GB": {
+      "min_hbm_bandwidth_gbps": 1700.0,
+      "min_gemm_tflops_bf16": 250.0,
+      "min_nvlink_bandwidth_gbps": 480.0,
+      "min_nccl_allreduce_busbw_gbps": 180.0,
+      "min_rdma_ib_write_bw_gbps": 90.0,
+      "max_gpu_temp_idle_c": 45.0
+    }
+  }
+}
