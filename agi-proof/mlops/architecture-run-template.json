@@ -1,0 +1,109 @@
+{
+  "schema": "sophia.architecture_run_template.v1",
+  "kind": "architecture-run-template",
+  "templateVersion": "0.1.0",
+  "status": "scaffolding_only_not_run",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "claimBoundary": "MLOps run template only. It declares required artifacts for future candidate runs; it is not a run result or AGI proof; canClaimAGI=false.",
+  "runIdentity": {
+    "runId": null,
+    "gitCommit": null,
+    "operator": null,
+    "startedAt": null,
+    "completedAt": null,
+    "dryRun": true
+  },
+  "candidateConfig": "configs/sophia-long-context-candidate.sample.json",
+  "architectureBets": "agi-proof/architecture-bets/manifest.json",
+  "contextPacking": {
+    "manifest": "training/context_packing/manifest.json",
+    "evidenceCardSchema": "training/context_packing/evidence_card.schema.json",
+    "contextPackArtifact": null,
+    "compressionReport": null,
+    "recallReport": null
+  },
+  "checkpoints": {
+    "registry": "agi-proof/mlops/checkpoint-registry.json",
+    "baseModel": "Qwen/Qwen2.5-3B-Instruct",
+    "adapterPath": null,
+    "weightsSha256": null,
+    "metadataPath": null
+  },
+  "datasets": {
+    "trainingManifest": null,
+    "contextPackingManifest": "training/context_packing/manifest.json",
+    "toolUseManifest": "training/tool_use/manifest.json",
+    "decontaminationReport": null,
+    "heldoutRefs": [
+      "eval/**",
+      "training/lora/holdout.jsonl",
+      "data/tool_use_benchmark/heldout_v1.jsonl",
+      "sealed hidden-eval packs"
+    ]
+  },
+  "evals": {
+    "plannedSuites": [
+      "context-packing-smoke",
+      "provenance-delta",
+      "tool-use-mcp",
+      "team-agents-longtask"
+    ],
+    "resultArtifacts": [],
+    "judgeFamilies": [],
+    "minimumSeeds": 3
+  },
+  "ablations": {
+    "requiredArms": [
+      "raw",
+      "long_context_only",
+      "long_context_plus_memory",
+      "long_context_plus_tools",
+      "verifier_gated",
+      "sophia_full"
+    ],
+    "completedArms": [],
+    "ablationReport": null
+  },
+  "failureLedger": {
+    "path": "agi-proof/failure-ledger.md",
+    "requiredRefs": [
+      "architecture-bets-not-run",
+      "long-context-candidate-not-run"
+    ],
+    "updated": false
+  },
+  "promotionVerdict": {
+    "verdict": "held",
+    "allowedValues": [
+      "accepted",
+      "rejected",
+      "held",
+      "abstain"
+    ],
+    "proofArtifact": null,
+    "reason": "Template has not been executed. No metrics or checkpoint artifacts are present.",
+    "candidateOnly": true,
+    "canClaimAGI": false
+  },
+  "requiredBeforeRun": [
+    "git_commit",
+    "candidate_config_hash",
+    "context_packing_manifest",
+    "architecture_bet_manifest",
+    "decontamination_report",
+    "checkpoint_or_adapter_metadata",
+    "eval_suite_versions",
+    "failure_ledger_ref"
+  ],
+  "requiredBeforePromotion": [
+    "three_or_more_seeds",
+    "ablation_report",
+    "accepted_evidence_cards",
+    "false_positive_cost_report",
+    "wrong_tool_rate_report",
+    "memory_contamination_report",
+    "failure_ledger_update",
+    "canClaimAGI_false"
+  ]
+}
