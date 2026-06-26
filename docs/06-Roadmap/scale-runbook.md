@@ -63,6 +63,22 @@ python tools/pipeline_stats.py lake/cc-main-sample/part-00001.jsonl --baseline b
 | Throughput (docs/s), wall-clock | scale-pipeline report |
 | Shard count + catalog | `lake/<prefix>/_catalog.json` |
 
+## Recorded sample run (small, real network)
+
+A polite smoke run of the **live** loop (`pipeline.fetch.http.make_http_transport`, robots
+honored, `per_host_quota=3`) — proves the real-network path end-to-end. This is a smoke run,
+**not** a TB-scale claim:
+
+```
+seeds: en.wikipedia.org/wiki/Web_crawler, /wiki/Common_Crawl, example.com
+fetched 6  kept 6  skipped_robots 1  errors 0  retries 0
+followed real outlinks (donate.wikimedia.org, af/ar.wikipedia.org, ...)
+all scored 0.700  (capped — crawled pages carry no provenance, by design)
+elapsed ~8.1s  throughput ~0.74 docs/s (network + politeness bound)
+```
+
+Reproduce: drive `pipeline.fetch.loop.run_loop(seeds, make_http_transport(), robots=...)`.
+
 > **Honesty note.** The committed tests run this path on small fixtures (offline, no cloud).
 > Real TB-token numbers require running step 2/3 on actual infra with a real dump — this
 > runbook + `tools/run_scale_pipeline.py` are the harness to produce them; the numbers

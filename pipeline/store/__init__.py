@@ -15,8 +15,17 @@ tested here; the cloud backends are adapters you wire up when running on real in
 
 from __future__ import annotations
 
-from pipeline.store.kv import SeenSet, SqliteSeenSet
-from pipeline.store.objectstore import LocalObjectStore
-from pipeline.store.queue import FileQueue
+from pipeline.store.kv import MemorySeenSet, SeenSet, SqliteSeenSet
+from pipeline.store.objectstore import LocalObjectStore, ObjectStore
+from pipeline.store.queue import FileQueue, WorkQueue
+from pipeline.store.redis_backends import RedisListQueue, RedisSeenSet
+from pipeline.store.s3 import S3ObjectStore
 
-__all__ = ["LocalObjectStore", "SeenSet", "SqliteSeenSet", "FileQueue"]
+__all__ = [
+    # interfaces
+    "ObjectStore", "SeenSet", "WorkQueue",
+    # local defaults
+    "LocalObjectStore", "SqliteSeenSet", "MemorySeenSet", "FileQueue",
+    # cloud backends
+    "S3ObjectStore", "RedisSeenSet", "RedisListQueue",
+]
