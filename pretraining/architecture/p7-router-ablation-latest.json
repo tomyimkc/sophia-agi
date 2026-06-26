@@ -1,0 +1,97 @@
+{
+  "study": "P7 \u2014 router-policy ablation on fixed nano-MoE experts",
+  "floor_E": 0.83816,
+  "config": {
+    "vocab": 10,
+    "context": 2,
+    "hidden": 32,
+    "n_experts": 4,
+    "epochs": 8,
+    "seed": 0,
+    "n_train": 298,
+    "n_eval": 148
+  },
+  "moe_active_params": 1086,
+  "moe_total_params": 4092,
+  "dense": {
+    "hidden_tuned": 35,
+    "params": 1095,
+    "held_loss": 1.86884,
+    "excess_over_floor": 1.03068
+  },
+  "compute_equalized": true,
+  "policies": {
+    "handrolled-top1": {
+      "held_loss": 1.96303,
+      "aux_loss": 1.00966,
+      "max_route_share": 0.527,
+      "route_cv": 0.7812,
+      "counts": [
+        3,
+        49,
+        18,
+        78
+      ],
+      "pct_dropped": 0.0,
+      "excess_over_floor": 1.12487
+    },
+    "moerouter-top1-nodrop": {
+      "held_loss": 1.96303,
+      "aux_loss": 1.00966,
+      "max_route_share": 0.527,
+      "route_cv": 0.7812,
+      "counts": [
+        3,
+        49,
+        18,
+        78
+      ],
+      "pct_dropped": 0.0,
+      "excess_over_floor": 1.12487
+    },
+    "handrolled-top2-nodrop": {
+      "held_loss": 1.78494,
+      "aux_loss": 1.00544,
+      "max_route_share": 0.3818,
+      "route_cv": 0.4172,
+      "counts": [
+        27,
+        83,
+        73,
+        113
+      ],
+      "pct_dropped": 0.0,
+      "excess_over_floor": 0.94678
+    },
+    "moerouter-topk-cap": {
+      "held_loss": 1.81619,
+      "aux_loss": 1.00544,
+      "max_route_share": 0.337,
+      "route_cv": 0.3661,
+      "counts": [
+        27,
+        83,
+        73,
+        93
+      ],
+      "pct_dropped": 6.757,
+      "excess_over_floor": 0.97803
+    }
+  },
+  "confound_isolation": {
+    "mixture_effect_nats": 0.17809,
+    "policy_effect_nats": -0.03125,
+    "policy_effect_isolated": false,
+    "decomposition_exact": true,
+    "interpretation": "mixture_effect = handrolled-top1 -> handrolled-top2-nodrop (pure top-2 averaging, no capacity drop); policy_effect = handrolled-top2-nodrop -> moerouter-topk-cap (the capacity-drop policy in isolation). Their sum is the total handrolled-top1 -> topk-cap gap. policy_effect_isolated is True only when the capacity policy lowers loss BEYOND mixture-averaging."
+  },
+  "self_consistency": {
+    "native_moe_held_loss": 1.96303,
+    "handrolled_matches_native": true,
+    "experts_frozen": true
+  },
+  "verdict": "moe_router_better",
+  "held_loss_gap_handrolled_minus_topkcap": 0.14684,
+  "p7b_decision_note": "evidence MIXED on P7-B: top-k-cap's lower loss is explained by MIXTURE-AVERAGING, not the capacity policy \u2014 handrolled-top2-nodrop (same k=2 mix, no drops) already accounts for 0.1781 nats of the gap and the capacity policy adds only -0.0312 nats. Load balance still favors MoERouter, but do NOT justify the trainable bridge on a loss advantage that is really mixing; build it (if at all) for the load-balance / capacity behavior, not the NLL.",
+  "honest_scope": "Routing-policy ablation on fixed experts \u2014 a nano-scale methodology study. Measures whether capacity-aware top-k routing (MoERouter + Switch aux loss) gives different load-balance / held-out loss than MoELM's hand-rolled top-1 router, on identical frozen experts against a known entropy floor. NOT a claim that either router scales to frontier MoEs, and NOT that the policy delta implies a capability delta. A 'superior router' claim needs the same measurement on a real model to the kappa >= 0.40 / 2-judge gate. The trainable Gumbel-softmax bridge (P7-B) is a separate, gated follow-up, not included here. IMPORTANT: the raw 'verdict' is a held-out-loss comparison and is MIXTURE-CONFOUNDED \u2014 see confound_isolation, which measures (via handrolled-top2-nodrop) that the top-k loss advantage is mixture-averaging, not the capacity policy; read the verdict together with that decomposition."
+}
