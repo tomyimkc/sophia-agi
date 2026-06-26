@@ -47,10 +47,14 @@ scorers (judge-independent); **no LLM judge** → semantic quality is ILLUSTRATI
   (0.611→0.677); dips slightly at raw (0.502→0.460). No refusal collapse.
 
 ## Verdict
-**PASS** of the pre-registered M3-pilot primary criterion: a LoRA on the gate-passed data produces a
-**CI-clean, non-regressing behavioral shift toward source-discipline habits at the prompt (no-gate)
-layer** of gemma-3-4b — the "weights internalize the habit" feasibility signal — at bounded
-over-abstention and rising scaffold-conditioned usefulness.
+**MIXED** (updated 2026-06-26 after the formal retention check). The pre-registered **primary**
+criterion PASSES: a LoRA on the gate-passed data produces a **CI-clean, non-regressing behavioral
+shift toward source-discipline habits at the prompt (no-gate) layer** of gemma-3-4b — the "weights
+internalize the habit" feasibility signal — 3-seed robust and 3-judge-family corroborated. **BUT the
+pre-registered stability criterion #3 FAILS**: the adapter loses ~12pts of general capability on the
+held-out generality probe (`retains: false`, see caveat 2). So the pilot is NOT a clean pass — it's a
+source-discipline specializer that sacrifices general reasoning. Stays `candidate_only`; not a
+general-purpose model, not validated, not a headline.
 
 ## Honest caveats (why this is NOT a headline / validated claim)
 1. **Marker/structural metrics only.** Scores are deterministic marker- and forbidden-assertion-based.
@@ -58,9 +62,18 @@ over-abstention and rising scaffold-conditioned usefulness.
    **format/markers** (the very habit trained) — genuine behavior shift, but **semantic quality needs
    a ≥2-family LLM-judge pass** before any headline. The forbidden-assertion reductions
    (tradition-merge, false-attribution) are the more substantive signal.
-2. **Retention proxy, not `run_learning_shift.py`.** Pre-registration named that tool; here retention
-   is inferred from useful_correctness + over_abstention. Running `run_learning_shift.py` on the
-   adapter is the open follow-up.
+2. **GENERAL-CAPABILITY FORGETTING — criterion #3 FAILS (run 2026-06-26).** The pre-registered
+   stability check is now done gemma-3-native: base vs adapter on the **held-out generality probe**
+   (`data/generality_tasks.json`, N=34 abstraction/arithmetic/logic/analogy/out-of-domain,
+   deterministically scored, no LLM judge — `M3-pilot-retention-eval.json`). Result: **base 0.735 →
+   adapter 0.618, Δ −0.118 → `retains: false`** (criterion #3 required ≥ base−0.05). The drop is
+   directionally consistent (4 of 5 reasoning categories lose 1 task each; out-of-domain flat),
+   so it reads as REAL forgetting, not noise — though N=34 makes the magnitude coarse (no CI). The
+   earlier useful_correctness+over_abstention PROXY MISSED this (it tracked refusal/scaffold
+   usefulness, not raw reasoning). **Net: the SFT adapter trades general reasoning for
+   source-discipline.** This DOWNGRADES the pilot from a clean pass to a MIXED result — the primary
+   habit-transfer signal is real and judge-corroborated, but the adapter is NOT a free win and is
+   unfit as a general model. M4 ORPO (from-base and on-SFT) did not recover this (see ledger).
 3. **Single base, single seed, corpus-bound** (~730 deterministic rows; M2 volume is a NO-GO). Needs
    seeds 1–2 for stability and the multi-judge semantic pass before promotion.
 4. Train/eval share structural families (decontaminated by exact prompt, not by format) — format-overlap
@@ -91,6 +104,11 @@ the appropriate statistic; the literal **pre-registered κ≥0.40 bar is still N
 reported failing; AC1 is the documented robustness read given the skew).
 
 ## Next steps before any promotion
-Seeds 1–2 (stability) · ≥2-judge-family semantic re-score of qualification/route quality ·
-`run_learning_shift.py` retention check · then M4 (ORPO on the preference pairs). Until then this stays
-`candidate_only` and no external/market claim is made.
+ALL pre-registered follow-ups are now DONE: seeds 1–2 stability ✓ (3-seed robust) · 3-judge-family
+semantic re-score ✓ (adapter preferred, AC1 substantial, κ<0.40 reported failing) · retention check ✓
+(**criterion #3 FAILS — ~12pt general-capability forgetting**) · M4 ORPO ✓ (NO-GO: from-base coin-flip,
+on-SFT does not beat SFT). **Net: candidate stays `candidate_only` and is NOT promotable** — the
+forgetting makes it unfit as a general model, and no external/market/AGI claim is made (`canClaimAGI:
+false`). A real promotion would need a forgetting-mitigated recipe (e.g. replay/rehearsal of the
+general slice, lower-rank or fewer-epoch SFT, or a KL/anchor penalty) that keeps the source-discipline
+gains WITHOUT the general-reasoning drop.
