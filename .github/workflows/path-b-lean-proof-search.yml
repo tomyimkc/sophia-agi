@@ -1,0 +1,187 @@
+name: path-b-lean-proof-search
+
+# Real-Lean lane for Path B of Two-Paths-To-Novelty (agent/lean_backend.py +
+# agent/proof_search.py + agent/tactic_proposer.py). This is the falsifiable
+# novelty experiment: does best-first search over Lean 4 tactics, with an LLM
+# proposer and a REAL LeanProofSession, ever produce a Lean-VERIFIED proof that
+# is NOT a near-duplicate of the corpus (novel: true)?
+#
+# Manual-only (workflow_dispatch). Lean toolchain install (~5 min) + a real model
+# call cost money, so this never runs on every push. Fail-closed throughout: if
+# Lean or the model is unavailable, tools/run_proof_search.py abstains and records
+# an honest result (lean_unavailable / no_proof_within_budget) — it NEVER fabricates
+# a proof. The result report is committed back to the dispatch branch as evidence.
+#
+# NOT a required check (main-protection requires only fast + ci-complete). Green =
+# the real Lean path ran; the verdict in the committed report is the research signal.
+#
+# Secrets required (set ONE, matching the chosen provider):
+#   DEEPSEEK_API_KEY | OPENAI_API_KEY | ANTHROPIC_API_KEY | OPENROUTER_API_KEY | ZHIPUAI_API_KEY
+# The model provider is selected by the `provider` input; its key env must be set as
+# a repo secret. No key is ever printed.
+#
+# Coordination: distinct from lean-kernel.yml (which exercises the formal-proof
+# VERIFIER, agent/lean_verifier.py). This workflow exercises the novelty SEARCH
+# (agent/proof_search.py) — different code path, same Lean toolchain.
+
+on:
+  workflow_dispatch:
+    inputs:
+      theorem:
+        description: 'Bundled theorem to prove (add_comm | zero_add | trivial_true)'
+        required: true
+        default: 'add_comm'
+      provider:
+        description: 'Model provider for the tactic proposer (deepseek|openai|anthropic|openrouter|glm)'
+        required: true
+        default: 'deepseek'
+      model:
+        description: 'Override model id (blank = provider preset default)'
+        required: false
+        default: ''
+      max_nodes:
+        description: 'Search node budget (more = deeper search, more model calls)'
+        required: false
+        default: '40'
+      max_depth:
+        description: 'Max tactic-chain depth per proof attempt'
+        required: false
+        default: '10'
+      stub:
+        description: 'Set "1" to run the CI-safe stub proposer (no model call) — dry-run wiring only'
+        required: false
+        default: ''
+
+permissions:
+  contents: write   # commit the result report back to the dispatch branch
+
+concurrency:
+  group: path-b-lean-${{ github.ref }}
+  cancel-in-progress: false   # don't cancel a paid run mid-flight
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Configure Git for report commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # ---- Lean toolchain (elan + lean + lake) --------------------------------
+      # Reuses the repo's idempotent installer. lean-dojo needs a real Lean 4 on PATH.
+      - name: Install Lean 4 toolchain
+        run: |
+          bash scripts/install_lean.sh
+          # install_lean.sh prints a NOTE about rc files; in CI we set PATH directly.
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Verify Lean is reachable
+        run: |
+          lean --version
+          lake --version
+
+      - name: Install theorem backend (lean-dojo)
+        # Installs lean-dojo (the opt-in requirements-theorem.txt extra). Also numpy for
+        # the agent stack + the model adapter's deps.
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-theorem.txt
+          pip install numpy
+
+      # ---- model proposer -----------------------------------------------------
+      # default_proposer() reads SOPHIA_MODEL_PROVIDER and the provider's key env. The
+      # proposer is fail-closed: if the resolved provider is 'mock' (key missing) it
+      # falls back to the deterministic stub — so a missing key degrades to an honest
+      # no-model run rather than crashing or fabricating tactics.
+      - name: Resolve and validate the model provider
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ZHIPUAI_API_KEY: ${{ secrets.ZHIPUAI_API_KEY }}
+          SOPHIA_MODEL_PROVIDER: ${{ inputs.provider }}
+          SOPHIA_MODEL: ${{ inputs.model }}
+        run: |
+          python - <<'PY'
+          import os, sys
+          from agent.tactic_proposer import default_proposer
+          from agent.model import resolve_config
+          spec = os.environ.get("SOPHIA_MODEL_PROVIDER", "deepseek")
+          cfg = resolve_config(spec)
+          print(f"provider={spec} kind={cfg.kind} model={cfg.model}")
+          if cfg.kind == "mock":
+              print("::warning::Resolved to 'mock' (provider key secret not set). "
+                    "The proposer will use the deterministic STUB — no real model call, "
+                    "no real novelty signal. Set the matching *_API_KEY secret and re-run.")
+          # Smoke: the proposer must return a list of tactic strings either way.
+          out = default_proposer(model_spec=spec)("theorem t : True := by", "⊢ True")
+          assert isinstance(out, list) and out, "proposer returned no tactics"
+          print(f"proposer smoke OK ({len(out)} tactics)")
+          PY
+
+      # ---- fire the search ----------------------------------------------------
+      # --stub forces the deterministic applier (no Lean model calls); omit for the real
+      # LeanProofSession path. Exit code: 0=proved, 1=not proved (honest). We DON'T fail
+      # the job on exit 1 — a negative result is a valid research outcome.
+      - name: Run the proof search
+        id: search
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ZHIPUAI_API_KEY: ${{ secrets.ZHIPUAI_API_KEY }}
+          SOPHIA_MODEL_PROVIDER: ${{ inputs.provider }}
+          SOPHIA_MODEL: ${{ inputs.model }}
+        run: |
+          args=(--theorem "${{ inputs.theorem }}" --max-nodes "${{ inputs.max_nodes }}" --max-depth "${{ inputs.max_depth }}")
+          if [ -n "${{ inputs.stub }}" ]; then args+=(--stub); fi
+          # Don't abort the job on a not-proved verdict — record it honestly.
+          python tools/run_proof_search.py "${args[@]}" || echo "search_exit=$?" >> "$GITHUB_OUTPUT"
+          # Surface the verdict for the summary
+          python -c "import json;d=json.load(open('agi-proof/proof-search/result.json'));print('VERDICT='+d['verdict']);print('NOVELTY='+str((d.get('novelty') or {}).get('novel')))" >> "$GITHUB_OUTPUT" || true
+
+      # ---- commit the result report back to the branch ------------------------
+      # The report is the evidence artifact; committing it makes the result durable and
+      # attributable to the exact run (no artifact-download needed — a fine-grained PAT
+      # can't fetch those anyway). candidateOnly / level3Evidence: false throughout.
+      - name: Commit result report
+        run: |
+          ts=$(date -u +%Y-%m-%dT%H-%M-%SZ)
+          out="agi-proof/proof-search/path-b-${{ inputs.theorem }}-${ts}.public-report.json"
+          mkdir -p agi-proof/proof-search
+          [ -f agi-proof/proof-search/result.json ] && cp agi-proof/proof-search/result.json "$out"
+          git add agi-proof/proof-search/*.public-report.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no report to commit"
+          else
+            git commit -m "evidence(path-b): Lean proof search ${{ inputs.theorem }} via ${{ inputs.provider }} (${{ steps.search.outputs.VERDICT }})"
+            git push
+            echo "committed $out"
+          fi
+
+      - name: Job summary
+        if: always()
+        run: |
+          echo "## Path B — Lean proof search" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Theorem:** \`${{ inputs.theorem }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Provider:** \`${{ inputs.provider }}\` (\`${{ inputs.model || 'preset default' }}\`)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Mode:** $([ -n '${{ inputs.stub }}' ] && echo 'stub (no model)' || echo 'real Lean + LLM proposer')" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Verdict:** \`${{ steps.search.outputs.VERDICT || '(not recorded)' }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Novel:** \`${{ steps.search.outputs.NOVELTY || 'n/a' }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Recall: the load-bearing signal is **novel: true** (a Lean-verified proof that is NOT a corpus near-duplicate). Any other verdict is a valid negative / blocked result, recorded honestly." >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.search.outputs.VERDICT }}" = "proved" ] && [ "${{ steps.search.outputs.NOVELTY }}" = "True" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "⚠️ **NOVEL VERIFIED PRODUCE — flag for human review** (update failure-ledger + RESULTS.md; this would be the first evidence of a path past the verifier ceiling)." >> "$GITHUB_STEP_SUMMARY"
+          fi
