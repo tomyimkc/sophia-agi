@@ -4,8 +4,10 @@
 
 Correctness for curriculum training and RLVR rewards is decided here (and via
 ``agent.verifiers.math_equivalent``), NOT by the provenance/wisdom gate. Fail-closed
-when sympy is unavailable. Optional Lean backend is reserved but not wired — requests
-return ``abstain`` with ``lean_unavailable``.
+when sympy is unavailable. The Lean 4 backend (``agent.lean_backend``, via LeanDojo,
+Path B of the Two-Paths-To-Novelty roadmap) is wired but **opt-in**: when ``lean-dojo``
+is not installed (the CI/production default), ``use_lean=True`` abstains fail-closed
+with ``lean_unavailable`` — the exact pre-wiring behavior is preserved.
 """
 from __future__ import annotations
 
@@ -44,18 +46,37 @@ def verify(
     *,
     extract: bool = True,
     use_lean: bool = False,
+    lean_proof: str | None = None,
 ) -> dict[str, Any]:
-    """Compare ``answer`` to ``gold`` with a hard sympy oracle.
+    """Compare ``answer`` to ``gold`` with a hard sympy oracle, or — when
+    ``use_lean=True`` — verify a Lean 4 proof of ``gold`` via ``lean_backend``.
 
     Returns ``{verdict, reasons, detail}`` where verdict is one of
     ``accepted``, ``rejected``, ``abstain``.
+
+    Lean path (Path B): when ``use_lean`` and ``lean_proof`` is supplied, delegate to
+    ``agent.lean_backend.verify_proof``. When lean-dojo is absent (the default),
+    this abstains with ``lean_unavailable`` — fail-closed, never fabricates a verdict.
     """
     if use_lean:
-        return {
-            "verdict": "abstain",
-            "reasons": ["lean_unavailable: optional Lean backend not configured"],
-            "detail": {"backend": "lean", "lean": False},
-        }
+        # Delegate to the Lean 4 backend (opt-in extra; abstains when not installed).
+        # Without lean_proof we cannot ask Lean to verify anything -> abstain.
+        from agent import lean_backend
+
+        if not lean_backend.lean_available():
+            return {
+                "verdict": "abstain",
+                "reasons": ["lean_unavailable: lean-dojo not installed (opt-in extra)"],
+                "detail": {"backend": "lean", "lean": False},
+            }
+        if not lean_proof:
+            return {
+                "verdict": "abstain",
+                "reasons": ["lean_unavailable: use_lean=True requires lean_proof (a `theorem ... := by ...` block)"],
+                "detail": {"backend": "lean", "lean": True, "lean_proof_supplied": False},
+            }
+        check = lean_backend.verify_proof(theorem=gold, proof=lean_proof)
+        return check.to_dict()
     if not sympy_available():
         return {
             "verdict": "abstain",
