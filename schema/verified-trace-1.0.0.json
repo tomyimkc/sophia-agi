@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sophia.aihk/schema/verified-trace-1.0.0.json",
+  "title": "Sophia Verified Reasoning Trace",
+  "description": "One fact+logic-stamped reasoning step. schema sophia.verified_trace.v1. A step is 'verified' iff fact.verdict in {allow, retrieve} AND logic.emittable; this is a derived property, never asserted. Pretraining is explicitly out of scope (phase enum). 'verified' means 'passed both gates at the verifier's (recall, fpr)', NEVER 'the model truly reasoned this way' (CoT faithfulness is a separate causal question).",
+  "type": "object",
+  "required": [
+    "schema",
+    "traceId",
+    "runId",
+    "phase",
+    "stepIdx",
+    "claimText",
+    "claimKind",
+    "fact",
+    "logic",
+    "verified",
+    "candidateOnly",
+    "level3Evidence",
+    "boundary",
+    "prevHash",
+    "ts"
+  ],
+  "properties": {
+    "schema": { "type": "string", "const": "sophia.verified_trace.v1" },
+    "traceId": {
+      "type": "string",
+      "pattern": "^vtrace_[0-9a-f]{24}$",
+      "description": "Deterministic content-hash id, matching the sophia_contract.trace _trace_id idiom."
+    },
+    "runId": { "type": "string", "minLength": 1 },
+    "phase": {
+      "type": "string",
+      "enum": ["rlvr", "sft", "curriculum", "benchmark", "conscience"],
+      "description": "Pretraining is deliberately excluded: per-step logging at scale is infeasible and the discipline targets stages where one bad step can poison downstream belief."
+    },
+    "stepIdx": { "type": "integer", "minimum": 0 },
+    "claimText": { "type": "string" },
+    "claimKind": {
+      "type": "string",
+      "enum": ["source", "derived", "goal"],
+      "description": "Mirrors reasoning_compiler.Claim.kind."
+    },
+    "fact": {
+      "type": "object",
+      "required": ["verdict", "source"],
+      "properties": {
+        "verdict": {
+          "type": "string",
+          "enum": ["allow", "revise", "retrieve", "clarify", "escalate", "abstain", "block"],
+          "description": "Reuses ConscienceDecision.verdict verbatim — no new vocabulary."
+        },
+        "source": {
+          "type": "string",
+          "description": "Which gate produced the fact verdict (e.g. fact_check_gate, propagate_confidence, fact_check_text)."
+        },
+        "authorConfidence": {
+          "type": "string",
+          "enum": ["attributed", "compiled", "legendary", "none_extant", "disputed", "consensus", "anachronism_risk", "layered"],
+          "description": "okf.AUTHOR_CONFIDENCE enum."
+        },
+        "effectiveConfidenceRank": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "okf propagate_confidence weakest-link rank (lower == weaker)."
+        },
+        "sources": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "logic": {
+      "type": "object",
+      "required": ["emittable"],
+      "properties": {
+        "emittable": {
+          "type": "boolean",
+          "description": "reasoning_compiler.CompileResult.emittable — the compiler's fail-closed type-check. False if a contradiction taints the goal."
+        },
+        "contradictions": { "type": "array", "items": {} },
+        "laundered": { "type": "array", "items": {} },
+        "semanticsPreserved": {
+          "type": "boolean",
+          "description": "Compiler invariant H2: goal effective confidence AND grounded status invariant under the passes."
+        }
+      },
+      "additionalProperties": false
+    },
+    "verified": {
+      "type": "boolean",
+      "description": "DERIVED: fact.verdict in {allow, retrieve} AND logic.emittable. Never set by hand."
+    },
+    "reward": {
+      "type": "number",
+      "minimum": -1,
+      "maximum": 1,
+      "description": "From a verifier/gate only (selfextend rule), never a model self-score."
+    },
+    "rewardProvenance": { "type": "string" },
+    "candidateOnly": { "type": "boolean", "default": true },
+    "level3Evidence": { "type": "boolean", "default": false },
+    "boundary": { "type": "string" },
+    "prevHash": {
+      "type": "string",
+      "description": "Previous line's _selfHash (Merkle/hash-chain link). Empty for the first line."
+    },
+    "ts": { "type": "string" }
+  },
+  "additionalProperties": true
+}

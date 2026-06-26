@@ -225,7 +225,7 @@ def compile_graph(g: ReasoningGraph) -> CompileResult:
     semantics = (conf_before == conf_after) and (grounded_before == grounded_after)
     emittable = grounded_after and not diags["contradictions"]
 
-    return CompileResult(
+    result = CompileResult(
         cost_before=cost_before,
         cost_after=cost_after,
         cost_reduction=(cost_before - cost_after) / cost_before if cost_before else 0.0,
@@ -238,6 +238,40 @@ def compile_graph(g: ReasoningGraph) -> CompileResult:
         laundered=diags["laundered"],
         emittable=emittable,
     )
+
+    # Verified-trace hook (observer-only): emit one fact+logic-stamped trace per
+    # compile. The logic stamp IS the compiler's own type-check (emittable /
+    # contradictions / laundered / semanticsPreserved); the fact stamp reuses the
+    # grounded-conclusion provenance verdict. A logger fault can never break a
+    # compile (``emit`` swallows exceptions per the repo's audit convention), and
+    # the compiler's fail-closed behaviour is untouched.
+    try:
+        from agent.verified_trace import VerifiedTrace, emit, _trace_id
+        emit(VerifiedTrace(
+            traceId=_trace_id(f"reasoning_compiler:{id(g)}:{g.goal}"),
+            runId="reasoning_compiler",
+            phase="benchmark",
+            stepIdx=0,
+            claimText=g.claims[g.goal].statement,
+            claimKind="goal",
+            fact={
+                "verdict": "allow" if grounded_after else "abstain",
+                "source": "propagate_confidence",
+                "authorConfidence": "compiled",
+                "effectiveConfidenceRank": conf_after,
+                "sources": [],
+            },
+            logic={
+                "emittable": emittable,
+                "contradictions": diags["contradictions"],
+                "laundered": diags["laundered"],
+                "semanticsPreserved": semantics,
+            },
+        ))
+    except Exception:  # noqa: BLE001 - observer-only: never break a compile
+        pass
+
+    return result
 
 
 # --------------------------------------------------------------------------------------

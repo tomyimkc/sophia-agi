@@ -220,7 +220,7 @@ def conscience_check(
     else:
         verdict, reason = "allow", "all conscience gates passed"
 
-    return ConscienceDecision(
+    decision = ConscienceDecision(
         verdict=verdict,
         reason=reason,
         action=act,
@@ -234,6 +234,39 @@ def conscience_check(
         publicStandard=public_standard,
         recommendedActions=tuple(agenda_actions),
     )
+
+    # Verified-trace hook (observer-only): persist one fact+logic-stamped trace per
+    # conscience decision. The fact stamp IS the conscience verdict; the logic
+    # stamp is derived from it (a block/abstain/escalate verdict is not emittable).
+    # This makes every conscience call auditable without changing the verdict path.
+    # A logger fault can never change a verdict (``emit`` swallows exceptions).
+    try:
+        from agent.verified_trace import VerifiedTrace, emit, _trace_id
+        emit(VerifiedTrace(
+            traceId=_trace_id(f"conscience:{act}:{text[:128]}"),
+            runId="conscience",
+            phase="conscience",
+            stepIdx=0,
+            claimText=text,
+            claimKind="derived",
+            fact={
+                "verdict": verdict,
+                "source": "conscience_check",
+                "authorConfidence": "compiled",
+                "effectiveConfidenceRank": 2 if verdict in {"allow", "retrieve"} else 0,
+                "sources": [],
+            },
+            logic={
+                "emittable": verdict in {"allow", "retrieve", "revise", "clarify"},
+                "contradictions": [] if verdict != "block" else [{"verdict": verdict, "reason": reason}],
+                "laundered": [],
+                "semanticsPreserved": True,
+            },
+        ))
+    except Exception:  # noqa: BLE001 - observer-only: never change a verdict
+        pass
+
+    return decision
 
 
 def run_conscience_benchmark() -> dict[str, Any]:
