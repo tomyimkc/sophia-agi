@@ -61,6 +61,42 @@ Because `check_proof_in_repo` (PR #175) resolves a `Theorem` against a traced
 repo, and tracing does not complete, **the real 4.x verification path cannot
 run on this machine today**. L0 is blocked at the trace step.
 
+## 1a. Now reproduced on Linux / ubuntu-latest CI (2026-06-26) — NOT macOS-specific
+
+The deadlock is **not** macOS-arm64-specific, and **not** a `from_path`-local-repo
+artifact. Both of §4's leading unblock hypotheses (option 1 "use a real GitHub
+repo instead of `from_path`" and option 3 "run on Linux") were exercised
+*together* by the existing CI and **both are falsified as fixes**: the trace still
+hangs.
+
+Evidence — `lean-kernel.yml` `lean-dojo-search` job on `main`@`fd2f59a` (the #175
+merge), run `28270535053`, job `83766792273`, ubuntu-latest, Python 3.12,
+Lean v4.20.0, lean-dojo 4.20.0:
+
+- The job installs the Lean toolchain + lean-dojo, then runs
+  `tests/test_lean_dojo_check_proof.py`, whose real-lean case
+  `test_check_proof_in_repo_accepts_correct_rejects_wrong` traces
+  **`leanprover-community/lean4-example`** — a *real GitHub* minimal repo fetched
+  by `LeanGitRepo`, **not** a local `from_path` fixture.
+- pytest reached **95%** (the two fail-closed cases PASSED) at `23:16:39`, then the
+  real-trace case produced **no further output for 29m33s** until
+  `##[error]The operation was canceled` at `23:46:10` — killed by the job's
+  `timeout-minutes: 30`, *not* by concurrency-cancel (no superseding `lean-kernel`
+  run exists on `main` after this one; the ~30-min duration is the timeout).
+- At cleanup the runner had to `Terminate orphan process` a tree of hung **`lake`**
+  and **`lean`** subprocesses (pids 2613/2616, 5630/5634, 5988/5992, 6596/6600)
+  plus two `python` workers — i.e. lean-dojo's tracer had spawned its build/extract
+  subprocess fan-out and **stalled with them alive at 0 progress**. Same fingerprint
+  as the macOS stall in §1.
+
+**Honesty bound:** this is **one** Linux CI run (§1's macOS result was reproduced on
+two fixtures; the Linux side has one so far). It is nonetheless strong: the hang is
+deterministic in the sense of "the trace step never returns within 30 min," and the
+orphaned-`lake`/`lean` evidence shows the tracer — not the test harness — is where it
+stalls. Combined with §1, the blocker is now **platform-independent (macOS-arm64 AND
+Linux-x64) and repo-source-independent (`from_path` AND real GitHub repo)**, which
+points at the lean-dojo 4.20.0 tracer itself rather than any local environment.
+
 ## 2. What is NOT the blocker (ruled out empirically)
 
 - **Python version.** lean-dojo's metadata declares `Requires-Python: <3.13,>=3.9`;
@@ -95,25 +131,37 @@ run on this machine today**. L0 is blocked at the trace step.
   green is possible — which is exactly why this is documented rather than
   papered over.
 
-## 4. Options to unblock L0 (none attempted yet — for the next session)
+## 4. Options to unblock L0 (status updated 2026-06-26 after the CI repro in §1a)
 
-1. **Trace mathlib4 instead of a minimal repo** and target a real mathlib
-   theorem for the L0 smoke check. mathlib4 is the path lean-dojo is *built and
-   tested* against; its trace is also remote-cacheable. Heaviest, but most
-   likely to dodge the minimal-repo deadlock. (Cost: multi-GB clone + trace.)
-2. **Reproduce against a lean-dojo version newer than 4.20.0** (if released) —
-   the deadlock may be fixed upstream. Pin that version in
-   `requirements-theorem.txt`.
-3. **Run the same reproduction on Linux** (CI is ubuntu-latest). If the deadlock
-   is macOS-arm64-specific, CI may trace fine — in which case L0 is a CI-only
-   demonstration and the local-Mac path is documented as unsupported.
-4. **Root-cause the 1515/1518 stall** in `ExtractData.lean`'s final extraction
-   (the proof-state serialization for the last few items). Smallest scope,
-   most uncertain payoff.
+1. ~~**Trace a real GitHub repo instead of a `from_path` local repo.**~~
+   **FALSIFIED (§1a):** CI traces `leanprover-community/lean4-example` (a real
+   GitHub repo via `LeanGitRepo`) and still hangs. Repo-source is not the cause.
+2. ~~**Run the same reproduction on Linux** (CI is ubuntu-latest).~~
+   **FALSIFIED (§1a):** ubuntu-latest hangs identically (orphaned `lake`/`lean` at
+   the 30-min timeout). The deadlock is not macOS-arm64-specific, so there is no
+   "CI-only L0" shortcut.
+3. **Trace mathlib4 instead of a minimal repo.** Still untried. mathlib4 is the
+   path lean-dojo is *built and tested* against and is remote-cacheable, so it may
+   exercise a non-deadlocking code path. But §1a shows the stall is in the tracer's
+   subprocess fan-out on a *minimal* repo, so a heavier repo is not obviously a fix
+   — and it costs a multi-GB clone + trace. Lower-priority than (4)/(5).
+4. **Bump / pin / patch lean-dojo.** Reproduce against a lean-dojo newer than
+   4.20.0 (if released); the tracer deadlock may be fixed upstream. If none exists,
+   search lean-dojo's issue tracker for this exact symptom (tracer hangs with
+   orphaned `lake`/`lean`, never returns) and pin a known-good version in
+   `requirements-theorem.txt`. **Highest expected value** now that the bug is
+   localized to the tracer.
+5. **Bypass `trace()` entirely with a lighter verification path.** Since L0 only
+   needs "one real green check + one real reject," a `lake env lean` /
+   direct-tactic-exec path (no lean-dojo tracer) could satisfy L0 without the
+   deadlocking trace step. Most code, but it removes the dependency on the broken
+   tracer and keeps the fail-closed contract intact.
+6. **Root-cause the tracer stall** in `ExtractData.lean`'s extraction
+   (`ps`/`py-spy` on the hung `lean` orphan to capture where it blocks). Smallest
+   scope, most uncertain payoff; useful mainly to file a precise upstream bug.
 
-The cheapest signal is **(3)**: if CI traces mathlib4 cleanly, L0 is achievable
-in CI and the local deadlock becomes a known platform limitation, not a project
-blocker. Recommend that as the next attempt.
+Recommended order: **(4) → (5) → (6) → (3)**. Do **not** claim L0 until a
+green-on-valid AND reject-on-invalid run both pass on a clean cache-miss.
 
 ## 5. Non-action taken (discipline)
 
