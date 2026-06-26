@@ -192,6 +192,14 @@ def resolve_config(spec: str | None = None) -> ModelConfig:
 
     provider, _, model_override = spec.partition(":")
     provider = provider.strip().lower()
+    # Per-spec base_url override: "provider:model@http://host/v1". Model IDs contain no
+    # '@', so this is unambiguous; it lets two local judges hit two ports on one host, e.g.
+    # "vllm:Qwen/..@http://localhost:8000/v1" and "vllm:meta-llama/..@http://localhost:8001/v1"
+    # (a local judge farm on a DGX Spark). Most-specific: beats the preset AND SOPHIA_MODEL_BASE_URL.
+    spec_base_url = None
+    if "@" in model_override:
+        model_override, _, spec_base_url = model_override.partition("@")
+        spec_base_url = spec_base_url.strip() or None
     preset = PRESETS.get(provider)
     if preset is None:
         raise ValueError(f"unknown model provider {provider!r}; valid: {', '.join(sorted(PRESETS))}")
@@ -200,7 +208,7 @@ def resolve_config(spec: str | None = None) -> ModelConfig:
         kind=preset["kind"],
         model=model_override.strip() or os.environ.get("SOPHIA_MODEL") or preset["model"],
         label=provider,
-        base_url=os.environ.get("SOPHIA_MODEL_BASE_URL") or preset.get("base_url"),
+        base_url=spec_base_url or os.environ.get("SOPHIA_MODEL_BASE_URL") or preset.get("base_url"),
         api_key_env=preset.get("api_key_env"),
         api_key_default=preset.get("api_key_default"),
         adapter_path=(os.environ.get("SOPHIA_MLX_ADAPTER") or None) if preset["kind"] == "mlx" else None,

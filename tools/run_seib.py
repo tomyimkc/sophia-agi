@@ -208,10 +208,15 @@ def _extract_json_payload(text: str) -> dict[str, Any] | list[Any] | None:
 
 
 def _judge_family(spec: str) -> str:
+    from provenance_bench.aggregate import _AGGREGATOR_PROVIDERS
+
     provider, _, model = spec.partition(":")
     provider = provider.strip().lower()
     model = model.strip().lower()
-    if provider in {"openrouter", "openai"} and "/" in model:
+    # Keep IN SYNC with provenance_bench.aggregate._distinct_families — same concept (a
+    # self-hosted vllm/sglang server is an aggregator; the family is the model vendor), so
+    # SEIB's judgeFamilies agrees with the no-overclaim gate's family count.
+    if provider in _AGGREGATOR_PROVIDERS and "/" in model:
         return model.split("/", 1)[0]
     if provider == "ollama":
         return model.split(":", 1)[0] or "ollama"
