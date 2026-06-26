@@ -56,6 +56,15 @@ def test_minhash_estimate_tracks_true_jaccard():
     assert strict_ids[0] != strict_ids[1]
 
 
+def test_lsh_unions_pairs_not_sharing_first_member():
+    # Regression: two near-dups must cluster even when a third, dissimilar doc shares a band
+    # bucket with them. Build B and a near-dup B'; A is unrelated. All three present.
+    ids, _ = mh.cluster([_DIFFERENT, _BASE, _NEAR], threshold=0.7)
+    # _BASE (idx 1) and _NEAR (idx 2) are near-dups -> same cluster; _DIFFERENT (idx 0) separate.
+    assert ids[1] == ids[2]
+    assert ids[0] != ids[1]
+
+
 def test_jaccard_estimate_bounds():
     sig = mh.signature(_BASE)
     assert mh.jaccard_estimate(sig, sig) == 1.0

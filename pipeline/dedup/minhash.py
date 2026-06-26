@@ -119,10 +119,16 @@ def cluster(
     for members in buckets.values():
         if len(members) < 2:
             continue
-        first = members[0]
-        for j in members[1:]:
-            if jaccard_estimate(sigs[first], sigs[j]) >= threshold:
-                uf.union(first, j)
+        # Compare ALL pairs in the bucket, not just each to the first member: two near-dups
+        # can share a band with a third, dissimilar doc and would otherwise never be unioned.
+        # Buckets of true near-dups are small, so the O(k^2) cost is negligible.
+        for a in range(len(members)):
+            for b in range(a + 1, len(members)):
+                i, j = members[a], members[b]
+                if uf.find(i) == uf.find(j):
+                    continue
+                if jaccard_estimate(sigs[i], sigs[j]) >= threshold:
+                    uf.union(i, j)
 
     cluster_ids = [uf.find(i) for i in range(len(texts))]
     return cluster_ids, sigs

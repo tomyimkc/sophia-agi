@@ -83,7 +83,7 @@ def summarize(docs) -> dict:
     return {
         "count": count,
         "totalTokens": total_tokens,
-        "meanTokens": round(total_tokens / count, 3) if count else 0.0,
+        "meanTokens": round(total_tokens / count, 3) if count else None,
         "meanQuality": round(quality_sum / quality_n, 6) if quality_n else None,
         "keepRate": round(kept / count, 6) if count else 0.0,
         "duplicateRate": round(dups / count, 6) if count else 0.0,
