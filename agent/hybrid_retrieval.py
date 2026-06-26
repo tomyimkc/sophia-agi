@@ -34,10 +34,19 @@ DEFAULT_RRF_K = 60
 #: Default fusion weights (dense, sparse). Dense leads because Sophia's corpus is dominated by
 #: near-duplicate teacher examples on which BM25 is high-recall but low-precision (it ranks
 #: many lexically-identical-but-wrong chunks alike). Weighting sparse as a *minority vote*
-#: lets it promote a chunk the dense view also liked (recovering lexical-only hits) without
-#: overriding the cleaner dense ranking. Measured on the search-quality probes (see
-#: tools/eval_search_quality.py): equal-weight fusion regressed below pure dense; 1.0/0.4
-#: recovers dense parity while still closing real lexical_gap badcases. Tune per corpus.
+#: lets it promote a chunk the dense view also liked without overriding the cleaner dense
+#: ranking.
+#:
+#: HONEST STATUS (measured, tools/eval_search_quality.py): on the short attribution probes
+#: the sparse view is **uninformative** (0 correct hits in top-5), and weighted RRF over a
+#: deep sparse list still lets that noise bury genuine dense hits — hybrid recall@5 (≈0.28)
+#: falls BELOW pure dense (≈0.52). No weight/depth setting recovers parity on this query
+#: type; the sparse lexical signal simply does not help when the gold differs from the query
+#: only in surface tokens it shares with many distractors. Hybrid is therefore a
+#: **candidate-only** path here, NOT a validated improvement — earlier comments claiming
+#: "1.0/0.4 recovers dense parity" were wrong and are corrected. Where hybrid is expected to
+#: help is rare-exact-term queries (names/IDs/numbers) a low-dim hash embedding blurs; that
+#: is unproven on the current probe set. Tune/justify per corpus before trusting it.
 DEFAULT_DENSE_WEIGHT = 1.0
 DEFAULT_SPARSE_WEIGHT = 0.4
 
