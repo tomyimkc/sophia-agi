@@ -9,8 +9,14 @@ surprise-gated. Anything less -> quarantine, never demote. Demotion is exactly O
 from __future__ import annotations
 
 import math
+import sys
+from pathlib import Path
 
-from okf.frontier_demotion import (
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from okf.frontier_demotion import (  # noqa: E402
     DemotionEvidence, Observation, try_demote_consensus,
     simulate_newton_to_einstein, simulate_opera_ftl_neutrino,
     K_DECISIVE, N_MIN,
@@ -138,3 +144,22 @@ def test_global_demotion_when_challenger_has_no_regime():
     assert d.demote is True
     assert d.superseded_by_regime is None    # global
     assert d.new_confidence == "disputed"    # still ONE rank
+
+
+def main() -> int:
+    test_newton_to_einstein_regime_demotion()
+    test_opera_ftl_quarantined_by_multiplicity_floor()
+    test_gate1_bayes_factor_must_be_decisive()
+    test_gate2_multiplicity_floor_blocks_single_experiment()
+    test_gate3_surprise_filter_blocks_routine_confirmation()
+    test_demotion_is_exactly_one_rank_never_to_provenance_categories()
+    test_non_frontier_consensus_is_absolutely_immune()
+    test_non_consensus_belief_skips_this_rule()
+    test_shared_group_is_not_independent_multiplicity()
+    test_global_demotion_when_challenger_has_no_regime()
+    print("test_frontier_demotion: OK")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

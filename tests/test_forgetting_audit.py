@@ -3,7 +3,14 @@
 """Falsifying tests for okf.forgetting_audit — tamper-evidence + non-rewriting erasure."""
 from __future__ import annotations
 
-from okf.forgetting_audit import ForgettingAudit, GENESIS_HASH, LifecycleEvent
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from okf.forgetting_audit import ForgettingAudit, GENESIS_HASH, LifecycleEvent  # noqa: E402
 
 
 def test_chain_verifies_on_clean_appends():
@@ -53,10 +60,13 @@ def test_hash_is_content_addressed_over_payload_including_timestamp():
 
 
 def test_unknown_event_type_is_rejected():
-    import pytest
+    """An event type outside the controlled vocabulary must be rejected (ValueError)."""
     a = ForgettingAudit()
-    with pytest.raises(ValueError):
+    try:
         a.append(LifecycleEvent("nuke_everything", "n1", "evil"))   # not in controlled vocab
+    except ValueError:
+        return
+    raise AssertionError("expected ValueError for an unknown event type")
 
 
 def test_demotion_events_are_auditable_and_chain_valid():
@@ -70,3 +80,18 @@ def test_demotion_events_are_auditable_and_chain_valid():
     assert a.verify() is True
     # non-demotion decisions emit nothing (no spurious audit entries)
     assert a.record_demotion({"demote": False}) is None
+
+
+def main() -> int:
+    test_chain_verifies_on_clean_appends()
+    test_single_bit_flip_breaks_the_chain()
+    test_erasure_appends_does_not_rewrite_history()
+    test_hash_is_content_addressed_over_payload_including_timestamp()
+    test_unknown_event_type_is_rejected()
+    test_demotion_events_are_auditable_and_chain_valid()
+    print("test_forgetting_audit: OK")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

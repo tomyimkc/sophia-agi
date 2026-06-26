@@ -8,8 +8,15 @@ gate is exercised by its own suite.
 """
 from __future__ import annotations
 
-from agent.cls_consolidation import select_consolidation_set
-from okf.surprise_consolidation import surprise_gated_consolidation_set
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from agent.cls_consolidation import select_consolidation_set  # noqa: E402
+from okf.surprise_consolidation import surprise_gated_consolidation_set  # noqa: E402
 
 
 def test_stability_only_baseline_unchanged():
@@ -62,3 +69,17 @@ def test_two_signals_union_dedup():
     plan = {"reinforce": ["b", "c"]}                 # b is both stable+surprise; c surprise-only
     aug = surprise_gated_consolidation_set(streaks, cleared, plan, include_surprise_only=True)
     assert aug == ["a", "b", "c"]                    # deduped, sorted
+
+
+def main() -> int:
+    test_stability_only_baseline_unchanged()
+    test_surprise_proposes_stability_disposes_default()
+    test_surprise_can_consolidate_ahead_of_stability_when_enabled()
+    test_surprise_belief_must_be_gate_cleared()
+    test_two_signals_union_dedup()
+    print("test_cls_surprise_consolidation: OK")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

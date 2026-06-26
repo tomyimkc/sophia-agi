@@ -8,7 +8,14 @@ P3 source-discipline-outranks-recency: consensus is never time-decayed.
 """
 from __future__ import annotations
 
-from okf.decay_okf import BeliefState, DecayPlan, plan_decay, DEFAULT_HALF_LIFE_DAYS
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from okf.decay_okf import BeliefState, DecayPlan, plan_decay, DEFAULT_HALF_LIFE_DAYS  # noqa: E402
 
 
 def _belief(node_id, conf, age_days, surprise=0.0, reinforced=0, decayed=None):
@@ -90,3 +97,19 @@ def test_effective_strength_exponential_decay_shape():
     s = b.effective_strength(1_700_000_000.0)
     # base_rank(attributed)=3; ~half after one half-life (within surprise floor of 1)
     assert 1.4 < s < 1.6
+
+
+def main() -> int:
+    test_p1_no_silent_deletion_belief_count_is_non_decreasing()
+    test_p2_every_suppression_has_a_provenanced_reason()
+    test_p3_consensus_is_never_time_decayed()
+    test_competition_suppresses_weak_tail_but_consensus_wins_outright()
+    test_surprising_and_reinforced_beliefs_get_consolidated_not_decayed()
+    test_tied_contradictions_are_quarantined_not_auto_resolved()
+    test_effective_strength_exponential_decay_shape()
+    print("test_decay_okf: OK")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
