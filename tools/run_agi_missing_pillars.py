@@ -22,8 +22,8 @@ if str(ROOT) not in sys.path:
 from agent.active_inference import build_active_agenda  # noqa: E402
 from agent.continual_plasticity import demo_plasticity_report  # noqa: E402
 from agent.layered_memory import demo_memory_report  # noqa: E402
-from agent.planner_mcts import run_mcts  # noqa: E402
-from agent.predictive_world_model import demo_world_model_report  # noqa: E402
+from agent.verification_mcts import run_mcts  # noqa: E402
+from agent.tabular_transition_model import demo_world_model_report  # noqa: E402
 from agent.program_induction import evaluate_program_induction  # noqa: E402
 
 DEFAULT_OUT = ROOT / "agi-proof" / "agi-kernel" / "missing-pillars.public-report.json"

@@ -7,6 +7,12 @@ missing rung: learn a small executable rule from examples, validate it on held-o
 examples, and only then admit it as a skill/verifier candidate. The trust boundary
 is the measured validation/test split, not the proposal source.
 
+Honest scope (name vs substance): the hypothesis space is a fixed, hand-written set of
+template families (affine, polynomial, string/reverse/upper, grid flip/transpose) plus
+an AST-sandboxed slot for a model-proposed ``solve(x)``. It is inductive-programming
+*infrastructure* with a tiny template library, NOT DreamCoder-class open-ended program
+synthesis — it abstains on any rule outside its templates.
+
 Design constraints:
 - deterministic/offline by default;
 - optional model-proposed ``solve(x)`` programs must pass an AST allowlist;

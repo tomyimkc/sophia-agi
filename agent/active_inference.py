@@ -6,6 +6,12 @@ Sophia should not go silent on out-of-wiki claims. This module turns holds,
 low-confidence accepts, stale provenance, and calibration gaps into a prioritized
 agenda of *active* verification work. It emits plans/candidates; canonical wiki
 promotion remains gated elsewhere.
+
+Honest scope (name vs substance): this is NOT active inference in the Friston /
+free-energy sense. It is a priority-ranked verification worklist — a TODO queue scored
+by hand-set expected-information-gain constants over a fixed lookup of verification
+actions per claim type. There is no variational free energy, no Markov decision process,
+no adaptive belief updating. It is a gap-agenda builder behind the AGI-pillar interface.
 """
 
 from __future__ import annotations

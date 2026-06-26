@@ -35,7 +35,46 @@ SEAL_PATHS: list[str] = [
     "eval/coding/humaneval-style-sample.jsonl",
     "benchmark/code_tasks.json",
     "provenance_bench/data/math_problems.json",
+    "provenance_bench/data/code_tasks.json",
 ]
+
+# Per-file provenance + the pretraining-contamination caveat. Public-benchmark-style
+# samples inherit the field's contamination problem (a model may have seen similar items
+# in pretraining), so a held-out gain on them is suggestive, not contamination-free proof.
+# A clean external claim requires the third-party-authored pack (agi-proof/third-party-heldout/).
+PRETRAINING_CAVEAT = (
+    "Public-benchmark-style items inherit the field's pretraining-contamination problem: a "
+    "model may have seen similar items during pretraining, so a held-out gain on these is "
+    "suggestive, NOT contamination-free proof. A clean external claim requires the "
+    "third-party-authored pack (agi-proof/third-party-heldout/)."
+)
+
+FILE_PROVENANCE: dict[str, dict] = {
+    "eval/external/math-style-sample.jsonl": {
+        "sourceBenchmark": "MATH (Hendrycks et al., 2021)", "sourceLicense": "MIT",
+        "authorship": "repo-authored style-sample (NOT official MATH)",
+        "pretrainingContaminationCaveat": PRETRAINING_CAVEAT},
+    "eval/external/gsm8k-style-sample.jsonl": {
+        "sourceBenchmark": "GSM8K (OpenAI, 2021)", "sourceLicense": "MIT",
+        "authorship": "repo-authored style-sample (NOT official GSM8K)",
+        "pretrainingContaminationCaveat": PRETRAINING_CAVEAT},
+    "eval/coding/mbpp-style-sample.jsonl": {
+        "sourceBenchmark": "MBPP (Google, 2021)", "sourceLicense": "CC-BY-4.0",
+        "authorship": "repo-authored style-sample (NOT official MBPP)",
+        "pretrainingContaminationCaveat": PRETRAINING_CAVEAT},
+    "eval/coding/humaneval-style-sample.jsonl": {
+        "sourceBenchmark": "HumanEval (OpenAI, 2021)", "sourceLicense": "MIT",
+        "authorship": "repo-authored style-sample (NOT official HumanEval)",
+        "pretrainingContaminationCaveat": PRETRAINING_CAVEAT},
+    "benchmark/code_tasks.json": {
+        "authorship": "repo-authored", "pretrainingContaminationCaveat": "low (repo-authored, not from a public pretraining corpus)"},
+    "provenance_bench/data/math_problems.json": {
+        "authorship": "repo-authored (sympy-generated, family-disjoint eval split)",
+        "pretrainingContaminationCaveat": "low (synthetic)"},
+    "provenance_bench/data/code_tasks.json": {
+        "authorship": "repo-authored (exec-verified, family-disjoint eval split)",
+        "pretrainingContaminationCaveat": "low (synthetic)"},
+}
 
 
 def _sha256_bytes(data: bytes) -> str:
@@ -66,7 +105,13 @@ def _items_from_file(rel: str, path: Path) -> list[dict]:
     if rel.endswith("math_problems.json"):
         return [p for p in data.get("problems", []) if p.get("split") == "eval"]
     if rel.endswith("code_tasks.json"):
-        return list(data.get("tasks", []))
+        # Hold out the EVAL split only (the unseen families); train-split items are
+        # training data, not protected held-out. Older benchmark/code_tasks.json has no
+        # split field -> all items are held-out (unchanged behavior).
+        tasks = list(data.get("tasks", []))
+        if any(t.get("split") for t in tasks):
+            return [t for t in tasks if t.get("split") == "eval"]
+        return tasks
     if isinstance(data, list):
         return data
     return []
@@ -81,7 +126,7 @@ def build_manifest() -> dict:
             raise FileNotFoundError(f"seal path missing: {rel}")
         raw = path.read_bytes()
         items = _items_from_file(rel, path)
-        files.append({
+        entry = {
             "path": rel,
             "sha256": _sha256_bytes(raw),
             "itemCount": len(items),
@@ -89,14 +134,19 @@ def build_manifest() -> dict:
                 {"id": str(it.get("id", i)), "sha256": _item_digest(it)}
                 for i, it in enumerate(items)
             ],
-        })
+        }
+        if rel in FILE_PROVENANCE:
+            entry["provenance"] = FILE_PROVENANCE[rel]
+        files.append(entry)
     return {
-        "schema": "sophia.math_code_heldout_seal.v1",
+        "schema": "sophia.math_code_heldout_seal.v2",
         "packId": "math-code-curriculum-heldout-2026-06-25",
         "sealedAt": sealed_at,
         "visibility": "public-hash-only",
         "privateCopy": "private/math-code-heldout/ (gitignored)",
         "generatorPolicy": "Curriculum generators MUST NOT read sealed paths; train on sympy/exec-verified synthetic packs only.",
+        "pretrainingContaminationPolicy": PRETRAINING_CAVEAT,
+        "cleanExternalClaimPath": "agi-proof/third-party-heldout/ (third-party-authored, salted; currently EMPTY)",
         "files": files,
     }
 

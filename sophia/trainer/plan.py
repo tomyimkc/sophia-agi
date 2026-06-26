@@ -155,7 +155,15 @@ def build_experiment_plan(
         )
 
     if "rlvr" in requested and config.rlvr.enabled:
-        model = "mock" if use_dry_run else config.model.name
+        # Model resolution: an explicit per-stage model wins; else mock under dry-run
+        # (offline reward-wiring check); else the experiment model. dry_run_default stays
+        # the config default, so a careless `sophia experiment run` never spends GPU.
+        if config.rlvr.model:
+            model = config.rlvr.model
+        elif use_dry_run:
+            model = "mock"
+        else:
+            model = config.model.name
         command = [
             *_python(config.rlvr.script),
             "--model",
@@ -170,8 +178,26 @@ def build_experiment_plan(
             config.rlvr.report,
             "--seed",
             str(config.rlvr.seed),
+            "--epochs",
+            str(config.rlvr.epochs),
+            "--lr",
+            str(config.rlvr.lr),
+            "--beta",
+            str(config.rlvr.beta),
+            "--num-generations",
+            str(config.rlvr.num_generations),
+            "--vllm",
+            config.rlvr.vllm,
+            "--quant",
+            config.rlvr.quant,
+            "--max-prompt-len",
+            str(config.rlvr.max_prompt_len),
+            "--max-completion-len",
+            str(config.rlvr.max_completion_len),
             *config.rlvr.extra_args,
         ]
+        if config.rlvr.task == "code":
+            command += ["--code-timeout", str(config.rlvr.code_timeout)]
         _append_flag(command, "--dry-run", use_dry_run)
         plan.append(
             CommandSpec(
