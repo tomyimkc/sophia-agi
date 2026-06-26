@@ -88,22 +88,31 @@ def detect_ko(revision_states: "list[set[str]]", *, max_rounds: int = KO_MAX_ROU
     n = len(revision_states)
     if n < 2:
         return KOAlert(rounds=n)
+    # Track the MOST RECENT round at which each belief state was seen, not the
+    # first. The contract is "recurs within the trailing window": a state seen at
+    # rounds 0 and 8 with max_rounds=4 must NOT ko on the 0->8 gap (8 > 4), but if
+    # it recurs again at round 9 then 8->9 (gap 1 <= 4) IS a ko. Storing only the
+    # first occurrence (seen.setdefault) would keep index 0 forever and both miss
+    # 8->9 and wrongly flag 0->9 as a 9-gap non-ko vs the real 1-gap ko — so we
+    # overwrite with the latest index each round.
     seen: dict[frozenset[str], int] = {}
     for i, state in enumerate(revision_states):
         key = _state_key(state)
-        if key in seen and (i - seen[key]) <= max_rounds:
+        prev = seen.get(key)
+        if prev is not None and (i - prev) <= max_rounds:
             return KOAlert(
                 ko=True,
-                cycle=(seen[key], i),
+                cycle=(prev, i),
                 rounds=n,
                 recommendedVerdict="escalate",
                 reason=(
-                    f"ko: abstain state from round {seen[key]} recurred at round {i} "
-                    f"(gap {i - seen[key]} <= {max_rounds}); irreducible without new information"
+                    f"ko: abstain state from round {prev} recurred at round {i} "
+                    f"(gap {i - prev} <= {max_rounds}); irreducible without new information"
                 ),
             )
-        # record only the FIRST occurrence so we catch the tightest recurrence
-        seen.setdefault(key, i)
+        # update to the latest occurrence so the window is measured from the
+        # most recent sighting, not the first.
+        seen[key] = i
     return KOAlert(rounds=n, reason=f"no abstain-state recurrence across {n} rounds")
 
 

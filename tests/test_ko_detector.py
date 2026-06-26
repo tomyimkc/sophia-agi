@@ -57,6 +57,21 @@ def test_recurrence_just_inside_window_is_ko() -> None:
     assert alert.ko is True
 
 
+def test_late_recurrence_inside_window_is_ko_after_early_one_was_outside() -> None:
+    # Regression for the "track most-recent, not first, occurrence" fix.
+    # {x} appears at rounds 0, 5, 8 with max_rounds=4:
+    #   0 -> 5 gap is 5 (>4) -> NOT a ko at round 5
+    #   5 -> 8 gap is 3 (<=4) -> IS a ko at round 8
+    # The OLD code stored only the first occurrence (index 0), so at round 8 it
+    # measured 8-0=8 (>4) and MISSED the real 5->8 ko (gap 3). The window must be
+    # measured from the most recent sighting.
+    seq = [{"x"}, {"a"}, {"b"}, {"c"}, {"d"}, {"x"}, {"e"}, {"f"}, {"x"}]
+    alert = detect_ko(seq, max_rounds=4)
+    assert alert.ko is True
+    # the flagged cycle must be the late (5,8) recurrence, not (0,5) or (0,8)
+    assert alert.cycle == (5, 8)
+
+
 def test_ko_uses_set_equality_not_text() -> None:
     # two rounds with the SAME abstain set but different "reasoning" are ko-equal
     seq = [{"a", "b"}, {"b", "a"}]  # order-independent
