@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sophia Checkpoint Registry",
+  "type": "object",
+  "required": [
+    "kind",
+    "registryVersion",
+    "status",
+    "candidateOnly",
+    "canClaimAGI",
+    "claimBoundary",
+    "retentionPolicy",
+    "requiredEntryFields",
+    "checkpoints"
+  ],
+  "properties": {
+    "kind": { "const": "checkpoint-registry" },
+    "registryVersion": { "type": "string" },
+    "status": {
+      "enum": [
+        "scaffolding_only",
+        "active"
+      ]
+    },
+    "candidateOnly": { "const": true },
+    "canClaimAGI": { "const": false },
+    "claimBoundary": { "type": "string" },
+    "retentionPolicy": {
+      "type": "object",
+      "required": [
+        "keepMetadataInGit",
+        "keepWeightsOutOfGit",
+        "requireSha256",
+        "requirePromotionVerdict",
+        "requireFailureLedgerLink"
+      ],
+      "properties": {
+        "keepMetadataInGit": { "const": true },
+        "keepWeightsOutOfGit": { "const": true },
+        "requireSha256": { "const": true },
+        "requirePromotionVerdict": { "const": true },
+        "requireFailureLedgerLink": { "const": true }
+      }
+    },
+    "requiredEntryFields": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "checkpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "checkpointId",
+          "status",
+          "candidateOnly",
+          "canClaimAGI",
+          "baseModel",
+          "adapterPath",
+          "artifactManifest",
+          "promotion"
+        ],
+        "properties": {
+          "checkpointId": { "type": "string" },
+          "status": {
+            "enum": [
+              "planned",
+              "candidate",
+              "rejected",
+              "promoted_internal",
+              "archived"
+            ]
+          },
+          "candidateOnly": { "const": true },
+          "canClaimAGI": { "const": false },
+          "baseModel": { "type": "string" },
+          "adapterPath": { "type": ["string", "null"] },
+          "artifactManifest": {
+            "type": "object",
+            "required": ["metadataPath", "weightsSha256", "trainingRunPath", "evalArtifacts"],
+            "properties": {
+              "metadataPath": { "type": ["string", "null"] },
+              "weightsSha256": { "type": ["string", "null"] },
+              "trainingRunPath": { "type": ["string", "null"] },
+              "evalArtifacts": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          },
+          "promotion": {
+            "type": "object",
+            "required": ["verdict", "proofArtifact", "failureLedgerRef"],
+            "properties": {
+              "verdict": {
+                "enum": [
+                  "not_evaluated",
+                  "reject",
+                  "promote_internal"
+                ]
+              },
+              "proofArtifact": { "type": ["string", "null"] },
+              "failureLedgerRef": { "type": ["string", "null"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}

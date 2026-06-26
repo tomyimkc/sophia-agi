@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sophia-agi"
+version = "0.8.0"
+description = "Verifier-gated training and proof package for provenance-aware AGI-candidate systems."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+authors = [{ name = "tomyimkc" }]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.scripts]
+sophia = "sophia.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["agent*", "provenance_bench*", "sophia*", "sophia_mcp*"]
+exclude = ["tests*"]

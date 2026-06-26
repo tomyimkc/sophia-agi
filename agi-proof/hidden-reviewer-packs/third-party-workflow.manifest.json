@@ -1,0 +1,103 @@
+{
+  "$schema": "./third-party-workflow.schema.json",
+  "kind": "third-party-hidden-pack-workflow",
+  "manifestVersion": "0.1.0",
+  "status": "scaffolding_only_not_run",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "claimBoundary": "This workflow describes how to receive and audit a future reviewer-controlled hidden pack. It is not a hidden-pack result and does not certify independence by itself.",
+  "failureLedgerRefs": [
+    "hidden-review-third-party-not-run",
+    "hidden-full-sophia-valid-run-not-yet-run",
+    "hidden-manual-review-not-complete"
+  ],
+  "roles": {
+    "reviewer": "Creates the pack outside Sophia context, controls the salt, signs the commitments, and attests that prompts were hidden before the run.",
+    "operator": "Runs the agreed harness without editing prompts, records environment and logs, and preserves failures.",
+    "auditor": "Checks commitments, schema validity, leakage boundary, scorer outputs, manual review, and public aggregate report."
+  },
+  "stages": [
+    {
+      "id": "author-private-pack",
+      "owner": "reviewer",
+      "requiredArtifacts": [
+        "private_pack_json",
+        "reviewer_identity",
+        "scope_statement",
+        "salt"
+      ],
+      "publicBeforeRun": []
+    },
+    {
+      "id": "publish-commitments",
+      "owner": "reviewer",
+      "requiredArtifacts": [
+        "salted_case_commitments",
+        "case_count",
+        "domain_counts",
+        "commitment_method",
+        "reviewer_signature"
+      ],
+      "publicBeforeRun": [
+        "salted_case_commitments",
+        "case_count",
+        "domain_counts",
+        "commitment_method",
+        "reviewer_signature"
+      ]
+    },
+    {
+      "id": "run-evaluation",
+      "owner": "operator",
+      "requiredArtifacts": [
+        "git_commit",
+        "environment",
+        "model_or_adapter_identifier",
+        "answer_traces",
+        "tool_logs",
+        "memory_diffs",
+        "backend_health",
+        "raw_scoring_report"
+      ],
+      "publicBeforeRun": []
+    },
+    {
+      "id": "manual-semantic-review",
+      "owner": "auditor",
+      "requiredArtifacts": [
+        "two_pass_review_notes",
+        "adjudication_notes",
+        "rubric_miss_summary",
+        "strict_pass_count"
+      ],
+      "publicBeforeRun": []
+    },
+    {
+      "id": "publish-aggregate",
+      "owner": "auditor",
+      "requiredArtifacts": [
+        "public_aggregate_report",
+        "artifact_manifest",
+        "sha256_checksums",
+        "failure_ledger_update",
+        "claim_boundary_statement"
+      ],
+      "publicBeforeRun": []
+    }
+  ],
+  "artifactManifestTemplate": {
+    "packId": null,
+    "runId": null,
+    "visibility": "public-aggregate-no-prompts",
+    "hiddenStatus": "unspent-until-run",
+    "reviewerSignature": null,
+    "operatorSignature": null,
+    "auditorSignature": null,
+    "schemaValidation": null,
+    "promptLeakageAudit": null,
+    "baselineAblationArtifact": null,
+    "resultArtifact": null,
+    "failureLedgerUpdate": null,
+    "canClaimAGI": false
+  }
+}

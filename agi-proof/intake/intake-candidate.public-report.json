@@ -1,0 +1,199 @@
+{
+  "schemaVersion": "sophia.intake-eval.v1",
+  "status": "candidate",
+  "runAt": "2026-06-25T17:58:41+00:00",
+  "seed": 1701,
+  "visibility": "public-aggregate-no-hidden-prompts",
+  "metricDiscipline": "intent-fidelity only; downstream success is reported separately and is not a reward signal",
+  "fidelityMetrics": {
+    "intentAccuracy": 0.8571,
+    "ambiguityRecall": 1.0,
+    "falseClarificationRate": 0.0,
+    "silentDriftRate": 0.0,
+    "unsurfacedRewriteRate": 0.0
+  },
+  "adversarialSets": {
+    "ambiguity": 1,
+    "entity_swaps": 1,
+    "in_prompt_injection": 1,
+    "negation": 1,
+    "quantifier_scope": 1,
+    "scope_escalation_traps": 1,
+    "typo_vs_intentional": 1
+  },
+  "paraphraseInvariance": {
+    "groups": [
+      {
+        "group": 1,
+        "sameContractModuloWording": true,
+        "signatures": [
+          {
+            "intent": "tool_use",
+            "risk": "low",
+            "blp": "UNCLASSIFIED",
+            "allowedOps": [
+              "enqueue_task",
+              "verify_claim"
+            ],
+            "sourcesRequired": true,
+            "action": "retrieve"
+          },
+          {
+            "intent": "tool_use",
+            "risk": "low",
+            "blp": "UNCLASSIFIED",
+            "allowedOps": [
+              "enqueue_task",
+              "verify_claim"
+            ],
+            "sourcesRequired": true,
+            "action": "retrieve"
+          }
+        ]
+      },
+      {
+        "group": 2,
+        "sameContractModuloWording": true,
+        "signatures": [
+          {
+            "intent": "answer_question",
+            "risk": "low",
+            "blp": "UNCLASSIFIED",
+            "allowedOps": [
+              "verify_claim"
+            ],
+            "sourcesRequired": true,
+            "action": "retrieve"
+          },
+          {
+            "intent": "answer_question",
+            "risk": "low",
+            "blp": "UNCLASSIFIED",
+            "allowedOps": [
+              "verify_claim"
+            ],
+            "sourcesRequired": true,
+            "action": "retrieve"
+          }
+        ]
+      }
+    ],
+    "passRate": 1.0
+  },
+  "clarificationCalibration": {
+    "n": 7,
+    "ece": 0.4,
+    "aurc": 0.0728,
+    "baseRisk": 0.1429,
+    "coverage": 0.5,
+    "selectiveRisk": 0.0,
+    "selectiveBeatsBase": true
+  },
+  "silentDriftControls": {
+    "oracle": "gold_meaning_tokens",
+    "caveat": "needs independent reviewer families; synthetic token oracle only",
+    "noDrift": {
+      "n": 7,
+      "silentDriftRate": 0.0
+    },
+    "plantedDrift": {
+      "n": 7,
+      "silentDriftRate": 0.5714,
+      "unsurfacedRewriteRate": 0.0,
+      "classes": [
+        "entity_swaps",
+        "negation",
+        "quantifier_scope",
+        "scope_escalation_traps"
+      ]
+    }
+  },
+  "downstreamDelta": {
+    "benchmark": "hidden_eval_protocol_mock_smoke",
+    "withIntake": {
+      "returncode": 0,
+      "answerNonempty": true,
+      "latencySec": 0.000114,
+      "costUsd": 0.0
+    },
+    "withoutIntake": {
+      "returncode": 0,
+      "answerNonempty": true,
+      "latencySec": 0.000129,
+      "costUsd": 0.0
+    },
+    "claimBoundary": "Mock smoke delta only; candidate plumbing signal, not downstream quality evidence."
+  },
+  "latencyCost": {
+    "totalSec": 0.001026,
+    "meanSec": 0.000147,
+    "costUsd": 0.0,
+    "backend": "deterministic_offline"
+  },
+  "counterfactualAudit": {
+    "found": true,
+    "source": "memory_ref_a",
+    "id": "memory_ref_a",
+    "affected": [
+      {
+        "page": "intake_claim",
+        "dependsOnRemoved": true,
+        "groundedBefore": true,
+        "groundedAfter": false,
+        "supportLost": true,
+        "confidenceRankBefore": 4,
+        "confidenceRankAfter": 0
+      }
+    ],
+    "affectedCount": 1,
+    "supportLost": [
+      "intake_claim"
+    ],
+    "supportLostCount": 1,
+    "query": {
+      "entity": "intake_claim",
+      "id": "intake_claim",
+      "removed": false,
+      "groundedBefore": true,
+      "groundedAfter": false,
+      "supportLost": true,
+      "effectiveBefore": 4,
+      "effectiveAfter": 0
+    }
+  },
+  "executionWithinContractGate": {
+    "contractId": "clm_6b635ff13787db7b3ad29ce0",
+    "gate": {
+      "verdict": "held",
+      "confidence": 0.0,
+      "reasons": [
+        "execution used ops outside intake tool_policy: ['enqueue_task']"
+      ],
+      "cited_evidence": [],
+      "held_reason": "over_budget"
+    }
+  },
+  "measuredVsAsserted": {
+    "measured": [
+      "intent accuracy on deterministic synthetic labels",
+      "ambiguity recall and false-clarification rate",
+      "silent-drift rate over synthetic gold meaning tokens",
+      "unsurfaced rewrite rate from material_rewrites",
+      "paraphrase-invariance signatures modulo wording",
+      "risk-coverage calibration over intake confidence",
+      "mock with-vs-without-intake downstream plumbing delta",
+      "counterfactual source-reference drop audit"
+    ],
+    "structural": [
+      "original prompt is preserved verbatim before contract metadata",
+      "tool policy is requested_ops intersect role scope ops",
+      "BLP level is capped by role scope",
+      "source references carry ids/status only, not memory content"
+    ],
+    "stillAsserted": [
+      "silentDriftRate needs independent reviewer families; synthetic token oracle only",
+      "semantic intent fidelity beyond the gold synthetic tokens needs independent reviewer families",
+      "model-based intake elaboration quality is not validated in this offline candidate report"
+    ]
+  }
+}

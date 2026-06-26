@@ -1,0 +1,66 @@
+{
+  "$schema": "./experiment-tracking.schema.json",
+  "kind": "experiment-tracking-aggregation-spec",
+  "specVersion": "0.1.0",
+  "status": "scaffolding_only",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "claimBoundary": "This spec defines how future runs are recorded and aggregated. It does not declare that any benchmark, adapter, or model run has cleared a proof gate.",
+  "runRecord": {
+    "requiredFields": [
+      "runId",
+      "experimentId",
+      "gitCommit",
+      "workingTreeDirty",
+      "createdAt",
+      "operator",
+      "baseModel",
+      "adapterId",
+      "seed",
+      "trainingConfigHash",
+      "datasetManifest",
+      "decontaminationReport",
+      "checkpointRegistryRef",
+      "evalSuite",
+      "failureLedgerRef",
+      "candidateOnly",
+      "canClaimAGI"
+    ],
+    "metricFields": [
+      "primaryMetric",
+      "primaryMetricBefore",
+      "primaryMetricAfter",
+      "delta",
+      "protectedMetricBefore",
+      "protectedMetricAfter",
+      "falsePositiveCost",
+      "fabricationRate",
+      "abstentionRate",
+      "toolUseSuccessRate",
+      "manualReviewStatus"
+    ],
+    "provenanceFields": [
+      "artifactManifestPath",
+      "sha256",
+      "sourceDatasetRefs",
+      "heldoutSealRefs",
+      "judgeFamilies",
+      "scoringScriptHash",
+      "environment"
+    ]
+  },
+  "aggregation": {
+    "minimumSeeds": 3,
+    "confidenceInterval": "bootstrap_95_or_exact_binomial_when_applicable",
+    "headlineRule": "A positive headline requires every seed artifact, contamination clean, protected metrics non-regressing, and a 95% CI on the primary delta excluding zero. Otherwise report candidate-only, within-noise, blocked, or negative.",
+    "judgeRule": "Semantic or model-judged claims require at least two independent judge families and agreement reporting. Deterministic verifier claims must identify the verifier and its held-out scope.",
+    "failureRule": "Failures, backend errors, empty responses, prompt leaks, and manual-review gaps are aggregated beside successes and linked to the failure ledger before public wording changes."
+  },
+  "artifactOutputs": [
+    "per_seed_run_records.jsonl",
+    "aggregate.public-report.json",
+    "checkpoint-registry.json",
+    "adapter-card.md",
+    "failure-ledger.md update"
+  ]
+}

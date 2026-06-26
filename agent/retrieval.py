@@ -164,46 +164,103 @@ def _retrieve_keyword(query: str, *, top_k: int = 8) -> list[SourceChunk]:
     return ranked[:top_k]
 
 
-def retrieve(query: str, *, top_k: int = 8) -> list[SourceChunk]:
-    """Retrieve sources — prefers curated `rag/index` when present."""
-    try:
-        from agent.vector_store import (
-            embedding_backend_id, index_dir, load_index, search,
-        )
 
-        idir = index_dir()
-        indexed = load_index(idir)
-        if indexed:
-            from agent.config import load_dotenv
+def _retrieve_lexical_vector(query: str, *, top_k: int = 8) -> list[SourceChunk]:
+    """Deterministic offline vector retrieval (cosine over hashed n-gram vectors).
 
-            load_dotenv()
-            backend = (os.environ.get("SOPHIA_RAG_BACKEND") or "auto").strip().lower()
-            query_embedding = None
-            has_embeddings = indexed[0].embedding is not None
-            # Embed the query with the SAME backend that built the index, so the committed
-            # vectors and the query vector share one space. The local hashing backend is
-            # offline/CPU — vector recall works under airgap with no API key.
-            index_backend = embedding_backend_id(idir)
-            if backend != "keyword" and has_embeddings:
-                if index_backend == "local-hash-v1":
-                    try:
-                        from agent.rag_local_embed import embed_query
+    Reproducible, numpy-free, no model/network — the middle tier between the learned
+    embedding path and plain keyword overlap. Preserves the provenance confidence boost.
+    """
+    from agent.lexical_embed import embed, cosine
 
-                        query_embedding = embed_query(query)
-                    except Exception:
-                        query_embedding = None
-                elif backend in {"gemini", "vertex", "auto"}:
-                    if backend == "vertex":
-                        os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
-                    try:
-                        from agent.rag_embed import embed_query
+    query_vec = embed(query)
+    ranked: list[SourceChunk] = []
+    for item in collect_corpus():
+        path_label, title, text = item[0], item[1], item[2]
+        prov = item[3] if len(item) > 3 else None
+        score = cosine(query_vec, embed(f"{title} {text}"))
+        if score <= 0:
+            continue
+        if prov:  # provenance boost: curated, confident wiki pages win over raw dumps
+            score += 0.05 + _CONFIDENCE_BOOST.get(prov.get("author_confidence"), 0.0)
+        excerpt = text[:1200] + ("..." if len(text) > 1200 else "")
+        ranked.append(SourceChunk(
+            path=path_label, title=title, excerpt=excerpt, score=score,
+            page_id=(prov or {}).get("page_id"),
+            tradition=(prov or {}).get("tradition"),
+            author_confidence=(prov or {}).get("author_confidence"),
+            do_not_attribute_to=list((prov or {}).get("do_not_attribute_to") or []),
+        ))
+    ranked.sort(key=lambda c: c.score, reverse=True)
+    return ranked[:top_k]
 
-                        query_embedding = embed_query(query)
-                    except Exception:
-                        query_embedding = None
-            return search(query, indexed, top_k=top_k, query_embedding=query_embedding)
-    except Exception:
-        pass
+
+def retrieve(query: str, *, top_k: int = 8, mode: "str | None" = None) -> list[SourceChunk]:
+    """Retrieve sources. Tiers: learned vectors (if usable index+embeddings exist) →
+    deterministic offline lexical-vector cosine → keyword overlap.
+    ``mode`` or ``SOPHIA_RETRIEVAL`` env can force a tier ("learned"|"vector"|"lexical"|"keyword").
+    Default "auto" walks tiers in quality order.
+    """
+    mode = (mode or os.environ.get("SOPHIA_RETRIEVAL") or "auto").strip().lower()
+
+    # Learned / remote or committed local-hash embeddings via vector store
+    if mode in {"auto", "learned", "vertex", "gemini"}:
+        try:
+            from agent.vector_store import (
+                embedding_backend_id, index_dir, load_index, search,
+            )
+
+            idir = index_dir()
+            indexed = load_index(idir)
+            if indexed:
+                from agent.config import load_dotenv
+
+                load_dotenv()
+                backend = (os.environ.get("SOPHIA_RAG_BACKEND") or "auto").strip().lower()
+                query_embedding = None
+                has_embeddings = indexed[0].embedding is not None
+                # Embed query using same backend that built the index for space compatibility.
+                # local-hash-v1 is fully offline/CPU.
+                index_backend = embedding_backend_id(idir)
+                if backend != "keyword" and has_embeddings:
+                    if index_backend == "local-hash-v1":
+                        try:
+                            from agent.rag_local_embed import embed_query
+
+                            query_embedding = embed_query(query)
+                        except Exception:
+                            query_embedding = None
+                    elif backend in {"gemini", "vertex", "auto"}:
+                        if backend == "vertex":
+                            os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
+                        try:
+                            from agent.rag_embed import embed_query
+
+                            query_embedding = embed_query(query)
+                        except Exception:
+                            query_embedding = None
+                result = search(query, indexed, top_k=top_k, query_embedding=query_embedding)
+                if result or mode != "auto":
+                    return result
+        except Exception:
+            pass
+        if mode != "auto":
+            # explicit non-auto that didn't work should not silently continue unless auto
+            if mode in {"learned", "vertex", "gemini"}:
+                return _retrieve_keyword(query, top_k=top_k)
+
+    # Deterministic offline lexical vector tier (numpy-free). Feature addition.
+    if mode in {"auto", "vector", "lexical"}:
+        try:
+            ranked = _retrieve_lexical_vector(query, top_k=top_k)
+            if ranked or mode != "auto":
+                return ranked
+        except Exception:
+            pass
+        if mode in {"vector", "lexical"}:
+            return _retrieve_keyword(query, top_k=top_k)
+
+    # Final fallback
     return _retrieve_keyword(query, top_k=top_k)
 
 

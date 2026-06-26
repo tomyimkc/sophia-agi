@@ -14,6 +14,7 @@ they do not change without a MAJOR bump.
 from __future__ import annotations
 
 from sophia_contract.errors import ERROR_CODES, ContractError
+from sophia_contract.intake import IntakeContract
 from sophia_contract.models import HELD_REASONS, VERDICTS
 from sophia_contract.service import CONTRACT_VERSION, SCHEMA_URL, SophiaContract
 from sophia_contract.blp import BLP_LEVELS
@@ -30,4 +31,5 @@ __all__ = [
     "BLP_LEVELS",
     "Scope",
     "ScopeRegistry",
+    "IntakeContract",
 ]

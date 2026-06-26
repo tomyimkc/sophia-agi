@@ -15,6 +15,8 @@ from collections import Counter
 from dataclasses import dataclass, field
 from typing import Any, Sequence
 
+from sophia_contract.intake import RECOMMENDED_ACTIONS
+
 
 @dataclass(frozen=True)
 class MetacognitionReport:
@@ -26,9 +28,13 @@ class MetacognitionReport:
     semantic_entropy: float | None = None
     nonconformity: float = 1.0
     uncertainty_type: str = "epistemic"  # epistemic|aleatoric|moral|low
-    recommended_action: str = "abstain"  # allow|retrieve|clarify|escalate|abstain
+    recommended_action: str = "abstain"
     reasons: tuple[str, ...] = ()
     signals: dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if self.recommended_action not in RECOMMENDED_ACTIONS:
+            raise ValueError(f"recommended_action must be one of {RECOMMENDED_ACTIONS}")
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -174,4 +180,11 @@ def assess_uncertainty(
     )
 
 
-__all__ = ["MetacognitionReport", "normalize_answer", "self_consistency", "semantic_entropy", "assess_uncertainty"]
+__all__ = [
+    "RECOMMENDED_ACTIONS",
+    "MetacognitionReport",
+    "normalize_answer",
+    "self_consistency",
+    "semantic_entropy",
+    "assess_uncertainty",
+]

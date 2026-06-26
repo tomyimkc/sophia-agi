@@ -1,0 +1,153 @@
+{
+  "schema": "sophia.long_context_heldout.public_report.v1",
+  "reportStatus": "candidate",
+  "claimStatus": "candidate_not_validated",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "backend": "mock",
+  "relevanceSource": "lexical",
+  "budgetTokens": 140,
+  "items": 6,
+  "corpusIntegrity": {
+    "clean": true,
+    "failures": []
+  },
+  "claimBoundary": "CANDIDATE: real-fact prose with real distractors, maintainer-authored questions, deterministic exact-match scoring, small N, not a third-party benchmark.",
+  "backendClaimBoundary": "MOCK backend cannot read prose; recall ~0 here is a PLUMBING + corpus-integrity check only. Run --backend adapter (SOPHIA_MODEL_PROVIDER=ollama|mlx) for real recall.",
+  "recallByMode": {
+    "matrix-g0-r0-p0-raw-long-context": 0.0,
+    "matrix-g1-r1-p1-gated-packed": 0.0
+  },
+  "headlineMetric": {
+    "metric": "gated_packed_recall - raw_truncated_recall (real-fact held-out)",
+    "rawTruncatedRecall": 0.0,
+    "gatedPackedRecall": 0.0,
+    "delta": 0.0,
+    "gridDispersion95": [
+      0.0,
+      0.0
+    ],
+    "pairedItems": 6
+  },
+  "wrongDistractorTokenRateByMode": {
+    "matrix-g0-r0-p0-raw-long-context": 0.0,
+    "matrix-g1-r1-p1-gated-packed": 0.0
+  },
+  "cardsValid": true,
+  "runAt": "2026-06-25T18:58:42",
+  "rows": [
+    {
+      "caseId": "penicillin",
+      "mode": "matrix-g0-r0-p0-raw-long-context",
+      "recall": 0.0,
+      "wrongDistractorTokenCount": 0,
+      "answerSpanPresentInPack": true,
+      "cardErrors": [],
+      "wallTimeSec": 0.000613
+    },
+    {
+      "caseId": "penicillin",
+      "mode": "matrix-g1-r1-p1-gated-packed",
+      "recall": 0.0,
+      "wrongDistractorTokenCount": 0,
+      "answerSpanPresentInPack": true,
+      "cardErrors": [],
+      "wallTimeSec": 0.028214
+    },
+    {
+      "caseId": "dna_helix",
+      "mode": "matrix-g0-r0-p0-raw-long-context",
+      "recall": 0.0,
+      "wrongDistractorTokenCount": 0,
+      "answerSpanPresentInPack": true,
+      "cardErrors": [],
+      "wallTimeSec": 0.000265
+    },
+    {
+      "caseId": "dna_helix",
+      "mode": "matrix-g1-r1-p1-gated-packed",
+      "recall": 0.0,
+      "wrongDistractorTokenCount": 0,
+      "answerSpanPresentInPack": true,
+      "cardErrors": [],
+      "wallTimeSec": 0.003757
+    },
+    {
+      "caseId": "general_relativity",
+      "mode": "matrix-g0-r0-p0-raw-long-context",
+      "recall": 0.0,
+      "wrongDistractorTokenCount": 0,
+      "answerSpanPresentInPack": true,
+      "cardErrors": [],
+      "wallTimeSec": 0.000232
+    },
+    {
+      "caseId": "general_relativity",
+      "mode": "matrix-g1-r1-p1-gated-packed",
+      "recall": 0.0,
+      "wrongDistractorTokenCount": 0,
+      "answerSpanPresentInPack": true,
+      "cardErrors": [],
+      "wallTimeSec": 0.004144
+    },
+    {
+      "caseId": "telephone_patent",
+      "mode": "matrix-g0-r0-p0-raw-long-context",
+      "recall": 0.0,
+      "wrongDistractorTokenCount": 0,
+      "answerSpanPresentInPack": true,
+      "cardErrors": [],
+      "wallTimeSec": 0.000287
+    },
+    {
+      "caseId": "telephone_patent",
+      "mode": "matrix-g1-r1-p1-gated-packed",
+      "recall": 0.0,
+      "wrongDistractorTokenCount": 0,
+      "answerSpanPresentInPack": true,
+      "cardErrors": [],
+      "wallTimeSec": 0.004258
+    },
+    {
+      "caseId": "oxygen_discovery",
+      "mode": "matrix-g0-r0-p0-raw-long-context",
+      "recall": 0.0,
+      "wrongDistractorTokenCount": 0,
+      "answerSpanPresentInPack": true,
+      "cardErrors": [],
+      "wallTimeSec": 0.00026
+    },
+    {
+      "caseId": "oxygen_discovery",
+      "mode": "matrix-g1-r1-p1-gated-packed",
+      "recall": 0.0,
+      "wrongDistractorTokenCount": 0,
+      "answerSpanPresentInPack": true,
+      "cardErrors": [],
+      "wallTimeSec": 0.004649
+    },
+    {
+      "caseId": "everest_height",
+      "mode": "matrix-g0-r0-p0-raw-long-context",
+      "recall": 0.0,
+      "wrongDistractorTokenCount": 0,
+      "answerSpanPresentInPack": true,
+      "cardErrors": [],
+      "wallTimeSec": 0.000249
+    },
+    {
+      "caseId": "everest_height",
+      "mode": "matrix-g1-r1-p1-gated-packed",
+      "recall": 0.0,
+      "wrongDistractorTokenCount": 0,
+      "answerSpanPresentInPack": true,
+      "cardErrors": [],
+      "wallTimeSec": 0.004024
+    }
+  ],
+  "notes": [
+    "Non-synthetic: real-world facts in real prose with real competing distractors.",
+    "Exact-match scoring against gold tokens; no LLM judge.",
+    "Maintainer-authored questions/labels; small N; candidate, not third-party validated."
+  ]
+}
