@@ -22,9 +22,18 @@ agent/ai_search.py   fuse across sub-queries (RRF) ──► dedup (agent/dedup.
 SearchResult { AnalyzedQuery plan, ranked SourceChunks }
 ```
 
-> **Where this is heading.** Wired onto Sophia's belief graph + grounded gate + graded
-> abstention, this pipeline becomes a *verifiable perception organ* — see
-> [Search-as-AGI-Substrate.md](Search-as-AGI-Substrate.md).
+> **Grounded perception.** `agent/grounded_search.py` wraps this pipeline and overlays the
+> trust layer: ground the top result in the OKF belief graph, derive a provenance confidence,
+> and apply the **answer / hedge / abstain** reflex (downgrade-only, fail-closed), logging
+> hedged/abstained queries to the knowledge-gap worklist. This is what makes search a
+> *verifiable perception organ* — see [Search-as-AGI-Substrate.md](Search-as-AGI-Substrate.md).
+>
+> ```python
+> from agent.grounded_search import grounded_search
+> r = grounded_search("Who wrote the Dao De Jing?")
+> # r.action == "hedge"  (disputed authorship → confidence 0.48, not served as fact)
+> # r.belief["doNotAttributeTo"] == ["confucius", "socrates", "plato"]
+> ```
 
 Every stage is deterministic. The committed `local-hash-v1` embedder
 (`agent/rag_local_embed.py`) makes dense recall work under `SOPHIA_PROFILE=airgap` with no key.

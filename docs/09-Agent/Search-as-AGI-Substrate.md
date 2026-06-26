@@ -60,20 +60,32 @@ Sophia's charter exists to build, expressed as the organ the DeepSeek charter ca
 
 ## Roadmap — from what's shipped to the organ
 
-| Step | From → To | Where |
-|------|-----------|-------|
-| Ground | `SearchResult` → belief-graph claim nodes with provenance edges | `agent/ai_search.py` → `okf/graph.py` |
-| Verify | search path → grounded gate + citation faithfulness before use | `agent/grounded_gate.py`, `agent/rerank.py` |
-| Abstain | search path → graded answer/hedge/abstain on low/conflicting confidence | `agent/graded_decision.py`, `agent/grounded_confidence.py` |
-| Self-correct | eval badcases → flywheel → index/embedder updates | `tools/eval_search_quality.py` → `agent/fact_check_flywheel.py` |
-| Perceive widely | learned multilingual/**multimodal** embedder via the registry | `agent/embedding_backends.py` |
-| Serve at scale | Rust HNSW dense view via the bridge → sharding/RDMA | `services/ann_serving/`, `agent/ann_client.py` |
+| Step | From → To | Where | Status |
+|------|-----------|-------|--------|
+| Ground | search results → OKF belief (entity-link + lineage/laundering/contradicts) | `agent/grounded_search.py` → `okf/graph.belief` | ✅ shipped |
+| Calibrate + Abstain | search path → provenance confidence → graded answer/hedge/abstain | `agent/grounded_search.py`, `agent/grounded_confidence.py`, `agent/graded_decision.py` | ✅ shipped |
+| Self-correct | hedged/abstained queries → knowledge-gap worklist → corpus enrichment | `agent/grounded_search.py` → `agent/knowledge_gap_log.gap_worklist` | ✅ shipped (worklist); ⚠️ auto-ingest pending |
+| Verify | search path → grounded gate + citation faithfulness on the generated answer | `agent/grounded_gate.py`, `agent/rerank.citation_faithfulness` | ⚠️ partial — gate exists, not yet on the served answer |
+| Perceive widely | learned multilingual/**multimodal** embedder via the registry | `agent/embedding_backends.py` | ⚠️ seam shipped; learned weights pending |
+| Serve at scale | Rust HNSW dense view via the bridge → sharding/RDMA | `services/ann_serving/`, `agent/ann_client.py` | ⚠️ single-node shipped; sharding/RDMA pending |
 
 ## Shipped foundation (this work)
 
-Understand → hybrid recall (dense+sparse RRF) → dedup → multi-hop fusion → rerank
-(`agent/ai_search.py`), a graded search-quality eval体系 with a badcase taxonomy, a pluggable
-embedder registry (the multilingual/multimodal seam), and a Rust HNSW serving core with a
-Python bridge. See [AI-Search.md](AI-Search.md). Honest status: the *grounding/verification/
-abstention/flywheel* wiring above is the next, highest-leverage step — it is what converts a
-strong search pipeline into Sophia's perception organ.
+- **Pipeline.** Understand → hybrid recall (dense+sparse RRF) → dedup → multi-hop fusion →
+  rerank (`agent/ai_search.py`). See [AI-Search.md](AI-Search.md).
+- **Grounded, calibrated perception.** `agent/grounded_search.py` grounds the top result in the
+  OKF belief graph (entity-link → lineage, confidence-laundering, `contradicts`,
+  `doNotAttributeTo`), derives a **provenance confidence**, and applies the **answer / hedge /
+  abstain** reflex — downgrade-only and fail-closed. Measured discrimination over the OKF wiki
+  (`tools/eval_grounded_search.py`, candidate): **weak sources downgraded 100%**, strong sources
+  answered ~67% (the rest conservatively hedged).
+- **Self-correction loop.** Hedged/abstained queries are logged as knowledge gaps that feed the
+  existing frequency-ranked enrichment worklist (`agent/knowledge_gap_log.gap_worklist`) — the
+  corpus grows where perception actually failed.
+- **Scale & breadth seams.** A graded search-quality eval体系 with a badcase taxonomy, a
+  pluggable embedder registry (multilingual/multimodal), and a Rust HNSW serving core with a
+  Python bridge.
+
+Honest status: the remaining high-leverage step is **verification on the served answer** — run
+the generated response through the grounded gate + citation-faithfulness before it reaches the
+caller — and **closing the self-correction loop** from worklist to automatic corpus ingestion.

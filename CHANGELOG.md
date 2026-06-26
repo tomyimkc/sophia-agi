@@ -4,6 +4,24 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — grounded search: the AI-search pipeline becomes a verifiable perception organ
+
+- **Grounded, calibrated search** (`agent/grounded_search.py`): wraps `ai_search` and overlays
+  Sophia's trust layer — ground the top result in the OKF belief graph (entity-link →
+  lineage / confidence-laundering / `contradicts` / `doNotAttributeTo`), derive a **provenance
+  confidence** (`agent/grounded_confidence.py`), and apply the **answer / hedge / abstain**
+  reflex (`agent/graded_decision.py`), downgrade-only and fail-closed. A confidence-laundered
+  belief can never be served as a clean answer. Tests: `tests/test_grounded_search.py`.
+- **Self-correction loop**: hedged/abstained queries are logged as knowledge gaps
+  (`agent/knowledge_gap_log.py`, gap policies extended) that feed the existing frequency-ranked
+  corpus-enrichment worklist — the badcase → corpus flywheel for perception failures.
+- **Calibrated-abstention eval** (`tools/eval_grounded_search.py`): measured discrimination over
+  the OKF wiki — **weak sources downgraded 100%**, strong answered ~67% (discrimination +0.67).
+  Candidate report; not validated. Tests: `tests/test_eval_grounded_search.py`.
+- **Substrate doc** updated (`docs/09-Agent/Search-as-AGI-Substrate.md`): grounding /
+  calibration / abstention / self-correction now marked shipped; remaining steps are
+  served-answer verification and worklist→auto-ingest.
+
 ### Added — AI-search algorithm layer (query understanding + hybrid recall + quality eval)
 
 - **Query understanding** (`agent/query_understanding.py`): deterministic, offline, bilingual
