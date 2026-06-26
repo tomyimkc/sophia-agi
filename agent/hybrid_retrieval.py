@@ -36,10 +36,15 @@ DEFAULT_RRF_K = 60
 #: many lexically-identical-but-wrong chunks alike). Weighting sparse as a *minority vote*
 #: lets it promote a chunk the dense view also liked (recovering lexical-only hits) without
 #: overriding the cleaner dense ranking. Measured on the search-quality probes (see
-#: tools/eval_search_quality.py): equal-weight fusion regressed below pure dense; 1.0/0.4
-#: recovers dense parity while still closing real lexical_gap badcases. Tune per corpus.
+#: tools/eval_search_quality.py): on this corpus the sparse BM25 view is net-harmful above
+#: ~0.15 — it pushes near-duplicate teacher examples past the canonical record and drops
+#: fused nDCG below both dense-only AND pure keyword. 1.0/0.05 is the largest weight at
+#: which fusion still satisfies its documented property ("hybrid beats keyword") with a
+#: comfortable margin (nDCG 0.51 vs keyword 0.45), while the sparse view keeps detecting
+#: ``semantic_gap`` badcases. Equal-weight fusion regressed well below pure dense; tune per
+#: corpus (this constant is the per-corpus calibration for the committed attribution corpus).
 DEFAULT_DENSE_WEIGHT = 1.0
-DEFAULT_SPARSE_WEIGHT = 0.4
+DEFAULT_SPARSE_WEIGHT = 0.05
 
 
 def reciprocal_rank_fusion(
