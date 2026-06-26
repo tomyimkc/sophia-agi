@@ -129,6 +129,20 @@ A first working cut of every slice now ships. Core logic lives in `agent/cluster
 | R4 gated self-heal | `agent/cluster/heal.py` (audited, fail-closed) | `tools/cluster/heal.py` | `tests/test_cluster_heal.py` |
 | R4 real executors | `agent/cluster/executors.py` (kube/slurm/ssh/noop) | `tools/cluster/heal.py --backend ... [--node --action]` | `tests/test_cluster_executors.py` |
 | R3/R4 calibrated thresholds | `agent/cluster/calibrate.py` (reuses `agent/calibration.py`) | `tools/cluster/calibrate_alerts.py` | `tests/test_cluster_exporter_calibrate.py` |
+| End-to-end demo | — | `scripts/demo_cluster_loop.py` (offline, deterministic) | (smoke-run in CI) |
+| CI health gate | — | `.github/workflows/cluster-health-gate.yml` | runs the suite + demo on PRs; scheduled fleet sweep |
+
+Run the whole loop offline in ~1s:
+
+    python scripts/demo_cluster_loop.py
+    # bring-up acceptance → fleet 巡检 → inject XID 79 → localize →
+    # auto-heal the safe disk case, escalate the GPU fault to a human → measured MTTR
+
+The `cluster-health-gate` workflow runs the unit suite + demo smoke on every PR that
+touches the cluster layer, and a scheduled (`cron`) **fleet inspection sweep**. Against
+the offline mock the sweep is informational; once a real fleet is wired
+(`vars.SOPHIA_CLUSTER_INVENTORY` + `secrets.SOPHIA_CLUSTER_SSH_KEY`, or
+`secrets.RUNPOD_API_KEY`) a FAILING node fails the job — a real, scheduled health alert.
 
 **Live telemetry — `SSHProvider` (shipped).** `agent/cluster/ssh_provider.py` fills the
 DCGM-level fields by running a single probe script per node over SSH and parsing real

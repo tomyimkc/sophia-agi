@@ -1,0 +1,117 @@
+name: cluster-health-gate
+
+# Two lanes:
+#  1. test  — on PRs/pushes touching the cluster layer: run its unit suite, byte-compile
+#             the package, and smoke the offline end-to-end demo.
+#  2. health-gate — on a schedule (and manual dispatch): run the fleet 巡检 sweep. With a
+#     real fleet configured (vars.SOPHIA_CLUSTER_INVENTORY + secrets.SOPHIA_CLUSTER_SSH_KEY),
+#     a FAILING node fails the job (a real alert). Against the offline mock it is purely
+#     informational (the synthetic fleet always contains faults by design).
+
+on:
+  push:
+    paths:
+      - 'agent/cluster/**'
+      - 'tools/cluster/**'
+      - 'services/cluster_exporter/**'
+      - 'tests/test_cluster_*.py'
+      - 'scripts/demo_cluster_loop.py'
+      - 'observability/**'
+      - 'config/cluster_baselines.json'
+      - '.github/workflows/cluster-health-gate.yml'
+  pull_request:
+    paths:
+      - 'agent/cluster/**'
+      - 'tools/cluster/**'
+      - 'services/cluster_exporter/**'
+      - 'tests/test_cluster_*.py'
+      - 'scripts/demo_cluster_loop.py'
+      - 'observability/**'
+      - 'config/cluster_baselines.json'
+      - '.github/workflows/cluster-health-gate.yml'
+  schedule:
+    - cron: '17 */6 * * *'   # every 6 hours
+  workflow_dispatch:
+    inputs:
+      source:
+        description: 'telemetry source (mock | runpod | ssh)'
+        default: 'mock'
+        type: choice
+        options: [mock, runpod, ssh]
+
+concurrency:
+  group: cluster-health-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install test deps
+        run: python -m pip install --quiet pytest
+      - name: Unit suite
+        run: python -m pytest tests/test_cluster_*.py -q
+      - name: Byte-compile the package
+        run: python -m py_compile agent/cluster/*.py tools/cluster/*.py services/cluster_exporter/*.py
+      - name: Offline end-to-end demo (smoke)
+        run: python scripts/demo_cluster_loop.py
+
+  health-gate:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SOURCE: ${{ github.event.inputs.source || 'mock' }}
+      SOPHIA_CLUSTER_INVENTORY: ${{ vars.SOPHIA_CLUSTER_INVENTORY }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Configure SSH key (only if a real fleet is wired)
+        env:
+          CLUSTER_SSH_KEY: ${{ secrets.SOPHIA_CLUSTER_SSH_KEY }}
+        run: |
+          if [ -n "$CLUSTER_SSH_KEY" ]; then
+            mkdir -p "$HOME/.ssh"
+            printf '%s' "$CLUSTER_SSH_KEY" > "$HOME/.ssh/cluster_key"
+            chmod 600 "$HOME/.ssh/cluster_key"
+            echo "SOPHIA_CLUSTER_SSH_KEY=$HOME/.ssh/cluster_key" >> "$GITHUB_ENV"
+          fi
+      - name: Fleet inspection sweep
+        id: sweep
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          set +e
+          python tools/cluster/inspect_fleet.py --source "$SOURCE" --diagnose --json > sweep.json
+          echo "rc=$?" >> "$GITHUB_OUTPUT"
+          python - <<'PY'
+          import json
+          d = json.load(open("sweep.json"))
+          fail = [n["node_id"] for n in d["nodes"] if n["verdict"] == "FAIL"]
+          warn = [n["node_id"] for n in d["nodes"] if n["verdict"] == "WARN"]
+          print(f"::notice::cluster sweep ({len(d['nodes'])} nodes): "
+                f"{len(fail)} FAIL, {len(warn)} WARN")
+          for nid in fail:
+              print(f"::warning::FAILING node {nid}")
+          PY
+      - name: Upload sweep report
+        uses: actions/upload-artifact@v7
+        with:
+          name: cluster-health-sweep
+          path: sweep.json
+      - name: Fail on real-fleet faults
+        if: ${{ env.SOURCE != 'mock' && steps.sweep.outputs.rc != '0' }}
+        run: |
+          echo "::error::cluster health gate: FAILING node(s) detected on a real fleet"
+          exit 1
