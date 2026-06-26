@@ -93,6 +93,38 @@ git push --force-with-lease origin feat/<my-feature>
 `--force-with-lease` (not `--force`) aborts if the remote moved, so a
 concurrent push can't be silently overwritten.
 
+## Lean 4 toolchain on this machine (optional, fail-closed)
+
+The formal-proof verifier (`agent/lean_verifier.py`, `selfextend/proof_verifier.py`)
+is **fail-closed without Lean** — every check returns `verdict: held` /
+`lean_unavailable` and never `accepted`, and CI is green without a toolchain (the
+fail-closed path IS the tested contract). A Lean install is OPTIONAL and changes
+no gate's logic; it only lets the two real-kernel test cases run (otherwise they
+skip) and lets `tools/run_formal_proofs_eval.py` actually type-check proofs.
+
+Lean 4.31 was installed on this Mac (Tom's machine) via `scripts/install_lean.sh`
+while debugging the lean-kernel CI lane. It lives at:
+
+```
+/Users/tom/.elan/bin/{lean,lake,elan}
+```
+
+The installer deliberately does **not** modify shell rc files. To make
+`lean`/`lake` available in a shell, add to `~/.zshrc` (or the relevant rc file):
+
+```bash
+export PATH="/Users/tom/.elan/bin:$PATH"
+```
+
+Verify with `lean --version`. A future session that needs the kernel should check
+this path first (`command -v lean`) before re-running `scripts/install_lean.sh`
+(which is idempotent — it no-ops if Lean is already present).
+
+Note: this path is **machine-local to Tom's Mac**, not portable — it is recorded
+here only so concurrent sessions on this checkout know the kernel is already
+available and don't re-download ~100 MB unnecessarily. On any other machine (CI
+included), run `scripts/install_lean.sh` fresh.
+
 ## Why it matters for this repo specifically
 
 Sophia's discipline is provenance and auditability — every claim traceable,
