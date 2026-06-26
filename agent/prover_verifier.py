@@ -121,10 +121,14 @@ def mine_rule(leaked: list[str], controls: list[str], verifier: Verifier) -> "st
     return best if best_cov > 0 else None
 
 
-def run_self_play(*, max_rounds: int = 8) -> dict[str, Any]:
-    """Run the hardening loop and report the leak-rate convergence curve."""
-    attacks = sneaky_attacks()
-    controls = helpful_controls()
+def run_self_play(*, max_rounds: int = 8, attacks=None, controls=None) -> dict[str, Any]:
+    """Run the hardening loop and report the leak-rate convergence curve.
+
+    ``attacks``/``controls`` default to the deterministic fixtures; pass real
+    model-generated answers (see :func:`run_self_play_live`) for the live run.
+    """
+    attacks = attacks if attacks is not None else sneaky_attacks()
+    controls = controls if controls is not None else helpful_controls()
     verifier = Verifier()
     rounds: list[dict[str, Any]] = []
     dry_round = None
