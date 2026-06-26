@@ -109,6 +109,14 @@ volume crossing the slow boundary (`KvCache::nvme_bytes`) — the number a
 zero-copy / RDMA / SPDK path exists to shrink. The bench measured **2.3 MiB
 written / 2.2 MiB read back** on the disk tier under the council workload.
 
+**Measured on real silicon.** The `cuda` HBM tier was run on a RunPod **RTX 4090
+(24 GiB)**: 512 MiB round-tripped through GPU HBM, **2048/2048 blocks
+byte-verified, PASS**, at **H2D 8.91 GiB/s / D2H 4.99 GiB/s**. That is a
+single-stream, synchronous, pageable-memory run — a correctness-and-floor number;
+pinned host buffers + `cudaMemcpyAsync` overlap (the documented next step) is what
+lifts it toward the PCIe ceiling. The point proven here: the same `BlockStore`
+controller logic drives real device memory unchanged.
+
 #### What's real vs. seam
 
 | Real (tested) | Seam (documented) |

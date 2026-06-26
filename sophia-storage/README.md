@@ -60,6 +60,12 @@ sophia-kvcache  (512-tok prompt, fan-out 16, 200 rounds — the council/best-of-
   avg prefix hit-ratio   0.970
   prefill blocks avoided 97.0%   (105,600 → 3,200 blocks computed)
   NVMe tier (real disk)  2.3 MiB written / 2.2 MiB read back  (the RDMA/SPDK target)
+
+sophia-kvcache GPU HBM tier (cuda feature) — measured on a real RunPod RTX 4090 (24 GiB):
+  512 MiB round-tripped through HBM, 2048/2048 blocks byte-verified, RESULT: PASS
+  H2D 8.91 GiB/s   D2H 4.99 GiB/s
+  (single-stream, synchronous per-block, pageable host memory — a correctness +
+   floor-bandwidth run; pinned buffers + cudaMemcpyAsync overlap is the next step)
 ```
 
 We published the unflattering per-write number first, identified the fsync as the
