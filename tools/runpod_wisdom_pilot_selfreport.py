@@ -144,7 +144,7 @@ echo "[pod] eval + answers written; finish() will commit + push"
 
 def _build_payload(args, api_key, hf_token, gh_pat):
     gpu_types = [g.strip() for g in args.gpu_type.split(",") if g.strip()]
-    return {
+    payload = {
         "name": args.name,
         "cloudType": args.cloud_type,
         "computeType": "GPU",
@@ -166,6 +166,12 @@ def _build_payload(args, api_key, hf_token, gh_pat):
         "dockerEntrypoint": [],
         "dockerStartCmd": ["bash", "-lc", _job_script(args)],
     }
+    # Private-registry pull (e.g. a private GHCR pre-baked image): reference a RunPod
+    # container-registry-auth so the image stays private instead of being made public.
+    auth_id = getattr(args, "registry_auth_id", "") or ""
+    if auth_id:
+        payload["containerRegistryAuthId"] = auth_id
+    return payload
 
 
 def parse_args(argv=None):
@@ -179,6 +185,8 @@ def parse_args(argv=None):
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--mode", choices=["sft", "orpo"], default="sft")
+    ap.add_argument("--registry-auth-id", default=os.environ.get("RUNPOD_REGISTRY_AUTH_ID", ""),
+                    help="RunPod container-registry-auth id for pulling a private image")
     ap.add_argument("--name", default=f"sophia-wisdom-pilot-sr-{ts}")
     ap.add_argument("--gpu-type", default=",".join(DEFAULT_GPU_TYPES))
     ap.add_argument("--cloud-type", choices=["SECURE", "COMMUNITY"], default="SECURE")
