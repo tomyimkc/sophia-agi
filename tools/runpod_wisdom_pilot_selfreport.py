@@ -68,7 +68,12 @@ finish() {{
   if [ -d /workspace/sophia-agi/.git ]; then
     mkdir -p "$(dirname {LOG_PATH})"
     cp /workspace/pod.log {LOG_PATH} 2>/dev/null || true
-    git add {result_path} {answers_path} {LOG_PATH} 2>/dev/null || true
+    # Stage the LOG FIRST and SEPARATELY: `git add A B C` fails as a whole if A/B don't
+    # exist yet (early crash -> no result/answers), which would silently drop the log too
+    # and leave the branch with a STALE log (the M4 blind-spot, diagnosed 2026-06-26).
+    git add {LOG_PATH} 2>/dev/null || true
+    git add {result_path} 2>/dev/null || true
+    git add {answers_path} 2>/dev/null || true
     git -c user.email=noreply@anthropic.com -c user.name=Claude commit \
       -m "M3 pilot: self-reported result (exit $code) [skip ci]" 2>/dev/null || echo "[pod] nothing to commit"
     for i in 1 2 3 4 5 6 7 8; do
@@ -116,6 +121,21 @@ echo "pod ${{RUNPOD_POD_ID:-?}} alive $(date -u) seed={seed}" > agi-proof/benchm
 git add agi-proof/benchmark-results/runpod-wisdom-pilot/pod-heartbeat.txt
 git -c user.email=noreply@anthropic.com -c user.name=Claude commit -m "M3 pilot: pod heartbeat (seed {seed}) [skip ci]" >/dev/null 2>&1 || true
 if git push origin HEAD:{args.branch} 2>/tmp/push.err; then echo "[pod] HEARTBEAT PUSH OK — delivery channel works"; else echo "[pod] HEARTBEAT PUSH FAILED:"; cat /tmp/push.err; fi
+
+# ENV PROBE — pushed IMMEDIATELY (before the heavy build/smoke) so even a hard kill that
+# skips the EXIT trap still leaves the package versions + a guarded TRL/PEFT import test on
+# the branch. This is how a pre-model-load crash (e.g. a prebaked-image version conflict)
+# becomes diagnosable in ONE run instead of a blind retry.
+{{ echo "[probe] $(date -u)"; \
+   python -c "import sys,platform;print('python',sys.version.split()[0],platform.platform())" 2>&1; \
+   python -c "import torch;print('torch',torch.__version__,'cuda',torch.cuda.is_available())" 2>&1; \
+   python -c "import transformers,peft,trl,accelerate,datasets;print('transformers',transformers.__version__,'peft',peft.__version__,'trl',trl.__version__,'accelerate',accelerate.__version__,'datasets',datasets.__version__)" 2>&1; \
+   python -c "from trl import ORPOConfig, ORPOTrainer;from peft import LoraConfig;print('trl ORPO import OK')" 2>&1; \
+}} > agi-proof/benchmark-results/runpod-wisdom-pilot/pod-envprobe.txt 2>&1 || true
+git add agi-proof/benchmark-results/runpod-wisdom-pilot/pod-envprobe.txt
+git -c user.email=noreply@anthropic.com -c user.name=Claude commit -m "M4 pilot: pod env probe (seed {seed}) [skip ci]" >/dev/null 2>&1 || true
+git pull --rebase -X ours origin {args.branch} >/dev/null 2>&1 || true
+if git push origin HEAD:{args.branch} 2>/tmp/probe.err; then echo "[pod] ENV PROBE PUSH OK"; else echo "[pod] ENV PROBE PUSH FAILED:"; cat /tmp/probe.err; fi
 
 # Deps: skip the slow pip install when the image is PRE-BAKED (deps already importable).
 # This is the fix for the "pod container dies ~60s into pip install -> restart loop -> GPU
