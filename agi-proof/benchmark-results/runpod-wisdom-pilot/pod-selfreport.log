@@ -1,5 +1,5 @@
-[pod] M3 pilot self-report job starting Fri Jun 26 11:50:26 UTC 2026
-Fri Jun 26 11:50:29 2026       
+[pod] M3 pilot self-report job starting Fri Jun 26 12:41:14 UTC 2026
+Fri Jun 26 12:41:18 2026       
 +-----------------------------------------------------------------------------------------+
 | NVIDIA-SMI 570.211.01             Driver Version: 570.211.01     CUDA Version: 12.8     |
 |-----------------------------------------+------------------------+----------------------+
@@ -8,7 +8,7 @@ Fri Jun 26 11:50:29 2026
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
 |   0  NVIDIA H100 80GB HBM3          On  |   00000000:86:00.0 Off |                    0 |
-| N/A   31C    P0             73W /  700W |       0MiB /  81559MiB |      0%      Default |
+| N/A   33C    P0             74W /  700W |       0MiB /  81559MiB |      0%      Default |
 |                                         |                        |             Disabled |
 +-----------------------------------------+------------------------+----------------------+
                                                                                          
@@ -20,7 +20,7 @@ Fri Jun 26 11:50:29 2026
 |  No running processes found                                                             |
 +-----------------------------------------------------------------------------------------+
 Cloning into 'sophia-agi'...
-Updating files:  13% (275/1988)Updating files:  14% (279/1988)Updating files:  15% (299/1988)Updating files:  16% (319/1988)Updating files:  17% (338/1988)Updating files:  18% (358/1988)Updating files:  19% (378/1988)Updating files:  20% (398/1988)Updating files:  21% (418/1988)Updating files:  22% (438/1988)Updating files:  23% (458/1988)Updating files:  24% (478/1988)Updating files:  25% (497/1988)Updating files:  26% (517/1988)Updating files:  27% (537/1988)Updating files:  28% (557/1988)Updating files:  29% (577/1988)Updating files:  30% (597/1988)Updating files:  31% (617/1988)Updating files:  32% (637/1988)Updating files:  33% (657/1988)Updating files:  34% (676/1988)Updating files:  35% (696/1988)Updating files:  36% (716/1988)Updating files:  37% (736/1988)Updating files:  38% (756/1988)Updating files:  39% (776/1988)Updating files:  40% (796/1988)Updating files:  40% (797/1988)Updating files:  41% (816/1988)Updating files:  42% (835/1988)Updating files:  43% (855/1988)Updating files:  44% (875/1988)Updating files:  45% (895/1988)Updating files:  46% (915/1988)Updating files:  47% (935/1988)Updating files:  48% (955/1988)Updating files:  49% (975/1988)Updating files:  50% (994/1988)Updating files:  51% (1014/1988)Updating files:  52% (1034/1988)Updating files:  53% (1054/1988)Updating files:  54% (1074/1988)Updating files:  54% (1075/1988)Updating files:  55% (1094/1988)Updating files:  56% (1114/1988)Updating files:  57% (1134/1988)Updating files:  58% (1154/1988)Updating files:  59% (1173/1988)Updating files:  60% (1193/1988)Updating files:  61% (1213/1988)Updating files:  62% (1233/1988)Updating files:  63% (1253/1988)Updating files:  64% (1273/1988)Updating files:  65% (1293/1988)Updating files:  66% (1313/1988)Updating files:  67% (1332/1988)Updating files:  68% (1352/1988)Updating files:  68% (1364/1988)Updating files:  69% (1372/1988)Updating files:  70% (1392/1988)Updating files:  71% (1412/1988)Updating files:  72% (1432/1988)Updating files:  73% (1452/1988)Updating files:  74% (1472/1988)Updating files:  75% (1491/1988)Updating files:  76% (1511/1988)Updating files:  77% (1531/1988)Updating files:  78% (1551/1988)Updating files:  79% (1571/1988)Updating files:  80% (1591/1988)Updating files:  81% (1611/1988)Updating files:  82% (1631/1988)Updating files:  83% (1651/1988)Updating files:  83% (1664/1988)Updating files:  84% (1670/1988)Updating files:  85% (1690/1988)Updating files:  86% (1710/1988)Updating files:  87% (1730/1988)Updating files:  88% (1750/1988)Updating files:  89% (1770/1988)Updating files:  90% (1790/1988)Updating files:  91% (1810/1988)Updating files:  92% (1829/1988)Updating files:  93% (1849/1988)Updating files:  94% (1869/1988)Updating files:  95% (1889/1988)Updating files:  96% (1909/1988)Updating files:  97% (1929/1988)Updating files:  97% (1944/1988)Updating files:  98% (1949/1988)Updating files:  99% (1969/1988)Updating files: 100% (1988/1988)Updating files: 100% (1988/1988), done.
+Updating files:  13% (275/1990)Updating files:  14% (279/1990)Updating files:  15% (299/1990)Updating files:  16% (319/1990)Updating files:  17% (339/1990)Updating files:  18% (359/1990)Updating files:  19% (379/1990)Updating files:  20% (398/1990)Updating files:  21% (418/1990)Updating files:  22% (438/1990)Updating files:  23% (458/1990)Updating files:  24% (478/1990)Updating files:  25% (498/1990)Updating files:  26% (518/1990)Updating files:  27% (538/1990)Updating files:  27% (557/1990)Updating files:  28% (558/1990)Updating files:  29% (578/1990)Updating files:  30% (597/1990)Updating files:  31% (617/1990)Updating files:  32% (637/1990)Updating files:  33% (657/1990)Updating files:  34% (677/1990)Updating files:  35% (697/1990)Updating files:  36% (717/1990)Updating files:  37% (737/1990)Updating files:  38% (757/1990)Updating files:  39% (777/1990)Updating files:  40% (796/1990)Updating files:  41% (816/1990)Updating files:  42% (836/1990)Updating files:  43% (856/1990)Updating files:  44% (876/1990)Updating files:  45% (896/1990)Updating files:  46% (916/1990)Updating files:  47% (936/1990)Updating files:  48% (956/1990)Updating files:  49% (976/1990)Updating files:  50% (995/1990)Updating files:  51% (1015/1990)Updating files:  52% (1035/1990)Updating files:  53% (1055/1990)Updating files:  54% (1075/1990)Updating files:  54% (1091/1990)Updating files:  55% (1095/1990)Updating files:  56% (1115/1990)Updating files:  57% (1135/1990)Updating files:  58% (1155/1990)Updating files:  59% (1175/1990)Updating files:  60% (1194/1990)Updating files:  61% (1214/1990)Updating files:  62% (1234/1990)Updating files:  63% (1254/1990)Updating files:  64% (1274/1990)Updating files:  65% (1294/1990)Updating files:  66% (1314/1990)Updating files:  67% (1334/1990)Updating files:  68% (1354/1990)Updating files:  69% (1374/1990)Updating files:  70% (1393/1990)Updating files:  70% (1397/1990)Updating files:  71% (1413/1990)Updating files:  72% (1433/1990)Updating files:  73% (1453/1990)Updating files:  74% (1473/1990)Updating files:  75% (1493/1990)Updating files:  76% (1513/1990)Updating files:  77% (1533/1990)Updating files:  78% (1553/1990)Updating files:  79% (1573/1990)Updating files:  80% (1592/1990)Updating files:  81% (1612/1990)Updating files:  82% (1632/1990)Updating files:  83% (1652/1990)Updating files:  84% (1672/1990)Updating files:  85% (1692/1990)Updating files:  85% (1698/1990)Updating files:  86% (1712/1990)Updating files:  87% (1732/1990)Updating files:  88% (1752/1990)Updating files:  89% (1772/1990)Updating files:  90% (1791/1990)Updating files:  91% (1811/1990)Updating files:  92% (1831/1990)Updating files:  93% (1851/1990)Updating files:  94% (1871/1990)Updating files:  95% (1891/1990)Updating files:  96% (1911/1990)Updating files:  97% (1931/1990)Updating files:  98% (1951/1990)Updating files:  99% (1971/1990)Updating files:  99% (1988/1990)Updating files: 100% (1990/1990)Updating files: 100% (1990/1990), done.
 [pod] HEARTBEAT PUSH OK — delivery channel works
 Requirement already satisfied: transformers>=4.52 in /usr/local/lib/python3.12/dist-packages (5.12.1)
 Requirement already satisfied: peft>=0.13 in /usr/local/lib/python3.12/dist-packages (0.19.1)
@@ -173,242 +173,242 @@ Requirement already satisfied: six>=1.5 in /usr/lib/python3/dist-packages (from 
 WROTE training/local_sophia_v3: 880 gate-passed rows, 233 preference pairs, 90 decontam drops.
 847 training/local_sophia_v3/mlx/train.jsonl
 [pod] SMOKE
-[pilot 11:50:58] SMOKE: train 2 steps then eval 2 cases x1 run
+[pilot 12:41:49] SMOKE: train 2 steps then eval 2 cases x1 run
 [transformers] `torch_dtype` is deprecated! Use `dtype` instead!
-Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   0%|          | 1/883 [00:00<01:29,  9.85it/s]Loading weights:   4%|▍         | 39/883 [00:00<00:03, 225.11it/s]Loading weights:   8%|▊         | 69/883 [00:00<00:03, 256.39it/s]Loading weights:  12%|█▏        | 107/883 [00:00<00:02, 294.56it/s]Loading weights:  16%|█▌        | 137/883 [00:00<00:02, 293.94it/s]Loading weights:  20%|█▉        | 173/883 [00:00<00:02, 310.10it/s]Loading weights:  24%|██▍       | 211/883 [00:00<00:02, 328.09it/s]Loading weights:  28%|██▊       | 246/883 [00:00<00:01, 334.15it/s]Loading weights:  32%|███▏      | 280/883 [00:00<00:01, 326.38it/s]Loading weights:  36%|███▌      | 316/883 [00:01<00:01, 328.90it/s]Loading weights:  40%|████      | 354/883 [00:01<00:01, 337.03it/s]Loading weights:  44%|████▍     | 388/883 [00:01<00:01, 337.58it/s]Loading weights:  48%|████▊     | 422/883 [00:01<00:01, 328.20it/s]Loading weights:  64%|██████▍   | 567/883 [00:01<00:00, 650.16it/s]Loading weights:  91%|█████████▏| 806/883 [00:01<00:00, 1151.09it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 553.25it/s] 
-[pilot 11:51:07] loaded base via AutoModelForImageTextToText
-[pilot 11:51:09] trainable params: 29,802,496
-[pilot 11:51:09] training rows: 8
+Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   0%|          | 1/883 [00:00<01:29,  9.86it/s]Loading weights:   5%|▍         | 40/883 [00:00<00:03, 232.06it/s]Loading weights:   8%|▊         | 70/883 [00:00<00:03, 252.93it/s]Loading weights:  12%|█▏        | 108/883 [00:00<00:02, 293.45it/s]Loading weights:  17%|█▋        | 146/883 [00:00<00:02, 317.80it/s]Loading weights:  20%|██        | 178/883 [00:00<00:02, 318.37it/s]Loading weights:  24%|██▍       | 212/883 [00:00<00:02, 320.40it/s]Loading weights:  28%|██▊       | 249/883 [00:00<00:01, 330.52it/s]Loading weights:  32%|███▏      | 283/883 [00:00<00:01, 331.38it/s]Loading weights:  36%|███▌      | 317/883 [00:01<00:01, 317.13it/s]Loading weights:  40%|████      | 355/883 [00:01<00:01, 329.23it/s]Loading weights:  45%|████▍     | 393/883 [00:01<00:01, 340.10it/s]Loading weights:  48%|████▊     | 428/883 [00:01<00:01, 340.45it/s]Loading weights:  64%|██████▍   | 566/883 [00:01<00:00, 636.20it/s]Loading weights:  90%|████████▉ | 791/883 [00:01<00:00, 1101.47it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 547.38it/s] 
+[pilot 12:41:58] loaded base via AutoModelForImageTextToText
+[pilot 12:42:01] trainable params: 29,802,496
+[pilot 12:42:01] training rows: 8
 [transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
-[pilot 11:51:10] step 1/2 loss=4.0761
-[pilot 11:51:11] step 2/2 loss=3.4083
-[pilot 11:51:11] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
-[pilot 11:51:11] eval cases: 2 x 1 runs x (base, adapter)
-Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   0%|          | 1/883 [00:00<01:28,  9.93it/s]Loading weights:   4%|▍         | 39/883 [00:00<00:03, 226.24it/s]Loading weights:   8%|▊         | 70/883 [00:00<00:03, 255.89it/s]Loading weights:  12%|█▏        | 108/883 [00:00<00:02, 296.07it/s]Loading weights:  17%|█▋        | 146/883 [00:00<00:02, 320.85it/s]Loading weights:  20%|██        | 180/883 [00:00<00:02, 326.11it/s]Loading weights:  24%|██▍       | 213/883 [00:00<00:02, 317.01it/s]Loading weights:  28%|██▊       | 251/883 [00:00<00:01, 328.21it/s]Loading weights:  32%|███▏      | 286/883 [00:00<00:01, 334.46it/s]Loading weights:  36%|███▌      | 320/883 [00:01<00:01, 316.30it/s]Loading weights:  40%|████      | 354/883 [00:01<00:01, 322.10it/s]Loading weights:  44%|████▍     | 387/883 [00:01<00:01, 321.77it/s]Loading weights:  48%|████▊     | 420/883 [00:01<00:01, 315.99it/s]Loading weights:  59%|█████▉    | 523/883 [00:01<00:00, 521.90it/s]Loading weights:  84%|████████▍ | 745/883 [00:01<00:00, 1013.96it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 540.24it/s] 
-[pilot 11:51:16] loaded base via AutoModelForImageTextToText
-[pilot 11:51:28]   gen 2/2
-[pilot 11:51:40]   gen 2/2
-[pilot 11:51:41]   run 1/1 done
-[pilot 11:51:41] loading adapter onto base ...
-[pilot 11:52:04]   gen 2/2
-[pilot 11:52:25]   gen 2/2
-[pilot 11:52:26]   run 1/1 done
-[pilot 11:52:26] wrote eval report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-smoke.json
-[pilot 11:52:26] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
-[pilot 11:52:26]   tradition_merge_rate               Δ None ci=[None, None]  
-[pilot 11:52:26]   qualification_rate_on_contested    Δ 0.0 ci=[0.0, 0.0]  
-[pilot 11:52:26]   false_attribution_rate             Δ None ci=[None, None]  
-[pilot 11:52:26]   citation_fidelity                  Δ None ci=[None, None]  
-[pilot 11:52:26]   adapter protected_history_regression       None
-[pilot 11:52:26]   adapter protected_religion_regression      None
-[pilot 11:52:26]   adapter over_abstention_rate               0.0
-[pilot 11:52:26] PRIMARY habit-transfer signal present: False
-[pilot 11:52:26] SMOKE OK
+[pilot 12:42:02] step 1/2 loss=4.0761
+[pilot 12:42:02] step 2/2 loss=3.4075
+[pilot 12:42:03] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 12:42:03] eval cases: 2 x 1 runs x (base, adapter)
+Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   0%|          | 1/883 [00:00<01:28,  9.92it/s]Loading weights:   5%|▍         | 43/883 [00:00<00:03, 246.46it/s]Loading weights:   9%|▉         | 83/883 [00:00<00:02, 312.23it/s]Loading weights:  15%|█▌        | 133/883 [00:00<00:01, 381.21it/s]Loading weights:  20%|█▉        | 174/883 [00:00<00:01, 383.03it/s]Loading weights:  25%|██▌       | 225/883 [00:00<00:01, 423.90it/s]Loading weights:  30%|███       | 268/883 [00:00<00:01, 423.40it/s]Loading weights:  36%|███▌      | 315/883 [00:00<00:01, 426.06it/s]Loading weights:  41%|████      | 358/883 [00:00<00:01, 423.49it/s]Loading weights:  46%|████▌     | 406/883 [00:01<00:01, 440.10it/s]Loading weights:  54%|█████▎    | 473/883 [00:01<00:00, 508.79it/s]Loading weights:  88%|████████▊ | 781/883 [00:01<00:00, 1278.92it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 700.17it/s] 
+[pilot 12:42:07] loaded base via AutoModelForImageTextToText
+[pilot 12:42:19]   gen 2/2
+[pilot 12:42:31]   gen 2/2
+[pilot 12:42:32]   run 1/1 done
+[pilot 12:42:32] loading adapter onto base ...
+[pilot 12:42:55]   gen 2/2
+[pilot 12:43:16]   gen 2/2
+[pilot 12:43:16]   run 1/1 done
+[pilot 12:43:16] wrote eval report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-smoke.json
+[pilot 12:43:16] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
+[pilot 12:43:16]   tradition_merge_rate               Δ None ci=[None, None]  
+[pilot 12:43:16]   qualification_rate_on_contested    Δ 0.0 ci=[0.0, 0.0]  
+[pilot 12:43:16]   false_attribution_rate             Δ None ci=[None, None]  
+[pilot 12:43:16]   citation_fidelity                  Δ None ci=[None, None]  
+[pilot 12:43:16]   adapter protected_history_regression       None
+[pilot 12:43:16]   adapter protected_religion_regression      None
+[pilot 12:43:16]   adapter over_abstention_rate               0.0
+[pilot 12:43:16] PRIMARY habit-transfer signal present: False
+[pilot 12:43:16] SMOKE OK
 [pod] FULL train + eval (--runs 3) seed=2
 [transformers] `torch_dtype` is deprecated! Use `dtype` instead!
-Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   0%|          | 3/883 [00:00<00:33, 25.91it/s]Loading weights:   5%|▍         | 43/883 [00:00<00:04, 208.46it/s]Loading weights:   9%|▉         | 82/883 [00:00<00:02, 271.22it/s]Loading weights:  14%|█▎        | 120/883 [00:00<00:02, 298.69it/s]Loading weights:  17%|█▋        | 150/883 [00:00<00:02, 296.21it/s]Loading weights:  21%|██        | 186/883 [00:00<00:02, 310.28it/s]Loading weights:  25%|██▌       | 223/883 [00:00<00:02, 323.56it/s]Loading weights:  29%|██▉       | 257/883 [00:00<00:01, 325.62it/s]Loading weights:  33%|███▎      | 290/883 [00:00<00:01, 320.16it/s]Loading weights:  37%|███▋      | 326/883 [00:01<00:01, 331.83it/s]Loading weights:  41%|████      | 360/883 [00:01<00:01, 323.48it/s]Loading weights:  45%|████▍     | 395/883 [00:01<00:01, 325.91it/s]Loading weights:  49%|████▉     | 433/883 [00:01<00:01, 340.44it/s]Loading weights:  72%|███████▏  | 633/883 [00:01<00:00, 823.98it/s]Loading weights:  99%|█████████▊| 871/883 [00:01<00:00, 1281.23it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 549.45it/s] 
-[pilot 11:52:36] loaded base via AutoModelForImageTextToText
-[pilot 11:52:37] trainable params: 29,802,496
-[pilot 11:52:37] training rows: 847
+Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   0%|          | 3/883 [00:00<00:30, 28.48it/s]Loading weights:   5%|▍         | 42/883 [00:00<00:03, 222.80it/s]Loading weights:   8%|▊         | 70/883 [00:00<00:03, 244.93it/s]Loading weights:  12%|█▏        | 107/883 [00:00<00:02, 291.96it/s]Loading weights:  16%|█▌        | 137/883 [00:00<00:02, 291.73it/s]Loading weights:  20%|█▉        | 173/883 [00:00<00:02, 304.86it/s]Loading weights:  24%|██▍       | 210/883 [00:00<00:02, 325.30it/s]Loading weights:  28%|██▊       | 243/883 [00:00<00:02, 315.84it/s]Loading weights:  31%|███▏      | 277/883 [00:00<00:01, 317.00it/s]Loading weights:  35%|███▌      | 313/883 [00:01<00:01, 329.08it/s]Loading weights:  39%|███▉      | 346/883 [00:01<00:01, 317.42it/s]Loading weights:  43%|████▎     | 381/883 [00:01<00:01, 319.83it/s]Loading weights:  47%|████▋     | 419/883 [00:01<00:01, 329.70it/s]Loading weights:  57%|█████▋    | 505/883 [00:01<00:00, 481.21it/s]Loading weights:  82%|████████▏ | 720/883 [00:01<00:00, 966.06it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 533.67it/s]
+[pilot 12:43:26] loaded base via AutoModelForImageTextToText
+[pilot 12:43:29] trainable params: 29,802,496
+[pilot 12:43:29] training rows: 847
 [transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
-[pilot 11:52:46] step 25/847 loss=2.8508
-[pilot 11:52:54] step 50/847 loss=0.6009
-[pilot 11:53:02] step 75/847 loss=1.2409
-[pilot 11:53:10] step 100/847 loss=0.6249
-[pilot 11:53:17] step 125/847 loss=0.6872
-[pilot 11:53:25] step 150/847 loss=0.1896
-[pilot 11:53:33] step 175/847 loss=0.2150
-[pilot 11:53:41] step 200/847 loss=0.2076
-[pilot 11:53:48] step 225/847 loss=1.7956
-[pilot 11:53:56] step 250/847 loss=0.3682
-[pilot 11:54:04] step 275/847 loss=0.1978
-[pilot 11:54:11] step 300/847 loss=0.1058
-[pilot 11:54:19] step 325/847 loss=1.8041
-[pilot 11:54:27] step 350/847 loss=0.0926
-[pilot 11:54:34] step 375/847 loss=0.0874
-[pilot 11:54:42] step 400/847 loss=0.0343
-[pilot 11:54:49] step 425/847 loss=0.0770
-[pilot 11:54:57] step 450/847 loss=0.0366
-[pilot 11:55:04] step 475/847 loss=2.0124
-[pilot 11:55:12] step 500/847 loss=1.2034
-[pilot 11:55:19] step 525/847 loss=1.8985
-[pilot 11:55:27] step 550/847 loss=0.7039
-[pilot 11:55:35] step 575/847 loss=0.0267
-[pilot 11:55:42] step 600/847 loss=0.0008
-[pilot 11:55:50] step 625/847 loss=0.7225
-[pilot 11:55:57] step 650/847 loss=0.0089
-[pilot 11:56:05] step 675/847 loss=0.0004
-[pilot 11:56:12] step 700/847 loss=0.0282
-[pilot 11:56:20] step 725/847 loss=1.2601
-[pilot 11:56:27] step 750/847 loss=0.8665
-[pilot 11:56:35] step 775/847 loss=2.0405
-[pilot 11:56:42] step 800/847 loss=0.7503
-[pilot 11:56:50] step 825/847 loss=0.0083
-[pilot 11:56:57] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
-[pilot 11:56:57] eval cases: 354 x 3 runs x (base, adapter)
-Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   0%|          | 1/883 [00:00<01:29,  9.84it/s]Loading weights:   5%|▍         | 40/883 [00:00<00:03, 231.93it/s]Loading weights:   8%|▊         | 70/883 [00:00<00:03, 262.83it/s]Loading weights:  12%|█▏        | 108/883 [00:00<00:02, 302.37it/s]Loading weights:  17%|█▋        | 146/883 [00:00<00:02, 319.17it/s]Loading weights:  21%|██        | 186/883 [00:00<00:02, 342.00it/s]Loading weights:  25%|██▌       | 224/883 [00:00<00:01, 353.85it/s]Loading weights:  30%|██▉       | 263/883 [00:00<00:01, 355.93it/s]Loading weights:  34%|███▍      | 299/883 [00:00<00:01, 353.67it/s]Loading weights:  38%|███▊      | 335/883 [00:01<00:01, 346.84it/s]Loading weights:  42%|████▏     | 370/883 [00:01<00:01, 342.76it/s]Loading weights:  46%|████▌     | 408/883 [00:01<00:01, 346.40it/s]Loading weights:  56%|█████▌    | 491/883 [00:01<00:00, 486.87it/s]Loading weights:  82%|████████▏ | 728/883 [00:01<00:00, 1038.40it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 583.54it/s] 
-[pilot 11:57:02] loaded base via AutoModelForImageTextToText
-[pilot 11:57:15]   gen 32/354
-[pilot 11:57:27]   gen 64/354
-[pilot 11:57:40]   gen 96/354
-[pilot 11:57:53]   gen 128/354
-[pilot 11:58:05]   gen 160/354
-[pilot 11:58:18]   gen 192/354
-[pilot 11:58:31]   gen 224/354
-[pilot 11:58:43]   gen 256/354
-[pilot 11:58:56]   gen 288/354
-[pilot 11:59:08]   gen 320/354
-[pilot 11:59:21]   gen 352/354
-[pilot 11:59:33]   gen 354/354
-[pilot 11:59:47]   gen 32/354
-[pilot 12:00:01]   gen 64/354
-[pilot 12:00:15]   gen 96/354
-[pilot 12:00:28]   gen 128/354
-[pilot 12:00:42]   gen 160/354
-[pilot 12:00:56]   gen 192/354
-[pilot 12:01:10]   gen 224/354
-[pilot 12:01:23]   gen 256/354
-[pilot 12:01:37]   gen 288/354
-[pilot 12:01:51]   gen 320/354
-[pilot 12:02:05]   gen 352/354
-[pilot 12:02:17]   gen 354/354
-[pilot 12:03:58]   run 1/3 done
-[pilot 12:04:11]   gen 32/354
-[pilot 12:04:23]   gen 64/354
-[pilot 12:04:36]   gen 96/354
-[pilot 12:04:49]   gen 128/354
-[pilot 12:05:01]   gen 160/354
-[pilot 12:05:14]   gen 192/354
-[pilot 12:05:26]   gen 224/354
-[pilot 12:05:39]   gen 256/354
-[pilot 12:05:52]   gen 288/354
-[pilot 12:06:04]   gen 320/354
-[pilot 12:06:17]   gen 352/354
-[pilot 12:06:29]   gen 354/354
-[pilot 12:06:43]   gen 32/354
-[pilot 12:06:57]   gen 64/354
-[pilot 12:07:11]   gen 96/354
-[pilot 12:07:24]   gen 128/354
-[pilot 12:07:38]   gen 160/354
-[pilot 12:07:52]   gen 192/354
-[pilot 12:08:06]   gen 224/354
-[pilot 12:08:19]   gen 256/354
-[pilot 12:08:33]   gen 288/354
-[pilot 12:08:47]   gen 320/354
-[pilot 12:09:01]   gen 352/354
-[pilot 12:09:13]   gen 354/354
-[pilot 12:10:56]   run 2/3 done
-[pilot 12:11:09]   gen 32/354
-[pilot 12:11:22]   gen 64/354
-[pilot 12:11:34]   gen 96/354
-[pilot 12:11:47]   gen 128/354
-[pilot 12:12:00]   gen 160/354
-[pilot 12:12:12]   gen 192/354
-[pilot 12:12:25]   gen 224/354
-[pilot 12:12:37]   gen 256/354
-[pilot 12:12:50]   gen 288/354
-[pilot 12:13:03]   gen 320/354
-[pilot 12:13:15]   gen 352/354
-[pilot 12:13:27]   gen 354/354
-[pilot 12:13:41]   gen 32/354
-[pilot 12:13:55]   gen 64/354
-[pilot 12:14:09]   gen 96/354
-[pilot 12:14:23]   gen 128/354
-[pilot 12:14:37]   gen 160/354
-[pilot 12:14:50]   gen 192/354
-[pilot 12:15:04]   gen 224/354
-[pilot 12:15:18]   gen 256/354
-[pilot 12:15:32]   gen 288/354
-[pilot 12:15:46]   gen 320/354
-[pilot 12:15:59]   gen 352/354
-[pilot 12:16:12]   gen 354/354
-[pilot 12:17:53]   run 3/3 done
-[pilot 12:17:53] loading adapter onto base ...
-[pilot 12:18:17]   gen 32/354
-[pilot 12:18:39]   gen 64/354
-[pilot 12:19:01]   gen 96/354
-[pilot 12:19:16]   gen 128/354
-[pilot 12:19:27]   gen 160/354
-[pilot 12:19:50]   gen 192/354
-[pilot 12:20:12]   gen 224/354
-[pilot 12:20:31]   gen 256/354
-[pilot 12:20:53]   gen 288/354
-[pilot 12:21:16]   gen 320/354
-[pilot 12:21:38]   gen 352/354
-[pilot 12:21:59]   gen 354/354
-[pilot 12:22:09]   gen 32/354
-[pilot 12:22:19]   gen 64/354
-[pilot 12:22:28]   gen 96/354
-[pilot 12:22:35]   gen 128/354
-[pilot 12:22:42]   gen 160/354
-[pilot 12:22:52]   gen 192/354
-[pilot 12:23:05]   gen 224/354
-[pilot 12:23:20]   gen 256/354
-[pilot 12:23:29]   gen 288/354
-[pilot 12:23:37]   gen 320/354
-[pilot 12:23:47]   gen 352/354
-[pilot 12:23:53]   gen 354/354
-[pilot 12:25:31]   run 1/3 done
-[pilot 12:25:53]   gen 32/354
-[pilot 12:26:16]   gen 64/354
-[pilot 12:26:38]   gen 96/354
-[pilot 12:27:00]   gen 128/354
-[pilot 12:27:09]   gen 160/354
-[pilot 12:27:31]   gen 192/354
-[pilot 12:27:53]   gen 224/354
-[pilot 12:28:15]   gen 256/354
-[pilot 12:28:37]   gen 288/354
-[pilot 12:29:00]   gen 320/354
-[pilot 12:29:22]   gen 352/354
-[pilot 12:29:43]   gen 354/354
-[pilot 12:29:53]   gen 32/354
-[pilot 12:30:03]   gen 64/354
-[pilot 12:30:12]   gen 96/354
-[pilot 12:30:19]   gen 128/354
-[pilot 12:30:26]   gen 160/354
-[pilot 12:30:36]   gen 192/354
-[pilot 12:30:58]   gen 224/354
-[pilot 12:31:11]   gen 256/354
-[pilot 12:31:20]   gen 288/354
-[pilot 12:31:28]   gen 320/354
-[pilot 12:31:36]   gen 352/354
-[pilot 12:31:43]   gen 354/354
-[pilot 12:33:22]   run 2/3 done
-[pilot 12:33:44]   gen 32/354
-[pilot 12:34:06]   gen 64/354
-[pilot 12:34:28]   gen 96/354
-[pilot 12:34:43]   gen 128/354
-[pilot 12:34:52]   gen 160/354
-[pilot 12:35:14]   gen 192/354
-[pilot 12:35:36]   gen 224/354
-[pilot 12:35:58]   gen 256/354
-[pilot 12:36:20]   gen 288/354
-[pilot 12:36:42]   gen 320/354
-[pilot 12:37:05]   gen 352/354
-[pilot 12:37:17]   gen 354/354
-[pilot 12:37:27]   gen 32/354
-[pilot 12:37:37]   gen 64/354
-[pilot 12:37:46]   gen 96/354
-[pilot 12:37:53]   gen 128/354
-[pilot 12:38:00]   gen 160/354
-[pilot 12:38:09]   gen 192/354
-[pilot 12:38:28]   gen 224/354
-[pilot 12:38:42]   gen 256/354
-[pilot 12:38:51]   gen 288/354
-[pilot 12:38:59]   gen 320/354
-[pilot 12:39:09]   gen 352/354
-[pilot 12:39:15]   gen 354/354
-[pilot 12:40:56]   run 3/3 done
-[pilot 12:40:56] wrote 354 base/adapter answer pairs -> agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed2.json
-[pilot 12:40:56] wrote eval report -> agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed2.json
-[pilot 12:40:56] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
-[pilot 12:40:56]   tradition_merge_rate               Δ 0.1191 ci=[0.0714, 0.1429] *
-[pilot 12:40:56]   qualification_rate_on_contested    Δ 0.2295 ci=[0.1967, 0.2459] *
-[pilot 12:40:56]   false_attribution_rate             Δ 0.0097 ci=[0.0058, 0.0117] *
-[pilot 12:40:56]   citation_fidelity                  Δ 0.1111 ci=[0.0, 0.25]  
-[pilot 12:40:56]   adapter protected_history_regression       0.0093
-[pilot 12:40:56]   adapter protected_religion_regression      0.0
-[pilot 12:40:56]   adapter over_abstention_rate               0.0177
-[pilot 12:40:56] PRIMARY habit-transfer signal present: True
+[pilot 12:43:37] step 25/847 loss=2.8553
+[pilot 12:43:45] step 50/847 loss=0.6042
+[pilot 12:43:53] step 75/847 loss=1.1908
+[pilot 12:44:01] step 100/847 loss=0.5532
+[pilot 12:44:08] step 125/847 loss=0.6816
+[pilot 12:44:16] step 150/847 loss=0.1447
+[pilot 12:44:24] step 175/847 loss=0.1980
+[pilot 12:44:31] step 200/847 loss=0.2360
+[pilot 12:44:39] step 225/847 loss=1.7684
+[pilot 12:44:47] step 250/847 loss=0.3712
+[pilot 12:44:54] step 275/847 loss=0.1950
+[pilot 12:45:02] step 300/847 loss=0.1111
+[pilot 12:45:09] step 325/847 loss=1.8043
+[pilot 12:45:17] step 350/847 loss=0.1098
+[pilot 12:45:25] step 375/847 loss=0.0995
+[pilot 12:45:32] step 400/847 loss=0.0236
+[pilot 12:45:40] step 425/847 loss=0.1387
+[pilot 12:45:47] step 450/847 loss=0.0789
+[pilot 12:45:55] step 475/847 loss=2.0048
+[pilot 12:46:02] step 500/847 loss=1.2033
+[pilot 12:46:10] step 525/847 loss=1.8739
+[pilot 12:46:17] step 550/847 loss=0.7106
+[pilot 12:46:25] step 575/847 loss=0.0101
+[pilot 12:46:33] step 600/847 loss=0.0004
+[pilot 12:46:40] step 625/847 loss=0.7227
+[pilot 12:46:48] step 650/847 loss=0.0040
+[pilot 12:46:55] step 675/847 loss=0.0005
+[pilot 12:47:03] step 700/847 loss=0.0072
+[pilot 12:47:10] step 725/847 loss=1.2490
+[pilot 12:47:18] step 750/847 loss=0.8436
+[pilot 12:47:25] step 775/847 loss=1.9547
+[pilot 12:47:33] step 800/847 loss=0.7323
+[pilot 12:47:40] step 825/847 loss=0.0082
+[pilot 12:47:48] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 12:47:48] eval cases: 354 x 3 runs x (base, adapter)
+Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   0%|          | 3/883 [00:00<00:30, 28.97it/s]Loading weights:   5%|▍         | 42/883 [00:00<00:03, 232.85it/s]Loading weights:   8%|▊         | 70/883 [00:00<00:03, 253.02it/s]Loading weights:  12%|█▏        | 107/883 [00:00<00:02, 295.24it/s]Loading weights:  16%|█▌        | 137/883 [00:00<00:02, 291.66it/s]Loading weights:  19%|█▉        | 172/883 [00:00<00:02, 308.98it/s]Loading weights:  23%|██▎       | 203/883 [00:00<00:02, 305.04it/s]Loading weights:  27%|██▋       | 238/883 [00:00<00:02, 309.64it/s]Loading weights:  31%|███       | 273/883 [00:00<00:01, 320.83it/s]Loading weights:  35%|███▍      | 306/883 [00:01<00:01, 304.68it/s]Loading weights:  39%|███▊      | 341/883 [00:01<00:01, 316.14it/s]Loading weights:  42%|████▏     | 373/883 [00:01<00:01, 312.73it/s]Loading weights:  46%|████▌     | 407/883 [00:01<00:01, 311.63it/s]Loading weights:  50%|█████     | 443/883 [00:01<00:01, 325.05it/s]Loading weights:  74%|███████▎  | 651/883 [00:01<00:00, 834.11it/s]Loading weights:  98%|█████████▊| 863/883 [00:01<00:00, 1209.60it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 525.40it/s] 
+[pilot 12:47:53] loaded base via AutoModelForImageTextToText
+[pilot 12:48:05]   gen 32/354
+[pilot 12:48:18]   gen 64/354
+[pilot 12:48:30]   gen 96/354
+[pilot 12:48:43]   gen 128/354
+[pilot 12:48:55]   gen 160/354
+[pilot 12:49:07]   gen 192/354
+[pilot 12:49:20]   gen 224/354
+[pilot 12:49:32]   gen 256/354
+[pilot 12:49:45]   gen 288/354
+[pilot 12:49:57]   gen 320/354
+[pilot 12:50:09]   gen 352/354
+[pilot 12:50:21]   gen 354/354
+[pilot 12:50:35]   gen 32/354
+[pilot 12:50:49]   gen 64/354
+[pilot 12:51:03]   gen 96/354
+[pilot 12:51:17]   gen 128/354
+[pilot 12:51:30]   gen 160/354
+[pilot 12:51:44]   gen 192/354
+[pilot 12:51:58]   gen 224/354
+[pilot 12:52:12]   gen 256/354
+[pilot 12:52:25]   gen 288/354
+[pilot 12:52:39]   gen 320/354
+[pilot 12:52:53]   gen 352/354
+[pilot 12:53:05]   gen 354/354
+[pilot 12:54:48]   run 1/3 done
+[pilot 12:55:01]   gen 32/354
+[pilot 12:55:13]   gen 64/354
+[pilot 12:55:26]   gen 96/354
+[pilot 12:55:38]   gen 128/354
+[pilot 12:55:51]   gen 160/354
+[pilot 12:56:03]   gen 192/354
+[pilot 12:56:16]   gen 224/354
+[pilot 12:56:28]   gen 256/354
+[pilot 12:56:41]   gen 288/354
+[pilot 12:56:53]   gen 320/354
+[pilot 12:57:05]   gen 352/354
+[pilot 12:57:17]   gen 354/354
+[pilot 12:57:31]   gen 32/354
+[pilot 12:57:45]   gen 64/354
+[pilot 12:57:59]   gen 96/354
+[pilot 12:58:13]   gen 128/354
+[pilot 12:58:27]   gen 160/354
+[pilot 12:58:40]   gen 192/354
+[pilot 12:58:54]   gen 224/354
+[pilot 12:59:08]   gen 256/354
+[pilot 12:59:22]   gen 288/354
+[pilot 12:59:35]   gen 320/354
+[pilot 12:59:49]   gen 352/354
+[pilot 13:00:01]   gen 354/354
+[pilot 13:01:45]   run 2/3 done
+[pilot 13:01:57]   gen 32/354
+[pilot 13:02:10]   gen 64/354
+[pilot 13:02:22]   gen 96/354
+[pilot 13:02:35]   gen 128/354
+[pilot 13:02:48]   gen 160/354
+[pilot 13:03:00]   gen 192/354
+[pilot 13:03:13]   gen 224/354
+[pilot 13:03:25]   gen 256/354
+[pilot 13:03:38]   gen 288/354
+[pilot 13:03:50]   gen 320/354
+[pilot 13:04:03]   gen 352/354
+[pilot 13:04:15]   gen 354/354
+[pilot 13:04:29]   gen 32/354
+[pilot 13:04:43]   gen 64/354
+[pilot 13:04:57]   gen 96/354
+[pilot 13:05:11]   gen 128/354
+[pilot 13:05:24]   gen 160/354
+[pilot 13:05:38]   gen 192/354
+[pilot 13:05:52]   gen 224/354
+[pilot 13:06:06]   gen 256/354
+[pilot 13:06:20]   gen 288/354
+[pilot 13:06:33]   gen 320/354
+[pilot 13:06:47]   gen 352/354
+[pilot 13:06:59]   gen 354/354
+[pilot 13:08:43]   run 3/3 done
+[pilot 13:08:43] loading adapter onto base ...
+[pilot 13:09:08]   gen 32/354
+[pilot 13:09:30]   gen 64/354
+[pilot 13:09:49]   gen 96/354
+[pilot 13:10:12]   gen 128/354
+[pilot 13:10:20]   gen 160/354
+[pilot 13:10:42]   gen 192/354
+[pilot 13:11:05]   gen 224/354
+[pilot 13:11:27]   gen 256/354
+[pilot 13:11:49]   gen 288/354
+[pilot 13:12:11]   gen 320/354
+[pilot 13:12:33]   gen 352/354
+[pilot 13:12:49]   gen 354/354
+[pilot 13:12:59]   gen 32/354
+[pilot 13:13:09]   gen 64/354
+[pilot 13:13:19]   gen 96/354
+[pilot 13:13:26]   gen 128/354
+[pilot 13:13:33]   gen 160/354
+[pilot 13:13:43]   gen 192/354
+[pilot 13:13:56]   gen 224/354
+[pilot 13:14:06]   gen 256/354
+[pilot 13:14:29]   gen 288/354
+[pilot 13:14:37]   gen 320/354
+[pilot 13:14:46]   gen 352/354
+[pilot 13:14:51]   gen 354/354
+[pilot 13:16:33]   run 1/3 done
+[pilot 13:16:55]   gen 32/354
+[pilot 13:17:18]   gen 64/354
+[pilot 13:17:40]   gen 96/354
+[pilot 13:17:51]   gen 128/354
+[pilot 13:18:13]   gen 160/354
+[pilot 13:18:35]   gen 192/354
+[pilot 13:18:57]   gen 224/354
+[pilot 13:19:19]   gen 256/354
+[pilot 13:19:41]   gen 288/354
+[pilot 13:20:03]   gen 320/354
+[pilot 13:20:25]   gen 352/354
+[pilot 13:20:39]   gen 354/354
+[pilot 13:20:49]   gen 32/354
+[pilot 13:20:59]   gen 64/354
+[pilot 13:21:09]   gen 96/354
+[pilot 13:21:16]   gen 128/354
+[pilot 13:21:23]   gen 160/354
+[pilot 13:21:32]   gen 192/354
+[pilot 13:21:42]   gen 224/354
+[pilot 13:21:51]   gen 256/354
+[pilot 13:22:03]   gen 288/354
+[pilot 13:22:11]   gen 320/354
+[pilot 13:22:19]   gen 352/354
+[pilot 13:22:24]   gen 354/354
+[pilot 13:24:05]   run 2/3 done
+[pilot 13:24:27]   gen 32/354
+[pilot 13:24:49]   gen 64/354
+[pilot 13:25:09]   gen 96/354
+[pilot 13:25:21]   gen 128/354
+[pilot 13:25:31]   gen 160/354
+[pilot 13:25:53]   gen 192/354
+[pilot 13:26:08]   gen 224/354
+[pilot 13:26:30]   gen 256/354
+[pilot 13:26:52]   gen 288/354
+[pilot 13:27:14]   gen 320/354
+[pilot 13:27:36]   gen 352/354
+[pilot 13:27:53]   gen 354/354
+[pilot 13:28:03]   gen 32/354
+[pilot 13:28:13]   gen 64/354
+[pilot 13:28:24]   gen 96/354
+[pilot 13:28:31]   gen 128/354
+[pilot 13:28:38]   gen 160/354
+[pilot 13:28:48]   gen 192/354
+[pilot 13:28:58]   gen 224/354
+[pilot 13:29:08]   gen 256/354
+[pilot 13:29:16]   gen 288/354
+[pilot 13:29:25]   gen 320/354
+[pilot 13:29:34]   gen 352/354
+[pilot 13:29:39]   gen 354/354
+[pilot 13:31:20]   run 3/3 done
+[pilot 13:31:20] wrote 354 base/adapter answer pairs -> agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed2.json
+[pilot 13:31:21] wrote eval report -> agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed2.json
+[pilot 13:31:21] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
+[pilot 13:31:21]   tradition_merge_rate               Δ 0.125 ci=[0.0893, 0.1429] *
+[pilot 13:31:21]   qualification_rate_on_contested    Δ 0.3825 ci=[0.3606, 0.4098] *
+[pilot 13:31:21]   false_attribution_rate             Δ 0.0097 ci=[0.0058, 0.0117] *
+[pilot 13:31:21]   citation_fidelity                  Δ 0.1111 ci=[0.0, 0.25]  
+[pilot 13:31:21]   adapter protected_history_regression       0.0278
+[pilot 13:31:21]   adapter protected_religion_regression      0.0
+[pilot 13:31:21]   adapter over_abstention_rate               0.019
+[pilot 13:31:21] PRIMARY habit-transfer signal present: True
 [pod] eval + answers written; finish() will commit + push
 [pod] job exit code=0
