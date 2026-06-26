@@ -189,15 +189,25 @@ def parse_args(argv=None):
 def _wait_for_pod_gone(api_key: str, pod_id: str, timeout_min: int) -> int:
     import time
     deadline = time.time() + timeout_min * 60
+    gone_streak = 0
+    # RunPod restarts a pod's container on a fast non-zero exit; during a restart the GET can
+    # briefly 404. Require N CONSECUTIVE 404s before declaring the pod truly gone, so a restart
+    # (which rm-rf-reclones and re-runs the job) isn't mistaken for completion.
     while time.time() < deadline:
         try:
             _api_request("GET", f"/pods/{pod_id}", api_key, timeout=30)
+            gone_streak = 0
             status = "running"
         except RunPodError as exc:
             if "404" in str(exc) or "not found" in str(exc).lower():
-                print(f"[selfreport] pod {pod_id} is gone (self-deleted after pushing). Done.")
-                return 0
-            status = f"poll-error: {exc}"
+                gone_streak += 1
+                if gone_streak >= 4:
+                    print(f"[selfreport] pod {pod_id} confirmed gone (4 consecutive 404s). Done.")
+                    return 0
+                status = f"transient-404 ({gone_streak}/4) — maybe restarting"
+            else:
+                gone_streak = 0
+                status = f"poll-error: {exc}"
         print(f"[selfreport] pod {pod_id} still {status}; waiting ...", flush=True)
         time.sleep(45)
     print(f"[selfreport] wait timed out after {timeout_min} min; deleting pod {pod_id} to be safe.")
