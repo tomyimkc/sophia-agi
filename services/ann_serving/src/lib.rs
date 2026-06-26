@@ -25,6 +25,9 @@ use std::collections::BinaryHeap;
 pub mod sharded;
 pub use sharded::ShardedHnsw;
 
+#[cfg(feature = "python")]
+mod python;
+
 /// Cosine similarity for L2-normalised vectors (== dot product). Panics on length mismatch.
 #[inline]
 pub fn cosine(a: &[f32], b: &[f32]) -> f32 {

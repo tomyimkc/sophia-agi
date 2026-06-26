@@ -82,14 +82,33 @@ the binary or `vectors.txt` is missing, `available()` is `False` and callers fal
 pure-Python vector path. Verified: at high `ef` the bridge returns the **same** top-k as Python
 exact cosine over the committed index (`tests/test_ann_bridge.py`).
 
+## In-process Python binding (PyO3)
+
+Beyond the subprocess bridge, the core exposes an **in-process** binding behind the optional
+`python` cargo feature (off by default, so the default build stays dependency-free):
+
+```sh
+pip install maturin
+maturin develop --release --features python     # build + install into the active venv
+```
+```python
+import sophia_ann
+idx = sophia_ann.ShardedHnsw(num_shards=4, dim=384, m=16, ef_construction=200)
+idx.add(0, vec); hits = idx.search(query, k=10, ef=128)   # [(id, score), …]
+idx.save("sophia.idx"); idx2 = sophia_ann.ShardedHnsw.load("sophia.idx")
+```
+
+This removes the process boundary and the float-text serialization the subprocess bridge pays
+per query. `cargo build --features python` produces the cdylib; `tests/test_ann_native.py`
+exercises it (skipped unless built). Source: `src/python.rs`.
+
 ## Honest bounds & next steps
 
 - **Persistent thread pool.** Search fans out with fresh per-query threads (`thread::scope`) —
   correct and dependency-free, but the spawn cost only pays off when per-shard work is large. A
   reusable worker pool (or distributing shards across processes/machines) is where the parallel
   latency win lands at production scale.
-- **In-process PyO3 binding.** The current bridge is a subprocess over a text protocol (robust,
-  zero-build-coupling). A `cdylib` + PyO3 binding would remove the process boundary and the
-  float-text serialization for lower per-query overhead.
 - **Distribution & RDMA.** Shards are in-process; cross-machine sharding with RDMA transport, and
   HNSW deletion/compaction, are the genuinely large architecture items the JD lists as bonus.
+- **Wheel packaging.** `pyproject.toml` is maturin-ready; a published wheel (so `pip install
+  sophia-ann` needs no Rust toolchain) is the remaining packaging step.

@@ -4,6 +4,18 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — in-process PyO3 binding for the Rust ANN core (optional `python` feature)
+
+- **PyO3 binding** (`services/ann_serving/src/python.rs`, `pyproject.toml`): the sharded HNSW
+  core is now callable in-process from Python — `import sophia_ann; ShardedHnsw(...).add/search/
+  save/load` — removing the subprocess boundary + float-text serialization the bridge pays per
+  query. Behind the optional `python` cargo feature (`cargo build --features python` /
+  `maturin develop --features python`), **off by default** so the default `cargo test`/`build`
+  stays dependency-free (verified: default 12 tests green with zero deps; the feature build pulls
+  pyo3 only when asked). Tests: `tests/test_ann_native.py` (gated on the built `.so`; round-trip +
+  persistence + dim-mismatch errors).
+
+
 ### Added — architecture track: sharded HNSW (parallel) + graph persistence for scale-out
 
 - **Sharded HNSW** (`services/ann_serving/src/sharded.rs`, `ShardedHnsw`): the dense recall view

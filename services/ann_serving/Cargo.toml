@@ -6,14 +6,21 @@ license = "Apache-2.0"
 description = "Dependency-free flat + NSW approximate-nearest-neighbour index for Sophia search recall"
 repository = "https://github.com/tomyimkc/sophia-agi"
 
-# Intentionally zero external dependencies: this is a self-contained systems core meant to be
-# read, benchmarked, and embedded (Python via a future cdylib/PyO3). Determinism comes from
-# insertion order + a seeded LCG in the bench, so `cargo test` is reproducible everywhere.
+# Zero external dependencies by default: the core is self-contained, so `cargo test`/`build` need
+# no network and stay reproducible. The ONLY optional dependency is PyO3, behind the `python`
+# feature, for the in-process binding (`cargo build --features python`) — off by default.
 [dependencies]
+pyo3 = { version = "0.22", optional = true, features = ["extension-module"] }
+
+[features]
+# In-process Python binding (cdylib). Off by default so the default build stays dependency-free.
+python = ["dep:pyo3"]
 
 [lib]
 name = "sophia_ann"
 path = "src/lib.rs"
+# rlib for the bins + tests; cdylib for the optional PyO3 extension module.
+crate-type = ["rlib", "cdylib"]
 
 [[bin]]
 name = "bench"
