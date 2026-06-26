@@ -1,0 +1,215 @@
+{
+  "benchmark": "agent_faithfulness",
+  "schema": "sophia.agent_faithfulness.report.v1",
+  "scoring": "deterministic (lexical support judge); no LLM judge; reproducible",
+  "labelProvenance": "first-party / seed (see pack status) — NOT independently validated",
+  "n": 13,
+  "verdictAccuracy": 1.0,
+  "verdictAccuracyCI95": [
+    0.7719,
+    1.0
+  ],
+  "verdictCorrect": 13,
+  "detection": {
+    "tp": 10,
+    "fp": 0,
+    "fn": 0,
+    "tn": 3,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "localizationAccuracy": 1.0,
+  "localizationN": 6,
+  "byCategory": {
+    "grounded": {
+      "n": 3,
+      "verdictCorrect": 3,
+      "verdictAccuracy": 1.0
+    },
+    "fabrication": {
+      "n": 3,
+      "verdictCorrect": 3,
+      "verdictAccuracy": 1.0
+    },
+    "weak_evidence": {
+      "n": 2,
+      "verdictCorrect": 2,
+      "verdictAccuracy": 1.0
+    },
+    "provenance_violation": {
+      "n": 3,
+      "verdictCorrect": 3,
+      "verdictAccuracy": 1.0
+    },
+    "no_claims": {
+      "n": 1,
+      "verdictCorrect": 1,
+      "verdictAccuracy": 1.0
+    },
+    "empty": {
+      "n": 1,
+      "verdictCorrect": 1,
+      "verdictAccuracy": 1.0
+    }
+  },
+  "cases": [
+    {
+      "id": "G1-grounded-own",
+      "category": "grounded",
+      "goldVerdict": "accept",
+      "predictedVerdict": "accept",
+      "verdictCorrect": true,
+      "goldFirstUnfaithfulStep": null,
+      "predictedFirstUnfaithfulStep": null,
+      "localizationApplicable": false,
+      "localizationCorrect": null,
+      "faithfulnessScore": 1.0
+    },
+    {
+      "id": "G2-grounded-backward-cite",
+      "category": "grounded",
+      "goldVerdict": "accept",
+      "predictedVerdict": "accept",
+      "verdictCorrect": true,
+      "goldFirstUnfaithfulStep": null,
+      "predictedFirstUnfaithfulStep": null,
+      "localizationApplicable": false,
+      "localizationCorrect": null,
+      "faithfulnessScore": 1.0
+    },
+    {
+      "id": "G3-grounded-multistep",
+      "category": "grounded",
+      "goldVerdict": "accept",
+      "predictedVerdict": "accept",
+      "verdictCorrect": true,
+      "goldFirstUnfaithfulStep": null,
+      "predictedFirstUnfaithfulStep": null,
+      "localizationApplicable": false,
+      "localizationCorrect": null,
+      "faithfulnessScore": 1.0
+    },
+    {
+      "id": "U1-fabrication-no-evidence",
+      "category": "fabrication",
+      "goldVerdict": "abstain",
+      "predictedVerdict": "abstain",
+      "verdictCorrect": true,
+      "goldFirstUnfaithfulStep": "s1",
+      "predictedFirstUnfaithfulStep": "s1",
+      "localizationApplicable": true,
+      "localizationCorrect": true,
+      "faithfulnessScore": 0.0
+    },
+    {
+      "id": "U2-fabrication-midplan-empty-cite",
+      "category": "fabrication",
+      "goldVerdict": "abstain",
+      "predictedVerdict": "abstain",
+      "verdictCorrect": true,
+      "goldFirstUnfaithfulStep": "s4",
+      "predictedFirstUnfaithfulStep": "s4",
+      "localizationApplicable": true,
+      "localizationCorrect": true,
+      "faithfulnessScore": 0.5
+    },
+    {
+      "id": "U3-forward-citation",
+      "category": "fabrication",
+      "goldVerdict": "abstain",
+      "predictedVerdict": "abstain",
+      "verdictCorrect": true,
+      "goldFirstUnfaithfulStep": "s1",
+      "predictedFirstUnfaithfulStep": "s1",
+      "localizationApplicable": true,
+      "localizationCorrect": true,
+      "faithfulnessScore": 0.0
+    },
+    {
+      "id": "V1-weak-overlap-cite",
+      "category": "weak_evidence",
+      "goldVerdict": "abstain",
+      "predictedVerdict": "abstain",
+      "verdictCorrect": true,
+      "goldFirstUnfaithfulStep": null,
+      "predictedFirstUnfaithfulStep": null,
+      "localizationApplicable": false,
+      "localizationCorrect": null,
+      "faithfulnessScore": 0.0
+    },
+    {
+      "id": "V2-weak-overlap-lenient",
+      "category": "weak_evidence",
+      "goldVerdict": "abstain",
+      "predictedVerdict": "abstain",
+      "verdictCorrect": true,
+      "goldFirstUnfaithfulStep": null,
+      "predictedFirstUnfaithfulStep": null,
+      "localizationApplicable": false,
+      "localizationCorrect": null,
+      "faithfulnessScore": 0.0
+    },
+    {
+      "id": "B1-provenance-violation-cited",
+      "category": "provenance_violation",
+      "goldVerdict": "blocked",
+      "predictedVerdict": "blocked",
+      "verdictCorrect": true,
+      "goldFirstUnfaithfulStep": "s2",
+      "predictedFirstUnfaithfulStep": "s2",
+      "localizationApplicable": true,
+      "localizationCorrect": true,
+      "faithfulnessScore": 0.0
+    },
+    {
+      "id": "B2-provenance-violation-no-evidence",
+      "category": "provenance_violation",
+      "goldVerdict": "blocked",
+      "predictedVerdict": "blocked",
+      "verdictCorrect": true,
+      "goldFirstUnfaithfulStep": "s1",
+      "predictedFirstUnfaithfulStep": "s1",
+      "localizationApplicable": true,
+      "localizationCorrect": true,
+      "faithfulnessScore": 0.0
+    },
+    {
+      "id": "B3-provenance-violation-midplan",
+      "category": "provenance_violation",
+      "goldVerdict": "blocked",
+      "predictedVerdict": "blocked",
+      "verdictCorrect": true,
+      "goldFirstUnfaithfulStep": "s3",
+      "predictedFirstUnfaithfulStep": "s3",
+      "localizationApplicable": true,
+      "localizationCorrect": true,
+      "faithfulnessScore": 0.5
+    },
+    {
+      "id": "N1-no-claims",
+      "category": "no_claims",
+      "goldVerdict": "abstain",
+      "predictedVerdict": "abstain",
+      "verdictCorrect": true,
+      "goldFirstUnfaithfulStep": null,
+      "predictedFirstUnfaithfulStep": null,
+      "localizationApplicable": false,
+      "localizationCorrect": null,
+      "faithfulnessScore": null
+    },
+    {
+      "id": "E1-empty",
+      "category": "empty",
+      "goldVerdict": "abstain",
+      "predictedVerdict": "abstain",
+      "verdictCorrect": true,
+      "goldFirstUnfaithfulStep": null,
+      "predictedFirstUnfaithfulStep": null,
+      "localizationApplicable": false,
+      "localizationCorrect": null,
+      "faithfulnessScore": null
+    }
+  ],
+  "candidateOnly": true
+}

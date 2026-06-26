@@ -20,6 +20,7 @@ independence, entailment, confidence-floor, and learning-candidate rules.
 from __future__ import annotations
 
 import csv
+import hashlib
 import io
 import json
 import re
@@ -35,6 +36,8 @@ from agent.fact_check_gate import AtomicClaim, EvidenceSource
 
 DEFAULT_TIMEOUT = 8.0
 USER_AGENT = "sophia-agi fact-check gate (keyless; contact: github.com/tomyimkc/sophia-agi)"
+DEFAULT_WIKIDATA_CACHE_DIR = Path(__file__).resolve().parents[1] / "eval" / "external" / ".cache" / "wikidata"
+_RETRYABLE_HTTP = {429, 503}
 
 _AUTHOR_WROTE_RE = re.compile(
     r"^(?P<author>[A-Z][A-Za-z0-9 .,'’\-]+?)\s+(?:wrote|authored|penned|composed)\s+(?P<work>.+)$",
@@ -174,10 +177,21 @@ class LiveFactBackend:
     gate holds fail-closed rather than accepting from a broken backend.
     """
 
-    def __init__(self, *, timeout: float = DEFAULT_TIMEOUT, sleep_s: float = 0.05):
+    def __init__(
+        self,
+        *,
+        timeout: float = DEFAULT_TIMEOUT,
+        sleep_s: float = 0.05,
+        cache_dir: str | Path | None = DEFAULT_WIKIDATA_CACHE_DIR,
+        opener: Any | None = None,
+        sleep_fn: Any | None = None,
+    ):
         self.timeout = timeout
         self.sleep_s = sleep_s
         self._label_cache: dict[str, str] = {}
+        self._cache_dir = Path(cache_dir) if cache_dir is not None else None
+        self._opener = opener
+        self._sleep_fn = sleep_fn or time.sleep
 
     def doi_resolver(self, doi: str) -> bool:
         doi = (doi or "").strip().lower()
@@ -225,6 +239,8 @@ class LiveFactBackend:
         work = parsed["work"]
         try:
             qids = self._wikidata_search(work, limit=3)
+        except (RateLimited, URLError, TimeoutError):
+            raise
         except Exception:
             return []
         sources: list[EvidenceSource] = []
@@ -232,6 +248,8 @@ class LiveFactBackend:
             try:
                 entity = self._wikidata_entity(qid)
                 authors = self._wikidata_authors(entity)
+            except (RateLimited, URLError, TimeoutError):
+                raise
             except Exception:
                 continue
             if not authors:
@@ -249,7 +267,7 @@ class LiveFactBackend:
                 retrieved_at=_utc_now(),
                 source_type="wikidata",
             ))
-            time.sleep(self.sleep_s)
+            self._sleep_fn(self.sleep_s)
         return sources
 
     def macro_economics(self, claim: AtomicClaim) -> list[EvidenceSource]:
@@ -382,22 +400,42 @@ class LiveFactBackend:
         return out
 
     def _wikidata_search(self, query: str, *, limit: int = 3) -> list[str]:
-        params = urlencode({
-            "action": "wbsearchentities",
-            "search": query,
-            "language": "en",
-            "format": "json",
-            "limit": str(limit),
-            "type": "item",
-        })
-        data = _get_json(f"https://www.wikidata.org/w/api.php?{params}", timeout=self.timeout)
+        def fetch() -> Any:
+            params = urlencode({
+                "action": "wbsearchentities",
+                "search": query,
+                "language": "en",
+                "format": "json",
+                "limit": str(limit),
+                "type": "item",
+            })
+            return _get_json(
+                f"https://www.wikidata.org/w/api.php?{params}",
+                timeout=self.timeout,
+                opener=self._opener,
+                sleep_fn=self._sleep_fn,
+            )
+
+        data = self._cached_json("search", {"query": query, "limit": limit}, fetch)
         return [row["id"] for row in data.get("search", []) if row.get("id")]
 
     def _wikidata_entity(self, qid: str) -> dict[str, Any]:
-        data = _get_json(f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json", timeout=self.timeout)
+        def fetch() -> Any:
+            return _get_json(
+                f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json",
+                timeout=self.timeout,
+                opener=self._opener,
+                sleep_fn=self._sleep_fn,
+            )
+
+        data = self._cached_json("entity", {"qid": qid}, fetch)
         return data.get("entities", {}).get(qid, {})
 
     def _wikidata_authors(self, entity: dict[str, Any]) -> list[str]:
+        cache_key = {"entity": str(entity.get("id") or _cache_digest(entity))}
+        cached = self._cache_read("authors", cache_key)
+        if isinstance(cached, list):
+            return [str(x) for x in cached if x]
         claims = entity.get("claims", {}).get("P50", [])  # P50 = author
         labels: list[str] = []
         for claim in claims:
@@ -405,7 +443,41 @@ class LiveFactBackend:
             qid = value.get("id")
             if qid:
                 labels.append(self._label(qid))
-        return [x for x in labels if x]
+        authors = [x for x in labels if x]
+        self._cache_write("authors", cache_key, authors)
+        return authors
+
+    def _cached_json(self, prefix: str, key: Any, fetch: Any) -> Any:
+        cached = self._cache_read(prefix, key)
+        if cached is not None:
+            return cached
+        data = fetch()
+        self._cache_write(prefix, key, data)
+        return data
+
+    def _cache_read(self, prefix: str, key: Any) -> Any | None:
+        path = self._cache_path(prefix, key)
+        if path is None or not path.exists():
+            return None
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return None
+
+    def _cache_write(self, prefix: str, key: Any, data: Any) -> None:
+        path = self._cache_path(prefix, key)
+        if path is None:
+            return
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        except OSError:
+            return
+
+    def _cache_path(self, prefix: str, key: Any) -> Path | None:
+        if self._cache_dir is None:
+            return None
+        return self._cache_dir / f"{prefix}-{_cache_digest(key)}.json"
 
     def _entity_label(self, entity: dict[str, Any], fallback_qid: str) -> str:
         labels = entity.get("labels", {}) or {}
@@ -568,11 +640,56 @@ def _title_match(query: str, candidate_text: str) -> bool:
     return (len(q & c) / len(q)) >= 0.75
 
 
-def _get_json(url: str, *, timeout: float = DEFAULT_TIMEOUT) -> dict[str, Any]:
+class RateLimited(RuntimeError):
+    """Raised when a live source keeps returning retryable throttling errors."""
+
+
+def _cache_digest(value: Any) -> str:
+    raw = json.dumps(value, sort_keys=True, ensure_ascii=False, default=str)
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:32]
+
+
+def _retry_after_seconds(exc: HTTPError, fallback: float) -> float:
+    value = ""
+    try:
+        value = str(exc.headers.get("Retry-After", "") or "")
+    except AttributeError:
+        value = ""
+    if value:
+        try:
+            return max(0.0, float(value))
+        except ValueError:
+            return fallback
+    return fallback
+
+
+def _get_json(
+    url: str,
+    *,
+    timeout: float = DEFAULT_TIMEOUT,
+    opener: Any | None = None,
+    sleep_fn: Any | None = None,
+    max_attempts: int = 5,
+) -> dict[str, Any]:
     req = Request(url, headers={"Accept": "application/json", "User-Agent": USER_AGENT})
-    with urlopen(req, timeout=timeout) as resp:  # noqa: S310 - fixed keyless public endpoints
-        raw = resp.read().decode("utf-8")
-    return json.loads(raw)
+    open_fn = opener or urlopen
+    sleep = sleep_fn or time.sleep
+    last: HTTPError | None = None
+    for attempt in range(max_attempts):
+        try:
+            with open_fn(req, timeout=timeout) as resp:  # noqa: S310 - fixed keyless public endpoints
+                raw = resp.read().decode("utf-8")
+            return json.loads(raw)
+        except HTTPError as exc:
+            if exc.code not in _RETRYABLE_HTTP:
+                raise
+            last = exc
+            if attempt == max_attempts - 1:
+                break
+            delay = _retry_after_seconds(exc, float(2 ** attempt))
+            sleep(delay)
+    code = getattr(last, "code", "unknown")
+    raise RateLimited(f"HTTP {code} persisted after {max_attempts} attempts for {url[:120]}")
 
 
 def _utc_now() -> str:
@@ -580,6 +697,6 @@ def _utc_now() -> str:
 
 
 __all__ = [
-    "FixtureFactBackend", "LiveFactBackend", "extract_authorship_claim", "extract_macro_claim",
+    "FixtureFactBackend", "LiveFactBackend", "RateLimited", "extract_authorship_claim", "extract_macro_claim",
     "macro_structured_entailment", "normalize_text", "ranked_sources", "structured_entailment",
 ]

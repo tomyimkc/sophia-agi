@@ -17,11 +17,13 @@ rag/index-*/embeddings.npz
 # fetched external benchmarks (large public datasets — keep the committed style-sample only)
 eval/external/gsm8k-test.jsonl
 eval/external/gsm8k-train.jsonl
+eval/external/.cache/
 benchmark/model_runs/*.log
 train-error.log
 train-out.txt
 agent/memory/*.jsonl
 agent/memory/agent_runs/
+agent/memory/task_ledgers/
 agent/memory/legal_cache.json
 # live governance-contract stores (claims/decisions/tasks/traces)
 agent/memory/contract/
