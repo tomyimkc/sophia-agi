@@ -30,6 +30,7 @@ on:
       - 'tests/test_selfextend_proof_verifier.py'
       - 'tests/test_proof_search.py'
       - 'tests/test_novelty_dag.py'
+      - 'tests/test_lean_dojo_check_proof.py'
       - 'scripts/install_lean.sh'
       - 'requirements-theorem.txt'
       - '.github/workflows/lean-kernel.yml'
@@ -105,26 +106,35 @@ jobs:
     # LeanProofSession / verify_proof / the math_verifier lean delegation BEFORE a
     # real eval relies on them. Informational; not required.
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
+      - name: Install Lean 4 toolchain (elan + lean + lake)
+        # lean-dojo needs `lake` to trace repos (check_proof traces via `lake build`).
+        # Without this, the job fails with "lake: not found" (exit 127) the moment any
+        # theorem verification touches a real traced repo.
+        run: |
+          bash scripts/install_lean.sh
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
       - name: Install pytest + the lean-dojo extra (requirements-theorem.txt)
         run: |
           pip install --quiet pytest
           pip install --quiet -r requirements-theorem.txt
 
-      - name: Verify lean-dojo imports
+      - name: Verify lean-dojo imports + lake on PATH
         run: |
+          lake --version
           python -c "import lean_dojo; print('lean_dojo OK')"
           python -c "from agent import lean_backend; print('lean_available:', lean_backend.lean_available())"
 
-      - name: Proof-search + novelty-DAG tests (real-lean-dojo paths now execute)
+      - name: Proof-search + novelty-DAG + check_proof tests (real-lean-dojo paths now execute)
         env:
           PYTHONDONTWRITEBYTECODE: "1"
         run: |
-          python -m pytest tests/test_proof_search.py tests/test_novelty_dag.py -v
+          python -m pytest tests/test_proof_search.py tests/test_novelty_dag.py tests/test_lean_dojo_check_proof.py -v
 
