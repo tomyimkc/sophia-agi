@@ -6,8 +6,9 @@ Deterministic (local hashing embedder, exact-match scorer — no API key, no LLM
 the measured ordering is a stable invariant. Honest ordering (measured): on these short
 attribution probes the lexical KEYWORD backend leads the offline local-hash vector on both
 recall and graded nDCG (the hash embedder is a weak semantic proxy — README notes Gemini is
-the higher-quality backend), and the current hybrid fusion underperforms both (a known,
-candidate-only weakness, not asserted as good). Offline; runs in the numpy pytest job.
+the higher-quality backend). Hybrid fusion carries a **do-no-harm guard** so it no longer
+underperforms its dense component (recall@k(hybrid) >= recall@k(vector)); it still trails
+keyword on this query type, which we do not hide. Offline; runs in the numpy pytest job.
 """
 
 from __future__ import annotations
@@ -53,8 +54,21 @@ def test_keyword_leads_lexical_attribution_probes() -> None:
     # Keyword is the current best backend by graded nDCG (and non-trivial); vector is not broken.
     assert all(k["ndcg@5"] >= report["metrics"][b]["ndcg@5"] for b in BACKENDS)
     assert v["recall@5"] >= 0.4
-    # NOTE: hybrid fusion currently underperforms BOTH components on these probes — a known
-    # candidate-only weakness. We deliberately do NOT assert hybrid >= keyword (it is false).
+    # Hybrid trails keyword on this query type (sparse view is uninformative here); we do NOT
+    # assert hybrid >= keyword (false). But the do-no-harm guard means hybrid no longer falls
+    # below its dense component — that guarantee is asserted in test_hybrid_guard_does_no_harm.
+
+
+def test_hybrid_guard_does_no_harm() -> None:
+    # The do-no-harm guard (agent.hybrid_retrieval.hybrid_search) protects the dense top-k,
+    # so fused recall can never drop below the dense (vector) view — even when the sparse
+    # view is pure noise, as it is on these probes. Regression guard for the burial bug that
+    # had hybrid recall@5 ≈0.28 vs vector ≈0.52.
+    report = run()
+    v = report["metrics"]["vector"]
+    h = report["metrics"]["hybrid"]
+    assert h["recall@5"] >= v["recall@5"]
+    assert h["ndcg@5"] >= v["ndcg@5"] - 1e-9
 
 
 def test_badcase_taxonomy_is_well_formed() -> None:

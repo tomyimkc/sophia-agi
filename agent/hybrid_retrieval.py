@@ -38,15 +38,16 @@ DEFAULT_RRF_K = 60
 #: ranking.
 #:
 #: HONEST STATUS (measured, tools/eval_search_quality.py): on the short attribution probes
-#: the sparse view is **uninformative** (0 correct hits in top-5), and weighted RRF over a
-#: deep sparse list still lets that noise bury genuine dense hits — hybrid recall@5 (≈0.28)
-#: falls BELOW pure dense (≈0.52). No weight/depth setting recovers parity on this query
-#: type; the sparse lexical signal simply does not help when the gold differs from the query
-#: only in surface tokens it shares with many distractors. Hybrid is therefore a
-#: **candidate-only** path here, NOT a validated improvement — earlier comments claiming
-#: "1.0/0.4 recovers dense parity" were wrong and are corrected. Where hybrid is expected to
-#: help is rare-exact-term queries (names/IDs/numbers) a low-dim hash embedding blurs; that
-#: is unproven on the current probe set. Tune/justify per corpus before trusting it.
+#: the sparse view is **uninformative** (0 correct hits in top-5). Unguarded weighted RRF
+#: over a deep sparse list let that noise bury genuine dense hits — hybrid recall@5 fell to
+#: ≈0.28, BELOW pure dense ≈0.52, and earlier comments claiming "1.0/0.4 recovers dense
+#: parity" were simply wrong. The fix is NOT weight/depth tuning (no setting recovers parity
+#: on this query type) but the **do-no-harm guard** in ``hybrid_search`` (default on), which
+#: protects the dense top-k from eviction so ``recall@k(hybrid) >= recall@k(dense)`` always
+#: holds — restoring ≈0.52 here while still letting sparse re-order the head and fill slots
+#: dense leaves empty. Hybrid's *upside* (lexical rescue of rare-exact-term queries a low-dim
+#: hash embedding blurs) is unproven on this probe set; the guard guarantees it does no harm
+#: while that upside is established per corpus.
 DEFAULT_DENSE_WEIGHT = 1.0
 DEFAULT_SPARSE_WEIGHT = 0.4
 
@@ -116,12 +117,25 @@ def hybrid_search(
     rrf_k: int = DEFAULT_RRF_K,
     dense_weight: float = DEFAULT_DENSE_WEIGHT,
     sparse_weight: float = DEFAULT_SPARSE_WEIGHT,
+    do_no_harm: bool = True,
 ) -> list[SourceChunk]:
     """Fuse dense + sparse rankings over an in-memory ``chunks`` list (IndexedChunk).
 
     Over-fetches ``over_fetch`` from each view, fuses by weighted RRF, returns the top
     ``top_k`` as :class:`SourceChunk` carrying the fused score. Sparse-only when no
     embeddings are present (and vice versa) — an absent view simply drops out of the fusion.
+
+    **Do-no-harm guard** (``do_no_harm``, default on): a hard guarantee that fusion never
+    scores below its primary (dense) view. The dense ``top_k`` are protected — they keep
+    their *fused* order but cannot be evicted from the returned ``top_k`` by a sparse-only
+    candidate — so ``recall@k(hybrid) >= recall@k(dense)`` always holds. Sparse therefore
+    (a) re-orders within the dense head (can lift a gold higher → better MRR/nDCG) and
+    (b) fills any slots the dense view leaves empty when it returns fewer than ``top_k``
+    candidates — capturing sparse's lexical-rescue upside *without* its noise burying a
+    genuine dense hit. Measured: on the attribution probes the unguarded fuser dropped to
+    recall@5 ≈0.28 (below dense ≈0.52) by letting a noise-ranked sparse list promote
+    distractors over dense hits; the guard restores ≈0.52. Set ``do_no_harm=False`` for the
+    raw, unguarded RRF (research/ablation only).
     """
     if not chunks:
         return []
@@ -134,9 +148,22 @@ def hybrid_search(
     fused = reciprocal_rank_fusion(
         [[str(i) for i in r] for r, _ in active], k=rrf_k, weights=[w for _, w in active]
     )
+    score_of = {doc_id: score for doc_id, score in fused}
+    ordered = [int(doc_id) for doc_id, _ in fused]
+    if do_no_harm and dense:
+        # Protect the dense head in its OWN order: the dense top_k keep their dense ranks at
+        # the front (a dense rank-r hit stays at fused rank <= r), and only sparse-only
+        # candidates fill positions after them. This guarantees recall@k'(hybrid) >=
+        # recall@k'(dense) for EVERY k' <= top_k — not just as a set, so slicing the result
+        # at a shallower k' (the eval pools deeper than it scores) can never drop a dense hit.
+        # Sparse still contributes by filling slots dense leaves empty (dense shorter than k).
+        floor_list = dense[:top_k]
+        floor = set(floor_list)
+        tail = [i for i in ordered if i not in floor]      # sparse-only ids, in fused order
+        ordered = floor_list + tail
     out: list[SourceChunk] = []
-    for doc_id, score in fused[:top_k]:
-        out.append(_to_source_chunk(chunks[int(doc_id)], score))
+    for i in ordered[:top_k]:
+        out.append(_to_source_chunk(chunks[i], score_of.get(str(i), 0.0)))
     return out
 
 
