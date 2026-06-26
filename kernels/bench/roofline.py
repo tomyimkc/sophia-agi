@@ -51,12 +51,21 @@ class DeviceSpec:
     name: str
     fp16_tensor_tflops: float  # BF16/FP16 tensor-core peak, dense (TFLOP/s)
     fp32_tflops: float         # FP32 non-tensor peak (TFLOP/s)
-    hbm_gbytes_s: float        # HBM bandwidth (GB/s, 1e9 bytes)
+    hbm_gbytes_s: float        # HBM/unified bandwidth (GB/s, 1e9 bytes)
     note: str = ""
+    fp4_tensor_tflops: float = 0.0  # NVFP4/FP4 tensor-core peak, DENSE (TFLOP/s); 0 == unsupported
 
     def peak_flops(self, dtype: str) -> float:
-        """Peak FLOP/s for a dtype tier (``fp16``/``bf16`` -> tensor, else fp32)."""
-        tier = self.fp16_tensor_tflops if dtype.lower() in {"fp16", "bf16", "half"} else self.fp32_tflops
+        """Peak FLOP/s for a dtype tier (fp4 -> FP4 tensor, fp16/bf16 -> tensor, else fp32)."""
+        d = dtype.lower()
+        if d in {"fp4", "nvfp4", "mxfp4", "e2m1"}:
+            if self.fp4_tensor_tflops <= 0:
+                raise ValueError(
+                    f"{self.name} has no FP4 tensor peak in DEVICE_SPECS "
+                    "(pre-Blackwell, or not yet entered) — cannot roofline FP4 here"
+                )
+            return self.fp4_tensor_tflops * 1e12
+        tier = self.fp16_tensor_tflops if d in {"fp16", "bf16", "half"} else self.fp32_tflops
         return tier * 1e12
 
     def peak_bw(self) -> float:
@@ -71,13 +80,18 @@ DEVICE_SPECS: dict[str, DeviceSpec] = {
     "NVIDIA H100 80GB HBM3": DeviceSpec("NVIDIA H100 80GB HBM3", 989.5, 67.0, 3350.0, "Hopper SXM, HBM3"),
     "NVIDIA L40S": DeviceSpec("NVIDIA L40S", 362.0, 91.6, 864.0, "Ada, GDDR6"),
     "NVIDIA GeForce RTX 4090": DeviceSpec("NVIDIA GeForce RTX 4090", 165.2, 82.6, 1008.0, "Ada, GDDR6X"),
-    # Grace Blackwell GB10 (DGX Spark), aarch64. Bandwidth is LPDDR5x UNIFIED memory (~273 GB/s),
-    # NOT HBM — so the roofline ridge point sits far to the right (memory-bound for almost any kernel).
-    # Compute peaks are DENSE estimates: NVIDIA markets GB10 at ~1 PFLOP FP4 / ~250 TFLOP BF16 (sparse);
-    # VERIFY against the datasheet before reporting any headline derived from these denominators.
-    "NVIDIA DGX Spark GB10": DeviceSpec("NVIDIA DGX Spark GB10", 125.0, 31.0, 273.0,
-                                        "Grace Blackwell GB10 (aarch64); 128GB LPDDR5x UNIFIED ~273 GB/s "
-                                        "(NOT HBM); dense compute peaks APPROXIMATE — verify vs datasheet"),
+    # Grace Blackwell GB10 (DGX Spark), aarch64. Bandwidth is LPDDR5x UNIFIED memory (273 GB/s,
+    # confirmed by NVIDIA's DGX Spark hardware overview), NOT HBM — so the roofline ridge point
+    # sits FAR to the right: even FP4 GEMM needs intensity > ~1830 FLOP/B to leave the memory wall,
+    # so token decode is memory-bound here and bytes-per-weight (4-bit) is the dominant lever.
+    # NVIDIA markets GB10 at ~1 PFLOP *sparse* FP4; the FP4 dense peak below is ~half that (sparse 2:4
+    # doubles the headline). BF16/FP32 dense peaks are estimates — VERIFY vs datasheet before any
+    # headline derived from these denominators.
+    "NVIDIA DGX Spark GB10": DeviceSpec(
+        "NVIDIA DGX Spark GB10", 125.0, 31.0, 273.0,
+        "Grace Blackwell GB10 (aarch64); 128GB LPDDR5x UNIFIED 273 GB/s (NOT HBM); FP4 ~500 TFLOP/s "
+        "dense (~1 PFLOP sparse); BF16/FP32 peaks APPROXIMATE — verify vs datasheet",
+        fp4_tensor_tflops=500.0),
 }
 
 
