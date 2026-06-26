@@ -1452,3 +1452,71 @@ corrected gate, v3 does not promote.** Closing the loop without forgetting (repl
 old domain or a smaller weight delta, then re-running learning-under-shift to `passingSignal=true`)
 is now a precondition for any future promotion — this remains open and hardware-bound (MLX/GPU).
 **Claim impact:** Mock eval shows metric direction; no validated uplift. `canClaimAGI: false`.
+
+## verifiable-sophia-moves-executed-2026-06-27
+
+**Status:** BATCH EXECUTED. Four recommended moves from the phase plan, all on
+branch `experiment/datalog-judgefree-clean`. `canClaimAGI` stays **False** —
+nothing here is a capability claim or third-party evidence.
+
+**Move 1 — Datalog substrate made runtime-viable (eng debt I created).** The
+port was a 25-min audit artifact; now it is a real backend. Two correctness-
+preserving optimizations: (a) predicate-indexed fact store in
+`agent/datalog_engine.py` (a body literal scans only its predicate's facts);
+(b) module-level caching of the default records + the gate's compiled specs in
+`agent/datalog_provenance.py` (root cause: `_load_provenance_records()` returned
+a fresh dict every call → identity-keyed cache always missed → ~766 regex
+re-compiles/call). Result: `check_claim(backend="datalog")` is byte-identical to
+`backend="regex"` at **0.5ms/call (was ~464ms, ~900×)**. The opt-in `backend=`
+parameter is wired on `agent.guarded.check_claim` (default `"regex"` unchanged;
+`"datalog"` fail-closed falls back to `"regex"` if unavailable). 14/14 unit
+tests pass; full 957-case audit still 957/957 byte-identical.
+
+**Move 2 — the judge-free −12.5pt reproduction, RUN LIVE (the decisive one).**
+The plan's binary falsifiable question: is the validated advantage an LLM-judge
+artifact? **Answer: NO — it survives judge-free.** dolphin-llama3:8b was
+available locally (Ollama HTTP 200, model pulled), so this ran live on the host,
+NOT via RunPod/GHA. `tools/run_unified_uplift.py --model ollama:dolphin-llama3:8b
+--runs 3 --limit 48 --levers +gate` with **no `--judges`** → deterministic
+lexical judge only:
+- `+gate` hallucination Δ = **+9.0%**, 95% CI **[+4.9%, +13.9%], EXCLUDES ZERO**,
+  0% FP-cost, 100% coverage. per-run [0.0625, 0.125, 0.0833].
+- The validated number was +12.5% [+5.6, +19.4] (2 LLM families, N=24 false).
+  This judge-free run (lexical, N=48) is a smaller estimate with an OVERLAPPING
+  CI that also excludes zero. The direction + significance survive removing
+  every LLM judge from labeling. **The advantage is NOT an LLM-judge artifact.**
+- HONEST: `validated:False` (correctly — lexical = 1 family, not multi-judge
+  corroboration; this STRENGTHENS but does NOT REPLACE the +12.5% headline).
+  Still a decaying model-side asset (vanishes on strong bases). Full detail in
+  `provenance-delta-survives-judge-free-2026-06-27` above. Artifact:
+  `agi-proof/baseline-ablation/judge-free-reproduction-2026-06-27/`.
+
+**Move 3 — turnkey third-party reproducer for the Datalog claim.**
+`tools/run_datalog_reproducer.py`: a reviewer-run one-command check that pins
+the provenance data files by SHA-256, re-derives the 957-comparison audit LIVE
+(trusts no committed artifact), and prints PASS/FAIL. Prints the pre-reg's own
+hash so a silent swap is detectable. **Self-verified**: clean run PASS exit 0;
+negative control (tampered hash) FAIL exit 1 with DATA TAMPER detection even
+though the live audit still passed (integrity check independent of logic check).
+This is the "one third-party run > 10 self-runs" lever — when a reviewer
+appears, the whole gate-faithfulness claim is one command.
+
+**Move 4 — Lean soundness lane: already exists, NOT duplicated.** The strategic
+plan's Lean experiment is already staged on `origin/main` by a concurrent
+session: `.github/workflows/lean-kernel.yml` + `scripts/install_lean.sh` install
+the Lean 4 toolchain and run `tests/test_lean_verifier.py` +
+`tools/run_formal_proofs_eval.py` with a real kernel (flips the 2 SKIPPED
+kernel tests to PASSED; asserts the smoke loop closes). This covers the plan's
+"Lean soundness on sympy verifiers" intent via the cleaner `lean_verifier`
+(lake subprocess) path. The older `lean_backend.py` (LeanDojo) path is half-wired
+and heavier; a redundant lane for it would duplicate effort — deferred. The Lean
+lane is dispatchable on main; no local install was attempted (multi-GB toolchain
+under HTTPS-only egress — correctly gated).
+
+**Net phase position.** The non-decaying asset (machine-checkable verification +
+derivable abstention) now has: a logic-native gate backend (957/957, 0.5ms), a
+judge-free confirmation that the model-side effect is real (+9.0% CI excludes
+0), and a one-command third-party reproducer. The two open levers are unchanged:
+(1) a judge-free run on a STRONG base (expected null — tests the decay boundary);
+(2) one real third-party pack (closes the independence gap, now turnkey).
+
