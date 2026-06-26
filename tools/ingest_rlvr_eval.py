@@ -85,11 +85,26 @@ def map_report(report: dict[str, Any], *, adapter_id: str | None = None) -> dict
     contaminated = bool(entity_intersection)
     aid = adapter_id or _dig(report, ("adapter",)) or report.get("model") or "rlvr-adapter"
     aid = str(aid).rsplit("/", 1)[-1]
-    return {
+    mapped = {
         "id": aid, "before": float(before), "after": float(after),
         "protected_before": prot_before, "protected_after": prot_after,
         "contaminated": contaminated, "entityIntersection": entity_intersection,
     }
+    # Capability-panel deltas (attribution / hallucination / calibration), if the
+    # report carries them (eval_rlvr_adapter.py --capability-panel). Fail-OPEN on
+    # absence: old reports and non-panel runs still ingest exactly as before; the
+    # legacy G4/G5 headline (meanReward + FP integrity) is unaffected by these.
+    panel = report.get("capabilityPanel")
+    if isinstance(panel, dict) and panel.get("delta"):
+        pdelta = panel["delta"]
+        mapped["capabilityPanelDelta"] = {
+            "verdictAccuracy": pdelta.get("verdictAccuracy"),
+            "hallucinationRate": pdelta.get("hallucinationRate"),
+            "integrityRecall": pdelta.get("integrityRecall"),
+            "calibrationScore": pdelta.get("calibrationScore"),
+            "fabricationRate": pdelta.get("fabricationRate"),
+        }
+    return mapped
 
 
 def ingest(report_path: str | Path, *, adapter_id: str | None = None) -> dict[str, Any]:
