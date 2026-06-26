@@ -137,6 +137,58 @@ def test_state_schema_and_boundary() -> None:
     assert "AGI proof" in d["boundary"] or "not AGI" in d["boundary"]
 
 
+def test_policy_mode_matches_equivalent_schedule() -> None:
+    # A live policy that simply replays a fixed schedule must produce a result
+    # identical to passing that schedule directly — the two modes share one round
+    # engine; only the target source differs.
+    sched = [["primary"], [], ["primary"]]
+
+    def replay(i: int, prev_abstain: "frozenset[str]") -> "list[str] | None":
+        return sched[i] if i < len(sched) else None
+
+    g1, g2 = _graph(), _graph()
+    st_sched = run_revise_loop(g1, retraction_schedule=sched)
+    st_pol = run_revise_loop(g2, policy=replay)
+    assert st_pol.rounds == st_sched.rounds
+    assert st_pol.verdicts == st_sched.verdicts
+    assert st_pol.finalVerdict == st_sched.finalVerdict == "escalate"
+    assert st_pol.roundsExecuted == st_sched.roundsExecuted == 3
+    assert (st_pol.ko is not None) and (st_sched.ko is not None)
+    assert st_pol.ko.cycle == st_sched.ko.cycle
+
+
+def test_requires_exactly_one_of_schedule_or_policy() -> None:
+    g = _graph()
+    # Neither given -> error.
+    try:
+        run_revise_loop(g)
+        raise AssertionError("expected ValueError when neither mode is given")
+    except ValueError:
+        pass
+    # Both given -> error (ambiguous).
+    try:
+        run_revise_loop(g, retraction_schedule=[["primary"]], policy=lambda i, p: None)
+        raise AssertionError("expected ValueError when both modes are given")
+    except ValueError:
+        pass
+
+
+def test_policy_safety_cap_fails_closed() -> None:
+    # A policy that never stops and never recurs (a fresh isolated node every round)
+    # cannot be bounded -> the loop must terminate fail-closed at max_policy_rounds.
+    pages = [Page(path=Path(f"n{i}.md"), meta={"id": f"n{i}", "pageType": "concept", "authorConfidence": "consensus"}) for i in range(8)]
+    g = okf.build_graph(pages)
+
+    def never_stops(i: int, prev_abstain: "frozenset[str]") -> "list[str] | None":
+        return [f"n{i % 8}"]
+
+    st = run_revise_loop(g, policy=never_stops, max_policy_rounds=5, ko_max_rounds=4)
+    assert st.terminated is True
+    assert st.ko is None
+    assert st.finalVerdict == "abstain"
+    assert "max_policy_rounds" in st.reason
+
+
 def main() -> int:
     import inspect
     for nm, fn in sorted(globals().items()):

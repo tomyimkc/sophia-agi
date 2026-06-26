@@ -39,7 +39,7 @@ it with empirical evidence that escalation is the right operator response.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
 
 from okf.graph import Graph
 from okf.revision import revise
@@ -121,16 +121,34 @@ def _round_severity(graph: Graph, abstain: set[str]) -> float:
 def run_revise_loop(
     graph: Graph,
     *,
-    retraction_schedule: "list[list[str]]",
+    retraction_schedule: "list[list[str]] | None" = None,
+    policy: "Callable[[int, frozenset[str]], list[str] | None] | None" = None,
+    max_policy_rounds: int = 64,
     ko_max_rounds: "int | None" = None,
     escalate_threshold: "float | None" = None,
     by: str = "revise_loop",
 ) -> ReviseLoopState:
-    """Run an iterative revise/reassert schedule under a ko cycle guard.
+    """Run an iterative revise/reassert loop under a ko cycle guard.
 
-    ``retraction_schedule`` is a list of rounds; each round is the list of target
-    ids to retract THAT round (a round's targets replace the prior round's — i.e.
-    a retraction is "reasserted" by omitting it from a later round). Each round:
+    The loop is driven in one of two mutually exclusive modes (exactly one of
+    ``retraction_schedule`` / ``policy`` must be given):
+
+    - **Static schedule** (``retraction_schedule``): a pre-baked list of rounds;
+      each round is the list of target ids to retract THAT round (a round's targets
+      replace the prior round's — i.e. a retraction is "reasserted" by omitting it
+      from a later round). This is the replay mode used by tests and benchmarks.
+
+    - **Live policy** (``policy``): a caller-supplied decision callback
+      ``policy(round_index, prev_abstain) -> list[str] | None`` invoked once per
+      round to obtain that round's targets from the caller's OWN decision logic,
+      reacting to the *previous* round's abstain set (empty frozenset for round 0).
+      Returning ``None`` ends the loop cleanly. This is the mode a live runtime
+      consumer (e.g. ``agent.belief_revision_policy.resolve_conflicts_consequence_aware``)
+      uses to route real retraction decisions through the ko guard. The decision is
+      INJECTED — this module imports nothing from ``agent.*`` to consume it, so the
+      layering contract (no agent.* dependency in ``reasoning.consequence.*``) holds.
+
+    Each round, in either mode:
 
     1. Calls ``okf.revise(graph, this_round_targets)`` on the ORIGINAL graph (revise
        is non-destructive; we never thread a reduced graph forward).
@@ -140,6 +158,10 @@ def run_revise_loop(
     4. Maps the round's severity to a verdict for reporting (escalate if severity
        >= threshold, else allow; abstain if the round's targets did not resolve).
 
+    ``max_policy_rounds`` bounds the live-policy mode: a policy that neither stops
+    (returns ``None``) nor triggers a ko within the cap cannot be bounded, so the
+    loop terminates fail-closed (``abstain``). It is ignored in schedule mode.
+
     ``ko_max_rounds`` defaults to the config value (``config/consequence.json``
     ``koMaxRounds``). ``escalate_threshold`` defaults to the config
     ``flipSeverityEscalate`` (used only for the per-round verdict vocabulary, NOT
@@ -148,6 +170,10 @@ def run_revise_loop(
     Returns a ``ReviseLoopState``. The input ``graph`` is never mutated (revise is
     non-destructive; this function does not write either).
     """
+    if (retraction_schedule is None) == (policy is None):
+        raise ValueError(
+            "run_revise_loop requires exactly one of retraction_schedule or policy"
+        )
     if ko_max_rounds is None:
         # Lazy import: avoids coupling this module's import to agent.* / config I/O.
         from agent.consequence_gate import ko_max_rounds as _cfg_ko_max_rounds
@@ -162,7 +188,31 @@ def run_revise_loop(
     verdicts: list[str] = []
     reason = "no rounds executed"
 
-    for i, targets in enumerate(retraction_schedule):
+    i = 0
+    while True:
+        # Source this round's targets from the static schedule or the live policy.
+        if retraction_schedule is not None:
+            if i >= len(retraction_schedule):
+                break
+            targets = retraction_schedule[i]
+        else:
+            if i >= max_policy_rounds:
+                # A policy that neither stopped nor ko'd within the cap cannot be
+                # bounded -> fail-closed abstain (same posture as a notFound target).
+                rounds.append(frozenset())
+                verdicts.append("abstain")
+                return ReviseLoopState(
+                    rounds=tuple(rounds), verdicts=tuple(verdicts),
+                    terminated=True, roundsExecuted=i + 1,
+                    reason=(
+                        f"policy did not terminate within max_policy_rounds="
+                        f"{max_policy_rounds} -> fail-closed abstain"
+                    ),
+                )
+            prev_abstain = rounds[-1] if rounds else frozenset()
+            targets = policy(i, prev_abstain)
+            if targets is None:
+                break  # policy signalled clean termination
         rev = revise(graph, [(t, f"{by} round {i}") for t in targets], by=by)
         # An unresolved target is fail-closed: the round's consequence cannot be
         # bounded. Map to abstain and terminate — we cannot reason about the
@@ -189,6 +239,7 @@ def run_revise_loop(
                 reason=ko.reason,
             )
         reason = f"round {i} complete; no ko across {len(rounds)} round(s)"
+        i += 1
 
     return ReviseLoopState(
         rounds=tuple(rounds), verdicts=tuple(verdicts),
