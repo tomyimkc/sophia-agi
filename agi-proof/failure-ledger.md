@@ -6,6 +6,8 @@ Failures are claim evidence. They show where the system is not AGI.
 |---|---|---|---|
 | external-benchmarks-not-run | Partial (one pilot run) | W5 DONE (pilot): GSM8K-STYLE 10-item numeric exact-match, raw vs sophia-full, 3 seeds, DeepSeek `deepseek-v4-pro`. Both arms 100%; **Δ = 0.000, 95% CI [0.000,0.000] — NULL/tie** (base at ceiling on trivial items). Gate fired 30/30 on STYLE/format grounds only (no numeric violations), gate-coverage cost on correctness = 0. Artifacts: `agi-proof/external-benchmarks/w5-gsm8k-style-pilot-2026-06-26.*`. NOT official GSM8K; foothold plumbing pilot, `_is_validated`=false. | Run the licensed GSM8K/ARC set at larger N so the CI moves off ceiling; keep wording at AGI-candidate. `canClaimAGI` stays false. |
 | hidden-review-third-party-not-run | Open | Blocks independent hidden generalization claim | Run third-party packs |
+| external-benchmarks-not-run | Open | Blocks expert AGI claim | Keep wording at AGI-candidate |
+| hidden-review-third-party-not-run | Open | Blocks independent hidden generalization claim | Run third-party packs. A self-serve reproducer now exists for the SEIB-100 provenance claim (`tools/run_external_validation.py` + `agi-proof/external-validation/`): a reviewer recomputes PASS/FAIL live against a hash-pinned pre-registration, trusting no committed artifact. Still needs an actual third party to run it. |
 | hidden-prepared-pack-grok-cli-2026-06-19 | Open | Preliminary hidden run only: 28.75/40 auto score, 2/8 strict pass | Improve strict pass rate; run fresh third-party hidden pack |
 | hidden-fresh-pack-sophia-grok-2026-06-19 | Open | Full hidden-run artifact exists, but backend produced 0/8 nonempty answers; not valid evidence of reasoning competence | Fix Grok/session/network execution and run a new unspent hidden pack |
 | hidden-fresh-pack-sophia-deepseek-2026-06-19 | Open | Diagnostic spent-pack run reached 27.5/40 auto score, 8/8 nonempty answers, and 0 backend failures, but 0/8 strict pass; not independent proof evidence | Complete manual semantic review, improve missed rubric/coding/tool-use behavior, then run a new unspent reviewer-controlled pack |
@@ -993,3 +995,16 @@ perception (the report labels every rung).
 
 **Required response:** Run `tools/probe_vision_encoder.py --encoder clip:<id>` /
 `siglip:<id>` on a machine with the weights; report recall@1 + CI per encoder.
+**Gate hardening (2026-06-24, retention gate):** The original W2 promote verdict was reached on a
+gate that read only the eval ladder + the protected-floor proof — it had **no old-task retention
+term**, so it promoted v3 despite the learning-under-shift report showing a `-50.0pp` old-benchmark
+regression (`passingSignal=false`). The gate rewarded forgetting. `tools/promote_adapter.py` and
+`agent/continual_plasticity.evaluate_update` now consume a learning-under-shift report
+(`--shift-report`) and treat an old-task regression beyond tolerance (default `5.0pp`) as a **hard
+reject**, on par with a protected-suite regression. Re-running the gate on v3 with its real shift
+report now yields `FINAL VERDICT: reject`
+(`agi-proof/continual-plasticity/local-sophia-v3-mlx-retention-gated.public-report.json`). The
+historical ladder-only `promote` artifact is retained unaltered for provenance. Net: **under the
+corrected gate, v3 does not promote.** Closing the loop without forgetting (replay/rehearsal of the
+old domain or a smaller weight delta, then re-running learning-under-shift to `passingSignal=true`)
+is now a precondition for any future promotion — this remains open and hardware-bound (MLX/GPU).

@@ -105,3 +105,6 @@ storage/target/
 # Rust ANN serving build artifacts
 services/ann_serving/target/
 rag/index/vectors.txt
+# external-validation: generated per-run outputs (reviewers run their own)
+agi-proof/external-validation/seib-uplift.validation-report.json
+agi-proof/external-validation/_seib-live.raw.json
