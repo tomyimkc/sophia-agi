@@ -64,10 +64,13 @@ else
   # repo is `leanprover/elan`, NOT `leanprover/elan-init` (the latter 404s; it was the
   # wrong repo and broke the lean-kernel CI lane on first run).
   ELAN_INIT_URL="${ELAN_INIT_URL:-https://elan.lean-lang.org/elan-init.sh}"
+  # elan-init's supported flags are only: -y --default-toolchain <chain> --no-modify-path.
+  # The install directory is controlled by the ELAN_HOME env var (NOT a --prefix flag,
+  # which elan-init rejects). We export it for the curl|sh invocation below.
   # -y: accept defaults (non-interactive); --no-modify-path: we export PATH ourselves
-  # below so this script is self-contained and doesn't touch shell rc files.
-  curl -fsSL "$ELAN_INIT_URL" \
-    | sh -s -- -y --default-toolchain none --no-modify-path --prefix "$ELAN_DIR" \
+  # so this script is self-contained and doesn't touch shell rc files.
+  ELAN_HOME="$ELAN_DIR" curl -fsSL "$ELAN_INIT_URL" \
+    | ELAN_HOME="$ELAN_DIR" sh -s -- -y --default-toolchain none --no-modify-path \
     || err "elan install failed (curl $ELAN_INIT_URL)"
   log "elan installed."
 fi
