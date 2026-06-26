@@ -123,6 +123,7 @@ DPO_SOURCES = [
     ("training/hard_negatives_dpo.jsonl", "dpo_hard_negatives.jsonl", "dpo"),
     ("training/wiki_provenance_dpo.jsonl", "dpo_wiki_provenance.jsonl", "dpo"),
     ("training/hk_advisor/dpo_pairs.jsonl", "dpo_hk_advisor.jsonl", "dpo"),
+    ("training/tool_use/dpo_pairs.jsonl", "dpo_tool_use_mcp.jsonl", "dpo"),
 ]
 
 REQUIRED_INPUTS = _required_inputs(ROOT / "training" / "local_sophia_v2")
