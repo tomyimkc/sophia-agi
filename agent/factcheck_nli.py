@@ -114,8 +114,58 @@ class NLIEntailment:
         return _parse_relation(reply if isinstance(reply, str) else "")
 
 
+def consensus_relation(relations: list[str], *, min_agree: int = 2) -> str:
+    """Fail-closed majority vote over judge relations.
+
+    ``contradicts`` wins iff ≥ ``min_agree`` judges say so and it is not
+    outvoted by ``entails``; symmetrically for ``entails``. Any tie or lack of a
+    quorum yields ``irrelevant`` (a safe hold) — the panel never fabricates an
+    accept from a split vote.
+    """
+    from collections import Counter
+    counts = Counter(r for r in relations if r in _VALID)
+    contra = counts.get("contradicts", 0)
+    entail = counts.get("entails", 0)
+    if contra >= min_agree and contra >= entail:
+        return "contradicts"
+    if entail >= min_agree and entail > contra:
+        return "entails"
+    return "irrelevant"
+
+
+class MultiJudgeNLI:
+    """Cross-family NLI entailment: poll several judges, return their consensus.
+
+    Each judge is an independent :class:`NLIEntailment` (typically one model
+    family each). The per-source votes are optionally recorded into ``record``
+    (keyed by ``EvidenceSource.id``) so a caller can compute inter-judge
+    agreement (Cohen's κ) afterward.
+    """
+
+    def __init__(
+        self,
+        judges: dict[str, NLIEntailment],
+        *,
+        min_agree: int = 2,
+        source_types: set[str] | None = None,
+        record: dict[str, dict[str, str]] | None = None,
+    ) -> None:
+        self.judges = judges
+        self.min_agree = min_agree
+        self.source_types = source_types
+        self.record = record
+
+    def __call__(self, claim: AtomicClaim, source: EvidenceSource) -> str:
+        if self.source_types is not None and (source.source_type or "") not in self.source_types:
+            return "irrelevant"
+        votes = {name: judge(claim, source) for name, judge in self.judges.items()}
+        if self.record is not None:
+            self.record[source.id] = votes
+        return consensus_relation(list(votes.values()), min_agree=self.min_agree)
+
+
 def _coerce(value: Any) -> str:
     return value if isinstance(value, str) else ""
 
 
-__all__ = ["NLIEntailment"]
+__all__ = ["NLIEntailment", "MultiJudgeNLI", "consensus_relation"]
