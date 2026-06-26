@@ -52,6 +52,9 @@ eval/provenance_audit.json
 provenance_bench/dataset.jsonl
 agi-proof/benchmark-results/provenance-delta.public-report.json
 agi-proof/benchmark-results/provenance-delta.md
+# Faithfulness probe: machine/adapter-specific (run on the M4 Max with mlx-lm);
+# the recall report IS committed (deterministic, seed-based, machine-independent).
+agi-proof/verified-traces/faithfulness-probe.public-report.json
 
 # Build artifacts
 *.jsonl.bak
