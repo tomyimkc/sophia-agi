@@ -5,6 +5,12 @@ Failures are claim evidence. They show where the system is not AGI.
 | Failure ID | Status | Claim impact | Required response |
 |---|---|---|---|
 | external-benchmarks-not-run | Partial (one pilot run) | W5 DONE (pilot): GSM8K-STYLE 10-item numeric exact-match, raw vs sophia-full, 3 seeds, DeepSeek `deepseek-v4-pro`. Both arms 100%; **Δ = 0.000, 95% CI [0.000,0.000] — NULL/tie** (base at ceiling on trivial items). Gate fired 30/30 on STYLE/format grounds only (no numeric violations), gate-coverage cost on correctness = 0. Artifacts: `agi-proof/external-benchmarks/w5-gsm8k-style-pilot-2026-06-26.*`. NOT official GSM8K; foothold plumbing pilot, `_is_validated`=false. | Run the licensed GSM8K/ARC set at larger N so the CI moves off ceiling; keep wording at AGI-candidate. `canClaimAGI` stays false. |
+| tool-use-phase0-2026-06-25 | Closed | Sealed benchmark v1 N=120 (40/40/40), hash `67ee5152d501164df79c709199927e4037d0c06acb460d5d4edd8f08eb27b289`, `--check` CLEAN | — |
+| tool-use-phase1-2026-06-25 | Closed | 80 verified mock SFT traces, 0 verify_fail | RunPod real traces |
+| tool-use-phase2-2026-06-25 | Open | RunPod blocker: no SFT ≥3 seeds | train_lora on RunPod |
+| tool-use-phase3-2026-06-25 | Partial | 200 DPO pairs (over_call=36, mis_ground=28, wrong_tool=28, ignored_error=36, schema_invalid=36, spurious_extra=36) | DPO after Phase 2 |
+| tool-use-phase6-2026-06-25 | Open | Mock eval 3 seeds: trained pass@1=0.65 vs no_tools=0.025 (Δ+0.625 CI excl.0); within noise vs always_tools (Δ=0). `canClaimAGI:false` | Real adapter eval |
+| external-benchmarks-not-run | Open | Blocks expert AGI claim | Keep wording at AGI-candidate |
 | hidden-review-third-party-not-run | Open | Blocks independent hidden generalization claim | Run third-party packs |
 | external-benchmarks-not-run | Open | Blocks expert AGI claim | Keep wording at AGI-candidate |
 | hidden-review-third-party-not-run | Open | Blocks independent hidden generalization claim | Run third-party packs. A self-serve reproducer now exists for the SEIB-100 provenance claim (`tools/run_external_validation.py` + `agi-proof/external-validation/`): a reviewer recomputes PASS/FAIL live against a hash-pinned pre-registration, trusting no committed artifact. Still needs an actual third party to run it. |

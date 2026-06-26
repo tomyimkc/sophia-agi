@@ -1,0 +1,15 @@
+{
+  "schema": "sophia.tool_use_benchmark.v1",
+  "version": "heldout_v1",
+  "nCases": 120,
+  "contentHash": "67ee5152d501164df79c709199927e4037d0c06acb460d5d4edd8f08eb27b289",
+  "balance": {
+    "should_call": 40,
+    "shouldnt_call": 40,
+    "traps": 40,
+    "total": 120
+  },
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "sealed": true
+}
