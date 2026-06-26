@@ -173,6 +173,28 @@ def test_math_verifier_lean_backend_id_is_lean() -> None:
     assert r["detail"]["backend"] == "lean"
 
 
+def test_verify_proof_abstains_on_free_form_without_repo_key() -> None:
+    """Phase-0 drift fix (lean-dojo 4.x): verify_proof must abstain with a clear reason
+    when called WITHOUT theorem_name + file_path, because lean-dojo 4.x's check_proof
+    verifies a proof of a NAMED theorem in a TRACED repo — there is no stateless
+    "elaborate this string" API.
+
+    The pre-fix code called a phantom `LeanDojo(repo=...).run_code(...)` API that does
+    not exist in lean-dojo 4.x, so it ALWAYS abstained with the misleading
+    "lean-dojo import failed". This test pins the corrected, honest reason so the
+    limitation is explicit, not a silent wrong-API failure.
+
+    Runs in BOTH regimes: when lean-dojo is absent (abstains: not installed) and when
+    present (abstains: needs repo key). Either way the verdict is abstain, never accepted."""
+    check = lean_backend.verify_proof(theorem="theorem t : True := by trivial",
+                                      proof="trivial")  # no theorem_name/file_path
+    assert check.verdict == "abstain"
+    # The reason must name the actual limitation, not the misleading "import failed".
+    assert "import failed" not in check.reason
+    assert "theorem_name" in check.reason or "not installed" in check.reason
+
+
+
 def test_full_block_detection_not_fooled_by_have_term() -> None:
     """Regression: verify_proof must classify a proof as a full theorem block ONLY by its
     LEADING declaration keyword, not by a `:= by` substring. A tactic body legitimately
