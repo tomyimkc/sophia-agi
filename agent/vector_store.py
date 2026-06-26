@@ -4,10 +4,12 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import math
-from dataclasses import dataclass
+import os
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import numpy as np
@@ -139,7 +141,86 @@ def _cosine(a: np.ndarray, b: np.ndarray) -> float:
     return float(np.dot(a, b) / denom)
 
 
+# --- optional kvcache acceleration (storage/kvcache) -----------------------
+# Opt-in via SOPHIA_KVCACHE_ADDR. Caches search *results* keyed by the query,
+# top_k, and a fingerprint of the chunk set + query embedding, so a repeated
+# query against an unchanged index skips re-scoring. Fail-closed: any cache
+# error degrades to a normal (uncached) search — correctness never depends on it.
+
+_KVCACHE_TTL_MS = int(os.environ.get("SOPHIA_KVCACHE_TTL_MS", "300000"))
+
+
+def _chunkset_fingerprint(chunks: list[IndexedChunk]) -> str:
+    h = hashlib.blake2b(digest_size=16)
+    h.update(str(len(chunks)).encode())
+    # First/last/middle chunk ids cheaply detect an index swap without hashing all rows.
+    for c in (chunks[0], chunks[len(chunks) // 2], chunks[-1]):
+        h.update(b"\x00")
+        h.update(c.chunk_id.encode("utf-8"))
+        h.update(b"\x01")
+        h.update(b"1" if c.embedding is not None else b"0")
+    return h.hexdigest()
+
+
+def _cache_key(query: str, top_k: int, chunks: list[IndexedChunk], query_embedding) -> bytes:
+    h = hashlib.blake2b(digest_size=16)
+    h.update(query.encode("utf-8"))
+    h.update(f"|k={top_k}|".encode())
+    h.update(_chunkset_fingerprint(chunks).encode())
+    if query_embedding is not None:
+        h.update(np.asarray(query_embedding, dtype=np.float32).tobytes())
+    return b"sophia:rag:search:" + h.hexdigest().encode()
+
+
+def _encode_results(results: list[SourceChunk]) -> bytes:
+    return json.dumps([asdict(r) for r in results], ensure_ascii=False).encode("utf-8")
+
+
+def _decode_results(blob: bytes) -> list[SourceChunk]:
+    return [SourceChunk(**row) for row in json.loads(blob.decode("utf-8"))]
+
+
 def search(
+    query: str,
+    chunks: list[IndexedChunk],
+    *,
+    top_k: int = 8,
+    query_embedding: np.ndarray | None = None,
+) -> list[SourceChunk]:
+    if not chunks:
+        return []
+
+    client = None
+    key = None
+    try:
+        from agent import kvcache_client
+
+        client = kvcache_client.from_env()
+        if client is not None:
+            key = _cache_key(query, top_k, chunks, query_embedding)
+            hit = client.get(key)
+            if hit is not None:
+                try:
+                    return _decode_results(hit)
+                except (ValueError, TypeError) as e:  # poisoned/stale entry
+                    _LOG.debug("kvcache hit failed to decode, recomputing: %s", e)
+    except Exception as e:  # import or key-build failure must never break search
+        _LOG.debug("kvcache lookup skipped: %s", e)
+        client = None
+
+    results = _search_impl(query, chunks, top_k=top_k, query_embedding=query_embedding)
+
+    if client is not None and key is not None:
+        try:
+            client.set(key, _encode_results(results), _KVCACHE_TTL_MS)
+        except Exception as e:  # noqa: BLE001 — cache write is best-effort
+            _LOG.debug("kvcache store skipped: %s", e)
+        finally:
+            client.close()
+    return results
+
+
+def _search_impl(
     query: str,
     chunks: list[IndexedChunk],
     *,

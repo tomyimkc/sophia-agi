@@ -18,8 +18,8 @@
     {
       "seed": 0,
       "before": 0.531,
-      "after": 0.7149,
-      "delta": 0.1839,
+      "after": 0.6885,
+      "delta": 0.1575,
       "protectedDelta": 0.0,
       "contaminated": false,
       "verdict": "promote",
@@ -27,9 +27,9 @@
     },
     {
       "seed": 1,
-      "before": 0.6908,
-      "after": 0.8034,
-      "delta": 0.1126,
+      "before": 0.6793,
+      "after": 0.7851,
+      "delta": 0.1058,
       "protectedDelta": -0.0303,
       "contaminated": false,
       "verdict": "reject",
@@ -40,8 +40,8 @@
     {
       "seed": 2,
       "before": 0.5586,
-      "after": 0.7644,
-      "delta": 0.2058,
+      "after": 0.7149,
+      "delta": 0.1563,
       "protectedDelta": 0.0,
       "contaminated": false,
       "verdict": "promote",
@@ -49,12 +49,12 @@
     }
   ],
   "capability": {
-    "meanBefore": 0.5935,
-    "meanAfter": 0.7609,
-    "meanDelta": 0.1674,
-    "minDelta": 0.1126,
-    "maxDelta": 0.2058,
-    "stdevDelta": 0.0487
+    "meanBefore": 0.5896,
+    "meanAfter": 0.7295,
+    "meanDelta": 0.1399,
+    "minDelta": 0.1058,
+    "maxDelta": 0.1575,
+    "stdevDelta": 0.0295
   },
   "promotes": 2,
   "anyProtectedRegression": true,
@@ -64,7 +64,7 @@
   "boundary": "Aggregated gate result over a few seeds, under the no-overclaim measurement gate. NOT a validated capability claim; n is small. canClaimAGI=false.",
   "registry": {
     "adapterId": "sophia-rlvr-v1",
-    "replications": 3,
+    "replications": 6,
     "capabilityClaimReady": false,
     "canonical": false,
     "canonicalMeanAfter": null,

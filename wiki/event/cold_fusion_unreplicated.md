@@ -16,6 +16,8 @@ links: []
 
 # cold fusion (Fleischmann–Pons, unreplicated) (冷核融合（未獲重現）)
 
+Cold fusion (Fleischmann–Pons, unreplicated) (冷核融合（未獲重現）) is a science event, in the non_replication subfield, dated to 1989.
+
 - **Domain:** science
 
 The 1989 Fleischmann–Pons room-temperature fusion claim was never reliably replicated and is not accepted; an example of announcement-by-press-conference ahead of verification.

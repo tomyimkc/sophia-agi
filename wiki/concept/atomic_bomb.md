@@ -17,6 +17,8 @@ links: []
 
 # the atomic bomb (原子彈)
 
+The atomic bomb (原子彈) is a science concept, in the physics subfield, attributed to manhattan_project (authorship confidence: attributed), dated to 1942-1945.
+
 - **Attributed author:** manhattan_project (confidence: `attributed`)
 - **Domain:** science
 

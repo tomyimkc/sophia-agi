@@ -1,0 +1,48 @@
+Deliberation-roofline experiment  (trials=800, seed=1234)
+Task: 90 items, equal mix of easy(p=.90)/medium(.50)/hard(.15).
+Budget N = best-of-N candidates; verifier accepts/rejects; abstain if none accepted.
+
+=== verifier 'oracle'  (recall=1.0, fpr=0.0)  ceiling=1.000 ===
+   N  coverage  acc|ans  quality(MC) quality(thy)  % of roof
+   1     0.517    1.000        0.517        0.517     51.7%
+   2     0.674    1.000        0.674        0.673     67.4%
+   4     0.806    1.000        0.806        0.805     80.6%
+   8     0.908    1.000        0.908        0.908     90.8%
+  16     0.975    1.000        0.975        0.975     97.5%
+  32     0.998    1.000        0.998        0.998     99.8%
+  64     1.000    1.000        1.000        1.000    100.0%
+  -> ridge N*=16 (reaches 95% of ceiling at quality 0.975); N=64 reaches 1.000. Compute past the ridge: 4x for +0.025 quality.
+  -> concave: True; accuracy|answered ~flat in N: True; MC vs theory max err: 0.0012
+  -> oracle verifier: ceiling ~1.0 — compute alone suffices
+
+=== verifier 'good'  (recall=0.95, fpr=0.05)  ceiling=0.905 ===
+   N  coverage  acc|ans  quality(MC) quality(thy)  % of roof
+   1     0.516    0.954        0.492        0.491     54.3%
+   2     0.690    0.942        0.651        0.649     71.9%
+   4     0.833    0.928        0.773        0.772     85.4%
+   8     0.933    0.915        0.853        0.854     94.3%
+  16     0.988    0.906        0.895        0.895     98.9%
+  32     1.000    0.905        0.904        0.904    100.0%
+  64     1.000    0.905        0.905        0.905    100.0%
+  -> ridge N*=16 (reaches 95% of ceiling at quality 0.895); N=64 reaches 0.905. Compute past the ridge: 4x for +0.010 quality.
+  -> concave: True; accuracy|answered ~flat in N: False; MC vs theory max err: 0.0019
+  -> verifier-capped: ceiling 0.905 < 1.0 — extra compute cannot cross it
+
+=== verifier 'leaky'  (recall=0.85, fpr=0.15)  ceiling=0.777 ===
+   N  coverage  acc|ans  quality(MC) quality(thy)  % of roof
+   1     0.512    0.859        0.440        0.439     56.6%
+   2     0.715    0.838        0.599        0.598     77.1%
+   4     0.876    0.809        0.708        0.707     91.2%
+   8     0.966    0.786        0.760        0.760     97.8%
+  16     0.997    0.779        0.776        0.775     99.9%
+  32     1.000    0.777        0.777        0.777    100.0%
+  64     1.000    0.777        0.777        0.777    100.0%
+  -> ridge N*=8 (reaches 95% of ceiling at quality 0.760); N=64 reaches 0.777. Compute past the ridge: 8x for +0.017 quality.
+  -> concave: True; accuracy|answered ~flat in N: False; MC vs theory max err: 0.0013
+  -> verifier-capped: ceiling 0.777 < 1.0 — extra compute cannot cross it
+
+THEORY VERDICT
+  H1 concave (diminishing returns): True
+  H2 finite ridge point exists:     leaky N*=8 << 64  -> CONFIRMED
+  H3 ceiling set by verifier (not compute): oracle=1.000 vs leaky=0.777  -> CONFIRMED
+  MC matches closed form within 0.0019  -> the model is sound, not just asserted

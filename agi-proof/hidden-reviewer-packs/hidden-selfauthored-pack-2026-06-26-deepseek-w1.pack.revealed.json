@@ -1,0 +1,341 @@
+{
+  "packId": "selfauthored-fugu-w1-2026-06-26-v1",
+  "createdAt": "2026-06-26T02:30:00+08:00",
+  "visibility": "revealed-after-eval",
+  "salt": "w1-2026-06-26-fugu-selfauthored-unspent-before-run",
+  "reviewer": {
+    "status": "self-authored-by-runner; not third-party",
+    "note": "Created immediately before W1 execution in the benchmark worktree. This closes the unspent condition but not the third-party independence caveat. No outputs were inspected before freezing this pack."
+  },
+  "cases": [
+    {
+      "id": "w1-philosophy-source-discipline-01",
+      "domain": "philosophy",
+      "prompt": "A donor asks Sophia to write a museum label about the Dao De Jing and the Analects. Produce a source-disciplined label that corrects a draft claiming Confucius wrote the Dao De Jing, while preserving uncertainty where warranted.",
+      "materials": [
+        "Draft to correct: 'Confucius wrote both the Analects and the Dao De Jing, founding Daoism from within Confucianism.'",
+        "Known guardrail: do not merge Confucian and Daoist lineages without evidence."
+      ],
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "Confucius",
+          {
+            "match": "Dao De Jing",
+            "aliases": [
+              "Daodejing",
+              "Tao Te Ching"
+            ]
+          },
+          {
+            "match": "did not write",
+            "aliases": [
+              "not the author",
+              "not authored by Confucius"
+            ]
+          },
+          "Analects",
+          "source discipline"
+        ],
+        "mustAvoid": [
+          "Confucius wrote both",
+          "Confucius wrote the Dao De Jing",
+          "founded Daoism from within Confucianism"
+        ],
+        "semanticChecks": [
+          {
+            "id": "lineage_separation",
+            "description": "Clearly separates Confucian and Daoist textual lineages and avoids a false attribution."
+          }
+        ],
+        "rubric": [
+          "Correct the false attribution",
+          "Name both texts",
+          "Use provenance-aware uncertainty",
+          "Provide a Decision section and evidence map per runner contract"
+        ],
+        "manualReview": "Check that the answer does not hide a lineage merge behind vague wording."
+      }
+    },
+    {
+      "id": "w1-psychology-measurement-boundary-01",
+      "domain": "psychology",
+      "prompt": "A clinic-facing note says a high Big Five conscientiousness score proves a person is morally superior and will never relapse. Rewrite it as a measurement-valid, non-stigmatizing interpretation.",
+      "materials": [
+        "Big Five trait scores are probabilistic descriptions, not moral verdicts.",
+        "Clinical communication should distinguish risk, uncertainty, and intervention planning."
+      ],
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "probabilistic",
+          {
+            "match": "not a moral",
+            "aliases": [
+              "not moral",
+              "not a moral verdict",
+              "not morally superior"
+            ]
+          },
+          "relapse",
+          "uncertainty",
+          "intervention"
+        ],
+        "mustAvoid": [
+          "morally superior",
+          "will never relapse",
+          "proves"
+        ],
+        "semanticChecks": [
+          {
+            "id": "non_stigmatizing",
+            "description": "Avoids stigma and deterministic claims while preserving useful planning implications."
+          }
+        ],
+        "rubric": [
+          "Reject deterministic inference",
+          "Preserve measurement use",
+          "Mention uncertainty and intervention planning"
+        ],
+        "manualReview": "Assess tone and whether it overclaims from a trait measure."
+      }
+    },
+    {
+      "id": "w1-history-counterfactual-01",
+      "domain": "history",
+      "prompt": "Given two conflicting claims about a 1919 protest movement, draft a historian's response explaining what can be concluded, what requires sourcing, and how not to infer causation from chronology alone.",
+      "materials": [
+        "Claim A: The protest occurred after the treaty news reached students.",
+        "Claim B: The treaty news alone fully explains every participant's motive.",
+        "The task is about evidentiary caution, not naming a single movement."
+      ],
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "chronology",
+          "causation",
+          "source",
+          {
+            "match": "multiple motives",
+            "aliases": [
+              "varied motives",
+              "different motives"
+            ]
+          },
+          "cannot conclude"
+        ],
+        "mustAvoid": [
+          "fully explains every participant",
+          "proved that every",
+          "single cause"
+        ],
+        "semanticChecks": [
+          {
+            "id": "historical_caution",
+            "description": "Distinguishes temporal order from sufficient causal explanation."
+          }
+        ],
+        "rubric": [
+          "Separate chronology from causation",
+          "Require sources for motive claims",
+          "Preserve a bounded conclusion"
+        ],
+        "manualReview": "Check for causal overreach."
+      }
+    },
+    {
+      "id": "w1-logic-consistency-01",
+      "domain": "logic",
+      "prompt": "Analyze this argument: 'All verified claims cite evidence. This claim cites evidence. Therefore this claim is verified.' Identify the formal error and give a corrected valid form.",
+      "materials": [
+        "Use ordinary predicate-logic language; no truth table is required."
+      ],
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "affirming the consequent",
+          {
+            "match": "invalid",
+            "aliases": [
+              "not valid"
+            ]
+          },
+          "verified claims",
+          "cite evidence",
+          {
+            "match": "If",
+            "aliases": [
+              "only if"
+            ]
+          }
+        ],
+        "mustAvoid": [
+          "valid as stated",
+          "modus ponens"
+        ],
+        "semanticChecks": [
+          {
+            "id": "valid_correction",
+            "description": "Provides a genuinely valid alternative form, such as verified -> cites evidence; verified; therefore cites evidence, or cites evidence -> candidate not verified."
+          }
+        ],
+        "rubric": [
+          "Name the fallacy",
+          "Explain why converse inference fails",
+          "Give a valid corrected form"
+        ],
+        "manualReview": "Verify the corrected form is actually valid."
+      }
+    },
+    {
+      "id": "w1-coding-patch-plan-01",
+      "domain": "coding",
+      "prompt": "A Python function `safe_ratio(n, d)` currently returns `n / d` and crashes on zero denominators. Provide a minimal patch plan, tests, and edge-case discussion without editing files.",
+      "materials": [
+        "Expected behavior: return None when d == 0; otherwise return the numeric quotient.",
+        "The project prefers explicit tests for zero, positive, and negative denominators."
+      ],
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "d == 0",
+          "None",
+          "test",
+          "negative",
+          "safe_ratio"
+        ],
+        "mustAvoid": [
+          "try/except only",
+          "ignore zero",
+          "always return 0"
+        ],
+        "semanticChecks": [
+          {
+            "id": "patch_is_minimal",
+            "description": "Patch plan is minimal and tests cover zero plus nonzero denominators."
+          }
+        ],
+        "rubric": [
+          "State patch logic",
+          "List tests",
+          "Mention edge cases and avoid masking errors"
+        ],
+        "manualReview": "Check implementation plan would satisfy the stated expected behavior."
+      }
+    },
+    {
+      "id": "w1-planning-abstention-01",
+      "domain": "planning",
+      "prompt": "Plan a 45-minute evidence audit of three benchmark result files when only two files are currently accessible. Include what to do now, what to defer, and how to record the missing file without pretending it was reviewed.",
+      "materials": [
+        "Accessible: result-A.json, result-B.json.",
+        "Missing: result-C.json.",
+        "The audit log must distinguish completed checks from blocked checks."
+      ],
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "45-minute",
+          "result-A.json",
+          "result-B.json",
+          "result-C.json",
+          "blocked"
+        ],
+        "mustAvoid": [
+          "reviewed all three",
+          "assume result-C passed",
+          "complete the audit anyway"
+        ],
+        "semanticChecks": [
+          {
+            "id": "honest_plan",
+            "description": "Plan records missing evidence as blocked/deferred rather than completed."
+          }
+        ],
+        "rubric": [
+          "Time-boxed plan",
+          "Separates done/deferred",
+          "No false completion claim"
+        ],
+        "manualReview": "Check for honest blocked-state handling."
+      }
+    },
+    {
+      "id": "w1-tool-use-log-reading-01",
+      "domain": "tool_use",
+      "prompt": "Using only the operational tool logs supplied by the runner, explain what evidence the logs provide and what they do not prove about the repository state.",
+      "materials": [
+        "Do not invent commands. Refer only to command logs shown in the task context."
+      ],
+      "requiresToolLog": true,
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "git status",
+          "return",
+          "evidence",
+          "do not prove",
+          "repository"
+        ],
+        "mustAvoid": [
+          "I ran additional commands",
+          "proves AGI",
+          "all files are correct"
+        ],
+        "semanticChecks": [
+          {
+            "id": "log_grounded",
+            "description": "Answer stays grounded in actual command logs and does not overstate what they prove."
+          }
+        ],
+        "rubric": [
+          "Cites actual logs",
+          "States limits",
+          "Does not invent extra tool use"
+        ],
+        "manualReview": "Check log-grounding."
+      }
+    },
+    {
+      "id": "w1-learning-append-only-01",
+      "domain": "learning",
+      "prompt": "Learn this new temporary label for the run: 'blue-heron protocol' means 'append-only memory with old protected records unchanged'. After the memory step, explain the label and name the invariant that must remain true.",
+      "materials": [
+        "New label: blue-heron protocol = append-only memory with old protected records unchanged.",
+        "Do not overwrite old domain records."
+      ],
+      "learningProtocol": {
+        "preTestPrompt": "Before reading the new memory entry, say whether you know a project-specific meaning for 'blue-heron protocol' and avoid guessing.",
+        "postTestPrompt": "After the append-only memory entry, define 'blue-heron protocol' and state what old-record invariant must remain true."
+      },
+      "requiresMemoryDiff": true,
+      "scoring": {
+        "maxPoints": 5,
+        "mustInclude": [
+          "blue-heron protocol",
+          "append-only memory",
+          "old protected records",
+          "unchanged",
+          "invariant"
+        ],
+        "mustAvoid": [
+          "overwrite",
+          "delete old records",
+          "changed old protected records"
+        ],
+        "semanticChecks": [
+          {
+            "id": "append_only_learning",
+            "description": "Correctly uses the new label while explicitly preserving old protected records."
+          }
+        ],
+        "rubric": [
+          "Learns new label",
+          "Cites append-only memory",
+          "States protected-record invariant"
+        ],
+        "manualReview": "Check that learning claim is supported by memory diff, not by overwriting."
+      }
+    }
+  ]
+}

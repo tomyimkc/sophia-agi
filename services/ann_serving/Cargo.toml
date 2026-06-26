@@ -1,0 +1,30 @@
+[package]
+name = "sophia-ann-serving"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Dependency-free flat + NSW approximate-nearest-neighbour index for Sophia search recall"
+repository = "https://github.com/tomyimkc/sophia-agi"
+
+# Intentionally zero external dependencies: this is a self-contained systems core meant to be
+# read, benchmarked, and embedded (Python via a future cdylib/PyO3). Determinism comes from
+# insertion order + a seeded LCG in the bench, so `cargo test` is reproducible everywhere.
+[dependencies]
+
+[lib]
+name = "sophia_ann"
+path = "src/lib.rs"
+
+[[bin]]
+name = "bench"
+path = "src/main.rs"
+
+# Streaming query server: builds the index from an exported vectors file once, then answers
+# queries from stdin. The Python bridge (agent/ann_client.py) drives it as a subprocess.
+[[bin]]
+name = "serve"
+path = "src/serve.rs"
+
+[profile.release]
+opt-level = 3
+lto = true

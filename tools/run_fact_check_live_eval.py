@@ -33,24 +33,45 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--fixtures", default=str(DEFAULT_FIXTURES), help="offline fixture JSON")
     ap.add_argument("--out", default=str(DEFAULT_OUT), help="report output path")
     ap.add_argument("--live", action="store_true", help="use keyless live Wikidata/Crossref/URL/macro/scholarly backend")
+    ap.add_argument("--condition", choices=["full", "raw"], default="full",
+                    help="full = gate+retrieval pipeline (default); raw = base model alone (no gate), "
+                         "the baseline the gate is measured against")
+    ap.add_argument("--model", default=None, help="model spec for --condition raw (e.g. mlx:Qwen/Qwen2.5-3B-Instruct)")
     ap.add_argument("--target-fabrication-rate", type=float, default=0.01)
     args = ap.parse_args(argv)
 
     rows = load_jsonl(args.pack)
-    if args.live:
-        backend = LiveFactBackend()
-    else:
-        backend = FixtureFactBackend.from_file(args.fixtures)
 
-    report = run_fact_check_eval(
-        rows,
-        retriever=backend.retriever,
-        entailment=backend.entailment,
-        doi_resolver=backend.doi_resolver,
-        url_resolver=backend.url_resolver,
-        live_backend=bool(args.live),
-        target_fabrication_rate=args.target_fabrication_rate,
-    )
+    if args.condition == "raw":
+        # RAW arm: base model classifies each claim with NO gate/retrieval. Same pack, same
+        # external labels -> raw-vs-full isolates the gate's fabrication-reduction value.
+        if not args.model:
+            print("--condition raw requires --model <spec>", file=sys.stderr)
+            return 2
+        from agent.model import default_client  # noqa: E402
+        from agent.raw_fact_classifier import raw_fact_verdict  # noqa: E402
+
+        client = default_client(args.model)
+        report = run_fact_check_eval(
+            rows,
+            live_backend=bool(args.live),
+            target_fabrication_rate=args.target_fabrication_rate,
+            verdict_fn=lambda row: raw_fact_verdict(row, client),
+        )
+        report["condition"] = "raw"
+        report["rawModel"] = args.model
+    else:
+        backend = LiveFactBackend() if args.live else FixtureFactBackend.from_file(args.fixtures)
+        report = run_fact_check_eval(
+            rows,
+            retriever=backend.retriever,
+            entailment=backend.entailment,
+            doi_resolver=backend.doi_resolver,
+            url_resolver=backend.url_resolver,
+            live_backend=bool(args.live),
+            target_fabrication_rate=args.target_fabrication_rate,
+        )
+        report["condition"] = "full"
     write_report(report, args.out)
     print(json.dumps({
         "out": args.out,

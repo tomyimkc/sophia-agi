@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+[package]
+name = "sophia-kvcache"
+description = "Disaggregated, prefix-sharing KV-cache for LLM inference — paged blocks tiered across HBM/DRAM/NVMe with reference-counted prefix reuse."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[lib]
+name = "sophia_kvcache"
+
+[[bench]]
+name = "kvcache_bench"
+path = "../../benches/kvcache_bench.rs"
+harness = false

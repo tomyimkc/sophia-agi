@@ -1,0 +1,511 @@
+{
+  "schema": "sophia.seib_contested_corpus_partition.v1",
+  "nContested": 50,
+  "corpusClean": [
+    {
+      "id": "seib_contested_004_true-anaximenes-rhetoric_to_alexander",
+      "work": "Rhetoric to Alexander",
+      "gold_author": "Anaximenes of Lampsacus",
+      "entity": [
+        "rhetoric to alexander",
+        "anaximenes of lampsacus"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_005_true-philip-epinomis",
+      "work": "Epinomis",
+      "gold_author": "Philip of Opus",
+      "entity": [
+        "epinomis",
+        "philip of opus"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_006_true-many_authors_over_-the_book_of_psalms",
+      "work": "the Book of Psalms",
+      "gold_author": "many authors over centuries",
+      "entity": [
+        "the book of psalms",
+        "many authors over centuries"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_007_true-moses_de_le_n-zohar",
+      "work": "Zohar",
+      "gold_author": "Moses de León",
+      "entity": [
+        "zohar",
+        "moses de le n"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_008_true-james_macpherson-the_poems_of_ossian_fingal_tem",
+      "work": "The Poems of Ossian (Fingal, Temora)",
+      "gold_author": "James Macpherson",
+      "entity": [
+        "the poems of ossian fingal temora",
+        "james macpherson"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_009_true-thomas_chatterton-the_rowley_poems",
+      "work": "The Rowley Poems",
+      "gold_author": "Thomas Chatterton",
+      "entity": [
+        "the rowley poems",
+        "thomas chatterton"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_010_true-thomas_kempis-de_imitatione_christi_the_imit",
+      "work": "De Imitatione Christi (The Imitation of Christ)",
+      "gold_author": "Thomas à Kempis",
+      "entity": [
+        "de imitatione christi the imitation of christ",
+        "thomas kempis"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_011_true-william_henry_irel-vortigern_and_rowena",
+      "work": "Vortigern and Rowena",
+      "gold_author": "William Henry Ireland",
+      "entity": [
+        "vortigern and rowena",
+        "william henry ireland"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_012_true-philo_of_byblos-phoenician_history",
+      "work": "Phoenician History",
+      "gold_author": "Philo of Byblos",
+      "entity": [
+        "phoenician history",
+        "philo of byblos"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_013_true-arthur_schopenhaue-the_world_as_will_and_represen",
+      "work": "The World as Will and Representation",
+      "gold_author": "Arthur Schopenhauer",
+      "entity": [
+        "the world as will and representation",
+        "arthur schopenhauer"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_014_true-lucretius-on_the_nature_of_things",
+      "work": "On the Nature of Things",
+      "gold_author": "Lucretius",
+      "entity": [
+        "on the nature of things",
+        "lucretius"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_015_true-john_locke-an_essay_concerning_human_unde",
+      "work": "An Essay Concerning Human Understanding",
+      "gold_author": "John Locke",
+      "entity": [
+        "an essay concerning human understanding",
+        "john locke"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_016_true-david_hume-an_enquiry_concerning_the_prin",
+      "work": "An Enquiry Concerning the Principles of Morals",
+      "gold_author": "David Hume",
+      "entity": [
+        "an enquiry concerning the principles of morals",
+        "david hume"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_017_true-montesquieu-the_spirit_of_the_laws",
+      "work": "The Spirit of the Laws",
+      "gold_author": "Montesquieu",
+      "entity": [
+        "the spirit of the laws",
+        "montesquieu"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_018_true-simone_de_beauvoir-the_second_sex",
+      "work": "The Second Sex",
+      "gold_author": "Simone de Beauvoir",
+      "entity": [
+        "the second sex",
+        "simone de beauvoir"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_019_true-jean_paul_sartre-being_and_nothingness",
+      "work": "Being and Nothingness",
+      "gold_author": "Jean-Paul Sartre",
+      "entity": [
+        "being and nothingness",
+        "jean paul sartre"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_020_true-martin_heidegger-being_and_time",
+      "work": "Being and Time",
+      "gold_author": "Martin Heidegger",
+      "entity": [
+        "being and time",
+        "martin heidegger"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_021_true-ludwig_wittgenstei-philosophical_investigations",
+      "work": "Philosophical Investigations",
+      "gold_author": "Ludwig Wittgenstein",
+      "entity": [
+        "philosophical investigations",
+        "ludwig wittgenstein"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_022_true-ludwig_wittgenstei-tractatus_logico_philosophicus",
+      "work": "Tractatus Logico-Philosophicus",
+      "gold_author": "Ludwig Wittgenstein",
+      "entity": [
+        "tractatus logico philosophicus",
+        "ludwig wittgenstein"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_023_true-francis_bacon-the_new_atlantis",
+      "work": "The New Atlantis",
+      "gold_author": "Francis Bacon",
+      "entity": [
+        "the new atlantis",
+        "francis bacon"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_024_true-ren_descartes-discourse_on_method",
+      "work": "Discourse on Method",
+      "gold_author": "René Descartes",
+      "entity": [
+        "discourse on method",
+        "ren descartes"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_025_true-friedrich_nietzsch-the_genealogy_of_morals",
+      "work": "The Genealogy of Morals",
+      "gold_author": "Friedrich Nietzsche",
+      "entity": [
+        "the genealogy of morals",
+        "friedrich nietzsche"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_026_true-voltaire-candide",
+      "work": "Candide",
+      "gold_author": "Voltaire",
+      "entity": [
+        "candide",
+        "voltaire"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_027_true-al_ghazali-the_incoherence_of_the_philoso",
+      "work": "The Incoherence of the Philosophers",
+      "gold_author": "Al-Ghazali",
+      "entity": [
+        "the incoherence of the philosophers",
+        "al ghazali"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_028_true-jean_paul_sartre-nausea",
+      "work": "Nausea",
+      "gold_author": "Jean-Paul Sartre",
+      "entity": [
+        "nausea",
+        "jean paul sartre"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_029_true-albert_camus-the_stranger",
+      "work": "The Stranger",
+      "gold_author": "Albert Camus",
+      "entity": [
+        "the stranger",
+        "albert camus"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_030_true-ernest_hemingway-the_old_man_and_the_sea",
+      "work": "The Old Man and the Sea",
+      "gold_author": "Ernest Hemingway",
+      "entity": [
+        "the old man and the sea",
+        "ernest hemingway"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_031_true-ernest_hemingway-for_whom_the_bell_tolls",
+      "work": "For Whom the Bell Tolls",
+      "gold_author": "Ernest Hemingway",
+      "entity": [
+        "for whom the bell tolls",
+        "ernest hemingway"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_032_true-fyodor_dostoevsky-crime_and_punishment",
+      "work": "Crime and Punishment",
+      "gold_author": "Fyodor Dostoevsky",
+      "entity": [
+        "crime and punishment",
+        "fyodor dostoevsky"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_033_true-leo_tolstoy-anna_karenina",
+      "work": "Anna Karenina",
+      "gold_author": "Leo Tolstoy",
+      "entity": [
+        "anna karenina",
+        "leo tolstoy"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_034_true-william_makepeace_-vanity_fair",
+      "work": "Vanity Fair",
+      "gold_author": "William Makepeace Thackeray",
+      "entity": [
+        "vanity fair",
+        "william makepeace thackeray"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_035_true-emily_bront-wuthering_heights",
+      "work": "Wuthering Heights",
+      "gold_author": "Emily Brontë",
+      "entity": [
+        "wuthering heights",
+        "emily bront"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_036_true-george_eliot-middlemarch",
+      "work": "Middlemarch",
+      "gold_author": "George Eliot",
+      "entity": [
+        "middlemarch",
+        "george eliot"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_037_true-jack_london-the_call_of_the_wild",
+      "work": "The Call of the Wild",
+      "gold_author": "Jack London",
+      "entity": [
+        "the call of the wild",
+        "jack london"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_038_true-ray_bradbury-fahrenheit_451",
+      "work": "Fahrenheit 451",
+      "gold_author": "Ray Bradbury",
+      "entity": [
+        "fahrenheit 451",
+        "ray bradbury"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_039_true-anthony_burgess-a_clockwork_orange",
+      "work": "A Clockwork Orange",
+      "gold_author": "Anthony Burgess",
+      "entity": [
+        "a clockwork orange",
+        "anthony burgess"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_040_true-c_s_lewis-the_chronicles_of_narnia",
+      "work": "The Chronicles of Narnia",
+      "gold_author": "C.S. Lewis",
+      "entity": [
+        "the chronicles of narnia",
+        "c s lewis"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_041_true-hermann_hesse-steppenwolf",
+      "work": "Steppenwolf",
+      "gold_author": "Hermann Hesse",
+      "entity": [
+        "steppenwolf",
+        "hermann hesse"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_042_true-isabel_allende-the_house_of_the_spirits",
+      "work": "The House of the Spirits",
+      "gold_author": "Isabel Allende",
+      "entity": [
+        "the house of the spirits",
+        "isabel allende"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_043_true-evelyn_waugh-brideshead_revisited",
+      "work": "Brideshead Revisited",
+      "gold_author": "Evelyn Waugh",
+      "entity": [
+        "brideshead revisited",
+        "evelyn waugh"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_044_true-virginia_woolf-mrs_dalloway",
+      "work": "Mrs Dalloway",
+      "gold_author": "Virginia Woolf",
+      "entity": [
+        "mrs dalloway",
+        "virginia woolf"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_045_true-harper_lee-to_kill_a_mockingbird",
+      "work": "To Kill a Mockingbird",
+      "gold_author": "Harper Lee",
+      "entity": [
+        "to kill a mockingbird",
+        "harper lee"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_046_true-john_maynard_keyne-the_general_theory_of_employme",
+      "work": "The General Theory of Employment, Interest and Money",
+      "gold_author": "John Maynard Keynes",
+      "entity": [
+        "the general theory of employment interest and money",
+        "john maynard keynes"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_047_true-friedrich_hayek-the_road_to_serfdom",
+      "work": "The Road to Serfdom",
+      "gold_author": "Friedrich Hayek",
+      "entity": [
+        "the road to serfdom",
+        "friedrich hayek"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_048_true-richard_dawkins-the_selfish_gene",
+      "work": "The Selfish Gene",
+      "gold_author": "Richard Dawkins",
+      "entity": [
+        "the selfish gene",
+        "richard dawkins"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_049_true-stephen_hawking-a_brief_history_of_time",
+      "work": "A Brief History of Time",
+      "gold_author": "Stephen Hawking",
+      "entity": [
+        "a brief history of time",
+        "stephen hawking"
+      ],
+      "corpusExamples": 0
+    },
+    {
+      "id": "seib_contested_050_true-yuval_noah_harari-sapiens_a_brief_history_of_hum",
+      "work": "Sapiens: A Brief History of Humankind",
+      "gold_author": "Yuval Noah Harari",
+      "entity": [
+        "sapiens a brief history of humankind",
+        "yuval noah harari"
+      ],
+      "corpusExamples": 0
+    }
+  ],
+  "corpusTaught": [
+    {
+      "id": "seib_contested_001_true-laozi-dao_de_jing",
+      "work": "Dao De Jing",
+      "gold_author": "Laozi",
+      "entity": [
+        "dao de jing",
+        "laozi"
+      ],
+      "corpusExamples": 105
+    },
+    {
+      "id": "seib_contested_002_true-confucius-analects",
+      "work": "Analects",
+      "gold_author": "Confucius (compiled by his disciples)",
+      "entity": [
+        "analects",
+        "confucius"
+      ],
+      "corpusExamples": 81
+    },
+    {
+      "id": "seib_contested_003_true-arrian-enchiridion",
+      "work": "Enchiridion",
+      "gold_author": "Arrian (recording Epictetus)",
+      "entity": [
+        "enchiridion",
+        "arrian"
+      ],
+      "corpusExamples": 19
+    }
+  ],
+  "nCorpusClean": 47,
+  "nCorpusTaught": 3,
+  "guidance": "Use corpusClean entities as the GENERALIZATION held-out (fabrication==0 there = a transferring habit). corpusTaught entities measure in-distribution retention only. If nCorpusClean is too small for a stable rate, commission a fresh corpus-disjoint contested pack (this also advances Hurdle 1 / external validation)."
+}

@@ -17,6 +17,8 @@ links: []
 
 # telephone (電話)
 
+Telephone (電話) is a science concept, in the engineering subfield, attributed to alexander_graham_bell (authorship confidence: disputed), dated to 1876.
+
 - **Attributed author:** alexander_graham_bell (confidence: `disputed`)
 - **Domain:** science
 

@@ -16,6 +16,8 @@ links: []
 
 # Hwang Woo-suk cloned stem-cell papers (fraud, retracted) (黃禹錫幹細胞造假（已撤稿）)
 
+Hwang Woo-suk cloned stem-cell papers (fraud, retracted) (黃禹錫幹細胞造假（已撤稿）) is a science event, in the retraction subfield, dated to 2004-2006.
+
 - **Domain:** science
 
 The 2004–2005 Science papers claiming patient-matched embryonic stem-cell lines were RETRACTED in 2006 as fabricated.

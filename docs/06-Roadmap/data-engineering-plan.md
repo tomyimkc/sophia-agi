@@ -34,7 +34,7 @@ catalog), importable from `agent/` so it stays consistent with the trust-layer v
 | 1 | Quality scoring | `quality_score.py`, `link_priority.py`, `tools/score_corpus.py` | 采集 pipeline (链接质量预估/数据优先级) | ✅ done |
 | 2 | Dedup & URL hygiene | MinHash-LSH, vector near-dup, URL canonicalization | 采集 / 语言数据 (MinHash/向量去重/链接规模控制) | ✅ done |
 | 3 | Columnar & regression | DuckDB/Parquet corpus stats, quality-regression gate | 语言数据处理 (质量回归) | ✅ done |
-| 4 | Acquisition loop | async crawler, priority frontier, CommonCrawl WARC ingest | 采集 pipeline (全网采集环路) | ⏳ |
+| 4 | Acquisition loop | async crawler, priority frontier, CommonCrawl WARC ingest | 采集 pipeline (全网采集环路) | ✅ done |
 | 5 | Scale proof & infra | object-store shards, KV seen-set, queue, RESULTS numbers | 数据基建 (TB tokens) | ⏳ |
 | + | Multimodal slice (stretch) | image-text WebDataset shards w/ perceptual-hash dedup | 多模态数据 | ⏳ |
 
@@ -80,10 +80,20 @@ catalog), importable from `agent/` so it stays consistent with the trust-layer v
   `requirements-pipeline.txt`; CI currently runs the stdlib fallback path.
 - **Done:** end-to-end score → dedup → shard → stats → gate verified; regression fails closed.
 
-### Phase 4 — Acquisition loop (全网采集环路)
-- `pipeline/fetch/crawler.py` — polite async fetch, robots, per-host quota, retry/backoff, DNS.
-- `pipeline/fetch/frontier.py` — priority queue seeded by `link_priority`; cleaning feedback re-ranks.
-- `pipeline/fetch/warc.py` — CommonCrawl WARC ingest (scale demo without aggressive crawling).
+### Phase 4 — Acquisition loop (全网采集环路) ✅
+- `pipeline/fetch/frontier.py` — max-priority URL queue, canonical-dedup, `feedback()` re-rank.
+- `pipeline/fetch/robots.py` — async robots.txt gating (`urllib.robotparser`), conservative on error.
+- `pipeline/fetch/crawler.py` — **async** crawl over an **injectable transport** (mock/airgap;
+  httpx in prod): per-host rate limit + fetch quota + global `max_pages` (抓取配额), retry with
+  exponential backoff on 5xx/429/transport error. Injectable clock/sleep → deterministic tests.
+- `pipeline/fetch/extract.py` — dependency-free `<a href>` link + text extraction.
+- `pipeline/fetch/warc.py` — WARC `response`-record ingest (gzip-aware) → documents; the
+  network-free path to run at scale against an archived crawl.
+- `pipeline/fetch/loop.py` — `run_loop`: seed → fetch → extract → **score (Phase 1) → re-rank
+  frontier from that quality** → repeat. This is the closed selection loop, not a blind spider.
+- `tools/crawl_warc.py` — WARC → extract → dedup → score → shard + manifest.
+- **Done:** loop follows discovered links and scores; WARC CLI removes a mirror (33% dedup on
+  the sample) and emits a scored shard; 12 fetch tests green (all offline via mock transport).
 
 ### Phase 5 — Scale proof & infra (数据基建)
 - Run 1–4 over a multi-GB public dump (CommonCrawl/Wikipedia/OSCAR).

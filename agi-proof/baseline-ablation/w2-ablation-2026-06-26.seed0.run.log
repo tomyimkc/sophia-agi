@@ -1,0 +1,1630 @@
+[preflight] checking deepseek backend before running ablation sweep
+[mode] sophia-full
+  [sophia-full] [1/18] ab_voynich (philosophy)
+  [sophia-full] [2/18] ab_beowulf (philosophy)
+  [sophia-full] [3/18] ab_gilgamesh (history)
+  [sophia-full] [4/18] ab_einstein_quote (philosophy)
+  [sophia-full] [5/18] ab_gandhi_quote (philosophy)
+  [sophia-full] [6/18] ab_satoshi (history)
+  [sophia-full] [7/18] ab_ripper (history)
+  [sophia-full] [8/18] ab_deadsea (history)
+  [sophia-full] [9/18] ab_stonehenge (history)
+  [sophia-full] [10/18] ab_junius (history)
+  [sophia-full] [11/18] ab_rohonc (philosophy)
+  [sophia-full] [12/18] ab_twinkle (history)
+  [sophia-full] [13/18] def_republic (philosophy)
+  [sophia-full] [14/18] def_relativity (history)
+  [sophia-full] [15/18] def_hamlet (philosophy)
+  [sophia-full] [16/18] def_flt (logic)
+  [sophia-full] [17/18] def_origin (history)
+  [sophia-full] [18/18] def_analects (philosophy)
+[mode] raw-model
+  [raw-model] [1/18] ab_voynich (philosophy)
+  [raw-model] [2/18] ab_beowulf (philosophy)
+  [raw-model] [3/18] ab_gilgamesh (history)
+  [raw-model] [4/18] ab_einstein_quote (philosophy)
+  [raw-model] [5/18] ab_gandhi_quote (philosophy)
+  [raw-model] [6/18] ab_satoshi (history)
+  [raw-model] [7/18] ab_ripper (history)
+  [raw-model] [8/18] ab_deadsea (history)
+  [raw-model] [9/18] ab_stonehenge (history)
+  [raw-model] [10/18] ab_junius (history)
+  [raw-model] [11/18] ab_rohonc (philosophy)
+  [raw-model] [12/18] ab_twinkle (history)
+  [raw-model] [13/18] def_republic (philosophy)
+  [raw-model] [14/18] def_relativity (history)
+  [raw-model] [15/18] def_hamlet (philosophy)
+  [raw-model] [16/18] def_flt (logic)
+  [raw-model] [17/18] def_origin (history)
+  [raw-model] [18/18] def_analects (philosophy)
+[mode] raw-model-plus-tools
+  [raw-model-plus-tools] [1/18] ab_voynich (philosophy)
+  [raw-model-plus-tools] [2/18] ab_beowulf (philosophy)
+  [raw-model-plus-tools] [3/18] ab_gilgamesh (history)
+  [raw-model-plus-tools] [4/18] ab_einstein_quote (philosophy)
+  [raw-model-plus-tools] [5/18] ab_gandhi_quote (philosophy)
+  [raw-model-plus-tools] [6/18] ab_satoshi (history)
+  [raw-model-plus-tools] [7/18] ab_ripper (history)
+  [raw-model-plus-tools] [8/18] ab_deadsea (history)
+  [raw-model-plus-tools] [9/18] ab_stonehenge (history)
+  [raw-model-plus-tools] [10/18] ab_junius (history)
+  [raw-model-plus-tools] [11/18] ab_rohonc (philosophy)
+  [raw-model-plus-tools] [12/18] ab_twinkle (history)
+  [raw-model-plus-tools] [13/18] def_republic (philosophy)
+  [raw-model-plus-tools] [14/18] def_relativity (history)
+  [raw-model-plus-tools] [15/18] def_hamlet (philosophy)
+  [raw-model-plus-tools] [16/18] def_flt (logic)
+  [raw-model-plus-tools] [17/18] def_origin (history)
+  [raw-model-plus-tools] [18/18] def_analects (philosophy)
+[mode] sophia-no-kb
+  [sophia-no-kb] [1/18] ab_voynich (philosophy)
+  [sophia-no-kb] [2/18] ab_beowulf (philosophy)
+  [sophia-no-kb] [3/18] ab_gilgamesh (history)
+  [sophia-no-kb] [4/18] ab_einstein_quote (philosophy)
+  [sophia-no-kb] [5/18] ab_gandhi_quote (philosophy)
+  [sophia-no-kb] [6/18] ab_satoshi (history)
+  [sophia-no-kb] [7/18] ab_ripper (history)
+  [sophia-no-kb] [8/18] ab_deadsea (history)
+  [sophia-no-kb] [9/18] ab_stonehenge (history)
+  [sophia-no-kb] [10/18] ab_junius (history)
+  [sophia-no-kb] [11/18] ab_rohonc (philosophy)
+  [sophia-no-kb] [12/18] ab_twinkle (history)
+  [sophia-no-kb] [13/18] def_republic (philosophy)
+  [sophia-no-kb] [14/18] def_relativity (history)
+  [sophia-no-kb] [15/18] def_hamlet (philosophy)
+  [sophia-no-kb] [16/18] def_flt (logic)
+  [sophia-no-kb] [17/18] def_origin (history)
+  [sophia-no-kb] [18/18] def_analects (philosophy)
+[mode] sophia-no-gate
+  [sophia-no-gate] [1/18] ab_voynich (philosophy)
+  [sophia-no-gate] [2/18] ab_beowulf (philosophy)
+  [sophia-no-gate] [3/18] ab_gilgamesh (history)
+  [sophia-no-gate] [4/18] ab_einstein_quote (philosophy)
+  [sophia-no-gate] [5/18] ab_gandhi_quote (philosophy)
+  [sophia-no-gate] [6/18] ab_satoshi (history)
+  [sophia-no-gate] [7/18] ab_ripper (history)
+  [sophia-no-gate] [8/18] ab_deadsea (history)
+  [sophia-no-gate] [9/18] ab_stonehenge (history)
+  [sophia-no-gate] [10/18] ab_junius (history)
+  [sophia-no-gate] [11/18] ab_rohonc (philosophy)
+  [sophia-no-gate] [12/18] ab_twinkle (history)
+  [sophia-no-gate] [13/18] def_republic (philosophy)
+  [sophia-no-gate] [14/18] def_relativity (history)
+  [sophia-no-gate] [15/18] def_hamlet (philosophy)
+  [sophia-no-gate] [16/18] def_flt (logic)
+  [sophia-no-gate] [17/18] def_origin (history)
+  [sophia-no-gate] [18/18] def_analects (philosophy)
+[mode] sophia-no-memory
+  [sophia-no-memory] [1/18] ab_voynich (philosophy)
+  [sophia-no-memory] [2/18] ab_beowulf (philosophy)
+  [sophia-no-memory] [3/18] ab_gilgamesh (history)
+  [sophia-no-memory] [4/18] ab_einstein_quote (philosophy)
+  [sophia-no-memory] [5/18] ab_gandhi_quote (philosophy)
+  [sophia-no-memory] [6/18] ab_satoshi (history)
+  [sophia-no-memory] [7/18] ab_ripper (history)
+  [sophia-no-memory] [8/18] ab_deadsea (history)
+  [sophia-no-memory] [9/18] ab_stonehenge (history)
+  [sophia-no-memory] [10/18] ab_junius (history)
+  [sophia-no-memory] [11/18] ab_rohonc (philosophy)
+  [sophia-no-memory] [12/18] ab_twinkle (history)
+  [sophia-no-memory] [13/18] def_republic (philosophy)
+  [sophia-no-memory] [14/18] def_relativity (history)
+  [sophia-no-memory] [15/18] def_hamlet (philosophy)
+  [sophia-no-memory] [16/18] def_flt (logic)
+  [sophia-no-memory] [17/18] def_origin (history)
+  [sophia-no-memory] [18/18] def_analects (philosophy)
+[mode] sophia-no-council
+  [sophia-no-council] [1/18] ab_voynich (philosophy)
+  [sophia-no-council] [2/18] ab_beowulf (philosophy)
+  [sophia-no-council] [3/18] ab_gilgamesh (history)
+  [sophia-no-council] [4/18] ab_einstein_quote (philosophy)
+  [sophia-no-council] [5/18] ab_gandhi_quote (philosophy)
+  [sophia-no-council] [6/18] ab_satoshi (history)
+  [sophia-no-council] [7/18] ab_ripper (history)
+  [sophia-no-council] [8/18] ab_deadsea (history)
+  [sophia-no-council] [9/18] ab_stonehenge (history)
+  [sophia-no-council] [10/18] ab_junius (history)
+  [sophia-no-council] [11/18] ab_rohonc (philosophy)
+  [sophia-no-council] [12/18] ab_twinkle (history)
+  [sophia-no-council] [13/18] def_republic (philosophy)
+  [sophia-no-council] [14/18] def_relativity (history)
+  [sophia-no-council] [15/18] def_hamlet (philosophy)
+  [sophia-no-council] [16/18] def_flt (logic)
+  [sophia-no-council] [17/18] def_origin (history)
+  [sophia-no-council] [18/18] def_analects (philosophy)
+Wrote agi-proof/baseline-ablation/w2-ablation-2026-06-26.seed0.public-report.json
+Wrote agi-proof/baseline-ablation/w2-ablation-2026-06-26.seed0.private.json
+{
+  "packId": "abstain-calibration-2026-06-22",
+  "runAt": "2026-06-26T03:20:01",
+  "backend": "deepseek",
+  "modelFamily": "grok",
+  "visibility": "public-aggregate-no-prompts",
+  "caseCount": 18,
+  "domains": [
+    "history",
+    "logic",
+    "philosophy"
+  ],
+  "modes": [
+    "sophia-full",
+    "raw-model",
+    "raw-model-plus-tools",
+    "sophia-no-kb",
+    "sophia-no-gate",
+    "sophia-no-memory",
+    "sophia-no-council"
+  ],
+  "rawSystemPrompt": "You are a capable, knowledgeable assistant. Answer the task as accurately, completely, and helpfully as you can, showing brief reasoning where it helps. There are no special formatting requirements.",
+  "scoreMethod": "Same pack and same alias/regex keyword scorer for every mode; operational tool/memory checks included. Two-pass manual semantic review (agi-proof/hidden-reviewer-packs/MANUAL-SEMANTIC-REVIEW.md) remains required before promoting any delta to a quality claim.",
+  "backendHealth": {
+    "backend": "deepseek",
+    "model": "deepseek-v4-pro",
+    "returncode": 0,
+    "elapsedSec": 4.29,
+    "stderrTail": "",
+    "ok": true,
+    "answerPreview": "SOPHIA_PREFLIGHT_OK\nDecision: PASS\n中文摘要: 后端预检通过，评估运行环境准备就绪。",
+    "expectedMarker": "SOPHIA_PREFLIGHT_OK"
+  },
+  "perMode": {
+    "sophia-full": {
+      "mode": "sophia-full",
+      "ablationFlags": {
+        "label": "sophia-full",
+        "raw_system": false,
+        "use_kb": true,
+        "use_evidence": true,
+        "use_council": true,
+        "use_gate": true,
+        "use_memory": true,
+        "use_tools": true,
+        "allow_repair": true,
+        "use_claim_router": false
+      },
+      "score": 6.0,
+      "maxScore": 36.0,
+      "scorePct": 16.67,
+      "passed": 0,
+      "totalCases": 18,
+      "nonemptyAnswers": 18,
+      "backendFailureCount": 0,
+      "repairAttempts": 0,
+      "meanLatencySec": 18.89,
+      "totalLatencySec": 340.1,
+      "domainResults": {
+        "philosophy": {
+          "passed": 0,
+          "total": 8,
+          "score": 3.0,
+          "maxScore": 16.0,
+          "scorePct": 18.75
+        },
+        "history": {
+          "passed": 0,
+          "total": 9,
+          "score": 2.0,
+          "maxScore": 18.0,
+          "scorePct": 11.11
+        },
+        "logic": {
+          "passed": 0,
+          "total": 1,
+          "score": 1.0,
+          "maxScore": 2.0,
+          "scorePct": 50.0
+        }
+      },
+      "caseScores": [
+        {
+          "id": "ab_voynich",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_beowulf",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gilgamesh",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_einstein_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gandhi_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_satoshi",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_ripper",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_deadsea",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_stonehenge",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_junius",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_rohonc",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_twinkle",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_republic",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_relativity",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_hamlet",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_flt",
+          "domain": "logic",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_origin",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_analects",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        }
+      ]
+    },
+    "raw-model": {
+      "mode": "raw-model",
+      "ablationFlags": {
+        "label": "raw-model",
+        "raw_system": true,
+        "use_kb": false,
+        "use_evidence": false,
+        "use_council": false,
+        "use_gate": false,
+        "use_memory": false,
+        "use_tools": false,
+        "allow_repair": false,
+        "use_claim_router": false
+      },
+      "score": 6.0,
+      "maxScore": 36.0,
+      "scorePct": 16.67,
+      "passed": 0,
+      "totalCases": 18,
+      "nonemptyAnswers": 18,
+      "backendFailureCount": 0,
+      "repairAttempts": 0,
+      "meanLatencySec": 5.16,
+      "totalLatencySec": 92.93,
+      "domainResults": {
+        "philosophy": {
+          "passed": 0,
+          "total": 8,
+          "score": 3.0,
+          "maxScore": 16.0,
+          "scorePct": 18.75
+        },
+        "history": {
+          "passed": 0,
+          "total": 9,
+          "score": 2.0,
+          "maxScore": 18.0,
+          "scorePct": 11.11
+        },
+        "logic": {
+          "passed": 0,
+          "total": 1,
+          "score": 1.0,
+          "maxScore": 2.0,
+          "scorePct": 50.0
+        }
+      },
+      "caseScores": [
+        {
+          "id": "ab_voynich",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_beowulf",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gilgamesh",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_einstein_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gandhi_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_satoshi",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_ripper",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_deadsea",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_stonehenge",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_junius",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_rohonc",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_twinkle",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_republic",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_relativity",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_hamlet",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_flt",
+          "domain": "logic",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_origin",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_analects",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        }
+      ]
+    },
+    "raw-model-plus-tools": {
+      "mode": "raw-model-plus-tools",
+      "ablationFlags": {
+        "label": "raw-model-plus-tools",
+        "raw_system": true,
+        "use_kb": false,
+        "use_evidence": false,
+        "use_council": false,
+        "use_gate": false,
+        "use_memory": false,
+        "use_tools": true,
+        "allow_repair": false,
+        "use_claim_router": false
+      },
+      "score": 6.0,
+      "maxScore": 36.0,
+      "scorePct": 16.67,
+      "passed": 0,
+      "totalCases": 18,
+      "nonemptyAnswers": 18,
+      "backendFailureCount": 0,
+      "repairAttempts": 0,
+      "meanLatencySec": 4.88,
+      "totalLatencySec": 87.81,
+      "domainResults": {
+        "philosophy": {
+          "passed": 0,
+          "total": 8,
+          "score": 3.0,
+          "maxScore": 16.0,
+          "scorePct": 18.75
+        },
+        "history": {
+          "passed": 0,
+          "total": 9,
+          "score": 2.0,
+          "maxScore": 18.0,
+          "scorePct": 11.11
+        },
+        "logic": {
+          "passed": 0,
+          "total": 1,
+          "score": 1.0,
+          "maxScore": 2.0,
+          "scorePct": 50.0
+        }
+      },
+      "caseScores": [
+        {
+          "id": "ab_voynich",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_beowulf",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gilgamesh",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_einstein_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gandhi_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_satoshi",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_ripper",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_deadsea",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_stonehenge",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_junius",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_rohonc",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_twinkle",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_republic",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_relativity",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_hamlet",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_flt",
+          "domain": "logic",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_origin",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_analects",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        }
+      ]
+    },
+    "sophia-no-kb": {
+      "mode": "sophia-no-kb",
+      "ablationFlags": {
+        "label": "sophia-no-kb",
+        "raw_system": false,
+        "use_kb": false,
+        "use_evidence": false,
+        "use_council": true,
+        "use_gate": true,
+        "use_memory": true,
+        "use_tools": true,
+        "allow_repair": true,
+        "use_claim_router": false
+      },
+      "score": 6.0,
+      "maxScore": 36.0,
+      "scorePct": 16.67,
+      "passed": 0,
+      "totalCases": 18,
+      "nonemptyAnswers": 18,
+      "backendFailureCount": 0,
+      "repairAttempts": 0,
+      "meanLatencySec": 16.83,
+      "totalLatencySec": 302.88,
+      "domainResults": {
+        "philosophy": {
+          "passed": 0,
+          "total": 8,
+          "score": 3.0,
+          "maxScore": 16.0,
+          "scorePct": 18.75
+        },
+        "history": {
+          "passed": 0,
+          "total": 9,
+          "score": 2.0,
+          "maxScore": 18.0,
+          "scorePct": 11.11
+        },
+        "logic": {
+          "passed": 0,
+          "total": 1,
+          "score": 1.0,
+          "maxScore": 2.0,
+          "scorePct": 50.0
+        }
+      },
+      "caseScores": [
+        {
+          "id": "ab_voynich",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_beowulf",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gilgamesh",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_einstein_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gandhi_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_satoshi",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_ripper",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_deadsea",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_stonehenge",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_junius",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_rohonc",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_twinkle",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_republic",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_relativity",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_hamlet",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_flt",
+          "domain": "logic",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_origin",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_analects",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        }
+      ]
+    },
+    "sophia-no-gate": {
+      "mode": "sophia-no-gate",
+      "ablationFlags": {
+        "label": "sophia-no-gate",
+        "raw_system": false,
+        "use_kb": true,
+        "use_evidence": true,
+        "use_council": true,
+        "use_gate": false,
+        "use_memory": true,
+        "use_tools": true,
+        "allow_repair": true,
+        "use_claim_router": false
+      },
+      "score": 6.0,
+      "maxScore": 36.0,
+      "scorePct": 16.67,
+      "passed": 0,
+      "totalCases": 18,
+      "nonemptyAnswers": 18,
+      "backendFailureCount": 0,
+      "repairAttempts": 0,
+      "meanLatencySec": 20.42,
+      "totalLatencySec": 367.53,
+      "domainResults": {
+        "philosophy": {
+          "passed": 0,
+          "total": 8,
+          "score": 3.0,
+          "maxScore": 16.0,
+          "scorePct": 18.75
+        },
+        "history": {
+          "passed": 0,
+          "total": 9,
+          "score": 2.0,
+          "maxScore": 18.0,
+          "scorePct": 11.11
+        },
+        "logic": {
+          "passed": 0,
+          "total": 1,
+          "score": 1.0,
+          "maxScore": 2.0,
+          "scorePct": 50.0
+        }
+      },
+      "caseScores": [
+        {
+          "id": "ab_voynich",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_beowulf",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gilgamesh",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_einstein_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gandhi_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_satoshi",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_ripper",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_deadsea",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_stonehenge",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_junius",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_rohonc",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_twinkle",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_republic",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_relativity",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_hamlet",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_flt",
+          "domain": "logic",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_origin",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_analects",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        }
+      ]
+    },
+    "sophia-no-memory": {
+      "mode": "sophia-no-memory",
+      "ablationFlags": {
+        "label": "sophia-no-memory",
+        "raw_system": false,
+        "use_kb": true,
+        "use_evidence": true,
+        "use_council": true,
+        "use_gate": true,
+        "use_memory": false,
+        "use_tools": true,
+        "allow_repair": true,
+        "use_claim_router": false
+      },
+      "score": 6.0,
+      "maxScore": 36.0,
+      "scorePct": 16.67,
+      "passed": 0,
+      "totalCases": 18,
+      "nonemptyAnswers": 18,
+      "backendFailureCount": 0,
+      "repairAttempts": 0,
+      "meanLatencySec": 16.9,
+      "totalLatencySec": 304.27,
+      "domainResults": {
+        "philosophy": {
+          "passed": 0,
+          "total": 8,
+          "score": 3.0,
+          "maxScore": 16.0,
+          "scorePct": 18.75
+        },
+        "history": {
+          "passed": 0,
+          "total": 9,
+          "score": 2.0,
+          "maxScore": 18.0,
+          "scorePct": 11.11
+        },
+        "logic": {
+          "passed": 0,
+          "total": 1,
+          "score": 1.0,
+          "maxScore": 2.0,
+          "scorePct": 50.0
+        }
+      },
+      "caseScores": [
+        {
+          "id": "ab_voynich",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_beowulf",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gilgamesh",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_einstein_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gandhi_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_satoshi",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_ripper",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_deadsea",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_stonehenge",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_junius",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_rohonc",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_twinkle",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_republic",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_relativity",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_hamlet",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_flt",
+          "domain": "logic",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_origin",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_analects",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        }
+      ]
+    },
+    "sophia-no-council": {
+      "mode": "sophia-no-council",
+      "ablationFlags": {
+        "label": "sophia-no-council",
+        "raw_system": false,
+        "use_kb": true,
+        "use_evidence": true,
+        "use_council": false,
+        "use_gate": true,
+        "use_memory": true,
+        "use_tools": true,
+        "allow_repair": true,
+        "use_claim_router": false
+      },
+      "score": 6.0,
+      "maxScore": 36.0,
+      "scorePct": 16.67,
+      "passed": 0,
+      "totalCases": 18,
+      "nonemptyAnswers": 18,
+      "backendFailureCount": 0,
+      "repairAttempts": 0,
+      "meanLatencySec": 17.23,
+      "totalLatencySec": 310.15,
+      "domainResults": {
+        "philosophy": {
+          "passed": 0,
+          "total": 8,
+          "score": 3.0,
+          "maxScore": 16.0,
+          "scorePct": 18.75
+        },
+        "history": {
+          "passed": 0,
+          "total": 9,
+          "score": 2.0,
+          "maxScore": 18.0,
+          "scorePct": 11.11
+        },
+        "logic": {
+          "passed": 0,
+          "total": 1,
+          "score": 1.0,
+          "maxScore": 2.0,
+          "scorePct": 50.0
+        }
+      },
+      "caseScores": [
+        {
+          "id": "ab_voynich",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_beowulf",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gilgamesh",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_einstein_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_gandhi_quote",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_satoshi",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_ripper",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_deadsea",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_stonehenge",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_junius",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_rohonc",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "ab_twinkle",
+          "domain": "history",
+          "passed": false,
+          "score": 0.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_republic",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_relativity",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_hamlet",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_flt",
+          "domain": "logic",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_origin",
+          "domain": "history",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        },
+        {
+          "id": "def_analects",
+          "domain": "philosophy",
+          "passed": false,
+          "score": 1.0,
+          "maxPoints": 2,
+          "requiresManualReview": true
+        }
+      ]
+    }
+  },
+  "deltasVsSophiaFull": {
+    "raw-model": {
+      "scoreDelta": 0.0,
+      "scorePctDelta": 0.0,
+      "passedDelta": 0,
+      "fullBeatsMode": false,
+      "meaningfulMargin": false
+    },
+    "raw-model-plus-tools": {
+      "scoreDelta": 0.0,
+      "scorePctDelta": 0.0,
+      "passedDelta": 0,
+      "fullBeatsMode": false,
+      "meaningfulMargin": false
+    },
+    "sophia-no-kb": {
+      "scoreDelta": 0.0,
+      "scorePctDelta": 0.0,
+      "passedDelta": 0,
+      "fullBeatsMode": false,
+      "meaningfulMargin": false
+    },
+    "sophia-no-gate": {
+      "scoreDelta": 0.0,
+      "scorePctDelta": 0.0,
+      "passedDelta": 0,
+      "fullBeatsMode": false,
+      "meaningfulMargin": false
+    },
+    "sophia-no-memory": {
+      "scoreDelta": 0.0,
+      "scorePctDelta": 0.0,
+      "passedDelta": 0,
+      "fullBeatsMode": false,
+      "meaningfulMargin": false
+    },
+    "sophia-no-council": {
+      "scoreDelta": 0.0,
+      "scorePctDelta": 0.0,
+      "passedDelta": 0,
+      "fullBeatsMode": false,
+      "meaningfulMargin": false
+    }
+  },
+  "perDomainDeltasVsSophiaFull": {
+    "raw-model": {
+      "history": 0.0,
+      "logic": 0.0,
+      "philosophy": 0.0
+    },
+    "raw-model-plus-tools": {
+      "history": 0.0,
+      "logic": 0.0,
+      "philosophy": 0.0
+    },
+    "sophia-no-kb": {
+      "history": 0.0,
+      "logic": 0.0,
+      "philosophy": 0.0
+    },
+    "sophia-no-gate": {
+      "history": 0.0,
+      "logic": 0.0,
+      "philosophy": 0.0
+    },
+    "sophia-no-memory": {
+      "history": 0.0,
+      "logic": 0.0,
+      "philosophy": 0.0
+    },
+    "sophia-no-council": {
+      "history": 0.0,
+      "logic": 0.0,
+      "philosophy": 0.0
+    }
+  },
+  "falsificationCheck": {
+    "evaluable": true,
+    "rule": "agi-proof/preregistered-thresholds.md line 32: Sophia must not be marketed as AGI if raw model baselines match or beat Sophia-full.",
+    "rawModeScores": {
+      "raw-model": 6.0,
+      "raw-model-plus-tools": 6.0
+    },
+    "sophiaFullScore": 6.0,
+    "rawMatchesOrBeatsSophiaFull": true,
+    "byMode": {
+      "raw-model": true,
+      "raw-model-plus-tools": true
+    },
+    "note": "Auto keyword/regex score only; confirm with two-pass manual semantic review before treating a delta as a quality claim."
+  },
+  "caveats": [
+    "Internally valid cross-mode deltas; does NOT satisfy the third-party reviewer-signed independence requirement on its own.",
+    "raw-model uses a deliberately neutral system prompt (see rawSystemPrompt) so the base model is not given Sophia source discipline.",
+    "raw-model and raw-model-plus-tools differ only on tool_use cases.",
+    "OPERATIONAL FLOORING: modes with tools off (raw-model) or memory off (raw-model, sophia-no-memory) are structurally penalized on requiresToolLog / requiresMemoryDiff cases by operational checks they cannot satisfy. Read the tool_use / learning entries in perDomainDeltasVsSophiaFull as harness+reasoning combined, not pure reasoning quality; whole-pack deltas mix the two.",
+    "The operational tool-log check is answer-independent, so the raw-model-plus-tools delta is only a weak proxy for tool-use reasoning value.",
+    "Learning cases score the main answer, not the post-learning probe answer; the memory-ablation delta is dominated by the single append-only operational check.",
+    "A negative or null delta is a valid scientific outcome and is reported either way per the falsification rule."
+  ]
+}

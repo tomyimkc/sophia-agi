@@ -1,0 +1,53 @@
+{
+  "benchmark": "gsm8k-style-sample (10-item STYLE sample, NOT official GSM8K)",
+  "status": "pilot_complete",
+  "dataset": "eval/external/gsm8k-style-sample.jsonl",
+  "datasetN": 10,
+  "scorer": "numeric exact-match vs gold (judge-free, gate-independent)",
+  "backend": "deepseek",
+  "model": "deepseek-v4-pro",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "arms": {
+    "raw": {
+      "perSeedAccuracy": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "meanAccuracy": 1.0
+    },
+    "sophia-full": {
+      "perSeedAccuracy": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "meanAccuracy": 1.0,
+      "gateCoverage": {
+        "gateChecks": 30,
+        "gateFired": 30,
+        "gateFireRate": 1.0,
+        "interpretation": "Gate fired on 30/30 answers but on STYLE/format grounds ('Missing explicit source-discipline framing', 'Missing 中文 summary section') in advisor mode — NOT numeric/factual violations (violations=[]). Answers were not blocked; numeric accuracy stayed 100%. Gate-coverage cost on correctness = 0."
+      }
+    }
+  },
+  "delta_sophiaFull_minus_raw": {
+    "meanAccuracyDelta": 0.0,
+    "ci95": [
+      0.0,
+      0.0
+    ],
+    "ciExcludesZero": false
+  },
+  "honestScope": "10-item self-authored STYLE sample, not the licensed GSM8K set. Numbers are a plumbing/foothold pilot, not a citable benchmark result. Base model near-ceiling on these easy items, so a null/tie delta is expected and is a valid outcome.",
+  "validationGate": {
+    "_is_validated": false,
+    "reason": "External GOLD oracle is judge-free so the 2-independent-judge clause is N/A for correctness, but this is a 10-item self-authored style sample (not official GSM8K) and the delta CI does not exclude 0 — a foothold pilot, not validated capability evidence."
+  },
+  "canClaimAGI": false,
+  "registeredCommit": "b78e8ed2deb2160beaa46b0323e38b2df1d31dc3"
+}

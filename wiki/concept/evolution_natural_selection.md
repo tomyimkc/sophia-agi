@@ -17,6 +17,8 @@ links: []
 
 # evolution by natural selection (天擇演化)
 
+Evolution by natural selection (天擇演化) is a science concept, in the biology subfield, attributed to charles_darwin (authorship confidence: attributed), dated to 1858-1859.
+
 - **Attributed author:** charles_darwin (confidence: `attributed`)
 - **Domain:** science
 

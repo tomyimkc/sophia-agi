@@ -1,0 +1,33 @@
+{
+  "pack": "agi-proof/baseline-ablation/abstain-pack-2026-06-22.json",
+  "perMode": {
+    "raw": {
+      "calibrationScore": 0.8833,
+      "nCases": 18,
+      "abstainCases": 12,
+      "definiteCases": 6,
+      "fabricationRate": 0.0,
+      "overAbstentionRate": 0.0
+    },
+    "sophia-full": {
+      "calibrationScore": 0.9056,
+      "nCases": 18,
+      "abstainCases": 12,
+      "definiteCases": 6,
+      "fabricationRate": 0.0833,
+      "overAbstentionRate": 0.0
+    },
+    "gate-only": {
+      "calibrationScore": 0.8056,
+      "nCases": 18,
+      "abstainCases": 12,
+      "definiteCases": 6,
+      "fabricationRate": 0.0,
+      "overAbstentionRate": 0.0
+    }
+  },
+  "calibrationDeltaFullMinusMode": {
+    "raw": 0.0223,
+    "gate-only": 0.1
+  }
+}

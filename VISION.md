@@ -44,6 +44,12 @@ measuring small, auditable, high-trust models and agents.
   what it's *guessing* — visibly, in every output. Every public number must clear
   the no-overclaim measurement gate (multi-judge consensus + confidence intervals;
   see [RESULTS.md](RESULTS.md)).
+- **Governed scaling.** When a scaling/efficiency primitive *is* useful (memory,
+  routing, continual RL, kernel optimization), adopt it only with a trust governor
+  bolted on — promote-only-what-verifies, bound off-trust drift, measure
+  over-reliance, and admit optimizations only with an equivalence/error-bound proof.
+  The path forward is *scale that carries its own proof*, never scale for its own
+  sake. See [docs/11-Platform/Governed-Scaling.md](docs/11-Platform/Governed-Scaling.md).
 
 ## Explicit non-goals
 

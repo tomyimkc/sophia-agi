@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+[package]
+name = "miniraft"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Clean-room Raft consensus core + deterministic simulator (Sophia storage, phase 3)"
+
+[lib]
+name = "miniraft"
+path = "src/lib.rs"
+
+# Dependency-free on purpose: the algorithm and its test harness are the point.
+[dependencies]
