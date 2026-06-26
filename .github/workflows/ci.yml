@@ -484,7 +484,11 @@ jobs:
       needs.changes.outputs.code == 'true' ||
       contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # The full pytest suite runs in ~11 min in isolation, but sustained multi-agent
+    # concurrent CI (this repo runs many parallel PR lanes) throttles the shared runner and
+    # can push the run past 20 min — cancelling the job and failing ci-complete on a green
+    # tree. 30 min gives contention headroom; validate-* jobs still cap at 15 min.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
