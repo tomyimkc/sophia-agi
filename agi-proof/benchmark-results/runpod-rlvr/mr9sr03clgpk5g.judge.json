@@ -1,0 +1,33 @@
+{
+  "pilot_judge": "sophia-wisdom-4b-m3",
+  "answers": "agi-proof/benchmark-results/runpod-rlvr/mr9sr03clgpk5g.judge-answers.json",
+  "judges": [
+    "openrouter:deepseek/deepseek-chat",
+    "openrouter:meta-llama/llama-3.3-70b-instruct"
+  ],
+  "nCasesJudged": 94,
+  "perJudge": {
+    "openrouter:deepseek/deepseek-chat": {
+      "n": 94,
+      "adapter": 40,
+      "base": 23,
+      "tie": 31,
+      "adapter_winrate": 0.4255,
+      "base_winrate": 0.2447
+    },
+    "openrouter:meta-llama/llama-3.3-70b-instruct": {
+      "n": 94,
+      "adapter": 57,
+      "base": 37,
+      "tie": 0,
+      "adapter_winrate": 0.6064,
+      "base_winrate": 0.3936
+    }
+  },
+  "interJudgeKappa": 0.0938,
+  "consensus": {
+    "adapter_better": 29,
+    "base_better": 10
+  },
+  "boundary": "Independent LLM judges (≠ subject, ≠ gate). Validates whether the adapter's marker-based source-discipline gains hold up SEMANTICALLY. Single seed's answers; not a market or AGI claim."
+}

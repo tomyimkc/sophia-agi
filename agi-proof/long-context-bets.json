@@ -1,0 +1,126 @@
+{
+  "schema": "sophia.long_context_bets.v1",
+  "status": "candidate-map",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "claimBoundary": "Architecture bets are measurement targets, not capability claims. Self-authored long-context results remain candidate-only until independent review.",
+  "movedFrom": "agi-proof/architecture-bets.json",
+  "movedNote": "This 7-bet long-context measurement-target registry previously shared the architecture-bets.json filename with the module-wiring governance registry. It was relocated here so both schemas can coexist; see docs/11-Platform/Architecture-Bets-Schema.md.",
+  "bets": [
+    {
+      "id": "verifier-gated-long-context",
+      "bet": "verifier-gated long context",
+      "implementation_files": [
+        "tools/run_hidden_eval_sophia.py",
+        "tools/run_long_context_sophia.py",
+        "agent/gate.py",
+        "schema/context-pack-card-1.0.0.json"
+      ],
+      "ablation_flag": "use_gate",
+      "honest_status": "partial",
+      "evidence_report": "agi-proof/long-context/long-context-candidate-full-2026-06-26.public-report.json",
+      "blocked_on": [
+        "independent long-context corpus",
+        "non-mock backend run",
+        "third-party review before any validated claim"
+      ]
+    },
+    {
+      "id": "hybrid-memory",
+      "bet": "hybrid memory",
+      "implementation_files": [
+        "agent/memory.py",
+        "agent/layered_memory.py",
+        "agent/memory_consolidation.py",
+        "tools/run_hidden_eval_sophia.py"
+      ],
+      "ablation_flag": "use_memory",
+      "honest_status": "partial",
+      "evidence_report": null,
+      "blocked_on": [
+        "runtime decision memory remains append-only JSONL",
+        "long-context memory integration needs live ablation evidence"
+      ]
+    },
+    {
+      "id": "selective-tool-router",
+      "bet": "selective tool router",
+      "implementation_files": [
+        "tools/run_hidden_eval_sophia.py",
+        "agent/graded_decision.py"
+      ],
+      "ablation_flag": "use_tools",
+      "honest_status": "scaffold",
+      "evidence_report": null,
+      "blocked_on": [
+        "graded router is not wired into run_case",
+        "cost/latency savings not measured on live tool routes"
+      ]
+    },
+    {
+      "id": "council-small-models",
+      "bet": "council of small models",
+      "implementation_files": [
+        "agent/coding_council.py",
+        "agent/council_deliberate.py",
+        "agent/sector_council.py",
+        "tools/run_hidden_eval_sophia.py"
+      ],
+      "ablation_flag": "use_council",
+      "honest_status": "partial",
+      "evidence_report": null,
+      "blocked_on": [
+        "current hidden runner routes council instructions but does not prove a multi-small-model council win",
+        "needs component-isolated live ablation"
+      ]
+    },
+    {
+      "id": "verifier-as-reward",
+      "bet": "verifier-as-reward",
+      "implementation_files": [
+        "tools/run_rlvr.py",
+        "provenance_bench/rl_reward.py",
+        "docs/09-Agent/RLVR-Experiment.md"
+      ],
+      "ablation_flag": "verifier_reward",
+      "honest_status": "partial",
+      "evidence_report": "agi-proof/benchmark-results/rlvr.public-report.json",
+      "blocked_on": [
+        "GPU/live training evidence",
+        "held-out multi-seed run clearing the no-overclaim gate"
+      ]
+    },
+    {
+      "id": "long-context-compression-recall",
+      "bet": "long-context compression/recall",
+      "implementation_files": [
+        "tools/run_long_context_sophia.py",
+        "schema/context-pack-card-1.0.0.json",
+        "training/context_packing/manifest.json"
+      ],
+      "ablation_flag": "use_context_packing",
+      "honest_status": "partial",
+      "evidence_report": "agi-proof/long-context/long-context-candidate-full-2026-06-26.public-report.json",
+      "blocked_on": [
+        "synthetic corpus must be replaced or replicated independently before validation",
+        "embedding retrieval is not yet the live default for this harness"
+      ]
+    },
+    {
+      "id": "ablation-harness",
+      "bet": "ablation harness",
+      "implementation_files": [
+        "tools/run_hidden_eval_sophia.py",
+        "tools/run_ablation_sophia.py",
+        "tools/run_long_context_sophia.py",
+        "docs/09-Agent/Sophia-Architecture.md"
+      ],
+      "ablation_flag": "run_case_flags",
+      "honest_status": "live",
+      "evidence_report": "agi-proof/long-context/long-context-candidate-full-2026-06-26.public-report.json",
+      "blocked_on": [
+        "candidate synthetic reports are not independently validated"
+      ]
+    }
+  ]
+}

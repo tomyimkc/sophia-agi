@@ -188,11 +188,25 @@ class RLVRConfig:
     output: str = "training/rlvr/checkpoints/sophia-rlvr-v1"
     report: str = "agi-proof/benchmark-results/rlvr.public-report.json"
     seed: int = 0
+    # Real GRPO hyperparameters (map 1:1 to tools/run_rlvr.py args). Defaults mirror the
+    # trainer's CLI defaults so a config that sets only `enabled:true` is still valid.
+    # `model=None` means "resolve at plan time": mock under dry-run, else ExperimentConfig.model.
+    model: str | None = None
+    epochs: float = 1.0
+    lr: float = 1e-5
+    beta: float = 0.04
+    num_generations: int = 8
+    vllm: str = "colocate"
+    quant: str = "4bit"
+    max_prompt_len: int = 128
+    max_completion_len: int = 128
+    code_timeout: int = 15
     extra_args: tuple[str, ...] = field(default_factory=tuple)
 
     @classmethod
     def from_dict(cls, payload: dict[str, Any] | None) -> "RLVRConfig":
         data = _as_mapping(payload, "rlvr")
+        model = data.get("model")
         return cls(
             enabled=_as_bool(data.get("enabled"), cls.enabled),
             script=str(data.get("script", cls.script)),
@@ -201,6 +215,16 @@ class RLVRConfig:
             output=str(data.get("output", cls.output)),
             report=str(data.get("report", cls.report)),
             seed=int(data.get("seed", cls.seed)),
+            model=str(model) if model else None,
+            epochs=float(data.get("epochs", cls.epochs)),
+            lr=float(data.get("lr", cls.lr)),
+            beta=float(data.get("beta", cls.beta)),
+            num_generations=int(data.get("numGenerations", data.get("num_generations", cls.num_generations))),
+            vllm=str(data.get("vllm", cls.vllm)),
+            quant=str(data.get("quant", cls.quant)),
+            max_prompt_len=int(data.get("maxPromptLen", data.get("max_prompt_len", cls.max_prompt_len))),
+            max_completion_len=int(data.get("maxCompletionLen", data.get("max_completion_len", cls.max_completion_len))),
+            code_timeout=int(data.get("codeTimeout", data.get("code_timeout", cls.code_timeout))),
             extra_args=_as_args(data.get("extraArgs", data.get("extra_args")), "rlvr.extraArgs"),
         )
 
@@ -213,6 +237,16 @@ class RLVRConfig:
             "output": self.output,
             "report": self.report,
             "seed": self.seed,
+            "model": self.model,
+            "epochs": self.epochs,
+            "lr": self.lr,
+            "beta": self.beta,
+            "numGenerations": self.num_generations,
+            "vllm": self.vllm,
+            "quant": self.quant,
+            "maxPromptLen": self.max_prompt_len,
+            "maxCompletionLen": self.max_completion_len,
+            "codeTimeout": self.code_timeout,
             "extraArgs": list(self.extra_args),
         }
 

@@ -232,7 +232,10 @@ def test_real_backend_arm_skips_offline_safe_when_no_local_model() -> None:
 
 
 def test_architecture_bets_root_map_has_required_fields() -> None:
-    bets = json.loads((ROOT / "agi-proof" / "architecture-bets.json").read_text(encoding="utf-8"))
+    # The 7-bet long-context registry now lives in its own file so it does not collide
+    # with the canonical module-wiring `architecture-bets.json` (see
+    # docs/11-Platform/Architecture-Bets-Schema.md; also covered by test_long_context_bets.py).
+    bets = json.loads((ROOT / "agi-proof" / "long-context-bets.json").read_text(encoding="utf-8"))
     assert bets["candidateOnly"] is True
     assert bets["canClaimAGI"] is False
     required = {

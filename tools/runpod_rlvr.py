@@ -449,6 +449,12 @@ python -m pip install --upgrade pip setuptools wheel
 if [ "$SOPHIA_TASK" = "math" ]; then
   python -m pip install -r requirements-math.txt
 fi
+# The code task's reward executes model-generated code (provenance_bench.code_exec);
+# opt in on this ephemeral GPU pod (the executor is time-boxed + process-group-isolated).
+# Needed for BOTH the offline smoke (code_reward.offline_invariants) and the live reward.
+if [ "$SOPHIA_TASK" = "code" ]; then
+  export SOPHIA_ALLOW_CODE_EXEC=1
+fi
 if [ {shlex.quote(args.remote_mode)} = "live" ]; then
 {req_cmd}
   python -m pip install -r /tmp/requirements-rl.sophia.txt
@@ -568,7 +574,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--branch", default="", help="optional git branch/tag to clone")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--remote-mode", choices=["offline", "live"], default="live", help="run only remote offline smoke test or full live GRPO")
-    ap.add_argument("--task", choices=["provenance", "math"], default="provenance", help="RLVR reward task: provenance (provenance_faithful) or math (sympy math_equivalent)")
+    ap.add_argument("--task", choices=["provenance", "math", "code"], default="provenance", help="RLVR reward task: provenance (provenance_faithful), math (sympy math_equivalent), or code (hidden-tests-pass via code_exec)")
     ap.add_argument("--quant", choices=["bf16", "4bit"], default="bf16")
     ap.add_argument("--vllm", choices=["none", "server", "colocate"], default="none")
     ap.add_argument("--epochs", type=float, default=1.0)

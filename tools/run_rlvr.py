@@ -43,7 +43,14 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from provenance_bench import math_dataset, math_reward, rl_dataset, rl_reward  # noqa: E402
+from provenance_bench import (  # noqa: E402
+    code_dataset,
+    code_reward,
+    math_dataset,
+    math_reward,
+    rl_dataset,
+    rl_reward,
+)
 from provenance_bench.dataset import Case  # noqa: E402
 
 OUT_JSON = ROOT / "agi-proof" / "benchmark-results" / "rlvr.public-report.json"
@@ -211,6 +218,11 @@ def _run_gpu(args: argparse.Namespace) -> int:
     if args.task == "math":
         data = math_dataset.build_math_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         reward_fn = math_reward.make_grpo_reward()  # gold column -> sympy math_equivalent
+    elif args.task == "code":
+        data = code_dataset.build_code_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        # test column -> hidden-tests-pass (provenance_bench.code_exec). Judge-free;
+        # the interpreter decides. No false-positive axis (every item has a test).
+        reward_fn = code_reward.make_grpo_reward(timeout_sec=args.code_timeout)
     else:
         data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         if args.reward == "gate":
@@ -313,8 +325,9 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     ap.add_argument("--model", default="mock", help=f'subject model (default "mock"; GPU: "{DEFAULT_MODEL}")')
-    ap.add_argument("--task", choices=["provenance", "math"], default="provenance",
-                    help="reward task: provenance (provenance_faithful) or math (sympy math_equivalent)")
+    ap.add_argument("--task", choices=["provenance", "math", "code"], default="provenance",
+                    help="reward task: provenance (provenance_faithful), math (sympy math_equivalent), "
+                         "or code (hidden-tests-pass via provenance_bench.code_exec)")
     ap.add_argument("--dry-run", action="store_true", help="offline reward-wiring check only (no GPU)")
     ap.add_argument("--out", type=Path, default=OUT_JSON)
     # GPU-only args (ignored under --model mock / --dry-run)
@@ -333,6 +346,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--lora-r", type=int, default=16)
     ap.add_argument("--lora-alpha", type=int, default=32)
     ap.add_argument("--eval-frac", type=float, default=0.3)
+    ap.add_argument("--code-timeout", type=int, default=15,
+                    help="code-task only: wall-clock seconds for the hidden-test executor")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument(
         "--reward", default="verifier", choices=["verifier", "gate"],
@@ -349,6 +364,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.model == "mock" or args.dry_run:
         if args.task == "math":
             ok, detail = math_reward.offline_invariants()
+        elif args.task == "code":
+            ok, detail = code_reward.offline_invariants()
         else:
             ok, detail = _offline_invariants()
             # Also prove the gate-as-reward wiring offline (abstention-collapse fix).
