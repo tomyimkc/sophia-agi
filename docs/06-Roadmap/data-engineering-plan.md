@@ -35,7 +35,7 @@ catalog), importable from `agent/` so it stays consistent with the trust-layer v
 | 2 | Dedup & URL hygiene | MinHash-LSH, vector near-dup, URL canonicalization | 采集 / 语言数据 (MinHash/向量去重/链接规模控制) | ✅ done |
 | 3 | Columnar & regression | DuckDB/Parquet corpus stats, quality-regression gate | 语言数据处理 (质量回归) | ✅ done |
 | 4 | Acquisition loop | async crawler, priority frontier, CommonCrawl WARC ingest | 采集 pipeline (全网采集环路) | ✅ done |
-| 5 | Scale proof & infra | object-store shards, KV seen-set, queue, RESULTS numbers | 数据基建 (TB tokens) | ⏳ |
+| 5 | Scale proof & infra | object-store shards, KV seen-set, queue, RESULTS numbers | 数据基建 (TB tokens) | ✅ harness done |
 | + | Multimodal slice (stretch) | image-text WebDataset shards w/ perceptual-hash dedup | 多模态数据 | ⏳ |
 
 ### Phase 0 — Foundation & contracts
@@ -95,11 +95,26 @@ catalog), importable from `agent/` so it stays consistent with the trust-layer v
 - **Done:** loop follows discovered links and scores; WARC CLI removes a mirror (33% dedup on
   the sample) and emits a scored shard; 12 fetch tests green (all offline via mock transport).
 
-### Phase 5 — Scale proof & infra (数据基建)
-- Run 1–4 over a multi-GB public dump (CommonCrawl/Wikipedia/OSCAR).
-- Parquet shards in object store (MinIO/S3) + manifest catalog; KV (RocksDB/Redis) seen-set +
-  dedup fingerprints; Redis Streams/NATS replacing the single-process JSONL queue.
-- Publish a RESULTS-style table: docs processed, GB in/out, dedup ratio, pass rate, throughput, cost.
+### Phase 5 — Scale proof & infra (数据基建) ✅ harness
+Infra **adapters** with tested local defaults + a documented seam to cloud backends, plus a
+runner and runbook — so the harness ships and is tested offline; the actual TB-token numbers
+come from running it on real infra (see `scale-runbook.md`).
+- `pipeline/store/objectstore.py` — `ObjectStore` Protocol + `LocalObjectStore` (filesystem
+  data lake; S3/MinIO is the same four methods over boto3).
+- `pipeline/store/kv.py` — `SeenSet` Protocol + `SqliteSeenSet` (durable URL/fingerprint
+  seen-set; RocksDB/Redis drop-in) + `MemorySeenSet`.
+- `pipeline/store/queue.py` — `WorkQueue` Protocol + `FileQueue` (durable, at-least-once;
+  Redis Streams/NATS drop-in) — supersedes VISION.md's single-process JSONL queue limitation.
+- `pipeline/shard_writer.py` — batch docs → catalogued shards (`part-NNNNN.jsonl` + per-shard
+  manifest + `_catalog.json`) in any `ObjectStore`.
+- `tools/run_scale_pipeline.py` — WARC(s) → KV URL-dedup → MinHash near-dup → score → sharded
+  lake; reports docs, dedup ratio, tokens, quality, throughput (docs/s).
+- `docs/06-Roadmap/scale-runbook.md` — how to run on a real CommonCrawl/Wikipedia/OSCAR dump
+  and swap to S3/MinIO; what to publish.
+- **Verified locally:** 150-doc WARC → 30 near-dups removed (0.2 ratio) → 120 docs sharded
+  into a catalogued lake at ~300 docs/s; store + shard tests green.
+- **Remaining (needs real infra, not code):** run on a multi-GB dump and fill `RESULTS.md`
+  with measured TB-token numbers + cost; implement the S3/RocksDB/Redis adapters for prod.
 
 ### Stretch — Multimodal slice
 - One image-text pipeline → perceptual-hash dedup → quality filter → WebDataset/Parquet shards,
