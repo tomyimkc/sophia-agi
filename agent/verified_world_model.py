@@ -70,7 +70,7 @@ class WorldModelReport:
     shift_accuracy: float
     shift_degradation: float  # val - shift (positive = worse under shift)
     promoted: bool
-    verdict: str  # promote | hold-shift-degenerate | hold-below-bar
+    verdict: str  # promote | hold-shift-degenerate | hold-below-bar | hold-at-majority-baseline
     reason: str
     baseline_val_accuracy: float = 0.0  # the lookup-table baseline it had to beat
 
@@ -161,6 +161,22 @@ def accuracy(predictor, pairs: list[OutcomePair]) -> float:
     return round(correct / len(pairs), 4)
 
 
+def majority_class_accuracy(pairs: list[OutcomePair]) -> float:
+    """Accuracy of the trivial always-predict-the-modal-label baseline.
+
+    A learned predictor that merely matches this baseline has learned NOTHING — it
+    reproduces the class prior. On a pass-skewed corpus (e.g. strong-model traces where
+    ~95% of steps pass) this baseline is already ~0.95, so a ``val_bar`` of 0.65 is
+    cleared by the trivial solution. The promote gate must require the predictor to
+    STRICTLY BEAT this baseline, otherwise it promotes a majority-class mimic.
+    """
+    if not pairs:
+        return 0.0
+    labels = [int(bool(p[2])) for p in pairs]
+    mode = 1 if sum(labels) >= len(labels) / 2 else 0
+    return round(sum(1 for l in labels if l == mode) / len(labels), 4)
+
+
 def make_splits(
     traces: list[OutcomePair],
     *,
@@ -215,10 +231,23 @@ def train_verified_world_model(
     shift_deg = round(max(0.0, val_acc - shift_acc), 4)
 
     baseline_val = accuracy(baseline_predictor, splits.val) if baseline_predictor is not None else 0.0
+    # Majority-class baseline on the held-out split: a predictor that merely matches this
+    # has learned the class prior, NOT action-outcome regularities. On a pass-skewed corpus
+    # (strong-model traces) this baseline is already ~0.95, so clearing ``val_bar`` alone is
+    # meaningless — promote requires STRICTLY BEATING it. Without this guard the canary
+    # promotes a trivial always-positive solution on any pass-skewed data.
+    majority_val = majority_class_accuracy(splits.val)
     kind = type(predictor).__name__
 
     if val_acc < val_bar:
         verdict, reason, promoted = "hold-below-bar", f"val accuracy {val_acc:.2f} < bar {val_bar}", False
+    elif val_acc <= majority_val:
+        verdict, reason, promoted = (
+            "hold-at-majority-baseline",
+            f"val accuracy {val_acc:.2f} does not beat the majority-class baseline "
+            f"({majority_val:.2f}) — learned the class prior, not the action-outcome map",
+            False,
+        )
     elif shift_deg > max_shift_degradation:
         verdict, reason, promoted = (
             "hold-shift-degenerate",
@@ -226,7 +255,7 @@ def train_verified_world_model(
             False,
         )
     else:
-        verdict, reason, promoted = "promote", "cleared held-out bar and shift check", True
+        verdict, reason, promoted = "promote", "cleared held-out bar, beat majority baseline, and shift check", True
 
     return WorldModelReport(
         schema="sophia.verified_world_model.v1",

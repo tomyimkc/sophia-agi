@@ -104,6 +104,44 @@ def test_injected_predictor_seam() -> None:
     assert report.predictor_kind == "ConstantPredictor"
 
 
+def test_majority_class_accuracy_helper() -> None:
+    # All-positive => always-predict-1 baseline = 1.0; balanced => 0.5.
+    assert vwm.majority_class_accuracy([("s", "a", 1)] * 9 + [("s", "a", 0)]) == 0.9
+    assert vwm.majority_class_accuracy([("s", "a", 1), ("s", "a", 0)]) == 0.5
+    assert vwm.majority_class_accuracy([]) == 0.0
+
+
+def test_pass_skewed_corpus_does_not_spuriously_promote() -> None:
+    """A pass-skewed corpus (strong-model traces, ~95% positive) must NOT promote a
+    predictor that merely matches the majority class.
+
+    Regression guard for the canary defect found on the 2026-06-26 real-DeepSeek refire:
+    val/shift were all-positive (positive_rate 1.0), so val_accuracy 1.0 == the
+    always-predict-positive baseline, yet the old gate promoted. The fix requires the
+    predictor to STRICTLY BEAT the majority-class baseline before promote.
+    """
+    # Pass-skewed, with ALL negatives in train-only states (mirrors the real refire where
+    # the 2 failures both fell in train, leaving val/shift all-positive). The negative
+    # states ("fail_state_*") are unique so the in-distribution train/val carve-out keeps
+    # them in train; the all-positive "ok_*" states populate val.
+    rows = (
+        [("ok_alpha", "crossref", 1)] * 12
+        + [("ok_beta", "crossref", 1)] * 12
+        + [("ok_gamma", "crossref", 1)] * 12
+        + [("fail_state_one", "crossref", 0), ("fail_state_two", "crossref", 0)]
+        + [("shifted_state", "crossref", 1)] * 4
+    )
+    report = vwm.train_verified_world_model(rows, val_bar=0.65, seed=0)
+    # The held-out val split is all-positive, so its majority-class baseline is 1.0 —
+    # UNBEATABLE. The predictor's val_accuracy can at most match it (1.0), never beat it,
+    # so it must HOLD even though 1.0 clears the 0.65 bar.
+    assert report.verdict == "hold-at-majority-baseline"
+    assert report.promoted is False
+    splits = vwm.make_splits(rows, seed=0)
+    assert report.val_accuracy == vwm.majority_class_accuracy(splits.val)
+    assert "majority-class baseline" in report.reason
+
+
 def main() -> int:
     test_make_splits_keeps_shift_distribution_separate()
     test_learnable_signal_is_promoted()
@@ -111,6 +149,8 @@ def main() -> int:
     test_below_bar_is_held()
     test_report_discipline_fields()
     test_injected_predictor_seam()
+    test_majority_class_accuracy_helper()
+    test_pass_skewed_corpus_does_not_spuriously_promote()
     print("test_verified_world_model: OK")
     return 0
 
