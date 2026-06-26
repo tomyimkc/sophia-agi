@@ -195,7 +195,7 @@ def main(argv=None) -> int:
     print(f"  separation = {d['separation']}   AUROC = {d['auroc']}")
     ct = report["crossTrace"]
     print(f"  cross-trace: {len(ct['contradictions'])} contradiction(s) over {ct['nVerified']} verified traces")
-    print(f"Wrote {args.out.relative_to(ROOT)}")
+    print(f"Wrote {(args.out.relative_to(ROOT) if args.out.is_absolute() and args.out.is_relative_to(ROOT) else args.out)}")
     return 0
 
 

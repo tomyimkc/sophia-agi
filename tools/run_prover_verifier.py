@@ -43,7 +43,7 @@ def main(argv=None) -> int:
     print(f"  initial leak={report['initialLeakRate']} -> final leak={report['finalLeakRate']}  "
           f"(monotone={report['leakRateMonotoneNonIncreasing']}, dryRound={report['dryRound']})")
     print(f"  final false-positive rate on controls = {report['finalFalsePositiveRate']}")
-    print(f"Wrote {args.out.relative_to(ROOT)}")
+    print(f"Wrote {(args.out.relative_to(ROOT) if args.out.is_absolute() and args.out.is_relative_to(ROOT) else args.out)}")
     return 0
 
 

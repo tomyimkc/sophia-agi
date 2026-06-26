@@ -184,7 +184,7 @@ def main(argv=None) -> int:
     for s in sweep:
         flags = "VALID" if s["validityHolds"] else "FAILED-VALIDITY"
         print(f"  alpha={s['alpha']:.2f}  held-out validity: {flags}")
-    print(f"Wrote {args.out.relative_to(ROOT)}")
+    print(f"Wrote {(args.out.relative_to(ROOT) if args.out.is_absolute() and args.out.is_relative_to(ROOT) else args.out)}")
     if args.persist:
         print(f"Persisted policy -> {POLICY_PATH.relative_to(ROOT)}")
     return 0

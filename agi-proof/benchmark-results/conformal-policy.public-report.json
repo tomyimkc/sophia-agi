@@ -4,7 +4,7 @@
   "level3Evidence": false,
   "syntheticData": true,
   "validated": false,
-  "n": 600,
+  "n": 200,
   "persistAlpha": 0.1,
   "alphaSweep": [
     {
@@ -13,8 +13,8 @@
         "high": {
           "policy": {
             "alpha": 0.05,
-            "threshold": 0.9325,
-            "n_calibration": 6,
+            "threshold": 0.0,
+            "n_calibration": 0,
             "target_coverage": 0.95,
             "risk_bucket": "high",
             "schema": "sophia.conformal_policy.v1",
@@ -22,23 +22,23 @@
             "level3Evidence": false
           },
           "heldOut": {
-            "coverage": 0.8073,
-            "selectiveAccuracy": 0.0682,
-            "falseAnswerRate": 0.9318
+            "coverage": 0.0,
+            "selectiveAccuracy": 0.0,
+            "falseAnswerRate": 0.0
           },
           "validity": {
-            "nCorrect": 6,
-            "heldOutCorrectCoverage": 1.0,
+            "nCorrect": 3,
+            "heldOutCorrectCoverage": 0.0,
             "targetCoverage": 0.95,
-            "slack": 0.8165,
+            "slack": 1.1547,
             "holds": true
           }
         },
         "normal": {
           "policy": {
             "alpha": 0.05,
-            "threshold": 0.5939,
-            "n_calibration": 135,
+            "threshold": 0.585,
+            "n_calibration": 42,
             "target_coverage": 0.95,
             "risk_bucket": "normal",
             "schema": "sophia.conformal_policy.v1",
@@ -46,22 +46,22 @@
             "level3Evidence": false
           },
           "heldOut": {
-            "coverage": 0.911,
-            "selectiveAccuracy": 0.7356,
-            "falseAnswerRate": 0.2644
+            "coverage": 0.9091,
+            "selectiveAccuracy": 0.72,
+            "falseAnswerRate": 0.28
           },
           "validity": {
-            "nCorrect": 130,
-            "heldOutCorrectCoverage": 0.9846,
+            "nCorrect": 37,
+            "heldOutCorrectCoverage": 0.973,
             "targetCoverage": 0.95,
-            "slack": 0.1754,
+            "slack": 0.3288,
             "holds": true
           }
         }
       },
       "validityHolds": true,
-      "nCalib": 300,
-      "nTest": 300
+      "nCalib": 100,
+      "nTest": 100
     },
     {
       "alpha": 0.1,
@@ -69,8 +69,8 @@
         "high": {
           "policy": {
             "alpha": 0.1,
-            "threshold": 0.9325,
-            "n_calibration": 6,
+            "threshold": 0.0,
+            "n_calibration": 0,
             "target_coverage": 0.9,
             "risk_bucket": "high",
             "schema": "sophia.conformal_policy.v1",
@@ -78,15 +78,15 @@
             "level3Evidence": false
           },
           "heldOut": {
-            "coverage": 0.8073,
-            "selectiveAccuracy": 0.0682,
-            "falseAnswerRate": 0.9318
+            "coverage": 0.0,
+            "selectiveAccuracy": 0.0,
+            "falseAnswerRate": 0.0
           },
           "validity": {
-            "nCorrect": 6,
-            "heldOutCorrectCoverage": 1.0,
+            "nCorrect": 3,
+            "heldOutCorrectCoverage": 0.0,
             "targetCoverage": 0.9,
-            "slack": 0.8165,
+            "slack": 1.1547,
             "holds": true
           }
         },
@@ -94,7 +94,7 @@
           "policy": {
             "alpha": 0.1,
             "threshold": 0.5104,
-            "n_calibration": 135,
+            "n_calibration": 42,
             "target_coverage": 0.9,
             "risk_bucket": "normal",
             "schema": "sophia.conformal_policy.v1",
@@ -102,22 +102,22 @@
             "level3Evidence": false
           },
           "heldOut": {
-            "coverage": 0.7749,
-            "selectiveAccuracy": 0.8041,
-            "falseAnswerRate": 0.1959
+            "coverage": 0.7818,
+            "selectiveAccuracy": 0.814,
+            "falseAnswerRate": 0.186
           },
           "validity": {
-            "nCorrect": 130,
-            "heldOutCorrectCoverage": 0.9154,
+            "nCorrect": 37,
+            "heldOutCorrectCoverage": 0.9459,
             "targetCoverage": 0.9,
-            "slack": 0.1754,
+            "slack": 0.3288,
             "holds": true
           }
         }
       },
       "validityHolds": true,
-      "nCalib": 300,
-      "nTest": 300
+      "nCalib": 100,
+      "nTest": 100
     },
     {
       "alpha": 0.2,
@@ -125,8 +125,8 @@
         "high": {
           "policy": {
             "alpha": 0.2,
-            "threshold": 0.9325,
-            "n_calibration": 6,
+            "threshold": 0.0,
+            "n_calibration": 0,
             "target_coverage": 0.8,
             "risk_bucket": "high",
             "schema": "sophia.conformal_policy.v1",
@@ -134,23 +134,23 @@
             "level3Evidence": false
           },
           "heldOut": {
-            "coverage": 0.8073,
-            "selectiveAccuracy": 0.0682,
-            "falseAnswerRate": 0.9318
+            "coverage": 0.0,
+            "selectiveAccuracy": 0.0,
+            "falseAnswerRate": 0.0
           },
           "validity": {
-            "nCorrect": 6,
-            "heldOutCorrectCoverage": 1.0,
+            "nCorrect": 3,
+            "heldOutCorrectCoverage": 0.0,
             "targetCoverage": 0.8,
-            "slack": 0.8165,
+            "slack": 1.1547,
             "holds": true
           }
         },
         "normal": {
           "policy": {
             "alpha": 0.2,
-            "threshold": 0.4519,
-            "n_calibration": 135,
+            "threshold": 0.4375,
+            "n_calibration": 42,
             "target_coverage": 0.8,
             "risk_bucket": "normal",
             "schema": "sophia.conformal_policy.v1",
@@ -158,29 +158,29 @@
             "level3Evidence": false
           },
           "heldOut": {
-            "coverage": 0.6597,
-            "selectiveAccuracy": 0.881,
-            "falseAnswerRate": 0.119
+            "coverage": 0.6182,
+            "selectiveAccuracy": 0.9412,
+            "falseAnswerRate": 0.0588
           },
           "validity": {
-            "nCorrect": 130,
-            "heldOutCorrectCoverage": 0.8538,
+            "nCorrect": 37,
+            "heldOutCorrectCoverage": 0.8649,
             "targetCoverage": 0.8,
-            "slack": 0.1754,
+            "slack": 0.3288,
             "holds": true
           }
         }
       },
       "validityHolds": true,
-      "nCalib": 300,
-      "nTest": 300
+      "nCalib": 100,
+      "nTest": 100
     }
   ],
   "persistedPolicyByRisk": {
     "high": {
       "alpha": 0.1,
-      "threshold": 0.9325,
-      "n_calibration": 12,
+      "threshold": 0.7771,
+      "n_calibration": 3,
       "target_coverage": 0.9,
       "risk_bucket": "high",
       "schema": "sophia.conformal_policy.v1",
@@ -189,8 +189,8 @@
     },
     "normal": {
       "alpha": 0.1,
-      "threshold": 0.5069,
-      "n_calibration": 265,
+      "threshold": 0.4799,
+      "n_calibration": 79,
       "target_coverage": 0.9,
       "risk_bucket": "normal",
       "schema": "sophia.conformal_policy.v1",

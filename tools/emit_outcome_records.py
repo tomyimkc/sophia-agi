@@ -176,7 +176,7 @@ def main(argv=None) -> int:
         "source": args.source,
         "n": len(rows),
         "labeled": labeled,
-        "out": str(args.out.relative_to(ROOT) if args.out.is_relative_to(ROOT) else args.out),
+        "out": str((args.out.relative_to(ROOT) if args.out.is_absolute() and args.out.is_relative_to(ROOT) else args.out) if args.out.is_relative_to(ROOT) else args.out),
         "note": (
             "No `correct` labels offline (the OKF bridge cannot judge truth); point "
             "--source abstain-pack --model <backend> to produce labeled rows."

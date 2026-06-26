@@ -164,7 +164,7 @@ def main(argv=None) -> int:
     if report["deceptionWiring"]:
         w = report["deceptionWiring"]
         print(f"  deception wiring: probeFlagged={w['probeContext']['probeFlagged']} -> verdict={w['deceptionVerdict']}")
-    print(f"Wrote {args.out.relative_to(ROOT)}")
+    print(f"Wrote {(args.out.relative_to(ROOT) if args.out.is_absolute() and args.out.is_relative_to(ROOT) else args.out)}")
     return 0
 
 

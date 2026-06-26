@@ -88,7 +88,7 @@ def main(argv=None) -> int:
         win = "abstain-wins" if pt["abstentionWins"] else "guess-wins"
         print(f"  lambda={pt['lambda']:.1f}  aware={pt['awareTotal']:.1f}  "
               f"always-answer={pt['alwaysAnswerTotal']:.1f}  -> {win}")
-    print(f"Wrote {args.out.relative_to(ROOT)}")
+    print(f"Wrote {(args.out.relative_to(ROOT) if args.out.is_absolute() and args.out.is_relative_to(ROOT) else args.out)}")
     return 0
 
 
