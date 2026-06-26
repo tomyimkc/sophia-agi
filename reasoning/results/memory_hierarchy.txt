@@ -1,0 +1,23 @@
+Memory-hierarchy experiment  (vocab=2000, queries=1500, facts/query=4, seed=314)
+Tiers: working(1) / cache(10) / vector(100) / cold(1000). Roofline = compulsory-miss cost.
+
+H1 locality sweep (cost vs a flat 'always cold' policy):
+   skew       flat     tiered   roofline  tiered/flat  % of roofline  recall
+    0.6    6000000    3504039    1691313       58.4%         48.3%   100%
+    1.0    6000000    1648059    1151853       27.5%         69.9%   100%
+    1.4    6000000     517299     451554        8.6%         87.3%   100%
+
+H2 capacity knee (saving vs flat as working+cache grow):
+   working  cache     tiered   saving
+         2      8    1439205   76.0%
+         4     32    1307760   78.2%
+         8     64    1219542   79.7%
+        16    128    1125213   81.2%
+        32    256    1034475   82.8%
+        64    512     974841   83.8%
+  -> knee at working=8, cache=64 (reaches 95% of the best saving; bigger caches barely help)
+
+THEORY VERDICT
+  H1 cost down + grows with locality: tiered/flat 58.4% (skew 0.6) -> 8.6% (skew 1.4)  -> CONFIRMED
+  H2 capacity knee exists: working=8/cache=64  -> CONFIRMED
+  H3 recall=100% + provenance preserved: recall=100%, lineage_intact=True  -> CONFIRMED

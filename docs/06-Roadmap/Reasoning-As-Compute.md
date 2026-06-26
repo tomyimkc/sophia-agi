@@ -217,15 +217,70 @@ optimizing, checkable reasoning IR: dedup and dead-branch pruning cut verificati
 contradiction-detection and confidence-laundering into a compile-time gate that fails closed
 before emission — the verifiability axis, now with the efficiency axis bolted on.
 
+## Tested: a cost-modeled memory hierarchy pays for locality
+
+Feature #4 is implemented and **run** in
+[`reasoning/memory_hierarchy.py`](../../reasoning/memory_hierarchy.py): retrieval modeled as
+accesses to facts over a Zipf-skewed query stream, served from a recency stack tiered
+working(1) / cache(10) / vector(100) / cold(1000). The **memory roofline** is the
+compulsory-miss cost (each distinct fact paid cold once, every reuse from the working set).
+Saved output:
+[`reasoning/results/memory_hierarchy.txt`](../../reasoning/results/memory_hierarchy.txt).
+
+Result (vocab 2000, 1500 queries × 4 facts, seed 314):
+
+| Locality (Zipf skew) | tiered ÷ flat | % of roofline | recall |
+|---|---|---|---|
+| 0.6 (low)  | 58.4% | 48.3% | 100% |
+| 1.0 (med)  | 27.5% | 69.9% | 100% |
+| 1.4 (high) | **8.6%** | 87.3% | 100% |
+
+- **H1 — cost down, grows with locality:** confirmed — the tiered policy falls from 58% to
+  **8.6%** of the flat "always cold" cost as locality rises, approaching the roofline.
+- **H2 — capacity knee:** confirmed — saving flattens past working=8/cache=64; larger caches
+  barely help (the same ridge-point shape as deliberation).
+- **H3 — no correctness traded for cost:** confirmed — recall 100% and a cache hit carries
+  the same lineage as a cold read (provenance preserved across tiers).
+
+## Tested: a belief all-reduce is cheap, minority-safe, and firewalled
+
+Feature #5 is implemented and **run** in
+[`reasoning/belief_allreduce.py`](../../reasoning/belief_allreduce.py): N council agents
+all-reduce their beliefs with a provenance-preserving operator (max confidence, **union** of
+holders). Saved output:
+[`reasoning/results/belief_allreduce.txt`](../../reasoning/results/belief_allreduce.txt).
+
+Result (N=8, seed 7):
+
+| Topology | messages | consensus == naive? |
+|---|---|---|
+| all-to-all (naive O(N²)) | 56 | — |
+| ring all-reduce (O(N)) | **14** (25%) | yes |
+| recursive-doubling (O(N log N)) | 24 (43%) | yes |
+
+- **H1 — same consensus, far fewer messages:** confirmed — ring and tree reach the *exact*
+  all-to-all consensus at every agent with O(N) / O(N log N) messages.
+- **H2 — minority preserved:** confirmed — a correct belief held by a single agent survives
+  the provenance-preserving reduce but is **dropped** by a majority-vote reduce (the failure
+  mode the thesis forbids — and the reason "reduce" must union provenance, not vote).
+- **H3 — confidentiality firewall:** confirmed — a `secret`-labeled belief reaches every
+  cleared agent and **zero** uncleared agents, while public consensus still reaches all.
+
 ## Status of the thesis
 
 | # | Feature | State |
 |---|---------|-------|
-| 1 | Reasoning roofline | design (denominator for the experiments below) |
+| 1 | Reasoning roofline | realized as the *denominator* in #2/#4 (% of an oracle/compulsory ceiling) |
 | 2 | Deliberation budgeting | **implemented + tested** — `reasoning/deliberation_roofline.py` |
 | 3 | Reasoning compiler / IR | **implemented + tested** — `reasoning/reasoning_compiler.py` |
-| 4 | Cost-modeled memory hierarchy | design |
-| 5 | Communication-efficient collectives | design |
+| 4 | Cost-modeled memory hierarchy | **implemented + tested** — `reasoning/memory_hierarchy.py` |
+| 5 | Communication-efficient collectives | **implemented + tested** — `reasoning/belief_allreduce.py` |
+
+All five experiments share one shape: a **physical-limit denominator** (oracle ceiling,
+compulsory-miss floor, all-to-all consensus), a **ridge point** past which more resource is
+wasted, and a **fail-closed correctness invariant** that the efficiency win must never break
+(grounded conclusion, recall, minority provenance, confidentiality). That is the thesis: the
+verifiability axis and the efficiency axis, measured together.
 
 ## Non-goals
 
