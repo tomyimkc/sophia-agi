@@ -4,6 +4,26 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — architecture track: sharded HNSW (parallel) + graph persistence for scale-out
+
+- **Sharded HNSW** (`services/ann_serving/src/sharded.rs`, `ShardedHnsw`): the dense recall view
+  scales horizontally — vectors are split across N independent HNSW shards by a stable id hash
+  (even split, same id → same shard), and a query fans out to all shards **in parallel**
+  (`std::thread::scope`, no dependency), merging per-shard top-k into a global top-k. The merge is
+  **deterministic** (sorted `(-similarity, id)`, identical to the sequential merge — verified).
+  Measured (`bench`, 20k×64-d): sharding *raises* recall (1→0.92, 4→0.98, 8→0.99) and adds N×
+  capacity; honest bound — the parallel *latency* win needs production-size shards or a persistent
+  pool, since fresh per-query threads cost more than they save at toy scale.
+- **Graph persistence** (`HnswIndex`/`ShardedHnsw` `to_bytes`/`from_bytes`; `pack` binary):
+  a built graph is saved to a portable little-endian `.idx` and reloaded in milliseconds instead
+  of rebuilt — "build once, serve many". `serve` now loads a `.idx` directly or builds sharded
+  from text (`--shards N --save out.idx`); `agent/ann_client.py` gains `shards=` and `.idx` support.
+  Verified: serving from a packed `.idx` returns results identical to building from text.
+- Tests: +5 Rust (routing balance, parallel==sequential, sharded recall parity, persistence
+  round-trip, garbage rejection) and +2 gated Python (sharded serve, pack→serve `.idx` round-trip).
+  `cargo test` 12 green; committed local-hash index still verifies reproducible.
+
+
 ### Added — canon promotion (human sign-off) + opt-in learned multilingual/multimodal embedders
 
 - **Canon promotion** (`agent/canon_promote.py`, `tools/review_drafts.py`): the human review step

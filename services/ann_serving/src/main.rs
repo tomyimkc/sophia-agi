@@ -6,7 +6,7 @@
 //! Quantifies the cost/latency/effect trade-off the JD asks for, on deterministic synthetic
 //! data (seeded LCG, no dependencies). Run:  `cargo run --release --bin bench`.
 
-use sophia_ann::{FlatIndex, HnswIndex, NswIndex};
+use sophia_ann::{FlatIndex, HnswIndex, NswIndex, ShardedHnsw};
 use std::time::Instant;
 
 fn normalize(mut v: Vec<f32>) -> Vec<f32> {
@@ -92,6 +92,27 @@ fn main() {
     println!(
         "  (random high-dim vectors are the worst case for a graph index; the HNSW hierarchy\n   \
          lifts recall over single-layer NSW at the same ef. Real clustered embeddings do better.)"
+    );
+
+    // --- Sharded scale-out: same recall target, parallel fan-out across shards ---
+    println!("  --- sharded HNSW (parallel fan-out; same vectors, ef=128) ---");
+    let ef = 128usize;
+    let (single_r, single_us) = measure(&queries, &exact, |q| hnsw.search(q, k, ef), k);
+    println!("  {:>10}  {:>9} {:>10}", "shards", "r@10", "us/query");
+    println!("  {:>10}  {single_r:>9.3} {single_us:>10.1}", 1);
+    for nshards in [2usize, 4, 8] {
+        let mut sh = ShardedHnsw::new(nshards, dim, m, 200);
+        for (i, v) in data.iter().enumerate() {
+            sh.add(i as u32, v);
+        }
+        let (r, us) = measure(&queries, &exact, |q| sh.search(q, k, ef), k);
+        println!("  {nshards:>10}  {r:>9.3} {us:>10.1}");
+    }
+    println!(
+        "  (sharding's primary wins here are CAPACITY — N× vectors across memory budgets — and\n   \
+         RECALL — the top-k merge sees more candidates, so recall RISES with shards. The parallel\n   \
+         LATENCY win needs per-shard work to exceed thread-spawn cost: at this scale fresh\n   \
+         per-query threads cost more than they save, so use larger shards or a persistent pool.)"
     );
 }
 

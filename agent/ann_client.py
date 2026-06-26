@@ -36,11 +36,15 @@ class AnnClient:
         *,
         m: int = 16,
         ef_construction: int = 200,
+        shards: int = 1,
     ) -> None:
+        # vectors_path may be a text vectors file (built on start) or a packed `.idx`
+        # (loaded instantly; `shards` is then ignored, the shard count is baked into the file).
         self.vectors_path = Path(vectors_path) if vectors_path else DEFAULT_VECTORS
         self.binary = Path(binary) if binary else DEFAULT_BINARY
         self.m = m
         self.ef_construction = ef_construction
+        self.shards = max(1, shards)
         self._proc: subprocess.Popen | None = None
         self.size = 0
         self.dim = 0
@@ -56,8 +60,12 @@ class AnnClient:
                 f"vectors={self.vectors_path.exists()} (build with `cargo build --release` and "
                 "`python tools/export_rag_index.py`)"
             )
+        cmd = [str(self.binary), str(self.vectors_path), str(self.m), str(self.ef_construction)]
+        # Sharding applies only when building from a text file; a `.idx` carries its own shards.
+        if self.shards > 1 and self.vectors_path.suffix != ".idx":
+            cmd += ["--shards", str(self.shards)]
         self._proc = subprocess.Popen(
-            [str(self.binary), str(self.vectors_path), str(self.m), str(self.ef_construction)],
+            cmd,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,

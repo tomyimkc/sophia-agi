@@ -22,6 +22,9 @@ use std::cmp::Ordering;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 
+pub mod sharded;
+pub use sharded::ShardedHnsw;
+
 /// Cosine similarity for L2-normalised vectors (== dot product). Panics on length mismatch.
 #[inline]
 pub fn cosine(a: &[f32], b: &[f32]) -> f32 {
@@ -297,7 +300,8 @@ pub fn parse_index_line(line: &str) -> Option<(u32, Vec<f32>)> {
 }
 
 /// Deterministic SplitMix64 — turns an insertion index into a stable pseudo-random u64.
-fn splitmix64(mut x: u64) -> u64 {
+/// `pub(crate)` so the sharded index can hash-route ids with the same stable mixer.
+pub(crate) fn splitmix64(mut x: u64) -> u64 {
     x = x.wrapping_add(0x9E37_79B9_7F4A_7C15);
     let mut z = x;
     z = (z ^ (z >> 30)).wrapping_mul(0xBF58_476D_1CE4_E5B9);
@@ -490,6 +494,115 @@ impl HnswIndex {
         let mut w = self.search_layer(query, &[cur], ef.max(k), 0);
         w.sort_unstable_by(|a, b| b.cmp(a));
         w.into_iter().take(k).map(|s| (self.nodes[s.idx].id, s.sim)).collect()
+    }
+
+    pub fn dim(&self) -> usize {
+        self.dim
+    }
+
+    /// Serialize the built graph (vectors + per-layer adjacency + params) to a portable,
+    /// little-endian byte blob. Loading this with [`HnswIndex::from_bytes`] skips the expensive
+    /// graph construction — the "build once, serve many" path for the architecture track.
+    pub fn to_bytes(&self) -> Vec<u8> {
+        let mut out = Vec::new();
+        out.extend_from_slice(HNSW_MAGIC);
+        out.extend_from_slice(&(self.dim as u32).to_le_bytes());
+        out.extend_from_slice(&(self.m as u32).to_le_bytes());
+        out.extend_from_slice(&(self.ef_construction as u32).to_le_bytes());
+        out.extend_from_slice(&(self.max_level as u32).to_le_bytes());
+        out.extend_from_slice(&self.entry.map_or(-1i64, |e| e as i64).to_le_bytes());
+        out.extend_from_slice(&(self.nodes.len() as u32).to_le_bytes());
+        for node in &self.nodes {
+            out.extend_from_slice(&node.id.to_le_bytes());
+            out.extend_from_slice(&(node.levels.len() as u32).to_le_bytes());
+            for level in &node.levels {
+                out.extend_from_slice(&(level.len() as u32).to_le_bytes());
+                for &nb in level {
+                    out.extend_from_slice(&(nb as u32).to_le_bytes());
+                }
+            }
+            for &x in &node.vec {
+                out.extend_from_slice(&x.to_le_bytes());
+            }
+        }
+        out
+    }
+
+    /// Rebuild an index from [`HnswIndex::to_bytes`] output. Returns `None` on a bad magic or
+    /// truncated/corrupt blob (never panics), so a loader can fall back to rebuilding.
+    pub fn from_bytes(bytes: &[u8]) -> Option<HnswIndex> {
+        let mut r = ByteReader::new(bytes);
+        if r.take(8)? != HNSW_MAGIC {
+            return None;
+        }
+        let dim = r.u32()? as usize;
+        let m = (r.u32()? as usize).max(1);
+        let ef_construction = (r.u32()? as usize).max(1);
+        let max_level = r.u32()? as usize;
+        let entry_raw = r.i64()?;
+        let entry = if entry_raw < 0 { None } else { Some(entry_raw as usize) };
+        let n = r.u32()? as usize;
+        let mut nodes = Vec::with_capacity(n);
+        for _ in 0..n {
+            let id = r.u32()?;
+            let nlevels = r.u32()? as usize;
+            let mut levels = Vec::with_capacity(nlevels);
+            for _ in 0..nlevels {
+                let cnt = r.u32()? as usize;
+                let mut nbrs = Vec::with_capacity(cnt);
+                for _ in 0..cnt {
+                    nbrs.push(r.u32()? as usize);
+                }
+                levels.push(nbrs);
+            }
+            let mut vec = Vec::with_capacity(dim);
+            for _ in 0..dim {
+                vec.push(r.f32()?);
+            }
+            nodes.push(HnswNode { id, vec, levels });
+        }
+        Some(HnswIndex {
+            dim,
+            m,
+            m0: m * 2,
+            ef_construction,
+            ml: 1.0 / (m as f64).ln().max(1e-9),
+            nodes,
+            entry,
+            max_level,
+        })
+    }
+}
+
+/// Magic header for the persisted HNSW format (version 1).
+const HNSW_MAGIC: &[u8; 8] = b"SOPHNSW1";
+
+/// Minimal little-endian byte cursor for the persistence format — None on overrun, no panic.
+pub(crate) struct ByteReader<'a> {
+    bytes: &'a [u8],
+    pos: usize,
+}
+
+impl<'a> ByteReader<'a> {
+    pub(crate) fn new(bytes: &'a [u8]) -> Self {
+        Self { bytes, pos: 0 }
+    }
+    pub(crate) fn take(&mut self, n: usize) -> Option<&'a [u8]> {
+        if self.pos + n > self.bytes.len() {
+            return None;
+        }
+        let s = &self.bytes[self.pos..self.pos + n];
+        self.pos += n;
+        Some(s)
+    }
+    pub(crate) fn u32(&mut self) -> Option<u32> {
+        Some(u32::from_le_bytes(self.take(4)?.try_into().ok()?))
+    }
+    pub(crate) fn i64(&mut self) -> Option<i64> {
+        Some(i64::from_le_bytes(self.take(8)?.try_into().ok()?))
+    }
+    pub(crate) fn f32(&mut self) -> Option<f32> {
+        Some(f32::from_le_bytes(self.take(4)?.try_into().ok()?))
     }
 }
 

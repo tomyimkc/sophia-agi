@@ -74,7 +74,7 @@ Sophia's charter exists to build, expressed as the organ the DeepSeek charter ca
 | Self-correct | gaps → draft stubs → **sourced fill from trusted sources** (allowlist + gate) | `agent/gap_ingest.py` → `agent/source_fill.py` (`agent/wiki_librarian.py`, `agent/source_ranking.py`) | ✅ shipped; ⚠️ canon promotion + LLM extraction stay operator-gated |
 | Perceive widely | learned **multilingual + multimodal** embedders via the registry | `agent/embedding_st.py` → `agent/embedding_backends.py` | ✅ adapter shipped (opt-in); weights operator-fetched |
 | Promote to canon | reviewed draft → consolidated memory tier on human sign-off (re-gated) | `agent/canon_promote.py`, `tools/review_drafts.py` | ✅ shipped (human-gated by design) |
-| Serve at scale | Rust HNSW dense view via the bridge → sharding/RDMA | `services/ann_serving/`, `agent/ann_client.py` | ⚠️ single-node shipped; sharding/RDMA pending |
+| Serve at scale | Rust **sharded** HNSW (parallel fan-out + merge) + persistence, via the bridge | `services/ann_serving/` (`ShardedHnsw`, `pack`/`serve`), `agent/ann_client.py` | ✅ in-process sharding + persistence shipped; ⚠️ cross-machine/RDMA + PyO3 pending |
 
 ## Shipped foundation (this work)
 
