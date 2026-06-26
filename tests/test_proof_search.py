@@ -191,7 +191,11 @@ def test_verify_proof_abstains_on_free_form_without_repo_key() -> None:
     assert check.verdict == "abstain"
     # The reason must name the actual limitation, not the misleading "import failed".
     assert "import failed" not in check.reason
-    assert "theorem_name" in check.reason or "not installed" in check.reason
+    # The honest reason names the real 4.x path (check_proof_in_repo) OR, when lean-dojo
+    # is absent, "not installed". Either is the honest limitation; "import failed" is not.
+    assert ("check_proof_in_repo" in check.reason
+            or "theorem_name" in check.reason
+            or "not installed" in check.reason), f"unexpected reason: {check.reason}"
 
 
 
