@@ -36,7 +36,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from provenance_bench import math_dataset, math_reward, rl_dataset, rl_reward  # noqa: E402
+from provenance_bench import code_dataset, code_reward, math_dataset, math_reward, rl_dataset, rl_reward  # noqa: E402
 
 OUT = ROOT / "agi-proof" / "benchmark-results" / "rlvr.adapter-eval.json"
 
@@ -287,11 +287,107 @@ def run_eval_math(args: argparse.Namespace) -> dict:
     return report
 
 
+# --------------------------------------------------------------------------- #
+# Code task — held-out pass@1 before/after on UNSEEN task families.
+# Reward = hidden-tests-pass (provenance_bench.code_exec; deterministic, no judge),
+# so pass@1 IS the capability number; no false-positive axis (every item has a test).
+# --------------------------------------------------------------------------- #
+def _mock_completion_code(task: dict, *, improved: bool) -> str:
+    if improved:
+        # The fenced reference solution (pack-generator-verified to pass the test).
+        return "```python\n" + task["solution"].rstrip() + "\n```"
+    # Base: a syntactically valid but wrong implementation (restates the wrong op).
+    return "```python\ndef " + task["entry_point"] + "(*args, **kwargs):\n    return 0\n```"
+
+
+def _score_tasks(tasks: list, completions: dict) -> dict:
+    rows, rewards, pass1 = [], [], 0
+    by_family: dict = {}
+    for t in tasks:
+        text = completions.get(t["id"], "")
+        reward, detail = code_reward.reward_for_task(text, t["test"])
+        rewards.append(float(reward))
+        ok = int(reward >= 1.0)
+        pass1 += ok
+        by_family.setdefault(t["family"], []).append(ok)
+        rows.append({"task_id": t["id"], "family": t["family"], "reward": reward,
+                     "detail": detail, "completion": text})
+    return {
+        "n": len(tasks),
+        "meanReward": round(statistics.mean(rewards), 4) if rewards else 0.0,
+        "passAt1": round(pass1 / len(tasks), 4) if tasks else 0.0,
+        "passAt1ByFamily": {f: round(sum(v) / len(v), 4) for f, v in by_family.items()},
+        "rows": rows,
+    }
+
+
+def run_eval_code(args: argparse.Namespace) -> dict:
+    data = code_dataset.build_code_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+    tasks = data["eval_tasks"]
+    if args.limit:
+        tasks = tasks[: args.limit]
+    if data["family_intersection"]:
+        raise SystemExit(f"contaminated split: {data['family_intersection']}")
+
+    if args.mode == "mock":
+        base = {t["id"]: _mock_completion_code(t, improved=False) for t in tasks}
+        adapter = {t["id"]: _mock_completion_code(t, improved=True) for t in tasks}
+        model_desc = "mock"
+    else:
+        if not args.adapter:
+            raise SystemExit("--adapter is required under --mode real")
+        if not code_reward.exec_enabled():
+            raise SystemExit("code adapter eval needs SOPHIA_ALLOW_CODE_EXEC=1 (interpreter = reward)")
+        base_gen, adapter_gen = _load_real_generators(args.model, args.adapter, max_new_tokens=args.max_new_tokens)
+        base, adapter = {}, {}
+        for i, t in enumerate(tasks, 1):
+            print(f"[eval-code] {i}/{len(tasks)} {t['id']}", flush=True)
+            base[t["id"]] = base_gen(t["prompt"])
+            adapter[t["id"]] = adapter_gen(t["prompt"])
+        model_desc = args.model
+
+    base_score = _score_tasks(tasks, base)
+    adapter_score = _score_tasks(tasks, adapter)
+    delta = round(adapter_score["passAt1"] - base_score["passAt1"], 4)
+    report = {
+        "benchmark": "rlvr-adapter-heldout",
+        "task": "code",
+        "mode": args.mode,
+        "model": model_desc,
+        "adapter": str(args.adapter) if args.adapter else None,
+        "claimStatus": (
+            "Open — per-run held-out comparison on UNSEEN task families. Capability "
+            "claim requires >=3 seeds and no-overclaim aggregation (CI excludes 0)."
+        ),
+        "split": {
+            "evalTasks": len(tasks),
+            "seed": args.seed,
+            "evalFrac": args.eval_frac,
+            "evalFamilies": sorted({t["family"] for t in tasks}),
+            "trainSealed": data["train_sealed"],
+            "evalSealed": data["eval_sealed"],
+            "familyIntersection": data["family_intersection"],
+        },
+        "base": {k: v for k, v in base_score.items() if k != "rows"},
+        "adapterScore": {k: v for k, v in adapter_score.items() if k != "rows"},
+        "delta": {"passAt1": delta},
+        "checks": {
+            "contaminationFree": not data["family_intersection"],
+            "adapterImprovesPassAt1": delta > 0,
+            "noPassAt1Regression": delta >= 0,
+        },
+        "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
+    }
+    report["passed"] = all(report["checks"].values())
+    return report
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--mode", choices=["mock", "real"], default="mock")
-    ap.add_argument("--task", choices=["provenance", "math"], default="provenance",
-                    help="provenance (provenance_faithful reward) or math (sympy math_equivalent reward)")
+    ap.add_argument("--task", choices=["provenance", "math", "code"], default="provenance",
+                    help="provenance (provenance_faithful), math (sympy math_equivalent), or "
+                         "code (hidden-tests-pass via code_exec)")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--adapter", type=Path, default=None)
     ap.add_argument("--out", type=Path, default=OUT)
@@ -301,7 +397,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--max-new-tokens", type=int, default=128)
     ap.add_argument("--max-fp-regression", type=float, default=0.0)
     args = ap.parse_args(argv)
-    report = run_eval_math(args) if args.task == "math" else run_eval(args)
+    if args.task == "math":
+        report = run_eval_math(args)
+    elif args.task == "code":
+        report = run_eval_code(args)
+    else:
+        report = run_eval(args)
     _write(args.out, report)
     print("RLVR ADAPTER EVAL PASS ✓" if report["passed"] else "RLVR ADAPTER EVAL NOT PASSED ✗")
     return 0 if report["passed"] else 1

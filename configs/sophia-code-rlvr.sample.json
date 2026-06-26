@@ -1,0 +1,33 @@
+{
+  "schema": "sophia.experiment.v1",
+  "name": "sophia-code-rlvr-candidate",
+  "claimBoundary": "Code RLVR (hidden-tests-pass-as-reward) candidate run. Offline = reward-machinery invariants only (NOT a capability claim). Live capability stays Open until a gated >=3-seed RunPod run on the family-disjoint held-out split clears the no-overclaim gate (CI excludes 0). canClaimAGI=false.",
+  "dryRunDefault": true,
+  "model": {
+    "name": "zai-org/glm-4-9b-chat-hf",
+    "backend": "peft"
+  },
+  "data": {"enabled": false},
+  "sft": {"enabled": false},
+  "dpo": {"enabled": false},
+  "rlvr": {
+    "enabled": true,
+    "task": "code",
+    "reward": "verifier",
+    "model": null,
+    "output": "training/rlvr/checkpoints/sophia-code-rlvr-v1",
+    "report": "agi-proof/benchmark-results/rlvr-code.public-report.json",
+    "seed": 0,
+    "epochs": 1.0,
+    "lr": 1e-5,
+    "beta": 0.04,
+    "numGenerations": 8,
+    "vllm": "colocate",
+    "quant": "bf16",
+    "maxPromptLen": 256,
+    "maxCompletionLen": 256,
+    "codeTimeout": 15
+  },
+  "eval": {"enabled": false},
+  "promotion": {"enabled": false}
+}
