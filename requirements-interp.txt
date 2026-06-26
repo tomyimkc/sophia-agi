@@ -1,0 +1,18 @@
+# Mechanistic interpretability — GPU path ONLY (roadmap M1+).
+# The OFFLINE M0 core (interp/sae/*, interp/hookpoints.py, tools/run_interp.py
+# --mode mock, and the CI tests) needs NONE of these — it is pure stdlib.
+# Install only for real Qwen2.5-7B activation harvesting + SAE training on
+# RunPod / the DGX Spark.
+torch>=2.3
+transformers>=4.46.2
+accelerate>=1.0
+safetensors>=0.4
+datasets>=2.20
+einops>=0.8
+# SAE training + analysis (primary path); from-scratch torch trainer is the fallback.
+sae-lens>=4.0
+transformer-lens>=2.0
+# Optional cross-validation of patching results on the raw HF model.
+nnsight>=0.3
+# bitsandbytes 4-bit is CUDA-only (DGX Spark / RunPod), not Apple Silicon.
+bitsandbytes>=0.43; platform_system != "Darwin"

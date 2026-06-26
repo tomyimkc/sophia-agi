@@ -26,4 +26,8 @@ Origin: a gap analysis of Anthropic's open technical roles vs this repo, then a 
 
 ## Status
 - **Wave 1 #1 (Live RL):** M0 offline contract **DONE & green**; M1 pre-registered, GPU-/key-bound.
-- Base model standardized on **Qwen2.5-7B-Instruct (Apache-2.0)** across the RLVR toolchain.
+- **Wave 1 #2 (Interpretability):** M0 offline core **DONE & green** — pure-stdlib TopK SAE
+  (`interp/sae/`), metrics (L0/FVU/CE-recovered/dead-%), Qwen2.5 hookpoint adapter, offline CLI
+  (`tools/run_interp.py --mode mock`), and 12 CI tests. Reference SAE reconstructs a planted signal
+  to FVU 0.088 (91% explained variance). M1 (real Qwen2.5-7B harvest) is GPU-bound.
+- Base model standardized on **Qwen2.5-7B-Instruct (Apache-2.0)** across the RLVR + interp tracks.
