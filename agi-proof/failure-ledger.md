@@ -886,31 +886,26 @@ Mock adapter vs base: fabrication on traps 44.4% → 0%, calibration +0.58, usef
 
 ## team-agents-mode-mock-eval-2026-06-25
 
-**Status:** OPEN (mock eval only — not real-model evidence).
+## hk-advisor-phase3-2026-06-25
 
-**Branch:** `claude/team-agents-mode`
+**Status:** COMPLETE (DPO pairs mined).
 
-**Benchmark:** Sealed `team_agents_benchmark` heldout_v1 — 36 cases (12/12/12 balance),
-12 probe_divisive cases, contentHash=`50a0bfab6b9690aabdc7d9346a2487b900e87bd77647e81e81d292d06ace7e7b`,
-decontam CLEAN.
+**Artifact:** `training/hk_advisor/dpo_pairs.jsonl` — 49 pairs.
+By rejected_type: wrong_abstain 19, uncited_claim 19, overconfident_trap 9,
+fabricated_regulation 1, fake_citation 1.
 
-**Traces:** 8 externally verified rows in `training/team_agents/sft_traces.jsonl`
-(mock teacher, 0 overlap with heldout, 0 gate-only drops in sample).
+**Claim impact:** Preference data ready; DPO training blocked on P2 GPU blocker. `canClaimAGI: false`.
 
-**Independence (mock, 3 seeds):** homogeneous panel mean ρ≈0.56, N_eff≈1.41;
-heterogeneous mock panel ρ≈0.56, N_eff≈1.41 — **below** pre-registered consensus
-threshold (N_eff ≥ 2.0). Reports use **"correlated panel — not consensus"** wording.
+## hk-advisor-phase4-2026-06-25
 
-**Eval vs baseline (mock, 3 seeds):** team_agents composite pass rate beats single_agent
-by +0.056 (95% CI [0.056, 0.056], excludes 0 on this deterministic stub). Trap
-false-consensus: team ≤ single. External scorer disjoint from intrinsic gate.
+**Status:** COMPLETE (mock eval); adapter training NOT RUN.
 
-**SFT (P2):** No GPU run in this session — `train_lora.py --dry-run` on team traces
-passes; real 3-seed SFT blocked pending GPU.
+**Artifact:** `agi-proof/hk-advisor/eval-hk-advisor.public-report.json` (mock, 3 seeds).
+Mock: fabrication traps 37.8%→0%, calibration Δ+0.19, useful-answer Δ+0.24 (CI excludes 0).
+**Honest scope:** mock responses only — NOT real adapter weights.
 
-**Promotion gate:** Not attempted — no adapter ladder artifact. Positive control
-promotes with `solverChecked: true`; team-agents adapter promotion requires a gated
-ladder run via `tools/promote_adapter.py`.
+**promote_adapter:** `--dry-run` on sophia-v2 ladder → **reject** (protected_floor_content); `solverChecked: true`.
+No HK-advisor adapter (0/3 SFT seeds).
 
 **Honest claim:** Verifier-gated deliberation policy **candidate** only.
 `canClaimAGI: false` — not AGI, not validated uplift, not independent consensus
@@ -1008,3 +1003,4 @@ historical ladder-only `promote` artifact is retained unaltered for provenance. 
 corrected gate, v3 does not promote.** Closing the loop without forgetting (replay/rehearsal of the
 old domain or a smaller weight delta, then re-running learning-under-shift to `passingSignal=true`)
 is now a precondition for any future promotion — this remains open and hardware-bound (MLX/GPU).
+**Claim impact:** Mock eval shows metric direction; no validated uplift. `canClaimAGI: false`.
