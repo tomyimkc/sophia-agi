@@ -211,18 +211,23 @@ def conscience_check(
         verdict, reason = "block", "deception or gate-tampering signal triggered"
     elif fact.get("verdict") == "rejected":
         verdict, reason = "block", "fact-check gate rejected one or more claims"
-    # Safe self-boundary statements are allowed even when the open-world fact
-    # checker cannot externally prove the project-status wording offline.
-    elif classifier.get("category") == "benign_boundary" and constitution.get("verdict") == "accepted" and deception.get("verdict") == "clear":
-        verdict, reason = "allow", "safe candidate/no-overclaim boundary wording"
     # 8th path routing — ConsequenceGate. A severe cascade (flip severity at/above
     # threshold) or an unbounded consequence (unresolved retraction target) forces
-    # escalate/abstain BEFORE the soft public-standard/moral routing. It never
-    # overrides a hard block above, and never turns a safe claim into a block.
+    # escalate/abstain BEFORE the benign-boundary allow and the soft
+    # public-standard/moral routing. It never overrides a hard block above, and never
+    # turns a safe claim into a block — but it CAN escalate/abstain otherwise-safe
+    # boundary wording when the supplied retraction move's cascade is severe/unbounded
+    # (that is the entire point of an opt-in consequence simulation). Placed above the
+    # benign_boundary allow so the gate cannot be bypassed by classification alone.
     elif consequence.get("verdict") == "abstain":
         verdict, reason = "abstain", "consequence of the candidate move cannot be bounded"
     elif consequence.get("verdict") == "escalate":
         verdict, reason = "escalate", "consequence cascade exceeds flip-severity threshold"
+    # Safe self-boundary statements are allowed even when the open-world fact
+    # checker cannot externally prove the project-status wording offline. (Runs after
+    # consequence routing so a severe cascade is never masked by benign wording.)
+    elif classifier.get("category") == "benign_boundary" and constitution.get("verdict") == "accepted" and deception.get("verdict") == "clear":
+        verdict, reason = "allow", "safe candidate/no-overclaim boundary wording"
     # Soft/fail-closed routing.
     elif public_standard.get("verdict") == "escalate":
         verdict, reason = "escalate", "public-standard gray-zone moral disagreement requires escalation"

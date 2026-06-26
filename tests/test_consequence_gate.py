@@ -176,6 +176,81 @@ def test_consequence_report_schema_and_boundary() -> None:
     assert "AGI" in d["boundary"] or "AGI proof" in d["boundary"]
 
 
+def test_load_consequence_config_is_fully_exception_safe() -> None:
+    # Regression for the fail-safe fix: _load_consequence_config must NEVER raise
+    # into the gate path, no matter how malformed the config file is. Each of these
+    # malformed inputs previously raised and would have crashed import-time init /
+    # failed the gate OPEN via exception.
+    import importlib
+    import math
+    from agent import consequence_gate as cg
+
+    cases = {
+        "not_a_dict (list)": "[0.5]",
+        "not_a_dict (str)": '"0.5"',
+        "not_a_dict (null)": "null",
+        "non-numeric value": '{"flipSeverityEscalate": "high"}',
+        "missing key": '{"otherKey": 1}',
+        "value NaN": '{"flipSeverityEscalate": "NaN"}',
+        "value Inf": '{"flipSeverityEscalate": "Infinity"}',
+        "out of range >1": '{"flipSeverityEscalate": 1.5}',
+        "out of range <0": '{"flipSeverityEscalate": -0.1}',
+        "invalid JSON": "{not json",
+    }
+    orig_path = cg._CONFIG_PATH
+    tmpfile_path: Path | None = None
+    try:
+        import tempfile
+        tf = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False)
+        tf.close()
+        tmpfile_path = Path(tf.name)
+        cg._CONFIG_PATH = tmpfile_path  # redirect the loader at OUR temp file
+        for label, content in cases.items():
+            tmpfile_path.write_text(content, encoding="utf-8")
+            out = cg._load_consequence_config()
+            assert out == {"flipSeverityEscalate": cg.FLIP_SEVERITY_ESCALATE}, (
+                f"{label}: malformed config leaked through fail-safe -> {out}"
+            )
+        # finally, a VALID config must still load the real value (not silently default).
+        tmpfile_path.write_text('{"flipSeverityEscalate": 0.25}', encoding="utf-8")
+        assert cg._load_consequence_config() == {"flipSeverityEscalate": 0.25}
+        # the loaded value must be finite and in range for the valid path too
+        assert math.isfinite(cg._load_consequence_config()["flipSeverityEscalate"])
+    finally:
+        cg._CONFIG_PATH = orig_path
+        if tmpfile_path is not None:
+            tmpfile_path.unlink(missing_ok=True)
+
+
+def test_consequence_escalates_even_on_benign_boundary_text() -> None:
+    # Regression for the routing-order fix: the consequence path must run BEFORE
+    # the benign_boundary allow, so a severe cascade can escalate/abstain even when
+    # the text is otherwise safe project-status wording. Before the fix, a
+    # benign_boundary classification masked the consequence and the gate was bypassed.
+    #
+    # We cannot easily force classifier.category == "benign_boundary" from a unit
+    # test without mocking the classifier, so we verify the structural invariant
+    # directly: the consequence-routing branches appear in source order BEFORE the
+    # benign_boundary allow branch in conscience_check. (A behavioural test that
+    # forces both conditions would require classifier patching; the order invariant
+    # is the precise fix the review thread asked for and is what the comment now
+    # documents.)
+    import re
+    src = Path("agent/conscience.py").read_text(encoding="utf-8")
+    # isolate the verdict-routing block (hard gates start -> decision construction)
+    block = src[src.index('if deontic.get("verdict") == "rejected":'):]
+    block = block[:block.index("    decision = ConscienceDecision(")]
+    pos_consequence_abstain = block.index('consequence.get("verdict") == "abstain"')
+    pos_consequence_escalate = block.index('consequence.get("verdict") == "escalate"')
+    pos_benign = block.index('classifier.get("category") == "benign_boundary"')
+    assert pos_consequence_abstain < pos_benign, (
+        "consequence routing must precede the benign_boundary allow"
+    )
+    assert pos_consequence_escalate < pos_benign, (
+        "consequence routing must precede the benign_boundary allow"
+    )
+
+
 def main() -> int:
     import inspect
     for nm, fn in sorted(globals().items()):

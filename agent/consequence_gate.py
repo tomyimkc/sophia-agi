@@ -42,17 +42,27 @@ _CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "consequence.jso
 def _load_consequence_config() -> dict[str, Any]:
     """Load consequence params from ``config/consequence.json``.
 
-    Fail-safe: if the file is missing or malformed, fall back to the conservative
-    module defaults. A malformed config must NEVER raise into the gate path — it
-    would weaken the gate by crashing it, so we log-and-fallback instead.
+    Fail-safe: if the file is missing OR malformed in ANY way, fall back to the
+    conservative module defaults. A malformed config must NEVER raise into the gate
+    path — raising would crash import-time initialization and weaken the gate by
+    failing open via exception. So we catch the full universe of malformed inputs:
+    missing/unreadable file (OSError), bad UTF-8 (UnicodeDecodeError), syntactically
+    invalid JSON (json.JSONDecodeError), valid JSON that is not an object
+    (raw.get AttributeError on a list/str/null), or a value that is not a real
+    number (float() ValueError/TypeError, incl. NaN/Inf which float() accepts but
+    would silently break the threshold comparison). Any of these -> module default.
     """
     try:
         raw = json.loads(_CONFIG_PATH.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+        value = float(raw["flipSeverityEscalate"])
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, TypeError, KeyError, ValueError, AttributeError):
         return {"flipSeverityEscalate": FLIP_SEVERITY_ESCALATE}
-    return {
-        "flipSeverityEscalate": float(raw.get("flipSeverityEscalate", FLIP_SEVERITY_ESCALATE)),
-    }
+    # float("nan")/float("inf") parse but make the >= threshold meaningless; a
+    # non-finite/non-normal threshold is malformed for our purposes -> default.
+    import math
+    if not math.isfinite(value) or not (0.0 <= value <= 1.0):
+        return {"flipSeverityEscalate": FLIP_SEVERITY_ESCALATE}
+    return {"flipSeverityEscalate": value}
 
 
 _CONFIG = _load_consequence_config()
