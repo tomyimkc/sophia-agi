@@ -36,6 +36,14 @@ ablation prints `intrinsicWisdom` with the headline `studentGateOffHalluc`.
 
 ## Real run (per device)
 
+**0. Either device — ~10s smoke check first** (loads the model, does one real generation,
+fails closed on an empty/not-ok result before you commit to the full pass):
+```bash
+python -m tools.model_backends --backend mlx --model Qwen/Qwen3-4B   # Mac
+python -m tools.model_backends --backend hf  --model Qwen/Qwen3-4B   # Spark
+```
+The `trace` and `ablate` stages run this automatically before their full pass.
+
 **1. Mac — generate traces**
 ```bash
 pip install "mlx-lm>=0.20"

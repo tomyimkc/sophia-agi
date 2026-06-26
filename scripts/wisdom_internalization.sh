@@ -15,6 +15,7 @@
 # between) — or `all` on one box for a mock end-to-end smoke test.
 #
 #   bash scripts/wisdom_internalization.sh all                    # mock smoke test (CI/offline)
+#   BACKEND=mlx BASE=Qwen/Qwen3-4B bash scripts/wisdom_internalization.sh smoke   # ~10s load+gen check
 #   BACKEND=mlx BASE=Qwen/Qwen3-4B bash scripts/wisdom_internalization.sh trace   # on the Mac
 #   BACKEND=hf  BASE=Qwen/Qwen3-4B bash scripts/wisdom_internalization.sh train   # on the Spark
 #   BACKEND=mlx BASE=Qwen/Qwen3-4B bash scripts/wisdom_internalization.sh ablate  # on the Mac
@@ -29,7 +30,13 @@ OUT="${OUT:-models/sophia-4b-internalized}"
 TRACES="training/council/distill_traces.jsonl"
 PY="${PY:-python}"
 
+smoke() {
+  echo ">> [smoke] ~10s backend sanity check before the full pass"
+  $PY -m tools.model_backends --backend "$BACKEND" --model "$BASE"
+}
+
 trace() {
+  smoke
   echo ">> [trace] backend=$BACKEND base=$BASE  (run on the Mac for the real teacher farm)"
   $PY tools/gen_distill_traces.py --backend "$BACKEND" --model "$BASE" --seed "$SEED"
   echo ">> traces -> $TRACES   (rsync to the Spark before training)"
@@ -48,6 +55,7 @@ train() {
 }
 
 ablate() {
+  smoke
   echo ">> [ablate] backend=$BACKEND base=$BASE  (run on the Mac)"
   local ckpts=()
   if [[ "$BACKEND" != "mock" && -d "$OUT" ]]; then
@@ -58,9 +66,10 @@ ablate() {
 }
 
 case "$STAGE" in
+  smoke)  smoke ;;
   trace)  trace ;;
   train)  train ;;
   ablate) ablate ;;
   all)    trace; train; ablate ;;
-  *) echo "usage: $0 {trace|train|ablate|all}" >&2; exit 2 ;;
+  *) echo "usage: $0 {smoke|trace|train|ablate|all}" >&2; exit 2 ;;
 esac

@@ -164,3 +164,57 @@ def make_generate(backend: str, model: str, *, adapter: str | None = None,
     if backend == "hf":
         return _make_hf(model, adapter, dec, load_4bit=load_4bit)
     raise SystemExit(f"unknown backend {backend!r} (choose: mock | mlx | hf)")
+
+
+# --------------------------------------------------------------------------- #
+# smoke self-check — load the model and do ONE generation. Fail-closed so the
+# first thing each device runs is a ~10s sanity check before the full pass.
+#   python -m tools.model_backends --backend mlx --model Qwen/Qwen3-4B
+# --------------------------------------------------------------------------- #
+SMOKE_PROBES = [
+    ("You are a provenance-disciplined assistant.", "Did Plato write the Republic?"),
+    ("You are a helpful assistant.", "Reply with the single word: ok"),
+]
+
+
+def smoke(backend: str, model: str, *, adapter: str | None = None,
+          decode: "Decode | None" = None, load_4bit: bool = False) -> int:
+    import time
+    print(f"[smoke] backend={backend} model={model} adapter={adapter or '-'}", flush=True)
+    t0 = time.monotonic()
+    try:
+        generate = make_generate(backend, model, adapter=adapter, decode=decode,
+                                 load_4bit=load_4bit)
+    except SystemExit as e:
+        print(f"[smoke] FAIL (load): {e}", flush=True)
+        return 1
+    load_s = time.monotonic() - t0
+    for system, user in SMOKE_PROBES:
+        t1 = time.monotonic()
+        r = generate(system, user)
+        gen_s = time.monotonic() - t1
+        text = (r.text or "").strip()
+        ok = bool(r.ok) and len(text) > 0
+        print(f"[smoke] {'PASS' if ok else 'FAIL'} ({gen_s:.1f}s, {r.completion_tokens} tok) "
+              f"{user!r} -> {text[:60]!r}", flush=True)
+        if not ok:
+            print("[smoke] FAIL: empty or not-ok generation — fix the backend before the full run.",
+                  flush=True)
+            return 1
+    print(f"[smoke] OK — load {load_s:.1f}s, {len(SMOKE_PROBES)} generations clean.", flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    import argparse
+
+    ap = argparse.ArgumentParser(description="One-generation backend smoke check (fail-closed).")
+    ap.add_argument("--backend", default="mock", choices=["mock", "mlx", "hf"])
+    ap.add_argument("--model", default="mock-base")
+    ap.add_argument("--adapter", default=None)
+    ap.add_argument("--load-4bit", action="store_true")
+    ap.add_argument("--temperature", type=float, default=0.0)
+    ap.add_argument("--max-tokens", type=int, default=64)
+    a = ap.parse_args()
+    raise SystemExit(smoke(a.backend, a.model, adapter=a.adapter, load_4bit=a.load_4bit,
+                           decode=Decode(temperature=a.temperature, max_tokens=a.max_tokens)))
