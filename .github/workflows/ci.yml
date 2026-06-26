@@ -98,6 +98,10 @@ jobs:
         run: python tools/validate_attribution.py
       - name: Claims linter (no-overclaim copy gate)
         run: python tools/lint_claims.py
+      - name: Failure-ledger structural validity (no rot)
+        run: |
+          python tools/validate_failure_ledger.py --check
+          python tests/test_failure_ledger.py
       - name: Validate OKF wiki (drift, links, provenance)
         run: |
           python tools/wiki_sync.py check

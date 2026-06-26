@@ -1,7 +1,47 @@
 {
-  "version": "0.8.0",
-  "generated": "2026-06-25T15:49:04",
+  "version": "0.9.0",
+  "generated": "2026-06-26T12:09:20",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
+  "failureLedgerSummary": {
+    "openCount": 29,
+    "byStatus": {
+      "open": 29,
+      "resolved": 16,
+      "other": 8
+    },
+    "structurallyValid": true,
+    "openItems": [
+      "agent-faithfulness-judged-not-yet-validated-2026-06-25",
+      "calibration-self-authored-pack-2026-06-22",
+      "capability-cell-not-yet-in-live-ssa-2026-06-23",
+      "distribution-shift-not-run",
+      "error-memory-rag-pr-100-2026-06-25",
+      "error-memory-rag-precision-v2-2026-06-25",
+      "external-benchmarks-not-run",
+      "fact-check-live-backend-ran-2026-06-24",
+      "grounded-gate-not-yet-validated-2026-06-22",
+      "hidden-fresh-pack-sophia-deepseek-2026-06-19",
+      "hidden-fresh-pack-sophia-deepseek-coding-council-repair3-2026-06-20",
+      "hidden-fresh-pack-sophia-grok-2026-06-19",
+      "hidden-full-sophia-valid-run-not-yet-run",
+      "hidden-manual-review-not-complete",
+      "hidden-prepared-pack-grok-cli-2026-06-19",
+      "hidden-review-third-party-not-run",
+      "hk-advisor-phase2-2026-06-25",
+      "local-sophia-v2-mlx-trained-not-promoted-2026-06-24",
+      "local-sophia-v3-mlx-promoted-by-w2-but-not-validated-2026-06-24",
+      "long-horizon-not-run",
+      "math-code-curriculum-preregistered-2026-06-25",
+      "pif-headline-run-not-yet-gated-2026-06-23",
+      "rlvr-live-run-not-yet-gated-2026-06-21",
+      "self-extending-loop-closes-offline-2026-06-22",
+      "sophia-math-code-curriculum-stage3-ssh-blocked-2026-06-25",
+      "steering-live-run-not-yet-gated-2026-06-23",
+      "team-agents-longtask-eval-template-2026-06-25",
+      "team-agents-mode-mock-eval-2026-06-25",
+      "team-orchestrator-eval-template-2026-06-25"
+    ]
+  },
   "operationalDefinition": {
     "summary": "For this repo, AGI evidence means broad task competence, transfer, tool use, long-horizon autonomy, learning under distribution shift, baseline superiority, and independent reproduction.",
     "sourceFamilies": [
