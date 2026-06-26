@@ -2,69 +2,88 @@
 // Copyright (c) 2026 tomyimkc
 //! Tiered residency: HBM → DRAM → NVMe.
 //!
-//! Each tier is a capacity-bounded arena. The skeleton models every tier as an
-//! in-memory map (NVMe included) because the *placement* and *promotion/demotion*
-//! logic is what we want to exercise and test; swapping the NVMe arena for an
-//! mmap'd file or the HBM arena for a CUDA allocation does not change that logic.
+//! Each tier is a capacity-bounded [`Arena`] backed by a [`BlockStore`]
+//! ([`crate::store`]). The placement/promotion/demotion logic lives in the
+//! controller ([`crate::KvCache`]) and is identical no matter which medium backs
+//! a tier — that is the whole point of the split:
 //!
-//! The transfer methods are where the zero-copy / RDMA work lands: today they
-//! `clone` payloads; the production path would `cudaMemcpyAsync` (HBM↔DRAM) and
-//! issue RDMA reads (DRAM↔remote) / `io_uring` reads (DRAM↔NVMe).
+//! - HBM and DRAM are backed by [`MemStore`] (device-memory stand-in).
+//! - NVMe is backed by [`FileStore`] — **real disk**, so demoted blocks persist.
+//!
+//! The transfer methods that move bytes between tiers are `store.take` +
+//! `store.put`; that pair is where `cudaMemcpyAsync` (HBM↔DRAM) and RDMA / SPDK
+//! (DRAM↔NVMe / remote) replace the syscall path without touching anything here.
 
-use std::collections::HashMap;
+use std::io;
+use std::path::Path;
 
 use crate::block::{Block, BlockId, Tier};
+use crate::store::{BlockStore, FileStore, MemStore};
 
-/// One capacity-bounded arena. Capacity is counted in *blocks* for clarity;
-/// a byte-budget variant is a trivial change.
+/// One capacity-bounded arena over some storage medium. Capacity is counted in
+/// blocks; a byte-budget variant is a trivial change.
 pub struct Arena {
     pub tier: Tier,
     capacity_blocks: usize,
-    blocks: HashMap<BlockId, Block>,
+    store: Box<dyn BlockStore>,
 }
 
 impl Arena {
-    pub fn new(tier: Tier, capacity_blocks: usize) -> Self {
-        Arena { tier, capacity_blocks, blocks: HashMap::new() }
+    /// In-memory arena (HBM/DRAM).
+    pub fn memory(tier: Tier, capacity_blocks: usize) -> Self {
+        Arena { tier, capacity_blocks, store: Box::new(MemStore::new()) }
+    }
+
+    /// Disk-backed arena (NVMe), persisting blocks under `dir`.
+    pub fn file(tier: Tier, capacity_blocks: usize, dir: impl AsRef<Path>) -> io::Result<Self> {
+        Ok(Arena { tier, capacity_blocks, store: Box::new(FileStore::open(dir)?) })
     }
 
     pub fn contains(&self, id: BlockId) -> bool {
-        self.blocks.contains_key(&id)
+        self.store.contains(id)
     }
 
-    pub fn get(&self, id: BlockId) -> Option<&Block> {
-        self.blocks.get(&id)
-    }
-
-    /// Snapshot of resident block ids (eviction-candidate enumeration).
-    pub fn ids(&self) -> Vec<BlockId> {
-        self.blocks.keys().copied().collect()
+    pub fn get(&self, id: BlockId) -> io::Result<Option<Block>> {
+        self.store.get(id)
     }
 
     pub fn len(&self) -> usize {
-        self.blocks.len()
+        self.store.len()
     }
 
     pub fn is_empty(&self) -> bool {
-        self.blocks.is_empty()
+        self.store.is_empty()
     }
 
     pub fn is_full(&self) -> bool {
-        self.blocks.len() >= self.capacity_blocks
+        self.store.len() >= self.capacity_blocks
     }
 
     pub fn capacity(&self) -> usize {
         self.capacity_blocks
     }
 
-    /// Insert without an eviction decision (caller guarantees space).
-    pub fn insert(&mut self, block: Block) {
-        self.blocks.insert(block.id, block);
+    /// Resident block ids (eviction-candidate enumeration).
+    pub fn ids(&self) -> Vec<BlockId> {
+        self.store.ids()
     }
 
-    /// Remove and return a block (a demotion source).
-    pub fn remove(&mut self, id: BlockId) -> Option<Block> {
-        self.blocks.remove(&id)
+    /// Insert without an eviction decision (caller guarantees space).
+    pub fn insert(&mut self, block: Block) -> io::Result<()> {
+        self.store.put(block)
+    }
+
+    /// Remove and return a block (a demotion/promotion source).
+    pub fn remove(&mut self, id: BlockId) -> io::Result<Option<Block>> {
+        self.store.take(id)
+    }
+
+    /// Cumulative bytes written into / read out of this tier's medium.
+    pub fn bytes_in(&self) -> u64 {
+        self.store.bytes_in()
+    }
+    pub fn bytes_out(&self) -> u64 {
+        self.store.bytes_out()
     }
 }
 
@@ -76,12 +95,28 @@ pub struct TierStack {
 }
 
 impl TierStack {
-    pub fn new(hbm_blocks: usize, dram_blocks: usize, nvme_blocks: usize) -> Self {
+    /// All-in-memory stack (NVMe is an in-memory stand-in). Used when no NVMe
+    /// directory is configured — keeps the cache usable with zero disk setup.
+    pub fn in_memory(hbm_blocks: usize, dram_blocks: usize, nvme_blocks: usize) -> Self {
         TierStack {
-            hbm: Arena::new(Tier::Hbm, hbm_blocks),
-            dram: Arena::new(Tier::Dram, dram_blocks),
-            nvme: Arena::new(Tier::Nvme, nvme_blocks),
+            hbm: Arena::memory(Tier::Hbm, hbm_blocks),
+            dram: Arena::memory(Tier::Dram, dram_blocks),
+            nvme: Arena::memory(Tier::Nvme, nvme_blocks),
         }
+    }
+
+    /// Stack with a **real disk-backed NVMe tier** under `nvme_dir`.
+    pub fn with_nvme(
+        hbm_blocks: usize,
+        dram_blocks: usize,
+        nvme_blocks: usize,
+        nvme_dir: impl AsRef<Path>,
+    ) -> io::Result<Self> {
+        Ok(TierStack {
+            hbm: Arena::memory(Tier::Hbm, hbm_blocks),
+            dram: Arena::memory(Tier::Dram, dram_blocks),
+            nvme: Arena::file(Tier::Nvme, nvme_blocks, nvme_dir)?,
+        })
     }
 
     pub fn arena(&self, tier: Tier) -> &Arena {
@@ -100,7 +135,7 @@ impl TierStack {
         }
     }
 
-    /// Find which tier currently holds `id`, if any.
+    /// Find which tier currently holds `id`, if any. In-memory, infallible.
     pub fn locate(&self, id: BlockId) -> Option<Tier> {
         if self.hbm.contains(id) {
             Some(Tier::Hbm)

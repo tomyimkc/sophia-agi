@@ -20,8 +20,15 @@ fn main() {
 
     // Sized so the shared prefix fits comfortably; suffixes churn the tail.
     let prefix_blocks = prompt_tokens / block_len;
-    let cfg = Config::new(block_len, prefix_blocks * 2, prefix_blocks * 4, prefix_blocks * 8);
-    let mut cache = KvCache::new(cfg);
+    // Real disk-backed NVMe tier so the bench exercises (and measures) the slow
+    // boundary. Set NVME_DIR= to override; defaults to a temp dir.
+    let nvme_dir = std::env::var("NVME_DIR")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|_| std::env::temp_dir().join(format!("sophia-kvc-bench-{}", std::process::id())));
+    std::fs::remove_dir_all(&nvme_dir).ok();
+    let cfg = Config::new(block_len, prefix_blocks * 2, prefix_blocks * 4, prefix_blocks * 8)
+        .with_nvme_dir(&nvme_dir);
+    let mut cache = KvCache::new(cfg).expect("open cache");
 
     println!(
         "sophia-kvcache bench  (prompt={prompt_tokens} tok, fanout={fanout}, rounds={rounds}, block_len={block_len})"
@@ -40,13 +47,13 @@ fn main() {
         let prompt: Vec<u32> = (0..prompt_tokens as u32).map(|i| base ^ i).collect();
 
         // Warm the shared prefix once, pin it for the fan-out.
-        cache.admit(&prompt, |_| vec![0u8; 256]);
+        cache.admit(&prompt, |_| vec![0u8; 256]).expect("admit");
         let pinned = cache.pin_prefix(&prompt);
 
         for s in 0..fanout as u32 {
             let mut seq = prompt.clone();
             seq.extend([900_000 + s, 900_001 + s, 900_002 + s]); // divergent suffix
-            let res = cache.admit(&seq, |_| vec![0u8; 256]);
+            let res = cache.admit(&seq, |_| vec![0u8; 256]).expect("admit");
             prefill_no_cache += res.chain_len as u64;
             prefill_with_cache += res.computed_blocks as u64;
             hit_ratio_sum += res.hit_ratio();
@@ -69,9 +76,16 @@ fn main() {
     println!("prefill blocks (cache):{prefill_with_cache}");
     println!("blocks saved:          {saved}  ({pct:.1}% prefill avoided)");
     println!("resident blocks:       {}", cache.resident_blocks());
+    let (nvme_in, nvme_out) = cache.nvme_bytes();
+    println!(
+        "nvme tier (real disk): {:.1} MiB written, {:.1} MiB read back  (the RDMA/SPDK target)",
+        nvme_in as f64 / (1024.0 * 1024.0),
+        nvme_out as f64 / (1024.0 * 1024.0),
+    );
     println!("stats:                 {:?}", cache.stats);
     println!(
         "throughput:            {:.0} admissions/s",
         admissions as f64 / elapsed.as_secs_f64()
     );
+    std::fs::remove_dir_all(&nvme_dir).ok();
 }

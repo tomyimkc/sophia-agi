@@ -24,17 +24,17 @@ features. See [`docs/DESIGN.md`](docs/DESIGN.md) and the roadmap below.
 
 | Crate | What it is | JD line it targets |
 |-------|------------|--------------------|
-| [`sophia-kvcache`](crates/sophia-kvcache) | Disaggregated, prefix-sharing KV-cache: paged content-addressed blocks, HBM→DRAM→NVMe tiering, ref-counted LRU eviction | 高性能 KVCache 存储系统; RDMA 零拷贝 (seam) |
+| [`sophia-kvcache`](crates/sophia-kvcache) | Disaggregated, prefix-sharing KV-cache: paged content-addressed blocks, HBM→DRAM→**real-disk NVMe** tiering, ref-counted LRU eviction, byte-movement accounting | 高性能 KVCache 存储系统; RDMA 零拷贝 (seam) |
 | [`sophia-lsm`](crates/sophia-lsm) | Log-structured local engine: WAL + memtable + SSTable + compaction, pluggable I/O backend, CRC-framed crash recovery | SSD 本地存储引擎; io_uring (seam); RocksDB 设计范式 |
 
 ## Build & test
 
 ```bash
 cd sophia-storage
-cargo test --workspace                      # 24 tests (std backend)
+cargo test --workspace                      # 27 tests (std backend; incl. real-disk NVMe tier)
 cargo test -p sophia-lsm --features io_uring # +1 test through the real ring (Linux 5.1+)
 cargo bench -p sophia-lsm                   # put/get latency + group-commit scaling
-cargo bench -p sophia-kvcache               # prefix hit-ratio + prefill avoided
+cargo bench -p sophia-kvcache               # prefix hit-ratio + prefill avoided + NVMe bytes
 ```
 
 The **default** build is std-only and offline — it clones and runs anywhere. The
@@ -58,6 +58,7 @@ sophia-lsm:
 sophia-kvcache  (512-tok prompt, fan-out 16, 200 rounds — the council/best-of-N shape):
   avg prefix hit-ratio   0.970
   prefill blocks avoided 97.0%   (105,600 → 3,200 blocks computed)
+  NVMe tier (real disk)  2.3 MiB written / 2.2 MiB read back  (the RDMA/SPDK target)
 ```
 
 We published the unflattering per-write number first, identified the fsync as the
@@ -70,10 +71,14 @@ the same discipline as the rest of the repo ([RESULTS.md](../RESULTS.md)).
 1. ~~**LSM group-commit + io_uring backend**~~ — ✅ done: `WriteBatch` one-fsync
    group commit (204× at batch 512) and a real `io::IoUringIo` submitting
    Write/Read/Fsync SQEs, exercised end-to-end through the engine.
-2. **KVCache zero-copy tiers** — back `tier::Arena` with real HBM/DRAM/NVMe;
-   `cudaMemcpyAsync` + RDMA reads for the transfer path. *(biggest inference win)*
+2. **KVCache tiers** — ◐ partial: `tier::Arena` is now pluggable over a
+   `BlockStore`; the **NVMe tier is real disk** (`store::FileStore`, persists +
+   reloads) with byte-movement accounting. Remaining: HBM/DRAM on CUDA +
+   `cudaMemcpyAsync`, and a remote-DRAM pool over RDMA *(needs GPU/RDMA hardware
+   — not present in CI)*.
 3. **O_DIRECT + registered buffers + SQPOLL** on the io_uring backend; concurrent
-   group commit (a commit thread coalescing per-op sync requests).
+   group commit (a commit thread coalescing per-op sync requests); `io_uring` on
+   the NVMe `FileStore`.
 4. **Bloom filters + leveled compaction** — bound read- and write-amplification.
 5. **Raft-replicated log** — replicate the decision log / task queue for HA.
 6. **Python binding** — expose `sophia-lsm` under a `SOPHIA_STORAGE_ENGINE=lsm`

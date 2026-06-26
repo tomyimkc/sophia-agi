@@ -81,19 +81,43 @@ flood of new prompts. The test `pinned_prefix_is_not_evicted_under_pressure`
 hammers a 2-block tier with 40 distinct prompts and asserts the pinned prefix
 survives.
 
-### 2.3 What's real vs. seam
+### 2.3 Storage media behind a tier
+
+Each tier is an `Arena` over a pluggable `BlockStore` (`store.rs`), so the
+placement logic is identical regardless of medium:
+
+- **HBM / DRAM → `MemStore`** (in-memory). A GPU build swaps in a CUDA
+  allocation; the read/write becomes `cudaMemcpyAsync`. **No GPU is needed to
+  run or test the controller** — that is the point of the split.
+- **NVMe → `FileStore`** — **real on-disk persistence**, one file per block
+  (`[token_count][payload]`, temp-write+rename so a reader never sees a torn
+  block), with an in-memory id index so `contains`/`ids`/`len` never touch the
+  disk. Demoted blocks survive, page back in on promotion, and persist across a
+  cache restart (the index rebuilds from the directory). Tested by
+  `nvme_tier_persists_demoted_blocks_to_disk` (a block is pushed down to NVMe,
+  asserted present as a file on disk, then promoted back without recompute) and
+  `store::file_store_persists_to_disk_and_survives_reopen`.
+
+Every store tracks cumulative `bytes_in`/`bytes_out`, so the cache reports the
+volume crossing the slow boundary (`KvCache::nvme_bytes`) — the number a
+zero-copy / RDMA / SPDK path exists to shrink. The bench measured **2.3 MiB
+written / 2.2 MiB read back** on the disk tier under the council workload.
+
+#### What's real vs. seam
 
 | Real (tested) | Seam (documented) |
 |---|---|
-| Content-addressed ids, prefix sharing | Physical tiers are in-memory maps |
-| Promotion / demotion / cascade eviction | Transfer = `clone` today → `cudaMemcpyAsync` (HBM↔DRAM), RDMA read (DRAM↔remote), io_uring (DRAM↔NVMe) |
-| Ref-counted pinning | Single node; disaggregated remote-DRAM pool is §4 |
-| Hit-ratio / prefill-avoided metrics | Real KV tensor layout & dtype |
+| Content-addressed ids, prefix sharing | HBM/DRAM are in-memory (no GPU here) → CUDA alloc + `cudaMemcpyAsync` |
+| **Real disk NVMe tier** (`FileStore`), persists + reloads | NVMe transfer is `write`/`read` → `io_uring`/SPDK |
+| Promotion / demotion / cascade eviction across media | Disaggregated remote-DRAM pool over RDMA is §4 |
+| Ref-counted pinning; byte-movement accounting | Real KV tensor layout & dtype; per-block CRC |
+| Hit-ratio / prefill-avoided / NVMe-bytes metrics | |
 
 ### 2.4 The RDMA / zero-copy seam (加分项)
 
-The transfer methods in `tier.rs` are the only place bytes move between tiers.
-The production path:
+A tier transfer is exactly a `store.take` on the source + `store.put` on the
+destination (`tier.rs` / `store.rs`) — the only place bytes move between tiers.
+The production path swaps the medium behind those two calls:
 
 - **HBM↔DRAM:** `cudaMemcpyAsync` on a copy stream, overlapped with compute.
 - **DRAM↔remote DRAM pool:** one-sided **RDMA** `READ`/`WRITE` verbs against
