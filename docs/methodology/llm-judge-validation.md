@@ -17,13 +17,21 @@ re-scored semantically by two independent judge families (deepseek-chat, llama-3
 | tie-allowed | 0.426 | 0.606 | 0.094 | — |
 | forced-choice (run A) | 0.581 | 0.596 | 0.110 | — |
 | forced-choice (run B, panel) | 0.521 | 0.585 | 0.057 | 0.532 |
+| **4-judge panel, majority vote** | per-judge 0.52–0.62 | (qwen 0.55, mistral 0.54) | pairwise 0.16–0.59 | **maj-vote win-rate 0.532, p=0.65** |
 
-Two things stand out and **both** are diagnostic, not noise to be hidden:
+Three things stand out and **all** are diagnostic, not noise to be hidden:
 
-1. **κ stays ~0.06–0.11**, far below the pre-registered 0.40 bar, even after forced-choice
-   removed the tie-rate asymmetry.
-2. **Run-to-run variance is large** (deepseek 0.581 → 0.521 between identical runs) and the
-   **raw observed agreement is only ~0.53**.
+1. **κ between a given pair is unstable** — the 2-judge κ=0.094–0.110 used the single
+   *worst-agreeing* pair (deepseek↔llama). A 4-family panel shows **3/6 pairs at κ≥0.40**
+   (up to 0.59), so the judges are moderately reliable once you don't rely on one pairing.
+2. **But the capability signal is genuinely ~chance at this N.** Under a 4-judge **majority
+   vote**, adapter win-rate = **0.532 [0.42, 0.64], binomial p=0.65 — not significant.** The
+   earlier 0.58–0.60 read was inflated by one generous outlier judge (llama, 0.617).
+3. **Run-to-run variance is large** (deepseek 0.581 → 0.521 between identical runs) — the
+   signature of being underpowered at n=94.
+
+Net: more/better judges fixed the *reliability* worry but confirmed the *effect* is ~0 at
+n=94. The bottleneck is **power and an independent pack**, not the agreement statistic.
 
 ## 2. Why κ is the wrong *gate* here (verified literature)
 
