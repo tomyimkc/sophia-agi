@@ -1,0 +1,7 @@
+{
+  "schema": "sophia.consequence.config.v1",
+  "version": 1,
+  "boundary": "Tunable parameters for the ConsequenceGate (8th conscience path). All values are structural-magnitude thresholds over the deterministic OKF derivesFrom graph; none is a learned or empirical prior. Raising flipSeverityEscalate weakens the gate (more severe cascades allowed); lowering it strengthens the gate. TODO: tune against a real SEIB-Go-Flip benchmark pack once authored — the default 0.15 is a conservative hand-pick, not data-derived. This file is NOT on the reward tampering no-write surface (config/reward_surface.v1.json globs were checked: none match).",
+  "flipSeverityEscalate": 0.15,
+  "koMaxRounds": 4
+}

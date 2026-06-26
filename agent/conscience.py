@@ -49,6 +49,7 @@ class ConscienceDecision:
     moral: dict[str, Any] = field(default_factory=dict)
     deception: dict[str, Any] = field(default_factory=dict)
     publicStandard: dict[str, Any] = field(default_factory=dict)
+    consequence: dict[str, Any] = field(default_factory=dict)
     recommendedActions: tuple[dict[str, Any], ...] = ()
     boundary: str = "Sophia is an AGI-candidate verifier-gated epistemic framework; this decision is not proof of AGI."
 
@@ -68,6 +69,7 @@ class ConscienceDecision:
             "moral": self.moral,
             "deception": self.deception,
             "publicStandard": self.publicStandard,
+            "consequence": self.consequence,
             "recommendedActions": list(self.recommendedActions),
             "boundary": self.boundary,
         }
@@ -159,6 +161,21 @@ def conscience_check(
     # norm is not a falsifiable empirical claim. Hard-floor violations block
     # before the parliament; gray-zone signals escalate; unmet duties revise.
     public_standard = check_public_standard(text, context=context).to_dict()
+    # 8th path — ConsequenceGate. Only consulted when the caller EXPLICITLY asks
+    # for a consequence simulation by supplying BOTH an OKF belief graph
+    # (``context["okfGraph"]``) AND a retraction target (``context["consequenceMove"]``).
+    # If either is absent the path is skipped (empty report) — we deliberately do
+    # NOT fall back to an arbitrary graph node, because silently retracting a real
+    # claim from a forgotten key would violate the fail-closed invariant the gate
+    # exists to enforce. The report is a deterministic derivation over
+    # already-grounded derivesFrom edges; it invents no facts (see
+    # agent.consequence_gate).
+    consequence: dict[str, Any] = {}
+    okf_graph = context.get("okfGraph")
+    consequence_move = context.get("consequenceMove")
+    if okf_graph is not None and consequence_move:
+        from agent.consequence_gate import simulate_cascade
+        consequence = simulate_cascade(okf_graph, consequence_move).to_dict()
     computed_fact_verdict = "non_factual" if all(c.get("type") == "subjective" for c in fact.get("claims", [])) else fact.get("verdict")
     # Trusted internal adapters (e.g. LayeredMemory after an upstream verifier
     # accepted a claim with evidence) may pass trustUpstreamVerdict=True. This is
@@ -198,6 +215,14 @@ def conscience_check(
     # checker cannot externally prove the project-status wording offline.
     elif classifier.get("category") == "benign_boundary" and constitution.get("verdict") == "accepted" and deception.get("verdict") == "clear":
         verdict, reason = "allow", "safe candidate/no-overclaim boundary wording"
+    # 8th path routing — ConsequenceGate. A severe cascade (flip severity at/above
+    # threshold) or an unbounded consequence (unresolved retraction target) forces
+    # escalate/abstain BEFORE the soft public-standard/moral routing. It never
+    # overrides a hard block above, and never turns a safe claim into a block.
+    elif consequence.get("verdict") == "abstain":
+        verdict, reason = "abstain", "consequence of the candidate move cannot be bounded"
+    elif consequence.get("verdict") == "escalate":
+        verdict, reason = "escalate", "consequence cascade exceeds flip-severity threshold"
     # Soft/fail-closed routing.
     elif public_standard.get("verdict") == "escalate":
         verdict, reason = "escalate", "public-standard gray-zone moral disagreement requires escalation"
@@ -232,6 +257,7 @@ def conscience_check(
         moral=moral,
         deception=deception,
         publicStandard=public_standard,
+        consequence=consequence,
         recommendedActions=tuple(agenda_actions),
     )
 
