@@ -1,17 +1,17 @@
-[pod] M3 pilot self-report job starting Fri Jun 26 05:47:36 UTC 2026
-Fri Jun 26 05:47:52 2026       
+[pod] M3 pilot self-report job starting Fri Jun 26 11:50:26 UTC 2026
+Fri Jun 26 11:50:29 2026       
 +-----------------------------------------------------------------------------------------+
-| NVIDIA-SMI 580.126.09             Driver Version: 580.126.09     CUDA Version: 13.0     |
-+-----------------------------------------+------------------------+----------------------+
+| NVIDIA-SMI 570.211.01             Driver Version: 570.211.01     CUDA Version: 12.8     |
+|-----------------------------------------+------------------------+----------------------+
 | GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
 | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
-|   0  NVIDIA H100 80GB HBM3          On  |   00000000:DB:00.0 Off |                    0 |
-| N/A   30C    P0             72W /  700W |       0MiB /  81559MiB |      0%      Default |
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:86:00.0 Off |                    0 |
+| N/A   31C    P0             73W /  700W |       0MiB /  81559MiB |      0%      Default |
 |                                         |                        |             Disabled |
 +-----------------------------------------+------------------------+----------------------+
-
+                                                                                         
 +-----------------------------------------------------------------------------------------+
 | Processes:                                                                              |
 |  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
@@ -20,90 +20,58 @@ Fri Jun 26 05:47:52 2026
 |  No running processes found                                                             |
 +-----------------------------------------------------------------------------------------+
 Cloning into 'sophia-agi'...
+Updating files:  13% (275/1988)Updating files:  14% (279/1988)Updating files:  15% (299/1988)Updating files:  16% (319/1988)Updating files:  17% (338/1988)Updating files:  18% (358/1988)Updating files:  19% (378/1988)Updating files:  20% (398/1988)Updating files:  21% (418/1988)Updating files:  22% (438/1988)Updating files:  23% (458/1988)Updating files:  24% (478/1988)Updating files:  25% (497/1988)Updating files:  26% (517/1988)Updating files:  27% (537/1988)Updating files:  28% (557/1988)Updating files:  29% (577/1988)Updating files:  30% (597/1988)Updating files:  31% (617/1988)Updating files:  32% (637/1988)Updating files:  33% (657/1988)Updating files:  34% (676/1988)Updating files:  35% (696/1988)Updating files:  36% (716/1988)Updating files:  37% (736/1988)Updating files:  38% (756/1988)Updating files:  39% (776/1988)Updating files:  40% (796/1988)Updating files:  40% (797/1988)Updating files:  41% (816/1988)Updating files:  42% (835/1988)Updating files:  43% (855/1988)Updating files:  44% (875/1988)Updating files:  45% (895/1988)Updating files:  46% (915/1988)Updating files:  47% (935/1988)Updating files:  48% (955/1988)Updating files:  49% (975/1988)Updating files:  50% (994/1988)Updating files:  51% (1014/1988)Updating files:  52% (1034/1988)Updating files:  53% (1054/1988)Updating files:  54% (1074/1988)Updating files:  54% (1075/1988)Updating files:  55% (1094/1988)Updating files:  56% (1114/1988)Updating files:  57% (1134/1988)Updating files:  58% (1154/1988)Updating files:  59% (1173/1988)Updating files:  60% (1193/1988)Updating files:  61% (1213/1988)Updating files:  62% (1233/1988)Updating files:  63% (1253/1988)Updating files:  64% (1273/1988)Updating files:  65% (1293/1988)Updating files:  66% (1313/1988)Updating files:  67% (1332/1988)Updating files:  68% (1352/1988)Updating files:  68% (1364/1988)Updating files:  69% (1372/1988)Updating files:  70% (1392/1988)Updating files:  71% (1412/1988)Updating files:  72% (1432/1988)Updating files:  73% (1452/1988)Updating files:  74% (1472/1988)Updating files:  75% (1491/1988)Updating files:  76% (1511/1988)Updating files:  77% (1531/1988)Updating files:  78% (1551/1988)Updating files:  79% (1571/1988)Updating files:  80% (1591/1988)Updating files:  81% (1611/1988)Updating files:  82% (1631/1988)Updating files:  83% (1651/1988)Updating files:  83% (1664/1988)Updating files:  84% (1670/1988)Updating files:  85% (1690/1988)Updating files:  86% (1710/1988)Updating files:  87% (1730/1988)Updating files:  88% (1750/1988)Updating files:  89% (1770/1988)Updating files:  90% (1790/1988)Updating files:  91% (1810/1988)Updating files:  92% (1829/1988)Updating files:  93% (1849/1988)Updating files:  94% (1869/1988)Updating files:  95% (1889/1988)Updating files:  96% (1909/1988)Updating files:  97% (1929/1988)Updating files:  97% (1944/1988)Updating files:  98% (1949/1988)Updating files:  99% (1969/1988)Updating files: 100% (1988/1988)Updating files: 100% (1988/1988), done.
 [pod] HEARTBEAT PUSH OK — delivery channel works
-Collecting transformers>=4.52
-  Downloading transformers-5.12.1-py3-none-any.whl.metadata (33 kB)
-Collecting peft>=0.13
-  Downloading peft-0.19.1-py3-none-any.whl.metadata (15 kB)
-Collecting accelerate
-  Downloading accelerate-1.14.0-py3-none-any.whl.metadata (19 kB)
-Collecting datasets
-  Downloading datasets-5.0.0-py3-none-any.whl.metadata (23 kB)
-Collecting sentencepiece
-  Downloading sentencepiece-0.2.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (10 kB)
-Collecting protobuf
-  Downloading protobuf-7.35.1-cp310-abi3-manylinux2014_x86_64.whl.metadata (595 bytes)
-Collecting huggingface-hub<2.0,>=1.5.0 (from transformers>=4.52)
-  Downloading huggingface_hub-1.21.0-py3-none-any.whl.metadata (14 kB)
+Requirement already satisfied: transformers>=4.52 in /usr/local/lib/python3.12/dist-packages (5.12.1)
+Requirement already satisfied: peft>=0.13 in /usr/local/lib/python3.12/dist-packages (0.19.1)
+Requirement already satisfied: accelerate in /usr/local/lib/python3.12/dist-packages (1.14.0)
+Requirement already satisfied: datasets in /usr/local/lib/python3.12/dist-packages (5.0.0)
+Requirement already satisfied: sentencepiece in /usr/local/lib/python3.12/dist-packages (0.2.1)
+Requirement already satisfied: protobuf in /usr/local/lib/python3.12/dist-packages (7.35.1)
+Requirement already satisfied: huggingface-hub<2.0,>=1.5.0 in /usr/local/lib/python3.12/dist-packages (from transformers>=4.52) (1.21.0)
 Requirement already satisfied: numpy>=1.17 in /usr/local/lib/python3.12/dist-packages (from transformers>=4.52) (2.4.4)
 Requirement already satisfied: packaging>=20.0 in /usr/local/lib/python3.12/dist-packages (from transformers>=4.52) (26.2)
 Requirement already satisfied: pyyaml>=5.1 in /usr/local/lib/python3.12/dist-packages (from transformers>=4.52) (6.0.3)
-Collecting regex>=2025.10.22 (from transformers>=4.52)
-  Downloading regex-2026.5.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
-Collecting tokenizers<=0.23.0,>=0.22.0 (from transformers>=4.52)
-  Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)
-Collecting typer (from transformers>=4.52)
-  Downloading typer-0.26.7-py3-none-any.whl.metadata (16 kB)
-Collecting safetensors>=0.4.3 (from transformers>=4.52)
-  Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.2 kB)
-Collecting tqdm>=4.60 (from transformers>=4.52)
-  Downloading tqdm-4.68.3-py3-none-any.whl.metadata (57 kB)
-Collecting click>=8.4.0 (from huggingface-hub<2.0,>=1.5.0->transformers>=4.52)
-  Downloading click-8.4.2-py3-none-any.whl.metadata (2.6 kB)
+Requirement already satisfied: regex>=2025.10.22 in /usr/local/lib/python3.12/dist-packages (from transformers>=4.52) (2026.5.9)
+Requirement already satisfied: tokenizers<=0.23.0,>=0.22.0 in /usr/local/lib/python3.12/dist-packages (from transformers>=4.52) (0.22.2)
+Requirement already satisfied: typer in /usr/local/lib/python3.12/dist-packages (from transformers>=4.52) (0.25.1)
+Requirement already satisfied: safetensors>=0.4.3 in /usr/local/lib/python3.12/dist-packages (from transformers>=4.52) (0.8.0)
+Requirement already satisfied: tqdm>=4.60 in /usr/local/lib/python3.12/dist-packages (from transformers>=4.52) (4.68.3)
+Requirement already satisfied: click>=8.4.0 in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<2.0,>=1.5.0->transformers>=4.52) (8.4.2)
 Requirement already satisfied: filelock>=3.10.0 in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<2.0,>=1.5.0->transformers>=4.52) (3.29.4)
 Requirement already satisfied: fsspec>=2023.5.0 in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<2.0,>=1.5.0->transformers>=4.52) (2026.4.0)
-Collecting hf-xet<2.0.0,>=1.5.1 (from huggingface-hub<2.0,>=1.5.0->transformers>=4.52)
-  Downloading hf_xet-1.5.1-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+Requirement already satisfied: hf-xet<2.0.0,>=1.5.1 in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<2.0,>=1.5.0->transformers>=4.52) (1.5.1)
 Requirement already satisfied: httpx<1,>=0.23.0 in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<2.0,>=1.5.0->transformers>=4.52) (0.28.1)
-Collecting typer (from transformers>=4.52)
-  Downloading typer-0.25.1-py3-none-any.whl.metadata (15 kB)
 Requirement already satisfied: typing-extensions>=4.1.0 in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<2.0,>=1.5.0->transformers>=4.52) (4.15.0)
 Requirement already satisfied: anyio in /usr/local/lib/python3.12/dist-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers>=4.52) (4.14.0)
 Requirement already satisfied: certifi in /usr/local/lib/python3.12/dist-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers>=4.52) (2026.6.17)
 Requirement already satisfied: httpcore==1.* in /usr/local/lib/python3.12/dist-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers>=4.52) (1.0.9)
 Requirement already satisfied: idna in /usr/local/lib/python3.12/dist-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers>=4.52) (3.18)
 Requirement already satisfied: h11>=0.16 in /usr/local/lib/python3.12/dist-packages (from httpcore==1.*->httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers>=4.52) (0.16.0)
-Collecting shellingham>=1.3.0 (from typer->transformers>=4.52)
-  Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
-Collecting rich>=13.8.0 (from typer->transformers>=4.52)
-  Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
-Collecting annotated-doc>=0.0.2 (from typer->transformers>=4.52)
-  Downloading annotated_doc-0.0.4-py3-none-any.whl.metadata (6.6 kB)
+Requirement already satisfied: shellingham>=1.3.0 in /usr/local/lib/python3.12/dist-packages (from typer->transformers>=4.52) (1.5.4)
+Requirement already satisfied: rich>=13.8.0 in /usr/local/lib/python3.12/dist-packages (from typer->transformers>=4.52) (15.0.0)
+Requirement already satisfied: annotated-doc>=0.0.2 in /usr/local/lib/python3.12/dist-packages (from typer->transformers>=4.52) (0.0.4)
 Requirement already satisfied: psutil in /usr/local/lib/python3.12/dist-packages (from peft>=0.13) (7.2.2)
 Requirement already satisfied: torch>=1.13.0 in /usr/local/lib/python3.12/dist-packages (from peft>=0.13) (2.8.0+cu128)
-Collecting pyarrow>=21.0.0 (from datasets)
-  Downloading pyarrow-24.0.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (3.0 kB)
-Collecting dill<0.4.2,>=0.3.0 (from datasets)
-  Downloading dill-0.4.1-py3-none-any.whl.metadata (10 kB)
-Collecting pandas (from datasets)
-  Downloading pandas-3.0.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+Requirement already satisfied: pyarrow>=21.0.0 in /usr/local/lib/python3.12/dist-packages (from datasets) (24.0.0)
+Requirement already satisfied: dill<0.4.2,>=0.3.0 in /usr/local/lib/python3.12/dist-packages (from datasets) (0.4.1)
+Requirement already satisfied: pandas in /usr/local/lib/python3.12/dist-packages (from datasets) (3.0.3)
 Requirement already satisfied: requests>=2.32.2 in /usr/local/lib/python3.12/dist-packages (from datasets) (2.34.2)
-Collecting xxhash (from datasets)
-  Downloading xxhash-3.7.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (13 kB)
-Collecting multiprocess<0.70.20 (from datasets)
-  Downloading multiprocess-0.70.19-py312-none-any.whl.metadata (7.5 kB)
-Collecting aiohttp!=4.0.0a0,!=4.0.0a1 (from fsspec[http]<=2026.4.0,>=2023.1.0->datasets)
-  Downloading aiohttp-3.14.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (8.3 kB)
-Collecting aiohappyeyeballs>=2.5.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets)
-  Downloading aiohappyeyeballs-2.6.2-py3-none-any.whl.metadata (5.9 kB)
-Collecting aiosignal>=1.4.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets)
-  Downloading aiosignal-1.4.0-py3-none-any.whl.metadata (3.7 kB)
+Requirement already satisfied: xxhash in /usr/local/lib/python3.12/dist-packages (from datasets) (3.7.1)
+Requirement already satisfied: multiprocess<0.70.20 in /usr/local/lib/python3.12/dist-packages (from datasets) (0.70.19)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /usr/local/lib/python3.12/dist-packages (from fsspec[http]<=2026.4.0,>=2023.1.0->datasets) (3.14.1)
+Requirement already satisfied: aiohappyeyeballs>=2.5.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets) (2.6.2)
+Requirement already satisfied: aiosignal>=1.4.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets) (1.4.0)
 Requirement already satisfied: attrs>=17.3.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets) (26.1.0)
-Collecting frozenlist>=1.1.1 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets)
-  Downloading frozenlist-1.8.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (20 kB)
-Collecting multidict<7.0,>=4.5 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets)
-  Downloading multidict-6.7.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (5.3 kB)
-Collecting propcache>=0.2.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets)
-  Downloading propcache-0.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (16 kB)
-Collecting yarl<2.0,>=1.17.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets)
-  Downloading yarl-1.24.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (94 kB)
+Requirement already satisfied: frozenlist>=1.1.1 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets) (1.8.0)
+Requirement already satisfied: multidict<7.0,>=4.5 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets) (6.7.1)
+Requirement already satisfied: propcache>=0.2.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets) (0.5.2)
+Requirement already satisfied: yarl<2.0,>=1.17.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.4.0,>=2023.1.0->datasets) (1.24.2)
 Requirement already satisfied: charset_normalizer<4,>=2 in /usr/local/lib/python3.12/dist-packages (from requests>=2.32.2->datasets) (3.4.7)
 Requirement already satisfied: urllib3<3,>=1.26 in /usr/local/lib/python3.12/dist-packages (from requests>=2.32.2->datasets) (2.7.0)
-Collecting markdown-it-py>=2.2.0 (from rich>=13.8.0->typer->transformers>=4.52)
-  Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+Requirement already satisfied: markdown-it-py>=2.2.0 in /usr/local/lib/python3.12/dist-packages (from rich>=13.8.0->typer->transformers>=4.52) (4.2.0)
 Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /usr/local/lib/python3.12/dist-packages (from rich>=13.8.0->typer->transformers>=4.52) (2.20.0)
-Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.8.0->typer->transformers>=4.52)
-  Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Requirement already satisfied: mdurl~=0.1 in /usr/local/lib/python3.12/dist-packages (from markdown-it-py>=2.2.0->rich>=13.8.0->typer->transformers>=4.52) (0.1.2)
 Requirement already satisfied: setuptools in /usr/local/lib/python3.12/dist-packages (from torch>=1.13.0->peft>=0.13) (82.0.1)
 Requirement already satisfied: sympy>=1.13.3 in /usr/local/lib/python3.12/dist-packages (from torch>=1.13.0->peft>=0.13) (1.14.0)
 Requirement already satisfied: networkx in /usr/local/lib/python3.12/dist-packages (from torch>=1.13.0->peft>=0.13) (3.6.1)
@@ -127,51 +95,6 @@ Requirement already satisfied: mpmath<1.4,>=1.1.0 in /usr/local/lib/python3.12/d
 Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.12/dist-packages (from jinja2->torch>=1.13.0->peft>=0.13) (3.0.3)
 Requirement already satisfied: python-dateutil>=2.8.2 in /usr/local/lib/python3.12/dist-packages (from pandas->datasets) (2.9.0.post0)
 Requirement already satisfied: six>=1.5 in /usr/lib/python3/dist-packages (from python-dateutil>=2.8.2->pandas->datasets) (1.16.0)
-Downloading transformers-5.12.1-py3-none-any.whl (11.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.2/11.2 MB 240.7 MB/s  0:00:00
-Downloading huggingface_hub-1.21.0-py3-none-any.whl (721 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 721.1/721.1 kB 169.3 MB/s  0:00:00
-Downloading hf_xet-1.5.1-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.5 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 253.2 MB/s  0:00:00
-Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 239.6 MB/s  0:00:00
-Downloading typer-0.25.1-py3-none-any.whl (58 kB)
-Downloading peft-0.19.1-py3-none-any.whl (680 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 680.7/680.7 kB 138.2 MB/s  0:00:00
-Downloading accelerate-1.14.0-py3-none-any.whl (389 kB)
-Downloading datasets-5.0.0-py3-none-any.whl (555 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 555.1/555.1 kB 58.7 MB/s  0:00:00
-Downloading dill-0.4.1-py3-none-any.whl (120 kB)
-Downloading multiprocess-0.70.19-py312-none-any.whl (150 kB)
-Downloading sentencepiece-0.2.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (1.4 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 216.6 MB/s  0:00:00
-Downloading protobuf-7.35.1-cp310-abi3-manylinux2014_x86_64.whl (327 kB)
-Downloading aiohttp-3.14.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (1.8 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 79.6 MB/s  0:00:00
-Downloading multidict-6.7.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (256 kB)
-Downloading yarl-1.24.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (105 kB)
-Downloading aiohappyeyeballs-2.6.2-py3-none-any.whl (15 kB)
-Downloading aiosignal-1.4.0-py3-none-any.whl (7.5 kB)
-Downloading annotated_doc-0.0.4-py3-none-any.whl (5.3 kB)
-Downloading click-8.4.2-py3-none-any.whl (119 kB)
-Downloading frozenlist-1.8.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (242 kB)
-Downloading propcache-0.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (61 kB)
-Downloading pyarrow-24.0.0-cp312-cp312-manylinux_2_28_x86_64.whl (48.9 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 48.9/48.9 MB 92.5 MB/s  0:00:00
-Downloading regex-2026.5.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (801 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 801.2/801.2 kB 158.3 MB/s  0:00:00
-Downloading rich-15.0.0-py3-none-any.whl (310 kB)
-Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
-Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
-Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (516 kB)
-Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
-Downloading tqdm-4.68.3-py3-none-any.whl (78 kB)
-Downloading pandas-3.0.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (10.9 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.9/10.9 MB 233.2 MB/s  0:00:00
-Downloading xxhash-3.7.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (194 kB)
-Installing collected packages: xxhash, tqdm, shellingham, sentencepiece, safetensors, regex, pyarrow, protobuf, propcache, multidict, mdurl, hf-xet, frozenlist, dill, click, annotated-doc, aiohappyeyeballs, yarl, pandas, multiprocess, markdown-it-py, aiosignal, rich, aiohttp, typer, huggingface-hub, tokenizers, datasets, accelerate, transformers, peft
-
-Successfully installed accelerate-1.14.0 aiohappyeyeballs-2.6.2 aiohttp-3.14.1 aiosignal-1.4.0 annotated-doc-0.0.4 click-8.4.2 datasets-5.0.0 dill-0.4.1 frozenlist-1.8.0 hf-xet-1.5.1 huggingface-hub-1.21.0 markdown-it-py-4.2.0 mdurl-0.1.2 multidict-6.7.1 multiprocess-0.70.19 pandas-3.0.3 peft-0.19.1 propcache-0.5.2 protobuf-7.35.1 pyarrow-24.0.0 regex-2026.5.9 rich-15.0.0 safetensors-0.8.0 sentencepiece-0.2.1 shellingham-1.5.4 tokenizers-0.22.2 tqdm-4.68.3 transformers-5.12.1 typer-0.25.1 xxhash-3.7.1 yarl-1.24.2
 {
   "totals": {
     "candidates": 1327,
@@ -250,243 +173,242 @@ Successfully installed accelerate-1.14.0 aiohappyeyeballs-2.6.2 aiohttp-3.14.1 a
 WROTE training/local_sophia_v3: 880 gate-passed rows, 233 preference pairs, 90 decontam drops.
 847 training/local_sophia_v3/mlx/train.jsonl
 [pod] SMOKE
-[pilot 05:48:18] SMOKE: train 2 steps then eval 2 cases x1 run
+[pilot 11:50:58] SMOKE: train 2 steps then eval 2 cases x1 run
 [transformers] `torch_dtype` is deprecated! Use `dtype` instead!
-Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:05<00:05,  5.22s/it]Fetching 2 files: 100%|██████████| 2/2 [00:05<00:00,  2.61s/it]
-Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   2%|▏         | 16/883 [00:00<00:05, 151.36it/s]Loading weights:   6%|▋         | 56/883 [00:00<00:02, 289.32it/s]Loading weights:  11%|█         | 95/883 [00:00<00:02, 329.20it/s]Loading weights:  15%|█▌        | 134/883 [00:00<00:02, 346.77it/s]Loading weights:  20%|█▉        | 173/883 [00:00<00:01, 361.38it/s]Loading weights:  24%|██▍       | 212/883 [00:00<00:01, 364.26it/s]Loading weights:  28%|██▊       | 251/883 [00:00<00:01, 371.87it/s]Loading weights:  33%|███▎      | 290/883 [00:00<00:01, 375.45it/s]Loading weights:  37%|███▋      | 329/883 [00:00<00:01, 373.80it/s]Loading weights:  42%|████▏     | 368/883 [00:01<00:01, 373.65it/s]Loading weights:  46%|████▌     | 407/883 [00:01<00:01, 372.23it/s]Loading weights:  53%|█████▎    | 469/883 [00:01<00:00, 443.67it/s]Loading weights:  79%|███████▉  | 697/883 [00:01<00:00, 986.74it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 621.62it/s]
-[pilot 05:48:38] loaded base via AutoModelForImageTextToText
-[pilot 05:48:41] trainable params: 29,802,496
-[pilot 05:48:41] training rows: 8
+Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   0%|          | 1/883 [00:00<01:29,  9.85it/s]Loading weights:   4%|▍         | 39/883 [00:00<00:03, 225.11it/s]Loading weights:   8%|▊         | 69/883 [00:00<00:03, 256.39it/s]Loading weights:  12%|█▏        | 107/883 [00:00<00:02, 294.56it/s]Loading weights:  16%|█▌        | 137/883 [00:00<00:02, 293.94it/s]Loading weights:  20%|█▉        | 173/883 [00:00<00:02, 310.10it/s]Loading weights:  24%|██▍       | 211/883 [00:00<00:02, 328.09it/s]Loading weights:  28%|██▊       | 246/883 [00:00<00:01, 334.15it/s]Loading weights:  32%|███▏      | 280/883 [00:00<00:01, 326.38it/s]Loading weights:  36%|███▌      | 316/883 [00:01<00:01, 328.90it/s]Loading weights:  40%|████      | 354/883 [00:01<00:01, 337.03it/s]Loading weights:  44%|████▍     | 388/883 [00:01<00:01, 337.58it/s]Loading weights:  48%|████▊     | 422/883 [00:01<00:01, 328.20it/s]Loading weights:  64%|██████▍   | 567/883 [00:01<00:00, 650.16it/s]Loading weights:  91%|█████████▏| 806/883 [00:01<00:00, 1151.09it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 553.25it/s] 
+[pilot 11:51:07] loaded base via AutoModelForImageTextToText
+[pilot 11:51:09] trainable params: 29,802,496
+[pilot 11:51:09] training rows: 8
 [transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
-[pilot 05:48:42] step 1/2 loss=4.0761
-[pilot 05:48:42] step 2/2 loss=3.3925
-[pilot 05:48:43] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
-[pilot 05:48:43] eval cases: 2 x 1 runs x (base, adapter)
-Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   3%|▎         | 29/883 [00:00<00:03, 282.59it/s]Loading weights:   8%|▊         | 69/883 [00:00<00:02, 349.80it/s]Loading weights:  13%|█▎        | 118/883 [00:00<00:01, 412.62it/s]Loading weights:  19%|█▊        | 164/883 [00:00<00:01, 430.14it/s]Loading weights:  24%|██▎       | 208/883 [00:00<00:01, 433.40it/s]Loading weights:  29%|██▊       | 252/883 [00:00<00:01, 396.88it/s]Loading weights:  34%|███▍      | 300/883 [00:00<00:01, 421.91it/s]Loading weights:  39%|███▉      | 343/883 [00:00<00:01, 402.63it/s]Loading weights:  43%|████▎     | 384/883 [00:00<00:01, 403.77it/s]Loading weights:  49%|████▉     | 431/883 [00:01<00:01, 422.97it/s]Loading weights:  69%|██████▉   | 613/883 [00:01<00:00, 835.55it/s]Loading weights:  97%|█████████▋| 857/883 [00:01<00:00, 1311.30it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 700.08it/s] 
-[pilot 05:48:48] loaded base via AutoModelForImageTextToText
-[pilot 05:49:01]   gen 2/2
-[pilot 05:49:14]   gen 2/2
-[pilot 05:49:15]   run 1/1 done
-[pilot 05:49:15] loading adapter onto base ...
-[pilot 05:49:39]   gen 2/2
-[pilot 05:50:02]   gen 2/2
-[pilot 05:50:02]   run 1/1 done
-[pilot 05:50:02] wrote eval report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-smoke.json
-[pilot 05:50:02] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
-[pilot 05:50:02]   tradition_merge_rate               Δ None ci=[None, None]  
-[pilot 05:50:02]   qualification_rate_on_contested    Δ 0.0 ci=[0.0, 0.0]  
-[pilot 05:50:02]   false_attribution_rate             Δ None ci=[None, None]  
-[pilot 05:50:02]   citation_fidelity                  Δ None ci=[None, None]  
-[pilot 05:50:02]   adapter protected_history_regression       None
-[pilot 05:50:02]   adapter protected_religion_regression      None
-[pilot 05:50:02]   adapter over_abstention_rate               0.0
-[pilot 05:50:02] PRIMARY habit-transfer signal present: False
-[pilot 05:50:02] SMOKE OK
-[pod] FULL train + eval (--runs 3) seed=1
+[pilot 11:51:10] step 1/2 loss=4.0761
+[pilot 11:51:11] step 2/2 loss=3.4083
+[pilot 11:51:11] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 11:51:11] eval cases: 2 x 1 runs x (base, adapter)
+Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   0%|          | 1/883 [00:00<01:28,  9.93it/s]Loading weights:   4%|▍         | 39/883 [00:00<00:03, 226.24it/s]Loading weights:   8%|▊         | 70/883 [00:00<00:03, 255.89it/s]Loading weights:  12%|█▏        | 108/883 [00:00<00:02, 296.07it/s]Loading weights:  17%|█▋        | 146/883 [00:00<00:02, 320.85it/s]Loading weights:  20%|██        | 180/883 [00:00<00:02, 326.11it/s]Loading weights:  24%|██▍       | 213/883 [00:00<00:02, 317.01it/s]Loading weights:  28%|██▊       | 251/883 [00:00<00:01, 328.21it/s]Loading weights:  32%|███▏      | 286/883 [00:00<00:01, 334.46it/s]Loading weights:  36%|███▌      | 320/883 [00:01<00:01, 316.30it/s]Loading weights:  40%|████      | 354/883 [00:01<00:01, 322.10it/s]Loading weights:  44%|████▍     | 387/883 [00:01<00:01, 321.77it/s]Loading weights:  48%|████▊     | 420/883 [00:01<00:01, 315.99it/s]Loading weights:  59%|█████▉    | 523/883 [00:01<00:00, 521.90it/s]Loading weights:  84%|████████▍ | 745/883 [00:01<00:00, 1013.96it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 540.24it/s] 
+[pilot 11:51:16] loaded base via AutoModelForImageTextToText
+[pilot 11:51:28]   gen 2/2
+[pilot 11:51:40]   gen 2/2
+[pilot 11:51:41]   run 1/1 done
+[pilot 11:51:41] loading adapter onto base ...
+[pilot 11:52:04]   gen 2/2
+[pilot 11:52:25]   gen 2/2
+[pilot 11:52:26]   run 1/1 done
+[pilot 11:52:26] wrote eval report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-smoke.json
+[pilot 11:52:26] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
+[pilot 11:52:26]   tradition_merge_rate               Δ None ci=[None, None]  
+[pilot 11:52:26]   qualification_rate_on_contested    Δ 0.0 ci=[0.0, 0.0]  
+[pilot 11:52:26]   false_attribution_rate             Δ None ci=[None, None]  
+[pilot 11:52:26]   citation_fidelity                  Δ None ci=[None, None]  
+[pilot 11:52:26]   adapter protected_history_regression       None
+[pilot 11:52:26]   adapter protected_religion_regression      None
+[pilot 11:52:26]   adapter over_abstention_rate               0.0
+[pilot 11:52:26] PRIMARY habit-transfer signal present: False
+[pilot 11:52:26] SMOKE OK
+[pod] FULL train + eval (--runs 3) seed=2
 [transformers] `torch_dtype` is deprecated! Use `dtype` instead!
-Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   2%|▏         | 16/883 [00:00<00:05, 152.86it/s]Loading weights:   6%|▋         | 57/883 [00:00<00:02, 286.45it/s]Loading weights:  12%|█▏        | 104/883 [00:00<00:02, 363.69it/s]Loading weights:  16%|█▌        | 143/883 [00:00<00:01, 373.36it/s]Loading weights:  21%|██        | 182/883 [00:00<00:01, 379.15it/s]Loading weights:  25%|██▌       | 221/883 [00:00<00:01, 381.20it/s]Loading weights:  29%|██▉       | 260/883 [00:00<00:01, 381.11it/s]Loading weights:  34%|███▍      | 299/883 [00:00<00:01, 381.46it/s]Loading weights:  38%|███▊      | 338/883 [00:00<00:01, 383.04it/s]Loading weights:  43%|████▎     | 380/883 [00:01<00:01, 387.64it/s]Loading weights:  49%|████▉     | 434/883 [00:01<00:01, 432.74it/s]Loading weights:  87%|████████▋ | 767/883 [00:01<00:00, 1297.37it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 694.49it/s] 
-[pilot 05:50:12] loaded base via AutoModelForImageTextToText
-[pilot 05:50:15] trainable params: 29,802,496
-[pilot 05:50:15] training rows: 847
+Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   0%|          | 3/883 [00:00<00:33, 25.91it/s]Loading weights:   5%|▍         | 43/883 [00:00<00:04, 208.46it/s]Loading weights:   9%|▉         | 82/883 [00:00<00:02, 271.22it/s]Loading weights:  14%|█▎        | 120/883 [00:00<00:02, 298.69it/s]Loading weights:  17%|█▋        | 150/883 [00:00<00:02, 296.21it/s]Loading weights:  21%|██        | 186/883 [00:00<00:02, 310.28it/s]Loading weights:  25%|██▌       | 223/883 [00:00<00:02, 323.56it/s]Loading weights:  29%|██▉       | 257/883 [00:00<00:01, 325.62it/s]Loading weights:  33%|███▎      | 290/883 [00:00<00:01, 320.16it/s]Loading weights:  37%|███▋      | 326/883 [00:01<00:01, 331.83it/s]Loading weights:  41%|████      | 360/883 [00:01<00:01, 323.48it/s]Loading weights:  45%|████▍     | 395/883 [00:01<00:01, 325.91it/s]Loading weights:  49%|████▉     | 433/883 [00:01<00:01, 340.44it/s]Loading weights:  72%|███████▏  | 633/883 [00:01<00:00, 823.98it/s]Loading weights:  99%|█████████▊| 871/883 [00:01<00:00, 1281.23it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 549.45it/s] 
+[pilot 11:52:36] loaded base via AutoModelForImageTextToText
+[pilot 11:52:37] trainable params: 29,802,496
+[pilot 11:52:37] training rows: 847
 [transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
-[pilot 05:50:25] step 25/847 loss=1.8491
-[pilot 05:50:34] step 50/847 loss=1.0047
-[pilot 05:50:42] step 75/847 loss=2.5924
-[pilot 05:50:51] step 100/847 loss=0.5590
-[pilot 05:51:00] step 125/847 loss=1.4427
-[pilot 05:51:09] step 150/847 loss=0.0105
-[pilot 05:51:18] step 175/847 loss=0.1811
-[pilot 05:51:26] step 200/847 loss=3.4570
-[pilot 05:51:35] step 225/847 loss=1.1465
-[pilot 05:51:44] step 250/847 loss=0.1292
-[pilot 05:51:53] step 275/847 loss=0.9656
-[pilot 05:52:01] step 300/847 loss=0.0882
-[pilot 05:52:10] step 325/847 loss=1.7090
-[pilot 05:52:19] step 350/847 loss=0.0116
-[pilot 05:52:27] step 375/847 loss=0.0018
-[pilot 05:52:36] step 400/847 loss=0.3064
-[pilot 05:52:45] step 425/847 loss=0.8439
-[pilot 05:52:53] step 450/847 loss=0.7912
-[pilot 05:53:02] step 475/847 loss=2.1084
-[pilot 05:53:10] step 500/847 loss=1.2721
-[pilot 05:53:19] step 525/847 loss=1.1363
-[pilot 05:53:28] step 550/847 loss=0.0365
-[pilot 05:53:37] step 575/847 loss=1.3206
-[pilot 05:53:45] step 600/847 loss=0.5650
-[pilot 05:53:54] step 625/847 loss=0.7722
-[pilot 05:54:02] step 650/847 loss=0.9632
-[pilot 05:54:11] step 675/847 loss=0.0651
-[pilot 05:54:20] step 700/847 loss=0.3058
-[pilot 05:54:29] step 725/847 loss=0.0016
-[pilot 05:54:38] step 750/847 loss=0.8003
-[pilot 05:54:47] step 775/847 loss=1.0714
-[pilot 05:54:55] step 800/847 loss=0.0043
-[pilot 05:55:04] step 825/847 loss=0.9528
-[pilot 05:55:12] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
-[pilot 05:55:12] eval cases: 354 x 3 runs x (base, adapter)
-Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   2%|▏         | 16/883 [00:00<00:05, 159.91it/s]Loading weights:   6%|▋         | 56/883 [00:00<00:02, 296.25it/s]Loading weights:  11%|█         | 95/883 [00:00<00:02, 327.10it/s]Loading weights:  17%|█▋        | 147/883 [00:00<00:01, 396.15it/s]Loading weights:  21%|██        | 187/883 [00:00<00:01, 388.90it/s]Loading weights:  27%|██▋       | 237/883 [00:00<00:01, 421.48it/s]Loading weights:  32%|███▏      | 280/883 [00:00<00:01, 411.94it/s]Loading weights:  37%|███▋      | 326/883 [00:00<00:01, 425.98it/s]Loading weights:  42%|████▏     | 369/883 [00:00<00:01, 410.89it/s]Loading weights:  47%|████▋     | 419/883 [00:01<00:01, 430.37it/s]Loading weights:  62%|██████▏   | 546/883 [00:01<00:00, 675.59it/s]Loading weights:  90%|████████▉ | 791/883 [00:01<00:00, 1198.46it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 684.91it/s] 
-[pilot 05:55:17] loaded base via AutoModelForImageTextToText
-[pilot 05:55:31]   gen 32/354
-[pilot 05:55:44]   gen 64/354
-[pilot 05:55:58]   gen 96/354
-[pilot 05:56:11]   gen 128/354
-[pilot 05:56:25]   gen 160/354
-[pilot 05:56:39]   gen 192/354
-[pilot 05:56:52]   gen 224/354
-[pilot 05:57:06]   gen 256/354
-[pilot 05:57:19]   gen 288/354
-[pilot 05:57:32]   gen 320/354
-[pilot 05:57:46]   gen 352/354
-[pilot 05:57:59]   gen 354/354
-[pilot 05:58:13]   gen 32/354
-[pilot 05:58:27]   gen 64/354
-[pilot 05:58:41]   gen 96/354
-[pilot 05:58:55]   gen 128/354
-[pilot 05:59:09]   gen 160/354
-[pilot 05:59:23]   gen 192/354
-[pilot 05:59:37]   gen 224/354
-[pilot 05:59:51]   gen 256/354
-[pilot 06:00:05]   gen 288/354
-[pilot 06:00:19]   gen 320/354
-[pilot 06:00:33]   gen 352/354
-[pilot 06:00:46]   gen 354/354
-[pilot 06:02:36]   run 1/3 done
-[pilot 06:02:50]   gen 32/354
-[pilot 06:03:03]   gen 64/354
-[pilot 06:03:17]   gen 96/354
-[pilot 06:03:30]   gen 128/354
-[pilot 06:03:43]   gen 160/354
-[pilot 06:03:57]   gen 192/354
-[pilot 06:04:10]   gen 224/354
-[pilot 06:04:23]   gen 256/354
-[pilot 06:04:37]   gen 288/354
-[pilot 06:04:50]   gen 320/354
-[pilot 06:05:03]   gen 352/354
-[pilot 06:05:16]   gen 354/354
-[pilot 06:05:30]   gen 32/354
-[pilot 06:05:44]   gen 64/354
-[pilot 06:05:59]   gen 96/354
-[pilot 06:06:13]   gen 128/354
-[pilot 06:06:27]   gen 160/354
-[pilot 06:06:41]   gen 192/354
-[pilot 06:06:55]   gen 224/354
-[pilot 06:07:09]   gen 256/354
-[pilot 06:07:23]   gen 288/354
-[pilot 06:07:37]   gen 320/354
-[pilot 06:07:51]   gen 352/354
-[pilot 06:08:04]   gen 354/354
-[pilot 06:09:56]   run 2/3 done
-[pilot 06:10:09]   gen 32/354
-[pilot 06:10:23]   gen 64/354
-[pilot 06:10:36]   gen 96/354
-[pilot 06:10:50]   gen 128/354
-[pilot 06:11:03]   gen 160/354
-[pilot 06:11:17]   gen 192/354
-[pilot 06:11:30]   gen 224/354
-[pilot 06:11:44]   gen 256/354
-[pilot 06:11:57]   gen 288/354
-[pilot 06:12:11]   gen 320/354
-[pilot 06:12:24]   gen 352/354
-[pilot 06:12:37]   gen 354/354
-[pilot 06:12:51]   gen 32/354
-[pilot 06:13:05]   gen 64/354
-[pilot 06:13:20]   gen 96/354
-[pilot 06:13:34]   gen 128/354
-[pilot 06:13:47]   gen 160/354
-[pilot 06:14:02]   gen 192/354
-[pilot 06:14:16]   gen 224/354
-[pilot 06:14:30]   gen 256/354
-[pilot 06:14:44]   gen 288/354
-[pilot 06:14:58]   gen 320/354
-[pilot 06:15:12]   gen 352/354
-[pilot 06:15:25]   gen 354/354
-[pilot 06:17:15]   run 3/3 done
-[pilot 06:17:15] loading adapter onto base ...
-[pilot 06:17:41]   gen 32/354
-[pilot 06:18:04]   gen 64/354
-[pilot 06:18:19]   gen 96/354
-[pilot 06:18:33]   gen 128/354
-[pilot 06:18:44]   gen 160/354
-[pilot 06:19:01]   gen 192/354
-[pilot 06:19:23]   gen 224/354
-[pilot 06:19:47]   gen 256/354
-[pilot 06:20:10]   gen 288/354
-[pilot 06:20:33]   gen 320/354
-[pilot 06:20:56]   gen 352/354
-[pilot 06:21:18]   gen 354/354
-[pilot 06:21:27]   gen 32/354
-[pilot 06:21:37]   gen 64/354
-[pilot 06:21:48]   gen 96/354
-[pilot 06:21:55]   gen 128/354
-[pilot 06:22:02]   gen 160/354
-[pilot 06:22:11]   gen 192/354
-[pilot 06:22:34]   gen 224/354
-[pilot 06:22:44]   gen 256/354
-[pilot 06:22:55]   gen 288/354
-[pilot 06:23:03]   gen 320/354
-[pilot 06:23:11]   gen 352/354
-[pilot 06:23:16]   gen 354/354
-[pilot 06:25:04]   run 1/3 done
-[pilot 06:25:26]   gen 32/354
-[pilot 06:25:48]   gen 64/354
-[pilot 06:26:10]   gen 96/354
-[pilot 06:26:23]   gen 128/354
-[pilot 06:26:33]   gen 160/354
-[pilot 06:26:56]   gen 192/354
-[pilot 06:27:18]   gen 224/354
-[pilot 06:27:36]   gen 256/354
-[pilot 06:27:58]   gen 288/354
-[pilot 06:28:20]   gen 320/354
-[pilot 06:28:42]   gen 352/354
-[pilot 06:28:52]   gen 354/354
-[pilot 06:29:02]   gen 32/354
-[pilot 06:29:13]   gen 64/354
-[pilot 06:29:22]   gen 96/354
-[pilot 06:29:29]   gen 128/354
-[pilot 06:29:36]   gen 160/354
-[pilot 06:29:46]   gen 192/354
-[pilot 06:30:08]   gen 224/354
-[pilot 06:30:18]   gen 256/354
-[pilot 06:30:30]   gen 288/354
-[pilot 06:30:38]   gen 320/354
-[pilot 06:30:46]   gen 352/354
-[pilot 06:30:51]   gen 354/354
-[pilot 06:32:38]   run 2/3 done
-[pilot 06:33:00]   gen 32/354
-[pilot 06:33:21]   gen 64/354
-[pilot 06:33:43]   gen 96/354
-[pilot 06:33:57]   gen 128/354
-[pilot 06:34:06]   gen 160/354
-[pilot 06:34:28]   gen 192/354
-[pilot 06:34:50]   gen 224/354
-[pilot 06:35:10]   gen 256/354
-[pilot 06:35:32]   gen 288/354
-[pilot 06:35:54]   gen 320/354
-[pilot 06:36:16]   gen 352/354
-[pilot 06:36:37]   gen 354/354
-[pilot 06:36:47]   gen 32/354
-[pilot 06:36:57]   gen 64/354
-[pilot 06:37:06]   gen 96/354
-[pilot 06:37:13]   gen 128/354
-[pilot 06:37:20]   gen 160/354
-[pilot 06:37:30]   gen 192/354
-[pilot 06:37:49]   gen 224/354
-[pilot 06:38:00]   gen 256/354
-[pilot 06:38:13]   gen 288/354
-[pilot 06:38:21]   gen 320/354
-[pilot 06:38:29]   gen 352/354
-[pilot 06:38:37]   gen 354/354
-[pilot 06:40:27]   run 3/3 done
-[pilot 06:40:27] wrote 354 base/adapter answer pairs -> agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed1.json
-[pilot 06:40:27] wrote eval report -> agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed1.json
-[pilot 06:40:27] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
-[pilot 06:40:27]   tradition_merge_rate               Δ 0.1131 ci=[0.0893, 0.1429] *
-[pilot 06:40:27]   qualification_rate_on_contested    Δ 0.3715 ci=[0.3114, 0.4426] *
-[pilot 06:40:27]   false_attribution_rate             Δ 0.0097 ci=[0.0058, 0.0117] *
-[pilot 06:40:27]   citation_fidelity                  Δ 0.0555 ci=[0.0, 0.0833]  
-[pilot 06:40:27]   adapter protected_history_regression       0.0278
-[pilot 06:40:27]   adapter protected_religion_regression      0.0
-[pilot 06:40:27]   adapter over_abstention_rate               0.0228
-[pilot 06:40:27] PRIMARY habit-transfer signal present: True
+[pilot 11:52:46] step 25/847 loss=2.8508
+[pilot 11:52:54] step 50/847 loss=0.6009
+[pilot 11:53:02] step 75/847 loss=1.2409
+[pilot 11:53:10] step 100/847 loss=0.6249
+[pilot 11:53:17] step 125/847 loss=0.6872
+[pilot 11:53:25] step 150/847 loss=0.1896
+[pilot 11:53:33] step 175/847 loss=0.2150
+[pilot 11:53:41] step 200/847 loss=0.2076
+[pilot 11:53:48] step 225/847 loss=1.7956
+[pilot 11:53:56] step 250/847 loss=0.3682
+[pilot 11:54:04] step 275/847 loss=0.1978
+[pilot 11:54:11] step 300/847 loss=0.1058
+[pilot 11:54:19] step 325/847 loss=1.8041
+[pilot 11:54:27] step 350/847 loss=0.0926
+[pilot 11:54:34] step 375/847 loss=0.0874
+[pilot 11:54:42] step 400/847 loss=0.0343
+[pilot 11:54:49] step 425/847 loss=0.0770
+[pilot 11:54:57] step 450/847 loss=0.0366
+[pilot 11:55:04] step 475/847 loss=2.0124
+[pilot 11:55:12] step 500/847 loss=1.2034
+[pilot 11:55:19] step 525/847 loss=1.8985
+[pilot 11:55:27] step 550/847 loss=0.7039
+[pilot 11:55:35] step 575/847 loss=0.0267
+[pilot 11:55:42] step 600/847 loss=0.0008
+[pilot 11:55:50] step 625/847 loss=0.7225
+[pilot 11:55:57] step 650/847 loss=0.0089
+[pilot 11:56:05] step 675/847 loss=0.0004
+[pilot 11:56:12] step 700/847 loss=0.0282
+[pilot 11:56:20] step 725/847 loss=1.2601
+[pilot 11:56:27] step 750/847 loss=0.8665
+[pilot 11:56:35] step 775/847 loss=2.0405
+[pilot 11:56:42] step 800/847 loss=0.7503
+[pilot 11:56:50] step 825/847 loss=0.0083
+[pilot 11:56:57] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 11:56:57] eval cases: 354 x 3 runs x (base, adapter)
+Loading weights:   0%|          | 0/883 [00:00<?, ?it/s]Loading weights:   0%|          | 1/883 [00:00<01:29,  9.84it/s]Loading weights:   5%|▍         | 40/883 [00:00<00:03, 231.93it/s]Loading weights:   8%|▊         | 70/883 [00:00<00:03, 262.83it/s]Loading weights:  12%|█▏        | 108/883 [00:00<00:02, 302.37it/s]Loading weights:  17%|█▋        | 146/883 [00:00<00:02, 319.17it/s]Loading weights:  21%|██        | 186/883 [00:00<00:02, 342.00it/s]Loading weights:  25%|██▌       | 224/883 [00:00<00:01, 353.85it/s]Loading weights:  30%|██▉       | 263/883 [00:00<00:01, 355.93it/s]Loading weights:  34%|███▍      | 299/883 [00:00<00:01, 353.67it/s]Loading weights:  38%|███▊      | 335/883 [00:01<00:01, 346.84it/s]Loading weights:  42%|████▏     | 370/883 [00:01<00:01, 342.76it/s]Loading weights:  46%|████▌     | 408/883 [00:01<00:01, 346.40it/s]Loading weights:  56%|█████▌    | 491/883 [00:01<00:00, 486.87it/s]Loading weights:  82%|████████▏ | 728/883 [00:01<00:00, 1038.40it/s]Loading weights: 100%|██████████| 883/883 [00:01<00:00, 583.54it/s] 
+[pilot 11:57:02] loaded base via AutoModelForImageTextToText
+[pilot 11:57:15]   gen 32/354
+[pilot 11:57:27]   gen 64/354
+[pilot 11:57:40]   gen 96/354
+[pilot 11:57:53]   gen 128/354
+[pilot 11:58:05]   gen 160/354
+[pilot 11:58:18]   gen 192/354
+[pilot 11:58:31]   gen 224/354
+[pilot 11:58:43]   gen 256/354
+[pilot 11:58:56]   gen 288/354
+[pilot 11:59:08]   gen 320/354
+[pilot 11:59:21]   gen 352/354
+[pilot 11:59:33]   gen 354/354
+[pilot 11:59:47]   gen 32/354
+[pilot 12:00:01]   gen 64/354
+[pilot 12:00:15]   gen 96/354
+[pilot 12:00:28]   gen 128/354
+[pilot 12:00:42]   gen 160/354
+[pilot 12:00:56]   gen 192/354
+[pilot 12:01:10]   gen 224/354
+[pilot 12:01:23]   gen 256/354
+[pilot 12:01:37]   gen 288/354
+[pilot 12:01:51]   gen 320/354
+[pilot 12:02:05]   gen 352/354
+[pilot 12:02:17]   gen 354/354
+[pilot 12:03:58]   run 1/3 done
+[pilot 12:04:11]   gen 32/354
+[pilot 12:04:23]   gen 64/354
+[pilot 12:04:36]   gen 96/354
+[pilot 12:04:49]   gen 128/354
+[pilot 12:05:01]   gen 160/354
+[pilot 12:05:14]   gen 192/354
+[pilot 12:05:26]   gen 224/354
+[pilot 12:05:39]   gen 256/354
+[pilot 12:05:52]   gen 288/354
+[pilot 12:06:04]   gen 320/354
+[pilot 12:06:17]   gen 352/354
+[pilot 12:06:29]   gen 354/354
+[pilot 12:06:43]   gen 32/354
+[pilot 12:06:57]   gen 64/354
+[pilot 12:07:11]   gen 96/354
+[pilot 12:07:24]   gen 128/354
+[pilot 12:07:38]   gen 160/354
+[pilot 12:07:52]   gen 192/354
+[pilot 12:08:06]   gen 224/354
+[pilot 12:08:19]   gen 256/354
+[pilot 12:08:33]   gen 288/354
+[pilot 12:08:47]   gen 320/354
+[pilot 12:09:01]   gen 352/354
+[pilot 12:09:13]   gen 354/354
+[pilot 12:10:56]   run 2/3 done
+[pilot 12:11:09]   gen 32/354
+[pilot 12:11:22]   gen 64/354
+[pilot 12:11:34]   gen 96/354
+[pilot 12:11:47]   gen 128/354
+[pilot 12:12:00]   gen 160/354
+[pilot 12:12:12]   gen 192/354
+[pilot 12:12:25]   gen 224/354
+[pilot 12:12:37]   gen 256/354
+[pilot 12:12:50]   gen 288/354
+[pilot 12:13:03]   gen 320/354
+[pilot 12:13:15]   gen 352/354
+[pilot 12:13:27]   gen 354/354
+[pilot 12:13:41]   gen 32/354
+[pilot 12:13:55]   gen 64/354
+[pilot 12:14:09]   gen 96/354
+[pilot 12:14:23]   gen 128/354
+[pilot 12:14:37]   gen 160/354
+[pilot 12:14:50]   gen 192/354
+[pilot 12:15:04]   gen 224/354
+[pilot 12:15:18]   gen 256/354
+[pilot 12:15:32]   gen 288/354
+[pilot 12:15:46]   gen 320/354
+[pilot 12:15:59]   gen 352/354
+[pilot 12:16:12]   gen 354/354
+[pilot 12:17:53]   run 3/3 done
+[pilot 12:17:53] loading adapter onto base ...
+[pilot 12:18:17]   gen 32/354
+[pilot 12:18:39]   gen 64/354
+[pilot 12:19:01]   gen 96/354
+[pilot 12:19:16]   gen 128/354
+[pilot 12:19:27]   gen 160/354
+[pilot 12:19:50]   gen 192/354
+[pilot 12:20:12]   gen 224/354
+[pilot 12:20:31]   gen 256/354
+[pilot 12:20:53]   gen 288/354
+[pilot 12:21:16]   gen 320/354
+[pilot 12:21:38]   gen 352/354
+[pilot 12:21:59]   gen 354/354
+[pilot 12:22:09]   gen 32/354
+[pilot 12:22:19]   gen 64/354
+[pilot 12:22:28]   gen 96/354
+[pilot 12:22:35]   gen 128/354
+[pilot 12:22:42]   gen 160/354
+[pilot 12:22:52]   gen 192/354
+[pilot 12:23:05]   gen 224/354
+[pilot 12:23:20]   gen 256/354
+[pilot 12:23:29]   gen 288/354
+[pilot 12:23:37]   gen 320/354
+[pilot 12:23:47]   gen 352/354
+[pilot 12:23:53]   gen 354/354
+[pilot 12:25:31]   run 1/3 done
+[pilot 12:25:53]   gen 32/354
+[pilot 12:26:16]   gen 64/354
+[pilot 12:26:38]   gen 96/354
+[pilot 12:27:00]   gen 128/354
+[pilot 12:27:09]   gen 160/354
+[pilot 12:27:31]   gen 192/354
+[pilot 12:27:53]   gen 224/354
+[pilot 12:28:15]   gen 256/354
+[pilot 12:28:37]   gen 288/354
+[pilot 12:29:00]   gen 320/354
+[pilot 12:29:22]   gen 352/354
+[pilot 12:29:43]   gen 354/354
+[pilot 12:29:53]   gen 32/354
+[pilot 12:30:03]   gen 64/354
+[pilot 12:30:12]   gen 96/354
+[pilot 12:30:19]   gen 128/354
+[pilot 12:30:26]   gen 160/354
+[pilot 12:30:36]   gen 192/354
+[pilot 12:30:58]   gen 224/354
+[pilot 12:31:11]   gen 256/354
+[pilot 12:31:20]   gen 288/354
+[pilot 12:31:28]   gen 320/354
+[pilot 12:31:36]   gen 352/354
+[pilot 12:31:43]   gen 354/354
+[pilot 12:33:22]   run 2/3 done
+[pilot 12:33:44]   gen 32/354
+[pilot 12:34:06]   gen 64/354
+[pilot 12:34:28]   gen 96/354
+[pilot 12:34:43]   gen 128/354
+[pilot 12:34:52]   gen 160/354
+[pilot 12:35:14]   gen 192/354
+[pilot 12:35:36]   gen 224/354
+[pilot 12:35:58]   gen 256/354
+[pilot 12:36:20]   gen 288/354
+[pilot 12:36:42]   gen 320/354
+[pilot 12:37:05]   gen 352/354
+[pilot 12:37:17]   gen 354/354
+[pilot 12:37:27]   gen 32/354
+[pilot 12:37:37]   gen 64/354
+[pilot 12:37:46]   gen 96/354
+[pilot 12:37:53]   gen 128/354
+[pilot 12:38:00]   gen 160/354
+[pilot 12:38:09]   gen 192/354
+[pilot 12:38:28]   gen 224/354
+[pilot 12:38:42]   gen 256/354
+[pilot 12:38:51]   gen 288/354
+[pilot 12:38:59]   gen 320/354
+[pilot 12:39:09]   gen 352/354
+[pilot 12:39:15]   gen 354/354
+[pilot 12:40:56]   run 3/3 done
+[pilot 12:40:56] wrote 354 base/adapter answer pairs -> agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed2.json
+[pilot 12:40:56] wrote eval report -> agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed2.json
+[pilot 12:40:56] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
+[pilot 12:40:56]   tradition_merge_rate               Δ 0.1191 ci=[0.0714, 0.1429] *
+[pilot 12:40:56]   qualification_rate_on_contested    Δ 0.2295 ci=[0.1967, 0.2459] *
+[pilot 12:40:56]   false_attribution_rate             Δ 0.0097 ci=[0.0058, 0.0117] *
+[pilot 12:40:56]   citation_fidelity                  Δ 0.1111 ci=[0.0, 0.25]  
+[pilot 12:40:56]   adapter protected_history_regression       0.0093
+[pilot 12:40:56]   adapter protected_religion_regression      0.0
+[pilot 12:40:56]   adapter over_abstention_rate               0.0177
+[pilot 12:40:56] PRIMARY habit-transfer signal present: True
 [pod] eval + answers written; finish() will commit + push
 [pod] job exit code=0
