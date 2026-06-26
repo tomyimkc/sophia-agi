@@ -86,6 +86,31 @@ def test_gemm_reference_close_to_fp():
     assert rel < 0.15
 
 
+# ---- true 4-bit packing along K (what the fused kernel streams) -------------
+
+def test_pack_int4_k_roundtrip_and_shape():
+    rng = np.random.default_rng(5)
+    codes = rng.integers(0, 16, size=(40, 8)).astype(np.uint8)   # even K
+    packed = ng.pack_int4_k(codes)
+    assert packed.shape == (20, 8)                                # halved along K
+    assert np.array_equal(ng.unpack_int4_k(packed, 40), codes)
+    # odd K is zero-padded to even, then trimmed back on unpack
+    codes_odd = rng.integers(0, 16, size=(17, 5)).astype(np.uint8)
+    assert np.array_equal(ng.unpack_int4_k(ng.pack_int4_k(codes_odd), 17), codes_odd)
+
+
+def test_packed_reference_equals_unpacked_reference():
+    # The kernel's even/odd-K split must be mathematically identical to the plain
+    # dequant-then-matmul reference — for even AND odd K.
+    rng = np.random.default_rng(6)
+    for kk, nn in [(64, 32), (40, 8), (17, 5)]:
+        x = rng.standard_normal((4, kk))
+        W = rng.standard_normal((kk, nn))
+        a = ng.nvfp4_gemm_reference(x, W)
+        b = ng.nvfp4_gemm_packed_reference(x, W)
+        assert np.allclose(a, b, atol=1e-9), (kk, nn, np.max(np.abs(a - b)))
+
+
 # ---- FLOP / byte accounting (the roofline denominator) ----------------------
 
 def test_gemm_flops_accounting():

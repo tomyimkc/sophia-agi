@@ -164,6 +164,71 @@ def nvfp4_gemm_reference(x, W, *, block_size: int = NVFP4_BLOCK):
     return x @ Wq
 
 
+def pack_int4_k(codes):
+    """Pack 4-bit codes ``[K,N]`` two-per-byte **along K** → ``uint8[ceil(K/2), N]``.
+
+    Byte ``[j,n]`` holds ``code[2j,n]`` in the low nibble and ``code[2j+1,n]`` in the
+    high nibble (K zero-padded to even). This is the on-the-wire 4-bit weight layout
+    the fused kernel streams (0.5 byte/elem). Pairs adjacent K so the kernel's even/odd
+    split (see :func:`nvfp4_gemm_packed_reference`) maps to lo/hi nibbles.
+    """
+    if not _HAVE_NUMPY:
+        raise RuntimeError("numpy required")
+    c = np.asarray(codes, dtype=np.uint8)
+    if np.any(c > 15):
+        raise ValueError("codes must be 4-bit (0..15)")
+    k, n = c.shape
+    if k % 2:
+        c = np.concatenate([c, np.zeros((1, n), dtype=np.uint8)], axis=0)
+    lo = c[0::2]
+    hi = c[1::2]
+    return (lo | (hi << 4)).astype(np.uint8)
+
+
+def unpack_int4_k(packed, k_orig):
+    """Inverse of :func:`pack_int4_k`: ``uint8[K/2,N] → uint8[k_orig,N]`` codes."""
+    if not _HAVE_NUMPY:
+        raise RuntimeError("numpy required")
+    p = np.asarray(packed, dtype=np.uint8)
+    kp, n = p.shape
+    out = np.empty((kp * 2, n), dtype=np.uint8)
+    out[0::2] = p & 0x0F
+    out[1::2] = (p >> 4) & 0x0F
+    return out[:k_orig]
+
+
+def nvfp4_gemm_packed_reference(x, W, *, block_size: int = NVFP4_BLOCK):
+    """Reference that mirrors the fused **packed** kernel's even/odd-K split exactly.
+
+    The kernel never rebuilds an unpacked weight tile; it streams packed bytes and
+    accumulates two half-GEMMs — even-K (low nibbles) and odd-K (high nibbles). This
+    reference does the identical split so the kernel is correct-by-construction against
+    it, and it equals :func:`nvfp4_gemm_reference` (same dequant, just summed in two
+    halves). Block size 16 with K-pairing keeps both nibbles of a byte in the *same*
+    micro-scale block, so each packed byte shares one scale.
+    """
+    if not _HAVE_NUMPY:
+        raise RuntimeError("numpy required")
+    if block_size % 2:
+        raise ValueError("block_size must be even so K-pairs stay within one micro-block")
+    x = np.asarray(x, dtype=np.float64)
+    codes, scales, k_orig = quantize_nvfp4_weights(W, block_size=block_size)
+    packed = pack_int4_k(codes)                       # [Kp/2, N]; Kp = padded K
+    book = _codebook()
+    kp2, n = packed.shape
+    scale_full = np.repeat(scales, block_size, axis=0)   # [Kp, N] per-element scale
+    lo = book[packed & 0x0F] * scale_full[0::2][:kp2]    # even-K weights
+    hi = book[packed >> 4] * scale_full[1::2][:kp2]      # odd-K weights
+    # x columns at the even / odd K positions (K zero-padded to even via the packed range)
+    kp = kp2 * 2
+    xp = x
+    if x.shape[1] < kp:
+        xp = np.concatenate([x, np.zeros((x.shape[0], kp - x.shape[1]))], axis=1)
+    x_even = xp[:, 0:kp:2]
+    x_odd = xp[:, 1:kp:2]
+    return x_even @ lo + x_odd @ hi
+
+
 # --------------------------------------------------------------------------------------
 # Byte / FLOP accounting — the honest roofline denominator for a weight-only FP4 GEMM.
 # --------------------------------------------------------------------------------------
@@ -180,13 +245,11 @@ def nvfp4_gemm_bytes(m: int, n: int, k: int, *, block_size: int = NVFP4_BLOCK,
     per ``block_size`` elements along K; activations/output move at ``act_bytes``
     (BF16=2). For decode (m=1) the weight term dominates — that is the whole point.
 
-    ``weight_bytes_per_elem`` defaults to **0.5** — the *deployment-target* (truly
-    packed 4-bit) accounting, which is the honest denominator a packed kernel earns.
-    The current `run_nvfp4_gemm` reference kernel streams **unpacked 1-byte codes**
-    (it has no in-kernel int4 unpack yet), so it passes ``weight_bytes_per_elem=1.0``
-    and reports its % of roofline against the bytes it *actually* moves — never the
-    0.5 it has not yet earned. `pack_int4` proves the format halves bytes again; wiring
-    that unpack into the Triton K-loop is the next step (then the kernel earns 0.5).
+    ``weight_bytes_per_elem`` defaults to **0.5** — genuine packed 4-bit, which the
+    fused kernel now streams (`pack_int4_k` packs two K-adjacent codes per byte and the
+    kernel unpacks them in-register), so 0.5 is the honest denominator for what crosses
+    the bus. The parameter stays so an *unpacked* baseline (1.0 B/elem uint8 codes) can
+    be rooflined for comparison, but the deployed path earns 0.5.
     """
     nblocks_k = (k + block_size - 1) // block_size
     weight_bytes = int(weight_bytes_per_elem * n * k) + nblocks_k * n   # codes + fp8 scales
@@ -212,55 +275,67 @@ def _have_gpu_stack() -> tuple[bool, str]:
 
 
 def _build_kernel():
-    """Triton fused dequant-GEMM factory. Dequant happens in the K-loop (int4 -> compute dtype).
+    """Triton fused dequant-GEMM factory — streams **packed 4-bit** weights (0.5 B/elem).
 
-    Kept deliberately simple (one block config, codebook in a small constant table). The
-    deployment win is the 4-bit weight load; tuning the epilogue/specialization is the
-    explicit follow-up, re-reported as % of the Spark roofline at each step.
+    Per micro-block (BLOCK_K=16 along K = 8 packed bytes), the kernel rebuilds the
+    16-wide weight tile straight from the packed bytes using integer arithmetic only:
+    K-row ``r`` (0..15) reads packed byte ``r//2`` and takes the low nibble when ``r`` is
+    even, the high nibble when odd — exactly the layout `pack_int4_k` writes and the
+    even/odd-K split `nvfp4_gemm_packed_reference` verifies in NumPy. So the kernel is
+    correct-by-construction against that reference (no version-fragile interleave ops:
+    just shift/and/gather/dot). One block config; tuning is the explicit follow-up,
+    re-reported as % of the Spark roofline at each step.
+
+    GPU-only and validated *at runtime* on the Spark (the `rel < 5e-2` gate in
+    `run_nvfp4_gemm` vs the NumPy reference) — CI never runs it, like `run_kernel.py`.
     """
     import torch
     import triton
     import triton.language as tl
 
-    BLOCK_M, BLOCK_N, BLOCK_K = 64, 64, NVFP4_BLOCK  # BLOCK_K == micro-scale block
+    BLOCK_M, BLOCK_N, BLOCK_K = 64, 64, NVFP4_BLOCK  # BLOCK_K == micro-scale block == 2*bytes
 
     @triton.jit
     def _k(  # pragma: no cover - requires CUDA
-        x_ptr, code_ptr, scale_ptr, book_ptr, out_ptr,
+        x_ptr, packed_ptr, scale_ptr, book_ptr, out_ptr,
         M, N, K, NB,
-        sx_m, sx_k, sc_k, sc_n, ss_b, ss_n, so_m, so_n,
+        sx_m, sx_k, sp_j, sp_n, ss_b, ss_n, so_m, so_n,
         BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr, BLOCK_K: tl.constexpr,
     ):
         pid_m = tl.program_id(0)
         pid_n = tl.program_id(1)
         offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)
         offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)
-        offs_k = tl.arange(0, BLOCK_K)
+        r = tl.arange(0, BLOCK_K)                  # 0..15: K offset within the micro-block
+        byte_off = r // 2                          # packed byte holding this K-row
+        nibble = (r % 2) * 4                       # 0 -> low nibble (even K), 4 -> high (odd K)
         acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)
         for kb in range(0, NB):
-            k_idx = kb * BLOCK_K + offs_k
-            x_p = x_ptr + (offs_m[:, None] * sx_m + k_idx[None, :] * sx_k)
-            x = tl.load(x_p, mask=(offs_m[:, None] < M) & (k_idx[None, :] < K), other=0.0)
-            c_p = code_ptr + (k_idx[:, None] * sc_k + offs_n[None, :] * sc_n)
-            codes = tl.load(c_p, mask=(k_idx[:, None] < K) & (offs_n[None, :] < N), other=0)
-            w = tl.load(book_ptr + codes.to(tl.int32))         # code -> E2M1 value (cast for gather)
-            s_p = scale_ptr + (kb * ss_b + offs_n[None, :] * ss_n)
-            s = tl.load(s_p, mask=offs_n[None, :] < N, other=0.0)
+            # Weights: load the 8 packed bytes (each twice, once per nibble) -> [BLOCK_K, BLOCK_N].
+            p_p = packed_ptr + (kb * (BLOCK_K // 2) + byte_off)[:, None] * sp_j + offs_n[None, :] * sp_n
+            p = tl.load(p_p, mask=offs_n[None, :] < N, other=0)
+            code = (p >> nibble[:, None]) & 0xF
+            w = tl.load(book_ptr + code.to(tl.int32))          # E2M1 value, [BLOCK_K, BLOCK_N]
+            s = tl.load(scale_ptr + kb * ss_b + offs_n[None, :] * ss_n,
+                        mask=offs_n[None, :] < N, other=0.0)    # one FP8 scale per block, [1,BLOCK_N]
             w = w * s                                          # dequant in-register
+            # Activations: K = kb*BLOCK_K + r.
+            k_idx = kb * BLOCK_K + r
+            x_p = x_ptr + offs_m[:, None] * sx_m + k_idx[None, :] * sx_k
+            x = tl.load(x_p, mask=(offs_m[:, None] < M) & (k_idx[None, :] < K), other=0.0)
             acc += tl.dot(x.to(tl.float32), w.to(tl.float32))
-        o_p = out_ptr + (offs_m[:, None] * so_m + offs_n[None, :] * so_n)
+        o_p = out_ptr + offs_m[:, None] * so_m + offs_n[None, :] * so_n
         tl.store(o_p, acc, mask=(offs_m[:, None] < M) & (offs_n[None, :] < N))
 
-    def matmul(x, codes, scales):
+    def matmul(x, packed, scales):
         M, K = x.shape
-        Kc, N = codes.shape
-        NB = scales.shape[0]
+        NB, N = scales.shape
         out = torch.empty((M, N), device=x.device, dtype=torch.float32)
         book = torch.tensor(_E2M1_CODEBOOK, device=x.device, dtype=torch.float32)
         grid = (triton.cdiv(M, BLOCK_M), triton.cdiv(N, BLOCK_N))
         _k[grid](
-            x, codes, scales, book, out, M, N, Kc, NB,
-            x.stride(0), x.stride(1), codes.stride(0), codes.stride(1),
+            x, packed, scales, book, out, M, N, K, NB,
+            x.stride(0), x.stride(1), packed.stride(0), packed.stride(1),
             scales.stride(0), scales.stride(1), out.stride(0), out.stride(1),
             BLOCK_M=BLOCK_M, BLOCK_N=BLOCK_N, BLOCK_K=BLOCK_K,
         )
@@ -289,15 +364,14 @@ def run_nvfp4_gemm(
     x_np = np.random.default_rng(0).standard_normal((m, k)).astype(np.float32)
     W_np = np.random.default_rng(1).standard_normal((k, n)).astype(np.float32)
     codes_np, scales_np, _ = quantize_nvfp4_weights(W_np)
+    packed_np = pack_int4_k(codes_np)            # [Kp/2, N] — genuine 4-bit on the wire (0.5 B/elem)
 
     x = torch.tensor(x_np, device="cuda", dtype=torch.bfloat16)
-    # Codes are 0..15: upload as uint8 (1 byte/elem), the bytes this reference kernel
-    # actually streams. True 4-bit (0.5 B) needs the in-kernel int4 unpack — the next step.
-    codes = torch.tensor(codes_np, device="cuda", dtype=torch.uint8)
+    packed = torch.tensor(packed_np, device="cuda", dtype=torch.uint8)
     scales = torch.tensor(scales_np, device="cuda", dtype=torch.float32)
 
-    out = matmul(x, codes, scales).float().cpu().numpy()
-    ref = nvfp4_gemm_reference(x_np, W_np)
+    out = matmul(x, packed, scales).float().cpu().numpy()
+    ref = nvfp4_gemm_packed_reference(x_np, W_np)   # mirrors the kernel's even/odd split exactly
     rel = float(np.linalg.norm(out - ref) / (np.linalg.norm(ref) + 1e-9))
     correct = rel < 5e-2  # bf16 activations + 4-bit weights; 5% relative is the honest bar
     if verbose:
@@ -309,12 +383,12 @@ def run_nvfp4_gemm(
     start = torch.cuda.Event(enable_timing=True)
     end = torch.cuda.Event(enable_timing=True)
     for _ in range(warmup):
-        matmul(x, codes, scales)
+        matmul(x, packed, scales)
     torch.cuda.synchronize()
     times_s: list[float] = []
     for _ in range(iters):
         start.record()
-        matmul(x, codes, scales)
+        matmul(x, packed, scales)
         end.record()
         torch.cuda.synchronize()
         times_s.append(start.elapsed_time(end) / 1e3)
@@ -322,15 +396,14 @@ def run_nvfp4_gemm(
     device = resolve_device(device_name or detect_device())
     result = analyze(
         flops=nvfp4_gemm_flops(m, n, k),
-        # Honest denominator: this kernel streams unpacked 1-byte codes, so account at
-        # 1.0 B/elem — not the 0.5 B a packed kernel earns. % of roofline reflects what
-        # actually crosses the bus.
-        bytes_moved=nvfp4_gemm_bytes(m, n, k, weight_bytes_per_elem=1.0),
+        # Honest denominator: the kernel now streams genuinely packed 4-bit weights, so
+        # 0.5 B/elem (the default) is what actually crosses the bus.
+        bytes_moved=nvfp4_gemm_bytes(m, n, k, weight_bytes_per_elem=0.5),
         times_s=times_s, device=device, dtype="fp4",
     )
     if verbose:
-        print(f"\n[nvfp4_gemm] fused NVFP4 dequant-GEMM {m}x{n}x{k} ({iters} timed iters)")
-        print("  NOTE: reference streams unpacked 1-byte codes; packed 4-bit (0.5 B) is the next step.\n")
+        print(f"\n[nvfp4_gemm] fused NVFP4 dequant-GEMM {m}x{n}x{k} ({iters} timed iters), "
+              f"packed 4-bit weights\n")
         print(format_report(result))
     return result
 
