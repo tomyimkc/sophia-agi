@@ -87,6 +87,19 @@ def _check_architecture_bets() -> list[str]:
                 f"agi-proof/architecture-bets.json: bet '{bet.get('id')}' is 'wired' "
                 "but has no live_caller"
             )
+
+    # Sibling long-context measurement-target registry (split out so the two
+    # incompatible schemas can coexist; see docs/11-Platform/Architecture-Bets-Schema.md).
+    # It must also never claim AGI. A missing/invalid file is not an overclaim.
+    lc_registry = ROOT / "agi-proof" / "long-context-bets.json"
+    if lc_registry.exists():
+        try:
+            lc_data = json.loads(lc_registry.read_text(encoding="utf-8"))
+        except Exception as exc:
+            problems.append(f"agi-proof/long-context-bets.json: unreadable ({exc})")
+        else:
+            if lc_data.get("canClaimAGI") is not False:
+                problems.append("agi-proof/long-context-bets.json: canClaimAGI must be false")
     return problems
 
 
