@@ -1,0 +1,57 @@
+{
+  "schema": "sophia.okf_belief_dynamics_report.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "generatedAt": "2026-06-26T18:02:52.775207+00:00",
+  "claimBoundary": "Deterministic, offline dynamics over the OKF graph — decay, surprise-gating, competition suppression, decisive-evidence frontier demotion, and a tamper-evident audit trail. NOT a learning rule, NOT weight changes, NOT a capability claim. The forgetting layer is candidate-only and not wired into the live consolidation loop until a real run clears the anti-forgetting gate.",
+  "pass": true,
+  "panels": [
+    {
+      "panel": "decay-honesty",
+      "properties": {
+        "P1_noSilentDeletion": {
+          "pass": true,
+          "deletions": 0
+        },
+        "P2_provenancedForgetting": {
+          "pass": true,
+          "suppressedReason": "time"
+        },
+        "P3_consensusImmuneToTime": {
+          "pass": true
+        }
+      },
+      "pass": true
+    },
+    {
+      "panel": "frontier-demotion",
+      "simulations": {
+        "newtonToEinstein": {
+          "pass": true,
+          "claim": "decisive evidence -> regime-scoped demotion, ONE rank",
+          "case": "newton_to_einstein",
+          "regimeScoped": true,
+          "newConfidence": "disputed",
+          "demoted": true,
+          "stillConsensusInLowVelocity": true
+        },
+        "operaFtlNeutrino": {
+          "pass": true,
+          "claim": "N=1 high-surprise event -> quarantine, consensus untouched",
+          "quarantined": true,
+          "consensusUntouched": true
+        }
+      },
+      "pass": true
+    },
+    {
+      "panel": "audit-tamper-evidence",
+      "cleanChainVerifies": true,
+      "singleBitFlipDetected": true,
+      "recordsChained": 4,
+      "pass": true
+    }
+  ],
+  "honestBound": "Pure-stdlib dynamics over supplied/audited inputs; Bayes factors are taken as audited input, not computed from raw data. Self-authored falsifiable cases."
+}

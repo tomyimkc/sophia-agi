@@ -57,6 +57,8 @@ agi-proof/benchmark-results/provenance-delta.md
 *.jsonl.bak
 dist/
 build/
+# setuptools egg-info (regenerated on every editable install; per-developer build metadata)
+*.egg-info/
 training/lora/checkpoints/
 training/lora/bench/
 training/hk_advisor/checkpoints/
