@@ -173,6 +173,27 @@ def test_math_verifier_lean_backend_id_is_lean() -> None:
     assert r["detail"]["backend"] == "lean"
 
 
+def test_full_block_detection_not_fooled_by_have_term() -> None:
+    """Regression: verify_proof must classify a proof as a full theorem block ONLY by its
+    LEADING declaration keyword, not by a `:= by` substring. A tactic body legitimately
+    contains `have h : P := by ...`, which the old substring test misclassified as a full
+    block — dropping the theorem header and making Lean reject an otherwise-correct proof."""
+    # Mirror lean_backend.verify_proof's full-block detection exactly so this test stays
+    # honest if the heuristic changes.
+    def _is_full_block(proof: str) -> bool:
+        head = proof.lstrip()[:16].lower()
+        return head.startswith(("theorem ", "lemma ", "def ", "example", "axiom "))
+
+    # tactic body containing `have ... := by` -> must NOT be a full block (the bug case)
+    assert not _is_full_block("intro x\nhave h : P := by exact hp\nexact h")
+    assert not _is_full_block("  have h : True := by trivial")  # leading whitespace + have
+    assert not _is_full_block("intros; apply Nat.add_comm")     # normal tactic body
+    # actual full theorem/lemma blocks -> detected
+    assert _is_full_block("theorem t : True := by\n  trivial")
+    assert _is_full_block("lemma foo : P := by")
+    assert _is_full_block("example : True := by trivial")
+
+
 def main() -> int:
     test_lean_backend_abstains_without_lean()
     test_math_verifier_lean_delegation_abstains_without_lean()

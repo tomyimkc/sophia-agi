@@ -88,14 +88,19 @@ def main() -> int:
                                  theorem_source=spec["theorem"]):
             lean_session = None  # Lean unavailable / open failed -> search abstains cleanly
 
-    res = proof_search.search_proof(
-        spec["theorem"], proposer=proposer, initial_state=spec["initial_state"],
-        max_nodes=args.max_nodes, max_depth=args.max_depth,
-        apply_tactic=apply_tactic, novelty_corpus=novelty_corpus,
-        lean_session=lean_session,
-    )
-    if lean_session is not None:
-        lean_session.close()
+    try:
+        res = proof_search.search_proof(
+            spec["theorem"], proposer=proposer, initial_state=spec["initial_state"],
+            max_nodes=args.max_nodes, max_depth=args.max_depth,
+            apply_tactic=apply_tactic, novelty_corpus=novelty_corpus,
+            lean_session=lean_session,
+        )
+    finally:
+        # Always release the LeanDojo session, even if the search (or the
+        # proposer/applier it calls) raises — otherwise a leaked session can leave
+        # Lean subprocesses running. close() is itself defensive (swallows errors).
+        if lean_session is not None:
+            lean_session.close()
     payload = res.to_dict()
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

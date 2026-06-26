@@ -107,7 +107,12 @@ def verify_proof(
     # Assemble ONE Lean 4 source. Accept either a tactic body (the normal call shape)
     # or a caller's pre-assembled full block, but never emit a duplicate theorem header
     # or a stray separator — both would make Lean reject an otherwise-correct proof.
-    if ":= by" in proof or proof.strip().startswith("theorem "):
+    # Detect a full block ONLY by its leading declaration keyword (not by a `:= by`
+    # substring): a tactic body legitimately contains `have h : P := by ...`, which would
+    # falsely match the substring test and drop the theorem header.
+    _proof_head = proof.lstrip()[:16].lower()
+    _is_full_block = _proof_head.startswith(("theorem ", "lemma ", "def ", "example", "axiom "))
+    if _is_full_block:
         source = proof  # caller passed a full theorem block; use it verbatim
     elif ":= by" in theorem:
         source = f"{theorem}\n{proof}"
