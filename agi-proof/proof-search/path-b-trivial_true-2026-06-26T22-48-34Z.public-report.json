@@ -1,0 +1,20 @@
+{
+  "schema": "sophia.proof_search.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "verdict": "proved",
+  "theorem": "theorem t : True := by",
+  "proof": "trivial",
+  "leanVerdict": "accepted-by-injected-applier",
+  "novelty": {
+    "novel": false,
+    "best_overlap": 1.0,
+    "dag_hash": null,
+    "dag_decider": "skipped (trigram pre-filter rejected)",
+    "threshold": 0.92,
+    "method": "auto: trigram pre-filter rejected (near-duplicate); DAG not needed",
+    "proof_hash": "6d4c9cf5e022a07e"
+  },
+  "nodesExpanded": 2,
+  "reason": "Lean-verified proof found after 2 nodes. Novelty probe: retrieved-near-duplicate (overlap 1.0). candidateOnly; not a capability claim."
+}
