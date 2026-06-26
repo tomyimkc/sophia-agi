@@ -85,17 +85,26 @@ def judge_one(client, case: dict) -> "str | None":
     return "adapter" if (picked_a == a_is_adapter) else "base"
 
 
-def _kappa(labels_x: list, labels_y: list) -> "float | None":
+_CATS = ["adapter", "base", "tie"]
+
+
+def _agreement(labels_x: list, labels_y: list) -> dict:
+    """Return both Cohen's κ and Gwet's AC1 for a rater pair. AC1 is robust to the
+    PREVALENCE skew that deflates κ when one option is genuinely chosen most of the time."""
     pairs = [(x, y) for x, y in zip(labels_x, labels_y) if x and y]
-    if len(pairs) < 2:
-        return None
-    cats = ["adapter", "base", "tie"]
     n = len(pairs)
+    if n < 2:
+        return {"n": n, "raw_agreement": None, "cohen_kappa": None, "gwet_ac1": None}
     po = sum(1 for x, y in pairs if x == y) / n
-    px = {c: sum(1 for x, _ in pairs if x == c) / n for c in cats}
-    py = {c: sum(1 for _, y in pairs if y == c) / n for c in cats}
-    pe = sum(px[c] * py[c] for c in cats)
-    return round((po - pe) / (1 - pe), 4) if pe != 1 else None
+    px = {c: sum(1 for x, _ in pairs if x == c) / n for c in _CATS}
+    py = {c: sum(1 for _, y in pairs if y == c) / n for c in _CATS}
+    pe_k = sum(px[c] * py[c] for c in _CATS)
+    kappa = round((po - pe_k) / (1 - pe_k), 4) if pe_k != 1 else None
+    q = len(_CATS)
+    pi = {c: (px[c] + py[c]) / 2 for c in _CATS}
+    pe_g = sum(pi[c] * (1 - pi[c]) for c in _CATS) / (q - 1)
+    ac1 = round((po - pe_g) / (1 - pe_g), 4) if pe_g != 1 else None
+    return {"n": n, "raw_agreement": round(po, 4), "cohen_kappa": kappa, "gwet_ac1": ac1}
 
 
 def main() -> int:
@@ -128,7 +137,6 @@ def main() -> int:
               f"adapter_winrate={round(tally['adapter']/n,3) if n else None}")
 
     specs = list(per_judge)
-    kappa = _kappa(per_judge[specs[0]], per_judge[specs[1]]) if len(specs) >= 2 else None
 
     def summary(verdicts):
         ok = [v for v in verdicts if v]
@@ -138,25 +146,51 @@ def main() -> int:
                 "adapter_winrate": round(ok.count("adapter") / n, 4),
                 "base_winrate": round(ok.count("base") / n, 4)}
 
-    # consensus: cases where BOTH non-tie judges agree
-    both = [(per_judge[specs[0]][i], per_judge[specs[1]][i]) for i in range(len(rows))] if len(specs) >= 2 else []
-    consensus_adapter = sum(1 for x, y in both if x == "adapter" and y == "adapter")
-    consensus_base = sum(1 for x, y in both if x == "base" and y == "base")
+    # pairwise agreement (κ + prevalence-robust AC1) for every judge pair
+    pairwise = {}
+    for i in range(len(specs)):
+        for j in range(i + 1, len(specs)):
+            pairwise[f"{specs[i]} ⨯ {specs[j]}"] = _agreement(per_judge[specs[i]], per_judge[specs[j]])
+
+    # per-case MAJORITY verdict across all judges (ties broken to 'tie')
+    maj = []
+    for idx in range(len(rows)):
+        votes = [per_judge[s][idx] for s in specs if per_judge[s][idx]]
+        if not votes:
+            maj.append(None); continue
+        a, b = votes.count("adapter"), votes.count("base")
+        maj.append("adapter" if a > b else ("base" if b > a else "tie"))
+    maj_ok = [v for v in maj if v]
+    n_maj = len(maj_ok) or 1
+    # unanimous (all non-tie judges agree on a side)
+    unan_adapter = sum(1 for idx in range(len(rows))
+                       if [per_judge[s][idx] for s in specs] and
+                       all(per_judge[s][idx] == "adapter" for s in specs))
+    unan_base = sum(1 for idx in range(len(rows))
+                    if all(per_judge[s][idx] == "base" for s in specs))
 
     report = {
         "pilot_judge": "sophia-wisdom-4b-m3",
         "answers": str(args.answers.relative_to(ROOT) if args.answers.is_relative_to(ROOT) else args.answers),
         "judges": judge_specs, "nCasesJudged": len(rows),
         "perJudge": {s: summary(per_judge[s]) for s in specs},
-        "interJudgeKappa": kappa,
-        "consensus": {"adapter_better": consensus_adapter, "base_better": consensus_base},
-        "boundary": ("Independent LLM judges (≠ subject, ≠ gate). Validates whether the adapter's "
+        "pairwiseAgreement": pairwise,
+        "majorityVote": {"adapter": maj_ok.count("adapter"), "base": maj_ok.count("base"),
+                         "tie": maj_ok.count("tie"), "adapter_winrate": round(maj_ok.count("adapter") / n_maj, 4)},
+        "unanimous": {"adapter_better": unan_adapter, "base_better": unan_base},
+        "interpretation": ("κ is deflated by prevalence skew when judges agree the adapter is better; "
+                           "Gwet's AC1 is the prevalence-robust agreement statistic to read alongside it."),
+        "boundary": ("Independent LLM judges (≠ subject, ≠ gate). Tests whether the adapter's "
                      "marker-based source-discipline gains hold up SEMANTICALLY. Single seed's answers; "
                      "not a market or AGI claim."),
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"\nκ={kappa}  consensus adapter-better={consensus_adapter} base-better={consensus_base}")
+    print("\npairwise agreement:")
+    for k, v in pairwise.items():
+        print(f"  {k}: raw={v['raw_agreement']} κ={v['cohen_kappa']} AC1={v['gwet_ac1']}")
+    print(f"majority adapter-winrate={report['majorityVote']['adapter_winrate']} "
+          f"| unanimous adapter={unan_adapter} base={unan_base}")
     print(f"wrote -> {args.out}")
     return 0
 

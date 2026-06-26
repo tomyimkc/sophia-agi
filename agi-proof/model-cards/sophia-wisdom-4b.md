@@ -74,21 +74,21 @@ reproduces: adapter(prompt)−base(prompt) is CI-clean improving on the SAME 3 m
 moral_route +0.588. No protected regression (history 0.074→0.028), over-abstention 0.023. Two seeds
 agree.
 
-**Independent 2-family semantic judges (`M3-pilot-judge.json`).** To test whether the marker gains
-hold up SEMANTICALLY (vs learned format), two judge families distinct from the gemma subject AND from
+**Independent 3-family semantic judges (`M3-pilot-judge.json`).** To test whether the marker gains
+hold up SEMANTICALLY (vs learned format), three judge families distinct from the gemma subject AND from
 `agent/gate.py` re-scored 268 source-family cases blind (randomized A/B) — `tools/judge_pilot_answers.py`:
-- deepseek-chat: adapter preferred **90.3%** (242/268), base 7.8%.
-- llama-3.3-70b: adapter preferred **68.7%** (184/268), base 31.3%.
-- Consensus (both agree): **adapter-better 172 vs base-better 12**.
-- **Both independent families prefer the adapter by wide margins** → the source-discipline gains are
-  semantically real, not just keyword emission. This substantially addresses caveat (1).
+- deepseek-chat: adapter preferred **94.4%** · mistral-small-3.2-24b: **82.1%** · llama-3.3-70b: **67.9%**.
+- Majority-vote adapter win-rate **0.832**; **UNANIMOUS (all 3 agree): adapter 169 vs base 5**.
+- **All three independent families prefer the adapter** → the source-discipline gains are semantically
+  real, not just keyword emission. This substantially addresses caveat (1).
 
-**Honest limit on the judge result:** inter-judge **Cohen's κ = 0.118 (< 0.40)**. Raw inter-judge
-agreement is 68.7%, but κ is deflated by *prevalence skew* (both judges overwhelmingly pick the
-adapter, inflating chance agreement — the well-known κ paradox). The DIRECTION (adapter preferred) is
-robust and consistent; the formal **κ≥0.40 VALIDATED bar is NOT met**, so this is **strong
-corroboration, NOT a validated semantic claim**. A judge pair with less skew / a graded rubric, or a
-third family, would be needed to clear the formal bar.
+**Agreement statistics (the honest nuance).** Pairwise Cohen's **κ = 0.12–0.38 (< 0.40)** — but κ is
+deflated by *prevalence skew* (all judges agree the adapter is better, inflating chance agreement: the
+well-known κ paradox). The prevalence-robust **Gwet's AC1 = 0.68–0.79 across all pairs (substantial,
+well above 0.40)**, and raw agreement is 73–81%. So inter-judge agreement is genuinely substantial by
+the appropriate statistic; the literal **pre-registered κ≥0.40 bar is still NOT met**, so this remains
+**strong corroboration, NOT a formally validated semantic claim** (we do not move the goalposts — κ is
+reported failing; AC1 is the documented robustness read given the skew).
 
 ## Next steps before any promotion
 Seeds 1–2 (stability) · ≥2-judge-family semantic re-score of qualification/route quality ·
