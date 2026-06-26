@@ -5,14 +5,14 @@
     "raw": {
       "metrics": {
         "provenance_accuracy": {
-          "mean": 0.9167,
+          "mean": 1.0,
           "ci": [
-            0.9167,
-            0.9167
+            1.0,
+            1.0
           ],
           "runs": 1,
           "values": [
-            0.9167
+            1.0
           ]
         },
         "false_attribution_rate": {
@@ -25,14 +25,14 @@
           "values": []
         },
         "contested_fabrication_rate": {
-          "mean": 0.0833,
+          "mean": 0.0,
           "ci": [
-            0.0833,
-            0.0833
+            0.0,
+            0.0
           ],
           "runs": 1,
           "values": [
-            0.0833
+            0.0
           ]
         },
         "citation_fidelity": {
@@ -94,14 +94,14 @@
           ]
         },
         "useful_correctness": {
-          "mean": 0.375,
+          "mean": 0.5,
           "ci": [
-            0.375,
-            0.375
+            0.5,
+            0.5
           ],
           "runs": 1,
           "values": [
-            0.375
+            0.5
           ]
         },
         "protected_history_regression": {
@@ -216,14 +216,14 @@
           ]
         },
         "useful_correctness": {
-          "mean": 0.5,
+          "mean": 0.4583,
           "ci": [
-            0.5,
-            0.5
+            0.4583,
+            0.4583
           ],
           "runs": 1,
           "values": [
-            0.5
+            0.4583
           ]
         },
         "protected_history_regression": {
@@ -338,14 +338,14 @@
           ]
         },
         "useful_correctness": {
-          "mean": 0.375,
+          "mean": 0.3333,
           "ci": [
-            0.375,
-            0.375
+            0.3333,
+            0.3333
           ],
           "runs": 1,
           "values": [
-            0.375
+            0.3333
           ]
         },
         "protected_history_regression": {
@@ -815,10 +815,10 @@
       "improves": false
     },
     "useful_correctness": {
-      "delta": -0.0417,
+      "delta": -0.0834,
       "ci": [
-        -0.0417,
-        -0.0417
+        -0.0834,
+        -0.0834
       ],
       "improves": false
     },
@@ -913,10 +913,10 @@
       "improves": true
     },
     "useful_correctness": {
-      "delta": -0.0417,
+      "delta": -0.0834,
       "ci": [
-        -0.0417,
-        -0.0417
+        -0.0834,
+        -0.0834
       ],
       "improves": false
     },
