@@ -554,6 +554,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--yes", action="store_true", help="actually create a RunPod pod (required unless --dry-run)")
     ap.add_argument("--dry-run", action="store_true", help="print sanitized payload and remote command without creating a pod")
     ap.add_argument("--keep-pod", action="store_true", help="do NOT delete the pod after the run; use only for debugging")
+    ap.add_argument(
+        "--local",
+        action="store_true",
+        help="run RLVR on the LOCAL GPU (e.g. NVIDIA DGX Spark) instead of renting a RunPod pod; "
+             "no SSH/pod/cost. For aarch64/Grace Blackwell pair with --quant bf16 --vllm none to "
+             "sidestep the flash-attn/bitsandbytes/vLLM-colocate/unsloth wheel blockers.",
+    )
     ap.add_argument("--name", default=f"sophia-rlvr-{timestamp}")
     ap.add_argument("--source", choices=["local", "git"], default="local", help="upload current working tree or clone GitHub")
     ap.add_argument("--repo-url", default=DEFAULT_REPO_URL)
@@ -584,8 +591,44 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return ap.parse_args(argv)
 
 
+def _run_local(args: argparse.Namespace) -> int:
+    """Run RLVR on the LOCAL GPU (e.g. NVIDIA DGX Spark) instead of renting a RunPod pod.
+
+    Short-circuits pod creation / SSH / scp / RunPod cost entirely: the same
+    ``tools/run_rlvr.py`` the remote script would invoke is run against the host
+    Python+CUDA stack. For aarch64 / Grace Blackwell use ``--quant bf16 --vllm none``
+    to avoid the flash-attn / bitsandbytes / vLLM-colocate / unsloth aarch64-wheel
+    blockers (the 128 GB unified memory makes bf16 feasible where rented pods needed
+    4-bit). No RunPod API key is required in this mode.
+    """
+    args.artifacts_dir.mkdir(parents=True, exist_ok=True)
+    out_path = args.artifacts_dir / "local.rlvr.public-report.json"
+    cmd = [
+        sys.executable, str(ROOT / "tools" / "run_rlvr.py"),
+        "--task", args.task, "--model", args.model, "--quant", args.quant,
+        "--vllm", args.vllm, "--epochs", str(args.epochs), "--seed", str(args.seed),
+        "--out", str(out_path),
+    ]
+    if args.remote_mode == "offline":
+        # run_rlvr's own --dry-run is the offline reward-wiring check (no GPU, no model load).
+        cmd.append("--dry-run")
+    print("[runpod] --local: running RLVR on the LOCAL GPU (no pod, no SSH, no RunPod cost)")
+    print("[runpod] local command: " + " ".join(cmd))
+    if args.dry_run:
+        print("[runpod] dry-run only; nothing executed")
+        return 0
+    if not args.yes:
+        raise RunPodError("Refusing to run RLVR locally without --yes. Use --dry-run to inspect the command first.")
+    log_path = args.artifacts_dir / "local.train.log"
+    exit_code = _stream(cmd, log_path)
+    print(f"[runpod] local command exit code: {exit_code}; log={log_path}; report={out_path}")
+    return exit_code
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+    if args.local:
+        return _run_local(args)
     api_key = os.environ.get(args.api_key_env, "")
     if not api_key and args.api_key_file:
         api_key = args.api_key_file.read_text(encoding="utf-8").strip()
