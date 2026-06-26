@@ -1,11 +1,11 @@
 {
   "version": "0.9.0",
-  "generated": "2026-06-26T12:09:20",
+  "generated": "2026-06-26T12:21:06",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "failureLedgerSummary": {
-    "openCount": 29,
+    "openCount": 34,
     "byStatus": {
-      "open": 29,
+      "open": 34,
       "resolved": 16,
       "other": 8
     },
@@ -14,11 +14,13 @@
       "agent-faithfulness-judged-not-yet-validated-2026-06-25",
       "calibration-self-authored-pack-2026-06-22",
       "capability-cell-not-yet-in-live-ssa-2026-06-23",
+      "continual-plasticity-rename-deferred-2026-06-26",
       "distribution-shift-not-run",
       "error-memory-rag-pr-100-2026-06-25",
       "error-memory-rag-precision-v2-2026-06-25",
       "external-benchmarks-not-run",
       "fact-check-live-backend-ran-2026-06-24",
+      "flywheel-capstone-deriged-2026-06-26",
       "grounded-gate-not-yet-validated-2026-06-22",
       "hidden-fresh-pack-sophia-deepseek-2026-06-19",
       "hidden-fresh-pack-sophia-deepseek-coding-council-repair3-2026-06-20",
@@ -33,13 +35,16 @@
       "long-horizon-not-run",
       "math-code-curriculum-preregistered-2026-06-25",
       "pif-headline-run-not-yet-gated-2026-06-23",
+      "rlvr-code-live-run-not-yet-gated-2026-06-26",
       "rlvr-live-run-not-yet-gated-2026-06-21",
       "self-extending-loop-closes-offline-2026-06-22",
       "sophia-math-code-curriculum-stage3-ssh-blocked-2026-06-25",
+      "ssil-compounding-live-not-gated-2026-06-26",
       "steering-live-run-not-yet-gated-2026-06-23",
       "team-agents-longtask-eval-template-2026-06-25",
       "team-agents-mode-mock-eval-2026-06-25",
-      "team-orchestrator-eval-template-2026-06-25"
+      "team-orchestrator-eval-template-2026-06-25",
+      "third-party-heldout-pack-empty-2026-06-26"
     ]
   },
   "operationalDefinition": {

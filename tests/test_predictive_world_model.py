@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.predictive_world_model import PredictiveWorldModel, demo_world_model_report  # noqa: E402
+from agent.tabular_transition_model import PredictiveWorldModel, demo_world_model_report  # noqa: E402
 
 
 def test_world_model_predicts_distribution_and_reward() -> None:
