@@ -18,7 +18,6 @@ name = "sophia_kvcache"
 # it just needs a real GPU to *run*. This is what the RunPod GPU job exercises.
 cudarc = { version = "0.19", optional = true, default-features = false, features = [
     "driver",
-    "runtime",
     "dynamic-loading",
     # Pin the CUDA API version the bindings target; matches the 12.4 image the
     # RunPod job uses. dynamic-loading dlopens libcuda at runtime regardless.
