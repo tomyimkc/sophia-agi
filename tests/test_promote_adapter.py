@@ -156,7 +156,7 @@ def test_promotion_gate_generalizes_to_non_provenance_families() -> None:
         candidate_id="transfer-coding-math", kind="lora_adapter", baseline_ladder=None,
         adapter_ladder=ladder, contaminated=False, protected=(),  # empty protected set
         extra_artifacts=("ladder", "manifest"), proof_tag="formal_verifier:protected_floor[fallback:accepted]",
-    )
+    )[0]
     # Empty protected set -> the formal proof has nothing to constrain -> accepted.
     assert _formal_protected_floor_proof(list(cand.metrics), tolerance=0.01)["status"] == "no_protected_suites"
     d = evaluate_update(cand, target_suite="total", min_target_delta=0.03, max_protected_regression=0.01)
@@ -168,7 +168,7 @@ def test_promotion_gate_generalizes_to_non_provenance_families() -> None:
         candidate_id="transfer-coding-regress", kind="lora_adapter", baseline_ladder=None,
         adapter_ladder=regress, contaminated=False, protected=("coding",),
         extra_artifacts=("a", "b"), proof_tag="",
-    )
+    )[0]
     d2 = evaluate_update(cand2, target_suite="total", min_target_delta=0.03, max_protected_regression=0.01)
     assert d2.verdict == "reject"
     assert any("coding" in r for r in d2.reasons)
