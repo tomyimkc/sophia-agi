@@ -25,6 +25,11 @@ path = "src/main.rs"
 name = "serve"
 path = "src/serve.rs"
 
-[profile.release]
-opt-level = 3
-lto = true
+# NOTE: the release profile lives at the top-level virtual workspace root
+# (../../Cargo.toml), not here. Cargo only honours profiles declared at the
+# workspace root, so a `[profile.release]` in this member would be silently
+# ignored (and warned about). The workspace profile is opt-level 3 + thin LTO
+# + 1 codegen-unit; the former fat-LTO (`lto = true`) for these binaries is
+# subsumed by the workspace-wide thin LTO. If this crate is ever built
+# standalone again, re-add its own `[profile.release]` here.
+# See docs/11-Platform/Rust-Workspace-Consolidation.md.
