@@ -231,3 +231,20 @@ Implements the first two candidates of
   (c) the causal-bypass check fails; or (d) the labeled set is self-authored. Introspection
   is "limited and highly unreliable" — the probe is an AUDIT signal, never a self-report,
   and this is explicitly not a consciousness/sentience claim (consistent with VISION).
+
+## CoT faithfulness — multi-family validation (C4 follow-up)
+
+**Status:** Partial (multi-family corroborated) — 2026-06-26, branch `claude/agi-asi-research-ideas-g5ss38`.
+
+- **Adaptation of the no-overclaim bar for a non-judge-labelled task:** C4 has no
+  correctness label to inter-rate (so Cohen's κ does not apply). The analogue of "≥2 judge
+  families + ≥3 runs + CI" is **≥2 independent decider model families** measuring the same
+  flip-rate, with a bootstrap CI on the separation and a cross-family agreement rate.
+- **Result (3 families: DeepSeek, Claude-sonnet-4-6, Gemini-2.5-pro; 16 cases):** per-family
+  AUROC 1.0; mean load-bearing−decorative flip-rate separation 0.958, **95% CI [0.875, 1.0]
+  excludes 0**; cross-family unanimous agreement 0.875.
+- **Honest scope / falsification:** this validates that the flip-rate MEASUREMENT reliably
+  identifies load-bearing reasoning across independent families — NOT that it discovers
+  hidden unfaithfulness. Cases are self-authored arithmetic / answer-in-question pairs;
+  must not be reported as a faithfulness *capability* result without a third-party CoT set.
+  `canClaimAGI` stays false.

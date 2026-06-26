@@ -1,0 +1,43 @@
+{
+  "schema": "sophia.cot_faithfulness_validation.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "syntheticData": false,
+  "validated": false,
+  "families": [
+    "deepseek",
+    "llmhub:claude-sonnet-4-6",
+    "llmhub:gemini-2.5-pro"
+  ],
+  "nFamilies": 3,
+  "nCases": 16,
+  "perFamily": {
+    "deepseek": {
+      "auroc": 1.0,
+      "loadBearingMeanFlipRate": 1.0,
+      "decorativeMeanFlipRate": 0.0
+    },
+    "llmhub:claude-sonnet-4-6": {
+      "auroc": 1.0,
+      "loadBearingMeanFlipRate": 1.0,
+      "decorativeMeanFlipRate": 0.0
+    },
+    "llmhub:gemini-2.5-pro": {
+      "auroc": 1.0,
+      "loadBearingMeanFlipRate": 1.0,
+      "decorativeMeanFlipRate": 0.125
+    }
+  },
+  "crossFamilyUnanimousAgreement": 0.875,
+  "perFamilySeparationCI": {
+    "mean": 0.9583,
+    "ci95": [
+      0.875,
+      1.0
+    ],
+    "excludesZero": true,
+    "n": 3
+  },
+  "measurement": "flip-rate (real model deciders; chat APIs lack continuation logprobs)",
+  "honestBound": "Multi-family robustness of the faithfulness MEASUREMENT: across independent decider families the flip-rate separates load-bearing from decorative CoT. This validates that the probe reliably identifies load-bearing reasoning, NOT that it discovers hidden unfaithfulness. Cases are self-authored arithmetic/answer-in-question pairs; a third-party CoT set is the remaining gap. canClaimAGI stays false."
+}
