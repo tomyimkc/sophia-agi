@@ -49,6 +49,24 @@ apart** on the branch. The M4 ORPO run hit exactly this.
    gone. Confirm the actual artifact landed on the branch
    (`agi-proof/benchmark-results/wisdom-market/M3-pilot-eval*.json` / `M4-orpo-eval*.json`).
 
+## RESTART LOOP after a SUCCESSFUL job (root cause of the 3rd waste event, 2026-06-26)
+A RunPod pod **re-runs its `dockerStartCmd` whenever that command EXITS** — including a clean
+exit 0. So when the job finished (pushed result, self-deleted), the container exited, RunPod
+re-ran the WHOLE SFT→ORPO→eval job, and it looped (~10 cycles, same pod id, each pushing the
+SAME result then exiting). The old `--wait` restart-abort keyed on `lastStartedAt`, which does
+NOT advance on a start-command re-run, so it never fired. Two standing fixes (both in the
+launcher now):
+1. **Pod holds the container open** — after pushing the result + issuing self-delete, `finish()`
+   does `sleep 3600` instead of exiting, so RunPod can't re-run the job (and the DELETE tears it
+   down first).
+2. **Launcher deletes on result-seen** — `--wait` baselines the result blob before launch and
+   polls the BRANCH; when the FRESH result lands it DELETEs the pod itself (authoritative; no
+   reliance on self-delete or lastStartedAt).
+If you EVER see repeated `self-reported result (exit 0)` commits with the same pod id, that's the
+loop — delete the pod immediately (RunPod console or REST DELETE with RUNPOD_API_KEY). The launcher
+self-delete needs the pod env's RUNPOD_API_KEY to be valid; if the GH run is cancelled the pod
+keeps looping but can no longer push, so cancelling the run does NOT stop the pod.
+
 ## How a run is wired (reference)
 - Workflow: `.github/workflows/wisdom-pilot-runpod.yml` (inputs: confirm, runs, limit, seed,
   mode {sft|orpo}, image). Dispatch against the FEATURE branch; the workflow must also exist on

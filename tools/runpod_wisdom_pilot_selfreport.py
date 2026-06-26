@@ -40,21 +40,32 @@ RESULT_PATH = "agi-proof/benchmark-results/wisdom-market/M3-pilot-eval.json"
 LOG_PATH = "agi-proof/benchmark-results/runpod-wisdom-pilot/pod-selfreport.log"
 
 
+def _mode_spec(mode: str):
+    """(prefix, on-pod script, extra CLI flags) for a run mode. orpo_sft = the canonical
+    SFT->ORPO STACK (train SFT, merge, ORPO on top); orpo = ORPO from base; sft = M3 pilot."""
+    if mode == "orpo_sft":
+        return "M4-orpo-sft", "pilot_gemma3_orpo.py", "--from-sft"
+    if mode == "orpo":
+        return "M4-orpo", "pilot_gemma3_orpo.py", ""
+    return "M3-pilot", "pilot_gemma3_run.py", ""
+
+
+def _artifact_paths(args: argparse.Namespace):
+    """The branch-relative (result, answers) paths this run will push. Shared by the job script
+    and the launcher's --wait so completion is detected by the EXACT file the pod writes."""
+    prefix, _, _ = _mode_spec(getattr(args, "mode", "sft"))
+    seed = int(args.seed)
+    sfx = "" if seed == 0 else f"-seed{seed}"  # seed 0 keeps the canonical name
+    return (f"agi-proof/benchmark-results/wisdom-market/{prefix}-eval{sfx}.json",
+            f"agi-proof/benchmark-results/wisdom-market/{prefix}-answers{sfx}.json")
+
+
 def _job_script(args: argparse.Namespace) -> str:
     eval_flags = f"--runs {int(args.runs)}" + (f" --limit {int(args.limit)}" if args.limit else "")
     seed = int(args.seed)
     mode = getattr(args, "mode", "sft")
-    # orpo_sft = the canonical SFT->ORPO STACK (train SFT, merge, ORPO on top); orpo = ORPO from base.
-    if mode == "orpo_sft":
-        prefix, script, mode_flags = "M4-orpo-sft", "pilot_gemma3_orpo.py", "--from-sft"
-    elif mode == "orpo":
-        prefix, script, mode_flags = "M4-orpo", "pilot_gemma3_orpo.py", ""
-    else:
-        prefix, script, mode_flags = "M3-pilot", "pilot_gemma3_run.py", ""
-    # seed-tagged outputs so seeds 0/1/2 don't clobber each other; seed 0 keeps the canonical name.
-    sfx = "" if seed == 0 else f"-seed{seed}"
-    result_path = f"agi-proof/benchmark-results/wisdom-market/{prefix}-eval{sfx}.json"
-    answers_path = f"agi-proof/benchmark-results/wisdom-market/{prefix}-answers{sfx}.json"
+    prefix, script, mode_flags = _mode_spec(mode)
+    result_path, answers_path = _artifact_paths(args)
     # NOTE: no `set -x`; secrets must never reach the pushed log. The PAT lives only in the
     # git credential store on the ephemeral pod. All stdout/stderr -> /workspace/pod.log,
     # which is scrubbed of the token before being pushed.
@@ -93,6 +104,13 @@ finish() {{
     curl -fsS --request DELETE --url "https://rest.runpod.io/v1/pods/${{RUNPOD_POD_ID}}" \
       --header "Authorization: Bearer $RUNPOD_API_KEY" || true
   fi
+  # CRITICAL anti-restart-loop guard (diagnosed 2026-06-26): a RunPod pod RE-RUNS its
+  # dockerStartCmd whenever the command EXITS — so a clean exit here restart-loops the WHOLE
+  # SFT->ORPO->eval job, burning GPU (~10 cycles observed). Do NOT exit: hold the container
+  # open so (a) the DELETE above tears it down first, and (b) if DELETE failed, the launcher's
+  # --wait deletes the pod after seeing the pushed result — either way the job NEVER re-runs.
+  echo "[pod] job done + result pushed; holding container open to PREVENT a RunPod restart loop"
+  sleep 3600 || true
 }}
 trap finish EXIT
 
@@ -228,30 +246,71 @@ def parse_args(argv=None):
     return ap.parse_args(argv)
 
 
-def _wait_for_pod_gone(api_key: str, pod_id: str, timeout_min: int, *, max_restarts: int = 3) -> int:
-    """Wait until the pod self-deletes. ANTI-WASTAGE: if the pod's container keeps RESTARTING
-    (lastStartedAt advances) without finishing, abort+delete after `max_restarts` so a death
-    loop can't burn GPU until the timeout. Require N consecutive 404s before declaring it gone
-    (a restart briefly 404s)."""
+def _git_blob(branch: str, rel_path: str):
+    """Current git blob hash of rel_path on origin/branch, or None if absent. Used to detect
+    the pod pushing a FRESH result without trusting self-delete / lastStartedAt."""
+    import subprocess
+    try:
+        subprocess.run(["git", "fetch", "-q", "origin", branch], check=False, timeout=60,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        out = subprocess.run(["git", "rev-parse", f"origin/{branch}:{rel_path}"],
+                             capture_output=True, text=True, timeout=30)
+        return out.stdout.strip() if out.returncode == 0 else None
+    except Exception:
+        return None
+
+
+def _delete_pod(api_key: str, pod_id: str) -> None:
+    try:
+        _api_request("DELETE", f"/pods/{pod_id}", api_key, timeout=60)
+    except RunPodError:
+        pass
+
+
+def _wait_for_pod_gone(api_key: str, pod_id: str, timeout_min: int, *, branch: str = "",
+                       result_rel: str = "", baseline_blob=None, max_restarts: int = 3) -> int:
+    """Wait until the job is DONE, then ensure the pod is deleted. Completion is detected
+    AUTHORITATIVELY by the result file landing FRESH on the branch (blob != baseline) — the
+    launcher then DELETEs the pod itself rather than trusting the pod's self-delete or a
+    `lastStartedAt` restart count. Why: a RunPod pod re-runs its start command on exit WITHOUT
+    advancing lastStartedAt, so the old restart-abort never fired and the job restart-looped
+    (~10 cycles, GPU waste, 2026-06-26). 404-streak + restart-count remain as fallbacks."""
     import time
     deadline = time.time() + timeout_min * 60
     gone_streak = 0
     last_started = None
     restarts = 0
+    result_seen_at = None
     while time.time() < deadline:
+        # AUTHORITATIVE completion: the pod pushed a fresh result blob -> delete the pod, done.
+        if branch and result_rel:
+            blob = _git_blob(branch, result_rel)
+            if blob and blob != baseline_blob:
+                if result_seen_at is None:
+                    result_seen_at = time.time()
+                    print(f"[selfreport] FRESH result on branch ({result_rel}); deleting pod {pod_id}.")
+                _delete_pod(api_key, pod_id)
+                # give the API a moment, then confirm gone
+                try:
+                    _api_request("GET", f"/pods/{pod_id}", api_key, timeout=30)
+                    if time.time() - result_seen_at > 180:
+                        print("[selfreport] result delivered + delete issued; returning despite slow teardown.")
+                        return 0
+                except RunPodError:
+                    print(f"[selfreport] pod {pod_id} gone after result delivered. Done.")
+                    return 0
+                time.sleep(20)
+                continue
         try:
             pod = _api_request("GET", f"/pods/{pod_id}", api_key, timeout=30)
             gone_streak = 0
             started = pod.get("lastStartedAt")
             if last_started is not None and started and started != last_started:
                 restarts += 1
-                print(f"[selfreport] pod {pod_id} RESTARTED ({restarts}/{max_restarts}) — container died mid-job")
+                print(f"[selfreport] pod {pod_id} RESTARTED ({restarts}/{max_restarts}) — container restarted")
                 if restarts >= max_restarts:
                     print(f"[selfreport] restart loop — deleting pod {pod_id} to stop GPU wastage.")
-                    try:
-                        _api_request("DELETE", f"/pods/{pod_id}", api_key, timeout=60)
-                    except RunPodError:
-                        pass
+                    _delete_pod(api_key, pod_id)
                     return 3
             last_started = started or last_started
             status = "running"
@@ -268,10 +327,7 @@ def _wait_for_pod_gone(api_key: str, pod_id: str, timeout_min: int, *, max_resta
         print(f"[selfreport] pod {pod_id} still {status}; waiting ...", flush=True)
         time.sleep(45)
     print(f"[selfreport] wait timed out after {timeout_min} min; deleting pod {pod_id} to be safe.")
-    try:
-        _api_request("DELETE", f"/pods/{pod_id}", api_key, timeout=60)
-    except RunPodError:
-        pass
+    _delete_pod(api_key, pod_id)
     return 2
 
 
@@ -291,16 +347,23 @@ def main(argv=None) -> int:
     if not args.yes:
         raise RunPodError("Refusing to create a paid pod without --yes (use --dry-run first).")
 
+    # Baseline the result blob BEFORE launch so --wait can tell THIS run's fresh result from a
+    # stale prior one (the file usually already exists on the branch from an earlier run).
+    result_rel, _answers_rel = _artifact_paths(args)
+    baseline_blob = _git_blob(args.branch, result_rel)
+
     payload = _build_payload(args, api_key, hf_token, gh_pat)
     pod = _api_request("POST", "/pods", api_key, payload)
     pod_id = pod.get("id") or pod.get("podId")
     print(json.dumps({"created": True, "podId": pod_id, "costPerHr": pod.get("costPerHr"),
                       "name": args.name, "branch": args.branch,
-                      "expectResultAt": RESULT_PATH, "expectLogAt": LOG_PATH}, indent=2))
+                      "expectResultAt": result_rel, "expectLogAt": LOG_PATH,
+                      "baselineResultBlob": baseline_blob}, indent=2))
     print("[selfreport] pod is running the job autonomously; it will push the result + log to "
-          "the branch and self-delete.")
+          "the branch; the launcher deletes the pod once the fresh result lands.")
     if args.wait:
-        return _wait_for_pod_gone(api_key, pod_id, args.wait_timeout_min)
+        return _wait_for_pod_gone(api_key, pod_id, args.wait_timeout_min,
+                                  branch=args.branch, result_rel=result_rel, baseline_blob=baseline_blob)
     return 0
 
 
