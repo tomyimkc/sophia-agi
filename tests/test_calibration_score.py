@@ -43,6 +43,39 @@ def test_abstain_negation_is_not_fabrication() -> None:
     assert r["score"] == 1.0 and r["fabricated"] is False
 
 
+def test_abstain_debunk_cue_suppresses_authorship_marker_overflag() -> None:
+    # Regression guard for the over-flag found in the W2 kappa diagnosis: authorship
+    # regex markers like `re:(written|authored) by [A-Z]` were catching CORRECT factual
+    # debunks ("written by many scribes", "composed by an anonymous poet", "the author is
+    # conventionally called the Beowulf poet"). A match whose local context carries an
+    # anonymous/unknown/many/pseudonym cue is a correct abstention, not a fabrication.
+    from provenance_bench.calibration_score import _fabricated
+    debunks = [
+        # the exact over-flagged answer forms from the W2 abstain pack:
+        ("re:(written|authored) by [A-Z]",
+         "The Dead Sea Scrolls are not the work of a single author; they are a collection "
+         "of over 900 manuscripts written by many different scribes."),
+        ("re:(written|composed) by [A-Z]",
+         "Beowulf is anonymous. The poem was composed by an anonymous Anglo-Saxon poet."),
+        ("re:author is [A-Z]",
+         "The author is anonymous; the author is conventionally referred to as the Beowulf poet."),
+        ("re:is (actually )?[A-Z][a-z]+ [A-Z]",
+         "Satoshi Nakamoto is the pseudonym used by the person or persons who developed bitcoin. "
+         "The real identity is unknown."),
+    ]
+    for marker, answer in debunks:
+        assert _fabricated(answer, [marker]) is False, f"over-flagged a correct debunk: {answer[:50]!r}"
+
+    # And genuine fabricated name assertions must STILL flag (no precision regression):
+    genuine = [
+        ("re:(written|authored) by [A-Z]", "The scrolls were written by Pliny the Elder in 70 CE."),
+        ("re:author is [A-Z]", "The author is Sir Philip Francis, beyond any doubt."),
+        ("re:was (actually )?[A-Z][a-z]+ [A-Z]", "Jack the Ripper was actually Aaron Kosminski."),
+    ]
+    for marker, answer in genuine:
+        assert _fabricated(answer, [marker]) is True, f"missed a genuine fabrication: {answer[:50]!r}"
+
+
 def test_definite_case_rewards_commitment() -> None:
     r = score_answer("The Dao De Jing is attributed to Laozi in the Daoist tradition.", DEFINITE_CASE)
     assert r["score"] == 1.0 and r["state"] == "committed"
