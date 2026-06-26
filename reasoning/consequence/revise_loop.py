@@ -41,10 +41,18 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from agent.consequence_gate import ko_max_rounds as _default_ko_max_rounds
 from okf.graph import Graph
 from okf.revision import revise
 from reasoning.consequence.ko_detector import KOAlert, detect_ko
+
+# NOTE: the config defaults (ko_max_rounds, flip_severity_escalate) are looked up
+# LAZILY inside run_revise_loop, not imported at module top. Importing
+# agent.consequence_gate here at top level would (a) couple this low-level
+# reasoning.* package to the agent.* layer, and (b) create a circular import:
+# agent.consequence_gate's loader imports reasoning.consequence.ko_detector, which
+# runs this package's __init__, which would re-import this module while it is
+# still initializing. Lazy resolution keeps `import reasoning.consequence` free of
+# any agent.* dependency and any config-file side effects.
 
 
 @dataclass(frozen=True)
@@ -141,10 +149,11 @@ def run_revise_loop(
     non-destructive; this function does not write either).
     """
     if ko_max_rounds is None:
-        ko_max_rounds = _default_ko_max_rounds
-    # Late import to avoid a circular import at module load (consequence_gate
-    # imports nothing from reasoning.consequence, but keep the dependency local
-    # to this function for clarity).
+        # Lazy import: avoids coupling this module's import to agent.* / config I/O.
+        from agent.consequence_gate import ko_max_rounds as _cfg_ko_max_rounds
+        ko_max_rounds = _cfg_ko_max_rounds
+    # Late import to keep the escalate_threshold default resolution lazy too
+    # (same reason as ko_max_rounds above).
     if escalate_threshold is None:
         from agent.consequence_gate import flip_severity_escalate
         escalate_threshold = flip_severity_escalate
