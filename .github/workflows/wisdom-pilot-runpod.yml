@@ -3,11 +3,13 @@ name: wisdom-pilot-runpod
 # Manual-only launcher for the Sophia-Wisdom-4B M3 PILOT (pre-registered, corpus-bound).
 # Trains a LoRA on the language tower of the gated multimodal google/gemma-3-4b-it on the
 # deterministic gate-passed dataset, then evaluates base-vs-adapter on the held-out
-# benchmark with the M1 instrument's scoring. Runs on a rented RunPod GPU (NOT this runner)
-# via tools/runpod_wisdom_pilot.py (rent -> rsync -> SSH -> scp back -> ALWAYS delete pod).
+# benchmark with the M1 instrument's scoring. The GPU work runs on a rented RunPod pod.
 #
-# WHY a workflow: the dev exec container is HTTPS-egress-only and cannot SSH to a pod; a
-# GitHub runner has open egress, so the proven SSH lifecycle works here.
+# SSH-FREE design: tools/runpod_wisdom_pilot_selfreport.py creates the pod via the RunPod
+# HTTPS API; the pod runs the WHOLE job in its start command (clone -> rebuild deterministic
+# dataset -> smoke -> train -> eval) and GIT-PUSHES the eval report + log back to the branch
+# using this run's GITHUB_TOKEN, then self-deletes. The launcher runs with --wait so the job
+# stays alive (keeping GITHUB_TOKEN valid) until the pod is gone. No SSH session to drop.
 #
 # Secrets required: RUNPOD_API_KEY (GPU) and HF_TOKEN (gemma-3 is gated). Never printed.
 
@@ -26,13 +28,13 @@ on:
         description: 'Optional benchmark case cap (blank = full N=354)'
         required: false
         default: ''
-      gpu_type:
-        description: 'Comma-separated RunPod GPU preference'
+      seed:
+        description: 'Training+eval seed (0 = canonical; 1,2 for stability)'
         required: false
-        default: 'NVIDIA A100 80GB PCIe,NVIDIA A100-SXM4-80GB,NVIDIA H100 PCIe'
+        default: '0'
 
 permissions:
-  contents: write   # commit the eval result back to the branch
+  contents: write   # the pod pushes the eval result back with this run's GITHUB_TOKEN
 
 concurrency:
   group: wisdom-pilot-runpod
@@ -60,59 +62,33 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Rebuild the deterministic gate-passed dataset (reproducible; no teacher)
-        run: |
-          python tools/build_sophia_wisdom_dataset.py --stats
-          wc -l training/local_sophia_v3/mlx/train.jsonl
-
-      - name: Dry-run pilot payload (no pod, no cost)
+      - name: Dry-run self-report payload (no pod, no cost)
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python tools/runpod_wisdom_pilot.py --dry-run --runs "${{ github.event.inputs.runs }}"
+          GH_PILOT_PAT: ${{ github.token }}
+        run: python tools/runpod_wisdom_pilot_selfreport.py --dry-run --branch "${{ github.ref_name }}" --runs "${{ github.event.inputs.runs }}"
 
-      - name: Launch pilot on RunPod (trains + evals on the pod, then deletes it)
+      - name: Launch SSH-free pilot on RunPod (pod self-reports via git push; waits until done)
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GH_PILOT_PAT: ${{ github.token }}
         run: |
           LIMIT=""
           if [ -n "${{ github.event.inputs.limit }}" ]; then LIMIT="--limit ${{ github.event.inputs.limit }}"; fi
-          python tools/runpod_wisdom_pilot.py --yes \
-            --runs "${{ github.event.inputs.runs }}" $LIMIT \
-            --gpu-type "${{ github.event.inputs.gpu_type }}"
+          python tools/runpod_wisdom_pilot_selfreport.py --yes --wait \
+            --branch "${{ github.ref_name }}" \
+            --seed "${{ github.event.inputs.seed }}" \
+            --runs "${{ github.event.inputs.runs }}" $LIMIT
 
-      - name: Surface the eval report in the run log
+      - name: Surface the pushed eval result (pull what the pod committed)
         if: always()
         run: |
-          shopt -s nullglob
-          for f in agi-proof/benchmark-results/runpod-wisdom-pilot/*.M3-pilot-eval.json; do
-            echo "===== $f ====="; cat "$f"
-          done
-
-      - name: Commit the eval report back to the branch
-        if: always()
-        run: |
-          shopt -s nullglob
-          mkdir -p agi-proof/benchmark-results/wisdom-market
-          copied=0
-          for f in agi-proof/benchmark-results/runpod-wisdom-pilot/*.M3-pilot-eval.json; do
-            cp "$f" agi-proof/benchmark-results/wisdom-market/M3-pilot-eval.json; copied=1
-          done
-          if [ "$copied" = "1" ]; then
-            git config user.email noreply@anthropic.com
-            git config user.name Claude
-            git add agi-proof/benchmark-results/wisdom-market/M3-pilot-eval.json
-            git commit -m "M3 pilot: eval result from RunPod run [skip ci]" || echo "nothing to commit"
-            git push origin HEAD:${{ github.ref_name }} || echo "push failed"
+          git pull --no-edit origin "${{ github.ref_name }}" || true
+          if [ -f agi-proof/benchmark-results/wisdom-market/M3-pilot-eval.json ]; then
+            echo "===== M3-pilot-eval.json ====="
+            cat agi-proof/benchmark-results/wisdom-market/M3-pilot-eval.json
           else
-            echo "no eval report produced (see logs)"
+            echo "no eval report on the branch yet — see agi-proof/benchmark-results/runpod-wisdom-pilot/pod-selfreport.log on the branch"
           fi
-
-      - name: Upload all pilot artifacts
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: wisdom-pilot-artifacts
-          path: agi-proof/benchmark-results/runpod-wisdom-pilot/**
-          if-no-files-found: warn
