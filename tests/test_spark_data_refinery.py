@@ -38,10 +38,14 @@ def test_mock_teacher_deterministic() -> None:
 
 
 def test_mock_teacher_offline_no_torch() -> None:
-    # The mock path must not import torch/transformers.
+    # The mock path must not *trigger* a torch/transformers import. Assert on the DELTA,
+    # not global absence — in the full suite another test may have already loaded torch,
+    # which says nothing about whether mock_teacher imports it.
+    before = set(sys.modules)
     sdr.mock_teacher([{"id": "x", "prompt": "Q"}], seed=0)
-    assert "torch" not in sys.modules
-    assert "transformers" not in sys.modules
+    newly = set(sys.modules) - before
+    assert not any(m == "torch" or m.startswith("torch.") for m in newly)
+    assert not any(m == "transformers" or m.startswith("transformers.") for m in newly)
 
 
 # --------------------------------------------------------------------------- #

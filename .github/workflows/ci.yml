@@ -484,12 +484,12 @@ jobs:
       needs.changes.outputs.code == 'true' ||
       contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
-    # The full suite (2200+ tests) includes index-building retrieval/search-quality
-    # integration evals that take minutes each; at ~12-18 min it was brushing the old
-    # 20-min ceiling and a slow runner could tip it over. 30 gives honest headroom — the
-    # primary speed fix (dropping a redundant full search-quality eval from the hybrid
-    # do-no-harm test) lives in the tests; this is the belt-and-braces margin.
-    timeout-minutes: 30
+    # The full suite (2280+ tests) runs ~12-13 min on a normal runner (measured), but it
+    # includes index-building retrieval/search-quality evals + a ~110s all-phase benchmark,
+    # so a 2-3x-slow ubuntu-latest runner can reach ~30 min (one such run hit the old 20-min
+    # ceiling, then 30). 40 covers ~3x runner variance with honest headroom. The typical run
+    # is far under this; it's a backstop against slow shared runners, not the expected time.
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
