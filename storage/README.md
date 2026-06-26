@@ -13,7 +13,11 @@ multithreading, durable I/O, consensus).
 | [`infcache`](#infcache-phase-4) | 4 | prefix-keyed, RAM→SSD tiered KV-block cache for LLM inference |
 | `raftkv` | 2×3 | durable Raft: `miniraft` persistent state backed by `diskstore` |
 
-Run everything: `cargo test` (workspace root `storage/`).
+Run everything: `cargo test` (these crates are members of the top-level virtual
+workspace at the repo root — see
+[docs/11-Platform/Rust-Workspace-Consolidation.md](../docs/11-Platform/Rust-Workspace-Consolidation.md);
+`cargo` invoked from here walks up to that root). To test only these storage
+crates: `cargo test -p kvcache -p diskstore -p miniraft -p infcache -p raftkv`.
 
 ---
 
