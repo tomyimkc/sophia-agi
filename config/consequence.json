@@ -1,7 +1,7 @@
 {
   "schema": "sophia.consequence.config.v1",
   "version": 1,
-  "boundary": "Tunable parameters for the ConsequenceGate (8th conscience path). All values are structural-magnitude thresholds over the deterministic OKF derivesFrom graph; none is a learned or empirical prior. Raising flipSeverityEscalate weakens the gate (more severe cascades allowed); lowering it strengthens the gate. TODO: tune against a real SEIB-Go-Flip benchmark pack once authored — the default 0.15 is a conservative hand-pick, not data-derived. This file is NOT on the reward tampering no-write surface (config/reward_surface.v1.json globs were checked: none match).",
+  "boundary": "Tunable parameters for the ConsequenceGate (8th conscience path). All values are structural-magnitude thresholds over the deterministic OKF derivesFrom graph; none is a learned or empirical prior. Raising flipSeverityEscalate weakens the gate (more severe cascades allowed); lowering it strengthens the gate. flipSeverityEscalate=0.15 is DATA-DERIVED: it is the max-accuracy threshold from the consequence_cascade_40_v1 structural pack (38 synthetic OKF retraction graphs, swept over [0.05..0.50]; 0.15 achieves 100% verdict accuracy with the greatest margin to any boundary-case severity — see agi-proof/consequence-cascade/). It is NOT validated against real belief graphs; it earns level3Evidence only after a real run routes decisions through the live gate. This file is NOT on the reward tampering no-write surface (config/reward_surface.v1.json globs were checked: none match).",
   "flipSeverityEscalate": 0.15,
   "koMaxRounds": 4
 }
