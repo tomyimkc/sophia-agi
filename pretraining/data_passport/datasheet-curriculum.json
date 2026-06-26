@@ -1,0 +1,24 @@
+{
+  "rows": 144,
+  "unique_clusters": 57,
+  "duplicate_rate": 0.6042,
+  "by_source": {
+    "unknown": 144
+  },
+  "by_license": {
+    "unknown": 144
+  },
+  "mean_quality": 0.7657,
+  "flagged_rows": 144,
+  "near_dup_threshold": 0.8,
+  "quality_floor": 0.35,
+  "fail_closed": "rows flagged unlicensed/low_quality are surfaced for review; a recipe should keep one row per dedup_cluster and drop flagged",
+  "pack": "training/sophia-math-code-curriculum/sft_all.jsonl",
+  "contamination": {
+    "clean": true,
+    "nTrain": 144,
+    "nEval": 300,
+    "overlap": [],
+    "overlapCount": 0
+  }
+}

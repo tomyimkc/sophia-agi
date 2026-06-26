@@ -1,0 +1,32 @@
+{
+  "study": "architecture probe \u2014 top-1 MoE vs dense (nano LM)",
+  "honesty_note": "Toy. Studies routing behavior/load-balance, not a SOTA claim. See ARCHITECTURE.md for the real DeepSeek MLA + MoE design.",
+  "analytic_floor_E": 0.90938,
+  "config": {
+    "vocab": 8,
+    "context": 2,
+    "hidden": 8,
+    "n_experts": 3,
+    "epochs": 14
+  },
+  "dense": {
+    "params": 208,
+    "active_params": 208,
+    "held_loss": 0.94442,
+    "excess_over_floor": 0.03504
+  },
+  "moe": {
+    "total_params": 675,
+    "active_params_per_token": 259,
+    "held_loss": 0.9884,
+    "excess_over_floor": 0.07902,
+    "load_balance_max_share": 0.3376,
+    "route_counts": [
+      9452,
+      9270,
+      9278
+    ],
+    "balanced": true
+  },
+  "verdict": "dense_better"
+}

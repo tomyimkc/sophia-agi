@@ -152,6 +152,9 @@ jobs:
           python tests/test_knowledge_gap_log.py
           python tests/test_forgetting_curve.py
           python tests/test_belief_revision_scaling.py
+          python tests/test_pretraining.py
+          python tests/test_pretraining_agent.py
+          python tests/test_pretraining_autopilot.py
           python tests/test_symbol_identity.py
           python tests/test_competence_model.py
           python tests/test_proof_carrying_reasoning.py
