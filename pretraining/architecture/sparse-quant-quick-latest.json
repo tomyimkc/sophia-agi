@@ -1,0 +1,20 @@
+{
+  "E": 0.5219116171589779,
+  "L_fp": 1.769174534764425,
+  "L_quant": 1.8971080447628288,
+  "quant_gap": 0.1279335099984038,
+  "active_params": 476,
+  "total_params": 1700,
+  "active_total_ratio": 3.57,
+  "load_balance": 0.282,
+  "config": {
+    "vocab": 8,
+    "context": 2,
+    "hidden": 16,
+    "n_experts": 4,
+    "epochs": 4,
+    "lr": 0.1,
+    "seed": 0
+  },
+  "honest_scope": "Nano-scale composition study. Shows sparsity + adaptive-quant are *measurable together* against a known floor \u2014 NOT that the composition scales to frontier MoEs. A real 'MoE enables aggressive quant' claim needs the same measurement on a real model to the no-overclaim gate."
+}
