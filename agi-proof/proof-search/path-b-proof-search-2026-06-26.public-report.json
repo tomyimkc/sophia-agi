@@ -1,0 +1,55 @@
+{
+  "schema": "sophia.proof_search.v1",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "benchmark": "Path B — Lean 4 proof search (LeanDojo best-first tactic search + strict novelty probe)",
+  "date": "2026-06-26",
+  "environment": {
+    "leanToolchain": "NOT INSTALLED (lean/elan/lake absent on host)",
+    "leanDojo": "NOT INSTALLED",
+    "model": "no LLM proposer (stub path used the deterministic scripted applier)"
+  },
+  "falsifiableQuestion": "Does the search produce a Lean-verified proof that is NOT a near-duplicate of the corpus (novel: true)?",
+  "runs": [
+    {
+      "theorem": "trivial_true",
+      "mode": "stub",
+      "verdict": "proved",
+      "proof": "trivial",
+      "leanVerdict": "accepted-by-injected-applier (STUB, not real Lean)",
+      "novelty": {
+        "novel": false,
+        "best_overlap": 1.0,
+        "threshold": 0.92,
+        "method": "char-trigram-jaccard (strict proxy)"
+      },
+      "nodesExpanded": 2
+    },
+    {
+      "theorem": "zero_add",
+      "mode": "stub",
+      "verdict": "no_proof_within_budget",
+      "proof": null,
+      "reason": "Stub applier cannot prove it; fail-closed abstention. nodesExpanded=40."
+    },
+    {
+      "theorem": "add_comm",
+      "mode": "stub",
+      "verdict": "no_proof_within_budget",
+      "proof": null,
+      "reason": "Stub applier cannot prove it; fail-closed abstention. nodesExpanded=40."
+    },
+    {
+      "theorem": "add_comm",
+      "mode": "real (no --stub)",
+      "verdict": "lean_unavailable",
+      "proof": null,
+      "reason": "Real Lean path requires LeanDojo (stateful); not installed on host. Abstained."
+    }
+  ],
+  "verdict": "BLOCKED / negative — no novel verified proof produced on this host",
+  "interpretation": "Answer to the falsifiable question: NO. (1) The only proof the search found (trivial_true via the stub applier) is a near-duplicate of the corpus (char-trigram Jaccard overlap 1.0 >> 0.92 threshold) → novelty FALSE, correctly classified as retrieved/non-novel. It is also a STUB-accepted proof ('accepted-by-injected-applier'), NOT a real Lean verification. (2) zero_add and add_comm could not be proved by the stub applier and the search FAIL-CLOSED (no_proof_within_budget) — it never asserted an unproved goal. (3) The REAL Lean path (LeanDojo + Lean 4) abstained lean_unavailable because the toolchain is not installed on this host; it produced no fabricated proof. This is an honest BLOCKED result: the novelty signal cannot be exercised without (a) the Lean 4/elan toolchain + LeanDojo installed and (b) an LLM tactic proposer driving a real LeanProofSession. The fail-closed discipline is confirmed correct — a proof Lean would reject is never asserted.",
+  "noveltyProbeNote": "Strict char-trigram Jaccard proxy at 0.92 threshold (production would use a sentence embedding). trivial_true's proof 'trivial' scored 1.0 overlap = exact corpus near-duplicate."
+}
