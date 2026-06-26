@@ -1,5 +1,5 @@
-[pod] M3 pilot self-report job starting Fri Jun 26 22:19:10 UTC 2026
-Fri Jun 26 22:19:14 2026       
+[pod] M3 pilot self-report job starting Fri Jun 26 23:00:15 UTC 2026
+Fri Jun 26 23:00:22 2026       
 +-----------------------------------------------------------------------------------------+
 | NVIDIA-SMI 580.126.09             Driver Version: 580.126.09     CUDA Version: 13.0     |
 +-----------------------------------------+------------------------+----------------------+
@@ -7,8 +7,8 @@ Fri Jun 26 22:19:14 2026
 | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
-|   0  NVIDIA H100 80GB HBM3          On  |   00000000:5D:00.0 Off |                    0 |
-| N/A   31C    P0             69W /  700W |       0MiB /  81559MiB |      0%      Default |
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:DB:00.0 Off |                    0 |
+| N/A   30C    P0             70W /  700W |       0MiB /  81559MiB |      0%      Default |
 |                                         |                        |             Disabled |
 +-----------------------------------------+------------------------+----------------------+
 
@@ -20,7 +20,6 @@ Fri Jun 26 22:19:14 2026
 |  No running processes found                                                             |
 +-----------------------------------------------------------------------------------------+
 Cloning into 'sophia-agi'...
-Updating files:   0% (19/2000)Updating files:   1% (20/2000)Updating files:   2% (40/2000)Updating files:   3% (60/2000)Updating files:   4% (80/2000)Updating files:   5% (100/2000)Updating files:   6% (120/2000)Updating files:   7% (140/2000)Updating files:   7% (151/2000)Updating files:   8% (160/2000)Updating files:   9% (180/2000)Updating files:  10% (200/2000)Updating files:  11% (220/2000)Updating files:  11% (225/2000)Updating files:  12% (240/2000)Updating files:  13% (260/2000)Updating files:  14% (280/2000)Updating files:  15% (300/2000)Updating files:  15% (305/2000)Updating files:  16% (320/2000)Updating files:  17% (340/2000)Updating files:  18% (360/2000)Updating files:  18% (364/2000)Updating files:  19% (380/2000)Updating files:  20% (400/2000)Updating files:  20% (417/2000)Updating files:  21% (420/2000)Updating files:  22% (440/2000)Updating files:  23% (460/2000)Updating files:  23% (474/2000)Updating files:  24% (480/2000)Updating files:  25% (500/2000)Updating files:  26% (520/2000)Updating files:  26% (530/2000)Updating files:  27% (540/2000)Updating files:  28% (560/2000)Updating files:  29% (580/2000)Updating files:  30% (600/2000)Updating files:  30% (614/2000)Updating files:  31% (620/2000)Updating files:  32% (640/2000)Updating files:  33% (660/2000)Updating files:  34% (680/2000)Updating files:  35% (700/2000)Updating files:  35% (701/2000)Updating files:  36% (720/2000)Updating files:  37% (740/2000)Updating files:  38% (760/2000)Updating files:  39% (780/2000)Updating files:  39% (782/2000)Updating files:  40% (800/2000)Updating files:  41% (820/2000)Updating files:  42% (840/2000)Updating files:  43% (860/2000)Updating files:  44% (880/2000)Updating files:  44% (881/2000)Updating files:  45% (900/2000)Updating files:  46% (920/2000)Updating files:  47% (940/2000)Updating files:  48% (960/2000)Updating files:  48% (975/2000)Updating files:  49% (980/2000)Updating files:  50% (1000/2000)Updating files:  51% (1020/2000)Updating files:  52% (1040/2000)Updating files:  53% (1060/2000)Updating files:  53% (1072/2000)Updating files:  54% (1080/2000)Updating files:  55% (1100/2000)Updating files:  56% (1120/2000)Updating files:  57% (1140/2000)Updating files:  57% (1155/2000)Updating files:  58% (1160/2000)Updating files:  59% (1180/2000)Updating files:  60% (1200/2000)Updating files:  61% (1220/2000)Updating files:  62% (1240/2000)Updating files:  62% (1253/2000)Updating files:  63% (1260/2000)Updating files:  64% (1280/2000)Updating files:  65% (1300/2000)Updating files:  66% (1320/2000)Updating files:  66% (1323/2000)Updating files:  67% (1340/2000)Updating files:  68% (1360/2000)Updating files:  69% (1380/2000)Updating files:  69% (1391/2000)Updating files:  70% (1400/2000)Updating files:  71% (1420/2000)Updating files:  72% (1440/2000)Updating files:  73% (1460/2000)Updating files:  74% (1480/2000)Updating files:  75% (1500/2000)Updating files:  75% (1505/2000)Updating files:  76% (1520/2000)Updating files:  77% (1540/2000)Updating files:  78% (1560/2000)Updating files:  78% (1571/2000)Updating files:  79% (1580/2000)Updating files:  80% (1600/2000)Updating files:  81% (1620/2000)Updating files:  82% (1640/2000)Updating files:  82% (1647/2000)Updating files:  83% (1660/2000)Updating files:  84% (1680/2000)Updating files:  85% (1700/2000)Updating files:  85% (1715/2000)Updating files:  86% (1720/2000)Updating files:  87% (1740/2000)Updating files:  88% (1760/2000)Updating files:  89% (1780/2000)Updating files:  89% (1791/2000)Updating files:  90% (1800/2000)Updating files:  91% (1820/2000)Updating files:  91% (1821/2000)Updating files:  92% (1840/2000)Updating files:  92% (1854/2000)Updating files:  93% (1860/2000)Updating files:  94% (1880/2000)Updating files:  95% (1900/2000)Updating files:  95% (1911/2000)Updating files:  96% (1920/2000)Updating files:  97% (1940/2000)Updating files:  97% (1949/2000)Updating files:  98% (1960/2000)Updating files:  99% (1980/2000)Updating files: 100% (2000/2000)Updating files: 100% (2000/2000), done.
 [pod] HEARTBEAT PUSH OK — delivery channel works
 [pod] ENV PROBE PUSH OK
 [pod] deps pre-baked — skipping pip (no long install to die during)
@@ -102,97 +101,101 @@ Updating files:   0% (19/2000)Updating files:   1% (20/2000)Updating files:   
 WROTE training/local_sophia_v3: 880 gate-passed rows, 233 preference pairs, 90 decontam drops.
 847 training/local_sophia_v3/mlx/train.jsonl
 [pod] SMOKE (retention)
-[pilot 22:21:09] SMOKE: train 2 steps then eval 2 cases x1 run
+[pilot 23:00:47] SMOKE: train 2 steps then eval 2 cases x1 run
 `torch_dtype` is deprecated! Use `dtype` instead!
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.28s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.00s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.05s/it]
-[pilot 22:21:58] loaded base via AutoModelForImageTextToText
-[pilot 22:22:01] trainable params: 29,802,496
-[pilot 22:22:01] training rows: 8
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.30it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.53it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.49it/s]
+[pilot 23:01:13] loaded base via AutoModelForImageTextToText
+[pilot 23:01:16] trainable params: 29,802,496 (rank=16 alpha=32 rslora=False kl_coef=0.0)
+[pilot 23:01:16] training rows: 8 (0 general_retention — KL-anchored if kl_coef>0)
 `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
-[pilot 22:22:02] step 1/2 loss=4.0761
-[pilot 22:22:03] step 2/2 loss=3.4128
-[pilot 22:22:04] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
-[pilot 22:22:04] eval cases: 2 x 1 runs x (base, adapter)
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.14s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.06it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.03it/s]
-[pilot 22:22:08] loaded base via AutoModelForImageTextToText
-[pilot 22:22:20]   gen 2/2
-[pilot 22:22:32]   gen 2/2
-[pilot 22:22:33]   run 1/1 done
-[pilot 22:22:33] loading adapter onto base ...
-[pilot 22:22:54]   gen 2/2
-[pilot 22:23:13]   gen 2/2
-[pilot 22:23:14]   run 1/1 done
-[pilot 22:23:14] wrote eval report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-smoke.json
-[pilot 22:23:14] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
-[pilot 22:23:14]   tradition_merge_rate               Δ None ci=[None, None]  
-[pilot 22:23:14]   qualification_rate_on_contested    Δ 0.0 ci=[0.0, 0.0]  
-[pilot 22:23:14]   false_attribution_rate             Δ None ci=[None, None]  
-[pilot 22:23:14]   citation_fidelity                  Δ None ci=[None, None]  
-[pilot 22:23:14]   adapter protected_history_regression       None
-[pilot 22:23:14]   adapter protected_religion_regression      None
-[pilot 22:23:14]   adapter over_abstention_rate               0.0
-[pilot 22:23:14] PRIMARY habit-transfer signal present: False
-[pilot 22:23:14] retention: 34 held-out generality tasks x (base, adapter)
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.17s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.11it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.06it/s]
-[pilot 22:23:18] loaded base via AutoModelForImageTextToText
-[pilot 22:23:19]   gen 32/34
-[pilot 22:23:19]   gen 34/34
-[pilot 22:23:19] loading adapter onto base for retention ...
-[pilot 22:23:21]   gen 32/34
-[pilot 22:23:22]   gen 34/34
-[pilot 22:23:22] wrote retention report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-retention-smoke.json
-[pilot 22:23:22] === RETENTION (criterion #3): base 0.735 -> adapter 0.765 (Δ +0.029) retains=True ===
-[pilot 22:23:22] SMOKE OK
+[pilot 23:01:17] step 1/2 loss=4.0761 kl=0.0000
+[pilot 23:01:17] step 2/2 loss=3.4091 kl=0.0000
+[pilot 23:01:18] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 23:01:18] eval cases: 2 x 1 runs x (base, adapter)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.31it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.54it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.50it/s]
+[pilot 23:01:22] loaded base via AutoModelForImageTextToText
+[pilot 23:01:37]   gen 2/2
+[pilot 23:01:52]   gen 2/2
+[pilot 23:01:53]   run 1/1 done
+[pilot 23:01:53] loading adapter onto base ...
+[pilot 23:02:20]   gen 2/2
+[pilot 23:02:45]   gen 2/2
+[pilot 23:02:46]   run 1/1 done
+[pilot 23:02:46] wrote eval report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-smoke.json
+[pilot 23:02:46] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
+[pilot 23:02:46]   tradition_merge_rate               Δ None ci=[None, None]  
+[pilot 23:02:46]   qualification_rate_on_contested    Δ 0.0 ci=[0.0, 0.0]  
+[pilot 23:02:46]   false_attribution_rate             Δ None ci=[None, None]  
+[pilot 23:02:46]   citation_fidelity                  Δ None ci=[None, None]  
+[pilot 23:02:46]   adapter protected_history_regression       None
+[pilot 23:02:46]   adapter protected_religion_regression      None
+[pilot 23:02:46]   adapter over_abstention_rate               0.0
+[pilot 23:02:46] PRIMARY habit-transfer signal present: False
+[pilot 23:02:46] retention: 70 held-out generality tasks x (base, adapter)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.32it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.55it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.51it/s]
+[pilot 23:02:50] loaded base via AutoModelForImageTextToText
+[pilot 23:02:51]   gen 32/70
+[pilot 23:02:51]   gen 64/70
+[pilot 23:02:52]   gen 70/70
+[pilot 23:02:52] loading adapter onto base for retention ...
+[pilot 23:02:55]   gen 32/70
+[pilot 23:02:55]   gen 64/70
+[pilot 23:02:56]   gen 70/70
+[pilot 23:02:56] wrote retention report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-retention-smoke.json
+[pilot 23:02:56] === RETENTION (criterion #3): base 0.729 -> adapter 0.757 (Δ +0.029 ci95=[0.0, 0.0714]) retains=True forgetting_established=False ===
+[pilot 23:02:56] SMOKE OK
 [pod] FULL retention seed=0
 `torch_dtype` is deprecated! Use `dtype` instead!
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.11s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.10it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.06it/s]
-[pilot 22:23:32] loaded base via AutoModelForImageTextToText
-[pilot 22:23:34] trainable params: 29,802,496
-[pilot 22:23:34] training rows: 847
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.32it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.56it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.52it/s]
+[pilot 23:03:05] loaded base via AutoModelForImageTextToText
+[pilot 23:03:07] trainable params: 29,802,496 (rank=16 alpha=32 rslora=False kl_coef=0.0)
+[pilot 23:03:08] training rows: 847 (260 general_retention — KL-anchored if kl_coef>0)
 `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
-[pilot 22:23:40] step 25/847 loss=2.6760
-[pilot 22:23:46] step 50/847 loss=2.5893
-[pilot 22:23:51] step 75/847 loss=0.3357
-[pilot 22:23:56] step 100/847 loss=0.6076
-[pilot 22:24:01] step 125/847 loss=1.4291
-[pilot 22:24:06] step 150/847 loss=0.2431
-[pilot 22:24:11] step 175/847 loss=0.4928
-[pilot 22:24:16] step 200/847 loss=0.1276
-[pilot 22:24:21] step 225/847 loss=0.0102
-[pilot 22:24:27] step 250/847 loss=0.8004
-[pilot 22:24:32] step 275/847 loss=2.1308
-[pilot 22:24:37] step 300/847 loss=1.9137
-[pilot 22:24:42] step 325/847 loss=1.7334
-[pilot 22:24:47] step 350/847 loss=0.0058
-[pilot 22:24:52] step 375/847 loss=1.3055
-[pilot 22:24:57] step 400/847 loss=1.3550
-[pilot 22:25:02] step 425/847 loss=1.4272
-[pilot 22:25:08] step 450/847 loss=0.1672
-[pilot 22:25:13] step 475/847 loss=0.8040
-[pilot 22:25:18] step 500/847 loss=0.1630
-[pilot 22:25:24] step 525/847 loss=1.4250
-[pilot 22:25:29] step 550/847 loss=0.0090
-[pilot 22:25:34] step 575/847 loss=2.0315
-[pilot 22:25:40] step 600/847 loss=0.0463
-[pilot 22:25:45] step 625/847 loss=1.7637
-[pilot 22:25:50] step 650/847 loss=0.0012
-[pilot 22:25:56] step 675/847 loss=1.0368
-[pilot 22:26:01] step 700/847 loss=0.0014
-[pilot 22:26:06] step 725/847 loss=1.2539
-[pilot 22:26:12] step 750/847 loss=0.0229
-[pilot 22:26:17] step 775/847 loss=0.5645
-[pilot 22:26:22] step 800/847 loss=0.0059
-[pilot 22:26:28] step 825/847 loss=1.9587
-[pilot 22:26:34] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
-[pilot 22:26:35] retention: 34 held-out generality tasks x (base, adapter)
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.15s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.13it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.08it/s]
-[pilot 22:26:39] loaded base via AutoModelForImageTextToText
-[pilot 22:26:39]   gen 32/34
-[pilot 22:26:39]   gen 34/34
-[pilot 22:26:39] loading adapter onto base for retention ...
-[pilot 22:26:47]   gen 32/34
-[pilot 22:26:47]   gen 34/34
-[pilot 22:26:47] wrote retention report -> agi-proof/benchmark-results/wisdom-market/M3-pilot-retention-eval.json
-[pilot 22:26:47] === RETENTION (criterion #3): base 0.735 -> adapter 0.618 (Δ -0.118) retains=False ===
+[pilot 23:03:15] step 25/847 loss=2.6781 kl=0.0000
+[pilot 23:03:21] step 50/847 loss=2.6235 kl=0.0000
+[pilot 23:03:28] step 75/847 loss=0.3526 kl=0.0000
+[pilot 23:03:35] step 100/847 loss=0.6025 kl=0.0000
+[pilot 23:03:41] step 125/847 loss=1.4244 kl=0.0000
+[pilot 23:03:48] step 150/847 loss=0.1960 kl=0.0000
+[pilot 23:03:55] step 175/847 loss=0.4923 kl=0.0000
+[pilot 23:04:01] step 200/847 loss=0.1432 kl=0.0000
+[pilot 23:04:07] step 225/847 loss=0.0132 kl=0.0000
+[pilot 23:04:14] step 250/847 loss=0.8279 kl=0.0000
+[pilot 23:04:20] step 275/847 loss=2.1284 kl=0.0000
+[pilot 23:04:27] step 300/847 loss=1.9287 kl=0.0000
+[pilot 23:04:33] step 325/847 loss=1.7379 kl=0.0000
+[pilot 23:04:40] step 350/847 loss=0.0063 kl=0.0000
+[pilot 23:04:46] step 375/847 loss=1.2541 kl=0.0000
+[pilot 23:04:53] step 400/847 loss=1.3509 kl=0.0000
+[pilot 23:04:59] step 425/847 loss=1.4313 kl=0.0000
+[pilot 23:05:06] step 450/847 loss=0.1421 kl=0.0000
+[pilot 23:05:12] step 475/847 loss=0.8110 kl=0.0000
+[pilot 23:05:19] step 500/847 loss=0.1544 kl=0.0000
+[pilot 23:05:25] step 525/847 loss=1.4131 kl=0.0000
+[pilot 23:05:32] step 550/847 loss=0.0022 kl=0.0000
+[pilot 23:05:38] step 575/847 loss=2.1016 kl=0.0000
+[pilot 23:05:45] step 600/847 loss=0.0301 kl=0.0000
+[pilot 23:05:51] step 625/847 loss=1.7383 kl=0.0000
+[pilot 23:05:58] step 650/847 loss=0.0013 kl=0.0000
+[pilot 23:06:04] step 675/847 loss=1.1860 kl=0.0000
+[pilot 23:06:11] step 700/847 loss=0.0009 kl=0.0000
+[pilot 23:06:17] step 725/847 loss=1.2506 kl=0.0000
+[pilot 23:06:23] step 750/847 loss=0.0237 kl=0.0000
+[pilot 23:06:29] step 775/847 loss=0.5755 kl=0.0000
+[pilot 23:06:35] step 800/847 loss=0.0070 kl=0.0000
+[pilot 23:06:41] step 825/847 loss=1.9693 kl=0.0000
+[pilot 23:06:48] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 23:06:48] retention: 70 held-out generality tasks x (base, adapter)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.30it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.53it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.49it/s]
+[pilot 23:06:52] loaded base via AutoModelForImageTextToText
+[pilot 23:06:53]   gen 32/70
+[pilot 23:06:53]   gen 64/70
+[pilot 23:06:54]   gen 70/70
+[pilot 23:06:54] loading adapter onto base for retention ...
+[pilot 23:07:02]   gen 32/70
+[pilot 23:07:05]   gen 64/70
+[pilot 23:07:05]   gen 70/70
+[pilot 23:07:05] wrote retention report -> agi-proof/benchmark-results/wisdom-market/M3-pilot-retention-eval.json
+[pilot 23:07:05] === RETENTION (criterion #3): base 0.743 -> adapter 0.729 (Δ -0.014 ci95=[-0.0714, 0.0429]) retains=True forgetting_established=False ===
 [pod] result + answers written; finish() will commit + push
 [pod] job exit code=0

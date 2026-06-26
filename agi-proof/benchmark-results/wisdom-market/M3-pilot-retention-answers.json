@@ -271,6 +271,294 @@
       "gold": "1",
       "reply": "1",
       "correct": true
+    },
+    {
+      "id": "pat-008",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "160",
+      "reply": "160",
+      "correct": true
+    },
+    {
+      "id": "pat-009",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "42",
+      "reply": "42",
+      "correct": true
+    },
+    {
+      "id": "pat-010",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "21",
+      "reply": "21",
+      "correct": true
+    },
+    {
+      "id": "pat-011",
+      "category": "abstraction_pattern",
+      "match": "exact",
+      "gold": "T P Q R S",
+      "reply": "T P Q R S",
+      "correct": true
+    },
+    {
+      "id": "pat-012",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "25",
+      "reply": "25",
+      "correct": true
+    },
+    {
+      "id": "pat-013",
+      "category": "abstraction_pattern",
+      "match": "exact",
+      "gold": "j h g",
+      "reply": "j h g",
+      "correct": true
+    },
+    {
+      "id": "pat-014",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "22",
+      "reply": "23",
+      "correct": false
+    },
+    {
+      "id": "arith-008",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "120",
+      "reply": "240",
+      "correct": false
+    },
+    {
+      "id": "arith-009",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "15",
+      "reply": "15",
+      "correct": true
+    },
+    {
+      "id": "arith-010",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "21",
+      "reply": "21",
+      "correct": true
+    },
+    {
+      "id": "arith-011",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "60",
+      "reply": "60",
+      "correct": true
+    },
+    {
+      "id": "arith-012",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "10",
+      "reply": "20",
+      "correct": false
+    },
+    {
+      "id": "arith-013",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "136",
+      "reply": "138",
+      "correct": false
+    },
+    {
+      "id": "arith-014",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "7",
+      "reply": "9",
+      "correct": false
+    },
+    {
+      "id": "logic-007",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "no",
+      "reply": "No.",
+      "correct": true
+    },
+    {
+      "id": "logic-008",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "Liam",
+      "reply": "Liam",
+      "correct": true
+    },
+    {
+      "id": "logic-009",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "no",
+      "reply": "No.",
+      "correct": true
+    },
+    {
+      "id": "logic-010",
+      "category": "logic_wordproblem",
+      "match": "numeric",
+      "gold": "7",
+      "reply": "7",
+      "correct": true
+    },
+    {
+      "id": "logic-011",
+      "category": "logic_wordproblem",
+      "match": "numeric",
+      "gold": "1",
+      "reply": "1",
+      "correct": true
+    },
+    {
+      "id": "logic-012",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "no",
+      "reply": "Yes.",
+      "correct": false
+    },
+    {
+      "id": "logic-013",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "Carl",
+      "reply": "Eve",
+      "correct": false
+    },
+    {
+      "id": "logic-014",
+      "category": "logic_wordproblem",
+      "match": "numeric",
+      "gold": "18",
+      "reply": "20",
+      "correct": false
+    },
+    {
+      "id": "analogy-007",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "empty",
+      "reply": "Empty",
+      "correct": true
+    },
+    {
+      "id": "analogy-008",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "hive",
+      "reply": "Hive",
+      "correct": true
+    },
+    {
+      "id": "analogy-009",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "foot",
+      "reply": "Foot",
+      "correct": true
+    },
+    {
+      "id": "analogy-010",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "hospital|clinic",
+      "reply": "Hospital",
+      "correct": true
+    },
+    {
+      "id": "analogy-011",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "slow",
+      "reply": "Slow",
+      "correct": true
+    },
+    {
+      "id": "analogy-012",
+      "category": "analogy",
+      "match": "numeric",
+      "gold": "49",
+      "reply": "49",
+      "correct": true
+    },
+    {
+      "id": "analogy-013",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "horse|mare",
+      "reply": "Horse",
+      "correct": true
+    },
+    {
+      "id": "ood-009",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "come",
+      "reply": "macn",
+      "correct": false
+    },
+    {
+      "id": "ood-010",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "level",
+      "reply": "level",
+      "correct": true
+    },
+    {
+      "id": "ood-011",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "ka",
+      "reply": "Ka",
+      "correct": true
+    },
+    {
+      "id": "ood-012",
+      "category": "out_of_domain",
+      "match": "numeric",
+      "gold": "13",
+      "reply": "13",
+      "correct": true
+    },
+    {
+      "id": "ood-013",
+      "category": "out_of_domain",
+      "match": "numeric",
+      "gold": "2",
+      "reply": "2",
+      "correct": true
+    },
+    {
+      "id": "ood-014",
+      "category": "out_of_domain",
+      "match": "exact",
+      "gold": "7 5 3 1",
+      "reply": "7 5 3 1",
+      "correct": true
+    },
+    {
+      "id": "ood-015",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "110",
+      "reply": "110",
+      "correct": true
     }
   ],
   "adapter": [
@@ -303,7 +591,7 @@
       "category": "abstraction_pattern",
       "match": "exact",
       "gold": "B C D A",
-      "reply": "The output is:\nA B C D",
+      "reply": "A B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA",
       "correct": false
     },
     {
@@ -311,7 +599,7 @@
       "category": "abstraction_pattern",
       "match": "exact",
       "gold": "c a",
-      "reply": "a d\nb c",
+      "reply": "a c\nb d",
       "correct": false
     },
     {
@@ -319,7 +607,7 @@
       "category": "abstraction_pattern",
       "match": "numeric",
       "gold": "38",
-      "reply": "46",
+      "reply": "36",
       "correct": false
     },
     {
@@ -335,8 +623,8 @@
       "category": "multistep_arithmetic",
       "match": "numeric",
       "gold": "70",
-      "reply": "65",
-      "correct": false
+      "reply": "70",
+      "correct": true
     },
     {
       "id": "arith-002",
@@ -351,7 +639,7 @@
       "category": "multistep_arithmetic",
       "match": "numeric",
       "gold": "29",
-      "reply": "36",
+      "reply": "12",
       "correct": false
     },
     {
@@ -375,8 +663,8 @@
       "category": "multistep_arithmetic",
       "match": "numeric",
       "gold": "12.5",
-      "reply": "12.50",
-      "correct": true
+      "reply": "3 * 2.50 = 7.50\n20 - 7.50 = 12.50\n12.50",
+      "correct": false
     },
     {
       "id": "arith-007",
@@ -423,8 +711,8 @@
       "category": "logic_wordproblem",
       "match": "numeric",
       "gold": "0.05",
-      "reply": "Let the cost of the ball be x.\nThe cost of the bat is x + 1.00.\nThe total cost is x + (x + 1.00) = 1.10.\n2x + 1.00 = 1.10\n2x = 0.10\nx = 0.05\nThe ball costs $0.05.\nThe cost of the bat is",
-      "correct": false
+      "reply": "$0.05",
+      "correct": true
     },
     {
       "id": "logic-006",
@@ -479,8 +767,8 @@
       "category": "analogy",
       "match": "numeric",
       "gold": "27",
-      "reply": "6",
-      "correct": false
+      "reply": "27",
+      "correct": true
     },
     {
       "id": "ood-001",
@@ -503,8 +791,8 @@
       "category": "out_of_domain",
       "match": "regex",
       "gold": "mi",
-      "reply": "Red",
-      "correct": false
+      "reply": "Mi",
+      "correct": true
     },
     {
       "id": "ood-004",
@@ -519,16 +807,16 @@
       "category": "out_of_domain",
       "match": "numeric",
       "gold": "1",
-      "reply": "1.  Fill the 5-liter jug.\n2.  Pour water from the 5-liter jug into the 3-liter jug until it is full.\n3.  The 5-liter jug will contain 2 liters.\n4.  Fill the 3-liter jug.\n5.  Pour water from the 3-lite",
-      "correct": true
+      "reply": "1.5",
+      "correct": false
     },
     {
       "id": "ood-006",
       "category": "out_of_domain",
       "match": "numeric",
       "gold": "3",
-      "reply": "2",
-      "correct": false
+      "reply": "3",
+      "correct": true
     },
     {
       "id": "ood-007",
@@ -544,6 +832,294 @@
       "match": "numeric",
       "gold": "1",
       "reply": "1",
+      "correct": true
+    },
+    {
+      "id": "pat-008",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "160",
+      "reply": "160",
+      "correct": true
+    },
+    {
+      "id": "pat-009",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "42",
+      "reply": "42",
+      "correct": true
+    },
+    {
+      "id": "pat-010",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "21",
+      "reply": "21",
+      "correct": true
+    },
+    {
+      "id": "pat-011",
+      "category": "abstraction_pattern",
+      "match": "exact",
+      "gold": "T P Q R S",
+      "reply": "P Q R S T",
+      "correct": false
+    },
+    {
+      "id": "pat-012",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "25",
+      "reply": "25",
+      "correct": true
+    },
+    {
+      "id": "pat-013",
+      "category": "abstraction_pattern",
+      "match": "exact",
+      "gold": "j h g",
+      "reply": "j h g",
+      "correct": true
+    },
+    {
+      "id": "pat-014",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "22",
+      "reply": "23",
+      "correct": false
+    },
+    {
+      "id": "arith-008",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "120",
+      "reply": "240",
+      "correct": false
+    },
+    {
+      "id": "arith-009",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "15",
+      "reply": "15.00",
+      "correct": true
+    },
+    {
+      "id": "arith-010",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "21",
+      "reply": "21",
+      "correct": true
+    },
+    {
+      "id": "arith-011",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "60",
+      "reply": "$60",
+      "correct": true
+    },
+    {
+      "id": "arith-012",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "10",
+      "reply": "10",
+      "correct": true
+    },
+    {
+      "id": "arith-013",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "136",
+      "reply": "$18 \\times 7 + 10 = 126 + 10 = 136$\nThe total earnings are $136.",
+      "correct": false
+    },
+    {
+      "id": "arith-014",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "7",
+      "reply": "9.5",
+      "correct": false
+    },
+    {
+      "id": "logic-007",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "no",
+      "reply": "No.",
+      "correct": true
+    },
+    {
+      "id": "logic-008",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "Liam",
+      "reply": "Liam",
+      "correct": true
+    },
+    {
+      "id": "logic-009",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "no",
+      "reply": "No.",
+      "correct": true
+    },
+    {
+      "id": "logic-010",
+      "category": "logic_wordproblem",
+      "match": "numeric",
+      "gold": "7",
+      "reply": "7",
+      "correct": true
+    },
+    {
+      "id": "logic-011",
+      "category": "logic_wordproblem",
+      "match": "numeric",
+      "gold": "1",
+      "reply": "1",
+      "correct": true
+    },
+    {
+      "id": "logic-012",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "no",
+      "reply": "Yes.",
+      "correct": false
+    },
+    {
+      "id": "logic-013",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "Carl",
+      "reply": "Eve",
+      "correct": false
+    },
+    {
+      "id": "logic-014",
+      "category": "logic_wordproblem",
+      "match": "numeric",
+      "gold": "18",
+      "reply": "20",
+      "correct": false
+    },
+    {
+      "id": "analogy-007",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "empty",
+      "reply": "Empty",
+      "correct": true
+    },
+    {
+      "id": "analogy-008",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "hive",
+      "reply": "Hive",
+      "correct": true
+    },
+    {
+      "id": "analogy-009",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "foot",
+      "reply": "Foot",
+      "correct": true
+    },
+    {
+      "id": "analogy-010",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "hospital|clinic",
+      "reply": "Hospital",
+      "correct": true
+    },
+    {
+      "id": "analogy-011",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "slow",
+      "reply": "Slow",
+      "correct": true
+    },
+    {
+      "id": "analogy-012",
+      "category": "analogy",
+      "match": "numeric",
+      "gold": "49",
+      "reply": "49",
+      "correct": true
+    },
+    {
+      "id": "analogy-013",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "horse|mare",
+      "reply": "Horse",
+      "correct": true
+    },
+    {
+      "id": "ood-009",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "come",
+      "reply": "'mncd'",
+      "correct": false
+    },
+    {
+      "id": "ood-010",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "level",
+      "reply": "level",
+      "correct": true
+    },
+    {
+      "id": "ood-011",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "ka",
+      "reply": "ka",
+      "correct": true
+    },
+    {
+      "id": "ood-012",
+      "category": "out_of_domain",
+      "match": "numeric",
+      "gold": "13",
+      "reply": "13",
+      "correct": true
+    },
+    {
+      "id": "ood-013",
+      "category": "out_of_domain",
+      "match": "numeric",
+      "gold": "2",
+      "reply": "2",
+      "correct": true
+    },
+    {
+      "id": "ood-014",
+      "category": "out_of_domain",
+      "match": "exact",
+      "gold": "7 5 3 1",
+      "reply": "7 5 3 1",
+      "correct": true
+    },
+    {
+      "id": "ood-015",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "110",
+      "reply": "110",
       "correct": true
     }
   ]
