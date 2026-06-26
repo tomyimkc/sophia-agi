@@ -161,29 +161,105 @@ in the failure ledger, *not* suppressed. This is a valid outcome.
 
 ---
 
-## 6. Open questions for review (decide before any run)
+## 6. Open questions for review — ANSWERED (design-refinement pass)
 
-1. **Which proposer (A/B/C) for the first run?** Recommend (A) one-shot as the honest
-   floor — it is cheap, its result is interpretable, and its abstention behavior is the
-   designed fail-closed output.
-2. **LeanDojo dependency for (B)/(C)?** Tactic-state extraction needs LeanDojo or raw
-   `lake` interaction; that is a real engineering dependency to scope if we escalate
-   beyond (A).
-3. **miniF2F-v2 vs v1?** Recommend v2 per the Revisited paper, but we must pin the exact
-   commit/revision in the preregistration so the number is reproducible.
-4. **Licensing/attribution for miniF2F.** Confirm the license permits our use; mirror
-   the math/code curriculum's "style-sample until official licensed" honesty.
+> **Correction to §3 above.** The §3 framing assumed the proposer must be specified
+> *from scratch*. That is wrong. Repo inventory (done after the first draft) shows
+> **proposer B (tactic-search) is already built**: `agent/proof_search.py` (best-first
+> search + stateful `LeanProofSession`), `agent/tactic_proposer.py` (LLM + stub
+> proposers), `agent/lean_backend.py` (`verify_proof` + `novelty_check`), with
+> `tests/test_proof_search.py` exercising two regimes (fail-closed without Lean;
+> search logic with an injected applier). `requirements-theorem.txt` already declares
+> `lean-dojo>=4.0` as an optional extra and names this "Path B of Two-Paths-To-Novelty".
+> The proposer is **NOT greenfield**; what's missing is *exercising it against a real
+> held-out split* (and a CI lane that runs the real Lean path, currently a gap — see
+> Q1 below).
+
+### Q1. Which proposer (A/B/C) for the first run? → **B (tactic-search), with A as a baseline column**
+
+Revised recommendation, because B is already implemented:
+
+- **Primary: B** — `search_proof` with `LeanProofSession` + `make_llm_proposer`. This is
+  the proposer the field actually uses (ReProver/AlphaProof class) and it is the one
+  that makes the verifier flywheel meaningful (multi-step search with kernel-verified
+  reward at each node). It exists; running it is the work, not building it.
+- **Baseline column: A** — run the one-shot `agent/lean_verifier.check_proof` path on
+  the *same* split as a comparison column. A alone will abstain heavily (correct); the
+  A-vs-B delta is the *interesting* number because it isolates the value of search.
+- **Defer C** (self-repair) — it's a refinement on A, not a third independent arm.
+
+**The honest constraint on B:** `LeanProofSession.open()` calls LeanDojo's `LeanRepo`
++ `Dojo` with defensive try/except across versions. It has **never been exercised
+against a real LeanDojo install** — the tests stub the applier. So the first real run
+of B is partly a *LeanDojo-integration shakeout*, not just an eval. The preregistration
+must name the lean-dojo version and Lean toolchain version, and a first milestone is
+"B closes ≥1 miniF2F-valid problem end-to-end on a real LeanDojo session" (a plumbing
+proof, not a capability claim).
+
+**Coverage gap to close (independent of the eval):** the `lean-kernel.yml` CI lane
+exercises `lean_verifier` (one-shot) but **not** `proof_search` / `LeanProofSession`.
+Before the eval, extend that lane (or add a `lean-dojo-search` lane) so the
+stateful-search path stops being dead in CI — same lesson as the one-shot lane: the
+real path must run somewhere or it silently rots.
+
+### Q2. LeanDojo dependency for B? → **Already declared; integration is the unknown**
+
+- `lean-dojo>=4.0` is already in `requirements-theorem.txt` (opt-in, fail-closed).
+- The stateful `LeanProofSession` is written defensively (getattr-based across result-
+  type variants, try/except → abstain on any API mismatch).
+- **What's unverified:** the exact `lean-dojo` API the installed version exposes
+  (`Dojo`, `LeanRepo`, `run_tac`, `proof_state.ps`) — the code guesses across versions.
+  The first integration task is to pin a `lean-dojo` version, run `LeanProofSession`
+  on one real Mathlib lemma, and fix whatever API drift exists. This is hours-to-days,
+  not weeks, but it is *real* and must precede any eval number.
+
+### Q3. miniF2F-v2 vs v1, and which revision? → **v2, pinned to a facebookresearch/minif2f commit**
+
+- **v2** ([`github.com/facebookresearch/minif2f`](https://github.com/facebookresearch/minif2f)):
+  hundreds of theorems re-verified to match original informal statements; fixes the
+  correctness/contamination issues the [Revisited paper (arXiv 2511.03108)](https://arxiv.org/html/2511.03108v1)
+  documents. v1 numbers are not directly comparable.
+- **Pin the commit SHA** in `preregistration.json` so the split is reproducible; the
+  number is meaningless without it.
+- Use the **`test` (244) split as evidence**, `valid` (244) as the warmup/ablation only —
+  mirrors the existing "training oracle vs evidence oracle" rule.
+
+### Q4. Licensing/attribution for miniF2F? → **Permissive; our use is fine, with attribution**
+
+- Lean statements in miniF2F are **Apache-licensed**; Metamath portions MIT
+  ([openai/miniF2F README](https://github.com/openai/miniF2F/blob/main/README.md)).
+- Our use (eval, not redistribution-as-ours) is permitted; we **must** attribute the
+  source and pin the revision in every artifact that cites a number.
+- **Residual honesty:** miniF2F's public-ness means a model may have seen the proofs in
+  pretraining — the Revisited paper's whole point. We do not claim contamination-free;
+  we claim the *controls are documented and the residual risk is named*, exactly as the
+  math/code curriculum does. The clean-external path remains the (currently empty)
+  `agi-proof/third-party-heldout/` third-party-authored pack.
 
 ---
 
 ## 7. What gets built (only after this design is approved)
 
-- `agi-proof/formal-proofs-curriculum/preregistration.json` — the registered-before-run
-  manifest (proposer, split, seeds, thresholds), schema `sophia.preregistration.v1`.
-- `tools/seal_formal_proofs_heldout.py` — thin adaptation of `seal_math_code_heldout.py`.
-- `formal_proofs/eval/minif2f-v2-test.jsonl` (sealed, hash-manifest only) + the proposer
-  harness consuming the existing `close_loop_on_proofs` reward interface.
-- A `lint_claims`-gated, failure-ledger-accompanied result artifact — or, equally valid,
-  a null-result entry.
+**Phase 0 — plumbing proof (no eval, no claim):**
+- Pin a `lean-dojo` version in `requirements-theorem.txt`; run `LeanProofSession` on
+  one real Mathlib lemma end-to-end; fix any API drift. Exit criterion: the search
+  closes ≥1 real lemma on a real LeanDojo session (machinery proof only).
+- Extend `lean-kernel.yml` (or add a `lean-dojo-search` lane) so the stateful
+  `proof_search` / `LeanProofSession` path runs in CI, not just the one-shot verifier.
 
-None of the above is written until §6 is answered and this doc is approved.
+**Phase 1 — the held-out eval (the registered experiment):**
+- `agi-proof/formal-proofs-curriculum/preregistration.json` — registered-before-run
+  manifest: proposer = B (`search_proof` + `LeanProofSession`), baseline column = A
+  (`check_proof`), split = miniF2F-v2 `test` pinned to a facebookresearch/minif2f
+  commit SHA, seeds ≥3, thresholds, contamination controls. Schema
+  `sophia.preregistration.v1`.
+- `tools/seal_formal_proofs_heldout.py` — thin adaptation of `seal_math_code_heldout.py`
+  sealing the miniF2F-v2 `test` items to a hash manifest.
+- A proposer harness consuming the existing `search_proof` + `make_llm_proposer` (no new
+  proposer code) and the existing `close_loop_on_proofs` reward interface.
+- A `lint_claims`-gated, failure-ledger-accompanied result artifact reporting pass@1
+  (A and B columns) + abstention rate, with the null/abstention outcome pre-registered
+  as valid.
+
+None of the above is written until §6 answers are confirmed and this doc is approved.
+Phase 0 may proceed first (it produces no eval number, only a plumbing proof).

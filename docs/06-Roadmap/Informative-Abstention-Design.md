@@ -117,17 +117,50 @@ report file, the same way it already enforces no-overclaim copy.
 
 ---
 
-## 5. Open questions for review
+## 5. Open questions for review — ANSWERED (design-refinement pass)
 
-1. **Taxonomy granularity.** Is the 5-category set above the right resolution, or too
-   coarse/fine? Lean error traces are verbose; over-fitting the taxonomy to our
-   proposer's common errors risks bias.
-2. **LeanDojo for richer state.** A truly informative diagnosis wants the *proof state*
-   at failure (the goal + context), not just the error string — that needs LeanDojo or
-   `lake` interaction (the same dependency as proposer option B/C in the parent design).
-3. **Should the aggregate ever be a headline?** Recommend: no. It stays a *diagnostic
-   section* inside the held-out eval report, not a standalone number. Headline = pass
-   rate; abstention breakdown = supporting characterization.
+### Q1. Taxonomy granularity? → **5 categories is right; bias-control by construction**
+
+The 5-category set (`missing_lemma` / `type_mismatch` / `stuck_rewrite` /
+`search_budget` / `genuine_obstruction`) is the right resolution for a *first* report.
+Two controls keep it honest:
+
+- **A `unknown` / `unclassified` bucket is mandatory.** Anything the classifier can't
+  map confidently lands there, not force-fit into a category. The aggregate reports the
+  `unknown` fraction explicitly — a high `unknown` fraction is itself a finding (the
+  taxonomy is too coarse) and is published, not hidden.
+- **The classifier is rule-based (regex over the kernel error string), deterministic,
+  unit-tested against fixed error-trace fixtures** — no model judges the category, so
+  there's no "the model relabeled its own failures to look good" attack surface. A
+  human can re-bucket any case from the committed raw trace; the rules + fixtures make
+  re-bucketing auditable.
+- **Bias risk is real but bounded:** the rules will reflect *this proposer's* common
+  errors initially. We acknowledge that in the report ("categories reflect failure
+  modes of proposer B at this budget; not a universal taxonomy of proof difficulty").
+
+### Q2. LeanDojo for richer state? → **Dependency already declared; richer state is a Phase-2 upgrade**
+
+Revised: `lean-dojo>=4.0` is **already** in `requirements-theorem.txt`, and
+`agent/proof_search.LeanProofSession` already threads LeanDojo `proof_state` objects
+(see parent design §6 correction). So:
+
+- **Phase 1 diagnosis uses the kernel *error string*** (cheap, always available, from
+  `lean_backend.verify_proof`). This gives the 5-category taxonomy above.
+- **Phase 2 upgrade uses the *proof state at failure*** (goal + context), which
+  `LeanProofSession` already captures per-node. This enables a richer diagnosis
+  ("the search reached *this* subgoal and proposed no tactic that closed it") — but it
+  is an *upgrade*, gated behind the held-out eval existing, not a prerequisite.
+
+The richer-state path is therefore not "needs a new LeanDojo integration" — the
+integration exists. It's "needs the eval to exist so the per-node states have somewhere
+to be recorded."
+
+### Q3. Should the aggregate ever be a headline? → **No. Confirmed.**
+
+Stays a *diagnostic section* inside the held-out eval report. Headline = pass@1 (A and
+B columns); abstention breakdown = supporting characterization with its `unknown`
+fraction named. No abstention number is quoted standalone in any README, RESULTS.md,
+or PR title — `lint_claims` enforces this.
 
 ---
 
