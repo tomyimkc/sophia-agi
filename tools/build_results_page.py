@@ -261,6 +261,30 @@ def render(doc: dict) -> str:
             ]
         L += [f"- ⚠ {cg.get('note', '')}", ""]
 
+    systems = doc.get("systemsBenchmarks") or []
+    if systems:
+        L += [
+            "## Systems benchmarks (performance — candidate, host-dependent)",
+            "",
+            "Throughput/latency micro-benchmarks for the systems components. These are "
+            "**candidate** engineering numbers (single host, vary by machine), not "
+            "no-overclaim accuracy results — reproduce with the command in each note.",
+            "",
+        ]
+        for s in systems:
+            L += [f"### {s.get('name')} (`{s.get('component')}`)", "", s.get("description", ""), ""]
+            if s.get("config"):
+                L += [f"_Representative run — {s['config']}:_", ""]
+            cols, rows = s.get("columns") or [], s.get("rows") or []
+            if cols and rows:
+                L.append("| " + " | ".join(cols) + " |")
+                L.append("|" + "|".join(["---"] * len(cols)) + "|")
+                for r in rows:
+                    L.append("| " + " | ".join(str(c) for c in r) + " |")
+                L.append("")
+            if s.get("note"):
+                L += [f"- {s['note']}", ""]
+
     L += [
         "## Reproduce",
         "",
