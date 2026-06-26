@@ -161,6 +161,23 @@ def restart_pod(api_key: str, pod_id: str) -> "dict[str, Any]":
     return {"id": pod_id, "restarted": True, "steps": steps}
 
 
+def reap_exited(api_key: str, *, do_delete: bool = False) -> "dict[str, Any]":
+    """Find leaked EXITED/stopped pods and (optionally) terminate them.
+
+    The launcher deletes its pod on exit, but a killed orchestrator + a watchdog
+    that didn't fire leaves pods in EXITED state, billing disk forever. This reaps
+    them. ``do_delete=False`` only previews (safe default).
+    """
+
+    verdicts = [classify_pod(p) for p in _list_pods(api_key)]
+    leaked = [v for v in verdicts if v["verdict"] == "stopped"]
+    actions: "list[dict[str, Any]]" = []
+    if do_delete:
+        actions = [terminate_pod(api_key, v["id"]) for v in leaked]
+    return {"connected": True, "leaked_count": len(leaked), "leaked": leaked,
+            "deleted": do_delete, "actions": actions}
+
+
 def check(api_key: str, *, restart_stalled: bool = False) -> "dict[str, Any]":
     """List pods, classify each, optionally restart stalled ones."""
 
@@ -211,8 +228,10 @@ def main(argv: "list[str] | None" = None) -> int:
                         help="Terminate (delete) an idle/unused pod by id to save cost. "
                              "Requires --yes. REST cannot prove idleness (no GPU-util "
                              "telemetry); the pod's status is printed before deletion.")
+    parser.add_argument("--reap-exited", action="store_true",
+                        help="Find leaked EXITED/stopped pods; with --yes, terminate them")
     parser.add_argument("--yes", action="store_true",
-                        help="Confirm a destructive action (--terminate)")
+                        help="Confirm a destructive action (--terminate / --reap-exited)")
     parser.add_argument("--api-key", default=None,
                         help="Explicit key (prefer RUNPOD_API_KEY env; never commit one)")
     parser.add_argument("--json", action="store_true", help="Machine-readable output")
@@ -277,6 +296,21 @@ def main(argv: "list[str] | None" = None) -> int:
               f"[runpod] terminate {result['id']}: "
               f"{'OK' if result['terminated'] else 'FAILED'} — {result['detail']}")
         return 0 if result["terminated"] else 1
+
+    if args.reap_exited:
+        result = reap_exited(key, do_delete=args.yes)
+        if args.json:
+            print(json.dumps(result, indent=2))
+        else:
+            verb = "reaped" if args.yes else "found (preview; pass --yes to delete)"
+            print(f"[runpod] {result['leaked_count']} leaked EXITED pod(s) {verb}")
+            for v in result["leaked"]:
+                print(f"  - {v['name']} ({v['id']}): {v['reason']}")
+            for a in result["actions"]:
+                state = "deleted" if a["terminated"] else "DELETE FAILED"
+                print(f"  → {a['id']}: {state} — {a['detail']}")
+        # Non-zero when leaks exist but we were only previewing, so callers notice.
+        return 0 if (args.yes or not result["leaked_count"]) else 3
 
     if not args.check:
         msg = f"[runpod] key resolved from {source}; pass --check to query pods."

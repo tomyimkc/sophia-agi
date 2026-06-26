@@ -129,11 +129,20 @@ def _startup_cmd(auto_exit_seconds: int) -> list[str]:
 set -Eeuo pipefail
 cleanup() {{
   code=$?
-  if [ "${{SOPHIA_REMOTE_DELETE_WATCHDOG:-0}}" = "1" ] && [ -n "${{RUNPOD_API_KEY:-}}" ] && [ -n "${{RUNPOD_POD_ID:-}}" ]; then
-    echo "Sophia watchdog deleting RunPod Pod $RUNPOD_POD_ID after startup command exit."
-    curl -fsS --request DELETE \\
-      --url "https://rest.runpod.io/v1/pods/${{RUNPOD_POD_ID}}" \\
-      --header "Authorization: Bearer $RUNPOD_API_KEY" || true
+  # Derive our own pod id robustly: prefer RunPod's injected RUNPOD_POD_ID, but
+  # fall back to the container hostname (RunPod sets it to the pod id). Relying on
+  # RUNPOD_POD_ID alone silently leaked EXITED pods when it was absent.
+  POD_ID="${{RUNPOD_POD_ID:-$(hostname)}}"
+  if [ "${{SOPHIA_REMOTE_DELETE_WATCHDOG:-0}}" = "1" ] && [ -n "${{RUNPOD_API_KEY:-}}" ] && [ -n "$POD_ID" ]; then
+    echo "Sophia watchdog deleting RunPod Pod $POD_ID after startup command exit (code $code)."
+    if ! curl -fsS --request DELETE \\
+      --url "https://rest.runpod.io/v1/pods/${{POD_ID}}" \\
+      --header "Authorization: Bearer $RUNPOD_API_KEY"; then
+      # Non-fatal, but never silent: a swallowed failure here is exactly how pods leak.
+      echo "[sophia-watchdog] WARNING: failed to delete pod $POD_ID; it may linger and bill — reap it with tools/runpod_connect.py --reap-exited" >&2
+    fi
+  else
+    echo "[sophia-watchdog] WARNING: watchdog not armed (watchdog=${{SOPHIA_REMOTE_DELETE_WATCHDOG:-0}}, key=$([ -n "${{RUNPOD_API_KEY:-}}" ] && echo set || echo unset), pod_id=$([ -n "$POD_ID" ] && echo "$POD_ID" || echo empty)); pod will NOT self-delete." >&2
   fi
   exit "$code"
 }}

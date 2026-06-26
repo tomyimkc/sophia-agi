@@ -16,7 +16,7 @@ on:
         required: false
         default: 'check'
         type: choice
-        options: ['check', 'restart-stalled', 'terminate']
+        options: ['check', 'restart-stalled', 'terminate', 'reap-exited']
       pod_id:
         description: 'Pod id to inspect/terminate (required for action=terminate)'
         required: false
@@ -72,6 +72,10 @@ jobs:
             echo "Pod status before termination:"
             python tools/runpod_connect.py --pod "$POD_ID" || true
             python tools/runpod_connect.py --terminate "$POD_ID" --yes --json | tee runpod-connect.json
+          elif [ "$ACTION" = "reap-exited" ]; then
+            # Delete leaked EXITED pods to stop residual disk billing.
+            python tools/runpod_connect.py --reap-exited --yes --json | tee runpod-connect.json
+            python tools/runpod_connect.py --reap-exited --yes || true
           else
             EXTRA=""
             if [ "$ACTION" = "restart-stalled" ]; then EXTRA="--restart-stalled"; fi

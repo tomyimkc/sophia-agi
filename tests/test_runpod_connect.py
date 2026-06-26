@@ -17,9 +17,15 @@ if str(ROOT) not in sys.path:
 
 import tools.runpod_connect as rc  # noqa: E402
 from tools.runpod_connect import (  # noqa: E402
-    DISPATCH_WORKFLOW, RunPodError, classify_pod, main, resolve_api_key,
-    terminate_pod,
+    DISPATCH_WORKFLOW, RunPodError, classify_pod, main, reap_exited,
+    resolve_api_key, terminate_pod,
 )
+
+_LEAKED_FLEET = [
+    {"id": "exit1", "name": "sophia-rlvr-20260626-111704", "desiredStatus": "EXITED"},
+    {"id": "run1", "name": "live", "desiredStatus": "RUNNING",
+     "runtime": {"uptimeInSeconds": 50}},
+]
 
 
 # --- key resolution -------------------------------------------------------
@@ -152,6 +158,38 @@ def test_cli_terminate_with_yes_deletes(monkeypatch, capsys) -> None:
     out = capsys.readouterr().out
     assert rc_code == 0
     assert '"terminated": true' in out
+
+
+# --- reaper (leaked EXITED-pod cleanup) ------------------------------------
+
+def test_reap_preview_does_not_delete(monkeypatch) -> None:
+    monkeypatch.setattr(rc, "_list_pods", lambda k: list(_LEAKED_FLEET))
+    deleted = []
+    monkeypatch.setattr(rc, "terminate_pod", lambda k, pid: deleted.append(pid))
+    res = reap_exited("rpa_x", do_delete=False)
+    assert res["leaked_count"] == 1
+    assert res["leaked"][0]["id"] == "exit1"  # only the EXITED pod, not the running one
+    assert deleted == []  # preview never deletes
+
+
+def test_reap_with_delete_terminates_only_exited(monkeypatch) -> None:
+    monkeypatch.setattr(rc, "_list_pods", lambda k: list(_LEAKED_FLEET))
+    deleted = []
+    monkeypatch.setattr(rc, "terminate_pod",
+                        lambda k, pid: deleted.append(pid) or {"id": pid, "terminated": True,
+                                                               "detail": "deleted"})
+    res = reap_exited("rpa_x", do_delete=True)
+    assert deleted == ["exit1"]  # the running pod is left alone
+    assert res["actions"][0]["terminated"] is True
+
+
+def test_cli_reap_preview_exit_code_3(monkeypatch, capsys) -> None:
+    monkeypatch.setenv("RUNPOD_API_KEY", "rpa_present")
+    monkeypatch.setattr(rc, "_list_pods", lambda k: list(_LEAKED_FLEET))
+    rc_code = main(["--reap-exited", "--json"])
+    out = capsys.readouterr().out
+    assert rc_code == 3  # leaks exist, preview-only → non-zero so callers notice
+    assert '"leaked_count": 1' in out
 
 
 if __name__ == "__main__":  # allow running without pytest installed

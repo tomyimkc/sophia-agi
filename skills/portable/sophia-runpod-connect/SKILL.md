@@ -33,6 +33,7 @@ Need RunPod?
 │   │        • python tools/runpod_connect.py --check --restart-stalled
 │   │        • python tools/runpod_connect.py --pod <ID>      # inspect one pod
 │   │        • python tools/runpod_connect.py --terminate <ID> --yes  # delete idle pod (saves $)
+│   │        • python tools/runpod_connect.py --reap-exited [--yes]    # clean up leaked EXITED pods
 │   │        • python tools/runpod_rlvr.py / runpod_train.py # launch a real run
 │   │
 │   └─ NO  → GITHUB-MEDIATED route (the fallback that always works)
@@ -73,6 +74,23 @@ see those. Fail-closed: unknown ≠ healthy.
   git-crypt unlocked would leak it. This skill lives in `skills/portable/` on
   purpose (no secrets in it).
 - **Never** treat "unknown" pod state as healthy.
+
+## Leaked / lingering EXITED pods (a real failure mode)
+
+A pod that shows up as **EXITED** but never disappears is a *leak*, not a respawn:
+the launcher (`tools/runpod_rlvr.py`) deletes its pod in a `finally`, and the
+in-pod watchdog deletes on container exit — but if the orchestrator is killed
+(CI cancel / SIGKILL) **and** the watchdog doesn't fire, the pod exits and is
+never reaped. It then bills disk indefinitely and "keeps popping up". Reap it:
+
+```
+python tools/runpod_connect.py --reap-exited          # preview (exit 3 if any)
+python tools/runpod_connect.py --reap-exited --yes     # delete them
+# or GitHub-mediated:  gh workflow run runpod-connect.yml -f action=reap-exited
+```
+
+The watchdog itself was hardened to derive its pod id from `RUNPOD_POD_ID` *or*
+the hostname, and to log (never silently swallow) a failed self-delete.
 
 ## Files
 
