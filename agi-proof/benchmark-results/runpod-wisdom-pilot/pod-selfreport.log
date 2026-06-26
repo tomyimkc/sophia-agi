@@ -1,5 +1,5 @@
-[pod] M3 pilot self-report job starting Fri Jun 26 17:47:15 UTC 2026
-Fri Jun 26 17:47:57 2026       
+[pod] M3 pilot self-report job starting Fri Jun 26 19:13:26 UTC 2026
+Fri Jun 26 19:13:30 2026       
 +-----------------------------------------------------------------------------------------+
 | NVIDIA-SMI 580.126.09             Driver Version: 580.126.09     CUDA Version: 13.0     |
 +-----------------------------------------+------------------------+----------------------+
@@ -7,8 +7,8 @@ Fri Jun 26 17:47:57 2026
 | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
-|   0  NVIDIA H100 80GB HBM3          On  |   00000000:9B:00.0 Off |                    0 |
-| N/A   35C    P0             72W /  700W |       0MiB /  81559MiB |      0%      Default |
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:9A:00.0 Off |                    0 |
+| N/A   28C    P0             70W /  700W |       0MiB /  81559MiB |      0%      Default |
 |                                         |                        |             Disabled |
 +-----------------------------------------+------------------------+----------------------+
 
@@ -20,6 +20,7 @@ Fri Jun 26 17:47:57 2026
 |  No running processes found                                                             |
 +-----------------------------------------------------------------------------------------+
 Cloning into 'sophia-agi'...
+Updating files:   7% (149/1997)Updating files:   8% (160/1997)Updating files:   9% (180/1997)Updating files:  10% (200/1997)Updating files:  11% (220/1997)Updating files:  12% (240/1997)Updating files:  13% (260/1997)Updating files:  14% (280/1997)Updating files:  15% (300/1997)Updating files:  15% (302/1997)Updating files:  16% (320/1997)Updating files:  17% (340/1997)Updating files:  18% (360/1997)Updating files:  19% (380/1997)Updating files:  20% (400/1997)Updating files:  20% (403/1997)Updating files:  21% (420/1997)Updating files:  22% (440/1997)Updating files:  23% (460/1997)Updating files:  24% (480/1997)Updating files:  25% (500/1997)Updating files:  26% (520/1997)Updating files:  27% (540/1997)Updating files:  27% (542/1997)Updating files:  28% (560/1997)Updating files:  29% (580/1997)Updating files:  30% (600/1997)Updating files:  31% (620/1997)Updating files:  32% (640/1997)Updating files:  33% (660/1997)Updating files:  33% (672/1997)Updating files:  34% (679/1997)Updating files:  35% (699/1997)Updating files:  36% (719/1997)Updating files:  37% (739/1997)Updating files:  38% (759/1997)Updating files:  39% (779/1997)Updating files:  39% (792/1997)Updating files:  40% (799/1997)Updating files:  41% (819/1997)Updating files:  42% (839/1997)Updating files:  43% (859/1997)Updating files:  44% (879/1997)Updating files:  45% (899/1997)Updating files:  45% (913/1997)Updating files:  46% (919/1997)Updating files:  47% (939/1997)Updating files:  48% (959/1997)Updating files:  49% (979/1997)Updating files:  50% (999/1997)Updating files:  51% (1019/1997)Updating files:  52% (1039/1997)Updating files:  52% (1045/1997)Updating files:  53% (1059/1997)Updating files:  54% (1079/1997)Updating files:  55% (1099/1997)Updating files:  56% (1119/1997)Updating files:  57% (1139/1997)Updating files:  58% (1159/1997)Updating files:  59% (1179/1997)Updating files:  59% (1184/1997)Updating files:  60% (1199/1997)Updating files:  61% (1219/1997)Updating files:  62% (1239/1997)Updating files:  63% (1259/1997)Updating files:  64% (1279/1997)Updating files:  65% (1299/1997)Updating files:  66% (1319/1997)Updating files:  67% (1338/1997)Updating files:  68% (1358/1997)Updating files:  69% (1378/1997)Updating files:  70% (1398/1997)Updating files:  71% (1418/1997)Updating files:  72% (1438/1997)Updating files:  72% (1455/1997)Updating files:  73% (1458/1997)Updating files:  74% (1478/1997)Updating files:  75% (1498/1997)Updating files:  76% (1518/1997)Updating files:  77% (1538/1997)Updating files:  78% (1558/1997)Updating files:  79% (1578/1997)Updating files:  79% (1595/1997)Updating files:  80% (1598/1997)Updating files:  81% (1618/1997)Updating files:  82% (1638/1997)Updating files:  83% (1658/1997)Updating files:  84% (1678/1997)Updating files:  85% (1698/1997)Updating files:  86% (1718/1997)Updating files:  86% (1737/1997)Updating files:  87% (1738/1997)Updating files:  88% (1758/1997)Updating files:  89% (1778/1997)Updating files:  90% (1798/1997)Updating files:  91% (1818/1997)Updating files:  92% (1838/1997)Updating files:  93% (1858/1997)Updating files:  94% (1878/1997)Updating files:  94% (1879/1997)Updating files:  95% (1898/1997)Updating files:  96% (1918/1997)Updating files:  97% (1938/1997)Updating files:  98% (1958/1997)Updating files:  99% (1978/1997)Updating files: 100% (1997/1997)Updating files: 100% (1997/1997), done.
 [pod] HEARTBEAT PUSH OK — delivery channel works
 [pod] ENV PROBE PUSH OK
 [pod] deps pre-baked — skipping pip (no long install to die during)
@@ -100,220 +101,129 @@ Cloning into 'sophia-agi'...
 
 WROTE training/local_sophia_v3: 880 gate-passed rows, 233 preference pairs, 90 decontam drops.
 847 training/local_sophia_v3/mlx/train.jsonl
-[pod] SMOKE (orpo)
-[pilot 17:48:22] SMOKE: ORPO 2 steps then eval 2 cases x1 run
+[pod] SMOKE (orpo_sft)
+[pilot 19:14:41] SMOKE: SFT (2 steps) -> merge -> ORPO (2 steps) -> eval 2 cases x1 run
+[pilot 19:14:44] [on-sft] step 1/3: SFT LoRA (M3 recipe)
 `torch_dtype` is deprecated! Use `dtype` instead!
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.25it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.51it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.47it/s]
-[pilot 17:48:44] loaded base via AutoModelForImageTextToText
-[pilot 17:48:44] ORPO preference rows: 8
-Map:   0%|          | 0/8 [00:00<?, ? examples/s]Map: 100%|██████████| 8/8 [00:00<00:00, 2665.38 examples/s]
-Map:   0%|          | 0/8 [00:00<?, ? examples/s]Map: 100%|██████████| 8/8 [00:00<00:00, 3531.30 examples/s]
-Map:   0%|          | 0/8 [00:00<?, ? examples/s]Map: 100%|██████████| 8/8 [00:00<00:00, 205.30 examples/s]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.19s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.00it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.02s/it]
+[pilot 19:15:26] loaded base via AutoModelForImageTextToText
+[pilot 19:15:29] trainable params: 29,802,496
+[pilot 19:15:29] training rows: 8
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+[pilot 19:15:30] step 1/2 loss=4.0761
+[pilot 19:15:30] step 2/2 loss=3.3793
+[pilot 19:15:31] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 19:15:31] [on-sft] step 2/3: load base + merge SFT adapter
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.12s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.06it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.03it/s]
+[pilot 19:15:35] loaded base via AutoModelForImageTextToText
+[pilot 19:15:38] [on-sft] step 3/3: ORPO LoRA on the SFT-merged base
+[pilot 19:15:39] ORPO preference rows: 8
+Map:   0%|          | 0/8 [00:00<?, ? examples/s]Map: 100%|██████████| 8/8 [00:00<00:00, 3322.88 examples/s]
+Map:   0%|          | 0/8 [00:00<?, ? examples/s]Map: 100%|██████████| 8/8 [00:00<00:00, 3293.85 examples/s]
+Map:   0%|          | 0/8 [00:00<?, ? examples/s]Map: 100%|██████████| 8/8 [00:00<00:00, 228.59 examples/s]
 The model is already on multiple devices. Skipping the move to device specified in `args`.
 The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'eos_token_id': 1, 'bos_token_id': 2, 'pad_token_id': 0}.
-  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:01<00:01,  1.73s/it]100%|██████████| 2/2 [00:02<00:00,  1.43s/it]                                             {'train_runtime': 2.9519, 'train_samples_per_second': 2.71, 'train_steps_per_second': 0.678, 'train_loss': 5.297006130218506, 'epoch': 1.0}
-100%|██████████| 2/2 [00:02<00:00,  1.43s/it]100%|██████████| 2/2 [00:02<00:00,  1.47s/it]
-[pilot 17:48:52] saved ORPO adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-orpo
-[pilot 17:48:52] eval cases: 2 x 1 runs x (base, adapter)
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.26it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.52it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.47it/s]
-[pilot 17:48:56] loaded base via AutoModelForImageTextToText
-[pilot 17:49:11]   gen 2/2
-[pilot 17:49:26]   gen 2/2
-[pilot 17:49:27]   run 1/1 done
-[pilot 17:49:27] loading adapter onto base ...
-[pilot 17:49:55]   gen 2/2
-[pilot 17:50:20]   gen 2/2
-[pilot 17:50:21]   run 1/1 done
-[pilot 17:50:21] wrote eval report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M4-orpo-smoke.json
-[pilot 17:50:21] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
-[pilot 17:50:21]   tradition_merge_rate               Δ None ci=[None, None]  
-[pilot 17:50:21]   qualification_rate_on_contested    Δ -0.5 ci=[-0.5, -0.5]  
-[pilot 17:50:21]   false_attribution_rate             Δ None ci=[None, None]  
-[pilot 17:50:21]   citation_fidelity                  Δ None ci=[None, None]  
-[pilot 17:50:21]   adapter protected_history_regression       None
-[pilot 17:50:21]   adapter protected_religion_regression      None
-[pilot 17:50:21]   adapter over_abstention_rate               0.0
-[pilot 17:50:21] PRIMARY habit-transfer signal present: False
-[pilot 17:50:21] SMOKE OK
-[pod] FULL orpo train + eval (--runs 3) seed=0
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:01<00:01,  1.23s/it]100%|██████████| 2/2 [00:02<00:00,  1.17s/it]                                             {'train_runtime': 2.3627, 'train_samples_per_second': 3.386, 'train_steps_per_second': 0.846, 'train_loss': 4.882635116577148, 'epoch': 1.0}
+100%|██████████| 2/2 [00:02<00:00,  1.17s/it]100%|██████████| 2/2 [00:02<00:00,  1.18s/it]
+[pilot 19:15:46] saved ORPO adapter (on-SFT) -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-orpo
+[pilot 19:15:46] eval cases: 2 x 1 runs x (base, sft+orpo stack)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.13s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.05it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.02it/s]
+[pilot 19:15:50] loaded base via AutoModelForImageTextToText
+[pilot 19:16:01]   gen 2/2
+[pilot 19:16:13]   gen 2/2
+[pilot 19:16:14]   run 1/1 done
+[pilot 19:16:14] building SFT-merged + ORPO stack ...
+[pilot 19:16:37]   gen 2/2
+[pilot 19:16:56]   gen 2/2
+[pilot 19:16:57]   run 1/1 done
+[pilot 19:16:57] wrote eval report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M4-orpo-sft-smoke.json
+[pilot 19:16:57] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
+[pilot 19:16:57]   tradition_merge_rate               Δ None ci=[None, None]  
+[pilot 19:16:57]   qualification_rate_on_contested    Δ 0.0 ci=[0.0, 0.0]  
+[pilot 19:16:57]   false_attribution_rate             Δ None ci=[None, None]  
+[pilot 19:16:57]   citation_fidelity                  Δ None ci=[None, None]  
+[pilot 19:16:57]   adapter protected_history_regression       None
+[pilot 19:16:57]   adapter protected_religion_regression      None
+[pilot 19:16:57]   adapter over_abstention_rate               0.0
+[pilot 19:16:57] PRIMARY habit-transfer signal present: False
+[pilot 19:16:57] SMOKE OK
+[pod] FULL orpo_sft train + eval (--runs 1 --limit 24) seed=0
+[pilot 19:17:01] [on-sft] step 1/3: SFT LoRA (M3 recipe)
 `torch_dtype` is deprecated! Use `dtype` instead!
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.25it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.51it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.47it/s]
-[pilot 17:50:31] loaded base via AutoModelForImageTextToText
-[pilot 17:50:31] ORPO preference rows: 233
-Map:   0%|          | 0/233 [00:00<?, ? examples/s]Map: 100%|██████████| 233/233 [00:00<00:00, 18931.32 examples/s]
-Map:   0%|          | 0/233 [00:00<?, ? examples/s]Map: 100%|██████████| 233/233 [00:00<00:00, 17612.96 examples/s]
-Map:   0%|          | 0/233 [00:00<?, ? examples/s]Map:  13%|█▎        | 31/233 [00:00<00:00, 305.64 examples/s]Map:  27%|██▋       | 62/233 [00:00<00:00, 304.61 examples/s]Map:  40%|████      | 94/233 [00:00<00:00, 305.89 examples/s]Map:  54%|█████▍    | 126/233 [00:00<00:00, 305.11 examples/s]Map:  73%|███████▎  | 171/233 [00:00<00:00, 299.00 examples/s]Map:  93%|█████████▎| 216/233 [00:00<00:00, 293.72 examples/s]Map: 100%|██████████| 233/233 [00:00<00:00, 242.67 examples/s]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.12s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.07it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.04it/s]
+[pilot 19:17:06] loaded base via AutoModelForImageTextToText
+[pilot 19:17:08] trainable params: 29,802,496
+[pilot 19:17:08] training rows: 847
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+[pilot 19:17:14] step 25/847 loss=2.6803
+[pilot 19:17:19] step 50/847 loss=2.6017
+[pilot 19:17:25] step 75/847 loss=0.3458
+[pilot 19:17:30] step 100/847 loss=0.6240
+[pilot 19:17:35] step 125/847 loss=1.4255
+[pilot 19:17:40] step 150/847 loss=0.2495
+[pilot 19:17:45] step 175/847 loss=0.4906
+[pilot 19:17:50] step 200/847 loss=0.0923
+[pilot 19:17:55] step 225/847 loss=0.0122
+[pilot 19:18:00] step 250/847 loss=0.8148
+[pilot 19:18:05] step 275/847 loss=2.1428
+[pilot 19:18:10] step 300/847 loss=1.9263
+[pilot 19:18:15] step 325/847 loss=1.7356
+[pilot 19:18:21] step 350/847 loss=0.0103
+[pilot 19:18:26] step 375/847 loss=1.2896
+[pilot 19:18:31] step 400/847 loss=1.3513
+[pilot 19:18:36] step 425/847 loss=1.4316
+[pilot 19:18:41] step 450/847 loss=0.1346
+[pilot 19:18:46] step 475/847 loss=0.8215
+[pilot 19:18:51] step 500/847 loss=0.1556
+[pilot 19:18:56] step 525/847 loss=1.4038
+[pilot 19:19:01] step 550/847 loss=0.0032
+[pilot 19:19:06] step 575/847 loss=2.0103
+[pilot 19:19:11] step 600/847 loss=0.0409
+[pilot 19:19:16] step 625/847 loss=1.7563
+[pilot 19:19:21] step 650/847 loss=0.0029
+[pilot 19:19:26] step 675/847 loss=1.0188
+[pilot 19:19:31] step 700/847 loss=0.0016
+[pilot 19:19:36] step 725/847 loss=1.2724
+[pilot 19:19:41] step 750/847 loss=0.0498
+[pilot 19:19:46] step 775/847 loss=0.5885
+[pilot 19:19:51] step 800/847 loss=0.0044
+[pilot 19:19:57] step 825/847 loss=2.0019
+[pilot 19:20:02] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 19:20:02] [on-sft] step 2/3: load base + merge SFT adapter
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.10s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.09it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.06it/s]
+[pilot 19:20:06] loaded base via AutoModelForImageTextToText
+[pilot 19:20:09] [on-sft] step 3/3: ORPO LoRA on the SFT-merged base
+[pilot 19:20:09] ORPO preference rows: 233
+Map:   0%|          | 0/233 [00:00<?, ? examples/s]Map: 100%|██████████| 233/233 [00:00<00:00, 21745.20 examples/s]
+Map:   0%|          | 0/233 [00:00<?, ? examples/s]Map: 100%|██████████| 233/233 [00:00<00:00, 30087.52 examples/s]
+Map:   0%|          | 0/233 [00:00<?, ? examples/s]Map:  16%|█▌        | 37/233 [00:00<00:00, 359.08 examples/s]Map:  32%|███▏      | 74/233 [00:00<00:00, 361.51 examples/s]Map:  48%|████▊     | 112/233 [00:00<00:00, 365.95 examples/s]Map:  64%|██████▍   | 149/233 [00:00<00:00, 366.00 examples/s]Map:  80%|████████  | 187/233 [00:00<00:00, 366.86 examples/s]Map:  96%|█████████▌| 224/233 [00:00<00:00, 365.09 examples/s]Map: 100%|██████████| 233/233 [00:00<00:00, 301.09 examples/s]
 The model is already on multiple devices. Skipping the move to device specified in `args`.
 The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'eos_token_id': 1, 'bos_token_id': 2, 'pad_token_id': 0}.
-  0%|          | 0/59 [00:00<?, ?it/s]  2%|▏         | 1/59 [00:01<01:43,  1.78s/it]  3%|▎         | 2/59 [00:03<01:23,  1.46s/it]  5%|▌         | 3/59 [00:04<01:18,  1.40s/it]  7%|▋         | 4/59 [00:05<01:13,  1.34s/it]  8%|▊         | 5/59 [00:06<01:10,  1.31s/it] 10%|█         | 6/59 [00:08<01:08,  1.29s/it] 12%|█▏        | 7/59 [00:09<01:07,  1.29s/it] 14%|█▎        | 8/59 [00:10<01:04,  1.26s/it] 15%|█▌        | 9/59 [00:11<01:02,  1.25s/it] 17%|█▋        | 10/59 [00:13<01:00,  1.23s/it] 19%|█▊        | 11/59 [00:14<00:58,  1.21s/it] 20%|██        | 12/59 [00:15<00:56,  1.21s/it] 22%|██▏       | 13/59 [00:16<00:55,  1.21s/it] 24%|██▎       | 14/59 [00:17<00:55,  1.22s/it] 25%|██▌       | 15/59 [00:19<00:54,  1.23s/it] 27%|██▋       | 16/59 [00:20<00:52,  1.22s/it] 29%|██▉       | 17/59 [00:21<00:50,  1.21s/it] 31%|███       | 18/59 [00:22<00:49,  1.20s/it] 32%|███▏      | 19/59 [00:23<00:47,  1.19s/it] 34%|███▍      | 20/59 [00:25<00:46,  1.19s/it] 36%|███▌      | 21/59 [00:26<00:45,  1.19s/it] 37%|███▋      | 22/59 [00:27<00:43,  1.18s/it] 39%|███▉      | 23/59 [00:28<00:42,  1.19s/it] 41%|████      | 24/59 [00:29<00:41,  1.18s/it] 42%|████▏     | 25/59 [00:30<00:40,  1.18s/it]                                               {'loss': 4.9084, 'grad_norm': 7.35640811920166, 'learning_rate': 2.9661016949152545e-06, 'rewards/chosen': -0.4212050139904022, 'rewards/rejected': -0.6512503027915955, 'rewards/accuracies': 1.0, 'rewards/margins': 0.23004531860351562, 'logps/rejected': -6.512503147125244, 'logps/chosen': -4.212049961090088, 'logits/rejected': -5.770730972290039, 'logits/chosen': -4.969223976135254, 'nll_loss': 4.897939682006836, 'log_odds_ratio': -0.10495185852050781, 'log_odds_chosen': 2.314754009246826, 'epoch': 0.43}
- 42%|████▏     | 25/59 [00:30<00:40,  1.18s/it] 44%|████▍     | 26/59 [00:32<00:38,  1.18s/it] 46%|████▌     | 27/59 [00:33<00:37,  1.18s/it] 47%|████▋     | 28/59 [00:34<00:36,  1.18s/it] 49%|████▉     | 29/59 [00:35<00:35,  1.19s/it] 51%|█████     | 30/59 [00:36<00:34,  1.18s/it] 53%|█████▎    | 31/59 [00:37<00:33,  1.18s/it] 54%|█████▍    | 32/59 [00:39<00:32,  1.19s/it] 56%|█████▌    | 33/59 [00:40<00:30,  1.19s/it] 58%|█████▊    | 34/59 [00:41<00:29,  1.19s/it] 59%|█████▉    | 35/59 [00:42<00:28,  1.19s/it] 61%|██████    | 36/59 [00:43<00:27,  1.20s/it] 63%|██████▎   | 37/59 [00:45<00:26,  1.19s/it] 64%|██████▍   | 38/59 [00:46<00:25,  1.19s/it] 66%|██████▌   | 39/59 [00:47<00:23,  1.19s/it] 68%|██████▊   | 40/59 [00:48<00:23,  1.22s/it] 69%|██████▉   | 41/59 [00:50<00:21,  1.22s/it] 71%|███████   | 42/59 [00:51<00:20,  1.21s/it] 73%|███████▎  | 43/59 [00:52<00:19,  1.20s/it] 75%|███████▍  | 44/59 [00:53<00:17,  1.19s/it] 76%|███████▋  | 45/59 [00:54<00:16,  1.19s/it] 78%|███████▊  | 46/59 [00:55<00:15,  1.18s/it] 80%|███████▉  | 47/59 [00:57<00:14,  1.18s/it] 81%|████████▏ | 48/59 [00:58<00:12,  1.18s/it] 83%|████████▎ | 49/59 [00:59<00:11,  1.18s/it] 85%|████████▍ | 50/59 [01:00<00:10,  1.19s/it]                                               {'loss': 4.2005, 'grad_norm': 4.362166404724121, 'learning_rate': 8.474576271186441e-07, 'rewards/chosen': -0.3524520993232727, 'rewards/rejected': -0.5383963584899902, 'rewards/accuracies': 1.0, 'rewards/margins': 0.18594428896903992, 'logps/rejected': -5.3839640617370605, 'logps/chosen': -3.5245208740234375, 'logits/rejected': -5.016470432281494, 'logits/chosen': -4.516969680786133, 'nll_loss': 4.185467720031738, 'log_odds_ratio': -0.15025174617767334, 'log_odds_chosen': 1.8860620260238647, 'epoch': 0.86}
- 85%|████████▍ | 50/59 [01:00<00:10,  1.19s/it] 86%|████████▋ | 51/59 [01:01<00:09,  1.18s/it] 88%|████████▊ | 52/59 [01:03<00:08,  1.18s/it] 90%|████████▉ | 53/59 [01:04<00:07,  1.18s/it] 92%|█████████▏| 54/59 [01:05<00:05,  1.18s/it] 93%|█████████▎| 55/59 [01:06<00:04,  1.17s/it] 95%|█████████▍| 56/59 [01:07<00:03,  1.18s/it] 97%|█████████▋| 57/59 [01:08<00:02,  1.18s/it] 98%|█████████▊| 58/59 [01:10<00:01,  1.18s/it]100%|██████████| 59/59 [01:10<00:00,  1.09it/s]                                               {'train_runtime': 70.3998, 'train_samples_per_second': 3.31, 'train_steps_per_second': 0.838, 'train_loss': 4.471148410085904, 'epoch': 1.0}
-100%|██████████| 59/59 [01:10<00:00,  1.09it/s]100%|██████████| 59/59 [01:10<00:00,  1.19s/it]
-[pilot 17:51:48] saved ORPO adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-orpo
-[pilot 17:51:48] eval cases: 354 x 3 runs x (base, adapter)
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.20it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.49it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.44it/s]
-[pilot 17:51:53] loaded base via AutoModelForImageTextToText
-[pilot 17:52:09]   gen 32/354
-[pilot 17:52:25]   gen 64/354
-[pilot 17:52:41]   gen 96/354
-[pilot 17:52:58]   gen 128/354
-[pilot 17:53:14]   gen 160/354
-[pilot 17:53:30]   gen 192/354
-[pilot 17:53:46]   gen 224/354
-[pilot 17:54:02]   gen 256/354
-[pilot 17:54:18]   gen 288/354
-[pilot 17:54:34]   gen 320/354
-[pilot 17:54:50]   gen 352/354
-[pilot 17:55:06]   gen 354/354
-[pilot 17:55:22]   gen 32/354
-[pilot 17:55:39]   gen 64/354
-[pilot 17:55:56]   gen 96/354
-[pilot 17:56:12]   gen 128/354
-[pilot 17:56:29]   gen 160/354
-[pilot 17:56:45]   gen 192/354
-[pilot 17:57:02]   gen 224/354
-[pilot 17:57:18]   gen 256/354
-[pilot 17:57:35]   gen 288/354
-[pilot 17:57:52]   gen 320/354
-[pilot 17:58:08]   gen 352/354
-[pilot 17:58:24]   gen 354/354
-[pilot 18:00:13]   run 1/3 done
-[pilot 18:00:29]   gen 32/354
-[pilot 18:00:45]   gen 64/354
-[pilot 18:01:02]   gen 96/354
-[pilot 18:01:18]   gen 128/354
-[pilot 18:01:34]   gen 160/354
-[pilot 18:01:50]   gen 192/354
-[pilot 18:02:06]   gen 224/354
-[pilot 18:02:22]   gen 256/354
-[pilot 18:02:38]   gen 288/354
-[pilot 18:02:54]   gen 320/354
-[pilot 18:03:11]   gen 352/354
-[pilot 18:03:26]   gen 354/354
-[pilot 18:03:46]   gen 32/354
-[pilot 18:04:03]   gen 64/354
-[pilot 18:04:20]   gen 96/354
-[pilot 18:04:36]   gen 128/354
-[pilot 18:04:53]   gen 160/354
-[pilot 18:05:09]   gen 192/354
-[pilot 18:05:26]   gen 224/354
-[pilot 18:05:42]   gen 256/354
-[pilot 18:05:58]   gen 288/354
-[pilot 18:06:15]   gen 320/354
-[pilot 18:06:31]   gen 352/354
-[pilot 18:06:47]   gen 354/354
-[pilot 18:08:37]   run 2/3 done
-[pilot 18:08:53]   gen 32/354
-[pilot 18:09:09]   gen 64/354
-[pilot 18:09:25]   gen 96/354
-[pilot 18:09:41]   gen 128/354
-[pilot 18:09:57]   gen 160/354
-[pilot 18:10:13]   gen 192/354
-[pilot 18:10:29]   gen 224/354
-[pilot 18:10:45]   gen 256/354
-[pilot 18:11:01]   gen 288/354
-[pilot 18:11:17]   gen 320/354
-[pilot 18:11:34]   gen 352/354
-[pilot 18:11:49]   gen 354/354
-[pilot 18:12:06]   gen 32/354
-[pilot 18:12:23]   gen 64/354
-[pilot 18:12:39]   gen 96/354
-[pilot 18:12:56]   gen 128/354
-[pilot 18:13:12]   gen 160/354
-[pilot 18:13:29]   gen 192/354
-[pilot 18:13:45]   gen 224/354
-[pilot 18:14:01]   gen 256/354
-[pilot 18:14:17]   gen 288/354
-[pilot 18:14:33]   gen 320/354
-[pilot 18:14:49]   gen 352/354
-[pilot 18:15:05]   gen 354/354
-[pilot 18:16:56]   run 3/3 done
-[pilot 18:16:56] loading adapter onto base ...
-[pilot 18:17:25]   gen 32/354
-[pilot 18:17:51]   gen 64/354
-[pilot 18:18:18]   gen 96/354
-[pilot 18:18:44]   gen 128/354
-[pilot 18:19:11]   gen 160/354
-[pilot 18:19:37]   gen 192/354
-[pilot 18:20:03]   gen 224/354
-[pilot 18:20:30]   gen 256/354
-[pilot 18:20:56]   gen 288/354
-[pilot 18:21:22]   gen 320/354
-[pilot 18:21:49]   gen 352/354
-[pilot 18:22:14]   gen 354/354
-[pilot 18:22:41]   gen 32/354
-[pilot 18:23:08]   gen 64/354
-[pilot 18:23:36]   gen 96/354
-[pilot 18:24:03]   gen 128/354
-[pilot 18:24:30]   gen 160/354
-[pilot 18:24:57]   gen 192/354
-[pilot 18:25:24]   gen 224/354
-[pilot 18:25:50]   gen 256/354
-[pilot 18:26:18]   gen 288/354
-[pilot 18:26:46]   gen 320/354
-[pilot 18:27:15]   gen 352/354
-[pilot 18:27:42]   gen 354/354
-[pilot 18:29:33]   run 1/3 done
-[pilot 18:30:00]   gen 32/354
-[pilot 18:30:26]   gen 64/354
-[pilot 18:30:53]   gen 96/354
-[pilot 18:31:19]   gen 128/354
-[pilot 18:31:45]   gen 160/354
-[pilot 18:32:12]   gen 192/354
-[pilot 18:32:42]   gen 224/354
-[pilot 18:33:11]   gen 256/354
-[pilot 18:33:38]   gen 288/354
-[pilot 18:34:05]   gen 320/354
-[pilot 18:34:31]   gen 352/354
-[pilot 18:34:56]   gen 354/354
-[pilot 18:35:24]   gen 32/354
-[pilot 18:35:51]   gen 64/354
-[pilot 18:36:18]   gen 96/354
-[pilot 18:36:45]   gen 128/354
-[pilot 18:37:13]   gen 160/354
-[pilot 18:37:40]   gen 192/354
-[pilot 18:38:07]   gen 224/354
-[pilot 18:38:34]   gen 256/354
-[pilot 18:39:01]   gen 288/354
-[pilot 18:39:29]   gen 320/354
-[pilot 18:39:56]   gen 352/354
-[pilot 18:40:22]   gen 354/354
-[pilot 18:42:12]   run 2/3 done
-[pilot 18:42:39]   gen 32/354
-[pilot 18:43:05]   gen 64/354
-[pilot 18:43:32]   gen 96/354
-[pilot 18:43:58]   gen 128/354
-[pilot 18:44:24]   gen 160/354
-[pilot 18:44:53]   gen 192/354
-[pilot 18:45:29]   gen 224/354
-[pilot 18:46:01]   gen 256/354
-[pilot 18:46:31]   gen 288/354
-[pilot 18:47:00]   gen 320/354
-[pilot 18:47:30]   gen 352/354
-[pilot 18:47:57]   gen 354/354
-[pilot 18:48:25]   gen 32/354
-[pilot 18:48:55]   gen 64/354
-[pilot 18:49:24]   gen 96/354
-[pilot 18:49:53]   gen 128/354
-[pilot 18:50:22]   gen 160/354
-[pilot 18:50:51]   gen 192/354
-[pilot 18:51:21]   gen 224/354
-[pilot 18:51:51]   gen 256/354
-[pilot 18:52:21]   gen 288/354
-[pilot 18:52:52]   gen 320/354
-[pilot 18:53:21]   gen 352/354
-[pilot 18:53:49]   gen 354/354
-[pilot 18:55:42]   run 3/3 done
-[pilot 18:55:42] wrote 354 base/adapter answer pairs -> agi-proof/benchmark-results/wisdom-market/M4-orpo-answers.json
-[pilot 18:55:42] wrote eval report -> agi-proof/benchmark-results/wisdom-market/M4-orpo-eval.json
-[pilot 18:55:42] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
-[pilot 18:55:42]   tradition_merge_rate               Δ 0.0536 ci=[0.0179, 0.0893] *
-[pilot 18:55:42]   qualification_rate_on_contested    Δ 0.0328 ci=[-0.0164, 0.0983]  
-[pilot 18:55:42]   false_attribution_rate             Δ 0.0039 ci=[-0.0059, 0.0117]  
-[pilot 18:55:42]   citation_fidelity                  Δ 0.0556 ci=[0.0, 0.0834]  
-[pilot 18:55:42]   adapter protected_history_regression       0.0556
-[pilot 18:55:42]   adapter protected_religion_regression      0.0196
-[pilot 18:55:42]   adapter over_abstention_rate               0.0431
-[pilot 18:55:42] PRIMARY habit-transfer signal present: True
+  0%|          | 0/59 [00:00<?, ?it/s]  2%|▏         | 1/59 [00:01<01:09,  1.20s/it]  3%|▎         | 2/59 [00:02<01:06,  1.17s/it]  5%|▌         | 3/59 [00:03<01:07,  1.20s/it]  7%|▋         | 4/59 [00:04<01:05,  1.19s/it]  8%|▊         | 5/59 [00:05<01:02,  1.16s/it] 10%|█         | 6/59 [00:07<01:01,  1.16s/it] 12%|█▏        | 7/59 [00:08<01:00,  1.17s/it] 14%|█▎        | 8/59 [00:09<00:59,  1.16s/it] 15%|█▌        | 9/59 [00:10<00:58,  1.16s/it] 17%|█▋        | 10/59 [00:11<00:56,  1.15s/it] 19%|█▊        | 11/59 [00:12<00:54,  1.14s/it] 20%|██        | 12/59 [00:13<00:53,  1.14s/it] 22%|██▏       | 13/59 [00:15<00:52,  1.14s/it] 24%|██▎       | 14/59 [00:16<00:51,  1.15s/it] 25%|██▌       | 15/59 [00:17<00:49,  1.13s/it] 27%|██▋       | 16/59 [00:18<00:48,  1.13s/it] 29%|██▉       | 17/59 [00:19<00:47,  1.13s/it] 31%|███       | 18/59 [00:20<00:46,  1.12s/it] 32%|███▏      | 19/59 [00:21<00:44,  1.12s/it] 34%|███▍      | 20/59 [00:22<00:43,  1.13s/it] 36%|███▌      | 21/59 [00:24<00:42,  1.12s/it] 37%|███▋      | 22/59 [00:25<00:41,  1.12s/it] 39%|███▉      | 23/59 [00:26<00:40,  1.13s/it] 41%|████      | 24/59 [00:27<00:39,  1.12s/it] 42%|████▏     | 25/59 [00:28<00:38,  1.13s/it]                                               {'loss': 3.8422, 'grad_norm': 4.721267223358154, 'learning_rate': 2.9661016949152545e-06, 'rewards/chosen': -0.05412629246711731, 'rewards/rejected': -0.3552654981613159, 'rewards/accuracies': 1.0, 'rewards/margins': 0.301139235496521, 'logps/rejected': -3.552654981613159, 'logps/chosen': -0.5412628650665283, 'logits/rejected': -4.3553643226623535, 'logits/chosen': -4.616876602172852, 'nll_loss': 3.8399176597595215, 'log_odds_ratio': -0.02289939858019352, 'log_odds_chosen': 3.8716585636138916, 'epoch': 0.43}
+ 42%|████▏     | 25/59 [00:28<00:38,  1.13s/it] 44%|████▍     | 26/59 [00:29<00:36,  1.12s/it] 46%|████▌     | 27/59 [00:30<00:36,  1.13s/it] 47%|████▋     | 28/59 [00:31<00:34,  1.12s/it] 49%|████▉     | 29/59 [00:33<00:33,  1.13s/it] 51%|█████     | 30/59 [00:34<00:32,  1.12s/it] 53%|█████▎    | 31/59 [00:35<00:31,  1.12s/it] 54%|█████▍    | 32/59 [00:36<00:30,  1.12s/it] 56%|█████▌    | 33/59 [00:37<00:29,  1.12s/it] 58%|█████▊    | 34/59 [00:38<00:28,  1.13s/it] 59%|█████▉    | 35/59 [00:39<00:27,  1.13s/it] 61%|██████    | 36/59 [00:40<00:26,  1.14s/it] 63%|██████▎   | 37/59 [00:42<00:24,  1.13s/it] 64%|██████▍   | 38/59 [00:43<00:23,  1.13s/it] 66%|██████▌   | 39/59 [00:44<00:22,  1.14s/it] 68%|██████▊   | 40/59 [00:45<00:21,  1.13s/it] 69%|██████▉   | 41/59 [00:46<00:20,  1.14s/it] 71%|███████   | 42/59 [00:47<00:19,  1.14s/it] 73%|███████▎  | 43/59 [00:48<00:18,  1.14s/it] 75%|███████▍  | 44/59 [00:49<00:16,  1.13s/it] 76%|███████▋  | 45/59 [00:51<00:15,  1.13s/it] 78%|███████▊  | 46/59 [00:52<00:14,  1.12s/it] 80%|███████▉  | 47/59 [00:53<00:13,  1.12s/it] 81%|████████▏ | 48/59 [00:54<00:12,  1.11s/it] 83%|████████▎ | 49/59 [00:55<00:11,  1.12s/it] 85%|████████▍ | 50/59 [00:56<00:10,  1.13s/it]                                               {'loss': 3.3265, 'grad_norm': 2.670323371887207, 'learning_rate': 8.474576271186441e-07, 'rewards/chosen': -0.04507230222225189, 'rewards/rejected': -0.32836848497390747, 'rewards/accuracies': 1.0, 'rewards/margins': 0.2832961976528168, 'logps/rejected': -3.283684730529785, 'logps/chosen': -0.4507230520248413, 'logits/rejected': -4.0441484451293945, 'logits/chosen': -4.243086338043213, 'nll_loss': 3.3241400718688965, 'log_odds_ratio': -0.023272942751646042, 'log_odds_chosen': 3.8256726264953613, 'epoch': 0.86}
+ 85%|████████▍ | 50/59 [00:56<00:10,  1.13s/it] 86%|████████▋ | 51/59 [00:57<00:08,  1.12s/it] 88%|████████▊ | 52/59 [00:58<00:07,  1.12s/it] 90%|████████▉ | 53/59 [01:00<00:06,  1.11s/it] 92%|█████████▏| 54/59 [01:01<00:05,  1.12s/it] 93%|█████████▎| 55/59 [01:02<00:04,  1.11s/it] 95%|█████████▍| 56/59 [01:03<00:03,  1.12s/it] 97%|█████████▋| 57/59 [01:04<00:02,  1.12s/it] 98%|█████████▊| 58/59 [01:05<00:01,  1.12s/it]100%|██████████| 59/59 [01:05<00:00,  1.15it/s]                                               {'train_runtime': 65.9186, 'train_samples_per_second': 3.535, 'train_steps_per_second': 0.895, 'train_loss': 3.5270301689535883, 'epoch': 1.0}
+100%|██████████| 59/59 [01:05<00:00,  1.15it/s]100%|██████████| 59/59 [01:05<00:00,  1.12s/it]
+[pilot 19:21:21] saved ORPO adapter (on-SFT) -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-orpo
+[pilot 19:21:21] eval cases: 24 x 1 runs x (base, sft+orpo stack)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.09s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.09it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.06it/s]
+[pilot 19:21:24] loaded base via AutoModelForImageTextToText
+[pilot 19:21:36]   gen 24/24
+[pilot 19:21:49]   gen 24/24
+[pilot 19:21:57]   run 1/1 done
+[pilot 19:21:57] building SFT-merged + ORPO stack ...
+[pilot 19:22:21]   gen 24/24
+[pilot 19:22:27]   gen 24/24
+[pilot 19:22:35]   run 1/1 done
+[pilot 19:22:35] wrote 24 base/stack answer pairs -> agi-proof/benchmark-results/wisdom-market/M4-orpo-sft-answers.json
+[pilot 19:22:35] wrote eval report -> agi-proof/benchmark-results/wisdom-market/M4-orpo-sft-eval.json
+[pilot 19:22:35] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
+[pilot 19:22:35]   tradition_merge_rate               Δ None ci=[None, None]  
+[pilot 19:22:35]   qualification_rate_on_contested    Δ 0.0833 ci=[0.0833, 0.0833] *
+[pilot 19:22:35]   false_attribution_rate             Δ None ci=[None, None]  
+[pilot 19:22:35]   citation_fidelity                  Δ None ci=[None, None]  
+[pilot 19:22:35]   adapter protected_history_regression       None
+[pilot 19:22:35]   adapter protected_religion_regression      None
+[pilot 19:22:35]   adapter over_abstention_rate               0.125
+[pilot 19:22:35] PRIMARY habit-transfer signal present: True
 [pod] eval + answers written; finish() will commit + push
 [pod] job exit code=0
