@@ -163,6 +163,8 @@ jobs:
           python tests/test_context_manager.py
           python tests/test_subagent.py
           python tests/test_long_horizon_engine.py
+          python tests/test_uplift.py
+          python tests/test_trace_distill.py
       - name: Governance contract conformance (golden vectors + schema)
         run: |
           python tests/test_contract_conformance.py
