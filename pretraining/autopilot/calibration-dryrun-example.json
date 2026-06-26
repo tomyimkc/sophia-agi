@@ -1,0 +1,44 @@
+{
+  "mode": "dry_run",
+  "canClaimAGI": false,
+  "honesty_note": "No pod, no cost. Projections use the observed $/hr anchor; the real per-trial cost is unknown until a --from-result calibration run.",
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "branch": "claude/deepseek-pretraining-alignment-o281ju",
+  "ceiling_usd": 1.0,
+  "trial_plan": {
+    "launched": false,
+    "affordable": true,
+    "dry_run_command": "python tools/runpod_train.py --branch claude/deepseek-pretraining-alignment-o281ju --model Qwen/Qwen2.5-3B-Instruct --epochs 1 --seed 0 --dry-run",
+    "launch_command": "python tools/runpod_train.py --branch claude/deepseek-pretraining-alignment-o281ju --model Qwen/Qwen2.5-3B-Instruct --epochs 1 --seed 0 --yes   # CI-only, requires RUNPOD_API_KEY",
+    "cost": {
+      "ceiling_usd": 1.0,
+      "price_per_hr": 0.69,
+      "est_hours_per_trial": 0.75,
+      "est_cost_per_trial": 0.6727,
+      "spent_usd": 0.0,
+      "remaining_usd": 1.0,
+      "trials_run": 0,
+      "max_affordable_trials": 1
+    },
+    "guard": "OK — within ceiling"
+  },
+  "projected_per_trial_usd": 0.6727,
+  "projected_sweep_tiers": [
+    {
+      "tier": "small",
+      "trials": 10,
+      "est_cost_usd": 6.73
+    },
+    {
+      "tier": "medium",
+      "trials": 24,
+      "est_cost_usd": 16.14
+    },
+    {
+      "tier": "generous",
+      "trials": 40,
+      "est_cost_usd": 26.91
+    }
+  ],
+  "next_step": "trigger .github/workflows/calibrate-runpod.yml with a cost_ceiling and confirm=SPEND to run ONE real trial, then re-run this with --from-result"
+}

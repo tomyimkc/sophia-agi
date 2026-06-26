@@ -92,5 +92,18 @@ loop fabricates a score, the escalation launches without the guard, or it claims
 | G10 reviewer agent honest | ✅ PASS |
 | G11 autonomous runner fail-closed | ✅ PASS |
 
+### G12 — Cost governor is fail-closed against the ceiling
+The RunPod calibration machinery must (a) refuse to project/launch trials whose projected
+spend exceeds the hard USD ceiling (`can_afford`/`guard` fail-closed), (b) parse the eval
+ladder into an objective and return `+inf` for a malformed/missing ladder (never a fabricated
+score), (c) build DRY-RUN commands by default and never launch a paid pod from library code,
+and (d) keep the paid launch behind a typed `confirm=SPEND` + ceiling gate in
+`calibrate-runpod.yml`. *Falsified if* any code path can spend past the ceiling, fabricate an
+objective, or launch without the gate. — `tests/test_pretraining_calibrate.py`
+
+| Gate | Status (2026-06-26) |
+|---|---|
+| G12 cost governor fail-closed | ✅ PASS |
+
 G4 is intentionally listed as an honest-fail: it is the study's most useful lesson, not a
 defect — you cannot read off the irreducible loss without runs near saturation.

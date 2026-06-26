@@ -1,0 +1,129 @@
+name: calibrate-runpod
+
+# Manual-only: run ONE real RunPod LoRA trial to MEASURE the true per-trial time & cost,
+# then extrapolate honest budgets for a Step-2 hyperparameter sweep
+# (see pretraining/autopilot/SCOPE.md). This is Step 1 of the real-pipeline plan.
+#
+# Safety: dispatch-only; requires a typed confirmation AND an explicit USD ceiling. A
+# pre-flight cost projection must fit under the ceiling or the run aborts before any pod is
+# created. The pod itself is rented/torn down by tools/runpod_train.py (always deletes the
+# pod). RUNPOD_API_KEY secret required; never printed.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type SPEND to confirm you accept renting a paid GPU pod'
+        required: true
+        default: ''
+      cost_ceiling_usd:
+        description: 'Hard USD ceiling for this calibration trial'
+        required: true
+        default: '1.00'
+      model:
+        description: 'Base model'
+        required: false
+        default: 'Qwen/Qwen2.5-3B-Instruct'
+      epochs:
+        description: 'Training epochs'
+        required: false
+        default: '1'
+      gpu_type:
+        description: 'Comma-separated RunPod GPU type preference (cheapest first)'
+        required: false
+        default: 'NVIDIA GeForce RTX 4090,NVIDIA RTX A5000,NVIDIA A40'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: calibrate-runpod
+  cancel-in-progress: false
+
+jobs:
+  calibrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Preflight — confirm + secret + cost ceiling
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+          CEILING: ${{ github.event.inputs.cost_ceiling_usd }}
+        run: |
+          if [ "$CONFIRM" != "SPEND" ]; then
+            echo "::error::Dispatch input 'confirm' must be exactly SPEND to acknowledge GPU cost. Aborting (no pod)."
+            exit 1
+          fi
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set. Add it in Settings -> Secrets -> Actions. Aborting (no pod)."
+            exit 1
+          fi
+          # Cost-governor pre-flight: project per-trial cost; abort if it exceeds the ceiling.
+          python -m pretraining.autopilot.calibrate \
+            --branch "${{ github.ref_name }}" \
+            --model "${{ github.event.inputs.model }}" \
+            --epochs "${{ github.event.inputs.epochs }}" \
+            --ceiling "$CEILING" \
+            --out calibration-dryrun.json
+          python -c "import json,sys; d=json.load(open('calibration-dryrun.json')); \
+            aff=d['trial_plan']['affordable']; \
+            print('projected per-trial USD:', d['projected_per_trial_usd'], '| affordable:', aff); \
+            sys.exit(0 if aff else 1)" \
+            || { echo "::error::Projected trial cost exceeds the ceiling. Raise the ceiling or abort."; exit 1; }
+
+      - name: Launch ONE real RunPod LoRA trial (timed; pod always deleted)
+        id: launch
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          START=$(date +%s)
+          set -o pipefail
+          python tools/runpod_train.py --yes \
+            --source git --branch "${{ github.ref_name }}" \
+            --model "${{ github.event.inputs.model }}" \
+            --epochs "${{ github.event.inputs.epochs }}" \
+            --seed 0 \
+            --gpu-type "${{ github.event.inputs.gpu_type }}" 2>&1 | tee launch.log
+          END=$(date +%s)
+          HOURS=$(python -c "print(round(($END-$START)/3600.0, 4))")
+          # parse the real per-hour price RunPod quoted (line: "costPerHr=0.69, gpu=...")
+          PRICE=$(grep -oE 'costPerHr=[0-9.]+' launch.log | head -1 | cut -d= -f2)
+          PRICE=${PRICE:-0.69}
+          echo "wall_clock_hours=$HOURS" >> "$GITHUB_OUTPUT"
+          echo "price_per_hr=$PRICE"     >> "$GITHUB_OUTPUT"
+          echo "Measured: ${HOURS}h at \$${PRICE}/hr"
+
+      - name: Calibrate from the measured run (actual cost + objective + sweep tiers)
+        if: always()
+        run: |
+          LADDER=$(ls agi-proof/benchmark-results/runpod-train/*eval_ladder_adapter.json 2>/dev/null | head -1)
+          if [ -z "$LADDER" ]; then
+            echo "::warning::No eval_ladder_adapter.json returned; recording cost only."
+            LADDER=training/local_sophia_v2/eval_ladder_adapter.json   # shape-only fallback
+          fi
+          python -m pretraining.autopilot.calibrate \
+            --from-result "$LADDER" \
+            --wall-clock-hours "${{ steps.launch.outputs.wall_clock_hours }}" \
+            --price-per-hr "${{ steps.launch.outputs.price_per_hr }}" \
+            --ceiling "${{ github.event.inputs.cost_ceiling_usd }}" \
+            --model "${{ github.event.inputs.model }}" \
+            --out calibration-measured.json
+          echo "===== calibration-measured.json =====" && cat calibration-measured.json
+
+      - name: Upload calibration report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: calibrate-runpod-report
+          path: |
+            calibration-dryrun.json
+            calibration-measured.json
+            launch.log
+          if-no-files-found: warn

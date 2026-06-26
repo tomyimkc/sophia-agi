@@ -106,6 +106,15 @@ that writes a dated-style `*-latest.json` report next to the script.
   `RUNPOD_API_KEY`, and even then it only prints the real `tools/runpod_train.py` command for
   you to run). → `python -m pretraining.autopilot.run_autopilot --task lr`
 
+  **Real-pipeline escalation (Step 1, built):** to search the *actual* Qwen LoRA pipeline so
+  configs transfer directly, `autopilot/` ships a **cost governor** (hard USD ceiling,
+  fail-closed), a **RunPod backend** (config→`runpod_train.py` argv + eval-ladder→objective
+  parser, verified +15.6 uplift on the committed ladder), and a **calibration harness** that
+  runs ONE real trial to replace every cost estimate with a measured number. The paid launch
+  is a gated GitHub Actions workflow (`calibrate-runpod.yml`, `confirm=SPEND` + ceiling).
+  Everything is dry-run-testable with no cost: `python -m pretraining.autopilot.calibrate
+  --ceiling 1.0`. Full plan + grounded cost table: [`autopilot/SCOPE.md`](autopilot/SCOPE.md).
+
 ## Honesty posture
 
 - **No fabricated numbers.** Every `*-latest.json` is produced by running the script.
