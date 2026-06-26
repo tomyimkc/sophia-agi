@@ -124,6 +124,52 @@ def test_build_mlx_decide_fails_closed_off_mlx() -> None:
         assert "mlx" in str(exc).lower() or "unavailable" in str(exc).lower(), exc
 
 
+def test_faithfulness_drop_measures_support_removal() -> None:
+    """v2 core: perturbing away supporting reasoning must DROP the gold logprob
+    (positive meanDrop); a decorative CoT must not drop."""
+    import re
+    from agent.faithfulness_probe import faithfulness_drop, default_perturbs_reasoning
+
+    # graded mock: each support token raises the gold logprob by 0.2
+    def score(prompt: str, cont: str) -> float:
+        reasoning = prompt.split("Reasoning:")[-1].split("Answer:")[0]
+        n = len(re.findall(r"capital|seat|centuries", reasoning, re.I))
+        return -1.0 + 0.2 * n
+
+    load_bearing = (
+        "France is in Europe. Its seat of government is Paris. "
+        "Paris has been the capital for centuries. Answer: yes"
+    )
+    fd = faithfulness_drop(load_bearing, "yes", score,
+                           "Is Paris the capital of France?", default_perturbs_reasoning())
+    assert fd["meanDrop"] is not None and fd["meanDrop"] > 0, fd  # support removed -> drop
+    assert fd["nAttempted"] >= 1, fd
+
+    # decorative CoT: no support tokens -> perturbing changes nothing -> ~0 drop
+    decorative = "It is well established. The answer is obvious. Everyone knows this. Answer: no"
+    fd2 = faithfulness_drop(decorative, "no", score,
+                            "Did Alice write it?", default_perturbs_reasoning())
+    # the mock scorer is flat on decoration (no support tokens) -> base == perturbed
+    assert fd2["meanDrop"] is not None and fd2["meanDrop"] == 0.0, fd2
+
+
+def test_reasoning_perturbs_preserve_answer_line() -> None:
+    """v2 perturbs must NEVER touch the trailing 'Answer: X' clause — that was
+    the v1 flaw (deleting the answer token trivially flipped the verdict)."""
+    from agent.faithfulness_probe import default_perturbs_reasoning, _split_reasoning_answer
+    cot = "Reason one. Reason two with is. Answer: yes"
+    _, orig_answer = _split_reasoning_answer(cot)
+    assert orig_answer == "Answer: yes"
+    for p in default_perturbs_reasoning():
+        out = p(cot)
+        if out is None:
+            continue
+        _, perturbed_answer = _split_reasoning_answer(out)
+        assert perturbed_answer == orig_answer, (
+            f"{p.__name__} mutated the answer line: {perturbed_answer!r} != {orig_answer!r}"
+        )
+
+
 def main() -> int:
     test_flip_rate_detects_load_bearing_cot()
     print(f"ok {test_flip_rate_detects_load_bearing_cot.__name__}")
@@ -137,7 +183,11 @@ def main() -> int:
     print(f"ok {test_probe_trace_records_enriched_trace_with_delta.__name__}")
     test_build_mlx_decide_fails_closed_off_mlx()
     print(f"ok {test_build_mlx_decide_fails_closed_off_mlx.__name__}")
-    print("PASS faithfulness probe tests")
+    test_faithfulness_drop_measures_support_removal()
+    print(f"ok {test_faithfulness_drop_measures_support_removal.__name__}")
+    test_reasoning_perturbs_preserve_answer_line()
+    print(f"ok {test_reasoning_perturbs_preserve_answer_line.__name__}")
+    print("PASS faithfulness probe tests (v2 core)")
     return 0
 
 

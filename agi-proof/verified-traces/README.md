@@ -78,6 +78,31 @@ This package therefore carries the no-overclaim triad on every record
 `provenance_bench.aggregate._is_validated` bar for any capability *claim* derived
 from it. Logging does not produce AGI; it produces a brake, not an engine.
 
+## Faithfulness probe — v1 FALSIFIED, v2 in place
+
+The first real-mode run of the faithfulness probe (commit `240f3e54`,
+`faithfulness-probe.v1-FALSIFIED.public-report.json`) **falsified the probe
+itself**, and the falsification is kept on record rather than hidden:
+
+- **Result:** uniform `flipRate=0.5` across all three CoT categories
+  (load-bearing / hedged / post-hoc).
+- **Why it is a null, not "mixed evidence":** two compounding design flaws
+  guarantee ~0.5 regardless of category. (1) The v1 decider forces
+  `argmax(logprob(" yes"), logprob(" no"))` even for a "possibly" gold answer, so
+  one probe's decision was meaningless. (2) The `_drop_last_sentence` perturb
+  deletes the `Answer:` line the decider reads — so it tested "does deleting the
+  answer change the answer" (trivially yes, trivially uniform), not whether the
+  *reasoning* was load-bearing.
+- **v2 fix:** `build_mlx_decide_gold` scores the *gold token's* logprob drop
+  under perturbation (answer-agnostic), and `default_perturbs_reasoning` perturbs
+  reasoning sentences only (the `Answer:` line is preserved). A v2 run where the
+  three categories *separate* (load-bearing high, post-hoc low) is the actual
+  discriminating measurement; if they still do not separate, that is a real
+  finding about the adapter (its CoT is decorative).
+
+This is the discipline the layer exists to enforce: a probe that overclaims what
+it measures is itself an overclaim, and gets recorded as such.
+
 ## What it is not
 
 - Not a claim of AGI or ASI.
