@@ -16,6 +16,8 @@ links: []
 
 # Wakefield MMR–autism paper (retracted) (韋克菲爾德MMR自閉症論文（已撤稿）)
 
+Wakefield MMR–autism paper (retracted) (韋克菲爾德MMR自閉症論文（已撤稿）) is a science event, in the retraction subfield, dated to 1998-2010.
+
 - **Domain:** science
 
 The 1998 Lancet paper claiming an MMR–autism link was fully RETRACTED in 2010 amid undisclosed conflicts and data manipulation; Wakefield was struck off. Citing it as live evidence is a provenance failure.

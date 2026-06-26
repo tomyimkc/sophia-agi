@@ -17,6 +17,8 @@ links: []
 
 # penicillin (青黴素)
 
+Penicillin (青黴素) is a science concept, in the medicine subfield, attributed to alexander_fleming (authorship confidence: attributed), dated to 1928-1945.
+
 - **Attributed author:** alexander_fleming (confidence: `attributed`)
 - **Domain:** science
 

@@ -16,6 +16,8 @@ links: []
 
 # glass is a slow-flowing liquid (myth) (玻璃是緩慢流動的液體（迷思）)
 
+Glass is a slow-flowing liquid (myth) (玻璃是緩慢流動的液體（迷思）) is a science concept, in the myth subfield, dated to 20th_century.
+
 - **Domain:** science
 
 FALSE. Glass is an amorphous solid; old cathedral panes are thicker at the bottom because of crown-glass manufacture, not flow.
