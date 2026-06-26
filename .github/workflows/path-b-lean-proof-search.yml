@@ -172,24 +172,37 @@ jobs:
           # real problem (the tool should always write one) — surface it, don't || true.
           python -c "import json;d=json.load(open('agi-proof/proof-search/result.json'));print('VERDICT='+d['verdict']);print('NOVELTY='+str((d.get('novelty') or {}).get('novel')))" >> "$GITHUB_OUTPUT"
 
-      # ---- commit the result report back to the branch ------------------------
-      # The report is the evidence artifact; committing it makes the result durable and
-      # attributable to the exact run (no artifact-download needed — a fine-grained PAT
-      # can't fetch those anyway). candidateOnly / level3Evidence: false throughout.
-      - name: Commit result report
+      # ---- commit the result report via a PR (main-protection blocks direct push) --
+      # The report is the evidence artifact; landing it via a PR makes the result durable
+      # and attributable to the exact run (no artifact-download needed — a fine-grained PAT
+      # can't fetch those anyway). The main-protection ruleset REQUIRES changes go through
+      # a pull request, so we cannot git push directly to main — push to an evidence branch
+      # and open a PR instead. candidateOnly / level3Evidence: false throughout.
+      - name: Commit result report to an evidence branch + open a PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set +e
           ts=$(date -u +%Y-%m-%dT%H-%M-%SZ)
           out="agi-proof/proof-search/path-b-${{ inputs.theorem }}-${ts}.public-report.json"
           mkdir -p agi-proof/proof-search
           [ -f agi-proof/proof-search/result.json ] && cp agi-proof/proof-search/result.json "$out"
-          git add agi-proof/proof-search/*.public-report.json 2>/dev/null || true
+          git add agi-proof/proof-search/*.public-report.json 2>/dev/null
           if git diff --cached --quiet; then
-            echo "no report to commit"
-          else
-            git commit -m "evidence(path-b): Lean proof search ${{ inputs.theorem }} via ${{ inputs.provider }} (${{ steps.search.outputs.VERDICT }})"
-            git push
-            echo "committed $out"
+            echo "no report to commit"; exit 0
           fi
+          # Evidence branch off main (ruleset forbids pushing to main directly).
+          branch="evidence/path-b-${{ inputs.theorem }}-${ts}"
+          branch="${branch//:/-}"   # ':' is illegal in a branch name
+          git checkout -b "$branch"
+          git commit -m "evidence(path-b): Lean proof search ${{ inputs.theorem }} via ${{ inputs.provider }} (${{ steps.search.outputs.VERDICT || 'no-verdict' }})"
+          git push --set-upstream origin "$branch"
+          verdict="${{ steps.search.outputs.VERDICT || 'no-verdict' }}"
+          novel="${{ steps.search.outputs.NOVELTY || 'n/a' }}"
+          body=$(printf 'Auto-committed by the `path-b-lean-proof-search` workflow (run %s).\n\n- **Theorem:** `%s`\n- **Provider:** `%s` (stub=%s)\n- **Verdict:** `%s`\n- **Novel:** `%s`\n\n`candidateOnly`/`level3Evidence` = true/false; `canClaimAGI` unchanged. This is additive evidence — no code logic. Merge to record the result.' "${{ github.run_id }}" "${{ inputs.theorem }}" "${{ inputs.provider }}" "${{ inputs.stub != '' && 'yes' || 'no' }}" "$verdict" "$novel")
+          pr_url=$(gh pr create --base main --head "$branch" --title "evidence(path-b): Lean proof search ${{ inputs.theorem }} ($verdict)" --body "$body" 2>&1) || true
+          echo "committed $out"
+          echo "evidence PR: $pr_url"
 
       - name: Job summary
         if: always()
