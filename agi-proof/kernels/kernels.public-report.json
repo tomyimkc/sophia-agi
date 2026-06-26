@@ -1,0 +1,49 @@
+{
+  "benchmark": "kernels-reference-roofline",
+  "mode": "mock-offline",
+  "visibility": "public-aggregate",
+  "claimStatus": "Reference numerics + roofline accounting only. Measured kernel speedups (% of HBM SOL, ncu-attributed) require the Triton kernels on a CUDA device; correctness there = matching kernels.reference.",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "device": "NVIDIA DGX Spark GB10",
+  "regimes": {
+    "softmax": {
+      "op": "softmax",
+      "rows": 4096,
+      "d": 4096,
+      "flops": 83886080,
+      "bytes": 67108864,
+      "intensity": 1.25,
+      "ridgePoint": 457.8755,
+      "regime": "memory-bound"
+    },
+    "rmsnorm": {
+      "op": "rmsnorm",
+      "rows": 4096,
+      "d": 4096,
+      "flops": 67108864,
+      "bytes": 67108864,
+      "intensity": 1.0,
+      "ridgePoint": 457.8755,
+      "regime": "memory-bound"
+    },
+    "swiglu": {
+      "op": "swiglu",
+      "rows": 4096,
+      "d": 4096,
+      "flops": 100663296,
+      "bytes": 100663296,
+      "intensity": 1.0,
+      "ridgePoint": 457.8755,
+      "regime": "memory-bound"
+    }
+  },
+  "checks": {
+    "softmaxSumsToOne": true,
+    "softmaxMonotone": true,
+    "rmsnormUnitScale": true,
+    "swigluMatchesSiluUp": true,
+    "allMemoryBound": true,
+    "ridgeAboveIntensity": true
+  }
+}

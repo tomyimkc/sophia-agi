@@ -1,0 +1,49 @@
+{
+  "benchmark": "serving-batching-sim",
+  "mode": "mock-offline",
+  "visibility": "public-aggregate",
+  "claimStatus": "Simulation only — predicts the static→continuous batching uplift shape; the measured number requires the real engine on GPU. Not a served model.",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "compare": {
+    "static": {
+      "policy": "static",
+      "n": 24,
+      "makespan": 444,
+      "outputTokens": 983,
+      "throughput": 2.213964,
+      "ttftMean": 197.0,
+      "ttftP99": 358,
+      "tpotMean": 1.0,
+      "goodput": 0.041667
+    },
+    "continuous": {
+      "policy": "continuous",
+      "n": 24,
+      "makespan": 293,
+      "outputTokens": 983,
+      "throughput": 3.354949,
+      "ttftMean": 105.375,
+      "ttftP99": 205,
+      "tpotMean": 1.0,
+      "goodput": 0.208333
+    },
+    "throughputSpeedup": 1.515358,
+    "ttftMeanReduction": 0.465102
+  },
+  "checks": {
+    "allFinishedStatic": true,
+    "allFinishedContinuous": true,
+    "continuousThroughputGE": true,
+    "continuousTtftLE": true,
+    "goodputBounded": true,
+    "makespanPositive": true,
+    "deterministic": true
+  },
+  "config": {
+    "n": 24,
+    "rate": 0.8,
+    "maxBatch": 4,
+    "seed": 0
+  }
+}
