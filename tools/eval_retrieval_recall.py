@@ -93,13 +93,24 @@ def _metrics(ranks: "list[int]") -> dict:
 
 def score_backend(backend: str, probes: "list[dict]", *, top_k: int = 5) -> dict:
     """Run all probes through one backend; return exact-record and topical metrics."""
-    os.environ["SOPHIA_RAG_BACKEND"] = backend
-    exact_ranks: list[int] = []
-    topical_ranks: list[int] = []
-    for p in probes:
-        e, t = _ranks_for(p["q"], p["gold"], top_k=top_k)
-        exact_ranks.append(e)
-        topical_ranks.append(t)
+    saved = os.environ.get("SOPHIA_RAG_BACKEND")
+    try:
+        os.environ["SOPHIA_RAG_BACKEND"] = backend
+        exact_ranks: list[int] = []
+        topical_ranks: list[int] = []
+        for p in probes:
+            e, t = _ranks_for(p["q"], p["gold"], top_k=top_k)
+            exact_ranks.append(e)
+            topical_ranks.append(t)
+    finally:
+        # Restore so direct callers (e.g. tests) don't leak the backend selection into the
+        # rest of the process — ``run()`` already wraps this, but ``score_backend`` is also
+        # called standalone and a leaked ``keyword`` backend would silently change every
+        # later ``retrieve()``'s tier.
+        if saved is None:
+            os.environ.pop("SOPHIA_RAG_BACKEND", None)
+        else:
+            os.environ["SOPHIA_RAG_BACKEND"] = saved
     return {"backend": backend, "n": len(probes),
             "exact": _metrics(exact_ranks), "topical": _metrics(topical_ranks)}
 

@@ -245,6 +245,16 @@ def retrieve(query: str, *, top_k: int = 8, mode: "str | None" = None) -> list[S
     → deterministic offline lexical-vector cosine → keyword overlap. ``mode`` or
     ``SOPHIA_RETRIEVAL`` env forces a tier ("learned"|"vector"|"lexical"|"keyword");
     default "auto" walks the tiers in quality order."""
+    # Honor the documented ``SOPHIA_RAG_BACKEND=keyword`` contract (see
+    # docs/09-Agent/Online-RAG.md: "keyword" ⇒ keyword retrieve). The tier env
+    # (``SOPHIA_RETRIEVAL``) and the explicit ``mode`` arg take precedence when set, but the
+    # backend override must still force keyword-only when no tier was requested — otherwise
+    # ``SOPHIA_RAG_BACKEND=keyword`` silently routes through the lexical-vector tier (a
+    # stronger retriever than keyword), which is not what callers like the recall harnesses
+    # and the deploy docs mean by "keyword".
+    if mode is None and not os.environ.get("SOPHIA_RETRIEVAL"):
+        if (os.environ.get("SOPHIA_RAG_BACKEND") or "").strip().lower() == "keyword":
+            return _retrieve_keyword(query, top_k=top_k)
     mode = (mode or os.environ.get("SOPHIA_RETRIEVAL") or "auto").strip().lower()
 
     if mode in {"auto", "learned", "vertex", "gemini"}:

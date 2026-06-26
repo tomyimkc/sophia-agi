@@ -41,24 +41,24 @@ def test_metrics_are_bounded_probabilities() -> None:
             assert 0.0 <= v <= 1.0
 
 
-def test_keyword_leads_lexical_attribution_probes() -> None:
+def test_vector_beats_keyword_and_hybrid_holds_dense() -> None:
     report = run()
     k = report["metrics"]["keyword"]
     v = report["metrics"]["vector"]
-    # Measured truth with the OFFLINE deterministic backends: lexical KEYWORD leads the
-    # dense local-hash vector on both recall and graded nDCG (the hash embedder is a weak
-    # semantic proxy — a learned/Gemini backend would change this). This replaces the
-    # earlier (incorrect, never-true) "vector beats keyword / hybrid beats keyword" claim.
-    assert k["recall@5"] > v["recall@5"]
-    assert k["ndcg@5"] > v["ndcg@5"]
-    # Keyword is the current best backend by graded nDCG (and non-trivial); vector is not broken.
-    assert all(k["ndcg@5"] >= report["metrics"][b]["ndcg@5"] for b in BACKENDS)
-    assert v["recall@5"] >= 0.4
-    # Hybrid trails keyword on this query type (sparse view is uninformative here); we do NOT
-    # assert hybrid >= keyword (false). But the do-no-harm guard means hybrid never falls
-    # below its dense component — asserted here on the SAME report (no extra eval cost) and
-    # unit-tested structurally in tests/test_hybrid_retrieval.py::test_do_no_harm_guard_*.
     h = report["metrics"]["hybrid"]
+    # The validated retrieval delta against the TRUE keyword baseline
+    # (SOPHIA_RAG_BACKEND=keyword ⇒ token-overlap keyword tier; see agent.retrieval):
+    # the committed dense vector index outranks keyword on graded nDCG (the clean signal;
+    # recall@5 margin is thin ≈0.517 vs ≈0.500, so nDCG is the load-bearing assertion).
+    assert v["ndcg@5"] > k["ndcg@5"]
+    assert v["recall@5"] >= k["recall@5"]
+    # Neither backend is broken: both keep non-trivial recall.
+    assert v["recall@5"] >= 0.4
+    assert k["recall@5"] >= 0.3
+    # The do-no-harm guard guarantees fusion never scores below its dense component, so
+    # hybrid >= vector on both recall and graded nDCG (sparse may re-order the head / fill
+    # empty slots but cannot evict a dense hit). Structural guard also unit-tested in
+    # tests/test_hybrid_retrieval.py::test_do_no_harm_guard_*.
     assert h["recall@5"] >= v["recall@5"]
     assert h["ndcg@5"] >= v["ndcg@5"] - 1e-9
 
