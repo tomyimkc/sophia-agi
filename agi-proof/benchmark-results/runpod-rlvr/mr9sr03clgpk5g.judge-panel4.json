@@ -1,0 +1,224 @@
+{
+  "pilot_judge": "sophia-wisdom-4b-m3",
+  "answers": "agi-proof/benchmark-results/runpod-rlvr/mr9sr03clgpk5g.judge-answers.json",
+  "judges": [
+    "openrouter:deepseek/deepseek-chat",
+    "openrouter:meta-llama/llama-3.3-70b-instruct",
+    "openrouter:qwen/qwen-2.5-72b-instruct",
+    "openrouter:mistralai/mistral-large"
+  ],
+  "nCasesJudged": 94,
+  "protocol": "forced-choice (TIE disallowed)",
+  "perJudge": {
+    "openrouter:deepseek/deepseek-chat": {
+      "n": 94,
+      "adapter": 49,
+      "base": 45,
+      "tie": 0,
+      "adapter_winrate": 0.5213,
+      "base_winrate": 0.4787
+    },
+    "openrouter:meta-llama/llama-3.3-70b-instruct": {
+      "n": 94,
+      "adapter": 58,
+      "base": 36,
+      "tie": 0,
+      "adapter_winrate": 0.617,
+      "base_winrate": 0.383
+    },
+    "openrouter:qwen/qwen-2.5-72b-instruct": {
+      "n": 94,
+      "adapter": 52,
+      "base": 42,
+      "tie": 0,
+      "adapter_winrate": 0.5532,
+      "base_winrate": 0.4468
+    },
+    "openrouter:mistralai/mistral-large": {
+      "n": 94,
+      "adapter": 51,
+      "base": 43,
+      "tie": 0,
+      "adapter_winrate": 0.5426,
+      "base_winrate": 0.4574
+    }
+  },
+  "interJudgeKappa": 0.1619,
+  "consensus": {
+    "adapter_better": 34,
+    "base_better": 21
+  },
+  "winRate": {
+    "openrouter:deepseek/deepseek-chat": {
+      "nBinary": 94,
+      "adapterWins": 49,
+      "baseWins": 45,
+      "adapterWinrate": 0.5213,
+      "wilson95": [
+        0.4215,
+        0.6194
+      ],
+      "bootstrap95": [
+        0.4255,
+        0.617
+      ],
+      "binomialTwoSidedP_vs_0_5": 0.75719,
+      "significantVs0_5_at_0_05": false
+    },
+    "openrouter:meta-llama/llama-3.3-70b-instruct": {
+      "nBinary": 94,
+      "adapterWins": 58,
+      "baseWins": 36,
+      "adapterWinrate": 0.617,
+      "wilson95": [
+        0.516,
+        0.7089
+      ],
+      "bootstrap95": [
+        0.5106,
+        0.7128
+      ],
+      "binomialTwoSidedP_vs_0_5": 0.02977,
+      "significantVs0_5_at_0_05": true
+    },
+    "openrouter:qwen/qwen-2.5-72b-instruct": {
+      "nBinary": 94,
+      "adapterWins": 52,
+      "baseWins": 42,
+      "adapterWinrate": 0.5532,
+      "wilson95": [
+        0.4526,
+        0.6496
+      ],
+      "bootstrap95": [
+        0.4468,
+        0.6489
+      ],
+      "binomialTwoSidedP_vs_0_5": 0.35333,
+      "significantVs0_5_at_0_05": false
+    },
+    "openrouter:mistralai/mistral-large": {
+      "nBinary": 94,
+      "adapterWins": 51,
+      "baseWins": 43,
+      "adapterWinrate": 0.5426,
+      "wilson95": [
+        0.4422,
+        0.6396
+      ],
+      "bootstrap95": [
+        0.4362,
+        0.6383
+      ],
+      "binomialTwoSidedP_vs_0_5": 0.47049,
+      "significantVs0_5_at_0_05": false
+    }
+  },
+  "interJudgeReliability": {
+    "openrouter:deepseek/deepseek-chat vs openrouter:meta-llama/llama-3.3-70b-instruct": {
+      "nBinaryPairs": 94,
+      "observedAgreement": 0.5851,
+      "cohenKappaBinary": 0.1619,
+      "PABAK": 0.1702,
+      "biasIndex": -0.0957,
+      "prevalenceIndex": 0.1383,
+      "table": {
+        "bothAdapter": 34,
+        "bothBase": 21,
+        "xAdapter_yBase": 15,
+        "xBase_yAdapter": 24
+      }
+    },
+    "openrouter:deepseek/deepseek-chat vs openrouter:qwen/qwen-2.5-72b-instruct": {
+      "nBinaryPairs": 94,
+      "observedAgreement": 0.7979,
+      "cohenKappaBinary": 0.5939,
+      "PABAK": 0.5957,
+      "biasIndex": -0.0319,
+      "prevalenceIndex": 0.0745,
+      "table": {
+        "bothAdapter": 41,
+        "bothBase": 34,
+        "xAdapter_yBase": 8,
+        "xBase_yAdapter": 11
+      }
+    },
+    "openrouter:deepseek/deepseek-chat vs openrouter:mistralai/mistral-large": {
+      "nBinaryPairs": 94,
+      "observedAgreement": 0.766,
+      "cohenKappaBinary": 0.5302,
+      "PABAK": 0.5319,
+      "biasIndex": -0.0213,
+      "prevalenceIndex": 0.0638,
+      "table": {
+        "bothAdapter": 39,
+        "bothBase": 33,
+        "xAdapter_yBase": 10,
+        "xBase_yAdapter": 12
+      }
+    },
+    "openrouter:meta-llama/llama-3.3-70b-instruct vs openrouter:qwen/qwen-2.5-72b-instruct": {
+      "nBinaryPairs": 94,
+      "observedAgreement": 0.7021,
+      "cohenKappaBinary": 0.389,
+      "PABAK": 0.4043,
+      "biasIndex": 0.0638,
+      "prevalenceIndex": 0.1702,
+      "table": {
+        "bothAdapter": 41,
+        "bothBase": 25,
+        "xAdapter_yBase": 17,
+        "xBase_yAdapter": 11
+      }
+    },
+    "openrouter:meta-llama/llama-3.3-70b-instruct vs openrouter:mistralai/mistral-large": {
+      "nBinaryPairs": 94,
+      "observedAgreement": 0.6277,
+      "cohenKappaBinary": 0.2402,
+      "PABAK": 0.2553,
+      "biasIndex": 0.0745,
+      "prevalenceIndex": 0.1596,
+      "table": {
+        "bothAdapter": 37,
+        "bothBase": 22,
+        "xAdapter_yBase": 21,
+        "xBase_yAdapter": 14
+      }
+    },
+    "openrouter:qwen/qwen-2.5-72b-instruct vs openrouter:mistralai/mistral-large": {
+      "nBinaryPairs": 94,
+      "observedAgreement": 0.734,
+      "cohenKappaBinary": 0.4632,
+      "PABAK": 0.4681,
+      "biasIndex": 0.0106,
+      "prevalenceIndex": 0.0957,
+      "table": {
+        "bothAdapter": 39,
+        "bothBase": 30,
+        "xAdapter_yBase": 13,
+        "xBase_yAdapter": 12
+      }
+    }
+  },
+  "majorityVote": {
+    "perCase_winrate": {
+      "nBinary": 79,
+      "adapterWins": 42,
+      "baseWins": 37,
+      "adapterWinrate": 0.5316,
+      "wilson95": [
+        0.4227,
+        0.6376
+      ],
+      "bootstrap95": [
+        0.4177,
+        0.6456
+      ],
+      "binomialTwoSidedP_vs_0_5": 0.65296,
+      "significantVs0_5_at_0_05": false
+    },
+    "ties_in_vote": 15
+  },
+  "statsNote": "Win-rate vs 0.5 (Wilson/binomial/bootstrap) is the capability evidence; κ/PABAK/bias+prevalence indices report JUDGE RELIABILITY (Feinstein & Cicchetti 1990; Byrt 1993; Warrens 2010). Do NOT compare PABAK/AC1 to a κ-derived 0.40 bar — Landis & Koch cutoffs are not transferable (Zec 2023).",
+  "boundary": "Independent LLM judges (≠ subject, ≠ gate). Validates whether the adapter's marker-based source-discipline gains hold up SEMANTICALLY. Single seed's answers; not a market or AGI claim."
+}
