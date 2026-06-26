@@ -68,7 +68,7 @@ over-abstention and rising scaffold-conditioned usefulness.
 
 ## Corroboration added after the pilot (seed 1 + LLM judges)
 
-**Stability (seed 1, full N=354 × 3 runs — `M3-pilot-eval-seed1.json`).** The primary signal
+**Stability (seeds 1 AND 2, full N=354 × 3 runs each — `M3-pilot-eval-seed{1,2}.json`).** Across THREE seeds the primary signal is CI-clean improving every time: qualification +0.475/+0.371/+0.383, tradition_merge +0.143/+0.113/+0.125, false_attribution +0.014/+0.010/+0.010, moral_route +0.569/+0.588/+0.686 (seed0/1/2); no protected regression on any seed; over-abstention ≤0.023. Three-seed robust. (Original seed-1 detail:) The primary signal
 reproduces: adapter(prompt)−base(prompt) is CI-clean improving on the SAME 3 metrics — qualification
 +0.372, tradition_merge +0.113, false_attribution +0.010 (citation_fidelity again not CI-clean);
 moral_route +0.588. No protected regression (history 0.074→0.028), over-abstention 0.023. Two seeds
