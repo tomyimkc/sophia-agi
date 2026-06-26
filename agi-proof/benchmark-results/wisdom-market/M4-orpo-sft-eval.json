@@ -45,14 +45,14 @@
           "values": []
         },
         "qualification_rate_on_contested": {
-          "mean": 0.625,
+          "mean": 0.75,
           "ci": [
-            0.625,
-            0.625
+            0.75,
+            0.75
           ],
           "runs": 1,
           "values": [
-            0.625
+            0.75
           ]
         },
         "tradition_merge_rate": {
@@ -83,25 +83,25 @@
           "values": []
         },
         "over_abstention_rate": {
-          "mean": 0.1667,
+          "mean": 0.2083,
           "ci": [
-            0.1667,
-            0.1667
+            0.2083,
+            0.2083
           ],
           "runs": 1,
           "values": [
-            0.1667
+            0.2083
           ]
         },
         "useful_correctness": {
-          "mean": 0.4583,
+          "mean": 0.4167,
           "ci": [
-            0.4583,
-            0.4583
+            0.4167,
+            0.4167
           ],
           "runs": 1,
           "values": [
-            0.4583
+            0.4167
           ]
         },
         "protected_history_regression": {
@@ -216,14 +216,14 @@
           ]
         },
         "useful_correctness": {
-          "mean": 0.4583,
+          "mean": 0.375,
           "ci": [
-            0.4583,
-            0.4583
+            0.375,
+            0.375
           ],
           "runs": 1,
           "values": [
-            0.4583
+            0.375
           ]
         },
         "protected_history_regression": {
@@ -338,14 +338,14 @@
           ]
         },
         "useful_correctness": {
-          "mean": 0.375,
+          "mean": 0.2917,
           "ci": [
-            0.375,
-            0.375
+            0.2917,
+            0.2917
           ],
           "runs": 1,
           "values": [
-            0.375
+            0.2917
           ]
         },
         "protected_history_regression": {
@@ -815,10 +815,10 @@
       "improves": false
     },
     "useful_correctness": {
-      "delta": -0.0834,
+      "delta": -0.1667,
       "ci": [
-        -0.0834,
-        -0.0834
+        -0.1667,
+        -0.1667
       ],
       "improves": false
     },
@@ -913,10 +913,10 @@
       "improves": true
     },
     "useful_correctness": {
-      "delta": -0.0417,
+      "delta": -0.125,
       "ci": [
-        -0.0417,
-        -0.0417
+        -0.125,
+        -0.125
       ],
       "improves": false
     },
