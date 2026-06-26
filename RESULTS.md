@@ -253,14 +253,16 @@ RAM, 4 TB NVMe** — via `tools/runpod_storage_bench.py`. Full report:
 | infcache prompt-token reuse | 94.1% | **96.9%** (4096-tok system prompt) |
 | diskstore O_DIRECT pread (real NVMe, cold) | n/a (virtio) | **17.2k reads/s, 67 MiB/s, p50 57 µs** |
 
-**Honest finding — io_uring was seccomp-blocked on the RunPod container.**
-`io_uring_setup` succeeded but `io_uring_enter` returned `EPERM`, so the io_uring
-backend could not run there (hardened-container seccomp profiles commonly block
-io_uring). The pread paths ran fine. So the **io_uring win is measured in the dev
-sandbox (10.6× under O_DIRECT, which *does* permit io_uring), not yet on RunPod
-NVMe** — a real lesson that io_uring deployment depends on the runtime's seccomp
-policy. The benches now degrade gracefully (report "io_uring UNAVAILABLE" instead
-of crashing) when `io_uring_enter` is blocked.
+**Honest finding — io_uring is seccomp-blocked on RunPod (both COMMUNITY and
+SECURE tiers tested).** `io_uring_enter` returns `EPERM`, so the io_uring backend
+could not run on either RunPod container; the pread paths ran fine. Hardened
+container runtimes commonly block io_uring, and RunPod's standard runtime does on
+both clouds we tried. So the **io_uring win stays measured in the dev sandbox
+(10.6× under O_DIRECT, which *does* permit io_uring), not on RunPod NVMe** — a
+real lesson that io_uring deployment depends on the runtime's seccomp policy
+(getting it on rented infra would need a privileged container or bare metal).
+The benches now degrade gracefully — both `io_uring_setup` and `io_uring_enter`
+failures report "io_uring UNAVAILABLE" and continue, instead of crashing.
 
 To reproduce (rents the cheapest pod, runs on its NVMe, **always deletes the
 pod**; reuses the proven `tools/runpod_rlvr.py` lifecycle):

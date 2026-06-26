@@ -111,9 +111,11 @@ fn main() -> std::io::Result<()> {
     run_backend("std", &StdReader, &db, &args, &keystrings);
 
     #[cfg(feature = "io_uring")]
-    {
-        let uring = diskstore::UringReader::new(args.batch as u32)?;
-        run_backend("uring", &uring, &db, &args, &keystrings);
+    match diskstore::UringReader::new(args.batch as u32) {
+        Ok(uring) => run_backend("uring", &uring, &db, &args, &keystrings),
+        // io_uring_setup itself can be EPERM-blocked by a container seccomp
+        // profile — report and skip rather than aborting the whole bench.
+        Err(e) => println!("[uring] UNAVAILABLE: {e}\n  (io_uring blocked by container seccomp; the std backend numbers stand.)"),
     }
     #[cfg(not(feature = "io_uring"))]
     println!("\n(io_uring backend not built — rebuild with --features io_uring to compare)");
