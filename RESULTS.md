@@ -87,6 +87,158 @@ Continual Provenance QA (CPQA): a frozen LLM answers either from the retrieved O
   - 3-FAMILY VALIDATION (DeepSeek+Meta+Qwen, full-92, 3 runs). The grounded-vs-raw finding is robust across three independent families: mean pairwise kappa 0.88 (grounded) / 0.81 (raw), per-judge spread tight. Key behavioral result: vs the thin-corpus hybrid (141 parametric fallbacks), enrichment shifts the hybrid to 237 strict / 24 fallback — SAME recall (~0.67) with ~6x LESS parametric reliance (more grounded, not just more accurate). Traps behaviorally 1.0 (all 15 took the hard-abstain policy; the 0.933 score is judge noise on the fixed abstention string). raw still wins overall (0.895) — the residual gap is corpus coverage (terse field-derived summaries), not method.
 - ⚠ CANDIDATE, not validated (self-authored benchmark, keys held by one operator, no external replication). FULL 92-query cross-gateway run, 3 runs. Honest headline: on attribution-traps/retractions grounded scores 1.0 vs raw 0.0 (perfect fail-closed abstention), but on plain recall grounded collapses to 0.50 vs raw 0.93 because answers are constrained to the retrieved wiki page and many pages are thin provenance stubs that don't contain the answer. Net, the raw model wins OVERALL (0.88 vs 0.53) on this recall-heavy, thin-source corpus. This is the predicted coverage-vs-fabrication tradeoff: grounding buys trap-safety at a recall cost, not a blanket win. Inter-judge kappa is now healthy (0.94/0.67; the earlier degeneracy was a small-subset artifact). UPDATE: a Step 1+2 hybrid (graph-neighborhood + typed gate with attribution-safe fallback) recovers recall to 0.68 and overall to 0.685 while keeping all traps on the hard-abstain path (see continualGroundedEvals.hybrid).
 
+## Storage — kvcache (Phase 1)
+
+Sharded async in-memory KV cache (`storage/kvcache`, Rust/Tokio). `kvcache-bench`
+measures the **full loopback TCP round trip** (client→server→client), not the bare
+in-memory map. Numbers vary by host; reproduce with the command below.
+
+Representative run — 32 clients × 30,000 GETs, 100,000 keys, 256-byte values,
+16 shards, 100% read, no evictions (all hits):
+
+| pipeline depth | throughput | latency p50 | latency p99 |
+|---|---|---|---|
+| 1 (no pipelining) | ~186k ops/sec | ~168 µs (per-op) | ~300 µs (per-op) |
+| 16 | ~1.60M ops/sec | ~306 µs (per-batch) | ~546 µs (per-batch) |
+| 64 | ~2.13M ops/sec | ~920 µs (per-batch) | ~1602 µs (per-batch) |
+
+Phase 1b added request **pipelining**: the client packs a batch into one flush and
+the server coalesces responses (flush only when no further request is already
+buffered), turning N round trips into ~one. The result is the textbook
+throughput-for-latency trade — **8.6× throughput at depth 16** for a higher
+per-batch latency. The depth-1 row is the honest single-request baseline.
+
+Remaining caveats: single node, in-memory only. Persistence (io_uring on-disk
+engine) and replication (Raft) are Phases 2–3. 14 unit + 6 integration tests cover
+LRU eviction, TTL expiry, binary-safe framing, pipelined-batch ordering, concurrent
+shared state, and clean-EOF handling; all run offline in CI.
+
+```bash
+cd storage
+cargo test                                                                     # correctness
+cargo run --release --bin kvcache-bench -- --clients 32 --ops 30000 --pipeline 16
+```
+
+## Storage — diskstore (Phase 2)
+
+Bitcask-style **durable** KV engine (`storage/diskstore`, Rust): append-only log,
+CRC-32 per record, in-memory keydir, crash recovery (torn-tail truncation),
+compaction, and a batched-read abstraction with two backends — portable `pread`
+(`StdReader`) and **io_uring** (`UringReader`, feature `io_uring`).
+
+Batched random reads — 200k keys × 512 B (≈103 MiB), 3000 batches × 256 keys:
+
+| backend | throughput | batch p50 | batch p99 |
+|---|---|---|---|
+| std (pread) | ~837k reads/sec | ~284 µs | ~459 µs |
+| io_uring | ~868k reads/sec | ~275 µs | ~467 µs |
+
+**Honest reading of this:** the two are ~equal *because the working set is
+page-cached* — a warm `pread` is a cheap syscall with nothing to block on, so
+collapsing 256 syscalls into one submission saves little.
+
+**The real win, under O_DIRECT cold I/O** (`diskstore-odirect-bench`): bypass the
+page cache so every read goes to the device. Now serial `pread` is latency-bound
+(one outstanding I/O) while io_uring keeps the device queue full. 781 MiB file on
+ext4, 100k random 4 KiB reads:
+
+| backend | throughput | bandwidth | p50 |
+|---|---|---|---|
+| pread (serial, O_DIRECT) | ~17.6k reads/sec | ~69 MiB/s | 55 µs/read |
+| io_uring (depth 128, O_DIRECT) | ~187k reads/sec | ~731 MiB/s | 669 µs/batch |
+
+**~10.6× throughput** — this is the regime io_uring is built for. (It needs a
+non-tmpfs filesystem; measured on ext4/virtio here.) The io_uring read path is also
+verified **byte-identical** to pread (`multi_get_uring_matches_std`). 7 unit + 7
+integration tests; the io_uring parity test is gated on the feature.
+
+```bash
+cd storage
+cargo test -p diskstore                                   # std path (CI)
+cargo test -p diskstore --features io_uring               # + io_uring parity
+cargo run --release -p diskstore --features io_uring --bin diskstore-bench
+```
+
+## Storage — miniraft (Phase 3)
+
+Clean-room **Raft consensus** core (`storage/miniraft`, Rust, dependency-free)
+built from the paper rather than wrapped over a library — the job description
+explicitly values first-principles work, and the roadmap's own advice was
+"reproduce Raft". The node is a pure state machine (no I/O, no clock); a
+deterministic, event-driven simulator drives N nodes and can crash, restart, and
+partition them, so the **safety properties are tested, not asserted by hand**:
+
+| property | test |
+|---|---|
+| exactly one leader per term (no split-brain) | `elects_exactly_one_leader` |
+| writes commit only on a quorum, applied in order on all nodes | `replicates_and_commits_on_quorum` |
+| leadership + progress recover after the leader crashes | `re_elects_after_leader_crash` |
+| an isolated minority cannot commit; majority does | `minority_partition_cannot_commit` |
+| logs converge after heal; uncommitted writes are dropped | `minority_partition_cannot_commit` |
+| applied prefixes never diverge across nodes | `logs_never_disagree_on_committed_prefix` |
+
+Implements election (randomized timeouts + up-to-date-log voting restriction),
+log replication (consistency check + conflict truncation), and the commit rule
+(quorum **and** current-term). Out of scope, documented not faked: snapshots,
+dynamic membership, on-disk persistence (the node marks which state is
+persistent; wiring it to `diskstore` / a real transport / `openraft` is the
+productionization step).
+
+```bash
+cd storage && cargo test -p miniraft     # 5 safety tests + doctest, fully deterministic
+```
+
+### Durability — raftkv (Phase 2 × Phase 3)
+
+`storage/raftkv` backs each Raft node's persistent state (term/vote/log) with a
+per-node `diskstore` Bitcask (Phase 2), flushing on every durable-state change
+and reloading on restart — fulfilling Raft's "a completed write is durable"
+requirement with the real on-disk engine. Tested end-to-end:
+
+| property | test |
+|---|---|
+| committed log is persisted to disk (survives as bytes) | `committed_log_is_persisted_to_disk` |
+| a crashed follower recovers its log from disk and converges | `follower_recovers_log_from_disk_after_crash` |
+| a restarted old leader steps down — no split-brain | `restarted_leader_does_not_cause_split_brain` |
+
+```bash
+cd storage && cargo test -p raftkv       # 2 codec + 3 durability tests + doctest
+```
+
+## Storage — infcache (Phase 4): LLM inference KVCache
+
+The role's #1 responsibility ("支撑大模型推理的高性能 KVCache 存储系统"), built by
+composing the earlier phases. `storage/infcache` is a **prefix-keyed, tiered**
+KV-block cache: a token stream is chunked into blocks whose keys hash the whole
+prefix (so a shared prompt prefix is a cache hit — context caching), served from
+a RAM hot tier (Phase-1 `kvcache::ShardedCache`) over a durable SSD tier (Phase-2
+`diskstore::Bitcask`) with promotion on an SSD hit.
+
+Demo workload — 2000 requests sharing a 2048-token system prompt, each with a
+unique 128-token suffix, 16-token blocks, 4 KiB KV/block:
+
+| metric | value |
+|---|---|
+| prompt-token reuse rate | **94.1%** |
+| block hit rate | 99.2% |
+
+I.e. with prefix caching only ~6% of prompt tokens (the per-request suffixes plus
+the first request's full prompt) need their KV recomputed; the rest is served
+from cache. Tiering is exercised separately by
+`ssd_tier_serves_after_ram_eviction_and_promotes` (a block evicted from a 4-slot
+RAM tier is still served from SSD and promoted back) and durability by
+`blocks_survive_reopen`. 6 unit + 3 integration tests.
+
+```bash
+cd storage
+cargo test -p infcache
+cargo run --release -p infcache --bin infcache-bench -- --requests 2000 --system 2048 --suffix 128
+```
+
+This is the storage/reuse layer, not an attention kernel — block payloads are
+opaque serialized K/V; wiring it under a real engine (vLLM/SGLang-style) is the
+integration step.
+
 ## Reproduce
 
 ```bash
