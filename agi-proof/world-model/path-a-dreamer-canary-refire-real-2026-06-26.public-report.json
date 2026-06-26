@@ -1,0 +1,52 @@
+{
+  "schema": "sophia.world_model_dreamer.canary.v1",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "benchmark": "Path A — DreamerV3-style world model canary, REFIRE on REAL model traces",
+  "date": "2026-06-26",
+  "corpus": {
+    "source": "REAL DeepSeek (deepseek-chat) harness traces, coding-debugging skill with exec+gate verification (NOT synthesized/mock).",
+    "minedPairs": 44,
+    "positiveRate": 0.955,
+    "actions": [
+      "model",
+      "tool"
+    ],
+    "splits": "train=26 val=10 shift=8",
+    "honestBound": "Genuine model traces, but PASS-SKEWED (0.955): DeepSeek is competent enough that the gate rejects only ~5% of step-outputs. Both negative examples fell in train, leaving val/shift positive_rate = 1.000 (zero negatives to learn against)."
+  },
+  "results": [
+    {
+      "seed": 0,
+      "valAccuracy": 1.0,
+      "shiftAccuracy": 1.0,
+      "shiftDegradation": 0.0,
+      "verdict": "promote"
+    },
+    {
+      "seed": 1,
+      "valAccuracy": 0.9,
+      "shiftAccuracy": 1.0,
+      "shiftDegradation": 0.0,
+      "verdict": "promote"
+    },
+    {
+      "seed": 2,
+      "valAccuracy": 1.0,
+      "shiftAccuracy": 1.0,
+      "shiftDegradation": 0.0,
+      "verdict": "promote"
+    }
+  ],
+  "majorityClassBaseline": {
+    "alwaysPredictPositive_fullSet": 0.955,
+    "val_positiveRate": 1.0,
+    "shift_positiveRate": 1.0,
+    "interpretation": "val/shift contain ZERO negative examples, so a predictor that always outputs success=1 scores 1.0 on them — IDENTICAL to the Dreamer's 'valAccuracy 1.0'. The canary's promote is therefore SPURIOUS: it cannot distinguish learning from the trivial majority-class solution."
+  },
+  "verdict": "PROMOTE IS SPURIOUS — not a valid promote (no generalization proven)",
+  "interpretation": "Re-firing Path A on REAL DeepSeek traces produced a 'promote' on all 3 seeds, but this is NOT a valid positive result: the corpus is pass-skewed (positive_rate 0.955) and BOTH negative examples landed in train, so the val and shift splits have positive_rate = 1.000. A predictor that always outputs success=1 (the majority-class baseline) scores 1.0 on val/shift — exactly matching the Dreamer's 'valAccuracy 1.0'. The canary therefore PROMOTES A TRIVIAL SOLUTION. This is a real finding about the CANARY's blind spot, not a Path-A capability: the promote gate lacks a majority-class-baseline / balanced-data guard, so it is meaningless on pass-skewed strong-model traces. To get a meaningful signal the canary must (a) require a balanced pass/fail split (stratified so val/shift contain negatives) and (b) require the predictor to BEAT the majority-class baseline before promoting. Until then Path A has NO valid promote (the earlier 25-pair synthesized run's HOLD was the honest verdict; this real-data run's promote is a canary defect, recorded as such).",
+  "canaryDefectRecommendation": "verified_world_model's promote logic should add: (1) a stratified split guaranteeing val/shift contain negatives when the corpus has any; (2) a majority-class-baseline floor the predictor must clear (valAccuracy > majority_class_accuracy, not just > 0.65) before promote. Without these, any pass-skewed corpus yields a spurious promote."
+}
