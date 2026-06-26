@@ -109,6 +109,70 @@ machinery that already exists (`okf/graph.py`, `agent/calibration.py`) rather th
 new scope, so they are the cheapest path to a measurable result that clears the gate.
 #2, #4, #5 follow once there is a roofline to measure improvements against.
 
+## From thesis to adoptable steps
+
+The thesis is only useful if it becomes a procedure. The **deliberation-roofline protocol**
+(feature #2, generalizes to any verifier-gated best-of-N / council loop):
+
+1. **Instrument.** Log, per query, the deliberation budget spent (samples / council width /
+   retrieval depth) and whether the emitted answer was *verifier-accepted* and *actually
+   correct* (on a labeled slice). One row per (query, budget).
+2. **Build the curve.** Plot effective quality `Q(N)` = P(emit an actually-correct answer)
+   against budget `N`. Expect it concave and saturating.
+3. **Estimate the ceiling.** Fit / read off the asymptote. With a verifier of recall `r`
+   and false-positive rate `f` over difficulty mix `{p_i}`, the ceiling is
+   `mean_i (p_i·r)/(p_i·r + (1-p_i)·f)` — a property of the **verifier**, not the budget.
+4. **Set the operating budget at the ridge.** Pick `N* = ` smallest budget reaching ~95%
+   of the ceiling. Spend there; everything past `N*` is wasted compute.
+5. **If the ceiling is below target, fix the verifier — not the budget.** This is the
+   load-bearing consequence: when `Q(∞) < target`, no amount of additional thinking helps;
+   the lever is verifier precision (lower `f`) / recall (higher `r`), or abstaining more.
+
+This plugs into `agent/graded_decision.py` (the answer/hedge/abstain router gains a
+*budget* dimension) and `agent/best_of.py` / `agent/council_deliberate.py` (which gain an
+early-exit at `N*`).
+
+## Tested: the deliberation roofline holds (and the ceiling is the verifier)
+
+The protocol's claims are implemented and **run** as a falsifiable experiment in
+[`reasoning/deliberation_roofline.py`](../../reasoning/deliberation_roofline.py) — a
+verifier-gated best-of-N over a 90-item easy/medium/hard task, Monte-Carlo simulated **and
+checked against a closed-form derivation** (offline, seeded, no GPU/keys). Saved output:
+[`reasoning/results/deliberation_roofline.txt`](../../reasoning/results/deliberation_roofline.txt).
+
+Measured verdict (trials=800, seed=1234):
+
+| Verifier (recall, fpr) | Ceiling `Q(∞)` | Ridge `N*` (95%) | `Q` at N=64 | Compute past ridge |
+|---|---|---|---|---|
+| oracle (1.0, 0.0)  | **1.000** | 16 | 1.000 | 4× → +0.025 |
+| good   (0.95, 0.05)| **0.905** | 16 | 0.905 | 4× → +0.010 |
+| leaky  (0.85, 0.15)| **0.777** | 8  | 0.777 | 8× → +0.017 |
+
+- **H1 — concave / diminishing returns:** confirmed in all three.
+- **H2 — finite ridge point:** confirmed — e.g. the leaky verifier is within 5% of its
+  ceiling by `N*=8`; the 8× compute from 8→64 buys **+0.017** quality.
+- **H3 — ceiling set by the verifier, not compute:** confirmed — oracle plateaus at 1.000,
+  leaky at **0.777**, and *no budget crosses it*. You cannot deliberate past a leaky verifier.
+- **Soundness:** Monte-Carlo matches the closed form within **0.0019** — the model is
+  validated, not assumed.
+
+One honest, non-obvious side finding the run surfaced: task-level *accuracy-on-answered*
+**drifts down** as budget grows (e.g. good-verifier 0.954→0.905), because more deliberation
+broadens coverage to *harder* items that have lower per-item verified-accuracy. Higher
+coverage is not free accuracy — another reason `N*` matters.
+
+Reproduce:
+
+```bash
+python reasoning/deliberation_roofline.py --run        # the experiment + verdict
+python reasoning/deliberation_roofline.py --self-test   # assert the invariants
+```
+
+**Implication for Sophia.** This is the verifiability axis and the efficiency axis meeting:
+the system's quality ceiling is a function of its *verifier*, and beyond a measurable ridge
+point, the right move is not more compute but a better check — or principled abstention.
+That is exactly the discipline `VISION.md` already commits to, now with a budget attached.
+
 ## Non-goals
 
 - No claim that any of this constitutes AGI, sentience, or general intelligence.
