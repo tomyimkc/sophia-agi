@@ -10,6 +10,7 @@ multithreading, durable I/O, consensus).
 | [`kvcache`](#kvcache-phase-1) | 1 / 1b | sharded async in-memory KV cache + pipelining |
 | [`diskstore`](#diskstore-phase-2) | 2 | bitcask-style durable engine; std + io_uring read backends |
 | [`miniraft`](#miniraft-phase-3) | 3 | clean-room Raft core + deterministic fault-injection simulator |
+| [`infcache`](#infcache-phase-4) | 4 | prefix-keyed, RAM→SSD tiered KV-block cache for LLM inference |
 
 Run everything: `cargo test` (workspace root `storage/`).
 
@@ -162,7 +163,38 @@ cargo test -p miniraft     # 5 safety tests + doctest, fully deterministic
 
 See [../RESULTS.md](../RESULTS.md) for the property → test table.
 
+---
+
+## `infcache` (Phase 4)
+
+The role's core responsibility: a **prefix-keyed, tiered KV-block cache for LLM
+inference**, composing the earlier phases. A token stream is chunked into blocks
+whose keys hash the entire prefix, so a shared prompt prefix is a cache hit
+(context caching). Blocks live in a RAM hot tier (`kvcache::ShardedCache`) backed
+by a durable SSD tier (`diskstore::Bitcask`); an SSD hit is promoted back to RAM.
+
+```
+tokens ─► block_keys (prefix-chained) ─► plan_prefill
+   reused prefix (cache hit)  │  recompute tail (miss)
+   get_block: RAM ─miss─► SSD ─hit─► promote to RAM
+   put_block: write-through to RAM + SSD (durable)
+```
+
+`plan_prefill` reports how much of a prompt is reusable vs. must be recomputed —
+the number that drives inference cost. On a shared-system-prompt workload the
+demo shows **94.1% prompt-token reuse**:
+
+```bash
+cargo test -p infcache
+cargo run --release -p infcache --bin infcache-bench -- --requests 2000 --system 2048 --suffix 128
+```
+
+It's the storage/reuse layer, not an attention kernel (block payloads are opaque
+serialized K/V). See [../RESULTS.md](../RESULTS.md) for numbers and scope.
+
 ## What's next (see the roadmap)
 
-- **4** — specialize as an **LLM inference KVCache** (prefix-keyed blocks,
-  RAM→SSD tiering over `kvcache` + `diskstore`) — the role's core responsibility.
+The four phases are shipped. Remaining productionization — per crate — is tracked
+in the [roadmap](../docs/storage/STORAGE_ROADMAP.md): request pipelining tuning,
+rolling segments + `O_DIRECT` for the engine, snapshots/membership/disk-persistence
+for Raft, and integrating `infcache` under a real inference engine.

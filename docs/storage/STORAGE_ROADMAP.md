@@ -118,12 +118,17 @@ Each phase ends with a runnable artifact + benchmark numbers committed to the re
   Raft log to `diskstore`; run the core under a real transport, or integrate
   `openraft` (v0.9 storage-v2 API already vetted) as the production engine.
 
-### Phase 4 — KVCache-for-inference specialization (weeks 17–22) → the role's core
-- Prefix/blockwise KV-block cache keyed by token-prefix hash; RAM→SSD tiering;
-  admission + eviction (e.g. cost-aware LRU/LFU).
-- Integrate with Sophia's inference path (or a vLLM-style mock) to show cache-hit
-  speedups on repeated prefixes.
-- **Deliverable:** hit-rate vs latency curves; `RESULTS.md` entry.
+### Phase 4 — KVCache-for-inference specialization ✅ SHIPPED → the role's core
+- ✅ `storage/infcache`: prefix/blockwise KV-block cache keyed by a token-prefix
+  hash (context caching); RAM→SSD tiering over Phase-1 `kvcache` + Phase-2
+  `diskstore`, with promotion on an SSD hit and write-through durability.
+- ✅ `plan_prefill` reports reusable-prefix vs recompute; `infcache-bench`
+  shows **94.1% prompt-token reuse** on a shared-system-prompt workload
+  (`RESULTS.md`). 6 unit + 3 integration tests.
+- ⏭ **Next:** integrate under a real inference engine (vLLM/SGLang-style) for
+  end-to-end latency curves; cost-aware admission/eviction (LFU, block value);
+  distribute the cache across nodes (RadixAttention-style sharing) using the
+  Phase-3 consensus core for the metadata plane.
 
 ### Phase 5 — Stretch differentiators (ongoing)
 - Zero-copy: `mmap` reads, `splice` on the network path.

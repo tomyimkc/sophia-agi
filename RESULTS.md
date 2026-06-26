@@ -178,6 +178,40 @@ productionization step).
 cd storage && cargo test -p miniraft     # 5 safety tests + doctest, fully deterministic
 ```
 
+## Storage — infcache (Phase 4): LLM inference KVCache
+
+The role's #1 responsibility ("支撑大模型推理的高性能 KVCache 存储系统"), built by
+composing the earlier phases. `storage/infcache` is a **prefix-keyed, tiered**
+KV-block cache: a token stream is chunked into blocks whose keys hash the whole
+prefix (so a shared prompt prefix is a cache hit — context caching), served from
+a RAM hot tier (Phase-1 `kvcache::ShardedCache`) over a durable SSD tier (Phase-2
+`diskstore::Bitcask`) with promotion on an SSD hit.
+
+Demo workload — 2000 requests sharing a 2048-token system prompt, each with a
+unique 128-token suffix, 16-token blocks, 4 KiB KV/block:
+
+| metric | value |
+|---|---|
+| prompt-token reuse rate | **94.1%** |
+| block hit rate | 99.2% |
+
+I.e. with prefix caching only ~6% of prompt tokens (the per-request suffixes plus
+the first request's full prompt) need their KV recomputed; the rest is served
+from cache. Tiering is exercised separately by
+`ssd_tier_serves_after_ram_eviction_and_promotes` (a block evicted from a 4-slot
+RAM tier is still served from SSD and promoted back) and durability by
+`blocks_survive_reopen`. 6 unit + 3 integration tests.
+
+```bash
+cd storage
+cargo test -p infcache
+cargo run --release -p infcache --bin infcache-bench -- --requests 2000 --system 2048 --suffix 128
+```
+
+This is the storage/reuse layer, not an attention kernel — block payloads are
+opaque serialized K/V; wiring it under a real engine (vLLM/SGLang-style) is the
+integration step.
+
 ## Reproduce
 
 ```bash
