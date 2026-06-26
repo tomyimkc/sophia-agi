@@ -1,10 +1,12 @@
 {
-  "schema": "sophia.math_code_heldout_seal.v1",
+  "schema": "sophia.math_code_heldout_seal.v2",
   "packId": "math-code-curriculum-heldout-2026-06-25",
-  "sealedAt": "2026-06-25T09:46:25.258095+00:00",
+  "sealedAt": "2026-06-26T03:52:37.669011+00:00",
   "visibility": "public-hash-only",
   "privateCopy": "private/math-code-heldout/ (gitignored)",
   "generatorPolicy": "Curriculum generators MUST NOT read sealed paths; train on sympy/exec-verified synthetic packs only.",
+  "pretrainingContaminationPolicy": "Public-benchmark-style items inherit the field's pretraining-contamination problem: a model may have seen similar items during pretraining, so a held-out gain on these is suggestive, NOT contamination-free proof. A clean external claim requires the third-party-authored pack (agi-proof/third-party-heldout/).",
+  "cleanExternalClaimPath": "agi-proof/third-party-heldout/ (third-party-authored, salted; currently EMPTY)",
   "files": [
     {
       "path": "eval/external/math-style-sample.jsonl",
@@ -59,7 +61,13 @@
           "id": "m12",
           "sha256": "718c50da22b8152baf21523e91a0a4bc5ae41f190d2a7bd893516e4007820110"
         }
-      ]
+      ],
+      "provenance": {
+        "sourceBenchmark": "MATH (Hendrycks et al., 2021)",
+        "sourceLicense": "MIT",
+        "authorship": "repo-authored style-sample (NOT official MATH)",
+        "pretrainingContaminationCaveat": "Public-benchmark-style items inherit the field's pretraining-contamination problem: a model may have seen similar items during pretraining, so a held-out gain on these is suggestive, NOT contamination-free proof. A clean external claim requires the third-party-authored pack (agi-proof/third-party-heldout/)."
+      }
     },
     {
       "path": "eval/external/gsm8k-style-sample.jsonl",
@@ -106,7 +114,13 @@
           "id": "s10",
           "sha256": "04e96bb9a8d80369a9a7d30deb19d61163d157ef105f1403e231079945028381"
         }
-      ]
+      ],
+      "provenance": {
+        "sourceBenchmark": "GSM8K (OpenAI, 2021)",
+        "sourceLicense": "MIT",
+        "authorship": "repo-authored style-sample (NOT official GSM8K)",
+        "pretrainingContaminationCaveat": "Public-benchmark-style items inherit the field's pretraining-contamination problem: a model may have seen similar items during pretraining, so a held-out gain on these is suggestive, NOT contamination-free proof. A clean external claim requires the third-party-authored pack (agi-proof/third-party-heldout/)."
+      }
     },
     {
       "path": "eval/coding/mbpp-style-sample.jsonl",
@@ -145,7 +159,13 @@
           "id": "mbpp-is-anagram",
           "sha256": "67e87a8ed0deff7b82242e3e9eb091ede6750562d3d13f7bebf731d5ddeb2532"
         }
-      ]
+      ],
+      "provenance": {
+        "sourceBenchmark": "MBPP (Google, 2021)",
+        "sourceLicense": "CC-BY-4.0",
+        "authorship": "repo-authored style-sample (NOT official MBPP)",
+        "pretrainingContaminationCaveat": "Public-benchmark-style items inherit the field's pretraining-contamination problem: a model may have seen similar items during pretraining, so a held-out gain on these is suggestive, NOT contamination-free proof. A clean external claim requires the third-party-authored pack (agi-proof/third-party-heldout/)."
+      }
     },
     {
       "path": "eval/coding/humaneval-style-sample.jsonl",
@@ -168,7 +188,13 @@
           "id": "he-unique",
           "sha256": "bdc00f33f8221b11b22ad8b826e383ad73fe3b17e2f1de89734bc8a24ff5f2e0"
         }
-      ]
+      ],
+      "provenance": {
+        "sourceBenchmark": "HumanEval (OpenAI, 2021)",
+        "sourceLicense": "MIT",
+        "authorship": "repo-authored style-sample (NOT official HumanEval)",
+        "pretrainingContaminationCaveat": "Public-benchmark-style items inherit the field's pretraining-contamination problem: a model may have seen similar items during pretraining, so a held-out gain on these is suggestive, NOT contamination-free proof. A clean external claim requires the third-party-authored pack (agi-proof/third-party-heldout/)."
+      }
     },
     {
       "path": "benchmark/code_tasks.json",
@@ -255,7 +281,11 @@
           "id": "flatten-nested-list",
           "sha256": "fb534714258e3587a9068bbe5c67d7fe9c1418438df6231c4d98785916c0d50f"
         }
-      ]
+      ],
+      "provenance": {
+        "authorship": "repo-authored",
+        "pretrainingContaminationCaveat": "low (repo-authored, not from a public pretraining corpus)"
+      }
     },
     {
       "path": "provenance_bench/data/math_problems.json",
@@ -502,7 +532,214 @@
           "id": "d2-2-5-5-4",
           "sha256": "7ed212bcb96b166c4942a5ed0beb7d02a6c96c942c9ed780308d58621de8ab31"
         }
-      ]
+      ],
+      "provenance": {
+        "authorship": "repo-authored (sympy-generated, family-disjoint eval split)",
+        "pretrainingContaminationCaveat": "low (synthetic)"
+      }
+    },
+    {
+      "path": "provenance_bench/data/code_tasks.json",
+      "sha256": "c3334edfac7cef2eefb793aab8d66e74f7420f7674c185b7b9a37ec0cf25215c",
+      "itemCount": 48,
+      "items": [
+        {
+          "id": "palin-59201",
+          "sha256": "79fe967741c3a78682f032fa7d0bd2b87ef34567f7de65adba53d40cef20d25c"
+        },
+        {
+          "id": "palin-25147",
+          "sha256": "afa147932119ba6652101a04cc2d17cc84e777c1adf1b84bc206f04ad75d705a"
+        },
+        {
+          "id": "palin-27379",
+          "sha256": "2bbb18a450688c7903101cb1600f3596c55007c7328da2093e5ddbd16fa01a24"
+        },
+        {
+          "id": "palin-3851",
+          "sha256": "b52fe66c39dd7f053eca16adca838c696270850855cdb43239b48b2cc0384339"
+        },
+        {
+          "id": "palin-97184",
+          "sha256": "1e202033f0f09fd14d9094df2f40192d8c7330db5baac539aacc01d7250b63d2"
+        },
+        {
+          "id": "palin-34190",
+          "sha256": "b9318e491c48d49aafec1b7acc889da835caa48c3c8748ad5a22c1dce7325b01"
+        },
+        {
+          "id": "palin-2054",
+          "sha256": "4e9fdb28040610ee207f11ef99b5de46c97238f8c62ebb0b19e16f4e41596c62"
+        },
+        {
+          "id": "palin-28321",
+          "sha256": "ea01adcc488130c2744960cdc1b09859ce8af6abc6fa1783c5c8658b8da887cc"
+        },
+        {
+          "id": "palin-73051",
+          "sha256": "41fb01d37b0acf0c6261c600785a8bcbb0e35a7b4111b8328c4913d8c84cb67a"
+        },
+        {
+          "id": "palin-75465",
+          "sha256": "a92f1fb6cbf4fedcd9cd7537f4bdce9f22ddcd2d0970ce69db25ebbd94d808c2"
+        },
+        {
+          "id": "palin-29814",
+          "sha256": "5188222acf059505ae5f866e8eac273188775611ea327b5f40dd5a4eb1c339c5"
+        },
+        {
+          "id": "palin-98471",
+          "sha256": "19ec1f4991df8816e07d4563a82bc345e7c5f64a2bd0de74d368ee3e5916a6c5"
+        },
+        {
+          "id": "palin-85451",
+          "sha256": "e5770429763c2246676208bd1953fc143f6164b41eb643e544bfc9320a0fda7f"
+        },
+        {
+          "id": "palin-1898",
+          "sha256": "6e26bdfa68123e7ce2636828488e1e9bb62135bef04bda41b665a3866ca69bc1"
+        },
+        {
+          "id": "palin-43189",
+          "sha256": "13e416ef22e9821fc4b7651e09b6e29a01354607940d35c29e28b057a04869ee"
+        },
+        {
+          "id": "palin-34813",
+          "sha256": "206adb10453dcd39297fab27cbdc6db8a3c30165edd4bef3e349254dcce7b067"
+        },
+        {
+          "id": "dedupe-19615",
+          "sha256": "1aee8472b70d3989f6c010b1cebfdb214771e17f2a763f62a94b373a80c3ca93"
+        },
+        {
+          "id": "dedupe-26505",
+          "sha256": "9ea5848b88673ac719a7ad63fbad43303872784dbd7549bf6789860ffd5d9bd0"
+        },
+        {
+          "id": "dedupe-55237",
+          "sha256": "7fa65ee20a7ae897a65fefa5ae01ebbaf58783f1b09181bba47e3e236d6ed8ef"
+        },
+        {
+          "id": "dedupe-57438",
+          "sha256": "935cdf00bb5c208d74f83c71ba1dd04942c2821101dcb03a79a4cf1acab8f4f9"
+        },
+        {
+          "id": "dedupe-19813",
+          "sha256": "c4d9d2147da68cc5d27eb443554437d2699554dd50c34426b8dcad349536fcab"
+        },
+        {
+          "id": "dedupe-57099",
+          "sha256": "1ce717e0ee6b8d86fd4fc3bd230b0aaa8b8cc2ba5d198a17767a6386e6a523ab"
+        },
+        {
+          "id": "dedupe-77868",
+          "sha256": "0545a65bb90e2599cbfc578692e968388fbf3fa87955130b4249c39473fc5b1a"
+        },
+        {
+          "id": "dedupe-87475",
+          "sha256": "2d1b099692c99054bfd1ad32203adef635a44b07456c83b5d74fbd3e707497c2"
+        },
+        {
+          "id": "dedupe-1083",
+          "sha256": "9b00bb6ecee817c7108b0b7b89cff07e93cc53f8d40bd8957dd8b45923403174"
+        },
+        {
+          "id": "dedupe-27950",
+          "sha256": "99e581845b817f570c052d699423828e753c100066aa34b884d57b39b8b5d9ec"
+        },
+        {
+          "id": "dedupe-96181",
+          "sha256": "2d4385a070ab544578bc413031a32e9c0395513da5893a98e5b4392bb6afd88b"
+        },
+        {
+          "id": "dedupe-99449",
+          "sha256": "96832afe24ef5dd7e6ff61006e2a535db41bc0e489c8500d14a902893a113d0d"
+        },
+        {
+          "id": "dedupe-60283",
+          "sha256": "a960e06b1939a8122966501dd6d2a971f70afc933bd57073ae9fba99b9faddfe"
+        },
+        {
+          "id": "dedupe-4827",
+          "sha256": "e67b8e28077535d94fd4557ebd301fec181f5954607d6934e9a4052f7d7cd0f6"
+        },
+        {
+          "id": "dedupe-53554",
+          "sha256": "892ec35cc99cc8c18c1c76b99fce1e5e3a2ac38967d35761511cac5a286194a2"
+        },
+        {
+          "id": "dedupe-13529",
+          "sha256": "3c1f48ea7fa96c569ce85e64e6cc812cc462aad2d18c58e2804390b224510213"
+        },
+        {
+          "id": "merge-77365",
+          "sha256": "dd6a25f422b65961cdf0c6c6b10b65c882f893b14abb81394d0a43d37231a769"
+        },
+        {
+          "id": "merge-15243",
+          "sha256": "837763294c6c9a6380520946c24185c9860b1cacd3846d3939ce21bfcb724a63"
+        },
+        {
+          "id": "merge-24232",
+          "sha256": "5bf9cce42d72c19ed2a28a3e2bf92d0164227254b865cf9c93b680d6db246f84"
+        },
+        {
+          "id": "merge-45285",
+          "sha256": "cc1bef9a7b27cbdf11f5722328af1abea99d522e553687d99bc8ee41eb0231ed"
+        },
+        {
+          "id": "merge-20185",
+          "sha256": "fbfbd2cf533441f9e8e7dc3068655dcc7ddcdbcba4a3f45c9fb99e5f92ed9ff7"
+        },
+        {
+          "id": "merge-39289",
+          "sha256": "cbd1c1b541b394ade51fe0040f5d12e34759d031c32180bc7025565bae4820f0"
+        },
+        {
+          "id": "merge-70640",
+          "sha256": "59691b585dc3d298b008360c52c26db8c02ef31413ef864a00988526951bf0de"
+        },
+        {
+          "id": "merge-29918",
+          "sha256": "d4e0246863260c9b1730f3b33b7dc7b9293c10bba5d73bab3ae2d55a65fcc77e"
+        },
+        {
+          "id": "merge-18165",
+          "sha256": "b62be8d4cfab380a6ab14b97839205c9f88df662749389668952e8ecded09d8d"
+        },
+        {
+          "id": "merge-83536",
+          "sha256": "343b2efce16bd584bd9bf20a12988a60fba95f32d7005dbd344e07c450323522"
+        },
+        {
+          "id": "merge-28426",
+          "sha256": "ae874278e29f0cdd060948fd4bc434715e8b342cec0deb2ba34f8b46ea8a9187"
+        },
+        {
+          "id": "merge-90225",
+          "sha256": "9e273454131e31db98762c4041efa79d976da6e2be8f1897f35f790405f51d0c"
+        },
+        {
+          "id": "merge-39009",
+          "sha256": "b0e2e08d3a0705b405a0747b3478afda4832cf26e38db4fea337dda7ba6271f6"
+        },
+        {
+          "id": "merge-9211",
+          "sha256": "17ba452fa8cea98e24b61248fc5b76376131696246f2ca20b7cd003b0c21acf1"
+        },
+        {
+          "id": "merge-41973",
+          "sha256": "78faead678c30f66e04d3da4dbc682a726acab5e5a2d0aeb946661421b6f0a66"
+        },
+        {
+          "id": "merge-4297",
+          "sha256": "f6157d1353848267878c7c850b36bca4f7313aa2289925da968c6d6312647d81"
+        }
+      ],
+      "provenance": {
+        "authorship": "repo-authored (exec-verified, family-disjoint eval split)",
+        "pretrainingContaminationCaveat": "low (synthetic)"
+      }
     }
   ]
 }

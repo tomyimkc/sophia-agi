@@ -34,4 +34,22 @@ Official third-party sets (full MATH/GSM8K/HumanEval/MBPP) may replace style sam
 
 - `python tools/build_local_sophia_dataset.py --check` must report **CLEAN**
 - Sealed hashes: `agi-proof/sophia-math-code-curriculum/heldout-seal.manifest.json`
+  (schema `sophia.math_code_heldout_seal.v2` — now carries per-file `provenance` +
+  `pretrainingContaminationCaveat`)
 - `canClaimAGI` stays **False** regardless of outcome
+
+## Pretraining-contamination caveat (style samples)
+
+The `eval/external/*-style-sample.jsonl` and `eval/coding/*-style-sample.jsonl` items are
+**repo-authored style-samples** (clearly marked `authorship` in the seal manifest), NOT
+the official MATH/GSM8K/HumanEval/MBPP sets. They inherit the field's pretraining-
+contamination problem: a base model may have seen similar items during pretraining, so a
+held-out gain on these is **suggestive, not contamination-free proof**. The per-file
+`pretrainingContaminationCaveat` in the seal manifest makes this machine-readable.
+
+A **clean external** generalization claim requires the third-party-authored pack at
+[`agi-proof/third-party-heldout/`](../third-party-heldout/) (independent author,
+machine-checkable oracles, salted commitment sealed before any model run). That pack is
+**EMPTY by design** today; until it is filled and a gated run clears the no-overclaim bar,
+the honest wording stays "AGI-candidate", not "externally validated".
+
