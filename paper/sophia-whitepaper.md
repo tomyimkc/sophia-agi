@@ -161,26 +161,35 @@ commands.
 
 ## 6. Related work
 
-*(This section is expanded from a structured prior-art survey; see
-[docs/IP-PROTECTION.md](../docs/IP-PROTECTION.md) for the methodology.)* Sophia sits at
-the intersection of several active lines of research, and we make **no claim that the
-general concept of grounded abstention is novel**:
+*(Expanded from a structured prior-art survey — [docs/prior-art-survey.md](../docs/prior-art-survey.md).)*
+Sophia sits at the intersection of several active lines of research, and we make **no
+claim that the general concept of grounded abstention is novel**:
 
-- **Selective prediction / abstention** in LLMs — deciding when *not* to answer.
-- **Attribution & citation verification** — attributed QA, post-hoc revision and
-  citation evaluation (e.g. RARR, ALCE), and retrieval that self-reflects (Self-RAG).
-- **Hallucination detection & fact-checking** — SelfCheckGPT, FacTool, FActScore,
-  RefChecker, and ClaimReview-style pipelines.
-- **Verifier-gated / guardrail systems** — programmable guardrails and external
-  checker models gating LLM output.
+- **Selective prediction / abstention** — *Know Your Limits* (TACL 2024) surveys the
+  field; R-Tuning (NAACL 2024) teaches refusal of out-of-knowledge questions; Conformal
+  Abstention (Yadkori et al., 2024) abstains with finite-sample hallucination-rate
+  guarantees.
+- **Attribution & citation verification** — RARR and ALCE (Gao et al., 2023), Self-RAG
+  (Asai et al., ICLR 2024), and AGREE (Google, NAACL 2024). Misattribution itself is
+  benchmarked (CiteME, CiteAudit, MisCiteBench, AttributionBench).
+- **Hallucination detection & fact-checking** — SelfCheckGPT (2023), FacTool (2023),
+  FActScore (2023), RefChecker (Amazon, 2024), and ClaimReview-style pipelines.
+- **Verifier-gated / guardrail systems** — NeMo Guardrails (NVIDIA, EMNLP 2023), whose
+  output rails fact-check and block responses via a separate model; Guardrails AI; Llama
+  Guard. Commercially: Vectara, Cleanlab TLM, Patronus/Lynx, Galileo.
 
-What is distinctive in Sophia is the **specific combination**: the
+We further note **granted US patents** in this space (US 12,468,899, priority 2023-05-08;
+US 12,505,311) covering hallucination prevention/handling by checking output against
+sources and gating it. Sophia therefore claims **no fundamental algorithmic novelty** and
+no freedom-to-operate over the general method.
+
+What is distinctive is the **specific combination and application domain**: the
 attribution-hallucination framing in the **humanities** (philosophy/psychology/history/
-religion) plus law; a **bilingual** evaluation corpus; the **pre-registered
-no-overclaim measurement protocol** with an independent judge audit and a public
-failure ledger; and the **fail-closed governance contract** binding it together. We
-position these as engineering and methodological contributions, not as a claim of
-fundamental algorithmic novelty.
+religion) plus law — an area under-served by the STEM-centric miscitation benchmarks; a
+**bilingual** evaluation corpus; the **pre-registered no-overclaim measurement protocol**
+with an independent judge audit and a public failure ledger; and the **fail-closed
+governance contract** binding it together. We position these as engineering, dataset, and
+methodological contributions, not as a novelty claim over the pipeline.
 
 ## 7. Limitations
 

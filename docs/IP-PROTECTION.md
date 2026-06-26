@@ -39,6 +39,20 @@ for already-published versions. So "protection" here means three realistic thing
   (*Alice/Mayo*). A "verify-claim-then-abstain" method is borderline — patentable only
   if framed as a concrete technical process — and costs ~$10k–25k+ to prosecute and far
   more to enforce. For a solo author, weigh this honestly.
+- **Existing patents are a hard obstacle.** A prior-art search (see
+  [prior-art-survey.md](prior-art-survey.md)) found **granted US patents already covering
+  the core idea**, with priority dates in **early 2023** — well before any Sophia filing:
+  - **US 12,468,899** — "Hallucination prevention for natural language insights"
+    (priority 2023-05-08).
+  - **US 12,505,311** — "Hallucination detection and handling for an LLM-based
+    domain-specific conversation system."
+  Together with NeMo Guardrails (Oct 2023), RARR/ALCE/Self-RAG (2023), and Conformal
+  Abstention/R-Tuning (2024), these make a **broad** method claim ("verify LLM claims
+  against sources and abstain/block when unsupported") almost certainly
+  anticipated/obvious. Only a **narrow** claim on a specific non-obvious mechanism could
+  survive — and threading between these references is hard. **Realistic conclusion: do
+  not bank on a patent over the pipeline. The defensive-publication path below secures
+  your priority and freedom to operate at a fraction of the cost.**
 
 **If exclusivity matters, talk to a patent attorney within the grace window and stop
 disclosing new core IP until you have.** Otherwise, lean into defensive publication
@@ -90,8 +104,9 @@ diminish your real contribution: the specific humanities-attribution framing, th
 bilingual corpus, the pre-registered no-overclaim measurement protocol with an
 independent judge audit, and the fail-closed governance contract. Your durable moat is
 **execution + dataset + brand + being the recognized originator**, which the
-defensive-publication path protects directly. A live prior-art survey backing this
-section accompanies this strategy (see the project's research notes).
+defensive-publication path protects directly. The full prior-art survey backing this
+section — named systems, benchmarks, commercial products, and the granted patents — is in
+[prior-art-survey.md](prior-art-survey.md).
 
 ## Signing your commits (provenance)
 
