@@ -69,7 +69,11 @@ finish() {{
     git add {result_path} {answers_path} {LOG_PATH} 2>/dev/null || true
     git -c user.email=noreply@anthropic.com -c user.name=Claude commit \
       -m "M3 pilot: self-reported result (exit $code) [skip ci]" 2>/dev/null || echo "[pod] nothing to commit"
-    for i in 1 2 3 4 5; do git push origin HEAD:{args.branch} && break || sleep $((i*5)); done
+    for i in 1 2 3 4 5 6 7 8; do
+      git pull --rebase -X ours origin {args.branch} >/dev/null 2>&1 || true
+      if git push origin HEAD:{args.branch} 2>/tmp/fpush.err; then echo "[pod] RESULT PUSH OK"; break
+      else echo "[pod] result push attempt $i failed:"; cat /tmp/fpush.err; sleep $((i*8)); fi
+    done
   fi
   if [ -n "${{RUNPOD_API_KEY:-}}" ] && [ -n "${{RUNPOD_POD_ID:-}}" ]; then
     echo "[pod] self-deleting pod $RUNPOD_POD_ID"
@@ -99,8 +103,17 @@ cd /workspace
 # command, a stale clone would make `git clone` fail (exit 128). Clear it first so a
 # restart re-runs cleanly instead of dirtying the result with a spurious failure.
 rm -rf sophia-agi
-git clone --depth 1 --branch {args.branch} https://github.com/{REPO_SLUG}.git sophia-agi
+git clone --branch {args.branch} https://github.com/{REPO_SLUG}.git sophia-agi
 cd sophia-agi
+
+# EARLY HEARTBEAT push — proves the git-push channel (auth + fast-forward) works BEFORE the
+# ~50-min job, so a missing result is diagnosable instead of silent. If this fails the whole
+# delivery path is broken and the Actions log will show it.
+mkdir -p agi-proof/benchmark-results/runpod-wisdom-pilot
+echo "pod ${{RUNPOD_POD_ID:-?}} alive $(date -u) seed={seed}" > agi-proof/benchmark-results/runpod-wisdom-pilot/pod-heartbeat.txt
+git add agi-proof/benchmark-results/runpod-wisdom-pilot/pod-heartbeat.txt
+git -c user.email=noreply@anthropic.com -c user.name=Claude commit -m "M3 pilot: pod heartbeat (seed {seed}) [skip ci]" >/dev/null 2>&1 || true
+if git push origin HEAD:{args.branch} 2>/tmp/push.err; then echo "[pod] HEARTBEAT PUSH OK — delivery channel works"; else echo "[pod] HEARTBEAT PUSH FAILED:"; cat /tmp/push.err; fi
 
 python -m pip install --upgrade pip >/dev/null
 python -m pip install -U "transformers>=4.52" "peft>=0.13" accelerate datasets sentencepiece protobuf
