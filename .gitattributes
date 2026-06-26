@@ -19,3 +19,4 @@ CONTRACT.md filter=git-crypt diff=git-crypt
 # Local agent/tooling skill definitions:
 .claude/skills/** filter=git-crypt diff=git-crypt
 .grok/** filter=git-crypt diff=git-crypt
+agi-proof/benchmark-results/**/*.tar.gz filter=lfs diff=lfs merge=lfs -text
