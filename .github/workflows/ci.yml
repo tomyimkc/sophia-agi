@@ -269,6 +269,7 @@ jobs:
         run: |
           python tests/test_auto_research.py
           python tools/run_auto_research.py
+          python tools/run_auto_research.py --corpus wiki
           python tools/run_selfevolve_live.py --backend plan
       - name: Runtime policies + model-in-loop + dataset fetcher (offline)
         run: |

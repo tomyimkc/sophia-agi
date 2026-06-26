@@ -143,9 +143,20 @@ class SelfEvolvingAgent:
     """
 
     def __init__(self, *, min_target_delta: float = 0.05, hack_gap: float = 0.2,
-                 competence_threshold: float = 0.7) -> None:
+                 competence_threshold: float = 0.7, evolve_mode: str = "selection",
+                 verifier_threshold: float = 0.7) -> None:
+        # evolve_mode selects what counts as a capability gain:
+        #   "selection" — verified-reward selection lifts policy accuracy (close_loop);
+        #                 right when there is a weak policy with headroom (synthetic).
+        #   "verifier"  — a synthesized verifier generalizes on a held-out split above
+        #                 chance (balanced accuracy); right for a classification corpus
+        #                 (e.g. OKF grounding) where the gain is verifier generalization.
+        if evolve_mode not in ("selection", "verifier"):
+            raise ValueError(f"unknown evolve_mode: {evolve_mode}")
         self.min_target_delta = min_target_delta
         self.hack_gap = hack_gap
+        self.evolve_mode = evolve_mode
+        self.verifier_threshold = verifier_threshold
         self.competence = CompetenceMap(threshold=competence_threshold)
         self._round = 0
         self._tasks: list[Task] = []          # cumulative committed knowledge stream
@@ -157,19 +168,36 @@ class SelfEvolvingAgent:
     def knowledge_size(self) -> int:
         return len(self._knowledge)
 
+    def _evolve_signal(self, domain: str, examples: "list[tuple[str, bool]]") -> dict:
+        """Return the round's capability signal per the configured evolve_mode:
+        ``{promoted, loop_closed, pre, post, heldout}``."""
+        if self.evolve_mode == "verifier":
+            promoted, balanced = _verifier_balanced_gain(examples, self.verifier_threshold)
+            # The gain is the verifier's held-out lift over chance (0.5).
+            return {"promoted": promoted, "loop_closed": promoted,
+                    "pre": 0.5, "post": balanced, "heldout": balanced}
+        loop = close_loop(domain, examples)
+        return {
+            "promoted": bool(loop.get("promoted")),
+            "loop_closed": bool(loop.get("loop_closed")),
+            "pre": float(loop.get("preAccuracy", 0.0)),
+            "post": float(loop.get("postAccuracy", 0.0)),
+            "heldout": float(loop.get("heldoutAccuracy", 0.0)),
+        }
+
     def evolve(self, exp: Experience, *, ledger_path: "str | Path | None" = None) -> RoundOutcome:
         """Run one evolve -> no-hack -> promote -> retain -> commit cycle."""
         self._round += 1
         rnd = self._round
         examples = list(exp.examples)
 
-        # 1. EVOLVE: synthesize + held-out-validate a verifier, measure selection gain.
-        loop = close_loop(exp.domain, examples)
-        promoted = bool(loop.get("promoted"))
-        loop_closed = bool(loop.get("loop_closed"))
-        pre = float(loop.get("preAccuracy", 0.0))
-        post = float(loop.get("postAccuracy", 0.0))
-        heldout_acc = float(loop.get("heldoutAccuracy", 0.0))
+        # 1. EVOLVE: measure a capability gain (selection or verifier-generalization).
+        sig = self._evolve_signal(exp.domain, examples)
+        promoted = sig["promoted"]
+        loop_closed = sig["loop_closed"]
+        pre = sig["pre"]
+        post = sig["post"]
+        heldout_acc = sig["heldout"]
 
         # 2. NO-HACK: independent held-out reward-hacking probe.
         hack = _reward_hack_probe(examples, gap=self.hack_gap)
@@ -368,6 +396,26 @@ _SELF_DISTILL_SYSTEM = (
     "request falls outside it, say so plainly rather than guess. Do not invent "
     "authorities or attributions."
 )
+
+
+def _verifier_balanced_gain(examples: "list[tuple[str, bool]]", threshold: float) -> "tuple[bool, float]":
+    """Synthesize a verifier on a stratified train split and score BALANCED held-out
+    accuracy (mean of per-class recall, so a majority-guessing rule scores ~0.5).
+
+    Returns ``(promoted, balanced_accuracy)``; ``promoted`` iff balanced accuracy
+    clears ``threshold``. Balanced (not raw) accuracy is used so an imbalanced domain
+    cannot be "passed" by always predicting the majority class.
+    """
+    train, heldout = stratified_split(examples)
+    rule = synthesize_verifier(train)
+    if rule is None or not heldout:
+        return False, 0.0
+    pos = [t for t, lab in heldout if lab]
+    neg = [t for t, lab in heldout if not lab]
+    recall_pos = sum(rule.predict(t) for t in pos) / len(pos) if pos else 0.0
+    recall_neg = sum(not rule.predict(t) for t in neg) / len(neg) if neg else 0.0
+    balanced = round((recall_pos + recall_neg) / 2, 4)
+    return balanced >= threshold, balanced
 
 
 def _render_decision(domain: str, rule, label: bool) -> str:
