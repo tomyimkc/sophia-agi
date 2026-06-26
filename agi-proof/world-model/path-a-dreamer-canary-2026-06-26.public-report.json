@@ -1,0 +1,60 @@
+{
+  "schema": "sophia.world_model_dreamer.canary.v1",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "benchmark": "Path A — DreamerV3-style world model (discrete-latent RSSM) canary",
+  "date": "2026-06-26",
+  "corpus": {
+    "minedPairs": 25,
+    "successRate": 0.6,
+    "actions": [
+      "model",
+      "run_tests"
+    ],
+    "splits": "train=14 val=6 shift=5",
+    "honestBound": "25-pair synthesized mixed-outcome corpus (60% pass / 40% fail, 2 action types) — the live harness with the mock provider produced degenerate all-pass traces (no action-outcome contrast), so a mixed corpus was synthesized in the miner's expected JSONL schema to give the shift-degeneracy canary real signal. NOT live-agent traces."
+  },
+  "config": {
+    "hidden": 128,
+    "classes": 16,
+    "stoch": 16,
+    "epochs": 120,
+    "seed": "0,1,2,3"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "valAccuracy": 0.5,
+      "shiftAccuracy": 0.6,
+      "shiftDegradation": 0.0,
+      "verdict": "hold-below-bar"
+    },
+    {
+      "seed": 1,
+      "valAccuracy": 0.67,
+      "shiftAccuracy": 0.2,
+      "shiftDegradation": 0.47,
+      "verdict": "hold-shift-degenerate"
+    },
+    {
+      "seed": 2,
+      "valAccuracy": 0.5,
+      "shiftAccuracy": 0.8,
+      "shiftDegradation": 0.0,
+      "verdict": "hold-below-bar"
+    },
+    {
+      "seed": 3,
+      "valAccuracy": 0.5,
+      "shiftAccuracy": 0.4,
+      "shiftDegradation": 0.1,
+      "verdict": "hold-below-bar"
+    }
+  ],
+  "verdict": "HOLD (not promoted) — 4/4 seeds failed to promote",
+  "interpretation": "On a 25-pair mixed-outcome corpus the discrete-latent Dreamer predictor does NOT clear the held-out bar (0.65) in 3/4 seeds (val 0.50) and in seed 1 it cleared val (0.67) but COLLAPSED on the shift split (shift 0.20, degradation 0.47 >> max 0.15) — the canonical memorizes-train / collapses-on-novel-task-families failure the shift-degeneracy canary was built to catch. trainLoss was ~0.006-0.008 across seeds (near-zero) while val stayed at/below 0.67, i.e. classic overfitting: the predictor memorized 14 training traces and failed to learn generalizable action-outcome regularities. This is a REAL NEGATIVE result and the canary correctly refused to promote. It validates the canary's design (it catches memorization) and bounds the claim: Path A is not promotable at this trace scale. Prerequisite for a meaningful re-test: a much larger LIVE harness trace corpus (hundreds of traces with genuine pass/fail + multi-action contrast), not a synthesized 25-pair set.",
+  "falsifiableSignal": "The shift-degeneracy verdict is the load-bearing signal, NOT val accuracy. Seed 1 demonstrated it.",
+  "torchBackend": "CPU (torch 2.12.1, CUDA unavailable on this host)"
+}
