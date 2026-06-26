@@ -1,0 +1,61 @@
+{
+  "schema": "sophia.inference.local.v1",
+  "_comment": "Local/hybrid inference topology for Sophia on an NVIDIA DGX Spark (Grace Blackwell GB10, aarch64, 128GB unified LPDDR5x). Copy to config/inference.local.json and edit. Dependency-free config; consumed by future router wiring. NOTE: GB10 is CUDA-capable (unlike Apple Silicon) — use vllm/sglang here, NOT the mlx tier from the Apple-Silicon example (config/inference.local.example.json).",
+  "hardware": {
+    "machine": "NVIDIA DGX Spark (GB10 Grace Blackwell, aarch64)",
+    "unified_memory_gb": 128,
+    "notes": "128GB unified (CPU+GPU shared, ~273 GB/s LPDDR5x — NOT HBM). Single integrated Blackwell GPU, no NVLink/expansion. Fits a 7-34B dense model in bf16, or up to ~200B quantized. Full-precision fine-tune is capped at ~<=40B; use LoRA/QLoRA for larger."
+  },
+  "tiers": {
+    "orchestrator": {
+      "role": "planning, routing, cheap structured tool-calls",
+      "engine": "vllm",
+      "base_url": "http://localhost:8000/v1",
+      "model": "Qwen/Qwen2.5-14B-Instruct",
+      "max_context": 32768,
+      "constrained_decoding": false,
+      "notes": "vLLM OpenAI-compatible server on the GB10. Start: `vllm serve Qwen/Qwen2.5-14B-Instruct --port 8000`. Env: SOPHIA_MODEL_PROVIDER=vllm SOPHIA_MODEL_BASE_URL=http://localhost:8000/v1. Verify the aarch64+sm_100 vLLM build runs your model before trusting GRPO rollouts."
+    },
+    "tool_calls": {
+      "role": "guaranteed well-formed tool-calls + quarantined extractor (no tool access)",
+      "engine": "sglang",
+      "base_url": "http://localhost:30000/v1",
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "grammar": "json_schema",
+      "constrained_decoding": true,
+      "notes": "SGLang supports JSON-schema constrained decoding on Grace-Blackwell (aarch64). Alternative: llama.cpp + GBNF (engine: llamacpp). Do NOT use engine: mlx (Apple-only, fails closed)."
+    },
+    "escalation": {
+      "role": "hard reasoning the local tiers flag as low-confidence",
+      "engine": "api",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-6",
+      "trigger": {
+        "type": "uncertainty_threshold",
+        "source": "agent.calibration",
+        "max_local_confidence": 0.55,
+        "notes": "Escalate only above the difficulty/uncertainty threshold. Cloud key stays for THIS tier; the GB10 serves the two local tiers."
+      }
+    }
+  },
+  "routing": {
+    "default": "orchestrator",
+    "structured_output": "tool_calls",
+    "low_confidence": "escalation",
+    "quarantine_untrusted_data": "tool_calls"
+  },
+  "targets": {
+    "local_turn_ratio_min": 0.8,
+    "unsafe_accepted_outputs": 0,
+    "tool_call_json_validity_min": 0.99
+  },
+  "spark_notes": {
+    "judge_farm": "Serve TWO distinct local models (e.g. Qwen + Llama) on one vLLM endpoint to satisfy the no-overclaim >=2-family gate without metered cloud: --judge vllm:Qwen/Qwen2.5-7B-Instruct --judge vllm:meta-llama/Llama-3.3-8B-Instruct. Use tools/run_local_judge_eval.py to smoke-test the endpoint first.",
+    "training": "For local RLVR/LoRA ITERATION run `tools/runpod_rlvr.py --local --quant bf16 --vllm none` (sidesteps the flash-attn/bitsandbytes/vLLM-colocate/unsloth aarch64-wheel blockers). Headline training numbers stay on x86 RunPod per REPLICATION.md — do not cite Spark-produced training numbers as the registered result.",
+    "avoid": [
+      "engine: mlx (Apple-only)",
+      "unsloth backend (no aarch64 build)",
+      "prebuilt linux_x86_64 flash-attn wheel (Dockerfile/runpod_speedup.py)"
+    ]
+  }
+}
