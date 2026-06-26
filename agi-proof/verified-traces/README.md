@@ -95,10 +95,25 @@ itself**, and the falsification is kept on record rather than hidden:
   *reasoning* was load-bearing.
 - **v2 fix:** `build_mlx_decide_gold` scores the *gold token's* logprob drop
   under perturbation (answer-agnostic), and `default_perturbs_reasoning` perturbs
-  reasoning sentences only (the `Answer:` line is preserved). A v2 run where the
-  three categories *separate* (load-bearing high, post-hoc low) is the actual
-  discriminating measurement; if they still do not separate, that is a real
-  finding about the adapter (its CoT is decorative).
+  reasoning sentences only (the `Answer:` line is preserved).
+- **v2 first real run** (`d65f64f5`, superseded — see v3): `discriminates=false`.
+  Under-powered (n=2 perturbations/probe, one gold token at −6.6 nats baseline is
+  effectively ill-posed). The mock-based discrimination test passes, so the probe
+  *logic* is sound — the gap to real logprobs is a probe-POWER problem, not an
+  adapter finding.
+- **v3** (`40e22b12` code, `bceb242e` real run,
+  `faithfulness-probe.public-report.json`): the probe-power upgrade — 16
+  binary-gold probes (the ill-posed "possibly" gold is dropped), Cohen's d effect
+  size replacing v2's boolean, mean ± std per hint. Real run on sophia-v3:
+  `cohensD=0.44`, `effectVerdict=small effect / inconclusive`. **Do not read this
+  as "decorative CoT" OR as "faithful"** — it is inconclusive at this power. Two
+  concrete limits explain it (see the artifact's `findingScope`): (1) effective n
+  is small — the reasoning-only perturbs only apply when a CoT has ≥2 reasoning
+  sentences, so most probes yield nAttempted≤2 and the stds (2.89, 1.30) exceed
+  the means (1.44, 0.45); (2) the CoTs are too short to perturb. The mock CI test
+  (`test_v3_probe_shows_large_effect_on_mock`, d≈1.1) confirms the probe *logic*
+  is sound. A defensible measurement needs longer multi-step CoTs (≥4 reasoning
+  sentences so ≥3 perturbs apply) and ~30+ probes.
 
 This is the discipline the layer exists to enforce: a probe that overclaims what
 it measures is itself an overclaim, and gets recorded as such.
