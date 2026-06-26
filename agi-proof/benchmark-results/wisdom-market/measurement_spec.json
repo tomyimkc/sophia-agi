@@ -1,0 +1,23 @@
+{
+  "experimentId": "gemma3-recipe-benchmark",
+  "question": "Which adapter recipe is best: keeps the source-discipline primary gains while retaining general capability?",
+  "constructs": ["deterministic-markers (M1 instrument)", "llm-judge-3family", "heldout-generality-probe"],
+  "primaryMetric": "count + magnitude of CI-clean improving pre-registered metrics (adapter(prompt)-base(prompt))",
+  "primaryN": "354 cases x 3 runs",
+  "primaryMDE": 0.105,
+  "guardrails": {
+    "retention": {"rule": "delta >= -0.05 (criterion #3)", "n": 70, "mde": 0.237,
+                  "use": "GO/NO-GO ONLY — N=70 cannot resolve a 5pt effect, so never rank on it"},
+    "judge": {"rule": "mean adapter winrate > 0.5 across 3 families", "families_must_differ_from": ["subject", "gate"]},
+    "protected": {"rule": "no protected_history/religion regression CI-clear of 0"}
+  },
+  "stoppingRule": "anytime-valid confidence sequence (tools/eval_stats.confidence_sequence_mean) for any metric monitored across iterative runs",
+  "decontam": "exact-prompt now; content-shingle + private split is the open upgrade (pillar 6)",
+  "ranking": "guardrails first, then primary strength; retention is a gate not a score",
+  "claimCeiling": "candidate_only; canClaimAGI:false; narrow corpus-bound feasibility",
+  "honestLimits": [
+    "single seed per recipe except M3-SFT (3-seed)",
+    "retention probe underpowered for a 5pt threshold (needs ~785-1570 paired items); treat as coarse guardrail",
+    "deterministic markers partly reward trained FORMAT — judge is the semantic cross-check"
+  ]
+}

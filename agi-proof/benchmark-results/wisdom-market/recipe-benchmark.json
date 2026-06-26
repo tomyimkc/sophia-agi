@@ -1,0 +1,79 @@
+{
+  "benchmark": "gemma-3 adapter recipes under the measurement contract",
+  "discriminatingAxis": "PRIMARY source-discipline (N=354x3, well powered)",
+  "powerNote": {
+    "primary_mde_at_354": 0.105,
+    "retention_mde_at_70": 0.237,
+    "caveat": "Retention (N=70) cannot resolve a 5pt effect (MDE ~0.24) -> used ONLY as a GO/NO-GO guardrail, never to rank. Primary (N=354x3) is the decision axis."
+  },
+  "ranked": [
+    {
+      "name": "M3-SFT (rank16, baseline)",
+      "prefix": "M3-pilot",
+      "hasEval": true,
+      "hasJudge": true,
+      "hasRetention": true,
+      "primaryWins": 5,
+      "primaryMag": 1.2139,
+      "primaryMetrics": [
+        "qualification_rate_on_contested",
+        "tradition_merge_rate",
+        "false_attribution_rate",
+        "moral_route_accuracy",
+        "provenance_accuracy"
+      ],
+      "protectedRegressions": [],
+      "nCases": 354,
+      "runs": 3,
+      "judgeMeanWinrate": 0.8147,
+      "judgeMajority": 0.8321,
+      "retentionDelta": -0.0143,
+      "retentionCI": [
+        -0.0714,
+        0.0429
+      ],
+      "retains": true,
+      "retentionN": 70
+    },
+    {
+      "name": "M4-ORPO-on-SFT (stack)",
+      "prefix": "M4-orpo-sft",
+      "hasEval": true,
+      "hasJudge": true,
+      "hasRetention": false,
+      "primaryWins": 5,
+      "primaryMag": 0.955,
+      "primaryMetrics": [
+        "qualification_rate_on_contested",
+        "tradition_merge_rate",
+        "false_attribution_rate",
+        "moral_route_accuracy",
+        "provenance_accuracy"
+      ],
+      "protectedRegressions": [],
+      "nCases": 354,
+      "runs": 3,
+      "judgeMeanWinrate": 0.7674,
+      "judgeMajority": 0.791
+    },
+    {
+      "name": "M4-ORPO (from base)",
+      "prefix": "M4-orpo",
+      "hasEval": true,
+      "hasJudge": true,
+      "hasRetention": false,
+      "primaryWins": 1,
+      "primaryMag": 0.0536,
+      "primaryMetrics": [
+        "tradition_merge_rate"
+      ],
+      "protectedRegressions": [],
+      "nCases": 354,
+      "runs": 3,
+      "judgeMeanWinrate": 0.5286,
+      "judgeMajority": 0.5112
+    }
+  ],
+  "best": "M3-SFT (rank16, baseline)",
+  "boundary": "Single-seed per recipe except M3-SFT (3-seed); candidate_only; canClaimAGI:false."
+}
