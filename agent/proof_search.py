@@ -165,7 +165,7 @@ def search_proof(
         # an INJECTED-applier path (test/scripted), the applier IS the verifier, so a
         # closed node is a proved proof — Lean re-check is skipped (and would abstain).
         if node.priority >= 1.0 or "no goals" in (node.state or "").lower():
-            proof = " ".join(node.path) if node.path else "rfl"  # trivial proof
+            proof = "\n".join(node.path) if node.path else "rfl"  # trivial proof
             res.proof = proof
             res.nodes_expanded = expanded
             if real_lean_path:
@@ -206,8 +206,14 @@ def search_proof(
 
 
 def _assemble(theorem: str, path: tuple[str, ...]) -> str:
-    """Assemble a `theorem ... := by <tactics>` block for end-to-end Lean verification."""
-    tactics = " ".join(path) if path else "rfl"
+    """Assemble a `theorem ... := by <tactics>` block for end-to-end Lean verification.
+
+    Tactics are newline-separated: a Lean 4 ``by`` block runs each tactic on its own
+    line (space-joining multi-tactic sequences produces invalid syntax for anything
+    beyond a single tactic, which would make Lean reject otherwise-correct proofs and
+    corrupt the novelty-probe text). An empty path falls back to ``rfl``.
+    """
+    tactics = "\n".join(path) if path else "rfl"
     if ":= by" in theorem:
         return f"{theorem}\n{tactics}"
     return f"{theorem} := by\n{tactics}"

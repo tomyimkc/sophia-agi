@@ -166,6 +166,11 @@ class DreamerWorldPredictor:
         torch = self._torch
         if torch is None:
             return self  # abstain; report records torch_available=False
+        if not pairs:
+            # Fail-closed: an empty corpus runs zero optimizer steps, so leaving
+            # _trained=False keeps predict() abstaining (0.5) rather than returning an
+            # arbitrary value from random weights. Do NOT mark the model trained.
+            return self
         cfg = self.cfg
         torch.manual_seed(cfg.seed)
         random.seed(cfg.seed)

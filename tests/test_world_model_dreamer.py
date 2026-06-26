@@ -77,6 +77,21 @@ def test_predictor_protocol_shape() -> None:
     assert 0.0 <= p <= 1.0
 
 
+def test_fit_empty_corpus_stays_fail_closed() -> None:
+    """Regression: fit([]) must NOT mark the model trained. An empty corpus runs zero
+    optimizer steps, so marking trained would break fail-closed — predict() would return
+    an arbitrary random-weight value instead of abstaining (0.5)."""
+    pred = dwm.DreamerWorldPredictor()
+    if dwm._torch() is None:
+        # No torch: fit is a no-op regardless; predict still abstains.
+        pred.fit([])
+        assert pred.predict("s", "a") == 0.5
+        return
+    # With torch: an empty corpus must keep the predictor abstaining.
+    pred.fit([])
+    assert pred.predict("s", "a") == 0.5, "empty-corpus fit must stay fail-closed (abstain 0.5)"
+
+
 # --- generalization tests: only meaningful with torch; skip cleanly otherwise ---
 
 def test_canary_promotes_on_learnable_signal() -> None:

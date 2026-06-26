@@ -122,6 +122,39 @@ def test_corpus_report_shape() -> None:
     assert rep["sample"] == pairs[:3]
 
 
+def test_mine_file_orders_steps_numerically_not_by_log_insertion() -> None:
+    """Regression: a resumed/interleaved log can emit step_output events out of numeric
+    sequence (e.g. s10 before s2). The miner must iterate steps in NUMERIC order so
+    prior_failure threads against the correct progression and states are bucketed right —
+    insertion-order iteration mis-bucketed states and made the corpus non-deterministic."""
+    with tempfile.TemporaryDirectory() as tmpd:
+        path = Path(tmpd) / "run.jsonl"
+        lines = [{"type": "task_start", "goal": "g", "mode": "advisor"}]
+        # Emit s2 FIRST, then s1, then s10 — out of numeric order on purpose.
+        for sid, action, passed, fc in [
+            ("s2", "model", True, None),
+            ("s1", "tool", False, "tool_error"),
+            ("s10", "model", True, None),
+        ]:
+            lines.append({"type": "step_attempt", "step": sid, "action": action})
+            if passed:
+                lines.append({"type": "step_output", "step": sid, "attempt": 1,
+                              "passed": True, "failureClass": None})
+            else:
+                for att in range(1, 3):
+                    lines.append({"type": "step_output", "step": sid, "attempt": att,
+                                  "passed": False, "failureClass": fc})
+        path.write_text("\n".join(json.dumps(l) for l in lines) + "\n", encoding="utf-8")
+        pairs = tm.mine_file(path)
+    # Numeric order: s1, s2, s10 (NOT the log's s2, s1, s10 insertion order).
+    # State bucket format is "goal_slug:step_id[:prior_failure]" (colon-separated).
+    steps = [p[0].split(":")[1] for p in pairs]  # the step_id is the 2nd colon field
+    assert steps == ["s1", "s2", "s10"], f"expected numeric step order, got {steps}"
+    # s1 failed (tool_error) -> its failure-class threads into s2's state bucket
+    assert pairs[1][2] == 1  # s2 passed
+    assert "tool_error" in pairs[1][0], f"s2 should carry s1's prior tool_error, got {pairs[1][0]}"
+
+
 def main() -> int:
     test_extract_tactics_filters_prose_and_fences()
     test_llm_proposer_uses_injected_generator()

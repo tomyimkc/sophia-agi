@@ -83,11 +83,18 @@ def verify_proof(
     repo_url: str = "https://github.com/leanprover-community/mathlib4",
     timeout_s: int = 120,
 ) -> LeanCheck:
-    """Verify a Lean 4 ``proof`` of ``theorem`` (a `theorem ... := by ...` block).
+    """Verify a Lean 4 ``proof`` of ``theorem``.
 
-    Fail-closed at every step: no lean-dojo → abstain(`lean_unavailable`); a Lean
-    error → rejected with the error tail; a closed goal → accepted. We never
-    interpret a partial/errored state as anything but not-yet-proven.
+    ``theorem`` is a header ending in ``:= by`` (e.g. ``"theorem t : True := by"``) and
+    ``proof`` is the tactic body that follows (one tactic per line). The two are
+    assembled into a SINGLE ``theorem ... := by <tactics>`` source — never concatenated
+    with a separator or a second theorem header, which would produce invalid Lean and
+    cause systematic rejection/abstention even when Lean is available. If ``proof``
+    already contains ``:= by`` (a caller passed a full block), it is used verbatim.
+
+    Fail-closed at every step: no lean-dojo → abstain(``lean_unavailable``); a Lean
+    error → rejected with the error tail; a closed goal → accepted. We never interpret a
+    partial/errored state as anything but not-yet-proven.
     """
     if not lean_available():
         return LeanCheck(verdict="abstain", reason="lean_unavailable: lean-dojo not installed",
@@ -98,9 +105,20 @@ def verify_proof(
         return LeanCheck(verdict="abstain", reason="lean_unavailable: lean-dojo import failed",
                          lean_available=False)
 
-    # Concatenate into one Lean 4 source. A real integration would open the user's
-    # target repo via LeanDojo; this standalone form works for self-contained proofs.
-    source = f"{theorem}\n{'-' * 40}\n{proof}"
+    # Assemble ONE Lean 4 source. Accept either a tactic body (the normal call shape)
+    # or a caller's pre-assembled full block, but never emit a duplicate theorem header
+    # or a stray separator — both would make Lean reject an otherwise-correct proof.
+    # Detect a full block ONLY by its leading declaration keyword (not by a `:= by`
+    # substring): a tactic body legitimately contains `have h : P := by ...`, which would
+    # falsely match the substring test and drop the theorem header.
+    _proof_head = proof.lstrip()[:16].lower()
+    _is_full_block = _proof_head.startswith(("theorem ", "lemma ", "def ", "example", "axiom "))
+    if _is_full_block:
+        source = proof  # caller passed a full theorem block; use it verbatim
+    elif ":= by" in theorem:
+        source = f"{theorem}\n{proof}"
+    else:
+        source = f"{theorem} := by\n{proof}"
     try:
         # LeanDojo's exact API varies by version; the load-bearing call is "does
         # this source elaborate with no remaining goals / errors". We wrap it so a
