@@ -42,11 +42,15 @@ LOG_PATH = "agi-proof/benchmark-results/runpod-wisdom-pilot/pod-selfreport.log"
 
 def _mode_spec(mode: str):
     """(prefix, on-pod script, extra CLI flags) for a run mode. orpo_sft = the canonical
-    SFT->ORPO STACK (train SFT, merge, ORPO on top); orpo = ORPO from base; sft = M3 pilot."""
+    SFT->ORPO STACK (train SFT, merge, ORPO on top); orpo = ORPO from base; retention = train
+    SFT then score base-vs-adapter on the held-out generality probe (criterion #3, no wisdom
+    eval); sft = M3 pilot."""
     if mode == "orpo_sft":
         return "M4-orpo-sft", "pilot_gemma3_orpo.py", "--from-sft"
     if mode == "orpo":
         return "M4-orpo", "pilot_gemma3_orpo.py", ""
+    if mode == "retention":
+        return "M3-pilot-retention", "pilot_gemma3_run.py", "--retention"
     return "M3-pilot", "pilot_gemma3_run.py", ""
 
 
@@ -66,6 +70,16 @@ def _job_script(args: argparse.Namespace) -> str:
     mode = getattr(args, "mode", "sft")
     prefix, script, mode_flags = _mode_spec(mode)
     result_path, answers_path = _artifact_paths(args)
+    # retention mode trains the SFT adapter then scores base-vs-adapter on the held-out generality
+    # probe (criterion #3) — there is NO wisdom benchmark eval, so it omits --eval/--runs/--limit.
+    if mode == "retention":
+        smoke_cmd = f"python tools/{script} --smoke --retention"
+        full_cmd = (f"python tools/{script} --train --retention --seed {seed} "
+                    f"--out {result_path} --save-answers {answers_path}")
+    else:
+        smoke_cmd = f"python tools/{script} --smoke {mode_flags}"
+        full_cmd = (f"python tools/{script} --train --eval --seed {seed} {eval_flags} {mode_flags} "
+                    f"--out {result_path} --save-answers {answers_path}")
     # NOTE: no `set -x`; secrets must never reach the pushed log. The PAT lives only in the
     # git credential store on the ephemeral pod. All stdout/stderr -> /workspace/pod.log,
     # which is scrubbed of the token before being pushed.
@@ -177,12 +191,11 @@ python tools/build_sophia_wisdom_dataset.py --stats
 wc -l training/local_sophia_v3/mlx/train.jsonl
 
 echo "[pod] SMOKE ({mode})"
-python tools/{script} --smoke {mode_flags}
+{smoke_cmd}
 
-echo "[pod] FULL {mode} train + eval ({eval_flags}) seed={seed}"
-python tools/{script} --train --eval --seed {seed} {eval_flags} {mode_flags} \
-  --out {result_path} --save-answers {answers_path}
-echo "[pod] eval + answers written; finish() will commit + push"
+echo "[pod] FULL {mode} seed={seed}"
+{full_cmd}
+echo "[pod] result + answers written; finish() will commit + push"
 """
 
 
@@ -228,7 +241,7 @@ def parse_args(argv=None):
     ap.add_argument("--runs", type=int, default=3)
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--mode", choices=["sft", "orpo", "orpo_sft"], default="sft")
+    ap.add_argument("--mode", choices=["sft", "orpo", "orpo_sft", "retention"], default="sft")
     ap.add_argument("--registry-auth-id", default=os.environ.get("RUNPOD_REGISTRY_AUTH_ID", ""),
                     help="RunPod container-registry-auth id for pulling a private image")
     ap.add_argument("--name", default=f"sophia-wisdom-pilot-sr-{ts}")

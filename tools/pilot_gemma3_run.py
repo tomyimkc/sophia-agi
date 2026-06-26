@@ -309,6 +309,86 @@ def _print_prereg(report: dict) -> None:
     log(f"PRIMARY habit-transfer signal present: {any_improve}")
 
 
+def evaluate_retention(model_id: str, adapter_dir: Path, *, out_path: Path,
+                       tasks_path: Path = ROOT / "data" / "generality_tasks.json",
+                       answers_path: "Path | None" = None) -> None:
+    """Catastrophic-forgetting check for criterion #3 (learning-shift STABILITY): score base vs
+    adapter on the HELD-OUT generality probe (data/generality_tasks.json — abstraction/reasoning/
+    analogy/out-of-domain, NO provenance tasks). Scored DETERMINISTICALLY (numeric/exact/regex)
+    via tools/eval_generality.score — no LLM judge, can't be Goodharted. retains = the adapter
+    does NOT drop more than 5pts vs base. This is the gemma-3-native stand-in for
+    run_learning_shift's stability phase (that tool's adapter backend is vLLM/GLM, not gemma-3)."""
+    import importlib.util as _ilu
+    from peft import PeftModel
+    _g = _ilu.module_from_spec(_ilu.spec_from_file_location("evg", ROOT / "tools" / "eval_generality.py"))
+    _g.__spec__.loader.exec_module(_g)
+
+    doc = _g.load_tasks(tasks_path)
+    tasks = doc["tasks"]
+    contam = _g.contamination_report(tasks, TRAIN)
+    if contam:
+        log(f"WARN: {len(contam)} generality prompt(s) leaked into train — retention number is suspect")
+    sys_prompt = "You are a helpful, precise assistant. Answer concisely and follow the format requested."
+    su = [(sys_prompt, t["prompt"]) for t in tasks]
+    log(f"retention: {len(tasks)} held-out generality tasks x (base, adapter)")
+
+    base, tok = load_base(model_id)
+    base.eval()
+    base_ans = _batched_generate(base, tok, su, max_new=96)
+
+    log("loading adapter onto base for retention ...")
+    adapted = PeftModel.from_pretrained(base, str(adapter_dir))
+    adapted.eval()
+    adapter_ans = _batched_generate(adapted, tok, su, max_new=96)
+
+    def grade(answers):
+        rows, correct = [], 0
+        for t, a in zip(tasks, answers):
+            cleaned = _g.strip_prompt_echo(a, t["prompt"])
+            ok = _g.score(cleaned, t["answer"], t.get("match", "exact"))
+            correct += int(ok)
+            rows.append({"id": t["id"], "category": t.get("category"), "match": t.get("match"),
+                         "gold": t["answer"], "reply": cleaned[:200], "correct": ok})
+        return correct / len(tasks) if tasks else 0.0, rows
+
+    base_acc, base_rows = grade(base_ans)
+    adapter_acc, adapter_rows = grade(adapter_ans)
+    delta = round(adapter_acc - base_acc, 4)
+    retains = delta >= -0.05  # criterion #3: adapter stability >= base - 5pts
+
+    if answers_path is not None:
+        answers_path.parent.mkdir(parents=True, exist_ok=True)
+        answers_path.write_text(json.dumps(
+            {"base": base_rows, "adapter": adapter_rows}, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    import collections
+    def by_cat(rows):
+        c = collections.Counter(); n = collections.Counter()
+        for r in rows:
+            n[r["category"]] += 1; c[r["category"]] += int(r["correct"])
+        return {k: {"correct": c[k], "n": n[k], "acc": round(c[k] / n[k], 3)} for k in n}
+
+    report = {
+        "pilot": "sophia-wisdom-4b-m3-retention",
+        "criterion": "learning-shift stability: adapter general-capability >= base - 5pts",
+        "baseModel": model_id,
+        "adapter": str(adapter_dir.relative_to(ROOT) if adapter_dir.is_relative_to(ROOT) else adapter_dir),
+        "probe": str(tasks_path.relative_to(ROOT)), "nTasks": len(tasks),
+        "scoring": "deterministic (numeric/exact/regex) — NO LLM judge",
+        "contaminationLeaks": contam,
+        "base_accuracy": round(base_acc, 4), "adapter_accuracy": round(adapter_acc, 4),
+        "delta": delta, "retains": retains,
+        "byCategoryBase": by_cat(base_rows), "byCategoryAdapter": by_cat(adapter_rows),
+        "boundary": ("Held-out generality probe; deterministic scoring; small N=34 so treat the "
+                     "delta as a coarse forgetting guardrail, not a precise capability claim."),
+    }
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    log(f"wrote retention report -> {out_path}")
+    log(f"=== RETENTION (criterion #3): base {base_acc:.3f} -> adapter {adapter_acc:.3f} "
+        f"(Δ {delta:+.3f}) retains={retains} ===")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--model", default=DEFAULT_MODEL)
@@ -326,6 +406,8 @@ def main() -> int:
     ap.add_argument("--out", type=Path, default=ROOT / "agi-proof" / "benchmark-results" / "wisdom-market" / "M3-pilot-eval.json")
     ap.add_argument("--save-answers", type=Path, default=None,
                     help="also write per-case base/adapter advisor answers here (for the LLM-judge pass)")
+    ap.add_argument("--retention", action="store_true",
+                    help="also score base vs adapter on the held-out generality probe (criterion #3)")
     args = ap.parse_args()
 
     if args.smoke:
@@ -333,6 +415,9 @@ def main() -> int:
         train(args.model, args.adapter, rows_path=args.rows, seq_len=args.seq_len,
               epochs=1, seed=args.seed, lr=args.lr, smoke=True)
         evaluate(args.model, args.adapter, runs=1, limit=2, out_path=args.out.with_name("M3-pilot-smoke.json"))
+        if args.retention:
+            evaluate_retention(args.model, args.adapter,
+                               out_path=args.out.with_name("M3-pilot-retention-smoke.json"))
         log("SMOKE OK")
         return 0
     if args.train:
@@ -341,6 +426,16 @@ def main() -> int:
     if args.eval:
         evaluate(args.model, args.adapter, runs=args.runs, limit=args.limit, out_path=args.out,
                  answers_path=args.save_answers)
+    if args.retention:
+        # retention-ONLY (no --eval): write straight to --out/--save-answers so the launcher
+        # stages the exact files. Combined with --eval: use sibling names beside the eval report.
+        if args.eval:
+            ret_out = args.out.with_name("M3-pilot-retention.json")
+            ret_ans = args.out.with_name("M3-pilot-retention-answers.json")
+        else:
+            ret_out = args.out
+            ret_ans = args.save_answers
+        evaluate_retention(args.model, args.adapter, out_path=ret_out, answers_path=ret_ans)
     return 0
 
 
