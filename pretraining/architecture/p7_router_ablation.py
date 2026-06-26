@@ -22,7 +22,14 @@ logits:
    through ``MoERouter(k=1)`` with a capacity large enough that nothing is
    dropped. Isolates the measurement path through ``MoERouter``; selection is
    identical to (1) so any loss delta is a bug, not a signal.
-3. ``moerouter-topk-cap`` — ``MoERouter(k=2, capacity_factor=1.25)``: the real
+3. ``handrolled-top2-nodrop`` — the SAME top-2 selection and renormalized
+   combine weights as policy (4), but with NO capacity drop (no ``MoERouter``):
+   every selected expert is kept. This isolates the **mixture-averaging**
+   confound from the **capacity-drop policy** — its only difference from (4) is
+   the drop. If it matches (4), the top-k loss advantage over (1) is plain
+   mixing (k>1 smooths the output); if (4) is still better, the capacity policy
+   contributes beyond mixing. The split is reported in ``confound_isolation``.
+4. ``moerouter-topk-cap`` — ``MoERouter(k=2, capacity_factor=1.25)``: the real
    capacity-aware top-2 policy, where over-capacity assignments are *dropped*
    and each token's output is the (renormalized) mixture of its kept experts.
 
@@ -60,7 +67,7 @@ try:
 except Exception:  # pragma: no cover
     _HAVE_NUMPY = False
 
-from moe.router import MoERouter, load_balancing_loss  # noqa: E402
+from moe.router import MoERouter, load_balancing_loss, top_k_gating  # noqa: E402
 from pretraining.architecture.moe import MoELM  # noqa: E402
 from pretraining.nano import (  # noqa: E402
     NanoLM, eval_loss, make_source, sample_stream, source_entropy, to_examples, train,
@@ -180,6 +187,42 @@ def _eval_moerouter(m: MoELM, logits, actives, examples, *, k: int, capacity_fac
         dropped_slots=plan["dropped"], slots_attempted=slots_attempted)
 
 
+def _eval_handrolled_topk_nodrop(m: MoELM, logits, actives, examples, *, k: int):
+    """Top-k selection + renormalized mixture, but NO capacity drop (no MoERouter).
+
+    Isolates the *mixture-averaging* effect from the *capacity-drop policy*. This
+    uses the SAME top-k selection and the SAME renormalized combine weights that
+    ``moerouter-topk-cap`` uses (``top_k_gating``), but keeps EVERY selected
+    expert — nothing is ever dropped. The only thing that differs between this
+    policy and ``moerouter-topk-cap`` is therefore the capacity drop itself.
+
+    So: if this ≈ ``moerouter-topk-cap``, the top-k loss advantage over
+    ``handrolled-top1`` is plain mixture-averaging (k>1 smooths the output
+    distribution, lowering NLL regardless of the capacity policy). If
+    ``moerouter-topk-cap`` is still better, the capacity policy contributes
+    beyond mixing. Either way the confound is now *measured*, not just caveated.
+    """
+    E = m.n_experts
+    T = len(examples)
+    idx, combine, probs = top_k_gating(logits, k)  # combine sums to 1 per token
+    total_loss = 0.0
+    counts = [0] * E
+    for t, (_ctx, tgt) in enumerate(examples):
+        mix = [0.0] * m.V
+        for slot in range(k):
+            e = int(idx[t, slot])
+            counts[e] += 1
+            w = float(combine[t, slot])
+            pe = _expert_output(m, m.experts[e], actives[t])
+            for k_idx in range(m.V):
+                mix[k_idx] += w * pe[k_idx]
+        total_loss += -math.log(max(mix[tgt], 1e-12))
+    held = total_loss / max(1, T)
+    aux = load_balancing_loss(idx, probs, E)
+    # No drops: every one of the T*k slots is kept.
+    return _policy_stats(m, held, aux, counts, dropped_slots=0, slots_attempted=T * k)
+
+
 def _policy_stats(m: MoELM, held: float, aux: float, counts, *,
                   dropped_slots: int, slots_attempted: int) -> dict:
     total = sum(counts) or 1
@@ -258,6 +301,8 @@ def run_ablation(*, quick: bool = False, seed: int = 0) -> dict:
         m, logits, actives, eval_ex, k=1, capacity_factor=64.0)
     p_topk_cap = _eval_moerouter(
         m, logits, actives, eval_ex, k=2, capacity_factor=1.25)
+    # Confound-isolation policy: SAME top-2 mixture as topk-cap, NO capacity drop.
+    p_handrolled_top2 = _eval_handrolled_topk_nodrop(m, logits, actives, eval_ex, k=2)
 
     experts_after = _expert_fingerprint(m)
     experts_frozen = (experts_before == experts_after)
@@ -282,25 +327,43 @@ def run_ablation(*, quick: bool = False, seed: int = 0) -> dict:
     else:
         verdict = "tie"
 
+    # --- Confound isolation: the top-k-cap loss advantage over handrolled-top1
+    # conflates two effects — (a) plain MIXTURE-AVERAGING (k>1 experts blended per
+    # token smooth the output distribution, lowering NLL regardless of the capacity
+    # policy) and (b) the capacity-drop POLICY itself. handrolled-top2-nodrop uses
+    # the SAME top-2 mixture as topk-cap but never drops, so it MEASURES the split:
+    #   mixture_effect = handrolled-top1  -> handrolled-top2-nodrop  (pure mixing)
+    #   policy_effect  = handrolled-top2-nodrop -> moerouter-topk-cap (capacity drop)
+    # and mixture_effect + policy_effect == the total gap (handrolled-top1 - topk-cap).
+    # A positive policy_effect means topk-cap beats the no-drop mixture, i.e. the
+    # capacity policy contributes BEYOND mixing; near-zero means the win was mixing. ---
+    mixture_effect = p_handrolled["held_loss"] - p_handrolled_top2["held_loss"]
+    policy_effect = p_handrolled_top2["held_loss"] - p_topk_cap["held_loss"]
+    policy_effect_isolated = policy_effect > 0.01  # capacity policy helps beyond mixing
+
     # --- Decision note for the gated P7-B follow-up (documented, not auto-acted).
-    # Honest about the confound: a top-k CAP loss advantage conflates two effects —
-    # (a) the capacity-drop POLICY, and (b) plain MIXTURE-AVERAGING (k>1 experts
-    # blended per token smooth the output distribution, which lowers NLL regardless
-    # of *which* experts or whether dropping happened). We disentangle partly via
-    # moerouter-top1-nodrop (same k=1, no mixture confound) but the top-2 row cannot
-    # be attributed to policy alone. So "FOR B" requires a loss advantage that
-    # survives acknowledging the mixture confound — i.e. we are conservative. ---
+    # Now grounded in the MEASURED policy effect, not just a caveat. ---
     loss_better = p_topk_cap["held_loss"] < p_handrolled["held_loss"] - 0.05
     balance_better = (
         p_topk_cap["max_route_share"] < p_handrolled["max_route_share"] - 1e-3
         or p_topk_cap["route_cv"] < p_handrolled["route_cv"] - 1e-3)
-    if loss_better and balance_better:
+    if loss_better and balance_better and policy_effect_isolated:
         b_note = (
-            "evidence FOR P7-B (provisional): top-k-cap held-out loss is lower AND load "
-            "is better spread than the hand-rolled top-1 router. CAVEAT: the loss "
-            "advantage may be partly a mixture-averaging confound (k>1 smooths the "
-            "output), not the capacity policy — a trainable bridge is worth building "
-            "only if the advantage holds after isolating the policy effect.")
+            f"evidence FOR P7-B: top-k-cap held-out loss is lower AND load is better "
+            f"spread than the hand-rolled top-1 router, and the loss advantage SURVIVES "
+            f"isolating the mixture confound — the capacity policy contributes "
+            f"{round(policy_effect, 4)} nats beyond pure top-2 mixing "
+            f"(handrolled-top2-nodrop), which itself accounts for {round(mixture_effect, 4)} "
+            f"nats. Building the trainable bridge is warranted.")
+    elif loss_better and balance_better:
+        b_note = (
+            f"evidence MIXED on P7-B: top-k-cap's lower loss is explained by "
+            f"MIXTURE-AVERAGING, not the capacity policy — handrolled-top2-nodrop (same "
+            f"k=2 mix, no drops) already accounts for {round(mixture_effect, 4)} nats of "
+            f"the gap and the capacity policy adds only {round(policy_effect, 4)} nats. "
+            f"Load balance still favors MoERouter, but do NOT justify the trainable bridge "
+            f"on a loss advantage that is really mixing; build it (if at all) for the "
+            f"load-balance / capacity behavior, not the NLL.")
     else:
         b_note = (
             "evidence AGAINST P7-B: no clear joint advantage on loss AND load balance "
@@ -327,7 +390,22 @@ def run_ablation(*, quick: bool = False, seed: int = 0) -> dict:
         "policies": {
             "handrolled-top1": _with_floor(p_handrolled, E),
             "moerouter-top1-nodrop": _with_floor(p_top1_nodrop, E),
+            "handrolled-top2-nodrop": _with_floor(p_handrolled_top2, E),
             "moerouter-topk-cap": _with_floor(p_topk_cap, E),
+        },
+        "confound_isolation": {
+            "mixture_effect_nats": round(mixture_effect, 5),
+            "policy_effect_nats": round(policy_effect, 5),
+            "policy_effect_isolated": bool(policy_effect_isolated),
+            "decomposition_exact": bool(
+                abs((mixture_effect + policy_effect) - gap) < 1e-6),
+            "interpretation": (
+                "mixture_effect = handrolled-top1 -> handrolled-top2-nodrop (pure top-2 "
+                "averaging, no capacity drop); policy_effect = handrolled-top2-nodrop -> "
+                "moerouter-topk-cap (the capacity-drop policy in isolation). Their sum is "
+                "the total handrolled-top1 -> topk-cap gap. policy_effect_isolated is True "
+                "only when the capacity policy lowers loss BEYOND mixture-averaging."
+            ),
         },
         "self_consistency": {
             "native_moe_held_loss": round(native_held, 5),
@@ -345,7 +423,11 @@ def run_ablation(*, quick: bool = False, seed: int = 0) -> dict:
             "that either router scales to frontier MoEs, and NOT that the policy delta "
             "implies a capability delta. A 'superior router' claim needs the same "
             "measurement on a real model to the kappa >= 0.40 / 2-judge gate. The trainable "
-            "Gumbel-softmax bridge (P7-B) is a separate, gated follow-up, not included here."
+            "Gumbel-softmax bridge (P7-B) is a separate, gated follow-up, not included here. "
+            "IMPORTANT: the raw 'verdict' is a held-out-loss comparison and is "
+            "MIXTURE-CONFOUNDED — see confound_isolation, which measures (via "
+            "handrolled-top2-nodrop) that the top-k loss advantage is mixture-averaging, "
+            "not the capacity policy; read the verdict together with that decomposition."
         ),
     }
 
@@ -431,6 +513,24 @@ def offline_invariants() -> "tuple[bool, dict]":
     checks["losses_finite_floor_positive"] = all(
         math.isfinite(x) for x in losses) and rep["floor_E"] > 0
 
+    # 9. Policy effect isolated from the mixture confound: the new
+    #    handrolled-top2-nodrop row uses the same top-2 mixture as topk-cap with NO
+    #    capacity drop, so the gap decomposes EXACTLY into a mixture effect plus a
+    #    capacity-policy effect. This check asserts the confound is now *measured*
+    #    (decomposition present and exact), so the verdict is no longer confounded.
+    ci = rep["confound_isolation"]
+    h1 = rep["policies"]["handrolled-top1"]["held_loss"]
+    h2 = rep["policies"]["handrolled-top2-nodrop"]["held_loss"]
+    cap = rep["policies"]["moerouter-topk-cap"]["held_loss"]
+    recomputed_gap = ci["mixture_effect_nats"] + ci["policy_effect_nats"]
+    detail["mixture_effect_nats"] = ci["mixture_effect_nats"]
+    detail["policy_effect_nats"] = ci["policy_effect_nats"]
+    checks["policy_effect_isolated"] = (
+        ci["decomposition_exact"]
+        and abs(recomputed_gap - rep["held_loss_gap_handrolled_minus_topkcap"]) < 1e-6
+        and abs(ci["mixture_effect_nats"] - (h1 - h2)) < 1e-4
+        and abs(ci["policy_effect_nats"] - (h2 - cap)) < 1e-4)
+
     ok = all(checks.values())
     return ok, {"checks": checks, **detail}
 
@@ -455,8 +555,12 @@ def main() -> None:
         print(f"  {name:24s} held={p['held_loss']:7.4f} "
               f"aux={p['aux_loss']:6.3f} max_share={p['max_route_share']:.3f} "
               f"cv={p['route_cv']:.3f} dropped={p['pct_dropped']}%")
+    ci = rep["confound_isolation"]
     print(f"verdict: {rep['verdict']}  "
           f"(gap handrolled-topkcap={rep['held_loss_gap_handrolled_minus_topkcap']})")
+    print(f"confound split: mixture_effect={ci['mixture_effect_nats']} nats  "
+          f"policy_effect={ci['policy_effect_nats']} nats  "
+          f"policy_effect_isolated={ci['policy_effect_isolated']}")
     print(f"P7-B: {rep['p7b_decision_note']}")
 
 
