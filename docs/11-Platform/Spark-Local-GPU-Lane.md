@@ -1,5 +1,10 @@
 # Spark Local-GPU Lane — iteration, not registered results
 
+> **Companion:** for *what to actually run on the Spark to maximize it* (the data
+> refinery, NVFP4 MoE inference, the roofline discipline, Rust/Mojo), see
+> [`DGX-Spark-Maximization.md`](./DGX-Spark-Maximization.md). This doc is the
+> provenance boundary it builds on.
+
 The NVIDIA DGX Spark (Grace Blackwell GB10, aarch64, 128GB unified memory) is
 wired as a **free, instant iteration lane** for GPU work — primarily RLVR/LoRA —
 via [`tools/runpod_rlvr.py --local`](../../tools/runpod_rlvr.py) and the

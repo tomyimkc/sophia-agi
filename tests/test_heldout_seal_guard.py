@@ -17,8 +17,12 @@ MANIFEST = ROOT / "agi-proof" / "sophia-math-code-curriculum" / "heldout-seal.ma
 def test_manifest_exists() -> None:
     assert MANIFEST.exists()
     data = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    assert data["schema"] == "sophia.math_code_heldout_seal.v1"
-    assert len(data["files"]) >= 5
+    assert data["schema"] == "sophia.math_code_heldout_seal.v2"
+    assert len(data["files"]) >= 6
+    # v2 carries the per-file provenance + pretraining-contamination caveat
+    assert data.get("pretrainingContaminationPolicy")
+    assert all("provenance" in f for f in data["files"])
+    assert all("pretrainingContaminationCaveat" in f["provenance"] for f in data["files"])
 
 
 def test_sealed_paths_includes_eval_samples() -> None:

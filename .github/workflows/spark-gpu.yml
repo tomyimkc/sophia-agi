@@ -26,8 +26,14 @@ name: spark-gpu
 on:
   workflow_dispatch:
     inputs:
+      lane:
+        description: 'Which Spark lane to run: rlvr (training iteration) or roofline (kernel % of the Spark ceiling)'
+        required: true
+        default: 'rlvr'
+        type: choice
+        options: [rlvr, roofline]
       task:
-        description: 'RLVR reward task'
+        description: 'RLVR reward task (rlvr lane only)'
         required: true
         default: 'provenance'
         type: choice
@@ -62,6 +68,7 @@ permissions:
 
 jobs:
   spark:
+    if: ${{ inputs.lane == 'rlvr' }}
     runs-on: [self-hosted, spark, aarch64]
     timeout-minutes: 240
     env:
@@ -135,4 +142,45 @@ jobs:
           path: |
             agi-proof/benchmark-results/runpod-rlvr/local.rlvr.public-report.json
             agi-proof/benchmark-results/runpod-rlvr/local.train.log
+          if-no-files-found: warn
+
+  # Kernel roofline lane: run the repo's GPU kernels on the Spark and report each
+  # kernel's % of the SPARK's own datasheet ceiling (273 GB/s unified; ~500 TFLOP/s
+  # dense FP4) — never an "Nx vs my laptop" number. Same provenance boundary as the
+  # RLVR lane: the report is annotated sparkIteration/registeredResult=false by the
+  # harness itself (tools/spark_roofline_report.py). Dispatch with lane=roofline.
+  roofline:
+    if: ${{ inputs.lane == 'roofline' }}
+    runs-on: [self-hosted, spark, aarch64]
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — confirm runner is the Spark (aarch64 + CUDA)
+        run: |
+          uname -m
+          nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || {
+            echo "::error::nvidia-smi failed — this runner is not CUDA-capable. Register the Spark runner with nvidia drivers.";
+            exit 1;
+          }
+
+      - name: Roofline gate (offline math — never needs a GPU)
+        run: python kernels/bench/roofline.py --self-test
+
+      - name: "Run the kernels on the Spark and write a roofline report"
+        run: |
+          # --run times the BF16 GEMM + fused NVFP4 dequant-GEMM on the Spark and writes
+          # kernels/reports/spark-roofline-<run_id>.json, annotated sparkIteration=true /
+          # registeredResult=false. The stamp is the GH run id (no wall-clock in the harness).
+          # If torch+CUDA+triton are absent the harness writes nothing and still exits 0.
+          python tools/spark_roofline_report.py --run --stamp "${{ github.run_id }}"
+
+      - name: Upload roofline report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: spark-roofline-reports
+          path: kernels/reports/spark-roofline-*.json
           if-no-files-found: warn

@@ -1,0 +1,121 @@
+name: spark-smoke
+
+# Self-hosted NVIDIA DGX Spark (GB10 Grace Blackwell, aarch64) lane.
+#
+# Tier A (default, runs on PR + dispatch): the offline RLVR/compounding/flywheel
+# invariants PLUS a CUDA-stack probe on the Spark's REAL aarch64/sm_121a torch+cuda —
+# catches aarch64 wheel breaks (vLLM/bnb/flash-attn) on every code PR, for free, with no
+# overclaim (invariants + a probe are NOT a capability claim). This is the iteration tier.
+#
+# Tier B (dispatch only, micro_grpo=run): a real 1-seed micro-GRPO on the Spark.
+# candidateOnly, NEVER auto-published — it bridges "mock invariants green" and "a real
+# rung cleared" but is NOT the registered x86 result (per REPLICATION.md the headline
+# number stays on x86 RunPod).
+#
+# NOTE: this is a BEST-EFFORT lane on a self-hosted runner. It is intentionally NOT a
+# required/branch-protection check — if the Spark is offline the PR is not blocked.
+# Register the runner with labels [self-hosted, dgx-spark, arm64].
+
+on:
+  workflow_dispatch:
+    inputs:
+      micro_grpo:
+        description: 'off = Tier A invariants only; run = also run a 1-seed micro-GRPO (candidateOnly)'
+        required: false
+        default: 'off'
+        type: choice
+        options: [off, run]
+  pull_request:
+    branches: [main]
+    paths:
+      - 'agent/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'provenance_bench/**'
+      - 'selfextend/**'
+      - 'scripts/**'
+      - 'training/**'
+      - 'requirements*.txt'
+      - 'pyproject.toml'
+      - '.github/workflows/spark-smoke.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: spark-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tier-a-invariants:
+    runs-on: [self-hosted, dgx-spark, arm64]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install offline deps (sympy for the math task)
+        run: python -m pip install -r requirements-math.txt
+      - name: Claims linter (no-overclaim copy gate)
+        run: python tools/lint_claims.py
+      - name: Offline RLVR reward-wiring invariants (code + math tasks, mock)
+        env:
+          SOPHIA_ALLOW_CODE_EXEC: '1'
+        run: |
+          python tools/run_rlvr.py --model mock --task code  --dry-run
+          python tools/run_rlvr.py --model mock --task math --dry-run
+      - name: Compounding driver mock gate-pipeline (rising curve + negative control)
+        env:
+          SOPHIA_ALLOW_CODE_EXEC: '1'
+        run: |
+          python tools/run_ssil_winset_compounding.py --mode mock --task code --generations 4
+          python tools/run_ssil_winset_compounding.py --mode mock --task code --generations 4 --negative-control
+      - name: Self-extending flywheel capstone (real synthesis engine)
+        run: python tools/run_selfextend_loop.py
+      - name: CUDA stack probe (the Tier-A aarch64 value — catches sm_121a wheel breaks)
+        run: |
+          python - <<'PY'
+          import torch
+          assert torch.cuda.is_available(), "CUDA not available on the self-hosted dgx-spark runner"
+          print(f"CUDA OK: torch={torch.__version__} cuda={torch.version.cuda} "
+                f"device={torch.cuda.get_device_name(0)} arch={torch.cuda.get_device_capability(0)}")
+          PY
+      - name: Upload Spark smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: spark-smoke-reports
+          path: |
+            agi-proof/benchmark-results/rlvr.public-report.json
+            agi-proof/self-extension/ssil-winset-compounding.mock-report.json
+            agi-proof/self-extension/closed-loop-2026-06-22.json
+          if-no-files-found: warn
+
+  tier-b-micro-grpo:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.micro_grpo == 'run'
+    runs-on: [self-hosted, dgx-spark, arm64]
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Real 1-seed micro-GRPO on the Spark (candidateOnly, NOT the registered x86 result)
+        env:
+          SOPHIA_ALLOW_CODE_EXEC: '1'
+        run: |
+          echo "::notice::Tier-B micro-GRPO is candidateOnly; never auto-published. Per REPLICATION.md"
+          echo "the headline number stays on x86 RunPod. This only proves the verifier-as-reward loop"
+          echo "executes end-to-end on aarch64/sm_121a. Promote ONLY via tools/promote_adapter.py."
+          # bf16 + --vllm none: the aarch64/Grace-Blackwell-safe GRPO config (no bnb, no colocate).
+          python tools/run_rlvr.py --task code --model Qwen/Qwen2.5-7B-Instruct \
+            --quant bf16 --vllm none --epochs 0.02 --seed 0 \
+            --out agi-proof/benchmark-results/spark-micro-grpo.public-report.json
+      - name: Upload micro-GRPO report (candidateOnly)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: spark-micro-grpo
+          path: agi-proof/benchmark-results/spark-micro-grpo.public-report.json
+          if-no-files-found: warn

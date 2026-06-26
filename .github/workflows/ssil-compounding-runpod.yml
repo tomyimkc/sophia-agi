@@ -1,0 +1,93 @@
+name: ssil-compounding-runpod
+
+# Manual-only launcher for win-set generational compounding.
+#
+# Two jobs:
+#   - mock-smoke (default): runs the FULL compounding gate pipeline (win-set build,
+#     held-out contamination re-check, multi-seed aggregate, compounding_proof, z3
+#     attestation) on synthetic generations. CI-safe, no GPU, no secret, green. This
+#     is the real proof that the gate pipeline runs end-to-end on the runner.
+#   - live (remote_mode=live + confirm=RUN): the real multi-generation RunPod run.
+#     This per-rent-a-pod-per-generation orchestration is the OPEN next step (see
+#     agi-proof/failure-ledger.md ssil-compounding-live-not-gated); dispatching it now
+#     prints the blocker and exits neutral rather than silently failing.
+#
+# Dispatch-only: never runs on push/PR/schedule. canClaimAGI=false until a real gated
+# --mode live run clears the SSIL gate on every generation.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to acknowledge (live mode rents paid GPU pods per generation)'
+        required: false
+        default: ''
+      remote_mode:
+        description: 'offline = mock gate-pipeline smoke (no GPU); live = real RunPod compounding (OPEN)'
+        required: true
+        default: 'offline'
+        type: choice
+        options: [offline, live]
+      task:
+        description: 'Verifier-as-reward task'
+        required: true
+        default: 'code'
+        type: choice
+        options: [provenance, math, code]
+      generations:
+        description: 'Max generations'
+        required: false
+        default: '4'
+      seed_sweep:
+        description: 'Comma-separated per-generation eval seeds'
+        required: false
+        default: '0,1,2'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ssil-compounding-${{ github.event.inputs.remote_mode }}-${{ github.event.inputs.task }}
+  cancel-in-progress: false
+
+jobs:
+  mock-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Claims linter (no-overclaim copy gate)
+        run: python tools/lint_claims.py
+      - name: Mock compounding gate-pipeline smoke (rising curve + negative control)
+        run: |
+          python tools/run_ssil_winset_compounding.py --mode mock \
+            --task "${{ github.event.inputs.task }}" \
+            --generations "${{ github.event.inputs.generations }}" \
+            --seed-sweep "${{ github.event.inputs.seed_sweep }}" \
+            --negative-control
+      - name: Upload mock compounding report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ssil-compounding-mock
+          path: agi-proof/self-extension/ssil-winset-compounding.mock-report.json
+          if-no-files-found: warn
+
+  live:
+    if: github.event.inputs.remote_mode == 'live'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: State the OPEN live-orchestration blocker
+        run: |
+          echo "::notice::Live multi-generation compounding is the OPEN next step"
+          echo "(agi-proof/failure-ledger.md: ssil-compounding-live-not-gated)."
+          echo "The per-generation RunPod orchestration (rent -> train on the win set ->"
+          echo "eval_rlvr_adapter --mode real -> ingest_rlvr_eval -> SSIL gate -> delete pod,"
+          echo "looped per generation via tools/runpod_rlvr.py primitives) is not yet wired."
+          echo "The mock-smoke job proves the gate pipeline; a real live run clears it per gen."
+          echo "Trigger the single-generation code rung today via rlvr-runpod.yml (task=code)."

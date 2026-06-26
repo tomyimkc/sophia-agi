@@ -1,12 +1,16 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (c) 2026 tomyimkc
-"""Low-precision weight quantization — INT8 and FP8-E4M3 (低精度训推).
+"""Low-precision weight quantization — INT8, FP8-E4M3, NVFP4 (低精度训推).
 
 Low precision is the cheapest lever for memory and bandwidth at inference: an
 INT8 weight is 4× smaller than FP32 and 2× smaller than FP16; FP8 (the format
-DeepSeek-V3 trains in) halves it again. The engineering content is the
-*quantization scheme* — how you pick scales and bound the error so accuracy
-survives. Reproduced here, proven against their error bounds in CI:
+DeepSeek-V3 trains in) halves it again; FP4 (Blackwell's native format) halves it
+once more. On a bandwidth-bound device — e.g. the DGX Spark GB10, 128 GB unified
+LPDDR5x at only ~273 GB/s (see ``kernels/bench/roofline.py``) — token decode is
+*memory-bound*, so bytes-per-weight is the dominant lever and 4-bit is the
+Spark-native inference path. The engineering content is the *quantization scheme*
+— how you pick scales and bound the error so accuracy survives. Reproduced here,
+proven against their error bounds in CI:
 
 - **Symmetric INT8**, per-tensor and per-channel. ``scale = max|W| / 127``;
   ``q = clip(round(W/scale), -127, 127)``; ``dq = q·scale``. The round-trip error
@@ -17,6 +21,16 @@ survives. Reproduced here, proven against their error bounds in CI:
 - **FP8-E4M3** (1 sign, 4 exponent, 3 mantissa, bias 7, max 448), emulated by
   snapping to the nearest representable value. With 3 mantissa bits the relative
   round-trip error is bounded by ``2^-4 = 6.25%`` per (in-range, normal) element.
+
+- **NVFP4** (Blackwell-native FP4): an **E2M1** element (1 sign, 2 exponent, 1
+  mantissa; representable magnitudes ``{0,.5,1,1.5,2,3,4,6}``, max 6) carried with
+  a **per-block FP8-E4M3 micro-scale** over groups of 16. A single global FP4
+  scale is unusable — only 8 levels over a tensor's whole dynamic range — so the
+  micro-scale is the load-bearing trick: it restores per-block range, which we
+  *demonstrate* (block-scaled error ≪ global-scaled). Effective width ≈ 4 + 8/16
+  = **4.5 bits**, i.e. ~3.6× smaller than FP16. This is an emulated numpy
+  reference; the deployment artifact is a fused dequant-in-the-GEMM Blackwell
+  kernel (Triton/Mojo, measured on the Spark against its 273 GB/s roofline).
 
 - **Weight-only quantized linear**: ``x @ dequant(quant(W))`` ≈ ``x @ W`` within a
   tolerance that scales with the quant step — the actual inference path.
@@ -114,6 +128,74 @@ def fp8_e4m3_roundtrip(W):
     return sign * out
 
 
+# ---- NVFP4 (FP4 E2M1 + per-block FP8-E4M3 micro-scale) ---------------------
+# E2M1: 1 sign, 2 exponent, 1 mantissa bit. Representable magnitudes (exp bias 1):
+#   subnormal {0, 0.5}; normal {1, 1.5}, {2, 3}, {4, 6}.  Max = 6.0.
+_NVFP4_E2M1_LEVELS = (0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0)
+_NVFP4_E2M1_MAX = 6.0
+NVFP4_BLOCK = 16  # elements per micro-scale block (Blackwell NVFP4 default)
+
+
+def _snap_e2m1(a):
+    """Snap non-negative magnitudes to the nearest E2M1 representable level."""
+    levels = np.asarray(_NVFP4_E2M1_LEVELS)
+    idx = np.abs(np.asarray(a)[..., None] - levels).argmin(axis=-1)
+    return levels[idx]
+
+
+def nvfp4_roundtrip(W, *, block_size: int = NVFP4_BLOCK):
+    """Round-trip ``W`` through NVFP4 (E2M1 + per-block FP8-E4M3 micro-scale).
+
+    Blocks the flattened (row-major) tensor into groups of ``block_size``; each
+    block gets one FP8-E4M3 scale ``= max|block| / 6`` (E2M1 max), then every
+    element is snapped to the nearest E2M1 level and rescaled. The micro-scale is
+    what makes 4-bit usable — it restores the per-block dynamic range a single
+    global FP4 scale destroys. Returns the dequantized fp64 approximation, same
+    shape as ``W``.
+
+    The reference blocks the contiguous flattened weights (matching how a
+    micro-scaled format is laid out in memory); a real kernel blocks along the K
+    dimension of the GEMM. Equivalent for the error-bound demonstration here.
+    """
+    if not _HAVE_NUMPY:
+        raise RuntimeError("numpy required")
+    if block_size <= 0:
+        raise ValueError("block_size must be positive")
+    W = np.asarray(W, dtype=np.float64)
+    flat = W.reshape(-1)
+    n = flat.size
+    pad = (-n) % block_size
+    if pad:
+        flat = np.concatenate([flat, np.zeros(pad)])
+    blocks = flat.reshape(-1, block_size)
+    amax = np.max(np.abs(blocks), axis=1, keepdims=True)
+    amax = np.where(amax == 0, 1.0, amax)               # avoid 0-scale on all-zero block
+    scale = fp8_e4m3_roundtrip(amax / _NVFP4_E2M1_MAX)  # micro-scale stored in FP8-E4M3
+    scale = np.where(scale == 0, amax / _NVFP4_E2M1_MAX, scale)
+    sign = np.sign(blocks)
+    mag = _snap_e2m1(np.abs(blocks) / scale)
+    dq = sign * mag * scale
+    return dq.reshape(-1)[:n].reshape(W.shape)
+
+
+def quantized_linear_nvfp4(x, W, *, block_size: int = NVFP4_BLOCK):
+    """Weight-only NVFP4 linear: ``x @ nvfp4_roundtrip(W)`` — the FP4 inference path."""
+    if not _HAVE_NUMPY:
+        raise RuntimeError("numpy required")
+    x = np.asarray(x, dtype=np.float64)
+    return x @ nvfp4_roundtrip(W, block_size=block_size)
+
+
+def nvfp4_memory_reduction(from_bits: int = 16, block_size: int = NVFP4_BLOCK) -> float:
+    """Memory ratio vs ``from_bits``, counting the FP8 micro-scale overhead.
+
+    Effective width = 4 bits/elem + 8 bits per ``block_size`` block. At block 16
+    that is 4.5 bits → ~3.56× vs FP16, ~7.1× vs FP32 (cf. INT8's 2× / 4×).
+    """
+    effective_bits = 4.0 + 8.0 / block_size
+    return from_bits / effective_bits
+
+
 # ---------------------------------------------------------------------------
 # Offline invariants
 # ---------------------------------------------------------------------------
@@ -166,6 +248,38 @@ def offline_invariants() -> "tuple[bool, dict]":
     detail["fp8_max_relerr"] = round(float(rel_fp8), 5)
     checks["fp8_clamps_max"] = bool(np.max(np.abs(fp8_e4m3_roundtrip([1e9, -1e9]))) == _FP8_E4M3_MAX)
     checks["fp8_zero_preserved"] = float(fp8_e4m3_roundtrip([0.0])[0]) == 0.0
+
+    # 7. NVFP4: the E2M1 snapper only emits representable levels, and 0 is preserved.
+    snapped = _snap_e2m1(np.abs(rng.standard_normal(4000)) * 3.0)
+    checks["nvfp4_levels_representable"] = bool(np.all(np.isin(snapped, _NVFP4_E2M1_LEVELS)))
+    checks["nvfp4_zero_preserved"] = float(nvfp4_roundtrip(np.zeros((1, NVFP4_BLOCK)))[0, 0]) == 0.0
+
+    # 8. The micro-scale earns its keep: when one giant block forces a huge global
+    #    FP4 step, every smaller block collapses (values round to 0/0.5·step). The
+    #    per-block scale recovers them. Measured on the *non-max* blocks — the ones
+    #    a global scale destroys — this is the cross-block analogue of INT8's
+    #    per-channel win (judged on mean error, as the int8 check is).
+    wide = rng.standard_normal((32, NVFP4_BLOCK)).astype(np.float64)
+    wide[0] *= 100.0                                     # one giant-magnitude block
+    small = wide[1:]                                     # the blocks a global scale wrecks
+    err_block = np.mean(np.abs(nvfp4_roundtrip(wide)[1:] - small))
+    g_scale = max(np.max(np.abs(wide)), 1e-12) / _NVFP4_E2M1_MAX        # one global FP4 scale
+    err_global = np.mean(np.abs(np.sign(small) * _snap_e2m1(np.abs(small) / g_scale) * g_scale - small))
+    checks["nvfp4_microscale_beats_global"] = err_block < err_global / 5
+    detail["nvfp4_mean_err_block"] = round(float(err_block), 5)
+    detail["nvfp4_mean_err_global"] = round(float(err_global), 5)
+
+    # 9. Weight-only NVFP4 linear stays close to the fp matmul (4-bit, so looser
+    #    than INT8's 2% — but the averaging + micro-scale keep it well-bounded).
+    x_nv = rng.standard_normal((8, 64))
+    W_nv = rng.standard_normal((64, 64))
+    rel_nv = np.linalg.norm(quantized_linear_nvfp4(x_nv, W_nv) - x_nv @ W_nv) / np.linalg.norm(x_nv @ W_nv)
+    checks["nvfp4_linear_close"] = bool(rel_nv < 0.15)
+    detail["nvfp4_linear_rel_err"] = round(float(rel_nv), 5)
+
+    # 10. NVFP4 is ~3.56× smaller than FP16 at block 16 (4.5 effective bits).
+    checks["nvfp4_mem_3p5x_vs_fp16"] = abs(nvfp4_memory_reduction(16) - 16.0 / 4.5) < 1e-9
+    detail["nvfp4_mem_vs_fp16"] = round(float(nvfp4_memory_reduction(16)), 4)
 
     ok = all(checks.values())
     return ok, {"checks": checks, **detail}

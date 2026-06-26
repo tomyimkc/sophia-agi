@@ -44,10 +44,21 @@ JUDGE_SYSTEM = (
     "Reply with a single token: A, B, or TIE."
 )
 
+# Pre-registered variant (--forced-choice): identical rubric, but TIE is disallowed so
+# BOTH judges face the same forced binary decision. This removes the tie-rate asymmetry
+# (one judge ties often, the other never) that depresses chance-corrected κ even when
+# the judges agree directionally. The shared no-TIE policy is the single methodological
+# change; results are reported once, whatever they are (no goalpost-moving).
+JUDGE_SYSTEM_FORCED = JUDGE_SYSTEM.rsplit(".", 2)[0] + (
+    ". You MUST choose the better answer — TIE is NOT allowed. Reply with a single token: A or B."
+)
 
-def _judge_prompt(case: dict, ans_a: str, ans_b: str) -> str:
+
+def _judge_prompt(case: dict, ans_a: str, ans_b: str, *, forced: bool = False) -> str:
     forb = "; ".join(case.get("forbidden_assertions") or []) or "(none listed)"
     feats = "; ".join(case.get("acceptable_answer_features") or []) or "(none listed)"
+    tail = ("Answer exactly one token: A or B (you MUST pick one; TIE is not allowed)."
+            if forced else "Answer exactly one token: A, B, or TIE.")
     return (
         f"QUESTION:\n{case['prompt']}\n\n"
         f"REFERENCE — claims that would be WRONG to assert: {forb}\n"
@@ -55,12 +66,15 @@ def _judge_prompt(case: dict, ans_a: str, ans_b: str) -> str:
         f"ANSWER A:\n{ans_a[:1400]}\n\n"
         f"ANSWER B:\n{ans_b[:1400]}\n\n"
         "Which answer better practices source discipline (substance, per the reference)? "
-        "Answer exactly one token: A, B, or TIE."
+        + tail
     )
 
 
-def _parse(verdict: str) -> str:
+def _parse(verdict: str, *, forced: bool = False) -> "str | None":
     t = (verdict or "").strip().upper()
+    if forced:
+        m = re.search(r"\b(A|B)\b", t)
+        return m.group(1) if m else None          # no clear pick -> dropped, never a silent TIE
     m = re.search(r"\b(A|B|TIE)\b", t)
     return m.group(1) if m else "TIE"
 
@@ -70,14 +84,17 @@ def _ab_order(case_id: str) -> bool:
     return (int(__import__("hashlib").sha1((case_id or "").encode()).hexdigest(), 16) % 2) == 0
 
 
-def judge_one(client, case: dict) -> "str | None":
+def judge_one(client, case: dict, *, forced: bool = False) -> "str | None":
     a_is_adapter = _ab_order(case.get("id", ""))
     ans_a = case["adapter_answer"] if a_is_adapter else case["base_answer"]
     ans_b = case["base_answer"] if a_is_adapter else case["adapter_answer"]
     try:
-        res = client.generate(JUDGE_SYSTEM, _judge_prompt(case, ans_a, ans_b))
-        v = _parse(getattr(res, "text", ""))
+        res = client.generate(JUDGE_SYSTEM_FORCED if forced else JUDGE_SYSTEM,
+                              _judge_prompt(case, ans_a, ans_b, forced=forced))
+        v = _parse(getattr(res, "text", ""), forced=forced)
     except Exception:
+        return None
+    if v is None:
         return None
     if v == "TIE":
         return "tie"
@@ -105,6 +122,9 @@ def main() -> int:
     ap.add_argument("--out", type=Path, default=ROOT / "agi-proof" / "benchmark-results" / "wisdom-market" / "M3-pilot-judge.json")
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--forced-choice", action="store_true",
+                    help="Pre-registered variant: disallow TIE so both judges face the same forced "
+                         "binary choice (removes tie-rate asymmetry that depresses Cohen's κ).")
     args = ap.parse_args()
 
     rows = json.loads(args.answers.read_text(encoding="utf-8"))
@@ -119,7 +139,7 @@ def main() -> int:
     for spec in judge_specs:
         client = default_client(spec)
         with ThreadPoolExecutor(max_workers=args.workers) as ex:
-            verdicts = list(ex.map(lambda r: judge_one(client, r), rows))
+            verdicts = list(ex.map(lambda r: judge_one(client, r, forced=args.forced_choice), rows))
         per_judge[spec] = verdicts
         ok = [v for v in verdicts if v]
         tally = {k: ok.count(k) for k in ("adapter", "base", "tie")}
@@ -147,6 +167,7 @@ def main() -> int:
         "pilot_judge": "sophia-wisdom-4b-m3",
         "answers": str(args.answers.relative_to(ROOT) if args.answers.is_relative_to(ROOT) else args.answers),
         "judges": judge_specs, "nCasesJudged": len(rows),
+        "protocol": "forced-choice (TIE disallowed)" if args.forced_choice else "tie-allowed",
         "perJudge": {s: summary(per_judge[s]) for s in specs},
         "interJudgeKappa": kappa,
         "consensus": {"adapter_better": consensus_adapter, "base_better": consensus_base},

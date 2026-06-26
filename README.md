@@ -26,6 +26,13 @@ claim  →  verify against sources  →  accept · abstain · block
 - On genuine "I don't know" traps, Sophia fabricates **0%** while raw models fabricate 17–25%.
 - Every public number requires ≥2 judge families, κ ≥ 0.40, ≥3 runs, and confidence intervals. See [RESULTS.md](RESULTS.md).
 
+**Public failure ledger (first-class artifact):** the most honest thing here is what Sophia
+has *not* proven. [`agi-proof/failure-ledger.md`](agi-proof/failure-ledger.md) lists every
+OPEN blocker on the AGI claim with claim-impact and the required next step; its OPEN/CLOSED
+summary is regenerated into [`evidence-manifest.json`](agi-proof/evidence-manifest.json) and
+structurally validated in CI (`python tools/validate_failure_ledger.py --check`). If the
+OPEN count ever reaches 0, the public wording must be upgraded — not the gate silently relaxed.
+
 > **Scope, stated plainly.** This is a research program for *grounded, machine-checked* reasoning — **not a claim of AGI**. Thresholds are pre-registered and honestly not yet met. The deliverable is the honest machinery (verifiers, abstaining gate, governance contract) and the measured data. Full commitments: [VISION.md](VISION.md) · [SECURITY.md](SECURITY.md).
 
 **Thesis site:** https://tomyimkc.github.io/sophia-agi/

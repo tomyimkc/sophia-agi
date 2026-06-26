@@ -1,23 +1,68 @@
 {
-  "domain": "danger_intent (held-out)",
+  "domain": "divisible_by_5 (held-out)",
   "loop_closed": true,
   "promoted": true,
   "heldoutAccuracy": 1.0,
-  "preAccuracy": 0.5,
+  "preAccuracy": 0.4545,
   "postAccuracy": 1.0,
-  "improvement": 0.5,
+  "improvement": 0.5455,
   "evalCalibrationECE": 0.0,
   "routeBefore": "abstain",
   "routeAfter": "answer",
   "rule": {
-    "feature": "delete",
-    "present": true
+    "engine": "agent.verifier_synthesis",
+    "gate": "divisible_by_5",
+    "admitted": [
+      {
+        "name": "divisible_by_5",
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    ]
+  },
+  "antiGamingCheck": {
+    "trainReward": 0.4545,
+    "heldoutReward": 0.4545,
+    "drop": 0.0,
+    "hacked": false,
+    "rule": "hacked iff trainReward - heldoutReward > 0.2"
+  },
+  "synthesisReport": {
+    "taskId": "divisible_by_5 (held-out)",
+    "abstained": false,
+    "metaVerified": true,
+    "admitted": [
+      {
+        "name": "divisible_by_5",
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    ],
+    "rejectedCount": 6,
+    "splits": {
+      "fit": 14,
+      "val": 11,
+      "test": 11
+    },
+    "testStats": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "accuracy": 1.0,
+      "n": 11
+    }
   },
   "invariants": {
     "verifier_promoted_on_heldout": true,
     "policy_improved_on_eval": true,
     "generalizes_not_gamed": true,
+    "gate_not_hackable_vs_oracle": true,
     "competence_flips_abstain_to_answer": true
   },
-  "interpretation": "The system started abstaining on this domain, synthesized and validated its own verifier, used it as verified reward to improve a policy by selection, and the gain held on an independent eval split \u2014 the loop closed without a human writing the check and without gaming. (Selection-based; a live-RL weight update needs a GPU.)"
+  "interpretation": "The system started abstaining on this domain, synthesized a COMPOSITIONAL verifier with the real engine (meta-verified on a disjoint split), used it as verified reward to improve a policy by selection, passed the anti-gaming check vs the oracle, and the gain held on the disjoint held-out test split — the loop closed without a human writing the check and without gaming. (Selection-based; a live-RL weight update needs a GPU.)",
+  "toyStumpBaselineHeldout": 0.5556,
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "engineNote": "Verifier synthesized by the REAL agent.verifier_synthesis engine (template fitters + fit/val/test meta-verification), NOT the toy single-token stump. The domain's signal is divisibility (numeric), which a single-token stump provably cannot express (toy baseline held-out ~0.556).",
+  "boundary": "Selection-based compounding (rejection sampling against a validated verifier), GPU-free. Not a live-RL weight update; not an AGI claim. The domain is self-authored; a headline claim needs a third-party held-out domain + the no-overclaim gate."
 }
