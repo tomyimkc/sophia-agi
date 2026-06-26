@@ -26,7 +26,7 @@ from typing import Any, Callable
 
 from selfextend.verifier_synthesis import (
     Rule,
-    _candidate_features,
+    candidate_features,
     synthesize_verifier,
     validate,
 )
@@ -103,7 +103,7 @@ def _synthesize_top_k_verifiers(train: "list[tuple[str, bool]]",
     """
     if k <= 0 or not train:
         return []
-    feats = _candidate_features(train)
+    feats = candidate_features(train)
     n = len(train)
     ranked: list[Rule] = []
     seen: set[tuple[str, bool]] = set()
@@ -235,11 +235,20 @@ def meta_heldout_freeze_hash(meta_heldout: "list[tuple[str, bool]]") -> str:
     SAME value on every iteration; :func:`g2_improver_delta` recomputes it and
     ABSTAINS if they differ. This defends the G2 comparison against a silently-
     changed denominator (re-sampling, re-ordering, drift) that would make a
-    "delta" meaningless. The hash is over the sorted, stringified (text, label)
-    pairs — invariant to row order, sensitive to any content change.
+    "delta" meaningless.
+
+    Each record is encoded LENGTH-PREFIXED (``<len(text)>:text<label>``) so a
+    ``text`` containing a newline or the delimiter cannot collide two different
+    splits into one canonical string — the corruption guard must be injective in
+    the content. The sort key is the same length-prefixed form, so order is
+    invariant but any content change is detected.
     """
-    canon = "\n".join(f"{t}::{int(l)}" for t, l in sorted(meta_heldout or [],
-                                                          key=lambda e: (str(e[0]), e[1])))
+    def _enc(t: object, l: bool) -> str:
+        s = str(t)
+        return f"{len(s)}:{s}{int(l)}"
+
+    canon = "\n".join(_enc(t, l) for t, l in sorted(meta_heldout or [],
+                                                    key=lambda e: _enc(e[0], e[1])))
     return hashlib.sha256(canon.encode("utf-8")).hexdigest()[:16]
 
 

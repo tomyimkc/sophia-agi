@@ -266,6 +266,26 @@ def test_g2_freeze_hash_detects_content_change_not_just_order():
     assert meta_heldout_freeze_hash(meta_a) != meta_heldout_freeze_hash(meta_c)
 
 
+def test_g2_freeze_hash_injective_against_delimiter_injection():
+    """The canonical encoding must be INJECTIVE: a text containing the record
+    delimiter (newline) or the length-prefix boundary must not collide two
+    genuinely different splits into one hash. Without length-prefixing,
+    ``[("a\\nb", True)]`` and ``[("a", True), ("b", True)]`` would canonicalize
+    identically — a corruption the freeze-hash is meant to DETECT, not mask."""
+    # One record whose text embeds a newline vs two records splitting across it.
+    one_record = [("a\nb", True)]
+    two_records = [("a", True), ("b", True)]
+    assert meta_heldout_freeze_hash(one_record) != meta_heldout_freeze_hash(two_records), (
+        "newline-in-text collision: the freeze-hash is not injective in content"
+    )
+    # A text that itself contains the ``len:`` prefix shape must not spoof a record.
+    spoof = [("3:abc1", True)]
+    real = [("abc", True)]   # 3:abc + label 1 — the spoof target
+    assert meta_heldout_freeze_hash(spoof) != meta_heldout_freeze_hash(real), (
+        "delimiter-injection collision: the freeze-hash is not injective in content"
+    )
+
+
 def test_g2_abstains_on_empty_meta_heldout():
     g2 = g2_improver_delta(iteration_n_payload=Rule("x", True, 1.0),
                            iteration_n1_candidates=[Candidate("t", "verifier", Rule("x", True, 1.0))],
