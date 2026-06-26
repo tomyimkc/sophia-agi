@@ -66,11 +66,18 @@ def _action_mix(confidences: "list[float]", hi: float, lo: float) -> dict:
     for c in confidences:
         counts[decide(gate_passed=True, confidence=c, thresholds={"hi": hi, "lo": lo})["action"]] += 1
     n = len(confidences) or 1
+    # Report a rounded partition. Rounding each component independently can produce
+    # 1.0001/0.9999 on corpus sizes that do not divide cleanly into 4 decimals; make
+    # the final bucket the residual so downstream tests/reports keep the partition
+    # invariant without changing the underlying counts.
+    answer = round(counts["answer"] / n, 4)
+    hedge = round(counts["hedge"] / n, 4)
+    abstain = round(1.0 - answer - hedge, 4)
     return {
         "hi": round(hi, 3), "lo": round(lo, 3),
-        "answer": round(counts["answer"] / n, 4),
-        "hedge": round(counts["hedge"] / n, 4),
-        "abstain": round(counts["abstain"] / n, 4),
+        "answer": answer,
+        "hedge": hedge,
+        "abstain": abstain,
     }
 
 

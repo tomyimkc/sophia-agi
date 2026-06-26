@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "canClaimAGI": false,
+  "note": "Tracks integration status of AGI-shaped modules against the live per-case pipeline (tools/run_hidden_eval_sophia.py:run_case). status=wired requires a non-null live_caller verifiable by grep of the run_case path; status=measured additionally requires a recorded ablation delta whose CI excludes 0 in agi-proof/failure-ledger.md. A registry tracks intent; it proves nothing about capability.",
+  "bets": [
+    {
+      "id": "claim_router",
+      "module": "agent/claim_router.py",
+      "status": "wired",
+      "live_caller": "tools/run_hidden_eval_sophia.py:run_case",
+      "ablation_flag": "use_claim_router",
+      "closing_experiment": "W4 Option A DONE (wiring): run_case threads route_claims=ablation.use_claim_router into check_response, and the 'sophia-claim-router' mode exercises it. Still OPEN (measured): ablation routing/abstention delta CI excludes 0 on the W2 calibration pack — needs a live backend.",
+      "ledger_id": null
+    },
+    {
+      "id": "graded_decision",
+      "module": "agent/graded_decision.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_graded_decision",
+      "closing_experiment": "W4 Option B: graft graded_decision.decide() as a post-gate confidence grade behind use_graded_decision; ablation delta vs binary gate CI excludes 0. Callers today are agent/grounded_agent.py + calibration tools + tests, NOT run_case.",
+      "ledger_id": null
+    },
+    {
+      "id": "layered_memory",
+      "module": "agent/layered_memory.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_layered_memory",
+      "closing_experiment": "Wire layered_memory into run_case behind use_layered_memory and show a recall/abstention delta CI excludes 0. SSIL-only today, not on the run_case path.",
+      "ledger_id": null
+    },
+    {
+      "id": "planner_mcts",
+      "module": "agent/planner_mcts.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_planner_mcts",
+      "closing_experiment": "Wire planner_mcts into run_case behind use_planner_mcts and show a task-success delta CI excludes 0. Only caller today is tools/run_agi_missing_pillars.py (offline toy harness).",
+      "ledger_id": null
+    },
+    {
+      "id": "predictive_world_model",
+      "module": "agent/predictive_world_model.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_predictive_world_model",
+      "closing_experiment": "Wire predictive_world_model into run_case behind use_predictive_world_model and show a planning/accuracy delta CI excludes 0. Only caller today is tools/run_agi_missing_pillars.py (offline toy harness).",
+      "ledger_id": null
+    },
+    {
+      "id": "selective_tool_router",
+      "module": "gateway/verify_router.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_selective_tool_router",
+      "closing_experiment": "Route tool outputs through gateway/verify_router.py on the run_case path behind use_selective_tool_router and show a tool-trust/abstention delta CI excludes 0. verify_router and claim_router exist but are not invoked by run_case today.",
+      "ledger_id": null
+    },
+    {
+      "id": "hybrid_memory",
+      "module": "agent/memory_consolidation.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_hybrid_memory",
+      "closing_experiment": "Combine append-only runtime memory with consolidated/semantic memory on the run_case path behind use_hybrid_memory and show a recall delta CI excludes 0 at no trap-safety cost. The live path uses append-only JSONL only today; memory_consolidation.py is not invoked by run_case.",
+      "ledger_id": null
+    }
+  ]
+}

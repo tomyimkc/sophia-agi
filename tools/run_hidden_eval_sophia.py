@@ -819,6 +819,7 @@ class Ablation:
     use_memory: bool = True  # append-only learning probe + memory diff
     use_tools: bool = True  # operational tool logs
     allow_repair: bool = True  # bounded Sophia repair attempt
+    use_claim_router: bool = False  # route atomic claims to claim-type verifiers (W4)
 
 
 SOPHIA_FULL = Ablation()
@@ -851,6 +852,9 @@ ABLATION_MODES: dict[str, Ablation] = {
     "sophia-no-gate": Ablation(label="sophia-no-gate", use_gate=False),
     "sophia-no-memory": Ablation(label="sophia-no-memory", use_memory=False),
     "sophia-no-council": Ablation(label="sophia-no-council", use_council=False),
+    # W4 (opt-in A/B lever; not part of the canonical --modes all set): turns on the
+    # dormant per-claim routing seam (check_response(route_claims=True)).
+    "sophia-claim-router": Ablation(label="sophia-claim-router", use_claim_router=True),
 }
 
 
@@ -967,7 +971,13 @@ def run_case(
     )
     answer = first["answer"]
     if ablation.use_gate:
-        gate = check_response(answer, mode=mode, question=case["prompt"], domain=None)
+        gate = check_response(
+            answer,
+            mode=mode,
+            question=case["prompt"],
+            domain=None,
+            route_claims=ablation.use_claim_router,
+        )
     else:
         gate = dict(NEUTRAL_GATE)
 
@@ -1024,7 +1034,13 @@ def run_case(
             answer = second["answer"]
             first["repair"] = second
             if ablation.use_gate:
-                gate = check_response(answer, mode=mode, question=case["prompt"], domain=None)
+                gate = check_response(
+                    answer,
+                    mode=mode,
+                    question=case["prompt"],
+                    domain=None,
+                    route_claims=ablation.use_claim_router,
+                )
             final_score = _score_one(answer)
             review = build_rubric_review(
                 case,
