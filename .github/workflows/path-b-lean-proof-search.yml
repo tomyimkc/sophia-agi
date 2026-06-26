@@ -122,9 +122,17 @@ jobs:
               print("::warning::Resolved to 'mock' (provider key secret not set). "
                     "The proposer will use the deterministic STUB — no real model call, "
                     "no real novelty signal. Set the matching *_API_KEY secret and re-run.")
-          # Smoke: the proposer must return a list of tactic strings either way.
+          # Smoke: the proposer must satisfy the TacticProposer contract (return a list).
+          # An EMPTY list is a legitimate transient state (a real provider can rate-limit /
+          # network-fail -> empty .text -> _extract_tactics returns []) — the search handles
+          # that by abstaining within budget. So assert the TYPE only, not non-emptiness;
+          # failing here would block a run that could otherwise record an honest negative.
           out = default_proposer(model_spec=spec)("theorem t : True := by", "⊢ True")
-          assert isinstance(out, list) and out, "proposer returned no tactics"
+          assert isinstance(out, list), f"proposer broke the contract: expected list, got {type(out)}"
+          if not out:
+              print("::warning::proposer returned 0 tactics (possible transient model issue: "
+                    "rate limit / network / unparseable output). The search will proceed and "
+                    "likely abstain within budget — an honest negative, not a failure.")
           print(f"proposer smoke OK ({len(out)} tactics)")
           PY
 
@@ -143,12 +151,26 @@ jobs:
           SOPHIA_MODEL_PROVIDER: ${{ inputs.provider }}
           SOPHIA_MODEL: ${{ inputs.model }}
         run: |
+          set +e
           args=(--theorem "${{ inputs.theorem }}" --max-nodes "${{ inputs.max_nodes }}" --max-depth "${{ inputs.max_depth }}")
           if [ -n "${{ inputs.stub }}" ]; then args+=(--stub); fi
-          # Don't abort the job on a not-proved verdict — record it honestly.
-          python tools/run_proof_search.py "${args[@]}" || echo "search_exit=$?" >> "$GITHUB_OUTPUT"
-          # Surface the verdict for the summary
-          python -c "import json;d=json.load(open('agi-proof/proof-search/result.json'));print('VERDICT='+d['verdict']);print('NOVELTY='+str((d.get('novelty') or {}).get('novel')))" >> "$GITHUB_OUTPUT" || true
+          python tools/run_proof_search.py "${args[@]}"
+          rc=$?
+          # Exit-code contract for run_proof_search.py:
+          #   0 = proved (a Lean-verified proof was found)
+          #   1 = not proved (honest negative: no_proof_within_budget / lean_unavailable)
+          #   2 = invalid input (bad theorem name) -> a real error, fail the step
+          #   other = unexpected exception -> a real error, fail the step
+          # Only exit 1 is an EXPECTED non-success (a valid research outcome); anything else
+          # non-zero must surface so the run isn't silently miscategorized as "not recorded".
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          if [ "$rc" -ne 0 ] && [ "$rc" -ne 1 ]; then
+            echo "::error::run_proof_search.py exited $rc (expected 0 or 1) — a real error, not a not-proved verdict."
+            exit "$rc"
+          fi
+          # Surface the verdict for the summary. A missing/invalid result.json here is a
+          # real problem (the tool should always write one) — surface it, don't || true.
+          python -c "import json;d=json.load(open('agi-proof/proof-search/result.json'));print('VERDICT='+d['verdict']);print('NOVELTY='+str((d.get('novelty') or {}).get('novel')))" >> "$GITHUB_OUTPUT"
 
       # ---- commit the result report back to the branch ------------------------
       # The report is the evidence artifact; committing it makes the result durable and
