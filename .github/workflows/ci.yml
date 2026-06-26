@@ -123,6 +123,7 @@ jobs:
           python tests/test_personality_steering.py
           python tests/test_interp_metrics.py
           python tests/test_interp_sae.py
+          python tests/test_frontier_harness.py
           python tests/test_council_diversity.py
           python tests/test_pif_harness.py
           python tests/test_capability.py

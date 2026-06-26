@@ -28,6 +28,13 @@ Origin: a gap analysis of Anthropic's open technical roles vs this repo, then a 
 - **Wave 1 #1 (Live RL):** M0 offline contract **DONE & green**; M1 pre-registered, GPU-/key-bound.
 - **Wave 1 #2 (Interpretability):** M0 offline core **DONE & green** — pure-stdlib TopK SAE
   (`interp/sae/`), metrics (L0/FVU/CE-recovered/dead-%), Qwen2.5 hookpoint adapter, offline CLI
-  (`tools/run_interp.py --mode mock`), and 12 CI tests. Reference SAE reconstructs a planted signal
-  to FVU 0.088 (91% explained variance). M1 (real Qwen2.5-7B harvest) is GPU-bound.
-- Base model standardized on **Qwen2.5-7B-Instruct (Apache-2.0)** across the RLVR + interp tracks.
+  (`tools/run_interp.py --mode mock`), 12 CI tests. Reference SAE reconstructs a planted signal to
+  FVU 0.088 (91% explained variance). M1 (real Qwen2.5-7B harvest) is GPU-bound.
+- **Wave 1 #3 (Frontier evals):** M0 (Milestone-A core) **DONE & green** — `eval/frontier/` paired
+  control-vs-treatment harness, held-out split + content hash, gold-calibrated scorer (published
+  FP/FN), bootstrap CIs, fail-closed unmeasured path; proven end-to-end on the lowest-hazard probe
+  (`monitor_subversion`) via `tools/run_frontier_eval.py --mode mock`; 7 CI tests. Defensive-only;
+  the live G8 registry stays fail-closed (no mock registration).
+- **GPU runs:** see [DGX-SPARK-RUNBOOK.md](DGX-SPARK-RUNBOOK.md) — turnkey recipes for Live-RL M1
+  and Interpretability M1/M2 (run on the Spark; paste reports back for gating).
+- Base model standardized on **Qwen2.5-7B-Instruct (Apache-2.0)** across RLVR + interp tracks.
