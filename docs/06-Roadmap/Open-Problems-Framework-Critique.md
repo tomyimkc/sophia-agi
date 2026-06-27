@@ -11,8 +11,16 @@
 > PR #189) on Linux/CI — see `docs/06-Roadmap/Lean-L0-Trace-Deadlock.md`. L0 is a
 > *blocked* research/engineering problem, not one install away. The doc's own
 > load-bearing claim — "without this, everything above is speculative" — stands
-> unchanged; only the ETA is stale. (For reference: steps 3 and 4 of §5 have since
-> shipped as PR #147 and PR #157.)
+> unchanged; only the ETA is stale.
+>
+> **The body is the pre-#147/#157 state — read present-tense claims as historical.**
+> §5 steps 3 and 4 have since shipped, which supersedes several assertions in the body
+> below: §3/§4 describe `novelty_check` as char-trigram-Jaccard-only (it now also has
+> the **tactic-DAG hash**, PR #147), and §2/§3/§6 describe `propose_verifier_candidates`
+> as a single-candidate decision stump with G1/G2 unseparated (it now emits **≥3
+> candidates** with **G1 and G2 measured separately** on a frozen meta-held-out, PR
+> #157). Those sections are retained verbatim as the original critique that *motivated*
+> that work — they are not current repo state.
 
 **Status:** evaluation, not a claim. Documents the gaps in a proposed "use the
 unsolved Millennium / open-physics problems as primary self-growth benchmarks"
