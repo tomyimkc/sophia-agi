@@ -111,6 +111,11 @@ Pick ONE and record it in `tracedProject`:
   **lean-dojo-cached** commit (ideal: `29dcec0`/v4.20.0) → cheap CI trace like L0.
 - **(b)** Trace the port's mathlib4 **once on a Linux 32 GB box** (NOT the Mac), persist
   `~/.cache/lean_dojo` via `actions/cache`, then per-run tracing only touches miniF2F.
+  **READY-MADE:** dispatch `.github/workflows/formal-proofs-trace-cache.yml` (calls
+  `tools/trace_minif2f_project.py`) with `runner_label` set to a ≥32 GB runner and
+  `minif2f_commit` set — it traces + saves the cache (restore/save split so a partial
+  trace can't poison it). Optional `verify_file`/`verify_theorem` run a no-fabrication
+  sanity check (a deliberately wrong proof must NOT be accepted).
 - **(c)** Confirm lean-dojo already publishes a remote cache for the port's mathlib4
   commit (download-only path, like L0). Check `https://dl.fbaipublicfiles.com/lean-dojo`.
 

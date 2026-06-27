@@ -74,7 +74,7 @@
       "implication": "The L0 cache free-lunch does NOT automatically transfer to miniF2F-v2. Whether lean-dojo publishes a remote cache for the port's mathlib4 commit is UNVERIFIED (could not check — external git is blocked here, see openChecklist).",
       "options": [
         "(a) Choose/produce a miniF2F-v2 Lean 4 build whose mathlib4 dep matches a lean-dojo-CACHED commit (ideal: matches 29dcec0/v4.20.0) → cheap CI trace like L0.",
-        "(b) Trace the port's mathlib4 once on a 32GB machine, persist ~/.cache/lean_dojo via actions/cache, then per-run tracing only touches the small miniF2F files.",
+        "(b) Trace the port's mathlib4 once on a 32GB Linux machine, persist ~/.cache/lean_dojo via actions/cache, then per-run tracing only touches the small miniF2F files. READY: .github/workflows/formal-proofs-trace-cache.yml (workflow_dispatch) + tools/trace_minif2f_project.py do exactly this (restore/save cache split; set runner_label to a >=32GB runner).",
         "(c) Confirm lean-dojo already caches the port's mathlib4 commit (download-only, like L0)."
       ],
       "resolveBefore": "OPEN"
