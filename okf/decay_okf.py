@@ -113,7 +113,12 @@ def plan_decay(
     UNLESS the group contains a `consensus` claim (then the non-consensus ones lose).
     Ties are quarantined, not auto-decided (epistemic humility).
     """
-    now = now or datetime.now(timezone.utc).timestamp()
+    # ``now is None`` means "use the wall clock". Do NOT use ``now or ...``: a caller that
+    # passes an explicit epoch of 0.0 (e.g. a GENESIS_EPOCH "arrival time unknown" marker)
+    # is falsy, and ``or`` would silently swap it for the real clock — giving every belief a
+    # ~20000-day age and time-decaying the whole corpus on an UNMEASURED timestamp. That is
+    # exactly the fabricated-suppression the projection's HONESTY CONTRACT forbids.
+    now = datetime.now(timezone.utc).timestamp() if now is None else now
     groups = contradiction_groups or {}
     plan = DecayPlan()
 
@@ -127,7 +132,14 @@ def plan_decay(
             continue
         if b.author_confidence == "consensus":
             continue                                   # never time-decay consensus
-        plan.suppress.append((b.node_id, "time"))
+        # Distinguish a genuine TIME decay (strength fell below the floor as age accrued)
+        # from a STRUCTURAL low-base-confidence belief already below the floor at age 0
+        # (none_extant / anachronism_risk -> base_rank 0). Calling the latter "time" would
+        # be dishonest: no time elapsed, its recorded provenance is simply at/below the
+        # floor. That is source discipline, not recency.
+        undecayed = b.effective_strength(b.last_reinforced_at, half_life_days=half_life_days)
+        reason = "time" if undecayed >= MIN_EFFECTIVE_STRENGTH else "epistemic_hygiene:low_base_confidence"
+        plan.suppress.append((b.node_id, reason))
 
     # Competition: within a contradiction group, suppress the weak tail.
     for subject, members in groups.items():

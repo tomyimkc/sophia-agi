@@ -239,6 +239,31 @@ def _panel_gate_is_the_floor(measured_novel_count: int) -> dict:
 
 
 # --------------------------------------------------------------------------
+# Panel D — the signal is wired into the LIVE consolidation run
+# --------------------------------------------------------------------------
+
+def _panel_live_wiring(wiki_dir: Path) -> dict:
+    """The production consolidation run (tools.run_cls_consolidation) projects the MEASURED
+    surprise — not the old placeholder. Verified by running build_selection and confirming
+    the surprise channel is measured and the broader manifest stays level3:false."""
+    from tools.run_cls_consolidation import build_selection
+
+    sel = build_selection(str(wiki_dir), min_stable_snapshots=1)
+    ss = sel.get("surpriseSignal", {})
+    measured = bool(ss.get("measured")) and bool(sel.get("measuredSignals", {}).get("surprise"))
+    surprise_removed_from_placeholders = "surprise" not in sel.get("unrecordedPlaceholders", {})
+    return {
+        "panel": "live-wiring",
+        "claim": "the live consolidation run projects MEASURED surprise (not the placeholder)",
+        "measuredInLiveRun": measured,
+        "surpriseRemovedFromPlaceholders": surprise_removed_from_placeholders,
+        "liveNovelCount": ss.get("novelCount"),
+        "liveAuditValid": sel.get("auditChainValid"),
+        "pass": bool(measured and surprise_removed_from_placeholders and sel.get("auditChainValid")),
+    }
+
+
+# --------------------------------------------------------------------------
 # Aggregate
 # --------------------------------------------------------------------------
 
@@ -246,31 +271,34 @@ def run(wiki_dir: Path) -> dict:
     a = _panel_separation()
     b = _panel_corpus_run(wiki_dir)
     c = _panel_gate_is_the_floor(b["measuredNovelCount"])
-    all_pass = a["pass"] and b["pass"] and c["pass"]
+    d = _panel_live_wiring(wiki_dir)
+    all_pass = a["pass"] and b["pass"] and c["pass"] and d["pass"]
 
     # LEVEL-3 DETERMINATION — earned ONLY if all three genuinely pass: the signal is real
     # (separation), it moves the dynamics over the real corpus where the placeholder could
     # not (corpus-run), and it never bypasses the floor (gate). Scoped to the surprise
     # signal; the BROADER forgetting layer stays level3:false while written_at /
     # reinforcement_count remain unrecorded (time-decay + usage-reinforcement still no-ops).
-    level3 = bool(all_pass)
+    level3 = bool(a["pass"] and b["pass"] and c["pass"])
     return {
         "schema": "sophia.okf_surprise_signal_report.v1",
-        # candidateOnly tracks LIVE-PATH wiring, NOT evidence: the signal is validated
-        # (level3Evidence below) but is not yet projected by the production consolidation
-        # run (tools/run_cls_consolidation.py still uses the placeholder path). So it stays
-        # candidateOnly:true until project_corpus_measured is adopted there. A validated
-        # signal that is not yet on the live path is exactly these two flags disagreeing.
+        # Three independent, honest flags:
+        #  - level3Evidence: is the SIGNAL real/validated (separation + corpus + gate)? yes.
+        #  - liveWired: does the production consolidation run project the measured signal?
+        #    yes, now (Panel D verifies tools/run_cls_consolidation uses it).
+        #  - candidateOnly: the consolidation it feeds is still the OFFLINE selection half;
+        #    promotion into weights still requires the GPU anti-forgetting gate. So true.
         "candidateOnly": True,
-        "liveWired": False,
+        "liveWired": bool(d["pass"]),
         "level3Evidence": level3,
         "level3Scope": (
             "Scoped to the SURPRISE signal only: it is now a real, measured, falsifiably-"
-            "validated leave-one-out retrieval-likelihood over the OKF graph that never "
-            "bypasses the anti-forgetting gate. This does NOT make the whole forgetting "
-            "layer level3: written_at and reinforcement_count are still unrecorded, so "
-            "time-decay and usage-reinforcement remain no-ops; and it is not yet projected "
-            "by the live consolidation run (candidateOnly/liveWired above)."
+            "validated leave-one-out retrieval-likelihood over the OKF graph, projected into "
+            "the LIVE consolidation run (liveWired), that never bypasses the anti-forgetting "
+            "gate. This does NOT make the whole forgetting layer level3: written_at and "
+            "reinforcement_count are still unrecorded, so time-decay and usage-reinforcement "
+            "remain no-ops; and promotion into weights still requires the GPU gate "
+            "(candidateOnly above)."
         ),
         "canClaimAGI": False,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
@@ -292,7 +320,7 @@ def run(wiki_dir: Path) -> dict:
             "Tokeniser models ASCII word runs only; CJK (mostly titles) is not modelled.",
         ],
         "pass": all_pass,
-        "panels": [a, b, c],
+        "panels": [a, b, c, d],
     }
 
 

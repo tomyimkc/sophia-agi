@@ -33,7 +33,18 @@ def test_all_panels_pass() -> None:
     assert panels["separation"]["pass"] is True
     assert panels["corpus-run"]["pass"] is True
     assert panels["gate-is-the-floor"]["pass"] is True
+    assert panels["live-wiring"]["pass"] is True
     assert report["pass"] is True
+
+
+def test_signal_is_live_wired() -> None:
+    report = run(WIKI)
+    lw = {p["panel"]: p for p in report["panels"]}["live-wiring"]
+    assert lw["measuredInLiveRun"] is True
+    assert lw["surpriseRemovedFromPlaceholders"] is True
+    assert report["liveWired"] is True
+    # the consolidation it feeds is still the offline selection half (GPU gate pending).
+    assert report["candidateOnly"] is True
 
 
 def test_separation_duplicate_below_novel() -> None:
@@ -68,6 +79,7 @@ def test_level3_scoped_and_agi_false() -> None:
 
 def main() -> int:
     test_all_panels_pass()
+    test_signal_is_live_wired()
     test_separation_duplicate_below_novel()
     test_measured_beats_placeholder_and_audit_verifies()
     test_gate_refuses_unverified_surprise_selection()

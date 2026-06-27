@@ -2,35 +2,51 @@
   "schema": "sophia.cls_consolidation_manifest.v1",
   "candidateOnly": true,
   "level3Evidence": false,
+  "canClaimAGI": false,
   "gpuRequired": true,
   "selectedFacts": [
     "analects",
     "apology",
+    "arsenic_life_refuted",
     "art_of_war",
+    "atomic_bomb",
+    "berlin_wall_fall_1989",
     "book_of_songs",
     "boston_tea_party_1773",
     "buddha_dharma_teachings",
+    "calculus",
     "categories",
     "chemical_imbalance_slogan",
     "cognitive_dissonance",
+    "cold_fusion_unreplicated",
+    "columbus_landfall_1492",
     "confirmation_bias",
     "confucian_ancestor_veneration",
     "crito",
     "dao_de_jing",
     "dao_de_jing_daoist_scripture",
+    "dna_double_helix",
     "doctrine_of_mean",
     "dunning_kruger_effect",
+    "einstein_failed_math_myth",
     "enchiridion",
+    "evolution_natural_selection",
     "fall_of_rome_476",
+    "first_modern_olympics_1896",
     "first_powered_flight_1903",
     "flat_earth_medieval_myth",
+    "french_revolution_1789",
+    "glass_slow_liquid_myth",
+    "goldfish_memory_myth",
     "gospel_matthew",
     "great_learning",
     "great_wall_from_space_myth",
     "hadith_canonical_collections",
     "han_feizi",
     "heraclitus_fragments",
+    "hwang_stem_cell_fraud",
     "i_ching",
+    "indian_independence_1947",
     "islam_early_history",
     "jesus_gospel_teachings",
     "learning_styles_vak",
@@ -39,6 +55,7 @@
     "magna_carta_1215",
     "marco_polo_pasta_myth",
     "meditations",
+    "meiji_restoration_1868",
     "mencius",
     "metaphysics",
     "moon_landing_1969",
@@ -48,31 +65,178 @@
     "nicomachean_ethics",
     "nirvana_pop_heaven",
     "parmenides",
+    "penicillin",
+    "penicillin_1928",
     "phaedo",
     "politics",
     "printing_press_1440",
     "ptsd_clinical_vs_pop",
+    "qin_unification_221bce",
+    "radio",
+    "relativity",
     "republic",
     "shiji",
     "socrates_corpus",
     "stockholm_syndrome",
+    "survival_of_the_fittest",
     "symposium",
+    "telephone",
+    "telephone_patent_1876",
     "ten_percent_brain_myth",
     "timaeus",
+    "tongue_taste_map_myth",
+    "transcontinental_railroad_1869",
+    "us_declaration_1776",
     "viking_horned_helmets_myth",
+    "wakefield_mmr_autism_retracted",
+    "ww2_end_1945",
     "xunzi",
     "zhuangzi",
     "zuo_zhuan"
   ],
-  "selectedCount": 59,
+  "selectedCount": 88,
   "corpus": {
-    "pages": 67,
-    "grounded": 67,
-    "gateCleared": 59
+    "pages": 96,
+    "grounded": 96,
+    "gateCleared": 88
   },
   "protectedSuites": [
     "source_discipline",
     "fact_check_false_accept"
   ],
+  "beliefDynamics": {
+    "level3Evidence": false,
+    "decayPlan": {
+      "schema": "sophia.okf_decay_plan.v1",
+      "suppress": [
+        [
+          "marco_polo_pasta_myth",
+          "epistemic_hygiene:low_base_confidence"
+        ],
+        [
+          "socrates_corpus",
+          "epistemic_hygiene:low_base_confidence"
+        ],
+        [
+          "buddhism",
+          "epistemic_hygiene:low_base_confidence"
+        ],
+        [
+          "christianity",
+          "epistemic_hygiene:low_base_confidence"
+        ],
+        [
+          "confucian",
+          "epistemic_hygiene:low_base_confidence"
+        ],
+        [
+          "confucian_ritual",
+          "epistemic_hygiene:low_base_confidence"
+        ],
+        [
+          "daoist",
+          "epistemic_hygiene:low_base_confidence"
+        ],
+        [
+          "islam",
+          "epistemic_hygiene:low_base_confidence"
+        ],
+        [
+          "platonist",
+          "epistemic_hygiene:low_base_confidence"
+        ],
+        [
+          "socratic",
+          "epistemic_hygiene:low_base_confidence"
+        ]
+      ],
+      "reinforce": [],
+      "quarantine": [],
+      "deletions": 0,
+      "noSilentDeletion": true,
+      "candidateOnly": true,
+      "level3Evidence": false
+    },
+    "auditChainValid": true,
+    "auditRecordCount": 143,
+    "surpriseSignal": {
+      "measured": true,
+      "method": "leave-one-out retrieval-likelihood over the OKF graph (okf.surprise_signal)",
+      "distribution": {
+        "min": 0.134824,
+        "max": 0.855857,
+        "median": 0.544085,
+        "mean": 0.503238
+      },
+      "novelCount": 55,
+      "novel": [
+        "arsenic_life_refuted",
+        "atomic_bomb",
+        "boston_tea_party_1773",
+        "buddha_dharma_teachings",
+        "calculus",
+        "chemical_imbalance_slogan",
+        "cognitive_dissonance",
+        "cold_fusion_unreplicated",
+        "columbus_landfall_1492",
+        "confirmation_bias",
+        "dna_double_helix",
+        "dunning_kruger_effect",
+        "einstein_failed_math_myth",
+        "evolution_natural_selection",
+        "fall_of_rome_476",
+        "first_modern_olympics_1896",
+        "first_powered_flight_1903",
+        "flat_earth_medieval_myth",
+        "french_revolution_1789",
+        "glass_slow_liquid_myth",
+        "goldfish_memory_myth",
+        "gospel_matthew",
+        "great_wall_from_space_myth",
+        "hadith_canonical_collections",
+        "hwang_stem_cell_fraud",
+        "indian_independence_1947",
+        "jesus_gospel_teachings",
+        "learning_styles_vak",
+        "left_brain_right_brain_pop",
+        "magna_carta_1215",
+        "marco_polo_pasta_myth",
+        "meiji_restoration_1868",
+        "moon_landing_1969",
+        "mozart_effect_myth",
+        "napoleon_short_myth",
+        "nirvana_pop_heaven",
+        "penicillin",
+        "penicillin_1928",
+        "printing_press_1440",
+        "ptsd_clinical_vs_pop",
+        "qin_unification_221bce",
+        "radio",
+        "relativity",
+        "socrates_corpus",
+        "stockholm_syndrome",
+        "survival_of_the_fittest",
+        "telephone",
+        "telephone_patent_1876",
+        "ten_percent_brain_myth",
+        "tongue_taste_map_myth",
+        "transcontinental_railroad_1869",
+        "us_declaration_1776",
+        "viking_horned_helmets_myth",
+        "wakefield_mmr_autism_retracted",
+        "ww2_end_1945"
+      ],
+      "auditReinforceEvents": 55,
+      "honestyCaveat": "leave-one-out P(belief | rest of memory), NOT temporal 'surprise at first observation' (needs written_at). Normalised RELATIVE to the corpus."
+    },
+    "measuredSignals": {
+      "surprise": true
+    },
+    "projectionHonestyNote": "surprise is MEASURED (okf.surprise_signal, leave-one-out retrieval-likelihood). STILL UNRECORDED: written_at/last_reinforced_at=GENESIS_EPOCH (arrival time unknown -> age 0 -> time-decay is a no-op) and reinforcement_count=0 (unmeasured, not 'never used'). Any suppression is authorConfidence-driven (source discipline), not time. See okf/belief_state_projection HONESTY CONTRACT and RESEARCH_FOLLOWUP.md.",
+    "unrecordedPlaceholders": {
+      "writtenAtEpoch": 0.0,
+      "reinforcementCount": 0
+    }
+  },
   "nextStep": "Train a LoRA on the selected facts on a GPU box, evaluate it, then route the candidate through agent.continual_plasticity.evaluate_update — promote ONLY if no protected suite regresses (the anti-forgetting gate). No metrics are fabricated here; this manifest is the input to that gated training step."
 }

@@ -69,9 +69,19 @@ arrival-time prefix to recover the temporal signal. Evidence: `tools/eval_okf_su
 
 `written_at` is cheap plumbing; `reinforcement_count` is a moderate instrumentation task
 on the grounding path; `surprise` **is now measured** via a leave-one-out
-retrieval-likelihood (the scoped, honest variant). The **surprise signal** is
-`level3Evidence: true` (scoped); the **broader** forgetting layer stays `false` until
-`written_at` and `reinforcement_count` land, because time-decay and usage-reinforcement
-remain no-ops without them. Next wiring step: adopt `project_corpus_measured` in
-`tools/run_cls_consolidation.py` so the live consolidation manifest projects measured
-surprise (kept out of this change to preserve that run's landed honesty tests).
+retrieval-likelihood (the scoped, honest variant) **and projected into the live
+consolidation run** (`tools/run_cls_consolidation.py` now calls `project_corpus` with the
+measured surprise; the manifest carries a `surpriseSignal` block, and surprise-gated
+beliefs land in the audit ledger as `reinforce` events). The **surprise signal** is
+`level3Evidence: true` (scoped) and `liveWired: true`; the **broader** forgetting layer
+stays `false` until `written_at` and `reinforcement_count` land, because time-decay and
+usage-reinforcement remain no-ops without them.
+
+> **Honesty fix found while wiring this in.** `plan_decay(beliefs, now=GENESIS_EPOCH)`
+> passed `now=0.0`, which is *falsy* — `now = now or wall_clock` silently swapped the
+> genesis marker for the real clock, giving every belief a ~20,000-day age and time-
+> decaying **93 of 96** beliefs on an UNMEASURED `written_at` (exactly the fabricated
+> suppression the HONESTY CONTRACT forbids). Fixed (`now is None`, not `now or`); the live
+> run now suppresses only the 10 `none_extant`/`anachronism_risk` pages, by their recorded
+> `authorConfidence` (reason `epistemic_hygiene:low_base_confidence`), **not** by time.
+> The remaining open work is unchanged: `written_at` (#1) and `reinforcement_count` (#2).

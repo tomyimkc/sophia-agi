@@ -26,7 +26,7 @@ if str(ROOT) not in sys.path:
 
 from okf import frontmatter  # noqa: E402
 from okf.belief_state_projection import (  # noqa: E402
-    GENESIS_EPOCH, UNRECORDED_REINFORCEMENT, UNRECORDED_SURPRISE,
+    GENESIS_EPOCH, UNRECORDED_REINFORCEMENT,
 )
 from tools.run_cls_consolidation import build_selection  # noqa: E402
 
@@ -68,25 +68,30 @@ def test_dynamics_does_not_change_the_selected_set() -> None:
         assert sel["selected"] == ["analects"]   # unchanged by dynamics
 
 
-def test_projection_is_loudly_honest_about_unrecorded_signals() -> None:
-    """The documented placeholders are exactly what the projection uses; level3 stays false."""
+def test_projection_measures_surprise_and_is_honest_about_the_rest() -> None:
+    """surprise is now MEASURED; written_at/reinforcement_count stay documented placeholders;
+    the broader layer's level3 stays false."""
     with tempfile.TemporaryDirectory() as d:
         _write(d, "analects", _RICH_BODY)
         sel = build_selection(d, min_stable_snapshots=1)
+        # surprise is measured and projected — NOT in the unrecorded set anymore.
+        assert sel["measuredSignals"]["surprise"] is True
+        assert sel["surpriseSignal"]["measured"] is True
+        assert "leave-one-out" in sel["surpriseSignal"]["honestyCaveat"]
         ph = sel["unrecordedPlaceholders"]
         assert ph == {"writtenAtEpoch": GENESIS_EPOCH,
-                      "surprise": UNRECORDED_SURPRISE,
                       "reinforcementCount": UNRECORDED_REINFORCEMENT}
-        # the honesty note must name the placeholders explicitly
-        assert "UNRECORDED PLACEHOLDERS" in sel["projectionHonestyNote"]
-        assert "unmeasured, not" in sel["projectionHonestyNote"]   # "unsurprising"/"never used"
+        assert "surprise" not in ph                     # no longer a placeholder
+        # the honesty note must still name what IS measured and what stays unrecorded.
+        assert "surprise is MEASURED" in sel["projectionHonestyNote"]
+        assert "STILL UNRECORDED" in sel["projectionHonestyNote"]
         assert sel["decayPlan"]["level3Evidence"] is False
 
 
 def main() -> int:
     test_audit_ledger_records_every_selection_and_verifies()
     test_dynamics_does_not_change_the_selected_set()
-    test_projection_is_loudly_honest_about_unrecorded_signals()
+    test_projection_measures_surprise_and_is_honest_about_the_rest()
     print("test_cls_consolidation_audit_wiring: OK")
     return 0
 

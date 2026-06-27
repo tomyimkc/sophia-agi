@@ -91,6 +91,24 @@ def test_tied_contradictions_are_quarantined_not_auto_resolved():
     assert {n for n, _ in plan.suppress}.isdisjoint({"a", "b"})
 
 
+def test_genesis_epoch_now_is_not_treated_as_unset():
+    """now=0.0 (a GENESIS_EPOCH 'arrival unknown' marker) must be honoured, NOT swapped for
+    the wall clock. Regression for the falsy-`now` bug that time-decayed the whole corpus
+    on an UNMEASURED timestamp. With now==written_at, age is 0 -> no TIME suppression."""
+    # base_rank>=1 belief at age 0: not suppressed at all.
+    attributed = BeliefState(node_id="a", author_confidence="attributed",
+                             written_at=0.0, last_reinforced_at=0.0)
+    plan = plan_decay([attributed], now=0.0)
+    assert plan.suppress == []
+    # base_rank==0 belief IS suppressed at age 0 — but for low base confidence, NOT time.
+    none_extant = BeliefState(node_id="z", author_confidence="none_extant",
+                              written_at=0.0, last_reinforced_at=0.0)
+    plan2 = plan_decay([none_extant], now=0.0)
+    reasons = {n: r for n, r in plan2.suppress}
+    assert "z" in reasons
+    assert reasons["z"].split(":", 1)[0] == "epistemic_hygiene"   # not "time"
+
+
 def test_effective_strength_exponential_decay_shape():
     """At one half-life, a non-consensus belief is at ~half base strength (sanity)."""
     b = _belief("x", "attributed", age_days=DEFAULT_HALF_LIFE_DAYS)
@@ -106,6 +124,7 @@ def main() -> int:
     test_competition_suppresses_weak_tail_but_consensus_wins_outright()
     test_surprising_and_reinforced_beliefs_get_consolidated_not_decayed()
     test_tied_contradictions_are_quarantined_not_auto_resolved()
+    test_genesis_epoch_now_is_not_treated_as_unset()
     test_effective_strength_exponential_decay_shape()
     print("test_decay_okf: OK")
     return 0

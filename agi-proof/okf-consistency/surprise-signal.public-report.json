@@ -1,11 +1,11 @@
 {
   "schema": "sophia.okf_surprise_signal_report.v1",
   "candidateOnly": true,
-  "liveWired": false,
+  "liveWired": true,
   "level3Evidence": true,
-  "level3Scope": "Scoped to the SURPRISE signal only: it is now a real, measured, falsifiably-validated leave-one-out retrieval-likelihood over the OKF graph that never bypasses the anti-forgetting gate. This does NOT make the whole forgetting layer level3: written_at and reinforcement_count are still unrecorded, so time-decay and usage-reinforcement remain no-ops; and it is not yet projected by the live consolidation run (candidateOnly/liveWired above).",
+  "level3Scope": "Scoped to the SURPRISE signal only: it is now a real, measured, falsifiably-validated leave-one-out retrieval-likelihood over the OKF graph, projected into the LIVE consolidation run (liveWired), that never bypasses the anti-forgetting gate. This does NOT make the whole forgetting layer level3: written_at and reinforcement_count are still unrecorded, so time-decay and usage-reinforcement remain no-ops; and promotion into weights still requires the GPU gate (candidateOnly above).",
   "canClaimAGI": false,
-  "generatedAt": "2026-06-26T23:01:16.570993+00:00",
+  "generatedAt": "2026-06-27T03:16:50.773021+00:00",
   "signalDefinition": "surprise(b) = per-token cross-entropy (NLL, nats) of belief b's content under a smoothed interpolated unigram model built from the REST of the corpus (leave-one-out), focused on b's provenance neighbourhood with a global backoff. Normalised via z-score->logistic, RELATIVE to the corpus (0.5 == average predictability). See okf/surprise_signal.py.",
   "honestyCaveats": [
     "LEAVE-ONE-OUT, not first-observation: true 'surprise at first observation' needs an arrival-time ordering (written_at), which the frontmatter does not record. This measures P(belief | the rest of memory) instead — a weaker but genuinely measured substitute.",
@@ -99,6 +99,15 @@
         "missing target suite: okf_consolidation"
       ],
       "promoted": false,
+      "pass": true
+    },
+    {
+      "panel": "live-wiring",
+      "claim": "the live consolidation run projects MEASURED surprise (not the placeholder)",
+      "measuredInLiveRun": true,
+      "surpriseRemovedFromPlaceholders": true,
+      "liveNovelCount": 55,
+      "liveAuditValid": true,
       "pass": true
     }
   ]
