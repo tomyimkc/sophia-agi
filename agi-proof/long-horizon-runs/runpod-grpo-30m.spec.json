@@ -8,7 +8,7 @@
     "ingest ONLY the FRESH pod adapter-eval into the SSIL Layer-1 gate (fail-closed; never re-gate a committed archive)",
     "objective gate: a fresh pod adapter-eval report exists and parses (execution truth that a real GRPO run completed)"
   ],
-  "objectiveGate": ["bash", "-lc", "f=$(find agi-proof/benchmark-results/runpod-rlvr -name '*adapter-eval*.json' 2>/dev/null | head -1); test -n \"$f\" && python3 -m json.tool \"$f\" >/dev/null"],
+  "objectiveGate": ["bash", "-lc", "f=$(ls -t agi-proof/benchmark-results/runpod-rlvr/*adapter-eval*.json 2>/dev/null | head -1); test -n \"$f\" && python3 -m json.tool \"$f\" >/dev/null"],
   "steps": [
     {
       "name": "provenance",
@@ -29,8 +29,8 @@
     },
     {
       "name": "ssil-gate-ingest",
-      "cmd": ["bash", "-lc", "found=$(find agi-proof/benchmark-results/runpod-rlvr -name '*adapter-eval*.json' 2>/dev/null | head -1); if [ -n \"$found\" ]; then echo \"Ingesting FRESH pod report: $found\"; python3 tools/ingest_rlvr_eval.py \"$found\" --print --hardened --registry agi-proof/benchmark-results/rlvr-replication/registry.jsonl; else echo 'No fresh adapter-eval copied back from the pod (fail-closed); not gating any committed archive.'; exit 1; fi"],
-      "purpose": "gate ONLY the fresh pod adapter-eval through the SSIL Layer-1 gate (a gate REJECT is a legitimate scientific outcome, not a harness failure)",
+      "cmd": ["bash", "-lc", "found=$(ls -t agi-proof/benchmark-results/runpod-rlvr/*adapter-eval*.json 2>/dev/null | head -1); if [ -n \"$found\" ]; then echo \"Ingesting FRESH pod report (newest mtime): $found\"; python3 tools/ingest_rlvr_eval.py \"$found\" --print --hardened --registry agi-proof/benchmark-results/rlvr-replication/registry.jsonl; else echo 'No fresh adapter-eval copied back from the pod (fail-closed); not gating any committed archive.'; exit 1; fi"],
+      "purpose": "gate ONLY the freshest pod adapter-eval (newest mtime = the one THIS run copied back) through the SSIL Layer-1 gate; ls -t avoids the non-deterministic find|head-1 ordering that can pick a stale committed eval. A gate REJECT is a legitimate scientific outcome, not a harness failure",
       "verification": true,
       "allowFailure": true
     }

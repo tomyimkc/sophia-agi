@@ -1,5 +1,10 @@
 # long_horizon_30m — live GRPO RunPod run: in-flight status (2026-06-27)
 
+> **RESOLVED — see `runpod-grpo-30m-2026-06-27.CLEARED.md`.** The run completed
+> (GH Actions 28277509269): durationSec=2489.72 → tier=short-30min, objectivePassed=true.
+> This file is the original in-flight record, kept for provenance.
+
+
 **Owner:** Claude (Opus) takeover session. `canClaimAGI` stays **False**. This file
 tracks an IN-PROGRESS attempt to clear the `long_horizon_30m` (1800s `short-30min`)
 tier with a GENUINE GPU run; it is NOT a clearance claim.
