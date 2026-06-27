@@ -78,7 +78,7 @@ This package therefore carries the no-overclaim triad on every record
 `provenance_bench.aggregate._is_validated` bar for any capability *claim* derived
 from it. Logging does not produce AGI; it produces a brake, not an engine.
 
-## Faithfulness probe — v1 FALSIFIED → v2 under-powered → v3 inconclusive → v4 inconclusive-on-binary-facts (d=0.08) → v5 causal-dependency redesign **(d=0.95, CI excludes 0 — first defensible positive)**
+## Faithfulness probe — v1 FALSIFIED → v2 under-powered → v3 inconclusive → v4 inconclusive-on-binary-facts (d=0.08) → v5 causal-dependency redesign **(d=0.95, CI excludes 0 — first defensible positive)** → **v5.1 REPLICATED on a fresh disjoint set (sophia-v3 d=1.39; sophia-v2 d=1.26)**
 
 The first real-mode run of the faithfulness probe (commit `240f3e54`,
 `faithfulness-probe.v1-FALSIFIED.public-report.json`) **falsified the probe
@@ -189,29 +189,46 @@ itself**, and the falsification is kept on record rather than hidden:
   artifact stays `candidateOnly=true, validated=false`. The canonical command for
   reproducibility:
   `python tools/run_faithfulness_probe_v5.py --mode real --adapter training/mlx_adapters/sophia-v3/ --model mlx:Qwen/Qwen2.5-3B-Instruct`.
-- **v5.1 replication (real run pending)** — the v5 positive's third leg (`replicated`)
-  is **not yet met**: the only repeat was a deterministic bit-identical MLX re-run
-  (reproducibility, not replication). The `replication` probeset
-  (`tools/run_faithfulness_probe_v5.py --probeset replication`, canonical
-  `faithfulness-probe-v5-replication.public-report.json`) is a **fresh, disjoint**
-  batch of 15 arithmetic problems (no shared question or chain with the primary set —
-  enforced by `test_replication_set_is_disjoint_from_primary`), so re-running it on
-  sophia-v3 is a genuine **independent replication**, and a second command targets
-  **sophia-v2** for cross-adapter generalization. Mock power check matches the
-  primary (d≈3.25, CI excludes 0, 30/30 admitted). **Acceptance:** the v5 positive is
-  *replicated* iff the fresh set on sophia-v3 also gives `|d|≥0.8` with the CI
-  excluding 0 in the same direction; if it does not, the v5 positive must be
-  downgraded to "did not replicate on a fresh set" and recorded as such. Until the
-  Mac run lands, the v5 positive stays "positive evidence, replication owed."
+- **v5.1 replication (REPLICATED on sophia-v3)** — the v5 positive's third leg
+  (`replicated`) is now **met**. The only repeat of v5 was a deterministic
+  bit-identical MLX re-run (reproducibility, not replication), so v5.1 adds a
+  `replication` probeset (`tools/run_faithfulness_probe_v5.py --probeset replication`,
+  canonical `faithfulness-probe-v5-replication.public-report.json`) — a **fresh,
+  disjoint** batch of 15 arithmetic problems (no shared question or chain with the
+  primary set, enforced by `test_replication_set_is_disjoint_from_primary`). **The v5.1
+  REAL run is complete** on Apple Silicon (mlx-lm 0.29.1) over sophia-v3 (LoRA rank 8)
+  on `mlx:Qwen/Qwen2.5-3B-Instruct`, meeting the **PRE-REGISTERED** criterion (fixed in
+  the artifact's `replicationCriterion` before the run): **`cohensD=1.3883`**
+  (`|d|>=0.8`, larger than the primary's 0.9515), **bootstrap 95% CI
+  `[0.348611, 0.602083]` excludes 0**, and a sign test at **15 pos / 0 neg,
+  `p=3.1e-05`** in the same direction (load-bearing drops MORE: mean +0.383 vs
+  post-hoc −0.090), dependency gate **30/30 admitted**. **VERDICT: the v5 positive
+  graduates from "positive evidence, replication owed" to "REPLICATED positive"** on
+  sophia-v3 for arithmetic chain-dependent tasks. This is a genuine independent
+  replication (new probe instances, same design and adapter), not the deterministic
+  bit-identical re-run. **Cross-adapter generalization (reported separately):** the
+  same fresh set on **sophia-v2** (`faithfulness-probe-v5-replication-sophia-v2.public-report.json`)
+  also cleared the bar — `d=1.2599`, CI `[0.421528, 0.792361]` excludes 0, sign 15/0
+  — so the load-bearing effect is not specific to the v3 checkpoint; it appears across
+  both available sophia LoRA adapters on the 3B base. This is evidence of
+  generalization across checkpoints, not a second independent replication in the
+  probe-set sense. Honest scope unchanged: arithmetic-only, 3B base + rank-8 LoRA,
+  candidate-only (`validated=false`); a replicated load-bearing result is positive
+  evidence of faithfulness on THESE chain-dependent tasks, **not a faithfulness proof**.
+  Discipline held: the criterion was fixed before the run, and probes/perturbs/
+  scorer/gate were not retuned to force replication — the only change from v5 was the
+  probe instances.
 
 This is the discipline the layer exists to enforce: a probe that overclaims what
 it measures is itself an overclaim, and gets recorded as such. The v4 real run
 executed on Apple Silicon (no mock substituted) and returned outcome (c); v5 is
 the redesign its diagnosis called for, built and self-tested offline, and its real
 run executed on Apple Silicon — outcome (a), the first defensible positive in the
-arc (d=0.95, CI excludes 0), reported candidate-only and not as a faithfulness
-proof, with the discipline held (probes/perturbs/scorer/gate not retuned to force
-a high `d`).
+arc (d=0.95, CI excludes 0); v5.1 then closed the `replicated` leg with a
+pre-registered, fresh-disjoint-set run that also cleared the bar (sophia-v3
+d=1.39, sophia-v2 d=1.26) — reported candidate-only and not as a faithfulness
+proof, with the discipline held (criterion fixed before the run; probes/perturbs/
+scorer/gate not retuned to force a high `d`).
 
 ## What it is not
 
