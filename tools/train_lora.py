@@ -248,6 +248,59 @@ def _resolve_dtype(choice: str) -> Any:
 
 ATTN_MLP_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
 
+# Per-type LoRA sensitivity PRIOR for the moe/adapt rank allocator (--lora-rank-alloc).
+# A transparent, documented heuristic (NOT a measurement): attention query/value are the
+# load-bearing locus for instruction-following adaptation, MLP up/down are the most
+# redundant. Mirrors moe/adapt's quant sensitivity hierarchy (keep the spikes, crush the
+# redundant). Override per-module by editing this dict; the principled alternative is
+# moe.adapt.measure_sensitivity (output-KL probe), which needs calibration forward passes.
+LORA_SENSITIVITY_PRIOR = {
+    "q_proj": 4.0, "v_proj": 4.0,      # attention QV — most sensitive
+    "k_proj": 2.0, "o_proj": 3.0,      # attention KO — mid
+    "gate_proj": 1.5, "up_proj": 1.0, "down_proj": 1.5,  # MLP — redundant
+}
+# Protected types never drop below the uniform rank floor regardless of the budget.
+LORA_PROTECTED_TYPES = ("q_proj", "v_proj")
+
+
+def _compute_lora_rank_pattern(model: Any, target_types: list[str], lora_r: int) -> tuple[dict, dict]:
+    """Scan the model's target Linear modules and allocate per-type LoRA rank via
+    moe.adapt.lora_rank_allocation (same greedy sensitivity-aware budgeted allocator as the
+    quant bit-allocator). Returns (rank_pattern, alpha_pattern) keyed by module-type suffix,
+    preserving the uniform-rank=lora_r parameter budget. Pure plumbing around the allocator;
+    the allocation policy itself is the CI-proven moe/adapt function."""
+    import torch.nn as nn
+    from moe.adapt import lora_rank_allocation
+
+    # Aggregate fan_in/fan_out per type suffix across all layers (per-type allocation keeps
+    # the rank_pattern small and matches PEFT's suffix-keyed rank_pattern semantics).
+    agg: dict[str, list[int]] = {}  # suffix -> [in_sum, out_sum]
+    for name, mod in model.named_modules():
+        if not isinstance(mod, nn.Linear) and type(mod).__name__ not in ("Linear4bit", "Linear8bitLt"):
+            continue
+        suffix = name.rsplit(".", 1)[-1]
+        if suffix not in target_types:
+            continue
+        in_f = int(getattr(mod, "in_features", 0))
+        out_f = int(getattr(mod, "out_features", 0))
+        cur = agg.setdefault(suffix, [0, 0])
+        cur[0] += in_f
+        cur[1] += out_f
+    if not agg:
+        return {}, {}
+    modules = [
+        (suffix, fan[0], fan[1],
+         LORA_SENSITIVITY_PRIOR.get(suffix, 1.0), suffix in LORA_PROTECTED_TYPES)
+        for suffix, fan in agg.items()
+    ]
+    rank_pattern, alpha_pattern = lora_rank_allocation(
+        modules, target_avg_rank=lora_r,
+        min_rank=max(1, lora_r // 2), max_rank=lora_r * 4, protected_rank=lora_r,
+    )
+    print(f"[lora-rank-alloc] uniform r={lora_r} -> per-type rank_pattern={rank_pattern}",
+          flush=True)
+    return rank_pattern, alpha_pattern
+
 
 def _resolve_target_modules(choice: str) -> Any:
     # "all-linear" lets PEFT target every linear layer (the strongest module finding:
@@ -267,6 +320,7 @@ def build_model_and_tokenizer(
     target_modules: str = "attn-mlp",
     attn_impl: str | None = None,
     resume_adapter: Path | None = None,
+    lora_rank_alloc: bool = False,
 ) -> tuple[Any, Any]:
     import torch
     from peft import LoraConfig, PeftModel, get_peft_model, prepare_model_for_kbit_training
@@ -300,6 +354,16 @@ def build_model_and_tokenizer(
         model = PeftModel.from_pretrained(model, str(resume_adapter), is_trainable=True)
         print(f"Resumed adapter from {resume_adapter}")
     else:
+        # moe/adapt sensitivity-aware LoRA rank allocation: redistribute the SAME rank
+        # budget across module types (more rank to load-bearing q/v, less to redundant MLP).
+        # Requires named module types, so it pins target_modules to the explicit attn-mlp list.
+        rank_pattern: dict = {}
+        alpha_pattern: dict = {}
+        resolved_targets = _resolve_target_modules(target_modules)
+        if lora_rank_alloc:
+            resolved_targets = ATTN_MLP_MODULES
+            rank_pattern, alpha_pattern = _compute_lora_rank_pattern(
+                model, ATTN_MLP_MODULES, lora_r)
         lora = LoraConfig(
             r=lora_r,
             lora_alpha=lora_alpha,
@@ -307,7 +371,9 @@ def build_model_and_tokenizer(
             bias="none",
             task_type="CAUSAL_LM",
             use_rslora=use_rslora,
-            target_modules=_resolve_target_modules(target_modules),
+            target_modules=resolved_targets,
+            rank_pattern=rank_pattern,
+            alpha_pattern=alpha_pattern,
         )
         model = get_peft_model(model, lora)
     model.print_trainable_parameters()
@@ -721,6 +787,11 @@ def main() -> int:
                         help="all-linear (default) targets every linear layer — the 2026 'LoRA Without "
                              "Regret' finding: matching full-FT by adapting all linear layers (MLP is the "
                              "dominant locus of adaptation); 'attn-mlp' is the narrower explicit Qwen list")
+    parser.add_argument("--lora-rank-alloc", dest="lora_rank_alloc", action="store_true",
+                        help="Allocate LoRA rank per module type by sensitivity (moe/adapt's greedy "
+                             "budgeted allocator) instead of a uniform --lora-r. Preserves the total adapter "
+                             "param budget; pins target-modules to the explicit attn-mlp list. Sensitivity "
+                             "uses LORA_SENSITIVITY_PRIOR (transparent heuristic, not a measurement).")
     parser.add_argument("--neftune-alpha", type=float, default=0.0,
                         help="NEFTune embedding-noise regularizer (try 5); helps instruction tuning on small data")
     parser.add_argument("--seed", type=int, default=0)
@@ -865,6 +936,7 @@ def main() -> int:
             target_modules=args.target_modules,
             attn_impl=attn_impl,
             resume_adapter=args.resume_adapter,
+            lora_rank_alloc=args.lora_rank_alloc,
         )
 
     neftune_handle = attach_neftune(model, args.neftune_alpha)
