@@ -30,8 +30,11 @@ logits:
    mixing (k>1 smooths the output); if (4) is still better, the capacity policy
    contributes beyond mixing. The split is reported in ``confound_isolation``.
 4. ``moerouter-topk-cap`` — ``MoERouter(k=2, capacity_factor=1.25)``: the real
-   capacity-aware top-2 policy, where over-capacity assignments are *dropped*
-   and each token's output is the (renormalized) mixture of its kept experts.
+   capacity-aware top-2 policy, where over-capacity assignments are *dropped*.
+   Kept experts keep their ORIGINAL combine weights — they are NOT renormalized
+   to absorb the dropped mass, matching ``MoERouter.forward``'s residual-only
+   drop semantics. The dropped mass ``(1 - wsum)`` is scored as uniform, exactly
+   as the fully-dropped token is (``log V``).
 
 A dense ``NanoLM`` baseline, trained on the same data with ``hidden`` tuned so
 its parameter count ≈ the MoE's *active* parameter count, gives the
@@ -176,9 +179,27 @@ def _eval_moerouter(m: MoELM, logits, actives, examples, *, k: int, capacity_fac
         mix = [0.0] * m.V
         for e, w in kept:
             probs = _expert_output(m, m.experts[e], actives[t])
-            wn = w / wsum  # renormalize kept weights → valid mixture distribution
             for k_idx in range(m.V):
-                mix[k_idx] += wn * probs[k_idx]
+                mix[k_idx] += w * probs[k_idx]  # ORIGINAL combine weight, NOT renormalized
+        # Dropped mass (1 - wsum) is residual-only in MoERouter.forward — the kept
+        # experts are NOT renormalized to absorb it. Score that mass as uniform,
+        # consistent with the fully-dropped branch above (log V). Renormalizing
+        # (wn = w/wsum) would redistribute the dropped mass onto the kept experts:
+        # a semantics change whose effect on topk-cap is config-dependent (it can
+        # help or hurt — see confound_isolation.dropped_mass_convention), not a
+        # reliable flattering, so we avoid it.
+        missing = 1.0 - wsum
+        if missing > 0.0:
+            u = missing / m.V
+            for k_idx in range(m.V):
+                mix[k_idx] += u
+        elif missing < 0.0:
+            # Numerical guard: floating-point error pushed the kept combine weights
+            # marginally above 1.0 (wsum should be <= 1 by construction). Rescale the
+            # mixture back to a proper distribution so the NLL can never go negative.
+            s = sum(mix)
+            if s > 0.0:
+                mix = [v / s for v in mix]
         total_loss += -math.log(max(mix[tgt], 1e-12))
     held = total_loss / max(1, T)
     slots_attempted = T * k
@@ -405,6 +426,17 @@ def run_ablation(*, quick: bool = False, seed: int = 0) -> dict:
                 "moerouter-topk-cap (the capacity-drop policy in isolation). Their sum is "
                 "the total handrolled-top1 -> topk-cap gap. policy_effect_isolated is True "
                 "only when the capacity policy lowers loss BEYOND mixture-averaging."
+            ),
+            "dropped_mass_convention": (
+                "Dropped slots in moerouter-topk-cap are scored as MoERouter.forward does: "
+                "residual-only. Kept experts keep their ORIGINAL combine weights (no wn=w/wsum "
+                "renormalization); the missing mass (1-wsum) is scored as uniform, like the "
+                "fully-dropped branch (log V). An earlier version renormalized kept weights, "
+                "which deviated from MoERouter semantics and moved policy_effect by ~0.01-0.03 "
+                "nats. The decomposition is ROBUST to the convention: mixture_effect is "
+                "identical (handrolled-top2-nodrop has no drops, so the fix never touches it) "
+                "and policy_effect straddles zero across seeds either way — the NLL advantage "
+                "is mixture-averaging, not the capacity policy, under both conventions."
             ),
         },
         "self_consistency": {
