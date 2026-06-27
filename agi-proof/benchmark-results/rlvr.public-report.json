@@ -1,62 +1,53 @@
 {
   "rewards": {
-    "falseGood": {
-      "label": "false",
-      "passed": true,
-      "denies": true,
-      "namesGold": true,
-      "hedges": 0,
-      "reward": 1.0
-    },
-    "falseBad": {
-      "label": "false",
-      "passed": false,
-      "denies": false,
-      "namesGold": false,
-      "hedges": 0,
-      "assertedForbidden": true
-    },
-    "trueGood": {
-      "label": "true",
-      "passed": true,
-      "denies": false,
-      "namesGold": true,
-      "hedges": 0,
-      "reward": 1.0
-    },
-    "trueBad": {
-      "label": "true",
-      "passed": true,
-      "denies": false,
-      "namesGold": false,
-      "hedges": 0,
-      "reward": 0.0
-    }
+    "forbidden": -1.0,
+    "grounded": 1.0,
+    "overRefusal": -0.5,
+    "admit": 1.0
   },
   "checks": {
     "deterministic": true,
-    "falseMonotone": true,
-    "trueMonotone": true,
-    "forbiddenNegative": true,
-    "verifierSeamInvoked": true,
+    "forbiddenFloor": true,
+    "groundedTop": true,
+    "overRefusalPenalized": true,
+    "groundedBeatsForbidden": true,
     "bounded": true,
-    "contaminationFree": true
+    "verifierSeamInvoked": true,
+    "contaminationFree": true,
+    "spuriousAblationDiscriminates": true
   },
-  "trainCases": 203,
-  "evalCases": 87,
-  "trainSealed": "4efd66c8ff0f9986",
-  "evalSealed": "833600c436cce7ca",
+  "trainCases": 46,
+  "evalCases": 20,
+  "trainSealed": "241573d883eb2d1d",
+  "evalSealed": "ccad2d5be10980ff",
   "entityIntersection": [],
-  "gateTargetModules": [
-    "q_proj",
-    "k_proj",
-    "v_proj",
-    "o_proj",
-    "gate_up_proj",
-    "down_proj"
-  ],
-  "benchmark": "rlvr",
+  "spuriousAblation": {
+    "schema": "sophia.spurious_ablation.v1",
+    "candidateOnly": true,
+    "level3Evidence": false,
+    "canClaimAGI": false,
+    "nCases": 66,
+    "trueRewardDelta": {
+      "delta": 1.9697,
+      "ciLow": 1.9394,
+      "ciHigh": 1.9924,
+      "excludesZero": true,
+      "nBoot": 1000
+    },
+    "spuriousRewardDelta": {
+      "delta": 0.047,
+      "ciLow": -0.1387,
+      "ciHigh": 0.2349,
+      "excludesZero": false,
+      "nBoot": 1000
+    },
+    "discriminates": true,
+    "interpretation": "PASS: the verifier reward separates grounded from careless answers and the spurious reward does not — uplift under this reward is not a random-reward artifact."
+  },
+  "benchmark": "rlvr-concept",
+  "task": "concept",
   "mode": "mock-offline",
+  "rewardSelected": "verifier",
   "claim": "reward-machinery invariants (NOT a capability claim)",
   "liveClaimStatus": "Open — see agi-proof/failure-ledger.md rlvr-live-run-not-yet-gated-2026-06-21"
 }
