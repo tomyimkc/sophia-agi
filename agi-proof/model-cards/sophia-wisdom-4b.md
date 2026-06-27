@@ -78,7 +78,20 @@ rows, single base, single seed on retention. Stays `candidate_only`; `canClaimAG
 3. **Single base, single seed, corpus-bound** (~730 deterministic rows; M2 volume is a NO-GO). Needs
    seeds 1–2 for stability and the multi-judge semantic pass before promotion.
 4. Train/eval share structural families (decontaminated by exact prompt, not by format) — format-overlap
-   caution applies, as flagged previously for the religion channel.
+   caution applies. **NOW LARGELY ADDRESSED by an EXTERNAL-VALIDITY / TRANSFER test (2026-06-27).**
+   Base vs adapter on `data/wisdom_market_benchmark/transfer_v1.jsonl` — 80 held-out cases using
+   entities the model NEVER trained on (Gilgamesh, Iliad, Pentateuch, Mahabharata, Federalist Papers,
+   Zohar…; Stoicism vs Epicureanism, Theravada vs Mahayana, Advaita vs Dvaita…). The source-discipline
+   habit **TRANSFERS**, not memorized format: adapter(prompt)−base(prompt) is CI-clean on
+   qualification_on_contested **+0.385** [0.344,0.406] (base 0.56→adapter 0.95), false_attribution
+   **−0.156** (base 0.156→adapter 0.0), provenance **+0.111**, tradition_merge −0.063 — qualification
+   transfers at ~80% of in-distribution strength, and false-attribution/provenance gains are LARGER on
+   novel works (more fabrication headroom). The 3-family judge corroborates on novel entities (majority
+   0.675, unanimous adapter 39 vs base 9, AC1 0.58–0.69). HONEST LIMIT: `claim_gate` returns **NO-GO**
+   on this probe — at N=80 (×3 runs) its MDE (~0.13) exceeds the 0.105 practical threshold, so the
+   probe is slightly UNDERPOWERED to *fully certify* (the large qualification effect is decisively
+   resolved; the smaller deltas like tradition_merge sit nearer the resolution edge). So: transfer is
+   demonstrated and judge-corroborated, but formal certification wants a larger transfer probe.
 
 ## Corroboration added after the pilot (seed 1 + LLM judges)
 

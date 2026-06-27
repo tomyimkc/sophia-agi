@@ -98,7 +98,7 @@ def gate(prefix: str, spec: dict) -> dict:
                            and _ci_clean((ev["adapterPromptVsBasePrompt"].get(m) or {}).get("ci"))
                            and abs((ev["adapterPromptVsBasePrompt"].get(m) or {}).get("delta") or 0) >= practical
                            for m in PRIMARY)
-    prot = [m for m in PROTECTED if ((ev or {}).get("adapterPromptVsBasePrompt", {}).get(m) or {}).get("delta", 0) > 0
+    prot = [m for m in PROTECTED if (((ev or {}).get("adapterPromptVsBasePrompt", {}).get(m) or {}).get("delta") or 0) > 0
             and _ci_clean(((ev or {}).get("adapterPromptVsBasePrompt", {}).get(m) or {}).get("ci"))]
     ret_go = (rt is None) or (rt.get("delta") is not None and rt["delta"] >= -tol)
     add("8-magnitude", big and not prot and ret_go,
