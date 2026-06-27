@@ -102,8 +102,13 @@ def test_claim_guided_extraction_surfaces_buried_entity(monkeypatch) -> None:
 
 def test_wikipedia_summary_real_or_none() -> None:
     """Smoke test against the REAL Wikipedia API (network). Must return a non-empty string
-    for a known page, or None — never raise. Skipped gracefully if offline."""
+    for a known page, or None — never raise. OFFLINE BY DEFAULT to keep the suite
+    deterministic (see tests/test_legal_sources.py for the convention); opt in with
+    SOPHIA_NETWORK_TESTS=1. The fail-closed path is covered by other tests."""
+    import os
     import pytest
+    if not os.environ.get("SOPHIA_NETWORK_TESTS"):
+        pytest.skip("network test — set SOPHIA_NETWORK_TESTS=1 to run")
     s = web_sources.wikipedia_summary("Voynich manuscript", timeout=8)
     if s is None:
         pytest.skip("offline (Wikipedia unreachable) — fail-closed path covered by other tests")

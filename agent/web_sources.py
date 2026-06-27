@@ -38,7 +38,7 @@ def wikipedia_summary(topic: str, *, timeout: float = 15.0) -> "str | None":
     """Fetch the Wikipedia REST summary extract for ``topic``. Returns None on any failure
     (network error, missing page, non-200) so callers can fail-closed (treat None as
     'no independent reference available' -> the verifier abstains rather than trusts)."""
-    slug = urllib.parse.quote(re.sub(r"\s+", "_", topic.strip()))
+    slug = urllib.parse.quote(re.sub(r"\s+", "_", topic.strip()), safe="")
     url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{slug}"
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     try:
@@ -78,7 +78,7 @@ def wikipedia_article(topic: str, *, max_chars: int = 8000, timeout: float = 20.
         The stripped article text (capped), or None on any failure. Caller fails-closed on None.
     """
     import html as _html  # noqa: PLC0415
-    slug = urllib.parse.quote(re.sub(r"\s+", "_", topic.strip()))
+    slug = urllib.parse.quote(re.sub(r"\s+", "_", topic.strip()), safe="")
     url = f"https://en.wikipedia.org/api/rest_v1/page/html/{slug}"
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     try:
@@ -133,7 +133,7 @@ def wikipedia_article_for_claims(topic: str, answer: str, *,
         Lead + claim-guided windows (capped), or None on fetch failure.
     """
     import html as _html  # noqa: PLC0415
-    slug = urllib.parse.quote(re.sub(r"\s+", "_", topic.strip()))
+    slug = urllib.parse.quote(re.sub(r"\s+", "_", topic.strip()), safe="")
     url = f"https://en.wikipedia.org/api/rest_v1/page/html/{slug}"
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     try:
@@ -162,16 +162,16 @@ def wikipedia_article_for_claims(topic: str, answer: str, *,
 
 
 def make_wikipedia_verifier(
-    topic_resolver: "Callable[[str, str], str | None]",
+    topic_resolver: "Callable[[str, str], str | list[str] | None]",
     entailment_fn: "Callable[[str, str], str]",
     *,
     min_refs: int = 1,
         block_on_hold: bool = False,
-) -> "Callable[[str, answer], bool]":
+) -> "Callable[[str, str], bool]":
     """Build a ``(question, answer) -> bool`` verifier backed by LIVE Wikipedia.
 
     Args:
-        topic_resolver: ``(question, answer) -> topic_string | None``. Maps a Q/A pair to the
+        topic_resolver: ``(question, answer) -> topic_string | list[topic_string] | None``. Maps a Q/A pair to the
             Wikipedia page title to fetch as the independent reference (e.g.
             "Who wrote the Voynich Manuscript?" -> "Voynich manuscript"). Returns None when no
             clear topic can be resolved -> the verifier abstains (fail-closed) rather than
