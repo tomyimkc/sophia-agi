@@ -133,12 +133,19 @@ def with_tier_env(role: str, *, path: str | Path | None = None) -> dict[str, str
 def _main() -> int:
     topo = load_topology()
     if not topo:
-        print(f"no topology at {DEFAULT_CONFIG} (copy config/inference.local.spark.json -> config/inference.local.json)")
+        print(
+            f"no topology at {DEFAULT_CONFIG} "
+            "(copy config/inference.local.example.json or config/inference.local.spark.json -> config/inference.local.json)"
+        )
         return 0
     hw = topo.get("hardware", {})
     print(f"topology: {hw.get('machine', '?')} ({hw.get('unified_memory_gb', '?')} GB unified)")
     for role in topo.get("tiers", {}):
-        spec = resolve_tier(topo, role)
+        try:
+            spec = resolve_tier(topo, role)
+        except ValueError as exc:
+            print(f"  {role:14s} !! refused: {exc}")
+            continue
         if spec:
             print(f"  {role:14s} -> {spec.to_spec_str()}  base_url={spec.base_url or '-'}  [{spec.engine}]")
     routing = topo.get("routing", {})

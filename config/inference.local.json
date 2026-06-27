@@ -1,0 +1,84 @@
+{
+  "schema": "sophia.inference.local.v1",
+  "_comment": "Local/hybrid inference topology for this measured Apple Silicon node. The MLX orchestrator is served directly with mlx_lm.server; agent.inference_topology intentionally refuses engine: mlx and should only resolve tool_calls + escalation from this file.",
+  "hardware": {
+    "machine": "Mac Studio (Apple M3 Ultra)",
+    "chip": "Apple M3 Ultra",
+    "cpu_cores": 28,
+    "unified_memory_gb": 96,
+    "macos": {
+      "ProductName": "macOS",
+      "ProductVersion": "27.0",
+      "BuildVersion": "26A5368g"
+    },
+    "lan_host": "192.168.0.136",
+    "notes": "Measured 2026-06-27 on this host. With 25% OS/KV headroom, local 4-bit planning budget is about 72 GB. Current free disk was about 22 GiB during setup, so the 72B MLX target was selected from RAM budget but not downloaded or live-served in this setup pass."
+  },
+  "tiers": {
+    "orchestrator": {
+      "role": "planning, routing, cheap structured tool-calls (CaMeL privileged planner)",
+      "engine": "mlx",
+      "base_url": "http://localhost:8080/v1",
+      "model": "mlx-community/Qwen2.5-72B-Instruct-4bit",
+      "max_context": 32768,
+      "constrained_decoding": false,
+      "sizing": {
+        "measured_unified_memory_gb": 96,
+        "headroom_fraction": 0.25,
+        "usable_memory_budget_gb": 72,
+        "hf_repo_size_gb": 38.1,
+        "fit_status": "fits RAM budget by metadata; not downloaded because free disk was about 22 GiB"
+      },
+      "notes": "Serve directly: mlx_lm.server --model mlx-community/Qwen2.5-72B-Instruct-4bit --port 8080. Do not route this tier through agent.inference_topology; MLX has no native GBNF/JSON-schema constrained decoding and the router refuses it fail-closed."
+    },
+    "tool_calls": {
+      "role": "guaranteed well-formed tool-calls + CaMeL quarantined extractor (no tool access)",
+      "engine": "llamacpp",
+      "base_url": "http://localhost:8081/v1",
+      "model": "zkkdinx/Qwen2.5-1.5B-Instruct-Q4_K_M-GGUF",
+      "gguf_hf_file": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+      "grammar": "gbnf",
+      "grammar_source": "agent.structured_output.schema_to_gbnf(load_schema('gateway_call'))",
+      "max_context": 8192,
+      "constrained_decoding": true,
+      "notes": "Small real GGUF selected for constrained tool-call smoke on a disk-constrained node. It is not the primary reasoning tier; semantic verification still runs after syntax."
+    },
+    "escalation": {
+      "role": "hard reasoning the local tiers flag as low-confidence",
+      "engine": "api",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-6",
+      "trigger": {
+        "type": "uncertainty_threshold",
+        "source": "agent.calibration",
+        "max_local_confidence": 0.55,
+        "notes": "Cloud is not served on this Mac. Use only when local confidence is low or policy routes require escalation."
+      }
+    }
+  },
+  "routing": {
+    "default": "orchestrator",
+    "structured_output": "tool_calls",
+    "low_confidence": "escalation",
+    "quarantine_untrusted_data": "tool_calls"
+  },
+  "targets": {
+    "local_turn_ratio_min": 0.8,
+    "unsafe_accepted_outputs": 0,
+    "tool_call_json_validity_min": 0.99
+  },
+  "mac_notes": {
+    "serve_script": "scripts/mac_serve.sh",
+    "verified_stack": {
+      "mlx_lm": "mlx_lm.server --help succeeded under /Users/tom/.pyenv/versions/3.10.6/bin/python",
+      "llama_cpp": "Homebrew llama.cpp 9820 installed; llama-server and llama-cli --version succeeded"
+    },
+    "not_yet_verified": [
+      "The 72B MLX orchestrator was not downloaded or live-served because available disk was below the HF repo size."
+    ],
+    "live_smoke": [
+      "mlx_lm.server served cached mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit on 127.0.0.1:8080 and answered /v1/chat/completions; this verifies the MLX serve path, not the selected 72B orchestrator.",
+      "llama-server served zkkdinx/Qwen2.5-1.5B-Instruct-Q4_K_M-GGUF with gateway_call GBNF on 127.0.0.1:8081; tools/run_local_judge_eval.py --provider llamacpp returned ok."
+    ]
+  }
+}

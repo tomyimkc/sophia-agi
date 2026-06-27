@@ -1,0 +1,46 @@
+[
+  {
+    "node_id": "mac-studio-m3-ultra-001",
+    "host": "192.168.0.136",
+    "port": 22,
+    "user": "tom",
+    "node_class": "apple_silicon_unified_memory",
+    "roles": ["local_inference", "judge_farm"],
+    "hardware": {
+      "machine": "Mac Studio",
+      "chip": "Apple M3 Ultra",
+      "cpu_cores": 28,
+      "unified_memory_gb": 96,
+      "macos_product_version": "27.0",
+      "macos_build": "26A5368g"
+    },
+    "inference": {
+      "orchestrator_url": "http://192.168.0.136:8080/v1",
+      "tool_calls_url": "http://192.168.0.136:8081/v1",
+      "orchestrator_model_target": "mlx-community/Qwen2.5-72B-Instruct-4bit",
+      "tool_calls_model_target": "zkkdinx/Qwen2.5-1.5B-Instruct-Q4_K_M-GGUF",
+      "tool_calls_gguf_hf_file": "qwen2.5-1.5b-instruct-q4_k_m.gguf"
+    },
+    "baseline_notes": {
+      "status": "not_a_gpu_baseline_node",
+      "n_a_floors": [
+        "min_gpu_count",
+        "min_hbm_bandwidth_gbps",
+        "min_gemm_tflops_bf16",
+        "min_nvlink_bandwidth_gbps",
+        "min_nccl_allreduce_busbw_gbps",
+        "min_rdma_ib_write_bw_gbps",
+        "max_p2p_latency_us",
+        "max_ecc_uncorrectable"
+      ],
+      "measured_local": {
+        "chip": "Apple M3 Ultra",
+        "cpu_cores": 28,
+        "unified_memory_gb": 96,
+        "lan_ip": "192.168.0.136",
+        "free_disk_at_setup": "about 22 GiB"
+      },
+      "notes": "Do not use this node for canonical GPU acceptance floors or headline training numbers. It is registered for local MLX/llama.cpp inference and judge-farm work only."
+    }
+  }
+]

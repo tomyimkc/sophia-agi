@@ -17,6 +17,8 @@ Honest scope: this is a connectivity/config smoke test, not a benchmark. With
 
     python tools/run_local_judge_eval.py --provider vllm --base-url http://localhost:8000/v1 \
         --judge-models Qwen/Qwen2.5-7B-Instruct,meta-llama/Llama-3.3-8B-Instruct
+    python tools/run_local_judge_eval.py --provider llamacpp --base-url http://localhost:8081/v1 \
+        --judge-models local
     python tools/run_local_judge_eval.py --dry-run        # print config, no probe
     python tools/run_local_judge_eval.py --provider mock   # offline self-test
 """
@@ -33,8 +35,13 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-DEFAULT_BASE_URLS = {"vllm": "http://localhost:8000/v1", "sglang": "http://localhost:30000/v1",
-                     "ollama": "http://localhost:11434/v1", "mock": ""}
+DEFAULT_BASE_URLS = {
+    "vllm": "http://localhost:8000/v1",
+    "sglang": "http://localhost:30000/v1",
+    "llamacpp": "http://localhost:8081/v1",
+    "ollama": "http://localhost:11434/v1",
+    "mock": "",
+}
 _PROBE_PROMPT = (
     "Reply with exactly one word: is the following statement well-formed? 'Water boils at 100C "
     "at sea level.' Answer yes or no."
@@ -62,7 +69,7 @@ def _probe(provider: str, model: str) -> dict:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--provider", choices=["vllm", "sglang", "ollama", "mock"], default="vllm",
+    ap.add_argument("--provider", choices=["vllm", "sglang", "llamacpp", "ollama", "mock"], default="vllm",
                     help="local OpenAI-compatible server preset (agent.model.py)")
     ap.add_argument("--base-url", default=None, help="override; defaults to the preset's localhost URL")
     ap.add_argument("--judge-models", default="Qwen/Qwen2.5-7B-Instruct,meta-llama/Llama-3.3-8B-Instruct",

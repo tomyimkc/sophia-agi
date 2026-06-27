@@ -14,7 +14,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.inference_topology import (  # noqa: E402
-    SCHEMA, TierSpec, load_topology, resolve_tier, tier_spec, with_tier_env,
+    SCHEMA, TierSpec, _main, load_topology, resolve_tier, tier_spec, with_tier_env,
 )
 
 # A minimal v1 topology mirroring config/inference.local.spark.json (3 tiers).
@@ -109,6 +109,29 @@ def test_unknown_engine_refused() -> None:
         assert "unknown engine" in str(exc).lower()
         return
     raise AssertionError("unknown engine should be refused fail-closed")
+
+
+def test_cli_reports_mlx_refusal_and_continues() -> None:
+    import contextlib
+    import io
+    from unittest import mock
+
+    topo = {
+        "schema": SCHEMA,
+        "hardware": {"machine": "Mac Studio test", "unified_memory_gb": 96},
+        "tiers": {
+            "orchestrator": {"engine": "mlx", "model": "mlx-model"},
+            "tool_calls": {"engine": "llamacpp", "base_url": "http://localhost:8081/v1", "model": "gguf"},
+            "escalation": {"engine": "api", "provider": "anthropic", "model": "claude-sonnet-4-6"},
+        },
+    }
+    buf = io.StringIO()
+    with mock.patch("agent.inference_topology.load_topology", lambda: topo), contextlib.redirect_stdout(buf):
+        assert _main() == 0
+    out = buf.getvalue()
+    assert "orchestrator" in out and "refused" in out and "mlx" in out
+    assert "tool_calls" in out and "llamacpp:gguf" in out
+    assert "escalation" in out and "anthropic:claude-sonnet-4-6" in out
 
 
 def main() -> int:

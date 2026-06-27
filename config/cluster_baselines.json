@@ -29,5 +29,30 @@
       "min_rdma_ib_write_bw_gbps": 90.0,
       "max_gpu_temp_idle_c": 45.0
     }
+  },
+  "node_class_notes": {
+    "apple_silicon_unified_memory": {
+      "acceptance_status": "N/A for GPU bring-up gate",
+      "measured_reference_node": "mac-studio-m3-ultra-001",
+      "measured_on": "2026-06-27",
+      "measured": {
+        "chip": "Apple M3 Ultra",
+        "cpu_cores": 28,
+        "unified_memory_gb": 96,
+        "macos_product_version": "27.0",
+        "macos_build": "26A5368g"
+      },
+      "n_a_gpu_floors": [
+        "min_gpu_count",
+        "min_hbm_bandwidth_gbps",
+        "min_gemm_tflops_bf16",
+        "min_nvlink_bandwidth_gbps",
+        "min_nccl_allreduce_busbw_gbps",
+        "min_rdma_ib_write_bw_gbps",
+        "max_p2p_latency_us",
+        "max_ecc_uncorrectable"
+      ],
+      "notes": "Apple Silicon uses unified memory and MLX/Metal, not HBM/NVLink/NCCL/RDMA. This node class is useful for local inference and judge-farm work but must not be fake-passed through the GPU acceptance floors."
+    }
   }
 }

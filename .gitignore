@@ -21,6 +21,7 @@ eval/external/.cache/
 benchmark/model_runs/*.log
 train-error.log
 train-out.txt
+mac-logs/
 agent/memory/*.jsonl
 agent/memory/agent_runs/
 agent/memory/closed-loop/
@@ -117,4 +118,3 @@ agi-proof/external-validation/_seib-live.raw.json
 training/tool_use/checkpoints/
 training/tool_use/dpo_pairs.jsonl
 !training/tool_use/sft_traces.jsonl
-
