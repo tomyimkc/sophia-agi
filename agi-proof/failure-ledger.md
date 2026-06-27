@@ -2244,9 +2244,11 @@ precision; the point estimate is not the finding). The fixed labeler is what shi
 
 ## claimreview-implicit-frame-retrieve-then-decide-2026-06-27
 
-**Status:** PRE-REGISTERED → AWAITING RUN (blocked on `GOOGLE_FACTCHECK_API_KEY`).
-The fair grounding test the spoon-fed `grounded` arm could not give. Pre-registered
-BEFORE the run, per repo discipline. `canClaimAGI` stays **False**.
+**Status:** PRE-REGISTERED → RAN. **Mechanism WORKS but is COVERAGE-BOUNDED.** Live
+retrieval cuts endorsement substantially (Δ +23 to +60pt) but captures only 56–73% of
+the optimistic spoon-fed effect, because the API returns a usable verdict for ~62% of
+claims; on misses the model still goes along. The fair grounding test the spoon-fed
+`grounded` arm could not give. `canClaimAGI` stays **False**.
 
 **Why.** The implicit-frame result (`claimreview-implicit-endorsement-frame-2026-06-27`)
 has a known weakness I flagged myself: the `grounded` arm PREPENDS the pack's GOLD
@@ -2280,6 +2282,51 @@ offline (injected fetcher, hit + miss cases); 13 tests pass; fails closed withou
 key. The RUN is the only step blocked — needs `GOOGLE_FACTCHECK_API_KEY` (the prior
 one was `/tmp`-only and is gone) + a dolphin subject (RunPod).
 
-**Result.** _(to be filled in on completion.)_
+**Result (dolphin-llama3:8b, 60 FALSE/pack, 1 run, implicit frame, live GFC retrieval).**
+
+| pack | RAW | RETRIEVE (live) | coverage | GROUNDED (spoon-fed gold) | Δ raw−retrieve | Δ raw−grounded |
+|---|---|---|---|---|---|---|
+| obscure | 90.0% (54/60) | **30.0%** (18/60) | **65.0%** | 8.3% (5/60) | **+60.0pt** | +81.7pt |
+| famous | 50.0% (30/60) | **26.7%** (16/60) | **61.7%** | 8.3% (5/60) | **+23.3pt** | +41.7pt |
+
+**The mechanism works end-to-end — it is NOT just "repeat a handed-over answer."** When
+the verdict is LIVE-RETRIEVED by claim text (not spoon-fed), endorsement still drops
+sharply (90→30, 50→27). And the cut concentrates exactly where retrieval HITS: the
+residual retrieve-arm endorsements are dominated by retrieval MISSES — sample
+misses (`retrieved=false`) are all `endorse=true` ("The Cochrane Collaboration… claims
+that…", "GLP-1 drugs are a new approach to treating obesity in young children…"), i.e.
+the model goes along precisely when no verdict was found. A back-of-envelope check fits:
+coverage×grounded + (1−coverage)×raw ≈ 0.65·8%+0.35·90% ≈ 37% (obs 30%, obscure);
+0.62·8%+0.38·50% ≈ 24% (obs 27%, famous).
+
+**But it is COVERAGE-BOUNDED, and the spoon-fed number overstated it.** Retrieval
+returns a usable verdict for only ~62–65% of claims, so real grounding captures
+**56–73%** of the spoon-fed effect (obscure 60.0/81.7≈73%; famous 23.3/41.7≈56%). The
+honest realistic Δ is **+23 to +60pt**, not the +42 to +87pt the `grounded` arm implied.
+This is the deflation the pre-registration anticipated: the earlier implicit-frame
+"grounding cuts endorsement to ~5–7%" assumed perfect retrieval; with real retrieval it
+cuts to ~27–30%.
+
+**Boundary conditions (no overclaim).** N=60×1, dolphin (weak; the headroom decays to
+~5% on a strong base anyway — `claimreview-implicit-frame-strong-base-decay-2026-06-27`,
+so this matters only where the base is weak). Coverage ~62% is measured on packs that
+were THEMSELVES built from this API via topic queries — so claim-text retrieval coverage
+on genuinely cold claims is likely ≤62%, i.e. this is an OPTIMISTIC coverage estimate,
+not a floor. Lexical labeler, no LLM judge. The retrieved verdict is still prepended
+(not agentically reasoned over). `canClaimAGI` stays **False** — this validates the
+grounding mechanism's real-world shape and honestly bounds it; it is not a capability
+or AGI claim, and uses the existing `GoogleFactCheckBackend`, not a new mechanism.
+
+**Net.** The reopened ClaimReview substrate survives the fair test: grounding genuinely
+works on weak models, but its value is gated by fact-check coverage (~62%), so the
+realistic anti-endorsement Δ is ~+23 to +60pt — real, large, and honestly bounded below
+the spoon-fed figure.
+
+**Artifacts.** `agi-proof/baseline-ablation/claimreview-eval-2026-06-27/`
+`claimreview-retrieve-obscure-dolphin-60.json` (SHA-256
+`ca53b491a6d1cbf92718818766528760d300122e96b8e513e3f46891e50b3e99`) +
+`claimreview-retrieve-famous-dolphin-60.json` (SHA-256
+`0d2aa47ad0bf28711295effffb536774369ff56966fb0571030e62c150dcca17`). Arm + tooling:
+`tools/run_claimreview_eval.py --retrieve`, tests in `tests/test_claimreview_implicit_frame.py`.
 
 
