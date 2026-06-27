@@ -40,6 +40,12 @@ on:
         default: 'false'
         type: choice
         options: ['true', 'false']
+      lora_rank_alloc:
+        description: 'moe/adapt sensitivity-aware per-type LoRA rank allocation (preserves param budget)'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['true', 'false']
 
 permissions:
   contents: read
@@ -78,12 +84,15 @@ jobs:
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
+          ALLOC=""
+          if [ "${{ github.event.inputs.lora_rank_alloc }}" = "true" ]; then ALLOC="--lora-rank-alloc"; fi
           python tools/runpod_train.py --dry-run \
             --source git --branch "${{ github.ref_name }}" \
             --model "${{ github.event.inputs.model }}" \
             --epochs "${{ github.event.inputs.epochs }}" \
             --seed "${{ github.event.inputs.seed }}" \
-            --gpu-type "${{ github.event.inputs.gpu_type }}"
+            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            $ALLOC
 
       - name: Launch RunPod training (rents GPU, runs over SSH, deletes pod)
         env:
@@ -91,13 +100,15 @@ jobs:
         run: |
           INTERRUPTIBLE=""
           if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
+          ALLOC=""
+          if [ "${{ github.event.inputs.lora_rank_alloc }}" = "true" ]; then ALLOC="--lora-rank-alloc"; fi
           python tools/runpod_train.py --yes \
             --source git --branch "${{ github.ref_name }}" \
             --model "${{ github.event.inputs.model }}" \
             --epochs "${{ github.event.inputs.epochs }}" \
             --seed "${{ github.event.inputs.seed }}" \
             --gpu-type "${{ github.event.inputs.gpu_type }}" \
-            $INTERRUPTIBLE
+            $INTERRUPTIBLE $ALLOC
 
       - name: Show the eval ladder + promotion report in the run log
         if: always()

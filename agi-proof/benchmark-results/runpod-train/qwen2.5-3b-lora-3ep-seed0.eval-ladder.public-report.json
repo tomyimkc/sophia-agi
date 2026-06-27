@@ -1,0 +1,66 @@
+{
+  "benchmark": "lora-eval-ladder",
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "adapter": "local-sophia-v2 (candidateId local-sophia-v2-mlx)",
+  "quantization": "QLoRA 4-bit",
+  "epochs": 3,
+  "seed": 0,
+  "training_traces": "training/council/religion_repair_c4.jsonl",
+  "eval_set": {
+    "domains": ["philosophy", "psychology", "history", "religion"],
+    "items": 32,
+    "note": "held-out provenance set; single-judge content+format scoring via tools/eval_local_model.py; CONTENT is the protected channel"
+  },
+  "content_channel": {
+    "adapter_3ep": {
+      "philosophy": "7/9", "psychology": "7/9", "history": "8/8", "religion": "5/6",
+      "total": "27/32", "total_pct": 84.4
+    },
+    "fp16_base": {
+      "philosophy": "6/9", "psychology": "6/9", "history": "6/8", "religion": "5/6",
+      "total": "23/32", "total_pct": 71.9,
+      "note": "FP16 base is deterministic (greedy decode); measured at 23/32 content in run #5 on the identical model+eval"
+    },
+    "uplift_pct": 12.5,
+    "uplift_items": 4
+  },
+  "combined_channel": {
+    "adapter_3ep_total": "23/32",
+    "adapter_3ep_pct": 71.9,
+    "note": "format-and-content; religion format is consistently ~1/6 across all runs (eval-format quirk, not content), which caps religion's combined score"
+  },
+  "promotion": {
+    "schema": "sophia.adapter_promotion.v2",
+    "verdict": "reject",
+    "reject_reason": "oraclePromote=false because invariant 'solver_attestation' is HELD (z3-solver not installed in the pod) — a missing-tooling abstention, NOT a quality/capability regression",
+    "scorecardVerdict": "promote",
+    "continual_plasticity_decision": "promote (all gates cleared; targetSuite=total, targetDelta=+0.219)",
+    "invariants": {
+      "protected_floor_content": "accepted (fallback)",
+      "no_total_regression": "accepted (total_after=0.719)",
+      "contamination_zero": "accepted (overlap count 0)",
+      "provenance_complete": "accepted (all traces carry citation)",
+      "solver_attestation": "held — z3_unavailable (held, not accepted)"
+    }
+  },
+  "result_summary": "3-epoch QLoRA produced a +12.5pt CONTENT uplift (71.9% -> 84.4%) over the FP16 base on this held-out provenance set, converting the 1-epoch content-neutral null into a directional positive. religion (protected) held flat; philosophy/psychology/history rose. The W2 oracle REJECTED promotion solely because z3-solver was unavailable for the solver_attestation invariant; every content/contamination/provenance/no-regression gate passed.",
+  "claim": "real-GPU LoRA eval-ladder datapoint (NOT a capability claim)",
+  "judge": "single-judge content+format scoring (tools/eval_local_model.py); NOT the kappa>=0.40 / 2-judge-family / >=3-run / 95%-CI VALIDATED bar",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "honest_scope": "One real-GPU QLoRA run (3 epochs, seed 0, 32-item held-out provenance eval, single judge). The +12.5pt content uplift is DIRECTIONAL / candidate-only: at n=32, single judge, one seed, it is not separable from noise to the VALIDATED bar, and the training traces were religion-repair while religion (protected) held flat and OTHER domains rose (transfer or noise — undetermined at this power). It does NOT move canClaimAGI. The honest contrast with the 1-epoch run is the point: more training is the lever that moves content here, but a VALIDATED claim needs the 2-judge-family / kappa>=0.40 / >=3-run / 95%-CI protocol.",
+  "provenance": {
+    "workflow": ".github/workflows/train-runpod.yml",
+    "run_url": "https://github.com/tomyimkc/sophia-agi/actions/runs/28283117227",
+    "run_id": 28283117227,
+    "run_number": 7,
+    "head_sha": "bd75e951dac04dfbe0a9b308968c624282e65e3d",
+    "gpu_pool": ["NVIDIA GeForce RTX 4090", "NVIDIA A40", "NVIDIA GeForce RTX 3090", "NVIDIA A100-SXM4-80GB", "NVIDIA RTX A6000", "NVIDIA L40S"],
+    "artifact_id": 7922868787,
+    "artifact_sha256": "d072ad838a7eb95bbd4a0a6d43082341db0004adc44b4d37e6cffe934e79c5fc",
+    "promotion_report_in_artifact": "wt6i54d6gyyyfl.promotion.public-report.json",
+    "source": "transcribed from the train-runpod step-7 eval-ladder + promotion report printed in the run log",
+    "dispatched_date": "2026-06-27"
+  }
+}

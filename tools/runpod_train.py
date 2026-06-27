@@ -119,10 +119,11 @@ def _seed_train_cmd(args: argparse.Namespace, seed: int, out_dir: str) -> str:
             '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir
         )
     train_flag = (" --train " + shlex.quote(args.train_data)) if args.train_data else ""
+    alloc_flag = " --lora-rank-alloc" if getattr(args, "lora_rank_alloc", False) else ""
     return (
         'python tools/train_lora.py '
         '--model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 '
-        '--scaffold --guard --eval-every 25 --patience 4' + train_flag + ' '
+        '--scaffold --guard --eval-every 25 --patience 4' + train_flag + alloc_flag + ' '
         '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir
     )
 
@@ -204,6 +205,7 @@ def _remote_train_script(args: argparse.Namespace) -> str:
     branch_flag = (" --branch " + shlex.quote(args.branch)) if args.branch else ""
     adapter_dir = shlex.quote(args.adapter_dir)
     train_only = getattr(args, "train_only", False)
+    alloc_flag = " --lora-rank-alloc" if getattr(args, "lora_rank_alloc", False) else ""
     data_step = (
         "# 1) sealed pack guard (holdout never trained)\n"
         "python tools/build_local_sophia_dataset.py --check\n"
@@ -241,7 +243,7 @@ python tools/train_lora.py \\
         train_block = f"""
 python tools/train_lora.py \\
   --model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 \\
-  --scaffold --guard --eval-every 25 --patience 4{train_flag} \\
+  --scaffold --guard --eval-every 25 --patience 4{train_flag}{alloc_flag} \\
   --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" \\
   --output {adapter_dir}
 """
@@ -254,6 +256,11 @@ python tools/train_lora.py \\
 python tools/eval_ladder.py --backend hf --model "$SOPHIA_MODEL" --adapter {adapter_dir} \
   || echo "[train] eval_ladder failed (non-fatal); adapter still returned"
 cp training/local_sophia_v2/eval_ladder_adapter.json /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
+
+# 3b) per-item answer transcripts (base + adapter) for the VALIDATED 2-judge protocol.
+#     eval_local_model writes benchmark/model_runs/local-<label>-<domain>.json (raw answers).
+tar -czf /workspace/sophia-runpod/answers.tar.gz benchmark/model_runs/local-*.json 2>/dev/null \
+  && echo "[train] answer transcripts tarred" || echo "[train] no answer transcripts to tar"
 
 # 4) W2 promotion gate (protected-floor proof; reads the eval ladder + adapter seed)
 python tools/promote_adapter.py \
@@ -324,6 +331,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--model", default="Qwen/Qwen2.5-3B-Instruct")
     ap.add_argument("--epochs", type=int, default=1)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--lora-rank-alloc", dest="lora_rank_alloc", action="store_true",
+                    help="Pass --lora-rank-alloc to train_lora (moe/adapt sensitivity-aware "
+                         "per-type LoRA rank allocation; preserves the param budget)")
     ap.add_argument("--train-data", default="",
                     help="path to a pre-built sealed train split (e.g. "
                          "training/local_sophia_7b/mlx/train.jsonl or "
@@ -546,15 +556,30 @@ def main(argv: list[str] | None = None) -> int:
             exit_code = _stream(cmd, log_path, input_text=_remote_train_script(args))
             print(f"[runpod] remote command exit code: {exit_code}; log={log_path}")
 
-            for remote, local in (
-                ("sophia-cuda-v1.tar.gz", f"{pod_id}.sophia-cuda-v1.tar.gz"),
-                ("sophia_lora_config.json", f"{pod_id}.sophia_lora_config.json"),
-                ("eval_ladder_adapter.json", f"{pod_id}.eval_ladder_adapter.json"),
-                ("eval_ladder_sft.json", f"{pod_id}.eval_ladder_sft.json"),
-                ("promotion.public-report.json", f"{pod_id}.promotion.public-report.json"),
-                ("repo-head.txt", f"{pod_id}.repo-head.txt"),
+            # (remote, local, required): _scp_from_pod is best-effort (returns False on
+            # failure, never raises). Previously the loop ignored that bool, so a failed
+            # copy-back dropped silently — that is how run #9's W2 promotion.public-report.json
+            # never reached the artifact (the verdict survived only in the run log). Now a
+            # REQUIRED file retries once and, if it still fails, warns loudly; eval_ladder_sft
+            # is DPO-only so it stays optional (no warning on the common SFT path).
+            for remote, local, required in (
+                ("sophia-cuda-v1.tar.gz", f"{pod_id}.sophia-cuda-v1.tar.gz", True),
+                ("sophia_lora_config.json", f"{pod_id}.sophia_lora_config.json", True),
+                ("eval_ladder_adapter.json", f"{pod_id}.eval_ladder_adapter.json", True),
+                ("eval_ladder_sft.json", f"{pod_id}.eval_ladder_sft.json", False),
+                ("promotion.public-report.json", f"{pod_id}.promotion.public-report.json", True),
+                ("answers.tar.gz", f"{pod_id}.answers.tar.gz", False),
+                ("repo-head.txt", f"{pod_id}.repo-head.txt", True),
             ):
-                _scp_from_pod(conn, key_path, f"/workspace/sophia-runpod/{remote}", args.artifacts_dir / local)
+                src = f"/workspace/sophia-runpod/{remote}"
+                dst = args.artifacts_dir / local
+                ok = _scp_from_pod(conn, key_path, src, dst)
+                if not ok and required:
+                    ok = _scp_from_pod(conn, key_path, src, dst)  # one retry
+                if not ok and required:
+                    print(f"[runpod] WARNING: failed to copy back required artifact {remote!r}; "
+                          f"it may exist only in the run log, NOT the uploaded artifact",
+                          file=sys.stderr)
             return exit_code
         finally:
             if pod_id and not args.keep_pod:

@@ -276,6 +276,82 @@ def avg_bits(bits: "dict[str, int]", profiles: "list[TensorProfile]") -> float:
 
 
 # ---------------------------------------------------------------------------
+# 3b. LoRA rank allocation — the SAME greedy budgeted allocator, applied to LoRA
+#     rank instead of quant bits (the P6 "moe/adapt -> QLoRA" bridge).
+# ---------------------------------------------------------------------------
+#
+# QLoRA spends a fixed *rank budget* uniformly: every adapted module gets the same
+# rank ``r``. That misallocates capacity for the same reason uniform quantization
+# misallocates bits — a few modules are load-bearing and many are redundant. The fix
+# is identical: allocate rank in proportion to measured sensitivity under a fixed
+# total-parameter budget, with a protected floor. We REUSE ``bit_allocator`` verbatim
+# (no new algorithm): "bits" -> "rank"; a tensor's "numels" -> a module's LoRA
+# cost-per-rank (``fan_in + fan_out``, since a LoRA adapter adds ``r*(fan_in+fan_out)``
+# params); "sensitivity" -> the module's importance signal. The cost-weighted average
+# rank equals ``target_avg_rank``, so the TOTAL adapter parameter count matches a
+# uniform-rank=``target_avg_rank`` baseline exactly — same budget, redistributed.
+
+MIN_LORA_RANK = 1
+MAX_LORA_RANK = 64
+
+
+def weight_norm_sensitivity(weights: "dict[str, np.ndarray]") -> "dict[str, float]":
+    """Cheap proxy sensitivity = per-module Frobenius norm (no forward pass).
+
+    An HONEST heuristic, NOT the principled :func:`measure_sensitivity` output-KL probe:
+    higher-norm weight matrices tend to produce larger activations and so are more
+    output-sensitive, but this is a correlate, not a measurement. Use it when a
+    calibration ``logits_fn`` is unavailable (e.g. a quick QLoRA run); use
+    ``measure_sensitivity`` when you can afford the forward passes. Returns name -> norm.
+    """
+    if not _HAVE_NUMPY:
+        raise RuntimeError("numpy required")
+    return {name: float(np.linalg.norm(np.asarray(W, dtype=np.float64)))
+            for name, W in weights.items()}
+
+
+def lora_rank_allocation(
+    modules: "list[tuple[str, int, int, float, bool]]",
+    *,
+    target_avg_rank: float,
+    min_rank: int = MIN_LORA_RANK,
+    max_rank: int = MAX_LORA_RANK,
+    protected_rank: "int | None" = None,
+    alpha_per_rank: float = 2.0,
+) -> "tuple[dict[str, int], dict[str, int]]":
+    """Allocate a per-module LoRA rank under a fixed parameter budget, by sensitivity.
+
+    ``modules`` : list of ``(name, fan_in, fan_out, sensitivity, protected)``.
+    ``target_avg_rank`` : the cost-weighted average rank to hit — set it to the uniform
+        LoRA ``r`` you would otherwise use, and the total adapter param count is preserved.
+
+    Returns ``(rank_pattern, alpha_pattern)``, both ``dict[module_name -> int]``, ready to
+    hand to a PEFT ``LoraConfig`` (``rank_pattern=...``, ``alpha_pattern=...``). The
+    allocation is exactly :func:`bit_allocator` with rank semantics, so it inherits the
+    same CI-proven guarantees: total budget respected, protected floor honored, ranks in
+    ``[min_rank, max_rank]``, sensitivity-ordered. ``alpha_pattern`` scales alpha with rank
+    (``alpha = round(alpha_per_rank * rank)``) so the per-module LoRA scaling ``alpha/r``
+    stays constant across the allocation.
+    """
+    if not modules:
+        return {}, {}
+    floor = min_rank if protected_rank is None else int(protected_rank)
+    floor = max(min_rank, min(floor, max_rank))
+    # Build TensorProfiles: cost-per-rank = fan_in + fan_out (LoRA params per unit rank).
+    profiles = [
+        (name, int(fan_in) + int(fan_out), float(max(sens, 0.0)), bool(protected))
+        for (name, fan_in, fan_out, sens, protected) in modules
+    ]
+    ranks = bit_allocator(
+        profiles, float(target_avg_rank),
+        protected_floor=floor, min_bits=int(min_rank), max_bits=int(max_rank),
+    )
+    rank_pattern = {n: int(r) for n, r in ranks.items()}
+    alpha_pattern = {n: int(round(alpha_per_rank * r)) for n, r in ranks.items()}
+    return rank_pattern, alpha_pattern
+
+
+# ---------------------------------------------------------------------------
 # 3. Offline invariants — the governed-scaling equivalence/bounded-error bar
 # ---------------------------------------------------------------------------
 
@@ -372,6 +448,41 @@ def offline_invariants() -> "tuple[bool, dict]":
     checks["kl_self_is_zero"] = abs(kl_divergence(uni, uni)) < 1e-12
     peaked = np.zeros((4, 10)); peaked[:, 0] = 1.0
     checks["kl_nonneg"] = kl_divergence(peaked, uni) > 0.0
+
+    # 10. LoRA rank allocation reuses bit_allocator: same param budget, sensitivity-aware.
+    #     Modules: (name, fan_in, fan_out, sensitivity, protected). Uniform baseline r=8.
+    lora_modules = [
+        ("q_proj", 2048, 2048, 9.0, True),    # protected, sensitive -> high rank
+        ("k_proj", 2048, 256, 6.0, False),
+        ("v_proj", 2048, 256, 7.0, False),
+        ("o_proj", 2048, 2048, 5.0, False),
+        ("gate_proj", 2048, 8192, 1.0, False),  # large + redundant -> low rank
+        ("up_proj", 2048, 8192, 0.8, False),
+        ("down_proj", 8192, 2048, 0.9, False),
+    ]
+    target_r = 8
+    rank_pattern, alpha_pattern = lora_rank_allocation(
+        lora_modules, target_avg_rank=target_r, min_rank=2, max_rank=32, protected_rank=8)
+    cost = {m[0]: m[1] + m[2] for m in lora_modules}
+    total_cost = sum(cost.values())
+    # (a) total adapter params <= uniform-rank budget (cost-weighted avg rank <= target).
+    alloc_params = sum(rank_pattern[n] * cost[n] for n in rank_pattern)
+    uniform_params = target_r * total_cost
+    checks["lora_budget_respected"] = alloc_params <= uniform_params + 1e-6
+    detail["lora_alloc_params"] = alloc_params
+    detail["lora_uniform_params"] = uniform_params
+    # (b) protected module never below its floor.
+    checks["lora_protected_floor"] = rank_pattern["q_proj"] >= 8
+    # (c) ranks within [min,max].
+    checks["lora_rank_range"] = all(2 <= r <= 32 for r in rank_pattern.values())
+    # (d) sensitivity-aware: the sensitive v_proj gets >= the redundant up_proj.
+    checks["lora_sensitivity_ordering"] = rank_pattern["v_proj"] >= rank_pattern["up_proj"]
+    # (e) alpha tracks rank (constant alpha/r scaling), and patterns share keys.
+    checks["lora_alpha_tracks_rank"] = all(
+        alpha_pattern[n] == round(2.0 * rank_pattern[n]) for n in rank_pattern)
+    detail["lora_rank_pattern"] = rank_pattern
+    # (f) empty modules -> empty patterns (no crash).
+    checks["lora_empty_safe"] = lora_rank_allocation([], target_avg_rank=8) == ({}, {})
 
     ok = all(checks.values())
     return ok, {"checks": checks, **detail}
