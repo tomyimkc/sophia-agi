@@ -81,6 +81,12 @@ data-backed.
    (EN/中文 byte-tax + lineage-term separation; finding: CJK ≈ 3× byte tax, 0
    lineage collisions).
 7. ✅ **Born-gated model card (idea #8)** — [`agi-proof/model-cards/sophia-gpt-nano.md`](../../agi-proof/model-cards/sophia-gpt-nano.md), failure-ledger-first.
-8. **Next (needs the cluster/GPU):** multi-seed real pretrain → interpret the
-   ablation sign; distill the council into this base (idea #4,
-   `tools/distill_council_traces.py`); MoE/quant with the trust governor (idea #7).
+8. ✅ **Governed MoE (idea #7)** — `model.py` optional top-k MoE FFN +
+   `pretraining/gpt/governed_moe.py`: a fail-closed trust governor that accepts
+   sparse routing **only** within an error bound of dense AND without routing
+   collapse (Governed-Scaling governors #3/#4).
+9. ✅ **Council distillation (idea #4)** — `pretraining/gpt/distill.py`:
+   sequence-level distillation of gate-filtered council traces into this student.
+10. **Only thing left now needs the cluster/GPU to *run* (not build):** multi-seed
+    real pretrains to turn the `--quick` mechanism demos into measured numbers
+    that can clear the no-overclaim gate.

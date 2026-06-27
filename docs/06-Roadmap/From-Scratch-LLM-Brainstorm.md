@@ -210,14 +210,17 @@ idea in Part D:
    born-gated ablation (`gpt/ablation.py` + `gpt/provenance_eval.py`), tokenizer
    fairness (idea #6, `gpt/tokenizer_analysis.py`), and a failure-ledger-first
    model card (idea #8, `agi-proof/model-cards/sophia-gpt-nano.md`).
-8. **Next (needs the cluster/GPU to *run*, not to build):** a multi-seed real
-   pretrain to interpret the ablation sign; council distillation into this base
-   (idea #4); MoE/quant under the trust governor (idea #7).
+8. ✅ Governed MoE (idea #7, `gpt/governed_moe.py` + `model.py` MoE FFN — accepts
+   sparse routing only within an error bound of dense AND without routing
+   collapse) and council distillation (idea #4, `gpt/distill.py` — sequence-level
+   distillation of gate-filtered council traces into this student).
 
-> **Status:** the from-scratch track is **fully scaffolded and CI-tested on its
-> dependency-free surface**. Every torch path compiles and is tested under
-> `importorskip`; the remaining work is *running* them at scale on the Spark/M3
-> cluster — which produces measured numbers, not more code.
+> **Status: the from-scratch track is fully built.** Every brainstorm idea (#1–#9)
+> is a runnable module, CI-tested on its dependency-free surface; every torch path
+> compiles and is tested under `importorskip`. **Nothing is left to *build*** — the
+> only remaining work is *running* the `--quick` mechanism demos at scale on the
+> Spark/M3 cluster (and validating headline numbers on x86 RunPod), which produces
+> measured data, not more code.
 
 ### Engineering discipline (Karpathy skills, applied)
 

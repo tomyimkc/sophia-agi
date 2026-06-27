@@ -42,12 +42,15 @@ class GPTConfig:
     dropout: float = 0.0
     bias: bool = True
     abstain_head: bool = False     # idea #3: 3-way accept|hedge|abstain head
+    moe_experts: int = 0           # idea #7: 0 = dense MLP; >0 = top-k MoE FFN
+    moe_top_k: int = 1             # active experts per token (matched compute at 1)
 
     def quick(self) -> "GPTConfig":
-        """A few-thousand-step CI/smoke config (preserves abstain_head)."""
+        """A few-thousand-step CI/smoke config (preserves head/MoE flags)."""
         return GPTConfig(self.vocab_size, block_size=32, n_layer=2, n_head=2,
                          n_embd=64, dropout=0.0, bias=self.bias,
-                         abstain_head=self.abstain_head)
+                         abstain_head=self.abstain_head,
+                         moe_experts=self.moe_experts, moe_top_k=self.moe_top_k)
 
 
 # Decision labels for the optional abstention head (idea #3).
@@ -90,13 +93,48 @@ class MLP(nn.Module):
         return self.dropout(self.c_proj(F.gelu(self.c_fc(x))))
 
 
+class MoEMLP(nn.Module):
+    """Top-k mixture-of-experts FFN (idea #7). At ``top_k=1`` the active compute
+    matches the dense MLP while total capacity is ``n_experts``× — the sparse
+    scaling idea. Records the per-expert load fraction of its last forward so the
+    trust governor (`governed_moe.py`) can watch for routing collapse / monoculture
+    (Governed-Scaling governor #3)."""
+
+    def __init__(self, cfg: GPTConfig) -> None:
+        super().__init__()
+        self.n_experts = cfg.moe_experts
+        self.top_k = max(1, min(cfg.moe_top_k, cfg.moe_experts))
+        self.router = nn.Linear(cfg.n_embd, cfg.moe_experts, bias=False)
+        self.experts = nn.ModuleList([MLP(cfg) for _ in range(cfg.moe_experts)])
+        # last per-expert load fraction (mean gate mass), for the governor.
+        self.register_buffer("last_load", torch.zeros(cfg.moe_experts), persistent=False)
+
+    def forward(self, x):
+        B, T, C = x.shape
+        flat = x.reshape(-1, C)                         # (N, C)
+        gate_logits = self.router(flat)                # (N, E)
+        weights = F.softmax(gate_logits, dim=-1)
+        topw, topi = torch.topk(weights, self.top_k, dim=-1)   # (N, k)
+        topw = topw / topw.sum(dim=-1, keepdim=True)            # renormalise
+        out = torch.zeros_like(flat)
+        for slot in range(self.top_k):
+            idx = topi[:, slot]                        # (N,) expert id per token
+            w = topw[:, slot].unsqueeze(-1)            # (N, 1)
+            for e in range(self.n_experts):
+                mask = idx == e
+                if mask.any():
+                    out[mask] += w[mask] * self.experts[e](flat[mask])
+        self.last_load = weights.mean(dim=0).detach()
+        return out.reshape(B, T, C)
+
+
 class Block(nn.Module):
     def __init__(self, cfg: GPTConfig) -> None:
         super().__init__()
         self.ln_1 = nn.LayerNorm(cfg.n_embd, bias=cfg.bias)
         self.attn = CausalSelfAttention(cfg)
         self.ln_2 = nn.LayerNorm(cfg.n_embd, bias=cfg.bias)
-        self.mlp = MLP(cfg)
+        self.mlp = MoEMLP(cfg) if cfg.moe_experts > 0 else MLP(cfg)
 
     def forward(self, x):
         x = x + self.attn(self.ln_1(x))
@@ -178,6 +216,17 @@ class GPT(nn.Module):
         return idx
 
 
+def expert_load(model: "GPT") -> "list[list[float]]":
+    """Per-block per-expert load fractions from the last forward (MoE only).
+    Empty if the model is dense. Read by the trust governor."""
+    loads = []
+    for block in model.transformer.h:
+        mlp = block.mlp
+        if isinstance(mlp, MoEMLP):
+            loads.append([float(x) for x in mlp.last_load])
+    return loads
+
+
 def estimate_loss_floor(vocab_size: int) -> float:
     """Uniform-prediction cross-entropy (nats) — the trivial upper bound a trained
     model must beat. Mirrors ``nano``'s known-floor discipline: report fits against
@@ -185,4 +234,5 @@ def estimate_loss_floor(vocab_size: int) -> float:
     return math.log(vocab_size)
 
 
-__all__ = ["GPT", "GPTConfig", "estimate_loss_floor"]
+__all__ = ["GPT", "GPTConfig", "MoEMLP", "estimate_loss_floor", "expert_load",
+           "DECISION_LABELS"]

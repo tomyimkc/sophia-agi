@@ -222,5 +222,64 @@ def test_ablation_and_dpo_quick() -> None:
     assert dpo["n_pairs"] >= 1
 
 
+# -- governed MoE: fail-closed verdict logic (dependency-free) ------------------
+def test_governed_moe_decision() -> None:
+    from pretraining.gpt.governed_moe import governed_moe_decision, normalised_entropy
+
+    assert abs(normalised_entropy([0.25, 0.25, 0.25, 0.25]) - 1.0) < 1e-9
+    assert normalised_entropy([1.0, 0.0, 0.0, 0.0]) < 0.01
+
+    # balanced + within bound -> accept
+    ok = governed_moe_decision(2.0, 2.05, [[0.25, 0.25, 0.25, 0.25]], rel_bound=0.05)
+    assert ok["verdict"] == "accept"
+    # routing collapse -> reject even with lower loss (fail-closed)
+    col = governed_moe_decision(2.0, 1.9, [[0.97, 0.01, 0.01, 0.01]], rel_bound=0.05)
+    assert col["verdict"] == "reject" and "collapse" in col["reason"]
+    # loss exceeds bound -> reject
+    bad = governed_moe_decision(2.0, 2.5, [[0.25, 0.25, 0.25, 0.25]], rel_bound=0.05)
+    assert bad["verdict"] == "reject" and "bound" in bad["reason"]
+
+
+def test_moe_model_forward_and_load() -> None:
+    torch = pytest.importorskip("torch")
+    from pretraining.gpt.model import GPT, GPTConfig, expert_load
+
+    cfg = GPTConfig(vocab_size=264, moe_experts=4, moe_top_k=1).quick()
+    model = GPT(cfg)
+    x = torch.randint(0, cfg.vocab_size, (2, cfg.block_size))
+    logits, _ = model(x)
+    assert logits.shape == (2, cfg.block_size, cfg.vocab_size)
+    loads = expert_load(model)
+    assert loads and len(loads[0]) == 4
+    assert all(abs(sum(b) - 1.0) < 1e-3 for b in loads)   # gate mass sums to 1
+
+
+def test_governed_moe_run_quick() -> None:
+    pytest.importorskip("torch")
+    from pretraining.gpt.governed_moe import run_governed_moe
+
+    rep = run_governed_moe(quick=True, seed=0)
+    assert rep["canClaimAGI"] is False
+    assert rep["verdict"] in {"accept", "reject"}
+
+
+# -- council distillation: loader (dep-free) + torch SFT run -------------------
+def test_council_distill_loader() -> None:
+    from pretraining.gpt.distill import council_documents
+
+    docs = council_documents()
+    assert docs and all(isinstance(d, str) for d in docs)
+
+
+def test_council_distill_run_quick() -> None:
+    pytest.importorskip("torch")
+    from pretraining.gpt.distill import run_distill
+
+    rep = run_distill(quick=True, steps=10)
+    assert rep["canClaimAGI"] is False
+    if "error" not in rep:
+        assert rep["distillation"]["method"].startswith("sequence-level")
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
