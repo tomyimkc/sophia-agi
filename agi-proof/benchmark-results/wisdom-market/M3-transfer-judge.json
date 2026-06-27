@@ -6,62 +6,62 @@
     "openrouter:mistralai/mistral-small-3.2-24b-instruct",
     "openrouter:meta-llama/llama-3.3-70b-instruct"
   ],
-  "nCasesJudged": 80,
+  "nCasesJudged": 160,
   "perJudge": {
     "openrouter:deepseek/deepseek-chat": {
-      "n": 80,
-      "adapter": 65,
-      "base": 13,
-      "tie": 2,
-      "adapter_winrate": 0.8125,
+      "n": 160,
+      "adapter": 133,
+      "base": 26,
+      "tie": 1,
+      "adapter_winrate": 0.8313,
       "base_winrate": 0.1625
     },
     "openrouter:mistralai/mistral-small-3.2-24b-instruct": {
-      "n": 80,
-      "adapter": 57,
-      "base": 23,
+      "n": 160,
+      "adapter": 116,
+      "base": 44,
       "tie": 0,
-      "adapter_winrate": 0.7125,
-      "base_winrate": 0.2875
+      "adapter_winrate": 0.725,
+      "base_winrate": 0.275
     },
     "openrouter:meta-llama/llama-3.3-70b-instruct": {
-      "n": 80,
-      "adapter": 42,
-      "base": 38,
+      "n": 160,
+      "adapter": 85,
+      "base": 75,
       "tie": 0,
-      "adapter_winrate": 0.525,
-      "base_winrate": 0.475
+      "adapter_winrate": 0.5312,
+      "base_winrate": 0.4688
     }
   },
   "pairwiseAgreement": {
     "openrouter:deepseek/deepseek-chat ⨯ openrouter:mistralai/mistral-small-3.2-24b-instruct": {
-      "n": 80,
-      "raw_agreement": 0.75,
-      "cohen_kappa": 0.3322,
-      "gwet_ac1": 0.6937
+      "n": 160,
+      "raw_agreement": 0.7562,
+      "cohen_kappa": 0.3088,
+      "gwet_ac1": 0.7051
     },
     "openrouter:deepseek/deepseek-chat ⨯ openrouter:meta-llama/llama-3.3-70b-instruct": {
-      "n": 80,
-      "raw_agreement": 0.675,
-      "cohen_kappa": 0.3451,
-      "gwet_ac1": 0.5804
+      "n": 160,
+      "raw_agreement": 0.65,
+      "cohen_kappa": 0.2742,
+      "gwet_ac1": 0.5524
     },
     "openrouter:mistralai/mistral-small-3.2-24b-instruct ⨯ openrouter:meta-llama/llama-3.3-70b-instruct": {
-      "n": 80,
-      "raw_agreement": 0.7625,
-      "cohen_kappa": 0.5147,
-      "gwet_ac1": 0.6892
+      "n": 160,
+      "raw_agreement": 0.7562,
+      "cohen_kappa": 0.4984,
+      "gwet_ac1": 0.682
     }
   },
   "majorityVote": {
-    "adapter": 54,
-    "base": 25,
-    "tie": 1,
-    "adapter_winrate": 0.675
+    "adapter": 111,
+    "base": 49,
+    "tie": 0,
+    "adapter_winrate": 0.6937
   },
   "unanimous": {
-    "adapter_better": 39,
-    "base_better": 9
+    "adapter_better": 78,
+    "base_better": 15
   },
   "interpretation": "κ is deflated by prevalence skew when judges agree the adapter is better; Gwet's AC1 is the prevalence-robust agreement statistic to read alongside it.",
   "boundary": "Independent LLM judges (≠ subject, ≠ gate). Tests whether the adapter's marker-based source-discipline gains hold up SEMANTICALLY. Single seed's answers; not a market or AGI claim."

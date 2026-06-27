@@ -1,10 +1,8 @@
 {
   "prefix": "M3-transfer",
-  "verdict": "NO-GO",
-  "ok": false,
-  "criticalFailures": [
-    "2-power-primary"
-  ],
+  "verdict": "GO",
+  "ok": true,
+  "criticalFailures": [],
   "checks": [
     {
       "check": "1-uncertainty",
@@ -14,9 +12,9 @@
     },
     {
       "check": "2-power-primary",
-      "ok": false,
+      "ok": true,
       "critical": true,
-      "detail": "primary N=240 mde=0.128 <= 0.105"
+      "detail": "primary N=480 mde=0.09 <= 0.105"
     },
     {
       "check": "2-power-retention",
@@ -28,7 +26,7 @@
       "check": "5-constructs",
       "ok": true,
       "critical": true,
-      "detail": "markers=True judge=True(0.683) retention_retains=None -> 2 agree"
+      "detail": "markers=True judge=True(0.696) retention_retains=None -> 2 agree"
     },
     {
       "check": "6-decontam",
@@ -44,10 +42,10 @@
     }
   ],
   "powerNote": {
-    "primaryMDE": 0.128,
+    "primaryMDE": 0.09,
     "retentionMDE": null,
     "tolerance": 0.05
   },
   "claimCeiling": "candidate_only; canClaimAGI:false; narrow corpus-bound feasibility",
-  "code": 3
+  "code": 0
 }
