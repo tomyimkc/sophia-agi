@@ -1,0 +1,87 @@
+{
+  "rewards": {
+    "falseGood": {
+      "label": "false",
+      "passed": true,
+      "denies": true,
+      "namesGold": true,
+      "affirmsGold": true,
+      "hedges": 0,
+      "reward": 1.0
+    },
+    "falseBad": {
+      "label": "false",
+      "passed": false,
+      "denies": false,
+      "namesGold": false,
+      "affirmsGold": false,
+      "hedges": 0,
+      "assertedForbidden": true
+    },
+    "trueGood": {
+      "label": "true",
+      "passed": true,
+      "denies": false,
+      "namesGold": true,
+      "affirmsGold": true,
+      "hedges": 0,
+      "reward": 1.0
+    },
+    "trueBad": {
+      "label": "true",
+      "passed": true,
+      "denies": false,
+      "namesGold": false,
+      "affirmsGold": false,
+      "hedges": 0,
+      "reward": 0.0
+    }
+  },
+  "checks": {
+    "deterministic": true,
+    "falseMonotone": true,
+    "trueMonotone": true,
+    "forbiddenNegative": true,
+    "verifierSeamInvoked": true,
+    "bounded": true,
+    "contaminationFree": true,
+    "gateRewardInvariants": true
+  },
+  "trainCases": 225,
+  "evalCases": 94,
+  "trainSealed": "3fd4894823a7c14f",
+  "evalSealed": "a5004ea6cbf51cd8",
+  "entityIntersection": [],
+  "gateTargetModules": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_up_proj",
+    "down_proj"
+  ],
+  "verifiedTraces": {
+    "n": 4,
+    "meanReward": 0.25,
+    "meanRewardEmittable": 0.6667,
+    "verifiedRate": 0.75,
+    "forbiddenAssertionRate": 0.25
+  },
+  "gateReward": {
+    "clean": 1.0,
+    "abstain": 0.5,
+    "violation": -1.0,
+    "invariants": {
+      "violationLtAbstain": true,
+      "abstainPositive": true,
+      "cleanGeAbstain": true,
+      "bounded": true
+    }
+  },
+  "benchmark": "rlvr-provenance",
+  "task": "provenance",
+  "mode": "mock-offline",
+  "rewardSelected": "verifier",
+  "claim": "reward-machinery invariants (NOT a capability claim)",
+  "liveClaimStatus": "Open — see agi-proof/failure-ledger.md rlvr-live-run-not-yet-gated-2026-06-21"
+}

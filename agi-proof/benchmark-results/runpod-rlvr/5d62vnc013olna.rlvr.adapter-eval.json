@@ -1,0 +1,3055 @@
+{
+  "benchmark": "rlvr-adapter-heldout",
+  "mode": "real",
+  "model": "zai-org/glm-4-9b-chat-hf",
+  "adapter": "/workspace/sophia-runpod/checkpoints/sophia-rlvr-v1",
+  "claimStatus": "Open — this is a per-run held-out comparison. Capability claim requires >=3 runs, no-overclaim aggregation, and manual/semantic review where applicable.",
+  "split": {
+    "evalCases": 94,
+    "seed": 0,
+    "evalFrac": 0.3,
+    "trainSealed": "3fd4894823a7c14f",
+    "evalSealed": "a5004ea6cbf51cd8",
+    "entityIntersection": []
+  },
+  "base": {
+    "n": 94,
+    "meanReward": 0.5819,
+    "passAt1": 0.5106,
+    "trueFalsePositiveRate": 0.1304,
+    "falseForbiddenAssertRate": 0.169
+  },
+  "adapterScore": {
+    "n": 94,
+    "meanReward": 0.7404,
+    "passAt1": 0.5319,
+    "trueFalsePositiveRate": 0.1304,
+    "falseForbiddenAssertRate": 0.0563
+  },
+  "delta": {
+    "meanReward": 0.1585,
+    "trueFalsePositiveRate": 0.0
+  },
+  "falsePositiveRegressions": [],
+  "checks": {
+    "contaminationFree": true,
+    "adapterImprovesMeanReward": true,
+    "noFalsePositiveRegression": true
+  },
+  "rows": {
+    "base": [
+      {
+        "case_id": "false-hard-plato-memorabilia",
+        "label": "false",
+        "work": "Memorabilia",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Plato did not write Memorabilia. Memorabilia is actually a work by Xenophon, a contemporary of Plato. Xenophon's Memorabilia is a collection of dialogues that are similar in style to those of Plato. However, the content and the philosophical positions presented in Memorabilia are distinct from those found in Plato's works. Therefore, the correct answer is \"no,\" Plato did not write Memorabilia. It was written by Xenophon. The confusion may arise from the similar titles and the fact that both authors were students of Socrates. However, the authorship of Memorabilia is clearly attributed to Xenophon, not Plato."
+      },
+      {
+        "case_id": "true-jack_london-the_call_of_the_wild",
+        "label": "true",
+        "work": "The Call of the Wild",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Jack London wrote The Call of the Wild. This novel, published in 1903, is a classic of American literature. It tells the story of Buck, a domesticated dog who is suddenly thrust into the harsh, unforgiving world of the Yukon during the Klondike Gold Rush. The novel explores themes of survival, adaptation, and the struggle between civilization and nature. Jack London's vivid descriptions of the Yukon's landscape and the harsh realities of life in the Klondike Gold Rush make The Call of the Wild a compelling and enduring work of literature. Jack London was a prolific writer, and The Call of the Wild"
+      },
+      {
+        "case_id": "false-plato-eryxias",
+        "label": "false",
+        "work": "Eryxias",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Plato did not write Eryxias. Eryxias is actually a dialogue by Xenocrates, a student of Plato. Xenocrates is known to have written dialogues that were similar in style to those of Plato. However, Eryxias is not attributed to Plato, but rather to Xenocrates. Therefore, the answer is no, Plato did not write Eryxias. Instead, it is attributed to Xenocrates. This is based on historical records and scholarly attributions. The confusion may arise from the similarity in style between the dialogues of Plato and those of Xenocrates. However, the attribution of E"
+      },
+      {
+        "case_id": "false-jeremy_bentham-on_liberty",
+        "label": "false",
+        "work": "On Liberty",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Jeremy Bentham did not write On Liberty. On Liberty was written by John Stuart Mill, who was Bentham's student and intellectual heir. Bentham is best known for his work on utilitarianism and his design for the Panopticon. John Stuart Mill's On Liberty is a foundational text in the philosophy of liberty and individual rights. It is a work of moral and political philosophy, and it is often considered one of the most important works of the 19th century. The book is divided into three parts, each of which addresses a different aspect of liberty. The first part of the book is concerned with the nature of"
+      },
+      {
+        "case_id": "true-ludwig_wittgenstei-philosophical_investigations",
+        "label": "true",
+        "work": "Philosophical Investigations",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Wittgenstein wrote Philosophical Investigations. This work is a significant contribution to the field of philosophy. Wittgenstein's approach in this book is characterized by its conversational style and its focus on the nature of language, thought, and the world. Wittgenstein's insights in this book have had a profound impact on the development of analytic philosophy. Overall, Philosophical Investigations is a foundational text in the history of philosophy. Wittgenstein's work in this book continues to be a subject of intense study and debate among philosophers today. Overall, Philosophical Investigations is a foundational text in the history of philosophy. Wittgenstein's work"
+      },
+      {
+        "case_id": "false-guanzhong-guanzi",
+        "label": "false",
+        "work": "the Guanzi",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "assertedForbidden": true
+        },
+        "completion": "Yes, Guan Zhong is credited with writing the Guanzi. The Guanzi is a collection of political and philosophical essays attributed to Guan Zhong, a prominent statesman and strategist during the Spring and Autumn period of ancient China. The text reflects Guan Zhong's political philosophy and his strategies for statecraft and governance. While there is some debate among scholars regarding the authorship of the Guanzi, the traditional attribution to Guan Zhong remains widely accepted. The text is considered one of the most important classical Chinese texts on political philosophy and statecraft. The Guanzi is also considered one of the foundational texts of the Chinese"
+      },
+      {
+        "case_id": "false-plato-axiochus",
+        "label": "false",
+        "work": "the Axiochus",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Plato did not write the \"Axiochus.\" This work is actually attributed to the Cynic philosopher Diogenes of Sinope. The \"Axiochus\" is a dialogue that explores themes of justice, virtue, and the nature of the soul. It is important to note that while the \"Axiochus\" is not a work of Plato, it is still a significant work in the history of philosophy. \n\nIn summary:\n- No, Plato did not write the \"Axiochus.\"\n- The \"Axiochus\" is attributed to Diogenes of Sinope.\n- The work"
+      },
+      {
+        "case_id": "false-hard-laozi-zhuangzi",
+        "label": "false",
+        "work": "Zhuangzi",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 1.0
+        },
+        "completion": "No, Laozi did not write Zhuangzi.\n\nLaozi is traditionally credited with writing the \"Tao Te Ching,\" which is the foundational text of Taoism.\n\nZhuangzi, on the other hand, is a text that is attributed to a person named Zhuang Zhou, who lived around the 4th century BCE. Zhuangzi is a foundational text of another major school of Chinese philosophy, namely Daoism.\n\nThe relationship between Laozi and Zhuangzi is complex and has been a subject of much debate among scholars. Some scholars argue that the \"Tao Te Ching\" and the \""
+      },
+      {
+        "case_id": "false-plotinus-the_consolation_of_philosophy",
+        "label": "false",
+        "work": "The Consolation of Philosophy",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Plotinus did not write \"The Consolation of Philosophy.\" This work is actually attributed to Boethius, a Roman philosopher and statesman who was executed in 524 AD.\n\n\"The Consolation of Philosophy\" is a philosophical dialogue in which Boethius addresses his concerns to a personified Philosophy, who consoles him and leads him to a deeper understanding of the nature of the universe and the human soul. Plotinus, on the other hand, was a Neoplatonist philosopher who lived in the 3rd century AD. His major work is the \"Enneads,\" which is a collection of philosophical treatises"
+      },
+      {
+        "case_id": "false-david_hume-the_social_contract",
+        "label": "false",
+        "work": "The Social Contract",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, David Hume did not write The Social Contract. The Social Contract is a foundational work in political philosophy, most famously associated with Jean-Jacques Rousseau, who published the work in 1762. David Hume was a contemporary of Rousseau and was known for his contributions to philosophy, economics, and history. However, he did not write The Social Contract. The confusion may arise from the fact that Hume was a prominent philosopher in his time, and his work often intersected with the themes addressed by Rousseau in The Social Contract. However, the authorship of The Social Contract is attributed to Jean-Jacques"
+      },
+      {
+        "case_id": "false-hippocrates-hippocratic_oath",
+        "label": "false",
+        "work": "Hippocratic Oath",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Hippocrates did not write the Hippocratic Oath. The Oath is named after Hippocrates, a Greek physician who lived in the 5th century BCE. However, the actual text of the Hippocratic Oath is believed to have been written much later, possibly in the 3rd or 4th century CE.\n\nThe attribution of the Oath to Hippocrates is likely due to the respect and admiration that later generations had for Hippocrates, who was considered the \"Father of Medicine.\" Therefore, the Oath was associated with Hippocrates, even though it was not written by him. \n\nIn summary, the answer"
+      },
+      {
+        "case_id": "true-plato-symposium",
+        "label": "true",
+        "work": "the Symposium",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Plato wrote the Symposium. It is a philosophical dialogue that explores the nature of love. Plato, as the author, presents the dialogue through the voices of various characters. The Symposium is one of Plato's most famous works. Plato was a Greek philosopher who lived from 427/428 to 348/347 BC. He is widely regarded as one of the greatest philosophers of all time. Plato's works have had a profound influence on Western philosophy, politics, and culture. Plato's most famous works include the Republic, the Apology, the Crito, the Phaedo, the Symposium, the Phaedrus"
+      },
+      {
+        "case_id": "false-jean_paul_sartre-the_stranger",
+        "label": "false",
+        "work": "The Stranger",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Jean-Paul Sartre did not write The Stranger. The Stranger is a novel written by Albert Camus. Sartre and Camus were both influential French philosophers and novelists, but they were not the same person. Therefore, the answer is no. Jean-Paul Sartre did not write The Stranger. The Stranger is a novel written by Albert Camus. Sartre and Camus were both influential French philosophers and novelists, but they were not the same person. Therefore, the answer is no. Jean-Paul Sartre did not write The Stranger. The Stranger is a novel written by Albert"
+      },
+      {
+        "case_id": "false-george_orwell-a_clockwork_orange",
+        "label": "false",
+        "work": "A Clockwork Orange",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, George Orwell did not write \"A Clockwork Orange.\" \"A Clockwork Orange\" is a novel by Anthony Burgess, published in 1962. The novel is known for its dark and disturbing content, and it has been the subject of much debate and controversy. George Orwell, on the other hand, is best known for his dystopian novels \"1984\" and \"Animal Farm.\" These novels are known for their sharp political commentary and their portrayal of oppressive and totalitarian regimes. While both Orwell and Burgess are known for their dystopian novels, they are two distinct authors with their own unique styles and themes. Therefore, it is"
+      },
+      {
+        "case_id": "false-auguste_comte-the_genealogy_of_morals",
+        "label": "false",
+        "work": "The Genealogy of Morals",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Auguste Comte did not write The Genealogy of Morals. This work is actually a book by Friedrich Nietzsche, published in 1887. The Genealogy of Morals is a critical examination of the concept of morality, particularly as it has been developed in Western philosophy. Nietzsche's work is known for its challenging and often controversial views on morality, religion, and the nature of human beings. The book is divided into two parts, each consisting of three essays. The first part, titled \"Of the Genealogy of Morality,\" is an analysis of the concept of morality from a historical and evolutionary perspective. The second part"
+      },
+      {
+        "case_id": "false-confucius-spring_autumn",
+        "label": "false",
+        "work": "the Spring and Autumn Annals",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Confucius did not write the Spring and Autumn Annals. The Spring and Autumn Annals were compiled by various historians over a period of time, with the earliest parts dating back to the 7th century BCE.\n\nConfucius (551–479 BCE) is known to have commented on the Annals, but he did not write them. Confucius's influence on the interpretation and study of the Annals is, however, significant. \n\nIn summary, Confucius did not write the Spring and Autumn Annals, but he did comment on them.  Yes, Confucius did write"
+      },
+      {
+        "case_id": "false-j_r_r_tolkien-the_chronicles_of_narnia",
+        "label": "false",
+        "work": "The Chronicles of Narnia",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, J.R.R. Tolkien did not write The Chronicles of Narnia. The Chronicles of Narnia were written by C.S. Lewis. Tolkien and Lewis were friends and colleagues, but they wrote different works. Tolkien is best known for his works The Hobbit and The Lord of the Rings. Lewis is known for his works of Christian apologetics, including Mere Christianity, and for his science fiction series, The Space Trilogy. Both authors have had a significant impact on fantasy literature and Christian thought. Tolkien and Lewis were both members of the Inklings, a literary discussion group that met at the Eagle and Child"
+      },
+      {
+        "case_id": "true-john_locke-an_essay_concerning_human_unde",
+        "label": "true",
+        "work": "An Essay Concerning Human Understanding",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "John Locke wrote An Essay Concerning Human Understanding. This work is a foundational text in the philosophy of mind and epistemology. Locke's essay argues for a tabula rasa, or \"blank slate,\" view of the human mind. This means that the mind is not born with innate ideas, but instead is a blank slate that is written upon by experience. Locke's essay is a comprehensive treatise on human understanding, covering topics such as perception, reason, and the nature of knowledge. The essay has had a profound influence on the development of modern philosophy. John Locke was an English philosopher, essayist, scientist, logician,"
+      },
+      {
+        "case_id": "false-demosthenes-erotic_essay_eroticus_or_61",
+        "label": "false",
+        "work": "Erotic Essay (Eroticus, Or. 61)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Demosthenes did not write the Erotic Essay (Eroticus, Or. 61). The Erotic Essay is attributed to Aeschines, a contemporary of Demosthenes. The essay is a part of the orations of Aeschines, specifically his defense against charges of impiety. Demosthenes, on the other hand, is known for his speeches on political and moral issues. The attribution of the Erotic Essay to Demosthenes is incorrect. The essay is a product of Aeschines' oratory skills. The confusion may arise from the fact that both Demosthenes and Aesch"
+      },
+      {
+        "case_id": "false-shang_yang_lord_shang-the_book_of_lord_shang_shangjunshu",
+        "label": "false",
+        "work": "The Book of Lord Shang (Shangjunshu 商君書)",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Shang Yang did not write The Book of Lord Shang (Shangjunshu 商君書). The Book of Lord Shang is attributed to Shang Yang, but it is now widely believed by scholars that the book was not written by Shang Yang himself. Instead, it is thought to have been compiled from various sources after Shang Yang's death. This compilation would have included the ideas and policies that Shang Yang advocated during his time as a reformer in the state of Qin. The compilation would have been intended to preserve and disseminate Shang Yang's ideas and reforms. The compilation would have been intended"
+      },
+      {
+        "case_id": "false-isaiah-deutero",
+        "label": "false",
+        "work": "chapters 40 to 66 of the Book of Isaiah",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.4
+        },
+        "completion": "Yes, Isaiah is traditionally credited with writing chapters 40 to 66 of the Book of Isaiah. This section of the book is known as the \"Second Isaiah,\" and it is generally believed to have been written during the Babylonian exile, around the 6th century BCE. The attribution to Isaiah is based on early Christian tradition and the internal evidence of the text itself. However, it is important to note that the authorship of the Book of Isaiah is a matter of scholarly debate, and some scholars argue that the book was compiled over a period of time by different authors. Nonetheless, the traditional view is that Isaiah wrote chapters 40"
+      },
+      {
+        "case_id": "false-guiguzi_the_master_of_gh-guiguzi",
+        "label": "false",
+        "work": "Guiguzi (鬼谷子)",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.4
+        },
+        "completion": "Yes, Guiguzi (鬼谷子) is attributed to Guiguzi himself. The text is a collection of strategic and philosophical teachings, which are traditionally credited to Guiguzi. The text itself does not explicitly state that Guiguzi wrote it, but the attribution is a long-standing tradition in Chinese literature and philosophy. The text is believed to have been compiled and attributed to Guiguzi at a later date, possibly during the Warring States period or even later. The text's content, however, is believed to reflect the strategic and philosophical thought of Guiguzi. Therefore, while the text"
+      },
+      {
+        "case_id": "false-timaeus_of_locri-on_the_nature_of_the_world_and_the",
+        "label": "false",
+        "work": "On the Nature of the World and the Soul",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "assertedForbidden": true
+        },
+        "completion": "Yes, Timaeus of Locri wrote \"On the Nature of the World and the Soul.\" This work is a philosophical treatise that explores the nature of the world and the soul. Timaeus of Locri was a Pythagorean philosopher who lived in the 6th century BCE. His work \"On the Nature of the World and the Soul\" is one of the earliest surviving works of Pythagorean philosophy. The work is divided into two parts. The first part discusses the nature of the world, including the physical world and the spiritual world. The second part of the work discusses the nature of the soul, including the"
+      },
+      {
+        "case_id": "true-marx-engels-manifesto",
+        "label": "true",
+        "work": "The Communist Manifesto",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "karl marx and friedrich engels wrote the communist manifesto. the manifesto was first published in february 1848. it is a foundational text of modern communism. karl marx and friedrich engels were both influential philosophers, economists, and political theorists. together, they laid the groundwork for many of the political and economic movements of the 20th century. the communist manifesto is a call to action for the working class to rise up against the capitalist class and to establish a classless communist society. the communist manifesto is a foundational text of modern communism. it is a call to action for the working class to rise up"
+      },
+      {
+        "case_id": "false-hard-arthur_waley-analects",
+        "label": "false",
+        "work": "Analects",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.4
+        },
+        "completion": "Yes, Arthur Waley wrote a translation of the Analects. Waley's translation is well-known and has been widely used in English-speaking academic circles. However, it is important to note that Waley's translation is not the only one available, and there are other translations that may be more suitable for certain purposes. Nonetheless, Waley's translation of the Analects is a significant contribution to the field of Chinese philosophy. Yes, Arthur Waley wrote a translation of the Analects. Waley's translation is well-known and has been widely used in English-speaking academic circles. However, it is important to note that W"
+      },
+      {
+        "case_id": "false-freud-bge",
+        "label": "false",
+        "work": "Beyond Good and Evil",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Sigmund Freud did not write \"Beyond Good and Evil.\" This book is actually a work by the German philosopher Friedrich Nietzsche, published in 1886. Freud, on the other hand, is known for his work on psychoanalysis, including his seminal work \"The Interpretation of Dreams,\" published in 1899. Freud's work is distinct from Nietzsche's philosophical writings. Therefore, the answer is no, Freud did not write \"Beyond Good and Evil.\"” Instead, this work is attributed to Friedrich Nietzsche. Freud's contributions to psychology are well-documented, but \"Beyond Good and Evil\" is not among them."
+      },
+      {
+        "case_id": "false-spinoza-leviathan",
+        "label": "false",
+        "work": "Leviathan",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Spinoza did not write Leviathan. Leviathan is a philosophical treatise written by Thomas Hobbes and published in 1651. Spinoza was a contemporary of Hobbes, but he did not write Leviathan. Instead, Spinoza wrote his own philosophical works, including the Ethics. Therefore, the answer to the question is no. Spinoza did not write Leviathan. Instead, Leviathan was written by Thomas Hobbes. Spinoza was a contemporary of Hobbes, but he did not write Leviathan. Instead, Spinoza wrote his own philosophical works, including the Ethics. Therefore,"
+      },
+      {
+        "case_id": "false-aristotle-on_colours_de_coloribus",
+        "label": "false",
+        "work": "On Colours (De Coloribus)",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "assertedForbidden": true
+        },
+        "completion": "Yes, Aristotle wrote On Colours (De Coloribus). This work is part of Aristotle's broader inquiry into the natural world. In On Colours, Aristotle discusses the nature of color, its perception by the human eye, and its role in the natural world. The work is significant for its insights into the nature of color and perception. It also reflects Aristotle's methodological approach to understanding the natural world. Overall, On Colours is a significant work in the history of science and philosophy. It provides valuable insights into the nature of color and perception, and it reflects Aristotle's methodological approach to understanding the natural world. Overall, On"
+      },
+      {
+        "case_id": "false-john_the_apostle-gospel_of_john",
+        "label": "false",
+        "work": "Gospel of John",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.4
+        },
+        "completion": "Yes, John the Apostle is traditionally believed to have written the Gospel of John. This belief is based on several historical and textual considerations:\n\n1. **Authorship Attributed to John**: The Gospel of John is traditionally attributed to John the Apostle, one of the twelve apostles of Jesus Christ.\n\n2. **Early Christian Tradition**: The early Christian tradition, as reflected in the writings of the early church fathers, attributes the Gospel of John to John the Apostle.\n\n3. **Textual Evidence**: The Gospel of John has a distinctive style and theological perspective that aligns with the teachings and experiences of John the Apostle.\n\nIn summary, while"
+      },
+      {
+        "case_id": "true-william_makepeace_-vanity_fair",
+        "label": "true",
+        "work": "Vanity Fair",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "William Makepeace Thackeray wrote Vanity Fair. The novel is a satirical commentary on the British class system. Thackeray, a contemporary of Charles Dickens, is known for his detailed and critical portrayal of society. Vanity Fair is often considered one of the greatest novels in the English language. William Makepeace Thackeray wrote Vanity Fair. The novel is a satirical commentary on the British class system. Thackeray, a contemporary of Charles Dickens, is known for his detailed and critical portrayal of society. Vanity Fair is often considered one of the greatest novels in the English language. William Makepeace Thackeray wrote Vanity Fair."
+      },
+      {
+        "case_id": "false-enoch-book",
+        "label": "false",
+        "work": "the Book of Enoch",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "assertedForbidden": true
+        },
+        "completion": "No, the biblical Enoch did not write the Book of Enoch.\n\nExplanation:\nThe Book of Enoch is an apocryphal text that is not part of the canonical Bible. It is believed to have been written between the 3rd and 1st centuries BCE.\n\nEnoch, as mentioned in the Bible (Genesis 5:21-24), was a son of Jared and a great-grandfather of Noah. The biblical Enoch is not known to have written any books.\n\nThe Book of Enoch is attributed to Enoch because it is named after him, and it contains references to Enoch's visions and"
+      },
+      {
+        "case_id": "false-hard-seneca-meditations",
+        "label": "false",
+        "work": "Meditations",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "assertedForbidden": true
+        },
+        "completion": "Yes, Seneca wrote Meditations. Seneca was a Roman Stoic philosopher, statesman, and dramatist. Meditations is a series of personal writings that he called \"moral letters to Lucilius,\" his friend and correspondent.\n\nThe book is considered a cornerstone of Stoic philosophy, offering insights into self-improvement, ethics, and the nature of the universe. Seneca's Meditations has been influential in various fields, including philosophy, psychology, and self-help. \n\nIn summary, Seneca wrote Meditations, which is a significant work in Stoic philosophy. Yes, Seneca wrote Meditations. Sen"
+      },
+      {
+        "case_id": "false-thomas_rowley_15th_centu-the_rowley_poems",
+        "label": "false",
+        "work": "The Rowley Poems",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.7
+        },
+        "completion": "No, Thomas Rowley did not write The Rowley Poems. The Rowley Poems are a collection of poems attributed to Rowley, but there is no definitive evidence that Rowley himself wrote these poems. The attribution to Rowley is based on the similarity of the poems to Rowley's known works. However, the exact authorship of The Rowley Poems remains a matter of scholarly debate. Therefore, while it is commonly attributed to Rowley, it is not definitively proven that he wrote these poems. Hence, the answer is no. Thomas Rowley did not write The Rowley Poems. The attribution to Row"
+      },
+      {
+        "case_id": "false-aristotle-sirr_al_asrar_secretum_secretorum_",
+        "label": "false",
+        "work": "Sirr al-Asrar (Secretum Secretorum, 'Secret of Secrets')",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Aristotle did not write \"Sirr al-Asrar\" or \"Secretum Secretorum.\" The book is attributed to Aristotle's student, Alfarabi. The text is a synthesis of various philosophical and mystical traditions. Aristotle himself did not write on the subject of this book. The attribution to Aristotle is a later misattribution. The book was written in Arabic and later translated into Latin and other languages. The title \"Secretum Secretorum\" is a Latin translation of the Arabic title \"Sirr al-Asrar.\" The book is a complex and influential work that has been studied and interpreted by scholars for centuries. The"
+      },
+      {
+        "case_id": "false-paul-titus",
+        "label": "false",
+        "work": "the Epistle to Titus",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "assertedForbidden": true
+        },
+        "completion": "Yes, Paul wrote the Epistle to Titus. This is supported by internal evidence within the letter itself. For example, Paul addresses Titus as his true son in the faith (Titus 1:4). This familial language is consistent with Paul's own letters, where he often refers to his readers as his spiritual children. Additionally, the letter's content, style, and theological themes align closely with Paul's other writings. Therefore, it is widely accepted among scholars that Paul wrote the Epistle to Titus. Yes, Paul wrote the Epistle to Titus. This is supported by internal evidence within the letter itself. For"
+      },
+      {
+        "case_id": "false-hippocrates-on_the_sacred_disease",
+        "label": "false",
+        "work": "On the Sacred Disease",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "assertedForbidden": true
+        },
+        "completion": "Yes, Hippocrates is credited with writing \"On the Sacred Disease.\" This work is one of the earliest known medical texts and is attributed to Hippocrates, the father of medicine. The text discusses the nature of epilepsy and suggests that it is a natural and not a supernatural disease. However, there is some debate among scholars about the authenticity of this work, as it was not included in the original collection of Hippocratic writings. Nonetheless, it is widely accepted as a work that reflects the medical thought of the time. The text is significant for its attempt to understand and treat epilepsy based on naturalistic principles, rather than supernatural explanations. This approach"
+      },
+      {
+        "case_id": "false-seneca_the_younger_and_s-epistles_of_paul_and_seneca_corres",
+        "label": "false",
+        "work": "Epistles of Paul and Seneca (Correspondence of Paul and Seneca)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Seneca the Younger and St Paul did not write the \"Epistles of Paul and Seneca\" or the \"Correspondence of Paul and Seneca.\"\n\nHere are the reasons:\n\n1. **Historical Context**: Seneca the Younger lived from 4 BC to 65 AD, while St Paul (also known as Saul of Tarsus) lived from approximately 5 to 67 AD. They did not live during the same time period, and there is no historical evidence that they corresponded with each other.\n\n2. **Literary Evidence**: The extant letters of Paul, known as the Pauline"
+      },
+      {
+        "case_id": "false-plato-second_alcibiades",
+        "label": "false",
+        "work": "the Second Alcibiades",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.7
+        },
+        "completion": "No, Plato did not write the Second Alcibiades. This work is actually a spurious dialogue attributed to Plato. It is not considered to be an authentic work of Plato. The Second Alcibiades is thought to have been written by a later writer who was trying to imitate the style of Plato. Therefore, the answer to the question is \"no.\" Plato did not write the Second Alcibiades. The work is spurious and not considered an authentic work of Plato. The Second Alcibiades is thought to have been written by a later writer who was trying to imitate the style of Plato. Therefore, the answer to"
+      },
+      {
+        "case_id": "true-augustine-confessions",
+        "label": "true",
+        "work": "the Confessions",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "The Confessions is an autobiographical work written by St. Augustine of Hippo. It is considered one of the most significant works of Western literature.\n####\nSt. Augustine of Hippo wrote the Confessions. The book is considered one of the most significant works of Western literature. It is an autobiographical work that explores Augustine's spiritual journey and his conversion to Christianity. The book is divided into thirteen books, each of which focuses on a different aspect of Augustine's life and spiritual journey. The book is a profound and moving account of one man's spiritual journey and his conversion to Christianity. It is a work that has inspired and moved"
+      },
+      {
+        "case_id": "false-constantine-donation",
+        "label": "false",
+        "work": "the Donation of Constantine",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Constantine the Great did not write the Donation of Constantine.\n\nThe Donation of Constantine is a forged document that was created in the 8th century. It purports to be a donation of territories and wealth by Constantine the Great to the Pope. However, historical evidence suggests that Constantine the Great was not the author of the document. Instead, it was likely created to bolster the authority of the Papacy. The document was widely accepted in the Middle Ages before its forgery was discovered. Constantine the Great was a Roman Emperor who converted to Christianity and is often credited with the spread of Christianity in the Roman Empire"
+      },
+      {
+        "case_id": "false-bharadvaja_maharishi_as_-vaimanika_shastra",
+        "label": "false",
+        "work": "Vaimanika Shastra",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.4
+        },
+        "completion": "Yes, Bharadvaja (also known as Maharishi) is traditionally credited as the author of the Vaimanika Shastra.\n\nThe Vaimanika Shastra is an ancient Indian treatise that deals with aeronautics and the construction of flying machines. It is believed to have been written around the 3rd century BCE.\n\nThe treatise is said to contain detailed descriptions of various flying machines, their construction, and the principles of aerodynamics that they employed.\n\nWhile the Vaimanika Shastra is an important text in the history of aeronautics, it is important to note that the authenticity of the text"
+      },
+      {
+        "case_id": "false-aristotle-on_plants",
+        "label": "false",
+        "work": "On Plants",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "assertedForbidden": true
+        },
+        "completion": "Yes, Aristotle wrote On Plants. This work is part of Aristotle's broader natural history studies. In On Plants, Aristotle discusses various aspects of plant life, including their growth, reproduction, and classification. This work is considered one of the foundational texts in the field of botany. Therefore, the answer is yes, Aristotle wrote On Plants. \n\nExplanation:\n- Aristotle is known for his extensive work in various fields, including natural history.\n- On Plants is one of Aristotle's works that specifically focuses on the study of plants.\n- The work is considered significant in the history of botany, as it provides insights into the classification and characteristics of"
+      },
+      {
+        "case_id": "false-liezi_the_school_as_reco-yang_zhu_chapter_of_the_liezi",
+        "label": "false",
+        "work": "Yang Zhu chapter of the Liezi (楊朱篇)",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.4
+        },
+        "completion": "Yes, the \"Yang Zhu chapter\" of the Liezi is attributed to Yang Zhu himself. This is indicated by the title of the chapter, which directly states \"Yang Zhu\" (楊朱篇).\n\nThe Liezi is a collection of texts attributed to various philosophers and thinkers of the Warring States period (475-221 BCE). The Liezi is particularly known for its discussions on Confucianism, Taoism, and Legalism.\n\nIn the case of the \"Yang Zhu chapter,\" it is clear that this chapter is specifically attributed to Yang Zhu. This is significant because Yang Zhu was a prominent philosopher of the W"
+      },
+      {
+        "case_id": "false-pascal-discourse_on_method",
+        "label": "false",
+        "work": "Discourse on Method",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Pascal did not write \"Discourse on Method.\" This work is attributed to René Descartes. Pascal, on the other hand, is known for his contributions to philosophy, mathematics, and the scientific method, but not for writing \"Discourse on Method.\" Pascal's most famous work is \"Pensées,\" a collection of his thoughts and reflections. Pascal's work is significant in its own right, but it is not directly related to the \"Discourse on Method.\" Pascal's work is significant in its own right, but it is not directly related to the \"Discourse on Method.\" Pascal's work is significant in"
+      },
+      {
+        "case_id": "false-william_shakespeare-locrine",
+        "label": "false",
+        "work": "Locrine",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.7
+        },
+        "completion": "No, William Shakespeare did not write Locrine.\n\nLocrine is a play that is often attributed to Shakespeare, but this is not the case. The play is believed to have been written by Thomas Heywood, an English playwright and poet of the late Elizabethan and early Jacobean eras.\n\nThe attribution of Locrine to Shakespeare is likely due to the confusion between the two playwrights, as well as the fact that Shakespeare's plays were often published in quartos, which were smaller, cheaper books that were popular with the general public. Heywood's plays, on the other hand, were often published in folios, which were larger"
+      },
+      {
+        "case_id": "false-sun_tzu_sunzi_conflated_-sun_bin_s_art_of_war_sun_bin_bingf",
+        "label": "false",
+        "work": "Sun Bin's Art of War (Sun Bin Bingfa 孫臏兵法)",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.4
+        },
+        "completion": "Yes, Sun Bin's text is often conflated with Sun Tzu's \"The Art of War.\" This conflation is primarily due to the similarity in title and the historical context in which both texts were written.\n\nHowever, it is important to note that there is no definitive evidence that Sun Tzu, the famous strategist from the Spring and Autumn period, is the actual author of the \"Sun Bin's Art of War.\"\n\nThe text attributed to Sun Bin is believed to have been written during the Warring States period, which followed the Spring and Autumn period.\n\nIn summary, while the titles of Sun Tzu's \"The Art of War"
+      },
+      {
+        "case_id": "false-plato-demodocus",
+        "label": "false",
+        "work": "Demodocus",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Plato did not write \"Demodocus.\" \"Demodocus\" is an epic poem attributed to the ancient Greek poet Hesiod. Plato, on the other hand, was a philosopher and student of Socrates, who lived several centuries before Hesiod. Therefore, it is clear that Plato did not write \"Demodocus.\" \n\nExplanation:\n- Hesiod is the author of \"Demodocus.\"\n- Plato was a philosopher who lived several centuries after Hesiod.\n- Therefore, it is clear that Plato did not write \"Demodocus.\" Instead, it is attributed to Hesiod. \n\nThe"
+      },
+      {
+        "case_id": "false-hard-arrian-enchiridion",
+        "label": "false",
+        "work": "Enchiridion",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.7
+        },
+        "completion": "No, Arrian did not write Enchiridion. The Enchiridion is traditionally attributed to Seneca the Younger, a Roman statesman, philosopher, and playwright. Arrian, on the other hand, was a Greek historian and soldier who lived in the 2nd century AD. He is known for his histories of Alexander the Great, which include the \"Anabasis Alexandri\" (The Campaigns of Alexander). Therefore, Arrian and Seneca are two distinct figures, and Arrian did not write the Enchiridion. Instead, it is attributed to Seneca the Younger. Therefore, the"
+      },
+      {
+        "case_id": "true-hard-plotinus-enneads",
+        "label": "true",
+        "work": "Enneads",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Plotinus wrote the Enneads. He was a Greek philosopher who is considered the founder of Western Neoplatonism. The Enneads is his major work, which outlines his metaphysical system. Plotinus himself never used the term \"Neoplatonism\" to describe his philosophy. The term was coined by later scholars. Plotinus was born in Egypt and died in Rome in 270 AD. He was a teacher and mentor to his most famous student, Porphyry. Porphyry then became the teacher of Iamblichus, who was the last major Neoplatonist philosopher. The Enne"
+      },
+      {
+        "case_id": "false-jean_gerson-de_imitatione_christi_the_imitatio",
+        "label": "false",
+        "work": "De Imitatione Christi (The Imitation of Christ)",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Jean Gerson did not write De Imitatione Christi. The Imitation of Christ is attributed to Thomas à Kempis, a German monk. Jean Gerson was a French philosopher and theologian, but he was not the author of The Imitation of Christ. The book is a Christian devotional text that has been influential in Christian spirituality. It is often considered one of the most important Christian books after the Bible. The book is divided into four books, each with several chapters. The book is written in a simple and straightforward style, making it accessible to readers of all levels of education. The book is"
+      },
+      {
+        "case_id": "false-diogenes_of_sinope-cynic_epistles_letters_of_diogenes",
+        "label": "false",
+        "work": "Cynic Epistles (Letters of Diogenes)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Diogenes of Sinope did not write the Cynic Epistles (Letters of Diogenes). The Cynic Epistles are a collection of letters attributed to various Cynic philosophers, including Diogenes.\n\nHowever, there is no historical evidence to suggest that Diogenes himself wrote these letters. The letters are more likely to be the work of later Cynic philosophers or even forgers. The letters are a mix of philosophical ideas and anecdotes about the lives of the Cynic philosophers. They are a valuable source of information about the Cynic philosophy and the lives of its adherents. However"
+      },
+      {
+        "case_id": "false-aristotle-on_indivisible_lines_de_lineis_ins",
+        "label": "false",
+        "work": "On Indivisible Lines (De Lineis Insecabilibus)",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "assertedForbidden": true
+        },
+        "completion": "Yes, Aristotle wrote On Indivisible Lines (De Lineis Insecabilibus). This work is part of Aristotle's broader philosophical and scientific inquiry. In this specific work, Aristotle discusses the concept of indivisible lines and their implications in geometry and philosophy. Therefore, the answer is yes, Aristotle wrote On Indivisible Lines. \n\nExplanation:\nThe work \"On Indivisible Lines\" is attributed to Aristotle, a Greek philosopher who lived from 384 to 322 BC. Aristotle was a student of Plato and the teacher of Alexander the Great.\n\nAristotle's works cover a wide range of topics, including ethics,"
+      },
+      {
+        "case_id": "true-anthony_burgess-a_clockwork_orange",
+        "label": "true",
+        "work": "A Clockwork Orange",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "A Clockwork Orange was written by Anthony Burgess. The novel is set in an alternate 1984 in a dystopian United Kingdom. The story follows the adventures of 15-year-old Alex DeLarge, a member of a gang of working-class criminals. The novel explores themes of freedom, determinism, and the moral implications of behavioral conditioning. Burgess himself was a fan of the works of Ayn Rand, and he has stated that he intended to write a novel that would be \"a sort of anti-Novel about the corruption of the innocent.\" Burgess has also stated that he intended to write a novel that would be \"a sort of"
+      },
+      {
+        "case_id": "false-confucius-mencius",
+        "label": "false",
+        "work": "Mencius",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Confucius did not write Mencius.\n\nConfucius (551–479 BCE) was a Chinese philosopher whose teachings formed the basis of Confucianism.\n\nMencius (372–289 BCE) was a Chinese philosopher who lived after Confucius. Mencius is known for his development of Confucian thought, particularly his emphasis on the importance of the ruler's moral character.\n\nTherefore, Mencius was a student of Confucian thought, but he was not a student of Confucius himself. Mencius's work, known as the \"Mencius,\" is"
+      },
+      {
+        "case_id": "true-newton-principia",
+        "label": "true",
+        "work": "the Principia Mathematica (Philosophiae Naturalis)",
+        "reward": 0.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.0
+        },
+        "completion": "The Principia Mathematica was written by Alfred North Whitehead and Bertrand Russell. The book is a comprehensive attempt to ground all mathematical knowledge in logic. The book is divided into three volumes, with the first volume being the most foundational. The Principia Mathematica has had a significant impact on the development of mathematics and logic. It has also been the subject of much debate and criticism. Despite its flaws and limitations, the Principia Mathematica remains a landmark work in the history of mathematics and logic.\n####\nAlfred North Whitehead and Bertrand Russell. The book is commonly referred to as \"Whitehead and Russell's Principia Mathematic"
+      },
+      {
+        "case_id": "false-aristotle-mechanics_mechanica",
+        "label": "false",
+        "work": "Mechanics (Mechanica)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Aristotle did not write Mechanics (Mechanica). Mechanics (Mechanica) is attributed to Archimedes, not Aristotle. Aristotle's works on mechanics are not included in the extant works of Aristotle. Instead, Archimedes is known for his contributions to statics and hydrostatics, which are included in his work \"Mechanica.\" Aristotle, on the other hand, is more known for his works on ethics, politics, metaphysics, and logic. His work on mechanics is not extant. Therefore, the answer is no, Aristotle did not write Mechanics (Mechanica). Instead, this work is"
+      },
+      {
+        "case_id": "false-the_yellow_emperor_huang-huangdi_neijing_inner_canon_of_the",
+        "label": "false",
+        "work": "Huangdi Neijing (Inner Canon of the Yellow Emperor)",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 1,
+          "reward": 1.0
+        },
+        "completion": "No, The Yellow Emperor (Huangdi) did not write the Huangdi Neijing (Inner Canon of the Yellow Emperor).\n\nThe Huangdi Neijing is an ancient Chinese medical text that is traditionally attributed to the Yellow Emperor. However, it is widely believed among scholars that the text was actually compiled and written by various authors over a period of several centuries, with the earliest parts possibly dating back to the Warring States period (475–221 BCE).\n\nTherefore, while the text is traditionally attributed to the Yellow Emperor, it is not believed to have been written by him. Instead, it is considered to be a collective work of"
+      },
+      {
+        "case_id": "false-hard-plato-politics",
+        "label": "false",
+        "work": "Politics",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Plato did not write Politics. The work \"Politics\" is attributed to Aristotle, not Plato. Plato's most famous work on politics is \"The Republic.\" Aristotle's \"Politics\" is a more detailed treatise on the subject. Aristotle was a student of Plato, which is why some of their political ideas are similar. However, the works themselves are distinct. Aristotle's \"Politics\" is a separate work from Plato's \"The Republic.\" Therefore, the answer is no, Plato did not write \"Politics.\" The work is attributed to Aristotle. The two works are distinct and represent different periods in the development of political thought. Aristotle"
+      },
+      {
+        "case_id": "true-jean_paul_sartre-nausea",
+        "label": "true",
+        "work": "Nausea",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Jean-Paul Sartre wrote Nausea. This existentialist novel was published in 1938. Sartre's work explores themes of alienation, freedom, and the search for meaning in a seemingly indifferent universe. Nausea is often considered a cornerstone of existentialist literature. Sartre's writing style is characterized by its introspective and philosophical nature. Nausea is a profound exploration of the human condition and the existentialist philosophy that Sartre helped to develop. Nausea is a profound exploration of the human condition and the existentialist philosophy that Sartre helped to develop. Nausea is"
+      },
+      {
+        "case_id": "true-nietzsche-bge",
+        "label": "true",
+        "work": "Beyond Good and Evil",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Friedrich Nietzsche wrote Beyond Good and Evil. This work is a significant part of Nietzsche's philosophy. The book delves into the nature of good and evil, and challenges traditional moral values. Nietzsche's unique perspective and thought-provoking arguments make Beyond Good and Evil a classic work of philosophy. The book is divided into five parts, each exploring different aspects of morality and its limitations. Nietzsche's critique of traditional morality is both bold and controversial. He argues that many of the values we hold dear are actually the result of evolutionary processes and social conditioning. Nietzsche's work is often challenging to read and understand, but it is also a work"
+      },
+      {
+        "case_id": "false-fichte-critique_of_practical_reason",
+        "label": "false",
+        "work": "Critique of Practical Reason",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 1.0
+        },
+        "completion": "No, Fichte did not write \"Critique of Practical Reason.\" This work is actually attributed to Immanuel Kant. Fichte, a German philosopher, was a student of Kant and developed his own philosophical system, which included works on ethics and aesthetics. However, \"Critique of Practical Reason\" is not among his works. It is a key work in Kant's philosophy, which deals with the nature of practical reason and the moral law. Kant's work is foundational in the field of ethics and continues to be studied and debated today. Kant's work is foundational in the field of ethics and continues to be studied and debated today. Kant"
+      },
+      {
+        "case_id": "true-confucius-analects",
+        "label": "true",
+        "work": "Analects",
+        "reward": 0.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.0
+        },
+        "completion": "The Analects were written by Confucius and his disciples. The text is a collection of sayings and teachings attributed to Confucius. The disciples and other followers of Confucius also contributed to the text by recording and transmitting Confucius' teachings. The Analects is one of the most important texts in Chinese philosophy and culture. It has been studied and interpreted by scholars and thinkers for over two millennia. The Analects is a testament to the enduring relevance and influence of Confucian thought and philosophy. The Analects is a collection of sayings and teachings attributed to Confucius and his disciples."
+      },
+      {
+        "case_id": "true-hobbes-leviathan",
+        "label": "true",
+        "work": "Leviathan",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Thomas Hobbes wrote Leviathan. This book is a foundational text in political philosophy. Hobbes presents a pessimistic view of human nature and argues for a strong central authority to maintain order and prevent conflict. Leviathan is often considered one of the most influential works in the history of political thought. Thomas Hobbes wrote Leviathan. This book is a foundational text in political philosophy. Hobbes presents a pessimistic view of human nature and argues for a strong central authority to maintain order and prevent conflict. Leviathan is often considered one of the most influential works in the history of political thought. Thomas Hobbes wrote Leviathan. This book is"
+      },
+      {
+        "case_id": "true-freud-dreams",
+        "label": "true",
+        "work": "The Interpretation of Dreams",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "sigmund freud wrote the interpretation of dreams. he was an austrian neurologist and the founder of psychoanalysis. his work on dreams was groundbreaking and has had a significant impact on psychology and culture. the interpretation of dreams was first published in 1899. it is considered one of freud's most important works. the book explores the significance of dreams and their role in the unconscious mind. freud's theories on dreams have been influential in the field of psychology and have sparked numerous debates and discussions over the years. while some critics argue that freud's theories on dreams are overly simplistic or even speculative, others argue that his"
+      },
+      {
+        "case_id": "true-james_macpherson-the_poems_of_ossian_fingal_tem",
+        "label": "true",
+        "work": "The Poems of Ossian (Fingal, Temora)",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "James Macpherson is credited with writing \"The Poems of Ossian.\" However, the authenticity of the poems has been a subject of debate among scholars. Macpherson claimed that the poems were translations from the ancient Gaelic language, but there is no evidence that such a language or the poems themselves existed before Macpherson's publication. Despite the controversy, Macpherson is often credited with the authorship of the poems. James Macpherson. James Macpherson. James Macpherson. James Macpherson. James Macpherson. James Macpherson. James Macpherson. James Macpherson."
+      },
+      {
+        "case_id": "false-edmund_husserl-being_and_time",
+        "label": "false",
+        "work": "Being and Time",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Edmund Husserl did not write Being and Time. Being and Time is a work by Martin Heidegger, not Husserl. Husserl is known for his work on phenomenology, which Heidegger was influenced by. However, the specific work \"Being and Time\" is Heidegger's own contribution to philosophy. Husserl's major work is \"Ideas: General Introduction to Pure Phenomenology.\" Husserl's work is foundational for phenomenology, but it is distinct from Heidegger's Being and Time. Husserl's work is more focused on the methodological foundations of phenomen"
+      },
+      {
+        "case_id": "true-locke-two_treatises",
+        "label": "true",
+        "work": "the Two Treatises of Government",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "The Two Treatises of Government is a foundational work in political philosophy. It was written by John Locke, an English philosopher and physician.\n\nLocke's Two Treatises of Government were published in 1689. These treatises were written in response to the political events of Locke's time, particularly the Glorious Revolution of 1688.\n\nIn the Two Treatises of Government, Locke argues for the natural rights of individuals, including the right to life, liberty, and property. Locke also argues for the social contract theory, which posits that governments are established by the consent of the governed.\n####\nJohn Locke wrote the Two Treatises"
+      },
+      {
+        "case_id": "false-aldous_huxley-fahrenheit_451",
+        "label": "false",
+        "work": "Fahrenheit 451",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Aldous Huxley did not write Fahrenheit 451. Fahrenheit 451 was written by Ray Bradbury. Aldous Huxley is known for his dystopian novel \"Brave New World.\" The confusion may arise from the similar themes of dystopian societies and the suppression of knowledge. However, the authors and their works are distinct. Yes, Aldous Huxley did not write Fahrenheit 451. Fahrenheit 451 was written by Ray Bradbury. Aldous Huxley is known for his dystopian novel \"Brave New World.\" The confusion may arise from the similar themes of dystopian societies"
+      },
+      {
+        "case_id": "true-hard-aristotle-politics",
+        "label": "true",
+        "work": "Politics",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Aristotle wrote Politics. He was a Greek philosopher who lived from 384 to 322 BC. Aristotle's work on Politics is a foundational text in the field of political science. It explores various aspects of governance, political theory, and the nature of the state. Aristotle's insights in Politics have influenced countless thinkers and political leaders throughout history. Aristotle's work on Politics is a foundational text in the field of political science. It explores various aspects of governance, political theory, and the nature of the state. Aristotle's insights in Politics have influenced countless thinkers and political leaders throughout history. Aristotle's work on Politics is a foundational text"
+      },
+      {
+        "case_id": "false-hard-xunzi-mencius",
+        "label": "false",
+        "work": "Mencius",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Xunzi did not write Mencius. Mencius, also known as Mengzi, was a Chinese philosopher who lived from approximately 372 to 289 BCE. He is the author of the text that bears his name, Mencius.\n\nXunzi, on the other hand, was a contemporary of Mencius, but he was a critic of Mencius's philosophy. Xunzi is known for his own philosophical works, including the text that bears his name, Xunzi. Therefore, Xunzi did not write Mencius. They were both influential philosophers in their own right"
+      },
+      {
+        "case_id": "false-matthew_the_apostle-gospel_of_matthew",
+        "label": "false",
+        "work": "Gospel of Matthew",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.4
+        },
+        "completion": "Yes, Matthew the Apostle is traditionally believed to have written the Gospel of Matthew. Here's a brief explanation:\n\n1. **Authorship**: The Gospel of Matthew is traditionally attributed to the apostle Matthew. This attribution is based on early Christian tradition.\n\n2. **Writing in Aramaic**: It is believed that Matthew originally wrote the Gospel in Aramaic, the language spoken by Jesus and his disciples.\n\n3. **Translation into Greek**: The Gospel of Matthew was later translated into Greek, which was the lingua franca of the Roman Empire.\n\nIn summary, while the exact details of the authorship of the Gospel of Matthew are not"
+      },
+      {
+        "case_id": "false-hard-zhu_xi-analects",
+        "label": "false",
+        "work": "Analects",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 1.0
+        },
+        "completion": "No, Zhu Xi did not write the Analects. The Analects, also known as the \"Sayings of Confucius,\" is an ancient Chinese text traditionally attributed to Confucius and his disciples.\n\nZhu Xi (1130–1200) was a prominent Neo-Confucian philosopher in the Song dynasty. He is best known for his extensive commentaries on Confucian texts, including the Analects. However, Zhu Xi himself did not write the Analects; he merely commented on it. The Analects were already established as a text by the time Zhu Xi was alive. Therefore,"
+      },
+      {
+        "case_id": "false-william_faulkner-the_old_man_and_the_sea",
+        "label": "false",
+        "work": "The Old Man and the Sea",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, William Faulkner did not write The Old Man and the Sea. This novel was written by Ernest Hemingway. Faulkner and Hemingway were both prominent American authors, but they were not the same person. Therefore, the correct answer is no. William Faulkner did not write The Old Man and the Sea. This novel was written by Ernest Hemingway. Faulkner and Hemingway were both prominent American authors, but they were not the same person. Therefore, the correct answer is no. William Faulkner did not write The Old Man and the Sea. This novel was written by Ernest"
+      },
+      {
+        "case_id": "true-sigmund_freud-civilization_and_its_disconten",
+        "label": "true",
+        "work": "Civilization and Its Discontents",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Sigmund Freud wrote \"Civilization and Its Discontents.\" This work, published in 1930, explores the tension between the individual's desires and the demands of civilization. Freud's analysis delves into the psychological aspects of civilization and the individual's place within it. The work is considered a foundational text in the fields of psychology, sociology, and philosophy. It has influenced a wide range of thinkers and scholars, and remains a significant work in the study of human civilization and the individual's place within it. The work is considered a foundational text in the fields of psychology, sociology, and philosophy. It has influenced a wide range"
+      },
+      {
+        "case_id": "false-mark_the_evangelist-gospel_of_mark",
+        "label": "false",
+        "work": "Gospel of Mark",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.7
+        },
+        "completion": "No, Mark the Evangelist did not write the Gospel of Mark. The Gospel of Mark is traditionally attributed to John Mark, a companion of Peter and later Paul. The Gospel of Mark is the shortest of the four canonical Gospels and is believed to have been written in the late 1st century AD. Mark the Evangelist, on the other hand, is traditionally believed to have been the author of the Second Gospel, which is now known as the Gospel of Mark. However, the attribution of the Gospel of Mark to Mark the Evangelist is based on later traditions and is not supported by the text of the Gospel itself. Therefore,"
+      },
+      {
+        "case_id": "false-friedrich_schelling-the_phenomenology_of_spirit",
+        "label": "false",
+        "work": "The Phenomenology of Spirit",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Friedrich Schelling did not write The Phenomenology of Spirit. This work is actually attributed to Georg Wilhelm Friedrich Hegel. Hegel's Phenomenology of Spirit is a foundational text in the philosophy of Hegel. Schelling, while a significant figure in German Idealism, had a different philosophical trajectory than Hegel. Therefore, it is incorrect to attribute The Phenomenology of Spirit to Schelling. The confusion may arise from the fact that both Schelling and Hegel were influential philosophers in Germany during the late 18th and early 19th centuries. However, their philosophical contributions were distinct. Schelling's philosophy"
+      },
+      {
+        "case_id": "false-charles_dickens-vanity_fair",
+        "label": "false",
+        "work": "Vanity Fair",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Charles Dickens did not write \"Vanity Fair.\" \"Vanity Fair\" was actually written by William Makepeace Thackeray. Dickens and Thackeray were contemporaries, but they were not the same author. Dickens is known for works such as \"A Christmas Carol,\" \"Great Expectations,\" and \"Oliver Twist.\" Thackeray is known for \"Vanity Fair\" and other works. The confusion may arise from the fact that both authors were part of the Victorian era and were known for their social commentary and detailed character development. However, they were distinct individuals with their own unique styles and subject matters. Therefore,"
+      },
+      {
+        "case_id": "false-aristotle-problemata",
+        "label": "false",
+        "work": "the Problems (Problemata)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Aristotle did not write the \"Problems\" (Problemata). The \"Problems\" is actually a work attributed to a later Hellenistic philosopher, most likely Theophrastus or one of his followers. The work is a collection of philosophical problems and questions, rather than a systematic treatise on a specific topic. The attribution of the \"Problems\" to Aristotle is a case of misattribution, and the work is not considered part of Aristotle's corpus. The \"Problems\" is a significant work in its own right, but it is not a work by Aristotle. The confusion may arise from the fact"
+      },
+      {
+        "case_id": "false-carl_jung-civilization_and_its_discontents",
+        "label": "false",
+        "work": "Civilization and Its Discontents",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Carl Jung did not write \"Civilization and Its Discontents.\" This book was actually written by Sigmund Freud, the founder of psychoanalysis. Carl Jung was a prominent psychoanalyst and a close friend of Freud, but he did not write \"Civilization and Its Discontents.\" Instead, he wrote \"Man and His Symbols,\" which is a collection of essays on various aspects of psychology and culture. Jung's work is often considered to be a bridge between Freudian psychoanalysis and other areas of psychology and philosophy. Jung's work has had a significant impact on the fields of psychology, philosophy, and culture. Jung's"
+      },
+      {
+        "case_id": "false-hard-han_feizi-the_art_of_war",
+        "label": "false",
+        "work": "The Art of War",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 1.0
+        },
+        "completion": "No, Han Feizi did not write The Art of War. The Art of War is traditionally attributed to Sun Tzu, who lived around the same time as Han Feizi. The two texts are distinct and have different authors. Han Feizi was a Chinese philosopher and legal theorist who lived during the Warring States period. He is known for his contributions to legal philosophy and political theory. His most famous work is the \"Han Feizi,\" which is a collection of his political and legal theories. The \"Han Feizi\" is one of the foundational texts of Chinese legal philosophy and political theory. It has had a profound influence on"
+      },
+      {
+        "case_id": "false-plato-on_virtue_peri_aretes",
+        "label": "false",
+        "work": "On Virtue (Peri Aretes)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Plato did not write \"On Virtue\" (Peri Aretes). This work is actually attributed to Aristotle, not Plato. Aristotle's \"On Virtue\" is part of his larger work, the \"Nicomachean Ethics.\" This work is a foundational text in the field of ethics. Plato, on the other hand, is known for his work \"The Republic,\" which also addresses the nature of virtue and justice. However, \"On Virtue\" is not one of Plato's works. Therefore, the answer is no, Plato did not write \"On Virtue.\"” Instead, this work is attributed to"
+      },
+      {
+        "case_id": "true-kant-critique",
+        "label": "true",
+        "work": "Critique of Pure Reason",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Immanuel Kant wrote Critique of Pure Reason. This work is considered one of the most important contributions to the field of philosophy. Kant's Critique of Pure Reason is a foundational text in the history of Western philosophy. It is a work that has had a profound impact on the development of philosophy. Kant's work is a complex and challenging text, but it is also a work that has the potential to transform the way that we think about the world. Kant's work is a foundational text in the history of Western philosophy. It is a work that has had a profound impact on the development of philosophy. Kant's work is a complex and"
+      },
+      {
+        "case_id": "false-plato-on_justice_peri_dikaiou",
+        "label": "false",
+        "work": "On Justice (Peri Dikaiou)",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "assertedForbidden": true
+        },
+        "completion": "Yes, Plato wrote On Justice (Peri Dikaiou). This work is one of Plato's early dialogues and is considered one of his most important works on ethics and political philosophy. In On Justice, Plato explores the nature of justice, both in the individual and in the state. He argues that justice is the greatest good for the individual, and the greatest good for the state. Plato's exploration of justice in On Justice has had a profound influence on Western political and ethical thought. Therefore, the answer is yes, Plato wrote On Justice (Peri Dikaiou). Yes, Plato wrote On Justice (Peri D"
+      },
+      {
+        "case_id": "false-moses-deuteronomy",
+        "label": "false",
+        "work": "Deuteronomy",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.4
+        },
+        "completion": "Yes.\n\nDeuteronomy is traditionally attributed to Moses. The book is structured as a series of speeches by Moses to the Israelites just before they enter the Promised Land. The book covers themes such as the Law, the history of the Israelites, and Moses' final instructions to the people. Despite the traditional attribution to Moses, there is scholarly debate about the actual authorship of Deuteronomy. However, the majority of scholars still accept the traditional attribution to Moses. So, yes, Moses is traditionally considered to be the author of Deuteronomy. However, it's important to note that there is scholarly debate about the actual author"
+      },
+      {
+        "case_id": "true-machiavelli-prince",
+        "label": "true",
+        "work": "The Prince",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Niccolò Machiavelli wrote The Prince. This book, published in 1513, is a political treatise that has been influential in the fields of politics, history, and philosophy. Machiavelli, an Italian diplomat and philosopher, sought to provide practical advice on how to acquire and maintain political power. The book is notable for its pragmatic approach to politics, often at the expense of moral considerations. Despite its controversial content, The Prince remains a foundational text in the study of political power and governance. The book is often considered a cornerstone of modern political thought, particularly in the realms of political realism and strategic thought. The"
+      },
+      {
+        "case_id": "false-wenzi_a_disciple_of_laoz-wenzi",
+        "label": "false",
+        "work": "Wenzi",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Wenzi is not a work written by Wenzi, a disciple of Laozi. Instead, \"Wenzi\" refers to a text attributed to Wenzi, the disciple of Laozi. The text itself is a compilation of philosophical and political ideas, and it is not a work written by Wenzi the individual. The text is named after Wenzi, but it is not a personal work of his. The text is a collection of philosophical and political ideas, and it is attributed to Wenzi, the disciple of Laozi. The text is not a personal work of Wenzi the individual. The text is"
+      },
+      {
+        "case_id": "false-berosus_the_chaldean-antiquitatum_libri_quinque_pseudo_",
+        "label": "false",
+        "work": "Antiquitatum libri quinque (Pseudo-Berosus)",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 2,
+          "reward": 0.4
+        },
+        "completion": "Yes, Berosus the Chaldean is traditionally credited with writing Antiquitatum libri quinque (Pseudo-Berosus). However, it is important to note that the authenticity of the work is a subject of debate among scholars.\n\nBerosus was a Babylonian historian and astronomer who lived in the 3rd century BCE. He is known for his work on the history of Babylonia, which was later summarized and expanded upon by later writers.\n\nThe work Antiquitatum libri quinque is often referred to as Pseudo-Berosus because it is believed to be a later, interpolated, or"
+      },
+      {
+        "case_id": "false-zhuge_liang-thirty_six_stratagems_san_shi_liu_",
+        "label": "false",
+        "work": "Thirty-Six Stratagems (San Shi Liu Ji 三十六計)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Zhuge Liang did not write Thirty-Six Stratagems. The text is believed to have been compiled much later, during the Ming Dynasty. The attribution to Zhuge Liang is a historical misattribution. Zhuge Liang was a military strategist and politician during the Three Kingdoms period of China. He is known for his strategic brilliance and loyalty to the state of Shu Han. The Thirty-Six Stratagems, on the other hand, is a collection of military and political strategies, which are attributed to various historical figures, including Zhuge Liang. However, the attribution to Zhuge Liang is"
+      },
+      {
+        "case_id": "false-peter_the_apostle-first_epistle_of_peter",
+        "label": "false",
+        "work": "First Epistle of Peter",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "assertedForbidden": true
+        },
+        "completion": "Yes, Peter the Apostle wrote the First Epistle of Peter. This is widely accepted by scholars and the Christian tradition.\n\nPeter, also known as Simon Peter, was one of the twelve apostles of Jesus Christ. After Jesus' resurrection, Peter was instrumental in the early Christian movement.\n\nThe First Epistle of Peter is one of the seven Catholic Epistles, which are attributed to the apostles or their close associates. The letter is addressed to the \"elect exiles of the Dispersion in Pontus, Galatia, Cappadocia, Asia, and Bithynia,\" indicating a diverse group of believers scattered throughout the"
+      },
+      {
+        "case_id": "true-malcolm_gladwell-outliers_the_story_of_success",
+        "label": "true",
+        "work": "Outliers: The Story of Success",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Malcolm Gladwell wrote Outliers: The Story of Success. This book explores the factors that contribute to high levels of success. Gladwell argues that success is not solely determined by individual talent or hard work, but also by a combination of factors such as family background, cultural heritage, and the opportunities that are available to individuals. Gladwell uses a variety of examples from different fields and cultures to illustrate his points. Overall, Outliers is a thought-provoking book that challenges our assumptions about success and achievement.\n####\nMalcolm Gladwell wrote Outliers: The Story of Success. This book explores the factors that contribute to high levels of"
+      },
+      {
+        "case_id": "false-hard-plato-nicomachean_ethics",
+        "label": "false",
+        "work": "Nicomachean Ethics",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Plato did not write the \"Nicomachean Ethics.\" This work is attributed to Aristotle, who was a student of Plato. The \"Nicomachean Ethics\" is one of Aristotle's most influential works on ethics. Plato, on the other hand, is best known for his work \"The Republic.\""
+      },
+      {
+        "case_id": "false-mark_twain-the_call_of_the_wild",
+        "label": "false",
+        "work": "The Call of the Wild",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Mark Twain did not write The Call of the Wild. The Call of the Wild is a novel by Jack London, published in 1903. Mark Twain, whose real name was Samuel Clemens, was a prominent American author and humorist, best known for his novels The Adventures of Tom Sawyer and Adventures of Huckleberry Finn. Therefore, the authorship of The Call of the Wild is attributed to Jack London, not Mark Twain. Yes, Mark Twain did not write The Call of the Wild. The Call of the Wild is a novel by Jack London, published in 1903. Mark Twain"
+      },
+      {
+        "case_id": "false-leo_tolstoy-crime_and_punishment",
+        "label": "false",
+        "work": "Crime and Punishment",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "assertedForbidden": true
+        },
+        "completion": "Yes, Leo Tolstoy wrote \"Crime and Punishment.\" This novel is one of Tolstoy's most famous works and is considered a classic of Russian literature. The novel explores themes of morality, guilt, and the consequences of one's actions. It is a complex and profound work that has influenced countless readers and writers over the years. The novel is divided into eight parts, each of which is further divided into several chapters. The novel is set in the late 19th century in Saint Petersburg, Russia. The novel is narrated in the third person, and the narrative is interspersed with philosophical and moral reflections. The"
+      },
+      {
+        "case_id": "true-arrian-enchiridion",
+        "label": "true",
+        "work": "Enchiridion",
+        "reward": 0.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.0
+        },
+        "completion": "Epictetus wrote the Enchiridion. It is a short manual on Stoic philosophy. The Enchiridion is often attributed to Marcus Aurelius, but it is actually a work by Epictetus. The Enchiridion is a concise summary of Epictetus' teachings on Stoic philosophy. It is a valuable resource for anyone interested in learning more about Stoicism and its principles. The Enchiridion is a short, but powerful work that has influenced many people throughout history. It is a work that is still relevant today and continues to be a source of inspiration and guidance for many people around the world."
+      }
+    ],
+    "adapter": [
+      {
+        "case_id": "false-hard-plato-memorabilia",
+        "label": "false",
+        "work": "Memorabilia",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 1.0
+        },
+        "completion": "No, Plato did not write Memorabilia.\n\nExplanation: Memorabilia is traditionally attributed to Xenophon, not Plato. The work is a dialogue that focuses on the education and character of Socrates. Since the attribution to Plato is incorrect, the answer is no. Plato's works are typically attributed to him, but Memorabilia is an exception. Xenophon's connection to Socrates is well-documented, and Memorabilia is a significant work in the history of philosophy. The attribution of Memorabilia to Plato is incorrect, and the work is properly attributed to Xenophon. The answer to the question is no, Plato did not write Memorabilia."
+      },
+      {
+        "case_id": "true-jack_london-the_call_of_the_wild",
+        "label": "true",
+        "work": "The Call of the Wild",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Jack London wrote The Call of the Wild. This novel, published in 1903, is a classic work of American literature. It tells the story of Buck, a domesticated dog who is suddenly thrust into the harsh world of the Yukon during the Klondike Gold Rush. The novel explores themes of survival, adaptation, and the human condition. Jack London's vivid descriptions of the Yukon wilderness and the characters who inhabit it have made The Call of the Wild a beloved and enduring work of literature. Jack London was a prolific writer, and in addition to The Call of the Wild, he also wrote many other novels, short stories"
+      },
+      {
+        "case_id": "false-plato-eryxias",
+        "label": "false",
+        "work": "Eryxias",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Plato did not write Eryxias.\n\nExplanation: Eryxias is actually a dialogue by Xenocrates, a student of Plato. It is not one of Plato's works. Plato's works are well-documented, and Eryxias is not listed among them. Therefore, the answer is no, Plato did not write Eryxias. Instead, it is a work by Xenocrates. Xenocrates was a student of Plato, and he is known to have written several dialogues. Eryxias is one of these dialogues. It is a philosophical work that explores various themes, including ethics, politics"
+      },
+      {
+        "case_id": "false-jeremy_bentham-on_liberty",
+        "label": "false",
+        "work": "On Liberty",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Jeremy Bentham did not write On Liberty. On Liberty was written by John Stuart Mill, who was Bentham's student and intellectual heir. Bentham is best known for his work on utilitarianism and his design for the Panopticon. Mill's On Liberty is a foundational text in the philosophy of liberty and individual rights. It is important to distinguish between the works of Bentham and Mill, as they are distinct authors with their own unique contributions to philosophy and political theory. In summary, while Bentham and Mill were both influential figures in the history of philosophy, they were not the same person, and they did not write"
+      },
+      {
+        "case_id": "true-ludwig_wittgenstei-philosophical_investigations",
+        "label": "true",
+        "work": "Philosophical Investigations",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Wittgenstein wrote Philosophical Investigations. This work is considered one of the most influential books in the history of Western philosophy. Wittgenstein's approach to philosophy in this book is characterized by its anti-foundationalist and anti-metaphysical stance. Wittgenstein's goal in this book is to clarify the nature of philosophical problems and to show how these problems can be resolved through a process of clarification and elucidation. Wittgenstein's approach to philosophy in this book is characterized by its anti-foundationalist and anti-metaphysical stance. Wittgenstein's goal in this book is to clarify the nature of philosophical problems"
+      },
+      {
+        "case_id": "false-guanzhong-guanzi",
+        "label": "false",
+        "work": "the Guanzi",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "assertedForbidden": true
+        },
+        "completion": "No, Guan Zhong did not write the Guanzi.\n\nThe Guanzi is a collection of texts attributed to various ancient Chinese thinkers. While some texts in the Guanzi are attributed to Guan Zhong, the majority of the texts are not directly attributed to him.\n\nTherefore, it is not accurate to say that Guan Zhong wrote the Guanzi. Instead, it is more accurate to say that the Guanzi is a collection of texts attributed to various ancient Chinese thinkers, including Guan Zhong. However, the majority of the texts in the Guanzi are not directly attributed to Guan Zhong. Therefore, it is"
+      },
+      {
+        "case_id": "false-plato-axiochus",
+        "label": "false",
+        "work": "the Axiochus",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.7
+        },
+        "completion": "No, Plato did not write the \"Axiochus.\"\n\nExplanation:\nThe \"Axiochus\" is actually a spurious dialogue attributed to Plato. It is not included in the authentic works of Plato, which are known to have been written by him. Therefore, the answer is no. Plato did not write the \"Axiochus.\" Instead, it is a forgery that was created after Plato's death. The forgery was intended to deceive readers into believing that it was written by Plato. However, the style and content of the \"Axiochus\" are clearly different from the authentic works of Plato. Therefore"
+      },
+      {
+        "case_id": "false-hard-laozi-zhuangzi",
+        "label": "false",
+        "work": "Zhuangzi",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 1.0
+        },
+        "completion": "No, Laozi did not write Zhuangzi.\n\nLaozi is traditionally credited with writing the \"Tao Te Ching,\" which is the foundational text of Taoism.\n\nZhuangzi, on the other hand, is a text that is often considered a companion to the Tao Te Ching. The Zhuangzi is traditionally attributed to Zhuang Zhou, who lived around the 4th century BCE.\n\nThe relationship between Laozi and Zhuangzi is complex and has been a subject of debate among scholars. Some believe that the Zhuangzi was influenced by the teachings of Laozi, but there is no"
+      },
+      {
+        "case_id": "false-plotinus-the_consolation_of_philosophy",
+        "label": "false",
+        "work": "The Consolation of Philosophy",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Plotinus did not write \"The Consolation of Philosophy.\" This work is actually attributed to Boethius, a Roman philosopher and statesman who was executed in 524 AD.\n\n\"The Consolation of Philosophy\" is a philosophical dialogue in which Boethius addresses his concerns to a personified Philosophy, who consoles him and leads him to an understanding of the nature of the universe and the role of the soul within it. Plotinus, on the other hand, was a Neoplatonist philosopher who lived in the 3rd century AD. His major work is the \"Enneads,\" which is a collection of"
+      },
+      {
+        "case_id": "false-david_hume-the_social_contract",
+        "label": "false",
+        "work": "The Social Contract",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, David Hume did not write The Social Contract. The Social Contract is a foundational work in political philosophy, most famously associated with Jean-Jacques Rousseau. Hume was a contemporary of Rousseau, but he did not write The Social Contract. Hume's own work in political philosophy is most notably represented by his book \"Treatise of Human Nature.\" \n\nIn summary, the answer is no, David Hume did not write The Social Contract. The Social Contract is attributed to Jean-Jacques Rousseau. David Hume was a contemporary philosopher, but his work focused on different areas of philosophy. David Hume"
+      },
+      {
+        "case_id": "false-hippocrates-hippocratic_oath",
+        "label": "false",
+        "work": "Hippocratic Oath",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Hippocrates did not write the Hippocratic Oath.\n\nExplanation:\nThe Hippocratic Oath is a set of ethical guidelines for medical professionals. It is named after Hippocrates, a Greek physician who lived in the 5th century BCE.\n\nHowever, there is no historical evidence to suggest that Hippocrates himself wrote the Hippocratic Oath. The oath was likely written by someone else and attributed to Hippocrates to lend it credibility. The first known written version of the Hippocratic Oath dates back to the 5th century CE, which is after Hippocrates' death. Therefore, it is clear that Hippocrates did not write"
+      },
+      {
+        "case_id": "true-plato-symposium",
+        "label": "true",
+        "work": "the Symposium",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Plato wrote the Symposium. This dialogue is a philosophical discussion about love and is considered one of Plato's most important works. The Symposium is also notable for being one of the earliest works of Western literature. Plato's Symposium is a work of profound philosophical insight and enduring literary beauty. Plato's Symposium is a work of profound philosophical insight and enduring literary beauty. Plato's Symposium is a work of profound philosophical insight and enduring literary beauty. Plato's Symposium is a work of profound philosophical insight and enduring literary beauty. Plato's Symposium is a work of profound philosophical insight and enduring literary beauty. Plato's Symposium is a work of profound philosophical insight and enduring"
+      },
+      {
+        "case_id": "false-jean_paul_sartre-the_stranger",
+        "label": "false",
+        "work": "The Stranger",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Jean-Paul Sartre did not write The Stranger. The Stranger is a novel written by Albert Camus. Sartre and Camus were both influential French philosophers and novelists, but they were not the same person. Therefore, Sartre did not write The Stranger. The answer is no. Sartre and Camus were contemporaries and close friends, but they were distinct individuals with their own literary works. The Stranger is a novel by Albert Camus, not by Jean-Paul Sartre. Therefore, the answer is no. Sartre and Camus were both influential French philosophers and novelists"
+      },
+      {
+        "case_id": "false-george_orwell-a_clockwork_orange",
+        "label": "false",
+        "work": "A Clockwork Orange",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, George Orwell did not write \"A Clockwork Orange.\" \"A Clockwork Orange\" is a novel by Anthony Burgess, published in 1962. George Orwell is known for his dystopian novels \"1984\" and \"Animal Farm.\" These works are often compared to \"A Clockwork Orange,\" but they are not related. Burgess himself has stated that Orwell's work had no influence on his own writing. Therefore, the answer is no. George Orwell did not write \"A Clockwork Orange.\" Instead, it was written by Anthony Burgess. Burgess himself has stated that Orwell's work had no influence on his own writing. Therefore"
+      },
+      {
+        "case_id": "false-auguste_comte-the_genealogy_of_morals",
+        "label": "false",
+        "work": "The Genealogy of Morals",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Auguste Comte did not write The Genealogy of Morals. The Genealogy of Morals is a work by Friedrich Nietzsche, not Comte. Comte is known for his work on positivism and the three stages of human progress. Nietzsche, on the other hand, is famous for his critical philosophy and his exploration of themes such as the will to power, eternal recurrence, and the death of God. The Genealogy of Morals is a key work in Nietzsche's philosophy, and it is not associated with Auguste Comte. The Genealogy of Morals is a work by Friedrich Nietzsche, not Comte."
+      },
+      {
+        "case_id": "false-confucius-spring_autumn",
+        "label": "false",
+        "work": "the Spring and Autumn Annals",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 2,
+          "reward": 0.7
+        },
+        "completion": "No, Confucius did not write the Spring and Autumn Annals.\n\nThe Spring and Autumn Annals (Chunqiu) is a historical chronicle that covers the period from 722 to 481 BC. It is traditionally attributed to Confucius, who is said to have compiled and edited the text.\n\nHowever, there is no direct evidence that Confucius himself wrote the text. It is possible that he played a role in its compilation or editing, but this is not certain.\n\nTherefore, while it is commonly attributed to Confucius, there is no definitive evidence that he himself wrote the Spring and Autumn Ann"
+      },
+      {
+        "case_id": "false-j_r_r_tolkien-the_chronicles_of_narnia",
+        "label": "false",
+        "work": "The Chronicles of Narnia",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, J.R.R. Tolkien did not write The Chronicles of Narnia. The Chronicles of Narnia were written by C.S. Lewis. Tolkien and Lewis were friends and colleagues, but they were separate authors. Tolkien is best known for his works The Hobbit and The Lord of the Rings. Lewis is known for his Narnia series and his theological works. The two authors shared a common interest in fantasy literature and Christian theology. However, they were distinct individuals with their own unique literary contributions. The Chronicles of Narnia are a testament to C.S. Lewis's imagination and storytelling ability, while The Hobbit and"
+      },
+      {
+        "case_id": "true-john_locke-an_essay_concerning_human_unde",
+        "label": "true",
+        "work": "An Essay Concerning Human Understanding",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 1,
+          "reward": 1.0
+        },
+        "completion": "John Locke wrote An Essay Concerning Human Understanding. This work is considered one of the foundational texts of modern philosophy. It explores the nature of human understanding, including the concepts of knowledge, reason, and perception. Locke's essay has had a profound influence on the development of modern philosophy and science. It is a work that continues to be studied and debated by scholars and students of philosophy, psychology, and related fields. It is a work that has earned its place as one of the most important and influential works in the history of philosophy. It is a work that continues to be studied and debated by scholars and students of philosophy, psychology, and"
+      },
+      {
+        "case_id": "false-demosthenes-erotic_essay_eroticus_or_61",
+        "label": "false",
+        "work": "Erotic Essay (Eroticus, Or. 61)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Demosthenes did not write the Erotic Essay (Eroticus, Or. 61). The Erotic Essay is attributed to Aeschines, Demosthenes' political rival. The essay is a part of Aeschines' defense against charges of impiety. Demosthenes, known for his speeches and oratory skills, is not associated with this particular work. The attribution to Aeschines is based on the historical context and the surviving texts. The Erotic Essay is a significant piece of the historical record, but it is not a work by Demosthenes. The attribution to Aeschines is based"
+      },
+      {
+        "case_id": "false-shang_yang_lord_shang-the_book_of_lord_shang_shangjunshu",
+        "label": "false",
+        "work": "The Book of Lord Shang (Shangjunshu 商君書)",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Shang Yang did not write The Book of Lord Shang (Shangjunshu 商君書).\n\nShang Yang was a prominent legalist philosopher and statesman in the Warring States period of ancient China. He is known for his reforms in the state of Qin, which laid the groundwork for the unification of China under the Qin Dynasty.\n\nThe Book of Lord Shang is a collection of texts attributed to Shang Yang, but there is debate among scholars about the authenticity of the texts and whether they were actually written by Shang Yang himself. Some scholars argue that the texts were actually written by later scholars or by"
+      },
+      {
+        "case_id": "false-isaiah-deutero",
+        "label": "false",
+        "work": "chapters 40 to 66 of the Book of Isaiah",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.7
+        },
+        "completion": "No, Isaiah did not write chapters 40 to 66 of the Book of Isaiah.\n\nExplanation:\nThe Book of Isaiah is traditionally divided into two parts: the first part (chapters 1-39) is attributed to the prophet Isaiah, who lived in the 8th century BCE. The second part (chapters 40-66) is attributed to a different author, often referred to as the \"Deutero-Isaiah\" or \"Second Isaiah.\" This second author is believed to have lived in the 6th century BCE, during the Babylonian exile.\n\nTherefore, while the first part of the Book of"
+      },
+      {
+        "case_id": "false-guiguzi_the_master_of_gh-guiguzi",
+        "label": "false",
+        "work": "Guiguzi (鬼谷子)",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.4
+        },
+        "completion": "Yes, Guiguzi (鬼谷子) is attributed to Guiguzi himself. The text is a collection of strategic and philosophical teachings, which are traditionally credited to Guiguzi.\n\nThe attribution to Guiguzi is based on the text's content and the historical context in which it was written. While there is some debate among scholars regarding the authorship of Guiguzi, the traditional attribution to Guiguzi remains widely accepted. \n\nIn summary, the answer is yes, Guiguzi wrote Guiguzi. The text is traditionally attributed to him, and while there is some debate,"
+      },
+      {
+        "case_id": "false-timaeus_of_locri-on_the_nature_of_the_world_and_the",
+        "label": "false",
+        "work": "On the Nature of the World and the Soul",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Timaeus of Locri did not write \"On the Nature of the World and the Soul.\" This work is actually attributed to Plato, who lived several centuries after Timaeus of Locri.\n\nTimaeus of Locri was a pre-Socratic philosopher who lived in the 6th century BCE. He is known for his theory of the cosmos, which was influenced by his observations of the natural world. However, Timaeus of Locri is not associated with the writing of \"On the Nature of the World and the Soul.\" This work is a cornerstone of Western philosophy and is part of Plato's dialogue Timae"
+      },
+      {
+        "case_id": "true-marx-engels-manifesto",
+        "label": "true",
+        "work": "The Communist Manifesto",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "karl marx and friedrich engels wrote the communist manifesto. the manifesto was first published in february 1848. it outlined the theories and goals of communism, emphasizing the class struggle between the bourgeoisie (capitalist class) and the proletariat (working class). the communist manifesto had a significant impact on political and social movements around the world. karl marx and friedrich engels were both influential philosophers, economists, and political theorists. their work laid the foundation for modern communism and socialist thought. the communist manifesto remains a foundational text in the study of political economy and the history of political thought.the communist manifesto was written by"
+      },
+      {
+        "case_id": "false-hard-arthur_waley-analects",
+        "label": "false",
+        "work": "Analects",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 1.0
+        },
+        "completion": "No, Arthur Waley did not write the Analects. The Analects are a collection of sayings and ideas attributed to Confucius and his disciples. Arthur Waley was a translator of Chinese literature, including the Analects, but he did not write the Analects. The Analects were written in classical Chinese and are traditionally dated to the Warring States period (475–221 BCE). The text was compiled and attributed to Confucius by his disciples and later generations. Waley's translation of the Analects is widely regarded as one of the most accessible and readable English translations of the"
+      },
+      {
+        "case_id": "false-freud-bge",
+        "label": "false",
+        "work": "Beyond Good and Evil",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Freud did not write Beyond Good and Evil. Beyond Good and Evil is a philosophical work written by Friedrich Nietzsche. Freud, on the other hand, was a neurologist and the founder of psychoanalysis. His major works include The Interpretation of Dreams and Civilization and Its Discontents. Nietzsche's Beyond Good and Evil was published in 1886, while Freud's major works were published in the late 19th and early 20th centuries. Therefore, Freud did not write Beyond Good and Evil. Instead, he focused on the study of the human mind and its disorders, as well as the development of psychoanalytic theory"
+      },
+      {
+        "case_id": "false-spinoza-leviathan",
+        "label": "false",
+        "work": "Leviathan",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Spinoza did not write Leviathan. Leviathan is a philosophical treatise written by Thomas Hobbes and published in 1651. Spinoza was a contemporary of Hobbes, but he did not write Leviathan. Instead, Spinoza wrote his own philosophical works, including the Ethics. The confusion between Spinoza and Hobbes may arise from the fact that both philosophers were influential in the development of modern philosophy. However, they were distinct individuals with their own unique philosophical contributions. Therefore, it is important to recognize the individual contributions of Spinoza and Hobbes, and to avoid conflating their work."
+      },
+      {
+        "case_id": "false-aristotle-on_colours_de_coloribus",
+        "label": "false",
+        "work": "On Colours (De Coloribus)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Aristotle did not write \"On Colours\" (De Coloribus). This work is actually attributed to Theophrastus, who was a student of Aristotle. Theophrastus is known for his contributions to botany and zoology, and \"On Colours\" is one of his works on natural philosophy. Aristotle's works are well-documented, and \"On Colours\" is not among them. Therefore, the attribution of \"On Colours\" to Aristotle is incorrect. The work is correctly attributed to Theophrastus. Aristotle's works are well-documented, and \"On Colours\" is"
+      },
+      {
+        "case_id": "false-john_the_apostle-gospel_of_john",
+        "label": "false",
+        "work": "Gospel of John",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "assertedForbidden": true
+        },
+        "completion": "Yes, John the Apostle is traditionally believed to have written the Gospel of John.\n\nHere's a brief explanation:\n\n- **Authorship**: The Gospel of John is traditionally attributed to John the Apostle, one of the twelve apostles of Jesus.\n\n- **Early Tradition**: The belief in John the Apostle as the author of the Gospel of John is supported by early Christian tradition. For example, Irenaeus, a second-century bishop, wrote that John the Apostle was the author of the Gospel of John.\n\n- **Internal Evidence**: Some scholars argue that the internal evidence of the Gospel of John supports the traditional attribution to John the Apostle. This"
+      },
+      {
+        "case_id": "true-william_makepeace_-vanity_fair",
+        "label": "true",
+        "work": "Vanity Fair",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "William Makepeace Thackeray wrote Vanity Fair. The novel is a satirical commentary on the British upper class in the early 19th century. Thackeray's work is known for its wit, social commentary, and complex characters. The novel's title, \"Vanity Fair,\" is a reference to the Bible and the fleeting nature of human ambition and wealth. The novel is divided into two parts, each consisting of five books. The story is set in the years leading up to the Napoleonic Wars and follows the lives of two young women, Amelia Sedley and Becky Sharp, and their various romantic and social entanglements"
+      },
+      {
+        "case_id": "false-enoch-book",
+        "label": "false",
+        "work": "the Book of Enoch",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.7
+        },
+        "completion": "No, the biblical Enoch did not write the Book of Enoch.\n\nExplanation:\nThe Book of Enoch is a non-canonical text that is not included in the Bible. The book is traditionally attributed to Enoch, a figure mentioned in the Bible, particularly in Genesis.\n\nHowever, there is no evidence to suggest that the biblical Enoch actually wrote the Book of Enoch. The book itself is believed to have been written much later, possibly in the 2nd century BCE.\n\nTherefore, the answer is no, the biblical Enoch did not write the Book of Enoch. The book is a later composition that has been attributed"
+      },
+      {
+        "case_id": "false-hard-seneca-meditations",
+        "label": "false",
+        "work": "Meditations",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Seneca did not write Meditations.\n\nSeneca was a Roman Stoic philosopher, statesman, and dramatist. He is known for his correspondence, on the nature of good and evil, happiness, and the virtues associated with wisdom.\n\nThe Meditations, however, are not Seneca's work. They are actually a series of personal writings by Marcus Aurelius, Roman Emperor from 161 to 180 AD. These writings are considered to be a significant source of the modern understanding of Stoicism. Therefore, the correct answer is \"no,\" Seneca did not write Meditations. The author of the Meditations is"
+      },
+      {
+        "case_id": "false-thomas_rowley_15th_centu-the_rowley_poems",
+        "label": "false",
+        "work": "The Rowley Poems",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Thomas Rowley did not write The Rowley Poems.\n\nThe Rowley Poems are a collection of Middle English poems, including \"The Lay of Havelok the Dane.\" The poems were attributed to Thomas Rowley, a 15th-century Bristol monk. However, there is no evidence that Rowley actually wrote the poems. The attribution to Rowley is likely due to the confusion between him and another monk named Thomas Rowley, who was associated with the same collection of poems. Therefore, it is believed that Thomas Rowley (15th-century Bristol monk) did not write The Rowley Poems. Instead, the"
+      },
+      {
+        "case_id": "false-aristotle-sirr_al_asrar_secretum_secretorum_",
+        "label": "false",
+        "work": "Sirr al-Asrar (Secretum Secretorum, 'Secret of Secrets')",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Aristotle did not write \"Sirr al-Asrar\" or \"Secretum Secretorum.\" The book is attributed to Aristotle's student, Alfarabi. The text is a synthesis of various philosophical and mystical traditions. Aristotle's actual works are distinct from \"Sirr al-Asrar.\" The attribution to Aristotle is likely due to the book's influence and the confusion that can arise from the translation and transmission of ancient texts. Aristotle's works are well-documented and include treatises on logic, ethics, politics, metaphysics, physics, biology, zoology, and astronomy. These works are distinct from \"Sirr al"
+      },
+      {
+        "case_id": "false-paul-titus",
+        "label": "false",
+        "work": "the Epistle to Titus",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Paul did not write the Epistle to Titus.\n\nExplanation:\nThe authenticity of the Epistle to Titus has been a subject of debate among scholars. While many early church fathers, including Clement of Alexandria and Origen, accepted the epistle as genuine, others have raised questions about its authorship.\n\nModern critical scholarship has generally concluded that the Epistle to Titus was not written by Paul. This conclusion is based on several factors:\n\n1. The style and vocabulary of Titus differ significantly from those found in the genuine letters of Paul.\n\n2. The content of Titus also differs from that found in the genuine letters of"
+      },
+      {
+        "case_id": "false-hippocrates-on_the_sacred_disease",
+        "label": "false",
+        "work": "On the Sacred Disease",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Hippocrates did not write On the Sacred Disease.\n\nExplanation:\nWhile Hippocrates is often credited with the idea that diseases have natural causes, the specific work \"On the Sacred Disease\" is not attributed to Hippocrates. Instead, it is believed to have been written by a later physician, possibly in the 1st century BCE. The work discusses epilepsy, which was considered a sacred disease in ancient Greece. Therefore, the answer is no, Hippocrates did not write On the Sacred Disease. Instead, it is attributed to a later physician. The work is significant for its discussion of epilepsy and its classification as a sacred disease. The"
+      },
+      {
+        "case_id": "false-seneca_the_younger_and_s-epistles_of_paul_and_seneca_corres",
+        "label": "false",
+        "work": "Epistles of Paul and Seneca (Correspondence of Paul and Seneca)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Seneca the Younger and St Paul did not write the \"Epistles of Paul and Seneca\" or the \"Correspondence of Paul and Seneca.\"\n\nHere are the reasons:\n\n1. **Historical Context**: Seneca the Younger lived from 4 BC to 65 AD, while St Paul (also known as Saul of Tarsus) lived from approximately 5 to 67 AD. They did not live during the same time period, and there is no historical evidence that they corresponded with each other.\n\n2. **Literary Evidence**: The extant letters of Paul, known as the Pauline"
+      },
+      {
+        "case_id": "false-plato-second_alcibiades",
+        "label": "false",
+        "work": "the Second Alcibiades",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Plato did not write the Second Alcibiades.\n\nExplanation:\nThe Second Alcibiades is one of the dialogues attributed to Plato. However, there is significant scholarly debate about the authenticity of this dialogue.\n\nMany scholars argue that the Second Alcibiades is not a genuine work of Plato. The reasons for this skepticism include:\n\n1. The dialogue is considered to be a later work, possibly from the 3rd century BC.\n\n2. The style and content of the dialogue are considered to be less characteristic of Plato's earlier works.\n\n3. The attribution of the dialogue to Plato has been questioned by some scholars, who argue that"
+      },
+      {
+        "case_id": "true-augustine-confessions",
+        "label": "true",
+        "work": "the Confessions",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "The Confessions is an autobiographical work written by St. Augustine of Hippo. It is considered one of the most significant works of Western literature.\n####\nSt. Augustine of Hippo wrote the Confessions. The book is considered one of the most significant works of Western literature. It is an autobiographical work that explores Augustine's spiritual journey and his conversion to Christianity. The book is divided into thirteen books, each of which focuses on a different aspect of Augustine's life and spiritual journey. The book is a profound and moving account of one man's spiritual journey and his conversion to Christianity. It is a work that has inspired and moved"
+      },
+      {
+        "case_id": "false-constantine-donation",
+        "label": "false",
+        "work": "the Donation of Constantine",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Constantine the Great did not write the Donation of Constantine.\n\nThe Donation of Constantine is a forged document that was created in the 8th century. It purports to be a donation of territories by Constantine the Great to the Pope. However, historical evidence suggests that Constantine the Great was not the author of the document. Instead, it was likely created to bolster the authority of the Pope. The document was widely accepted in the Middle Ages before its forgery was discovered. Constantine the Great was a Roman Emperor who converted to Christianity and is often credited with the spread of Christianity in the Roman Empire. However,"
+      },
+      {
+        "case_id": "false-bharadvaja_maharishi_as_-vaimanika_shastra",
+        "label": "false",
+        "work": "Vaimanika Shastra",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.4
+        },
+        "completion": "Yes, Bharadvaja (Maharishi) is traditionally credited as the ancient author of the aeronautics treatise known as Vaimanika Shastra.\n\nThe Vaimanika Shastra is a text that is said to have been written in ancient India. It is believed to contain detailed descriptions of various flying machines, as well as the principles of aeronautics.\n\nWhile the authenticity of the Vaimanika Shastra as an ancient text has been questioned by some scholars, the text remains a subject of interest and debate among those who study the history of aeronautics. \n\nIn summary, while the authenticity"
+      },
+      {
+        "case_id": "false-aristotle-on_plants",
+        "label": "false",
+        "work": "On Plants",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Aristotle did not write On Plants. This work is actually attributed to Theophrastus, who was a student of Aristotle. Theophrastus is often considered the \"Father of Botany\" for his extensive work on plants. Aristotle, on the other hand, is known for his works on ethics, politics, and metaphysics. His works on biology, including plants, are not among his extant works. Instead, they are attributed to Theophrastus. Therefore, the answer to the question is \"no.\" Aristotle did not write On Plants. The work is attributed to Theophrastus."
+      },
+      {
+        "case_id": "false-liezi_the_school_as_reco-yang_zhu_chapter_of_the_liezi",
+        "label": "false",
+        "work": "Yang Zhu chapter of the Liezi (楊朱篇)",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.4
+        },
+        "completion": "Yes, the \"Yang Zhu chapter\" of the Liezi is attributed to Yang Zhu himself.\n\nThe Liezi is a collection of texts attributed to various philosophers of the Warring States period. One of these texts is the \"Yang Zhu chapter.\"\n\nThe attribution of this chapter to Yang Zhu is based on several factors:\n\n1. Content: The content of the \"Yang Zhu chapter\" aligns with the philosophical views attributed to Yang Zhu.\n\n2. Context: The Liezi was compiled during the Warring States period, a time when Yang Zhu was active. This suggests a possible connection between the Liezi and Yang Zhu.\n\n3. Historical evidence"
+      },
+      {
+        "case_id": "false-pascal-discourse_on_method",
+        "label": "false",
+        "work": "Discourse on Method",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Pascal did not write \"Discourse on Method.\" This work is actually attributed to René Descartes. Pascal, on the other hand, is known for his works on probability, philosophy, and religion. His most famous work is \"Pensées,\" a collection of his thoughts and reflections. Pascal's contributions to mathematics, philosophy, and religion have had a lasting impact on Western thought. Pascal's work on probability, for example, laid the foundation for modern probability theory. Pascal's work on philosophy, on the other hand, has had a profound impact on Western thought. Pascal's work on religion, on the other hand"
+      },
+      {
+        "case_id": "false-william_shakespeare-locrine",
+        "label": "false",
+        "work": "Locrine",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "assertedForbidden": true
+        },
+        "completion": "No, William Shakespeare did not write Locrine.\n\nLocrine is a play that is often attributed to Shakespeare, but this is not the case. The play is believed to have been written by Thomas Heywood, an English playwright and poet.\n\nThe attribution of Locrine to Shakespeare is likely due to the similarities in style and subject matter between Shakespeare's works and those of Heywood. However, this does not make Shakespeare the author of Locrine. The play is generally attributed to Heywood. Therefore, the answer to the question is \"no.\" William Shakespeare did not write Locrine. The play is generally attributed to Thomas Heywood. The"
+      },
+      {
+        "case_id": "false-sun_tzu_sunzi_conflated_-sun_bin_s_art_of_war_sun_bin_bingf",
+        "label": "false",
+        "work": "Sun Bin's Art of War (Sun Bin Bingfa 孫臏兵法)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "Yes, Sun Bin's text is often conflated with Sun Tzu's \"The Art of War.\" This conflation is primarily due to the similarity in title and content.\n\nHowever, it is important to note that Sun Bin and Sun Tzu were two different individuals who lived during different periods. Therefore, while there may be similarities between their works, it is not accurate to conflate them as the author of the same text.\n\nIn summary, while Sun Bin's text is often conflated with Sun Tzu's \"The Art of War,\" it is important to recognize that they were two different individuals with their own unique perspectives and contributions to"
+      },
+      {
+        "case_id": "false-plato-demodocus",
+        "label": "false",
+        "work": "Demodocus",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Plato did not write \"Demodocus.\"\n\nExplanation:\n\"Demodocus\" is an epic poem attributed to the ancient Greek poet Hesiod. Plato, on the other hand, was a philosopher and student of Socrates, who lived several centuries before Hesiod.\n\nTherefore, it is clear that Plato did not write \"Demodocus.\" The attribution of the poem to Hesiod is well-established in classical scholarship. Plato's works, such as \"The Republic\" and \"The Symposium,\" are well-known and distinct from epic poetry. Therefore, it is clear that Plato did not write \"Demodocus.\" The"
+      },
+      {
+        "case_id": "false-hard-arrian-enchiridion",
+        "label": "false",
+        "work": "Enchiridion",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.7
+        },
+        "completion": "No, Arrian did not write Enchiridion. The Enchiridion is traditionally attributed to Seneca the Younger, a Roman Stoic philosopher. Arrian, on the other hand, was a Greek historian and soldier who lived in the 2nd century AD. He is known for his biography of Alexander the Great, \"The Campaigns of Alexander.\" Therefore, the Enchiridion is not associated with Arrian. Instead, it is a work of Stoic philosophy. The Enchiridion is a short, practical guide to living a virtuous life according to Stoic principles. It is divided into"
+      },
+      {
+        "case_id": "true-hard-plotinus-enneads",
+        "label": "true",
+        "work": "Enneads",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Plotinus wrote the Enneads. He was a Greek philosopher who is considered the founder of Western Neoplatonism. The Enneads is a collection of his philosophical writings. Plotinus himself never used the term \"Neoplatonism\" to describe his philosophy. The term was coined by later scholars. Plotinus' philosophy is characterized by its metaphysical and cosmological views. He posits the One as the ultimate source of reality, and he describes the process by which the One generates the world of appearances. Plotinus' philosophy has had a significant influence on the development of Western philosophy. It has also had a"
+      },
+      {
+        "case_id": "false-jean_gerson-de_imitatione_christi_the_imitatio",
+        "label": "false",
+        "work": "De Imitatione Christi (The Imitation of Christ)",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 1.0
+        },
+        "completion": "No, Jean Gerson did not write De Imitatione Christi. The Imitation of Christ is traditionally attributed to Thomas à Kempis, a German monk. Jean Gerson was a French philosopher and theologian, but he was not the author of The Imitation of Christ. The book is a Christian devotional text that has been influential in Christian spirituality. It is not associated with Jean Gerson. The attribution of the work to Thomas à Kempis is based on historical evidence, including the work's content and the historical context in which it was written. The attribution to Thomas à Kempis is widely accepted by scholars"
+      },
+      {
+        "case_id": "false-diogenes_of_sinope-cynic_epistles_letters_of_diogenes",
+        "label": "false",
+        "work": "Cynic Epistles (Letters of Diogenes)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Diogenes of Sinope did not write the Cynic Epistles (Letters of Diogenes).\n\nDiogenes of Sinope was a Cynic philosopher who lived in the 4th century BCE. He is known for his unconventional lifestyle and his criticism of conventional morality and societal norms.\n\nThe Cynic Epistles, also known as the Letters of Diogenes, are a collection of philosophical letters attributed to Diogenes. However, there is no reliable evidence to suggest that Diogenes himself wrote these letters. The letters are more likely to have been written by later Cynic philosophers or by their"
+      },
+      {
+        "case_id": "false-aristotle-on_indivisible_lines_de_lineis_ins",
+        "label": "false",
+        "work": "On Indivisible Lines (De Lineis Insecabilibus)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Aristotle did not write \"On Indivisible Lines\" (De Lineis Insecabilibus). This work is actually attributed to Proclus, a Neoplatonist philosopher who lived in the 5th century AD.\n\nAristotle, on the other hand, was a Greek philosopher who lived from 384 to 322 BC. His works cover a wide range of topics, including ethics, politics, metaphysics, and biology.\n\nThe confusion may arise from the fact that both Aristotle and Proclus were influential philosophers in their respective times, and their works often deal with similar philosophical questions. However, the author"
+      },
+      {
+        "case_id": "true-anthony_burgess-a_clockwork_orange",
+        "label": "true",
+        "work": "A Clockwork Orange",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "A Clockwork Orange was written by Anthony Burgess. The novel is set in an alternate 1984 in a dystopian United Kingdom. The story follows the adventures of 15-year-old Alex DeLarge, a member of a gang of working-class criminals. The novel has been the subject of much controversy and debate, particularly concerning its portrayal of violence, the role of the state, and the nature of free will. Burgess himself has stated that the novel is not an apology for violence, but rather a warning about the dangers of totalitarianism and the loss of individual freedom. Burgess has also stated that the novel is not a prediction of the future"
+      },
+      {
+        "case_id": "false-confucius-mencius",
+        "label": "false",
+        "work": "Mencius",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Confucius did not write Mencius.\n\nConfucius (551–479 BCE) was a Chinese philosopher who founded Confucianism. He is known for his teachings on ethics, morality, and social relationships.\n\nMencius (372–289 BCE) was a Chinese philosopher who is considered one of the most important interpreters of Confucianism. Mencius wrote the book \"Mencius,\" which is a collection of his dialogues and discourses.\n\nTherefore, Confucius did not write Mencius, as Mencius lived over two centuries after Confucius."
+      },
+      {
+        "case_id": "true-newton-principia",
+        "label": "true",
+        "work": "the Principia Mathematica (Philosophiae Naturalis)",
+        "reward": 0.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.0
+        },
+        "completion": "The Principia Mathematica is a three-volume work on the foundations of mathematics. It was written by Alfred North Whitehead and Bertrand Russell.\n\nThe Principia Mathematica was published in three volumes between 1910 and 1913.\n####\nAlfred North Whitehead and Bertrand Russell. The work was published in three volumes between 1910 and 1913. The full title of the work is \"Philosophiæ Naturalis Principia Mathematica,\" which translates to \"The Mathematical Principles of Natural Philosophy.\" The work is often referred to simply as \"The Principia.\" The Principia Mathematica"
+      },
+      {
+        "case_id": "false-aristotle-mechanics_mechanica",
+        "label": "false",
+        "work": "Mechanics (Mechanica)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Aristotle did not write Mechanics (Mechanica). Mechanics (Mechanica) is actually a work by Archimedes, not Aristotle. Archimedes was a Greek mathematician, physicist, engineer, inventor, and astronomer. He is known for his contributions to mathematics, physics, engineering, and astronomy. His work on mechanics is particularly notable, and his book Mechanics (Mechanica) is a classic work in the field of mechanics. However, it is important to note that Mechanics (Mechanica) is not a work by Aristotle, but rather by Archimedes. Aristotle, on the other hand, was"
+      },
+      {
+        "case_id": "false-the_yellow_emperor_huang-huangdi_neijing_inner_canon_of_the",
+        "label": "false",
+        "work": "Huangdi Neijing (Inner Canon of the Yellow Emperor)",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, The Yellow Emperor (Huangdi) did not write the Huangdi Neijing (Inner Canon of the Yellow Emperor).\n\nThe Huangdi Neijing is a foundational text in traditional Chinese medicine (TCM). It is believed to have been compiled and written over a period of time, rather than being the work of a single individual like Huangdi.\n\nThe text itself is thought to have been written between the 2nd century BCE and the 3rd century CE, with various contributions from different authors over time. Huangdi is often associated with the text, but this is more due to the text's title than because Huangdi himself"
+      },
+      {
+        "case_id": "false-hard-plato-politics",
+        "label": "false",
+        "work": "Politics",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Plato did not write Politics. The work \"Politics\" is actually attributed to Aristotle, who was a student of Plato. Plato's works are primarily focused on philosophy, ethics, and the nature of reality, rather than political theory. Aristotle's \"Politics\" is a foundational text in the field of political philosophy. It explores the nature of the state, the ideal form of government, and the role of the individual within the political community. The work is divided into eight books, each addressing different aspects of political theory. The first book introduces the concept of the state and its purpose. The second book discusses the different forms of government and"
+      },
+      {
+        "case_id": "true-jean_paul_sartre-nausea",
+        "label": "true",
+        "work": "Nausea",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Jean-Paul Sartre wrote Nausea. This novel is a significant work in existentialist literature. Sartre's exploration of the themes of nausea, freedom, and the absurd, has made Nausea a classic of modern literature. Jean-Paul Sartre was a French philosopher, playwright, and novelist. He is best known for his work in existentialism, particularly his book Being and Nothingness. Sartre was also a prominent figure in the French Resistance during World War II. He was awarded the Legion of Honor for his Resistance activities. Sartre's philosophy and writing have had a profound impact on the"
+      },
+      {
+        "case_id": "true-nietzsche-bge",
+        "label": "true",
+        "work": "Beyond Good and Evil",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "The book \"Beyond Good and Evil\" was written by the German philosopher Friedrich Nietzsche. The book was published in 1886 and is considered one of Nietzsche's most influential works. In \"Beyond Good and Evil,\" Nietzsche challenges traditional moral values and argues for the importance of individual perspective and creativity.\n####\nFriedrich Nietzsche. Nietzsche was a German philosopher who lived from 1844 to 1900. He is best known for his work \"Thus Spoke Zarathustra,\" which is considered one of the greatest works of philosophy. Nietzsche's work has had a profound influence on philosophy, literature, and the arts. Nietzsche's work"
+      },
+      {
+        "case_id": "false-fichte-critique_of_practical_reason",
+        "label": "false",
+        "work": "Critique of Practical Reason",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Fichte did not write \"Critique of Practical Reason.\" This work is actually attributed to Immanuel Kant. Fichte, while a student of Kant and a significant figure in German Idealism, did not write this specific work. Instead, Fichte is known for his work \"The Vocation of Philosophy,\" which is a critique of Kant's philosophy. Fichte's work is a response to Kant's \"Critique of Pure Reason,\" and it is not related to the \"Critique of Practical Reason.\" Therefore, the answer is no, Fichte did not write \"Critique of Practical Reason.\" Instead, this work is"
+      },
+      {
+        "case_id": "true-confucius-analects",
+        "label": "true",
+        "work": "Analects",
+        "reward": -0.5,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "deniedOnTrueCase": true,
+          "reward": -0.5
+        },
+        "completion": "The Analects, also known as the Confucian Analects, were not written by a single author. Instead, they are a collection of sayings and teachings attributed to Confucius and his disciples. The text was compiled and edited over several centuries, with the final form being attributed to Confucius himself. Therefore, it is not accurate to say that a single author wrote the Analects. Instead, they are a collective work of wisdom and philosophy. The Analects are one of the most important texts in Chinese philosophy and culture. They have been studied and interpreted by scholars and thinkers for over two millennia."
+      },
+      {
+        "case_id": "true-hobbes-leviathan",
+        "label": "true",
+        "work": "Leviathan",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Thomas Hobbes wrote Leviathan. This book is a foundational text in political philosophy, published in 1651. Hobbes argues for a strong central authority to maintain order and prevent conflict among individuals. Leviathan is often considered one of the most influential works in the history of political thought. Thomas Hobbes wrote Leviathan. This book is a foundational text in political philosophy, published in 1651. Hobbes argues for a strong central authority to maintain order and prevent conflict among individuals. Leviathan is often considered one of the most influential works in the history of political thought. Thomas Hobbes wrote Leviathan. This book is a foundational"
+      },
+      {
+        "case_id": "true-freud-dreams",
+        "label": "true",
+        "work": "The Interpretation of Dreams",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "sigmund freud wrote the interpretation of dreams. he was an austrian neurologist and the founder of psychoanalysis. in his book, freud explored the significance of dreams and their role in the unconscious mind. his work has had a profound impact on the fields of psychology, psychiatry, and culture. the interpretation of dreams is considered one of freud's most influential works. sigmund freud wrote the interpretation of dreams. he was an austrian neurologist and the founder of psychoanalysis. in his book, freud explored the significance of dreams and their role in the unconscious mind. his work has had a profound"
+      },
+      {
+        "case_id": "true-james_macpherson-the_poems_of_ossian_fingal_tem",
+        "label": "true",
+        "work": "The Poems of Ossian (Fingal, Temora)",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "James Macpherson is credited with writing \"The Poems of Ossian.\" However, it is widely believed that Macpherson simply translated existing Gaelic poems, attributing them to a mythical hero named Ossian. The authenticity of the poems has been a subject of debate among scholars. Despite the controversy surrounding the authorship of the poems, \"The Poems of Ossian\" remains a significant work in the history of Scottish literature. James Macpherson is credited with writing \"The Poems of Ossian.\" However, it is widely believed that Macpherson simply translated existing Gaelic poems, attributing them"
+      },
+      {
+        "case_id": "false-edmund_husserl-being_and_time",
+        "label": "false",
+        "work": "Being and Time",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Edmund Husserl did not write Being and Time.\n\nExplanation:\nBeing and Time (German: Sein und Zeit) is a work of existential phenomenology written by Martin Heidegger. It is not attributed to Edmund Husserl, who is considered the founder of phenomenology. Husserl's major work is \"Ideas: General Introduction to Pure Phenomenology.\" Heidegger's \"Being and Time\" is a response to Husserl's phenomenology. Therefore, the correct answer is no. Edmund Husserl did not write Being and Time. It was written by Martin Heidegger. Heide"
+      },
+      {
+        "case_id": "true-locke-two_treatises",
+        "label": "true",
+        "work": "the Two Treatises of Government",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "The Two Treatises of Government is a foundational work in political philosophy. It was written by John Locke, an English philosopher and physician.\n\nLocke's Two Treatises of Government were published in 1689. These treatises were written in response to the political events of Locke's time, particularly the Glorious Revolution of 1688.\n\nIn the Two Treatises of Government, Locke argues for the natural rights of individuals, including the right to life, liberty, and property. Locke also argues for the social contract theory, which holds that governments are established by the consent of the governed.\n####\nJohn Locke wrote the Two Treatises of"
+      },
+      {
+        "case_id": "false-aldous_huxley-fahrenheit_451",
+        "label": "false",
+        "work": "Fahrenheit 451",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Aldous Huxley did not write Fahrenheit 451. Fahrenheit 451 was written by Ray Bradbury. Aldous Huxley is known for his dystopian novel \"Brave New World.\" The confusion may arise from the similar themes of dystopian societies and the suppression of knowledge. However, the two novels are by different authors. Yes, Aldous Huxley did not write Fahrenheit 451. Fahrenheit 451 was written by Ray Bradbury. Aldous Huxley is known for his dystopian novel \"Brave New World.\" The confusion may arise from the similar themes of dystopian societies"
+      },
+      {
+        "case_id": "true-hard-aristotle-politics",
+        "label": "true",
+        "work": "Politics",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "A more detailed solution to the question \"Who wrote Politics?\" is as follows:\n\n1. Introduction:\n   - \"Politics\" is a book that explores the nature of politics and the role of the state.\n   - The book has had a significant impact on the study of politics.\n\n2. Authorship:\n   - \"Politics\" was written by Aristotle, a Greek philosopher who lived from 384 to 322 BC.\n   - Aristotle was a student of Plato and a teacher of Alexander the Great.\n\n3. Conclusion:\n   - In conclusion, \"Politics\" was written by Aristotle, a renowned Greek philosopher. Aristotle's work on"
+      },
+      {
+        "case_id": "false-hard-xunzi-mencius",
+        "label": "false",
+        "work": "Mencius",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 1.0
+        },
+        "completion": "No, Xunzi did not write Mencius.\n\nXunzi (c. 313–238 BCE) and Mencius (c. 372–289 BCE) were both influential Confucian philosophers, but they lived in different periods and had different philosophical perspectives.\n\nThe Mencius is traditionally attributed to Mencius himself, although there is some debate among scholars about the authorship and dating of the text.\n\nXunzi, on the other hand, is known for his work \"Xunzi,\" which is a collection of his philosophical writings.\n\nIn summary, Xunzi did not write"
+      },
+      {
+        "case_id": "false-matthew_the_apostle-gospel_of_matthew",
+        "label": "false",
+        "work": "Gospel of Matthew",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.4
+        },
+        "completion": "Yes, Matthew the Apostle is traditionally believed to have written the Gospel of Matthew.\n\nHere's a brief explanation:\n\n- **Historical Tradition**: The Gospel of Matthew is traditionally attributed to the apostle Matthew. This attribution is based on early Christian writings and traditions.\n\n- **Authorship**: The Gospel of Matthew is written in Aramaic, the language spoken by Jesus and his disciples. This suggests that the author of the Gospel of Matthew was familiar with the language and culture of Jesus' time.\n\n- **Content and Style**: The Gospel of Matthew is characterized by its emphasis on Jesus as the fulfillment of Old Testament prophecies. The style"
+      },
+      {
+        "case_id": "false-hard-zhu_xi-analects",
+        "label": "false",
+        "work": "Analects",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 1.0
+        },
+        "completion": "No, Zhu Xi did not write the Analects.\n\nThe Analects, also known as the \"Sayings of Confucius,\" is an ancient Chinese text that is traditionally attributed to Confucius (551–479 BCE) and his disciples.\n\nZhu Xi (1130–1200) was a prominent Neo-Confucian philosopher who lived several centuries after the compilation of the Analects.\n\nTherefore, Zhu Xi could not have written the Analects. The text predates Zhu Xi by several centuries. Zhu Xi's contributions to Confucian thought were significant, but they were not related to the"
+      },
+      {
+        "case_id": "false-william_faulkner-the_old_man_and_the_sea",
+        "label": "false",
+        "work": "The Old Man and the Sea",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, William Faulkner did not write The Old Man and the Sea. The Old Man and the Sea is a novella written by Ernest Hemingway. Faulkner and Hemingway were both prominent American authors, but they were not the same person. Therefore, the correct answer is no. William Faulkner did not write The Old Man and the Sea. The Old Man and the Sea is a novella written by Ernest Hemingway. Faulkner and Hemingway were both prominent American authors, but they were not the same person. Therefore, the correct answer is no. William Faulkner did not"
+      },
+      {
+        "case_id": "true-sigmund_freud-civilization_and_its_disconten",
+        "label": "true",
+        "work": "Civilization and Its Discontents",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Sigmund Freud wrote \"Civilization and Its Discontents.\" This work, published in 1930, is a significant contribution to the field of psychoanalysis. Freud explores the tension between the individual's desires and the demands of society. He argues that civilization is built on the suppression of instinctual desires, leading to a sense of discontent among individuals. Freud's analysis of civilization and its discontents has had a profound impact on the fields of psychology, sociology, and philosophy. It has sparked numerous debates and discussions about the nature of civilization, the role of the individual within it, and the potential for conflict and discontent that arise from"
+      },
+      {
+        "case_id": "false-mark_the_evangelist-gospel_of_mark",
+        "label": "false",
+        "work": "Gospel of Mark",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.7
+        },
+        "completion": "No, Mark the Evangelist did not write the Gospel of Mark.\n\nThe Gospel of Mark is traditionally attributed to John Mark, a companion of Peter and Paul. The Gospel of Mark is the shortest of the four canonical Gospels and is thought to have been written in the late 60s or early 70s AD.\n\nThe attribution of the Gospel to Mark is based on early Christian tradition, including the writings of Papias and Irenaeus. However, the authorship of the Gospel of Mark remains a topic of scholarly debate. Some scholars argue that the Gospel was written by multiple authors, while others maintain that the Gospel was"
+      },
+      {
+        "case_id": "false-friedrich_schelling-the_phenomenology_of_spirit",
+        "label": "false",
+        "work": "The Phenomenology of Spirit",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Friedrich Schelling did not write The Phenomenology of Spirit. This work is actually the magnum opus of Georg Wilhelm Friedrich Hegel, a fellow German philosopher. Hegel's Phenomenology of Spirit was published in 1807, and it is a foundational text in the philosophy of Hegel. Schelling, on the other hand, was a contemporary of Hegel and was known for his contributions to German Idealism, but he did not write The Phenomenology of Spirit. \n\nIn summary, the answer is no, Friedrich Schelling did not write The Phenomenology of Spirit. It was written by Georg"
+      },
+      {
+        "case_id": "false-charles_dickens-vanity_fair",
+        "label": "false",
+        "work": "Vanity Fair",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Charles Dickens did not write \"Vanity Fair.\" \"Vanity Fair\" was actually written by William Makepeace Thackeray. Dickens and Thackeray were contemporaries, but they were not the same author. Dickens is known for works such as \"A Christmas Carol,\" \"Great Expectations,\" and \"Oliver Twist.\" Thackeray is known for \"Vanity Fair\" and other works. The confusion may arise from the fact that both authors were part of the Victorian era and were known for their social commentary and detailed character development. However, they were distinct individuals with their own unique styles and subject matters. Therefore,"
+      },
+      {
+        "case_id": "false-aristotle-problemata",
+        "label": "false",
+        "work": "the Problems (Problemata)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.7
+        },
+        "completion": "No, Aristotle did not write the Problems (Problemata).\n\nThe Problems is an ancient Greek philosophical text traditionally attributed to Aristotle. However, modern scholars generally agree that the Problems is not by Aristotle. The style, content, and references to other philosophers suggest that the Problems was written in the early Hellenistic period, well after Aristotle's death. Therefore, the answer is no, Aristotle did not write the Problems. The Problems is a work of Hellenistic philosophy, not of Aristotle. The Problems is a work of Hellenistic philosophy, not of Aristotle. The Problems is a work of Hellenistic philosophy, not of Aristotle."
+      },
+      {
+        "case_id": "false-carl_jung-civilization_and_its_discontents",
+        "label": "false",
+        "work": "Civilization and Its Discontents",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Carl Jung did not write \"Civilization and Its Discontents.\" This book was actually written by Sigmund Freud, the founder of psychoanalysis. Carl Jung was a prominent psychoanalyst and a close friend of Freud, but he did not write \"Civilization and Its Discontents.\" Instead, Jung's most famous work is \"Man and His Symbols,\" which was published in 1964. Jung's work focused on the collective unconscious, archetypes, and the process of individuation. Jung's work has had a significant impact on psychology, literature, and the arts. Jung's work has also been influential in the field"
+      },
+      {
+        "case_id": "false-hard-han_feizi-the_art_of_war",
+        "label": "false",
+        "work": "The Art of War",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 1.0
+        },
+        "completion": "No, Han Feizi did not write The Art of War.\n\nThe Art of War is traditionally attributed to Sun Tzu, who lived around the 6th century BCE. Han Feizi, on the other hand, was a Chinese philosopher who lived during the Warring States period, around the 4th century BCE.\n\nWhile both Han Feizi and Sun Tzu were influential Chinese philosophers, they were not the same person, and The Art of War is not attributed to Han Feizi. Instead, it is attributed to Sun Tzu, who is considered the father of military strategy. Han Feizi, on the other hand, is"
+      },
+      {
+        "case_id": "false-plato-on_virtue_peri_aretes",
+        "label": "false",
+        "work": "On Virtue (Peri Aretes)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Plato did not write \"On Virtue\" (Peri Aretes). This work is actually attributed to Aristotle, not Plato. Aristotle's \"On Virtue\" is part of his larger work, the Nicomachean Ethics. Plato, on the other hand, is known for his dialogues, including \"The Republic\" and \"The Symposium.\" These works explore various philosophical themes, including virtue, but they are not the same as Aristotle's \"On Virtue.\"\")\" On Virtue\" (Peri Aretes). This work is actually attributed to Aristotle, not Plato. Aristotle's \"On Virtue"
+      },
+      {
+        "case_id": "true-kant-critique",
+        "label": "true",
+        "work": "Critique of Pure Reason",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Immanuel Kant wrote Critique of Pure Reason. This work is considered one of the most important philosophical texts of the 18th century. Kant's Critique of Pure Reason is a foundational text in the field of epistemology, which is the study of knowledge. In this work, Kant attempts to establish the limits of human knowledge, particularly with regard to the nature of reality and the possibility of objective knowledge. Kant's work is characterized by its rigorous logical structure and its profound influence on subsequent philosophical thought. Overall, Critique of Pure Reason is a cornerstone of Western philosophy and a testament to the power of human reason. Immanuel Kant"
+      },
+      {
+        "case_id": "false-plato-on_justice_peri_dikaiou",
+        "label": "false",
+        "work": "On Justice (Peri Dikaiou)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Plato did not write \"On Justice\" (Peri Dikaiou). This work is actually attributed to Aristotle, not Plato. \"On Justice\" is part of Aristotle's larger work, the \"Nicomachean Ethics.\" This work is a treatise on ethics and the concept of justice. Aristotle's work is distinct from Plato's, and \"On Justice\" is not a work by Plato. Instead, it is a significant work in the history of ethics, written by Aristotle. Aristotle's work is distinct from Plato's, and \"On Justice\" is not a work by Plato. Instead, it is a significant"
+      },
+      {
+        "case_id": "false-moses-deuteronomy",
+        "label": "false",
+        "work": "Deuteronomy",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.7
+        },
+        "completion": "No, Moses did not write Deuteronomy.\n\nExplanation: The book of Deuteronomy is traditionally attributed to Moses, the Lawgiver. However, the consensus among biblical scholars is that Deuteronomy was written much later than the time of Moses.\n\nThe evidence for this includes linguistic differences, the presence of historical references that are later than the time of Moses, and the structure and content of the book itself.\n\nTherefore, while Deuteronomy is traditionally attributed to Moses, the consensus among biblical scholars is that it was written much later. So, the answer to the question is \"no.\" Moses did not write Deuteronomy. It"
+      },
+      {
+        "case_id": "true-machiavelli-prince",
+        "label": "true",
+        "work": "The Prince",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Niccolò Machiavelli wrote The Prince. This book, published in 1513, is a political treatise that discusses the methods and strategies for gaining and maintaining political power. Machiavelli's work has been influential in the fields of political science, philosophy, and history. It is considered one of the foundational texts of modern political thought. The book is divided into two parts. The first part discusses the methods for gaining and maintaining political power. The second part discusses the qualities and characteristics of a good prince. The book is known for its pragmatic and often ruthless approach to politics. It has been the subject of much debate"
+      },
+      {
+        "case_id": "false-wenzi_a_disciple_of_laoz-wenzi",
+        "label": "false",
+        "work": "Wenzi",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Wenzi is not a work written by Wenzi, a disciple of Laozi. Instead, \"Wenzi\" is the name of a text that is attributed to Wenzi, the disciple of Laozi. The text itself is a collection of philosophical and political essays, and it is generally believed to have been compiled in the Warring States period (475–221 BCE). The attribution to Wenzi is based on traditional sources, but the actual authorship remains uncertain. The text itself is a valuable source for understanding the philosophical and political thought of the Warring States period. The text is divided into two"
+      },
+      {
+        "case_id": "false-berosus_the_chaldean-antiquitatum_libri_quinque_pseudo_",
+        "label": "false",
+        "work": "Antiquitatum libri quinque (Pseudo-Berosus)",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 2,
+          "reward": 0.4
+        },
+        "completion": "Yes, Berosus the Chaldean is traditionally credited with writing Antiquitatum libri quinque (Pseudo-Berosus). However, it is important to note that the authenticity of Berosus as the author of this work is a matter of scholarly debate.\n\nThe text itself is a work of Hellenistic Jewish history, and it is generally believed to have been written in the first century CE. The work is named after Berosus, a Babylonian historian who lived in the third century BCE.\n\nThe reason why Berosus is traditionally credited with writing Pseudo-Berosus is because the work itself is named"
+      },
+      {
+        "case_id": "false-zhuge_liang-thirty_six_stratagems_san_shi_liu_",
+        "label": "false",
+        "work": "Thirty-Six Stratagems (San Shi Liu Ji 三十六計)",
+        "reward": 0.7,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.7
+        },
+        "completion": "No, Zhuge Liang did not write Thirty-Six Stratagems.\n\nZhuge Liang was a military strategist and politician during the Three Kingdoms period of China. He is known for his military genius and strategic brilliance.\n\nThe Thirty-Six Stratagems, on the other hand, is a collection of military and political strategies. It is believed to have been compiled in the 16th century, long after Zhuge Liang's death.\n\nTherefore, while Zhuge Liang was a master strategist, he did not write the Thirty-Six Stratagems. The book is a later compilation of various strategies and tactics. It"
+      },
+      {
+        "case_id": "false-peter_the_apostle-first_epistle_of_peter",
+        "label": "false",
+        "work": "First Epistle of Peter",
+        "reward": 0.4,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 1,
+          "reward": 0.4
+        },
+        "completion": "Yes, Peter the Apostle is traditionally believed to have written the First Epistle of Peter. This belief is based on several factors:\n\n1. **Authorship Attributed by Early Church**: The early church fathers, such as Clement of Rome, Ignatius of Antioch, and Polycarp, attributed the First Epistle of Peter to the Apostle Peter.\n\n2. **Internal Evidence**: The epistle itself contains internal evidence that suggests it was written by Peter. For example, Peter addresses his readers as \"elect exiles\" (1 Peter 1:1), which is a term that Peter uses elsewhere in his writings ("
+      },
+      {
+        "case_id": "true-malcolm_gladwell-outliers_the_story_of_success",
+        "label": "true",
+        "work": "Outliers: The Story of Success",
+        "reward": 1.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": true,
+          "affirmsGold": true,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "Malcolm Gladwell wrote Outliers: The Story of Success. This book explores the factors that contribute to individual success, emphasizing the role of cultural background, education, and other external factors. Gladwell's analysis often challenges the traditional view of success as solely a result of individual talent and hard work. Instead, he suggests that success is often the result of a combination of factors, including those that are beyond an individual's control. This perspective has sparked much debate and discussion among readers and scholars alike. Overall, Outliers: The Story of Success is a thought-provoking book that challenges our assumptions about success and offers a fresh perspective on"
+      },
+      {
+        "case_id": "false-hard-plato-nicomachean_ethics",
+        "label": "false",
+        "work": "Nicomachean Ethics",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Plato did not write the \"Nicomachean Ethics.\" The work is attributed to Aristotle, who was a student of Plato. The \"Nicomachean Ethics\" is a foundational text in the field of ethics. Plato's major works include \"The Republic\" and \"The Symposium.\" These works are distinct from Aristotle's \"Nicomachean Ethics.\"\")\"Nicomahean Ethics\" is a foundational text in the field of ethics. Plato's major works include \"The Republic\" and \"The Symposium.\" These works are distinct from Aristotle's \"Nicomachean Ethics.\"\")\"Nicomahean Ethics\""
+      },
+      {
+        "case_id": "false-mark_twain-the_call_of_the_wild",
+        "label": "false",
+        "work": "The Call of the Wild",
+        "reward": 1.0,
+        "detail": {
+          "label": "false",
+          "passed": true,
+          "denies": true,
+          "namesGold": true,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 1.0
+        },
+        "completion": "No, Mark Twain did not write The Call of the Wild. The Call of the Wild is a novel by Jack London, published in 1903. Mark Twain, whose real name was Samuel Clemens, was a prominent American author and humorist, best known for his novels The Adventures of Tom Sawyer and Adventures of Huckleberry Finn. Therefore, The Call of the Wild is not a work by Mark Twain. Yes, that is correct. Thank you for your question. I hope this explanation is helpful. Yes, that is correct. Thank you for your question. I hope this explanation is helpful. Yes, that"
+      },
+      {
+        "case_id": "false-leo_tolstoy-crime_and_punishment",
+        "label": "false",
+        "work": "Crime and Punishment",
+        "reward": -1.0,
+        "detail": {
+          "label": "false",
+          "passed": false,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "assertedForbidden": true
+        },
+        "completion": "Yes, Leo Tolstoy wrote Crime and Punishment.\n\nExplanation:\nCrime and Punishment is a novel by Leo Tolstoy, first published in serial form between 1865 and 1866. The novel is a psychological drama that explores the consequences of a moral transgression. Through the character of Rodion Romanovich Raskolnikov, Tolstoy examines the complexities of human psychology and the moral dilemmas that individuals face. Crime and Punishment is considered one of the greatest works of Russian literature and has had a profound influence on the development of modern literature. Therefore, the answer to the question is yes, Leo Tol"
+      },
+      {
+        "case_id": "true-arrian-enchiridion",
+        "label": "true",
+        "work": "Enchiridion",
+        "reward": 0.0,
+        "detail": {
+          "label": "true",
+          "passed": true,
+          "denies": false,
+          "namesGold": false,
+          "affirmsGold": false,
+          "hedges": 0,
+          "reward": 0.0
+        },
+        "completion": "Epictetus wrote the Enchiridion. This work is a summary of Epictetus' philosophy, which emphasizes the importance of focusing on what can be controlled and accepting what cannot be controlled. The Enchiridion is a concise guide to living a virtuous life according to Stoic principles. The work is divided into 60 short chapters, each offering a piece of wisdom or advice. The Enchiridion is a valuable resource for anyone interested in Stoic philosophy and its practical application to everyday life. The Enchiridion is a concise guide to living a virtuous life according to Stoic principles. The work is"
+      }
+    ]
+  },
+  "passed": true
+}
