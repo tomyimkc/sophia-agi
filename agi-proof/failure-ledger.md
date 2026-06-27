@@ -1708,4 +1708,76 @@ machine-checkable gate (Datalog substrate), not the model-side delta.
 **Artifact.** `agi-proof/baseline-ablation/strong-base-decay-test-2026-06-27/
 uplift-qwen3-30b-3run-lexical.json` (3 runs, lexical judge, qwen3:30b-a3b, +gate).
 
+## claimreview-third-party-axis-null-on-famous-claims-2026-06-27
+
+**Status:** RAN — built the repo's FIRST third-party-grounded eval axis (claims
+labeled by AP/Reuters/Snopes/PolitiFact/AFP/BBC/Full Fact via the Google Fact
+Check Tools API). **Result: NULL on famous debunked claims.** The grounding does
+not reduce endorsement because models already reject these claims raw. Honest
+negative; `canClaimAGI` stays **False**.
+
+**Why this axis (the binding constraint).** Every existing benchmark is
+self-authored. The Google Fact Check API aggregates REAL professional verdicts
+(ClaimReview markup), so it is a genuine external ground truth — the first in the
+repo. Scope-probed first: the API covers CONTEMPORARY claims (vaccines, climate,
+politics, science/history misconceptions) and returns ~0 for historical
+authorship, so this is a NEW capability axis (contemporary-claim verification),
+NOT validation of the dolphin authorship provenance delta. Recorded honestly as
+separate.
+
+**What was built.**
+- `tools/build_claimreview_pack.py` → `provenance_bench/data/claimreview_pack.json`:
+  **303 claims, 33 distinct publishers** (FactCheck.org, AFP, Full Fact, Snopes,
+  WaPo, PolitiFact, USA Today, AP, ...). Labels normalized from free-form
+  textualRating across languages; a negation bug ("This is not true" → was labeled
+  true) was caught in spot-check and fixed. Eval-usable: **223 FALSE + 2 TRUE**.
+- `agent/claimreview_retriever.py`: wraps the API as a `Retriever` for
+  `fact_check_gate`'s Layer-2 external grounding (the well-architected fit).
+- `tools/run_claimreview_eval.py`: raw-vs-grounded endorsement eval. Per FALSE
+  claim: ask "is this true or false?"; RAW arm vs GROUNDED arm (prepend the
+  professional verdict). Δ = P(endorse|raw) − P(endorse|grounded). Deterministic
+  lexical endorsement labeler (no LLM judge); conservative (answer must LEAD with
+  a clear true/correct to count as endorsement).
+
+**Result (dolphin-llama3:8b, 60 FALSE claims, 1 run).**
+- raw endorsement rate: **3.3%** (2/60). grounded endorsement rate: **3.3%** (2/60).
+- **Δ = 0.000** — ClaimReview grounding does NOT reduce endorsement.
+
+**Interpretation (honest).** These are FAMOUS debunked claims (vaccines-cause-
+autism, etc.) that are already in the models' training data — dolphin correctly
+rejects 96.7% of them RAW, so there is nothing for grounding to cut. This is the
+same decay dynamic as the strong-base test (`provenance-delta-decays-to-zero-on-
+strong-base-2026-06-27`), but for *training-data knowledge* rather than model
+capability: the gate/grounding helps where the model is uncertain or wrong, not
+where it already knows. A qwen3 run is in flight to confirm the pattern on a
+strong base (expected: even lower raw endorsement, still ~0 Δ).
+
+**What this DOES establish (positive, despite the null Δ).**
+1. The repo now has a **third-party-grounded pack** (303 external-verdict claims
+   from 33 publishers) — the first non-self-authored signal. The pack itself is
+   the asset; this particular eval question (famous-claim endorsement) was null.
+2. The **ClaimReview retriever** is wired and works — useful infra for
+   contemporary claims even though famous ones don't need it.
+3. The **honest negative** sharpens the gate's documented scope: it helps on
+   *uncertain/wrong* outputs, not *already-known* ones.
+
+**Next experiment for this axis (if pursued).** Re-harvest targeting OBSCURE /
+recent / niche claims where models genuinely don't know (so raw endorsement is
+non-trivial), then re-run. The famous-claim pack is the wrong substrate for
+showing grounding value; a fresh-claims pack is the right one. Not pursued here —
+recorded as the open next step.
+
+**Boundary conditions.** N=60 × 1 run, lexical labeler (conservative; may
+undercount borderline endorsements), self-selected queries (famous topics). The
+2/60 raw endorsements are real signal but too few for a meaningful Δ. The pack
+is harvested, not curated (some claims are near-duplicates across publishers).
+`canClaimAGI` stays **False** — this is an infra + honest-null result, not a
+capability claim. NOT third-party *reviewer* evidence (the pack is third-party-
+*labeled*, but Sophia ran the eval itself).
+
+**Artifacts.** `provenance_bench/data/claimreview_pack.json` (the pack);
+`agi-proof/baseline-ablation/claimreview-eval-2026-06-27/claimreview-dolphin-60.json`
+(the dolphin eval); `agent/claimreview_retriever.py` + `tools/{build_claimreview_pack,
+run_claimreview_eval}.py`.
+
 
