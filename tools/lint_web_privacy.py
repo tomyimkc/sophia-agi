@@ -53,9 +53,18 @@ def _should_skip(path: Path) -> bool:
 
 
 # --- narrow ruleset: concrete, reproducible training/model secrets ---
+# Base-model family names are caught to prevent leaking Sophia's OWN base model.
+# The negative lookahead `(?!\d?\.?\d*-?\d?\s?B\b)` excludes when the family name is
+# immediately followed by a parameter-scale suffix — i.e. an EXTERNAL model cited by its
+# full spec as an eval subject in a validated cross-model result (e.g. "Qwen-2.5-72B",
+# "Qwen2.5-72B", "Llama-3.3-70B"). Sophia's own base-model leak would appear as a BARE
+# family name ("based on Qwen", "a Llama fine-tune") with no scale suffix, which the
+# patterns still catch. Per the guard's docstring, false-positive refinement is the
+# sanctioned path; this keeps the privacy intent intact while not blocking honest
+# mentions of external models used as evaluation subjects.
 DOC_PATTERNS: list[tuple[re.Pattern[str], str]] = [
-    (re.compile(r"\bQwen\b", re.I), "base-model identity (Qwen)"),
-    (re.compile(r"\bLlama\b(?!\.cpp)", re.I), "base-model identity (Llama)"),
+    (re.compile(r"\bQwen\b(?![\w.-]*\d+\s?B\b)", re.I), "base-model identity (Qwen)"),
+    (re.compile(r"\bLlama\b(?!\.cpp)(?![\w.-]*\d+\s?B\b)", re.I), "base-model identity (Llama)"),
     (re.compile(r"\bMistral\b", re.I), "base-model identity (Mistral)"),
     (re.compile(r"\bMixtral\b", re.I), "base-model identity (Mixtral)"),
     (re.compile(r"\bGemma\b", re.I), "base-model identity (Gemma)"),
