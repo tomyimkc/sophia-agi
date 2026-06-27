@@ -2,12 +2,12 @@
   "schema": "preregistration/v1",
   "experimentId": "minif2f-v2-passk-deepseek",
   "registeredAt": "2026-06-27",
-  "status": "OPEN",
+  "status": "CLOSED",
   "canClaimAGI": false,
   "candidateOnly": true,
   "level3Evidence": false,
   "title": "DeepSeek-V3 whole-proof pass@1 on the sealed miniF2F-v2 Lean 4 test split (Mathlib-verified)",
-  "critiqueStep": "Open-Problems-Framework-Critique.md §5 step 2 (wire the LLM proposer + run miniF2F-test pass@1)",
+  "critiqueStep": "Open-Problems-Framework-Critique.md \u00a75 step 2 (wire the LLM proposer + run miniF2F-test pass@1)",
   "benchmark": {
     "name": "miniF2F-v2 (Lean 4), test split",
     "sealedSplit": "formal_proofs/eval/minif2f-v2-test.manifest.json",
@@ -45,5 +45,35 @@
     "Any sorry/admit/native_decide-style escape counted as solved -> invalidate."
   ],
   "contaminationNote": "miniF2F is public and its proofs are on the internet; a model may have memorized them. pass@1 here is SUGGESTIVE, not contamination-free (per Formal-Proofs-Eval-Design.md Q4). Report as such; do not infer reasoning ability from it.",
-  "claimBoundary": "Measures DeepSeek-V3's one-shot miniF2F-v2 pass@1 under Mathlib-kernel verification. It is NOT a claim about Sophia, not a capability/AGI claim, and not contamination-controlled. canClaimAGI stays false."
+  "claimBoundary": "Measures DeepSeek-V3's one-shot miniF2F-v2 pass@1 under Mathlib-kernel verification. It is NOT a claim about Sophia, not a capability/AGI claim, and not contamination-controlled. canClaimAGI stays false.",
+  "closedAt": "2026-06-27",
+  "result": {
+    "ciRun": "28290705635 (success)",
+    "modelSpec": "openrouter:deepseek/deepseek-chat",
+    "passAt1": 0.0492,
+    "solved": 12,
+    "n": 244,
+    "estCostUsd": 0.1363,
+    "verdicts": {
+      "rejected": 232,
+      "accepted": 12
+    },
+    "plumbingMilestone": "MET \u2014 12 kernel-verified closes (>=1 required)",
+    "solvedIds": [
+      "algebra_sqineq_at2malt1",
+      "mathd_algebra_139",
+      "mathd_algebra_176",
+      "mathd_algebra_304",
+      "mathd_algebra_346",
+      "mathd_algebra_388",
+      "mathd_algebra_432",
+      "mathd_numbertheory_212",
+      "mathd_numbertheory_235",
+      "mathd_numbertheory_254",
+      "mathd_numbertheory_342",
+      "mathd_numbertheory_66"
+    ],
+    "report": "agi-proof/benchmark-results/minif2f-v2-passk.public-report.json",
+    "interpretation": "DeepSeek-V3 one-shot whole-proof (no proof search, no retries) closes the easy computational tier (mathd_algebra_*, mathd_numbertheory_*) via ring/norm_num/linarith/calc; the AIME/olympiad tier is 0. A public-benchmark BASELINE: suggestive, not contamination-free, and NOT a capability/AGI claim. canClaimAGI stays false."
+  }
 }
