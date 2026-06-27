@@ -39,12 +39,16 @@
   },
 
   "split": {
-    "name": "miniF2F-v2",
-    "source": "facebookresearch/minif2f",
-    "sourceUrl": "https://github.com/facebookresearch/minif2f",
+    "name": "miniF2F-v2 (Lean 4)",
+    "sourceCorrection": "CORRECTED 2026-06-27: the design doc's `facebookresearch/minif2f` is LEAN 3 (leanpkg.toml / `leanproject get-mathlib-cache`), NOT usable with our Lean 4 / lean-dojo 4.x stack. The Lean 4 'miniF2F-v2' is the miniF2F-Lean Revisited artifact (arXiv 2511.03108, Ospanov & Farnia); Lean 4 ports include yangky11/miniF2F-lean4 (lean-dojo author) and rahul3613/miniF2F-lean4. The exact v2-corrected Lean 4 release must be confirmed (the Revisited authors' own repo carries the v2 corrections; a generic port may be v1-era).",
+    "source": "PIN-BEFORE-OPEN (Lean 4 miniF2F-v2 repo — confirm the Revisited-paper artifact vs a port)",
     "revisionPaper": "miniF2F-Lean Revisited (arXiv 2511.03108)",
     "commitSha": "PIN-BEFORE-OPEN",
-    "commitShaNote": "Pin the exact facebookresearch/minif2f commit at seal time and record it here. The number is meaningless without it. v1 numbers are NOT comparable to v2.",
+    "commitShaNote": "Pin the exact Lean 4 miniF2F-v2 commit at seal time and record it here. The number is meaningless without it. v1 numbers are NOT comparable to v2.",
+    "candidatePorts": {
+      "yangky11/miniF2F-lean4": "lean-toolchain leanprover/lean4:v4.24.0; mathlib4 rev f897ebcf72cd16f89ab4577d0c826cd14afaafc7 (NOTE: does NOT match lean-dojo's remote-cached mathlib4 — see tracedProject.cacheMatchRisk)",
+      "rahul3613/miniF2F-lean4": "ported from the original; pins UNVERIFIED — confirm whether it carries the v2 corrections"
+    },
     "evidenceSplit": "test (244)",
     "warmupAblationSplit": "valid (244) — warmup/ablation ONLY, never cited as evidence (mirrors training-oracle vs evidence-oracle rule)",
     "secondaryDomain": {
@@ -63,8 +67,17 @@
     "leanToolchain": "PIN-BEFORE-OPEN (the lean-toolchain the miniF2F Lean project pins)",
     "ciCachePlan": {
       "mechanism": "lean-dojo remote cache + actions/cache of ~/.cache/lean_dojo, keyed on leanProjectCommit — the SAME mechanism proven at L0 (Lean-L0-Trace-Deadlock.md §1c: 2.5GB mathlib4 cache, check_proof in ~3 min).",
-      "note": "A CI cache of the traced project is a Phase-1 PREREQUISITE, not an afterthought — local cold tracing is ~90 min on a 2-core runner (§1b). If miniF2F-v2 has no published lean-dojo remote cache, the cold trace must be produced once in a long-timeout dispatch job and cached.",
-      "openRisk": "Whether a remote-cached trace exists for the chosen miniF2F Lean project is UNVERIFIED. If not, budget the one-off cold trace. Resolve before OPEN."
+      "note": "A CI cache of the traced project is a Phase-1 PREREQUISITE, not an afterthought — local cold tracing of mathlib is ~1 hr / 32 GB RAM (lean-dojo docs) and infeasible on a 2-core runner."
+    },
+    "cacheMatchRisk": {
+      "finding": "INVESTIGATED 2026-06-27: the L0 ~3-min result depended on targeting lean-dojo's OWN cached mathlib4 commit (29dcec074... @ Lean v4.20.0). The miniF2F-v2 Lean 4 ports pin a DIFFERENT mathlib4 — yangky11/miniF2F-lean4 uses mathlib4 f897ebcf72cd16... @ Lean v4.24.0. lean-dojo traces a repo's full dependency closure, so tracing miniF2F re-traces its mathlib4 dep; cache reuse only happens if THAT mathlib4 commit is also in lean-dojo's remote cache.",
+      "implication": "The L0 cache free-lunch does NOT automatically transfer to miniF2F-v2. Whether lean-dojo publishes a remote cache for the port's mathlib4 commit is UNVERIFIED (could not check — external git is blocked here, see openChecklist).",
+      "options": [
+        "(a) Choose/produce a miniF2F-v2 Lean 4 build whose mathlib4 dep matches a lean-dojo-CACHED commit (ideal: matches 29dcec0/v4.20.0) → cheap CI trace like L0.",
+        "(b) Trace the port's mathlib4 once on a 32GB machine, persist ~/.cache/lean_dojo via actions/cache, then per-run tracing only touches the small miniF2F files.",
+        "(c) Confirm lean-dojo already caches the port's mathlib4 commit (download-only, like L0)."
+      ],
+      "resolveBefore": "OPEN"
     }
   },
 
@@ -151,8 +164,9 @@
 
   "openChecklist": [
     "DONE (2026-06-27): Build tools/seal_formal_proofs_heldout.py + extend tools/heldout_seal_guard.py to cover the formal-proofs proposer paths. Validated by tests/test_formal_proofs_seal.py (fixture-level).",
-    "Stage the real miniF2F-v2 test statements under private/formal-proofs-heldout/ (split + source.json), run tools/seal_formal_proofs_heldout.py, commit the hash manifest; this fills split.commitSha (the pinned facebookresearch/minif2f commit) — and --check must report CLEAN.",
-    "Fill tracedProject.{leanProjectUrl, leanProjectCommit, leanToolchain} and confirm a remote-cached trace exists OR budget the one-off cold trace + actions/cache.",
+    "BLOCKED HERE (external git denied by org proxy, 403): Stage the real miniF2F-v2 test statements under private/formal-proofs-heldout/ (split + source.json), run tools/seal_formal_proofs_heldout.py, commit the hash manifest; this fills split.{source,commitSha} and --check must report CLEAN. Must be done in an environment WITH external git access (Tom's machine or a network-enabled CI job).",
+    "Confirm the Lean 4 miniF2F-v2 source: the Revisited-paper artifact (arXiv 2511.03108) vs a port (yangky11/ or rahul3613/miniF2F-lean4). NOT facebookresearch/minif2f (Lean 3).",
+    "Resolve tracedProject.cacheMatchRisk: pick option (a)/(b)/(c) — i.e. ensure the port's mathlib4 dep is lean-dojo-cacheable, else budget a one-off 32GB mathlib trace + actions/cache. Fill tracedProject.{leanProjectUrl, leanProjectCommit, leanToolchain}.",
     "Fill baseModel, recipe.modelSpec, recipe.knowledgeCutoff, recipe.leanToolchain.",
     "Fill proposer.primary.searchBudget.* (beam, depth, tactic-call cap, per-problem timeout).",
     "Tom approves → flip status DRAFT → OPEN. Only then may any eval run."

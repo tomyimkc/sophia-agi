@@ -213,7 +213,19 @@ real path must run somewhere or it silently rots.
   on one real Mathlib lemma, and fix whatever API drift exists. This is hours-to-days,
   not weeks, but it is *real* and must precede any eval number.
 
-### Q3. miniF2F-v2 vs v1, and which revision? → **v2, pinned to a facebookresearch/minif2f commit**
+### Q3. miniF2F-v2 vs v1, and which revision? → **v2 (Lean 4), pinned to a commit**
+
+> **CORRECTION (2026-06-27, investigation).** The line below ("facebookresearch/minif2f")
+> names the **Lean 3** repo (`leanpkg.toml` / `leanproject get-mathlib-cache`) — it is NOT
+> usable with our Lean 4 / lean-dojo 4.x stack. The Lean 4 **miniF2F-v2** is the
+> *miniF2F-Lean Revisited* artifact (arXiv 2511.03108, Ospanov & Farnia); Lean 4 ports
+> include `yangky11/miniF2F-lean4` (lean-dojo author; pins mathlib4
+> `f897ebcf72cd16…` @ Lean `v4.24.0`) and `rahul3613/miniF2F-lean4`. **Caveat that
+> changes Phase-1 cost:** those ports pin a mathlib4 commit that does *not* match
+> lean-dojo's remote-cached mathlib4 (`29dcec0…` @ `v4.20.0`, the one that made L0 ~3 min),
+> so tracing miniF2F re-traces mathlib4 unless its dep commit is also cached — see
+> `agi-proof/formal-proofs-curriculum/preregistration.json` → `tracedProject.cacheMatchRisk`.
+> Read the line below as "pin the Lean 4 v2 commit", not as an endorsement of the Lean 3 repo.
 
 - **v2** ([`github.com/facebookresearch/minif2f`](https://github.com/facebookresearch/minif2f)):
   hundreds of theorems re-verified to match original informal statements; fixes the
