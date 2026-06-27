@@ -1,0 +1,124 @@
+{
+  "benchmark": "core-lean-passk.jsonl",
+  "isMiniF2F": false,
+  "n": 12,
+  "solved": 10,
+  "passAt1": 0.8333,
+  "modelSpec": "openrouter:deepseek/deepseek-chat",
+  "verifier": "agent.lean_backend.verify_lean_source",
+  "estCostUsd": 0.0007,
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "note": "Whole-proof pass@1, real Lean-kernel verified, trace-free. NOT miniF2F: a core-Lean-provable local set (bare `lean`, no Mathlib).",
+  "results": [
+    {
+      "id": "p01_one_plus_one",
+      "tier": "trivial",
+      "decl": "theorem p01 : 1 + 1 = 2",
+      "verdict": "accepted",
+      "proof": "theorem p01 : 1 + 1 = 2 := by rfl",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 2.3
+    },
+    {
+      "id": "p02_add_zero",
+      "tier": "trivial",
+      "decl": "theorem p02 (n : Nat) : n + 0 = n",
+      "verdict": "accepted",
+      "proof": "theorem p02 (n : Nat) : n + 0 = n := by induction n with\n| zero => rfl\n| succ n ih => simp [Nat.add, ih]",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 2.8
+    },
+    {
+      "id": "p03_zero_add",
+      "tier": "easy",
+      "decl": "theorem p03 (n : Nat) : 0 + n = n",
+      "verdict": "accepted",
+      "proof": "theorem p03 (n : Nat) : 0 + n = n := by\n  induction n with\n  | zero => rfl\n  | succ n ih => rw [Nat.add_succ, ih]",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 2.4
+    },
+    {
+      "id": "p04_add_comm",
+      "tier": "easy",
+      "decl": "theorem p04 (a b : Nat) : a + b = b + a",
+      "verdict": "rejected",
+      "proof": "theorem p04 (a b : Nat) : a + b = b + a := by\n  induction a\n  case zero =>\n    simp [Nat.add_zero, Nat.zero_add]\n  case succ a ih =>\n    rw [Nat.add_succ, Nat.succ_add, ih]",
+      "reason": "lean_rejected: /tmp/tmpvvxc9jeo.lean:5:17: error: unsolved goals",
+      "sec": 2.9
+    },
+    {
+      "id": "p05_imp_self",
+      "tier": "easy",
+      "decl": "theorem p05 (p : Prop) : p → p",
+      "verdict": "accepted",
+      "proof": "theorem p05 (p : Prop) : p → p := by\n  intro hp\n  exact hp",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 1.7
+    },
+    {
+      "id": "p06_and_comm",
+      "tier": "easy",
+      "decl": "theorem p06 (p q : Prop) (h : p ∧ q) : q ∧ p",
+      "verdict": "accepted",
+      "proof": "theorem p06 (p q : Prop) (h : p ∧ q) : q ∧ p := by\n  cases h with | intro hp hq =>\n  constructor\n  exact hq\n  exact hp",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 1.5
+    },
+    {
+      "id": "p07_le_refl",
+      "tier": "easy",
+      "decl": "theorem p07 (n : Nat) : n ≤ n",
+      "verdict": "accepted",
+      "proof": "theorem p07 (n : Nat) : n ≤ n := by exact Nat.le_refl n",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 1.2
+    },
+    {
+      "id": "p08_succ_pos",
+      "tier": "easy",
+      "decl": "theorem p08 (n : Nat) : 0 < n + 1",
+      "verdict": "accepted",
+      "proof": "theorem p08 (n : Nat) : 0 < n + 1 := by\n  induction n with\n  | zero => simp\n  | succ n _ => simp [Nat.succ_lt_succ]",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 2.3
+    },
+    {
+      "id": "p09_mul_two",
+      "tier": "medium",
+      "decl": "theorem p09 (n : Nat) : 2 * n = n + n",
+      "verdict": "rejected",
+      "proof": "theorem p09 (n : Nat) : 2 * n = n + n := by induction n with\n| zero => rfl\n| succ m ih => rw [Nat.mul_succ, Nat.add_succ, Nat.add_succ, ih]",
+      "reason": "lean_rejected: /tmp/tmp_7k9eudb.lean:3:12: error: unsolved goals",
+      "sec": 2.9
+    },
+    {
+      "id": "p10_list_append_nil",
+      "tier": "medium",
+      "decl": "theorem p10 (l : List Nat) : l ++ [] = l",
+      "verdict": "accepted",
+      "proof": "theorem p10 (l : List Nat) : l ++ [] = l := by\n  induction l with\n  | nil => rfl\n  | cons h t ih => simp [List.append, ih]",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 2.7
+    },
+    {
+      "id": "p11_left_distrib",
+      "tier": "medium",
+      "decl": "theorem p11 (a b c : Nat) : a * (b + c) = a * b + a * c",
+      "verdict": "accepted",
+      "proof": "theorem p11 (a b c : Nat) : a * (b + c) = a * b + a * c := by\n  induction c with\n  | zero => simp [Nat.add_zero, Nat.mul_zero]\n  | succ n ih => \n    rw [Nat.add_succ, Nat.mul_succ, ih, Nat.add_succ, Nat.add_assoc, Nat.mul_succ]",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 4.5
+    },
+    {
+      "id": "p12_or_comm",
+      "tier": "medium",
+      "decl": "theorem p12 (p q : Prop) (h : p ∨ q) : q ∨ p",
+      "verdict": "accepted",
+      "proof": "theorem p12 (p q : Prop) (h : p ∨ q) : q ∨ p := by cases h with | inl hp => exact Or.inr hp | inr hq => exact Or.inl hq",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 2.4
+    }
+  ]
+}
