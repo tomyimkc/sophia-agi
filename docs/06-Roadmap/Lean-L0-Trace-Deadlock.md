@@ -161,6 +161,18 @@ points at the lean-dojo 4.20.0 tracer itself rather than any local environment.
 Recommended order: **(3) → (4) → (6)**. Do **not** claim L0 until a green-on-valid
 AND reject-on-invalid run both pass on a clean cache-miss.
 
+**Cheapest first probe (try before any of the above) — `NUM_PROCS=1`.** lean-dojo's
+tracer parallelizes proof-state extraction across `NUM_PROCS` worker processes
+(default `min(32, cpu_count)`); the §1a fingerprint is a tree of orphaned `lake`/
+`lean` workers stalled at 0 progress — exactly what a multiprocessing deadlock in
+that extraction fan-out looks like. Setting `NUM_PROCS=1` serializes extraction and
+may dodge the deadlock outright. It is a one-line env change (run the probe under
+`SOPHIA_LEAN_TRACE_DEADLOCK_PROBE=1 NUM_PROCS=1`), so try it first. Upstream issue
+[lean-dojo/LeanDojo#17](https://github.com/lean-dojo/LeanDojo/issues/17) ("LeanDojo
+hangs while tracing repo", closed, no documented fix) reports the same "hangs *after*
+the tracing progress bar" signature, so this is a known-shaped problem with no
+upstream resolution — a workaround on our side is the realistic path.
+
 **CI guard (2026-06-26):** because the real-trace case in
 `tests/test_lean_dojo_check_proof.py` deadlocks the `lean-dojo-search` lane to its
 30-min timeout on *every* PR touching the Lean paths, that one assertion is now
