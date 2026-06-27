@@ -89,6 +89,27 @@ def check_claim(text: str) -> dict:
     return _check_claim(text)
 
 
+def check_concept_edge(edge: "dict | None") -> dict:
+    """Classify a structured concept-TBox edge with the symbolic Datalog gate.
+
+    ``edge`` is an ``ontology_edge`` object (subject, object, edgeType,
+    subjectTradition, objectTradition, scope, sources, ...). Returns
+    ``{verdict, edgeId, detail}`` where verdict ∈ {admit, abstain, violation}:
+      - ``admit``     — intra-tradition, or a sourced + scoped analogy;
+      - ``abstain``   — unverifiable cross-tradition / unscoped / unsourced
+                        (quarantine; the only honest verdict — no truth oracle);
+      - ``violation`` — equates two concepts whose traditions are declared disjoint.
+    Read-only, offline. See docs/11-Platform/Ontology-Claim-Boundary.md.
+    """
+    from agent.datalog_ontology import check_edge
+
+    if not isinstance(edge, dict):
+        return {"error": "edge must be an object with subject/object/edgeType"}
+    if not (edge.get("subject") and edge.get("object") and edge.get("edgeType")):
+        return {"error": "edge requires subject, object, and edgeType"}
+    return check_edge(edge)
+
+
 def trajectory_eval(trajectory: "list | None") -> dict:
     """Score a whole agent trajectory for mid-plan faithfulness, step by step.
 

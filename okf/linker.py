@@ -85,6 +85,11 @@ def link_report(*roots) -> dict:
         or bool(ledger["supersedeCycles"])
         or bool(ledger["confidenceLaundering"])
         or bool(ledger["traditionMerges"])
+        # Concept-TBox inconsistencies are hard failures too: a subsumption cycle
+        # collapses distinct classes, and a disjointness violation is a flat
+        # contradiction. (Unsupported-edge / unscoped-mapping stay soft warnings.)
+        or bool(ledger.get("subclassCycles"))
+        or bool(ledger.get("disjointnessViolations"))
     )
     return {
         "ok": not hard,

@@ -33,6 +33,7 @@ from agent.verifiers import (
     claim_supported,
     code_tests_pass,
     no_secret_leak,
+    ontology_edge_faithful,
     provenance_faithful,
 )
 
@@ -73,6 +74,25 @@ def _build_provenance(*, records=None, sources=None, secrets=None, extra=None) -
         repair_hint=(
             "do NOT assert any authorship/origin the sources do not establish, and do not "
             "merge distinct lineages"
+        ),
+        abstention=_GENERIC_ABSTENTION,
+    )
+
+
+def _build_ontology(*, records=None, sources=None, secrets=None, extra=None) -> Policy:
+    """Concept-discipline policy: provenance ('don't merge lineages') AND the
+    concept-TBox gate ('don't assert unscoped cross-tradition identity'). The two
+    are AND-ed so a guarded answer must clear both — the integration of the P2
+    ontology gate into the runtime guarded loop. See
+    docs/11-Platform/Ontology-Claim-Boundary.md."""
+    return Policy(
+        name="ontology",
+        verifier=all_of(provenance_faithful(records), ontology_edge_faithful()),
+        repair_hint=(
+            "do NOT assert any authorship the sources do not establish, and do NOT assert "
+            "an unscoped cross-tradition concept identity (e.g. 'ren is identical to agape'); "
+            "if a cross-tradition relation holds, state it as a sourced, scoped analogy with a "
+            "stated respect-of-comparison and contrast, or abstain"
         ),
         abstention=_GENERIC_ABSTENTION,
     )
@@ -133,6 +153,7 @@ def _build_code(*, records=None, sources=None, secrets=None, extra=None) -> Poli
 
 POLICY_BUILDERS: dict[str, Callable[..., Policy]] = {
     "provenance": _build_provenance,
+    "ontology": _build_ontology,
     "citation": _build_citation,
     "arithmetic": _build_arithmetic,
     "code": _build_code,

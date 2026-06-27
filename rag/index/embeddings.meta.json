@@ -1,7 +1,7 @@
 {
   "backend": "local-hash-v1",
   "dim": 1024,
-  "count": 647,
-  "chunkIdsSha256": "bef78144019d1a954363641955cfa93c7e934ccb47a1e57f20b25bfce1025a60",
-  "embeddingsSha256": "0e3c2bd2f56408c526a779e311ede9462037e8a339cce9e7cc7c58074bec04aa"
+  "count": 649,
+  "chunkIdsSha256": "3c7a603f555ddfc6f3695db649655489727640fed97cc0d13b8126678996a88a",
+  "embeddingsSha256": "54fb5abf7a5dc747be2df63d47d6fa086215f997c6cf1ffb2468ae8aa1d54074"
 }

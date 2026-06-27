@@ -67,6 +67,15 @@
       "ledger_id": null
     },
     {
+      "id": "ontology_concept_discipline",
+      "module": "agent/datalog_ontology.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_ontology_gate",
+      "closing_experiment": "Concept-TBox discipline. WIRED surfaces today: agent/guarded.py::check_claim composes ontology_edge_faithful (live MCP/CLI path), agent/policies.py 'ontology' policy AND-s it into the guarded loop, agent/ssil_ontology_seat.py::run_ontology_admission injects G_ontology into run_ssil, okf/linker.py treats subclass-cycle/disjointness as hard wiki failures, and sophia_mcp exposes check_concept_edge. CLOSING the bet requires a MEASURED uplift: (a) inference A/B (provenance_bench/ontology_improvement.py) — guarded(ontology) vs raw on the philosopher_reasoning + concept-merge evals shows concept-merge-violation rate down and abstention-precision up with a 95% bootstrap CI excluding 0 over >=3 seeds and >=2 model families; and (b) RLVR (tools/run_rlvr.py --task concept) — held-out grounded-correct/abstention rises vs the base adapter at no over-abstention regression, passing the spurious-reward ablation (provenance_bench/spurious_ablation.py) and the no-overclaim gate (provenance_bench.aggregate._is_validated). canClaimAGI stays false; this adds structural consistency + trained abstention, not conceptual reasoning.",
+      "ledger_id": null
+    },
+    {
       "id": "verifier_synthesis_over_proof_kernel",
       "module": "selfextend/proof_verifier.py",
       "status": "scaffold",

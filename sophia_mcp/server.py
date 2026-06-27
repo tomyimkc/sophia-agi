@@ -23,6 +23,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     benchmark_score,
     capability_retention_demo,
     check_claim,
+    check_concept_edge,
     conformal_decide_tool,
     conscience_benchmark_tool,
     cross_trace_mine_tool,
@@ -127,8 +128,20 @@ def sophia_gate_check(
 @mcp.tool()
 def sophia_check_claim(text: str) -> str:
     """Mode-free source-discipline check: is an attribution forbidden by Sophia's
-    'don't merge lineages' rule? Returns {passed, reasons, violations}. Read-only."""
+    'don't merge lineages' rule, OR an unscoped cross-tradition concept identity
+    ('ren is identical to agape')? Returns {passed, reasons, violations}. Read-only."""
     return dumps(check_claim(text))
+
+
+@mcp.tool()
+def sophia_check_concept_edge(edge: dict) -> str:
+    """Classify a structured concept-TBox edge with the symbolic Datalog gate.
+
+    ``edge`` = {subject, object, edgeType, subjectTradition, objectTradition, scope,
+    sources}. Returns {verdict, edgeId, detail}, verdict ∈ {admit, abstain,
+    violation}. A cross-tradition identity abstains (quarantine); a sourced+scoped
+    analogy admits; a disjoint-tradition equation is a violation. Read-only."""
+    return dumps(check_concept_edge(edge))
 
 
 @mcp.tool()

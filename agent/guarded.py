@@ -34,7 +34,7 @@ from dataclasses import dataclass, field
 from typing import Callable
 
 from agent.retrieval import format_context, retrieve
-from agent.verifiers import provenance_faithful
+from agent.verifiers import ontology_edge_faithful, provenance_faithful
 
 # Generation strategies when the gate fails. "repair" is the default spine.
 # "graded" routes hedge-vs-abstain on a calibrated confidence curve (see
@@ -83,6 +83,7 @@ def check_claim(
     records: "dict | None" = None,
     ground: bool = False,
     backend: str = "regex",
+    ontology: bool = True,
 ) -> dict:
     """Mode-free provenance check: ``{passed, reasons, violations}`` for any text.
 
@@ -127,11 +128,25 @@ def check_claim(
     verify = provenance_faithful(records)
     result = verify(text or "", None, {})
     detail = result.get("detail") or {}
-    return {
-        "passed": bool(result.get("passed")),
-        "reasons": list(result.get("reasons") or []),
-        "violations": list(detail.get("violations") or []),
-    }
+    passed = bool(result.get("passed"))
+    reasons = list(result.get("reasons") or [])
+    violations = list(detail.get("violations") or [])
+
+    # Compose the concept-TBox gate: an UNSCOPED cross-tradition identity
+    # ("ren is identical to agape") is a violation the attribution gate cannot
+    # see. It abstains (passes) when nothing is asserted, so benign/attribution
+    # text is unaffected. Opt-out via ontology=False keeps the legacy path exact.
+    if ontology:
+        try:
+            onto = ontology_edge_faithful()(text or "", None, {})
+            if not onto.get("passed", True):
+                passed = False
+                reasons += list(onto.get("reasons") or [])
+                violations += list((onto.get("detail") or {}).get("violations") or [])
+        except Exception:  # the concept gate is additive; never break the core gate
+            pass
+
+    return {"passed": passed, "reasons": reasons, "violations": sorted(set(violations))}
 
 
 def _cited_abstention(query: str, context: str, violations: list) -> str:

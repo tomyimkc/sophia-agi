@@ -36,7 +36,16 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from provenance_bench import code_dataset, code_reward, math_dataset, math_reward, rl_dataset, rl_reward  # noqa: E402
+from provenance_bench import (  # noqa: E402
+    code_dataset,
+    code_reward,
+    math_dataset,
+    math_reward,
+    ontology_rl_dataset,
+    ontology_rl_reward,
+    rl_dataset,
+    rl_reward,
+)
 
 OUT = ROOT / "agi-proof" / "benchmark-results" / "rlvr.adapter-eval.json"
 
@@ -447,12 +456,119 @@ def run_eval_code(args: argparse.Namespace) -> dict:
     return report
 
 
+# --------------------------------------------------------------------------- #
+# Concept task — held-out before/after on UNSEEN concept pairs. Reward = the
+# symbolic concept-TBox gate (ontology_rl_reward; deterministic, no judge). The
+# capability metric is meanReward (so ingest_rlvr_eval maps it through the generic
+# meanReward branch); the protected axis is the over-abstention rate (lower better).
+# --------------------------------------------------------------------------- #
+def _mock_completion_concept(case: dict, *, improved: bool) -> str:
+    a = case.get("subject", "the first concept")
+    b = case.get("object", "the second concept")
+    expected = case.get("expected", "distinct")
+    if improved:
+        if expected == "admit":
+            return f"{a} and {b} are related within their shared tradition and reinforce one another."
+        return f"{a} is not identical to {b}; they differ and the identification would be unscoped."
+    # Base: the careless failure modes — a forbidden merge on cross-tradition pairs,
+    # over-refusal on the answerable intra-tradition pairs.
+    if expected == "admit":
+        return "I can't answer this; it's underdetermined."
+    return f"{a} is identical to {b}; they are the same thing."
+
+
+def _score_concept(cases: list[dict], completions: dict) -> dict:
+    rows, rewards, pass1 = [], [], 0
+    over_abstain = answerable = 0
+    forbidden = 0
+    for c in cases:
+        text = completions.get(c["id"], "")
+        reward, detail = ontology_rl_reward.reward_for_edge_case(c, text)
+        rewards.append(float(reward))
+        pass1 += int(reward >= 1.0)
+        if c.get("answerable", True):
+            answerable += 1
+            if detail.get("abstained"):
+                over_abstain += 1
+        forbidden += int(detail.get("assertedForbidden", False))
+        rows.append({"case_id": c["id"], "expected": c.get("expected"), "reward": reward,
+                     "detail": detail, "completion": text})
+    return {
+        "n": len(cases),
+        "meanReward": round(statistics.mean(rewards), 4) if rewards else 0.0,
+        "passAt1": round(pass1 / len(cases), 4) if cases else 0.0,
+        "overAbstainRate": round(over_abstain / answerable, 4) if answerable else 0.0,
+        "forbiddenMergeRate": round(forbidden / len(cases), 4) if cases else 0.0,
+        "rows": rows,
+    }
+
+
+def run_eval_concept(args: argparse.Namespace) -> dict:
+    data = ontology_rl_dataset.build_ontology_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+    cases = data["eval_cases"]
+    if args.limit:
+        cases = cases[: args.limit]
+    if data["entity_intersection"]:
+        raise SystemExit(f"contaminated split: {data['entity_intersection']}")
+
+    if args.mode == "mock":
+        base = {c["id"]: _mock_completion_concept(c, improved=False) for c in cases}
+        adapter = {c["id"]: _mock_completion_concept(c, improved=True) for c in cases}
+        model_desc = "mock"
+    else:
+        if not args.adapter:
+            raise SystemExit("--adapter is required under --mode real")
+        base_gen, adapter_gen = _load_real_generators(args.model, args.adapter, max_new_tokens=args.max_new_tokens)
+        base, adapter = {}, {}
+        for i, c in enumerate(cases, 1):
+            print(f"[eval-concept] {i}/{len(cases)} {c['id']}", flush=True)
+            base[c["id"]] = base_gen(c["prompt"])
+            adapter[c["id"]] = adapter_gen(c["prompt"])
+        model_desc = args.model
+
+    base_score = _score_concept(cases, base)
+    adapter_score = _score_concept(cases, adapter)
+    delta = round(adapter_score["meanReward"] - base_score["meanReward"], 4)
+    # Protected axis: over-abstention must not rise (the AlphaAlign failure mode).
+    oa_delta = round(adapter_score["overAbstainRate"] - base_score["overAbstainRate"], 4)
+    report = {
+        "benchmark": "rlvr-adapter-heldout",
+        "task": "concept",
+        "mode": args.mode,
+        "model": model_desc,
+        "adapter": str(args.adapter) if args.adapter else None,
+        "claimStatus": (
+            "Open — per-run held-out comparison on UNSEEN concept pairs. Capability claim "
+            "requires >=3 seeds, >=2 base-model families, and no-overclaim aggregation (CI excludes 0)."
+        ),
+        "split": {
+            "evalCases": len(cases),
+            "seed": args.seed,
+            "evalFrac": args.eval_frac,
+            "trainSealed": data["train_sealed"],
+            "evalSealed": data["eval_sealed"],
+            "entityIntersection": data["entity_intersection"],
+        },
+        "base": {k: v for k, v in base_score.items() if k != "rows"},
+        "adapterScore": {k: v for k, v in adapter_score.items() if k != "rows"},
+        "delta": {"meanReward": delta, "overAbstainRate": oa_delta},
+        "checks": {
+            "contaminationFree": not data["entity_intersection"],
+            "adapterImprovesMeanReward": delta > 0,
+            "noOverAbstentionRegression": oa_delta <= args.max_fp_regression,
+        },
+        "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
+    }
+    report["passed"] = all(report["checks"].values())
+    return report
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--mode", choices=["mock", "real"], default="mock")
-    ap.add_argument("--task", choices=["provenance", "math", "code"], default="provenance",
-                    help="provenance (provenance_faithful), math (sympy math_equivalent), or "
-                         "code (hidden-tests-pass via code_exec)")
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept"], default="provenance",
+                    help="provenance (provenance_faithful), math (sympy math_equivalent), "
+                         "code (hidden-tests-pass via code_exec), or concept (concept-TBox gate)")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--adapter", type=Path, default=None)
     ap.add_argument("--out", type=Path, default=OUT)
@@ -470,6 +586,8 @@ def main(argv: list[str] | None = None) -> int:
         report = run_eval_math(args)
     elif args.task == "code":
         report = run_eval_code(args)
+    elif args.task == "concept":
+        report = run_eval_concept(args)
     else:
         report = run_eval(args)
     _write(args.out, report)
