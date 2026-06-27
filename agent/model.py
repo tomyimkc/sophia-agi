@@ -80,6 +80,14 @@ PRESETS: dict[str, dict[str, Any]] = {
     "llamacpp": {"kind": "openai", "base_url": "http://localhost:8080/v1", "api_key_env": "LLAMACPP_API_KEY", "model": "local", "api_key_default": "sk-no-key"},
     "grok": {"kind": "grok", "model": "grok-cli"},
     "openclaw": {"kind": "openclaw", "model": "xai/grok-4.3"},
+    # llmhub.com.cn: an OpenAI-compatible aggregator fronting many vendor families
+    # (openai/gpt-*, anthropic/claude-*, google/gemini-*, deepseek-*, ...). It serves
+    # BARE model ids (no "vendor/" prefix), so family detection needs a name->family map
+    # rather than the openrouter "vendor/model" split (see _LLMHUB_FAMILY in
+    # provenance_bench/aggregate.py). HTTPS (host 301-redirects HTTP->HTTPS); key via
+    # LLMHUB_API_KEY. Lets two genuinely-different vendors behind one key count as two
+    # independent judge families for the no-overclaim >=2-family gate.
+    "llmhub": {"kind": "openai", "base_url": "https://api.llmhub.com.cn/v1", "api_key_env": "LLMHUB_API_KEY", "model": "gpt-4o"},
     "mlx": {"kind": "mlx", "model": "Qwen/Qwen2.5-3B-Instruct"},
     "mock": {"kind": "mock", "model": "mock-1"},
 }

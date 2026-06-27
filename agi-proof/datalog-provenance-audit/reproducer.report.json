@@ -1,0 +1,18 @@
+{
+  "schema": "sophia.datalog_reproducer.report.v1",
+  "preregistrationSha256": "2215ea912acfc52ea56d89355c049c01d5b4cfdb0cfa53c012eb0219f6df6276",
+  "hashProblems": [],
+  "audit": {
+    "nCases": 319,
+    "nVariants": 3,
+    "nComparisons": 957,
+    "nMatch": 957,
+    "nDiverge": 0,
+    "divergences": []
+  },
+  "verdict": "PASS",
+  "matchesPreRegistration": true,
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "note": "Reviewer-run live reproduction of the Datalog gate-faithfulness claim."
+}

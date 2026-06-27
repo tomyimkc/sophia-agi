@@ -1,0 +1,59 @@
+{
+  "schema": "sophia.uplift.2run-partial.v1",
+  "model": "ollama:dolphin-llama3:8b",
+  "runs": 2,
+  "runsTarget": 3,
+  "judgeFamilies": 2,
+  "judgeSpecs": [
+    "llmhub:gpt-4o",
+    "llmhub:claude-sonnet-4-6"
+  ],
+  "levers": {
+    "+gate": {
+      "runs": 2,
+      "falseObs": 96,
+      "hallucinationRateAlone": 0.4375,
+      "ciAlone": [
+        0.3438,
+        0.5417
+      ],
+      "hallucinationRateGated": 0.3438,
+      "ciGated": [
+        0.25,
+        0.4375
+      ],
+      "delta": 0.0938,
+      "ciDelta": [
+        0.0417,
+        0.1562
+      ],
+      "perRunDelta": [
+        0.1042,
+        0.0833
+      ],
+      "falsePositiveCost": 0.0,
+      "coverageRecall": 0.2143,
+      "coverageDetail": {
+        "hallucinatedAlone": 42,
+        "fixedByGate": 9
+      },
+      "judgeAgreement": {
+        "items": 96,
+        "judges": 2,
+        "pairwiseAgreement": 0.9062,
+        "meanPairwiseKappa": 0.8123
+      },
+      "validated": false,
+      "validatedChecks": {
+        "notMock": true,
+        "multiFamilyJudges": true,
+        "kappaAboveFloor": true,
+        "atLeast3Runs": false,
+        "ciExcludesZero": true
+      }
+    }
+  },
+  "note": "Aggregated from a 2-run partial checkpoint (run 3 lost to a process kill). Honest 2-run multi-judge result.",
+  "candidateOnly": true,
+  "canClaimAGI": false
+}
