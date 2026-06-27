@@ -93,6 +93,42 @@ rows, single base, single seed on retention. Stays `candidate_only`; `canClaimAG
    no protected regression. So caveat #4 is no longer open — the +0.43 qualification habit is real and
    generalizes; receipt `M3-transfer.gate.json`.
 
+## Market reality-check vs strong large models (2026-06-27, `reality-check.json`)
+The pilot only ever compared the gate's uplift on same-size BASE models (M1). This is the first
+comparison of the trained adapter against **strong, widely-used large models** on the SAME held-out
+cases (`heldout_v1`, N=354×3, deterministic marker scorers): **Grok 4.3, DeepSeek V3.1, Mistral Large**
+(`tools/reality_check.py`, `frontier_baselines.json` + `frontier_prompt_baselines.json`).
+
+> **Egress limitation (documented, not hidden):** OpenAI / Anthropic / Google APIs return **403**
+> from this run's datacenter egress IP (provider policy), so the first-party-frontier trio
+> (GPT/Claude/Gemini) is a **gap** — the identical one-liner run from an allowed IP would add them.
+
+Two framings, both reported:
+- **Default / product** (adapter(prompt) vs frontier **raw**): adapter AHEAD on 6/9 headline metrics —
+  qualification_on_contested **0.978 vs 0.38–0.42** (gap +0.56–0.60), tradition_merge **0.000 vs
+  0.12–0.18**; false_attribution **parity** (all ~0.00). All gaps exceed the MDE (0.061).
+- **Fairness — isolates the LoRA** (adapter(prompt) vs frontier **with the same scaffold**): the edge
+  **SURVIVES**. The scaffold helps frontier (qualification: Grok 0.42→0.49, DeepSeek 0.38→0.54,
+  Mistral 0.41→**0.79**) but does not close the gap, and on tradition-merging the scaffold barely
+  helps (Grok 0.12→0.24, DeepSeek/Mistral ~0.16). Adapter still AHEAD on 6/9. **So the gain is real
+  consistency the LoRA learned, NOT just a portable prompt any model could copy.**
+
+**This is a genuine NARROW edge — but still NOT a "4B beats frontier" headline, for two reasons:**
+1. **Markers reward the trained format.** `qualification_rate_on_contested` detects generic hedging
+   phrases the adapter was trained to emit; frontier models may qualify in prose with different
+   phrasings the marker set misses (note Mistral+scaffold reaches 0.79 — much of the residual gap
+   could be marker-vocabulary). **A ≥2-family semantic-judge cross-check on these frontier outputs is
+   owed before any headline.** (PENDING.)
+2. **Over-qualification / calibration untested here.** 0.978 qualification on *contested* cases is only
+   half the story; whether the adapter ALSO reflexively hedges *clear-cut* questions (a calibration
+   failure that would not show on a contested-only metric) is not yet measured. The low
+   over_abstention (0.003) and the novel-entity transfer pass are reassuring but not a calibration test.
+
+Honest net: against three strong large models, the 4B adapter is **measurably more consistent at
+source-discipline (qualifying contested claims, not conflating traditions), and the advantage is not
+merely the prompt** — a real, defensible niche result, pending the judge + calibration checks above.
+`candidate_only`; `canClaimAGI:false`.
+
 ## Corroboration added after the pilot (seed 1 + LLM judges)
 
 **Stability (seeds 1 AND 2, full N=354 × 3 runs each — `M3-pilot-eval-seed{1,2}.json`).** Across THREE seeds the primary signal is CI-clean improving every time: qualification +0.475/+0.371/+0.383, tradition_merge +0.143/+0.113/+0.125, false_attribution +0.014/+0.010/+0.010, moral_route +0.569/+0.588/+0.686 (seed0/1/2); no protected regression on any seed; over-abstention ≤0.023. Three-seed robust. (Original seed-1 detail:) The primary signal
