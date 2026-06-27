@@ -1,0 +1,30 @@
+{
+  "4B": {
+    "raw_affirm": 17,
+    "gated_affirm": 0,
+    "gated_abstain": 40,
+    "n": 40,
+    "prevented": 17
+  },
+  "12B": {
+    "raw_affirm": 10,
+    "gated_affirm": 0,
+    "gated_abstain": 40,
+    "n": 40,
+    "prevented": 10
+  },
+  "27B": {
+    "raw_affirm": 1,
+    "gated_affirm": 0,
+    "gated_abstain": 20,
+    "n": 20,
+    "prevented": 1
+  },
+  "70B": {
+    "raw_affirm": 5,
+    "gated_affirm": 0,
+    "gated_abstain": 20,
+    "n": 20,
+    "prevented": 5
+  }
+}
