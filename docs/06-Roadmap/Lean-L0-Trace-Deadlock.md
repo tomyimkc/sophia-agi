@@ -174,6 +174,29 @@ stays false; nothing above L0 (L1 reproduce / L2 novel / L3 disjoint) is implied
 The same traced-project-keyed + remote-cache mechanism is what the Phase-1
 miniF2F eval will use, so this also de-risks Phase 1.
 
+### 1d. `NUM_PROCS=1` corroboration + a trace-free verifier (`verify_lean_source`) — mechanics (PR #207)
+
+Corroborates §1b from a second angle, and adds a lighter local verifier. On a fresh
+Linux x64 cloud env (4 vCPU, lean-dojo 4.20.0, a local `from_path` minimal fixture),
+setting **`NUM_PROCS=1`** makes the tracer's extraction **progress steadily**
+(~2.5 s/item, `lean` at ~135 % CPU — not the §1 0 %-CPU stall), confirming the hang
+lives in lean-dojo's *parallel* extraction pool. But at ~2.5 s × 1518 prelude items ≈
+**63 min/cold trace**, it is confirmed-but-impractical — the same *slow, not stuck*
+conclusion as §1b, reached independently.
+
+Separately, **`agent.lean_backend.verify_lean_source`** is a trace-free **verifier**
+(§4 option 3): it hands a self-contained source to the `lean` CLI (no lean-dojo tracer)
+and returns the real-kernel verdict in seconds — `accepted` on a valid proof, `rejected`
+on an invalid one, `rejected` on `sorry`/`admit`. Fail-closed (no `lean` → abstain),
+opt-in (`lean_cli_available()`), `candidateOnly`. Tests: `tests/test_lean_cli_verify.py`.
+
+**This is mechanics, not the L0 verdict.** L0 on the ladder is reached via the
+lean-dojo/mathlib4 remote-cache path (§1c); `verify_lean_source` is a complementary,
+lighter *local* verifier — and the verifier the step-2 whole-proof pass@1 harness uses
+(`tools/run_lean_passk.py`). Env note: lean-dojo's `git clone` of an external repo is
+denied **403** by the agent git-proxy in this sandbox, so only `from_path` local
+fixtures are traceable here (GitHub-Actions CI has no such proxy — §1a/§1b).
+
 ## 2. What is NOT the blocker (ruled out empirically)
 
 - **Python version.** lean-dojo's metadata declares `Requires-Python: <3.13,>=3.9`;
@@ -223,12 +246,12 @@ miniF2F eval will use, so this also de-risks Phase 1.
    (~3.5 s/item, slow but progressing), unlike the macOS 0%-CPU stall. But the local
    minimal-repo trace is still ~90 min, too slow for a per-PR lane, so "run on Linux"
    alone didn't yield L0; the mathlib4 remote cache (option 6, §1c) did.
-3. **Bypass `trace()` entirely with a lighter verification path.** Since L0 only
-   needs "one real green check + one real reject," a `lake env lean` /
-   direct-tactic-exec path (no lean-dojo tracer) could satisfy L0 without the
-   deadlocking trace step. Most code, but it removes the dependency on the broken
-   tracer and keeps the fail-closed contract intact. **Highest expected value** —
-   the only option that doesn't route through the hung tracer.
+3. ✓ **LANDED (§1d) — Bypass `trace()` with a lighter `lean`-CLI verifier.**
+   `agent.lean_backend.verify_lean_source` elaborates a self-contained source via the
+   `lean` CLI (no lean-dojo tracer): green-on-valid + reject-on-invalid + sorry-rejected
+   in seconds, fail-closed / opt-in / `candidateOnly`. A complementary *local* verifier —
+   it does NOT supersede the §1c L0 verdict (the lean-dojo/mathlib4 path); it is the
+   verifier the step-2 whole-proof pass@1 harness uses (PR #207).
 4. **Root-cause the tracer stall** in `ExtractData.lean`'s extraction
    (`ps`/`py-spy` on the hung `lean` orphan to capture where it blocks), then file
    a precise upstream bug. Smallest scope, payoff is an upstream fix on someone
@@ -246,8 +269,8 @@ miniF2F eval will use, so this also de-risks Phase 1.
 
 **L0 reached via (6)** — see §1c (green-on-valid AND reject-on-invalid, mathlib4 remote
 cache). For the *local* minimal-repo trace (a lighter cache-miss path), the remaining
-order is **(3 bypass) → (4 root-cause)**; option (3) `verify_lean_source` is pursued
-separately in PR #207 as a trace-free verifier (mechanics).
+order is **(3 bypass, landed §1d) → (4 root-cause)**; the bypass verifier
+`verify_lean_source` (PR #207) is mechanics, not the L0 verdict — §1c (mathlib4) is.
 
 **Cheapest first probe (try before any of the above) — `NUM_PROCS=1`.** lean-dojo's
 tracer parallelizes proof-state extraction across `NUM_PROCS` worker processes

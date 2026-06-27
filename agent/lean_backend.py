@@ -36,7 +36,11 @@ Discipline (Sophia, preserved — non-negotiable):
 from __future__ import annotations
 
 import hashlib
+import os
 import re
+import shutil
+import subprocess
+import tempfile
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
@@ -151,6 +155,88 @@ def check_proof_in_repo(theorem_obj: Any, proof: str) -> LeanCheck:
     return LeanCheck(verdict="rejected", reason="lean_rejected: check_proof False",
                      lean_available=True, goal_closed=False,
                      detail={"check_proof": False})
+
+
+# ---------------------------------------------------------------------------
+# trace()-free verification path (the L0 bypass).
+#
+# lean-dojo's `trace()` deadlocks on this machine class — reproduced on macOS-arm64
+# AND Linux/CI, on a `from_path` fixture AND a real GitHub repo (see
+# docs/06-Roadmap/Lean-L0-Trace-Deadlock.md). Its parallel proof-state-extraction pool
+# stalls with orphaned `lake`/`lean` workers; `NUM_PROCS=1` serializes it and avoids
+# the hang but is impractically slow (~1 min for every ~25 prelude items). So the
+# viable L0 path is to skip the tracer entirely: hand a self-contained Lean source to
+# the `lean` CLI and read its real kernel verdict. No lean-dojo dependency at all.
+# ---------------------------------------------------------------------------
+
+# Lean diagnostics are emitted as `<file>:<line>:<col>: error: ...`. Match that shape
+# (not a bare "error" substring, which could appear inside an identifier).
+_LEAN_ERROR_RE = re.compile(r":\d+:\d+:\s*error:", re.IGNORECASE)
+# `sorry`/`admit` both surface as `declaration uses 'sorry'` and exit 0 — an incomplete
+# proof must NEVER count as accepted, so we fail-closed on any sorry mention.
+_LEAN_SORRY_RE = re.compile(r"declaration uses ['`]?sorry|\bsorry\b|\badmit\b", re.IGNORECASE)
+
+
+def lean_cli_available() -> bool:
+    """True iff the ``lean`` CLI is on PATH — the trace-free bypass probe.
+
+    Distinct from ``lean_available()`` (which probes the *lean-dojo* import): the bypass
+    needs only a Lean 4 toolchain, not lean-dojo. Cheap, no Lean invocation."""
+    return shutil.which("lean") is not None
+
+
+def verify_lean_source(source: str, *, timeout_s: int = 120) -> LeanCheck:
+    """Verify a self-contained Lean 4 ``source`` by elaborating it with the ``lean`` CLI.
+
+    The L0 bypass: invokes Lean's real elaborator/kernel directly on a temp file,
+    skipping lean-dojo's deadlocking ``trace()`` entirely. ``source`` must be
+    self-contained — prelude-only, or importing only what the ambient toolchain provides.
+    For project/Mathlib lemmas, run inside a built lake project (``lake env lean``); the
+    verdict parsing here is identical.
+
+    Fail-closed at every step (mirrors ``math_verifier`` / ``check_proof_in_repo``):
+      * no ``lean`` on PATH              -> abstain (``lean_unavailable``)
+      * Lean reports ``error:``          -> rejected
+      * proof uses ``sorry``/``admit``   -> rejected (incomplete; never a real proof)
+      * clean elaboration (rc 0, no error, no sorry) -> accepted
+      * timeout / OS error               -> abstain (NEVER a fabricated ``accepted``)
+    """
+    if not lean_cli_available():
+        return LeanCheck(verdict="abstain", reason="lean_unavailable: `lean` CLI not on PATH",
+                         lean_available=False, backend="lean4-cli")
+    tmp_path = None
+    try:
+        with tempfile.NamedTemporaryFile("w", suffix=".lean", delete=False) as fh:
+            fh.write(source if source.endswith("\n") else source + "\n")
+            tmp_path = fh.name
+        proc = subprocess.run(["lean", tmp_path], capture_output=True, text=True,
+                              timeout=timeout_s)
+    except subprocess.TimeoutExpired:
+        return LeanCheck(verdict="abstain", reason=f"lean_timeout: elaboration exceeded {timeout_s}s",
+                         lean_available=True, backend="lean4-cli")
+    except OSError as exc:  # fail-closed: any spawn failure abstains, never lies
+        return LeanCheck(verdict="abstain",
+                         reason=f"lean_error: {type(exc).__name__}: {str(exc)[:200]}",
+                         lean_available=True, backend="lean4-cli")
+    finally:
+        if tmp_path and os.path.exists(tmp_path):
+            os.unlink(tmp_path)
+
+    output = f"{proc.stdout or ''}\n{proc.stderr or ''}"
+    if _LEAN_SORRY_RE.search(output):
+        return LeanCheck(verdict="rejected",
+                         reason="lean_rejected: proof uses sorry/admit (incomplete proof)",
+                         lean_available=True, goal_closed=False, backend="lean4-cli",
+                         detail={"sorry": True})
+    if proc.returncode != 0 or _LEAN_ERROR_RE.search(output):
+        tail = next((ln for ln in reversed(output.splitlines()) if "error:" in ln.lower()),
+                    f"returncode={proc.returncode}")
+        return LeanCheck(verdict="rejected", reason=f"lean_rejected: {tail.strip()[:200]}",
+                         lean_available=True, goal_closed=False, backend="lean4-cli",
+                         detail={"returncode": proc.returncode})
+    return LeanCheck(verdict="accepted",
+                     reason="lean_accepted: elaborated clean (no error, no sorry)",
+                     lean_available=True, goal_closed=True, backend="lean4-cli")
 
 
 # Legacy `verify_proof(theorem=..., proof=...)` body preserved below for the

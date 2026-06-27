@@ -1,0 +1,124 @@
+{
+  "benchmark": "core-lean-passk.jsonl",
+  "isMiniF2F": false,
+  "n": 12,
+  "solved": 5,
+  "passAt1": 0.4167,
+  "modelSpec": "openrouter:deepseek/deepseek-r1",
+  "verifier": "agent.lean_backend.verify_lean_source",
+  "estCostUsd": 0.0373,
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "note": "Whole-proof pass@1, real Lean-kernel verified, trace-free. NOT miniF2F: a core-Lean-provable local set (bare `lean`, no Mathlib).",
+  "results": [
+    {
+      "id": "p01_one_plus_one",
+      "tier": "trivial",
+      "decl": "theorem p01 : 1 + 1 = 2",
+      "verdict": "accepted",
+      "proof": "theorem p01 : 1 + 1 = 2 := by\n  rfl",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 36.7
+    },
+    {
+      "id": "p02_add_zero",
+      "tier": "trivial",
+      "decl": "theorem p02 (n : Nat) : n + 0 = n",
+      "verdict": "accepted",
+      "proof": "theorem p02 (n : Nat) : n + 0 = n := rfl",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 49.4
+    },
+    {
+      "id": "p03_zero_add",
+      "tier": "easy",
+      "decl": "theorem p03 (n : Nat) : 0 + n = n",
+      "verdict": "rejected",
+      "proof": "theorem p03 (n : Nat) : 0 + n = n := by\n  rfl",
+      "reason": "lean_rejected: /tmp/tmpj_dnxsq6.lean:2:2: error: tactic 'rfl' failed, the left-hand side",
+      "sec": 14.3
+    },
+    {
+      "id": "p04_add_comm",
+      "tier": "easy",
+      "decl": "theorem p04 (a b : Nat) : a + b = b + a",
+      "verdict": "rejected",
+      "proof": "theorem p04 (a b : Nat) : a + b = b + a := by\n        intro b\n        induction b with\n        | zero => rfl\n        | succ m ih => rw [show (succ m) + 0 = succ (m + 0) from rfl, ih]; rfl\n      rw [show 0 + b = b from rfl, lem b]; rfl\n  | succ n ih =>\n      have add_succ : ∀ b, b + (succ n) = succ (b + n) := by\n        intro b\n        induction b with\n        | zero => rw [show 0 + (succ n) = succ n from rfl, show 0 + n = n from rfl]; rfl\n        | succ m ih_inner => rw [show (succ m) + (succ n) = succ (m + (succ n)) from rfl, ih_inner]; rfl\n      rw [show (succ n) + b = succ (n + b) from rfl, ih, add_succ]; rfl",
+      "reason": "lean_rejected: /tmp/tmpwxa6cy1j.lean:6:6: error: unexpected identifier; expected command",
+      "sec": 308.7
+    },
+    {
+      "id": "p05_imp_self",
+      "tier": "easy",
+      "decl": "theorem p05 (p : Prop) : p → p",
+      "verdict": "accepted",
+      "proof": "theorem p05 (p : Prop) : p → p := fun h => h",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 8.9
+    },
+    {
+      "id": "p06_and_comm",
+      "tier": "easy",
+      "decl": "theorem p06 (p q : Prop) (h : p ∧ q) : q ∧ p",
+      "verdict": "accepted",
+      "proof": "theorem p06 (p q : Prop) (h : p ∧ q) : q ∧ p := ⟨h.right, h.left⟩",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 11.0
+    },
+    {
+      "id": "p07_le_refl",
+      "tier": "easy",
+      "decl": "theorem p07 (n : Nat) : n ≤ n",
+      "verdict": "rejected",
+      "proof": "theorem p07 (n : Nat) : n ≤ n := Nat.le.refl n",
+      "reason": "lean_rejected: /tmp/tmp2l058sc9.lean:1:33: error: function expected at",
+      "sec": 81.0
+    },
+    {
+      "id": "p08_succ_pos",
+      "tier": "easy",
+      "decl": "theorem p08 (n : Nat) : 0 < n + 1",
+      "verdict": "rejected",
+      "proof": "theorem p08 (n : Nat) : 0 < n + 1 := by induction n with | zero => exact Nat.le_refl | succ k ih => exact Nat.le_step ih",
+      "reason": "lean_rejected: /tmp/tmpwlvk5ejd.lean:1:67: error: type mismatch",
+      "sec": 182.8
+    },
+    {
+      "id": "p09_mul_two",
+      "tier": "medium",
+      "decl": "theorem p09 (n : Nat) : 2 * n = n + n",
+      "verdict": "rejected",
+      "proof": "theorem p09 (n : Nat) : 2 * n = n + n := rfl",
+      "reason": "lean_rejected: /tmp/tmpbde07t3r.lean:1:41: error: type mismatch",
+      "sec": 113.3
+    },
+    {
+      "id": "p10_list_append_nil",
+      "tier": "medium",
+      "decl": "theorem p10 (l : List Nat) : l ++ [] = l",
+      "verdict": "rejected",
+      "proof": "theorem p10 (l : List Nat) : l ++ [] = l := by\n  induction l with\n  | nil => rfl\n  | cons a as ih =>\n    rw [List.concat_eq_append, ih]",
+      "reason": "lean_rejected: /tmp/tmptele4tv8.lean:5:8: error: tactic 'rewrite' failed, did not find instance of the pattern in the target expression",
+      "sec": 33.0
+    },
+    {
+      "id": "p11_left_distrib",
+      "tier": "medium",
+      "decl": "theorem p11 (a b c : Nat) : a * (b + c) = a * b + a * c",
+      "verdict": "rejected",
+      "proof": "theorem p11 (a b c : Nat) : a * (b + c) = a * b + a * c := by\n  induction a with\n  | zero => \n      rw [Nat.zero_mul, Nat.zero_mul, Nat.zero_mul]\n      rfl\n  | succ n ih =>\n      rw [Nat.succ_mul, Nat.succ_mul, Nat.succ_mul, ih]\n      rw [Nat.add_assoc]\n      rw [Nat.add_left_comm c (n * b) (n * c)]\n      rw [← Nat.add_assoc]",
+      "reason": "lean_rejected: /tmp/tmpecy3kc9d.lean:9:10: error: tactic 'rewrite' failed, did not find instance of the pattern in the target expression",
+      "sec": 226.5
+    },
+    {
+      "id": "p12_or_comm",
+      "tier": "medium",
+      "decl": "theorem p12 (p q : Prop) (h : p ∨ q) : q ∨ p",
+      "verdict": "accepted",
+      "proof": "theorem p12 (p q : Prop) (h : p ∨ q) : q ∨ p := match h with | Or.inl hp => Or.inr hp | Or.inr hq => Or.inl hq",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 110.2
+    }
+  ]
+}
