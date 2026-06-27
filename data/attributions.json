@@ -2788,5 +2788,2991 @@
       "anita_desai"
     ],
     "provenance": "Novel by Arundhati Roy, published 1997."
+  },
+  "selected_poems_li_bai": {
+    "textId": "selected_poems_li_bai",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Collected Poems of Li Bai",
+    "canonicalTitleZh": "李白詩集",
+    "tradition": "tang_poetry",
+    "attributedAuthor": "li_bai",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "du_fu",
+      "wang_wei",
+      "bai_juyi"
+    ],
+    "provenance": "Core corpus of shi poetry by the High Tang poet Li Bai (701-762 CE); transmitted in well-documented anthologies."
+  },
+  "selected_poems_du_fu": {
+    "textId": "selected_poems_du_fu",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Collected Poems of Du Fu",
+    "canonicalTitleZh": "杜甫詩集",
+    "tradition": "tang_poetry",
+    "attributedAuthor": "du_fu",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "li_bai",
+      "wang_wei",
+      "meng_haoran"
+    ],
+    "provenance": "Shi poetry by the High Tang poet Du Fu (712-770 CE); preserved and annotated through centuries of Chinese scholarship."
+  },
+  "selected_poems_wang_wei": {
+    "textId": "selected_poems_wang_wei",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Collected Poems of Wang Wei",
+    "canonicalTitleZh": "王維詩集",
+    "tradition": "tang_poetry",
+    "attributedAuthor": "wang_wei",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "li_bai",
+      "du_fu",
+      "meng_haoran"
+    ],
+    "provenance": "Landscape and Buddhist-inflected Tang poems by Wang Wei (699-761 CE); well-attested in the literary record."
+  },
+  "selected_poems_bai_juyi": {
+    "textId": "selected_poems_bai_juyi",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Collected Poems of Bai Juyi",
+    "canonicalTitleZh": "白居易詩集",
+    "tradition": "tang_poetry",
+    "attributedAuthor": "bai_juyi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "du_fu",
+      "li_bai",
+      "yuan_zhen"
+    ],
+    "provenance": "Tang poet Bai Juyi (772-846 CE), including 'Song of Everlasting Sorrow'; authorship documented in his self-compiled collected works."
+  },
+  "strange_tales_from_a_chinese_studio": {
+    "textId": "strange_tales_from_a_chinese_studio",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Strange Tales from a Chinese Studio",
+    "canonicalTitleZh": "聊齋誌異",
+    "tradition": "qing_dynasty_fiction",
+    "attributedAuthor": "pu_songling",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "wu_jingzi",
+      "cao_xueqin",
+      "ji_yun"
+    ],
+    "provenance": "Classical-Chinese tale collection by Pu Songling (1640-1715), Qing dynasty; authorship well-documented."
+  },
+  "comprehensive_mirror_in_aid_of_governance": {
+    "textId": "comprehensive_mirror_in_aid_of_governance",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Comprehensive Mirror in Aid of Governance",
+    "canonicalTitleZh": "資治通鑑",
+    "tradition": "song_dynasty_historiography",
+    "attributedAuthor": "sima_guang",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ouyang_xiu",
+      "sima_qian",
+      "su_shi"
+    ],
+    "provenance": "Chronicle history compiled under the direction of Sima Guang (1019-1086), Northern Song; presented to the throne in 1084."
+  },
+  "six_records_of_a_floating_life": {
+    "textId": "six_records_of_a_floating_life",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Six Records of a Floating Life",
+    "canonicalTitleZh": "浮生六記",
+    "tradition": "qing_dynasty_memoir",
+    "attributedAuthor": "shen_fu",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "cao_xueqin",
+      "yuan_mei",
+      "li_yu"
+    ],
+    "provenance": "Autobiographical memoir by Shen Fu (1763-c.1825), Qing dynasty; authorship established despite later partial loss of the text."
+  },
+  "the_peony_pavilion": {
+    "textId": "the_peony_pavilion",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "The Peony Pavilion",
+    "canonicalTitleZh": "牡丹亭",
+    "tradition": "ming_dynasty_chuanqi_drama",
+    "attributedAuthor": "tang_xianzu",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "kong_shangren",
+      "hong_sheng",
+      "wang_shifu"
+    ],
+    "provenance": "Kunqu chuanqi play by Tang Xianzu (1550-1616), Ming dynasty; completed 1598, authorship undisputed."
+  },
+  "the_orphan_of_zhao": {
+    "textId": "the_orphan_of_zhao",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "The Orphan of Zhao",
+    "canonicalTitleZh": "趙氏孤兒",
+    "tradition": "yuan_dynasty_zaju_drama",
+    "attributedAuthor": "ji_junxiang",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "guan_hanqing",
+      "wang_shifu",
+      "ma_zhiyuan"
+    ],
+    "provenance": "Yuan dynasty zaju play attributed to Ji Junxiang (13th c.); well-established in the Yuan dramatic canon."
+  },
+  "the_romance_of_the_western_chamber": {
+    "textId": "the_romance_of_the_western_chamber",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "The Romance of the Western Chamber",
+    "canonicalTitleZh": "西廂記",
+    "tradition": "yuan_dynasty_zaju_drama",
+    "attributedAuthor": "wang_shifu",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "guan_hanqing",
+      "ji_junxiang",
+      "tang_xianzu"
+    ],
+    "provenance": "Yuan dynasty zaju play by Wang Shifu (c.1250-1300); the standard attribution in Chinese dramatic scholarship."
+  },
+  "the_pillow_book": {
+    "textId": "the_pillow_book",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Pillow Book",
+    "canonicalTitleZh": "枕草子",
+    "tradition": "heian_period_japanese",
+    "attributedAuthor": "sei_shonagon",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "murasaki_shikibu",
+      "izumi_shikibu",
+      "fujiwara_no_teika"
+    ],
+    "provenance": "Heian-era zuihitsu by the court lady Sei Shōnagon (c.966-1017/1025); compiled c.1002."
+  },
+  "the_narrow_road_to_the_deep_north": {
+    "textId": "the_narrow_road_to_the_deep_north",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Narrow Road to the Deep North",
+    "canonicalTitleZh": "奥の細道",
+    "tradition": "edo_period_japanese",
+    "attributedAuthor": "matsuo_basho",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "yosa_buson",
+      "kobayashi_issa",
+      "ihara_saikaku"
+    ],
+    "provenance": "Haibun travel diary by Matsuo Bashō (1644-1694), Edo period; written c.1689-1694."
+  },
+  "the_love_suicides_at_sonezaki": {
+    "textId": "the_love_suicides_at_sonezaki",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "The Love Suicides at Sonezaki",
+    "canonicalTitleZh": "曾根崎心中",
+    "tradition": "edo_period_japanese",
+    "attributedAuthor": "chikamatsu_monzaemon",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ihara_saikaku",
+      "takeda_izumo",
+      "zeami_motokiyo"
+    ],
+    "provenance": "Bunraku/jōruri play by Chikamatsu Monzaemon (1653-1724); first performed 1703."
+  },
+  "the_life_of_an_amorous_man": {
+    "textId": "the_life_of_an_amorous_man",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Life of an Amorous Man",
+    "canonicalTitleZh": "好色一代男",
+    "tradition": "edo_period_japanese",
+    "attributedAuthor": "ihara_saikaku",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "chikamatsu_monzaemon",
+      "matsuo_basho",
+      "ueda_akinari"
+    ],
+    "provenance": "Ukiyo-zōshi novel by Ihara Saikaku (1642-1693), Edo period; published 1682."
+  },
+  "tales_of_moonlight_and_rain": {
+    "textId": "tales_of_moonlight_and_rain",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Tales of Moonlight and Rain",
+    "canonicalTitleZh": "雨月物語",
+    "tradition": "edo_period_japanese",
+    "attributedAuthor": "ueda_akinari",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ihara_saikaku",
+      "takizawa_bakin",
+      "santo_kyoden"
+    ],
+    "provenance": "Collection of supernatural tales by Ueda Akinari (1734-1809); published 1776."
+  },
+  "rashomon_akutagawa": {
+    "textId": "rashomon_akutagawa",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Rashōmon and Other Stories",
+    "canonicalTitleZh": "羅生門",
+    "tradition": "taisho_period_japanese",
+    "attributedAuthor": "ryunosuke_akutagawa",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "natsume_soseki",
+      "junichiro_tanizaki",
+      "mori_ogai"
+    ],
+    "provenance": "Short stories by Ryūnosuke Akutagawa (1892-1927); 'Rashōmon' published 1915."
+  },
+  "thousand_cranes": {
+    "textId": "thousand_cranes",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Thousand Cranes",
+    "canonicalTitleZh": "千羽鶴",
+    "tradition": "showa_period_japanese",
+    "attributedAuthor": "yasunari_kawabata",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "junichiro_tanizaki",
+      "yukio_mishima",
+      "kenzaburo_oe"
+    ],
+    "provenance": "Novel by Yasunari Kawabata (1899-1972), Nobel laureate; serialized 1949-1952."
+  },
+  "the_makioka_sisters": {
+    "textId": "the_makioka_sisters",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Makioka Sisters",
+    "canonicalTitleZh": "細雪",
+    "tradition": "showa_period_japanese",
+    "attributedAuthor": "junichiro_tanizaki",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "yasunari_kawabata",
+      "yukio_mishima",
+      "natsume_soseki"
+    ],
+    "provenance": "Novel by Jun'ichirō Tanizaki (1886-1965); serialized 1943-1948."
+  },
+  "the_temple_of_the_golden_pavilion": {
+    "textId": "the_temple_of_the_golden_pavilion",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Temple of the Golden Pavilion",
+    "canonicalTitleZh": "金閣寺",
+    "tradition": "showa_period_japanese",
+    "attributedAuthor": "yukio_mishima",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "yasunari_kawabata",
+      "junichiro_tanizaki",
+      "kobo_abe"
+    ],
+    "provenance": "Novel by Yukio Mishima (1925-1970); published 1956."
+  },
+  "a_personal_matter": {
+    "textId": "a_personal_matter",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "A Personal Matter",
+    "canonicalTitleZh": "個人的な体験",
+    "tradition": "showa_period_japanese",
+    "attributedAuthor": "kenzaburo_oe",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "yukio_mishima",
+      "kobo_abe",
+      "yasunari_kawabata"
+    ],
+    "provenance": "Novel by Kenzaburō Ōe (1935-2023), Nobel laureate; published 1964."
+  },
+  "norwegian_wood": {
+    "textId": "norwegian_wood",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Norwegian Wood",
+    "canonicalTitleZh": "ノルウェイの森",
+    "tradition": "contemporary_japanese",
+    "attributedAuthor": "haruki_murakami",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "banana_yoshimoto",
+      "kenzaburo_oe",
+      "ryu_murakami"
+    ],
+    "provenance": "Novel by Haruki Murakami (b.1949); published 1987."
+  },
+  "the_woman_in_the_dunes": {
+    "textId": "the_woman_in_the_dunes",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Woman in the Dunes",
+    "canonicalTitleZh": "砂の女",
+    "tradition": "showa_period_japanese",
+    "attributedAuthor": "kobo_abe",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "kenzaburo_oe",
+      "yukio_mishima",
+      "yasunari_kawabata"
+    ],
+    "provenance": "Novel by Kōbō Abe (1924-1993); published 1962."
+  },
+  "kusamakura": {
+    "textId": "kusamakura",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Kusamakura",
+    "canonicalTitleZh": "草枕",
+    "tradition": "meiji_period_japanese",
+    "attributedAuthor": "natsume_soseki",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "mori_ogai",
+      "ryunosuke_akutagawa",
+      "junichiro_tanizaki"
+    ],
+    "provenance": "Novel by Natsume Sōseki (1867-1916), Meiji period; published 1906."
+  },
+  "the_abe_clan": {
+    "textId": "the_abe_clan",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Abe Clan",
+    "canonicalTitleZh": "阿部一族",
+    "tradition": "meiji_period_japanese",
+    "attributedAuthor": "mori_ogai",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "natsume_soseki",
+      "ryunosuke_akutagawa",
+      "shimazaki_toson"
+    ],
+    "provenance": "Historical novella by Mori Ōgai (1862-1922); published 1913."
+  },
+  "the_recognition_of_shakuntala": {
+    "textId": "the_recognition_of_shakuntala",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "The Recognition of Shakuntala",
+    "tradition": "classical_sanskrit",
+    "attributedAuthor": "kalidasa",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "bhavabhuti",
+      "bhasa",
+      "sudraka"
+    ],
+    "provenance": "Classical Sanskrit play (Abhijñānaśākuntalam) traditionally attributed to Kālidāsa, c. 4th-5th c. CE."
+  },
+  "meghaduta": {
+    "textId": "meghaduta",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Cloud Messenger",
+    "tradition": "classical_sanskrit",
+    "attributedAuthor": "kalidasa",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "bhartrihari",
+      "bharavi",
+      "magha"
+    ],
+    "provenance": "Sanskrit lyric poem (Meghadūta) attributed to Kālidāsa, c. 4th-5th c. CE; authorship traditionally settled."
+  },
+  "the_little_clay_cart": {
+    "textId": "the_little_clay_cart",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "The Little Clay Cart",
+    "tradition": "classical_sanskrit",
+    "attributedAuthor": "sudraka",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "kalidasa",
+      "bhasa",
+      "bhavabhuti"
+    ],
+    "provenance": "Sanskrit drama (Mṛcchakaṭika) traditionally attributed to King Śūdraka, c. 2nd-5th c. CE."
+  },
+  "gitanjali": {
+    "textId": "gitanjali",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Gitanjali (Song Offerings)",
+    "canonicalTitleZh": "গীতাঞ্জলি",
+    "tradition": "bengali_renaissance",
+    "attributedAuthor": "rabindranath_tagore",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "bankim_chandra_chattopadhyay",
+      "kazi_nazrul_islam",
+      "sarat_chandra_chattopadhyay"
+    ],
+    "provenance": "Bengali poetry collection by Rabindranath Tagore (1861-1941); English version 1912, Nobel Prize 1913."
+  },
+  "the_home_and_the_world": {
+    "textId": "the_home_and_the_world",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Home and the World",
+    "canonicalTitleZh": "ঘরে বাইরে",
+    "tradition": "bengali_renaissance",
+    "attributedAuthor": "rabindranath_tagore",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "sarat_chandra_chattopadhyay",
+      "bankim_chandra_chattopadhyay",
+      "bibhutibhushan_bandyopadhyay"
+    ],
+    "provenance": "Bengali novel by Rabindranath Tagore (1861-1941); published 1916."
+  },
+  "godan": {
+    "textId": "godan",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Godan (The Gift of a Cow)",
+    "canonicalTitleZh": "गोदान",
+    "tradition": "modern_hindi",
+    "attributedAuthor": "premchand",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "jaishankar_prasad",
+      "mohan_rakesh",
+      "yashpal"
+    ],
+    "provenance": "Hindi novel by Premchand (Dhanpat Rai Srivastava, 1880-1936); published 1936."
+  },
+  "tirukkural": {
+    "textId": "tirukkural",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleEn": "Tirukkural",
+    "canonicalTitleZh": "திருக்குறள்",
+    "tradition": "classical_tamil",
+    "attributedAuthor": "thiruvalluvar",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ilango_adigal",
+      "kambar",
+      "avvaiyar"
+    ],
+    "provenance": "Classical Tamil ethical couplet collection attributed to Thiruvalluvar, c. 1st c. BCE-5th c. CE; traditional authorship settled."
+  },
+  "silappatikaram": {
+    "textId": "silappatikaram",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Silappatikaram (The Tale of an Anklet)",
+    "canonicalTitleZh": "சிலப்பதிகாரம்",
+    "tradition": "classical_tamil",
+    "attributedAuthor": "ilango_adigal",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "thiruvalluvar",
+      "sattanar",
+      "kambar"
+    ],
+    "provenance": "Tamil epic traditionally attributed to the prince-poet Iḷaṅkō Aṭikaḷ, c. 5th-6th c. CE."
+  },
+  "ramcharitmanas": {
+    "textId": "ramcharitmanas",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Ramcharitmanas",
+    "canonicalTitleZh": "रामचरितमानस",
+    "tradition": "medieval_awadhi",
+    "attributedAuthor": "tulsidas",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "surdas",
+      "kabir",
+      "mirabai"
+    ],
+    "provenance": "Awadhi retelling of the Rama story by Goswami Tulsidas (1532-1623); composed from 1574."
+  },
+  "abhijnana_gita_govinda": {
+    "textId": "abhijnana_gita_govinda",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Gita Govinda",
+    "canonicalTitleZh": "गीतगोविन्द",
+    "tradition": "medieval_sanskrit",
+    "attributedAuthor": "jayadeva",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "vidyapati",
+      "chandidas",
+      "bilvamangala"
+    ],
+    "provenance": "Sanskrit devotional lyric cycle by Jayadeva (12th c.), court poet of Bengal."
+  },
+  "the_conference_of_the_birds": {
+    "textId": "the_conference_of_the_birds",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Conference of the Birds",
+    "tradition": "classical_persian_sufi",
+    "attributedAuthor": "farid_ud_din_attar",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "rumi",
+      "sanai",
+      "saadi"
+    ],
+    "provenance": "Persian Sufi allegorical poem (Manṭiq-uṭ-Ṭayr) by Farīd ud-Dīn ʿAṭṭār (c.1145-c.1221)."
+  },
+  "layla_and_majnun": {
+    "textId": "layla_and_majnun",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Layla and Majnun",
+    "tradition": "classical_persian",
+    "attributedAuthor": "nizami_ganjavi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ferdowsi",
+      "amir_khusrow",
+      "jami"
+    ],
+    "provenance": "Persian narrative poem by Nizami Ganjavi (1141-1209); composed 1188 as part of the Khamsa."
+  },
+  "khosrow_and_shirin": {
+    "textId": "khosrow_and_shirin",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Khosrow and Shirin",
+    "tradition": "classical_persian",
+    "attributedAuthor": "nizami_ganjavi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ferdowsi",
+      "attar",
+      "saadi"
+    ],
+    "provenance": "Persian romance by Nizami Ganjavi (1141-1209), part of the Khamsa; completed 1180."
+  },
+  "the_gulistan": {
+    "textId": "the_gulistan",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Gulistan (The Rose Garden)",
+    "tradition": "classical_persian",
+    "attributedAuthor": "saadi_shirazi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "hafez",
+      "rumi",
+      "nizami_ganjavi"
+    ],
+    "provenance": "Persian prose-and-verse work by Saadi of Shiraz (c.1210-c.1291/2); completed 1258."
+  },
+  "the_bustan": {
+    "textId": "the_bustan",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Bustan (The Orchard)",
+    "tradition": "classical_persian",
+    "attributedAuthor": "saadi_shirazi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "hafez",
+      "attar",
+      "jami"
+    ],
+    "provenance": "Persian didactic verse by Saadi of Shiraz (c.1210-c.1291/2); completed 1257."
+  },
+  "the_spring_garden_jami": {
+    "textId": "the_spring_garden_jami",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Baharestan (Abode of Spring)",
+    "tradition": "classical_persian",
+    "attributedAuthor": "jami",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "saadi_shirazi",
+      "hafez",
+      "nizami_ganjavi"
+    ],
+    "provenance": "Persian prose-and-verse work by Abd al-Rahman Jami (1414-1492); completed 1487."
+  },
+  "muallaqa_imru_al_qais": {
+    "textId": "muallaqa_imru_al_qais",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Mu'allaqa of Imru' al-Qais",
+    "tradition": "pre_islamic_arabic",
+    "attributedAuthor": "imru_al_qais",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "labid",
+      "tarafa",
+      "zuhayr_bin_abi_sulma"
+    ],
+    "provenance": "Pre-Islamic ode (qasida) of the Mu'allaqat attributed to Imru' al-Qais (6th c. CE); the most celebrated of the suspended odes."
+  },
+  "muallaqa_labid": {
+    "textId": "muallaqa_labid",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Mu'allaqa of Labid",
+    "tradition": "pre_islamic_arabic",
+    "attributedAuthor": "labid",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "imru_al_qais",
+      "tarafa",
+      "antarah_ibn_shaddad"
+    ],
+    "provenance": "Pre-Islamic Mu'allaqat ode attributed to Labīd ibn Rabīʿa (c.560-661 CE)."
+  },
+  "muallaqa_antarah": {
+    "textId": "muallaqa_antarah",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Mu'allaqa of Antarah ibn Shaddad",
+    "tradition": "pre_islamic_arabic",
+    "attributedAuthor": "antarah_ibn_shaddad",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "imru_al_qais",
+      "labid",
+      "tarafa"
+    ],
+    "provenance": "Pre-Islamic Mu'allaqat ode attributed to the warrior-poet ʿAntarah ibn Shaddād (6th c. CE)."
+  },
+  "diwan_al_mutanabbi": {
+    "textId": "diwan_al_mutanabbi",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Diwan of al-Mutanabbi",
+    "tradition": "classical_arabic",
+    "attributedAuthor": "al_mutanabbi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "abu_nuwas",
+      "al_ma_arri",
+      "abu_tammam"
+    ],
+    "provenance": "Collected Arabic panegyric and wisdom poetry of al-Mutanabbī (915-965 CE), Abbasid era; well-attested."
+  },
+  "the_epistle_of_forgiveness": {
+    "textId": "the_epistle_of_forgiveness",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Epistle of Forgiveness",
+    "tradition": "classical_arabic",
+    "attributedAuthor": "al_ma_arri",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "al_mutanabbi",
+      "al_jahiz",
+      "abu_nuwas"
+    ],
+    "provenance": "Arabic prose work (Risālat al-Ghufrān) by Abū al-ʿAlāʾ al-Maʿarrī (973-1057)."
+  },
+  "the_book_of_misers": {
+    "textId": "the_book_of_misers",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Book of Misers",
+    "tradition": "classical_arabic",
+    "attributedAuthor": "al_jahiz",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "al_ma_arri",
+      "ibn_qutaybah",
+      "al_isfahani"
+    ],
+    "provenance": "Arabic prose work (Kitāb al-Bukhalāʾ) by al-Jāḥiẓ (c.776-868/9), Abbasid Basra."
+  },
+  "palace_walk_mahfouz": {
+    "textId": "palace_walk_mahfouz",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Palace Walk",
+    "tradition": "modern_egyptian",
+    "attributedAuthor": "naguib_mahfouz",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "taha_hussein",
+      "tawfiq_al_hakim",
+      "yusuf_idris"
+    ],
+    "provenance": "First novel of the Cairo Trilogy by Naguib Mahfouz (1911-2006), Nobel laureate; published 1956."
+  },
+  "men_in_the_sun": {
+    "textId": "men_in_the_sun",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Men in the Sun",
+    "tradition": "modern_palestinian",
+    "attributedAuthor": "ghassan_kanafani",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "emile_habibi",
+      "mahmoud_darwish",
+      "jabra_ibrahim_jabra"
+    ],
+    "provenance": "Arabic novella by Ghassan Kanafani (1936-1972); published 1962."
+  },
+  "death_and_the_kings_horseman": {
+    "textId": "death_and_the_kings_horseman",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "Death and the King's Horseman",
+    "tradition": "modern_african",
+    "attributedAuthor": "wole_soyinka",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "chinua_achebe",
+      "john_pepper_clark",
+      "femi_osofisan"
+    ],
+    "provenance": "Play by Wole Soyinka (b.1934), Nigerian Nobel laureate; first published 1975."
+  },
+  "weep_not_child": {
+    "textId": "weep_not_child",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Weep Not, Child",
+    "tradition": "modern_african",
+    "attributedAuthor": "ngugi_wa_thiongo",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "chinua_achebe",
+      "grace_ogot",
+      "meja_mwangi"
+    ],
+    "provenance": "Novel by Ngũgĩ wa Thiong'o (b.1938), Kenyan; published 1964."
+  },
+  "disgrace_coetzee": {
+    "textId": "disgrace_coetzee",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Disgrace",
+    "tradition": "modern_south_african",
+    "attributedAuthor": "j_m_coetzee",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "nadine_gordimer",
+      "andre_brink",
+      "alan_paton"
+    ],
+    "provenance": "Novel by J. M. Coetzee (b.1940), South African Nobel laureate; published 1999."
+  },
+  "julys_people": {
+    "textId": "julys_people",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "July's People",
+    "tradition": "modern_south_african",
+    "attributedAuthor": "nadine_gordimer",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "j_m_coetzee",
+      "andre_brink",
+      "alan_paton"
+    ],
+    "provenance": "Novel by Nadine Gordimer (1923-2014), South African Nobel laureate; published 1981."
+  },
+  "so_long_a_letter": {
+    "textId": "so_long_a_letter",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "So Long a Letter",
+    "tradition": "modern_african_francophone",
+    "attributedAuthor": "mariama_ba",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "aminata_sow_fall",
+      "sembene_ousmane",
+      "ousmane_sembene"
+    ],
+    "provenance": "Epistolary novel by Mariama Bâ (1929-1981), Senegalese; published in French 1979."
+  },
+  "gods_bits_of_wood": {
+    "textId": "gods_bits_of_wood",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "God's Bits of Wood",
+    "tradition": "modern_african_francophone",
+    "attributedAuthor": "sembene_ousmane",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "mariama_ba",
+      "cheikh_hamidou_kane",
+      "ferdinand_oyono"
+    ],
+    "provenance": "Novel by Ousmane Sembène (1923-2007), Senegalese; published in French 1960."
+  },
+  "the_palm_wine_drinkard": {
+    "textId": "the_palm_wine_drinkard",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Palm-Wine Drinkard",
+    "tradition": "modern_african",
+    "attributedAuthor": "amos_tutuola",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "chinua_achebe",
+      "wole_soyinka",
+      "cyprian_ekwensi"
+    ],
+    "provenance": "Novel by Amos Tutuola (1920-1997), Nigerian; published 1952."
+  },
+  "the_beautyful_ones_are_not_yet_born": {
+    "textId": "the_beautyful_ones_are_not_yet_born",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Beautyful Ones Are Not Yet Born",
+    "tradition": "modern_african",
+    "attributedAuthor": "ayi_kwei_armah",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "chinua_achebe",
+      "kofi_awoonor",
+      "ama_ata_aidoo"
+    ],
+    "provenance": "Novel by Ayi Kwei Armah (b.1939), Ghanaian; published 1968."
+  },
+  "nervous_conditions": {
+    "textId": "nervous_conditions",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Nervous Conditions",
+    "tradition": "modern_african",
+    "attributedAuthor": "tsitsi_dangarembga",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "yvonne_vera",
+      "doris_lessing",
+      "bessie_head"
+    ],
+    "provenance": "Novel by Tsitsi Dangarembga (b.1959), Zimbabwean; published 1988."
+  },
+  "the_radiance_of_the_king": {
+    "textId": "the_radiance_of_the_king",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Radiance of the King",
+    "tradition": "modern_african_francophone",
+    "attributedAuthor": "camara_laye",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "sembene_ousmane",
+      "mongo_beti",
+      "ferdinand_oyono"
+    ],
+    "provenance": "Novel by Camara Laye (1928-1980), Guinean; published in French 1954."
+  },
+  "i_the_supreme": {
+    "textId": "i_the_supreme",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "I, the Supreme",
+    "tradition": "latin_american_boom",
+    "attributedAuthor": "augusto_roa_bastos",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "gabriel_garcia_marquez",
+      "alejo_carpentier",
+      "juan_rulfo"
+    ],
+    "provenance": "Dictator novel by Augusto Roa Bastos (1917-2005), Paraguayan; published in Spanish 1974."
+  },
+  "the_kingdom_of_this_world": {
+    "textId": "the_kingdom_of_this_world",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Kingdom of This World",
+    "tradition": "latin_american",
+    "attributedAuthor": "alejo_carpentier",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "gabriel_garcia_marquez",
+      "miguel_angel_asturias",
+      "augusto_roa_bastos"
+    ],
+    "provenance": "Novel by Alejo Carpentier (1904-1980), Cuban; published in Spanish 1949."
+  },
+  "the_house_of_the_spirits": {
+    "textId": "the_house_of_the_spirits",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The House of the Spirits",
+    "tradition": "latin_american",
+    "attributedAuthor": "isabel_allende",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "gabriel_garcia_marquez",
+      "laura_esquivel",
+      "jorge_luis_borges"
+    ],
+    "provenance": "Novel by Isabel Allende (b.1942), Chilean; published in Spanish 1982."
+  },
+  "twenty_love_poems_neruda": {
+    "textId": "twenty_love_poems_neruda",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Twenty Love Poems and a Song of Despair",
+    "tradition": "latin_american",
+    "attributedAuthor": "pablo_neruda",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "cesar_vallejo",
+      "gabriela_mistral",
+      "octavio_paz"
+    ],
+    "provenance": "Poetry collection by Pablo Neruda (1904-1973), Chilean Nobel laureate; published 1924."
+  },
+  "the_labyrinth_of_solitude": {
+    "textId": "the_labyrinth_of_solitude",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleEn": "The Labyrinth of Solitude",
+    "tradition": "mexican_essay",
+    "attributedAuthor": "octavio_paz",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "carlos_fuentes",
+      "alfonso_reyes",
+      "jose_vasconcelos"
+    ],
+    "provenance": "Essay collection on Mexican identity by Octavio Paz (1914-1998), Nobel laureate; published 1950."
+  },
+  "middlemarch": {
+    "textId": "middlemarch",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Middlemarch",
+    "tradition": "victorian_english",
+    "attributedAuthor": "george_eliot",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "charles_dickens",
+      "anthony_trollope",
+      "elizabeth_gaskell"
+    ],
+    "provenance": "Novel by George Eliot (Mary Ann Evans, 1819-1880); serialized 1871-1872."
+  },
+  "tess_of_the_durbervilles": {
+    "textId": "tess_of_the_durbervilles",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Tess of the d'Urbervilles",
+    "tradition": "victorian_english",
+    "attributedAuthor": "thomas_hardy",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "george_eliot",
+      "george_gissing",
+      "george_meredith"
+    ],
+    "provenance": "Novel by Thomas Hardy (1840-1928); published 1891."
+  },
+  "vanity_fair": {
+    "textId": "vanity_fair",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Vanity Fair",
+    "tradition": "victorian_english",
+    "attributedAuthor": "william_makepeace_thackeray",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "charles_dickens",
+      "anthony_trollope",
+      "george_eliot"
+    ],
+    "provenance": "Novel by William Makepeace Thackeray (1811-1863); serialized 1847-1848."
+  },
+  "the_way_we_live_now": {
+    "textId": "the_way_we_live_now",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Way We Live Now",
+    "tradition": "victorian_english",
+    "attributedAuthor": "anthony_trollope",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "charles_dickens",
+      "william_makepeace_thackeray",
+      "george_eliot"
+    ],
+    "provenance": "Novel by Anthony Trollope (1815-1882); published 1875."
+  },
+  "the_red_and_the_black": {
+    "textId": "the_red_and_the_black",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Red and the Black",
+    "tradition": "nineteenth_century_french",
+    "attributedAuthor": "stendhal",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "honore_de_balzac",
+      "gustave_flaubert",
+      "victor_hugo"
+    ],
+    "provenance": "Novel by Stendhal (Marie-Henri Beyle, 1783-1842); published 1830."
+  },
+  "bel_ami": {
+    "textId": "bel_ami",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Bel-Ami",
+    "tradition": "nineteenth_century_french",
+    "attributedAuthor": "guy_de_maupassant",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "emile_zola",
+      "gustave_flaubert",
+      "alphonse_daudet"
+    ],
+    "provenance": "Novel by Guy de Maupassant (1850-1893); published 1885."
+  },
+  "germinal": {
+    "textId": "germinal",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Germinal",
+    "tradition": "nineteenth_century_french",
+    "attributedAuthor": "emile_zola",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "guy_de_maupassant",
+      "honore_de_balzac",
+      "gustave_flaubert"
+    ],
+    "provenance": "Novel by Émile Zola (1840-1902), part of the Rougon-Macquart cycle; published 1885."
+  },
+  "pere_goriot": {
+    "textId": "pere_goriot",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Père Goriot",
+    "tradition": "nineteenth_century_french",
+    "attributedAuthor": "honore_de_balzac",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "stendhal",
+      "gustave_flaubert",
+      "emile_zola"
+    ],
+    "provenance": "Novel by Honoré de Balzac (1799-1850), part of La Comédie humaine; published 1835."
+  },
+  "buddenbrooks": {
+    "textId": "buddenbrooks",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Buddenbrooks",
+    "tradition": "modern_german",
+    "attributedAuthor": "thomas_mann",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "hermann_hesse",
+      "heinrich_mann",
+      "theodor_fontane"
+    ],
+    "provenance": "Novel by Thomas Mann (1875-1955), Nobel laureate; published 1901."
+  },
+  "effi_briest": {
+    "textId": "effi_briest",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Effi Briest",
+    "tradition": "nineteenth_century_german",
+    "attributedAuthor": "theodor_fontane",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "thomas_mann",
+      "gottfried_keller",
+      "theodor_storm"
+    ],
+    "provenance": "Novel by Theodor Fontane (1819-1898); serialized 1894-1895."
+  },
+  "the_radetzky_march": {
+    "textId": "the_radetzky_march",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Radetzky March",
+    "tradition": "austrian_modernism",
+    "attributedAuthor": "joseph_roth",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "robert_musil",
+      "stefan_zweig",
+      "hermann_broch"
+    ],
+    "provenance": "Novel by Joseph Roth (1894-1939); published 1932."
+  },
+  "the_betrothed_manzoni": {
+    "textId": "the_betrothed_manzoni",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Betrothed",
+    "tradition": "nineteenth_century_italian",
+    "attributedAuthor": "alessandro_manzoni",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "giacomo_leopardi",
+      "ugo_foscolo",
+      "giovanni_verga"
+    ],
+    "provenance": "Historical novel by Alessandro Manzoni (1785-1873); definitive edition 1840-1842."
+  },
+  "the_house_by_the_medlar_tree": {
+    "textId": "the_house_by_the_medlar_tree",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The House by the Medlar Tree",
+    "tradition": "nineteenth_century_italian",
+    "attributedAuthor": "giovanni_verga",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "alessandro_manzoni",
+      "luigi_pirandello",
+      "gabriele_dannunzio"
+    ],
+    "provenance": "Novel by Giovanni Verga (1840-1922); published 1881."
+  },
+  "hunger_hamsun": {
+    "textId": "hunger_hamsun",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Hunger",
+    "tradition": "scandinavian_modernism",
+    "attributedAuthor": "knut_hamsun",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "henrik_ibsen",
+      "sigrid_undset",
+      "bjornstjerne_bjornson"
+    ],
+    "provenance": "Novel by Knut Hamsun (1859-1952), Norwegian Nobel laureate; published 1890."
+  },
+  "kristin_lavransdatter": {
+    "textId": "kristin_lavransdatter",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Kristin Lavransdatter",
+    "tradition": "scandinavian_modernism",
+    "attributedAuthor": "sigrid_undset",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "knut_hamsun",
+      "selma_lagerlof",
+      "henrik_ibsen"
+    ],
+    "provenance": "Medieval-set trilogy by Sigrid Undset (1882-1949), Norwegian Nobel laureate; published 1920-1922."
+  },
+  "the_diary_of_a_madman_lu_xun": {
+    "textId": "the_diary_of_a_madman_lu_xun",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Diary of a Madman and Other Stories",
+    "canonicalTitleZh": "狂人日記",
+    "tradition": "modern_chinese",
+    "attributedAuthor": "lu_xun",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "lao_she",
+      "ba_jin",
+      "mao_dun"
+    ],
+    "provenance": "Short fiction by Lu Xun (Zhou Shuren, 1881-1936); 'Diary of a Madman' published 1918."
+  },
+  "rickshaw_boy": {
+    "textId": "rickshaw_boy",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Rickshaw Boy",
+    "canonicalTitleZh": "駱駝祥子",
+    "tradition": "modern_chinese",
+    "attributedAuthor": "lao_she",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "lu_xun",
+      "ba_jin",
+      "mao_dun"
+    ],
+    "provenance": "Novel by Lao She (Shu Qingchun, 1899-1966); serialized 1936-1937."
+  },
+  "family_ba_jin": {
+    "textId": "family_ba_jin",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Family",
+    "canonicalTitleZh": "家",
+    "tradition": "modern_chinese",
+    "attributedAuthor": "ba_jin",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "lao_she",
+      "lu_xun",
+      "mao_dun"
+    ],
+    "provenance": "Novel by Ba Jin (Li Yaotang, 1904-2005); published 1933."
+  },
+  "red_sorghum": {
+    "textId": "red_sorghum",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Red Sorghum",
+    "canonicalTitleZh": "紅高粱家族",
+    "tradition": "contemporary_chinese",
+    "attributedAuthor": "mo_yan",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "yu_hua",
+      "su_tong",
+      "wang_anyi"
+    ],
+    "provenance": "Novel by Mo Yan (Guan Moye, b.1955), Nobel laureate; published 1986-1987."
+  },
+  "to_live_yu_hua": {
+    "textId": "to_live_yu_hua",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "To Live",
+    "canonicalTitleZh": "活著",
+    "tradition": "contemporary_chinese",
+    "attributedAuthor": "yu_hua",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "mo_yan",
+      "su_tong",
+      "yan_lianke"
+    ],
+    "provenance": "Novel by Yu Hua (b.1960); published 1993."
+  },
+  "the_vegetarian_han_kang": {
+    "textId": "the_vegetarian_han_kang",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Vegetarian",
+    "canonicalTitleZh": "채식주의자",
+    "tradition": "contemporary_korean",
+    "attributedAuthor": "han_kang",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "hwang_sok_yong",
+      "shin_kyung_sook",
+      "kim_young_ha"
+    ],
+    "provenance": "Novel by Han Kang (b.1970), South Korean Nobel laureate; published in Korean 2007."
+  },
+  "please_look_after_mom": {
+    "textId": "please_look_after_mom",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Please Look After Mom",
+    "canonicalTitleZh": "엄마를 부탁해",
+    "tradition": "contemporary_korean",
+    "attributedAuthor": "shin_kyung_sook",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "han_kang",
+      "gong_ji_young",
+      "kim_young_ha"
+    ],
+    "provenance": "Novel by Shin Kyung-sook (b.1963), South Korean; published in Korean 2008."
+  },
+  "the_sympathizer": {
+    "textId": "the_sympathizer",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Sympathizer",
+    "tradition": "vietnamese_american",
+    "attributedAuthor": "viet_thanh_nguyen",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "bao_ninh",
+      "duong_thu_huong",
+      "ocean_vuong"
+    ],
+    "provenance": "Novel by Viet Thanh Nguyen (b.1971), Vietnamese-American; published 2015, Pulitzer Prize 2016."
+  },
+  "the_sorrow_of_war": {
+    "textId": "the_sorrow_of_war",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Sorrow of War",
+    "tradition": "modern_vietnamese",
+    "attributedAuthor": "bao_ninh",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "duong_thu_huong",
+      "nguyen_huy_thiep",
+      "viet_thanh_nguyen"
+    ],
+    "provenance": "Novel by Bảo Ninh (b.1952), Vietnamese; published in Vietnamese 1990."
+  },
+  "the_tale_of_kieu": {
+    "textId": "the_tale_of_kieu",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Tale of Kieu",
+    "canonicalTitleZh": "truyện kiều",
+    "tradition": "classical_vietnamese",
+    "attributedAuthor": "nguyen_du",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ho_xuan_huong",
+      "nguyen_trai",
+      "nguyen_dinh_chieu"
+    ],
+    "provenance": "Vietnamese narrative poem (Truyện Kiều) by Nguyễn Du (1766-1820); composed early 19th c."
+  },
+  "the_buried_giant": {
+    "textId": "the_buried_giant",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Buried Giant",
+    "tradition": "contemporary_british",
+    "attributedAuthor": "kazuo_ishiguro",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ian_mcewan",
+      "julian_barnes",
+      "salman_rushdie"
+    ],
+    "provenance": "Novel by Kazuo Ishiguro (b.1954), British Nobel laureate; published 2015."
+  },
+  "my_name_is_red": {
+    "textId": "my_name_is_red",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "My Name Is Red",
+    "tradition": "contemporary_turkish",
+    "attributedAuthor": "orhan_pamuk",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "yasar_kemal",
+      "elif_shafak",
+      "ahmet_hamdi_tanpinar"
+    ],
+    "provenance": "Novel by Orhan Pamuk (b.1952), Turkish Nobel laureate; published in Turkish 1998."
+  },
+  "memed_my_hawk": {
+    "textId": "memed_my_hawk",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Memed, My Hawk",
+    "tradition": "modern_turkish",
+    "attributedAuthor": "yasar_kemal",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "orhan_pamuk",
+      "ahmet_hamdi_tanpinar",
+      "sait_faik_abasiyanik"
+    ],
+    "provenance": "Novel by Yaşar Kemal (1923-2015), Turkish; published in Turkish 1955."
+  },
+  "the_blind_owl": {
+    "textId": "the_blind_owl",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Blind Owl",
+    "tradition": "modern_persian",
+    "attributedAuthor": "sadegh_hedayat",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "forough_farrokhzad",
+      "ahmad_shamlou",
+      "jalal_al_e_ahmad"
+    ],
+    "provenance": "Novella by Sadegh Hedayat (1903-1951), Iranian; published in Persian 1936-1937."
+  },
+  "the_radiance_of_hafez_divan": {
+    "textId": "the_radiance_of_hafez_divan",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Divan of Saib Tabrizi",
+    "tradition": "classical_persian",
+    "attributedAuthor": "saib_tabrizi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "hafez",
+      "saadi_shirazi",
+      "jami"
+    ],
+    "provenance": "Collected ghazals of Saib Tabrizi (1592-1676), foremost poet of the Persian 'Indian style'; well-attested."
+  },
+  "the_emperor_kapuscinski": {
+    "textId": "the_emperor_kapuscinski",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Emperor",
+    "tradition": "polish_reportage",
+    "attributedAuthor": "ryszard_kapuscinski",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "czeslaw_milosz",
+      "stanislaw_lem",
+      "witold_gombrowicz"
+    ],
+    "provenance": "Literary reportage by Ryszard Kapuściński (1932-2007), Polish; published in Polish 1978."
+  },
+  "solaris_lem": {
+    "textId": "solaris_lem",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Solaris",
+    "tradition": "polish_science_fiction",
+    "attributedAuthor": "stanislaw_lem",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ryszard_kapuscinski",
+      "witold_gombrowicz",
+      "czeslaw_milosz"
+    ],
+    "provenance": "Novel by Stanisław Lem (1921-2006), Polish; published in Polish 1961."
+  },
+  "the_good_soldier_svejk": {
+    "textId": "the_good_soldier_svejk",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Good Soldier Švejk",
+    "tradition": "czech_modernism",
+    "attributedAuthor": "jaroslav_hasek",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "karel_capek",
+      "milan_kundera",
+      "bohumil_hrabal"
+    ],
+    "provenance": "Satirical novel by Jaroslav Hašek (1883-1923), Czech; published 1921-1923 (unfinished)."
+  },
+  "rur_capek": {
+    "textId": "rur_capek",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "R.U.R. (Rossum's Universal Robots)",
+    "tradition": "czech_modernism",
+    "attributedAuthor": "karel_capek",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "jaroslav_hasek",
+      "milan_kundera",
+      "franz_kafka"
+    ],
+    "provenance": "Play by Karel Čapek (1890-1938), Czech; premiered 1921, coined the word 'robot'."
+  },
+  "zorba_the_greek": {
+    "textId": "zorba_the_greek",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Zorba the Greek",
+    "canonicalTitleZh": "Βίος και Πολιτεία του Αλέξη Ζορμπά",
+    "tradition": "modern_greek",
+    "attributedAuthor": "nikos_kazantzakis",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "constantine_cavafy",
+      "george_seferis",
+      "odysseas_elytis"
+    ],
+    "provenance": "Novel by Nikos Kazantzakis (1883-1957), Greek; published in Greek 1946."
+  },
+  "the_house_of_the_dead_dostoevsky": {
+    "textId": "the_house_of_the_dead_dostoevsky",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The House of the Dead",
+    "tradition": "nineteenth_century_russian",
+    "attributedAuthor": "fyodor_dostoevsky",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "leo_tolstoy",
+      "ivan_turgenev",
+      "nikolai_gogol"
+    ],
+    "provenance": "Semi-autobiographical novel by Fyodor Dostoevsky (1821-1881); published 1860-1862."
+  },
+  "oblomov": {
+    "textId": "oblomov",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Oblomov",
+    "tradition": "nineteenth_century_russian",
+    "attributedAuthor": "ivan_goncharov",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ivan_turgenev",
+      "fyodor_dostoevsky",
+      "leo_tolstoy"
+    ],
+    "provenance": "Novel by Ivan Goncharov (1812-1891), Russian; published 1859."
+  },
+  "and_quiet_flows_the_don": {
+    "textId": "and_quiet_flows_the_don",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "And Quiet Flows the Don",
+    "tradition": "soviet_russian",
+    "attributedAuthor": "mikhail_sholokhov",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "boris_pasternak",
+      "maxim_gorky",
+      "alexei_tolstoy"
+    ],
+    "provenance": "Novel by Mikhail Sholokhov (1905-1984), Russian Nobel laureate; published 1928-1940."
+  },
+  "the_radiance_petals_kabir": {
+    "textId": "the_radiance_petals_kabir",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Bijak of Kabir",
+    "canonicalTitleZh": "बीजक",
+    "tradition": "bhakti_sant_poetry",
+    "attributedAuthor": "kabir",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "tulsidas",
+      "surdas",
+      "ravidas"
+    ],
+    "provenance": "Devotional verses (sakhi, ramaini, shabda) attributed to the 15th-c. North Indian sant poet Kabir; core authorship traditionally settled."
+  },
+  "the_pinjar": {
+    "textId": "the_pinjar",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Pinjar (The Skeleton)",
+    "canonicalTitleZh": "ਪਿੰਜਰ",
+    "tradition": "modern_punjabi",
+    "attributedAuthor": "amrita_pritam",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "khushwant_singh",
+      "krishna_sobti",
+      "saadat_hasan_manto"
+    ],
+    "provenance": "Novel by Amrita Pritam (1919-2005), Punjabi; published in Punjabi 1950."
+  },
+  "toba_tek_singh": {
+    "textId": "toba_tek_singh",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Toba Tek Singh and Other Stories",
+    "canonicalTitleZh": "ٹوبہ ٹیک سنگھ",
+    "tradition": "modern_urdu",
+    "attributedAuthor": "saadat_hasan_manto",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ismat_chughtai",
+      "krishan_chander",
+      "rajinder_singh_bedi"
+    ],
+    "provenance": "Urdu short fiction by Saadat Hasan Manto (1912-1955); 'Toba Tek Singh' published 1955."
+  },
+  "umrao_jaan_ada": {
+    "textId": "umrao_jaan_ada",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Umrao Jaan Ada",
+    "canonicalTitleZh": "امراؤ جان ادا",
+    "tradition": "modern_urdu",
+    "attributedAuthor": "mirza_hadi_ruswa",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "nazir_ahmad_dehlvi",
+      "premchand",
+      "abdul_halim_sharar"
+    ],
+    "provenance": "Urdu novel by Mirza Hadi Ruswa (1857-1931); published 1899."
+  },
+  "the_diwan_of_ghalib": {
+    "textId": "the_diwan_of_ghalib",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Diwan of Ghalib",
+    "canonicalTitleZh": "دیوانِ غالب",
+    "tradition": "mughal_era_urdu",
+    "attributedAuthor": "mirza_ghalib",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "mir_taqi_mir",
+      "momin_khan_momin",
+      "zauq"
+    ],
+    "provenance": "Urdu and Persian ghazals of Mirza Asadullah Khan Ghalib (1797-1869), Delhi; collected in his Diwan."
+  },
+  "the_sceptical_chymist": {
+    "textId": "the_sceptical_chymist",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "The Sceptical Chymist",
+    "tradition": "early_modern_chemistry",
+    "attributedAuthor": "robert_boyle",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "isaac_newton",
+      "robert_hooke",
+      "joseph_priestley"
+    ],
+    "provenance": "Published by Robert Boyle, 1661."
+  },
+  "micrographia": {
+    "textId": "micrographia",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Micrographia",
+    "tradition": "early_modern_microscopy",
+    "attributedAuthor": "robert_hooke",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "antonie_van_leeuwenhoek",
+      "robert_boyle",
+      "christopher_wren"
+    ],
+    "provenance": "Published by Robert Hooke for the Royal Society, 1665."
+  },
+  "treatise_on_electricity_and_magnetism": {
+    "textId": "treatise_on_electricity_and_magnetism",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "A Treatise on Electricity and Magnetism",
+    "tradition": "classical_electromagnetism",
+    "attributedAuthor": "james_clerk_maxwell",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "michael_faraday",
+      "heinrich_hertz",
+      "oliver_heaviside"
+    ],
+    "provenance": "Published by James Clerk Maxwell, 1873."
+  },
+  "experimental_researches_in_electricity": {
+    "textId": "experimental_researches_in_electricity",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Experimental Researches in Electricity",
+    "tradition": "classical_electromagnetism",
+    "attributedAuthor": "michael_faraday",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "james_clerk_maxwell",
+      "humphry_davy",
+      "andre_marie_ampere"
+    ],
+    "provenance": "Collected papers by Michael Faraday, published 1839-1855."
+  },
+  "sidereus_nuncius": {
+    "textId": "sidereus_nuncius",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Sidereus Nuncius (Starry Messenger)",
+    "canonicalTitleZh": "星际信使",
+    "tradition": "early_modern_astronomy",
+    "attributedAuthor": "galileo_galilei",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "johannes_kepler",
+      "tycho_brahe",
+      "simon_marius"
+    ],
+    "provenance": "Published by Galileo Galilei, Venice, 1610."
+  },
+  "harmonices_mundi": {
+    "textId": "harmonices_mundi",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Harmonices Mundi (The Harmony of the World)",
+    "tradition": "early_modern_astronomy",
+    "attributedAuthor": "johannes_kepler",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "galileo_galilei",
+      "tycho_brahe",
+      "nicolaus_copernicus"
+    ],
+    "provenance": "Published by Johannes Kepler, 1619; contains his third law of planetary motion."
+  },
+  "astronomia_nova": {
+    "textId": "astronomia_nova",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Astronomia Nova (New Astronomy)",
+    "tradition": "early_modern_astronomy",
+    "attributedAuthor": "johannes_kepler",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "tycho_brahe",
+      "galileo_galilei",
+      "nicolaus_copernicus"
+    ],
+    "provenance": "Published by Johannes Kepler, 1609; presents his first two laws of planetary motion."
+  },
+  "de_revolutionibus_orbium_coelestium": {
+    "textId": "de_revolutionibus_orbium_coelestium",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "De revolutionibus orbium coelestium (On the Revolutions of the Heavenly Spheres)",
+    "tradition": "renaissance_astronomy",
+    "attributedAuthor": "nicolaus_copernicus",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "johannes_kepler",
+      "tycho_brahe",
+      "galileo_galilei"
+    ],
+    "provenance": "Published by Nicolaus Copernicus, 1543."
+  },
+  "the_feynman_lectures_on_physics": {
+    "textId": "the_feynman_lectures_on_physics",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "The Feynman Lectures on Physics",
+    "tradition": "modern_physics",
+    "attributedAuthor": "richard_feynman",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "julian_schwinger",
+      "murray_gell_mann",
+      "freeman_dyson"
+    ],
+    "provenance": "Lectures by Richard Feynman, published 1963-1965 (with Leighton and Sands)."
+  },
+  "cosmos_sagan": {
+    "textId": "cosmos_sagan",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Cosmos",
+    "tradition": "popular_science_astronomy",
+    "attributedAuthor": "carl_sagan",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "stephen_hawking",
+      "neil_degrasse_tyson",
+      "fred_hoyle"
+    ],
+    "provenance": "Written by Carl Sagan, published 1980."
+  },
+  "traite_elementaire_de_chimie": {
+    "textId": "traite_elementaire_de_chimie",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Traité élémentaire de chimie (Elementary Treatise on Chemistry)",
+    "tradition": "chemical_revolution",
+    "attributedAuthor": "antoine_lavoisier",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "joseph_priestley",
+      "henry_cavendish",
+      "carl_wilhelm_scheele"
+    ],
+    "provenance": "Published by Antoine Lavoisier, 1789."
+  },
+  "experiments_on_plant_hybridization": {
+    "textId": "experiments_on_plant_hybridization",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Experiments on Plant Hybridization",
+    "tradition": "classical_genetics",
+    "attributedAuthor": "gregor_mendel",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "charles_darwin",
+      "hugo_de_vries",
+      "francis_galton"
+    ],
+    "provenance": "Presented and published by Gregor Mendel, 1865-1866."
+  },
+  "on_the_motion_of_the_heart_and_blood": {
+    "textId": "on_the_motion_of_the_heart_and_blood",
+    "domain": "medicine",
+    "recordType": "text",
+    "canonicalTitleEn": "De Motu Cordis (On the Motion of the Heart and Blood)",
+    "tradition": "early_modern_physiology",
+    "attributedAuthor": "william_harvey",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "andreas_vesalius",
+      "galen",
+      "marcello_malpighi"
+    ],
+    "provenance": "Published by William Harvey, 1628; describes the circulation of blood."
+  },
+  "systema_naturae": {
+    "textId": "systema_naturae",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Systema Naturae",
+    "tradition": "taxonomy",
+    "attributedAuthor": "carl_linnaeus",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "georges_louis_leclerc_buffon",
+      "john_ray",
+      "joseph_pitton_de_tournefort"
+    ],
+    "provenance": "Published by Carl Linnaeus, first edition 1735."
+  },
+  "principles_of_geology": {
+    "textId": "principles_of_geology",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Principles of Geology",
+    "tradition": "uniformitarian_geology",
+    "attributedAuthor": "charles_lyell",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "james_hutton",
+      "william_smith",
+      "georges_cuvier"
+    ],
+    "provenance": "Published by Charles Lyell, 1830-1833."
+  },
+  "molecular_structure_of_nucleic_acids": {
+    "textId": "molecular_structure_of_nucleic_acids",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Molecular Structure of Nucleic Acids: A Structure for Deoxyribose Nucleic Acid",
+    "tradition": "molecular_biology",
+    "attributedAuthor": "james_watson_and_francis_crick",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "rosalind_franklin",
+      "maurice_wilkins",
+      "linus_pauling"
+    ],
+    "provenance": "Joint paper by James Watson and Francis Crick, Nature, 1953."
+  },
+  "the_double_helix": {
+    "textId": "the_double_helix",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "The Double Helix",
+    "tradition": "molecular_biology",
+    "attributedAuthor": "james_watson",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "francis_crick",
+      "maurice_wilkins",
+      "rosalind_franklin"
+    ],
+    "provenance": "Memoir written by James Watson, published 1968."
+  },
+  "al_hawi_comprehensive_book_of_medicine": {
+    "textId": "al_hawi_comprehensive_book_of_medicine",
+    "domain": "medicine",
+    "recordType": "text",
+    "canonicalTitleEn": "Al-Hawi (The Comprehensive Book on Medicine)",
+    "tradition": "islamic_golden_age_medicine",
+    "attributedAuthor": "al_razi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ibn_sina",
+      "ibn_al_nafis",
+      "al_zahrawi"
+    ],
+    "provenance": "Compiled by Abu Bakr al-Razi (Rhazes), c. 9th-10th century."
+  },
+  "the_canon_of_medicine_avicenna": {
+    "textId": "the_canon_of_medicine_avicenna",
+    "domain": "medicine",
+    "recordType": "text",
+    "canonicalTitleEn": "The Canon of Medicine (al-Qanun fi al-Tibb)",
+    "tradition": "islamic_golden_age_medicine",
+    "attributedAuthor": "ibn_sina",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "al_razi",
+      "ibn_al_nafis",
+      "al_zahrawi"
+    ],
+    "provenance": "Written by Ibn Sina (Avicenna), completed 1025."
+  },
+  "the_origin_of_continents_and_oceans": {
+    "textId": "the_origin_of_continents_and_oceans",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "The Origin of Continents and Oceans",
+    "tradition": "continental_drift",
+    "attributedAuthor": "alfred_wegener",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "charles_lyell",
+      "harry_hess",
+      "arthur_holmes"
+    ],
+    "provenance": "Published by Alfred Wegener, 1915; proposed continental drift."
+  },
+  "de_humani_corporis_fabrica": {
+    "textId": "de_humani_corporis_fabrica",
+    "domain": "medicine",
+    "recordType": "text",
+    "canonicalTitleEn": "De humani corporis fabrica (On the Fabric of the Human Body)",
+    "tradition": "renaissance_anatomy",
+    "attributedAuthor": "andreas_vesalius",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "galen",
+      "william_harvey",
+      "ambroise_pare"
+    ],
+    "provenance": "Published by Andreas Vesalius, 1543."
+  },
+  "liber_abaci": {
+    "textId": "liber_abaci",
+    "domain": "mathematics",
+    "recordType": "text",
+    "canonicalTitleEn": "Liber Abaci (The Book of Calculation)",
+    "tradition": "medieval_mathematics",
+    "attributedAuthor": "fibonacci",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "al_khwarizmi",
+      "gerbert_of_aurillac",
+      "jordanus_de_nemore"
+    ],
+    "provenance": "Written by Leonardo of Pisa (Fibonacci), 1202."
+  },
+  "disquisitiones_arithmeticae": {
+    "textId": "disquisitiones_arithmeticae",
+    "domain": "mathematics",
+    "recordType": "text",
+    "canonicalTitleEn": "Disquisitiones Arithmeticae",
+    "tradition": "number_theory",
+    "attributedAuthor": "carl_friedrich_gauss",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "adrien_marie_legendre",
+      "leonhard_euler",
+      "peter_gustav_lejeune_dirichlet"
+    ],
+    "provenance": "Published by Carl Friedrich Gauss, 1801."
+  },
+  "brahmasphutasiddhanta": {
+    "textId": "brahmasphutasiddhanta",
+    "domain": "mathematics",
+    "recordType": "text",
+    "canonicalTitleEn": "Brahmasphutasiddhanta",
+    "tradition": "classical_indian_mathematics",
+    "attributedAuthor": "brahmagupta",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "aryabhata",
+      "bhaskara_ii",
+      "al_khwarizmi"
+    ],
+    "provenance": "Written by Brahmagupta, 628 CE; first text to treat zero as a number."
+  },
+  "aryabhatiya": {
+    "textId": "aryabhatiya",
+    "domain": "mathematics",
+    "recordType": "text",
+    "canonicalTitleEn": "Aryabhatiya",
+    "tradition": "classical_indian_mathematics",
+    "attributedAuthor": "aryabhata",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "brahmagupta",
+      "bhaskara_ii",
+      "varahamihira"
+    ],
+    "provenance": "Written by Aryabhata, 499 CE."
+  },
+  "on_computable_numbers": {
+    "textId": "on_computable_numbers",
+    "domain": "mathematics",
+    "recordType": "text",
+    "canonicalTitleEn": "On Computable Numbers, with an Application to the Entscheidungsproblem",
+    "tradition": "theoretical_computer_science",
+    "attributedAuthor": "alan_turing",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "alonzo_church",
+      "kurt_godel",
+      "john_von_neumann"
+    ],
+    "provenance": "Published by Alan Turing, 1936."
+  },
+  "a_mathematical_theory_of_communication": {
+    "textId": "a_mathematical_theory_of_communication",
+    "domain": "mathematics",
+    "recordType": "text",
+    "canonicalTitleEn": "A Mathematical Theory of Communication",
+    "tradition": "information_theory",
+    "attributedAuthor": "claude_shannon",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "norbert_wiener",
+      "ralph_hartley",
+      "john_von_neumann"
+    ],
+    "provenance": "Published by Claude Shannon, Bell System Technical Journal, 1948."
+  },
+  "on_the_calculation_with_hindu_numerals": {
+    "textId": "on_the_calculation_with_hindu_numerals",
+    "domain": "mathematics",
+    "recordType": "text",
+    "canonicalTitleEn": "On the Calculation with Hindu Numerals (Kitab al-Hisab al-Hindi)",
+    "tradition": "islamic_golden_age_mathematics",
+    "attributedAuthor": "al_khwarizmi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "omar_khayyam",
+      "thabit_ibn_qurra",
+      "al_kindi"
+    ],
+    "provenance": "Written by Muhammad ibn Musa al-Khwarizmi, c. 825 CE; introduced the decimal positional system to the Islamic world."
+  },
+  "treatise_on_demonstration_of_problems_of_algebra": {
+    "textId": "treatise_on_demonstration_of_problems_of_algebra",
+    "domain": "mathematics",
+    "recordType": "text",
+    "canonicalTitleEn": "Treatise on Demonstration of Problems of Algebra",
+    "tradition": "islamic_golden_age_mathematics",
+    "attributedAuthor": "omar_khayyam",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "al_khwarizmi",
+      "sharaf_al_din_al_tusi",
+      "thabit_ibn_qurra"
+    ],
+    "provenance": "Written by Omar Khayyam, 1070; classified cubic equations geometrically."
+  },
+  "the_analytical_engine_notes": {
+    "textId": "the_analytical_engine_notes",
+    "domain": "mathematics",
+    "recordType": "text",
+    "canonicalTitleEn": "Notes on the Analytical Engine (Sketch of the Analytical Engine, with notes)",
+    "tradition": "early_computing",
+    "attributedAuthor": "ada_lovelace",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "charles_babbage",
+      "luigi_menabrea",
+      "george_boole"
+    ],
+    "provenance": "Translator's notes by Ada Lovelace, 1843, on Menabrea's account of Babbage's engine."
+  },
+  "an_investigation_of_the_laws_of_thought": {
+    "textId": "an_investigation_of_the_laws_of_thought",
+    "domain": "mathematics",
+    "recordType": "text",
+    "canonicalTitleEn": "An Investigation of the Laws of Thought",
+    "tradition": "mathematical_logic",
+    "attributedAuthor": "george_boole",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "augustus_de_morgan",
+      "gottlob_frege",
+      "charles_sanders_peirce"
+    ],
+    "provenance": "Published by George Boole, 1854; foundation of Boolean algebra."
+  },
+  "kitab_al_manazir_book_of_optics": {
+    "textId": "kitab_al_manazir_book_of_optics",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Kitab al-Manazir (The Book of Optics)",
+    "tradition": "islamic_golden_age_science",
+    "attributedAuthor": "ibn_al_haytham",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "al_kindi",
+      "ibn_sina",
+      "al_biruni"
+    ],
+    "provenance": "Written by Ibn al-Haytham (Alhazen), c. 1011-1021."
+  },
+  "the_chemical_history_of_a_candle": {
+    "textId": "the_chemical_history_of_a_candle",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "The Chemical History of a Candle",
+    "tradition": "science_lectures",
+    "attributedAuthor": "michael_faraday",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "humphry_davy",
+      "john_tyndall",
+      "james_clerk_maxwell"
+    ],
+    "provenance": "Christmas Lectures delivered by Michael Faraday, 1848 and 1860, published 1861."
+  },
+  "symphony_no_9_beethoven": {
+    "textId": "symphony_no_9_beethoven",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Symphony No. 9 in D minor, Op. 125 (Choral)",
+    "tradition": "classical_romantic_music",
+    "attributedAuthor": "ludwig_van_beethoven",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "franz_schubert",
+      "joseph_haydn",
+      "wolfgang_amadeus_mozart"
+    ],
+    "provenance": "Composed by Ludwig van Beethoven, premiered 1824."
+  },
+  "symphony_no_5_beethoven": {
+    "textId": "symphony_no_5_beethoven",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Symphony No. 5 in C minor, Op. 67",
+    "tradition": "classical_romantic_music",
+    "attributedAuthor": "ludwig_van_beethoven",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "joseph_haydn",
+      "wolfgang_amadeus_mozart",
+      "franz_schubert"
+    ],
+    "provenance": "Composed by Ludwig van Beethoven, premiered 1808."
+  },
+  "moonlight_sonata_beethoven": {
+    "textId": "moonlight_sonata_beethoven",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Piano Sonata No. 14 (Moonlight Sonata), Op. 27 No. 2",
+    "tradition": "classical_romantic_music",
+    "attributedAuthor": "ludwig_van_beethoven",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "wolfgang_amadeus_mozart",
+      "muzio_clementi",
+      "franz_schubert"
+    ],
+    "provenance": "Composed by Ludwig van Beethoven, 1801."
+  },
+  "fur_elise_beethoven": {
+    "textId": "fur_elise_beethoven",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Für Elise (Bagatelle No. 25 in A minor)",
+    "tradition": "classical_romantic_music",
+    "attributedAuthor": "ludwig_van_beethoven",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "wolfgang_amadeus_mozart",
+      "franz_schubert",
+      "carl_czerny"
+    ],
+    "provenance": "Composed by Ludwig van Beethoven, c. 1810."
+  },
+  "the_marriage_of_figaro_mozart": {
+    "textId": "the_marriage_of_figaro_mozart",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "The Marriage of Figaro (Le nozze di Figaro), K. 492",
+    "tradition": "classical_era_opera",
+    "attributedAuthor": "wolfgang_amadeus_mozart",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "antonio_salieri",
+      "christoph_willibald_gluck",
+      "joseph_haydn"
+    ],
+    "provenance": "Composed by Wolfgang Amadeus Mozart, premiered 1786."
+  },
+  "requiem_mozart": {
+    "textId": "requiem_mozart",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Requiem in D minor, K. 626",
+    "tradition": "classical_era_music",
+    "attributedAuthor": "wolfgang_amadeus_mozart",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "franz_xaver_sussmayr",
+      "antonio_salieri",
+      "joseph_haydn"
+    ],
+    "provenance": "Composed by Wolfgang Amadeus Mozart, 1791 (left unfinished at his death; completed by Süssmayr)."
+  },
+  "the_magic_flute_mozart": {
+    "textId": "the_magic_flute_mozart",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "The Magic Flute (Die Zauberflöte), K. 620",
+    "tradition": "classical_era_opera",
+    "attributedAuthor": "wolfgang_amadeus_mozart",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "antonio_salieri",
+      "christoph_willibald_gluck",
+      "joseph_haydn"
+    ],
+    "provenance": "Composed by Wolfgang Amadeus Mozart, premiered 1791."
+  },
+  "don_giovanni_mozart": {
+    "textId": "don_giovanni_mozart",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Don Giovanni, K. 527",
+    "tradition": "classical_era_opera",
+    "attributedAuthor": "wolfgang_amadeus_mozart",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "antonio_salieri",
+      "christoph_willibald_gluck",
+      "joseph_haydn"
+    ],
+    "provenance": "Composed by Wolfgang Amadeus Mozart, premiered 1787."
+  },
+  "eine_kleine_nachtmusik_mozart": {
+    "textId": "eine_kleine_nachtmusik_mozart",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Eine kleine Nachtmusik, K. 525",
+    "tradition": "classical_era_music",
+    "attributedAuthor": "wolfgang_amadeus_mozart",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "joseph_haydn",
+      "antonio_salieri",
+      "luigi_boccherini"
+    ],
+    "provenance": "Composed by Wolfgang Amadeus Mozart, 1787."
+  },
+  "the_well_tempered_clavier_bach": {
+    "textId": "the_well_tempered_clavier_bach",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "The Well-Tempered Clavier, BWV 846-893",
+    "tradition": "baroque_music",
+    "attributedAuthor": "johann_sebastian_bach",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "george_frideric_handel",
+      "antonio_vivaldi",
+      "domenico_scarlatti"
+    ],
+    "provenance": "Composed by Johann Sebastian Bach, Book I 1722, Book II 1742."
+  },
+  "brandenburg_concertos_bach": {
+    "textId": "brandenburg_concertos_bach",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Brandenburg Concertos, BWV 1046-1051",
+    "tradition": "baroque_music",
+    "attributedAuthor": "johann_sebastian_bach",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "antonio_vivaldi",
+      "george_frideric_handel",
+      "georg_philipp_telemann"
+    ],
+    "provenance": "Composed by Johann Sebastian Bach, dedicated 1721."
+  },
+  "st_matthew_passion_bach": {
+    "textId": "st_matthew_passion_bach",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "St Matthew Passion, BWV 244",
+    "tradition": "baroque_music",
+    "attributedAuthor": "johann_sebastian_bach",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "george_frideric_handel",
+      "georg_philipp_telemann",
+      "heinrich_schutz"
+    ],
+    "provenance": "Composed by Johann Sebastian Bach, premiered 1727."
+  },
+  "toccata_and_fugue_in_d_minor_bach": {
+    "textId": "toccata_and_fugue_in_d_minor_bach",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Toccata and Fugue in D minor, BWV 565",
+    "tradition": "baroque_music",
+    "attributedAuthor": "johann_sebastian_bach",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "dietrich_buxtehude",
+      "george_frideric_handel",
+      "johann_pachelbel"
+    ],
+    "provenance": "Traditionally attributed to Johann Sebastian Bach, c. early 18th century."
+  },
+  "goldberg_variations_bach": {
+    "textId": "goldberg_variations_bach",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Goldberg Variations, BWV 988",
+    "tradition": "baroque_music",
+    "attributedAuthor": "johann_sebastian_bach",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "george_frideric_handel",
+      "domenico_scarlatti",
+      "francois_couperin"
+    ],
+    "provenance": "Composed by Johann Sebastian Bach, published 1741."
+  },
+  "mass_in_b_minor_bach": {
+    "textId": "mass_in_b_minor_bach",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Mass in B minor, BWV 232",
+    "tradition": "baroque_music",
+    "attributedAuthor": "johann_sebastian_bach",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "george_frideric_handel",
+      "antonio_vivaldi",
+      "jan_dismas_zelenka"
+    ],
+    "provenance": "Composed by Johann Sebastian Bach, completed 1749."
+  },
+  "messiah_handel": {
+    "textId": "messiah_handel",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Messiah, HWV 56",
+    "tradition": "baroque_music",
+    "attributedAuthor": "george_frideric_handel",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "johann_sebastian_bach",
+      "antonio_vivaldi",
+      "henry_purcell"
+    ],
+    "provenance": "Composed by George Frideric Handel, premiered 1742."
+  },
+  "water_music_handel": {
+    "textId": "water_music_handel",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Water Music, HWV 348-350",
+    "tradition": "baroque_music",
+    "attributedAuthor": "george_frideric_handel",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "johann_sebastian_bach",
+      "henry_purcell",
+      "georg_philipp_telemann"
+    ],
+    "provenance": "Composed by George Frideric Handel, premiered 1717."
+  },
+  "music_for_the_royal_fireworks_handel": {
+    "textId": "music_for_the_royal_fireworks_handel",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Music for the Royal Fireworks, HWV 351",
+    "tradition": "baroque_music",
+    "attributedAuthor": "george_frideric_handel",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "johann_sebastian_bach",
+      "henry_purcell",
+      "georg_philipp_telemann"
+    ],
+    "provenance": "Composed by George Frideric Handel, premiered 1749."
+  },
+  "the_four_seasons_vivaldi": {
+    "textId": "the_four_seasons_vivaldi",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "The Four Seasons (Le quattro stagioni)",
+    "tradition": "baroque_music",
+    "attributedAuthor": "antonio_vivaldi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "arcangelo_corelli",
+      "johann_sebastian_bach",
+      "tomaso_albinoni"
+    ],
+    "provenance": "Composed by Antonio Vivaldi, published 1725."
+  },
+  "the_ring_cycle_wagner": {
+    "textId": "the_ring_cycle_wagner",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Der Ring des Nibelungen (The Ring Cycle)",
+    "tradition": "romantic_era_opera",
+    "attributedAuthor": "richard_wagner",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "giuseppe_verdi",
+      "richard_strauss",
+      "franz_liszt"
+    ],
+    "provenance": "Composed by Richard Wagner, completed 1874; first full cycle 1876."
+  },
+  "tristan_und_isolde_wagner": {
+    "textId": "tristan_und_isolde_wagner",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Tristan und Isolde",
+    "tradition": "romantic_era_opera",
+    "attributedAuthor": "richard_wagner",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "giuseppe_verdi",
+      "richard_strauss",
+      "anton_bruckner"
+    ],
+    "provenance": "Composed by Richard Wagner, premiered 1865."
+  },
+  "la_traviata_verdi": {
+    "textId": "la_traviata_verdi",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "La Traviata",
+    "tradition": "romantic_era_opera",
+    "attributedAuthor": "giuseppe_verdi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "giacomo_puccini",
+      "gioachino_rossini",
+      "gaetano_donizetti"
+    ],
+    "provenance": "Composed by Giuseppe Verdi, premiered 1853."
+  },
+  "aida_verdi": {
+    "textId": "aida_verdi",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Aida",
+    "tradition": "romantic_era_opera",
+    "attributedAuthor": "giuseppe_verdi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "giacomo_puccini",
+      "gioachino_rossini",
+      "richard_wagner"
+    ],
+    "provenance": "Composed by Giuseppe Verdi, premiered 1871."
+  },
+  "rigoletto_verdi": {
+    "textId": "rigoletto_verdi",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Rigoletto",
+    "tradition": "romantic_era_opera",
+    "attributedAuthor": "giuseppe_verdi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "giacomo_puccini",
+      "gaetano_donizetti",
+      "vincenzo_bellini"
+    ],
+    "provenance": "Composed by Giuseppe Verdi, premiered 1851."
+  },
+  "the_barber_of_seville_rossini": {
+    "textId": "the_barber_of_seville_rossini",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "The Barber of Seville (Il barbiere di Siviglia)",
+    "tradition": "romantic_era_opera",
+    "attributedAuthor": "gioachino_rossini",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "giuseppe_verdi",
+      "gaetano_donizetti",
+      "wolfgang_amadeus_mozart"
+    ],
+    "provenance": "Composed by Gioachino Rossini, premiered 1816."
+  },
+  "la_boheme_puccini": {
+    "textId": "la_boheme_puccini",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "La Bohème",
+    "tradition": "romantic_era_opera",
+    "attributedAuthor": "giacomo_puccini",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "giuseppe_verdi",
+      "pietro_mascagni",
+      "ruggero_leoncavallo"
+    ],
+    "provenance": "Composed by Giacomo Puccini, premiered 1896."
+  },
+  "the_nutcracker_tchaikovsky": {
+    "textId": "the_nutcracker_tchaikovsky",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "The Nutcracker, Op. 71",
+    "tradition": "romantic_era_music",
+    "attributedAuthor": "pyotr_ilyich_tchaikovsky",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "nikolai_rimsky_korsakov",
+      "sergei_rachmaninoff",
+      "alexander_borodin"
+    ],
+    "provenance": "Composed by Pyotr Ilyich Tchaikovsky, premiered 1892."
+  },
+  "swan_lake_tchaikovsky": {
+    "textId": "swan_lake_tchaikovsky",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Swan Lake, Op. 20",
+    "tradition": "romantic_era_music",
+    "attributedAuthor": "pyotr_ilyich_tchaikovsky",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "nikolai_rimsky_korsakov",
+      "alexander_glazunov",
+      "sergei_prokofiev"
+    ],
+    "provenance": "Composed by Pyotr Ilyich Tchaikovsky, premiered 1877."
+  },
+  "1812_overture_tchaikovsky": {
+    "textId": "1812_overture_tchaikovsky",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "1812 Overture, Op. 49",
+    "tradition": "romantic_era_music",
+    "attributedAuthor": "pyotr_ilyich_tchaikovsky",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "modest_mussorgsky",
+      "nikolai_rimsky_korsakov",
+      "alexander_borodin"
+    ],
+    "provenance": "Composed by Pyotr Ilyich Tchaikovsky, 1880."
+  },
+  "symphony_no_6_pathetique_tchaikovsky": {
+    "textId": "symphony_no_6_pathetique_tchaikovsky",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Symphony No. 6 in B minor (Pathétique), Op. 74",
+    "tradition": "romantic_era_music",
+    "attributedAuthor": "pyotr_ilyich_tchaikovsky",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "sergei_rachmaninoff",
+      "antonin_dvorak",
+      "johannes_brahms"
+    ],
+    "provenance": "Composed by Pyotr Ilyich Tchaikovsky, premiered 1893."
+  },
+  "the_rite_of_spring_stravinsky": {
+    "textId": "the_rite_of_spring_stravinsky",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "The Rite of Spring (Le Sacre du printemps)",
+    "tradition": "modernist_music",
+    "attributedAuthor": "igor_stravinsky",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "sergei_prokofiev",
+      "claude_debussy",
+      "maurice_ravel"
+    ],
+    "provenance": "Composed by Igor Stravinsky, premiered 1913."
+  },
+  "the_firebird_stravinsky": {
+    "textId": "the_firebird_stravinsky",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "The Firebird (L'Oiseau de feu)",
+    "tradition": "modernist_music",
+    "attributedAuthor": "igor_stravinsky",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "sergei_prokofiev",
+      "nikolai_rimsky_korsakov",
+      "maurice_ravel"
+    ],
+    "provenance": "Composed by Igor Stravinsky, premiered 1910."
+  },
+  "clair_de_lune_debussy": {
+    "textId": "clair_de_lune_debussy",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Clair de Lune (from Suite bergamasque)",
+    "tradition": "impressionist_music",
+    "attributedAuthor": "claude_debussy",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "maurice_ravel",
+      "erik_satie",
+      "gabriel_faure"
+    ],
+    "provenance": "Composed by Claude Debussy, published 1905."
+  },
+  "prelude_to_the_afternoon_of_a_faun_debussy": {
+    "textId": "prelude_to_the_afternoon_of_a_faun_debussy",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Prélude à l'après-midi d'un faune",
+    "tradition": "impressionist_music",
+    "attributedAuthor": "claude_debussy",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "maurice_ravel",
+      "gabriel_faure",
+      "paul_dukas"
+    ],
+    "provenance": "Composed by Claude Debussy, premiered 1894."
+  },
+  "bolero_ravel": {
+    "textId": "bolero_ravel",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Boléro",
+    "tradition": "impressionist_music",
+    "attributedAuthor": "maurice_ravel",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "claude_debussy",
+      "manuel_de_falla",
+      "gabriel_faure"
+    ],
+    "provenance": "Composed by Maurice Ravel, premiered 1928."
+  },
+  "nocturnes_chopin": {
+    "textId": "nocturnes_chopin",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Nocturnes",
+    "tradition": "romantic_era_music",
+    "attributedAuthor": "frederic_chopin",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "franz_liszt",
+      "robert_schumann",
+      "john_field"
+    ],
+    "provenance": "Composed by Frédéric Chopin, 1827-1846."
+  },
+  "symphony_no_9_from_the_new_world_dvorak": {
+    "textId": "symphony_no_9_from_the_new_world_dvorak",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Symphony No. 9 in E minor (From the New World), Op. 95",
+    "tradition": "romantic_era_music",
+    "attributedAuthor": "antonin_dvorak",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "johannes_brahms",
+      "bedrich_smetana",
+      "pyotr_ilyich_tchaikovsky"
+    ],
+    "provenance": "Composed by Antonín Dvořák, premiered 1893."
+  },
+  "a_german_requiem_brahms": {
+    "textId": "a_german_requiem_brahms",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "A German Requiem (Ein deutsches Requiem), Op. 45",
+    "tradition": "romantic_era_music",
+    "attributedAuthor": "johannes_brahms",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "anton_bruckner",
+      "robert_schumann",
+      "antonin_dvorak"
+    ],
+    "provenance": "Composed by Johannes Brahms, completed 1868."
+  },
+  "canon_in_d_pachelbel": {
+    "textId": "canon_in_d_pachelbel",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Canon in D major",
+    "tradition": "baroque_music",
+    "attributedAuthor": "johann_pachelbel",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "johann_sebastian_bach",
+      "antonio_vivaldi",
+      "henry_purcell"
+    ],
+    "provenance": "Composed by Johann Pachelbel, c. 1680-1706."
+  },
+  "rhapsody_in_blue_gershwin": {
+    "textId": "rhapsody_in_blue_gershwin",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Rhapsody in Blue",
+    "tradition": "american_20th_century_music",
+    "attributedAuthor": "george_gershwin",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "aaron_copland",
+      "leonard_bernstein",
+      "cole_porter"
+    ],
+    "provenance": "Composed by George Gershwin, premiered 1924."
+  },
+  "appalachian_spring_copland": {
+    "textId": "appalachian_spring_copland",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Appalachian Spring",
+    "tradition": "american_20th_century_music",
+    "attributedAuthor": "aaron_copland",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "george_gershwin",
+      "leonard_bernstein",
+      "samuel_barber"
+    ],
+    "provenance": "Composed by Aaron Copland, premiered 1944."
+  },
+  "carmen_bizet": {
+    "textId": "carmen_bizet",
+    "domain": "music",
+    "recordType": "text",
+    "canonicalTitleEn": "Carmen",
+    "tradition": "romantic_era_opera",
+    "attributedAuthor": "georges_bizet",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "jules_massenet",
+      "charles_gounod",
+      "camille_saint_saens"
+    ],
+    "provenance": "Composed by Georges Bizet, premiered 1875."
+  },
+  "the_book_of_healing": {
+    "textId": "the_book_of_healing",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "The Book of Healing (Kitab al-Shifa)",
+    "tradition": "islamic_golden_age_science",
+    "attributedAuthor": "ibn_sina",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "al_razi",
+      "al_farabi",
+      "ibn_rushd"
+    ],
+    "provenance": "Written by Ibn Sina (Avicenna), completed c. 1027."
+  },
+  "rudolphine_tables_kepler": {
+    "textId": "rudolphine_tables_kepler",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Rudolphine Tables (Tabulae Rudolphinae)",
+    "tradition": "early_modern_astronomy",
+    "attributedAuthor": "johannes_kepler",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "tycho_brahe",
+      "galileo_galilei",
+      "nicolaus_copernicus"
+    ],
+    "provenance": "Compiled by Johannes Kepler from Tycho Brahe's observations, published 1627."
+  },
+  "the_assayer_galileo": {
+    "textId": "the_assayer_galileo",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "The Assayer (Il Saggiatore)",
+    "tradition": "early_modern_science",
+    "attributedAuthor": "galileo_galilei",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "johannes_kepler",
+      "orazio_grassi",
+      "christopher_scheiner"
+    ],
+    "provenance": "Published by Galileo Galilei, 1623."
+  },
+  "the_alpha_helix_structure_of_proteins": {
+    "textId": "the_alpha_helix_structure_of_proteins",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "The Structure of Proteins (alpha helix paper)",
+    "tradition": "molecular_biology",
+    "attributedAuthor": "linus_pauling",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "james_watson",
+      "francis_crick",
+      "robert_corey"
+    ],
+    "provenance": "Co-authored by Linus Pauling and Robert Corey, 1951; describes the alpha helix."
+  },
+  "two_new_sciences_galileo": {
+    "textId": "two_new_sciences_galileo",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Discourses and Mathematical Demonstrations Relating to Two New Sciences",
+    "tradition": "early_modern_mechanics",
+    "attributedAuthor": "galileo_galilei",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "isaac_newton",
+      "christiaan_huygens",
+      "rene_descartes"
+    ],
+    "provenance": "Published by Galileo Galilei, 1638."
+  },
+  "on_the_equilibrium_of_heterogeneous_substances": {
+    "textId": "on_the_equilibrium_of_heterogeneous_substances",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "On the Equilibrium of Heterogeneous Substances",
+    "tradition": "thermodynamics",
+    "attributedAuthor": "josiah_willard_gibbs",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "james_clerk_maxwell",
+      "rudolf_clausius",
+      "ludwig_boltzmann"
+    ],
+    "provenance": "Published by Josiah Willard Gibbs, 1875-1878; foundation of chemical thermodynamics."
+  },
+  "the_descent_of_man": {
+    "textId": "the_descent_of_man",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "The Descent of Man, and Selection in Relation to Sex",
+    "tradition": "evolutionary_biology",
+    "attributedAuthor": "charles_darwin",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "alfred_russel_wallace",
+      "thomas_henry_huxley",
+      "herbert_spencer"
+    ],
+    "provenance": "Written by Charles Darwin, published 1871."
+  },
+  "molecular_configuration_in_sodium_thymonucleate": {
+    "textId": "molecular_configuration_in_sodium_thymonucleate",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Molecular Configuration in Sodium Thymonucleate (Photo 51 paper)",
+    "tradition": "molecular_biology",
+    "attributedAuthor": "rosalind_franklin_and_raymond_gosling",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "james_watson",
+      "francis_crick",
+      "maurice_wilkins"
+    ],
+    "provenance": "Joint paper by Rosalind Franklin and Raymond Gosling, Nature, 1953."
+  },
+  "on_the_sphere_and_cylinder_archimedes": {
+    "textId": "on_the_sphere_and_cylinder_archimedes",
+    "domain": "mathematics",
+    "recordType": "text",
+    "canonicalTitleEn": "On the Sphere and Cylinder",
+    "tradition": "ancient_greek_mathematics",
+    "attributedAuthor": "archimedes",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "euclid",
+      "apollonius_of_perga",
+      "eratosthenes"
+    ],
+    "provenance": "Written by Archimedes, c. 225 BCE."
+  },
+  "conics_apollonius": {
+    "textId": "conics_apollonius",
+    "domain": "mathematics",
+    "recordType": "text",
+    "canonicalTitleEn": "Conics (Konika)",
+    "tradition": "ancient_greek_mathematics",
+    "attributedAuthor": "apollonius_of_perga",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "euclid",
+      "archimedes",
+      "pappus_of_alexandria"
+    ],
+    "provenance": "Written by Apollonius of Perga, c. 200 BCE."
+  },
+  "almagest_ptolemy": {
+    "textId": "almagest_ptolemy",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Almagest (Mathematike Syntaxis)",
+    "tradition": "hellenistic_astronomy",
+    "attributedAuthor": "claudius_ptolemy",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "hipparchus",
+      "aristarchus_of_samos",
+      "nicolaus_copernicus"
+    ],
+    "provenance": "Written by Claudius Ptolemy, c. 150 CE."
+  },
+  "al_tasrif_al_zahrawi": {
+    "textId": "al_tasrif_al_zahrawi",
+    "domain": "medicine",
+    "recordType": "text",
+    "canonicalTitleEn": "Al-Tasrif (The Method of Medicine)",
+    "tradition": "islamic_golden_age_medicine",
+    "attributedAuthor": "al_zahrawi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "al_razi",
+      "ibn_sina",
+      "ibn_al_nafis"
+    ],
+    "provenance": "Compiled by Abu al-Qasim al-Zahrawi (Albucasis), c. 1000 CE; landmark surgical encyclopedia."
+  },
+  "the_hippocratic_corpus": {
+    "textId": "the_hippocratic_corpus",
+    "domain": "medicine",
+    "recordType": "text",
+    "canonicalTitleEn": "The Hippocratic Corpus",
+    "tradition": "ancient_greek_medicine",
+    "attributedAuthor": "hippocrates",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "galen",
+      "aristotle",
+      "dioscorides"
+    ],
+    "provenance": "Traditionally attributed to Hippocrates of Kos and his school, c. 5th-4th century BCE."
+  },
+  "de_materia_medica": {
+    "textId": "de_materia_medica",
+    "domain": "medicine",
+    "recordType": "text",
+    "canonicalTitleEn": "De Materia Medica",
+    "tradition": "ancient_pharmacology",
+    "attributedAuthor": "pedanius_dioscorides",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "galen",
+      "hippocrates",
+      "pliny_the_elder"
+    ],
+    "provenance": "Written by Pedanius Dioscorides, c. 50-70 CE; foundational pharmacopoeia."
+  },
+  "gray_s_anatomy": {
+    "textId": "gray_s_anatomy",
+    "domain": "medicine",
+    "recordType": "text",
+    "canonicalTitleEn": "Gray's Anatomy (Anatomy: Descriptive and Surgical)",
+    "tradition": "modern_anatomy",
+    "attributedAuthor": "henry_gray",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "andreas_vesalius",
+      "william_harvey",
+      "henry_vandyke_carter"
+    ],
+    "provenance": "Written by Henry Gray (illustrated by H. V. Carter), first published 1858."
   }
 }

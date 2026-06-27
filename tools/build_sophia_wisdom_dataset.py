@@ -772,18 +772,14 @@ def build(check_only: bool, stats: bool, *, teacher_spec: str | None = None,
             "target": ">=10k decontaminated gate-passed rows",
             "achieved": total,
             "met": total >= 10000,
-            "honest_note": ("Volume is CORPUS-bound (not teacher-bound): the builder dedups by "
-                            "normalized prompt, so rows scale with the number of ground-truth records. "
-                            "ENRICHMENT 2026-06-27 (tools/enrich_corpus.py, fail-closed on accuracy: "
-                            "every record carries a provenance note + is fact-checked; auto-decontaminated "
-                            "vs heldout_v1 + transfer_v1): attributions 30 -> 185, history_events 23 -> 51 "
-                            "(+28 fact-checked myths), religion_concepts 8 -> 21 (+13 distinct non-eval "
-                            "traditions). Dataset 880 -> 1946 gate-passed rows (+121%, more than doubled); "
-                            "preference pairs 233 -> 975 (4x); decontam drops held at 90 (zero new eval "
-                            "contamination). STILL BELOW the 10k target -> M2 stays NO-GO on absolute "
-                            "volume (~1240 more records to 10k at the measured ~6.5 rows/record). A "
-                            "sustained curation effort, not a one-shot; the path is now tooled + "
-                            "accuracy-disciplined + decontaminated. Pipeline complete + fail-closed."),
+            "honest_note": ("Volume is CORPUS-bound: rows scale with ground-truth records. ENRICHMENT "
+                            "2026-06-27 (tools/enrich_corpus.py, fail-closed on accuracy + provenance; "
+                            "auto-decontaminated vs heldout_v1 + transfer_v1; independently fact-verified): "
+                            "attributions 30 -> 381, history 23 -> 51, religion 8 -> 21. Dataset 880 -> 3306 "
+                            "gate-passed rows (+275%, 3.75x); preference pairs 233 -> 1851 (8x); decontam "
+                            "drops held at 90 (zero new eval contamination). STILL BELOW 10k -> M2 stays "
+                            "NO-GO on absolute volume (~1030 more records at the measured ~6.5 rows/record). "
+                            "Sustained curation, now tooled + accuracy-disciplined + decontaminated."),
         },
         "boundary": ("Habits learned by weights; truth enforced by the EXTERNAL gate. Not an AGI "
                      "claim. General-retention pack is small — expand with a license-clean instruct "
