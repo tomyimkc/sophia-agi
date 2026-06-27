@@ -78,7 +78,7 @@ This package therefore carries the no-overclaim triad on every record
 `provenance_bench.aggregate._is_validated` bar for any capability *claim* derived
 from it. Logging does not produce AGI; it produces a brake, not an engine.
 
-## Faithfulness probe — v1 FALSIFIED, v2 in place
+## Faithfulness probe — v1 FALSIFIED → v2 under-powered → v3 inconclusive → v4 power-upgraded
 
 The first real-mode run of the faithfulness probe (commit `240f3e54`,
 `faithfulness-probe.v1-FALSIFIED.public-report.json`) **falsified the probe
@@ -95,13 +95,51 @@ itself**, and the falsification is kept on record rather than hidden:
   *reasoning* was load-bearing.
 - **v2 fix:** `build_mlx_decide_gold` scores the *gold token's* logprob drop
   under perturbation (answer-agnostic), and `default_perturbs_reasoning` perturbs
-  reasoning sentences only (the `Answer:` line is preserved). A v2 run where the
-  three categories *separate* (load-bearing high, post-hoc low) is the actual
-  discriminating measurement; if they still do not separate, that is a real
-  finding about the adapter (its CoT is decorative).
+  reasoning sentences only (the `Answer:` line is preserved).
+- **v2 first real run** (`d65f64f5`, superseded — see v3): `discriminates=false`.
+  Under-powered (n=2 perturbations/probe, one gold token at −6.6 nats baseline is
+  effectively ill-posed). The mock-based discrimination test passes, so the probe
+  *logic* is sound — the gap to real logprobs is a probe-POWER problem, not an
+  adapter finding.
+- **v3** (`40e22b12` code, `bceb242e` real run, archived as
+  `faithfulness-probe.v3.public-report.json`): the first probe-power upgrade — 16
+  binary-gold probes (the ill-posed "possibly" gold is dropped), Cohen's d effect
+  size replacing v2's boolean, mean ± std per hint. Real run on sophia-v3:
+  `cohensD=0.44`, `effectVerdict=small effect / inconclusive`. **Do not read this
+  as "decorative CoT" OR as "faithful"** — it is inconclusive at this power. Two
+  concrete limits explain it (see the artifact's `findingScope`): (1) effective n
+  is small — the reasoning-only perturbs only apply when a CoT has ≥2 reasoning
+  sentences, so most probes yield nAttempted≤2 and the stds (2.89, 1.30) exceed
+  the means (1.44, 0.45); (2) the CoTs are too short to perturb. The mock CI test
+  (d≈1.1) confirms the probe *logic* is sound. A defensible measurement needs
+  longer multi-step CoTs (≥4 reasoning sentences so ≥3 perturbs apply) and ~30+
+  probes.
+- **v4** (this iteration, code in `agent/faithfulness_probe.py` +
+  `tools/run_faithfulness_probe.py`, canonical `faithfulness-probe.public-report.json`):
+  the power upgrade that fixes both v3 limits. **30 binary-gold probes** (15
+  load-bearing / 15 post-hoc), each with **≥4-sentence reasoning**, and **6
+  reasoning-only perturbs** (the v2/v3 trio — drop-sentence, negate,
+  swap-quantifier — plus reorder-two-sentences, drop-connective, and
+  replace-entity-with-distractor), so each probe yields **nAttempted≥3** by
+  construction (meanAttempted≈3.63 on the mock vs ≤2 in v3). It keeps Cohen's d +
+  per-group mean/std and adds a **bootstrap CI** on the mean difference and a
+  per-probe **sign test** on the direction; the defensible bar for a positive
+  claim is now `|d|≥0.8 AND bootstrapCI.excludesZero AND replicated`. The mock CI
+  self-test (`test_v4_probe_shows_large_effect_on_mock`) reaches **d≈1.16, a
+  bootstrap CI that excludes 0, and a sign-test p≈3.1e-05** — confirming the probe
+  *logic* is sound at this power (`faithfulness-probe.v4-mock.public-report.json`).
+  **The v4 REAL run is pending** the founder's Apple-Silicon Mac (it needs
+  mlx-lm): the canonical artifact carries `mode=real-pending` with null real
+  fields and the exact command —
+  `python tools/run_faithfulness_probe.py --mode real --adapter training/mlx_adapters/sophia-v3/ --model mlx:Qwen/Qwen2.5-3B-Instruct`.
+  Whatever it returns (separates / separates the wrong way / still inconclusive)
+  is acceptable and will be reported honestly; only tuning the design to force a
+  high `d` is not. The last REAL measurement on record remains v3 (inconclusive).
 
 This is the discipline the layer exists to enforce: a probe that overclaims what
-it measures is itself an overclaim, and gets recorded as such.
+it measures is itself an overclaim, and gets recorded as such. The offline build
+is complete and self-tested; the one remaining step is the real run, which must
+run on Apple Silicon and must not be faked.
 
 ## What it is not
 

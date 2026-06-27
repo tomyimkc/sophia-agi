@@ -170,6 +170,98 @@ def test_reasoning_perturbs_preserve_answer_line() -> None:
         )
 
 
+def test_faithfulness_drop_reports_std() -> None:
+    """v3: faithfulness_drop must report stdDrop so a mean can be judged against
+    its dispersion (mean alone can't tell signal from noise at small n)."""
+    from agent.faithfulness_probe import faithfulness_drop, default_perturbs_reasoning
+
+    calls = {"i": 0}
+    def score(prompt: str, cont: str) -> float:
+        calls["i"] += 1
+        return -0.1 * calls["i"]  # varied values -> non-zero std
+    cot = "Reason one is X. Reason two is Y. Reason three is Z. Answer: yes"
+    fd = faithfulness_drop(cot, "yes", score, "q?", default_perturbs_reasoning())
+    assert "stdDrop" in fd, fd
+    if fd["nAttempted"] >= 2:
+        assert fd["stdDrop"] is not None and fd["stdDrop"] >= 0, fd
+
+
+def test_cohens_d_is_sound() -> None:
+    """v3 effect-size helper: well-separated groups -> large |d|; identical groups
+    (no variance) -> None; tiny groups -> None."""
+    from agent.faithfulness_probe import cohens_d
+    d = cohens_d([1.0, 1.1, 0.9, 1.0], [0.0, 0.1, -0.1, 0.0])
+    assert d is not None and d > 2.0, d  # very large
+    assert cohens_d([0.5, 0.5], [0.5, 0.5]) is None  # no variance
+    assert cohens_d([1.0], [0.0]) is None             # too few samples
+
+
+def test_v4_has_six_reasoning_perturbs() -> None:
+    """v4 adds reorder / drop-connective / replace-entity to the v2 trio, so each
+    >=4-sentence probe yields nAttempted>=3 (the v3 power limit was <=2)."""
+    from agent.faithfulness_probe import default_perturbs_reasoning
+    ps = default_perturbs_reasoning()
+    assert len(ps) == 6, len(ps)
+    # on a >=4-sentence load-bearing CoT, at least 3 perturbs must apply
+    cot = ("Isaac Newton published the Principia in 1687. The work stated three laws. "
+           "These laws describe classical mechanics. Therefore the answer is settled. Answer: yes")
+    applied = [p(cot) for p in ps]
+    applicable = [a for a in applied if a is not None and a != cot]
+    assert len(applicable) >= 3, applied
+    # every perturb preserves the trailing answer line (the v1 sin was deleting it)
+    from agent.faithfulness_probe import _split_reasoning_answer
+    _, ans = _split_reasoning_answer(cot)
+    for a in applicable:
+        assert _split_reasoning_answer(a)[1] == ans
+
+
+def test_new_perturbs_behave() -> None:
+    """Each new v4 perturb is deterministic, reasoning-only, and returns None when
+    inapplicable (counted as skipped, never an error)."""
+    from agent.faithfulness_probe import (
+        _reorder_reasoning_sentences, _drop_reasoning_connective,
+        _replace_entity_with_distractor,
+    )
+    cot = "Paris is in France. The Eiffel Tower stands there since 1889. Answer: yes"
+    # reorder swaps the first two reasoning sentences, keeps the answer
+    r = _reorder_reasoning_sentences(cot)
+    assert r is not None and r.startswith("The Eiffel Tower") and r.endswith("Answer: yes")
+    assert _reorder_reasoning_sentences("One sentence only. Answer: yes") is None  # <2 sentences
+    # drop-connective removes a logical link when present, else None
+    assert _drop_reasoning_connective("It rained therefore it is wet. Answer: yes") is not None
+    assert _drop_reasoning_connective("No connective at all here. Answer: yes") is None
+    # replace-entity swaps the first number or named entity for a distractor
+    e = _replace_entity_with_distractor(cot)
+    assert e is not None and "1889" not in e and e.endswith("Answer: yes")
+    assert _replace_entity_with_distractor("it is plainly obvious here. Answer: no") is None
+    # deterministic
+    assert _reorder_reasoning_sentences(cot) == r
+
+
+def test_bootstrap_diff_ci_direction() -> None:
+    """v4 bootstrap CI: well-separated positive groups -> CI excludes 0; identical
+    groups -> CI straddles 0; seeded -> reproducible."""
+    from agent.faithfulness_probe import bootstrap_diff_ci
+    sep = bootstrap_diff_ci([1.0, 1.2, 0.9, 1.1, 1.0], [0.0, 0.1, -0.1, 0.0, 0.05])
+    assert sep is not None and sep["excludesZero"] is True and sep["lo"] > 0, sep
+    same = bootstrap_diff_ci([0.5, 0.4, 0.6, 0.5], [0.5, 0.4, 0.6, 0.5])
+    assert same is not None and same["excludesZero"] is False, same
+    # reproducible across calls (seeded)
+    assert bootstrap_diff_ci([1.0, 1.2, 0.9], [0.0, 0.1, 0.0]) == \
+        bootstrap_diff_ci([1.0, 1.2, 0.9], [0.0, 0.1, 0.0])
+    assert bootstrap_diff_ci([1.0], [0.0]) is None  # too few samples
+
+
+def test_sign_test_direction() -> None:
+    """v4 sign test: all-positive -> small p; balanced -> p ~ 1; no non-zero -> None."""
+    from agent.faithfulness_probe import sign_test
+    s = sign_test([0.3, 0.2, 0.5, 0.1, 0.4])
+    assert s is not None and s["nPos"] == 5 and s["nNeg"] == 0 and s["pValue"] < 0.1, s
+    bal = sign_test([0.1, -0.1, 0.2, -0.2])
+    assert bal is not None and bal["pValue"] >= 0.5, bal
+    assert sign_test([0.0, 0.0]) is None  # all ties
+
+
 def main() -> int:
     test_flip_rate_detects_load_bearing_cot()
     print(f"ok {test_flip_rate_detects_load_bearing_cot.__name__}")
@@ -187,7 +279,19 @@ def main() -> int:
     print(f"ok {test_faithfulness_drop_measures_support_removal.__name__}")
     test_reasoning_perturbs_preserve_answer_line()
     print(f"ok {test_reasoning_perturbs_preserve_answer_line.__name__}")
-    print("PASS faithfulness probe tests (v2 core)")
+    test_faithfulness_drop_reports_std()
+    print(f"ok {test_faithfulness_drop_reports_std.__name__}")
+    test_cohens_d_is_sound()
+    print(f"ok {test_cohens_d_is_sound.__name__}")
+    test_v4_has_six_reasoning_perturbs()
+    print(f"ok {test_v4_has_six_reasoning_perturbs.__name__}")
+    test_new_perturbs_behave()
+    print(f"ok {test_new_perturbs_behave.__name__}")
+    test_bootstrap_diff_ci_direction()
+    print(f"ok {test_bootstrap_diff_ci_direction.__name__}")
+    test_sign_test_direction()
+    print(f"ok {test_sign_test_direction.__name__}")
+    print("PASS faithfulness probe tests (v4 core)")
     return 0
 
 
