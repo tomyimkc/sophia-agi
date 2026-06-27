@@ -75,7 +75,8 @@ Lean v4.20.0, lean-dojo 4.20.0:
 - The job installs the Lean toolchain + lean-dojo, then runs
   `tests/test_lean_dojo_check_proof.py`, whose real-lean case
   `test_check_proof_in_repo_accepts_correct_rejects_wrong` traces
-  **`leanprover-community/lean4-example`** — a *real GitHub* minimal repo fetched
+  **`yangky11/lean4-example`** (`https://github.com/yangky11/lean4-example`, the
+  canonical LeanDojo Getting-Started repo) — a *real GitHub* minimal repo fetched
   by `LeanGitRepo`, **not** a local `from_path` fixture.
 - pytest reached **95%** (the two fail-closed cases PASSED) at `23:16:39`, then the
   real-trace case produced **no further output for 29m33s** until
@@ -133,8 +134,8 @@ points at the lean-dojo 4.20.0 tracer itself rather than any local environment.
 ## 4. Options to unblock L0 (status updated 2026-06-26 after the CI repro in §1a)
 
 1. ~~**Trace a real GitHub repo instead of a `from_path` local repo.**~~
-   **FALSIFIED (§1a):** CI traces `leanprover-community/lean4-example` (a real
-   GitHub repo via `LeanGitRepo`) and still hangs. Repo-source is not the cause.
+   **FALSIFIED (§1a):** CI traces `yangky11/lean4-example` (a real GitHub repo via
+   `LeanGitRepo`) and still hangs. Repo-source is not the cause.
 2. ~~**Run the same reproduction on Linux** (CI is ubuntu-latest).~~
    **FALSIFIED (§1a):** ubuntu-latest hangs identically (orphaned `lake`/`lean` at
    the 30-min timeout). The deadlock is not macOS-arm64-specific, so there is no
