@@ -1,0 +1,200 @@
+{"id": "sqa0", "domain": "Politics", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa1", "domain": "Politics", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa2", "domain": "Politics", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa3", "domain": "Art", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa4", "domain": "Politics", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa5", "domain": "Art", "risk": "normal", "confidence": 0.0, "nonconformity": 1.0, "correct": false, "action": "abstain"}
+{"id": "sqa6", "domain": "TV shows", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "abstain"}
+{"id": "sqa7", "domain": "History", "risk": "normal", "confidence": 0.85, "nonconformity": 0.15, "correct": false, "action": "answer"}
+{"id": "sqa8", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa9", "domain": "Music", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa10", "domain": "Politics", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa11", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa12", "domain": "Music", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa13", "domain": "Art", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa14", "domain": "Other", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa15", "domain": "Geography", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa16", "domain": "Sports", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa17", "domain": "Other", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa18", "domain": "Sports", "risk": "normal", "confidence": 0.85, "nonconformity": 0.15, "correct": false, "action": "answer"}
+{"id": "sqa19", "domain": "Sports", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa20", "domain": "Music", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa21", "domain": "Geography", "risk": "normal", "confidence": 0.85, "nonconformity": 0.15, "correct": false, "action": "answer"}
+{"id": "sqa22", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa23", "domain": "Other", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa24", "domain": "Politics", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa25", "domain": "Sports", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa26", "domain": "Politics", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa27", "domain": "History", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa28", "domain": "Politics", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa29", "domain": "Science and technology", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa30", "domain": "Geography", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa31", "domain": "History", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa32", "domain": "Politics", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": true, "action": "answer"}
+{"id": "sqa33", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "abstain"}
+{"id": "sqa34", "domain": "Music", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa35", "domain": "Geography", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa36", "domain": "Sports", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa37", "domain": "Geography", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa38", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa39", "domain": "Politics", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": true, "action": "answer"}
+{"id": "sqa40", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa41", "domain": "Other", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa42", "domain": "Science and technology", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": true, "action": "answer"}
+{"id": "sqa43", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa44", "domain": "Politics", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa45", "domain": "Politics", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa46", "domain": "Other", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa47", "domain": "Other", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa48", "domain": "TV shows", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa49", "domain": "History", "risk": "normal", "confidence": 0.85, "nonconformity": 0.15, "correct": true, "action": "answer"}
+{"id": "sqa50", "domain": "History", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa51", "domain": "History", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa52", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa53", "domain": "Other", "risk": "normal", "confidence": 0.8, "nonconformity": 0.2, "correct": false, "action": "answer"}
+{"id": "sqa54", "domain": "TV shows", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa55", "domain": "Science and technology", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa56", "domain": "Geography", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa57", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": true, "action": "answer"}
+{"id": "sqa58", "domain": "Sports", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa59", "domain": "Sports", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa60", "domain": "Sports", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa61", "domain": "Geography", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa62", "domain": "Art", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa63", "domain": "Art", "risk": "normal", "confidence": 0.85, "nonconformity": 0.15, "correct": false, "action": "answer"}
+{"id": "sqa64", "domain": "Science and technology", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa65", "domain": "Science and technology", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa66", "domain": "Art", "risk": "normal", "confidence": 0.85, "nonconformity": 0.15, "correct": true, "action": "answer"}
+{"id": "sqa67", "domain": "Geography", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": true, "action": "answer"}
+{"id": "sqa68", "domain": "Music", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "abstain"}
+{"id": "sqa69", "domain": "Music", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa70", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa71", "domain": "TV shows", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa72", "domain": "Geography", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa73", "domain": "Music", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa74", "domain": "Sports", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa75", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa76", "domain": "Art", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa77", "domain": "Other", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa78", "domain": "History", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa79", "domain": "Art", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa80", "domain": "History", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa81", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": true, "action": "answer"}
+{"id": "sqa82", "domain": "Music", "risk": "normal", "confidence": 0.1, "nonconformity": 0.9, "correct": false, "action": "abstain"}
+{"id": "sqa83", "domain": "Art", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa84", "domain": "Other", "risk": "normal", "confidence": 0.8, "nonconformity": 0.2, "correct": false, "action": "answer"}
+{"id": "sqa85", "domain": "Politics", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa86", "domain": "Geography", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": true, "action": "answer"}
+{"id": "sqa87", "domain": "Sports", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa88", "domain": "Science and technology", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa89", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa90", "domain": "Science and technology", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": true, "action": "answer"}
+{"id": "sqa91", "domain": "Politics", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa92", "domain": "Science and technology", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa93", "domain": "Sports", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa94", "domain": "Sports", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa95", "domain": "Geography", "risk": "normal", "confidence": 0.1, "nonconformity": 0.9, "correct": false, "action": "answer"}
+{"id": "sqa96", "domain": "Sports", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa97", "domain": "Video games", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa98", "domain": "Geography", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa99", "domain": "Science and technology", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa100", "domain": "Music", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa101", "domain": "Politics", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa102", "domain": "History", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": true, "action": "answer"}
+{"id": "sqa103", "domain": "Politics", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa104", "domain": "Politics", "risk": "normal", "confidence": 0.8, "nonconformity": 0.2, "correct": true, "action": "answer"}
+{"id": "sqa105", "domain": "Science and technology", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa106", "domain": "Science and technology", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa107", "domain": "Music", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa108", "domain": "Geography", "risk": "normal", "confidence": 0.1, "nonconformity": 0.9, "correct": false, "action": "abstain"}
+{"id": "sqa109", "domain": "Music", "risk": "normal", "confidence": 0.8, "nonconformity": 0.2, "correct": false, "action": "answer"}
+{"id": "sqa110", "domain": "Sports", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa111", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa112", "domain": "Video games", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa113", "domain": "Music", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa114", "domain": "Music", "risk": "normal", "confidence": 0.8, "nonconformity": 0.2, "correct": false, "action": "answer"}
+{"id": "sqa115", "domain": "Science and technology", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa116", "domain": "Politics", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa117", "domain": "TV shows", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": true, "action": "answer"}
+{"id": "sqa118", "domain": "Other", "risk": "normal", "confidence": 0.0, "nonconformity": 1.0, "correct": false, "action": "abstain"}
+{"id": "sqa119", "domain": "Science and technology", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa120", "domain": "Art", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa121", "domain": "TV shows", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa122", "domain": "Geography", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa123", "domain": "Politics", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa124", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa125", "domain": "Sports", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa126", "domain": "Politics", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa127", "domain": "Science and technology", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa128", "domain": "Sports", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa129", "domain": "Science and technology", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa130", "domain": "TV shows", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa131", "domain": "Science and technology", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa132", "domain": "Sports", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa133", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa134", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa135", "domain": "History", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa136", "domain": "TV shows", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa137", "domain": "Science and technology", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": true, "action": "answer"}
+{"id": "sqa138", "domain": "Politics", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa139", "domain": "Politics", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa140", "domain": "Geography", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa141", "domain": "Geography", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa142", "domain": "Sports", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa143", "domain": "Geography", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa144", "domain": "Politics", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa145", "domain": "Geography", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa146", "domain": "TV shows", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa147", "domain": "Other", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa148", "domain": "Science and technology", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa149", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa150", "domain": "Politics", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa151", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa152", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa153", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa154", "domain": "Science and technology", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa155", "domain": "Politics", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa156", "domain": "Music", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa157", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa158", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa159", "domain": "Geography", "risk": "normal", "confidence": 0.1, "nonconformity": 0.9, "correct": false, "action": "answer"}
+{"id": "sqa160", "domain": "Science and technology", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa161", "domain": "Sports", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa162", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": true, "action": "answer"}
+{"id": "sqa163", "domain": "Geography", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa164", "domain": "Science and technology", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa165", "domain": "History", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa166", "domain": "Science and technology", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa167", "domain": "Music", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa168", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa169", "domain": "History", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa170", "domain": "TV shows", "risk": "normal", "confidence": 0.0, "nonconformity": 1.0, "correct": false, "action": "abstain"}
+{"id": "sqa171", "domain": "Geography", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa172", "domain": "Art", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa173", "domain": "Geography", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa174", "domain": "Sports", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa175", "domain": "Other", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "abstain"}
+{"id": "sqa176", "domain": "Science and technology", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa177", "domain": "Politics", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa178", "domain": "Art", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa179", "domain": "Music", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa180", "domain": "Sports", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": true, "action": "answer"}
+{"id": "sqa181", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa182", "domain": "Science and technology", "risk": "normal", "confidence": 0.85, "nonconformity": 0.15, "correct": false, "action": "answer"}
+{"id": "sqa183", "domain": "TV shows", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa184", "domain": "Music", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa185", "domain": "Science and technology", "risk": "normal", "confidence": 0.0, "nonconformity": 1.0, "correct": false, "action": "abstain"}
+{"id": "sqa186", "domain": "TV shows", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa187", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa188", "domain": "Science and technology", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa189", "domain": "History", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa190", "domain": "Geography", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa191", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa192", "domain": "Other", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa193", "domain": "Sports", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}
+{"id": "sqa194", "domain": "Art", "risk": "normal", "confidence": 0.9, "nonconformity": 0.1, "correct": false, "action": "answer"}
+{"id": "sqa195", "domain": "Politics", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": true, "action": "answer"}
+{"id": "sqa196", "domain": "Science and technology", "risk": "normal", "confidence": 0.0, "nonconformity": 1.0, "correct": false, "action": "abstain"}
+{"id": "sqa197", "domain": "Art", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": true, "action": "answer"}
+{"id": "sqa198", "domain": "Sports", "risk": "normal", "confidence": 1.0, "nonconformity": 0.0, "correct": false, "action": "answer"}
+{"id": "sqa199", "domain": "Sports", "risk": "normal", "confidence": 0.95, "nonconformity": 0.05, "correct": false, "action": "answer"}

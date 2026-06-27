@@ -1,0 +1,14 @@
+{
+  "n": 200,
+  "attempted": 189,
+  "abstained": 11,
+  "correct": 48,
+  "accuracyOverall": 0.24,
+  "accuracyAttempted": 0.254,
+  "files": {
+    "all": "agi-proof/benchmark-results/real-model/simpleqa/simpleqa.all.deepseek.jsonl",
+    "stated": "agi-proof/benchmark-results/real-model/simpleqa/simpleqa.attempted.stated.deepseek.jsonl",
+    "selfcons": "agi-proof/benchmark-results/real-model/simpleqa/simpleqa.attempted.selfcons.deepseek.jsonl",
+    "logprob": "agi-proof/benchmark-results/real-model/simpleqa/simpleqa.attempted.logprob.deepseek.jsonl"
+  }
+}

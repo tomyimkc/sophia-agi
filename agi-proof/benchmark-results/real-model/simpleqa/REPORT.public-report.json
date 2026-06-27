@@ -1,0 +1,60 @@
+{
+  "schema": "sophia.simpleqa_calibration_report.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "syntheticData": false,
+  "externalPublicBenchmark": "google/simpleqa-verified",
+  "validated": false,
+  "subjectModel": "deepseek-chat",
+  "graderModel": "llmhub:claude-sonnet-4-6 (single family; not official GPT-4.1)",
+  "n": 200,
+  "attempted": 189,
+  "abstained": 11,
+  "accuracyOverall": 0.24,
+  "accuracyAttempted": 0.254,
+  "C1_conformal": {
+    "baseAccuracy": 0.254,
+    "signals": {
+      "selfcons": {
+        "auroc": 0.6144,
+        "riskCoverage": {
+          "cov100": 0.254,
+          "cov50": 0.3404,
+          "cov30": 0.375,
+          "cov20": 0.4595,
+          "cov10": 0.2778
+        },
+        "nAttempted": 189
+      },
+      "stated": {
+        "auroc": 0.5799,
+        "riskCoverage": {
+          "cov100": 0.254,
+          "cov50": 0.3191,
+          "cov30": 0.2679,
+          "cov20": 0.2703,
+          "cov10": 0.2222
+        },
+        "nAttempted": 189
+      },
+      "logprob": {
+        "auroc": 0.5,
+        "riskCoverage": {
+          "cov100": 0.254,
+          "cov50": 0.3085,
+          "cov30": 0.2679,
+          "cov20": 0.2703,
+          "cov10": 0.2222
+        },
+        "nAttempted": 189
+      }
+    },
+    "finding": "self-consistency is the only USEFUL nonconformity signal: selective accuracy rises 0.254->0.459 at 20% coverage (AUROC 0.614). Stated confidence (AUROC 0.580, severely overconfident ~0.93) and token logprob (AUROC 0.500, saturated) are weak. Held-out conformal coverage guarantee holds for all signals, but the useful operating region is aggressive abstention (20-30% coverage), not alpha=0.1 which answers all."
+  },
+  "C3_abstention": {
+    "breakEvenLambda": 0.5,
+    "abstentionRate": 0.055,
+    "finding": "fail-closed abstention beats always-guessing at lambda>=0.5; but DeepSeek self-abstains only 5.5% on SimpleQA (overconfident), so the C1 self-consistency gate is what would FORCE the beneficial abstention."
+  },
+  "honestBound": "First REAL EXTERNAL (non-self-authored) validation of C1/C3, on the public human-authored SimpleQA Verified. Genuine result: the conformal mechanism is useful ONLY with self-consistency, not naive confidence. Residual gaps: single run, single grader family (need >=2 + Cohen's kappa), N=200 of 1000. canClaimAGI stays false."
+}
