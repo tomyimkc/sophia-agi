@@ -107,5 +107,44 @@ def test_train_quick_smoke() -> None:
     assert report["num_params"] > 0
 
 
+# -- born-gated corpus: inline provenance markers become tokens ----------------
+def test_born_gated_documents_carry_markers() -> None:
+    from pretraining.gpt.born_gated import born_gated_documents, born_gated_token_stream
+
+    docs = born_gated_documents()
+    assert docs and any("<src>" in d for d in docs)
+    # legendary/disputed records must be marked low-confidence, fail-closed
+    assert any("<conf_lo>" in d for d in docs)
+    assert any("<doNotAttributeTo>" in d for d in docs)
+
+    tok = ByteProvenanceTokenizer()
+    ids = born_gated_token_stream(tok)
+    assert tok.special_id("<src>") in ids
+    assert tok.special_id("<conf_lo>") in ids
+    assert tok.eot_id in ids
+
+
+# -- scaling: dependency-free schedule + fit reuse -----------------------------
+def test_scaling_schedule_is_monotone_and_bounded() -> None:
+    from pretraining.gpt.scaling import data_size_schedule
+
+    sched = data_size_schedule(10_000, points=5)
+    assert sched == sorted(sched)
+    assert sched[-1] == 10_000
+    assert all(s >= 1 for s in sched)
+    # degenerate totals never crash
+    assert data_size_schedule(3, points=5)[-1] == 3
+
+
+def test_scaling_run_quick() -> None:
+    pytest.importorskip("torch")
+    from pretraining.gpt.scaling import run_scaling
+
+    report = run_scaling(quick=True, seed=0)
+    assert report["canClaimAGI"] is False
+    assert len(report["points"]) >= 2
+    assert "passes_10pct_gate" in report["extrapolation"]
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

@@ -49,8 +49,14 @@ def _grad_global_norm(model) -> float:
 
 def train(*, quick: bool = False, steps: int = 2000, batch_size: int = 16,
           lr: float = 3e-4, prefer: str = "auto", seed: int = 0,
-          eval_every: int = 0) -> dict:
-    """Real cross-entropy descent. Returns a JSON-able report dict."""
+          eval_every: int = 0, born_gated: bool = False,
+          ids: "list[int] | None" = None) -> dict:
+    """Real cross-entropy descent. Returns a JSON-able report dict.
+
+    ``born_gated=True`` trains on the inline-provenance corpus (idea #1): the
+    model sees ``<src>``/``<conf_*>``/``<doNotAttributeTo>`` markers as first-class
+    tokens instead of a post-hoc gate.
+    """
     import torch  # noqa: PLC0415
 
     torch.manual_seed(seed)
@@ -65,7 +71,12 @@ def train(*, quick: bool = False, steps: int = 2000, batch_size: int = 16,
         cfg = cfg.quick()
         steps = min(steps, 60)
 
-    ids = token_stream(tok)
+    if ids is None:
+        if born_gated:
+            from pretraining.gpt.born_gated import born_gated_token_stream
+            ids = born_gated_token_stream(tok)
+        else:
+            ids = token_stream(tok)
     train_ids, val_ids = train_val_split(ids)
     if len(train_ids) <= cfg.block_size + 1:  # tiny synthetic corpus → repeat
         train_ids = (train_ids * (cfg.block_size * 4 // max(1, len(train_ids)) + 2))
@@ -107,6 +118,7 @@ def train(*, quick: bool = False, steps: int = 2000, batch_size: int = 16,
         "canClaimAGI": False,
         "boundary": "from-scratch GPT smoke/iteration run — not headline evidence; "
                     "headline numbers stay on x86 RunPod (see docs/11-Platform/DGX-Spark.md)",
+        "born_gated": born_gated,
         "tier": tier.as_dict(),
         "config": cfg.__dict__,
         "num_params": model.num_params(),
@@ -132,12 +144,15 @@ def main(argv=None) -> int:
     ap.add_argument("--lr", type=float, default=3e-4)
     ap.add_argument("--prefer", default="auto", choices=["auto", "cuda", "mps", "cpu"])
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--born-gated", action="store_true",
+                    help="train on the inline-provenance corpus (idea #1)")
     ap.add_argument("--report", action="store_true", help="write gpt-train-latest.json")
     args = ap.parse_args(argv)
 
     try:
         report = train(quick=args.quick, steps=args.steps, batch_size=args.batch_size,
-                       lr=args.lr, prefer=args.prefer, seed=args.seed)
+                       lr=args.lr, prefer=args.prefer, seed=args.seed,
+                       born_gated=args.born_gated)
     except ImportError as exc:
         print(f"[gpt.train] {exc}")
         return 2

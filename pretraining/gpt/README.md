@@ -60,10 +60,13 @@ data-backed.
 
 ## Roadmap (the brainstorm ideas, in order)
 
-1. **Reproduce the scaling law on the real GPT** — feed `epoch_loss` to
-   `pretraining/scaling/fit.py`; report against the uniform floor (`estimate_loss_floor`).
-2. **Born-gated pretraining (idea #1)** — build a corpus with inline `<src>…</src>`
-   markers, train with `token_stream(..., with_specials=True)`, and ablate
+1. ✅ **Scaling law on the real GPT** — `pretraining/gpt/scaling.py` trains at a
+   geometric token-budget schedule, fits `L(D)=E+A·D^-p` via
+   `pretraining/scaling/fit.py`, and runs a pre-registered extrapolation gate
+   (floor = uniform upper bound). `python -m pretraining.gpt.scaling --quick`.
+2. ✅ **Born-gated pretraining (idea #1)** — `pretraining/gpt/born_gated.py` turns
+   `data/attributions.json` into inline `<src>`/`<conf_*>`/`<doNotAttributeTo>`
+   text; `python -m pretraining.gpt.train --born-gated`. Next: ablate
    attribution-hallucination vs. a plain-text twin at equal perplexity.
 3. **Abstention head (idea #3)** — second head predicting `accept|hedge|abstain`,
    measured with `agent/calibration.py` (ECE / risk-coverage).

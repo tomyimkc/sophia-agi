@@ -200,9 +200,24 @@ idea in Part D:
    `gpt-train-latest.json` stamped `canClaimAGI: false`.
 4. ✅ `tests/test_gpt_pretraining.py` — tokenizer/data/cluster tested
    dependency-free (CI); torch model + a real descending step under `importorskip`.
-5. **Next:** reproduce the `scaling/` law on the real model, then escalate to a
-   longer pretrain on the cluster / RunPod and layer idea #1 (provenance tokens)
-   and idea #3 (abstention head).
+5. ✅ `pretraining/gpt/born_gated.py` + `--born-gated` — idea #1 made runnable:
+   `data/attributions.json` → inline `<src>`/`<conf_*>`/`<doNotAttributeTo>` text
+   (low-confidence by default, fail-closed) trained as first-class tokens.
+6. ✅ `pretraining/gpt/scaling.py` — reproduces the `scaling/` law on the real GPT
+   with a pre-registered extrapolation gate.
+7. **Next:** escalate to a longer pretrain on the cluster / RunPod, then the
+   abstention head (idea #3) and verifier-in-the-loss (idea #2).
+
+### Engineering discipline (Karpathy skills, applied)
+
+Studied [`multica-ai/andrej-karpathy-skills`](https://github.com/multica-ai/andrej-karpathy-skills)
+— four anti-pitfall coding guidelines (think-before-coding, simplicity-first,
+surgical-changes, goal-driven-verified-execution). They map cleanly onto Sophia's
+charter (fail-closed, no-overclaim, "every change more checkable"), so they are
+adapted into a portable skill: [`skills/portable/sophia-karpathy-engineering/SKILL.md`](../../skills/portable/sophia-karpathy-engineering/SKILL.md).
+The overlay adds Sophia's reflexes: abstain-and-ask on uncertainty, prefer
+dependency-free/deterministic, never weaken a gate to pass a diff, and "done"
+means *a check was run and observed* (no claimed-green-without-running).
 
 Everything through step 4 runs free on CPU/laptop, exactly as rasbt intends — and
 every piece lands inside an existing folder, test, and gate.
