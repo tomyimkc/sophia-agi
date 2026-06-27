@@ -78,6 +78,9 @@ jobs:
           git clone --no-checkout https://github.com/yangky11/miniF2F-lean4 "$HOME/miniF2F-lean4"
           git -C "$HOME/miniF2F-lean4" checkout "${{ steps.pin.outputs.commit }}"
           cat "$HOME/miniF2F-lean4/lean-toolchain"
+          # Export the absolute project dir for later steps. `${{ env.HOME }}` is EMPTY in
+          # the expression context, so working-directory/env must use this instead of $HOME.
+          echo "PROJECT_DIR=$HOME/miniF2F-lean4" >> "$GITHUB_ENV"
 
       - name: Cache Mathlib oleans (~/.cache/mathlib + project .lake)
         uses: actions/cache@v4
@@ -90,7 +93,7 @@ jobs:
       - name: Download prebuilt Mathlib (lake exe cache get) + build deps
         # Downloads Mathlib's prebuilt oleans for the project's pinned toolchain (v4.24.0)
         # instead of compiling Mathlib from scratch. Then a no-op build resolves deps.
-        working-directory: ${{ env.HOME }}/miniF2F-lean4
+        working-directory: ${{ env.PROJECT_DIR }}
         run: |
           lake exe cache get || lake exe cache get   # one retry; cache fetch can flake
           lake build MiniF2F.Test.aime_1983_p1 || true   # warm one module; ignore proof state
@@ -102,7 +105,7 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          MINIF2F_PROJECT: ${{ env.HOME }}/miniF2F-lean4
+          MINIF2F_PROJECT: ${{ env.PROJECT_DIR }}
         run: |
           args=(--spec "${{ inputs.spec }}" --timeout "${{ inputs.timeout }}")
           if [ "${{ inputs.limit }}" != "0" ]; then args+=(--limit "${{ inputs.limit }}"); fi
