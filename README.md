@@ -100,7 +100,7 @@ The single validated result is narrow: **attribution-hallucination reduction on 
 The core is Apache-2.0 and always will be. If it's useful to you, you can fund the time and compute
 to keep it honest — especially the third-party validation the ledger says is still missing.
 
-- **Sponsor** → [SPONSORS.md](SPONSORS.md) — recognition only; sponsors never steer what counts as true.
+- **Sponsor** → [SPONSORS.md](SPONSORS.md) (Patreon + GitHub Sponsors) — recognition only; sponsors never steer what counts as true.
 - **Hire me** → [services](docs/07-Growth/SERVICES.md) — install the provenance gate in your stack (scoped, measured, no guarantees).
 - **Learn the method** → [Source-Discipline Engineering](docs/07-Growth/education/Source-Discipline-Engineering.md).
 
