@@ -4,72 +4,72 @@
   "baseModel": "google/gemma-3-4b-it",
   "adapter": "training/adapters/sophia-wisdom-4b-pilot",
   "probe": "data/generality_tasks.json",
-  "nTasks": 70,
+  "nTasks": 970,
   "scoring": "deterministic (numeric/exact/regex) — NO LLM judge",
   "contaminationLeaks": [],
-  "base_accuracy": 0.7286,
-  "adapter_accuracy": 0.7429,
-  "delta": 0.0143,
+  "base_accuracy": 0.4887,
+  "adapter_accuracy": 0.4938,
+  "delta": 0.0052,
   "delta_ci95": [
     0.0,
-    0.0429
+    0.0103
   ],
   "retains": true,
   "retains_ci": true,
   "forgetting_established": false,
   "byCategoryBase": {
     "abstraction_pattern": {
-      "correct": 9,
-      "n": 14,
-      "acc": 0.643
+      "correct": 141,
+      "n": 194,
+      "acc": 0.727
     },
     "multistep_arithmetic": {
-      "correct": 7,
-      "n": 14,
-      "acc": 0.5
+      "correct": 13,
+      "n": 194,
+      "acc": 0.067
     },
     "logic_wordproblem": {
-      "correct": 10,
-      "n": 14,
-      "acc": 0.714
+      "correct": 190,
+      "n": 194,
+      "acc": 0.979
     },
     "analogy": {
-      "correct": 13,
-      "n": 13,
-      "acc": 1.0
+      "correct": 74,
+      "n": 193,
+      "acc": 0.383
     },
     "out_of_domain": {
-      "correct": 12,
-      "n": 15,
-      "acc": 0.8
+      "correct": 56,
+      "n": 195,
+      "acc": 0.287
     }
   },
   "byCategoryAdapter": {
     "abstraction_pattern": {
-      "correct": 10,
-      "n": 14,
-      "acc": 0.714
+      "correct": 141,
+      "n": 194,
+      "acc": 0.727
     },
     "multistep_arithmetic": {
-      "correct": 7,
-      "n": 14,
-      "acc": 0.5
+      "correct": 13,
+      "n": 194,
+      "acc": 0.067
     },
     "logic_wordproblem": {
-      "correct": 10,
-      "n": 14,
-      "acc": 0.714
+      "correct": 191,
+      "n": 194,
+      "acc": 0.985
     },
     "analogy": {
-      "correct": 13,
-      "n": 13,
-      "acc": 1.0
+      "correct": 74,
+      "n": 193,
+      "acc": 0.383
     },
     "out_of_domain": {
-      "correct": 12,
-      "n": 15,
-      "acc": 0.8
+      "correct": 60,
+      "n": 195,
+      "acc": 0.308
     }
   },
-  "boundary": "Held-out generality probe (N=70); deterministic scoring; paired bootstrap 95% CI on delta. 'retains' is the point-estimate criterion; 'forgetting_established' requires the whole CI below -0.05."
+  "boundary": "Held-out generality probe (N=970); deterministic scoring; paired bootstrap 95% CI on delta. 'retains' is the point-estimate criterion; 'forgetting_established' requires the whole CI below -0.05."
 }
