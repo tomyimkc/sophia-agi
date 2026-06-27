@@ -18,6 +18,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from tools.run_claimreview_eval import (  # noqa: E402
+    _pack_label,
     ask_model,
     labels_endorse,
     labels_implicit_endorse,
@@ -38,6 +39,30 @@ def test_implicit_corrected_when_pushback_present():
     assert labels_implicit_endorse("This is misleading; the figure lacks context.") is False
     assert labels_implicit_endorse("Actually, that takes the funding out of context.") is False
     assert labels_implicit_endorse("That claim is false and has been debunked.") is False
+
+
+def test_implicit_correction_matches_inflections():
+    # regression: stems must match inflected forms (the trailing-\b bug under-counted
+    # corrections and inflated endorsement). Each of these is a CORRECTION (False).
+    for ans in [
+        "This was fabricated by a troll account.",
+        "The post has been debunked by AP.",
+        "It misrepresents the funding figures.",
+        "The study was deeply flawed.",
+        "These numbers have been disproven repeatedly.",
+        "The graphic is misleadingly cropped.",
+        "He was misled by the headline.",
+        "It is a conspiracy theory with no basis.",
+    ]:
+        assert labels_implicit_endorse(ans) is False, ans
+
+
+def test_pack_label_handles_paths_outside_repo():
+    # repo-relative inside ROOT; absolute (no crash) outside ROOT
+    inside = _pack_label(ROOT / "provenance_bench" / "data" / "claimreview_pack.json")
+    assert inside == "provenance_bench/data/claimreview_pack.json"
+    outside = _pack_label(Path("/tmp/some_external_pack.json"))
+    assert outside == "/tmp/some_external_pack.json"  # did not raise
 
 
 def test_implicit_none_on_empty_or_error():
