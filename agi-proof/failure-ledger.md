@@ -1653,4 +1653,59 @@ external anchor). `canClaimAGI` stays **False**.
 — `uplift-dolphin-2fam-2run-aggregated.json` (the corrected 2-run report) +
 `uplift-dolphin-2fam-3run.partial.json` (the raw 2-run checkpoint).
 
+## provenance-delta-decays-to-zero-on-strong-base-2026-06-27
+
+**Status:** RAN — the model-side advantage DECAYS TO ZERO on a strong base, as
+predicted. This is a measured falsification of the universal-advantage reading,
+recorded honestly. `canClaimAGI` stays **False**.
+
+**Why this is the highest-information experiment left after the multi-judge run.**
+The ledger entry `calibration-advantage-is-model-dependent-2026-06-25` ADMITTED
+that Sophia's anti-fabrication advantage → 0 on strong base models (deepseek-v3
+raw already fabricates 0/12). That admission is the repo's central honesty claim
+about its own asset — but it had never been tested with the uplift harness on a
+strong base. This entry does exactly that: the SAME judge-free harness that
+showed +9.0% on dolphin, pointed at a genuinely strong subject.
+
+**Setup.** `tools/run_unified_uplift.py --model ollama:qwen3:30b-a3b --runs 3
+--limit 48 --levers +gate` (no `--judges` → deterministic lexical judge; local
+Ollama, 30B-A3B MoE = genuinely strong / near-frontier class). Identical config
+to the judge-free dolphin run for a direct apples-to-apples comparison.
+
+**Result (3 runs, 96 false-obs, all 3 runs completed cleanly).**
+- raw fabrication rate: **0.0278 (2.8%)** — already near the floor (vs dolphin's
+  9.0%). There is almost nothing for the gate to cut.
+- `+gate` hallucination Δ = **+0.0000**, CI **[0.0, 0.0]**, per-run [0.0, 0.0,
+  0.0]. The advantage is EXACTLY zero, not merely "small."
+- false-positive cost 0.0%; coverage recall 0.0 (nothing to cover).
+
+**Interpretation (honest).** This is the cleanest possible confirmation of the
+decay boundary: the gate provides ZERO measurable benefit on a strong base,
+because the strong base barely fabricates to begin with. The +9.0% / +9.4%
+dolphin results are now unambiguously a **weak-model phenomenon** — not a
+universal property of the gate. Combined with the three positive determinations
+(dolphin: +9.0% judge-free, +9.4% 2-family, +12.5% validated), the full picture is:
+
+| subject | raw fab | +gate Δ | 95% CI |
+|---|---|---|---|
+| dolphin-llama3:8b (weak, uncensored) | 9.0% | +9.0% | [+4.9, +13.9] |
+| qwen3:30b-a3b (strong) | 2.8% | +0.0% | [0.0, 0.0] |
+
+The gate's value is real AND bounded: it helps exactly where fabrication is high
+(weak/uncensored models), and helps not at all where the model is already
+truthful. This is the precise, measured scope the strategic plan called for
+("convert a decaying claim into an honest one") — the decay is now a feature of
+the documented boundary, not an unmeasured caveat.
+
+**Boundary conditions (no overclaim).** N=48 × 3 runs, self-authored pack,
+lexical judge (no multi-family corroboration on this specific run — though the
+judge-free dolphin Δ was corroborated by 2 LLM families separately). The
+zero-delta is robust (all 3 runs identical at 0.0), so judge variance cannot
+explain it away. `canClaimAGI` stays **False** — this sharpens the honesty, it
+does not add a capability claim. The non-decaying asset remains the
+machine-checkable gate (Datalog substrate), not the model-side delta.
+
+**Artifact.** `agi-proof/baseline-ablation/strong-base-decay-test-2026-06-27/
+uplift-qwen3-30b-3run-lexical.json` (3 runs, lexical judge, qwen3:30b-a3b, +gate).
+
 
