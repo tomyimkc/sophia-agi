@@ -1594,3 +1594,61 @@ judge-free confirmation that the model-side effect is real (+9.0% CI excludes
 (1) a judge-free run on a STRONG base (expected null — tests the decay boundary);
 (2) one real third-party pack (closes the independence gap, now turnkey).
 
+## provenance-delta-multijudge-2family-2026-06-27
+
+**Status:** RAN — multi-judge (2 distinct vendor families) reproduction on the
+validated subject (dolphin-llama3:8b). The effect survives with genuine
+judge-family independence; it clears 4 of 5 validation flags. The single miss is
+`atLeast3Runs` (run 3 was lost to repeated concurrent-session process kills).
+`canClaimAGI` stays **False**.
+
+**Setup.** Two judge families that are BOTH distinct from each other AND from the
+deepseek/meta-llama pair used in the original validated run:
+`llmhub:gpt-4o` (openai) + `llmhub:claude-sonnet-4-6` (anthropic), served via an
+OpenAI-compatible aggregator proxy (api.llmhub.com.cn). Subject `ollama:dolphin-
+llama3:8b`, local. `tools/run_unified_uplift.py --runs 3 --limit 48 --levers
++gate`. To make two genuinely-different vendors behind one key count honestly as
+≥2 families (the aggregator serves bare model ids with no `vendor/` prefix), a
+new `llmhub` preset + a `_LLMHUB_FAMILY` name→family map were added
+(`agent/model.py`, `provenance_bench/aggregate.py`), gated by 6 tests.
+
+**Result (2 runs, 96 false-case observations; run 3 lost).**
+- `+gate` hallucination Δ = **+9.4pt** (raw-alone 0.4375 → +gate 0.3438),
+  paired-bootstrap 95% CI **[+4.2%, +15.6%], EXCLUDES ZERO**.
+- per-run Δ: [+10.4pt, +8.3pt] (both positive, consistent).
+- false-positive cost **0.0%**; coverage recall 0.214 (9 of 42 hallucinations
+  fixed — the gate fires on the explicit-assertion subset it's designed for).
+- **judge κ = 0.8123** (well above the 0.40 floor), 90.6% pairwise agreement.
+- validation flags: `notMock=T`, `multiFamilyJudges=T`, `kappaAboveFloor=T`,
+  `ciExcludesZero=T`, `atLeast3Runs=**F**` (only 2 runs survived). ⇒ `validated:False`.
+
+**Interpretation (honest).** This is the *strongest internal corroboration yet*
+of the validated claim. It is NOT judge-free (it uses 2 LLM judges), but the two
+judges are independent vendors (openai + anthropic) with high agreement (κ=0.81),
+so the effect is not an artifact of any single judge's bias. Combined with the
+judge-free run (+9.0%, CI [+4.9,+13.9], `provenance-delta-survives-judge-free-
+2026-06-27` above), the picture is now: the gate cuts dolphin's hallucinated
+attributions by ~9–9.4pt with a CI excluding zero, reproducible under (a) NO LLM
+judge and (b) two independent LLM-judge families — three independent determinations
+of the same effect.
+
+**Why it does NOT formally clear `_is_validated` (and why that's honest).** The
+single failing flag is `atLeast3Runs`: the runner needs 3 complete runs and run 3
+was killed twice by concurrent-session process churn (the shared working tree
+here is actively edited by other agents). The per-run checkpoint fix (committed
+`1a9c0e27`) preserved runs 1–2 so this is a real 2-run result, not a loss. A clean
+third run on a quiet host flips the flag; the underlying Δ/κ/CI won't move
+materially (per-run Δ is consistent at +8–10pt).
+
+**Boundary conditions (no overclaim).** Still self-authored pack; still a decaying
+model-side asset (vanishes on strong bases per `calibration-advantage-is-model-
+dependent`); N=48 × 2 runs; one API key behind one proxy. The judge κ=0.81 is high
+but the two judges saw the same answers — they agree with each other, not with an
+external ground truth (the lexical judge in the judge-free run provides the
+external anchor). `canClaimAGI` stays **False**.
+
+**Artifact.** `agi-proof/baseline-ablation/multi-judge-reproduction-2026-06-27/`
+— `uplift-dolphin-2fam-2run-aggregated.json` (the corrected 2-run report) +
+`uplift-dolphin-2fam-3run.partial.json` (the raw 2-run checkpoint).
+
+
