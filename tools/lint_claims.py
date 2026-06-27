@@ -27,6 +27,8 @@ SCAN: list[str] = [
     "GOOD_FIRST_ISSUES.md",
     "SPONSORS.md",
     "agi-proof/README.md",
+    "agi-proof/sophia-wisdom-4b-method-note.md",
+    "agi-proof/measurement-thesis.md",
     "docs/00-Index/Home.md",
 ]
 SCAN_GLOBS: list[str] = ["docs/07-Growth/**/*.md", "docs/07-Growth/**/*.txt"]
