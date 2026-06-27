@@ -113,21 +113,29 @@ Two framings, both reported:
   helps (Grok 0.12→0.24, DeepSeek/Mistral ~0.16). Adapter still AHEAD on 6/9. **So the gain is real
   consistency the LoRA learned, NOT just a portable prompt any model could copy.**
 
-**This is a genuine NARROW edge — but still NOT a "4B beats frontier" headline, for two reasons:**
-1. **Markers reward the trained format.** `qualification_rate_on_contested` detects generic hedging
-   phrases the adapter was trained to emit; frontier models may qualify in prose with different
-   phrasings the marker set misses (note Mistral+scaffold reaches 0.79 — much of the residual gap
-   could be marker-vocabulary). **A ≥2-family semantic-judge cross-check on these frontier outputs is
-   owed before any headline.** (PENDING.)
-2. **Over-qualification / calibration untested here.** 0.978 qualification on *contested* cases is only
-   half the story; whether the adapter ALSO reflexively hedges *clear-cut* questions (a calibration
-   failure that would not show on a contested-only metric) is not yet measured. The low
-   over_abstention (0.003) and the novel-entity transfer pass are reassuring but not a calibration test.
+**This is a genuine NARROW edge — but the two confounds below, now BOTH RESOLVED, cut it down to size:**
 
-Honest net: against three strong large models, the 4B adapter is **measurably more consistent at
-source-discipline (qualifying contested claims, not conflating traditions), and the advantage is not
-merely the prompt** — a real, defensible niche result, pending the judge + calibration checks above.
-`candidate_only`; `canClaimAGI:false`.
+1. **Semantic-judge cross-check — RESOLVED, and it DEFLATES the marker gap** (`reality-judge-adapter-vs-mistral.json`).
+   The markers reward the trained format, so 268 source-family cases were blind-judged (randomized A/B)
+   by **three independent families** — DeepSeek, Llama-3.3-70b, Grok-4.3 — adapter vs **Mistral-large
+   WITH the scaffold** (the strongest competitor, 0.79 markers). All three prefer the adapter, but only
+   **modestly: per-judge 0.556 / 0.586 / 0.664, majority 0.646 (173–95), unanimous 82–39**, Gwet AC1
+   0.48–0.55 (κ 0.19–0.30, prevalence-deflated). So the semantic edge is REAL and corroborated, but
+   ~0.65 — **far below the marker gap**: much of the +0.19–0.49 marker lead was *vocabulary* (the adapter
+   emits the exact hedge phrases; Mistral qualifies in substance with words the markers miss).
+2. **Over-qualification / calibration — RESOLVED, and it is a real COST** (`calibration-check.json`,
+   `tools/calibration_check.py`). On *clear-cut* settled cases (protected_history/religion, where hedging
+   is miscalibration) the adapter hedges **0.37 / 0.68** (two seeds) vs base **0.13 / 0.08** — a **+0.24
+   to +0.61 over-qualification lift**. It still ANSWERS them (over_abstention 0.0, no refusals), so the
+   failure is unnecessary hedging, not refusal; clear-cut n≈38 so magnitude is noisy but the direction is
+   robust across seeds. The contested-case strength is **not free** — it comes with a reflexive-hedging tax.
+
+Honest net (final): against three strong large models, the 4B adapter is **modestly but genuinely more
+consistent at source-discipline on contested cases — judge-confirmed ~0.65 win-rate vs a scaffolded
+Mistral-large, and the advantage is not merely the prompt — but the deterministic markers OVERSTATED the
+gap, and the gain carries a measurable over-qualification cost on clear-cut cases.** A real, defensible
+NARROW/niche result; **NOT** "4B beats frontier," not general-LLM, not validated against first-party
+frontier (GPT/Claude/Gemini egress-blocked). `candidate_only`; `canClaimAGI:false`.
 
 ## Corroboration added after the pilot (seed 1 + LLM judges)
 
