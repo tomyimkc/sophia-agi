@@ -10,66 +10,66 @@
     "level3Evidence": false,
     "lambda": 1.0,
     "counts": {
-      "n": 200,
-      "answeredCorrect": 48,
-      "answeredWrong": 141,
-      "abstained": 11,
+      "n": 1000,
+      "answeredCorrect": 216,
+      "answeredWrong": 724,
+      "abstained": 60,
       "hedged": 0,
-      "answered": 189
+      "answered": 940
     },
-    "awareTotal": -93.0,
-    "awareMean": -0.465,
-    "binaryTotal": 48.0,
-    "binaryMean": 0.24,
-    "abstentionRate": 0.055,
-    "selectiveAccuracy": 0.254
+    "awareTotal": -508.0,
+    "awareMean": -0.508,
+    "binaryTotal": 216.0,
+    "binaryMean": 0.216,
+    "abstentionRate": 0.06,
+    "selectiveAccuracy": 0.2298
   },
   "lambdaSweep": {
     "schema": "sophia.abstention_lambda_sweep.v1",
     "candidateOnly": true,
     "level3Evidence": false,
-    "n": 200,
+    "n": 1000,
     "curve": [
       {
         "lambda": 0.0,
-        "awareTotal": 48.0,
-        "awareMean": 0.24,
-        "alwaysAnswerTotal": 50.7937,
+        "awareTotal": 216.0,
+        "awareMean": 0.216,
+        "alwaysAnswerTotal": 229.7872,
         "abstentionWins": false
       },
       {
         "lambda": 0.5,
-        "awareTotal": -22.5,
-        "awareMean": -0.1125,
-        "alwaysAnswerTotal": -23.8095,
+        "awareTotal": -146.0,
+        "awareMean": -0.146,
+        "alwaysAnswerTotal": -155.3191,
         "abstentionWins": true
       },
       {
         "lambda": 1.0,
-        "awareTotal": -93.0,
-        "awareMean": -0.465,
-        "alwaysAnswerTotal": -98.4127,
+        "awareTotal": -508.0,
+        "awareMean": -0.508,
+        "alwaysAnswerTotal": -540.4255,
         "abstentionWins": true
       },
       {
         "lambda": 2.0,
-        "awareTotal": -234.0,
-        "awareMean": -1.17,
-        "alwaysAnswerTotal": -247.619,
+        "awareTotal": -1232.0,
+        "awareMean": -1.232,
+        "alwaysAnswerTotal": -1310.6383,
         "abstentionWins": true
       },
       {
         "lambda": 3.0,
-        "awareTotal": -375.0,
-        "awareMean": -1.875,
-        "alwaysAnswerTotal": -396.8254,
+        "awareTotal": -1956.0,
+        "awareMean": -1.956,
+        "alwaysAnswerTotal": -2080.8511,
         "abstentionWins": true
       },
       {
         "lambda": 5.0,
-        "awareTotal": -657.0,
-        "awareMean": -3.285,
-        "alwaysAnswerTotal": -695.2381,
+        "awareTotal": -3404.0,
+        "awareMean": -3.404,
+        "alwaysAnswerTotal": -3621.2766,
         "abstentionWins": true
       }
     ],

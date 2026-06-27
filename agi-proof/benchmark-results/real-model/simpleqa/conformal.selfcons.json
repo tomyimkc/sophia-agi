@@ -4,7 +4,7 @@
   "level3Evidence": false,
   "syntheticData": false,
   "validated": false,
-  "n": 189,
+  "n": 940,
   "persistAlpha": 0.1,
   "alphaSweep": [
     {
@@ -14,7 +14,7 @@
           "policy": {
             "alpha": 0.05,
             "threshold": 0.75,
-            "n_calibration": 26,
+            "n_calibration": 109,
             "target_coverage": 0.95,
             "risk_bucket": "normal",
             "schema": "sophia.conformal_policy.v1",
@@ -23,21 +23,21 @@
           },
           "heldOut": {
             "coverage": 1.0,
-            "selectiveAccuracy": 0.2316,
-            "falseAnswerRate": 0.7684
+            "selectiveAccuracy": 0.2277,
+            "falseAnswerRate": 0.7723
           },
           "validity": {
-            "nCorrect": 22,
+            "nCorrect": 107,
             "heldOutCorrectCoverage": 1.0,
             "targetCoverage": 0.95,
-            "slack": 0.4264,
+            "slack": 0.1933,
             "holds": true
           }
         }
       },
       "validityHolds": true,
-      "nCalib": 94,
-      "nTest": 95
+      "nCalib": 470,
+      "nTest": 470
     },
     {
       "alpha": 0.1,
@@ -46,7 +46,7 @@
           "policy": {
             "alpha": 0.1,
             "threshold": 0.75,
-            "n_calibration": 26,
+            "n_calibration": 109,
             "target_coverage": 0.9,
             "risk_bucket": "normal",
             "schema": "sophia.conformal_policy.v1",
@@ -55,21 +55,21 @@
           },
           "heldOut": {
             "coverage": 1.0,
-            "selectiveAccuracy": 0.2316,
-            "falseAnswerRate": 0.7684
+            "selectiveAccuracy": 0.2277,
+            "falseAnswerRate": 0.7723
           },
           "validity": {
-            "nCorrect": 22,
+            "nCorrect": 107,
             "heldOutCorrectCoverage": 1.0,
             "targetCoverage": 0.9,
-            "slack": 0.4264,
+            "slack": 0.1933,
             "holds": true
           }
         }
       },
       "validityHolds": true,
-      "nCalib": 94,
-      "nTest": 95
+      "nCalib": 470,
+      "nTest": 470
     },
     {
       "alpha": 0.2,
@@ -77,8 +77,8 @@
         "normal": {
           "policy": {
             "alpha": 0.2,
-            "threshold": 0.75,
-            "n_calibration": 26,
+            "threshold": 0.5,
+            "n_calibration": 109,
             "target_coverage": 0.8,
             "risk_bucket": "normal",
             "schema": "sophia.conformal_policy.v1",
@@ -86,29 +86,29 @@
             "level3Evidence": false
           },
           "heldOut": {
-            "coverage": 1.0,
-            "selectiveAccuracy": 0.2316,
-            "falseAnswerRate": 0.7684
+            "coverage": 0.6787,
+            "selectiveAccuracy": 0.279,
+            "falseAnswerRate": 0.721
           },
           "validity": {
-            "nCorrect": 22,
-            "heldOutCorrectCoverage": 1.0,
+            "nCorrect": 107,
+            "heldOutCorrectCoverage": 0.8318,
             "targetCoverage": 0.8,
-            "slack": 0.4264,
+            "slack": 0.1933,
             "holds": true
           }
         }
       },
       "validityHolds": true,
-      "nCalib": 94,
-      "nTest": 95
+      "nCalib": 470,
+      "nTest": 470
     }
   ],
   "persistedPolicyByRisk": {
     "normal": {
       "alpha": 0.1,
       "threshold": 0.75,
-      "n_calibration": 48,
+      "n_calibration": 216,
       "target_coverage": 0.9,
       "risk_bucket": "normal",
       "schema": "sophia.conformal_policy.v1",

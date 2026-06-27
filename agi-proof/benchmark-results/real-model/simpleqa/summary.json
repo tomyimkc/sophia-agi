@@ -1,10 +1,10 @@
 {
-  "n": 200,
-  "attempted": 189,
-  "abstained": 11,
-  "correct": 48,
-  "accuracyOverall": 0.24,
-  "accuracyAttempted": 0.254,
+  "n": 1000,
+  "attempted": 940,
+  "abstained": 60,
+  "correct": 216,
+  "accuracyOverall": 0.216,
+  "accuracyAttempted": 0.2298,
   "files": {
     "all": "agi-proof/benchmark-results/real-model/simpleqa/simpleqa.all.deepseek.jsonl",
     "stated": "agi-proof/benchmark-results/real-model/simpleqa/simpleqa.attempted.stated.deepseek.jsonl",
