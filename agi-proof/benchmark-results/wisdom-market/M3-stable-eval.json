@@ -1,0 +1,1168 @@
+{
+  "pilot": "sophia-wisdom-4b-m3",
+  "baseModel": "google/gemma-3-4b-it",
+  "adapter": {
+    "raw": {
+      "metrics": {
+        "provenance_accuracy": {
+          "mean": 0.9933,
+          "ci": [
+            0.99,
+            0.995
+          ],
+          "runs": 3,
+          "values": [
+            0.995,
+            0.99,
+            0.995
+          ]
+        },
+        "false_attribution_rate": {
+          "mean": 0.0078,
+          "ci": [
+            0.0058,
+            0.0117
+          ],
+          "runs": 3,
+          "values": [
+            0.0058,
+            0.0117,
+            0.0058
+          ]
+        },
+        "contested_fabrication_rate": {
+          "mean": 0.0219,
+          "ci": [
+            0.0164,
+            0.0328
+          ],
+          "runs": 3,
+          "values": [
+            0.0164,
+            0.0164,
+            0.0328
+          ]
+        },
+        "citation_fidelity": {
+          "mean": 1.0,
+          "ci": [
+            1.0,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "qualification_rate_on_contested": {
+          "mean": 0.4153,
+          "ci": [
+            0.3934,
+            0.4426
+          ],
+          "runs": 3,
+          "values": [
+            0.3934,
+            0.4098,
+            0.4426
+          ]
+        },
+        "tradition_merge_rate": {
+          "mean": 0.1607,
+          "ci": [
+            0.1607,
+            0.1607
+          ],
+          "runs": 3,
+          "values": [
+            0.1607,
+            0.1607,
+            0.1607
+          ]
+        },
+        "moral_route_accuracy": {
+          "mean": 0.3921,
+          "ci": [
+            0.3529,
+            0.4706
+          ],
+          "runs": 3,
+          "values": [
+            0.4706,
+            0.3529,
+            0.3529
+          ]
+        },
+        "tool_route_accuracy": {
+          "mean": 0.2381,
+          "ci": [
+            0.1429,
+            0.2857
+          ],
+          "runs": 3,
+          "values": [
+            0.1429,
+            0.2857,
+            0.2857
+          ]
+        },
+        "over_abstention_rate": {
+          "mean": 0.0139,
+          "ci": [
+            0.0114,
+            0.0152
+          ],
+          "runs": 3,
+          "values": [
+            0.0114,
+            0.0152,
+            0.0152
+          ]
+        },
+        "useful_correctness": {
+          "mean": 0.469,
+          "ci": [
+            0.4601,
+            0.4753
+          ],
+          "runs": 3,
+          "values": [
+            0.4753,
+            0.4601,
+            0.4715
+          ]
+        },
+        "protected_history_regression": {
+          "mean": 0.0093,
+          "ci": [
+            0.0,
+            0.0278
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0278,
+            0.0
+          ]
+        },
+        "protected_religion_regression": {
+          "mean": 0.1176,
+          "ci": [
+            0.0882,
+            0.1471
+          ],
+          "runs": 3,
+          "values": [
+            0.0882,
+            0.1471,
+            0.1176
+          ]
+        }
+      }
+    },
+    "prompt": {
+      "metrics": {
+        "provenance_accuracy": {
+          "mean": 1.0,
+          "ci": [
+            1.0,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "false_attribution_rate": {
+          "mean": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "contested_fabrication_rate": {
+          "mean": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "citation_fidelity": {
+          "mean": 1.0,
+          "ci": [
+            1.0,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "qualification_rate_on_contested": {
+          "mean": 0.694,
+          "ci": [
+            0.6885,
+            0.7049
+          ],
+          "runs": 3,
+          "values": [
+            0.6885,
+            0.7049,
+            0.6885
+          ]
+        },
+        "tradition_merge_rate": {
+          "mean": 0.0298,
+          "ci": [
+            0.0179,
+            0.0357
+          ],
+          "runs": 3,
+          "values": [
+            0.0357,
+            0.0179,
+            0.0357
+          ]
+        },
+        "moral_route_accuracy": {
+          "mean": 0.9608,
+          "ci": [
+            0.9412,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            0.9412,
+            1.0,
+            0.9412
+          ]
+        },
+        "tool_route_accuracy": {
+          "mean": 1.0,
+          "ci": [
+            1.0,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "over_abstention_rate": {
+          "mean": 0.0038,
+          "ci": [
+            0.0,
+            0.0076
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0076,
+            0.0038
+          ]
+        },
+        "useful_correctness": {
+          "mean": 0.7414,
+          "ci": [
+            0.7376,
+            0.7452
+          ],
+          "runs": 3,
+          "values": [
+            0.7414,
+            0.7376,
+            0.7452
+          ]
+        },
+        "protected_history_regression": {
+          "mean": 0.0093,
+          "ci": [
+            0.0,
+            0.0278
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0278,
+            0.0
+          ]
+        },
+        "protected_religion_regression": {
+          "mean": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "prompt_gate": {
+      "metrics": {
+        "provenance_accuracy": {
+          "mean": 1.0,
+          "ci": [
+            1.0,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "false_attribution_rate": {
+          "mean": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "contested_fabrication_rate": {
+          "mean": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "citation_fidelity": {
+          "mean": 1.0,
+          "ci": [
+            1.0,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "qualification_rate_on_contested": {
+          "mean": 0.694,
+          "ci": [
+            0.6885,
+            0.7049
+          ],
+          "runs": 3,
+          "values": [
+            0.6885,
+            0.7049,
+            0.6885
+          ]
+        },
+        "tradition_merge_rate": {
+          "mean": 0.0298,
+          "ci": [
+            0.0179,
+            0.0357
+          ],
+          "runs": 3,
+          "values": [
+            0.0357,
+            0.0179,
+            0.0357
+          ]
+        },
+        "moral_route_accuracy": {
+          "mean": 0.9608,
+          "ci": [
+            0.9412,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            0.9412,
+            1.0,
+            0.9412
+          ]
+        },
+        "tool_route_accuracy": {
+          "mean": 1.0,
+          "ci": [
+            1.0,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "over_abstention_rate": {
+          "mean": 0.0228,
+          "ci": [
+            0.019,
+            0.0266
+          ],
+          "runs": 3,
+          "values": [
+            0.019,
+            0.0266,
+            0.0228
+          ]
+        },
+        "useful_correctness": {
+          "mean": 0.7287,
+          "ci": [
+            0.7262,
+            0.73
+          ],
+          "runs": 3,
+          "values": [
+            0.73,
+            0.7262,
+            0.73
+          ]
+        },
+        "protected_history_regression": {
+          "mean": 0.0371,
+          "ci": [
+            0.0278,
+            0.0556
+          ],
+          "runs": 3,
+          "values": [
+            0.0278,
+            0.0556,
+            0.0278
+          ]
+        },
+        "protected_religion_regression": {
+          "mean": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    }
+  },
+  "benchmark": "data/wisdom_market_benchmark/heldout_v1.jsonl",
+  "nCases": 354,
+  "runs": 3,
+  "base": {
+    "raw": {
+      "metrics": {
+        "provenance_accuracy": {
+          "mean": 0.9983,
+          "ci": [
+            0.995,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            0.995,
+            1.0,
+            1.0
+          ]
+        },
+        "false_attribution_rate": {
+          "mean": 0.0019,
+          "ci": [
+            0.0,
+            0.0058
+          ],
+          "runs": 3,
+          "values": [
+            0.0058,
+            0.0,
+            0.0
+          ]
+        },
+        "contested_fabrication_rate": {
+          "mean": 0.082,
+          "ci": [
+            0.082,
+            0.082
+          ],
+          "runs": 3,
+          "values": [
+            0.082,
+            0.082,
+            0.082
+          ]
+        },
+        "citation_fidelity": {
+          "mean": 1.0,
+          "ci": [
+            1.0,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "qualification_rate_on_contested": {
+          "mean": 0.2842,
+          "ci": [
+            0.2623,
+            0.3115
+          ],
+          "runs": 3,
+          "values": [
+            0.2623,
+            0.3115,
+            0.2787
+          ]
+        },
+        "tradition_merge_rate": {
+          "mean": 0.1845,
+          "ci": [
+            0.125,
+            0.2321
+          ],
+          "runs": 3,
+          "values": [
+            0.2321,
+            0.125,
+            0.1964
+          ]
+        },
+        "moral_route_accuracy": {
+          "mean": 0.3725,
+          "ci": [
+            0.3529,
+            0.4118
+          ],
+          "runs": 3,
+          "values": [
+            0.3529,
+            0.4118,
+            0.3529
+          ]
+        },
+        "tool_route_accuracy": {
+          "mean": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "over_abstention_rate": {
+          "mean": 0.0215,
+          "ci": [
+            0.0152,
+            0.0304
+          ],
+          "runs": 3,
+          "values": [
+            0.019,
+            0.0152,
+            0.0304
+          ]
+        },
+        "useful_correctness": {
+          "mean": 0.5044,
+          "ci": [
+            0.5019,
+            0.5057
+          ],
+          "runs": 3,
+          "values": [
+            0.5057,
+            0.5057,
+            0.5019
+          ]
+        },
+        "protected_history_regression": {
+          "mean": 0.0185,
+          "ci": [
+            0.0,
+            0.0278
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0278,
+            0.0278
+          ]
+        },
+        "protected_religion_regression": {
+          "mean": 0.1667,
+          "ci": [
+            0.1471,
+            0.1765
+          ],
+          "runs": 3,
+          "values": [
+            0.1471,
+            0.1765,
+            0.1765
+          ]
+        }
+      }
+    },
+    "prompt": {
+      "metrics": {
+        "provenance_accuracy": {
+          "mean": 0.99,
+          "ci": [
+            0.985,
+            0.995
+          ],
+          "runs": 3,
+          "values": [
+            0.985,
+            0.99,
+            0.995
+          ]
+        },
+        "false_attribution_rate": {
+          "mean": 0.0078,
+          "ci": [
+            0.0058,
+            0.0117
+          ],
+          "runs": 3,
+          "values": [
+            0.0117,
+            0.0058,
+            0.0058
+          ]
+        },
+        "contested_fabrication_rate": {
+          "mean": 0.0109,
+          "ci": [
+            0.0,
+            0.0164
+          ],
+          "runs": 3,
+          "values": [
+            0.0164,
+            0.0164,
+            0.0
+          ]
+        },
+        "citation_fidelity": {
+          "mean": 0.9444,
+          "ci": [
+            0.8333,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            0.8333,
+            1.0,
+            1.0
+          ]
+        },
+        "qualification_rate_on_contested": {
+          "mean": 0.4863,
+          "ci": [
+            0.459,
+            0.5082
+          ],
+          "runs": 3,
+          "values": [
+            0.459,
+            0.5082,
+            0.4918
+          ]
+        },
+        "tradition_merge_rate": {
+          "mean": 0.125,
+          "ci": [
+            0.1071,
+            0.1429
+          ],
+          "runs": 3,
+          "values": [
+            0.125,
+            0.1071,
+            0.1429
+          ]
+        },
+        "moral_route_accuracy": {
+          "mean": 0.2941,
+          "ci": [
+            0.2941,
+            0.2941
+          ],
+          "runs": 3,
+          "values": [
+            0.2941,
+            0.2941,
+            0.2941
+          ]
+        },
+        "tool_route_accuracy": {
+          "mean": 1.0,
+          "ci": [
+            1.0,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "over_abstention_rate": {
+          "mean": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "useful_correctness": {
+          "mean": 0.6781,
+          "ci": [
+            0.6578,
+            0.6882
+          ],
+          "runs": 3,
+          "values": [
+            0.6882,
+            0.6882,
+            0.6578
+          ]
+        },
+        "protected_history_regression": {
+          "mean": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "protected_religion_regression": {
+          "mean": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "prompt_gate": {
+      "metrics": {
+        "provenance_accuracy": {
+          "mean": 0.9967,
+          "ci": [
+            0.995,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            0.995,
+            0.995,
+            1.0
+          ]
+        },
+        "false_attribution_rate": {
+          "mean": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "contested_fabrication_rate": {
+          "mean": 0.0109,
+          "ci": [
+            0.0,
+            0.0164
+          ],
+          "runs": 3,
+          "values": [
+            0.0164,
+            0.0164,
+            0.0
+          ]
+        },
+        "citation_fidelity": {
+          "mean": 1.0,
+          "ci": [
+            1.0,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "qualification_rate_on_contested": {
+          "mean": 0.4863,
+          "ci": [
+            0.459,
+            0.5082
+          ],
+          "runs": 3,
+          "values": [
+            0.459,
+            0.5082,
+            0.4918
+          ]
+        },
+        "tradition_merge_rate": {
+          "mean": 0.125,
+          "ci": [
+            0.1071,
+            0.1429
+          ],
+          "runs": 3,
+          "values": [
+            0.125,
+            0.1071,
+            0.1429
+          ]
+        },
+        "moral_route_accuracy": {
+          "mean": 0.549,
+          "ci": [
+            0.4706,
+            0.5882
+          ],
+          "runs": 3,
+          "values": [
+            0.4706,
+            0.5882,
+            0.5882
+          ]
+        },
+        "tool_route_accuracy": {
+          "mean": 0.9524,
+          "ci": [
+            0.8571,
+            1.0
+          ],
+          "runs": 3,
+          "values": [
+            1.0,
+            0.8571,
+            1.0
+          ]
+        },
+        "over_abstention_rate": {
+          "mean": 0.0443,
+          "ci": [
+            0.0418,
+            0.0494
+          ],
+          "runs": 3,
+          "values": [
+            0.0494,
+            0.0418,
+            0.0418
+          ]
+        },
+        "useful_correctness": {
+          "mean": 0.6388,
+          "ci": [
+            0.6274,
+            0.6464
+          ],
+          "runs": 3,
+          "values": [
+            0.6426,
+            0.6464,
+            0.6274
+          ]
+        },
+        "protected_history_regression": {
+          "mean": 0.0926,
+          "ci": [
+            0.0556,
+            0.1389
+          ],
+          "runs": 3,
+          "values": [
+            0.1389,
+            0.0833,
+            0.0556
+          ]
+        },
+        "protected_religion_regression": {
+          "mean": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "runs": 3,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    }
+  },
+  "adapterPromptVsBasePrompt": {
+    "provenance_accuracy": {
+      "delta": 0.01,
+      "ci": [
+        0.005,
+        0.015
+      ],
+      "improves": true
+    },
+    "false_attribution_rate": {
+      "delta": 0.0078,
+      "ci": [
+        0.0058,
+        0.0117
+      ],
+      "improves": true
+    },
+    "contested_fabrication_rate": {
+      "delta": 0.0109,
+      "ci": [
+        0.0,
+        0.0164
+      ],
+      "improves": false
+    },
+    "citation_fidelity": {
+      "delta": 0.0556,
+      "ci": [
+        0.0,
+        0.1667
+      ],
+      "improves": false
+    },
+    "qualification_rate_on_contested": {
+      "delta": 0.2076,
+      "ci": [
+        0.1967,
+        0.2295
+      ],
+      "improves": true
+    },
+    "tradition_merge_rate": {
+      "delta": 0.0952,
+      "ci": [
+        0.0892,
+        0.1072
+      ],
+      "improves": true
+    },
+    "moral_route_accuracy": {
+      "delta": 0.6667,
+      "ci": [
+        0.6471,
+        0.7059
+      ],
+      "improves": true
+    },
+    "tool_route_accuracy": {
+      "delta": 0.0,
+      "ci": [
+        0.0,
+        0.0
+      ],
+      "improves": false
+    },
+    "over_abstention_rate": {
+      "delta": -0.0038,
+      "ci": [
+        -0.0076,
+        0.0
+      ],
+      "improves": false
+    },
+    "useful_correctness": {
+      "delta": 0.0633,
+      "ci": [
+        0.0494,
+        0.0874
+      ],
+      "improves": true
+    },
+    "protected_history_regression": {
+      "delta": -0.0093,
+      "ci": [
+        -0.0278,
+        0.0
+      ],
+      "improves": false
+    },
+    "protected_religion_regression": {
+      "delta": 0.0,
+      "ci": [
+        0.0,
+        0.0
+      ],
+      "improves": false
+    }
+  },
+  "adapterGateVsBaseGate": {
+    "provenance_accuracy": {
+      "delta": 0.0033,
+      "ci": [
+        0.0,
+        0.005
+      ],
+      "improves": false
+    },
+    "false_attribution_rate": {
+      "delta": 0.0,
+      "ci": [
+        0.0,
+        0.0
+      ],
+      "improves": false
+    },
+    "contested_fabrication_rate": {
+      "delta": 0.0109,
+      "ci": [
+        0.0,
+        0.0164
+      ],
+      "improves": false
+    },
+    "citation_fidelity": {
+      "delta": 0.0,
+      "ci": [
+        0.0,
+        0.0
+      ],
+      "improves": false
+    },
+    "qualification_rate_on_contested": {
+      "delta": 0.2076,
+      "ci": [
+        0.1967,
+        0.2295
+      ],
+      "improves": true
+    },
+    "tradition_merge_rate": {
+      "delta": 0.0952,
+      "ci": [
+        0.0892,
+        0.1072
+      ],
+      "improves": true
+    },
+    "moral_route_accuracy": {
+      "delta": 0.4118,
+      "ci": [
+        0.353,
+        0.4706
+      ],
+      "improves": true
+    },
+    "tool_route_accuracy": {
+      "delta": 0.0476,
+      "ci": [
+        0.0,
+        0.1429
+      ],
+      "improves": false
+    },
+    "over_abstention_rate": {
+      "delta": 0.0215,
+      "ci": [
+        0.0152,
+        0.0304
+      ],
+      "improves": true
+    },
+    "useful_correctness": {
+      "delta": 0.0899,
+      "ci": [
+        0.0798,
+        0.1026
+      ],
+      "improves": true
+    },
+    "protected_history_regression": {
+      "delta": 0.0555,
+      "ci": [
+        0.0277,
+        0.1111
+      ],
+      "improves": true
+    },
+    "protected_religion_regression": {
+      "delta": 0.0,
+      "ci": [
+        0.0,
+        0.0
+      ],
+      "improves": false
+    }
+  },
+  "boundary": "Pilot feasibility numbers; deterministic structural metrics; no LLM judge; not market-beating, not validated, not AGI."
+}
