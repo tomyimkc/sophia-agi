@@ -1,0 +1,159 @@
+name: long-horizon-runpod
+
+# Manual-only launcher that produces a GENUINE long-horizon (>=1800s "short-30min"
+# tier) autonomy run by wrapping a REAL live GRPO RunPod training run in the
+# long-horizon harness (tools/run_long_horizon.py). The harness runs HERE on the
+# GitHub runner (which has SSH egress to the rented pod; the CPU dev box does not),
+# so the harness's OWN monotonic clock measures the real GPU compute end-to-end --
+# this is the honest answer routed by agi-proof/long-horizon-runs/HONEST-WALL-2026-06-27.md.
+#
+# Like rlvr-runpod.yml this is dispatch-only, uses the RUNPOD_API_KEY secret, and
+# spends real money. runpod_rlvr.py ALWAYS deletes the pod (finally block + a remote
+# watchdog), so a runner death still reaps the GPU. On completion this workflow
+# COMMITS the harness JSONL + public report (and the copied-back pod artifacts) to
+# the dispatch branch, so the evidence is durable and does not need artifact download.
+#
+# PREREQUISITE (only the human can do this): add a VALID RunPod API key as the repo
+# secret RUNPOD_API_KEY (Settings -> Secrets and variables -> Actions).
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to confirm you accept renting a paid GPU pod'
+        required: true
+        default: ''
+      remote_mode:
+        description: 'offline = cheap remote smoke (will NOT reach 1800s); live = full GRPO (the real 30-min run)'
+        required: true
+        default: 'live'
+        type: choice
+        options: [live, offline]
+      task:
+        description: 'RLVR reward task'
+        required: true
+        default: 'provenance'
+        type: choice
+        options: [provenance, math, code]
+      epochs:
+        description: 'Training epochs (live mode)'
+        required: false
+        default: '1.0'
+      seed:
+        description: 'Training+eval seed'
+        required: false
+        default: '0'
+      gpu_type:
+        description: 'RunPod GPU type preference'
+        required: false
+        default: 'NVIDIA A100 80GB PCIe'
+      interruptible:
+        description: 'Use cheaper spot/interruptible pod (false = on-demand, recommended: spot gets preempted mid-pip-install)'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['false', 'true']
+
+# contents: write so the runner can commit the harness-generated long-horizon
+# report + JSONL back to the dispatch branch (durable evidence).
+permissions:
+  contents: write
+
+concurrency:
+  group: long-horizon-runpod-${{ github.event.inputs.task }}-${{ github.event.inputs.seed }}-${{ github.event.inputs.remote_mode }}
+  cancel-in-progress: false
+
+jobs:
+  long-horizon:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Preflight — confirm + secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "RUN" ]; then
+            echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
+            exit 1
+          fi
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set (or empty). Add a VALID key in Settings -> Secrets and variables -> Actions. Aborting (no pod created)."
+            exit 1
+          fi
+          echo "Preflight OK: confirmed, secret present. GPU runs on the rented pod; the harness times the run on this runner."
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Run the long-horizon harness around the live GRPO RunPod run
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          LH_BRANCH: ${{ github.ref_name }}
+          LH_MODE: ${{ github.event.inputs.remote_mode }}
+          LH_TASK: ${{ github.event.inputs.task }}
+          LH_EPOCHS: ${{ github.event.inputs.epochs }}
+          LH_SEED: ${{ github.event.inputs.seed }}
+          LH_GPU: ${{ github.event.inputs.gpu_type }}
+          LH_INTERRUPTIBLE: ${{ github.event.inputs.interruptible }}
+        run: |
+          # --timeout-sec 16200 (4.5h) bounds the long live step; the workflow
+          # timeout-minutes (300) is the outer bound. runpod_rlvr.py deletes the
+          # pod in finally + a remote watchdog, so neither bound can leak a pod.
+          python tools/run_long_horizon.py \
+            --spec agi-proof/long-horizon-runs/runpod-grpo-30m.spec.json \
+            --overwrite \
+            --timeout-sec 16200
+
+      - name: Show the public report
+        if: always()
+        run: |
+          shopt -s nullglob
+          for r in agi-proof/long-horizon-runs/runpod-grpo-30m-*.public-report.json; do
+            echo "=== $r ==="; cat "$r"
+          done
+
+      - name: Commit the harness report + JSONL + pod artifacts to the branch
+        if: always()
+        env:
+          LH_BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f \
+            agi-proof/long-horizon-runs/runpod-grpo-30m-*.public-report.json \
+            agi-proof/long-horizon-runs/runpod-grpo-30m-*.log.jsonl \
+            agi-proof/benchmark-results/runpod-rlvr/ \
+            agi-proof/self-extension/ssil-layer1-real.public-report.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Nothing to commit (no harness artifacts produced)."
+            exit 0
+          fi
+          git commit -m "evidence(long-horizon): live GRPO RunPod run — harness-timed report [skip ci]"
+          # Push with a small rebase-retry in case the branch advanced during the run.
+          for i in 1 2 3 4; do
+            if git push origin "HEAD:refs/heads/$LH_BRANCH"; then
+              echo "Pushed evidence commit."; exit 0
+            fi
+            echo "push failed (attempt $i); fetch+rebase and retry"
+            git fetch origin "$LH_BRANCH" || true
+            git rebase "origin/$LH_BRANCH" || { git rebase --abort || true; }
+            sleep $((2 ** i))
+          done
+          echo "::warning::Could not push evidence commit after retries; artifacts are still uploaded below."
+
+      - name: Upload artifacts (backup to the branch commit)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: long-horizon-runpod-reports
+          path: |
+            agi-proof/long-horizon-runs/runpod-grpo-30m-*
+            agi-proof/benchmark-results/runpod-rlvr/**
+            agi-proof/self-extension/ssil-layer1-real.public-report.json
+          if-no-files-found: warn
