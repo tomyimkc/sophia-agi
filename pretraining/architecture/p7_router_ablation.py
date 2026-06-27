@@ -184,13 +184,22 @@ def _eval_moerouter(m: MoELM, logits, actives, examples, *, k: int, capacity_fac
         # Dropped mass (1 - wsum) is residual-only in MoERouter.forward — the kept
         # experts are NOT renormalized to absorb it. Score that mass as uniform,
         # consistent with the fully-dropped branch above (log V). Renormalizing
-        # (wn = w/wsum) would redistribute the dropped mass onto the kept experts
-        # and erase the drop penalty, flattering topk-cap.
-        missing = max(0.0, 1.0 - wsum)
+        # (wn = w/wsum) would redistribute the dropped mass onto the kept experts:
+        # a semantics change whose effect on topk-cap is config-dependent (it can
+        # help or hurt — see confound_isolation.dropped_mass_convention), not a
+        # reliable flattering, so we avoid it.
+        missing = 1.0 - wsum
         if missing > 0.0:
             u = missing / m.V
             for k_idx in range(m.V):
                 mix[k_idx] += u
+        elif missing < 0.0:
+            # Numerical guard: floating-point error pushed the kept combine weights
+            # marginally above 1.0 (wsum should be <= 1 by construction). Rescale the
+            # mixture back to a proper distribution so the NLL can never go negative.
+            s = sum(mix)
+            if s > 0.0:
+                mix = [v / s for v in mix]
         total_loss += -math.log(max(mix[tgt], 1e-12))
     held = total_loss / max(1, T)
     slots_attempted = T * k
