@@ -97,6 +97,83 @@ stalls. Combined with §1, the blocker is now **platform-independent (macOS-arm6
 Linux-x64) and repo-source-independent (`from_path` AND real GitHub repo)**, which
 points at the lean-dojo 4.20.0 tracer itself rather than any local environment.
 
+> **Superseded by §1b/§1c below (2026-06-27).** This §1a was the *initial* read of
+> run `28270535053`. A later streamed-progress experiment (§1b) showed the Linux
+> tracer **advances** (~3.5 s/item, 617/1518) — it is **slow, not stuck**, unlike the
+> macOS-arm64 0%-CPU stall. So the "platform-independent deadlock" wording above holds
+> for **macOS-arm64** (a true deadlock) but **not** for Linux, which is a *throughput*
+> problem. L0 was then **achieved** on Linux via mathlib4 + lean-dojo's remote cache
+> (§1c). Read §1a as the hypothesis that §1b/§1c corrected with direct evidence.
+
+### 1b. RESOLVED: Linux is *slow, not stuck* (PR #187, run 28276820949)
+
+The streamed-progress experiment settled it. With `-s`/`VERBOSE=1` the tracer's
+progress bar was visible, and at the 50-min `timeout`:
+
+```
+40%|███▉ | 601/1518 [49:00<53:05, 3.47s/it]
+41%|████ | 617/1518 [49:43<1:12:36, 4.84s/it]
+KeyboardInterrupt → 2 passed in 3000.66s (0:50:00)  → exit 124
+```
+
+- The tracer reached **617/1518 (41%)** and was **actively advancing at
+  ~3.5 s/item** — it is **NOT** frozen. This is categorically different from the
+  macOS-arm64 deadlock (stuck at 1515/1518 at **0% CPU**). Linux genuinely makes
+  progress; macOS does not.
+- At ~3.5 s/item × 1518 prelude items, the extraction phase alone is **~90 min**
+  on a 2-core `ubuntu-latest` runner (the bar's own ETA showed ~2 h total). So
+  L0 on Linux is a **throughput problem, not a deadlock** — achievable given
+  time, but far too slow for a per-PR CI lane.
+- The 50-min `timeout --signal=INT --kill-after=2m` wrapper behaved exactly as
+  intended: SIGINT fired at 50:00, lean-dojo unwound (the `KeyboardInterrupt` is
+  in lean-dojo's progress `_monitor`), and the step exited 124 with the
+  diagnostic marker.
+
+**Conclusion.** macOS-arm64 = a true deadlock (separate, unsolved, and not on
+the critical path since CI is Linux). Linux = slow extraction. The cheap
+timeout-bump experiment (option 0) is done; the remaining work is **throughput**,
+which is a direction decision (see §4): cache the cold trace so it is paid once,
+trace the remote-cacheable mathlib4 to skip local extraction entirely, or run
+the cold trace on a larger runner. Because the per-PR L0 trace now always
+times out, the L0 step is gated to manual `workflow_dispatch` so it stops
+burning ~50 min on every PR; a real green L0 awaits the throughput decision.
+
+Two prior CI "greens" on this lane were **green-because-skipped**: the L0 test
+pointed at a non-existent file (`HelloWorld.lean`; the real file is
+`Lean4Example.lean`) and an un-`rfl`-provable theorem (`hello_world`), so it
+could only fail or skip. The corrected test targets `foo : a + 1 = Nat.succ a
+:= by rfl` and runs under `SOPHIA_L0_REQUIRE_TRACE=1`, which forbids skipping —
+so a future green on this lane is a genuine L0 signal, not a skip in disguise.
+
+### 1c. ACHIEVED: L0 green via mathlib4 + remote cache (PR #187, run 28278153340)
+
+The throughput fix worked. Targeting the exact mathlib4 commit lean-dojo
+publishes a trace for, `check_proof` downloads the traced repo from
+`REMOTE_CACHE_URL` instead of running the local extraction:
+
+```
+saved leanprover-community-mathlib4-29dcec…tar.gz [2,583,424,493 bytes]
+lean_dojo … get_traced_repo_path - The traced repo is available in the cache.
+lean_dojo … check_proof - Modifying Mathlib/Algebra/BigOperators/Pi.lean …
+lake env lean --threads=1 --memory=32768 …Pi*.lean      (×2: correct + wrong)
+tests/test_lean_dojo_check_proof.py::test_check_proof_mathlib4_cached_l0 PASSED
+1 passed in 176.71s (0:02:56)
+```
+
+- Target: `pi_eq_sum_univ` in `Mathlib/Algebra/BigOperators/Pi.lean` at commit
+  `29dcec074de168ac2bf835a77ef68bbe069194c5` (lean-dojo's own demo / Benchmark 4).
+- The real proof (`by ext; simp`) was **accepted**; a wrong proof (`by rfl`) was
+  **not accepted** — the no-fabrication contract held through the real kernel.
+- Ran in **~3 min** on `ubuntu-latest` via the remote cache (vs. the ~90-min
+  local lean4-example extraction), under `SOPHIA_L0_MATHLIB=1` which forbids
+  skipping — so the green is a genuine L0 signal, not a skip in disguise.
+
+**This is the first non-`candidateOnly` Lean artifact** — L0 on the viability
+ladder is demonstrated. It is plumbing, not a capability claim: `canClaimAGI`
+stays false; nothing above L0 (L1 reproduce / L2 novel / L3 disjoint) is implied.
+The same traced-project-keyed + remote-cache mechanism is what the Phase-1
+miniF2F eval will use, so this also de-risks Phase 1.
+
 ## 2. What is NOT the blocker (ruled out empirically)
 
 - **Python version.** lean-dojo's metadata declares `Requires-Python: <3.13,>=3.9`;
@@ -131,15 +208,21 @@ points at the lean-dojo 4.20.0 tracer itself rather than any local environment.
   green is possible — which is exactly why this is documented rather than
   papered over.
 
-## 4. Options to unblock L0 (status updated 2026-06-26 after the CI repro in §1a)
+## 4. Options to unblock L0 (status updated 2026-06-27 — L0 REACHED, see §1c)
+
+> **L0 was reached via option 6 (mathlib4 + lean-dojo's remote cache) — see §1c.** The
+> enumeration below is the unblock history; option 6 succeeded. Options 3–4 remain
+> relevant only for the *local minimal-repo* trace (slow on Linux per §1b, a true
+> deadlock on macOS per §1).
 
 1. ~~**Trace a real GitHub repo instead of a `from_path` local repo.**~~
    **FALSIFIED (§1a):** CI traces `yangky11/lean4-example` (a real GitHub repo via
    `LeanGitRepo`) and still hangs. Repo-source is not the cause.
-2. ~~**Run the same reproduction on Linux** (CI is ubuntu-latest).~~
-   **FALSIFIED (§1a):** ubuntu-latest hangs identically (orphaned `lake`/`lean` at
-   the 30-min timeout). The deadlock is not macOS-arm64-specific, so there is no
-   "CI-only L0" shortcut.
+2. **Run the same reproduction on Linux** (CI is ubuntu-latest).
+   **REFINED (§1b):** ubuntu-latest does *not* hang identically — the tracer **advances**
+   (~3.5 s/item, slow but progressing), unlike the macOS 0%-CPU stall. But the local
+   minimal-repo trace is still ~90 min, too slow for a per-PR lane, so "run on Linux"
+   alone didn't yield L0; the mathlib4 remote cache (option 6, §1c) did.
 3. **Bypass `trace()` entirely with a lighter verification path.** Since L0 only
    needs "one real green check + one real reject," a `lake env lean` /
    direct-tactic-exec path (no lean-dojo tracer) could satisfy L0 without the
@@ -155,12 +238,16 @@ points at the lean-dojo 4.20.0 tracer itself rather than any local environment.
    predates the 4.x `check_proof`/`LeanGitRepo` API this codebase requires). There
    is nothing to bump *to*, and pinning *older* loses the 4.x API. Pursue an
    upstream fix (option 4) rather than a version bump.
-6. **Trace mathlib4 instead of a minimal repo.** Still untried, lowest priority:
-   §1a shows the stall is in the tracer's subprocess fan-out on a *minimal* repo, so
-   a heavier repo is not obviously a fix, and it costs a multi-GB clone + trace.
+6. ✓ **DONE (§1c) — Trace mathlib4 via lean-dojo's published remote cache.** Targeting
+   the exact pre-traced mathlib4 commit, `check_proof` downloads the traced repo instead
+   of running the ~90-min local extraction: `pi_eq_sum_univ`'s real proof **accepted**,
+   `by rfl` **rejected**, in ~3 min (run `28278153340`). This is the throughput fix that
+   reached L0; the local minimal-repo trace stays slow.
 
-Recommended order: **(3) → (4) → (6)**. Do **not** claim L0 until a green-on-valid
-AND reject-on-invalid run both pass on a clean cache-miss.
+**L0 reached via (6)** — see §1c (green-on-valid AND reject-on-invalid, mathlib4 remote
+cache). For the *local* minimal-repo trace (a lighter cache-miss path), the remaining
+order is **(3 bypass) → (4 root-cause)**; option (3) `verify_lean_source` is pursued
+separately in PR #207 as a trace-free verifier (mechanics).
 
 **Cheapest first probe (try before any of the above) — `NUM_PROCS=1`.** lean-dojo's
 tracer parallelizes proof-state extraction across `NUM_PROCS` worker processes
