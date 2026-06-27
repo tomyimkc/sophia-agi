@@ -6,17 +6,18 @@ Thin formal-proofs analogue of ``tools/seal_math_code_heldout.py`` (design:
 ``docs/06-Roadmap/Formal-Proofs-Eval-Design.md`` §2; registered in
 ``agi-proof/formal-proofs-curriculum/preregistration.json``).
 
-The leakage firewall for Phase 1. The miniF2F-v2 ``test`` (244) theorem STATEMENTS
+The leakage firewall for Phase 1. The miniF2F-v2c ``test`` (244) theorem STATEMENTS
 (no proofs) are the evidence split; they must be fixed to a hash manifest BEFORE any
 proposer runs, and the proposer must be unable to read them. Because the statements
-come from an external public repo (facebookresearch/minif2f) we keep the payload
-**out of git**: the committed manifest carries SHA-256 hashes + ids + the pinned
-source commit only; the full statements live under gitignored
+come from an external public repo (the miniF2F-Lean Revisited authors' data release,
+``roozbeh-mohit/miniF2F_v2``) we keep the payload **out of git**: the committed
+manifest carries SHA-256 hashes + ids + the pinned source commit only; the full
+statements live under gitignored
 ``private/formal-proofs-heldout/``.
 
 Source layout (gitignored):
     private/formal-proofs-heldout/
-        source.json            # {"repo","commit","split","paper","license"}
+        source.json            # {"repo","commit","split","dataset","paper","license"}
         minif2f-v2-test.jsonl  # one obj/line; statement only, e.g.
                                # {"claim_id": "...", "proposition": "...",
                                #  "lean_statement": "theorem ... : ... := by"}
@@ -133,8 +134,14 @@ def build_manifest(source_dir: Path) -> dict:
             "repo": source_meta.get("repo", "PIN-BEFORE-OPEN"),
             "commit": source_meta.get("commit", "PIN-BEFORE-OPEN"),
             "split": source_meta.get("split", "test"),
+            "dataset": source_meta.get("dataset", "datasets/miniF2F_v2c.jsonl"),
             "paper": source_meta.get("paper", "miniF2F-Lean Revisited (arXiv 2511.03108)"),
             "license": source_meta.get("license", "Lean statements Apache-2.0; Metamath MIT"),
+            **(
+                {"legacyRepoAlias": source_meta["legacyRepoAlias"]}
+                if source_meta.get("legacyRepoAlias")
+                else {}
+            ),
         },
         "generatorPolicy": "Proposers/generators MUST NOT read sealed paths "
                            "(tools/heldout_seal_guard.py enforces).",
@@ -208,10 +215,15 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    _copy_private(manifest, args.source)
+    refresh_private = args.out.resolve() == MANIFEST_OUT.resolve()
+    if refresh_private:
+        _copy_private(manifest, args.source)
     n = manifest["files"][0]["itemCount"]
     print(f"wrote {args.out} ({n} sealed items, commit {manifest['source']['commit']})")
-    print(f"private payload under {PRIVATE_DIR} (gitignored)")
+    if refresh_private:
+        print(f"private payload under {PRIVATE_DIR} (gitignored)")
+    else:
+        print("private payload not refreshed (--out is not the committed manifest path)")
     return 0
 
 

@@ -59,8 +59,12 @@ def test_seal_then_check_roundtrip_and_tamper(tmp_path: Path) -> None:
     src = tmp_path / "src"
     out = tmp_path / "manifest.json"
     _write_fixture(src)
+    private_split = seal.PRIVATE_DIR / seal.SPLIT_FILE
+    before_private = private_split.read_bytes() if private_split.exists() else None
     assert seal.main(["--source", str(src), "--out", str(out)]) == 0
     assert out.exists()
+    after_private = private_split.read_bytes() if private_split.exists() else None
+    assert after_private == before_private
     # A fresh check against the same source passes.
     assert seal.check_manifest(src, out) == 0
     # Tampering with the split (adding an item) makes the committed manifest STALE.

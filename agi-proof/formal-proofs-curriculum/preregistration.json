@@ -17,11 +17,12 @@
       "tacticProposer": "agent.tactic_proposer.default_proposer(model_spec=...) → make_llm_proposer",
       "rewardInterface": "selfextend.proof_verifier.close_loop_on_proofs (kernel-accept reward)",
       "searchBudget": {
-        "beamWidth": "PIN-BEFORE-OPEN",
-        "maxDepth": "PIN-BEFORE-OPEN",
-        "maxTacticCallsPerProblem": "PIN-BEFORE-OPEN",
-        "wallclockTimeoutSecPerProblem": "PIN-BEFORE-OPEN",
-        "note": "A pass@1 number is uninterpretable without the search budget. These are part of the registered protocol — fix them before any run; changing them later is a new experiment."
+        "beamWidth": 8,
+        "maxDepth": 12,
+        "maxTacticCallsPerProblem": 96,
+        "wallclockTimeoutSecPerProblem": 900,
+        "status": "PROPOSED-BEFORE-OPEN — Tom may accept or revise before flipping status to OPEN; changing these after OPEN is a new experiment.",
+        "note": "A pass@1 number is uninterpretable without the search budget. Proposed starter budget: beam 8 × depth 12 = <=96 Lean tactic applications per problem, with a 15-minute wallclock cap. This is intentionally bounded for the first tactic-search run; it will likely abstain on many hard v2c problems."
       }
     },
     "baselineColumn": {
@@ -40,14 +41,15 @@
 
   "split": {
     "name": "miniF2F-v2 (Lean 4)",
-    "sourceCorrection": "CORRECTED 2026-06-27: the design doc's `facebookresearch/minif2f` is LEAN 3 (leanpkg.toml / `leanproject get-mathlib-cache`), NOT usable with our Lean 4 / lean-dojo 4.x stack. The Lean 4 'miniF2F-v2' is the miniF2F-Lean Revisited artifact (arXiv 2511.03108, Ospanov & Farnia); Lean 4 ports include yangky11/miniF2F-lean4 (lean-dojo author) and rahul3613/miniF2F-lean4. The exact v2-corrected Lean 4 release must be confirmed (the Revisited authors' own repo carries the v2 corrections; a generic port may be v1-era).",
-    "source": "PIN-BEFORE-OPEN (Lean 4 miniF2F-v2 repo — confirm the Revisited-paper artifact vs a port)",
-    "revisionPaper": "miniF2F-Lean Revisited (arXiv 2511.03108)",
-    "commitSha": "PIN-BEFORE-OPEN",
-    "commitShaNote": "Pin the exact Lean 4 miniF2F-v2 commit at seal time and record it here. The number is meaningless without it. v1 numbers are NOT comparable to v2.",
+    "sourceCorrection": "CORRECTED 2026-06-27: the design doc's `facebookresearch/minif2f` is LEAN 3 (leanpkg.toml / `leanproject get-mathlib-cache`), NOT usable with our Lean 4 / lean-dojo 4.x stack. The authoritative Lean 4 miniF2F-v2 release for the Revisited paper is the authors' data repo `roozbeh-mohit/miniF2F_v2` (legacy alias `roozbeh-yz/miniF2F_v2`) and Hugging Face dataset `roozbeh-yz/miniF2F_v2`. Candidate Lake ports (`yangky11/miniF2F-lean4`, `rahul3613/miniF2F-lean4`) are older/original-style miniF2F ports, not the v2c/v2s Revisited split.",
+    "source": "https://github.com/roozbeh-mohit/miniF2F_v2 — datasets/miniF2F_v2c.jsonl, split=test (competition-level miniF2F-v2c)",
+    "revisionPaper": "miniF2F-Lean Revisited (arXiv 2511.03108; OpenReview KtaHv0YUyh)",
+    "commitSha": "905eca84f37cf38a49ec54f0f03e7bf99b510168",
+    "commitShaNote": "Pinned at seal time. The sealed evidence split is the 244 `test` rows from `datasets/miniF2F_v2c.jsonl` at this commit; v1 and the older Lean 4 ports are NOT comparable to this v2c split.",
     "candidatePorts": {
-      "yangky11/miniF2F-lean4": "lean-toolchain leanprover/lean4:v4.24.0; mathlib4 rev f897ebcf72cd16f89ab4577d0c826cd14afaafc7 (NOTE: does NOT match lean-dojo's remote-cached mathlib4 — see tracedProject.cacheMatchRisk)",
-      "rahul3613/miniF2F-lean4": "ported from the original; pins UNVERIFIED — confirm whether it carries the v2 corrections"
+      "roozbeh-mohit/miniF2F_v2": "AUTHORITATIVE v2 source for sealing; data release only (JSON/JSONL, no lakefile/lean-toolchain). GitHub HEAD/main 905eca84f37cf38a49ec54f0f03e7bf99b510168; Hugging Face dataset sha 065cb8057ccfc6e70f4afdd4d8542306c0f7cdb2.",
+      "yangky11/miniF2F-lean4": "Buildable Lean 4 project, lean-toolchain leanprover/lean4:v4.24.0; mathlib4 rev f897ebcf72cd16f89ab4577d0c826cd14afaafc7. REJECTED as v2 source: its Test IDs have 0/244 overlap with the Revisited v2c test IDs.",
+      "rahul3613/miniF2F-lean4": "Buildable Lean 4 project, lean-toolchain leanprover/lean4:v4.6.0; mathlib4 rev e3e4eeab8cbfb7220b4d1e0f0117ecf993174909. REJECTED as v2 source: README says it is a Lean 4 version of the original facebookresearch miniF2F."
     },
     "evidenceSplit": "test (244)",
     "warmupAblationSplit": "valid (244) — warmup/ablation ONLY, never cited as evidence (mirrors training-oracle vs evidence-oracle rule)",
@@ -62,37 +64,38 @@
 
   "tracedProject": {
     "role": "LOAD-BEARING: lean-dojo 4.x verification is traced-repo-keyed — check_proof resolves Theorem(LeanGitRepo(url, commit), file, name) against a TRACED Lean project, not a stateless snippet. The harness must point at a built/traced miniF2F Lean project (or cached trace), not pass a repo_url string.",
-    "leanProjectUrl": "PIN-BEFORE-OPEN",
-    "leanProjectCommit": "PIN-BEFORE-OPEN",
-    "leanToolchain": "PIN-BEFORE-OPEN (the lean-toolchain the miniF2F Lean project pins)",
+    "leanProjectUrl": "DERIVED-PROJECT-REQUIRED-BEFORE-OPEN: materialize a Lake project from https://github.com/roozbeh-mohit/miniF2F_v2@905eca84f37cf38a49ec54f0f03e7bf99b510168, datasets/miniF2F_v2c.jsonl test rows. No authoritative public Lake project for the Revisited v2c IDs was found.",
+    "leanProjectCommit": "DERIVED-PROJECT-COMMIT-PENDING-BEFORE-OPEN; source commit is 905eca84f37cf38a49ec54f0f03e7bf99b510168 and sealed file sha256 is 9769f7d551056db16b1270a583909a65cf1fdaa1486a7a6c601c6b3788729605.",
+    "leanToolchain": "PROPOSED for derived project: leanprover/lean4:v4.24.0 with Mathlib v4.24.0; must be confirmed by Linux build/trace before OPEN.",
     "ciCachePlan": {
-      "mechanism": "lean-dojo remote cache + actions/cache of ~/.cache/lean_dojo, keyed on leanProjectCommit — the SAME mechanism proven at L0 (Lean-L0-Trace-Deadlock.md §1c: 2.5GB mathlib4 cache, check_proof in ~3 min).",
-      "note": "A CI cache of the traced project is a Phase-1 PREREQUISITE, not an afterthought — local cold tracing of mathlib is ~1 hr / 32 GB RAM (lean-dojo docs) and infeasible on a 2-core runner."
+      "mechanism": "Selected option (b): one-off trace of the derived miniF2F-v2c Lake project on a 32GB Linux box, then persist ~/.cache/lean_dojo with actions/cache keyed on the derived project commit + Mathlib commit. Do NOT cold-trace on Tom's Mac.",
+      "note": "A CI cache of the traced project remains a Phase-1 PREREQUISITE, not an afterthought. The official v2 source is data-only, so OPEN is blocked until the derived Lake project exists and its trace/cache is created on Linux."
     },
     "cacheMatchRisk": {
-      "finding": "INVESTIGATED 2026-06-27: the L0 ~3-min result depended on targeting lean-dojo's OWN cached mathlib4 commit (29dcec074... @ Lean v4.20.0). The miniF2F-v2 Lean 4 ports pin a DIFFERENT mathlib4 — yangky11/miniF2F-lean4 uses mathlib4 f897ebcf72cd16... @ Lean v4.24.0. lean-dojo traces a repo's full dependency closure, so tracing miniF2F re-traces its mathlib4 dep; cache reuse only happens if THAT mathlib4 commit is also in lean-dojo's remote cache.",
-      "implication": "The L0 cache free-lunch does NOT automatically transfer to miniF2F-v2. Whether lean-dojo publishes a remote cache for the port's mathlib4 commit is UNVERIFIED (could not check — external git is blocked here, see openChecklist).",
+      "finding": "RESOLVED-PLAN 2026-06-27: the L0 ~3-min result depended on lean-dojo's cached mathlib4 commit 29dcec074de168ac2bf835a77ef68bbe069194c5 @ Lean v4.20.0. HEAD checks against https://dl.fbaipublicfiles.com/lean-dojo showed 29dcec mathlib4 is present (HTTP 200) but mathlib4 f897ebcf72cd16f89ab4577d0c826cd14afaafc7, yangky11/miniF2F-lean4@5746b7d6c47855ce1294bed87329618ff7f1bc31, and the official v2 data repo cache name are not published there (HTTP 403).",
+      "implication": "The L0 cache free-lunch does NOT transfer to the miniF2F-v2c task. The older buildable `yangky11` port is not the Revisited v2 source (0/244 test-ID overlap), so using it would seal/evaluate the wrong split. The honest path is a derived v2c Lake project plus one-off Linux trace/cache before OPEN.",
       "options": [
         "(a) Choose/produce a miniF2F-v2 Lean 4 build whose mathlib4 dep matches a lean-dojo-CACHED commit (ideal: matches 29dcec0/v4.20.0) → cheap CI trace like L0.",
         "(b) Trace the port's mathlib4 once on a 32GB Linux machine, persist ~/.cache/lean_dojo via actions/cache, then per-run tracing only touches the small miniF2F files. READY: .github/workflows/formal-proofs-trace-cache.yml (workflow_dispatch) + tools/trace_minif2f_project.py do exactly this (restore/save cache split; set runner_label to a >=32GB runner).",
         "(c) Confirm lean-dojo already caches the port's mathlib4 commit (download-only, like L0)."
       ],
-      "resolveBefore": "OPEN"
+      "selectedOption": "(b)",
+      "resolveBefore": "OPEN — selected plan is recorded, but the derived project trace/cache still must exist before Tom flips status to OPEN."
     }
   },
 
-  "baseModel": "PIN-BEFORE-OPEN",
+  "baseModel": "TOM-DECISION-BEFORE-OPEN (cost/contamination call)",
   "recipe": {
     "method": "No training in this experiment — inference-time verifier-gated proof search (proposer B) vs one-shot baseline (A). (Distinct from the math/code curriculum, which is QLoRA SFT.)",
-    "modelSpec": "PIN-BEFORE-OPEN (the agent.model spec backing make_llm_proposer)",
-    "knowledgeCutoff": "PIN-BEFORE-OPEN",
+    "modelSpec": "TOM-DECISION-BEFORE-OPEN (the agent.model spec backing make_llm_proposer)",
+    "knowledgeCutoff": "TOM-DECISION-BEFORE-OPEN",
     "knowledgeCutoffRule": "Must be recorded and dated relative to the miniF2F-v2 revision used. We do not assert contamination-freedom; we assert the cutoff is documented and the residual risk named.",
     "leanDojoVersion": "4.20.0",
-    "leanToolchain": "PIN-BEFORE-OPEN",
+    "leanToolchain": "PROPOSED for derived project: leanprover/lean4:v4.24.0; confirm in Linux build/trace before OPEN.",
     "seeds": [0, 1, 2],
     "minSeedsForCitedNumbers": 3,
     "decontamination": "tools/seal_formal_proofs_heldout.py --check (thin adaptation of seal_math_code_heldout.py) → CLEAN",
-    "holdoutSeal": "agi-proof/formal-proofs-curriculum/heldout-seal.manifest.json (created by the seal tool; not yet generated)"
+    "holdoutSeal": "agi-proof/formal-proofs-curriculum/heldout-seal.manifest.json (244-item public hash manifest generated 2026-06-27 from the gitignored private split)"
   },
 
   "leakageControls": {
@@ -164,11 +167,11 @@
 
   "openChecklist": [
     "DONE (2026-06-27): Build tools/seal_formal_proofs_heldout.py + extend tools/heldout_seal_guard.py to cover the formal-proofs proposer paths. Validated by tests/test_formal_proofs_seal.py (fixture-level).",
-    "BLOCKED HERE (external git denied by org proxy, 403): Stage the real miniF2F-v2 test statements under private/formal-proofs-heldout/ (split + source.json), run tools/seal_formal_proofs_heldout.py, commit the hash manifest; this fills split.{source,commitSha} and --check must report CLEAN. Must be done in an environment WITH external git access (Tom's machine or a network-enabled CI job).",
-    "Confirm the Lean 4 miniF2F-v2 source: the Revisited-paper artifact (arXiv 2511.03108) vs a port (yangky11/ or rahul3613/miniF2F-lean4). NOT facebookresearch/minif2f (Lean 3).",
-    "Resolve tracedProject.cacheMatchRisk: pick option (a)/(b)/(c) — i.e. ensure the port's mathlib4 dep is lean-dojo-cacheable, else budget a one-off 32GB mathlib trace + actions/cache. Fill tracedProject.{leanProjectUrl, leanProjectCommit, leanToolchain}.",
-    "Fill baseModel, recipe.modelSpec, recipe.knowledgeCutoff, recipe.leanToolchain.",
-    "Fill proposer.primary.searchBudget.* (beam, depth, tactic-call cap, per-problem timeout).",
+    "DONE (2026-06-27): Stage the real miniF2F-v2c test statements under private/formal-proofs-heldout/ (split + source.json), run tools/seal_formal_proofs_heldout.py, commit the hash manifest; --check reports CLEAN. Private statements remain gitignored.",
+    "DONE (2026-06-27): Confirmed the Lean 4 miniF2F-v2 source as the Revisited-paper artifact `roozbeh-mohit/miniF2F_v2` / Hugging Face `roozbeh-yz/miniF2F_v2`, not facebookresearch/minif2f (Lean 3) and not the older `yangky11`/`rahul3613` ports.",
+    "OPEN-BLOCKER (selected option b): materialize a derived Lean 4 Lake project from the sealed v2c source, confirm leanprover/lean4:v4.24.0 + Mathlib v4.24.0 builds it, trace it once on a 32GB Linux box, and persist ~/.cache/lean_dojo via actions/cache. Do NOT trace on Tom's Mac.",
+    "TOM-DECISION-BEFORE-OPEN: Fill baseModel, recipe.modelSpec, and recipe.knowledgeCutoff.",
+    "PROPOSED (Tom may accept/revise before OPEN): proposer.primary.searchBudget = beamWidth 8, maxDepth 12, maxTacticCallsPerProblem 96, wallclockTimeoutSecPerProblem 900.",
     "Tom approves → flip status DRAFT → OPEN. Only then may any eval run."
   ]
 }
