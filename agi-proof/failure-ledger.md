@@ -1914,5 +1914,69 @@ small for a meaningful Δ — the value of this run is the HEADROOM measurement
 `agi-proof/baseline-ablation/claimreview-eval-2026-06-27/claimreview-obscure-dolphin-60.json`.
 A qwen3 confirmation run is in flight.
 
+## provenance-delta-multijudge-2family-3run-validated-2026-06-27
+
+**Status:** RAN — the clean 3rd run that the 2-family multi-judge reproduction was
+missing. **All five validation flags now pass → `validated: True`.** This is a
+second fully-validated multi-judge determination of the provenance anti-fabrication
+delta (the first being the original +12.5% headline with a different judge pair). It
+does NOT add a new capability; `canClaimAGI` stays **False**.
+
+**Why this run.** The prior entry `provenance-delta-multijudge-2family-2026-06-27`
+cleared 4 of 5 flags; the single miss was `atLeast3Runs` (run 3 was killed twice by
+concurrent-session process churn on the shared host). Per-run deltas were consistent
+(+8–10pt), so a clean 3rd run on a quiet host was predicted to flip the flag without
+moving the effect. It did exactly that.
+
+**Setup.** Identical judges and config to the 2-run entry: subject
+`dolphin-llama3:8b`, judges `llmhub:gpt-4o` (openai) + `llmhub:claude-sonnet-4-6`
+(anthropic) — two independent vendor families, distinct from each other and from the
+original deepseek/meta-llama pair. `--runs 3 --limit 48 --levers +gate`.
+- **Serving difference (boundary, honest):** the subject was served by a transient
+  RunPod RTX 4090 pod (the prior 2 runs used local Ollama). Same ollama model id and
+  quant (`dolphin-llama3:8b`); GPU vs local CPU changes inference speed, not weights.
+  The artifact's `model` field records the (now-terminated) pod proxy URL for
+  provenance. This is a quiet, isolated host — the churn that killed run 3 last time
+  does not exist on a dedicated pod, which is why the 3rd run completed cleanly here.
+- The judges were called from the run host via the llmhub aggregator over HTTPS.
+
+**Result (3 runs, 144 false-case observations, all 3 completed cleanly).**
+- `+gate` hallucination Δ = **+9.0%** (alone 0.4236 → gated 0.3333), paired-bootstrap
+  95% CI **[+4.2%, +14.6%], EXCLUDES ZERO**.
+- per-run Δ: [+8.3pt, +8.3pt, +10.4pt] — all positive, consistent.
+- false-positive cost **0.0%**; coverage recall 0.230.
+- judge **κ = 0.7637** (above the 0.40 floor), 88.2% pairwise agreement.
+- validation flags: notMock=T, multiFamilyJudges=T, kappaAboveFloor=T,
+  atLeast3Runs=**T**, ciExcludesZero=T ⇒ **`validated: True`**.
+
+**Interpretation (honest).** The effect is unchanged from the 2-run checkpoint within
+noise (Δ +9.4%→+9.0%, κ 0.81→0.76; the 3rd run's +10.4pt is in-band). The provenance
+gate's anti-fabrication advantage on dolphin now has TWO fully-validated multi-judge
+determinations (original +12.5% with deepseek+llama; this +9.0% with gpt-4o+claude)
+plus the judge-free determination (+9.0%, `provenance-delta-survives-judge-free-
+2026-06-27`) — three independent labelings, all CI-excludes-0, same direction.
+
+**What this does and does NOT change.**
+- It DOES: close the one open flag on the multi-judge axis; the reproduction is now
+  `validated: True` on its own terms.
+- It does NOT change `canClaimAGI` (stays **False**), add a new capability, or alter
+  the decaying-asset boundary: still a WEAK-model phenomenon (Δ=0 on strong base,
+  `provenance-delta-decays-to-zero-on-strong-base-2026-06-27`), still a self-authored
+  pack, still NOT third-party-*reviewer* evidence.
+
+**Boundary conditions (no overclaim).** N=48 × 3 runs; self-authored provenance pack;
+one API key behind one aggregator proxy (gpt-4o + claude are distinct vendor families
+but both judged the same answers — they corroborate each other, not an external gold;
+the lexical judge in the judge-free run is the external anchor). Subject served on a
+transient GPU pod (weights identical to the local runs). `canClaimAGI` stays **False**.
+
+**Artifacts.**
+`agi-proof/baseline-ablation/multi-judge-reproduction-2026-06-27/uplift-dolphin-2fam-3run-clean.json`
+(SHA-256 `1ec1b7aedfa4b6ae54c316ae87342a5efd6fd95efa249ec3c586a44f4b391075`; the
+validated 3-run report) + `...-3run-clean.partial.json` (raw per-case rows, 3×48).
+Completes the `atLeast3Runs` gap noted in
+`provenance-delta-multijudge-2family-2026-06-27`; that entry's 2-run numbers stand as
+the honest record of the churn-interrupted attempt.
+
 
 

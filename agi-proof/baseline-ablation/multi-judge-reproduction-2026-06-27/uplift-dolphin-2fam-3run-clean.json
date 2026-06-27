@@ -1,0 +1,47 @@
+{
+  "benchmark": "unified-uplift",
+  "model": "ollama:dolphin-llama3:8b@https://34f9x6t8vpoh3t-11434.proxy.runpod.net/v1",
+  "grounded": false,
+  "visibility": "public-aggregate",
+  "runs": 3,
+  "cases": 48,
+  "judgeFamilies": 2,
+  "judgeSpecs": [
+    "llmhub:gpt-4o",
+    "llmhub:claude-sonnet-4-6"
+  ],
+  "scopeNote": "Provenance/attribution discipline on checkable cases — NOT general capability or AGI. +mcp-tools is tool-grounded retrieval + self-verification, not model intelligence. A lever is VALIDATED only under the no-overclaim gate (>=2 judge families, kappa>=0.40, >=3 runs, 95% CI excludes 0).",
+  "levers": {
+    "+gate": {
+      "hallucinationAlone": 0.4236,
+      "hallucinationLever": 0.3333,
+      "delta": 0.0903,
+      "ciDelta": [
+        0.0417,
+        0.1458
+      ],
+      "perRunDelta": [
+        0.0834,
+        0.0833,
+        0.1042
+      ],
+      "falseObs": 144,
+      "falsePositiveCost": 0.0,
+      "coverageRecall": 0.2295,
+      "judgeAgreement": {
+        "items": 144,
+        "judges": 2,
+        "pairwiseAgreement": 0.8819,
+        "meanPairwiseKappa": 0.7637
+      },
+      "validated": true,
+      "validatedChecks": {
+        "notMock": true,
+        "multiFamilyJudges": true,
+        "kappaAboveFloor": true,
+        "atLeast3Runs": true,
+        "ciExcludesZero": true
+      }
+    }
+  }
+}
