@@ -30,8 +30,22 @@
     "note": "religion format is consistently ~1/6 across all runs (eval-format quirk, not content), capping religion's combined"
   },
   "mechanisms_exercised": {
-    "moe_adapt_lora_rank_alloc": "ran on the pod (the remote train_lora invocation carried --lora-rank-alloc; the allocated adapter's content differs from the uniform 3-epoch adapter, confirming the rank_pattern took effect). Exact per-type rank_pattern is in the run log's [lora-rank-alloc] line / the artifact.",
-    "z3_solver_attestation": "the pod cloned this branch, whose requirements-lora.txt installs z3-solver, so the W2 oracle's solver_attestation runs on backend=z3 (proven offline to flip held/z3_unavailable -> accepted/z3). The on-pod promotion.public-report.json is in the run artifact."
+    "moe_adapt_lora_rank_alloc": {
+      "ran": true,
+      "uniform_r": 16,
+      "rank_pattern": {"q_proj": 17, "k_proj": 17, "v_proj": 17, "o_proj": 17, "gate_proj": 16, "up_proj": 15, "down_proj": 16},
+      "trainable_params": 29924352,
+      "trainable_pct": 0.9604,
+      "note": "VERIFIED from the run's train.log [lora-rank-alloc] line. Redistribution is MODEST (15-17 around uniform 16): cheap attention modules (small fan_out) got +1, the large up_proj got -1. So the allocated and uniform-3ep adapters are near-identical in capacity at r=16 — which is WHY the +6.2pt content gain over uniform-3ep must be read as eval noise, not the allocation."
+    },
+    "z3_solver_attestation": {
+      "verified_on_pod": true,
+      "solver_attestation": "accepted (z3)",
+      "oraclePromote": true,
+      "verdict": "promote",
+      "breachingInvariants": [],
+      "note": "VERIFIED from the run's step-6 promotion report. The pod cloned this branch (requirements-lora.txt installs z3-solver), so all five invariants ran on backend=z3 and the W2 oracle PROMOTED — flipping run #7's reject-on-missing-z3 to a real solver-checked promote, exactly as proven offline."
+    }
   },
   "result_summary": "The moe/adapt-allocated 3-epoch QLoRA adapter scored 90.6% CONTENT (29/32) on the held-out provenance set — the highest of the three real-GPU runs (base 71.9%, uniform-3ep 84.4%, alloc-3ep 90.6%). It exercises BOTH new mechanisms end-to-end on hardware. The gain over the uniform 3-epoch adapter (+6.2pt) is WITHIN single-judge / n=32 / 1-seed noise and must NOT be read as the allocator outperforming uniform — it is a successful end-to-end exercise plus a directional datapoint, not a validated comparison.",
   "claim": "real-GPU LoRA eval-ladder datapoint exercising moe/adapt allocation + z3 oracle (NOT a capability claim)",

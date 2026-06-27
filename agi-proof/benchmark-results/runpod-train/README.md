@@ -58,13 +58,20 @@ protocol. `canClaimAGI` unchanged (false).
 |---|---|---|---|---|---|---|
 | #5 | 1 | uniform | 23/32 (71.9%) | 23/32 (71.9%) | **0.0pt** (null) | — |
 | #7 | 3 | uniform | 23/32 (71.9%) | **27/32 (84.4%)** | **+12.5pt** | reject (z3 unavailable; all quality gates passed) |
-| #9 | 3 | `--lora-rank-alloc` + z3 | 23/32 (71.9%) | **29/32 (90.6%)** | **+18.75pt** | (z3 now installed → solver-checked; report in artifact) |
+| #9 | 3 | `--lora-rank-alloc` + z3 | 23/32 (71.9%) | **29/32 (90.6%)** | **+18.75pt** | **promote** (solver-checked, z3) ✓ |
 
 > Run #9 (`qwen2.5-3b-lora-3ep-rankalloc-seed0.eval-ladder.public-report.json`) exercises BOTH
-> the moe/adapt LoRA rank allocator and the z3-enabled W2 oracle on hardware. The allocated
-> adapter's content (90.6%) differs from the uniform 3-epoch adapter (84.4%), confirming the
-> rank_pattern took effect — but the **+6.2pt over uniform is within single-judge / n=32 / 1-seed
-> noise** and is NOT a validated allocator-beats-uniform claim. A validated comparison needs the
-> P6 preregistration protocol (≥3 seeds, 2 non-qwen judge families, κ≥0.40, 95% CI).
+> new mechanisms on hardware, **verified from the run's artifact + logs**:
+> - **moe/adapt allocator ran** — literal `rank_pattern={q/k/v/o:17, gate:16, up:15, down:16}`
+>   (uniform r=16). The redistribution is **modest** (15–17), so the allocated and uniform-3ep
+>   adapters are near-identical in capacity — which is exactly why the +6.2pt over uniform-3ep is
+>   **eval noise, not the allocation**.
+> - **z3 W2 oracle PROMOTED** — `solver_attestation: accepted (z3)`, `oraclePromote: true`,
+>   `verdict: promote`, `breachingInvariants: []` — flipping run #7's reject-on-missing-z3 to a
+>   real solver-checked promote, exactly as proven offline.
+>
+> The 90.6% content and +18.75pt over base remain **single-judge / n=32 / 1-seed → candidate-only**.
+> A validated comparison needs the P6 preregistration protocol (≥3 seeds, 2 non-qwen judge
+> families, κ≥0.40, 95% CI).
 
 The `*.log` files in this directory are earlier SFT / SSH-smoke run logs.
