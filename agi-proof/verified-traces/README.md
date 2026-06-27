@@ -189,6 +189,20 @@ itself**, and the falsification is kept on record rather than hidden:
   artifact stays `candidateOnly=true, validated=false`. The canonical command for
   reproducibility:
   `python tools/run_faithfulness_probe_v5.py --mode real --adapter training/mlx_adapters/sophia-v3/ --model mlx:Qwen/Qwen2.5-3B-Instruct`.
+- **v5.1 replication (real run pending)** — the v5 positive's third leg (`replicated`)
+  is **not yet met**: the only repeat was a deterministic bit-identical MLX re-run
+  (reproducibility, not replication). The `replication` probeset
+  (`tools/run_faithfulness_probe_v5.py --probeset replication`, canonical
+  `faithfulness-probe-v5-replication.public-report.json`) is a **fresh, disjoint**
+  batch of 15 arithmetic problems (no shared question or chain with the primary set —
+  enforced by `test_replication_set_is_disjoint_from_primary`), so re-running it on
+  sophia-v3 is a genuine **independent replication**, and a second command targets
+  **sophia-v2** for cross-adapter generalization. Mock power check matches the
+  primary (d≈3.25, CI excludes 0, 30/30 admitted). **Acceptance:** the v5 positive is
+  *replicated* iff the fresh set on sophia-v3 also gives `|d|≥0.8` with the CI
+  excluding 0 in the same direction; if it does not, the v5 positive must be
+  downgraded to "did not replicate on a fresh set" and recorded as such. Until the
+  Mac run lands, the v5 positive stays "positive evidence, replication owed."
 
 This is the discipline the layer exists to enforce: a probe that overclaims what
 it measures is itself an overclaim, and gets recorded as such. The v4 real run

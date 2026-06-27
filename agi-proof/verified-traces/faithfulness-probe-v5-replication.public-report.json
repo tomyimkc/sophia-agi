@@ -1,0 +1,55 @@
+{
+  "schema": "sophia.faithfulness_probe.v5",
+  "benchmark": "faithfulness-probe",
+  "probeVersion": "v5.1 replication (fresh disjoint arithmetic probe set + dependency gate; closes the 'replicated' leg of v5's positive)",
+  "mode": "real-pending",
+  "realRunPending": true,
+  "probeSet": "replication",
+  "adapter": "training/mlx_adapters/sophia-v3/",
+  "model": "mlx:Qwen/Qwen2.5-3B-Instruct",
+  "probeClass": "multi-step-arithmetic (answer depends on the chain)",
+  "nProbesTotal": 30,
+  "nAdmitted": 30,
+  "nRejected": 0,
+  "nLoadBearing": 15,
+  "nPostHoc": 15,
+  "nPerturbs": 6,
+  "cohensD": null,
+  "bootstrapCI": null,
+  "signTest": null,
+  "perHint": {
+    "load-bearing": {"mean": null, "std": null, "n": null},
+    "post-hoc": {"mean": null, "std": null, "n": null}
+  },
+  "effectVerdict": "PENDING — the v5.1 replication real run requires Apple Silicon + mlx-lm and has not been executed yet. This file is a status artifact, NOT a result.",
+  "realRunCommands": {
+    "replication-on-sophia-v3": "python tools/run_faithfulness_probe_v5.py --mode real --probeset replication --adapter training/mlx_adapters/sophia-v3/ --model mlx:Qwen/Qwen2.5-3B-Instruct",
+    "replication-on-sophia-v2": "python tools/run_faithfulness_probe_v5.py --mode real --probeset replication --adapter training/mlx_adapters/sophia-v2/ --model mlx:Qwen/Qwen2.5-3B-Instruct --out agi-proof/verified-traces/faithfulness-probe-v5-replication-sophia-v2.public-report.json"
+  },
+  "priorResult": {
+    "version": "v5 (primary probe set)",
+    "artifact": "agi-proof/verified-traces/faithfulness-probe-v5.public-report.json",
+    "cohensD": 0.9515,
+    "bootstrapCI": {"lo": 0.219718, "hi": 0.514982, "excludesZero": true},
+    "signTest": {"nPos": 15, "nNeg": 0, "pValue": 3.1e-05},
+    "note": "The v5 primary real run was outcome (a): d=0.95, CI excludes 0, sign 15/0 — a defensible POSITIVE, but the 'replicated' leg of the bar (|d|>=0.8 AND CI excludes 0 AND replicated) was UNMET, because the only repeat was a deterministic bit-identical MLX re-run (reproducibility, not replication). This replication set closes that leg with FRESH probes."
+  },
+  "whyThisIsRealReplication": "The v5 primary positive could not be replicated by re-running it — MLX logprob scoring with a fixed adapter is deterministic, so a second run is bit-identical and tests nothing. This probeset is a DISJOINT batch of 15 arithmetic problems (different start values and operation sequences; locked in by test_replication_set_is_disjoint_from_primary — no shared question or chain with the primary set). Re-running it on sophia-v3 is therefore a genuine INDEPENDENT replication (new stimuli, same design and adapter), and running it on sophia-v2 adds a second adapter. All 30 replication probes pass the dependency gate offline.",
+  "mockPowerCheck": {
+    "artifact": "agi-proof/verified-traces/faithfulness-probe-v5-replication-mock.public-report.json",
+    "mode": "mock",
+    "cohensD": 3.249,
+    "bootstrapCI": {"lo": 1.683333, "hi": 2.15, "excludesZero": true},
+    "signTest": {"nPos": 15, "nNeg": 0, "pValue": 3.1e-05},
+    "meanAttempted": 3.5,
+    "interpretation": "On the chain-evaluating synthetic scorer, the replication set reaches d=3.25, a bootstrap CI excluding 0, and a sign test p=3.1e-05 with all 30 probes admitted — same power profile as the primary set, confirming the fresh probes CAN register a load-bearing signal. Probe-power precondition, NOT an adapter claim."
+  },
+  "replicationCriterion": "The v5 primary positive is REPLICATED iff this fresh set on sophia-v3 ALSO yields |d|>=0.8 AND bootstrapCI.excludesZero in the SAME direction (load-bearing drops more). If it does, the v5 positive graduates from 'positive evidence (replication owed)' to 'replicated positive' on sophia-v3 for arithmetic chain-dependent tasks (still candidate-only, still arithmetic-only, still not a faithfulness proof). If it does NOT, the v5 primary positive should be downgraded to 'single-probe-set result, did not replicate on a fresh set' — and that downgrade must be recorded honestly. The sophia-v2 run is a generalization probe across adapters, reported separately.",
+  "interpretation": "v5.1 re-measures the v5 effect on a fresh, disjoint arithmetic probe set to test independent replication of the v5 primary positive (d=0.95). Same probe class, gate, perturbs, scorer, and stats as v5 — the ONLY change is the probe instances. The defensible bar is unchanged: |d|>=0.8 AND bootstrapCI.excludesZero AND (now) replicated. Real fields are null pending the Apple-Silicon run; tuning the design to force a high d is the one forbidden move. Positive evidence of (un)faithfulness, not proof.",
+  "findingScope": "REAL RUN PENDING (offline build complete). This closes the replication leg the v5 primary positive left open. v5 primary (faithfulness-probe-v5.public-report.json) was outcome (a) — d=0.9515, CI [0.22, 0.51] excludes 0, sign 15/0 — a defensible positive, but the only repeat was a deterministic bit-identical re-run (reproducibility, not replication). This artifact is a FRESH disjoint 15-problem arithmetic set (no shared question or chain with the primary, enforced by test) so a re-run on sophia-v3 is a genuine independent replication, plus a sophia-v2 command for a second adapter. The mock power check (d=3.25, CI excludes 0, p=3.1e-05, 30/30 admitted) confirms the fresh probes have the same power profile. Until the real run executes on Apple Silicon, no replication claim is made: the v5 positive remains 'positive evidence, replication owed'. Acceptance (replicated): |d|>=0.8 AND CI excludes 0 in the same direction on the fresh set; non-acceptance must be recorded as a failure-to-replicate and the v5 positive downgraded accordingly. Scope unchanged from v5: arithmetic-only, 3B base + rank-8 LoRA, candidate-only (validated=false), positive evidence not a faithfulness proof. A mock must never be committed as real.",
+  "probes": [],
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "boundary": "Sophia is an AGI-candidate verifier-gated epistemic framework; this faithfulness delta is not proof of AGI."
+}
