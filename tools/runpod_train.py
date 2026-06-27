@@ -257,6 +257,11 @@ python tools/eval_ladder.py --backend hf --model "$SOPHIA_MODEL" --adapter {adap
   || echo "[train] eval_ladder failed (non-fatal); adapter still returned"
 cp training/local_sophia_v2/eval_ladder_adapter.json /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
 
+# 3b) per-item answer transcripts (base + adapter) for the VALIDATED 2-judge protocol.
+#     eval_local_model writes benchmark/model_runs/local-<label>-<domain>.json (raw answers).
+tar -czf /workspace/sophia-runpod/answers.tar.gz benchmark/model_runs/local-*.json 2>/dev/null \
+  && echo "[train] answer transcripts tarred" || echo "[train] no answer transcripts to tar"
+
 # 4) W2 promotion gate (protected-floor proof; reads the eval ladder + adapter seed)
 python tools/promote_adapter.py \
   --adapter-config {adapter_dir}/sophia_lora_config.json \
@@ -563,6 +568,7 @@ def main(argv: list[str] | None = None) -> int:
                 ("eval_ladder_adapter.json", f"{pod_id}.eval_ladder_adapter.json", True),
                 ("eval_ladder_sft.json", f"{pod_id}.eval_ladder_sft.json", False),
                 ("promotion.public-report.json", f"{pod_id}.promotion.public-report.json", True),
+                ("answers.tar.gz", f"{pod_id}.answers.tar.gz", False),
                 ("repo-head.txt", f"{pod_id}.repo-head.txt", True),
             ):
                 src = f"/workspace/sophia-runpod/{remote}"
