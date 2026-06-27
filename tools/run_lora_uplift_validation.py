@@ -12,8 +12,9 @@ no-overclaim VALIDATED gate (the same one provenance_bench uses), reusing its pr
   - provenance_bench.aggregate._distinct_families / KAPPA_FLOOR  -> the gate thresholds
 
 A result is VALIDATED only if ALL hold (provenance_bench definition):
-  notMock, >=2 judge families, mean pairwise Cohen's kappa >= 0.40, >=3 seeds, and a 95%
-  CI on the content-uplift delta that excludes zero. Otherwise: candidate-only / illustrative.
+  notMock, >=2 judge families, NO judge family == the subject's family (judge != subject),
+  mean pairwise Cohen's kappa >= 0.40, >=3 seeds, and a 95% CI on the content-uplift delta
+  that excludes zero. Otherwise: candidate-only / illustrative.
 
 This is the AGGREGATION + GATE half of the protocol (offline, deterministic, tested via
 --mock). Producing the judgments it consumes (2 independent LLM judges, judge != Qwen2.5-3B,
@@ -22,12 +23,13 @@ preregistration (docs/06-Roadmap/P6-LoRA-Uplift-Validation-Preregistration.md) s
 
 Judgments schema (``--judgments file.json``):
   {
-    "subjectModel": "Qwen/Qwen2.5-3B-Instruct",   # NOT a judge
-    "judges": ["openrouter:deepseek/deepseek-chat", "openrouter:qwen/qwen-2.5-72b-instruct"],
+    "subjectModel": "Qwen/Qwen2.5-3B-Instruct",   # NOT a judge (subject family = 'qwen')
+    "judges": ["openrouter:deepseek/deepseek-chat",          # families keyed by VENDOR:
+               "openrouter:meta-llama/llama-3.1-70b-instruct"],  # 'deepseek', 'meta-llama'
     "seeds": [
       {"seed": 0, "items": [
-        {"id": "philosophy/...", "baseContent": {"deepseek": true, "qwen": false},
-                                  "adapterContent": {"deepseek": true, "qwen": true}}, ...]},
+        {"id": "philosophy/...", "baseContent": {"deepseek": true, "meta-llama": false},
+                                  "adapterContent": {"deepseek": true, "meta-llama": true}}, ...]},
       ... (>=3 seeds for VALIDATED) ...
     ]
   }
@@ -47,18 +49,54 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from provenance_bench.aggregate import KAPPA_FLOOR, _ci, _distinct_families  # noqa: E402
+from provenance_bench.aggregate import (  # noqa: E402
+    _AGGREGATOR_PROVIDERS, KAPPA_FLOOR, _ci, _distinct_families, _llmhub_family,
+)
 from provenance_bench.consensus import cohen_kappa  # noqa: E402
 
 
 def _family_key(judge_spec: str) -> str:
-    """A short family label for a judge spec (used to key per-judge label vectors)."""
-    tail = judge_spec.split(":", 1)[-1]
-    return tail.split("/", 1)[-1].split("-", 1)[0] if "/" in tail else tail.split("-", 1)[0]
+    """Provider family for a judge spec, IDENTICAL to aggregate._distinct_families'
+    per-judge derivation, so the per-family label vectors key the SAME way the gate
+    counts families (vendor, gateway-aware). Examples:
+      'openrouter:meta-llama/llama-3.1-70b-instruct' -> 'meta-llama'  (NOT 'llama')
+      'openrouter:deepseek/deepseek-chat'            -> 'deepseek'
+      'llmhub:gpt-4o'                                -> 'openai'
+    The old 'last path component, first token' rule diverged from the gate's vendor
+    family for vendor-prefixed names (meta-llama -> 'llama'), which skipped items and
+    corrupted the kappa. Keeping the two in lockstep is the whole point."""
+    if not judge_spec or not judge_spec.strip():
+        return ""
+    prov, _, model = judge_spec.partition(":")
+    prov = prov.strip().lower()
+    model = model.strip().split("@", 1)[0]  # drop any 'model@http://host/v1' base_url suffix
+    if prov == "llmhub":
+        return _llmhub_family(model)
+    if prov in _AGGREGATOR_PROVIDERS and "/" in model:
+        return model.split("/", 1)[0].lower()
+    return prov
+
+
+def _subject_family(subject_spec: str) -> str:
+    """Vendor family of the subject model. The subject is usually a bare HF id
+    ('Qwen/Qwen2.5-3B-Instruct' -> 'qwen'); also accept a 'provider:vendor/model' spec."""
+    s = (subject_spec or "").strip()
+    if not s:
+        return ""
+    if ":" in s and "/" in s.split(":", 1)[1]:
+        return _family_key(s)
+    if "/" in s:
+        return s.split("/", 1)[0].lower()
+    if ":" in s:
+        return s.split(":", 1)[0].lower()
+    return s.lower()
 
 
 def _majority(labels: list[bool]) -> bool:
-    return sum(1 for x in labels if x) * 2 >= len(labels)
+    """Strict majority, matching provenance_bench.consensus.make_consensus_judge
+    (``sum(True) * 2 > n``). A tie (e.g. 1-1 across two judges) does NOT pass, so a
+    2-judge 'consensus' is unanimity, not OR — otherwise pass rates / uplift inflate."""
+    return sum(1 for x in labels if x) * 2 > len(labels)
 
 
 def mean_pairwise_kappa(judgments: dict) -> "tuple[float | None, dict]":
@@ -87,17 +125,22 @@ def mean_pairwise_kappa(judgments: dict) -> "tuple[float | None, dict]":
     return mean_k, detail
 
 
-def _consensus_rates(srun: dict) -> "tuple[float, float, int]":
-    """Per-seed consensus (majority-of-families) CONTENT pass rates: (base, adapter, n)."""
+def _consensus_rates(srun: dict, fams: list[str]) -> "tuple[float, float, int]":
+    """Per-seed consensus (majority-of-families) CONTENT pass rates: (base, adapter, n).
+
+    A row counts only if EVERY judge family labelled it on BOTH base and adapter — else
+    the majority-of-families vote is ill-defined and a single-judge row would silently
+    enter the uplift/CI while mean_pairwise_kappa() drops it. The vote is taken over the
+    fixed family set (in order), never over raw dict.values()."""
     base_pass, adapter_pass, n = 0, 0, 0
     for item in srun.get("items", []):
-        bc = list(item.get("baseContent", {}).values())
-        ac = list(item.get("adapterContent", {}).values())
-        if not bc or not ac:
+        bc = item.get("baseContent", {})
+        ac = item.get("adapterContent", {})
+        if not all(f in bc for f in fams) or not all(f in ac for f in fams):
             continue
         n += 1
-        base_pass += 1 if _majority(bc) else 0
-        adapter_pass += 1 if _majority(ac) else 0
+        base_pass += 1 if _majority([bool(bc[f]) for f in fams]) else 0
+        adapter_pass += 1 if _majority([bool(ac[f]) for f in fams]) else 0
     if n == 0:
         return 0.0, 0.0, 0
     return base_pass / n, adapter_pass / n, n
@@ -119,10 +162,12 @@ def aggregate(judgments: dict, *, n_boot: int = 2000) -> dict:
     subject = judgments.get("subjectModel", "")
     judges = judgments.get("judges", [])
     seeds = judgments.get("seeds", [])
+    fams = [_family_key(j) for j in judges]
+    subject_fam = _subject_family(subject)
 
     per_seed = []
     for srun in seeds:
-        b, a, n = _consensus_rates(srun)
+        b, a, n = _consensus_rates(srun, fams)
         per_seed.append({"seed": srun.get("seed"), "baseContent": round(b, 4),
                          "adapterContent": round(a, 4), "delta": round(a - b, 4), "n": n})
     deltas = [s["delta"] for s in per_seed if s["n"] > 0]
@@ -137,14 +182,20 @@ def aggregate(judgments: dict, *, n_boot: int = 2000) -> dict:
         "kappaAboveFloor": mean_k is not None and mean_k >= KAPPA_FLOOR,
         "atLeast3Seeds": len([s for s in per_seed if s["n"] > 0]) >= 3,
         "ciExcludesZero": bool(ci) and (ci[0] > 0 or ci[1] < 0),
+        # Enforce the honest_scope promise: no judge family may be the subject's own
+        # family (judge != subject). A qwen judge over a qwen subject is self-grading.
+        "judgeNotSubject": bool(judges) and bool(subject_fam)
+        and subject_fam not in set(fams),
     }
     validated = all(checks.values())
 
     return {
         "benchmark": "lora-content-uplift-validation",
         "subjectModel": subject,
+        "subjectFamily": subject_fam,
         "judges": judges,
         "judgeFamilies": n_families,
+        "judgeFamilyKeys": fams,
         "metric": "consensus CONTENT pass-rate uplift (adapter - base), per seed",
         "perSeed": per_seed,
         "meanDelta": mean_delta,
@@ -184,13 +235,15 @@ def mock_judgments(*, seeds: int = 3, n: int = 32) -> dict:
             def pair(truth):
                 a = truth if rng.random() < 0.9 else (not truth)
                 b = truth if rng.random() < 0.9 else (not truth)
-                return {"deepseek": bool(a), "qwen": bool(b)}
+                return {"deepseek": bool(a), "meta-llama": bool(b)}
             items.append({"id": f"item_{i}", "baseContent": pair(base_true),
                           "adapterContent": pair(adapter_true)})
         seed_runs.append({"seed": s, "items": items})
     return {
         "subjectModel": "mock:Qwen2.5-3B",   # mock -> notMock check is False on purpose
-        "judges": ["openrouter:deepseek/deepseek-chat", "openrouter:qwen/qwen-2.5-72b-instruct"],
+        # Two NON-qwen families (judge != subject), per the P6 preregistration.
+        "judges": ["openrouter:deepseek/deepseek-chat",
+                   "openrouter:meta-llama/llama-3.1-70b-instruct"],
         "seeds": seed_runs,
     }
 

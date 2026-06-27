@@ -50,8 +50,8 @@ def test_judge_seeds_orchestration_with_injected_judges():
     # base answers all PASS; adapter passes the first case per domain only (4 of 8).
     assert all(all(it["baseContent"].values()) for it in items)
     assert sum(1 for it in items if all(it["adapterContent"].values())) == len(J.DOMAINS)
-    # keys are the two distinct families
-    assert set(items[0]["baseContent"]) == {"deepseek", "llama"}
+    # keys are the two distinct vendor families (gateway-aware: meta-llama, not llama)
+    assert set(items[0]["baseContent"]) == {"deepseek", "meta-llama"}
 
 
 def test_mock_run_shape():

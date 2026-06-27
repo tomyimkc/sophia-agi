@@ -92,8 +92,12 @@ def make_content_judge(spec: str):
 
 
 def _family(spec: str) -> str:
-    tail = spec.split(":", 1)[-1]
-    return (tail.split("/", 1)[-1] if "/" in tail else tail).split("-", 1)[0]
+    """Judge family for the emitted label-dict keys. Delegates to the aggregator's
+    _family_key (vendor, gateway-aware) so the keys this labeler writes ALWAYS match
+    what run_lora_uplift_validation reads back — enforced by
+    test_judge_content_transcripts.test_family_keys_match_aggregator."""
+    from tools.run_lora_uplift_validation import _family_key
+    return _family_key(spec)
 
 
 def _load_answers(d: Path, label: str) -> dict:

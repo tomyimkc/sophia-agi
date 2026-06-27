@@ -23,19 +23,21 @@ def _items(base_pass: int, adapter_pass: int, n: int = 32, agree: bool = True):
         bt = i < base_pass
         at = i < adapter_pass
         if agree:
-            base = {"deepseek": bt, "qwen": bt}
-            adapter = {"deepseek": at, "qwen": at}
+            base = {"deepseek": bt, "meta-llama": bt}
+            adapter = {"deepseek": at, "meta-llama": at}
         else:  # judges disagree on every item -> kappa low
-            base = {"deepseek": bt, "qwen": not bt}
-            adapter = {"deepseek": at, "qwen": not at}
+            base = {"deepseek": bt, "meta-llama": not bt}
+            adapter = {"deepseek": at, "meta-llama": not at}
         items.append({"id": f"i{i}", "baseContent": base, "adapterContent": adapter})
     return items
 
 
 def _judgments(subject, *, seeds=3, base=23, adapter=27, agree=True):
+    # Two NON-qwen judge families so judge != subject (subject family = 'qwen').
     return {
         "subjectModel": subject,
-        "judges": ["openrouter:deepseek/deepseek-chat", "openrouter:qwen/qwen-2.5-72b-instruct"],
+        "judges": ["openrouter:deepseek/deepseek-chat",
+                   "openrouter:meta-llama/llama-3.1-70b-instruct"],
         "seeds": [{"seed": s, "items": _items(base, adapter, agree=agree)} for s in range(seeds)],
     }
 
@@ -44,10 +46,26 @@ def test_clear_signal_real_subject_validates():
     rep = v.aggregate(_judgments("Qwen/Qwen2.5-3B-Instruct"))
     assert rep["validatedChecks"] == {
         "notMock": True, "multiFamilyJudges": True, "kappaAboveFloor": True,
-        "atLeast3Seeds": True, "ciExcludesZero": True}
+        "atLeast3Seeds": True, "ciExcludesZero": True, "judgeNotSubject": True}
     assert rep["validated"] is True
     assert rep["meanDelta"] == pytest.approx((27 - 23) / 32, abs=1e-6)
     assert rep["canClaimAGI"] is False
+
+
+def test_in_family_judge_fails_judge_not_subject():
+    # A qwen judge over a qwen subject is self-grading -> must NOT validate.
+    j = _judgments("Qwen/Qwen2.5-3B-Instruct")
+    j["judges"] = ["openrouter:deepseek/deepseek-chat",
+                   "openrouter:qwen/qwen-2.5-72b-instruct"]
+    for srun in j["seeds"]:
+        for item in srun["items"]:
+            item["baseContent"] = {"deepseek": item["baseContent"]["deepseek"],
+                                   "qwen": item["baseContent"]["meta-llama"]}
+            item["adapterContent"] = {"deepseek": item["adapterContent"]["deepseek"],
+                                      "qwen": item["adapterContent"]["meta-llama"]}
+    rep = v.aggregate(j)
+    assert rep["validatedChecks"]["judgeNotSubject"] is False
+    assert rep["validated"] is False
 
 
 def test_mock_subject_never_validates():
