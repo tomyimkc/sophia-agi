@@ -1,0 +1,85 @@
+{
+  "schema": "sophia.simpleqa_headline.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "syntheticData": false,
+  "externalPublicBenchmark": "google/simpleqa-verified",
+  "subjectModel": "deepseek-chat",
+  "graders": [
+    "claude-sonnet-4-6",
+    "gemini-2.5-pro"
+  ],
+  "n": 2000,
+  "nAttempted": 786,
+  "overallAccuracy": 0.057,
+  "accuracyAttempted": 0.145,
+  "interGraderCohenKappa": 0.9948,
+  "kappaMeetsBar": true,
+  "signals": {
+    "stated": {
+      "auroc": 0.5493,
+      "riskCoverage": {
+        "cov100": 0.145,
+        "cov50": 0.173,
+        "cov30": 0.1872,
+        "cov20": 0.2166,
+        "cov10": 0.2564
+      },
+      "bootstrapLift@20": {
+        "coverage": 0.2,
+        "selectiveAccMean": 0.1827,
+        "liftMean": 0.0378,
+        "liftCI95": [
+          -0.0126,
+          0.0919
+        ],
+        "liftExcludesZero": false
+      }
+    },
+    "selfcons": {
+      "auroc": 0.636,
+      "riskCoverage": {
+        "cov100": 0.145,
+        "cov50": 0.2087,
+        "cov30": 0.2213,
+        "cov20": 0.2293,
+        "cov10": 0.2949
+      },
+      "bootstrapLift@20": {
+        "coverage": 0.2,
+        "selectiveAccMean": 0.2229,
+        "liftMean": 0.078,
+        "liftCI95": [
+          0.0231,
+          0.1353
+        ],
+        "liftExcludesZero": true
+      }
+    },
+    "logprob": {
+      "auroc": null,
+      "riskCoverage": {
+        "cov100": 0.0,
+        "cov50": 0.0,
+        "cov30": 0.0,
+        "cov20": 0.0,
+        "cov10": 0.0
+      },
+      "bootstrapLift@20": {
+        "coverage": 0.2,
+        "selectiveAccMean": null,
+        "liftMean": null,
+        "liftCI95": [
+          null,
+          null
+        ],
+        "liftExcludesZero": false,
+        "n": 0
+      }
+    }
+  },
+  "bestSignal": "selfcons",
+  "selfconsSeeds": null,
+  "validated": true,
+  "honestBound": "Real EXTERNAL public benchmark (SimpleQA Verified), no self-authored data. Headline = selective-accuracy lift of the best confidence signal with a bootstrap 95% CI, plus inter-grader Cohen's kappa on the ternary labels. Single subject model, single self-consistency sampling round (K samples) with bootstrap CI in lieu of 3 separate API re-runs (the temp=0 label is deterministic). canClaimAGI stays false."
+}

@@ -1,0 +1,61 @@
+{
+  "schema": "sophia.simpleqa_calibration_report.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "syntheticData": false,
+  "externalPublicBenchmark": "google/simpleqa-verified",
+  "validated": true,
+  "subjectModel": "deepseek-chat",
+  "graders": [
+    "claude-sonnet-4-6",
+    "gemini-2.5-pro"
+  ],
+  "interGraderCohenKappa": 0.9736,
+  "n": 1000,
+  "attempted": 940,
+  "overallAccuracy": 0.216,
+  "C1_bestSignal": "selfcons",
+  "C1_signals": {
+    "stated": {
+      "auroc": 0.5681,
+      "lift@20": {
+        "coverage": 0.2,
+        "selectiveAccMean": 0.2576,
+        "liftMean": 0.0276,
+        "liftCI95": [
+          -0.0277,
+          0.0819
+        ],
+        "liftExcludesZero": false
+      }
+    },
+    "selfcons": {
+      "auroc": 0.6485,
+      "lift@20": {
+        "coverage": 0.2,
+        "selectiveAccMean": 0.3877,
+        "liftMean": 0.1578,
+        "liftCI95": [
+          0.0979,
+          0.2213
+        ],
+        "liftExcludesZero": true
+      }
+    },
+    "logprob": {
+      "auroc": 0.5,
+      "lift@20": {
+        "coverage": 0.2,
+        "selectiveAccMean": 0.2298,
+        "liftMean": -0.0002,
+        "liftCI95": [
+          -0.0511,
+          0.0553
+        ],
+        "liftExcludesZero": false
+      }
+    }
+  },
+  "C3_breakEvenLambda": 0.5,
+  "honestBound": "Real EXTERNAL public benchmark (SimpleQA Verified), no self-authored data. Headline = selective-accuracy lift of the best confidence signal with a bootstrap 95% CI, plus inter-grader Cohen's kappa on the ternary labels. Single subject model, single self-consistency sampling round (K samples) with bootstrap CI in lieu of 3 separate API re-runs (the temp=0 label is deterministic). canClaimAGI stays false."
+}

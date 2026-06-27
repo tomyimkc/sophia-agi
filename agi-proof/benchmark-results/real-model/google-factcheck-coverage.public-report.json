@@ -1,0 +1,82 @@
+{
+  "schema": "sophia.google_factcheck_coverage.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "hasApiKey": true,
+  "generalClaims": {
+    "n": 6,
+    "covered": 6,
+    "coverageRate": 1.0,
+    "rows": [
+      {
+        "claim": "The Earth is flat.",
+        "nSources": 16,
+        "sample": "ClaimReview by Snopes.com: rating='Fake' (normalized: false). Reviewed claim: \"Images authentically depicted a Facebook post by the Flat Earth Society in which "
+      },
+      {
+        "claim": "Vaccines cause autism.",
+        "nSources": 19,
+        "sample": "ClaimReview by The Washington Post: rating='Four Pinocchios' (normalized: false). Reviewed claim: \"“Pharmaceutical medicine has its place, but no single safety "
+      },
+      {
+        "claim": "5G networks spread the coronavirus.",
+        "nSources": 15,
+        "sample": "ClaimReview by AP News: rating='False' (normalized: false). Reviewed claim: \"A patent held by Moderna proves its COVID mRNA vaccine contains “programmable” nano"
+      },
+      {
+        "claim": "Drinking bleach cures COVID-19.",
+        "nSources": 2,
+        "sample": "ClaimReview by Snopes: rating='Mostly False' (normalized: false). Reviewed claim: \"Former U.S. President Donald Trump once suggested that people inject bleach o"
+      },
+      {
+        "claim": "Climate change is a hoax.",
+        "nSources": 22,
+        "sample": "ClaimReview by The Washington Post: rating='Four Pinocchios' (normalized: false). Reviewed claim: \"“The climate change agenda is a hoax … The reality is more pe"
+      },
+      {
+        "claim": "The 2020 US presidential election was stolen.",
+        "nSources": 18,
+        "sample": "ClaimReview by The Washington Post: rating='Four Pinocchios' (normalized: false). Reviewed claim: \"“We have claimed, for Electoral Vote purposes, the Commonweal"
+      }
+    ]
+  },
+  "provenanceClaims": {
+    "n": 6,
+    "covered": 0,
+    "coverageRate": 0.0,
+    "rows": [
+      {
+        "claim": "Confucius wrote the Dao De Jing.",
+        "nSources": 0,
+        "sample": null
+      },
+      {
+        "claim": "Laozi wrote the Dao De Jing.",
+        "nSources": 0,
+        "sample": null
+      },
+      {
+        "claim": "Freud originated the theory of the unconscious.",
+        "nSources": 0,
+        "sample": null
+      },
+      {
+        "claim": "Homer wrote the Iliad.",
+        "nSources": 0,
+        "sample": null
+      },
+      {
+        "claim": "The Voynich Manuscript was written by Roger Bacon.",
+        "nSources": 0,
+        "sample": null
+      },
+      {
+        "claim": "Hippocrates authored the Hippocratic Oath.",
+        "nSources": 0,
+        "sample": null
+      }
+    ]
+  },
+  "honestBound": "Live end-to-end validation of GoogleFactCheckBackend. Confirms the integration works on general/viral claims (ClaimReview's home turf) and QUANTIFIES that the API does not cover Sophia's literary-provenance domain — so this external oracle complements, but cannot replace, the Wikidata/Crossref provenance path. Corroborates the failure-ledger note with live data."
+}

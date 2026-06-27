@@ -39,7 +39,10 @@ from agent.verifiers import provenance_faithful
 # Generation strategies when the gate fails. "repair" is the default spine.
 # "graded" routes hedge-vs-abstain on a calibrated confidence curve (see
 # agent/graded_decision.py) using bounded self-consistency sampling.
-ON_FAIL_MODES = ("repair", "abstain", "hedge", "passthrough", "graded")
+# "conformal" routes hedge-vs-abstain on a *certified* split-conformal threshold
+# (agent/conformal_gate.py) instead of the hand-picked hi/lo cut points; it
+# fails safe to the default boundary when no calibration artifact is present.
+ON_FAIL_MODES = ("repair", "abstain", "hedge", "passthrough", "graded", "conformal")
 
 DEFAULT_SYSTEM = (
     "You answer strictly from the provided sources and practice source discipline: "
@@ -218,6 +221,12 @@ def guarded_complete(
     **abstains** otherwise (``thresholds`` overrides the ``hi``/``lo`` cut points).
     With fewer than two generations self-consistency is undefined, so it abstains
     (fail-closed). The default ``repair`` path is unchanged.
+
+    ``on_fail="conformal"`` is the same flow but routes on a *certified*
+    split-conformal threshold (:func:`agent.graded_decision.decide_conformal`)
+    instead of the hand-picked ``hi``/``lo`` cut points. It loads the fitted policy
+    artifact written by ``tools/fit_conformal_policy.py`` and falls back to the
+    default boundary (a safe no-op) when no calibration artifact is present.
     """
     mode = (on_fail or os.environ.get("SOPHIA_ON_FAIL") or "repair").strip().lower()
     if mode not in ON_FAIL_MODES:
@@ -291,9 +300,9 @@ def guarded_complete(
     violations = verdict["violations"]
     reasons = verdict["reasons"]
 
-    # --- gate failed: graded route (calibrated hedge-vs-abstain) ----------- #
-    if mode == "graded":
-        from agent.graded_decision import answer_confidence, decide
+    # --- gate failed: graded/conformal route (calibrated hedge-vs-abstain) - #
+    if mode in ("graded", "conformal"):
+        from agent.graded_decision import answer_confidence, decide, decide_conformal
 
         sample_texts = [text]
         for _ in range(max(0, samples - 1)):
@@ -307,9 +316,14 @@ def guarded_complete(
             answer_confidence(self_consistency_samples=sample_texts)
             if len(sample_texts) >= 2 else answer_confidence()
         )
-        graded = decide(gate_passed=False, confidence=confidence, violations=violations,
-                        thresholds=thresholds)
-        note = f"graded confidence={confidence:.3f} -> {graded['action']} ({graded['reason']})"
+        if mode == "conformal":
+            graded = decide_conformal(gate_passed=False, confidence=confidence)
+            note = (f"conformal confidence={confidence:.3f} -> {graded['action']} "
+                    f"({graded['reason']})")
+        else:
+            graded = decide(gate_passed=False, confidence=confidence, violations=violations,
+                            thresholds=thresholds)
+            note = f"graded confidence={confidence:.3f} -> {graded['action']} ({graded['reason']})"
         if graded["action"] == "hedge":
             return GuardedResult(
                 text=_hedged(text, violations), ok=True, passed=False, action="hedged",

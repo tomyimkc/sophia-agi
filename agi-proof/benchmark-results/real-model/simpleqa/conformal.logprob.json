@@ -1,0 +1,120 @@
+{
+  "schema": "sophia.conformal_policy_report.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "syntheticData": false,
+  "validated": false,
+  "n": 940,
+  "persistAlpha": 0.1,
+  "alphaSweep": [
+    {
+      "alpha": 0.05,
+      "byRisk": {
+        "normal": {
+          "policy": {
+            "alpha": 0.05,
+            "threshold": 0.0,
+            "n_calibration": 109,
+            "target_coverage": 0.95,
+            "risk_bucket": "normal",
+            "schema": "sophia.conformal_policy.v1",
+            "candidateOnly": true,
+            "level3Evidence": false
+          },
+          "heldOut": {
+            "coverage": 1.0,
+            "selectiveAccuracy": 0.2277,
+            "falseAnswerRate": 0.7723
+          },
+          "validity": {
+            "nCorrect": 107,
+            "heldOutCorrectCoverage": 1.0,
+            "targetCoverage": 0.95,
+            "slack": 0.1933,
+            "holds": true
+          }
+        }
+      },
+      "validityHolds": true,
+      "nCalib": 470,
+      "nTest": 470
+    },
+    {
+      "alpha": 0.1,
+      "byRisk": {
+        "normal": {
+          "policy": {
+            "alpha": 0.1,
+            "threshold": 0.0,
+            "n_calibration": 109,
+            "target_coverage": 0.9,
+            "risk_bucket": "normal",
+            "schema": "sophia.conformal_policy.v1",
+            "candidateOnly": true,
+            "level3Evidence": false
+          },
+          "heldOut": {
+            "coverage": 1.0,
+            "selectiveAccuracy": 0.2277,
+            "falseAnswerRate": 0.7723
+          },
+          "validity": {
+            "nCorrect": 107,
+            "heldOutCorrectCoverage": 1.0,
+            "targetCoverage": 0.9,
+            "slack": 0.1933,
+            "holds": true
+          }
+        }
+      },
+      "validityHolds": true,
+      "nCalib": 470,
+      "nTest": 470
+    },
+    {
+      "alpha": 0.2,
+      "byRisk": {
+        "normal": {
+          "policy": {
+            "alpha": 0.2,
+            "threshold": 0.0,
+            "n_calibration": 109,
+            "target_coverage": 0.8,
+            "risk_bucket": "normal",
+            "schema": "sophia.conformal_policy.v1",
+            "candidateOnly": true,
+            "level3Evidence": false
+          },
+          "heldOut": {
+            "coverage": 1.0,
+            "selectiveAccuracy": 0.2277,
+            "falseAnswerRate": 0.7723
+          },
+          "validity": {
+            "nCorrect": 107,
+            "heldOutCorrectCoverage": 1.0,
+            "targetCoverage": 0.8,
+            "slack": 0.1933,
+            "holds": true
+          }
+        }
+      },
+      "validityHolds": true,
+      "nCalib": 470,
+      "nTest": 470
+    }
+  ],
+  "persistedPolicyByRisk": {
+    "normal": {
+      "alpha": 0.1,
+      "threshold": 0.0,
+      "n_calibration": 216,
+      "target_coverage": 0.9,
+      "risk_bucket": "normal",
+      "schema": "sophia.conformal_policy.v1",
+      "candidateOnly": true,
+      "level3Evidence": false
+    }
+  },
+  "honestBound": "Real labeled rows; still candidate until >=2 judge families + >=3 runs + CI and a third-party pack clear the no-overclaim gate."
+}

@@ -1,0 +1,80 @@
+{
+  "schema": "sophia.abstention_scoring_report.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "syntheticData": true,
+  "validated": false,
+  "headline": {
+    "schema": "sophia.abstention_score.v1",
+    "candidateOnly": true,
+    "level3Evidence": false,
+    "lambda": 1.0,
+    "counts": {
+      "n": 100,
+      "answeredCorrect": 33,
+      "answeredWrong": 7,
+      "abstained": 60,
+      "hedged": 0,
+      "answered": 40
+    },
+    "awareTotal": 26.0,
+    "awareMean": 0.26,
+    "binaryTotal": 33.0,
+    "binaryMean": 0.33,
+    "abstentionRate": 0.6,
+    "selectiveAccuracy": 0.825
+  },
+  "lambdaSweep": {
+    "schema": "sophia.abstention_lambda_sweep.v1",
+    "candidateOnly": true,
+    "level3Evidence": false,
+    "n": 100,
+    "curve": [
+      {
+        "lambda": 0.0,
+        "awareTotal": 33.0,
+        "awareMean": 0.33,
+        "alwaysAnswerTotal": 82.5,
+        "abstentionWins": false
+      },
+      {
+        "lambda": 0.5,
+        "awareTotal": 29.5,
+        "awareMean": 0.295,
+        "alwaysAnswerTotal": 73.75,
+        "abstentionWins": false
+      },
+      {
+        "lambda": 1.0,
+        "awareTotal": 26.0,
+        "awareMean": 0.26,
+        "alwaysAnswerTotal": 65.0,
+        "abstentionWins": false
+      },
+      {
+        "lambda": 2.0,
+        "awareTotal": 19.0,
+        "awareMean": 0.19,
+        "alwaysAnswerTotal": 47.5,
+        "abstentionWins": false
+      },
+      {
+        "lambda": 3.0,
+        "awareTotal": 12.0,
+        "awareMean": 0.12,
+        "alwaysAnswerTotal": 30.0,
+        "abstentionWins": false
+      },
+      {
+        "lambda": 5.0,
+        "awareTotal": -2.0,
+        "awareMean": -0.02,
+        "alwaysAnswerTotal": -5.0,
+        "abstentionWins": true
+      }
+    ],
+    "breakEvenLambda": 5.0,
+    "honestBound": "Methodology, not a capability claim: shows that under a confident-wrong penalty lambda >= breakEvenLambda, fail-closed abstention scores at least as well as always-guessing. The always-answer baseline prices forced answers at the run's own base accuracy (approximate). Requires real {correct, action} labels from a model run to be a result, not a demo."
+  },
+  "honestBound": "Methodology, not a capability claim: shows that under a confident-wrong penalty lambda >= breakEvenLambda, fail-closed abstention scores at least as well as always-guessing. The always-answer baseline prices forced answers at the run's own base accuracy (approximate). Requires real {correct, action} labels from a model run to be a result, not a demo."
+}
