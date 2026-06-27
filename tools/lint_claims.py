@@ -52,6 +52,44 @@ FORBIDDEN: list[tuple[str, str]] = [
 
 ALLOW_MARKER = "claim-ok"
 
+# Adapter registry: a candidate PROMOTED past candidate_only must carry a passing measurement
+# receipt (tools/claim_gate.py). This makes "no claim beyond what the instrument resolves"
+# machine-enforced. candidate_only entries are exempt (they make no external claim).
+REGISTRY = "training/adapters/registry.jsonl"
+
+
+def _check_registry_receipts() -> list[str]:
+    import json
+    v: list[str] = []
+    reg = ROOT / REGISTRY
+    if not reg.exists():
+        return v
+    for ln in reg.read_text(encoding="utf-8").splitlines():
+        ln = ln.strip()
+        if not ln:
+            continue
+        try:
+            e = json.loads(ln)
+        except Exception:
+            continue
+        promoted = e.get("validated_external") is True or e.get("canClaimAGI") is True \
+            or e.get("candidate_only") is False
+        if not promoted:
+            continue  # candidate_only / unpromoted -> no receipt required
+        rcpt = e.get("measurement_receipt")
+        if not rcpt or not (ROOT / rcpt).exists():
+            v.append(f"{REGISTRY}: {e.get('id')} is promoted past candidate_only but has no "
+                     f"measurement_receipt (run tools/claim_gate.py and reference its GO receipt)")
+            continue
+        try:
+            r = json.loads((ROOT / rcpt).read_text(encoding="utf-8"))
+            if r.get("verdict") != "GO":
+                v.append(f"{REGISTRY}: {e.get('id')} receipt {rcpt} is {r.get('verdict')} "
+                         f"(critical failures: {r.get('criticalFailures')}) — cannot promote")
+        except Exception:
+            v.append(f"{REGISTRY}: {e.get('id')} measurement_receipt {rcpt} is unreadable")
+    return v
+
 
 def _files() -> list[Path]:
     out: list[Path] = []
@@ -79,6 +117,8 @@ def main() -> int:
                 if re.search(pat, low):
                     rel = path.relative_to(ROOT)
                     violations.append(f"{rel}:{i}: «{line.strip()[:90]}» — {why}")
+
+    violations.extend(_check_registry_receipts())
 
     if violations:
         print("CLAIMS LINTER: FAIL — overclaims found (fix the copy or add a qualifier):\n")
