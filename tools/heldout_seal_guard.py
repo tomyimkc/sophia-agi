@@ -10,16 +10,30 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "agi-proof" / "sophia-math-code-curriculum" / "heldout-seal.manifest.json"
 PRIVATE_PREFIX = ROOT / "private" / "math-code-heldout"
 
+# Formal-proofs held-out split (Phase-1; design Formal-Proofs-Eval-Design.md §2). The
+# miniF2F-v2 evidence statements are sealed by tools/seal_formal_proofs_heldout.py; the
+# proposer (agent.proof_search) must not read them, same firewall as the math/code split.
+FORMAL_PROOFS_MANIFEST = ROOT / "agi-proof" / "formal-proofs-curriculum" / "heldout-seal.manifest.json"
+FORMAL_PROOFS_PRIVATE_PREFIX = ROOT / "private" / "formal-proofs-heldout"
+
+# (committed manifest, private payload dir) pairs — all sealed surfaces a generator/
+# proposer must never read.
+_SEALED_SURFACES = [
+    (MANIFEST, PRIVATE_PREFIX),
+    (FORMAL_PROOFS_MANIFEST, FORMAL_PROOFS_PRIVATE_PREFIX),
+]
+
 
 def sealed_paths(*, root: Path = ROOT) -> set[Path]:
-    """Resolved paths that generators must not load for training data."""
+    """Resolved paths that generators/proposers must not load for training data."""
     out: set[Path] = set()
-    manifest_path = root / MANIFEST.relative_to(ROOT)
-    if manifest_path.exists():
-        data = json.loads(manifest_path.read_text(encoding="utf-8"))
-        for entry in data.get("files", []):
-            out.add((root / entry["path"]).resolve())
-    out.add((root / PRIVATE_PREFIX.relative_to(ROOT)).resolve())
+    for manifest, private_prefix in _SEALED_SURFACES:
+        manifest_path = root / manifest.relative_to(ROOT)
+        if manifest_path.exists():
+            data = json.loads(manifest_path.read_text(encoding="utf-8"))
+            for entry in data.get("files", []):
+                out.add((root / entry["path"]).resolve())
+        out.add((root / private_prefix.relative_to(ROOT)).resolve())
     return out
 
 

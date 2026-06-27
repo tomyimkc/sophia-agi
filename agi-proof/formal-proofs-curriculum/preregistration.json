@@ -150,12 +150,11 @@
   ],
 
   "openChecklist": [
-    "Fill split.commitSha with the pinned facebookresearch/minif2f commit (at seal time).",
+    "DONE (2026-06-27): Build tools/seal_formal_proofs_heldout.py + extend tools/heldout_seal_guard.py to cover the formal-proofs proposer paths. Validated by tests/test_formal_proofs_seal.py (fixture-level).",
+    "Stage the real miniF2F-v2 test statements under private/formal-proofs-heldout/ (split + source.json), run tools/seal_formal_proofs_heldout.py, commit the hash manifest; this fills split.commitSha (the pinned facebookresearch/minif2f commit) — and --check must report CLEAN.",
     "Fill tracedProject.{leanProjectUrl, leanProjectCommit, leanToolchain} and confirm a remote-cached trace exists OR budget the one-off cold trace + actions/cache.",
     "Fill baseModel, recipe.modelSpec, recipe.knowledgeCutoff, recipe.leanToolchain.",
     "Fill proposer.primary.searchBudget.* (beam, depth, tactic-call cap, per-problem timeout).",
-    "Build tools/seal_formal_proofs_heldout.py and generate agi-proof/formal-proofs-curriculum/heldout-seal.manifest.json; run --check → CLEAN.",
-    "Extend tools/heldout_seal_guard.py to cover the formal-proofs proposer paths.",
     "Tom approves → flip status DRAFT → OPEN. Only then may any eval run."
   ]
 }
