@@ -1,0 +1,35 @@
+{
+  "snapshot_id": "citeguard_hk_authorities_demo_snapshot",
+  "display_name": "Hong Kong authority snapshot",
+  "completeness_note": "Small bundled demonstration snapshot for offline mode. Not exhaustive and not a citator. A missing citation may be outside or newer than this snapshot.",
+  "authorities": [
+    {
+      "citation": "[2025] HKCFI 808",
+      "name": "Yu Hon Tong Thomas v Centaline Property Agency Ltd",
+      "source": "HKLII",
+      "source_url": "https://www.hklii.hk/",
+      "retrieved_at": "2026-06-22T00:00:00Z"
+    },
+    {
+      "citation": "[2025] HKDC 1287",
+      "name": "Licksun Company Ltd v Occupiers of Lot No. 552 in D.D. 85",
+      "source": "HKLII",
+      "source_url": "https://www.hklii.hk/",
+      "retrieved_at": "2026-06-22T00:00:00Z"
+    },
+    {
+      "citation": "Cap. 614",
+      "name": "Legislation Publication Ordinance",
+      "source": "Hong Kong e-Legislation",
+      "source_url": "https://www.elegislation.gov.hk/",
+      "retrieved_at": "2026-06-22T00:00:00Z"
+    },
+    {
+      "citation": "Cap. 486",
+      "name": "Personal Data (Privacy) Ordinance",
+      "source": "Hong Kong e-Legislation",
+      "source_url": "https://www.elegislation.gov.hk/",
+      "retrieved_at": "2026-06-22T00:00:00Z"
+    }
+  ]
+}
