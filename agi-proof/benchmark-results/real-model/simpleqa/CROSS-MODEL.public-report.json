@@ -1,0 +1,49 @@
+{
+  "schema": "sophia.simpleqa_crossmodel.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "syntheticData": false,
+  "externalPublicBenchmark": "google/simpleqa-verified",
+  "graders": [
+    "claude-sonnet-4-6",
+    "gemini-2.5-pro"
+  ],
+  "deepseek": {
+    "n": 1000,
+    "attempted": 940,
+    "abstentionRate": 0.06,
+    "accuracy": 0.216,
+    "interGraderKappa": 0.9736,
+    "selfconsAUROC": 0.6485,
+    "lift@20": 0.1578,
+    "lift95CI": [
+      0.0979,
+      0.2213
+    ],
+    "excludesZero": true,
+    "validated": true
+  },
+  "qwen": {
+    "n": 600,
+    "attempted": 196,
+    "abstentionRate": 0.673,
+    "accuracy": 0.055,
+    "interGraderKappa": 0.9954,
+    "selfconsAUROC": 0.6402,
+    "lift@20": 0.0722,
+    "lift95CI": [
+      -0.0352,
+      0.1906
+    ],
+    "excludesZero": false,
+    "validated": false
+  },
+  "qwen3seedLifts": [
+    0.0587,
+    0.0809,
+    0.0734
+  ],
+  "qwen3seedAllExcludeZero": false,
+  "finding": "Self-consistency RANKING replicates across two independent model families (AUROC 0.65 DeepSeek, 0.64 Qwen) with near-perfect grading (kappa 0.97 / 0.99). The selective-accuracy LIFT is VALIDATED on DeepSeek (+0.158, CI [0.098,0.221]) but NOT on Qwen (+0.072, CI [-0.035,0.191] includes 0) \u2014 because Qwen self-abstains on 67% of SimpleQA vs DeepSeek's 6%, leaving only 196 attempted (underpowered at 20% coverage) and less headroom. The 3 Qwen seeds are STABLE (lifts 0.059/0.081/0.073), so non-significance is a POWER issue, not instability. Honest conclusion: a self-consistency conformal gate adds large value for an OVERCONFIDENT model that answers everything, and little for a CAUTIOUS model that already abstains heavily. Cross-model magnitude depends on base abstention behavior.",
+  "honestBound": "DeepSeek validated; Qwen directional-only (underpowered). canClaimAGI false."
+}

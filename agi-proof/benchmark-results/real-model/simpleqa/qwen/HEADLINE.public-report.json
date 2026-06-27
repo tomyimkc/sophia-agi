@@ -1,0 +1,120 @@
+{
+  "schema": "sophia.simpleqa_headline.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "syntheticData": false,
+  "externalPublicBenchmark": "google/simpleqa-verified",
+  "subjectModel": "deepseek-chat",
+  "graders": [
+    "claude-sonnet-4-6",
+    "gemini-2.5-pro"
+  ],
+  "n": 600,
+  "nAttempted": 196,
+  "overallAccuracy": 0.055,
+  "accuracyAttempted": 0.1684,
+  "interGraderCohenKappa": 0.9954,
+  "kappaMeetsBar": true,
+  "signals": {
+    "stated": {
+      "auroc": 0.6031,
+      "riskCoverage": {
+        "cov100": 0.1684,
+        "cov50": 0.2245,
+        "cov30": 0.2759,
+        "cov20": 0.3333,
+        "cov10": 0.4211
+      },
+      "bootstrapLift@20": {
+        "coverage": 0.2,
+        "selectiveAccMean": 0.2425,
+        "liftMean": 0.0745,
+        "liftCI95": [
+          -0.0352,
+          0.1957
+        ],
+        "liftExcludesZero": false
+      }
+    },
+    "selfcons": {
+      "auroc": 0.6402,
+      "riskCoverage": {
+        "cov100": 0.1684,
+        "cov50": 0.2347,
+        "cov30": 0.2759,
+        "cov20": 0.2564,
+        "cov10": 0.3684
+      },
+      "bootstrapLift@20": {
+        "coverage": 0.2,
+        "selectiveAccMean": 0.2402,
+        "liftMean": 0.0722,
+        "liftCI95": [
+          -0.0352,
+          0.1906
+        ],
+        "liftExcludesZero": false
+      }
+    },
+    "logprob": {
+      "auroc": null,
+      "riskCoverage": {
+        "cov100": 0.0,
+        "cov50": 0.0,
+        "cov30": 0.0,
+        "cov20": 0.0,
+        "cov10": 0.0
+      },
+      "bootstrapLift@20": {
+        "coverage": 0.2,
+        "selectiveAccMean": null,
+        "liftMean": null,
+        "liftCI95": [
+          null,
+          null
+        ],
+        "liftExcludesZero": false,
+        "n": 0
+      }
+    }
+  },
+  "bestSignal": "selfcons",
+  "selfconsSeeds": {
+    "nSeeds": 3,
+    "perSeedLift@20": [
+      {
+        "coverage": 0.2,
+        "selectiveAccMean": 0.2267,
+        "liftMean": 0.0587,
+        "liftCI95": [
+          -0.0506,
+          0.1754
+        ],
+        "liftExcludesZero": false
+      },
+      {
+        "coverage": 0.2,
+        "selectiveAccMean": 0.2489,
+        "liftMean": 0.0809,
+        "liftCI95": [
+          -0.03,
+          0.1957
+        ],
+        "liftExcludesZero": false
+      },
+      {
+        "coverage": 0.2,
+        "selectiveAccMean": 0.2415,
+        "liftMean": 0.0734,
+        "liftCI95": [
+          -0.0402,
+          0.1958
+        ],
+        "liftExcludesZero": false
+      }
+    ],
+    "allSeedsExcludeZero": false
+  },
+  "validated": false,
+  "honestBound": "Real EXTERNAL public benchmark (SimpleQA Verified), no self-authored data. Headline = selective-accuracy lift of the best confidence signal with a bootstrap 95% CI, plus inter-grader Cohen's kappa on the ternary labels. Single subject model, single self-consistency sampling round (K samples) with bootstrap CI in lieu of 3 separate API re-runs (the temp=0 label is deterministic). canClaimAGI stays false."
+}

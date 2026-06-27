@@ -168,7 +168,7 @@ def main(argv=None) -> int:
         excl = [b["liftExcludesZero"] for b in sc_seeds_block["perSeedLift@20"]]
         print(f"  selfcons {sc_seeds_block['nSeeds']} seeds: lifts={lifts} excl0={excl} all={sc_seeds_block['allSeedsExcludeZero']}")
     print(f"  best signal = {best};  VALIDATED = {report['validated']}")
-    print(f"Wrote {args.out.relative_to(ROOT)}")
+    print(f"Wrote {(args.out.relative_to(ROOT) if args.out.is_absolute() and args.out.is_relative_to(ROOT) else args.out)}")
     return 0
 
 
