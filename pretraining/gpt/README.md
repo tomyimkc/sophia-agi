@@ -68,9 +68,19 @@ data-backed.
    `data/attributions.json` into inline `<src>`/`<conf_*>`/`<doNotAttributeTo>`
    text; `python -m pretraining.gpt.train --born-gated`. Next: ablate
    attribution-hallucination vs. a plain-text twin at equal perplexity.
-3. **Abstention head (idea #3)** — second head predicting `accept|hedge|abstain`,
-   measured with `agent/calibration.py` (ECE / risk-coverage).
-4. **Verifier-in-the-loss (idea #2)** — penalise continuations `agent/gate.py`
-   would block; start as DPO reranking, graduate to a token-level term.
-5. **Distill the council into this base (idea #4)** — `tools/distill_council_traces.py`
-   with this GPT as the student.
+3. ✅ **Abstention head (idea #3)** — `model.py` optional 3-way `accept|hedge|abstain`
+   head; `pretraining/gpt/abstain.py` trains it on the provenance signal and
+   scores it with `agent/calibration.py` (ECE / risk-coverage).
+4. ✅ **Verifier-in-the-loss (idea #2)** — `pretraining/gpt/verifier_loss.py`:
+   provenance penalty → DPO preference loss (+ `sequence_reward` hook for the
+   existing RLVR stack).
+5. ✅ **Born-gated ablation (idea #1 experiment)** — `pretraining/gpt/ablation.py`
+   trains born-gated vs plain arms and scores forbidden-attribution rate
+   (`pretraining/gpt/provenance_eval.py`).
+6. ✅ **Tokenizer fairness (idea #6)** — `pretraining/gpt/tokenizer_analysis.py`
+   (EN/中文 byte-tax + lineage-term separation; finding: CJK ≈ 3× byte tax, 0
+   lineage collisions).
+7. ✅ **Born-gated model card (idea #8)** — [`agi-proof/model-cards/sophia-gpt-nano.md`](../../agi-proof/model-cards/sophia-gpt-nano.md), failure-ledger-first.
+8. **Next (needs the cluster/GPU):** multi-seed real pretrain → interpret the
+   ablation sign; distill the council into this base (idea #4,
+   `tools/distill_council_traces.py`); MoE/quant with the trust governor (idea #7).

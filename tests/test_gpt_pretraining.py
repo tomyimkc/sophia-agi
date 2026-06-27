@@ -146,5 +146,81 @@ def test_scaling_run_quick() -> None:
     assert "passes_10pct_gate" in report["extrapolation"]
 
 
+# -- provenance scorer: flags merges, passes denials (dependency-free) ---------
+def test_forbidden_attribution_scorer() -> None:
+    from pretraining.gpt.provenance_eval import (
+        asserts_forbidden, forbidden_attribution_rate, preference_pairs, provenance_penalty)
+
+    assert asserts_forbidden("Confucius wrote the Dao De Jing.")
+    assert asserts_forbidden("The Dao De Jing was authored by Confucius.")  # passive
+    assert not asserts_forbidden("Confucius did not write the Dao De Jing.")
+    assert not asserts_forbidden("The Dao De Jing is attributed to Laozi.")
+    assert forbidden_attribution_rate(["Confucius wrote the Dao De Jing."]) == 1.0
+    assert provenance_penalty("Laozi wrote the Dao De Jing.") == 0.0
+    pairs = preference_pairs()
+    assert pairs
+    # the verifier must agree with its own labels (no self-contradiction)
+    assert not asserts_forbidden(pairs[0]["chosen"])
+    assert asserts_forbidden(pairs[0]["rejected"])
+
+
+# -- tokenizer analysis: real bilingual stats, no lineage collisions -----------
+def test_tokenizer_analysis() -> None:
+    from pretraining.gpt.tokenizer_analysis import language_efficiency, lineage_separation, report
+
+    eff = language_efficiency()
+    assert eff["ascii_tokens_per_char"] == 1.0       # byte-level: 1 byte / ascii char
+    assert eff["cjk_tokens_per_char"] >= 2.0         # CJK costs more bytes
+    assert lineage_separation()["all_distinct"] is True
+    assert report()["canClaimAGI"] is False
+
+
+# -- verifier-in-the-loss: reward sign + verifier-confirmed pairs --------------
+def test_verifier_reward_and_pairs() -> None:
+    from pretraining.gpt.verifier_loss import sequence_reward, verified_pairs
+
+    assert sequence_reward("Confucius wrote the Dao De Jing.") == -1.0
+    assert sequence_reward("Laozi is credited with the Dao De Jing.") == 0.0
+    vp = verified_pairs()
+    assert vp and all("chosen" in p and "rejected" in p for p in vp)
+
+
+# -- abstention head: dataset labels + torch head trains -----------------------
+def test_abstain_dataset_labels() -> None:
+    from pretraining.gpt.abstain import ABSTAIN, ACCEPT, decision_dataset
+
+    ds = decision_dataset()
+    assert ds and {y for _, y in ds} == {ACCEPT, ABSTAIN}
+
+
+def test_abstain_head_forward() -> None:
+    torch = pytest.importorskip("torch")
+    from pretraining.gpt.model import DECISION_LABELS, GPT, GPTConfig
+
+    cfg = GPTConfig(vocab_size=264, abstain_head=True).quick()
+    model = GPT(cfg)
+    x = torch.randint(0, cfg.vocab_size, (3, cfg.block_size))
+    logits = model.decision_logits(x)
+    assert logits.shape == (3, len(DECISION_LABELS))
+    # a model without the head raises, fail-closed
+    plain = GPT(GPTConfig(vocab_size=264).quick())
+    with pytest.raises(RuntimeError):
+        plain.decision_logits(x)
+
+
+def test_ablation_and_dpo_quick() -> None:
+    pytest.importorskip("torch")
+    from pretraining.gpt.ablation import run_ablation
+    from pretraining.gpt.verifier_loss import run_dpo
+
+    abl = run_ablation(quick=True, seed=0)
+    assert abl["canClaimAGI"] is False
+    assert "delta_plain_minus_bg" in abl
+
+    dpo = run_dpo(quick=True)
+    assert dpo["canClaimAGI"] is False
+    assert dpo["n_pairs"] >= 1
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

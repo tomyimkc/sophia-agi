@@ -205,8 +205,19 @@ idea in Part D:
    (low-confidence by default, fail-closed) trained as first-class tokens.
 6. ✅ `pretraining/gpt/scaling.py` — reproduces the `scaling/` law on the real GPT
    with a pre-registered extrapolation gate.
-7. **Next:** escalate to a longer pretrain on the cluster / RunPod, then the
-   abstention head (idea #3) and verifier-in-the-loss (idea #2).
+7. ✅ Abstention head (idea #3, `gpt/abstain.py` + `model.py` head, calibrated via
+   `agent/calibration.py`), verifier-in-the-loss (idea #2, `gpt/verifier_loss.py`),
+   born-gated ablation (`gpt/ablation.py` + `gpt/provenance_eval.py`), tokenizer
+   fairness (idea #6, `gpt/tokenizer_analysis.py`), and a failure-ledger-first
+   model card (idea #8, `agi-proof/model-cards/sophia-gpt-nano.md`).
+8. **Next (needs the cluster/GPU to *run*, not to build):** a multi-seed real
+   pretrain to interpret the ablation sign; council distillation into this base
+   (idea #4); MoE/quant under the trust governor (idea #7).
+
+> **Status:** the from-scratch track is **fully scaffolded and CI-tested on its
+> dependency-free surface**. Every torch path compiles and is tested under
+> `importorskip`; the remaining work is *running* them at scale on the Spark/M3
+> cluster — which produces measured numbers, not more code.
 
 ### Engineering discipline (Karpathy skills, applied)
 

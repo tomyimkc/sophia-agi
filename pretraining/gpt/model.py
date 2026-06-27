@@ -41,11 +41,17 @@ class GPTConfig:
     n_embd: int = 128
     dropout: float = 0.0
     bias: bool = True
+    abstain_head: bool = False     # idea #3: 3-way accept|hedge|abstain head
 
     def quick(self) -> "GPTConfig":
-        """A few-thousand-step CI/smoke config."""
+        """A few-thousand-step CI/smoke config (preserves abstain_head)."""
         return GPTConfig(self.vocab_size, block_size=32, n_layer=2, n_head=2,
-                         n_embd=64, dropout=0.0, bias=self.bias)
+                         n_embd=64, dropout=0.0, bias=self.bias,
+                         abstain_head=self.abstain_head)
+
+
+# Decision labels for the optional abstention head (idea #3).
+DECISION_LABELS = ("accept", "hedge", "abstain")
 
 
 class CausalSelfAttention(nn.Module):
@@ -111,6 +117,8 @@ class GPT(nn.Module):
         ))
         self.lm_head = nn.Linear(cfg.n_embd, cfg.vocab_size, bias=False)
         self.transformer.wte.weight = self.lm_head.weight  # weight tying
+        # Optional metacognitive head: accept | hedge | abstain (idea #3).
+        self.decision_head = nn.Linear(cfg.n_embd, len(DECISION_LABELS)) if cfg.abstain_head else None
         self.apply(self._init_weights)
 
     def _init_weights(self, module) -> None:
@@ -126,14 +134,18 @@ class GPT(nn.Module):
         n = sum(p.numel() for p in self.parameters())
         return n - self.transformer.wpe.weight.numel()
 
-    def forward(self, idx, targets=None):
+    def hidden_states(self, idx):
+        """Transformer output (post final-norm), shape (B, T, n_embd)."""
         B, T = idx.shape
         assert T <= self.cfg.block_size, f"sequence {T} > block_size {self.cfg.block_size}"
         pos = torch.arange(0, T, dtype=torch.long, device=idx.device)
         x = self.transformer.drop(self.transformer.wte(idx) + self.transformer.wpe(pos))
         for block in self.transformer.h:
             x = block(x)
-        x = self.transformer.ln_f(x)
+        return self.transformer.ln_f(x)
+
+    def forward(self, idx, targets=None):
+        x = self.hidden_states(idx)
         logits = self.lm_head(x)
         loss = None
         if targets is not None:
@@ -141,6 +153,14 @@ class GPT(nn.Module):
                 logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1
             )
         return logits, loss
+
+    def decision_logits(self, idx):
+        """3-way accept|hedge|abstain logits from the last-token hidden state.
+        Raises if the model was built without ``abstain_head=True``."""
+        if self.decision_head is None:
+            raise RuntimeError("model built without abstain_head=True")
+        last = self.hidden_states(idx)[:, -1, :]   # (B, n_embd)
+        return self.decision_head(last)            # (B, 3)
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens: int, temperature: float = 1.0, top_k=None):
