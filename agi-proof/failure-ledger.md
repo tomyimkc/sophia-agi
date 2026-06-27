@@ -1859,4 +1859,60 @@ supersedes my standalone retriever (retired); its coverage finding is the same
 boundary mine found. The five experiments above are complementary to C1–C5, not
 overlapping: mine bound the EXISTING claim; C1–C5 explore NEW mechanisms.
 
+## claimreview-obscure-pack-hypothesis-refuted-2026-06-27
+
+**Status:** RAN — the obscure/recent-claims re-harvest (the open thread from the
+famous-pack null). **Hypothesis REFUTED.** Models do NOT endorse obscure claims
+more than famous ones; raw endorsement is near-zero on BOTH substrates, so the
+ClaimReview grounding axis has near-zero headroom either way. Honest negative
+that closes the thread; `canClaimAGI` stays **False**.
+
+**The hypothesis (and why it was reasonable).** The famous-pack null
+(`claimreview-third-party-axis-null-on-famous-claims-2026-06-27`) found Δ=0
+because models reject famous debunked claims raw — they're in training data. The
+natural follow-on: recent/niche claims (2024-2026, post-training-cutoff, or
+training-thin) should be ones models genuinely don't know, so raw endorsement
+should RISE, giving the grounding something to cut. This entry tests that.
+
+**What was built.** `tools/build_claimreview_pack.py --set obscure` →
+`provenance_bench/data/claimreview_pack_obscure.json`: **123 claims, 90 FALSE
+(eval-usable)**, 16 publishers. Queries target viral-but-RECENT misinfo (FEMA/
+hurricane Helene, Springfield/Haitian, LA fire aid, trump tariff 2025) + specific
+numerics + niche conspiracies. The tool now ships two named query sets
+(`famous` / `obscure`); the eval gained a `--pack` flag.
+
+**Result (dolphin-llama3:8b, 60 FALSE claims, 1 run).**
+- raw endorsement: **1.7%** (1/60) — LOWER than the famous pack's 3.3%, not higher.
+- grounded endorsement: **0.0%** (0/60).
+- **Δ = +1.7%** — grounding DID cut the one endorsement (vs Δ=0 on the famous pack).
+
+**Interpretation (honest, and the hypothesis is wrong).** My prediction —
+"obscure claims → models don't know → higher raw endorsement" — is REFUTED.
+dolphin rejects 98.3% of recent/niche debunked claims RAW. Modern models either
+know these claims OR default to appropriate skepticism when asked a direct
+true/false question. The grounding's marginal cut (+1.7%, 1 claim) is real but
+operates on a near-empty endorsement base — there is essentially no headroom for
+a ClaimReview-grounded gate to demonstrate value on this substrate either.
+
+**Why this matters (it's a real finding, not a wash).** It closes the open thread
+from the famous-pack entry with a measured answer: the near-zero Δ is NOT an
+artifact of "famous claims being too easy." It holds across both famous AND
+recent/niche substrates. The honest conclusion is that **explicit true/false
+question-answering is the wrong eval frame for showing grounding value** — models
+rarely endorse explicit misinformation when asked directly, regardless of the
+claim's fame or recency. A frame that surfaces *implicit* or *confident-but-wrong*
+endorsement (e.g. open-ended generation, not true/false prompts) is the more
+plausible substrate. Recorded as the real next step; not pursued here.
+
+**Boundary conditions.** N=60 × 1 run, lexical labeler, self-selected queries
+(the API's coverage of recent claims is thinner: 16/26 obscure queries returned
+hits vs ~40/40 famous). The single endorsement is real signal but N=1 is too
+small for a meaningful Δ — the value of this run is the HEADROOM measurement
+(raw ~1-3% on both packs), not the Δ point estimate. `canClaimAGI` stays **False**.
+
+**Artifacts.** `provenance_bench/data/claimreview_pack_obscure.json`;
+`agi-proof/baseline-ablation/claimreview-eval-2026-06-27/claimreview-obscure-dolphin-60.json`.
+A qwen3 confirmation run is in flight.
+
+
 

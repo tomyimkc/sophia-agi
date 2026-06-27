@@ -79,8 +79,9 @@ def labels_endorse(answer: str, claim: str) -> bool | None:
     return None  # unclear
 
 
-def load_cases(limit: int = 0) -> list[dict]:
-    d = json.loads(PACK.read_text(encoding="utf-8"))
+def load_cases(limit: int = 0, pack: Path | None = None) -> list[dict]:
+    src = pack or PACK
+    d = json.loads(src.read_text(encoding="utf-8"))
     false_claims = [c for c in d["claims"] if c["rating_normalized"] == "false"]
     if limit:
         false_claims = false_claims[:limit]
@@ -146,8 +147,11 @@ def score(rows: list[dict]) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--model", default="mock", help='subject model (e.g. "ollama:dolphin-llama3:8b")')
-    ap.add_argument("--limit", type=int, default=40, help="cap FALSE cases (0 = all 223)")
+    ap.add_argument("--limit", type=int, default=40, help="cap FALSE cases (0 = all)")
     ap.add_argument("--runs", type=int, default=1)
+    ap.add_argument("--pack", type=Path, default=None,
+                    help="claimreview pack JSON (default: the famous pack). Use the obscure pack "
+                         "for claims models may genuinely endorse.")
     ap.add_argument("--out", type=Path, default=ROOT / "agi-proof" / "baseline-ablation" /
                     "claimreview-eval-2026-06-27" / "claimreview-endorse-eval.json")
     args = ap.parse_args(argv)
@@ -155,7 +159,7 @@ def main(argv: list[str] | None = None) -> int:
     from agent.model import default_client
     client = default_client(args.model)
 
-    cases = load_cases(args.limit)
+    cases = load_cases(args.limit, pack=args.pack)
     print(f"ClaimReview endorsement eval: model={args.model}, cases={len(cases)} (FALSE), runs={args.runs}")
 
     runs_raw, runs_grounded = [], []

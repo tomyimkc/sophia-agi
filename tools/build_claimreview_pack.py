@@ -43,32 +43,63 @@ OUT = ROOT / "provenance_bench" / "data" / "claimreview_pack.json"
 
 BASE = "https://factchecktools.googleapis.com/v1alpha1/claims:search"
 
-# Domains where the API demonstrably has coverage (from the scope probe).
-QUERIES = [
-    # health / vaccines
-    "vaccines cause autism", "covid vaccine microchip", "5G coronavirus",
-    "hydroxychloroquine covid cure", "fluoride water IQ", "mmr vaccine",
-    "covid vaccine infertility", "ivermectin covid", "vaccine shedding",
-    "covid death count exaggerated",
-    # climate / energy
-    "climate change hoax", "co2 not greenhouse gas", "climate models inaccurate",
-    "solar panels cause cancer", "wind turbines bird extinction",
-    # politics / elections (generic)
-    "election fraud", "mail ballot fraud", "immigrant crime statistics",
-    "inflation cause", "crime rate rising",
-    # science misconceptions
-    "Einstein failed math", "Great Wall visible from space", "humans use 10 percent of brain",
-    "sugar makes children hyperactive", "cracking knuckles arthritis",
-    "shaving makes hair grow back thicker", "water spins drain hemisphere",
-    "bull sees red color", "goldfish three second memory",
-    # history misconceptions
-    "Marie Antoinette let them eat cake", "Vikings horned helmets",
-    "Columbus proved earth round", "Washington wooden teeth",
-    "pyramids built by aliens", "mao sparrows campaign",
-    # tech / AI / media
-    "deepfake election", "5g tracking", "ai replaces jobs", "phone cause cancer",
-    "wifi radiation harmful", "vpn makes anonymous",
-]
+# Query sets. The API's coverage is heavily biased toward already-viral claims,
+# which models ALSO know from training data — so the "famous" pack (default) is
+# the WRONG substrate for showing grounding value (models reject those raw). The
+# "obscure"/recent set targets viral-but-RECENT (2024-2026) and specific
+# misinformation that a model with an older training cutoff might genuinely
+# endorse — the right substrate for a non-null Δ. Select via --set.
+QUERY_SETS: dict[str, list[str]] = {
+    "famous": [
+        # health / vaccines
+        "vaccines cause autism", "covid vaccine microchip", "5G coronavirus",
+        "hydroxychloroquine covid cure", "fluoride water IQ", "mmr vaccine",
+        "covid vaccine infertility", "ivermectin covid", "vaccine shedding",
+        "covid death count exaggerated",
+        # climate / energy
+        "climate change hoax", "co2 not greenhouse gas", "climate models inaccurate",
+        "solar panels cause cancer", "wind turbines bird extinction",
+        # politics / elections (generic)
+        "election fraud", "mail ballot fraud", "immigrant crime statistics",
+        "inflation cause", "crime rate rising",
+        # science misconceptions
+        "Einstein failed math", "Great Wall visible from space", "humans use 10 percent of brain",
+        "sugar makes children hyperactive", "cracking knuckles arthritis",
+        "shaving makes hair grow back thicker", "water spins drain hemisphere",
+        "bull sees red color", "goldfish three second memory",
+        # history misconceptions
+        "Marie Antoinette let them eat cake", "Vikings horned helmets",
+        "Columbus proved earth round", "Washington wooden teeth",
+        "pyramids built by aliens", "mao sparrows campaign",
+        # tech / AI / media
+        "deepfake election", "5g tracking", "ai replaces jobs", "phone cause cancer",
+        "wifi radiation harmful", "vpn makes anonymous",
+    ],
+    "obscure": [
+        # 2024-2026 viral misinfo (recent; older-cutoff models may not know)
+        "hurricane helene fema response 2024", "katrina fema money immigrants",
+        "springfield haitian immigrants pets 2024", "trump Springfield comment",
+        "israel gaza hospital 2024", "unrwa staff october 7",
+        "taylor swift endorse 2024", "ai generated trump pope photo 2025",
+        "trump crypto wallet 2025", "melania trump body double",
+        "maui fire directed energy weapon", "fema 750 loan hurricane",
+        "california fire aid 180 days", "los angeles hollywood aid",
+        # specific numerics (training-thin)
+        "us inflation rate 2024", "gdp growth 2024",
+        "border crossings 2024 statistics", "fentanyl deaths 2024",
+        "ev sales decline 2024", "tesla robotaxi 2024",
+        # recent science/health specifics
+        "bird flu h5n1 transmission human 2024", "mpox 2024 outbreak",
+        "semaglutide pancreatic cancer", "pfizer ceo resign 2024",
+        "seed oils inflammation study",
+        # niche conspiracies (less canonical than the famous-pack ones)
+        "chemtrails weather modification", "haarp earthquake",
+        "flat earth antarctica ice wall", "moon landing fake",
+        # tech/specific
+        "openai nonprofit 2024", "sam altman fired timeline",
+    ],
+}
+QUERIES = QUERY_SETS["famous"]  # default, backward-compatible
 
 # Rating normalization. The API's textualRating is free-form across languages;
 # map it to a clean {true, false, mixed, other} label. Conservative: anything
@@ -109,11 +140,13 @@ def search(q: str, key: str, page_token: str | None = None) -> dict:
         return json.load(r)
 
 
-def harvest(key: str, per_query_pages: int = 1) -> list[dict]:
+def harvest(key: str, queries: list[str] | None = None, per_query_pages: int = 1) -> list[dict]:
     """Harvest claims; dedup by (claim text, publisher). Returns raw claim rows."""
+    if queries is None:
+        queries = QUERIES
     seen: set[str] = set()
     rows: list[dict] = []
-    for q in QUERIES:
+    for q in queries:
         token = None
         for _ in range(per_query_pages):
             try:
@@ -185,11 +218,15 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--key-file", default="/tmp/.gfc", help="file containing the Google Fact Check API key")
     ap.add_argument("--out", default=str(OUT))
     ap.add_argument("--pages", type=int, default=1, help="result pages per query (each ~20 claims)")
+    ap.add_argument("--set", default="famous", choices=list(QUERY_SETS),
+                    help="'famous' (canonical, models know them) or 'obscure' (recent/niche, "
+                         "models may genuinely endorse — the right substrate for a non-null Δ)")
     args = ap.parse_args(argv)
 
     key = Path(args.key_file).read_text().strip()
-    print(f"harvesting from {len(QUERIES)} queries x {args.pages} page(s)...")
-    rows = harvest(key, per_query_pages=args.pages)
+    queries = QUERY_SETS[args.set]
+    print(f"harvesting set={args.set!r}: {len(queries)} queries x {args.pages} page(s)...")
+    rows = harvest(key, queries=queries, per_query_pages=args.pages)
     pack = build_pack(rows)
     OUT_PATH = Path(args.out)
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
