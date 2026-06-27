@@ -774,15 +774,16 @@ def build(check_only: bool, stats: bool, *, teacher_spec: str | None = None,
             "met": total >= 10000,
             "honest_note": ("Volume is CORPUS-bound (not teacher-bound): the builder dedups by "
                             "normalized prompt, so rows scale with the number of ground-truth records. "
-                            "ENRICHMENT STARTED 2026-06-27: attributions corpus 30 -> 104 records "
-                            "(tools/enrich_corpus.py, fail-closed on accuracy: every record carries a "
-                            "provenance note; auto-decontaminated vs heldout_v1 + transfer_v1) lifted "
-                            "the dataset 880 -> 1344 gate-passed rows (+53%) and preference pairs "
-                            "233 -> 539. STILL BELOW the 10k target -> M2 stays NO-GO on absolute "
-                            "volume. Measured yield ~6.3 net rows per attribution record, so 10k needs "
-                            "~1380 MORE attribution records (or, higher-yield, also enriching "
-                            "tradition/religion/history records which feed more generators) — a "
-                            "sustained curation effort, not a one-shot. Pipeline complete + fail-closed."),
+                            "ENRICHMENT 2026-06-27 (tools/enrich_corpus.py, fail-closed on accuracy: "
+                            "every record carries a provenance note + is fact-checked; auto-decontaminated "
+                            "vs heldout_v1 + transfer_v1): attributions 30 -> 185, history_events 23 -> 51 "
+                            "(+28 fact-checked myths), religion_concepts 8 -> 21 (+13 distinct non-eval "
+                            "traditions). Dataset 880 -> 1946 gate-passed rows (+121%, more than doubled); "
+                            "preference pairs 233 -> 975 (4x); decontam drops held at 90 (zero new eval "
+                            "contamination). STILL BELOW the 10k target -> M2 stays NO-GO on absolute "
+                            "volume (~1240 more records to 10k at the measured ~6.5 rows/record). A "
+                            "sustained curation effort, not a one-shot; the path is now tooled + "
+                            "accuracy-disciplined + decontaminated. Pipeline complete + fail-closed."),
         },
         "boundary": ("Habits learned by weights; truth enforced by the EXTERNAL gate. Not an AGI "
                      "claim. General-retention pack is small — expand with a license-clean instruct "

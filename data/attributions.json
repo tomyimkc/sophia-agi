@@ -1571,5 +1571,1222 @@
       "ambrose_of_milan"
     ],
     "provenance": "Autobiographical work by Augustine of Hippo, composed c.397-400 CE."
+  },
+  "the_great_gatsby": {
+    "textId": "the_great_gatsby",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Great Gatsby",
+    "tradition": "american_modernism",
+    "attributedAuthor": "f_scott_fitzgerald",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ernest_hemingway",
+      "john_dos_passos",
+      "sinclair_lewis"
+    ],
+    "provenance": "Novel by F. Scott Fitzgerald, published 1925; authorship is settled."
+  },
+  "mrs_dalloway": {
+    "textId": "mrs_dalloway",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Mrs Dalloway",
+    "tradition": "modernist_fiction",
+    "attributedAuthor": "virginia_woolf",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "katherine_mansfield",
+      "e_m_forster",
+      "dorothy_richardson"
+    ],
+    "provenance": "Novel by Virginia Woolf, published 1925."
+  },
+  "the_sound_and_the_fury": {
+    "textId": "the_sound_and_the_fury",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Sound and the Fury",
+    "tradition": "american_modernism",
+    "attributedAuthor": "william_faulkner",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ernest_hemingway",
+      "f_scott_fitzgerald",
+      "thomas_wolfe"
+    ],
+    "provenance": "Novel by William Faulkner, published 1929."
+  },
+  "the_old_man_and_the_sea": {
+    "textId": "the_old_man_and_the_sea",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Old Man and the Sea",
+    "tradition": "american_modernism",
+    "attributedAuthor": "ernest_hemingway",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "william_faulkner",
+      "f_scott_fitzgerald",
+      "john_steinbeck"
+    ],
+    "provenance": "Novella by Ernest Hemingway, published 1952."
+  },
+  "the_grapes_of_wrath": {
+    "textId": "the_grapes_of_wrath",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Grapes of Wrath",
+    "tradition": "american_social_realism",
+    "attributedAuthor": "john_steinbeck",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ernest_hemingway",
+      "william_faulkner",
+      "upton_sinclair"
+    ],
+    "provenance": "Novel by John Steinbeck, published 1939."
+  },
+  "beloved": {
+    "textId": "beloved",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Beloved",
+    "tradition": "american_literature",
+    "attributedAuthor": "toni_morrison",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "alice_walker",
+      "maya_angelou",
+      "james_baldwin"
+    ],
+    "provenance": "Novel by Toni Morrison, published 1987."
+  },
+  "things_fall_apart": {
+    "textId": "things_fall_apart",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Things Fall Apart",
+    "tradition": "african_literature",
+    "attributedAuthor": "chinua_achebe",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "wole_soyinka",
+      "ngugi_wa_thiongo",
+      "amos_tutuola"
+    ],
+    "provenance": "Novel by Chinua Achebe, published 1958."
+  },
+  "midnights_children": {
+    "textId": "midnights_children",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Midnight's Children",
+    "tradition": "postcolonial_fiction",
+    "attributedAuthor": "salman_rushdie",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "v_s_naipaul",
+      "vikram_seth",
+      "anita_desai"
+    ],
+    "provenance": "Novel by Salman Rushdie, published 1981."
+  },
+  "the_stranger": {
+    "textId": "the_stranger",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Stranger",
+    "tradition": "french_existentialism",
+    "attributedAuthor": "albert_camus",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "jean_paul_sartre",
+      "andre_malraux",
+      "simone_de_beauvoir"
+    ],
+    "provenance": "Novel by Albert Camus, published 1942 (L'Étranger)."
+  },
+  "nausea": {
+    "textId": "nausea",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Nausea",
+    "tradition": "french_existentialism",
+    "attributedAuthor": "jean_paul_sartre",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "albert_camus",
+      "simone_de_beauvoir",
+      "andre_malraux"
+    ],
+    "provenance": "Novel by Jean-Paul Sartre, published 1938 (La Nausée)."
+  },
+  "the_metamorphosis": {
+    "textId": "the_metamorphosis",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Metamorphosis",
+    "tradition": "modernist_fiction",
+    "attributedAuthor": "franz_kafka",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "robert_musil",
+      "thomas_mann",
+      "hermann_hesse"
+    ],
+    "provenance": "Novella by Franz Kafka, published 1915 (Die Verwandlung)."
+  },
+  "the_magic_mountain": {
+    "textId": "the_magic_mountain",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Magic Mountain",
+    "tradition": "german_modernism",
+    "attributedAuthor": "thomas_mann",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "hermann_hesse",
+      "robert_musil",
+      "heinrich_mann"
+    ],
+    "provenance": "Novel by Thomas Mann, published 1924 (Der Zauberberg)."
+  },
+  "steppenwolf": {
+    "textId": "steppenwolf",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Steppenwolf",
+    "tradition": "german_modernism",
+    "attributedAuthor": "hermann_hesse",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "thomas_mann",
+      "robert_musil",
+      "stefan_zweig"
+    ],
+    "provenance": "Novel by Hermann Hesse, published 1927 (Der Steppenwolf)."
+  },
+  "doctor_zhivago": {
+    "textId": "doctor_zhivago",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Doctor Zhivago",
+    "tradition": "russian_literature",
+    "attributedAuthor": "boris_pasternak",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "mikhail_sholokhov",
+      "vladimir_nabokov",
+      "aleksandr_solzhenitsyn"
+    ],
+    "provenance": "Novel by Boris Pasternak, published 1957."
+  },
+  "lolita": {
+    "textId": "lolita",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Lolita",
+    "tradition": "modernist_fiction",
+    "attributedAuthor": "vladimir_nabokov",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "boris_pasternak",
+      "saul_bellow",
+      "john_updike"
+    ],
+    "provenance": "Novel by Vladimir Nabokov, published 1955."
+  },
+  "catch_22": {
+    "textId": "catch_22",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Catch-22",
+    "tradition": "american_postwar_fiction",
+    "attributedAuthor": "joseph_heller",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "kurt_vonnegut",
+      "norman_mailer",
+      "thomas_pynchon"
+    ],
+    "provenance": "Novel by Joseph Heller, published 1961."
+  },
+  "to_kill_a_mockingbird": {
+    "textId": "to_kill_a_mockingbird",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "To Kill a Mockingbird",
+    "tradition": "american_literature",
+    "attributedAuthor": "harper_lee",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "truman_capote",
+      "carson_mccullers",
+      "flannery_oconnor"
+    ],
+    "provenance": "Novel by Harper Lee, published 1960."
+  },
+  "the_catcher_in_the_rye": {
+    "textId": "the_catcher_in_the_rye",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Catcher in the Rye",
+    "tradition": "american_postwar_fiction",
+    "attributedAuthor": "j_d_salinger",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "john_updike",
+      "saul_bellow",
+      "philip_roth"
+    ],
+    "provenance": "Novel by J. D. Salinger, published 1951."
+  },
+  "invisible_man": {
+    "textId": "invisible_man",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Invisible Man",
+    "tradition": "american_literature",
+    "attributedAuthor": "ralph_ellison",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "richard_wright",
+      "james_baldwin",
+      "ralph_waldo_emerson"
+    ],
+    "provenance": "Novel by Ralph Ellison, published 1952."
+  },
+  "pedro_paramo": {
+    "textId": "pedro_paramo",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Pedro Páramo",
+    "tradition": "latin_american_literature",
+    "attributedAuthor": "juan_rulfo",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "gabriel_garcia_marquez",
+      "carlos_fuentes",
+      "octavio_paz"
+    ],
+    "provenance": "Novel by Juan Rulfo, published 1955."
+  },
+  "ficciones": {
+    "textId": "ficciones",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Ficciones",
+    "tradition": "latin_american_literature",
+    "attributedAuthor": "jorge_luis_borges",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "julio_cortazar",
+      "adolfo_bioy_casares",
+      "ernesto_sabato"
+    ],
+    "provenance": "Short-story collection by Jorge Luis Borges, published 1944."
+  },
+  "hopscotch": {
+    "textId": "hopscotch",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Hopscotch",
+    "tradition": "latin_american_boom",
+    "attributedAuthor": "julio_cortazar",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "jorge_luis_borges",
+      "gabriel_garcia_marquez",
+      "carlos_fuentes"
+    ],
+    "provenance": "Novel by Julio Cortázar, published 1963 (Rayuela)."
+  },
+  "the_tin_drum": {
+    "textId": "the_tin_drum",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Tin Drum",
+    "tradition": "german_postwar_fiction",
+    "attributedAuthor": "gunter_grass",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "heinrich_boll",
+      "thomas_mann",
+      "uwe_johnson"
+    ],
+    "provenance": "Novel by Günter Grass, published 1959 (Die Blechtrommel)."
+  },
+  "the_leopard": {
+    "textId": "the_leopard",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Leopard",
+    "tradition": "italian_literature",
+    "attributedAuthor": "giuseppe_tomasi_di_lampedusa",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "italo_calvino",
+      "alberto_moravia",
+      "cesare_pavese"
+    ],
+    "provenance": "Novel by Giuseppe Tomasi di Lampedusa, published posthumously 1958 (Il Gattopardo)."
+  },
+  "the_name_of_the_rose": {
+    "textId": "the_name_of_the_rose",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Name of the Rose",
+    "tradition": "italian_literature",
+    "attributedAuthor": "umberto_eco",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "italo_calvino",
+      "alberto_moravia",
+      "leonardo_sciascia"
+    ],
+    "provenance": "Novel by Umberto Eco, published 1980 (Il nome della rosa)."
+  },
+  "snow_country": {
+    "textId": "snow_country",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Snow Country",
+    "canonicalTitleZh": "雪国",
+    "tradition": "japanese_literature",
+    "attributedAuthor": "yasunari_kawabata",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "junichiro_tanizaki",
+      "yukio_mishima",
+      "osamu_dazai"
+    ],
+    "provenance": "Novel by Yasunari Kawabata, serialized 1935-1937, completed 1948 (Yukiguni)."
+  },
+  "kokoro": {
+    "textId": "kokoro",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Kokoro",
+    "canonicalTitleZh": "こころ",
+    "tradition": "japanese_literature",
+    "attributedAuthor": "natsume_soseki",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ryunosuke_akutagawa",
+      "mori_ogai",
+      "junichiro_tanizaki"
+    ],
+    "provenance": "Novel by Natsume Sōseki, published 1914."
+  },
+  "season_of_migration_to_the_north": {
+    "textId": "season_of_migration_to_the_north",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Season of Migration to the North",
+    "tradition": "arabic_literature",
+    "attributedAuthor": "tayeb_salih",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "naguib_mahfouz",
+      "ghassan_kanafani",
+      "tawfiq_al_hakim"
+    ],
+    "provenance": "Novel by Tayeb Salih, published 1966 (Mawsim al-Hijra ila al-Shamal)."
+  },
+  "the_cairo_trilogy": {
+    "textId": "the_cairo_trilogy",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Cairo Trilogy",
+    "tradition": "arabic_literature",
+    "attributedAuthor": "naguib_mahfouz",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "tayeb_salih",
+      "taha_hussein",
+      "yusuf_idris"
+    ],
+    "provenance": "Novel trilogy by Naguib Mahfouz, published 1956-1957."
+  },
+  "wide_sargasso_sea": {
+    "textId": "wide_sargasso_sea",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Wide Sargasso Sea",
+    "tradition": "postcolonial_fiction",
+    "attributedAuthor": "jean_rhys",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "doris_lessing",
+      "muriel_spark",
+      "elizabeth_bowen"
+    ],
+    "provenance": "Novel by Jean Rhys, published 1966."
+  },
+  "the_master_and_margarita": {
+    "textId": "the_master_and_margarita",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The Master and Margarita",
+    "tradition": "russian_literature",
+    "attributedAuthor": "mikhail_bulgakov",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "boris_pasternak",
+      "andrei_platonov",
+      "yevgeny_zamyatin"
+    ],
+    "provenance": "Novel by Mikhail Bulgakov, written 1928-1940, published 1966-1967."
+  },
+  "one_day_in_the_life_of_ivan_denisovich": {
+    "textId": "one_day_in_the_life_of_ivan_denisovich",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "One Day in the Life of Ivan Denisovich",
+    "tradition": "russian_literature",
+    "attributedAuthor": "aleksandr_solzhenitsyn",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "boris_pasternak",
+      "varlam_shalamov",
+      "mikhail_sholokhov"
+    ],
+    "provenance": "Novella by Aleksandr Solzhenitsyn, published 1962."
+  },
+  "dead_souls": {
+    "textId": "dead_souls",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Dead Souls",
+    "tradition": "russian_realism",
+    "attributedAuthor": "nikolai_gogol",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "fyodor_dostoevsky",
+      "ivan_turgenev",
+      "leo_tolstoy"
+    ],
+    "provenance": "Novel by Nikolai Gogol, published 1842."
+  },
+  "fathers_and_sons": {
+    "textId": "fathers_and_sons",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Fathers and Sons",
+    "tradition": "russian_realism",
+    "attributedAuthor": "ivan_turgenev",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "fyodor_dostoevsky",
+      "leo_tolstoy",
+      "nikolai_gogol"
+    ],
+    "provenance": "Novel by Ivan Turgenev, published 1862."
+  },
+  "eugene_onegin": {
+    "textId": "eugene_onegin",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Eugene Onegin",
+    "tradition": "russian_romanticism",
+    "attributedAuthor": "alexander_pushkin",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "mikhail_lermontov",
+      "nikolai_gogol",
+      "vasily_zhukovsky"
+    ],
+    "provenance": "Novel in verse by Alexander Pushkin, published 1825-1832."
+  },
+  "leaves_of_grass": {
+    "textId": "leaves_of_grass",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Leaves of Grass",
+    "tradition": "american_poetry",
+    "attributedAuthor": "walt_whitman",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ralph_waldo_emerson",
+      "henry_david_thoreau",
+      "henry_wadsworth_longfellow"
+    ],
+    "provenance": "Poetry collection by Walt Whitman, first published 1855 and expanded through 1892."
+  },
+  "the_waste_land": {
+    "textId": "the_waste_land",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Waste Land",
+    "tradition": "modernist_poetry",
+    "attributedAuthor": "t_s_eliot",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "ezra_pound",
+      "w_b_yeats",
+      "wallace_stevens"
+    ],
+    "provenance": "Poem by T. S. Eliot, published 1922."
+  },
+  "howl": {
+    "textId": "howl",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Howl",
+    "tradition": "beat_poetry",
+    "attributedAuthor": "allen_ginsberg",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "jack_kerouac",
+      "william_s_burroughs",
+      "lawrence_ferlinghetti"
+    ],
+    "provenance": "Poem by Allen Ginsberg, published 1956."
+  },
+  "duino_elegies": {
+    "textId": "duino_elegies",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Duino Elegies",
+    "tradition": "german_modernist_poetry",
+    "attributedAuthor": "rainer_maria_rilke",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "stefan_george",
+      "hugo_von_hofmannsthal",
+      "paul_celan"
+    ],
+    "provenance": "Poetry cycle by Rainer Maria Rilke, completed 1922, published 1923 (Duineser Elegien)."
+  },
+  "the_flowers_of_evil": {
+    "textId": "the_flowers_of_evil",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Flowers of Evil",
+    "tradition": "french_symbolism",
+    "attributedAuthor": "charles_baudelaire",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "arthur_rimbaud",
+      "paul_verlaine",
+      "stephane_mallarme"
+    ],
+    "provenance": "Poetry collection by Charles Baudelaire, published 1857 (Les Fleurs du mal)."
+  },
+  "the_divan_of_hafez": {
+    "textId": "the_divan_of_hafez",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Divan of Hafez",
+    "tradition": "persian_poetry",
+    "attributedAuthor": "hafez",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "rumi",
+      "saadi_shirazi",
+      "ferdowsi"
+    ],
+    "provenance": "Collected ghazals of Hafez of Shiraz, 14th century."
+  },
+  "shakespeares_sonnets": {
+    "textId": "shakespeares_sonnets",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "Shakespeare's Sonnets",
+    "tradition": "english_renaissance_poetry",
+    "attributedAuthor": "william_shakespeare",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "christopher_marlowe",
+      "edmund_spenser",
+      "philip_sidney"
+    ],
+    "provenance": "Sequence of 154 sonnets by William Shakespeare, published 1609."
+  },
+  "the_faerie_queene": {
+    "textId": "the_faerie_queene",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Faerie Queene",
+    "tradition": "english_renaissance_poetry",
+    "attributedAuthor": "edmund_spenser",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "philip_sidney",
+      "william_shakespeare",
+      "christopher_marlowe"
+    ],
+    "provenance": "Epic poem by Edmund Spenser, published 1590-1596."
+  },
+  "the_rime_of_the_ancient_mariner": {
+    "textId": "the_rime_of_the_ancient_mariner",
+    "domain": "poetry",
+    "recordType": "text",
+    "canonicalTitleEn": "The Rime of the Ancient Mariner",
+    "tradition": "english_romanticism",
+    "attributedAuthor": "samuel_taylor_coleridge",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "william_wordsworth",
+      "lord_byron",
+      "robert_southey"
+    ],
+    "provenance": "Poem by Samuel Taylor Coleridge, published 1798."
+  },
+  "a_dolls_house": {
+    "textId": "a_dolls_house",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "A Doll's House",
+    "tradition": "modern_drama",
+    "attributedAuthor": "henrik_ibsen",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "august_strindberg",
+      "anton_chekhov",
+      "bjornstjerne_bjornson"
+    ],
+    "provenance": "Play by Henrik Ibsen, premiered 1879 (Et dukkehjem)."
+  },
+  "the_cherry_orchard": {
+    "textId": "the_cherry_orchard",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "The Cherry Orchard",
+    "tradition": "russian_drama",
+    "attributedAuthor": "anton_chekhov",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "maxim_gorky",
+      "henrik_ibsen",
+      "leo_tolstoy"
+    ],
+    "provenance": "Play by Anton Chekhov, premiered 1904 (Vishnyovy sad)."
+  },
+  "death_of_a_salesman": {
+    "textId": "death_of_a_salesman",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "Death of a Salesman",
+    "tradition": "american_drama",
+    "attributedAuthor": "arthur_miller",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "tennessee_williams",
+      "eugene_oneill",
+      "edward_albee"
+    ],
+    "provenance": "Play by Arthur Miller, premiered 1949."
+  },
+  "a_streetcar_named_desire": {
+    "textId": "a_streetcar_named_desire",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "A Streetcar Named Desire",
+    "tradition": "american_drama",
+    "attributedAuthor": "tennessee_williams",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "arthur_miller",
+      "eugene_oneill",
+      "william_inge"
+    ],
+    "provenance": "Play by Tennessee Williams, premiered 1947."
+  },
+  "waiting_for_godot": {
+    "textId": "waiting_for_godot",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "Waiting for Godot",
+    "tradition": "theatre_of_the_absurd",
+    "attributedAuthor": "samuel_beckett",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "eugene_ionesco",
+      "harold_pinter",
+      "jean_genet"
+    ],
+    "provenance": "Play by Samuel Beckett, premiered 1953 (En attendant Godot)."
+  },
+  "pygmalion": {
+    "textId": "pygmalion",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "Pygmalion",
+    "tradition": "modern_drama",
+    "attributedAuthor": "george_bernard_shaw",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "oscar_wilde",
+      "j_m_barrie",
+      "john_galsworthy"
+    ],
+    "provenance": "Play by George Bernard Shaw, premiered 1913."
+  },
+  "the_importance_of_being_earnest": {
+    "textId": "the_importance_of_being_earnest",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "The Importance of Being Earnest",
+    "tradition": "victorian_comedy",
+    "attributedAuthor": "oscar_wilde",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "george_bernard_shaw",
+      "arthur_wing_pinero",
+      "henry_james"
+    ],
+    "provenance": "Play by Oscar Wilde, premiered 1895."
+  },
+  "the_blood_wedding": {
+    "textId": "the_blood_wedding",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "Blood Wedding",
+    "tradition": "spanish_drama",
+    "attributedAuthor": "federico_garcia_lorca",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "antonio_machado",
+      "miguel_de_unamuno",
+      "rafael_alberti"
+    ],
+    "provenance": "Play by Federico García Lorca, premiered 1933 (Bodas de sangre)."
+  },
+  "tartuffe": {
+    "textId": "tartuffe",
+    "domain": "drama",
+    "recordType": "text",
+    "canonicalTitleEn": "Tartuffe",
+    "tradition": "french_classical_comedy",
+    "attributedAuthor": "moliere",
+    "authorConfidence": "pseudonymous",
+    "doNotAttributeTo": [
+      "jean_racine",
+      "pierre_corneille",
+      "jean_de_la_fontaine"
+    ],
+    "provenance": "Comedy first performed 1664 by Jean-Baptiste Poquelin under his stage name Molière."
+  },
+  "general_theory_of_employment_interest_and_money": {
+    "textId": "general_theory_of_employment_interest_and_money",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "The General Theory of Employment, Interest and Money",
+    "tradition": "keynesian_economics",
+    "attributedAuthor": "john_maynard_keynes",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "friedrich_hayek",
+      "milton_friedman",
+      "arthur_pigou"
+    ],
+    "provenance": "Economics treatise by John Maynard Keynes, published 1936."
+  },
+  "principles_of_political_economy_and_taxation": {
+    "textId": "principles_of_political_economy_and_taxation",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "On the Principles of Political Economy and Taxation",
+    "tradition": "classical_economics",
+    "attributedAuthor": "david_ricardo",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "adam_smith",
+      "thomas_malthus",
+      "john_stuart_mill"
+    ],
+    "provenance": "Economics treatise by David Ricardo, published 1817."
+  },
+  "the_structure_of_scientific_revolutions": {
+    "textId": "the_structure_of_scientific_revolutions",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleEn": "The Structure of Scientific Revolutions",
+    "tradition": "philosophy_of_science",
+    "attributedAuthor": "thomas_kuhn",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "karl_popper",
+      "imre_lakatos",
+      "paul_feyerabend"
+    ],
+    "provenance": "Work in philosophy of science by Thomas Kuhn, published 1962."
+  },
+  "tractatus_logico_philosophicus": {
+    "textId": "tractatus_logico_philosophicus",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleEn": "Tractatus Logico-Philosophicus",
+    "tradition": "analytic_philosophy",
+    "attributedAuthor": "ludwig_wittgenstein",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "bertrand_russell",
+      "g_e_moore",
+      "rudolf_carnap"
+    ],
+    "provenance": "Philosophical work by Ludwig Wittgenstein, published 1921."
+  },
+  "being_and_time": {
+    "textId": "being_and_time",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleEn": "Being and Time",
+    "tradition": "phenomenology",
+    "attributedAuthor": "martin_heidegger",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "edmund_husserl",
+      "karl_jaspers",
+      "hans_georg_gadamer"
+    ],
+    "provenance": "Philosophical work by Martin Heidegger, published 1927 (Sein und Zeit)."
+  },
+  "the_second_sex": {
+    "textId": "the_second_sex",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleEn": "The Second Sex",
+    "tradition": "existentialism_feminism",
+    "attributedAuthor": "simone_de_beauvoir",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "jean_paul_sartre",
+      "albert_camus",
+      "hannah_arendt"
+    ],
+    "provenance": "Philosophical work by Simone de Beauvoir, published 1949 (Le Deuxième Sexe)."
+  },
+  "a_theory_of_justice": {
+    "textId": "a_theory_of_justice",
+    "domain": "philosophy",
+    "recordType": "text",
+    "canonicalTitleEn": "A Theory of Justice",
+    "tradition": "political_philosophy",
+    "attributedAuthor": "john_rawls",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "robert_nozick",
+      "ronald_dworkin",
+      "isaiah_berlin"
+    ],
+    "provenance": "Work in political philosophy by John Rawls, published 1971."
+  },
+  "the_elements": {
+    "textId": "the_elements",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Elements",
+    "tradition": "ancient_greek_mathematics",
+    "attributedAuthor": "euclid",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "archimedes",
+      "apollonius_of_perga",
+      "pythagoras"
+    ],
+    "provenance": "Mathematical treatise by Euclid of Alexandria, c.300 BCE."
+  },
+  "almagest": {
+    "textId": "almagest",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Almagest",
+    "tradition": "ancient_astronomy",
+    "attributedAuthor": "ptolemy",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "hipparchus",
+      "aristarchus_of_samos",
+      "euclid"
+    ],
+    "provenance": "Astronomical treatise by Claudius Ptolemy, 2nd century CE."
+  },
+  "on_the_fabric_of_the_human_body": {
+    "textId": "on_the_fabric_of_the_human_body",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "On the Fabric of the Human Body",
+    "tradition": "renaissance_anatomy",
+    "attributedAuthor": "andreas_vesalius",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "galen",
+      "william_harvey",
+      "ambroise_pare"
+    ],
+    "provenance": "Anatomical treatise by Andreas Vesalius, published 1543 (De humani corporis fabrica)."
+  },
+  "the_selfish_gene": {
+    "textId": "the_selfish_gene",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "The Selfish Gene",
+    "tradition": "evolutionary_biology",
+    "attributedAuthor": "richard_dawkins",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "stephen_jay_gould",
+      "edward_o_wilson",
+      "john_maynard_smith"
+    ],
+    "provenance": "Popular science book by Richard Dawkins, published 1976."
+  },
+  "silent_spring": {
+    "textId": "silent_spring",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Silent Spring",
+    "tradition": "environmental_science",
+    "attributedAuthor": "rachel_carson",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "aldo_leopold",
+      "barry_commoner",
+      "paul_ehrlich"
+    ],
+    "provenance": "Environmental science book by Rachel Carson, published 1962."
+  },
+  "a_brief_history_of_time": {
+    "textId": "a_brief_history_of_time",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "A Brief History of Time",
+    "tradition": "modern_cosmology",
+    "attributedAuthor": "stephen_hawking",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "roger_penrose",
+      "carl_sagan",
+      "kip_thorne"
+    ],
+    "provenance": "Popular science book by Stephen Hawking, published 1988."
+  },
+  "godel_escher_bach": {
+    "textId": "godel_escher_bach",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Gödel, Escher, Bach: an Eternal Golden Braid",
+    "tradition": "cognitive_science",
+    "attributedAuthor": "douglas_hofstadter",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "marvin_minsky",
+      "daniel_dennett",
+      "john_searle"
+    ],
+    "provenance": "Book by Douglas Hofstadter, published 1979."
+  },
+  "principia_mathematica_whitehead_russell": {
+    "textId": "principia_mathematica_whitehead_russell",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Principia Mathematica",
+    "tradition": "mathematical_logic",
+    "attributedAuthor": "alfred_north_whitehead_and_bertrand_russell",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "gottlob_frege",
+      "kurt_godel",
+      "giuseppe_peano"
+    ],
+    "provenance": "Foundational logic work co-authored by Alfred North Whitehead and Bertrand Russell, published 1910-1913."
+  },
+  "democracy_in_america": {
+    "textId": "democracy_in_america",
+    "domain": "history",
+    "recordType": "text",
+    "canonicalTitleEn": "Democracy in America",
+    "tradition": "political_history",
+    "attributedAuthor": "alexis_de_tocqueville",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "john_stuart_mill",
+      "francois_guizot",
+      "edmund_burke"
+    ],
+    "provenance": "Political study by Alexis de Tocqueville, published 1835-1840 (De la démocratie en Amérique)."
+  },
+  "reflections_on_the_revolution_in_france": {
+    "textId": "reflections_on_the_revolution_in_france",
+    "domain": "history",
+    "recordType": "text",
+    "canonicalTitleEn": "Reflections on the Revolution in France",
+    "tradition": "political_thought",
+    "attributedAuthor": "edmund_burke",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "thomas_paine",
+      "mary_wollstonecraft",
+      "william_godwin"
+    ],
+    "provenance": "Political treatise by Edmund Burke, published 1790."
+  },
+  "common_sense": {
+    "textId": "common_sense",
+    "domain": "history",
+    "recordType": "text",
+    "canonicalTitleEn": "Common Sense",
+    "tradition": "revolutionary_pamphlet",
+    "attributedAuthor": "thomas_paine",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "thomas_jefferson",
+      "benjamin_franklin",
+      "samuel_adams"
+    ],
+    "provenance": "Pamphlet by Thomas Paine advocating American independence, published 1776."
+  },
+  "the_gallic_wars": {
+    "textId": "the_gallic_wars",
+    "domain": "history",
+    "recordType": "text",
+    "canonicalTitleEn": "Commentaries on the Gallic War",
+    "tradition": "roman_historiography",
+    "attributedAuthor": "julius_caesar",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "sallust",
+      "livy",
+      "cicero"
+    ],
+    "provenance": "Firsthand military account by Julius Caesar, written c.58-49 BCE (Commentarii de Bello Gallico)."
+  },
+  "the_book_of_optics": {
+    "textId": "the_book_of_optics",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "Book of Optics",
+    "tradition": "medieval_islamic_science",
+    "attributedAuthor": "ibn_al_haytham",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "al_biruni",
+      "ibn_sina",
+      "al_kindi"
+    ],
+    "provenance": "Optics treatise by Ibn al-Haytham (Alhazen), composed c.1011-1021 (Kitab al-Manazir)."
+  },
+  "the_canon_of_medicine": {
+    "textId": "the_canon_of_medicine",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "The Canon of Medicine",
+    "tradition": "medieval_islamic_medicine",
+    "attributedAuthor": "ibn_sina",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "al_razi",
+      "ibn_al_haytham",
+      "ibn_rushd"
+    ],
+    "provenance": "Medical encyclopedia by Ibn Sina (Avicenna), completed 1025 (al-Qanun fi al-Tibb)."
+  },
+  "the_compendious_book_on_calculation_by_completion_and_balancing": {
+    "textId": "the_compendious_book_on_calculation_by_completion_and_balancing",
+    "domain": "science",
+    "recordType": "text",
+    "canonicalTitleEn": "The Compendious Book on Calculation by Completion and Balancing",
+    "tradition": "medieval_islamic_mathematics",
+    "attributedAuthor": "al_khwarizmi",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "al_biruni",
+      "omar_khayyam",
+      "ibn_sina"
+    ],
+    "provenance": "Foundational algebra treatise by al-Khwarizmi, c.820 CE."
+  },
+  "a_portrait_of_the_artist_as_a_young_man": {
+    "textId": "a_portrait_of_the_artist_as_a_young_man",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "A Portrait of the Artist as a Young Man",
+    "tradition": "modernist_fiction",
+    "attributedAuthor": "james_joyce",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "virginia_woolf",
+      "d_h_lawrence",
+      "ford_madox_ford"
+    ],
+    "provenance": "Novel by James Joyce, published 1916."
+  },
+  "heart_of_darkness": {
+    "textId": "heart_of_darkness",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Heart of Darkness",
+    "tradition": "modernist_fiction",
+    "attributedAuthor": "joseph_conrad",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "rudyard_kipling",
+      "henry_james",
+      "ford_madox_ford"
+    ],
+    "provenance": "Novella by Joseph Conrad, published 1899."
+  },
+  "nineteen_eighty_four": {
+    "textId": "nineteen_eighty_four",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Nineteen Eighty-Four",
+    "tradition": "dystopian_fiction",
+    "attributedAuthor": "george_orwell",
+    "authorConfidence": "pseudonymous",
+    "doNotAttributeTo": [
+      "aldous_huxley",
+      "evelyn_waugh",
+      "graham_greene"
+    ],
+    "provenance": "Novel published 1949 by Eric Arthur Blair under his pen name George Orwell."
+  },
+  "brave_new_world": {
+    "textId": "brave_new_world",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Brave New World",
+    "tradition": "dystopian_fiction",
+    "attributedAuthor": "aldous_huxley",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "george_orwell",
+      "h_g_wells",
+      "evelyn_waugh"
+    ],
+    "provenance": "Novel by Aldous Huxley, published 1932."
+  },
+  "animal_farm": {
+    "textId": "animal_farm",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "Animal Farm",
+    "tradition": "political_satire",
+    "attributedAuthor": "george_orwell",
+    "authorConfidence": "pseudonymous",
+    "doNotAttributeTo": [
+      "aldous_huxley",
+      "evelyn_waugh",
+      "arthur_koestler"
+    ],
+    "provenance": "Allegorical novella published 1945 by Eric Arthur Blair under his pen name George Orwell."
+  },
+  "the_god_of_small_things": {
+    "textId": "the_god_of_small_things",
+    "domain": "literature",
+    "recordType": "text",
+    "canonicalTitleEn": "The God of Small Things",
+    "tradition": "postcolonial_fiction",
+    "attributedAuthor": "arundhati_roy",
+    "authorConfidence": "attributed",
+    "doNotAttributeTo": [
+      "salman_rushdie",
+      "vikram_seth",
+      "anita_desai"
+    ],
+    "provenance": "Novel by Arundhati Roy, published 1997."
   }
 }
