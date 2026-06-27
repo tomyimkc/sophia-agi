@@ -11,6 +11,12 @@
       "detail": "primary CIs=True retentionCI=None"
     },
     {
+      "check": "1b-anytime-valid",
+      "ok": true,
+      "critical": false,
+      "detail": "retention peeked=False anytime_ci95=None (fixed-n CI invalid under peeking)"
+    },
+    {
       "check": "2-power-primary",
       "ok": true,
       "critical": true,
@@ -26,7 +32,7 @@
       "check": "5-constructs",
       "ok": true,
       "critical": true,
-      "detail": "markers=True judge=True(0.767) retention_retains=None -> 2 agree"
+      "detail": "markers=True judge=True(0.767) retention_retains=None -> 2 DISTINCT families agree ['deterministic-marker', 'llm-judge']"
     },
     {
       "check": "6-decontam",

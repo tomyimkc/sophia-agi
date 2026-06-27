@@ -38,6 +38,14 @@ jobs:
       - name: Attribution + training-example validation
         run: python tools/validate_attribution.py
 
+      - name: Measurement contract — habit-not-fact + decontam + receipts
+        run: |
+          python tools/eval_stats.py
+          python tools/lint_training_rows.py
+          python tools/assert_decontam.py
+          python tools/claim_gate.py --prefix M3-pilot
+          python tools/claim_gate.py --prefix M3-transfer
+
       - name: Core unit tests (fast, dependency-free)
         run: |
           python tests/test_skills.py

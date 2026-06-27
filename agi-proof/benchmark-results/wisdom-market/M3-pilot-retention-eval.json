@@ -71,5 +71,36 @@
       "acc": 0.313
     }
   },
-  "boundary": "Held-out generality probe (N=970); deterministic scoring; paired bootstrap 95% CI on delta. 'retains' is the point-estimate criterion; 'forgetting_established' requires the whole CI below -0.05."
+  "boundary": "Held-out generality probe (N=970); deterministic scoring; paired bootstrap 95% CI on delta. 'retains' is the point-estimate criterion; 'forgetting_established' requires the whole CI below -0.05.",
+  "looks": [
+    {
+      "n": 34,
+      "delta": -0.118,
+      "note": "underpowered (MDE 0.34) — no verdict"
+    },
+    {
+      "n": 70,
+      "delta": -0.014,
+      "ci95": [
+        -0.071,
+        0.043
+      ],
+      "note": "overturned -0.118; lower tail still past -0.05"
+    },
+    {
+      "n": 970,
+      "delta": -0.001,
+      "ci95": [
+        -0.0196,
+        0.0175
+      ],
+      "note": "powered; final"
+    }
+  ],
+  "peeked": true,
+  "anytime_ci95": [
+    -0.0301,
+    0.0281
+  ],
+  "anytime_note": "Time-uniform (Robbins) confidence sequence — VALID under the 3 peeks above, unlike the fixed-n bootstrap delta_ci95. sigma backed out of the fixed-n CI. Retention holds even under the peeking-robust interval (|bounds| < 0.05 tolerance)."
 }

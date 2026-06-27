@@ -65,11 +65,14 @@ def required_n_for_mde(mde: float, *, p0: float = 0.5, alpha: float = 0.05, powe
     return int(math.ceil(n))
 
 
-def mde_at_n(n: int, *, p0: float = 0.5, alpha: float = 0.05, power: float = 0.8) -> float:
+def mde_at_n(n: int, *, p0: float = 0.5, alpha: float = 0.05, power: float = 0.8,
+             paired_rho: float = 0.0) -> float:
     """Inverse of required_n_for_mde: the smallest effect an N-item probe can resolve. A probe
-    whose mde_at_n exceeds the decision threshold is UNDERPOWERED by construction (the N=34 bug)."""
+    whose mde_at_n exceeds the decision threshold is UNDERPOWERED by construction (the N=34 bug).
+    `paired_rho>0` reflects per-item base/adapter correlation (same items), which LOWERS the MDE;
+    leave it 0 for the conservative worst-case (the default used by the claim gate)."""
     za, zb = z_quantile(1 - alpha / 2), z_quantile(power)
-    var = 2 * p0 * (1 - p0)
+    var = 2 * p0 * (1 - p0) * (1 - paired_rho)
     return (za + zb) * math.sqrt(var / max(1, n))
 
 
@@ -124,6 +127,55 @@ def confidence_sequence_mean(values: Sequence[float], alpha: float = 0.05, *, si
     return [round(m - rad, 4), round(m + rad, 4)]
 
 
+def verdict_or_underpowered(delta: float, n: int, *, tolerance: float = None,
+                            p0: float = 0.5, alpha: float = 0.05, power: float = 0.8,
+                            paired_rho: float = 0.0, up: str = "improves", down: str = "regresses",
+                            flat: str = "no-change") -> dict:
+    """PILLAR 2/3 GUARD. Turn a raw delta into a verdict ONLY when the probe can resolve it.
+
+    Refuses to emit a directional verdict word when the probe's MDE at this N exceeds the
+    effect being judged — the failure mode that produced the spurious N=34 '-0.118 forgetting'
+    read. The decision threshold is `tolerance` (default: the magnitude of the delta itself, so
+    a probe must at least be able to see an effect of the size observed). Returns a dict carrying
+    the chosen word, the MDE, and a self-describing `mde` field so a committed eval JSON is
+    auditable. Callers should print/serialize the whole dict — never a bare verdict string."""
+    mde = round(mde_at_n(max(1, n), p0=p0, alpha=alpha, power=power, paired_rho=paired_rho), 4)
+    tol = abs(delta) if tolerance is None else abs(tolerance)
+    powered = mde <= tol + 1e-9
+    if not powered:
+        word, note = "underpowered", (f"MDE {mde} > tolerance {round(tol,4)} at N={n}: the probe "
+                                      f"CANNOT resolve this effect — grow N before claiming a direction")
+    elif abs(delta) < mde:
+        # probe is powered for a tolerance-sized effect, but THIS delta is below the MDE -> its
+        # sign is not statistically resolvable. Honest verdict is no-change, not a tiny direction.
+        word, note = flat, (f"|delta| {round(abs(delta),4)} < MDE {mde}: sign not resolvable "
+                            f"(powered for a {round(tol,4)} effect; none of that size observed)")
+    else:
+        word, note = (up if delta > 0 else down), f"MDE {mde} <= tolerance {round(tol,4)}: resolvable"
+    return {"verdict": word, "powered": powered, "delta": round(delta, 4), "n": n,
+            "mde": mde, "tolerance": round(tol, 4), "note": note}
+
+
+def confidence_sequence_from_summary(mean: float, n: int, sigma: float, alpha: float = 0.05,
+                                     n_ref: int = 50) -> "list[float]":
+    """PILLAR 4 — anytime-valid interval from SUMMARY stats (mean, n, sigma) when per-item data
+    isn't retained. Same Robbins normal-mixture boundary as confidence_sequence_mean; use this to
+    retrofit a peeking-robust interval onto a result whose only stored uncertainty is a fixed-n CI.
+    `sigma` can be backed out of a fixed-n CI half-width h via sigma = h*sqrt(n)/z_quantile(1-alpha/2)."""
+    if n <= 0 or sigma <= 0:
+        return [None, None]
+    rho2 = 1.0 / max(1, n_ref)
+    nr = n * rho2 + 1.0
+    rad = sigma * math.sqrt((2.0 * nr / (n * n * rho2)) * math.log(math.sqrt(nr) / alpha))
+    return [round(mean - rad, 4), round(mean + rad, 4)]
+
+
+def sigma_from_ci(ci_lo: float, ci_hi: float, n: int, alpha: float = 0.05) -> float:
+    """Back out the per-item sub-Gaussian sigma implied by a fixed-n normal/bootstrap CI."""
+    h = (ci_hi - ci_lo) / 2.0
+    return h * math.sqrt(max(1, n)) / z_quantile(1 - alpha / 2)
+
+
 def mcnemar(base_correct: Sequence[int], adapter_correct: Sequence[int]) -> dict:
     """Paired McNemar test for two adapters on the SAME items. b = base-right/adapter-wrong,
     c = base-wrong/adapter-right. Returns the discordant counts + a chi-square (cc) p-value."""
@@ -149,3 +201,7 @@ if __name__ == "__main__":
     print("Δ=-1/70:", round(sum(diffs) / len(diffs), 4),
           "| boot CI:", bootstrap_ci_paired(diffs),
           "| anytime CS:", confidence_sequence_mean(diffs))
+    # power-or-no-verdict guard: the N=34 '-0.118 forgetting' read should NOT get a verdict word
+    print("verdict@N=34 Δ-0.118 tol=0.05:", verdict_or_underpowered(-0.118, 34, tolerance=0.05))
+    print("verdict@N=970 Δ-0.001 tol=0.05 (paired rho=0.5):",
+          verdict_or_underpowered(-0.001, 970, tolerance=0.05, paired_rho=0.5))

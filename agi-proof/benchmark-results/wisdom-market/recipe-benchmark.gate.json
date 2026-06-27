@@ -1,0 +1,19 @@
+{
+  "claim": "recipe ranking ('which recipe is best')",
+  "verdict": "GO",
+  "ok": true,
+  "checks": [
+    {
+      "check": "simple-baseline-included",
+      "ok": true,
+      "detail": "'M3-SFT (rank16, baseline)' in comparison = True"
+    },
+    {
+      "check": "ranking-axis-powered",
+      "ok": true,
+      "detail": "#1 M3-SFT (rank16, baseline) vs #2 M3-stable (rank8+KL+replay): primaryMag gap=0.227 vs MDE@1062=0.061 -> resolvable"
+    }
+  ],
+  "best": "M3-SFT (rank16, baseline)",
+  "boundary": "ranking valid ONLY on the powered primary; retention is a guardrail, not a score"
+}

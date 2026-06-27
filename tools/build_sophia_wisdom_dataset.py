@@ -616,6 +616,27 @@ def generate_with_teacher(specs: list, teacher_spec: str, *, max_workers: int = 
 # --------------------------------------------------------------------------- #
 # Build                                                                       #
 # --------------------------------------------------------------------------- #
+def count_records() -> dict:
+    """Count the GROUND-TRUTH structured records that bound dataset volume. Volume is corpus-bound:
+    rows scale with records, so the honest 'how big is the corpus' number is RECORDS, not rows.
+    A high rows/record ratio means templating (Goodhart bait), not more ground truth."""
+    files = ["attributions.json", "traditions.json", "religion_concepts.json",
+             "psychology_concepts.json", "history_events.json", "legal_authorities.json"]
+    per = {}
+    for f in files:
+        try:
+            per[f.replace(".json", "")] = len(_load(f))
+        except Exception:
+            per[f.replace(".json", "")] = 0
+    per["_total"] = sum(per.values())
+    return per
+
+
+# Ceiling: rows must come from RECORDS, not from templating one record many ways. If rows/record
+# exceeds this, the build flags it (volume inflation) rather than quietly reporting a big row count.
+ROWS_PER_RECORD_CEILING = 8.0
+
+
 def synthesize() -> list:
     attr = _load("attributions.json")
     trad = _load("traditions.json")
@@ -768,6 +789,11 @@ def build(check_only: bool, stats: bool, *, teacher_spec: str | None = None,
         "mlx": {"trainRows": len(mlx_train), "validRows": len(mlx_valid), "maxTokens": 1024,
                 "path": "training/local_sophia_v3/mlx"},
         "targetMix": {k: [v[0], v[1]] for k, v in TARGET_MIX.items()},
+        "records": (lambda rec: {**rec, "rowsPerRecord": round(total / rec["_total"], 2) if rec["_total"] else None,
+                                 "ceiling": ROWS_PER_RECORD_CEILING,
+                                 "inflationFlag": bool(rec["_total"] and total / rec["_total"] > ROWS_PER_RECORD_CEILING),
+                                 "note": ("Volume headline is RECORDS, not rows. rowsPerRecord above the "
+                                          "ceiling means templating (Goodhart), not more ground truth.")})(count_records()),
         "go_no_go": {
             "target": ">=10k decontaminated gate-passed rows",
             "achieved": total,

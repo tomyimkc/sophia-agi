@@ -55,20 +55,29 @@ One artifact per experiment, committed **before** the run, machine-checkable:
 A claim is admissible only if its spec is satisfied on **every** field. This turns "no-overclaim"
 from a vibe into a checklist a linter can enforce.
 
-## How it bolts onto what already exists (minimal, incremental)
+## How it is enforced in this repo (shipped)
 
-1. **`tools/retention_gate.py`** — already CI-aware (`forgetting_established` = whole CI past the
-   threshold). Generalize into a `claim_gate.py` that, given a `measurement_spec` + result, returns
-   GO only if: CI present (1) ∧ N ≥ requiredN (2) ∧ ≥2 constructs agree (5) ∧ decontam clean (6) ∧
-   magnitude ≥ practicalThreshold (8). Fail-closed, fits the project's gate philosophy.
-2. **`evaluate()` / `evaluate_retention()` / `judge_pilot_answers.py`** — already emit CIs / AC1.
-   Add: confidence-sequence option (4), per-item discrimination logging (3), verbosity covariate (7).
-3. **`build_sophia_wisdom_dataset.py`** — already decontaminates by exact prompt + marks `heldout`.
-   Add: content-level overlap check + carve a private split that the builder/selectors never see (6).
-4. **`lint_claims.py`** — today it scans prose. Upgrade it to also require that each quantitative
-   claim references a `measurement_spec` that passed `claim_gate` (the contract enforcement point).
-5. **`failure-ledger.md`** — already the honesty record. Add the IEC fields (MDE, N, CI, constructs,
-   stopping rule) as expected columns so every logged result carries its instrument's resolution.
+Every pillar below is a deterministic check; the headline ones run in `fast-ci` on every PR, via
+`make claim-check`, and (opt-in) the `.githooks/pre-commit` hook:
+
+1. **`tools/claim_gate.py`** — given a `measurement_spec` + a result, returns GO only if: CIs present
+   (1) ∧ **anytime-valid CS for any peeked metric** (4) ∧ primary powered, `mde_at_n(N) ≤ MDE` (2) ∧
+   ≥2 **distinct-family** constructs agree (5) ∧ decontam clean (6) ∧ magnitude ≥ practicalThreshold
+   with no protected regression (8). `--assert-prereg` additionally fails if the spec does not
+   provably predate the result (git history). Writes a GO/NO-GO receipt; fail-closed.
+2. **`tools/eval_stats.py`** — power/MDE (`mde_at_n`, now paired-aware), bootstrap CI, the Robbins
+   anytime-valid CS (`confidence_sequence_mean` / `…_from_summary`), and `verdict_or_underpowered`,
+   which refuses to emit a directional verdict word when the probe cannot resolve the effect (3).
+3. **`tools/assert_decontam.py`** — independent of the build: re-checks the *committed* training packs
+   against the eval surfaces with exact-prompt **and** content-shingle (Jaccard) near-duplicate scans (6).
+4. **`tools/lint_training_rows.py`** — asserts every source-discipline / moral-gate target teaches a
+   HABIT (route/qualify/refuse), never a bare ground-truth fact (separates truth from behavior).
+5. **`tools/lint_claims.py`** — requires a promoted registry entry to carry a passing
+   `measurement_receipt`, a *generalizes* claim to carry a passing `transfer_receipt`, and a recipe
+   "best" claim to carry a powered superiority receipt; plus the no-overclaim prose scan.
+6. **`tools/benchmark_recipes.py --emit-receipt`** + **`build_sophia_wisdom_dataset.py`** — ranking only
+   on the powered axis with the simple baseline included (9); the manifest headlines RECORDS (not rows)
+   and flags volume inflation when rows/record exceeds the ceiling (8).
 
 ## The one-line discipline
 

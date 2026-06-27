@@ -109,6 +109,19 @@
       0.3
     ]
   },
+  "records": {
+    "attributions": 381,
+    "traditions": 8,
+    "religion_concepts": 21,
+    "psychology_concepts": 10,
+    "history_events": 51,
+    "legal_authorities": 5,
+    "_total": 476,
+    "rowsPerRecord": 6.95,
+    "ceiling": 8.0,
+    "inflationFlag": false,
+    "note": "Volume headline is RECORDS, not rows. rowsPerRecord above the ceiling means templating (Goodhart), not more ground truth."
+  },
   "go_no_go": {
     "target": ">=10k decontaminated gate-passed rows",
     "achieved": 3306,

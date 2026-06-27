@@ -26,12 +26,42 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from tools.eval_stats import mde_at_n  # noqa: E402
+
+
+def _git(*args) -> str:
+    try:
+        return subprocess.run(["git", "-C", str(ROOT), *args], capture_output=True,
+                              text=True, timeout=15).stdout.strip()
+    except Exception:
+        return ""
+
+
+def prereg_ordering(spec_path: Path, result_path: Path) -> dict:
+    """PILLAR 2 (pre-registration). Assert the measurement_spec was committed BEFORE the result it
+    judges — pre-registration is only meaningful if the criteria provably predate the data. Uses git
+    history: the commit that first ADDED the spec must be an ancestor of (or equal to) the commit
+    that last touched the result. SKIPS (non-fatal) when either file is uncommitted or git history is
+    unavailable; FAILS only when it can prove the spec came AFTER the data (retro-fitting)."""
+    spec_add = _git("log", "--diff-filter=A", "--format=%H", "--", str(spec_path))
+    spec_add = spec_add.splitlines()[-1] if spec_add else ""   # earliest add
+    res_last = _git("log", "-1", "--format=%H", "--", str(result_path))
+    if not spec_add or not res_last:
+        return {"ok": True, "skipped": True,
+                "detail": f"prereg ordering UNCHECKED (spec_committed={bool(spec_add)} "
+                          f"result_committed={bool(res_last)}) — commit both to enforce ordering"}
+    anc = subprocess.run(["git", "-C", str(ROOT), "merge-base", "--is-ancestor", spec_add, res_last],
+                         capture_output=True)
+    ok = anc.returncode == 0
+    return {"ok": ok, "skipped": False,
+            "detail": (f"spec added @{spec_add[:8]} {'<=' if ok else 'AFTER'} result @{res_last[:8]} "
+                       + ("(pre-registered)" if ok else "(spec post-dates data — NOT pre-registered)"))}
 
 WM = ROOT / "agi-proof" / "benchmark-results" / "wisdom-market"
 PRIMARY = ["qualification_rate_on_contested", "tradition_merge_rate", "false_attribution_rate",
@@ -50,7 +80,7 @@ def _ci_clean(ci) -> bool:
     return isinstance(ci, list) and None not in ci and (ci[0] > 0 or ci[1] < 0)
 
 
-def gate(prefix: str, spec: dict) -> dict:
+def gate(prefix: str, spec: dict, spec_path: Path = None, assert_prereg: bool = False) -> dict:
     ev = _load(WM / f"{prefix}-eval.json")
     jg = _load(WM / f"{prefix}-judge.json")
     rt = _load(WM / f"{prefix}-retention.json") or _load(WM / f"{prefix}-retention-eval.json")
@@ -68,6 +98,17 @@ def gate(prefix: str, spec: dict) -> dict:
     add("1-uncertainty", bool(prim_ci and (not rt or rt.get("delta_ci95"))),
         f"primary CIs={bool(prim_ci)} retentionCI={(rt or {}).get('delta_ci95')}")
 
+    # 1b anytime-valid (peeked metrics): a metric iterated across runs (a peek) must carry a
+    # time-uniform confidence sequence — a fixed-n CI is invalid under optional stopping. Default
+    # peeked metric = retention (it was matured N=34->70->970). CRITICAL only when the metric was
+    # in fact peeked AND lacks the anytime interval.
+    peeked = spec.get("peekedMetrics", ["retention"])
+    rt_peeked = "retention" in peeked and bool(rt and (rt.get("peeked") or rt.get("looks")))
+    rt_anytime = (rt or {}).get("anytime_ci95")
+    add("1b-anytime-valid", (not rt_peeked) or bool(rt_anytime),
+        f"retention peeked={rt_peeked} anytime_ci95={rt_anytime} "
+        f"(fixed-n CI invalid under peeking)", critical=rt_peeked)
+
     # 2 power
     prim_n = (ev or {}).get("nCases", 0) * (ev or {}).get("runs", 1)
     prim_mde = round(mde_at_n(max(1, prim_n)), 3)
@@ -78,16 +119,22 @@ def gate(prefix: str, spec: dict) -> dict:
         f"retention N={ret_n} mde={ret_mde} vs tolerance {tol} "
         f"(coarse if mde>tol)", critical=False)
 
-    # 5 constructs (>=2 agree)
+    # 5 constructs (>=2 INDEPENDENT FAMILIES agree). Triangulation only counts if the agreeing
+    # signals come from DISTINCT scorer families — two same-family scorers (markers + markers-v2)
+    # are construct-irrelevant correlation, not corroboration. Each signal is tagged with its family.
     markers_ok = bool(ev) and any((ev["adapterPromptVsBasePrompt"].get(m) or {}).get("improves")
                                   and _ci_clean((ev["adapterPromptVsBasePrompt"].get(m) or {}).get("ci"))
                                   for m in PRIMARY)
     wr = [v.get("adapter_winrate", 0) for v in ((jg or {}).get("perJudge") or {}).values()]
     judge_ok = bool(wr) and (sum(wr) / len(wr)) > 0.5
-    n_constructs = sum([markers_ok, judge_ok, bool(rt and rt.get("retains"))])
-    add("5-constructs", n_constructs >= 2,
+    signals = [("deterministic-marker", markers_ok),
+               ("llm-judge", judge_ok),
+               ("behavioral-retention", bool(rt and rt.get("retains")))]
+    agreeing_families = sorted({fam for fam, ok in signals if ok})
+    add("5-constructs", len(agreeing_families) >= 2,
         f"markers={markers_ok} judge={judge_ok}({round(sum(wr)/len(wr),3) if wr else None}) "
-        f"retention_retains={(rt or {}).get('retains')} -> {n_constructs} agree")
+        f"retention_retains={(rt or {}).get('retains')} -> {len(agreeing_families)} DISTINCT "
+        f"families agree {agreeing_families}")
 
     # 6 decontam
     leaks = (rt or {}).get("contaminationLeaks")
@@ -103,6 +150,11 @@ def gate(prefix: str, spec: dict) -> dict:
     ret_go = (rt is None) or (rt.get("delta") is not None and rt["delta"] >= -tol)
     add("8-magnitude", big and not prot and ret_go,
         f"primary>=threshold={big} protectedRegressions={prot} retentionGate={'GO' if ret_go else 'NO-GO'}")
+
+    # 2b prereg ordering (opt-in CRITICAL): spec must provably predate the result it judges.
+    if assert_prereg and spec_path:
+        po = prereg_ordering(spec_path, WM / f"{prefix}-eval.json")
+        add("2b-prereg", po["ok"], po["detail"], critical=not po.get("skipped"))
 
     critical_fail = [c["check"] for c in checks if c["critical"] and not c["ok"]]
     go = not critical_fail
@@ -121,12 +173,14 @@ def main() -> int:
     ap.add_argument("--prefix", required=True, help="recipe artifact prefix, e.g. M3-pilot")
     ap.add_argument("--spec", type=Path, default=WM / "measurement_spec.json")
     ap.add_argument("--receipt", type=Path, default=None, help="write receipt JSON here (default <prefix>.gate.json)")
+    ap.add_argument("--assert-prereg", action="store_true",
+                    help="CRITICAL-fail if the spec does not provably predate the result (git history)")
     args = ap.parse_args()
     spec = _load(args.spec)
     if spec is None:
         print(json.dumps({"verdict": "NO-GO", "reason": "unreadable spec", "code": 2}))
         return 2
-    result = gate(args.prefix, spec)
+    result = gate(args.prefix, spec, spec_path=args.spec, assert_prereg=args.assert_prereg)
     receipt = args.receipt or (WM / f"{args.prefix}.gate.json")
     receipt.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     for c in result["checks"]:

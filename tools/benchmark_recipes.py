@@ -92,9 +92,41 @@ def rank(scores: "list[dict]") -> "list[dict]":
     return sorted(scores, key=key, reverse=True)
 
 
+# The simplest recipe — must always be in the comparison as the baseline (principle #9: a "new
+# recipe wins" claim is meaningless without the simple baseline in the same table).
+SIMPLE_BASELINE = "M3-SFT (rank16, baseline)"
+
+
+def superiority_receipt(ranked: "list[dict]") -> dict:
+    """PILLAR 8/9 receipt for a 'recipe X is best' claim. A ranking is only trustworthy if the
+    decision axis can RESOLVE the gap between the top two recipes (else 'best' is noise) AND the
+    simplest recipe was included as a baseline. Emits GO/NO-GO."""
+    checks = []
+    has_baseline = any(s["name"] == SIMPLE_BASELINE for s in ranked)
+    checks.append({"check": "simple-baseline-included", "ok": has_baseline,
+                   "detail": f"'{SIMPLE_BASELINE}' in comparison = {has_baseline}"})
+    # gap between #1 and #2 on the powered primary magnitude vs the primary MDE.
+    powered_gap = True
+    detail = "only one recipe measured — no ranking claim"
+    if len(ranked) >= 2:
+        n = (ranked[0].get("nCases") or 354) * (ranked[0].get("runs") or 3)
+        mde = round(mde_at_n(max(1, n)), 3)
+        gap = abs((ranked[0].get("primaryMag") or 0) - (ranked[1].get("primaryMag") or 0))
+        powered_gap = gap >= mde
+        detail = (f"#1 {ranked[0]['name']} vs #2 {ranked[1]['name']}: primaryMag gap={round(gap,3)} "
+                  f"vs MDE@{n}={mde} -> {'resolvable' if powered_gap else 'NOT resolvable (gap is noise)'}")
+    checks.append({"check": "ranking-axis-powered", "ok": powered_gap, "detail": detail})
+    ok = all(c["ok"] for c in checks)
+    return {"claim": "recipe ranking ('which recipe is best')", "verdict": "GO" if ok else "NO-GO",
+            "ok": ok, "checks": checks, "best": (ranked[0]["name"] if ranked else None),
+            "boundary": "ranking valid ONLY on the powered primary; retention is a guardrail, not a score"}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", type=Path, default=WM / "recipe-benchmark.json")
+    ap.add_argument("--emit-receipt", action="store_true",
+                    help="also write recipe-benchmark.gate.json (GO/NO-GO for a superiority claim)")
     args = ap.parse_args()
 
     scores = [dict(name=n, **score_recipe(p)) for n, p in RECIPES.items()]
@@ -114,6 +146,13 @@ def main() -> int:
         "boundary": "Single-seed per recipe except M3-SFT (3-seed); candidate_only; canClaimAGI:false.",
     }
     args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    if args.emit_receipt:
+        rcpt = superiority_receipt(ranked)
+        (WM / "recipe-benchmark.gate.json").write_text(
+            json.dumps(rcpt, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(f"superiority receipt: {rcpt['verdict']} (best={rcpt['best']}) -> recipe-benchmark.gate.json")
+        for c in rcpt["checks"]:
+            print(f"  {'✓' if c['ok'] else '✗'} {c['check']}: {c['detail']}")
     # human summary
     print(f"\n=== RECIPE BENCHMARK (best = {report['best']}) ===")
     print(f"power: primary MDE@354={report['powerNote']['primary_mde_at_354']} | "
