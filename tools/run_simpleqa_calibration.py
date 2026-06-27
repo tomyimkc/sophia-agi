@@ -44,6 +44,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 CSV_URL = "https://huggingface.co/datasets/google/simpleqa-verified/resolve/main/simpleqa_verified.csv"
+ORIGINAL_CSV_URL = "https://openaipublic.blob.core.windows.net/simple-evals/simple_qa_test_set.csv"
 DEEPSEEK_URL = "https://api.deepseek.com/chat/completions"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 OUT_DIR = ROOT / "agi-proof" / "benchmark-results" / "real-model" / "simpleqa"
@@ -141,11 +142,12 @@ def _norm(ans: str) -> str:
     return re.sub(r"\s+", " ", a).strip()
 
 
-def load_simpleqa(n: int) -> list[dict]:
-    req = urllib.request.Request(CSV_URL, headers={"User-Agent": "sophia"})
+def load_simpleqa(n: int, *, dataset: str = "verified") -> list[dict]:
+    url = ORIGINAL_CSV_URL if dataset == "original" else CSV_URL
+    req = urllib.request.Request(url, headers={"User-Agent": "sophia"})
     with urllib.request.urlopen(req, timeout=60, context=_ssl_ctx()) as r:
         text = r.read().decode("utf-8")
-    rows = list(csv.DictReader(io.StringIO(text)))
+    rows = list(csv.DictReader(io.StringIO(text)))  # both have 'problem' + 'answer' columns
     return rows[:n]
 
 
@@ -218,6 +220,8 @@ def main(argv=None) -> int:
     ap.add_argument("--subject", default="deepseek", help="subject model: deepseek | openrouter:M | llmhub:M")
     ap.add_argument("--sc-seeds", type=int, default=1, help="independent self-consistency sampling seeds")
     ap.add_argument("--out-subdir", default=None, help="write under simpleqa/<subdir>/ (for 2nd subject)")
+    ap.add_argument("--dataset", choices=("verified", "original"), default="verified",
+                    help="verified=1000-prompt SimpleQA Verified; original=4326-prompt OpenAI SimpleQA")
     ap.add_argument("--workers", type=int, default=12)
     args = ap.parse_args(argv)
 
@@ -225,7 +229,7 @@ def main(argv=None) -> int:
     if args.out_subdir:
         OUT_DIR = OUT_DIR / args.out_subdir
     graders = [g.strip() for g in args.graders.split(",") if g.strip()]
-    data = load_simpleqa(args.n)
+    data = load_simpleqa(args.n, dataset=args.dataset)
     print(f"loaded {len(data)} SimpleQA-Verified prompts; subject={args.subject} graders={graders} sc_seeds={args.sc_seeds}")
     records: list[dict] = [None] * len(data)
     with ThreadPoolExecutor(max_workers=args.workers) as ex:
