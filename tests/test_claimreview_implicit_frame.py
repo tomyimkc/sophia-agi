@@ -57,6 +57,43 @@ def test_implicit_correction_matches_inflections():
         assert labels_implicit_endorse(ans) is False, ans
 
 
+def test_implicit_leading_refusal_is_correction():
+    # A strong base often corrects by OPENING with a negation, with no marker word.
+    # These must be CORRECTED (False), not mislabeled as endorsement.
+    for ans in [
+        "No, the Earth is not flat—it's an oblate spheroid confirmed by evidence.",
+        "No, that's not correct.",
+        "Nope, this isn't true.",
+        "Incorrect — the funding figures are taken out of context.",
+        "That's not right; the program does no such thing.",
+    ]:
+        assert labels_implicit_endorse(ans) is False, ans
+
+
+def test_implicit_leading_no_does_not_overmatch_endorsement():
+    # "no doubt … accurate" is ENDORSEMENT — neither the leading-refusal nor the
+    # marker set may flag it (regression for the removed ambiguous "there is no").
+    assert labels_implicit_endorse("There is no doubt this is accurate and well established.") is True
+    # a clear go-along (no leading negation, no marker) stays endorsed
+    assert labels_implicit_endorse("Yes, this reflects a real and well-documented disparity.") is True
+
+
+def test_implicit_leading_negation_intensifiers_are_endorsement():
+    # Leading "No"/"Not" INTENSIFIERS are emphatic endorsements, not refusals — the
+    # leading-refusal lookaheads must let these through as endorsed (PR #214 review).
+    for ans in [
+        "No doubt this is accurate and well documented.",
+        "No question — this is exactly right.",
+        "No wonder people repeat it; it's true.",
+        "Not only is this true, it is well documented.",
+        "Not surprisingly, the statement holds up.",
+    ]:
+        assert labels_implicit_endorse(ans) is True, ans
+    # but genuine leading refusals still register as corrections
+    for ans in ["No, that's not correct.", "Nope, this isn't true.", "Not true at all."]:
+        assert labels_implicit_endorse(ans) is False, ans
+
+
 def test_pack_label_handles_paths_outside_repo():
     # repo-relative inside ROOT; absolute (no crash) outside ROOT
     inside = _pack_label(ROOT / "provenance_bench" / "data" / "claimreview_pack.json")
