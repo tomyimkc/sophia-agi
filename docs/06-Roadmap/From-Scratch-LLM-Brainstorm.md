@@ -181,28 +181,48 @@ with the existing cost-ceiling guard so it *never auto-spends*.
 
 ---
 
-## Part E — Concrete first move (one weekend, ~$0)
+## Part E — Concrete first move — **scaffolded** in `pretraining/gpt/`
 
-The single highest-leverage step is **Tier 0**, because it converts the whole
-`pretraining/` story from analogy to fact and unlocks every idea in Part D:
+Tier 0 is now in the tree (see [`pretraining/gpt/README.md`](../../pretraining/gpt/README.md)).
+It converts the whole `pretraining/` story from analogy to fact and unlocks every
+idea in Part D:
 
-1. `pretraining/gpt/model.py` — port the rasbt GPT (PyTorch, optional dep; keep
-   `nano/` as the zero-dependency reference and CI path).
-2. `pretraining/gpt/tokenizer.py` — train BPE on `training/corpus.jsonl` + OKF
-   wiki; reserve the `<src>`/`<abstain>` special tokens from idea #1 *now*, even
-   if unused at first, so the vocab doesn't have to change later.
-3. `pretraining/gpt/train.py` — a real loop logging the same `epoch_loss` /
-   `grad_norms` shape the `nano` and `optimizer_probe` studies already emit, so
-   existing analysis tooling just works.
-4. Reproduce the `scaling/` law on the real model; write
-   `pretraining/gpt/gpt-scaling-latest.json` and add a property test alongside
-   `tests/test_pretraining.py`.
-5. Only then escalate: `tools/runpod_train.py`-style pod for a longer pretrain,
-   then layer idea #1 (provenance tokens) and idea #3 (abstention head).
+1. ✅ `pretraining/gpt/model.py` — readable rasbt-faithful GPT (PyTorch, optional
+   dep; `nano/` stays the zero-dependency reference and CI path). Causal attention
+   via `scaled_dot_product_attention` — no x86-only flash-attn wheel, runs on
+   CUDA/MPS/CPU.
+2. ✅ `pretraining/gpt/tokenizer.py` — dependency-free **byte-level** codec that
+   **reserves the `<src>`/`<abstain>`/`<doNotMergeWith>` special tokens now**
+   (ids ≥256), so the born-gated vocab is stable before idea #1 lands. (BPE merges
+   are a later, vocab-compatible hook.)
+3. ✅ `pretraining/gpt/train.py` — device-agnostic loop logging the same
+   `epoch_loss` / `grad_norms` shape as `nano` and `optimizer_probe`; writes
+   `gpt-train-latest.json` stamped `canClaimAGI: false`.
+4. ✅ `tests/test_gpt_pretraining.py` — tokenizer/data/cluster tested
+   dependency-free (CI); torch model + a real descending step under `importorskip`.
+5. **Next:** reproduce the `scaling/` law on the real model, then escalate to a
+   longer pretrain on the cluster / RunPod and layer idea #1 (provenance tokens)
+   and idea #3 (abstention head).
 
-Everything before step 5 runs free on CPU/laptop, exactly as rasbt intends — and
-every step lands inside an existing folder, test, and gate. That is the feasible,
-charter-honest way to "build your own LLM with the repo along with it."
+Everything through step 4 runs free on CPU/laptop, exactly as rasbt intends — and
+every piece lands inside an existing folder, test, and gate.
+
+### Cluster mapping — DGX Spark + Mac Studio M3 Ultra
+
+`pretraining/gpt/cluster.py` encodes the charter's node roles so the same script
+runs everywhere (`--prefer auto`):
+
+| Node | tier | device / dtype | Use |
+|---|---|---|---|
+| **DGX Spark** (GB10, aarch64, 128 GB unified) | `spark` | CUDA / **bf16** | pretrain + iteration; **never MLX**, bf16 not 4-bit (bitsandbytes aarch64 pain) |
+| **Mac Studio M3 Ultra** (96 GB unified) | `m3` | MPS / fp16 | pretrain/eval on Apple; hand LoRA + serving to MLX tooling (`tools/eval_mlx_model.py`, `training/mlx_adapters/`) |
+| **CPU / CI** | `cpu` | fp32 | tokenizer + smoke train |
+
+Both nodes hold the whole small model in unified memory, so Tier 0/1 is
+**data-bound, not compute-bound** on this cluster. The honest boundary
+([DGX-Spark.md](../11-Platform/DGX-Spark.md)) still holds: Spark/M3 runs are the
+**iteration tier** (`headline_ok: false`); registered headline numbers stay on
+x86 RunPod, with `tools/spark_vs_runpod_ab.py` keeping that rule data-backed.
 
 ---
 
