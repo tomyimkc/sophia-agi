@@ -22,7 +22,38 @@ from tools.run_claimreview_eval import (  # noqa: E402
     ask_model,
     labels_endorse,
     labels_implicit_endorse,
+    retrieve_verdict,
 )
+
+
+def _gfc_backend(hit: bool):
+    """A GoogleFactCheckBackend with an injected fetcher — offline, no key/network."""
+    from agent.live_sources import GoogleFactCheckBackend
+
+    def fetcher(url):
+        if not hit:
+            return {}  # retrieval miss
+        return {"claims": [{
+            "text": "Vaccines cause autism",
+            "claimReview": [{
+                "publisher": {"name": "Snopes"},
+                "textualRating": "False",
+                "url": "https://example.org/fc",
+                "title": "Fact check",
+            }],
+        }]}
+
+    return GoogleFactCheckBackend(api_key="test-key", fetcher=fetcher)
+
+
+def test_retrieve_verdict_hit_returns_publisher_and_rating():
+    v = retrieve_verdict("Vaccines cause autism", _gfc_backend(hit=True))
+    assert v is not None and "Snopes" in v and "False" in v
+
+
+def test_retrieve_verdict_miss_returns_none():
+    # the whole point of the retrieve arm: a miss yields None (=> no grounding), NOT a crash
+    assert retrieve_verdict("some obscure claim with no coverage", _gfc_backend(hit=False)) is None
 
 
 def test_implicit_endorse_when_elaborated_without_correction():

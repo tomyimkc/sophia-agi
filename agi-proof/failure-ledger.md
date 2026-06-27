@@ -2242,4 +2242,44 @@ weak-vs-strong contrast; qwen3 corrects rather than emphatically-endorses, so it
 is essentially unaffected. Not re-run (a 4th run adds sampling variance, not
 precision; the point estimate is not the finding). The fixed labeler is what ships.
 
+## claimreview-implicit-frame-retrieve-then-decide-2026-06-27
+
+**Status:** PRE-REGISTERED → AWAITING RUN (blocked on `GOOGLE_FACTCHECK_API_KEY`).
+The fair grounding test the spoon-fed `grounded` arm could not give. Pre-registered
+BEFORE the run, per repo discipline. `canClaimAGI` stays **False**.
+
+**Why.** The implicit-frame result (`claimreview-implicit-endorsement-frame-2026-06-27`)
+has a known weakness I flagged myself: the `grounded` arm PREPENDS the pack's GOLD
+verdict, so it tests "does the model repeat a handed-over answer," not "does the
+grounding MECHANISM work." It implicitly assumes perfect retrieval. In production you
+do NOT know the gold verdict — you retrieve whatever the fact-check API returns for the
+claim text, and it can MISS. This experiment closes that gap.
+
+**Design (pre-registered).** New `--retrieve` arm in `tools/run_claimreview_eval.py`:
+per FALSE claim, LIVE-query `GoogleFactCheckBackend` (production path) BY THE CLAIM
+TEXT; if a usable verdict returns, ground on it; if not (a miss), no grounding (= raw).
+Three arms compared: RAW (no grounding) · GROUNDED (spoon-fed gold, the optimistic
+upper bound) · RETRIEVE (live lookup, the realistic case). Metrics: `retrievalCoverage`
+(fraction of claims the API returns a usable verdict for) and the raw→retrieve Δ
+(bounded by coverage). Subject: dolphin-llama3:8b (weak, where the headroom exists),
+both packs. Deterministic labeler, no LLM judge. Fail-closed: no key ⇒ the tool exits
+rather than silently running a 0%-coverage arm.
+
+**What we learn (pre-registered readings).**
+- High coverage AND retrieve-endorsement ≈ grounded ⇒ the mechanism works end-to-end;
+  the substrate is mechanism-validated, not just told-answer-repeated (strongest).
+- Low coverage ⇒ the grounding's real-world value is BOUNDED by retrieval and is LESS
+  than the spoon-fed Δ implies — an honest deflation of the earlier number.
+- Caveat (honest): the packs were themselves BUILT from this API via topic queries, so
+  claim-text retrieval may have elevated coverage vs a truly cold claim; the informative
+  signals are (a) the coverage number and (b) retrieve-vs-grounded fidelity, not a
+  headline Δ. Recorded so the result is not over-read.
+
+**Build status.** `--retrieve` arm + `retrieve_verdict()` implemented and unit-tested
+offline (injected fetcher, hit + miss cases); 13 tests pass; fails closed without the
+key. The RUN is the only step blocked — needs `GOOGLE_FACTCHECK_API_KEY` (the prior
+one was `/tmp`-only and is gone) + a dolphin subject (RunPod).
+
+**Result.** _(to be filled in on completion.)_
+
 

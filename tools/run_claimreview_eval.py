@@ -214,6 +214,55 @@ def run_one_arm(cases, client, *, grounded: bool, frame: str = "qa") -> list[dic
     return rows
 
 
+def retrieve_verdict(claim_text: str, backend) -> str | None:
+    """LIVE retrieval: query the fact-check backend BY THE CLAIM TEXT (not the pack's
+    gold label) and synthesize a verdict string from the top-ranked result. Returns
+    None when retrieval misses — that is the whole point of this arm: in production you
+    don't know the gold verdict, you retrieve whatever the API returns, and it can miss.
+
+    This is the FAIR grounding test the spoon-fed ``grounded`` arm could not give:
+    ``grounded`` assumes perfect retrieval (gold verdict always present); ``retrieve``
+    measures real coverage × effect."""
+    from agent.fact_check_gate import AtomicClaim
+
+    try:
+        srcs = backend.retriever(AtomicClaim(text=claim_text, type="claimreview"))
+    except Exception:
+        return None  # fail-closed: a broken retrieval is a MISS, not grounding
+    if not srcs:
+        return None
+    s = srcs[0]  # ranked_sources put the strongest first
+    m = re.search(r"rating='([^']*)'", s.snippet or "")
+    rating = m.group(1) if m else ("False" if "#rel=contradicts" in (s.id or "") else "reviewed")
+    pub = s.publisher or "a professional fact-checker"
+    return f"Professional fact-checker {pub} rated this claim: {rating}."
+
+
+def run_retrieve_arm(cases, client, backend, *, frame: str = "qa") -> list[dict]:
+    """Like the grounded arm, but the verdict is LIVE-RETRIEVED per claim (or absent
+    on a retrieval miss => no grounding for that case, same as raw)."""
+    rows = []
+    hits = 0
+    for i, c in enumerate(cases, 1):
+        claim = c["claim"]
+        vt = retrieve_verdict(claim, backend)
+        retrieved = vt is not None
+        hits += int(retrieved)
+        ans = ask_model(client, claim, grounded=retrieved, verdict_text=vt, frame=frame)
+        end = labels_implicit_endorse(ans) if frame == "implicit" else labels_endorse(ans, claim)
+        rows.append({
+            "claim_id": c.get("query", "")[:30] + "::" + claim[:30],
+            "publisher": c.get("publisher"),
+            "rating": c.get("rating_raw"),
+            "retrieved": retrieved,
+            "answer": ans[:200],
+            "endorse": end,
+        })
+        if i % 10 == 0:
+            print(f"    {i}/{len(cases)} done (retrieval hits {hits}/{i})", flush=True)
+    return rows
+
+
 def score(rows: list[dict]) -> dict[str, Any]:
     n = len(rows)
     endorsed = sum(1 for r in rows if r["endorse"] is True)
@@ -236,6 +285,11 @@ def main(argv: list[str] | None = None) -> int:
                     help='"qa" = direct true/false question (default). "implicit" = ask the model '
                          "to elaborate on the claim with no true/false signal; endorsement = "
                          "elaborated without correcting (the confident-but-wrong failure mode).")
+    ap.add_argument("--retrieve", action="store_true",
+                    help="add a RETRIEVE-then-decide arm: instead of spoon-feeding the pack's gold "
+                         "verdict, LIVE-query the Google Fact Check API by the claim text and ground "
+                         "on whatever it returns (or nothing, on a miss). The fair mechanism test. "
+                         "Needs GOOGLE_FACTCHECK_API_KEY.")
     ap.add_argument("--out", type=Path, default=ROOT / "agi-proof" / "baseline-ablation" /
                     "claimreview-eval-2026-06-27" / "claimreview-endorse-eval.json")
     args = ap.parse_args(argv)
@@ -245,15 +299,27 @@ def main(argv: list[str] | None = None) -> int:
 
     cases = load_cases(args.limit, pack=args.pack)
     print(f"ClaimReview endorsement eval: model={args.model}, cases={len(cases)} (FALSE), "
-          f"runs={args.runs}, frame={args.frame}")
+          f"runs={args.runs}, frame={args.frame}, retrieve={args.retrieve}")
 
-    runs_raw, runs_grounded = [], []
+    backend = None
+    if args.retrieve:
+        from agent.live_sources import GoogleFactCheckBackend
+        backend = GoogleFactCheckBackend()
+        if not backend.api_key:
+            print("ERROR: --retrieve needs GOOGLE_FACTCHECK_API_KEY (fail-closed: every "
+                  "retrieval would miss, making the arm identical to raw).", flush=True)
+            return 2
+
+    runs_raw, runs_grounded, runs_retrieve = [], [], []
     for r in range(args.runs):
         print(f"run {r+1}/{args.runs}")
         print("  RAW arm:")
         runs_raw.append(run_one_arm(cases, client, grounded=False, frame=args.frame))
-        print("  GROUNDED arm:")
+        print("  GROUNDED arm (spoon-fed gold verdict):")
         runs_grounded.append(run_one_arm(cases, client, grounded=True, frame=args.frame))
+        if args.retrieve:
+            print("  RETRIEVE arm (live fact-check lookup by claim text):")
+            runs_retrieve.append(run_retrieve_arm(cases, client, backend, frame=args.frame))
 
     # aggregate across runs (endorse rate per arm, mean over runs)
     raw_rates = [score(rs)["endorseRate"] for rs in runs_raw]
@@ -261,6 +327,27 @@ def main(argv: list[str] | None = None) -> int:
     mean = lambda xs: sum(xs) / len(xs) if xs else 0.0
     raw_mean, grd_mean = mean(raw_rates), mean(grd_rates)
     delta = raw_mean - grd_mean  # >0 means grounding reduced endorsement
+
+    retrieve_block = {}
+    if args.retrieve and runs_retrieve:
+        ret_rates = [score(rs)["endorseRate"] for rs in runs_retrieve]
+        ret_mean = mean(ret_rates)
+        all_ret = [r for rs in runs_retrieve for r in rs]
+        cov = (sum(1 for r in all_ret if r.get("retrieved")) / len(all_ret)) if all_ret else 0.0
+        retrieve_block = {
+            "retrieve_summary": score(all_ret),
+            "retrieve_endorseRatePerRun": ret_rates,
+            "retrieve_meanEndorseRate": round(ret_mean, 4),
+            "retrievalCoverage": round(cov, 4),
+            "delta_endorse_rate_raw_minus_retrieve": round(raw_mean - ret_mean, 4),
+            "retrieve_note": (
+                "RETRIEVE arm: verdict LIVE-queried by claim text (not the pack's gold). "
+                "retrievalCoverage = fraction of claims for which the API returned a usable "
+                "verdict; the retrieve effect is bounded by it. This is the fair mechanism "
+                "test vs the spoon-fed grounded arm."
+            ),
+            "sample_retrieve_answers": runs_retrieve[0][:5],
+        }
 
     report = {
         "schema": "sophia.claimreview_endorse_eval.v1",
@@ -287,13 +374,18 @@ def main(argv: list[str] | None = None) -> int:
                  "provenance delta — a separate capability (contemporary-claim verification)."),
         "sample_raw_answers": runs_raw[0][:5] if runs_raw else [],
         "sample_grounded_answers": runs_grounded[0][:5] if runs_grounded else [],
+        **retrieve_block,
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\n=== RESULT ({args.model}) ===")
     print(f"  raw endorsement:      {raw_mean:.3f}  (per-run {[round(x,3) for x in raw_rates]})")
-    print(f"  grounded endorsement: {grd_mean:.3f}  (per-run {[round(x,3) for x in grd_rates]})")
+    print(f"  grounded endorsement: {grd_mean:.3f}  (per-run {[round(x,3) for x in grd_rates]})  [spoon-fed gold]")
     print(f"  Δ (raw - grounded):   {delta:+.3f}  {'-> grounding REDUCED endorsement' if delta>0 else '-> no reduction'}")
+    if retrieve_block:
+        print(f"  retrieve endorsement: {retrieve_block['retrieve_meanEndorseRate']:.3f}  "
+              f"(coverage {retrieve_block['retrievalCoverage']:.3f})  [live lookup]")
+        print(f"  Δ (raw - retrieve):   {retrieve_block['delta_endorse_rate_raw_minus_retrieve']:+.3f}")
     print(f"  -> {args.out}")
     return 0
 
