@@ -71,23 +71,38 @@ def _adapter_prompt_abs(ev: dict) -> dict:
     return out
 
 
-def _frontier_raw_abs(front: dict, spec_filter: str = None) -> dict:
-    """{model_spec: {metric: raw absolute mean}} for each frontier model in the baseline file."""
-    models = front.get("models") or []
+def _frontier_abs(front: dict, condition: str = "raw") -> dict:
+    """{model_spec: {metric: absolute mean}} for each frontier model at the given condition."""
     res = {}
-    for mod in models:
+    for mod in (front.get("models") or []):
         spec = mod.get("spec", "?")
-        if spec_filter and spec_filter not in spec:
-            continue
-        raw = ((mod.get("conditions") or {}).get("raw") or {}).get("metrics") or {}
-        res[spec] = {m: (raw.get(m) or {}).get("mean") for m in DIRECTION if m in raw}
+        cm = ((mod.get("conditions") or {}).get(condition) or {}).get("metrics") or {}
+        res[spec] = {m: (cm.get(m) or {}).get("mean") for m in DIRECTION if m in cm}
     return res
+
+
+def _compare(adapter: dict, frontier: dict, mde: float, headline_axis: list) -> list:
+    rows = []
+    for spec, fr in frontier.items():
+        for m, hib in DIRECTION.items():
+            a, f = adapter.get(m), fr.get(m)
+            if a is None or f is None:
+                continue
+            gap = (a - f) if hib else (f - a)        # >0 => adapter ahead (sign-normalized)
+            verdict = "AHEAD" if gap > mde else ("BEHIND" if gap < -mde else "PARITY")
+            rows.append({"model": spec, "metric": m, "adapter": round(a, 3), "frontier": round(f, 3),
+                         "gap_adapter_minus_frontier": round(gap, 3), "mde": mde, "verdict": verdict,
+                         "headline": m in headline_axis})
+    return rows
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--adapter-eval", type=Path, default=WM / "M3-pilot-eval.json")
-    ap.add_argument("--frontier", type=Path, default=WM / "frontier_baselines.json")
+    ap.add_argument("--frontier", type=Path, default=WM / "frontier_baselines.json",
+                    help="frontier RAW baseline (default/product framing)")
+    ap.add_argument("--frontier-prompt", type=Path, default=WM / "frontier_prompt_baselines.json",
+                    help="frontier WITH the same scaffold (isolates the LoRA's contribution)")
     ap.add_argument("--out", type=Path, default=WM / "reality-check.json")
     args = ap.parse_args()
 
@@ -114,45 +129,64 @@ def main() -> int:
             print(f"  {m:34s} {v:.3f}  ({'higher' if DIRECTION[m] else 'lower'} better)")
         return 0
 
-    frontier = _frontier_raw_abs(front)
-    rows, headline_axis = [], ["qualification_rate_on_contested", "false_attribution_rate",
-                               "tradition_merge_rate"]
-    for spec, fr in frontier.items():
-        for m, hib in DIRECTION.items():
-            a, f = adapter.get(m), fr.get(m)
-            if a is None or f is None:
-                continue
-            gap = (a - f) if hib else (f - a)        # >0 => adapter ahead (sign-normalized)
-            verdict = "AHEAD" if gap > mde else ("BEHIND" if gap < -mde else "PARITY")
-            rows.append({"model": spec, "metric": m, "adapter": round(a, 3), "frontier": round(f, 3),
-                         "gap_adapter_minus_frontier": round(gap, 3), "mde": mde, "verdict": verdict,
-                         "headline": m in headline_axis})
+    headline_axis = ["qualification_rate_on_contested", "false_attribution_rate", "tradition_merge_rate"]
+    frontier_raw = _frontier_abs(front, "raw")
+    rows = _compare(adapter, frontier_raw, mde, headline_axis)
+
+    # Optional fairness framing: frontier WITH the same scaffold (prompt condition). Isolates
+    # whether the LoRA adds anything BEYOND a portable prompt any model could use.
+    front_p = _load(args.frontier_prompt)
+    frontier_prompt = _frontier_abs(front_p, "prompt") if front_p else {}
+    rows_prompt = _compare(adapter, frontier_prompt, mde, headline_axis) if frontier_prompt else []
 
     # honest headline: on the axis the adapter was trained for, is it ahead of frontier or not?
     head = [r for r in rows if r["headline"]]
     ahead = [r for r in head if r["verdict"] == "AHEAD"]
-    parity = [r for r in head if r["verdict"] == "PARITY"]
-    behind = [r for r in head if r["verdict"] == "BEHIND"]
+    head_p = [r for r in rows_prompt if r["headline"]]
+    ahead_p = [r for r in head_p if r["verdict"] == "AHEAD"]
+
     if head and not ahead:
-        summary = ("FRONTIER PARITY-OR-BETTER on the narrow axis: a 4B adapter's source-discipline "
-                   "edge does NOT beat frontier models that already do this natively. The narrow win "
-                   "is real vs a same-size base, NOT vs the market. Do not ship as a market product.")
-    elif ahead:
-        summary = (f"Adapter AHEAD of frontier on {len(ahead)}/{len(head)} headline metric(s) — a "
-                   "genuine narrow edge worth a CAREFUL, scoped claim (still not a general-LLM claim).")
+        summary = ("FRONTIER PARITY-OR-BETTER (raw): a 4B adapter's source-discipline edge does NOT "
+                   "beat frontier models. Do not ship as a market product.")
+    elif ahead and head_p and not ahead_p:
+        summary = (f"Adapter beats frontier RAW on {len(ahead)}/{len(head)} headline metric(s), but the "
+                   f"edge VANISHES once frontier gets the SAME scaffold ({len(ahead_p)}/{len(head_p)} "
+                   "ahead vs frontier(prompt)). The win is a PORTABLE PROMPT, not the LoRA — ship the "
+                   "scaffold/gate, not the weights.")
+    elif ahead and ahead_p:
+        summary = (f"Adapter AHEAD of frontier on {len(ahead)}/{len(head)} headline metric(s) RAW and "
+                   f"{len(ahead_p)}/{len(head_p)} even WITH the scaffold given to frontier — the LoRA "
+                   "adds real consistency beyond a prompt. A genuine narrow edge; still not a general-LLM "
+                   "claim, and pending a semantic-judge cross-check (markers reward the trained format).")
+    elif ahead and not head_p:
+        summary = (f"Adapter beats frontier RAW on {len(ahead)}/{len(head)} headline metric(s). FAIRNESS "
+                   "PENDING: run frontier WITH the scaffold (frontier_prompt_baselines.json) before any "
+                   "claim — the raw gap may just be a portable prompt. Markers also need a judge cross-check.")
     else:
         summary = "Insufficient overlapping metrics to judge."
 
     report = {"benchmark": "wisdom-market heldout_v1 (same cases as adapter eval)", "N": n, "mde": mde,
-              "adapterPromptAbsolute": adapter, "frontierRawAbsolute": frontier,
-              "comparison": rows, "headlineSummary": summary,
-              "boundary": "adapter(prompt) vs frontier(raw); absolute marker rates; candidate_only; canClaimAGI:false"}
+              "adapterPromptAbsolute": adapter, "frontierRawAbsolute": frontier_raw,
+              "frontierPromptAbsolute": frontier_prompt or None,
+              "comparison_vs_raw": rows, "comparison_vs_prompt": rows_prompt or None,
+              "headlineSummary": summary,
+              "boundary": ("adapter(prompt) vs frontier(raw) = default/product framing; vs frontier(prompt) "
+                           "= isolates LoRA beyond scaffold; absolute MARKER rates (judge cross-check pending); "
+                           "candidate_only; canClaimAGI:false")}
     args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     print(f"=== MARKET REALITY-CHECK (N={n}, MDE={mde}) ===")
+    print("\n-- adapter(prompt) vs frontier(RAW) — the default/product framing --")
     for r in head:
         print(f"  [{r['verdict']:6s}] {r['metric']:34s} adapter {r['adapter']:.3f} vs "
               f"{r['model'].split('/')[-1]:24s} {r['frontier']:.3f}  (gap {r['gap_adapter_minus_frontier']:+.3f})")
+    if head_p:
+        print("\n-- adapter(prompt) vs frontier(PROMPT, same scaffold) — isolates the LoRA --")
+        for r in head_p:
+            print(f"  [{r['verdict']:6s}] {r['metric']:34s} adapter {r['adapter']:.3f} vs "
+                  f"{r['model'].split('/')[-1]:24s} {r['frontier']:.3f}  (gap {r['gap_adapter_minus_frontier']:+.3f})")
+    else:
+        print("\n-- frontier(PROMPT) not present yet — fairness framing PENDING --")
     print(f"\n{summary}\nwrote -> {args.out.relative_to(ROOT)}")
     return 0
 
