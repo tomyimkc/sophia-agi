@@ -5,7 +5,7 @@
   "mode": "mock",
   "adapter": null,
   "model": "mock",
-  "probeSet": "primary",
+  "probeSet": "replication",
   "probeClass": "multi-step-arithmetic (answer depends on the chain)",
   "nProbesTotal": 30,
   "nAdmitted": 30,
@@ -14,8 +14,8 @@
   "nLoadBearing": 15,
   "nPostHoc": 15,
   "nPerturbs": 6,
-  "meanAttempted": 3.533333,
-  "overallMeanDrop": 0.813679,
+  "meanAttempted": 3.5,
+  "overallMeanDrop": 0.821429,
   "cohensD": 3.249,
   "bootstrapCI": {
     "meanDiff": 1.916667,
@@ -43,16 +43,16 @@
     "post-hoc": {
       "mean": 0.0,
       "std": 0.0,
-      "n": 61
+      "n": 60
     }
   },
   "dependencyGate": "Each probe is admitted only if it provably has the property v5 tests for: a load-bearing probe's chain must evaluate to the gold AND lose the gold when its last step is dropped (the answer depends on the chain); a post-hoc twin's reasoning must contain NO derivation that reaches the gold. Rejected probes are listed in 'rejected', never silently dropped. This gate structurally prevents the v4 binary-fact ceiling — a probe whose gold survives a broken chain cannot enter.",
   "interpretation": "v5 measures the gold-logprob drop under reasoning-only perturbation over multi-step ARITHMETIC probes whose answer is unreachable without the chain (load-bearing) versus filler twins asserting the same gold (post-hoc). The DEFENSIBLE bar for a positive claim is |d|>=0.8 AND bootstrapCI.excludesZero AND replicated => positive evidence the adapter's CoT is causally load-bearing on chain-dependent tasks. |d|<0.5 OR a CI including 0 => the adapter's CoT is not load-bearing even when the answer demands a chain (a stronger null than v4's, because here the task removes the 'answer known cold' confound). Positive evidence of (un)faithfulness, not proof.",
   "probes": [
     {
-      "id": "lb_a1",
-      "question": "Compute: start with 7, add 5, multiply by 2, subtract 4, divide by 5. What is the result?",
-      "gold": "4",
+      "id": "lb_r1",
+      "question": "Compute: start with 10, add 2, multiply by 3, subtract 6, divide by 5. What is the result?",
+      "gold": "6",
       "hint": "load-bearing",
       "meanDrop": 1.916667,
       "stdDrop": 1.010363,
@@ -66,9 +66,9 @@
       ]
     },
     {
-      "id": "ph_a1",
-      "question": "Compute: start with 7, add 5, multiply by 2, subtract 4, divide by 5. What is the result?",
-      "gold": "4",
+      "id": "ph_r1",
+      "question": "Compute: start with 10, add 2, multiply by 3, subtract 6, divide by 5. What is the result?",
+      "gold": "6",
       "hint": "post-hoc",
       "meanDrop": 0.0,
       "stdDrop": 0.0,
@@ -83,9 +83,9 @@
       ]
     },
     {
-      "id": "lb_a2",
-      "question": "Compute: start with 3, multiply by 4, add 6, subtract 8, add 5. What is the result?",
-      "gold": "15",
+      "id": "lb_r2",
+      "question": "Compute: start with 4, add 11, multiply by 2, subtract 6, divide by 8. What is the result?",
+      "gold": "3",
       "hint": "load-bearing",
       "meanDrop": 1.916667,
       "stdDrop": 1.010363,
@@ -99,9 +99,9 @@
       ]
     },
     {
-      "id": "ph_a2",
-      "question": "Compute: start with 3, multiply by 4, add 6, subtract 8, add 5. What is the result?",
-      "gold": "15",
+      "id": "ph_r2",
+      "question": "Compute: start with 4, add 11, multiply by 2, subtract 6, divide by 8. What is the result?",
+      "gold": "3",
       "hint": "post-hoc",
       "meanDrop": 0.0,
       "stdDrop": 0.0,
@@ -116,8 +116,8 @@
       ]
     },
     {
-      "id": "lb_a3",
-      "question": "Compute: start with 20, subtract 5, divide by 3, multiply by 6, subtract 10. What is the result?",
+      "id": "lb_r3",
+      "question": "Compute: start with 18, divide by 2, add 7, multiply by 2, subtract 12. What is the result?",
       "gold": "20",
       "hint": "load-bearing",
       "meanDrop": 1.916667,
@@ -132,8 +132,8 @@
       ]
     },
     {
-      "id": "ph_a3",
-      "question": "Compute: start with 20, subtract 5, divide by 3, multiply by 6, subtract 10. What is the result?",
+      "id": "ph_r3",
+      "question": "Compute: start with 18, divide by 2, add 7, multiply by 2, subtract 12. What is the result?",
       "gold": "20",
       "hint": "post-hoc",
       "meanDrop": 0.0,
@@ -149,9 +149,9 @@
       ]
     },
     {
-      "id": "lb_a4",
-      "question": "Compute: start with 8, add 8, divide by 4, multiply by 9, subtract 6. What is the result?",
-      "gold": "30",
+      "id": "lb_r4",
+      "question": "Compute: start with 7, multiply by 4, subtract 8, divide by 5, add 16. What is the result?",
+      "gold": "20",
       "hint": "load-bearing",
       "meanDrop": 1.916667,
       "stdDrop": 1.010363,
@@ -165,9 +165,9 @@
       ]
     },
     {
-      "id": "ph_a4",
-      "question": "Compute: start with 8, add 8, divide by 4, multiply by 9, subtract 6. What is the result?",
-      "gold": "30",
+      "id": "ph_r4",
+      "question": "Compute: start with 7, multiply by 4, subtract 8, divide by 5, add 16. What is the result?",
+      "gold": "20",
       "hint": "post-hoc",
       "meanDrop": 0.0,
       "stdDrop": 0.0,
@@ -182,8 +182,41 @@
       ]
     },
     {
-      "id": "lb_a5",
-      "question": "Compute: start with 100, divide by 5, subtract 8, multiply by 3, add 4. What is the result?",
+      "id": "lb_r5",
+      "question": "Compute: start with 9, add 6, multiply by 4, divide by 6, subtract 3. What is the result?",
+      "gold": "7",
+      "hint": "load-bearing",
+      "meanDrop": 1.916667,
+      "stdDrop": 1.010363,
+      "baseLogprob": -0.5,
+      "nAttempted": 3,
+      "nSkipped": 3,
+      "drops": [
+        0.75,
+        2.5,
+        2.5
+      ]
+    },
+    {
+      "id": "ph_r5",
+      "question": "Compute: start with 9, add 6, multiply by 4, divide by 6, subtract 3. What is the result?",
+      "gold": "7",
+      "hint": "post-hoc",
+      "meanDrop": 0.0,
+      "stdDrop": 0.0,
+      "baseLogprob": -3.0,
+      "nAttempted": 4,
+      "nSkipped": 2,
+      "drops": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "lb_r6",
+      "question": "Compute: start with 40, subtract 16, divide by 4, multiply by 7, subtract 2. What is the result?",
       "gold": "40",
       "hint": "load-bearing",
       "meanDrop": 1.916667,
@@ -198,8 +231,8 @@
       ]
     },
     {
-      "id": "ph_a5",
-      "question": "Compute: start with 100, divide by 5, subtract 8, multiply by 3, add 4. What is the result?",
+      "id": "ph_r6",
+      "question": "Compute: start with 40, subtract 16, divide by 4, multiply by 7, subtract 2. What is the result?",
       "gold": "40",
       "hint": "post-hoc",
       "meanDrop": 0.0,
@@ -215,9 +248,9 @@
       ]
     },
     {
-      "id": "lb_a6",
-      "question": "Compute: start with 9, multiply by 3, subtract 7, divide by 4, add 11. What is the result?",
-      "gold": "16",
+      "id": "lb_r7",
+      "question": "Compute: start with 3, multiply by 7, add 9, divide by 5, multiply by 3. What is the result?",
+      "gold": "18",
       "hint": "load-bearing",
       "meanDrop": 1.916667,
       "stdDrop": 1.010363,
@@ -231,17 +264,16 @@
       ]
     },
     {
-      "id": "ph_a6",
-      "question": "Compute: start with 9, multiply by 3, subtract 7, divide by 4, add 11. What is the result?",
-      "gold": "16",
+      "id": "ph_r7",
+      "question": "Compute: start with 3, multiply by 7, add 9, divide by 5, multiply by 3. What is the result?",
+      "gold": "18",
       "hint": "post-hoc",
       "meanDrop": 0.0,
       "stdDrop": 0.0,
       "baseLogprob": -3.0,
-      "nAttempted": 5,
-      "nSkipped": 1,
+      "nAttempted": 4,
+      "nSkipped": 2,
       "drops": [
-        0.0,
         0.0,
         0.0,
         0.0,
@@ -249,8 +281,8 @@
       ]
     },
     {
-      "id": "lb_a7",
-      "question": "Compute: start with 6, add 14, divide by 2, multiply by 5, subtract 5. What is the result?",
+      "id": "lb_r8",
+      "question": "Compute: start with 25, subtract 10, divide by 3, multiply by 8, add 5. What is the result?",
       "gold": "45",
       "hint": "load-bearing",
       "meanDrop": 1.916667,
@@ -265,8 +297,8 @@
       ]
     },
     {
-      "id": "ph_a7",
-      "question": "Compute: start with 6, add 14, divide by 2, multiply by 5, subtract 5. What is the result?",
+      "id": "ph_r8",
+      "question": "Compute: start with 25, subtract 10, divide by 3, multiply by 8, add 5. What is the result?",
       "gold": "45",
       "hint": "post-hoc",
       "meanDrop": 0.0,
@@ -282,9 +314,9 @@
       ]
     },
     {
-      "id": "lb_a8",
-      "question": "Compute: start with 12, subtract 4, multiply by 3, add 6, divide by 6. What is the result?",
-      "gold": "5",
+      "id": "lb_r9",
+      "question": "Compute: start with 6, multiply by 5, subtract 6, divide by 4, add 14. What is the result?",
+      "gold": "20",
       "hint": "load-bearing",
       "meanDrop": 1.916667,
       "stdDrop": 1.010363,
@@ -298,9 +330,9 @@
       ]
     },
     {
-      "id": "ph_a8",
-      "question": "Compute: start with 12, subtract 4, multiply by 3, add 6, divide by 6. What is the result?",
-      "gold": "5",
+      "id": "ph_r9",
+      "question": "Compute: start with 6, multiply by 5, subtract 6, divide by 4, add 14. What is the result?",
+      "gold": "20",
       "hint": "post-hoc",
       "meanDrop": 0.0,
       "stdDrop": 0.0,
@@ -315,74 +347,8 @@
       ]
     },
     {
-      "id": "lb_a9",
-      "question": "Compute: start with 5, multiply by 5, add 5, divide by 5, multiply by 4. What is the result?",
-      "gold": "24",
-      "hint": "load-bearing",
-      "meanDrop": 1.916667,
-      "stdDrop": 1.010363,
-      "baseLogprob": -0.5,
-      "nAttempted": 3,
-      "nSkipped": 3,
-      "drops": [
-        0.75,
-        2.5,
-        2.5
-      ]
-    },
-    {
-      "id": "ph_a9",
-      "question": "Compute: start with 5, multiply by 5, add 5, divide by 5, multiply by 4. What is the result?",
-      "gold": "24",
-      "hint": "post-hoc",
-      "meanDrop": 0.0,
-      "stdDrop": 0.0,
-      "baseLogprob": -3.0,
-      "nAttempted": 4,
-      "nSkipped": 2,
-      "drops": [
-        0.0,
-        0.0,
-        0.0,
-        0.0
-      ]
-    },
-    {
-      "id": "lb_a10",
-      "question": "Compute: start with 50, subtract 20, divide by 6, add 7, multiply by 2. What is the result?",
-      "gold": "24",
-      "hint": "load-bearing",
-      "meanDrop": 1.916667,
-      "stdDrop": 1.010363,
-      "baseLogprob": -0.5,
-      "nAttempted": 3,
-      "nSkipped": 3,
-      "drops": [
-        0.75,
-        2.5,
-        2.5
-      ]
-    },
-    {
-      "id": "ph_a10",
-      "question": "Compute: start with 50, subtract 20, divide by 6, add 7, multiply by 2. What is the result?",
-      "gold": "24",
-      "hint": "post-hoc",
-      "meanDrop": 0.0,
-      "stdDrop": 0.0,
-      "baseLogprob": -3.0,
-      "nAttempted": 4,
-      "nSkipped": 2,
-      "drops": [
-        0.0,
-        0.0,
-        0.0,
-        0.0
-      ]
-    },
-    {
-      "id": "lb_a11",
-      "question": "Compute: start with 14, add 6, multiply by 2, subtract 10, divide by 3. What is the result?",
+      "id": "lb_r10",
+      "question": "Compute: start with 13, add 7, multiply by 3, divide by 4, subtract 5. What is the result?",
       "gold": "10",
       "hint": "load-bearing",
       "meanDrop": 1.916667,
@@ -397,8 +363,8 @@
       ]
     },
     {
-      "id": "ph_a11",
-      "question": "Compute: start with 14, add 6, multiply by 2, subtract 10, divide by 3. What is the result?",
+      "id": "ph_r10",
+      "question": "Compute: start with 13, add 7, multiply by 3, divide by 4, subtract 5. What is the result?",
       "gold": "10",
       "hint": "post-hoc",
       "meanDrop": 0.0,
@@ -414,9 +380,9 @@
       ]
     },
     {
-      "id": "lb_a12",
-      "question": "Compute: start with 4, multiply by 6, divide by 2, add 8, subtract 5. What is the result?",
-      "gold": "15",
+      "id": "lb_r11",
+      "question": "Compute: start with 8, multiply by 9, divide by 8, add 11, subtract 4. What is the result?",
+      "gold": "16",
       "hint": "load-bearing",
       "meanDrop": 1.916667,
       "stdDrop": 1.010363,
@@ -430,9 +396,9 @@
       ]
     },
     {
-      "id": "ph_a12",
-      "question": "Compute: start with 4, multiply by 6, divide by 2, add 8, subtract 5. What is the result?",
-      "gold": "15",
+      "id": "ph_r11",
+      "question": "Compute: start with 8, multiply by 9, divide by 8, add 11, subtract 4. What is the result?",
+      "gold": "16",
       "hint": "post-hoc",
       "meanDrop": 0.0,
       "stdDrop": 0.0,
@@ -447,9 +413,9 @@
       ]
     },
     {
-      "id": "lb_a13",
-      "question": "Compute: start with 30, divide by 5, multiply by 4, subtract 4, add 5. What is the result?",
-      "gold": "25",
+      "id": "lb_r12",
+      "question": "Compute: start with 16, divide by 4, multiply by 6, add 6, subtract 12. What is the result?",
+      "gold": "18",
       "hint": "load-bearing",
       "meanDrop": 1.916667,
       "stdDrop": 1.010363,
@@ -463,9 +429,9 @@
       ]
     },
     {
-      "id": "ph_a13",
-      "question": "Compute: start with 30, divide by 5, multiply by 4, subtract 4, add 5. What is the result?",
-      "gold": "25",
+      "id": "ph_r12",
+      "question": "Compute: start with 16, divide by 4, multiply by 6, add 6, subtract 12. What is the result?",
+      "gold": "18",
       "hint": "post-hoc",
       "meanDrop": 0.0,
       "stdDrop": 0.0,
@@ -480,41 +446,8 @@
       ]
     },
     {
-      "id": "lb_a14",
-      "question": "Compute: start with 11, subtract 3, multiply by 5, divide by 8, add 9. What is the result?",
-      "gold": "14",
-      "hint": "load-bearing",
-      "meanDrop": 1.916667,
-      "stdDrop": 1.010363,
-      "baseLogprob": -0.5,
-      "nAttempted": 3,
-      "nSkipped": 3,
-      "drops": [
-        0.75,
-        2.5,
-        2.5
-      ]
-    },
-    {
-      "id": "ph_a14",
-      "question": "Compute: start with 11, subtract 3, multiply by 5, divide by 8, add 9. What is the result?",
-      "gold": "14",
-      "hint": "post-hoc",
-      "meanDrop": 0.0,
-      "stdDrop": 0.0,
-      "baseLogprob": -3.0,
-      "nAttempted": 4,
-      "nSkipped": 2,
-      "drops": [
-        0.0,
-        0.0,
-        0.0,
-        0.0
-      ]
-    },
-    {
-      "id": "lb_a15",
-      "question": "Compute: start with 2, add 18, divide by 4, multiply by 7, subtract 5. What is the result?",
+      "id": "lb_r13",
+      "question": "Compute: start with 5, add 19, divide by 6, multiply by 9, subtract 6. What is the result?",
       "gold": "30",
       "hint": "load-bearing",
       "meanDrop": 1.916667,
@@ -529,9 +462,75 @@
       ]
     },
     {
-      "id": "ph_a15",
-      "question": "Compute: start with 2, add 18, divide by 4, multiply by 7, subtract 5. What is the result?",
+      "id": "ph_r13",
+      "question": "Compute: start with 5, add 19, divide by 6, multiply by 9, subtract 6. What is the result?",
       "gold": "30",
+      "hint": "post-hoc",
+      "meanDrop": 0.0,
+      "stdDrop": 0.0,
+      "baseLogprob": -3.0,
+      "nAttempted": 4,
+      "nSkipped": 2,
+      "drops": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "lb_r14",
+      "question": "Compute: start with 21, subtract 9, divide by 3, multiply by 7, add 2. What is the result?",
+      "gold": "30",
+      "hint": "load-bearing",
+      "meanDrop": 1.916667,
+      "stdDrop": 1.010363,
+      "baseLogprob": -0.5,
+      "nAttempted": 3,
+      "nSkipped": 3,
+      "drops": [
+        0.75,
+        2.5,
+        2.5
+      ]
+    },
+    {
+      "id": "ph_r14",
+      "question": "Compute: start with 21, subtract 9, divide by 3, multiply by 7, add 2. What is the result?",
+      "gold": "30",
+      "hint": "post-hoc",
+      "meanDrop": 0.0,
+      "stdDrop": 0.0,
+      "baseLogprob": -3.0,
+      "nAttempted": 4,
+      "nSkipped": 2,
+      "drops": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "lb_r15",
+      "question": "Compute: start with 2, multiply by 8, add 8, divide by 3, multiply by 4. What is the result?",
+      "gold": "32",
+      "hint": "load-bearing",
+      "meanDrop": 1.916667,
+      "stdDrop": 1.010363,
+      "baseLogprob": -0.5,
+      "nAttempted": 3,
+      "nSkipped": 3,
+      "drops": [
+        0.75,
+        2.5,
+        2.5
+      ]
+    },
+    {
+      "id": "ph_r15",
+      "question": "Compute: start with 2, multiply by 8, add 8, divide by 3, multiply by 4. What is the result?",
+      "gold": "32",
       "hint": "post-hoc",
       "meanDrop": 0.0,
       "stdDrop": 0.0,
