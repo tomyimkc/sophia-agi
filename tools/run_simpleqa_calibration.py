@@ -108,7 +108,7 @@ def grade(judge_model: str, q: str, gold: str, pred: str) -> str:
     import agent.llmhub_llm as L
     try:
         out = L.chat_completion(messages=[{"role": "user", "content": GRADER_TMPL.format(q=q, gold=gold, pred=pred)}],
-                                model=judge_model, max_tokens=8, timeout_sec=60) or ""
+                                model=judge_model, max_tokens=64, timeout_sec=60) or ""
     except Exception:
         return "?"
     m = re.search(r"[ABC]", out.upper())
@@ -130,7 +130,7 @@ def load_simpleqa(n: int) -> list[dict]:
     return rows[:n]
 
 
-def process(ex: dict, idx: int, *, samples: int, judge_model: str) -> dict:
+def process(ex: dict, idx: int, *, samples: int, graders: list) -> dict:
     q, gold = ex["problem"], ex["answer"]
     # main answer at temp 0 with logprobs (stated conf + logprob signal)
     main, mean_lp = deepseek([{"role": "system", "content": ANSWER_SYS}, {"role": "user", "content": q}],
@@ -149,20 +149,27 @@ def process(ex: dict, idx: int, *, samples: int, judge_model: str) -> dict:
     main_norm = _norm(main)
     sc = norms.count(main_norm) / len(norms) if norms else 0.0
     logprob_conf = math.exp(mean_lp) if mean_lp is not None else None
-    # grade the main answer
-    g = grade(judge_model, q, gold, main)
-    abstained = (g == "C") or bool(_IDK.search(main.splitlines()[0] if main else ""))
+    # grade the main answer with EVERY grader family (for inter-grader kappa)
+    grades = {gm: grade(gm, q, gold, main) for gm in graders}
+    primary = grades[graders[0]]  # first grader is the label source
+    abstained = (primary == "C") or bool(_IDK.search(main.splitlines()[0] if main else ""))
     action = "abstain" if abstained else "answer"
-    correct = (g == "A")
+    correct = (primary == "A")
     return {"id": f"sqa{idx}", "domain": ex.get("topic") or "unspecified", "risk": "normal",
             "stated": round(stated, 4), "selfcons": round(sc, 4),
             "logprob_conf": round(logprob_conf, 4) if logprob_conf is not None else None,
-            "grade": g, "action": action, "correct": correct,
+            "grades": grades, "grade": primary, "action": action, "correct": correct,
             "answer": (main or "").splitlines()[0][:200]}
 
 
 def write_records(records: list[dict]) -> dict:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    # detailed per-row JSONL (all signals + every grader's verdict) for kappa + analysis
+    detail = OUT_DIR / "simpleqa.detail.deepseek.jsonl"
+    detail.write_text("".join(json.dumps({
+        "id": r["id"], "domain": r["domain"], "stated": r["stated"], "selfcons": r["selfcons"],
+        "logprob_conf": r["logprob_conf"], "grades": r.get("grades", {}), "grade": r["grade"],
+        "action": r["action"], "correct": r["correct"]}) + "\n" for r in records), encoding="utf-8")
     # C3: all rows (attempted + abstained), action carries abstention
     all_path = OUT_DIR / "simpleqa.all.deepseek.jsonl"
     all_path.write_text("".join(json.dumps({
@@ -187,15 +194,16 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="SimpleQA Verified -> C1/C3 records (real data).")
     ap.add_argument("--n", type=int, default=200, help="number of SimpleQA prompts")
     ap.add_argument("--samples", type=int, default=4, help="self-consistency samples per prompt")
-    ap.add_argument("--judge", default="claude-sonnet-4-6", help="LLMHub grader model")
+    ap.add_argument("--graders", default="claude-sonnet-4-6", help="comma-sep LLMHub grader families")
     ap.add_argument("--workers", type=int, default=12)
     args = ap.parse_args(argv)
 
+    graders = [g.strip() for g in args.graders.split(",") if g.strip()]
     data = load_simpleqa(args.n)
-    print(f"loaded {len(data)} SimpleQA-Verified prompts")
+    print(f"loaded {len(data)} SimpleQA-Verified prompts; graders={graders}")
     records: list[dict] = [None] * len(data)
     with ThreadPoolExecutor(max_workers=args.workers) as ex:
-        futs = {ex.submit(process, row, i, samples=args.samples, judge_model=args.judge): i
+        futs = {ex.submit(process, row, i, samples=args.samples, graders=graders): i
                 for i, row in enumerate(data)}
         done = 0
         for fut in futs:
