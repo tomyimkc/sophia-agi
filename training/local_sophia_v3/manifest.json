@@ -8,16 +8,16 @@
   },
   "admission": "agent.gate.check_response (advisor) + public_standard; reject -> preference/hard-neg",
   "totals": {
-    "candidates": 1791,
-    "accepted": 1344,
+    "candidates": 1899,
+    "accepted": 1452,
     "rejected": 340,
     "decontaminationDrops": 90,
-    "acceptanceRate": 0.75
+    "acceptanceRate": 0.765
   },
   "byFamily": {
     "council": {
       "rows": 125,
-      "pct": 9.3,
+      "pct": 8.6,
       "targetPct": [
         10.0,
         15.0
@@ -25,7 +25,7 @@
     },
     "general_retention": {
       "rows": 270,
-      "pct": 20.1,
+      "pct": 18.6,
       "targetPct": [
         25.0,
         30.0
@@ -41,15 +41,15 @@
     },
     "moral_gate": {
       "rows": 37,
-      "pct": 2.8,
+      "pct": 2.5,
       "targetPct": [
         10.0,
         10.0
       ]
     },
     "source_discipline": {
-      "rows": 895,
-      "pct": 66.6,
+      "rows": 1003,
+      "pct": 69.1,
       "targetPct": [
         20.0,
         25.0
@@ -57,7 +57,7 @@
     },
     "tool_mcp": {
       "rows": 9,
-      "pct": 0.7,
+      "pct": 0.6,
       "targetPct": [
         10.0,
         10.0
@@ -65,13 +65,13 @@
     }
   },
   "byLanguage": {
-    "en": 1164,
-    "zh": 180
+    "en": 1218,
+    "zh": 234
   },
-  "preferencePairs": 539,
+  "preferencePairs": 647,
   "mlx": {
-    "trainRows": 1283,
-    "validRows": 61,
+    "trainRows": 1388,
+    "validRows": 64,
     "maxTokens": 1024,
     "path": "training/local_sophia_v3/mlx"
   },
@@ -111,7 +111,7 @@
   },
   "go_no_go": {
     "target": ">=10k decontaminated gate-passed rows",
-    "achieved": 1344,
+    "achieved": 1452,
     "met": false,
     "honest_note": "Volume is CORPUS-bound (not teacher-bound): the builder dedups by normalized prompt, so rows scale with the number of ground-truth records. ENRICHMENT STARTED 2026-06-27: attributions corpus 30 -> 104 records (tools/enrich_corpus.py, fail-closed on accuracy: every record carries a provenance note; auto-decontaminated vs heldout_v1 + transfer_v1) lifted the dataset 880 -> 1344 gate-passed rows (+53%) and preference pairs 233 -> 539. STILL BELOW the 10k target -> M2 stays NO-GO on absolute volume. Measured yield ~6.3 net rows per attribution record, so 10k needs ~1380 MORE attribution records (or, higher-yield, also enriching tradition/religion/history records which feed more generators) — a sustained curation effort, not a one-shot. Pipeline complete + fail-closed."
   },

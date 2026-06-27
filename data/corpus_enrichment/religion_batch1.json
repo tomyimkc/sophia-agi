@@ -1,331 +1,139 @@
-{
-  "dao_de_jing_daoist_scripture": {
-    "recordId": "dao_de_jing_daoist_scripture",
-    "domain": "religion",
-    "recordType": "text",
-    "canonicalTitleZh": "道德經",
-    "canonicalTitleEn": "Dao De Jing",
-    "tradition": "daoist",
-    "attributedAuthor": "laozi",
-    "authorConfidence": "legendary",
-    "answerMode": "council_debate",
-    "doNotMergeWith": [
-      "confucian_ritual",
-      "buddhism"
-    ],
-    "notes": "Daoist scripture layer — overlaps philosophy attribution; religion record tracks ritual/theological reception"
-  },
-  "confucian_ancestor_veneration": {
-    "recordId": "confucian_ancestor_veneration",
-    "domain": "religion",
-    "recordType": "concept",
-    "canonicalTitleZh": "祭祖",
-    "canonicalTitleEn": "ancestor veneration in Confucian ritual religion",
-    "tradition": "confucian_ritual",
-    "authorConfidence": "consensus",
-    "answerMode": "council_debate",
-    "doNotMergeWith": [
-      "christianity",
-      "islam",
-      "buddhism"
-    ],
-    "notes": "Ritual religion distinct from philosophical Confucianism — boundary trap for models"
-  },
-  "gospel_matthew": {
-    "recordId": "gospel_matthew",
-    "domain": "religion",
-    "recordType": "text",
-    "canonicalTitleZh": "馬太福音",
-    "canonicalTitleEn": "Gospel of Matthew",
-    "tradition": "christianity",
-    "attributedAuthor": "matthew_tradition",
-    "authorConfidence": "disputed",
-    "answerMode": "council_debate",
-    "doNotMergeWith": [
-      "islam",
-      "buddhism",
-      "daoist"
-    ],
-    "notes": "Theological apostolic attribution vs historical-critical anonymous composition — council panel required"
-  },
-  "nirvana_pop_heaven": {
-    "recordId": "nirvana_pop_heaven",
-    "domain": "religion",
-    "recordType": "concept",
-    "canonicalTitleZh": "涅槃即永恆天堂",
-    "canonicalTitleEn": "nirvana as eternal heaven (pop spirituality)",
-    "tradition": "buddhism",
-    "attributedAuthor": null,
-    "authorConfidence": "disputed",
-    "answerMode": "council_debate",
-    "doNotMergeWith": [
-      "christianity",
-      "islam"
-    ],
-    "notes": "Pop self-help myth — must label misconception; contrast with Buddhist doctrinal nirvana"
-  },
-  "islam_early_history": {
-    "recordId": "islam_early_history",
-    "domain": "religion",
-    "recordType": "concept",
-    "canonicalTitleEn": "early Islam historical-theological boundary",
-    "canonicalTitleZh": "早期伊斯蘭歷史與神學分界",
-    "tradition": "islam",
-    "authorConfidence": "consensus",
-    "answerMode": "council_debate",
-    "doNotMergeWith": [
-      "christianity",
-      "buddhism"
-    ],
-    "notes": "Sensitive trap — scholarly vs theological claims must not collapse"
-  },
-  "jesus_gospel_teachings": {
-    "recordId": "jesus_gospel_teachings",
-    "domain": "religion",
-    "recordType": "figure_source_seat",
-    "canonicalTitleEn": "Jesus traditions in the canonical Gospels",
-    "canonicalTitleZh": "福音書中的耶穌傳統",
-    "tradition": "christianity",
-    "representativeFigure": "jesus_of_nazareth",
-    "sourceAnchors": [
-      "canonical_gospels",
-      "sermon_on_mount",
-      "early_church_reception"
-    ],
-    "answerMode": "religion_figure_council",
-    "authorConfidence": "layered",
-    "doNotMergeWith": [
-      "buddhism",
-      "islam",
-      "pop_spirituality"
-    ],
-    "notes": "Use as a Christian tradition witness seat, not first-person impersonation. Split theological voice from historical-critical reconstruction."
-  },
-  "buddha_dharma_teachings": {
-    "recordId": "buddha_dharma_teachings",
-    "domain": "religion",
-    "recordType": "figure_source_seat",
-    "canonicalTitleEn": "Buddha traditions in Buddhist canons",
-    "canonicalTitleZh": "佛教經藏中的佛陀傳統",
-    "tradition": "buddhism",
-    "representativeFigure": "gautama_buddha",
-    "sourceAnchors": [
-      "pali_canon",
-      "dhammapada",
-      "mahayana_sutras"
-    ],
-    "answerMode": "religion_figure_council",
-    "authorConfidence": "layered",
-    "doNotMergeWith": [
-      "christianity",
-      "islam",
-      "pop_spirituality"
-    ],
-    "notes": "Use as a Buddhist dharma witness seat, not first-person impersonation. Split doctrinal voice from historical-critical reconstruction."
-  },
-  "hadith_canonical_collections": {
-    "recordId": "hadith_canonical_collections",
-    "domain": "religion",
-    "recordType": "text",
-    "canonicalTitleEn": "Hadith canonical collections (sect-bounded)",
-    "canonicalTitleZh": "聖訓經典彙編（教派分界）",
-    "tradition": "islam",
-    "attributedAuthor": "muhammad_al_bukhari",
-    "authorConfidence": "compiled",
-    "answerMode": "council_debate",
-    "sectBoundaries": {
-      "sunni": [
-        "sahih_al_bukhari",
-        "sahih_muslim",
-        "kutub_al_sittah"
-      ],
-      "shia": [
-        "al_kafi",
-        "the_four_books"
-      ]
-    },
-    "doNotMergeWith": [
-      "christianity",
-      "buddhism",
-      "daoist",
-      "quran"
-    ],
-    "notes": "Sect boundary inside Islam: the Sunni canonical six books (Kutub al-Sittah, e.g. Sahih al-Bukhari, Sahih Muslim) and the Shia four books (e.g. al-Kafi) are distinct collections graded by chains of transmission (isnad). Hadith are compiled reports, not the Quran — do not merge sect canons with each other or collapse hadith into the Quran. Keep scholarly grading (sahih/da'if) separate from theological authority claims; a sensitive topic that requires the council panel."
-  },
-  "eastern_orthodox_theosis": {
+[
+  {
     "recordId": "eastern_orthodox_theosis",
     "domain": "religion",
     "recordType": "concept",
     "canonicalTitleEn": "Eastern Orthodox theosis (deification)",
     "canonicalTitleZh": "东正教神化",
     "tradition": "eastern_orthodox",
-    "doNotMergeWith": [
-      "roman_catholic",
-      "lutheran"
-    ],
+    "doNotMergeWith": ["roman_catholic", "lutheran"],
     "notes": "Theosis is participation in God's uncreated energies (Palamite essence/energies distinction), not the Roman Catholic created-grace model of sanctification nor the Lutheran forensic justification, so the traditions must stay separate.",
     "provenance": "Gregory Palamas, Triads; affirmed at the Hesychast Councils of Constantinople (1341-1351)."
   },
-  "roman_catholic_filioque": {
+  {
     "recordId": "roman_catholic_filioque",
     "domain": "religion",
     "recordType": "concept",
     "canonicalTitleEn": "Roman Catholic Filioque (procession of the Spirit from Father and Son)",
     "canonicalTitleZh": "和子说",
     "tradition": "roman_catholic",
-    "doNotMergeWith": [
-      "eastern_orthodox",
-      "assyrian_church_of_the_east"
-    ],
+    "doNotMergeWith": ["eastern_orthodox", "assyrian_church_of_the_east"],
     "notes": "The Latin addition that the Spirit proceeds 'and from the Son' is precisely what Eastern Orthodoxy rejects as uncanonical, so the two pneumatologies are distinct rather than interchangeable.",
     "provenance": "Filioque inserted in Western recensions of the Nicene-Constantinopolitan Creed; defended at the Council of Florence (1439)."
   },
-  "oriental_orthodox_miaphysitism": {
+  {
     "recordId": "oriental_orthodox_miaphysitism",
     "domain": "religion",
     "recordType": "concept",
     "canonicalTitleEn": "Oriental Orthodox miaphysitism (one united nature of Christ)",
     "canonicalTitleZh": "合性论",
     "tradition": "oriental_orthodox",
-    "doNotMergeWith": [
-      "chalcedonian_christianity",
-      "nestorianism"
-    ],
+    "doNotMergeWith": ["chalcedonian_christianity", "nestorianism"],
     "notes": "Miaphysitism affirms one incarnate nature 'out of two' and rejects the Chalcedonian two-natures formula, yet is equally opposed to Nestorian division, so it is a third distinct christology, not a variant of either.",
     "provenance": "Cyril of Alexandria's 'mia physis tou theou logou sesarkomene'; Coptic, Syriac and Armenian churches' rejection of the Council of Chalcedon (451)."
   },
-  "assyrian_church_of_east_dyophysitism": {
+  {
     "recordId": "assyrian_church_of_east_dyophysitism",
     "domain": "religion",
     "recordType": "concept",
     "canonicalTitleEn": "Church of the East dyophysite christology (two qnome)",
     "tradition": "assyrian_church_of_the_east",
-    "doNotMergeWith": [
-      "oriental_orthodox",
-      "chalcedonian_christianity"
-    ],
+    "doNotMergeWith": ["oriental_orthodox", "chalcedonian_christianity"],
     "notes": "The East Syriac tradition confesses two natures and two qnome in Christ, a framework distinct from both Chalcedonian hypostatic union and Oriental Orthodox miaphysitism, and should not be flattened into 'Nestorianism' as a slur.",
     "provenance": "Synod of Mar Aba I and the East Syriac liturgical/theological tradition; christology articulated by Babai the Great (c. 600)."
   },
-  "lutheran_sacramental_union": {
+  {
     "recordId": "lutheran_sacramental_union",
     "domain": "religion",
     "recordType": "concept",
     "canonicalTitleEn": "Lutheran sacramental union (real presence in/with/under bread and wine)",
     "canonicalTitleZh": "圣餐合一",
     "tradition": "lutheran",
-    "doNotMergeWith": [
-      "reformed_christianity",
-      "roman_catholic"
-    ],
+    "doNotMergeWith": ["reformed_christianity", "roman_catholic"],
     "notes": "Lutheran sacramental union holds Christ's body truly present 'in, with, and under' the elements without transubstantiation, distinct from the Reformed spiritual/pneumatic presence and from the Catholic conversion of substance.",
     "provenance": "Augsburg Confession Art. X and the Formula of Concord (1577), against both Zwinglian and Roman views."
   },
-  "reformed_lords_supper_pneumatic": {
+  {
     "recordId": "reformed_lords_supper_pneumatic",
     "domain": "religion",
     "recordType": "concept",
     "canonicalTitleEn": "Reformed pneumatic presence in the Lord's Supper",
     "tradition": "reformed_christianity",
-    "doNotMergeWith": [
-      "lutheran",
-      "zwinglianism"
-    ],
+    "doNotMergeWith": ["lutheran", "zwinglianism"],
     "notes": "Calvin's view that believers are lifted by the Spirit to feed on the ascended Christ is distinct from Lutheran local real presence and from Zwingli's bare-memorialism, so 'Reformed' must not be merged with either.",
     "provenance": "John Calvin, Institutes IV.17; codified in the Westminster Confession and Heidelberg Catechism."
   },
-  "vishishtadvaita_ramanuja_qualified_nondualism": {
+  {
     "recordId": "vishishtadvaita_ramanuja_qualified_nondualism",
     "domain": "religion",
     "recordType": "concept",
     "canonicalTitleEn": "Vishishtadvaita qualified non-dualism (Ramanuja)",
     "canonicalTitleZh": "限定不二论",
     "tradition": "vishishtadvaita",
-    "doNotMergeWith": [
-      "shuddhadvaita",
-      "bhedabheda"
-    ],
+    "doNotMergeWith": ["shuddhadvaita", "bhedabheda"],
     "notes": "Ramanuja's Vishishtadvaita treats souls and matter as the real body/modes (sharira) of Brahman, distinct from Vallabha's Shuddhadvaita pure-monism and from Bhedabheda's simultaneous difference-and-nondifference.",
     "provenance": "Ramanuja, Sri Bhashya commentary on the Brahma Sutras (12th c.)."
   },
-  "shuddhadvaita_vallabha_pure_nondualism": {
+  {
     "recordId": "shuddhadvaita_vallabha_pure_nondualism",
     "domain": "religion",
     "recordType": "concept",
     "canonicalTitleEn": "Shuddhadvaita pure non-dualism (Vallabha)",
     "tradition": "shuddhadvaita",
-    "doNotMergeWith": [
-      "vishishtadvaita",
-      "achintya_bheda_abheda"
-    ],
+    "doNotMergeWith": ["vishishtadvaita", "achintya_bheda_abheda"],
     "notes": "Vallabha's Shuddhadvaita holds the world is real and non-illusory while souls are identical-in-essence with Brahman without qualification, differing from Ramanuja's qualified scheme and from Chaitanya's inconceivable difference-nondifference.",
     "provenance": "Vallabha, Anubhashya and Shodasha Granthah; Pushtimarg tradition (16th c.)."
   },
-  "achintya_bheda_abheda_chaitanya": {
+  {
     "recordId": "achintya_bheda_abheda_chaitanya",
     "domain": "religion",
     "recordType": "concept",
     "canonicalTitleEn": "Achintya Bheda Abheda (inconceivable difference and non-difference, Chaitanya)",
     "tradition": "achintya_bheda_abheda",
-    "doNotMergeWith": [
-      "vishishtadvaita",
-      "shuddhadvaita"
-    ],
+    "doNotMergeWith": ["vishishtadvaita", "shuddhadvaita"],
     "notes": "The Gaudiya doctrine that the soul is simultaneously and inconceivably one with and different from Bhagavan is a distinct Vedantic position, not reducible to Ramanuja's or Vallabha's systems.",
     "provenance": "Jiva Goswami, Sat Sandarbhas; Gaudiya Vaishnava tradition stemming from Chaitanya Mahaprabhu (16th c.)."
   },
-  "jodo_shinshu_tariki_other_power": {
+  {
     "recordId": "jodo_shinshu_tariki_other_power",
     "domain": "religion",
     "recordType": "concept",
     "canonicalTitleEn": "Jodo Shinshu Other-Power (tariki) and shinjin",
     "canonicalTitleZh": "净土真宗他力",
     "tradition": "jodo_shinshu",
-    "doNotMergeWith": [
-      "jodo_shu",
-      "tendai"
-    ],
+    "doNotMergeWith": ["jodo_shu", "tendai"],
     "notes": "Shinran's Jodo Shinshu makes salvation wholly Amida's Other-Power received as entrusting faith (shinjin), distinct from Honen's Jodo-shu emphasis on repeated nembutsu practice and from Tendai's self-power meditative path.",
     "provenance": "Shinran, Kyogyoshinsho (13th c.); foundational Jodo Shinshu scripture."
   },
-  "druze_tawhid_unitarianism": {
+  {
     "recordId": "druze_tawhid_unitarianism",
     "domain": "religion",
     "recordType": "concept",
     "canonicalTitleEn": "Druze Tawhid (Unitarian) faith and the seven luminaries",
     "tradition": "druze",
-    "doNotMergeWith": [
-      "ismailism",
-      "twelver_shia"
-    ],
+    "doNotMergeWith": ["ismailism", "twelver_shia"],
     "notes": "The Druze movement (al-Muwahhidun) emerged from Fatimid Ismailism but developed a closed, distinct cosmology including reincarnation and the divine manifestation in al-Hakim, and is not a sect of Twelver Shia Islam.",
     "provenance": "Rasa'il al-Hikma (Epistles of Wisdom) compiled by Hamza ibn Ali and Baha al-Din al-Muqtana (11th c.)."
   },
-  "bahai_progressive_revelation": {
+  {
     "recordId": "bahai_progressive_revelation",
     "domain": "religion",
     "recordType": "concept",
     "canonicalTitleEn": "Baha'i progressive revelation and the unity of religion",
     "canonicalTitleZh": "巴哈伊渐进启示",
     "tradition": "bahai_faith",
-    "doNotMergeWith": [
-      "twelver_shia",
-      "babism"
-    ],
+    "doNotMergeWith": ["twelver_shia", "babism"],
     "notes": "The Baha'i Faith teaches successive Manifestations of God in an unending cycle and regards Baha'u'llah as a new independent revelation, distinct from the Islamic seal-of-prophethood framework it grew out of and from its precursor Babism.",
     "provenance": "Baha'u'llah, Kitab-i-Iqan and Kitab-i-Aqdas (19th c.)."
   },
-  "lds_exaltation_and_godhead": {
+  {
     "recordId": "lds_exaltation_and_godhead",
     "domain": "religion",
     "recordType": "concept",
     "canonicalTitleEn": "LDS exaltation and the social Godhead of three beings",
     "tradition": "latter_day_saints",
-    "doNotMergeWith": [
-      "trinitarian_christianity",
-      "community_of_christ"
-    ],
+    "doNotMergeWith": ["trinitarian_christianity", "community_of_christ"],
     "notes": "The LDS (Mormon) teaching of exaltation toward godhood and a Godhead of three distinct beings is materially different from creedal Trinitarian Christianity's one-substance God, and differs again from the Community of Christ's more traditional theology.",
     "provenance": "Joseph Smith, King Follett Discourse (1844); Doctrine and Covenants and the Articles of Faith."
   }
-}
+]

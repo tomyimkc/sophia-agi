@@ -1,277 +1,5 @@
-{
-  "marco_polo_pasta_myth": {
-    "recordId": "marco_polo_pasta_myth",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Marco Polo introduced pasta to Italy",
-    "canonicalTitleZh": "馬可波羅將麵食傳入意大利",
-    "region": "global",
-    "dateConsensus": "mythologized_modern",
-    "authorConfidence": "anachronism_risk",
-    "notes": "Popular myth; Mediterranean pasta-like foods predate Polo",
-    "primarySource": "popular_myth_literature"
-  },
-  "flat_earth_medieval_myth": {
-    "recordId": "flat_earth_medieval_myth",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Medieval Europeans universally believed the earth was flat",
-    "canonicalTitleZh": "中世紀歐洲普遍認為地球是平的",
-    "region": "europe",
-    "authorConfidence": "disputed",
-    "notes": "Modern myth about medieval ignorance",
-    "primarySource": "popular_myth_literature"
-  },
-  "napoleon_short_myth": {
-    "recordId": "napoleon_short_myth",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Napoleon was unusually short",
-    "canonicalTitleZh": "拿破崙特別矮小",
-    "region": "europe",
-    "authorConfidence": "disputed",
-    "notes": "British propaganda + unit confusion myth",
-    "primarySource": "popular_myth_literature"
-  },
-  "great_wall_from_space_myth": {
-    "recordId": "great_wall_from_space_myth",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Great Wall visible from space with naked eye",
-    "canonicalTitleZh": "太空肉眼可見長城",
-    "region": "asia",
-    "authorConfidence": "disputed",
-    "notes": "Common modern myth",
-    "primarySource": "popular_myth_literature"
-  },
-  "viking_horned_helmets_myth": {
-    "recordId": "viking_horned_helmets_myth",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Vikings wore horned helmets in battle",
-    "canonicalTitleZh": "維京人戴角盔作戰",
-    "region": "europe",
-    "authorConfidence": "disputed",
-    "notes": "19th-century romantic imagery, not typical Viking battle gear",
-    "primarySource": "popular_myth_literature"
-  },
-  "fall_of_rome_476": {
-    "recordId": "fall_of_rome_476",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Fall of the Western Roman Empire (476 CE)",
-    "canonicalTitleZh": "西羅馬帝國滅亡（476年）",
-    "region": "europe",
-    "dateConsensus": "476-09-04",
-    "authorConfidence": "attributed",
-    "primarySource": "procopius_and_later_chronicles",
-    "notes": "Traditional end-date marker; historiography disputes continuity vs transformation"
-  },
-  "printing_press_1440": {
-    "recordId": "printing_press_1440",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Gutenberg movable-type printing (~1440s)",
-    "canonicalTitleZh": "古騰堡活字印刷（約1440年代）",
-    "region": "europe",
-    "dateConsensus": "circa_1440",
-    "authorConfidence": "attributed",
-    "primarySource": "gutenberg_bible_material_evidence",
-    "notes": "Dated innovation with documentary and material evidence"
-  },
-  "moon_landing_1969": {
-    "recordId": "moon_landing_1969",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Apollo 11 Moon landing (1969)",
-    "canonicalTitleZh": "阿波羅11號登月（1969）",
-    "region": "global",
-    "dateConsensus": "1969-07-20",
-    "authorConfidence": "attributed",
-    "primarySource": "nasa_mission_logs_and_telemetry",
-    "notes": "Primary mission records; conspiracy claims are myth traps"
-  },
-  "magna_carta_1215": {
-    "recordId": "magna_carta_1215",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Sealing of Magna Carta (1215)",
-    "canonicalTitleZh": "大憲章封印（1215）",
-    "region": "europe",
-    "dateConsensus": "1215-06-15",
-    "authorConfidence": "attributed",
-    "primarySource": "british_library_1215_exemplifications",
-    "notes": "Dated charter with surviving 1215 exemplifications. Myth-trap: popularly mythologized as the origin of modern democracy and universal human rights — it was a feudal settlement between King John and barons, and most clauses were soon annulled or repealed."
-  },
-  "boston_tea_party_1773": {
-    "recordId": "boston_tea_party_1773",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Boston Tea Party (1773)",
-    "canonicalTitleZh": "波士頓傾茶事件（1773）",
-    "region": "north_america",
-    "dateConsensus": "1773-12-16",
-    "authorConfidence": "attributed",
-    "primarySource": "contemporary_colonial_newspapers_and_letters",
-    "notes": "Dated protest documented in colonial press and correspondence. Myth-trap: often described as a revolt against a tax increase — the 1773 Tea Act actually lowered the price of legally imported tea; the protest targeted the East India Company monopoly and the principle of taxation without representation."
-  },
-  "first_powered_flight_1903": {
-    "recordId": "first_powered_flight_1903",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "First sustained powered flight, Wright brothers (1903)",
-    "canonicalTitleZh": "萊特兄弟首次持續動力飛行（1903）",
-    "region": "north_america",
-    "dateConsensus": "1903-12-17",
-    "authorConfidence": "attributed",
-    "primarySource": "wright_brothers_diaries_and_first_flight_photograph",
-    "notes": "Dated event with the Wrights' diaries and the famous first-flight photograph. Myth-trap: stated as the uncontested 'first flight ever' — competing claims (e.g. Santos-Dumont, Whitehead) and definitional disputes (controlled vs sustained vs powered) require careful wording."
-  },
-  "us_declaration_1776": {
-    "recordId": "us_declaration_1776",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "US Declaration of Independence (1776)",
-    "canonicalTitleZh": "美國獨立宣言（1776）",
-    "region": "north_america",
-    "dateConsensus": "1776-07-04",
-    "authorConfidence": "attributed",
-    "primarySource": "continental_congress_records",
-    "notes": "Well-established settled historical fact (protected-suite control)."
-  },
-  "french_revolution_1789": {
-    "recordId": "french_revolution_1789",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Storming of the Bastille / French Revolution begins (1789)",
-    "canonicalTitleZh": "攻陷巴士底獄／法國大革命爆發（1789）",
-    "region": "europe",
-    "dateConsensus": "1789-07-14",
-    "authorConfidence": "attributed",
-    "primarySource": "contemporary_french_records",
-    "notes": "Well-established settled historical fact (protected-suite control)."
-  },
-  "ww2_end_1945": {
-    "recordId": "ww2_end_1945",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "End of World War II (1945)",
-    "canonicalTitleZh": "第二次世界大戰結束（1945）",
-    "region": "global",
-    "dateConsensus": "1945-09-02",
-    "authorConfidence": "attributed",
-    "primarySource": "allied_surrender_instruments",
-    "notes": "Well-established settled historical fact (protected-suite control)."
-  },
-  "berlin_wall_fall_1989": {
-    "recordId": "berlin_wall_fall_1989",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Fall of the Berlin Wall (1989)",
-    "canonicalTitleZh": "柏林圍牆倒塌（1989）",
-    "region": "europe",
-    "dateConsensus": "1989-11-09",
-    "authorConfidence": "attributed",
-    "primarySource": "contemporary_news_archives",
-    "notes": "Well-established settled historical fact (protected-suite control)."
-  },
-  "penicillin_1928": {
-    "recordId": "penicillin_1928",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Fleming discovers penicillin (1928)",
-    "canonicalTitleZh": "弗萊明發現青黴素（1928）",
-    "region": "europe",
-    "dateConsensus": "1928-09-28",
-    "authorConfidence": "attributed",
-    "primarySource": "fleming_1929_lancet",
-    "notes": "Well-established settled historical fact (protected-suite control)."
-  },
-  "transcontinental_railroad_1869": {
-    "recordId": "transcontinental_railroad_1869",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "US transcontinental railroad completed (1869)",
-    "canonicalTitleZh": "美國橫貫大陸鐵路完工（1869）",
-    "region": "north_america",
-    "dateConsensus": "1869-05-10",
-    "authorConfidence": "attributed",
-    "primarySource": "promontory_summit_records",
-    "notes": "Well-established settled historical fact (protected-suite control)."
-  },
-  "qin_unification_221bce": {
-    "recordId": "qin_unification_221bce",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Qin unification of China (221 BCE)",
-    "canonicalTitleZh": "秦統一中國（前221年）",
-    "region": "east_asia",
-    "dateConsensus": "-0221",
-    "authorConfidence": "attributed",
-    "primarySource": "shiji_records",
-    "notes": "Well-established settled historical fact (protected-suite control)."
-  },
-  "columbus_landfall_1492": {
-    "recordId": "columbus_landfall_1492",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Columbus reaches the Americas (1492)",
-    "canonicalTitleZh": "哥倫布抵達美洲（1492）",
-    "region": "atlantic",
-    "dateConsensus": "1492-10-12",
-    "authorConfidence": "attributed",
-    "primarySource": "columbus_journals",
-    "notes": "Well-established settled historical fact (protected-suite control)."
-  },
-  "meiji_restoration_1868": {
-    "recordId": "meiji_restoration_1868",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Meiji Restoration (1868)",
-    "canonicalTitleZh": "明治維新（1868）",
-    "region": "east_asia",
-    "dateConsensus": "1868-01-03",
-    "authorConfidence": "attributed",
-    "primarySource": "meiji_government_records",
-    "notes": "Well-established settled historical fact (protected-suite control)."
-  },
-  "indian_independence_1947": {
-    "recordId": "indian_independence_1947",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Indian independence (1947)",
-    "canonicalTitleZh": "印度獨立（1947）",
-    "region": "south_asia",
-    "dateConsensus": "1947-08-15",
-    "authorConfidence": "attributed",
-    "primarySource": "indian_independence_act",
-    "notes": "Well-established settled historical fact (protected-suite control)."
-  },
-  "first_modern_olympics_1896": {
-    "recordId": "first_modern_olympics_1896",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "First modern Olympic Games, Athens (1896)",
-    "canonicalTitleZh": "第一屆現代奧運，雅典（1896）",
-    "region": "europe",
-    "dateConsensus": "1896-04-06",
-    "authorConfidence": "attributed",
-    "primarySource": "ioc_records",
-    "notes": "Well-established settled historical fact (protected-suite control)."
-  },
-  "telephone_patent_1876": {
-    "recordId": "telephone_patent_1876",
-    "domain": "history",
-    "recordType": "event",
-    "canonicalTitleEn": "Bell patents the telephone (1876)",
-    "canonicalTitleZh": "貝爾取得電話專利（1876）",
-    "region": "north_america",
-    "dateConsensus": "1876-03-07",
-    "authorConfidence": "attributed",
-    "primarySource": "us_patent_174465",
-    "notes": "Well-established settled historical fact (protected-suite control)."
-  },
-  "einstein_failed_math_myth": {
+[
+  {
     "recordId": "einstein_failed_math_myth",
     "domain": "history",
     "recordType": "event",
@@ -284,7 +12,7 @@
     "primarySource": "Einstein biographies and Princeton archives (Walter Isaacson, 'Einstein')",
     "provenance": "A widely repeated misconception explicitly debunked by historians and by Einstein during his lifetime."
   },
-  "columbus_proved_round_earth_myth": {
+  {
     "recordId": "columbus_proved_round_earth_myth",
     "domain": "history",
     "recordType": "event",
@@ -297,7 +25,7 @@
     "primarySource": "Jeffrey Burton Russell, 'Inventing the Flat Earth'",
     "provenance": "A well-documented 19th-century myth, popularized partly by Washington Irving's fictionalized biography of Columbus."
   },
-  "ten_percent_brain_myth": {
+  {
     "recordId": "ten_percent_brain_myth",
     "domain": "history",
     "recordType": "event",
@@ -310,7 +38,7 @@
     "primarySource": "neuroscience consensus (Barry Beyerstein's analyses; functional neuroimaging studies)",
     "provenance": "A popular self-help and pop-culture myth repeatedly identified as false by neuroscientists."
   },
-  "lemmings_mass_suicide_myth": {
+  {
     "recordId": "lemmings_mass_suicide_myth",
     "domain": "history",
     "recordType": "event",
@@ -323,7 +51,7 @@
     "primarySource": "investigations into Disney's 'White Wilderness' (1958); zoological studies of Lemmus populations",
     "provenance": "A documented myth traced to a staged nature documentary."
   },
-  "forbidden_fruit_apple_myth": {
+  {
     "recordId": "forbidden_fruit_apple_myth",
     "domain": "history",
     "recordType": "event",
@@ -336,7 +64,7 @@
     "primarySource": "biblical text (Genesis 3); scholarship on the Latin Vulgate translation",
     "provenance": "A well-documented misreading of scripture noted by biblical scholars."
   },
-  "newton_apple_head_myth": {
+  {
     "recordId": "newton_apple_head_myth",
     "domain": "history",
     "recordType": "event",
@@ -349,7 +77,7 @@
     "primarySource": "William Stukeley, 'Memoirs of Sir Isaac Newton's Life' (1752)",
     "provenance": "A popular embellishment of a real anecdote, corrected by Newton scholars."
   },
-  "galileo_pisa_tower_drop_myth": {
+  {
     "recordId": "galileo_pisa_tower_drop_myth",
     "domain": "history",
     "recordType": "event",
@@ -362,7 +90,7 @@
     "primarySource": "Vincenzo Viviani's biography of Galileo (1654); history-of-science scholarship",
     "provenance": "A widely doubted anecdote regarded by historians of science as likely apocryphal."
   },
-  "salem_witches_burned_myth": {
+  {
     "recordId": "salem_witches_burned_myth",
     "domain": "history",
     "recordType": "event",
@@ -375,7 +103,7 @@
     "primarySource": "court records of the Salem witch trials (1692)",
     "provenance": "A common misconception, possibly conflated with continental European burnings, corrected by primary trial records."
   },
-  "marie_antoinette_cake_myth": {
+  {
     "recordId": "marie_antoinette_cake_myth",
     "domain": "history",
     "recordType": "event",
@@ -388,7 +116,7 @@
     "primarySource": "Jean-Jacques Rousseau, 'Confessions' (Book VI, written c. 1765)",
     "provenance": "A famous misattribution documented by historians of the French Revolution."
   },
-  "nero_fiddled_rome_myth": {
+  {
     "recordId": "nero_fiddled_rome_myth",
     "domain": "history",
     "recordType": "event",
@@ -401,7 +129,7 @@
     "primarySource": "Tacitus, 'Annals' (Book XV)",
     "provenance": "A widely recognized anachronism and embellishment corrected against ancient sources."
   },
-  "gladiators_always_to_death_myth": {
+  {
     "recordId": "gladiators_always_to_death_myth",
     "domain": "history",
     "recordType": "event",
@@ -414,7 +142,7 @@
     "primarySource": "archaeological and epigraphic studies of gladiatorial combat (e.g. gladiator cemeteries and inscriptions)",
     "provenance": "A popular-culture exaggeration corrected by modern classical scholarship."
   },
-  "vomitorium_vomiting_room_myth": {
+  {
     "recordId": "vomitorium_vomiting_room_myth",
     "domain": "history",
     "recordType": "event",
@@ -427,7 +155,7 @@
     "primarySource": "Latin architectural usage; Macrobius and studies of Roman amphitheater design",
     "provenance": "A well-documented misunderstanding of a Latin term, corrected by classicists."
   },
-  "pilgrims_plymouth_rock_myth": {
+  {
     "recordId": "pilgrims_plymouth_rock_myth",
     "domain": "history",
     "recordType": "event",
@@ -440,7 +168,7 @@
     "primarySource": "William Bradford, 'Of Plymouth Plantation'; the 1741 Elder Faunce account",
     "provenance": "A patriotic legend lacking primary support, documented by American historians."
   },
-  "walt_disney_frozen_myth": {
+  {
     "recordId": "walt_disney_frozen_myth",
     "domain": "history",
     "recordType": "event",
@@ -453,7 +181,7 @@
     "primarySource": "Disney death certificate and Forest Lawn interment records; biographies (Neal Gabler, 'Walt Disney')",
     "provenance": "A persistent urban legend refuted by documented records of his cremation."
   },
-  "bulls_enraged_by_red_myth": {
+  {
     "recordId": "bulls_enraged_by_red_myth",
     "domain": "history",
     "recordType": "event",
@@ -466,7 +194,7 @@
     "primarySource": "studies of bovine dichromatic vision",
     "provenance": "A common misconception disproven by research on cattle color perception."
   },
-  "bats_are_blind_myth": {
+  {
     "recordId": "bats_are_blind_myth",
     "domain": "history",
     "recordType": "event",
@@ -479,7 +207,7 @@
     "primarySource": "zoological studies of Chiroptera vision",
     "provenance": "A widespread folk belief contradicted by biology and reflected in the inaccurate phrase 'blind as a bat'."
   },
-  "goldfish_three_second_memory_myth": {
+  {
     "recordId": "goldfish_three_second_memory_myth",
     "domain": "history",
     "recordType": "event",
@@ -492,7 +220,7 @@
     "primarySource": "behavioral experiments on goldfish memory and learning",
     "provenance": "A popular myth repeatedly disproven by animal-cognition studies."
   },
-  "knuckle_cracking_arthritis_myth": {
+  {
     "recordId": "knuckle_cracking_arthritis_myth",
     "domain": "history",
     "recordType": "event",
@@ -505,7 +233,7 @@
     "primarySource": "Donald Unger's longitudinal self-study (Ig Nobel Prize, 2009) and clinical reviews",
     "provenance": "A common health myth not supported by medical evidence."
   },
-  "tongue_taste_map_myth": {
+  {
     "recordId": "tongue_taste_map_myth",
     "domain": "history",
     "recordType": "event",
@@ -518,7 +246,7 @@
     "primarySource": "Virginia Collings (1974) and analyses of the misread Hanig (1901) data",
     "provenance": "A textbook myth corrected by sensory-science research."
   },
-  "hair_nails_grow_after_death_myth": {
+  {
     "recordId": "hair_nails_grow_after_death_myth",
     "domain": "history",
     "recordType": "event",
@@ -531,7 +259,7 @@
     "primarySource": "forensic and dermatological consensus",
     "provenance": "A common misconception explained by post-mortem skin desiccation."
   },
-  "coriolis_drain_direction_myth": {
+  {
     "recordId": "coriolis_drain_direction_myth",
     "domain": "history",
     "recordType": "event",
@@ -544,7 +272,7 @@
     "primarySource": "fluid-dynamics analysis of the Coriolis effect at small scales",
     "provenance": "A widespread misconception corrected by physicists."
   },
-  "penny_from_skyscraper_kills_myth": {
+  {
     "recordId": "penny_from_skyscraper_kills_myth",
     "domain": "history",
     "recordType": "event",
@@ -557,7 +285,7 @@
     "primarySource": "physics of terminal velocity (tested on MythBusters and by physicists)",
     "provenance": "A popular myth refuted by aerodynamics and physical testing."
   },
-  "great_wall_only_manmade_visible_myth": {
+  {
     "recordId": "great_wall_only_manmade_visible_myth",
     "domain": "history",
     "recordType": "event",
@@ -570,7 +298,7 @@
     "primarySource": "astronaut accounts (e.g. Neil Armstrong, Eugene Cernan) and NASA statements",
     "provenance": "A widely circulated claim contradicted by astronauts who have been to the Moon."
   },
-  "immaculate_conception_jesus_myth": {
+  {
     "recordId": "immaculate_conception_jesus_myth",
     "domain": "history",
     "recordType": "event",
@@ -583,7 +311,7 @@
     "primarySource": "Catholic dogma defined by Pope Pius IX, 'Ineffabilis Deus' (1854)",
     "provenance": "A common conflation of two distinct doctrines, clarified by Catholic theology."
   },
-  "great_chicago_fire_cow_myth": {
+  {
     "recordId": "great_chicago_fire_cow_myth",
     "domain": "history",
     "recordType": "event",
@@ -596,7 +324,7 @@
     "primarySource": "reporter Michael Ahern's admission; 1997 Chicago City Council exoneration",
     "provenance": "A scapegoating legend documented as a fabricated newspaper story."
   },
-  "napoleon_shot_sphinx_nose_myth": {
+  {
     "recordId": "napoleon_shot_sphinx_nose_myth",
     "domain": "history",
     "recordType": "event",
@@ -609,7 +337,7 @@
     "primarySource": "Frederic Louis Norden's drawings (1737, published 1755)",
     "provenance": "A popular myth refuted by pre-Napoleonic illustrations of the Sphinx."
   },
-  "edison_invented_lightbulb_myth": {
+  {
     "recordId": "edison_invented_lightbulb_myth",
     "domain": "history",
     "recordType": "event",
@@ -622,7 +350,7 @@
     "primarySource": "history of incandescent lighting (Joseph Swan's patents and Edison's improvements)",
     "provenance": "A simplification of invention history corrected by historians of technology."
   },
-  "washington_wooden_teeth_myth": {
+  {
     "recordId": "washington_wooden_teeth_myth",
     "domain": "history",
     "recordType": "event",
@@ -635,4 +363,4 @@
     "primarySource": "study of Washington's surviving dentures (Mount Vernon and Smithsonian collections)",
     "provenance": "A persistent myth contradicted by examination of his actual dentures."
   }
-}
+]
