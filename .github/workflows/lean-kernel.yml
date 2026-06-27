@@ -41,6 +41,12 @@ on:
       - 'agent/proof_search.py'
       - 'selfextend/proof_verifier.py'
       - 'formal_proofs/**'
+  # Manual trigger for the L0 trace step. The cold lean4-example trace takes ~90 min
+  # of prelude extraction on a 2-core runner (slow, not stuck — see
+  # docs/06-Roadmap/Lean-L0-Trace-Deadlock.md §1b), so it is NOT run on every PR;
+  # dispatch it deliberately once a throughput strategy (trace cache / mathlib4
+  # remote cache / larger runner) is in place.
+  workflow_dispatch:
 
 concurrency:
   group: lean-kernel-${{ github.ref }}
@@ -106,7 +112,12 @@ jobs:
     # LeanProofSession / verify_proof / the math_verifier lean delegation BEFORE a
     # real eval relies on them. Informational; not required.
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # 60 min (was 30): a cold lean4-example trace did NOT finish in 30 min on a 2-core
+    # runner — it was still actively building (live lake/lean processes), not frozen,
+    # when the 30-min cap killed it. 60 min tests whether it merely needs more time on
+    # a slow runner vs. genuinely stalls (the documented macOS-arm64 deadlock). See
+    # docs/06-Roadmap/Lean-L0-Trace-Deadlock.md §1.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
@@ -132,9 +143,110 @@ jobs:
           python -c "import lean_dojo; print('lean_dojo OK')"
           python -c "from agent import lean_backend; print('lean_available:', lean_backend.lean_available())"
 
-      - name: Proof-search + novelty-DAG + check_proof tests (real-lean-dojo paths now execute)
+      - name: Proof-search + novelty-DAG tests (real-lean-dojo paths now execute)
         env:
           PYTHONDONTWRITEBYTECODE: "1"
         run: |
-          python -m pytest tests/test_proof_search.py tests/test_novelty_dag.py tests/test_lean_dojo_check_proof.py -v
+          python -m pytest tests/test_proof_search.py tests/test_novelty_dag.py -v
+
+      - name: L0 smoke — trace() + check_proof on a real repo (require-trace; no skip)
+        # Manual-only: the cold trace takes ~90 min on a 2-core runner (slow, not stuck;
+        # §1b), so running it on every PR just burns ~50 min and always times out. Run it
+        # deliberately via "Run workflow" once a throughput strategy is in place.
+        if: github.event_name == 'workflow_dispatch'
+        # The viability-ladder L0 step (docs/06-Roadmap/Lean-L0-Trace-Deadlock.md). With
+        # SOPHIA_L0_REQUIRE_TRACE=1 the L0 test MUST NOT skip: it traces lean4-example
+        # (pinned commit) and asserts check_proof accepts `foo := by rfl` and does not
+        # fabricate-accept a wrong proof. A green here = L0 demonstrated on Linux. If
+        # trace() stalls (the documented macOS-arm64 deadlock) this step goes RED.
+        # Informational lane; does not gate PRs.
+        #
+        # `-s` streams lean-dojo's trace progress bar live so we can SEE whether the
+        # tracer advances past the ~1515/1518 prelude-extraction boundary where it froze
+        # on macOS-arm64 (distinguishes "slow but progressing" from "stuck"). The inner
+        # `timeout` fails the step with a clear marker BEFORE the 60-min job cap, so
+        # the post-cleanup log isn't the only evidence of a non-completing trace.
+        #
+        # SIGINT first (lets pytest/lean-dojo unwind and print WHERE it was stuck), then
+        # --kill-after=2m sends SIGKILL so a child that ignores SIGINT (e.g. blocked in a
+        # native lake/lean call) can't hang past the cap — exactly the failure this step
+        # exists to catch. GNU timeout reports the timeout as 124, but a child killed by
+        # the signal can surface as 130 (128+SIGINT) or 137 (128+SIGKILL); match all three
+        # for the diagnostic. Any non-zero still re-exits, so the step always goes RED.
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+          SOPHIA_L0_REQUIRE_TRACE: "1"
+          VERBOSE: "1"            # lean-dojo: emit trace progress to stderr
+        run: |
+          timeout --signal=INT --kill-after=2m 50m \
+            python -m pytest tests/test_lean_dojo_check_proof.py -v -s \
+            || { code=$?; \
+                 case "$code" in \
+                   124|130|137) echo "::error::L0 trace did not complete within 50m (exit $code) — see streamed progress above (slow vs. stuck)";; \
+                 esac; \
+                 exit "$code"; }
+
+  l0-mathlib:
+    # PRIMARY L0 path (Tom's call): mathlib4 via lean-dojo's PUBLISHED remote cache.
+    # The local lean4-example trace is slow (~90 min prelude extraction; §1b). Here
+    # check_proof targets the exact mathlib4 commit + theorem lean-dojo's own demo
+    # uses, so the traced repo is DOWNLOADED from REMOTE_CACHE_URL
+    # (https://dl.fbaipublicfiles.com/lean-dojo) instead of extracted locally —
+    # skipping the slow part entirely. This is also the throughput model the Phase-1
+    # miniF2F eval will rely on (traced-project-keyed verification + a CI cache).
+    #
+    # Manual-only (workflow_dispatch): it downloads a multi-GB cache, so it is not on
+    # the PR/push path. A green here is the first genuine non-candidateOnly L0 check.
+    # VALIDATED 2026-06-27 (run 28278153340): the real proof of pi_eq_sum_univ was
+    # accepted and `by rfl` was not, in ~3 min via the remote cache — see
+    # docs/06-Roadmap/Lean-L0-Trace-Deadlock.md §1c. With the actions/cache warm this
+    # job is ~3-4 min, so it could be promoted to a per-PR lane for continuous L0
+    # regression coverage if desired; kept dispatch-only for now.
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Free disk space (mathlib4 cache is multi-GB)
+        # The pre-traced mathlib4 cache + oleans are several GB; ubuntu-latest's root fs
+        # is tight. Remove large preinstalled toolchains we don't use to avoid ENOSPC.
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android /usr/local/.ghcup || true
+          df -h /
+
+      - name: Install Lean 4 toolchain (elan + lean + lake)
+        run: |
+          bash scripts/install_lean.sh
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Install pytest + the lean-dojo extra (requirements-theorem.txt)
+        run: |
+          pip install --quiet pytest
+          pip install --quiet -r requirements-theorem.txt
+
+      - name: Cache lean-dojo traced repos (~/.cache/lean_dojo)
+        # Persist the downloaded/traced mathlib4 across dispatches so subsequent runs
+        # skip even the remote-cache download. Keyed on the pinned mathlib4 commit so a
+        # commit bump invalidates cleanly.
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/lean_dojo
+          key: lean-dojo-mathlib4-29dcec07-${{ runner.os }}
+
+      - name: L0 (mathlib4 remote cache) — check_proof accepts real proof, rejects wrong
+        # SOPHIA_L0_MATHLIB=1 opts into the mathlib4 test AND forbids it from skipping:
+        # any off-ramp (no lean-dojo, bad import) is a hard failure, so a green is a real
+        # L0 signal. DISABLE_REMOTE_CACHE is left UNSET so lean-dojo uses its remote cache.
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+          SOPHIA_L0_MATHLIB: "1"
+          VERBOSE: "1"
+        run: |
+          python -m pytest \
+            tests/test_lean_dojo_check_proof.py::test_check_proof_mathlib4_cached_l0 -v -s
 
