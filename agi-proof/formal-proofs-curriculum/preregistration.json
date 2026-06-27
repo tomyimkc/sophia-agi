@@ -1,0 +1,161 @@
+{
+  "schema": "sophia.preregistration.v1",
+  "experimentId": "formal-proofs-curriculum",
+  "status": "DRAFT",
+  "statusNote": "DRAFT — awaiting Tom's sign-off. Flips to OPEN only after every item in `openChecklist` is satisfied (all PIN-BEFORE-OPEN fields filled with real values, split sealed, traced project cached). No eval may run while status != OPEN.",
+  "registeredAt": "2026-06-27",
+  "branch": "claude/formal-proofs-handover-f9zrh6",
+  "canClaimAGI": false,
+  "designDoc": "docs/06-Roadmap/Formal-Proofs-Eval-Design.md",
+  "gatingDependency": "Design doc above must be approved; L0 (real check_proof through the kernel) must be demonstrated on main — DONE 2026-06-27, see docs/06-Roadmap/Lean-L0-Trace-Deadlock.md §1c.",
+
+  "proposer": {
+    "primary": {
+      "id": "B",
+      "name": "tactic-step search (ReProver/AlphaProof class)",
+      "entrypoint": "agent.proof_search.search_proof + agent.proof_search.LeanProofSession",
+      "tacticProposer": "agent.tactic_proposer.default_proposer(model_spec=...) → make_llm_proposer",
+      "rewardInterface": "selfextend.proof_verifier.close_loop_on_proofs (kernel-accept reward)",
+      "searchBudget": {
+        "beamWidth": "PIN-BEFORE-OPEN",
+        "maxDepth": "PIN-BEFORE-OPEN",
+        "maxTacticCallsPerProblem": "PIN-BEFORE-OPEN",
+        "wallclockTimeoutSecPerProblem": "PIN-BEFORE-OPEN",
+        "note": "A pass@1 number is uninterpretable without the search budget. These are part of the registered protocol — fix them before any run; changing them later is a new experiment."
+      }
+    },
+    "baselineColumn": {
+      "id": "A",
+      "name": "one-shot whole-proof (honest floor)",
+      "entrypoint": "agent.lean_backend.check_proof_in_repo",
+      "note": "Run on the SAME split as a comparison column. A abstains heavily on hard problems (correct fail-closed behavior). The A-vs-B delta isolates the value of search and is the interesting number."
+    },
+    "deferred": {
+      "id": "C",
+      "name": "whole-proof + self-repair",
+      "note": "A refinement on A, not an independent arm. Out of scope for the first run; would be registered as a separate experiment."
+    },
+    "firstMilestone": "Plumbing, not capability: 'B closes >=1 miniF2F-v2 problem end-to-end on a real LeanDojo session.' LeanProofSession.open() has never been exercised against a real lean-dojo install, so the first run is partly a LeanDojo-integration shakeout."
+  },
+
+  "split": {
+    "name": "miniF2F-v2",
+    "source": "facebookresearch/minif2f",
+    "sourceUrl": "https://github.com/facebookresearch/minif2f",
+    "revisionPaper": "miniF2F-Lean Revisited (arXiv 2511.03108)",
+    "commitSha": "PIN-BEFORE-OPEN",
+    "commitShaNote": "Pin the exact facebookresearch/minif2f commit at seal time and record it here. The number is meaningless without it. v1 numbers are NOT comparable to v2.",
+    "evidenceSplit": "test (244)",
+    "warmupAblationSplit": "valid (244) — warmup/ablation ONLY, never cited as evidence (mirrors training-oracle vs evidence-oracle rule)",
+    "secondaryDomain": {
+      "name": "ProofNet",
+      "include": "only if a usable Lean 4 port exists at run time; probes transfer beyond competition math",
+      "status": "OPTIONAL — not required for the first run"
+    },
+    "license": "Lean statements Apache-2.0 (Metamath portions MIT); eval use permitted with attribution + pinned revision in every artifact that cites a number.",
+    "honestResidual": "miniF2F is public; the proposer model may have seen proofs in pretraining (the Revisited paper's whole point). We do NOT claim contamination-free; we claim the controls are documented and the residual risk is named. The clean-external path remains the (empty) agi-proof/third-party-heldout/ pack."
+  },
+
+  "tracedProject": {
+    "role": "LOAD-BEARING: lean-dojo 4.x verification is traced-repo-keyed — check_proof resolves Theorem(LeanGitRepo(url, commit), file, name) against a TRACED Lean project, not a stateless snippet. The harness must point at a built/traced miniF2F Lean project (or cached trace), not pass a repo_url string.",
+    "leanProjectUrl": "PIN-BEFORE-OPEN",
+    "leanProjectCommit": "PIN-BEFORE-OPEN",
+    "leanToolchain": "PIN-BEFORE-OPEN (the lean-toolchain the miniF2F Lean project pins)",
+    "ciCachePlan": {
+      "mechanism": "lean-dojo remote cache + actions/cache of ~/.cache/lean_dojo, keyed on leanProjectCommit — the SAME mechanism proven at L0 (Lean-L0-Trace-Deadlock.md §1c: 2.5GB mathlib4 cache, check_proof in ~3 min).",
+      "note": "A CI cache of the traced project is a Phase-1 PREREQUISITE, not an afterthought — local cold tracing is ~90 min on a 2-core runner (§1b). If miniF2F-v2 has no published lean-dojo remote cache, the cold trace must be produced once in a long-timeout dispatch job and cached.",
+      "openRisk": "Whether a remote-cached trace exists for the chosen miniF2F Lean project is UNVERIFIED. If not, budget the one-off cold trace. Resolve before OPEN."
+    }
+  },
+
+  "baseModel": "PIN-BEFORE-OPEN",
+  "recipe": {
+    "method": "No training in this experiment — inference-time verifier-gated proof search (proposer B) vs one-shot baseline (A). (Distinct from the math/code curriculum, which is QLoRA SFT.)",
+    "modelSpec": "PIN-BEFORE-OPEN (the agent.model spec backing make_llm_proposer)",
+    "knowledgeCutoff": "PIN-BEFORE-OPEN",
+    "knowledgeCutoffRule": "Must be recorded and dated relative to the miniF2F-v2 revision used. We do not assert contamination-freedom; we assert the cutoff is documented and the residual risk named.",
+    "leanDojoVersion": "4.20.0",
+    "leanToolchain": "PIN-BEFORE-OPEN",
+    "seeds": [0, 1, 2],
+    "minSeedsForCitedNumbers": 3,
+    "decontamination": "tools/seal_formal_proofs_heldout.py --check (thin adaptation of seal_math_code_heldout.py) → CLEAN",
+    "holdoutSeal": "agi-proof/formal-proofs-curriculum/heldout-seal.manifest.json (created by the seal tool; not yet generated)"
+  },
+
+  "leakageControls": {
+    "1_knowledgeCutoff": "Proposer model cutoff recorded in `recipe.knowledgeCutoff`, dated before the miniF2F-v2 revision used. Residual risk named, not denied.",
+    "2_sealedSplit": "miniF2F-v2 test (244) sealed to a SHA-256 hash manifest before any proposer runs; proposer data paths guarded by tools/heldout_seal_guard.py (extended) so it cannot read sealed items.",
+    "3_noExactLibraryLemma": "A proof that closes by citing the target theorem's own Mathlib/library declaration name (e.g. `exact <goal_decl>`) is plagiarism of the answer, not evidence. The reward function rejects proofs whose closing step resolves to the goal statement's own declaration. This is the formal-proofs 'don't let the gate be the judge'."
+  },
+
+  "trainingOracle": {
+    "note": "Mathlib lemmas may be used ONLY as a tactic-library / warmup source, NEVER as the evidence split (they are already proved by `exact <name>` and are public — worst-case contamination).",
+    "citableAsBenchmarkEvidence": false
+  },
+  "evidenceOracle": {
+    "headlineMetric": "pass@1 on miniF2F-v2 test (244), reported as a proportion with a 95% bootstrap CI, WITH proposer (B) and search budget named.",
+    "columns": ["A (one-shot baseline)", "B (tactic search)"],
+    "coReportedMetrics": ["abstention rate (first-class, never hidden — abstention is a designed output)", "A-vs-B delta"],
+    "citableWhen": ">=3 seeds, 95% bootstrap CI excludes the base/null, contamination CLEAN, lint_claims OK, failure-ledger entry present"
+  },
+
+  "thresholds": [
+    {
+      "metric": "miniF2F-v2 test pass@1 (proposer B)",
+      "threshold": 0.0,
+      "direction": "min_increase",
+      "ciExcludesZero": true,
+      "notes": "No pre-committed target rate. The registered success is that the result clears the gate (>=3 seeds, CI methodology, controls) and is reported honestly with proposer+budget. A LOW pass@1 with HIGH abstention is a valid, expected, publishable outcome — the verifier doing its job — not a failure."
+    },
+    {
+      "metric": "A-vs-B delta on miniF2F-v2 test pass@1",
+      "threshold": 0.0,
+      "direction": "report_only",
+      "ciExcludesZero": false,
+      "notes": "Isolates the value of search. Reported with CI; no pre-committed minimum — a null delta is informative."
+    },
+    {
+      "metric": "fabrication on the verifier path",
+      "threshold": 0.0,
+      "direction": "no_regression",
+      "ciExcludesZero": false,
+      "notes": "Hard floor: any proof accepted that the Lean kernel does not actually close, or any `exact <goal_decl>` plagiarism accepted, is a protocol-breaking fabrication → abort + withdraw."
+    }
+  ],
+
+  "success": {
+    "headline": "pass@1 (A and B) + abstention on miniF2F-v2 test reported on >=3 seeds with a 95% CI and the proposer+budget named; contamination CLEAN; holdout seal OK; lint_claims OK; failure-ledger entry present.",
+    "canClaimAGI": false,
+    "explicitNonClaim": "Clearing this gate is evidence of verifier-gated formal-proof capability on one split with one proposer at one budget. It does NOT move the Level ladder on its own and is NOT AGI evidence by itself."
+  },
+
+  "failure": [
+    "Any fabricated accept (kernel did not close the proof, or `exact <goal_decl>` plagiarism) → abort + withdraw headline (protocol violation).",
+    "Seal or contamination break → abort run / withdraw headline.",
+    "pass@1 statistically indistinguishable from baseline (CI overlaps) → record honest negative in the failure ledger; this is a VALID pre-registered outcome, not suppressed.",
+    "Proposer reads sealed held-out manifest paths → protocol violation.",
+    "A number reported without proposer + search budget named → uninterpretable, not citable."
+  ],
+
+  "falsification": [
+    "miniF2F-v2 test pass@1 delta vs baseline <= 0 with CI including 0 across >=3 seeds (verifier-gated search shows no benefit at this budget).",
+    "heldout_seal_guard detects the proposer reading sealed paths.",
+    "A proof that the Lean kernel rejects is recorded as accepted (verifier integrity failure)."
+  ],
+
+  "explicitNonClaims": [
+    "NOT a Millennium-problems eval. open-problems.jsonl is an abstention demonstration only; no Riemann/Navier-Stokes/etc. framing appears in any committed result artifact.",
+    "NOT a wisdom / frontier-lab-comparison claim. No 'no frontier lab produces this', no 'wisdom-defining', no Level-ladder claim.",
+    "NOT AGI evidence by itself."
+  ],
+
+  "openChecklist": [
+    "Fill split.commitSha with the pinned facebookresearch/minif2f commit (at seal time).",
+    "Fill tracedProject.{leanProjectUrl, leanProjectCommit, leanToolchain} and confirm a remote-cached trace exists OR budget the one-off cold trace + actions/cache.",
+    "Fill baseModel, recipe.modelSpec, recipe.knowledgeCutoff, recipe.leanToolchain.",
+    "Fill proposer.primary.searchBudget.* (beam, depth, tactic-call cap, per-problem timeout).",
+    "Build tools/seal_formal_proofs_heldout.py and generate agi-proof/formal-proofs-curriculum/heldout-seal.manifest.json; run --check → CLEAN.",
+    "Extend tools/heldout_seal_guard.py to cover the formal-proofs proposer paths.",
+    "Tom approves → flip status DRAFT → OPEN. Only then may any eval run."
+  ]
+}
