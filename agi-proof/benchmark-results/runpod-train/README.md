@@ -28,4 +28,35 @@ Provenance (run URL, head SHA, GPU pool, artifact id + sha256) is in the report'
 report printed in the run log; the W2 `promotion.public-report.json` verdict lives inside
 the run artifact.
 
+### `qwen2.5-3b-lora-3ep-seed0.eval-ladder.public-report.json`
+
+Same setup, **3 epochs** (seed 0). This is the "does more training move it" follow-up to the
+1-epoch null.
+
+**Headline (directional positive):** 3 epochs converts the 1-epoch null into a **+12.5pt
+CONTENT uplift** — adapter **27/32 = 84.4%** content vs the FP16 base's **23/32 = 71.9%**
+(content per suite: philosophy 6→7/9, psychology 6→7/9, history 6→8/8, religion held at 5/6 —
+the *protected* suite did not regress). So **more training is the lever that moves content
+here**, unlike epoch-1.
+
+**W2 promotion verdict = `reject`, but NOT on quality.** Every content/quality gate passed
+(`protected_floor_content`, `no_total_regression` total_after=0.719, `contamination_zero`
+overlap=0, `provenance_complete`); the scorecard and continual-plasticity decision both say
+*promote* (targetDelta +0.219). The sole breach is `solver_attestation` → **"held:
+z3-solver not installed"** — the formal oracle abstains for a *missing-tooling* reason, not a
+capability regression. The gate correctly refuses to rubber-stamp without its solver.
+
+**Scope:** still single-judge / 32-item / 1-seed → **candidate-only / directional**, not
+VALIDATED. The +12.5pt is not separable from noise at this power, and the training traces were
+religion-repair while religion (protected) held flat and *other* domains rose (transfer or
+noise — undetermined). A VALIDATED claim needs the κ≥0.40 / 2-judge-family / ≥3-run / 95%-CI
+protocol. `canClaimAGI` unchanged (false).
+
+### 1-epoch vs 3-epoch (content channel)
+
+| run | epochs | base content | adapter content | uplift | W2 verdict |
+|---|---|---|---|---|---|
+| #5 | 1 | 23/32 (71.9%) | 23/32 (71.9%) | **0.0pt** (null) | — |
+| #7 | 3 | 23/32 (71.9%) | **27/32 (84.4%)** | **+12.5pt** | reject (z3 unavailable; all quality gates passed) |
+
 The `*.log` files in this directory are earlier SFT / SSH-smoke run logs.
