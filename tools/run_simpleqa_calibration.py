@@ -45,6 +45,7 @@ if str(ROOT) not in sys.path:
 
 CSV_URL = "https://huggingface.co/datasets/google/simpleqa-verified/resolve/main/simpleqa_verified.csv"
 DEEPSEEK_URL = "https://api.deepseek.com/chat/completions"
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 OUT_DIR = ROOT / "agi-proof" / "benchmark-results" / "real-model" / "simpleqa"
 
 ANSWER_SYS = (
@@ -81,22 +82,40 @@ def _post(url: str, key: str, body: dict, timeout: int = 60) -> dict:
         return json.load(r)
 
 
-def deepseek(messages, *, temperature=0.0, max_tokens=256, logprobs=False):
-    key = os.environ["DEEPSEEK_API_KEY"]
-    body = {"model": "deepseek-chat", "messages": messages,
-            "temperature": temperature, "max_tokens": max_tokens}
-    if logprobs:
-        body["logprobs"] = True
+def subject_chat(messages, *, spec="deepseek", temperature=0.0, max_tokens=256, logprobs=False):
+    """Call a subject model with temperature control. Returns (text, mean_logprob|None).
+
+    spec: 'deepseek' (api.deepseek.com, logprobs), 'openrouter:MODEL', or 'llmhub:MODEL'.
+    Only DeepSeek exposes per-token logprobs here; others return mean_lp=None.
+    """
+    if spec.startswith("llmhub:"):
+        import agent.llmhub_llm as L
+        try:
+            return (L.chat_completion(messages=messages, model=spec.split(":", 1)[1],
+                                      temperature=temperature, max_tokens=max_tokens, timeout_sec=60) or ""), None
+        except Exception:
+            return "", None
+    if spec.startswith("openrouter:"):
+        url, key, model = OPENROUTER_URL, os.environ["OPENROUTER_API_KEY"], spec.split(":", 1)[1]
+        body = {"model": model, "messages": messages, "temperature": temperature, "max_tokens": max_tokens}
+        want_lp = False
+    else:  # deepseek
+        url, key, model = DEEPSEEK_URL, os.environ["DEEPSEEK_API_KEY"], "deepseek-chat"
+        body = {"model": model, "messages": messages, "temperature": temperature, "max_tokens": max_tokens}
+        want_lp = logprobs
+        if logprobs:
+            body["logprobs"] = True
     for attempt in range(3):
         try:
-            resp = _post(DEEPSEEK_URL, key, body)
+            resp = _post(url, key, body)
             choice = resp["choices"][0]
             text = choice["message"]["content"] or ""
             mean_lp = None
-            lp = (choice.get("logprobs") or {}).get("content")
-            if lp:
-                vals = [t["logprob"] for t in lp if t.get("logprob") is not None]
-                mean_lp = sum(vals) / len(vals) if vals else None
+            if want_lp:
+                lp = (choice.get("logprobs") or {}).get("content")
+                if lp:
+                    vals = [t["logprob"] for t in lp if t.get("logprob") is not None]
+                    mean_lp = sum(vals) / len(vals) if vals else None
             return text, mean_lp
         except Exception:
             if attempt == 2:
@@ -108,7 +127,7 @@ def grade(judge_model: str, q: str, gold: str, pred: str) -> str:
     import agent.llmhub_llm as L
     try:
         out = L.chat_completion(messages=[{"role": "user", "content": GRADER_TMPL.format(q=q, gold=gold, pred=pred)}],
-                                model=judge_model, max_tokens=64, timeout_sec=60) or ""
+                                model=judge_model, max_tokens=128, timeout_sec=60) or ""
     except Exception:
         return "?"
     m = re.search(r"[ABC]", out.upper())
@@ -130,36 +149,36 @@ def load_simpleqa(n: int) -> list[dict]:
     return rows[:n]
 
 
-def process(ex: dict, idx: int, *, samples: int, graders: list) -> dict:
+def process(ex: dict, idx: int, *, samples: int, graders: list, subject: str = "deepseek",
+            sc_seeds: int = 1) -> dict:
     q, gold = ex["problem"], ex["answer"]
+    msgs = [{"role": "system", "content": ANSWER_SYS}, {"role": "user", "content": q}]
     # main answer at temp 0 with logprobs (stated conf + logprob signal)
-    main, mean_lp = deepseek([{"role": "system", "content": ANSWER_SYS}, {"role": "user", "content": q}],
-                             temperature=0.0, logprobs=True)
-    # extra temperature-sampled answers for self-consistency
-    sampled = [main]
-    for _ in range(max(0, samples - 1)):
-        s, _ = deepseek([{"role": "system", "content": ANSWER_SYS}, {"role": "user", "content": q}],
-                        temperature=0.7)
-        if s:
-            sampled.append(s)
-    # signals
+    main, mean_lp = subject_chat(msgs, spec=subject, temperature=0.0, logprobs=True)
+    main_norm = _norm(main)
+    # self-consistency: sc_seeds independent groups of (samples-1) temp-0.7 draws each
+    sc_per_seed = []
+    for _ in range(max(1, sc_seeds)):
+        grp = [main]
+        for _ in range(max(0, samples - 1)):
+            s, _ = subject_chat(msgs, spec=subject, temperature=0.7)
+            if s:
+                grp.append(s)
+        norms = [_norm(s) for s in grp]
+        sc_per_seed.append(round(norms.count(main_norm) / len(norms), 4) if norms else 0.0)
+    sc = round(sum(sc_per_seed) / len(sc_per_seed), 4)  # mean across seeds (for the .selfcons file)
     cm = _CONF.search(main)
     stated = (int(cm.group(1)) / 100.0) if cm else 0.5
-    norms = [_norm(s) for s in sampled]
-    main_norm = _norm(main)
-    sc = norms.count(main_norm) / len(norms) if norms else 0.0
     logprob_conf = math.exp(mean_lp) if mean_lp is not None else None
     # grade the main answer with EVERY grader family (for inter-grader kappa)
     grades = {gm: grade(gm, q, gold, main) for gm in graders}
-    primary = grades[graders[0]]  # first grader is the label source
+    primary = grades[graders[0]]
     abstained = (primary == "C") or bool(_IDK.search(main.splitlines()[0] if main else ""))
-    action = "abstain" if abstained else "answer"
-    correct = (primary == "A")
     return {"id": f"sqa{idx}", "domain": ex.get("topic") or "unspecified", "risk": "normal",
-            "stated": round(stated, 4), "selfcons": round(sc, 4),
+            "stated": round(stated, 4), "selfcons": sc, "selfcons_seeds": sc_per_seed,
             "logprob_conf": round(logprob_conf, 4) if logprob_conf is not None else None,
-            "grades": grades, "grade": primary, "action": action, "correct": correct,
-            "answer": (main or "").splitlines()[0][:200]}
+            "grades": grades, "grade": primary, "action": "abstain" if abstained else "answer",
+            "correct": (primary == "A"), "answer": (main or "").splitlines()[0][:200]}
 
 
 def write_records(records: list[dict]) -> dict:
@@ -168,6 +187,7 @@ def write_records(records: list[dict]) -> dict:
     detail = OUT_DIR / "simpleqa.detail.deepseek.jsonl"
     detail.write_text("".join(json.dumps({
         "id": r["id"], "domain": r["domain"], "stated": r["stated"], "selfcons": r["selfcons"],
+        "selfcons_seeds": r.get("selfcons_seeds", [r["selfcons"]]),
         "logprob_conf": r["logprob_conf"], "grades": r.get("grades", {}), "grade": r["grade"],
         "action": r["action"], "correct": r["correct"]}) + "\n" for r in records), encoding="utf-8")
     # C3: all rows (attempted + abstained), action carries abstention
@@ -195,15 +215,22 @@ def main(argv=None) -> int:
     ap.add_argument("--n", type=int, default=200, help="number of SimpleQA prompts")
     ap.add_argument("--samples", type=int, default=4, help="self-consistency samples per prompt")
     ap.add_argument("--graders", default="claude-sonnet-4-6", help="comma-sep LLMHub grader families")
+    ap.add_argument("--subject", default="deepseek", help="subject model: deepseek | openrouter:M | llmhub:M")
+    ap.add_argument("--sc-seeds", type=int, default=1, help="independent self-consistency sampling seeds")
+    ap.add_argument("--out-subdir", default=None, help="write under simpleqa/<subdir>/ (for 2nd subject)")
     ap.add_argument("--workers", type=int, default=12)
     args = ap.parse_args(argv)
 
+    global OUT_DIR
+    if args.out_subdir:
+        OUT_DIR = OUT_DIR / args.out_subdir
     graders = [g.strip() for g in args.graders.split(",") if g.strip()]
     data = load_simpleqa(args.n)
-    print(f"loaded {len(data)} SimpleQA-Verified prompts; graders={graders}")
+    print(f"loaded {len(data)} SimpleQA-Verified prompts; subject={args.subject} graders={graders} sc_seeds={args.sc_seeds}")
     records: list[dict] = [None] * len(data)
     with ThreadPoolExecutor(max_workers=args.workers) as ex:
-        futs = {ex.submit(process, row, i, samples=args.samples, graders=graders): i
+        futs = {ex.submit(process, row, i, samples=args.samples, graders=graders,
+                          subject=args.subject, sc_seeds=args.sc_seeds): i
                 for i, row in enumerate(data)}
         done = 0
         for fut in futs:

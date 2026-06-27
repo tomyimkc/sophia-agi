@@ -73,6 +73,9 @@ def bootstrap_lift(rows: list, key: str, *, cov=0.2, B=3000, seed=13) -> dict:
     """Bootstrap 95% CI on (selectiveAcc@cov - overallAcc) over attempted rows."""
     rs = [r for r in rows if r.get(key) is not None]
     n = len(rs)
+    if n == 0:
+        return {"coverage": cov, "selectiveAccMean": None, "liftMean": None,
+                "liftCI95": [None, None], "liftExcludesZero": False, "n": 0}
     rng = random.Random(seed)
     lifts, sel = [], []
     for _ in range(B):
@@ -117,6 +120,19 @@ def main(argv=None) -> int:
                          "bootstrapLift@20": bootstrap_lift(attempted, key, cov=0.2)}
 
     best = max(signals, key=lambda s: signals[s]["auroc"] or 0)
+
+    # multi-seed self-consistency: per-seed bootstrap lift (the literal >=3-runs axis)
+    sc_seeds_block = None
+    sc_rows = [r for r in attempted if r.get("selfcons_seeds") and len(r["selfcons_seeds"]) > 1]
+    if sc_rows:
+        n_seeds = min(len(r["selfcons_seeds"]) for r in sc_rows)
+        per_seed = []
+        for si in range(n_seeds):
+            rows_si = [{**r, "_sc": r["selfcons_seeds"][si]} for r in sc_rows]
+            per_seed.append(bootstrap_lift(rows_si, "_sc", cov=0.2))
+        sc_seeds_block = {"nSeeds": n_seeds, "perSeedLift@20": per_seed,
+                          "allSeedsExcludeZero": all(b["liftExcludesZero"] for b in per_seed)}
+
     report = {
         "schema": "sophia.simpleqa_headline.v1", "candidateOnly": True, "level3Evidence": False,
         "syntheticData": False, "externalPublicBenchmark": "google/simpleqa-verified",
@@ -126,8 +142,10 @@ def main(argv=None) -> int:
         "interGraderCohenKappa": kappa,
         "kappaMeetsBar": (kappa is not None and kappa >= 0.40),
         "signals": signals, "bestSignal": best,
+        "selfconsSeeds": sc_seeds_block,
         "validated": bool(kappa is not None and kappa >= 0.40
-                          and signals[best]["bootstrapLift@20"]["liftExcludesZero"]),
+                          and signals[best]["bootstrapLift@20"]["liftExcludesZero"]
+                          and (sc_seeds_block is None or sc_seeds_block["allSeedsExcludeZero"])),
         "honestBound": (
             "Real EXTERNAL public benchmark (SimpleQA Verified), no self-authored data. "
             "Headline = selective-accuracy lift of the best confidence signal with a bootstrap "
@@ -145,6 +163,10 @@ def main(argv=None) -> int:
         b = s["bootstrapLift@20"]
         print(f"  {name:9s} AUROC={s['auroc']}  selAcc@20%={b['selectiveAccMean']}  "
               f"lift={b['liftMean']} CI{b['liftCI95']} excl0={b['liftExcludesZero']}")
+    if sc_seeds_block:
+        lifts = [b["liftMean"] for b in sc_seeds_block["perSeedLift@20"]]
+        excl = [b["liftExcludesZero"] for b in sc_seeds_block["perSeedLift@20"]]
+        print(f"  selfcons {sc_seeds_block['nSeeds']} seeds: lifts={lifts} excl0={excl} all={sc_seeds_block['allSeedsExcludeZero']}")
     print(f"  best signal = {best};  VALIDATED = {report['validated']}")
     print(f"Wrote {args.out.relative_to(ROOT)}")
     return 0
