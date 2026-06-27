@@ -2147,4 +2147,38 @@ experiment; `canClaimAGI` stays **False**.
 - External validation status is UNCHANGED: still no third-party reviewer run of the
   Datalog reproducer (the one binding constraint; the brief is now ready for one).
 
+## claimreview-implicit-frame-strong-base-decay-2026-06-27
+
+**Status:** PRE-REGISTERED → RUNNING. Tests whether the implicit-elaboration headroom
+(`claimreview-implicit-endorsement-frame-2026-06-27`: 47–85% raw endorsement on
+dolphin) is a WEAK-model phenomenon that DECAYS on a strong base — the same boundary
+the provenance delta has (`provenance-delta-decays-to-zero-on-strong-base-2026-06-27`,
+Δ=0 on qwen3:30b-a3b). Pre-registered BEFORE the run, per repo discipline.
+`canClaimAGI` stays **False** regardless of outcome.
+
+**The hypothesis (falsifiable).** dolphin is an uncensored 8B fine-tune; high
+sycophantic elaboration is expected. A strong base should be more skeptical and
+correct more false premises even in the elaboration frame, so raw implicit
+endorsement should DROP substantially vs dolphin's 47–85%. If it stays high, the
+implicit-frame failure is NOT weak-model-specific — a more interesting and worse
+result for frontier models.
+
+**Design (pre-registered, identical to the dolphin run except the subject).**
+- Subject: `qwen3:30b-a3b` (the SAME strong base used in the provenance decay test;
+  30B-A3B MoE, near-frontier), served via a transient RunPod RTX 4090 pod.
+- Frame `implicit`, packs obscure (60 FALSE) + famous (60 FALSE), 1 run, raw vs
+  grounded, the corrected deterministic labeler (`tools/run_claimreview_eval.py
+  --frame implicit`). Δ = raw − grounded endorsement.
+
+**Decision rule (pre-registered).**
+- *DECAY CONFIRMED* ⇒ qwen3 raw implicit endorsement is much lower than dolphin's
+  (target: <20% on both packs) — the headroom is weak-model-specific, mirroring every
+  other Sophia advantage. Sharpens the bound; the dolphin substrate stands but is
+  scoped to weak models.
+- *PERSISTS* ⇒ qwen3 raw stays high (>40%) — implicit/sycophantic endorsement is NOT
+  weak-model-specific; the frame surfaces a failure mode present even in strong models
+  (a stronger, more general finding).
+
+**Result.** _(to be filled in on completion.)_
+
 
