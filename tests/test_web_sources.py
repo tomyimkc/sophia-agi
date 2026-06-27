@@ -78,6 +78,28 @@ def test_live_verifier_passes_empty_answer(monkeypatch) -> None:
     assert verify("Who wrote the Voynich Manuscript?", "") is True
 
 
+def test_claim_guided_extraction_surfaces_buried_entity(monkeypatch) -> None:
+    """The silent-reference fix: ``wikipedia_article_for_claims`` returns the lead PLUS a
+    window around each capitalized name in the answer, so an entity buried deep in the body
+    (not in the lead/summary) is surfaced for the entailment grader."""
+    import urllib.request
+    filler = "Lorem ipsum dolor sit amet. " * 2000  # ~50k chars — pushes Ascham to ~51%
+    body = ("The Voynich manuscript's authorship is debated. " + filler +
+            " Some have suggested the work to be written by the 16th-century English author "
+            "Anthony Ascham, whose works include A Little Herbal. " + filler)
+    class _Resp:
+        status = 200
+        def read(self): return body.encode()
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+    def fake_urlopen(req, *a, **kw):
+        return _Resp()
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    extract = web_sources.wikipedia_article_for_claims("Voynich manuscript", "Anthony Ascham wrote it.")
+    assert extract is not None
+    assert "ascham" in extract.lower(), "claim-guided extract must surface the buried Ascham mention"
+
+
 def test_wikipedia_summary_real_or_none() -> None:
     """Smoke test against the REAL Wikipedia API (network). Must return a non-empty string
     for a known page, or None — never raise. Skipped gracefully if offline."""

@@ -49,8 +49,11 @@ def _or(model, user, mt=160):
 def _entail(claim, source):
     from agent.model import complete
     spec = "openai:claude-sonnet-4-6@https://api.llmhub.com.cn/v1"
-    q = (f"CLAIM: {claim}\nREFERENCE SOURCE: {source}\n\nDoes the SOURCE entail the CLAIM, "
-         f"contradict it, or is it irrelevant? One word: entails/contradicts/irrelevant.")
+    # QUESTION-AWARE: a bare-name answer ("Anthony Ascham.") decomposes to a predicative-less
+    # claim; the grader needs the question context to judge it as an asserted authorship.
+    q = (f"QUESTION: {QUESTION}\nCLAIM (asserted as the answer): \"{claim}\"\n"
+         f"REFERENCE SOURCE (excerpt): {source[:3500]}\n\nDoes the SOURCE entail the CLAIM "
+         f"in context, contradict it, or is it irrelevant? One word: entails/contradicts/irrelevant.")
     r = (complete("Strict grader.", q, spec=spec, max_tokens=10) or "").strip().lower()
     return "contradicts" if "contradict" in r else ("entails" if "entail" in r else "irrelevant")
 
