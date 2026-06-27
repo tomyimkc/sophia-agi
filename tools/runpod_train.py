@@ -119,10 +119,11 @@ def _seed_train_cmd(args: argparse.Namespace, seed: int, out_dir: str) -> str:
             '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir
         )
     train_flag = (" --train " + shlex.quote(args.train_data)) if args.train_data else ""
+    alloc_flag = " --lora-rank-alloc" if getattr(args, "lora_rank_alloc", False) else ""
     return (
         'python tools/train_lora.py '
         '--model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 '
-        '--scaffold --guard --eval-every 25 --patience 4' + train_flag + ' '
+        '--scaffold --guard --eval-every 25 --patience 4' + train_flag + alloc_flag + ' '
         '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir
     )
 
@@ -204,6 +205,7 @@ def _remote_train_script(args: argparse.Namespace) -> str:
     branch_flag = (" --branch " + shlex.quote(args.branch)) if args.branch else ""
     adapter_dir = shlex.quote(args.adapter_dir)
     train_only = getattr(args, "train_only", False)
+    alloc_flag = " --lora-rank-alloc" if getattr(args, "lora_rank_alloc", False) else ""
     data_step = (
         "# 1) sealed pack guard (holdout never trained)\n"
         "python tools/build_local_sophia_dataset.py --check\n"
@@ -241,7 +243,7 @@ python tools/train_lora.py \\
         train_block = f"""
 python tools/train_lora.py \\
   --model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 \\
-  --scaffold --guard --eval-every 25 --patience 4{train_flag} \\
+  --scaffold --guard --eval-every 25 --patience 4{train_flag}{alloc_flag} \\
   --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" \\
   --output {adapter_dir}
 """
@@ -324,6 +326,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--model", default="Qwen/Qwen2.5-3B-Instruct")
     ap.add_argument("--epochs", type=int, default=1)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--lora-rank-alloc", dest="lora_rank_alloc", action="store_true",
+                    help="Pass --lora-rank-alloc to train_lora (moe/adapt sensitivity-aware "
+                         "per-type LoRA rank allocation; preserves the param budget)")
     ap.add_argument("--train-data", default="",
                     help="path to a pre-built sealed train split (e.g. "
                          "training/local_sophia_7b/mlx/train.jsonl or "
