@@ -64,7 +64,7 @@
       "excess_over_floor": 0.94678
     },
     "moerouter-topk-cap": {
-      "held_loss": 1.81619,
+      "held_loss": 1.78697,
       "aux_loss": 1.00544,
       "max_route_share": 0.337,
       "route_cv": 0.3661,
@@ -75,15 +75,16 @@
         93
       ],
       "pct_dropped": 6.757,
-      "excess_over_floor": 0.97803
+      "excess_over_floor": 0.94881
     }
   },
   "confound_isolation": {
     "mixture_effect_nats": 0.17809,
-    "policy_effect_nats": -0.03125,
+    "policy_effect_nats": -0.00203,
     "policy_effect_isolated": false,
     "decomposition_exact": true,
-    "interpretation": "mixture_effect = handrolled-top1 -> handrolled-top2-nodrop (pure top-2 averaging, no capacity drop); policy_effect = handrolled-top2-nodrop -> moerouter-topk-cap (the capacity-drop policy in isolation). Their sum is the total handrolled-top1 -> topk-cap gap. policy_effect_isolated is True only when the capacity policy lowers loss BEYOND mixture-averaging."
+    "interpretation": "mixture_effect = handrolled-top1 -> handrolled-top2-nodrop (pure top-2 averaging, no capacity drop); policy_effect = handrolled-top2-nodrop -> moerouter-topk-cap (the capacity-drop policy in isolation). Their sum is the total handrolled-top1 -> topk-cap gap. policy_effect_isolated is True only when the capacity policy lowers loss BEYOND mixture-averaging.",
+    "dropped_mass_convention": "Dropped slots in moerouter-topk-cap are scored as MoERouter.forward does: residual-only. Kept experts keep their ORIGINAL combine weights (no wn=w/wsum renormalization); the missing mass (1-wsum) is scored as uniform, like the fully-dropped branch (log V). An earlier version renormalized kept weights, which deviated from MoERouter semantics and moved policy_effect by ~0.01-0.03 nats. The decomposition is ROBUST to the convention: mixture_effect is identical (handrolled-top2-nodrop has no drops, so the fix never touches it) and policy_effect straddles zero across seeds either way \u2014 the NLL advantage is mixture-averaging, not the capacity policy, under both conventions."
   },
   "self_consistency": {
     "native_moe_held_loss": 1.96303,
@@ -91,7 +92,7 @@
     "experts_frozen": true
   },
   "verdict": "moe_router_better",
-  "held_loss_gap_handrolled_minus_topkcap": 0.14684,
-  "p7b_decision_note": "evidence MIXED on P7-B: top-k-cap's lower loss is explained by MIXTURE-AVERAGING, not the capacity policy \u2014 handrolled-top2-nodrop (same k=2 mix, no drops) already accounts for 0.1781 nats of the gap and the capacity policy adds only -0.0312 nats. Load balance still favors MoERouter, but do NOT justify the trainable bridge on a loss advantage that is really mixing; build it (if at all) for the load-balance / capacity behavior, not the NLL.",
+  "held_loss_gap_handrolled_minus_topkcap": 0.17606,
+  "p7b_decision_note": "evidence MIXED on P7-B: top-k-cap's lower loss is explained by MIXTURE-AVERAGING, not the capacity policy \u2014 handrolled-top2-nodrop (same k=2 mix, no drops) already accounts for 0.1781 nats of the gap and the capacity policy adds only -0.002 nats. Load balance still favors MoERouter, but do NOT justify the trainable bridge on a loss advantage that is really mixing; build it (if at all) for the load-balance / capacity behavior, not the NLL.",
   "honest_scope": "Routing-policy ablation on fixed experts \u2014 a nano-scale methodology study. Measures whether capacity-aware top-k routing (MoERouter + Switch aux loss) gives different load-balance / held-out loss than MoELM's hand-rolled top-1 router, on identical frozen experts against a known entropy floor. NOT a claim that either router scales to frontier MoEs, and NOT that the policy delta implies a capability delta. A 'superior router' claim needs the same measurement on a real model to the kappa >= 0.40 / 2-judge gate. The trainable Gumbel-softmax bridge (P7-B) is a separate, gated follow-up, not included here. IMPORTANT: the raw 'verdict' is a held-out-loss comparison and is MIXTURE-CONFOUNDED \u2014 see confound_isolation, which measures (via handrolled-top2-nodrop) that the top-k loss advantage is mixture-averaging, not the capacity policy; read the verdict together with that decomposition."
 }
