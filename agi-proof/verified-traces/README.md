@@ -78,7 +78,7 @@ This package therefore carries the no-overclaim triad on every record
 `provenance_bench.aggregate._is_validated` bar for any capability *claim* derived
 from it. Logging does not produce AGI; it produces a brake, not an engine.
 
-## Faithfulness probe — v1 FALSIFIED → v2 under-powered → v3 inconclusive → v4 power-upgraded
+## Faithfulness probe — v1 FALSIFIED → v2 under-powered → v3 inconclusive → v4 real-run inconclusive-at-power (d=0.08)
 
 The first real-mode run of the faithfulness probe (commit `240f3e54`,
 `faithfulness-probe.v1-FALSIFIED.public-report.json`) **falsified the probe
@@ -128,18 +128,28 @@ itself**, and the falsification is kept on record rather than hidden:
   self-test (`test_v4_probe_shows_large_effect_on_mock`) reaches **d≈1.16, a
   bootstrap CI that excludes 0, and a sign-test p≈3.1e-05** — confirming the probe
   *logic* is sound at this power (`faithfulness-probe.v4-mock.public-report.json`).
-  **The v4 REAL run is pending** the founder's Apple-Silicon Mac (it needs
-  mlx-lm): the canonical artifact carries `mode=real-pending` with null real
-  fields and the exact command —
+  **The v4 REAL run is complete** on Apple Silicon (mlx-lm 0.29.1) over
+  sophia-v3 (LoRA, rank 8) on `mlx:Qwen/Qwen2.5-3B-Instruct` — outcome **(c),
+  inconclusive at this power**: **`cohensD=0.08`** (`|d|<0.5`), **bootstrap 95%
+  CI `[-0.41, +0.54]` includes 0** (`excludesZero=false`), and a non-significant
+  sign test (9 pos / 6 neg, `p=0.30`). The direction is nominally right
+  (load-bearing CoTs drop more under perturbation: mean 0.38 vs 0.28) but the
+  within-group stds (~1.1–1.3) are an order of magnitude larger than the mean
+  difference (~0.10), so the probe cannot separate the categories here. This is
+  **not** "decorative CoT" **and not** "faithful" — it is a power/adapter null:
+  the adapter's CoT faithfulness on this 3B base + these 30 binary probes is
+  **unmeasured**, the same status v3 reached. The mock self-test (`d≈1.16`, CI
+  excludes 0, `p≈3.1e-05`) and the 19 passing logic tests confirm the probe
+  *mechanism* is sound, so the null is an adapter/power finding, not a broken
+  probe. **Discipline held:** probes, perturbs, and scorer were not retuned to
+  raise `d` (the one forbidden move). See the canonical artifact's `findingScope`
+  for the full power analysis. The canonical command for reproducibility:
   `python tools/run_faithfulness_probe.py --mode real --adapter training/mlx_adapters/sophia-v3/ --model mlx:Qwen/Qwen2.5-3B-Instruct`.
-  Whatever it returns (separates / separates the wrong way / still inconclusive)
-  is acceptable and will be reported honestly; only tuning the design to force a
-  high `d` is not. The last REAL measurement on record remains v3 (inconclusive).
 
 This is the discipline the layer exists to enforce: a probe that overclaims what
-it measures is itself an overclaim, and gets recorded as such. The offline build
-is complete and self-tested; the one remaining step is the real run, which must
-run on Apple Silicon and must not be faked.
+it measures is itself an overclaim, and gets recorded as such. The v4 real run
+has now executed on Apple Silicon (no mock substituted), returned outcome (c),
+and is recorded honestly above — nulls included, no retuning to force a high `d`.
 
 ## What it is not
 
