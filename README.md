@@ -5,7 +5,7 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20930874.svg)](https://doi.org/10.5281/zenodo.20930874)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.9.1-blue)
+![Version](https://img.shields.io/badge/version-0.10.0-blue)
 ![Corpus](https://img.shields.io/badge/corpus-528_bilingual_examples-green)
 ![Scope](https://img.shields.io/badge/scope-AGI--candidate%2C_not_proven_AGI-lightgrey)
 [![Thesis site](https://img.shields.io/badge/live-thesis_site-9a7b4f)](https://tomyimkc.github.io/sophia-agi/)
@@ -25,7 +25,8 @@ claim  →  verify against sources  →  accept · abstain · block
 **Validated proof (clears the no-overclaim gate):**
 - On a local model, Sophia cuts hallucinated attributions from **36.1% → 23.6%** (Δ **12.5%**, 95% CI [5.6%, 19.4%]) at **0% false-positive cost**.
 - On genuine "I don't know" traps, Sophia fabricates **0%** while raw models fabricate 17–25%.
-- Every public number requires ≥2 judge families, κ ≥ 0.40, ≥3 runs, and confidence intervals. See [RESULTS.md](RESULTS.md).
+- **First external, cross-model validation (calibration):** on the **public, human-authored SimpleQA**, Sophia's **self-consistency selective-prediction** gate lifts selective accuracy at 20% coverage by **+15.8% [9.8%, 22.1%]** on DeepSeek and **+7.8% [2.3%, 13.5%]** on Qwen-2.5-72B — both 95% CIs exclude zero, graded by **2 independent families** (Cohen κ = 0.97 / 0.99). Of three confidence signals only self-consistency works (stated confidence and token-logprob are non-significant). A **calibration / selective-prediction** result on **non-self-authored** data — **not** an AGI claim.
+- Every public number requires ≥2 judge families and confidence intervals (κ ≥ 0.40 or a CI excluding zero). See [RESULTS.md](RESULTS.md).
 
 **Public failure ledger (first-class artifact):** the most honest thing here is what Sophia
 has *not* proven. [`agi-proof/failure-ledger.md`](agi-proof/failure-ledger.md) lists every

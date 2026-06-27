@@ -52,6 +52,17 @@ Scored by a **deterministic marker-based scorer** (no LLM judge) that rewards ho
 
 - _sophia-full vs raw-model (deepseek-chat):_ DeepSeek subject. sophia-full fabricates 0% (deterministic scorer) on the unknown-author/quote cases in all 3 runs; raw-model 16.7-25%. Keyword/regex scoring is blind to this; the calibration scorer reveals it. vs raw-model-plus-tools the gap is larger (calibration Δ 28.3% [24.5%, 32.2%]). CORROBORATED by two INDEPENDENT judge families (gpt-4o + claude-sonnet, distinct from the deepseek subject): all three methods rank sophia-full lowest fabrication; inter-judge κ=0.74, scorer-vs-judge κ=0.48/0.40 (both ≥0.40). Meets the multi-judge bar. Residual caveat: the pack is self-authored — a third-party pack + human review remain for full independence. (A 3rd family, qwen3.7-max, was tested and found non-discriminating — 0% fabrication everywhere, κ=0 — so it is excluded as an uninformative judge; the 2-family OpenAI+Anthropic corroboration stands.)
 
+## External-benchmark calibration (selective prediction) — **VALIDATED**
+
+On a **public, human-authored, external** benchmark (SimpleQA / SimpleQA Verified (OpenAI + Google DeepMind) — public, human-authored, external), graded by consensus: llmhub:claude-sonnet-4-6 + llmhub:gemini-2.5-pro (2 independent families). The first Sophia calibration result validated on **non-self-authored** data — the selective-accuracy lift's 95% CI excludes zero on two independent subject models. A **calibration / selective-prediction** result, **not** an AGI claim.
+
+| Subject | Dataset | N (attempted) | Signal | AUROC | Selective-acc lift @20% cov (95% CI) | Inter-grader κ | Date |
+|---|---|---|---|---|---|---|---|
+| deepseek-chat | SimpleQA Verified | 1000 (940) | self-consistency | 0.649 | +15.8% [9.8%, 22.1%] | 0.974 | 2026-06-26 |
+| qwen-2.5-72b-instruct | SimpleQA (original) | 2000 (786) | self-consistency | 0.636 | +7.8% [2.3%, 13.5%] | 0.995 | 2026-06-26 |
+
+- CROSS-MODEL VALIDATED on external public data. Self-consistency selective prediction lifts selective accuracy on BOTH independent subject families, each graded by 2 independent families (Cohen kappa 0.97/0.99) with the lift's 95% CI excluding zero. The effect is base-model-dependent: larger for the overconfident DeepSeek (+15.8pts; self-abstains 6%) than the cautious Qwen (+7.8pts; self-abstains 61%). Of three confidence signals only self-consistency works; stated confidence and token-logprob are non-significant on both. This is a calibration / selective-prediction result, NOT an AGI claim; canClaimAGI stays false. Detail: agi-proof/benchmark-results/real-model/simpleqa/.
+
 ## Semantic evals (model-judged, gated)
 
 Judging whether a holding *supports* a proposition is a model call, so these are held to the no-overclaim gate (multi-judge + agreement + runs + CIs). A single judge is illustrative, never a headline.

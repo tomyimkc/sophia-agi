@@ -306,5 +306,16 @@
       "note": "Phase 1b request pipelining packs a batch into one flush and coalesces responses — the textbook throughput-for-latency trade (8.6× throughput at depth 16 for higher per-batch latency; depth-1 is the honest single-request baseline). Single node, in-memory only; persistence (io_uring) + replication (Raft) are Phases 2–3. Reproduce: `cd storage && cargo run --release --bin kvcache-bench -- --clients 32 --ops 30000 --pipeline 16`",
       "candidate": true
     }
-  ]
+  ],
+  "externalBenchmarkCalibration": {
+    "validated": true,
+    "benchmark": "SimpleQA / SimpleQA Verified (OpenAI + Google DeepMind) — public, human-authored, external",
+    "claim": "Self-consistency selective prediction (the C1 conformal method) significantly lifts selective accuracy on a third-party benchmark — non-self-authored.",
+    "graders": "consensus: llmhub:claude-sonnet-4-6 + llmhub:gemini-2.5-pro (2 independent families)",
+    "rows": [
+      {"subject": "deepseek-chat", "dataset": "SimpleQA Verified", "n": 1000, "attempted": 940, "selfAbstain": 0.06, "signal": "self-consistency", "auroc": 0.649, "liftAt20Coverage": {"mean": 0.158, "ciLow": 0.098, "ciHigh": 0.221}, "kappa": 0.974, "date": "2026-06-26"},
+      {"subject": "qwen-2.5-72b-instruct", "dataset": "SimpleQA (original)", "n": 2000, "attempted": 786, "selfAbstain": 0.61, "signal": "self-consistency", "auroc": 0.636, "liftAt20Coverage": {"mean": 0.078, "ciLow": 0.023, "ciHigh": 0.135}, "kappa": 0.995, "date": "2026-06-26"}
+    ],
+    "note": "CROSS-MODEL VALIDATED on external public data. Self-consistency selective prediction lifts selective accuracy on BOTH independent subject families, each graded by 2 independent families (Cohen kappa 0.97/0.99) with the lift's 95% CI excluding zero. The effect is base-model-dependent: larger for the overconfident DeepSeek (+15.8pts; self-abstains 6%) than the cautious Qwen (+7.8pts; self-abstains 61%). Of three confidence signals only self-consistency works; stated confidence and token-logprob are non-significant on both. This is a calibration / selective-prediction result, NOT an AGI claim; canClaimAGI stays false. Detail: agi-proof/benchmark-results/real-model/simpleqa/."
+  }
 }

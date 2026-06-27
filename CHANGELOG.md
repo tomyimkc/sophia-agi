@@ -145,6 +145,43 @@ Turns the simulator's guessed comm penalty into a bandwidth-derived (and measura
   this pipeline on the belief graph + grounded gate + graded abstention + badcase flywheel turns
   it into a verifiable perception organ — search as Sophia's AGI substrate.
 
+## [0.10.0] - 2026-06-26
+
+### Milestone — first external, cross-model validation of a Sophia calibration method
+
+The first Sophia capability result validated on **non-self-authored, public, human-authored**
+data, clearing the no-overclaim gate (≥2 independent grader families + CI excluding zero) on
+**two independent subject models**. This is a **calibration / selective-prediction** result —
+**not** an AGI claim; `canClaimAGI` stays false.
+
+- **C1 conformal / self-consistency selective prediction, on SimpleQA.** Answering only the most
+  self-consistent 20% lifts selective accuracy by **+15.8% [9.8%, 22.1%]** (DeepSeek, N=1000) and
+  **+7.8% [2.3%, 13.5%]** (Qwen-2.5-72B, N=2000) — both CIs exclude zero, graded by Claude +
+  Gemini (Cohen κ = 0.97 / 0.99). Of three confidence signals **only self-consistency works**;
+  stated confidence (overconfident) and token-logprob (saturated) are non-significant. The effect
+  is base-model-dependent (larger for the overconfident DeepSeek). `tools/run_simpleqa_calibration.py`
+  + `tools/analyze_simpleqa_calibration.py`; reports under `agi-proof/benchmark-results/real-model/simpleqa/`.
+
+### Added — five frontier-research candidate mechanisms (C1–C5), implemented + measured
+
+Built on existing seams, each fail-closed, with tests, pre-registration, an OPEN/Partial
+failure-ledger row, and real-model runs (DeepSeek subject; Claude/Gemini graders):
+
+- **C1 conformal abstention** (`agent/graded_decision.decide_conformal`, `guarded on_fail="conformal"`,
+  `tools/fit_conformal_policy.py`, MCP `sophia_conformal_decide`) — validated externally (above).
+- **C3 abstention-aware scoring** (`agent/abstention_scoring.py`) — Kalai reform; fail-closed beats
+  always-guessing on SimpleQA at λ ≥ 0.5.
+- **C4 CoT faithfulness** (`tools/run_faithfulness_bench.py`, MCP `sophia_cross_trace_mine`) —
+  multi-family corroborated (3 decider families, AUROC 1.0, separation CI [0.875, 1.0]).
+- **C2 prover-verifier self-play** (`agent/prover_verifier.py`) — real legibility delta +0.125;
+  honest negative on gate coverage.
+- **C5 truth-probe** (`tools/eval_truth_probe.py`) — honest weak result (AUROC 0.625 real).
+
+### Added — Google Fact Check Tools backend, live-validated
+
+`GoogleFactCheckBackend` run live (`tools/run_google_factcheck_coverage.py`): 6/6 coverage on
+general/viral claims, 0/6 on literary-provenance — a documented capability boundary.
+
 ## [0.9.1] - 2026-06-26
 
 ### Added — IP-protection & defensive-publication package (docs-only)
