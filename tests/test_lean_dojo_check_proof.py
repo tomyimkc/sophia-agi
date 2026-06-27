@@ -15,7 +15,7 @@ Two regimes:
   * REAL LEAN-DOJO (runs only when lean-dojo is installed): verify_proof returns
     the honest abstain regardless (it CANNOT verify a standalone snippet on 4.x),
     and check_proof_in_repo drives lean-dojo's check_proof against a theorem in a
-    MINIMAL traced repo (leanprover-community/lean4-example — NOT full Mathlib).
+    MINIMAL traced repo (yangky11/lean4-example — NOT full Mathlib).
     Asserts: a correct proof -> accepted; a wrong proof -> rejected; never fabricated.
 
 The minimal-repo trace is CI-feasible (lean4-example is tiny); full Mathlib tracing
@@ -71,15 +71,35 @@ def test_check_proof_in_repo_abstains_without_lean() -> None:
 def test_check_proof_in_repo_accepts_correct_rejects_wrong() -> None:
     """Drive lean-dojo 4.x check_proof against a theorem in a MINIMAL traced repo.
 
-    Uses leanprover-community/lean4-example (the repo LeanDojo's own Getting Started
+    Uses yangky11/lean4-example (the repo LeanDojo's own Getting Started
     documents) — tiny, so tracing is CI-feasible. Asserts the contract that matters:
     a CORRECT proof -> accepted; a WRONG proof -> rejected. Never fabricated.
 
     Skipped (not failed) when lean-dojo is absent — the fail-closed path is covered above.
+
+    DEADLOCK GUARD: lean-dojo 4.20.0's ``trace()`` deadlocks on this exact path —
+    it never returns and hangs the CI lane to the 30-min job timeout, leaving
+    orphaned ``lake``/``lean`` processes. Reproduced on macOS-arm64 AND Linux/CI,
+    on a ``from_path`` fixture AND this real GitHub repo — so it is the lean-dojo
+    tracer itself, not the environment (4.20.0 is the latest on PyPI; there is no
+    newer version to bump to). See ``docs/06-Roadmap/Lean-L0-Trace-Deadlock.md``.
+    The real-trace assertion is therefore SKIPPED by default and only runs when
+    ``SOPHIA_LEAN_TRACE_DEADLOCK_PROBE=1`` is set — opt-in, for someone actively
+    working the tracer fix — so it stops burning 30 CI-minutes on every PR while
+    staying honestly runnable. Skipping is not a green: L0 is still blocked.
     """
     if not lean_backend.lean_available():
         import pytest
         pytest.skip("lean-dojo not installed; fail-closed path covered above")
+    # Deadlock guard runs AFTER the lean-availability check: when lean-dojo is absent
+    # the skip reason above is the accurate one; this guard only fires when lean-dojo
+    # IS present (the case that would otherwise hang the trace for 30 min).
+    import os
+    if os.environ.get("SOPHIA_LEAN_TRACE_DEADLOCK_PROBE") != "1":
+        import pytest
+        pytest.skip(
+            "lean-dojo trace() deadlocks (Lean-L0-Trace-Deadlock.md §1a); skipped to "
+            "avoid the 30-min CI hang. Set SOPHIA_LEAN_TRACE_DEADLOCK_PROBE=1 to run it.")
     try:
         from lean_dojo import LeanGitRepo, Theorem  # type: ignore
     except ImportError:
