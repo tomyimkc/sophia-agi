@@ -129,7 +129,10 @@ def extract_facts(
         tb = _tradition_of(obj, edge.get("objectTradition"), lexicon or {})
 
         prog.fact(A("edge", eid))
-        if etype in _IDENTITY_EDGE_TYPES:
+        if etype != "disjointWith":
+            # "equates" is internal pair fact for disjoint-class violation detection
+            # (used by identity + scoped claims). disjointWith decls populate "disjoint"
+            # facts via DNM map; they do not emit equates.
             prog.fact(A("equates", eid, subj, obj))
         if etype:
             prog.fact(A("etype", eid, etype))
