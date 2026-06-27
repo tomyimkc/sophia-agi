@@ -53,6 +53,10 @@ def _mode_spec(mode: str):
         return "M3-pilot-retention", "pilot_gemma3_run.py", "--retention"
     if mode == "sft_stable":
         return "M3-stable", "pilot_gemma3_run.py", ""
+    if mode == "transfer":
+        # external-validity test: same M3 SFT recipe, but EVAL on the transfer benchmark
+        # (NOVEL entities the model never trained on) to test whether the habit generalizes.
+        return "M3-transfer", "pilot_gemma3_run.py", "--benchmark data/wisdom_market_benchmark/transfer_v1.jsonl"
     return "M3-pilot", "pilot_gemma3_run.py", ""
 
 
@@ -259,7 +263,7 @@ def parse_args(argv=None):
     ap.add_argument("--runs", type=int, default=3)
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--mode", choices=["sft", "orpo", "orpo_sft", "retention", "sft_stable"], default="sft")
+    ap.add_argument("--mode", choices=["sft", "orpo", "orpo_sft", "retention", "sft_stable", "transfer"], default="sft")
     ap.add_argument("--registry-auth-id", default=os.environ.get("RUNPOD_REGISTRY_AUTH_ID", ""),
                     help="RunPod container-registry-auth id for pulling a private image")
     ap.add_argument("--name", default=f"sophia-wisdom-pilot-sr-{ts}")

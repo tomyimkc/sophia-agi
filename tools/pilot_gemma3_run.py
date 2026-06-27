@@ -265,10 +265,10 @@ def _run_conditions_for_model(model, tok, cases, runs, *, capture=None):
 
 
 def evaluate(model_id: str, adapter_dir: Path, *, runs: int, limit, out_path: Path,
-             answers_path: "Path | None" = None) -> None:
+             answers_path: "Path | None" = None, bench_path: Path = BENCH) -> None:
     import torch  # noqa: F401
     from peft import PeftModel
-    cases = SSMB.load_cases(BENCH, limit)
+    cases = SSMB.load_cases(bench_path, limit)
     log(f"eval cases: {len(cases)} x {runs} runs x (base, adapter)")
 
     base, tok = load_base(model_id)
@@ -458,6 +458,9 @@ def main() -> int:
                     help="also write per-case base/adapter advisor answers here (for the LLM-judge pass)")
     ap.add_argument("--retention", action="store_true",
                     help="also score base vs adapter on the held-out generality probe (criterion #3)")
+    ap.add_argument("--benchmark", type=Path, default=BENCH,
+                    help="eval benchmark JSONL (default = heldout_v1; point at transfer_v1 for the "
+                         "external-validity test on NOVEL entities)")
     # Stability knobs (anti-forgetting). Defaults reproduce the original M3 recipe.
     ap.add_argument("--lora-rank", type=int, default=16, help="LoRA rank (lower = less forgetting)")
     ap.add_argument("--lora-alpha", type=int, default=32)
@@ -480,7 +483,8 @@ def main() -> int:
         train(args.model, args.adapter, rows_path=args.rows, seq_len=args.seq_len,
               epochs=1, seed=args.seed, lr=args.lr, smoke=True, lora_rank=args.lora_rank,
               lora_alpha=args.lora_alpha, use_rslora=args.use_rslora, kl_coef=args.kl_coef)
-        evaluate(args.model, args.adapter, runs=1, limit=2, out_path=args.out.with_name("M3-pilot-smoke.json"))
+        evaluate(args.model, args.adapter, runs=1, limit=2, out_path=args.out.with_name("M3-pilot-smoke.json"),
+                 bench_path=args.benchmark)
         if args.retention:
             evaluate_retention(args.model, args.adapter,
                                out_path=args.out.with_name("M3-pilot-retention-smoke.json"))
@@ -492,7 +496,7 @@ def main() -> int:
               lora_alpha=args.lora_alpha, use_rslora=args.use_rslora, kl_coef=args.kl_coef)
     if args.eval:
         evaluate(args.model, args.adapter, runs=args.runs, limit=args.limit, out_path=args.out,
-                 answers_path=args.save_answers)
+                 answers_path=args.save_answers, bench_path=args.benchmark)
     if args.retention:
         ret_out, ret_ans = _ret_paths()
         evaluate_retention(args.model, args.adapter, out_path=ret_out, answers_path=ret_ans)
