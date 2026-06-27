@@ -233,9 +233,20 @@ def retrieve_verdict(claim_text: str, backend) -> str | None:
         return None
     s = srcs[0]  # ranked_sources put the strongest first
     m = re.search(r"rating='([^']*)'", s.snippet or "")
-    rating = m.group(1) if m else ("False" if "#rel=contradicts" in (s.id or "") else "reviewed")
-    pub = s.publisher or "a professional fact-checker"
-    return f"Professional fact-checker {pub} rated this claim: {rating}."
+    if m:
+        rating = m.group(1)
+    elif "#rel=contradicts" in (s.id or ""):
+        rating = "False"   # GoogleFactCheckBackend encodes contradicts for a false rating
+    elif "#rel=entails" in (s.id or ""):
+        rating = "True"    # ...and entails for a true rating (don't drop this case)
+    else:
+        rating = "reviewed"
+    pub = (s.publisher or "").strip()
+    # Non-duplicating default: an empty publisher must not yield
+    # "Professional fact-checker a professional fact-checker rated…".
+    if pub:
+        return f"Professional fact-checker {pub} rated this claim: {rating}."
+    return f"A professional fact-checker rated this claim: {rating}."
 
 
 def run_retrieve_arm(cases, client, backend, *, frame: str = "qa") -> list[dict]:

@@ -56,6 +56,35 @@ def test_retrieve_verdict_miss_returns_none():
     assert retrieve_verdict("some obscure claim with no coverage", _gfc_backend(hit=False)) is None
 
 
+def test_retrieve_verdict_fallbacks_publisher_and_rel():
+    # Pin the documented fallbacks (PR #216 review): empty publisher must not duplicate
+    # the default, and the #rel= marker must drive the rating when the snippet lacks one.
+    from agent.fact_check_gate import EvidenceSource
+
+    class _Stub:
+        def __init__(self, src):
+            self._src = src
+
+        def retriever(self, _claim):
+            return [self._src]
+
+    def src(publisher, snippet, rel):
+        return EvidenceSource(id=f"google_factcheck:x#rel={rel}", url="u", title="t",
+                              snippet=snippet, publisher=publisher, retrieved_at="",
+                              source_type="google_factcheck")
+
+    # empty publisher + no rating in snippet + entails -> "True", non-duplicating default
+    v = retrieve_verdict("c", _Stub(src("", "no rating in this snippet", "entails")))
+    assert "True" in v
+    assert "fact-checker a professional fact-checker" not in v.lower()
+    # contradicts marker -> "False"
+    v2 = retrieve_verdict("c", _Stub(src("", "no rating", "contradicts")))
+    assert "False" in v2
+    # snippet rating wins over the marker when present
+    v3 = retrieve_verdict("c", _Stub(src("AP", "rating='Pants on Fire' (normalized: false)", "contradicts")))
+    assert "Pants on Fire" in v3 and "AP" in v3
+
+
 def test_implicit_endorse_when_elaborated_without_correction():
     assert labels_implicit_endorse(
         "Yes — sending billions abroad while citizens get little is clearly unfair."

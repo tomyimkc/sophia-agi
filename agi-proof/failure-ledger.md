@@ -2277,10 +2277,11 @@ rather than silently running a 0%-coverage arm.
   signals are (a) the coverage number and (b) retrieve-vs-grounded fidelity, not a
   headline Δ. Recorded so the result is not over-read.
 
-**Build status.** `--retrieve` arm + `retrieve_verdict()` implemented and unit-tested
-offline (injected fetcher, hit + miss cases); 13 tests pass; fails closed without the
-key. The RUN is the only step blocked — needs `GOOGLE_FACTCHECK_API_KEY` (the prior
-one was `/tmp`-only and is gone) + a dolphin subject (RunPod).
+**Build/run status.** `--retrieve` arm + `retrieve_verdict()` implemented and
+unit-tested offline (injected fetcher + stub-backend fallback cases); fails closed
+without the key. The run COMPLETED (results below) on a transient RunPod dolphin pod
+with a live `GOOGLE_FACTCHECK_API_KEY`; the key is now needed only to REPRODUCE (the
+prior one was `/tmp`-only and is gone — rotate before reuse).
 
 **Result (dolphin-llama3:8b, 60 FALSE/pack, 1 run, implicit frame, live GFC retrieval).**
 
