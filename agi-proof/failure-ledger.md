@@ -1724,6 +1724,20 @@ Check Tools API). **Result: NULL on famous debunked claims.** The grounding does
 not reduce endorsement because models already reject these claims raw. Honest
 negative; `canClaimAGI` stays **False**.
 
+**Consolidation note (2026-06-27).** v0.10.0 independently landed
+`GoogleFactCheckBackend` (`agent/live_sources.py`) + a live coverage probe
+(`tools/run_google_factcheck_coverage.py`) and documented the SAME domain
+boundary in the table row `google-factcheck-live-validated-coverage-boundary-
+2026-06-26` (general/viral claims 6/6 covered; literary-provenance 0/6). This
+entry does NOT restate that boundary — it EXTENDS it with: (a) a full harvested
+**pack** (`provenance_bench/data/claimreview_pack.json`, 303 claims / 33
+publishers — v0.10.0 has no equivalent), and (b) an **endorsement eval** showing
+the boundary also holds at the *model-output* level (models reject famous claims
+raw, so grounding can't help). The standalone `agent/claimreview_retriever.py`
+was RETIRED — `GoogleFactCheckBackend` is the single Fact Check integration now
+(better-architected: proper `EvidenceSource`/`AtomicClaim`/`entailment` types,
+fail-closed rating normalization, source ranking).
+
 **Why this axis (the binding constraint).** Every existing benchmark is
 self-authored. The Google Fact Check API aggregates REAL professional verdicts
 (ClaimReview markup), so it is a genuine external ground truth — the first in the
@@ -1787,5 +1801,62 @@ capability claim. NOT third-party *reviewer* evidence (the pack is third-party-
 `agi-proof/baseline-ablation/claimreview-eval-2026-06-27/claimreview-dolphin-60.json`
 (the dolphin eval); `agent/claimreview_retriever.py` + `tools/{build_claimreview_pack,
 run_claimreview_eval}.py`.
+
+## verifiable-sophia-phase-summary-2026-06-27
+
+**Purpose.** A single coherent narrative tying together the discrete experiments
+above, so the phase's net position is readable without reconstructing it from
+scattered entries. All on `main`; `canClaimAGI` stays **False** throughout.
+
+**The phase question (from the Verifiable-Sophia strategic plan, commit cb887e5).**
+Sophia's one validated claim (+12.5pt hallucination Δ on dolphin-llama3:8b) is a
+DECAYING ASSET — the gate's advantage → 0 on strong base models. The plan asked:
+convert the non-decaying asset (machine-checkable verification) into the spine,
+and honestly bound the decaying one (the model-side delta). Five experiments
+answered the falsifiable parts of that:
+
+| # | Experiment | Result | Entry |
+|---|---|---|---|
+| 1 | Datalog port of `provenance_faithful` | **957/957 byte-identical** to the Python gate; optimized to 0.5ms runtime backend; opt-in `backend="datalog"` on `check_claim` | `datalog-provenance-faithful-port-preregistered-2026-06-27` |
+| 2 | Judge-free reproduction of the Δ | **+9.0%, CI [+4.9, +13.9]**, excludes 0 — the advantage is NOT an LLM-judge artifact | `provenance-delta-survives-judge-free-2026-06-27` |
+| 3 | 2-family multi-judge (openai gpt-4o + anthropic claude) | **+9.4%, CI [+4.2, +15.6]**, κ=0.81 — third independent determination (2 runs; run 3 lost to churn) | `provenance-delta-multijudge-2family-2026-06-27` |
+| 4 | Strong-base decay test (qwen3:30b-a3b) | **Δ = 0.000, CI [0,0]** — advantage decays to zero on a strong base, exactly as predicted | `provenance-delta-decays-to-zero-on-strong-base-2026-06-27` |
+| 5 | ClaimReview third-party axis (Google Fact Check API) | **NULL on famous claims** (dolphin 3.3%→3.3%; qwen3 0%→0%) — famous debunked claims are in training data; built the repo's FIRST third-party-labeled pack (303 claims / 33 publishers) | `claimreview-third-party-axis-null-on-famous-claims-2026-06-27` |
+
+**Net position.**
+- **The non-decaying asset is real and substrate-complete:** the fail-closed
+  abstention rule is now a derivable Datalog theorem (one Horn clause), runtime-
+  viable, byte-identical to the production gate, with a turnkey third-party
+  reproducer (`tools/run_datalog_reproducer.py`) that trusts no committed
+  artifact. This is exactly the machine-checkable substrate the plan called for.
+- **The decaying asset is now precisely bounded (not assumed):** the model-side
+  advantage is real on weak/uncensored models (~9pt, three independent
+  determinations, CI excludes 0) AND confirmed to vanish on a strong base (Δ=0).
+  Its scope is "helps where fabrication is high," not "a universal property."
+- **The third-party-independence gap is partially closed, not closed.** A
+  third-party-LABELED pack now exists (ClaimReview) but the eval was null on its
+  substrate, and no external REVIEWER has run the Datalog reproducer. The
+  binding constraint for external validation is unchanged: one real reviewer run
+  is worth >10 more self-runs.
+
+**What this did NOT change.** `canClaimAGI` stays **False** — nothing here is a
+new capability claim, nothing is externally reviewed, and the single validated
+headline (+12.5%) is unchanged. The phase converted the repo's honesty from
+*asserted caveats* into *measured boundaries*; it did not add validated claims.
+
+**Two open levers (both need a human).**
+1. Solicit one external reviewer to run `tools/run_datalog_reproducer.py` (one
+   command, hash-pinned) — the only thing that converts candidate-grade to
+   externally-validated.
+2. Re-harvest ClaimReview for obscure/recent claims (where models don't already
+   know) to give the third-party axis a non-null substrate. Recorded as open.
+
+**Concurrent-work integration.** v0.10.0 (`19379c93`) landed in parallel with
+SimpleQA cross-model validation + C1–C5 candidate mechanisms (`prover_verifier`,
+`abstention_scoring`, `conformal_policy`, `activation_probes`, `graded_decision`)
+— all `validated: false`, `candidateOnly: true`. Its `GoogleFactCheckBackend`
+supersedes my standalone retriever (retired); its coverage finding is the same
+boundary mine found. The five experiments above are complementary to C1–C5, not
+overlapping: mine bound the EXISTING claim; C1–C5 explore NEW mechanisms.
 
 
