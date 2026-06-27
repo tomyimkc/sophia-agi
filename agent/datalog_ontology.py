@@ -129,7 +129,8 @@ def extract_facts(
         tb = _tradition_of(obj, edge.get("objectTradition"), lexicon or {})
 
         prog.fact(A("edge", eid))
-        prog.fact(A("equates", eid, subj, obj))
+        if etype in _IDENTITY_EDGE_TYPES:
+            prog.fact(A("equates", eid, subj, obj))
         if etype:
             prog.fact(A("etype", eid, etype))
         if ta:
@@ -141,7 +142,12 @@ def extract_facts(
         for s in edge.get("sources") or []:
             prog.fact(A("source", eid, str(s)))
         # crossTradition: computed here (the engine has no inequality).
-        if ta and tb and ta != tb:
+        # Conservative for identity claims: unknown traditions => treat as cross (abstain path)
+        # unless both traditions are known and identical.
+        cross_trad = bool(ta and tb and ta != tb)
+        if not cross_trad and (not ta or not tb) and etype in _IDENTITY_EDGE_TYPES:
+            cross_trad = True
+        if cross_trad:
             prog.fact(A("crossTradition", eid))
         meta["edges"][eid] = {"subject": subj, "object": obj, "edgeType": etype,
                               "subjectTradition": ta, "objectTradition": tb}

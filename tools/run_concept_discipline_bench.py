@@ -92,6 +92,10 @@ def main(argv: list[str] | None = None) -> int:
 
     per_seed = [ontology_improvement.run_ab(items, policy, repair=repair, seed=s) for s in range(args.seeds)]
     head = per_seed[0]
+    # NOTE (addressing review): for non-mock models the run_ab + 2x run_arm multiplies calls.
+    # This is intentional for the falsifiable bench (per-seed + baseline/treatment + spurious).
+    # Use --seeds 1 for quick checks on real models, or the rlvr-runpod GHA lane for full.
+    # See docs/11-Platform/Concept-Discipline-Benchmark-Prompt.md
     baseline_records = ontology_improvement.run_arm(items, policy, guarded=False)
     treatment_records = ontology_improvement.run_arm(items, policy, guarded=True, repair=repair)
 

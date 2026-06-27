@@ -161,11 +161,13 @@ def subclass_cycles(graph: Graph) -> "list[list[str]]":
             nxt = resolve(graph, raw)
             if nxt is None:
                 continue
-            if nxt == start and len(path) >= 1:
-                cyc = tuple(sorted(path + [nxt]))
-                if cyc not in seen_pairs:
-                    seen_pairs.add(cyc)
-                    cycles.append(path + [nxt])
+            if nxt == start and len(path) >= 2:
+                # canonical key by node set (order-independent, ignores traversal start/duplicate close)
+                cycle_nodes = path[:]
+                cyc_key = frozenset(cycle_nodes)
+                if cyc_key not in seen_pairs:
+                    seen_pairs.add(cyc_key)
+                    cycles.append(cycle_nodes)
             elif nxt not in path:
                 walk(start, nxt, path + [nxt])
 
