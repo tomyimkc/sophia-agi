@@ -31,7 +31,10 @@ Markdown is converted to basic HTML automatically.
 
 Environment variables (put in .env):
   PATREON_CREATOR_ACCESS_TOKEN (required)
-  PATREON_CREATOR_REFRESH_TOKEN, PATREON_CLIENT_ID etc. (only if you need refresh)
+
+Note: unlike sync_patreon_supporters.py, this script does NOT implement token
+refresh on 401. Use a valid (non-expired) creator access token. If you hit 401,
+generate a fresh token on the Patreon developer portal.
 """
 
 from __future__ import annotations
@@ -116,8 +119,10 @@ def markdown_to_html(md: str) -> str:
     if not md:
         return ""
 
-    # Join wrapped lines inside paragraphs (helps with long changelog lines)
-    md = re.sub(r'([^\n])\n([^\n#\-*+\s])', r'\1 \2', md)
+    # Join wrapped lines inside paragraphs (helps with long changelog lines).
+    # The lookahead-exclusion set must include ordered-list markers (digit + '.'),
+    # otherwise a line starting with "1." would be joined onto the previous line.
+    md = re.sub(r'([^\n])\n(?=[^\n#\-*+\s])(?!\d+\.\s)', r'\1 \2', md)
 
     lines = md.strip().splitlines()
     out: list[str] = []
@@ -339,7 +344,7 @@ def main() -> int:
 
     # Helper mode for large supporter bases
     parser.add_argument("--supporter-post", action="store_true",
-                        help="Auto-generate a bilingual-friendly thank-you post from data/patreon_supporters.json (ideal for huge supporter page expansion)")
+                        help="Auto-generate a bilingual-friendly thank-you post from data/patreon/supporters.json (ideal for huge supporter page expansion)")
 
     args = parser.parse_args()
 
@@ -349,7 +354,7 @@ def main() -> int:
 
     # === Special helper mode for huge supporter expansions ===
     if args.supporter_post:
-        supporters_path = ROOT / "data" / "patreon_supporters.json"
+        supporters_path = ROOT / "data" / "patreon" / "supporters.json"
         if not supporters_path.exists():
             print("ERROR: No supporters data found. Run `python tools/sync_patreon_supporters.py --update --write-json` first.", file=sys.stderr)
             return 1

@@ -48,8 +48,8 @@ def _patreon_supporters_summary() -> dict:
     """Lightweight public summary for the web manifest.
     Only count + tier names (no individual names) to keep it tasteful.
     """
-    supporters_path = ROOT / "data" / "patreon_supporters.json"
-    tiers_config_path = ROOT / "data" / "patreon_tiers.json"
+    supporters_path = ROOT / "data" / "patreon" / "supporters.json"
+    tiers_config_path = ROOT / "data" / "patreon" / "tiers.json"
 
     if not supporters_path.exists():
         return {}
@@ -76,7 +76,11 @@ def _patreon_supporters_summary() -> dict:
             "lastSync": data.get("synced_at"),
             "patreonUrl": "https://www.patreon.com/c/aideveloper_tomyim",
         }
-    except Exception:
+    except (json.JSONDecodeError, OSError, KeyError) as exc:
+        # Malformed or missing supporters data should not crash the web build, but
+        # a bare pass would hide a real bug — log to stderr so it is debuggable.
+        import sys
+        print(f"[build_web_data] warning: patreon supporters summary skipped: {exc}", file=sys.stderr)
         return {}
 
 

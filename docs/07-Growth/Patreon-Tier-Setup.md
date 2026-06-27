@@ -13,7 +13,7 @@ These are the **exact tier titles** currently configured on your Patreon (use th
 3. **Verifier (驗證者)** — HKD699 / month
 4. **Wisdom Council (智慧議會)** — HKD999 / month
 
-The machine-readable definition lives in `data/patreon_tiers.json`. The sync script uses the `patreon_title` values for grouping and ordering.
+The machine-readable definition lives in `data/patreon/tiers.json`. The sync script uses the `patreon_title` values for grouping and ordering.
 
 ## How to Create / Edit Tiers on Patreon
 
@@ -170,18 +170,18 @@ The highest public tier. Wisdom Council members get a seat at the table. You rec
    python tools/sync_patreon_supporters.py --update --write-json
    ```
 
-4. Verify the output in `SPONSORS.md` and `data/patreon_supporters.json`.
+4. Verify the output in `SPONSORS.md` and `data/patreon/supporters.json`.
 
 5. (Recommended) Configure the GitHub Action secrets so the list auto-syncs (see `SPONSORS.md` maintainer notes).
 
 ## Tier Configuration (machine readable)
 
 The source of truth is:
-- `data/patreon_tiers.json`
+- `data/patreon/tiers.json`
 
 The sync script reads the `patreon_title` and `ordering` to group supporters correctly and produce nicely ordered output.
 
-**Whenever you change tier titles or pricing on Patreon, also update `data/patreon_tiers.json`.**
+**Whenever you change tier titles or pricing on Patreon, also update `data/patreon/tiers.json`.**
 
 ## Notes & Integrity
 
@@ -259,7 +259,7 @@ python tools/post_to_patreon.py --supporter-post --min-cents 99900
 ```
 
 **What it does automatically:**
-- Reads your latest `data/patreon_supporters.json` (make sure you ran the sync first)
+- Reads your latest `data/patreon/supporters.json` (make sure you ran the sync first)
 - Builds a clean thank-you post using your exact bilingual tier titles
 - For small tiers → lists the names
 - For large tiers (your "huge expand") → shows a sample + count + link to the full list in GitHub SPONSORS.md

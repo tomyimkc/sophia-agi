@@ -8,7 +8,7 @@ Fetches active patrons from the Patreon API v2 using a Creator Access Token
 and syncs public names into:
 
 - SPONSORS.md (replaces the block between PATREON_SUPPORTERS_START/END markers)
-- data/patreon_supporters.json (machine-readable, committed)
+- data/patreon/supporters.json (machine-readable, committed)
 
 Usage (after putting secrets in .env or environment):
 
@@ -42,8 +42,8 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 SPONSORS_MD = ROOT / "SPONSORS.md"
-DEFAULT_JSON = ROOT / "data" / "patreon_supporters.json"
-TIERS_CONFIG = ROOT / "data" / "patreon_tiers.json"
+DEFAULT_JSON = ROOT / "data" / "patreon" / "supporters.json"
+TIERS_CONFIG = ROOT / "data" / "patreon" / "tiers.json"
 
 PATREON_BASE = "https://www.patreon.com/api/oauth2/v2"
 MARKER_START = "<!-- PATREON_SUPPORTERS_START -->"
@@ -189,7 +189,6 @@ def fetch_active_members(token: str, campaign_id: str) -> list[dict[str, Any]]:
         "page[count]": "100",
     }
 
-    next_url: str | None = None
     page = 0
 
     while True:
@@ -197,22 +196,7 @@ def fetch_active_members(token: str, campaign_id: str) -> list[dict[str, Any]]:
         if page > 20:  # safety
             break
 
-        if next_url:
-            # Patreon returns full next URL in links.next sometimes; handle relative or absolute
-            if next_url.startswith("http"):
-                # We still need auth; rebuild with same token
-                # For simplicity we parse cursor from the next link
-                parsed = urllib.parse.urlparse(next_url)
-                q = urllib.parse.parse_qs(parsed.query)
-                cursor = q.get("page[cursor]", [None])[0]
-                if cursor:
-                    params = {**params, "page[cursor]": cursor}
-                else:
-                    # Fallback: just call the path again with current params
-                    pass
-            resp = patreon_request(f"/campaigns/{campaign_id}/members", token, params)
-        else:
-            resp = patreon_request(f"/campaigns/{campaign_id}/members", token, params)
+        resp = patreon_request(f"/campaigns/{campaign_id}/members", token, params)
 
         included = {inc["id"]: inc for inc in resp.get("included", []) if inc.get("type") == "tier"}
 
@@ -295,7 +279,7 @@ def build_markdown(groups: dict[str, list[str]], synced_at: str) -> str:
 
     lines: list[str] = []
 
-    # Use canonical order from data/patreon_tiers.json when available
+    # Use canonical order from data/patreon/tiers.json when available
     canonical_order = get_tier_display_order()
     ordered_tiers: list[str] = []
 
@@ -318,7 +302,10 @@ def build_markdown(groups: dict[str, list[str]], synced_at: str) -> str:
             lines.append(f"- {name}")
         lines.append("")  # blank line between tiers
 
-    header = f"<!-- Last sync: {synced_at} (UTC) via tools/sync_patreon_supporters.py -->"
+    header = (
+        f"<!-- Last sync: {synced_at} (UTC) via tools/sync_patreon_supporters.py -->\n"
+        f"<!-- AUTO-GENERATED — do not edit by hand; run `python tools/sync_patreon_supporters.py --update` -->"
+    )
     return header + "\n\n" + "\n".join(lines).strip()
 
 
@@ -384,10 +371,9 @@ def write_json(members: list[dict[str, Any]], groups: dict[str, list[str]], out_
 def main() -> int:
     parser = argparse.ArgumentParser(description="Sync Patreon active supporters into Sophia repo content.")
     parser.add_argument("--update", action="store_true", help="Update SPONSORS.md in place")
-    parser.add_argument("--write-json", action="store_true", help="Write data/patreon_supporters.json")
+    parser.add_argument("--write-json", action="store_true", help="Write data/patreon/supporters.json")
     parser.add_argument("--json-path", default=str(DEFAULT_JSON), help="Custom JSON output path")
     parser.add_argument("--dry-run", action="store_true", help="Do not write files, just show what would happen")
-    parser.add_argument("--print", action="store_true", help="Always print the grouped markdown (default behavior)")
     args = parser.parse_args()
 
     # Load .env if present (simple, no extra package)
@@ -443,8 +429,7 @@ def main() -> int:
         if args.update:
             changed = update_sponsors_md(md)
 
-        if args.write_json or (not args.update and not args.print):
-            # default when no flags is print only; explicit --write-json or combined
+        if args.write_json:
             write_json(members, groups, Path(args.json_path))
 
         if args.update and not changed:

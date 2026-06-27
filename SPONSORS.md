@@ -52,7 +52,7 @@ To protect the one thing that makes this project worth funding — its integrity
 
 The tiers documented here are the project's **custom** (自訂) membership tiers. See the full setup guide and copy-paste descriptions in [docs/07-Growth/Patreon-Tier-Setup.md](docs/07-Growth/Patreon-Tier-Setup.md).
 
-The sync script automatically uses the order defined in `data/patreon_tiers.json`.
+The sync script automatically uses the order defined in `data/patreon/tiers.json`.
 
 ## Current sponsors
 
@@ -81,7 +81,7 @@ GitHub Sponsors (public recognition) are listed here when provided. Add manually
    ```bash
    python tools/sync_patreon_supporters.py                 # preview
    python tools/sync_patreon_supporters.py --update        # edits SPONSORS.md
-   python tools/sync_patreon_supporters.py --write-json    # updates data/patreon_supporters.json
+   python tools/sync_patreon_supporters.py --write-json    # updates data/patreon/supporters.json
    ```
 
 4. For GitHub Actions: add these **repository secrets** (Settings → Secrets and variables → Actions):
@@ -101,5 +101,5 @@ See `docs/07-Growth/Patreon-Tier-Setup.md` → "Helper mode for huge supporter e
 
 See also:
 - Full tier setup guide: `docs/07-Growth/Patreon-Tier-Setup.md`
-- Tier definitions (source of truth): `data/patreon_tiers.json`
-- `.env.example`, `data/patreon_supporters.json`, `.github/workflows/sync-patreon.yml`
+- Tier definitions (source of truth): `data/patreon/tiers.json`
+- `.env.example`, `data/patreon/supporters.json`, `.github/workflows/sync-patreon.yml`
