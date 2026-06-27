@@ -551,15 +551,29 @@ def main(argv: list[str] | None = None) -> int:
             exit_code = _stream(cmd, log_path, input_text=_remote_train_script(args))
             print(f"[runpod] remote command exit code: {exit_code}; log={log_path}")
 
-            for remote, local in (
-                ("sophia-cuda-v1.tar.gz", f"{pod_id}.sophia-cuda-v1.tar.gz"),
-                ("sophia_lora_config.json", f"{pod_id}.sophia_lora_config.json"),
-                ("eval_ladder_adapter.json", f"{pod_id}.eval_ladder_adapter.json"),
-                ("eval_ladder_sft.json", f"{pod_id}.eval_ladder_sft.json"),
-                ("promotion.public-report.json", f"{pod_id}.promotion.public-report.json"),
-                ("repo-head.txt", f"{pod_id}.repo-head.txt"),
+            # (remote, local, required): _scp_from_pod is best-effort (returns False on
+            # failure, never raises). Previously the loop ignored that bool, so a failed
+            # copy-back dropped silently — that is how run #9's W2 promotion.public-report.json
+            # never reached the artifact (the verdict survived only in the run log). Now a
+            # REQUIRED file retries once and, if it still fails, warns loudly; eval_ladder_sft
+            # is DPO-only so it stays optional (no warning on the common SFT path).
+            for remote, local, required in (
+                ("sophia-cuda-v1.tar.gz", f"{pod_id}.sophia-cuda-v1.tar.gz", True),
+                ("sophia_lora_config.json", f"{pod_id}.sophia_lora_config.json", True),
+                ("eval_ladder_adapter.json", f"{pod_id}.eval_ladder_adapter.json", True),
+                ("eval_ladder_sft.json", f"{pod_id}.eval_ladder_sft.json", False),
+                ("promotion.public-report.json", f"{pod_id}.promotion.public-report.json", True),
+                ("repo-head.txt", f"{pod_id}.repo-head.txt", True),
             ):
-                _scp_from_pod(conn, key_path, f"/workspace/sophia-runpod/{remote}", args.artifacts_dir / local)
+                src = f"/workspace/sophia-runpod/{remote}"
+                dst = args.artifacts_dir / local
+                ok = _scp_from_pod(conn, key_path, src, dst)
+                if not ok and required:
+                    ok = _scp_from_pod(conn, key_path, src, dst)  # one retry
+                if not ok and required:
+                    print(f"[runpod] WARNING: failed to copy back required artifact {remote!r}; "
+                          f"it may exist only in the run log, NOT the uploaded artifact",
+                          file=sys.stderr)
             return exit_code
         finally:
             if pod_id and not args.keep_pod:
