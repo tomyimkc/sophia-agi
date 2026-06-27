@@ -43,7 +43,7 @@ yours). Leave them public as *proof the method is real*. The moat moves forward,
 | What | Where it would otherwise land | Action |
 |---|---|---|
 | vNext **training-run configs** (v4+) | `training/**/training_run_*.json` | Private repo only |
-| vNext **adapter weights + configs** | `training/mlx_adapters/sophia-v4+/` | Already ignored by `mlx_adapters/**`; keep it that way |
+| vNext **adapter weights + configs** | `training/mlx_adapters/sophia-v4+/` | Already ignored by `training/mlx_adapters/**`; keep it that way |
 | **Data-mixing / curriculum** ratios | `pretraining/data_mixing/`, `synthetic_scaling/`, `optimizer_probe/` | Commit only *abstracted* notes; real ratios private |
 | **RL reward shaping** internals | `config/reward_surface.*.json`, `selfextend/verified_reward.py` (future) | New tuning → private |
 | New **algorithm internals** (pre-publication) | new modules under `agent/`, `okf/`, `reasoning/` | Develop private; publish only after you've abstracted into the whitepaper |
@@ -84,7 +84,7 @@ production tuning** that makes it work. Publish *what* and *that it works*; keep
 The committed `.gitignore` rules now keep these out of the public repo automatically:
 - `private/` — your local vNext working dir
 - `**/*.private.*` and `.env.private` — the explicit-private naming convention
-- `training/**/training_run_v[4-9]*.json`, `**/*.recipe.json` — new recipe dumps
+- `training/**/training_run_v[4-9]*.json`, `training/**/*.recipe.json` — new recipe dumps
 - `configs/*.json` except `*.sample.json` — real configs stay out; commit sanitized samples
 - `secret/**` — personal setup (run `git rm -r --cached secret/` once if it has tracked files)
 

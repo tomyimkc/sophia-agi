@@ -131,10 +131,7 @@ training/tool_use/dpo_pairs.jsonl
 private/
 
 # Explicit-private convention: any file you name *.private.* stays out.
-**/*.private.json
-**/*.private.jsonl
-**/*.private.yaml
-**/*.private.yml
+**/*.private.*
 .env.private
 
 # New training-run hyperparameter dumps (v2/v3 are whitelisted above as proof).
