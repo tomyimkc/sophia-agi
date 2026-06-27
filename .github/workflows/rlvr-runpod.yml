@@ -33,11 +33,11 @@ on:
         type: choice
         options: [offline, live]
       task:
-        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass)'
+        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept (concept-TBox gate)'
         required: true
         default: 'provenance'
         type: choice
-        options: [provenance, math, code]
+        options: [provenance, math, code, concept]
       epochs:
         description: 'Training epochs (live mode)'
         required: false

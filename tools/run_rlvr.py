@@ -48,6 +48,8 @@ from provenance_bench import (  # noqa: E402
     code_reward,
     math_dataset,
     math_reward,
+    ontology_rl_dataset,
+    ontology_rl_reward,
     rl_dataset,
     rl_reward,
 )
@@ -247,6 +249,10 @@ def _run_gpu(args: argparse.Namespace) -> int:
     if args.task == "math":
         data = math_dataset.build_math_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         reward_fn = math_reward.make_grpo_reward()  # gold column -> sympy math_equivalent
+    elif args.task == "concept":
+        data = ontology_rl_dataset.build_ontology_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        # expected/answerable columns -> symbolic concept-TBox gate (outside gradient).
+        reward_fn = ontology_rl_reward.make_grpo_reward()
     elif args.task == "code":
         data = code_dataset.build_code_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         # test column -> hidden-tests-pass (provenance_bench.code_exec). Judge-free;
@@ -354,9 +360,10 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     ap.add_argument("--model", default="mock", help=f'subject model (default "mock"; GPU: "{DEFAULT_MODEL}")')
-    ap.add_argument("--task", choices=["provenance", "math", "code"], default="provenance",
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept"], default="provenance",
                     help="reward task: provenance (provenance_faithful), math (sympy math_equivalent), "
-                         "or code (hidden-tests-pass via provenance_bench.code_exec)")
+                         "code (hidden-tests-pass via provenance_bench.code_exec), or concept "
+                         "(concept-TBox gate: don't merge cross-tradition concepts)")
     ap.add_argument("--dry-run", action="store_true", help="offline reward-wiring check only (no GPU)")
     ap.add_argument("--out", type=Path, default=OUT_JSON)
     # GPU-only args (ignored under --model mock / --dry-run)
@@ -395,6 +402,16 @@ def main(argv: list[str] | None = None) -> int:
             ok, detail = math_reward.offline_invariants()
         elif args.task == "code":
             ok, detail = code_reward.offline_invariants()
+        elif args.task == "concept":
+            ok, detail = ontology_rl_reward.offline_invariants()
+            # The concept task additionally requires the spurious-reward ablation to
+            # discriminate (uplift must not replicate under a random reward).
+            from provenance_bench import spurious_ablation
+
+            abl = spurious_ablation.run_spurious_ablation(seed=args.seed)
+            ok = ok and bool(abl["discriminates"])
+            detail.setdefault("checks", {})["spuriousAblationDiscriminates"] = bool(abl["discriminates"])
+            detail["spuriousAblation"] = abl
         else:
             ok, detail = _offline_invariants()
             # Also prove the gate-as-reward wiring offline (abstention-collapse fix).
