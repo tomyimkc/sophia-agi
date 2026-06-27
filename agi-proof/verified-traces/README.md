@@ -78,7 +78,7 @@ This package therefore carries the no-overclaim triad on every record
 `provenance_bench.aggregate._is_validated` bar for any capability *claim* derived
 from it. Logging does not produce AGI; it produces a brake, not an engine.
 
-## Faithfulness probe — v1 FALSIFIED → v2 under-powered → v3 inconclusive → v4 inconclusive-on-binary-facts (d=0.08) → v5 causal-dependency redesign (real run pending)
+## Faithfulness probe — v1 FALSIFIED → v2 under-powered → v3 inconclusive → v4 inconclusive-on-binary-facts (d=0.08) → v5 causal-dependency redesign **(d=0.95, CI excludes 0 — first defensible positive)**
 
 The first real-mode run of the faithfulness probe (commit `240f3e54`,
 `faithfulness-probe.v1-FALSIFIED.public-report.json`) **falsified the probe
@@ -163,22 +163,41 @@ itself**, and the falsification is kept on record rather than hidden:
   prevents the v4 ceiling from recurring. The mock self-test
   (`test_v5_mock_shows_large_effect`) reaches **d≈3.25, a bootstrap CI that excludes
   0, p≈3.1e-05, all 30 probes admitted** — confirming the v5 design *can* register a
-  load-bearing signal when one exists. **The v5 REAL run is pending** the
-  Apple-Silicon Mac; the canonical artifact carries `mode=real-pending` with null
-  real fields and the command —
+  load-bearing signal when one exists. **The v5 REAL run is complete** on Apple
+  Silicon (mlx-lm 0.29.1) over sophia-v3 (LoRA rank 8) on
+  `mlx:Qwen/Qwen2.5-3B-Instruct` — **outcome (a), the first defensible positive in
+  the arc**: **`cohensD=0.9515`** (`|d|>=0.8`), **bootstrap 95% CI
+  `[0.219718, 0.514982]` excludes 0** (`excludesZero=true`), and a sign test at
+  **15 pos / 0 neg, `p=3.1e-05`**. The dependency gate admitted all **30/30**
+  deterministically (a rejection on the real path would mean the gate changed, not
+  an adapter finding). The direction is the predicted one: perturbing a
+  load-bearing arithmetic step drops the gold-token logprob (mean +0.331) while
+  perturbing post-hoc filler barely moves it (mean −0.029). This is the **first
+  time the arc's probe separated the two categories on a real adapter** — and
+  precisely where v4 could not, on probes whose answer the 3B base cannot reach
+  cold (so the chain is not superfluous). **Stability / replication:** a second
+  real run produced a **bit-identical** artifact (same SHA-256, same `d`/CI/sign)
+  because MLX logprob scoring with a fixed adapter is deterministic (no sampling) —
+  this confirms the measurement's *reproducibility*, not an independent
+  statistical replication (a genuinely independent replication needs a different
+  model/adapter seed or a held-out probe set, not done here). **Honest scope:** v5
+  is **arithmetic-only** (the cleanest class whose causal dependence the gate can
+  *verify* offline; extending to multi-hop / factual chains is future work and must
+  not rubber-stamp non-dependent probes), the effect is on a 3B base + rank-8 LoRA
+  (not a generalizable claim), a load-bearing result is positive evidence of
+  faithfulness on THESE chain-dependent tasks **not a faithfulness proof**, and the
+  artifact stays `candidateOnly=true, validated=false`. The canonical command for
+  reproducibility:
   `python tools/run_faithfulness_probe_v5.py --mode real --adapter training/mlx_adapters/sophia-v3/ --model mlx:Qwen/Qwen2.5-3B-Instruct`.
-  Honest scope: v5 is **arithmetic-only**, because arithmetic is the cleanest class
-  whose causal dependence the gate can *verify* offline; extending to multi-hop /
-  factual chains is future work (and must not rubber-stamp non-dependent probes).
-  A positive v5 result would be the first defensible load-bearing signal in the arc
-  (still not proof); a null would be a stronger one than v4's — the CoT not
-  load-bearing even when the answer demands a chain.
 
 This is the discipline the layer exists to enforce: a probe that overclaims what
 it measures is itself an overclaim, and gets recorded as such. The v4 real run
 executed on Apple Silicon (no mock substituted) and returned outcome (c); v5 is
-the redesign its diagnosis called for, built and self-tested offline, with its
-real run staged for the Mac — nulls included, no retuning to force a high `d`.
+the redesign its diagnosis called for, built and self-tested offline, and its real
+run executed on Apple Silicon — outcome (a), the first defensible positive in the
+arc (d=0.95, CI excludes 0), reported candidate-only and not as a faithfulness
+proof, with the discipline held (probes/perturbs/scorer/gate not retuned to force
+a high `d`).
 
 ## What it is not
 
