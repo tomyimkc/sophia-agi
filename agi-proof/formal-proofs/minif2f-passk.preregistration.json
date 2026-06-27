@@ -1,0 +1,49 @@
+{
+  "schema": "preregistration/v1",
+  "experimentId": "minif2f-v2-passk-deepseek",
+  "registeredAt": "2026-06-27",
+  "status": "OPEN",
+  "canClaimAGI": false,
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "title": "DeepSeek-V3 whole-proof pass@1 on the sealed miniF2F-v2 Lean 4 test split (Mathlib-verified)",
+  "critiqueStep": "Open-Problems-Framework-Critique.md §5 step 2 (wire the LLM proposer + run miniF2F-test pass@1)",
+  "benchmark": {
+    "name": "miniF2F-v2 (Lean 4), test split",
+    "sealedSplit": "formal_proofs/eval/minif2f-v2-test.manifest.json",
+    "n": 244,
+    "pinnedCommit": "5746b7d6c47855ce1294bed87329618ff7f1bc31",
+    "toolchain": "leanprover/lean4:v4.24.0",
+    "mathlib": "leanprover-community/mathlib4 @ v4.24.0"
+  },
+  "proposer": {
+    "id": "openrouter:deepseek/deepseek-chat",
+    "family": "DeepSeek-V3 (non-US)",
+    "mode": "whole-proof, one attempt (pass@1), temperature 0.2",
+    "note": "Registered BEFORE the run. The exact provider/model is fixed here; changing it requires a new preregistration."
+  },
+  "verifier": {
+    "method": "Mathlib-backed `lake env lean` over the pinned miniF2F-lean4 project (real Lean 4 kernel)",
+    "tool": "tools/run_minif2f_passk.py",
+    "failClosed": "no lean / no Mathlib project -> abstain; sorry/admit -> rejected; only a clean elaboration -> accepted. A proof is NEVER counted solved without the kernel accepting it.",
+    "runsIn": "CI lane .github/workflows/minif2f-passk.yml (workflow_dispatch); Mathlib cannot be fetched in the dev sandbox (git-proxy 403)."
+  },
+  "metric": {
+    "primary": "pass@1 = solved / 244, where solved = the model's single proposed proof elaborates clean under Mathlib (no error, no sorry).",
+    "reported": "proportion with the raw solved/total; per-problem verdicts committed as evidence."
+  },
+  "thresholds": {
+    "plumbingMilestone": "solved >= 1 (the design doc's 'B closes >=1 miniF2F-valid problem end-to-end on a real session') -> the harness + verifier work end-to-end.",
+    "note": "This is a BASELINE measurement, not an uplift claim. There is no pass@1 threshold that promotes the Level ladder or earns a capability claim; the number is descriptive evidence only."
+  },
+  "successRules": [
+    "Report pass@1 honestly whatever it is (including 0/244).",
+    "plumbingMilestone met (>=1 kernel-verified proof) demonstrates the trace-free Mathlib-verified miniF2F harness is real."
+  ],
+  "failureRules": [
+    "A proof counted solved that does not elaborate clean under the kernel -> harness bug, invalidate the run.",
+    "Any sorry/admit/native_decide-style escape counted as solved -> invalidate."
+  ],
+  "contaminationNote": "miniF2F is public and its proofs are on the internet; a model may have memorized them. pass@1 here is SUGGESTIVE, not contamination-free (per Formal-Proofs-Eval-Design.md Q4). Report as such; do not infer reasoning ability from it.",
+  "claimBoundary": "Measures DeepSeek-V3's one-shot miniF2F-v2 pass@1 under Mathlib-kernel verification. It is NOT a claim about Sophia, not a capability/AGI claim, and not contamination-controlled. canClaimAGI stays false."
+}
