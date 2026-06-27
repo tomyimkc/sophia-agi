@@ -78,7 +78,7 @@ This package therefore carries the no-overclaim triad on every record
 `provenance_bench.aggregate._is_validated` bar for any capability *claim* derived
 from it. Logging does not produce AGI; it produces a brake, not an engine.
 
-## Faithfulness probe — v1 FALSIFIED → v2 under-powered → v3 inconclusive → v4 real-run inconclusive-at-power (d=0.08)
+## Faithfulness probe — v1 FALSIFIED → v2 under-powered → v3 inconclusive → v4 inconclusive-on-binary-facts (d=0.08) → v5 causal-dependency redesign (real run pending)
 
 The first real-mode run of the faithfulness probe (commit `240f3e54`,
 `faithfulness-probe.v1-FALSIFIED.public-report.json`) **falsified the probe
@@ -145,11 +145,40 @@ itself**, and the falsification is kept on record rather than hidden:
   raise `d` (the one forbidden move). See the canonical artifact's `findingScope`
   for the full power analysis. The canonical command for reproducibility:
   `python tools/run_faithfulness_probe.py --mode real --adapter training/mlx_adapters/sophia-v3/ --model mlx:Qwen/Qwen2.5-3B-Instruct`.
+- **v5** (code in `tools/run_faithfulness_probe_v5.py`, canonical
+  `faithfulness-probe-v5.public-report.json`): the **causal-dependency redesign** the
+  v4 null pointed to. v4's `d` *fell* as power rose (0.44 → 0.08) — an effect that
+  shrinks with more power is evidence of a true effect near zero on that design,
+  not a signal missed for lack of power. The honest reading: v4's binary
+  common-knowledge facts are answered robustly by the 3B base, so the CoT is
+  *superfluous to the answer* and faithfulness has nothing to register. v5 attacks
+  the **design**, not the power: each load-bearing probe is a **multi-step
+  arithmetic derivation whose gold answer is unreachable without the chain**, paired
+  with a post-hoc twin that asserts the same gold with filler. The new discipline is
+  a **dependency gate** — a probe is admitted only if (load-bearing) its chain
+  evaluates to the gold AND loses the gold when a step is dropped, or (post-hoc) its
+  reasoning contains no derivation reaching the gold. The gate is offline,
+  deterministic, and **rejects a v4-style binary-fact probe** (locked in by
+  `test_gate_rejects_v4_style_binary_fact_probe`), which is what structurally
+  prevents the v4 ceiling from recurring. The mock self-test
+  (`test_v5_mock_shows_large_effect`) reaches **d≈3.25, a bootstrap CI that excludes
+  0, p≈3.1e-05, all 30 probes admitted** — confirming the v5 design *can* register a
+  load-bearing signal when one exists. **The v5 REAL run is pending** the
+  Apple-Silicon Mac; the canonical artifact carries `mode=real-pending` with null
+  real fields and the command —
+  `python tools/run_faithfulness_probe_v5.py --mode real --adapter training/mlx_adapters/sophia-v3/ --model mlx:Qwen/Qwen2.5-3B-Instruct`.
+  Honest scope: v5 is **arithmetic-only**, because arithmetic is the cleanest class
+  whose causal dependence the gate can *verify* offline; extending to multi-hop /
+  factual chains is future work (and must not rubber-stamp non-dependent probes).
+  A positive v5 result would be the first defensible load-bearing signal in the arc
+  (still not proof); a null would be a stronger one than v4's — the CoT not
+  load-bearing even when the answer demands a chain.
 
 This is the discipline the layer exists to enforce: a probe that overclaims what
 it measures is itself an overclaim, and gets recorded as such. The v4 real run
-has now executed on Apple Silicon (no mock substituted), returned outcome (c),
-and is recorded honestly above — nulls included, no retuning to force a high `d`.
+executed on Apple Silicon (no mock substituted) and returned outcome (c); v5 is
+the redesign its diagnosis called for, built and self-tested offline, with its
+real run staged for the Mac — nulls included, no retuning to force a high `d`.
 
 ## What it is not
 
