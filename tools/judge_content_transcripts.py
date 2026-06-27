@@ -72,8 +72,13 @@ def parse_content_pass(text: str) -> bool:
         return False
 
 
-def make_content_judge(spec: str):
-    """A judge(question, requirements, answer) -> bool backed by model ``spec``."""
+def make_content_judge(spec: str, *, retries: int = 5):
+    """A judge(question, requirements, answer) -> bool backed by model ``spec``.
+
+    Retries transient failures (network/SSL drops, non-ok responses) up to ``retries``
+    times with linear backoff — a single flaky call must not abort a 100+-call pass.
+    """
+    import time
     from agent.model import default_client
     client = default_client(spec)
 
@@ -83,10 +88,17 @@ def make_content_judge(spec: str):
             f"Content requirements (JSON): {json.dumps(requirements, ensure_ascii=False)}\n"
             f"Answer:\n'''{answer}'''"
         )
-        res = client.generate(_JUDGE_SYSTEM, user)
-        if not getattr(res, "ok", False):
-            raise RuntimeError(f"judge {spec} call failed: {getattr(res, 'error', '')}")
-        return parse_content_pass(getattr(res, "text", "") or "")
+        last = ""
+        for attempt in range(retries):
+            try:
+                res = client.generate(_JUDGE_SYSTEM, user)
+                if getattr(res, "ok", False):
+                    return parse_content_pass(getattr(res, "text", "") or "")
+                last = str(getattr(res, "error", ""))
+            except Exception as exc:  # transient network/SSL — retry
+                last = f"{type(exc).__name__}: {exc}"
+            time.sleep(1.5 * (attempt + 1))
+        raise RuntimeError(f"judge {spec} failed after {retries} retries: {last}")
 
     return judge
 
