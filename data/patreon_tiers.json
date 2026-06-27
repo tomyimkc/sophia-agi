@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "updated": "2026-06-27",
+  "currency_note": "Pricing on Patreon is set in HKD. The values below reflect the current Patreon configuration.",
+  "tiers": [
+    {
+      "key": "wisdom_seed",
+      "patreon_title": "Wisdom Seed (智慧種子)",
+      "price_hkd": 99,
+      "price_display": "HKD99 / month",
+      "display_name_en": "Wisdom Seed",
+      "display_name_zh": "智慧種子",
+      "short_desc_en": "Support the development of honest, provenance-aware AI reasoning. Wisdom before intelligence.",
+      "short_desc_zh": "支持誠實且具來源意識的 AI 推理開發。智慧先於智能。",
+      "benefits_en": [
+        "Your name publicly listed in SPONSORS.md",
+        "Thanked in release notes",
+        "The satisfaction of funding real source-discipline research"
+      ],
+      "benefits_zh": [
+        "姓名公開列於 SPONSORS.md",
+        "在版本發行說明中獲得鳴謝",
+        "支持真實來源紀律研究的滿足感"
+      ]
+    },
+    {
+      "key": "gatekeeper",
+      "patreon_title": "Gatekeeper (守門人)",
+      "price_hkd": 299,
+      "price_display": "HKD299 / month",
+      "display_name_en": "Gatekeeper",
+      "display_name_zh": "守門人",
+      "short_desc_en": "Early access + deeper insight into the work behind the gate.",
+      "short_desc_zh": "搶先體驗 + 深入了解閘門背後的工作。",
+      "benefits_en": [
+        "Everything in Wisdom Seed",
+        "Early access to new tools, scripts and benchmark previews",
+        "Private Patreon posts with deeper technical notes",
+        "Priority consideration for feedback on new features"
+      ],
+      "benefits_zh": [
+        "包含智慧種子所有權益",
+        "搶先體驗新工具、腳本及基準測試預覽",
+        " Patreon 私人貼文，深入技術筆記",
+        "新功能回饋享有優先考慮"
+      ]
+    },
+    {
+      "key": "verifier",
+      "patreon_title": "Verifier (驗證者)",
+      "price_hkd": 699,
+      "price_display": "HKD699 / month",
+      "display_name_en": "Verifier",
+      "display_name_zh": "驗證者",
+      "short_desc_en": "Help decide the direction of future domains and expansions.",
+      "short_desc_zh": "協助決定未來領域與擴展的方向。",
+      "benefits_en": [
+        "Everything in Gatekeeper",
+        "Quarterly direction survey — help choose which domains to expand next",
+        "Name mentioned in relevant technical updates and posts",
+        "Occasional private notes on verification work"
+      ],
+      "benefits_zh": [
+        "包含守門人所有權益",
+        "季度方向調查 — 協助選擇下一個擴展的領域",
+        "在相關技術更新與貼文中提及姓名",
+        "偶爾獲得驗證工作的私人筆記"
+      ]
+    },
+    {
+      "key": "wisdom_council",
+      "patreon_title": "Wisdom Council (智慧議會)",
+      "price_hkd": 999,
+      "price_display": "HKD999 / month",
+      "display_name_en": "Wisdom Council",
+      "display_name_zh": "智慧議會",
+      "short_desc_en": "Small-group involvement and direct voice in the project.",
+      "short_desc_zh": "小組參與及在項目中擁有直接發聲機會。",
+      "benefits_en": [
+        "Everything in Verifier",
+        "Invitation to small quarterly live discussion / office hours",
+        "Stronger voice on roadmap and domain priorities",
+        "Public credit in major releases and documentation"
+      ],
+      "benefits_zh": [
+        "包含驗證者所有權益",
+        "獲邀參與季度小型線上討論 / 辦公時間",
+        "對路線圖及領域優先順序擁有更強影響力",
+        "在主要版本及文件中獲得公開致謝"
+      ]
+    }
+  ],
+  "ordering": ["wisdom_seed", "gatekeeper", "verifier", "wisdom_council"]
+}

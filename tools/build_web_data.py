@@ -44,6 +44,42 @@ def _agi_proof_meta() -> dict:
     return {}
 
 
+def _patreon_supporters_summary() -> dict:
+    """Lightweight public summary for the web manifest.
+    Only count + tier names (no individual names) to keep it tasteful.
+    """
+    supporters_path = ROOT / "data" / "patreon_supporters.json"
+    tiers_config_path = ROOT / "data" / "patreon_tiers.json"
+
+    if not supporters_path.exists():
+        return {}
+
+    try:
+        data = json.loads(supporters_path.read_text(encoding="utf-8"))
+        tiers = data.get("tiers", {}) or {}
+        total = data.get("count", 0) or sum(len(v) for v in tiers.values())
+
+        # Prefer canonical order + nice names from config
+        tier_order = data.get("tier_order") or []
+        if not tier_order and tiers_config_path.exists():
+            cfg = json.loads(tiers_config_path.read_text(encoding="utf-8"))
+            tier_order = [t["patreon_title"] for t in cfg.get("tiers", [])]
+
+        # Only include tiers that actually have members, in preferred order
+        active_tiers = [t for t in tier_order if t in tiers and tiers[t]]
+        if not active_tiers:
+            active_tiers = [t for t, names in tiers.items() if names]
+
+        return {
+            "count": int(total),
+            "tiers": active_tiers,
+            "lastSync": data.get("synced_at"),
+            "patreonUrl": "https://www.patreon.com/c/aideveloper_tomyim",
+        }
+    except Exception:
+        return {}
+
+
 def main() -> int:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     examples = len(list((ROOT / "training" / "examples").glob("*.json")))
@@ -85,7 +121,9 @@ def main() -> int:
         "links": {
             "github": "https://github.com/tomyimkc/sophia-agi",
             "huggingface": "https://huggingface.co/datasets/tomyimkc/sophia-agi-corpus",
+            "patreon": "https://www.patreon.com/c/aideveloper_tomyim",
         },
+        "supporters": _patreon_supporters_summary(),
     }
     WEB_DATA.parent.mkdir(parents=True, exist_ok=True)
     WEB_DATA.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
