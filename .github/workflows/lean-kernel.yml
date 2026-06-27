@@ -31,6 +31,7 @@ on:
       - 'tests/test_proof_search.py'
       - 'tests/test_novelty_dag.py'
       - 'tests/test_lean_dojo_check_proof.py'
+      - 'tests/test_lean_cli_verify.py'
       - 'scripts/install_lean.sh'
       - 'requirements-theorem.txt'
       - '.github/workflows/lean-kernel.yml'
@@ -143,11 +144,11 @@ jobs:
           python -c "import lean_dojo; print('lean_dojo OK')"
           python -c "from agent import lean_backend; print('lean_available:', lean_backend.lean_available())"
 
-      - name: Proof-search + novelty-DAG tests (real-lean-dojo paths now execute)
+      - name: Proof-search + novelty-DAG + lean-CLI-verify tests (real paths execute)
         env:
           PYTHONDONTWRITEBYTECODE: "1"
         run: |
-          python -m pytest tests/test_proof_search.py tests/test_novelty_dag.py -v
+          python -m pytest tests/test_proof_search.py tests/test_novelty_dag.py tests/test_lean_cli_verify.py -v
 
       - name: L0 smoke — trace() + check_proof on a real repo (require-trace; no skip)
         # Manual-only: the cold trace takes ~90 min on a 2-core runner (slow, not stuck;

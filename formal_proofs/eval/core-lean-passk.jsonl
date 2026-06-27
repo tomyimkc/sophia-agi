@@ -1,0 +1,12 @@
+{"id": "p01_one_plus_one", "decl": "theorem p01 : 1 + 1 = 2", "tier": "trivial"}
+{"id": "p02_add_zero", "decl": "theorem p02 (n : Nat) : n + 0 = n", "tier": "trivial"}
+{"id": "p03_zero_add", "decl": "theorem p03 (n : Nat) : 0 + n = n", "tier": "easy"}
+{"id": "p04_add_comm", "decl": "theorem p04 (a b : Nat) : a + b = b + a", "tier": "easy"}
+{"id": "p05_imp_self", "decl": "theorem p05 (p : Prop) : p → p", "tier": "easy"}
+{"id": "p06_and_comm", "decl": "theorem p06 (p q : Prop) (h : p ∧ q) : q ∧ p", "tier": "easy"}
+{"id": "p07_le_refl", "decl": "theorem p07 (n : Nat) : n ≤ n", "tier": "easy"}
+{"id": "p08_succ_pos", "decl": "theorem p08 (n : Nat) : 0 < n + 1", "tier": "easy"}
+{"id": "p09_mul_two", "decl": "theorem p09 (n : Nat) : 2 * n = n + n", "tier": "medium"}
+{"id": "p10_list_append_nil", "decl": "theorem p10 (l : List Nat) : l ++ [] = l", "tier": "medium"}
+{"id": "p11_left_distrib", "decl": "theorem p11 (a b c : Nat) : a * (b + c) = a * b + a * c", "tier": "medium"}
+{"id": "p12_or_comm", "decl": "theorem p12 (p q : Prop) (h : p ∨ q) : q ∨ p", "tier": "medium"}
