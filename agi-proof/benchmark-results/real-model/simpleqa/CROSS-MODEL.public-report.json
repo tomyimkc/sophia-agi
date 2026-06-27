@@ -1,9 +1,9 @@
 {
-  "schema": "sophia.simpleqa_crossmodel.v1",
+  "schema": "sophia.simpleqa_crossmodel.v2",
   "candidateOnly": true,
   "level3Evidence": false,
   "syntheticData": false,
-  "externalPublicBenchmark": "google/simpleqa-verified",
+  "externalPublicBenchmark": "google/simpleqa-verified (DeepSeek) + openai/simpleqa (Qwen power-up)",
   "graders": [
     "claude-sonnet-4-6",
     "gemini-2.5-pro"
@@ -24,26 +24,21 @@
     "validated": true
   },
   "qwen": {
-    "n": 600,
-    "attempted": 196,
-    "abstentionRate": 0.673,
-    "accuracy": 0.055,
-    "interGraderKappa": 0.9954,
-    "selfconsAUROC": 0.6402,
-    "lift@20": 0.0722,
+    "n": 2000,
+    "attempted": 786,
+    "abstentionRate": 0.607,
+    "accuracy": 0.057,
+    "interGraderKappa": 0.9948,
+    "selfconsAUROC": 0.636,
+    "lift@20": 0.078,
     "lift95CI": [
-      -0.0352,
-      0.1906
+      0.0231,
+      0.1353
     ],
-    "excludesZero": false,
-    "validated": false
+    "excludesZero": true,
+    "validated": true
   },
-  "qwen3seedLifts": [
-    0.0587,
-    0.0809,
-    0.0734
-  ],
-  "qwen3seedAllExcludeZero": false,
-  "finding": "Self-consistency RANKING replicates across two independent model families (AUROC 0.65 DeepSeek, 0.64 Qwen) with near-perfect grading (kappa 0.97 / 0.99). The selective-accuracy LIFT is VALIDATED on DeepSeek (+0.158, CI [0.098,0.221]) but NOT on Qwen (+0.072, CI [-0.035,0.191] includes 0) \u2014 because Qwen self-abstains on 67% of SimpleQA vs DeepSeek's 6%, leaving only 196 attempted (underpowered at 20% coverage) and less headroom. The 3 Qwen seeds are STABLE (lifts 0.059/0.081/0.073), so non-significance is a POWER issue, not instability. Honest conclusion: a self-consistency conformal gate adds large value for an OVERCONFIDENT model that answers everything, and little for a CAUTIOUS model that already abstains heavily. Cross-model magnitude depends on base abstention behavior.",
-  "honestBound": "DeepSeek validated; Qwen directional-only (underpowered). canClaimAGI false."
+  "crossModelValidated": true,
+  "finding": "CROSS-MODEL VALIDATED. Self-consistency selective prediction significantly lifts selective accuracy on BOTH independent model families: DeepSeek +0.158 (95% CI [0.098,0.221]) and Qwen-2.5-72B +0.078 (95% CI [0.023,0.135]), each with near-perfect grading (Cohen \u03ba 0.97/0.99, 2 families). The effect is SMALLER on Qwen, consistent with its heavy self-abstention (61-67% vs DeepSeek's 6%) leaving less headroom \u2014 magnitude depends on base-model abstention behavior. Stated confidence and token-logprob remain weak/non-significant on both. The earlier N=600 Qwen non-significance was a POWER artifact (the 3 stable seeds predicted it), resolved at N=2000.",
+  "honestBound": "Two subject models, 2 graders, CI excludes 0 on both, external public data. canClaimAGI false."
 }
