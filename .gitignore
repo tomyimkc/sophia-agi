@@ -118,3 +118,35 @@ training/tool_use/checkpoints/
 training/tool_use/dpo_pairs.jsonl
 !training/tool_use/sft_traces.jsonl
 
+# ──────────────────────────────────────────────────────────────────────────
+# OPEN-CORE: keep the FUTURE training recipe + algorithm tuning private.
+#
+# Honest scope: the already-committed v1–v3 recipe/adapters above are PUBLIC and
+# cannot be un-published (git history + forks already have them). These rules
+# only stop *new* (v4+) recipe artifacts from leaking into the public repo. The
+# primary protection is a separate private repo — see docs/PRIVATE-REPO-SETUP.md.
+# ──────────────────────────────────────────────────────────────────────────
+
+# Local-only working area for vNext recipe/algorithm (never committed here).
+private/
+
+# Explicit-private convention: any file you name *.private.* stays out.
+**/*.private.json
+**/*.private.jsonl
+**/*.private.yaml
+**/*.private.yml
+.env.private
+
+# New training-run hyperparameter dumps (v2/v3 are whitelisted above as proof).
+training/**/training_run_v[4-9]*.json
+training/**/*.recipe.json
+
+# Real (non-sample) experiment/recipe configs — commit only sanitized *.sample.json.
+configs/*.json
+!configs/*.sample.json
+
+# Personal setup / secrets (if secret/ has tracked files, also run:
+#   git rm -r --cached secret/   then commit, to stop tracking them).
+secret/**
+!secret/.gitkeep
+
