@@ -1917,7 +1917,7 @@ A qwen3 confirmation run is in flight.
 **Update (2026-06-27) — this conclusion was frame-specific and is now PARTLY
 OVERTURNED.** The "near-zero headroom either way" reading holds ONLY for the
 true/false frame. The implicit-elaboration frame
-(`claimreview-implicit-endorsement-frame-2026-06-27`) found **47–85% raw endorsement**
+(`claimreview-implicit-endorsement-frame-2026-06-27`) found **48–93% raw endorsement**
 on the SAME packs — the headroom was hidden by skepticism priming, not absent. The
 "explicit true/false QA is the wrong frame" hypothesis recorded at the end of this
 entry was correct; the "no headroom in any frame" implication was wrong. Thread
@@ -1990,7 +1990,7 @@ the honest record of the churn-interrupted attempt.
 ## claimreview-implicit-endorsement-frame-2026-06-27
 
 **Status:** PRE-REGISTERED → RAN. **SUBSTRATE FOUND — hypothesis confirmed.** The
-implicit-elaboration frame has large headroom (47–85% raw endorsement vs 1.7–3.3%
+implicit-elaboration frame has large headroom (48–93% raw endorsement vs 1.7–3.3%
 in the true/false frame) and a large grounding Δ (+42 to +80 pt) on dolphin. This
 REOPENS the ClaimReview axis that `claimreview-obscure-pack-hypothesis-refuted-
 2026-06-27` had closed — that closure held only for the true/false frame.
@@ -2041,17 +2041,17 @@ axis definitively across *both* frames.
 
 | pack | QA-frame raw (prior) | implicit raw | implicit grounded | Δ (raw−grounded) |
 |---|---|---|---|---|
-| obscure | 1.7% | **85.0%** (51/60) | 5.0% (3/60) | **+80.0pt** |
-| famous | 3.3% | **46.7%** (28/60) | 5.0% (3/60) | **+41.7pt** |
+| obscure | 1.7% | **93.3%** (56/60) | 6.7% (4/60) | **+86.7pt** |
+| famous | 3.3% | **48.3%** (29/60) | 3.3% (2/60) | **+45.0pt** |
 
-Raw implicit endorsement is 14–50× the QA-frame rate — far above the pre-registered
->20% "real headroom" threshold — and grounding cuts it by +42 to +80 pt. **The
+Raw implicit endorsement is 15–55× the QA-frame rate — far above the pre-registered
+>20% "real headroom" threshold — and grounding cuts it by +45 to +87 pt. **The
 QA-frame null was a FRAME ARTIFACT (skepticism priming), not a property of the
 model.** Per the pre-registered decision rule: SUBSTRATE FOUND.
 
 **Interpretation (honest, with the caveats that matter).**
 1. The headline is the RAW headroom. Asked to *explain* a false claim rather than
-   judge it, dolphin goes along 47–85% of the time — restating or asserting the
+   judge it, dolphin goes along 48–93% of the time — restating or asserting the
    false premise with no correction. Sample (famous, labeled endorse): *"The Cochrane
    Collaboration, a respected research organization, claims that 12-step programs are
    the most effective method for treating opioid addiction…"* — relaying a fabricated
@@ -2074,12 +2074,18 @@ model.** Per the pre-registered decision rule: SUBSTRATE FOUND.
   It captures both affirmative assertion AND neutral restatement-without-pushback;
   the strong cases are clear endorsement, the soft cases are non-correction. The
   broad correction-marker set makes raw endorsement a conservative LOWER bound.
-- Numbers here are the CORRECTED-labeler re-run. A PR-review finding (#212) caught
-  that the original correction regex used a trailing `\b` around stems and so missed
-  inflections ("debunked", "fabricated"), under-counting corrections. Fixed (leading
-  `\b` only; +flaw/disprov/mislead/conspirac stems) and re-run: raw endorsement moved
-  86.7%→85.0% (obscure) and 53.3%→46.7% (famous) — slightly lower, as predicted; the
-  finding is unchanged. (Fresh run, so part of the shift is sampling variance.)
+- The lexical labeler went through TWO precision fixes before these numbers; both
+  are pinned by tests. (1) A PR-review finding (#212) caught a trailing-`\b` bug that
+  missed inflections ("debunked"/"fabricated"), under-counting corrections — fixed
+  (leading `\b` only; +flaw/disprov/mislead/conspirac). (2) Smoke-testing the strong
+  base exposed that instruct models often correct by OPENING with a negation ("No, …
+  is not flat") with no marker word, which evaded the markers and would have inflated
+  endorsement — added a leading-refusal matcher (`_REFUSAL_LEAD`) and removed an
+  ambiguous "there is no" marker. Both dolphin AND qwen3 here use this FINAL labeler,
+  so the decay comparison is apples-to-apples. dolphin point estimates vary across
+  single runs (obscure 86.7→85.0→93.3, famous 53.3→46.7→48.3 across the three labeler
+  versions/runs) — N=60×1 at temp 0.2; the finding is the MAGNITUDE (≈50–90% on a weak
+  model) and the contrast with the strong base, not the exact point estimate.
 - N=60 × 1 run per pack; single weak model; self-authored elaboration PROMPT (the
   framing is mine — the CLAIMS are third-party-labeled, but the prompt is not).
   Lexical labeler, no LLM judge. Subject served on a transient RunPod RTX 4090 pod
@@ -2091,13 +2097,15 @@ model.** Per the pre-registered decision rule: SUBSTRATE FOUND.
 **What this changes.** It overturns the "near-zero headroom either way" conclusion of
 `claimreview-obscure-pack-hypothesis-refuted-2026-06-27` (true only for the true/false
 frame). The ClaimReview third-party axis is now a viable, candidate-grade substrate,
-pending (a) a strong-base decay check, (b) a retrieve-then-decide mechanism test
-(verdict not spoon-fed), and (c) LLM-judge or human confirmation of the lexical labels.
+pending (a) a strong-base decay check [**DONE** — decays to ~5%, see
+`claimreview-implicit-frame-strong-base-decay-2026-06-27`], (b) a retrieve-then-decide
+mechanism test (verdict not spoon-fed), and (c) LLM-judge or human confirmation of the
+lexical labels.
 
 **Artifacts.** `agi-proof/baseline-ablation/claimreview-eval-2026-06-27/claimreview-implicit-obscure-dolphin-60.json`
-(SHA-256 `0bc7de717b9eee96e45c979e81c03f6006eb0830e899cf00a07ced63690982e0`) +
+(SHA-256 `c3397c8d70963a9cd9f54b90b0d8791861d42fa13260499010e8d4021c688f69`) +
 `claimreview-implicit-famous-dolphin-60.json`
-(SHA-256 `c6cbb77dd34f4272cd6b65a2a90775729aaa93a8bd88fc79418bfbaac979f069`). Frame +
+(SHA-256 `4fb088182eba9d12c8311180f0b791609117e8fa9720985dfc8ead98339bdba0`). Frame +
 labeler: `tools/run_claimreview_eval.py --frame implicit`, pinned by
 `tests/test_claimreview_implicit_frame.py`.
 
@@ -2115,7 +2123,7 @@ experiment; `canClaimAGI` stays **False**.
 2. Clean 3rd multi-judge run → `provenance-delta-multijudge-2family-3run-validated-
    2026-06-27`: all 5 flags pass, `validated: true` (Δ +9.0%, CI [+4.2,+14.6], κ=0.76).
 3. ClaimReview implicit-elaboration frame → `claimreview-implicit-endorsement-frame-
-   2026-06-27`: SUBSTRATE FOUND (raw 47–85% vs 1.7–3.3% in the QA frame); reopens the
+   2026-06-27`: SUBSTRATE FOUND (raw 48–93% vs 1.7–3.3% in the QA frame); reopens the
    axis that the obscure-pack entry had closed.
 
 **Registry reconciliation (the consolidation action).**
@@ -2149,8 +2157,12 @@ experiment; `canClaimAGI` stays **False**.
 
 ## claimreview-implicit-frame-strong-base-decay-2026-06-27
 
-**Status:** PRE-REGISTERED → RUNNING. Tests whether the implicit-elaboration headroom
-(`claimreview-implicit-endorsement-frame-2026-06-27`: 47–85% raw endorsement on
+**Status:** PRE-REGISTERED → RAN. **DECAY CONFIRMED.** qwen3:30b-a3b raw implicit
+endorsement is **5.0% on both packs** (vs dolphin's 48–93%) — far below the
+pre-registered <20% threshold. The implicit-frame headroom is a WEAK-model phenomenon,
+mirroring the provenance delta (Δ=0 on this same strong base). `canClaimAGI` stays
+**False**. Tests whether the implicit-elaboration headroom
+(`claimreview-implicit-endorsement-frame-2026-06-27`: 48–93% raw endorsement on
 dolphin) is a WEAK-model phenomenon that DECAYS on a strong base — the same boundary
 the provenance delta has (`provenance-delta-decays-to-zero-on-strong-base-2026-06-27`,
 Δ=0 on qwen3:30b-a3b). Pre-registered BEFORE the run, per repo discipline.
@@ -2159,7 +2171,7 @@ the provenance delta has (`provenance-delta-decays-to-zero-on-strong-base-2026-0
 **The hypothesis (falsifiable).** dolphin is an uncensored 8B fine-tune; high
 sycophantic elaboration is expected. A strong base should be more skeptical and
 correct more false premises even in the elaboration frame, so raw implicit
-endorsement should DROP substantially vs dolphin's 47–85%. If it stays high, the
+endorsement should DROP substantially vs dolphin's 48–93%. If it stays high, the
 implicit-frame failure is NOT weak-model-specific — a more interesting and worse
 result for frontier models.
 
@@ -2179,6 +2191,45 @@ result for frontier models.
   weak-model-specific; the frame surfaces a failure mode present even in strong models
   (a stronger, more general finding).
 
-**Result.** _(to be filled in on completion.)_
+**Result (qwen3:30b-a3b, 60 FALSE/pack, 1 run, FINAL labeler; dolphin re-run on the
+same pod + same labeler for an apples-to-apples baseline).**
+
+| subject | pack | raw implicit endorse | grounded | Δ |
+|---|---|---|---|---|
+| dolphin-llama3:8b (weak) | obscure | 93.3% (56/60) | 6.7% | +86.7pt |
+| dolphin-llama3:8b (weak) | famous | 48.3% (29/60) | 3.3% | +45.0pt |
+| **qwen3:30b-a3b (strong)** | obscure | **5.0%** (3/60) | 3.3% | +1.7pt |
+| **qwen3:30b-a3b (strong)** | famous | **5.0%** (3/60) | 5.0% | +0.0pt |
+
+**DECAY CONFIRMED (decision rule: <20% ⇒ decay).** qwen3's raw implicit endorsement is
+5.0% on both packs — 10–19× lower than dolphin's, and barely above the QA-frame floor
+(1.7–3.3%). The strong base corrects the false premise even when merely asked to
+"explain" it; sample raw answers: *"That statement is false and misrepresents
+science…"*, *"Actually, that statement is incorrect. The Cochrane Collaboration has
+never…"* — it volunteers the correction unprompted. With raw endorsement already at
+the floor there is nothing for grounding to cut (Δ≈0), exactly as on the famous QA
+pack and the strong-base provenance test.
+
+**Interpretation (honest).** The implicit-endorsement headroom is a WEAK/uncensored-
+model phenomenon, not a property of language models in general. It joins the
+provenance delta and the calibration advantage as a "helps where the base is weak,
+vanishes on a strong base" result. So the reopened ClaimReview substrate is real but
+SCOPED: it demonstrates the grounding's value on weak models, and says nothing about
+frontier models (which don't exhibit the failure here). This is the same shape as
+every other Sophia advantage — honestly bounded, not universal.
+
+**What this does NOT show.** Not that strong models are robust to all
+misinformation framings (only this elaboration frame, this pack, N=60×1, lexical
+labeler). qwen3 is "strong base" not frontier-closed-model. The grounded arm remains
+spoon-fed (the retrieve-then-decide test is still the open mechanism question).
+`canClaimAGI` stays **False**.
+
+**Artifacts.** `agi-proof/baseline-ablation/claimreview-eval-2026-06-27/`
+`claimreview-implicit-obscure-qwen3-60.json` (SHA-256
+`68ab96865c87e99c95e7f91fa9d89cb61a5b604da8570e6f126e2fde6bbc3319`) +
+`claimreview-implicit-famous-qwen3-60.json` (SHA-256
+`2ce93d525a33e6f6f726b53219cc405e91f477463106199ff6b8cb49072085f3`). The dolphin
+baseline artifacts (same labeler) are the `*-dolphin-60.json` files referenced in
+`claimreview-implicit-endorsement-frame-2026-06-27`.
 
 
