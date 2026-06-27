@@ -1,0 +1,56 @@
+{
+  "benchmark": "lora-eval-ladder",
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "adapter": "local-sophia-v2 (moe/adapt --lora-rank-alloc)",
+  "quantization": "QLoRA 4-bit",
+  "epochs": 3,
+  "seed": 0,
+  "lora_rank_alloc": true,
+  "training_traces": "training/council/religion_repair_c4.jsonl",
+  "eval_set": {
+    "domains": ["philosophy", "psychology", "history", "religion"],
+    "items": 32,
+    "note": "held-out provenance set; single-judge content+format scoring via tools/eval_local_model.py"
+  },
+  "content_channel": {
+    "adapter_3ep_rankalloc": {
+      "philosophy": "8/9", "psychology": "7/9", "history": "8/8", "religion": "6/6",
+      "total": "29/32", "total_pct": 90.6
+    },
+    "fp16_base": {
+      "total": "23/32", "total_pct": 71.9,
+      "note": "FP16 base is deterministic; measured 23/32 content in run #5 on the identical model+eval"
+    },
+    "uplift_vs_base_pct": 18.75,
+    "uniform_3ep_for_reference_pct": 84.4
+  },
+  "combined_channel": {
+    "adapter_3ep_rankalloc_total": "24/32",
+    "adapter_3ep_rankalloc_pct": 75.0,
+    "note": "religion format is consistently ~1/6 across all runs (eval-format quirk, not content), capping religion's combined"
+  },
+  "mechanisms_exercised": {
+    "moe_adapt_lora_rank_alloc": "ran on the pod (the remote train_lora invocation carried --lora-rank-alloc; the allocated adapter's content differs from the uniform 3-epoch adapter, confirming the rank_pattern took effect). Exact per-type rank_pattern is in the run log's [lora-rank-alloc] line / the artifact.",
+    "z3_solver_attestation": "the pod cloned this branch, whose requirements-lora.txt installs z3-solver, so the W2 oracle's solver_attestation runs on backend=z3 (proven offline to flip held/z3_unavailable -> accepted/z3). The on-pod promotion.public-report.json is in the run artifact."
+  },
+  "result_summary": "The moe/adapt-allocated 3-epoch QLoRA adapter scored 90.6% CONTENT (29/32) on the held-out provenance set — the highest of the three real-GPU runs (base 71.9%, uniform-3ep 84.4%, alloc-3ep 90.6%). It exercises BOTH new mechanisms end-to-end on hardware. The gain over the uniform 3-epoch adapter (+6.2pt) is WITHIN single-judge / n=32 / 1-seed noise and must NOT be read as the allocator outperforming uniform — it is a successful end-to-end exercise plus a directional datapoint, not a validated comparison.",
+  "claim": "real-GPU LoRA eval-ladder datapoint exercising moe/adapt allocation + z3 oracle (NOT a capability claim)",
+  "judge": "single-judge content+format scoring (tools/eval_local_model.py); NOT the kappa>=0.40 / 2-judge-family / >=3-run / 95%-CI VALIDATED bar",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "honest_scope": "One real-GPU QLoRA run (3 epochs, seed 0, --lora-rank-alloc, 32-item held-out provenance eval, single judge). Confirms the moe/adapt LoRA allocator and the z3-enabled W2 oracle run end-to-end on GPU. The 90.6% content and the +6.2pt over uniform-3ep are DIRECTIONAL / candidate-only: at n=32 / single judge / one seed they are not separable from noise, and the allocator's sensitivity prior is a transparent heuristic, not a measurement. Does NOT move canClaimAGI. A validated allocator-vs-uniform comparison needs the P6 preregistration protocol (>=3 seeds, 2 non-qwen judge families, kappa>=0.40, 95% CI).",
+  "provenance": {
+    "workflow": ".github/workflows/train-runpod.yml",
+    "run_url": "https://github.com/tomyimkc/sophia-agi/actions/runs/28285622770",
+    "run_id": 28285622770,
+    "run_number": 9,
+    "head_sha": "4526c782ed5ea24b142bd4b6bbb528d2522585ff",
+    "branch": "claude/sophia-sparse-quant-p7-router-era5j5",
+    "gpu_pool": ["NVIDIA GeForce RTX 4090", "NVIDIA A40", "NVIDIA GeForce RTX 3090", "NVIDIA A100-SXM4-80GB", "NVIDIA RTX A6000", "NVIDIA L40S", "NVIDIA RTX 6000 Ada Generation", "NVIDIA L40"],
+    "artifact_id": 7923721284,
+    "artifact_sha256": "40c53c26f855b46cfd3d47e94b61752c9551181ae7a6dafc8f7a23ef26364de3",
+    "source": "transcribed from the train-runpod step-7 eval-ladder report in the run log; rank_pattern + promotion verdict in the run artifact",
+    "dispatched_date": "2026-06-27"
+  }
+}
