@@ -76,6 +76,31 @@ def test_abstain_debunk_cue_suppresses_authorship_marker_overflag() -> None:
         assert _fabricated(answer, [marker]) is True, f"missed a genuine fabrication: {answer[:50]!r}"
 
 
+def test_abstain_capitalized_name_anchor_not_defeated_by_ignorecase() -> None:
+    # Regression guard for the root cause found after the unambiguous-subset re-score:
+    # regex markers were run with re.IGNORECASE, which makes [A-Z] match lowercase, so
+    # 'built by an ancient cult' matched 'built by [A-Z]' (two lowercase a's) — a false
+    # positive on a correct debunk. The anchor-aware fix requires the matched span to
+    # contain at least as many uppercase letters as the pattern has [A-Z] anchors.
+    from provenance_bench.calibration_score import _fabricated
+    # debunk/anonymous forms that contain NO capitalized name -> must NOT flag
+    overflags = [
+        ("re:built by [A-Z][a-z]+ [A-Z]", "Stonehenge was built by an ancient cult of druids."),
+        ("re:(written|authored) by [A-Z]", "The scrolls were authored by many different scribes over centuries."),
+        ("re:author is [A-Z]", "the author is conventionally described as anonymous."),
+    ]
+    for marker, answer in overflags:
+        assert _fabricated(answer, [marker]) is False, f"anchor defeated by IGNORECASE: {answer[:50]!r}"
+    # genuine capitalized-name fabrications still flag, incl. sentence-initial capital verb
+    genuine = [
+        ("re:(written|authored) by [A-Z]", "Written by Wilfrid Voynich in 1912."),
+        ("re:built by [A-Z][a-z]+ [A-Z]", "Stonehenge was built by John Dee in 3000 BC."),
+        ("re:author is [A-Z]", "The author is Sir Philip Francis."),
+    ]
+    for marker, answer in genuine:
+        assert _fabricated(answer, [marker]) is True, f"missed a genuine capitalized fabrication: {answer[:50]!r}"
+
+
 def test_definite_case_rewards_commitment() -> None:
     r = score_answer("The Dao De Jing is attributed to Laozi in the Daoist tradition.", DEFINITE_CASE)
     assert r["score"] == 1.0 and r["state"] == "committed"
