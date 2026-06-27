@@ -27,10 +27,38 @@
       "runs": 3,
       "judgeMeanWinrate": 0.8147,
       "judgeMajority": 0.8321,
-      "retentionDelta": -0.0143,
+      "retentionDelta": -0.001,
+      "retentionCI": [
+        -0.0196,
+        0.0175
+      ],
+      "retains": true,
+      "retentionN": 970
+    },
+    {
+      "name": "M3-stable (rank8+KL+replay)",
+      "prefix": "M3-stable",
+      "hasEval": true,
+      "hasJudge": true,
+      "hasRetention": true,
+      "primaryWins": 5,
+      "primaryMag": 0.9873,
+      "primaryMetrics": [
+        "qualification_rate_on_contested",
+        "tradition_merge_rate",
+        "false_attribution_rate",
+        "moral_route_accuracy",
+        "provenance_accuracy"
+      ],
+      "protectedRegressions": [],
+      "nCases": 354,
+      "runs": 3,
+      "judgeMeanWinrate": 0.7873,
+      "judgeMajority": 0.806,
+      "retentionDelta": 0.0143,
       "retentionCI": [
         -0.0714,
-        0.0429
+        0.1
       ],
       "retains": true,
       "retentionN": 70
