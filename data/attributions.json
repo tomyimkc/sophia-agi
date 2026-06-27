@@ -5737,13 +5737,13 @@
     "canonicalTitleEn": "The Hippocratic Corpus",
     "tradition": "ancient_greek_medicine",
     "attributedAuthor": "hippocrates",
-    "authorConfidence": "attributed",
+    "authorConfidence": "compiled",
     "doNotAttributeTo": [
       "galen",
       "aristotle",
       "dioscorides"
     ],
-    "provenance": "Traditionally attributed to Hippocrates of Kos and his school, c. 5th-4th century BCE."
+    "provenance": "Traditionally attributed to Hippocrates of Kos and his school, c. 5th-4th century BCE. [corrected 2026-06-27: the Corpus is a multi-author compilation, not a single Hippocratic work]."
   },
   "de_materia_medica": {
     "textId": "de_materia_medica",

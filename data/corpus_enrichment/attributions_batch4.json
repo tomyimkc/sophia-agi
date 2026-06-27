@@ -1312,7 +1312,7 @@
     "canonicalTitleEn": "The Hippocratic Corpus",
     "tradition": "ancient_greek_medicine",
     "attributedAuthor": "hippocrates",
-    "authorConfidence": "attributed",
+    "authorConfidence": "compiled",
     "doNotAttributeTo": [
       "galen",
       "aristotle",
