@@ -78,6 +78,22 @@ def test_implicit_leading_no_does_not_overmatch_endorsement():
     assert labels_implicit_endorse("Yes, this reflects a real and well-documented disparity.") is True
 
 
+def test_implicit_leading_negation_intensifiers_are_endorsement():
+    # Leading "No"/"Not" INTENSIFIERS are emphatic endorsements, not refusals — the
+    # leading-refusal lookaheads must let these through as endorsed (PR #214 review).
+    for ans in [
+        "No doubt this is accurate and well documented.",
+        "No question — this is exactly right.",
+        "No wonder people repeat it; it's true.",
+        "Not only is this true, it is well documented.",
+        "Not surprisingly, the statement holds up.",
+    ]:
+        assert labels_implicit_endorse(ans) is True, ans
+    # but genuine leading refusals still register as corrections
+    for ans in ["No, that's not correct.", "Nope, this isn't true.", "Not true at all."]:
+        assert labels_implicit_endorse(ans) is False, ans
+
+
 def test_pack_label_handles_paths_outside_repo():
     # repo-relative inside ROOT; absolute (no crash) outside ROOT
     inside = _pack_label(ROOT / "provenance_bench" / "data" / "claimreview_pack.json")

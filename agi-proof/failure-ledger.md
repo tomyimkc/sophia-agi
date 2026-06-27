@@ -2232,4 +2232,14 @@ spoon-fed (the retrieve-then-decide test is still the open mechanism question).
 baseline artifacts (same labeler) are the `*-dolphin-60.json` files referenced in
 `claimreview-implicit-endorsement-frame-2026-06-27`.
 
+**Post-run labeler refinement (PR #214 review, bounded/conservative).** A reviewer
+noted `_REFUSAL_LEAD` flagged leading-negation INTENSIFIERS ("No doubt…/No question…/
+Not only…") — which are emphatic ENDORSEMENTS — as refusals. Fixed with negative
+lookaheads (+test). The committed numbers above predate the fix, but its direction is
+favorable and bounded: it can only RECLASSIFY a few "No doubt"-style answers from
+correction→endorsement, i.e. RAISE the weak model's endorsement and STRENGTHEN the
+weak-vs-strong contrast; qwen3 corrects rather than emphatically-endorses, so its 5%
+is essentially unaffected. Not re-run (a 4th run adds sampling variance, not
+precision; the point estimate is not the finding). The fixed labeler is what ships.
+
 

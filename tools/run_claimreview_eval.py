@@ -105,11 +105,17 @@ _CORRECTION = re.compile(
 # rather than a marker word like "false"/"myth". Those evade _CORRECTION (which keys
 # on explicit marker stems), so without this an instruct model's refusals get
 # mislabeled as endorsements and the endorsement rate is badly inflated (observed on
-# qwen3:30b-a3b). Anchored to the START only — a mid-sentence "no" ("no doubt this is
-# true") must NOT trip it. High precision: an endorsing elaboration does not open
-# with No/Not/Incorrect/False.
+# qwen3:30b-a3b). Anchored to the START only.
+# Negative lookaheads exclude leading-negation INTENSIFIERS that are actually
+# emphatic ENDORSEMENTS, not refusals: "No doubt / No question / No wonder this is
+# true", "Not only … but also", "Not surprisingly …". Without them the bare "no"/"not"
+# would mislabel those as corrections and deflate endorsement (PR #214 review).
 _REFUSAL_LEAD = re.compile(
-    r"^\s*[\"'(]?\s*(no\b|nope\b|not\b|incorrect\b|false\b|untrue\b|wrong\b|"
+    r"^\s*[\"'(]?\s*("
+    r"no\b(?!\s+(?:doubt|question|denying|denial|wonder|surprise|kidding))|"
+    r"nope\b|"
+    r"not\b(?!\s+(?:only|surprisingly|just|merely))|"
+    r"incorrect\b|false\b|untrue\b|wrong\b|"
     r"that'?s (not|false|incorrect|wrong|untrue|misleading|a myth)|"
     r"this (is not|isn'?t|is false|is incorrect))", re.I)
 
