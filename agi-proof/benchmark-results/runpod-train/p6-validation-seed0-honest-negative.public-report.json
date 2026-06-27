@@ -1,0 +1,66 @@
+{
+  "benchmark": "lora-content-uplift-validation",
+  "outcome": "NOT VALIDATED — honest negative (judge-agreement failure, not a model failure)",
+  "subjectModel": "Qwen/Qwen2.5-3B-Instruct",
+  "config": "3-epoch QLoRA, seed 0 (train-runpod run #10)",
+  "judges": ["deepseek:deepseek-chat", "openrouter:meta-llama/llama-3.1-70b-instruct"],
+  "judge_families": ["deepseek", "meta-llama"],
+  "n_items_per_seed": 32,
+  "seeds_run": 1,
+  "perFamily_contentPass": {
+    "deepseek":  {"base": 0.750, "adapter": 0.781},
+    "meta-llama": {"base": 0.906, "adapter": 1.000},
+    "lexical_scorer_base_for_reference": 0.719
+  },
+  "consensus": {"base": 0.7188, "adapter": 0.7812, "delta": 0.0625},
+  "interJudgeKappa": {
+    "adapterContent": 0.0,
+    "baseContent": 0.2632,
+    "pooled": 0.1563,
+    "floor": 0.40
+  },
+  "gate": {
+    "validated": false,
+    "validatedChecks": {
+      "notMock": true,
+      "multiFamilyJudges": true,
+      "judgeNotSubject": true,
+      "kappaAboveFloor": false,
+      "atLeast3Seeds": false,
+      "ciExcludesZero": true
+    },
+    "decisive_failure": "kappaAboveFloor — mean pairwise Cohen's kappa = 0.0 (< 0.40)"
+  },
+  "interpretation": "The preregistered judge pair does NOT reach the kappa>=0.40 inter-judge "
+    "agreement the VALIDATED gate requires. meta-llama saturates on the content channel "
+    "(passes ~90% of base and 100% of adapter answers), so on the adapter labels there is no "
+    "co-variation with deepseek (kappa=0.0); deepseek (~75-78%) tracks the lexical-truth base "
+    "rate (71.9%) far more closely. This is a JUDGE-AGREEMENT failure, not a model failure: "
+    "the gate is correctly refusing to validate an uplift whose two independent judges do not "
+    "agree. The QLoRA content uplift therefore remains CANDIDATE-ONLY / directional (consistent "
+    "with the +12.5pt single-judge run #7 and the +18.75pt allocated run #9), NOT validated.",
+  "decision": "Stopped before seeds 1-2: seed-0 adapter kappa=0.0 is structural (the adapter "
+    "only trains better, so meta-llama keeps saturating), so the 3-seed gate is near-certain to "
+    "fail kappa regardless of the remaining seeds' deltas. Completing 2 more paid GPU trainings "
+    "to confirm a near-certain negative was judged not worth the spend.",
+  "path_forward": "A VALIDATED result needs a FRESH preregistration with a more discriminating "
+    "second judge family (e.g. a stricter non-qwen model via openrouter) that does not saturate "
+    "the content channel, then the full >=3-seed run. Swapping judges on THIS data would be "
+    "post-hoc; it must be preregistered before the runs.",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "honest_scope": "An honest NEGATIVE from running the VALIDATED protocol end-to-end on real "
+    "GPU output (run #10 transcripts -> 2 independent LLM judges -> the kappa/CI/seed gate). The "
+    "pipeline works; the preregistered judge pair fails the kappa>=0.40 agreement bar, so nothing "
+    "is validated. This is the no-overclaim discipline functioning as intended, not a result to "
+    "spin as a win. canClaimAGI stays false.",
+  "provenance": {
+    "training_run": "https://github.com/tomyimkc/sophia-agi/actions/runs/28290562821",
+    "training_run_number": 10,
+    "transcripts_artifact_id": 7925168921,
+    "judging": "tools/judge_content_transcripts.py (deepseek + meta-llama, local; keys never committed)",
+    "aggregation": "tools/run_lora_uplift_validation.py",
+    "dispatched_date": "2026-06-27"
+  }
+}

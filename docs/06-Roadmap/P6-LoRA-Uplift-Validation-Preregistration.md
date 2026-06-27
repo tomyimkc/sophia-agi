@@ -70,3 +70,27 @@ If any check fails, the result stays **candidate-only / illustrative** — never
 - A VALIDATED uplift here is a **narrow, nano-scope** claim (one 3B model, one 32-item
   provenance eval). It does **not** move `canClaimAGI`; it is one honest measurement to the
   project's no-overclaim standard, nothing more.
+
+## Outcome (2026-06-27): honest NEGATIVE — judge-agreement failure
+
+The protocol was run end-to-end on real GPU output (seed 0, train-runpod run #10 →
+transcripts → deepseek + meta-llama judges → the κ/CI/seed gate). Result: **NOT VALIDATED.**
+
+The decisive failure is **`kappaAboveFloor`**: mean pairwise Cohen's κ = **0.0** on the
+adapter content labels (< 0.40). meta-llama **saturates** the content channel (passes ~90% of
+base and **100%** of adapter answers), so it has no co-variation with deepseek (~75–78%, which
+tracks the lexical-truth base rate of 71.9% closely). The other gate checks pass — `notMock`,
+`multiFamilyJudges`, `judgeNotSubject` are all true. So this is a **judge-agreement failure,
+not a model failure**: the gate correctly refuses to validate an uplift whose two independent
+judges don't agree.
+
+Seeds 1–2 were **not run**: the seed-0 adapter κ=0.0 is structural (the adapter only trains
+better, so meta-llama keeps saturating), making the 3-seed κ near-certain to fail regardless —
+not worth two more paid GPU trainings to confirm a near-certain negative.
+
+The QLoRA content uplift therefore stays **candidate-only / directional** (the +12.5pt run #7
+and +18.75pt allocated run #9 single-judge measurements). A VALIDATED result needs a **fresh
+preregistration** with a more discriminating, non-saturating second judge family — swapping
+judges on this data would be post-hoc. Full report:
+`agi-proof/benchmark-results/runpod-train/p6-validation-seed0-honest-negative.public-report.json`.
+`canClaimAGI` unchanged (**false**).
