@@ -1,463 +1,5 @@
-{
-  "dao_de_jing": {
-    "textId": "dao_de_jing",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "道德經",
-    "canonicalTitleEn": "Dao De Jing",
-    "tradition": "daoist",
-    "attributedAuthor": "laozi",
-    "authorConfidence": "legendary",
-    "compilationPeriod": "warring_states",
-    "doNotAttributeTo": [
-      "confucius",
-      "socrates",
-      "plato"
-    ]
-  },
-  "analects": {
-    "textId": "analects",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "論語",
-    "canonicalTitleEn": "Analects",
-    "tradition": "confucian",
-    "attributedAuthor": "confucius",
-    "authorConfidence": "compiled",
-    "compilationPeriod": "warring_states",
-    "notes": "Teachings of Confucius assembled by students and later editors",
-    "doNotAttributeTo": [
-      "laozi",
-      "plato"
-    ]
-  },
-  "republic": {
-    "textId": "republic",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "理想國",
-    "canonicalTitleEn": "Republic",
-    "tradition": "platonist",
-    "attributedAuthor": "plato",
-    "authorConfidence": "attributed",
-    "compilationPeriod": "classical_greece",
-    "doNotAttributeTo": [
-      "socrates",
-      "confucius",
-      "laozi"
-    ]
-  },
-  "socrates_corpus": {
-    "textId": "socrates_corpus",
-    "domain": "philosophy",
-    "recordType": "figure",
-    "canonicalTitleZh": null,
-    "canonicalTitleEn": "Socratic corpus",
-    "tradition": "socratic",
-    "attributedAuthor": "socrates",
-    "authorConfidence": "none_extant",
-    "compilationPeriod": "classical_greece",
-    "notes": "Socrates wrote no books; known through Plato, Xenophon, and others",
-    "doNotAttributeTo": []
-  },
-  "mencius": {
-    "textId": "mencius",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "孟子",
-    "canonicalTitleEn": "Mencius",
-    "tradition": "confucian",
-    "attributedAuthor": "mencius",
-    "authorConfidence": "attributed",
-    "compilationPeriod": "warring_states",
-    "notes": "Attributed to Mencius (孟子, Meng Ke); compiled and edited across Warring States and Han",
-    "doNotAttributeTo": [
-      "confucius",
-      "laozi",
-      "plato",
-      "socrates"
-    ]
-  },
-  "zhuangzi": {
-    "textId": "zhuangzi",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "莊子",
-    "canonicalTitleEn": "Zhuangzi",
-    "tradition": "daoist",
-    "attributedAuthor": "zhuangzi",
-    "authorConfidence": "compiled",
-    "compilationPeriod": "warring_states",
-    "notes": "Core chapters linked to Zhuang Zhou; outer chapters likely later additions",
-    "doNotAttributeTo": [
-      "confucius",
-      "laozi",
-      "plato",
-      "socrates"
-    ]
-  },
-  "symposium": {
-    "textId": "symposium",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "會飲篇",
-    "canonicalTitleEn": "Symposium",
-    "tradition": "platonist",
-    "attributedAuthor": "plato",
-    "authorConfidence": "attributed",
-    "compilationPeriod": "classical_greece",
-    "notes": "Platonic dialogue; Socrates is a character, not the author",
-    "doNotAttributeTo": [
-      "socrates",
-      "confucius",
-      "laozi",
-      "mencius"
-    ]
-  },
-  "xunzi": {
-    "textId": "xunzi",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "荀子",
-    "canonicalTitleEn": "Xunzi",
-    "tradition": "confucian",
-    "attributedAuthor": "xunzi",
-    "authorConfidence": "compiled",
-    "compilationPeriod": "warring_states",
-    "doNotAttributeTo": [
-      "confucius",
-      "mencius",
-      "laozi",
-      "plato"
-    ]
-  },
-  "mozi": {
-    "textId": "mozi",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "墨子",
-    "canonicalTitleEn": "Mozi",
-    "tradition": "mohist",
-    "attributedAuthor": "mozi",
-    "authorConfidence": "compiled",
-    "compilationPeriod": "warring_states",
-    "doNotAttributeTo": [
-      "confucius",
-      "mencius",
-      "laozi"
-    ]
-  },
-  "liezi": {
-    "textId": "liezi",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "列子",
-    "canonicalTitleEn": "Liezi",
-    "tradition": "daoist",
-    "attributedAuthor": "liezi",
-    "authorConfidence": "legendary",
-    "compilationPeriod": "warring_states",
-    "doNotAttributeTo": [
-      "laozi",
-      "zhuangzi",
-      "confucius"
-    ]
-  },
-  "han_feizi": {
-    "textId": "han_feizi",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "韓非子",
-    "canonicalTitleEn": "Han Feizi",
-    "tradition": "legalist",
-    "attributedAuthor": "han_feizi",
-    "authorConfidence": "attributed",
-    "compilationPeriod": "warring_states",
-    "doNotAttributeTo": [
-      "confucius",
-      "mozi",
-      "laozi"
-    ]
-  },
-  "art_of_war": {
-    "textId": "art_of_war",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "孫子兵法",
-    "canonicalTitleEn": "Art of War",
-    "tradition": "military_classics",
-    "attributedAuthor": "sunzi",
-    "authorConfidence": "legendary",
-    "compilationPeriod": "warring_states",
-    "doNotAttributeTo": [
-      "confucius",
-      "laozi",
-      "mozi"
-    ]
-  },
-  "nicomachean_ethics": {
-    "textId": "nicomachean_ethics",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "尼各馬可倫理學",
-    "canonicalTitleEn": "Nicomachean Ethics",
-    "tradition": "peripatetic",
-    "attributedAuthor": "aristotle",
-    "authorConfidence": "attributed",
-    "compilationPeriod": "classical_greece",
-    "doNotAttributeTo": [
-      "plato",
-      "socrates",
-      "confucius"
-    ]
-  },
-  "metaphysics": {
-    "textId": "metaphysics",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "形而上學",
-    "canonicalTitleEn": "Metaphysics",
-    "tradition": "peripatetic",
-    "attributedAuthor": "aristotle",
-    "authorConfidence": "attributed",
-    "compilationPeriod": "classical_greece",
-    "doNotAttributeTo": [
-      "plato",
-      "socrates"
-    ]
-  },
-  "meditations": {
-    "textId": "meditations",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "沉思錄",
-    "canonicalTitleEn": "Meditations",
-    "tradition": "stoic",
-    "attributedAuthor": "marcus_aurelius",
-    "authorConfidence": "attributed",
-    "compilationPeriod": "roman_imperial",
-    "doNotAttributeTo": [
-      "plato",
-      "socrates",
-      "epictetus"
-    ]
-  },
-  "enchiridion": {
-    "textId": "enchiridion",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "手冊",
-    "canonicalTitleEn": "Enchiridion",
-    "tradition": "stoic",
-    "attributedAuthor": "arrian",
-    "authorConfidence": "compiled",
-    "notes": "Arrian compiled teachings of Epictetus; not Plato or Socrates",
-    "doNotAttributeTo": [
-      "epictetus",
-      "plato",
-      "socrates"
-    ]
-  },
-  "phaedo": {
-    "textId": "phaedo",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "斐多",
-    "canonicalTitleEn": "Phaedo",
-    "tradition": "platonist",
-    "attributedAuthor": "plato",
-    "authorConfidence": "attributed",
-    "compilationPeriod": "classical_greece",
-    "doNotAttributeTo": [
-      "socrates",
-      "confucius"
-    ]
-  },
-  "timaeus": {
-    "textId": "timaeus",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "蒂邁歐篇",
-    "canonicalTitleEn": "Timaeus",
-    "tradition": "platonist",
-    "attributedAuthor": "plato",
-    "authorConfidence": "attributed",
-    "doNotAttributeTo": [
-      "socrates",
-      "aristotle"
-    ]
-  },
-  "crito": {
-    "textId": "crito",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "克里同",
-    "canonicalTitleEn": "Crito",
-    "tradition": "platonist",
-    "attributedAuthor": "plato",
-    "authorConfidence": "attributed",
-    "doNotAttributeTo": [
-      "socrates"
-    ]
-  },
-  "politics": {
-    "textId": "politics",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "政治學",
-    "canonicalTitleEn": "Politics",
-    "tradition": "peripatetic",
-    "attributedAuthor": "aristotle",
-    "authorConfidence": "attributed",
-    "doNotAttributeTo": [
-      "plato",
-      "socrates",
-      "confucius"
-    ]
-  },
-  "categories": {
-    "textId": "categories",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "範疇篇",
-    "canonicalTitleEn": "Categories",
-    "tradition": "peripatetic",
-    "attributedAuthor": "aristotle",
-    "authorConfidence": "attributed",
-    "doNotAttributeTo": [
-      "plato",
-      "socrates"
-    ]
-  },
-  "i_ching": {
-    "textId": "i_ching",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "易經",
-    "canonicalTitleEn": "I Ching",
-    "tradition": "zhou_classics",
-    "attributedAuthor": "multiple",
-    "authorConfidence": "compiled",
-    "doNotAttributeTo": [
-      "confucius",
-      "laozi"
-    ]
-  },
-  "zuo_zhuan": {
-    "textId": "zuo_zhuan",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "左傳",
-    "canonicalTitleEn": "Zuo Zhuan",
-    "tradition": "zhou_classics",
-    "attributedAuthor": "zuo_qiuming",
-    "authorConfidence": "compiled",
-    "doNotAttributeTo": [
-      "confucius",
-      "laozi"
-    ]
-  },
-  "shiji": {
-    "textId": "shiji",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "史記",
-    "canonicalTitleEn": "Records of the Grand Historian",
-    "tradition": "historiography",
-    "attributedAuthor": "sima_qian",
-    "authorConfidence": "attributed",
-    "doNotAttributeTo": [
-      "confucius",
-      "plato"
-    ]
-  },
-  "book_of_songs": {
-    "textId": "book_of_songs",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "詩經",
-    "canonicalTitleEn": "Book of Songs",
-    "tradition": "zhou_classics",
-    "attributedAuthor": "multiple",
-    "authorConfidence": "compiled",
-    "doNotAttributeTo": [
-      "confucius",
-      "laozi"
-    ]
-  },
-  "great_learning": {
-    "textId": "great_learning",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "大學",
-    "canonicalTitleEn": "Great Learning",
-    "tradition": "confucian",
-    "attributedAuthor": "confucian_school",
-    "authorConfidence": "compiled",
-    "doNotAttributeTo": [
-      "laozi",
-      "mozi",
-      "plato"
-    ]
-  },
-  "doctrine_of_mean": {
-    "textId": "doctrine_of_mean",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "中庸",
-    "canonicalTitleEn": "Doctrine of the Mean",
-    "tradition": "confucian",
-    "attributedAuthor": "confucian_school",
-    "authorConfidence": "compiled",
-    "doNotAttributeTo": [
-      "laozi",
-      "zhuangzi"
-    ]
-  },
-  "apology": {
-    "textId": "apology",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "申辯篇",
-    "canonicalTitleEn": "Apology",
-    "tradition": "platonist",
-    "attributedAuthor": "plato",
-    "authorConfidence": "attributed",
-    "doNotAttributeTo": [
-      "socrates"
-    ],
-    "notes": "Plato's dialogue; Socrates speaks but did not author the text"
-  },
-  "parmenides": {
-    "textId": "parmenides",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "巴門尼德篇",
-    "canonicalTitleEn": "Parmenides",
-    "tradition": "platonist",
-    "attributedAuthor": "plato",
-    "authorConfidence": "attributed",
-    "doNotAttributeTo": [
-      "socrates",
-      "parmenides"
-    ]
-  },
-  "heraclitus_fragments": {
-    "textId": "heraclitus_fragments",
-    "domain": "philosophy",
-    "recordType": "text",
-    "canonicalTitleZh": "赫拉克利特殘篇",
-    "canonicalTitleEn": "Heraclitus fragments",
-    "tradition": "presocratic",
-    "attributedAuthor": "heraclitus",
-    "authorConfidence": "compiled",
-    "doNotAttributeTo": [
-      "plato",
-      "socrates",
-      "aristotle"
-    ]
-  },
-  "don_quixote": {
+[
+  {
     "textId": "don_quixote",
     "domain": "literature",
     "recordType": "text",
@@ -472,7 +14,7 @@
     ],
     "provenance": "Universally attributed to Miguel de Cervantes; published in two parts, 1605 and 1615."
   },
-  "paradise_lost": {
+  {
     "textId": "paradise_lost",
     "domain": "literature",
     "recordType": "text",
@@ -487,7 +29,7 @@
     ],
     "provenance": "Epic poem published by John Milton in 1667 (revised 1674); authorship is settled."
   },
-  "the_divine_comedy": {
+  {
     "textId": "the_divine_comedy",
     "domain": "literature",
     "recordType": "text",
@@ -502,7 +44,7 @@
     ],
     "provenance": "Composed by Dante Alighieri c.1308-1320; authorship universally established."
   },
-  "hamlet": {
+  {
     "textId": "hamlet",
     "domain": "drama",
     "recordType": "text",
@@ -517,7 +59,7 @@
     ],
     "provenance": "Tragedy by William Shakespeare, written c.1600; first printed 1603/1604."
   },
-  "macbeth": {
+  {
     "textId": "macbeth",
     "domain": "drama",
     "recordType": "text",
@@ -532,7 +74,7 @@
     ],
     "provenance": "Tragedy by William Shakespeare, c.1606; printed in the First Folio (1623)."
   },
-  "pride_and_prejudice": {
+  {
     "textId": "pride_and_prejudice",
     "domain": "literature",
     "recordType": "text",
@@ -547,7 +89,7 @@
     ],
     "provenance": "Novel by Jane Austen, published 1813; authorship is settled."
   },
-  "war_and_peace": {
+  {
     "textId": "war_and_peace",
     "domain": "literature",
     "recordType": "text",
@@ -562,7 +104,7 @@
     ],
     "provenance": "Novel by Leo Tolstoy, serialized and published 1865-1869."
   },
-  "anna_karenina": {
+  {
     "textId": "anna_karenina",
     "domain": "literature",
     "recordType": "text",
@@ -577,7 +119,7 @@
     ],
     "provenance": "Novel by Leo Tolstoy, serialized 1875-1877."
   },
-  "crime_and_punishment": {
+  {
     "textId": "crime_and_punishment",
     "domain": "literature",
     "recordType": "text",
@@ -592,7 +134,7 @@
     ],
     "provenance": "Novel by Fyodor Dostoevsky, published 1866."
   },
-  "the_brothers_karamazov": {
+  {
     "textId": "the_brothers_karamazov",
     "domain": "literature",
     "recordType": "text",
@@ -607,7 +149,7 @@
     ],
     "provenance": "Final novel of Fyodor Dostoevsky, published 1880."
   },
-  "les_mis_rables": {
+  {
     "textId": "les_mis_rables",
     "domain": "literature",
     "recordType": "text",
@@ -622,7 +164,7 @@
     ],
     "provenance": "Novel by Victor Hugo, published 1862."
   },
-  "the_hunchback_of_notre_dame": {
+  {
     "textId": "the_hunchback_of_notre_dame",
     "domain": "literature",
     "recordType": "text",
@@ -637,7 +179,7 @@
     ],
     "provenance": "Novel by Victor Hugo, published 1831 (Notre-Dame de Paris)."
   },
-  "the_count_of_monte_cristo": {
+  {
     "textId": "the_count_of_monte_cristo",
     "domain": "literature",
     "recordType": "text",
@@ -652,7 +194,7 @@
     ],
     "provenance": "Novel by Alexandre Dumas (with collaborator Auguste Maquet), serialized 1844-1846."
   },
-  "madame_bovary": {
+  {
     "textId": "madame_bovary",
     "domain": "literature",
     "recordType": "text",
@@ -667,7 +209,7 @@
     ],
     "provenance": "Novel by Gustave Flaubert, published 1856-1857."
   },
-  "faust": {
+  {
     "textId": "faust",
     "domain": "drama",
     "recordType": "text",
@@ -682,7 +224,7 @@
     ],
     "provenance": "Dramatic poem by Johann Wolfgang von Goethe; Part One 1808, Part Two 1832."
   },
-  "the_sorrows_of_young_werther": {
+  {
     "textId": "the_sorrows_of_young_werther",
     "domain": "literature",
     "recordType": "text",
@@ -697,7 +239,7 @@
     ],
     "provenance": "Epistolary novel by Johann Wolfgang von Goethe, published 1774."
   },
-  "don_juan": {
+  {
     "textId": "don_juan",
     "domain": "literature",
     "recordType": "text",
@@ -712,7 +254,7 @@
     ],
     "provenance": "Satirical epic poem by Lord Byron (George Gordon), published 1819-1824."
   },
-  "frankenstein": {
+  {
     "textId": "frankenstein",
     "domain": "literature",
     "recordType": "text",
@@ -727,7 +269,7 @@
     ],
     "provenance": "Novel by Mary Shelley, published 1818."
   },
-  "jane_eyre": {
+  {
     "textId": "jane_eyre",
     "domain": "literature",
     "recordType": "text",
@@ -742,7 +284,7 @@
     ],
     "provenance": "Novel by Charlotte Brontë, published 1847 under the pen name Currer Bell."
   },
-  "wuthering_heights": {
+  {
     "textId": "wuthering_heights",
     "domain": "literature",
     "recordType": "text",
@@ -757,7 +299,7 @@
     ],
     "provenance": "Sole novel of Emily Brontë, published 1847 under the pen name Ellis Bell."
   },
-  "great_expectations": {
+  {
     "textId": "great_expectations",
     "domain": "literature",
     "recordType": "text",
@@ -772,7 +314,7 @@
     ],
     "provenance": "Novel by Charles Dickens, serialized 1860-1861."
   },
-  "a_tale_of_two_cities": {
+  {
     "textId": "a_tale_of_two_cities",
     "domain": "literature",
     "recordType": "text",
@@ -787,7 +329,7 @@
     ],
     "provenance": "Novel by Charles Dickens, published 1859."
   },
-  "moby_dick": {
+  {
     "textId": "moby_dick",
     "domain": "literature",
     "recordType": "text",
@@ -802,7 +344,7 @@
     ],
     "provenance": "Novel by Herman Melville, published 1851."
   },
-  "the_scarlet_letter": {
+  {
     "textId": "the_scarlet_letter",
     "domain": "literature",
     "recordType": "text",
@@ -817,7 +359,7 @@
     ],
     "provenance": "Novel by Nathaniel Hawthorne, published 1850."
   },
-  "adventures_of_huckleberry_finn": {
+  {
     "textId": "adventures_of_huckleberry_finn",
     "domain": "literature",
     "recordType": "text",
@@ -832,7 +374,7 @@
     ],
     "provenance": "Novel published 1884-1885 by Samuel Clemens under his well-known pen name Mark Twain."
   },
-  "the_picture_of_dorian_gray": {
+  {
     "textId": "the_picture_of_dorian_gray",
     "domain": "literature",
     "recordType": "text",
@@ -847,7 +389,7 @@
     ],
     "provenance": "Novel by Oscar Wilde, published 1890-1891."
   },
-  "ulysses": {
+  {
     "textId": "ulysses",
     "domain": "literature",
     "recordType": "text",
@@ -862,7 +404,7 @@
     ],
     "provenance": "Novel by James Joyce, published 1922."
   },
-  "the_trial": {
+  {
     "textId": "the_trial",
     "domain": "literature",
     "recordType": "text",
@@ -877,7 +419,7 @@
     ],
     "provenance": "Novel by Franz Kafka, written 1914-1915, published posthumously 1925."
   },
-  "in_search_of_lost_time": {
+  {
     "textId": "in_search_of_lost_time",
     "domain": "literature",
     "recordType": "text",
@@ -892,7 +434,7 @@
     ],
     "provenance": "Novel sequence by Marcel Proust, published 1913-1927."
   },
-  "one_hundred_years_of_solitude": {
+  {
     "textId": "one_hundred_years_of_solitude",
     "domain": "literature",
     "recordType": "text",
@@ -907,7 +449,7 @@
     ],
     "provenance": "Novel by Gabriel García Márquez, published 1967."
   },
-  "decameron": {
+  {
     "textId": "decameron",
     "domain": "literature",
     "recordType": "text",
@@ -922,7 +464,7 @@
     ],
     "provenance": "Collection of novellas by Giovanni Boccaccio, composed c.1349-1353."
   },
-  "the_canterbury_tales": {
+  {
     "textId": "the_canterbury_tales",
     "domain": "literature",
     "recordType": "text",
@@ -937,7 +479,7 @@
     ],
     "provenance": "Collection of stories by Geoffrey Chaucer, composed c.1387-1400."
   },
-  "gulliver_s_travels": {
+  {
     "textId": "gulliver_s_travels",
     "domain": "literature",
     "recordType": "text",
@@ -952,7 +494,7 @@
     ],
     "provenance": "Satirical novel by Jonathan Swift, published 1726."
   },
-  "robinson_crusoe": {
+  {
     "textId": "robinson_crusoe",
     "domain": "literature",
     "recordType": "text",
@@ -967,7 +509,7 @@
     ],
     "provenance": "Novel by Daniel Defoe, published 1719."
   },
-  "dream_of_the_red_chamber": {
+  {
     "textId": "dream_of_the_red_chamber",
     "domain": "literature",
     "recordType": "text",
@@ -983,7 +525,7 @@
     ],
     "provenance": "Novel by Cao Xueqin, composed mid-18th century (later chapters edited by Gao E)."
   },
-  "romance_of_the_three_kingdoms": {
+  {
     "textId": "romance_of_the_three_kingdoms",
     "domain": "literature",
     "recordType": "text",
@@ -999,7 +541,7 @@
     ],
     "provenance": "Historical novel traditionally attributed to Luo Guanzhong, 14th century."
   },
-  "journey_to_the_west": {
+  {
     "textId": "journey_to_the_west",
     "domain": "literature",
     "recordType": "text",
@@ -1015,7 +557,7 @@
     ],
     "provenance": "Novel conventionally attributed to Wu Cheng'en, 16th century (Ming dynasty)."
   },
-  "water_margin": {
+  {
     "textId": "water_margin",
     "domain": "literature",
     "recordType": "text",
@@ -1031,7 +573,7 @@
     ],
     "provenance": "Novel traditionally attributed to Shi Nai'an, 14th century."
   },
-  "the_tale_of_genji": {
+  {
     "textId": "the_tale_of_genji",
     "domain": "literature",
     "recordType": "text",
@@ -1047,7 +589,7 @@
     ],
     "provenance": "Novel by Murasaki Shikibu, composed early 11th century."
   },
-  "shahnameh": {
+  {
     "textId": "shahnameh",
     "domain": "literature",
     "recordType": "text",
@@ -1062,7 +604,7 @@
     ],
     "provenance": "Persian epic completed by Ferdowsi c.1010 CE."
   },
-  "masnavi": {
+  {
     "textId": "masnavi",
     "domain": "literature",
     "recordType": "text",
@@ -1077,7 +619,7 @@
     ],
     "provenance": "Sufi poem by Jalal al-Din Rumi, composed 13th century."
   },
-  "rubaiyat_of_omar_khayyam": {
+  {
     "textId": "rubaiyat_of_omar_khayyam",
     "domain": "literature",
     "recordType": "text",
@@ -1092,7 +634,7 @@
     ],
     "provenance": "Quatrains traditionally attributed to Omar Khayyam, 11th-12th century."
   },
-  "muqaddimah": {
+  {
     "textId": "muqaddimah",
     "domain": "history",
     "recordType": "text",
@@ -1107,7 +649,7 @@
     ],
     "provenance": "Introduction to history by Ibn Khaldun, completed 1377."
   },
-  "the_prince": {
+  {
     "textId": "the_prince",
     "domain": "philosophy",
     "recordType": "text",
@@ -1122,7 +664,7 @@
     ],
     "provenance": "Political treatise by Niccolò Machiavelli, written 1513, published 1532."
   },
-  "leviathan": {
+  {
     "textId": "leviathan",
     "domain": "philosophy",
     "recordType": "text",
@@ -1137,7 +679,7 @@
     ],
     "provenance": "Political philosophy by Thomas Hobbes, published 1651."
   },
-  "two_treatises_of_government": {
+  {
     "textId": "two_treatises_of_government",
     "domain": "philosophy",
     "recordType": "text",
@@ -1152,7 +694,7 @@
     ],
     "provenance": "Political work by John Locke, published 1689."
   },
-  "discourse_on_the_method": {
+  {
     "textId": "discourse_on_the_method",
     "domain": "philosophy",
     "recordType": "text",
@@ -1167,7 +709,7 @@
     ],
     "provenance": "Philosophical work by René Descartes, published 1637."
   },
-  "ethics": {
+  {
     "textId": "ethics",
     "domain": "philosophy",
     "recordType": "text",
@@ -1182,7 +724,7 @@
     ],
     "provenance": "Philosophical treatise by Baruch Spinoza, published posthumously 1677."
   },
-  "critique_of_pure_reason": {
+  {
     "textId": "critique_of_pure_reason",
     "domain": "philosophy",
     "recordType": "text",
@@ -1197,7 +739,7 @@
     ],
     "provenance": "Philosophical work by Immanuel Kant, first edition 1781."
   },
-  "an_enquiry_concerning_human_understanding": {
+  {
     "textId": "an_enquiry_concerning_human_understanding",
     "domain": "philosophy",
     "recordType": "text",
@@ -1212,7 +754,7 @@
     ],
     "provenance": "Philosophical work by David Hume, published 1748."
   },
-  "the_wealth_of_nations": {
+  {
     "textId": "the_wealth_of_nations",
     "domain": "philosophy",
     "recordType": "text",
@@ -1227,7 +769,7 @@
     ],
     "provenance": "Treatise on political economy by Adam Smith, published 1776."
   },
-  "das_kapital": {
+  {
     "textId": "das_kapital",
     "domain": "philosophy",
     "recordType": "text",
@@ -1242,7 +784,7 @@
     ],
     "provenance": "Work of political economy by Karl Marx; Volume I published 1867."
   },
-  "thus_spoke_zarathustra": {
+  {
     "textId": "thus_spoke_zarathustra",
     "domain": "philosophy",
     "recordType": "text",
@@ -1257,7 +799,7 @@
     ],
     "provenance": "Philosophical work by Friedrich Nietzsche, published 1883-1885."
   },
-  "the_world_as_will_and_representation": {
+  {
     "textId": "the_world_as_will_and_representation",
     "domain": "philosophy",
     "recordType": "text",
@@ -1272,7 +814,7 @@
     ],
     "provenance": "Philosophical work by Arthur Schopenhauer, published 1818-1819."
   },
-  "on_the_origin_of_species": {
+  {
     "textId": "on_the_origin_of_species",
     "domain": "science",
     "recordType": "text",
@@ -1287,7 +829,7 @@
     ],
     "provenance": "Scientific work by Charles Darwin, published 1859."
   },
-  "philosophiae_naturalis_principia_mathematica": {
+  {
     "textId": "philosophiae_naturalis_principia_mathematica",
     "domain": "science",
     "recordType": "text",
@@ -1302,7 +844,7 @@
     ],
     "provenance": "Foundational physics treatise by Isaac Newton, published 1687."
   },
-  "dialogue_concerning_the_two_chief_world_systems": {
+  {
     "textId": "dialogue_concerning_the_two_chief_world_systems",
     "domain": "science",
     "recordType": "text",
@@ -1317,7 +859,7 @@
     ],
     "provenance": "Scientific work by Galileo Galilei, published 1632."
   },
-  "on_the_revolutions_of_the_heavenly_spheres": {
+  {
     "textId": "on_the_revolutions_of_the_heavenly_spheres",
     "domain": "science",
     "recordType": "text",
@@ -1332,7 +874,7 @@
     ],
     "provenance": "Astronomical work by Nicolaus Copernicus, published 1543."
   },
-  "relativity_the_special_and_the_general_theory": {
+  {
     "textId": "relativity_the_special_and_the_general_theory",
     "domain": "science",
     "recordType": "text",
@@ -1347,7 +889,7 @@
     ],
     "provenance": "Popular exposition by Albert Einstein, published 1916."
   },
-  "the_interpretation_of_dreams": {
+  {
     "textId": "the_interpretation_of_dreams",
     "domain": "science",
     "recordType": "text",
@@ -1362,7 +904,7 @@
     ],
     "provenance": "Psychological work by Sigmund Freud, published 1899 (dated 1900)."
   },
-  "candide": {
+  {
     "textId": "candide",
     "domain": "literature",
     "recordType": "text",
@@ -1377,7 +919,7 @@
     ],
     "provenance": "Satirical novella published 1759 by François-Marie Arouet under his pen name Voltaire."
   },
-  "the_social_contract": {
+  {
     "textId": "the_social_contract",
     "domain": "philosophy",
     "recordType": "text",
@@ -1392,7 +934,7 @@
     ],
     "provenance": "Political philosophy by Jean-Jacques Rousseau, published 1762."
   },
-  "the_spirit_of_the_laws": {
+  {
     "textId": "the_spirit_of_the_laws",
     "domain": "law",
     "recordType": "text",
@@ -1407,7 +949,7 @@
     ],
     "provenance": "Treatise on political and legal theory by Montesquieu, published 1748."
   },
-  "commentaries_on_the_laws_of_england": {
+  {
     "textId": "commentaries_on_the_laws_of_england",
     "domain": "law",
     "recordType": "text",
@@ -1422,7 +964,7 @@
     ],
     "provenance": "Treatise on English common law by William Blackstone, published 1765-1769."
   },
-  "the_history_of_the_decline_and_fall_of_the_roman_empire": {
+  {
     "textId": "the_history_of_the_decline_and_fall_of_the_roman_empire",
     "domain": "history",
     "recordType": "text",
@@ -1437,7 +979,7 @@
     ],
     "provenance": "History by Edward Gibbon, published 1776-1789."
   },
-  "the_histories": {
+  {
     "textId": "the_histories",
     "domain": "history",
     "recordType": "text",
@@ -1452,7 +994,7 @@
     ],
     "provenance": "Historical work by Herodotus of Halicarnassus, 5th century BCE."
   },
-  "history_of_the_peloponnesian_war": {
+  {
     "textId": "history_of_the_peloponnesian_war",
     "domain": "history",
     "recordType": "text",
@@ -1467,7 +1009,7 @@
     ],
     "provenance": "Historical work by Thucydides, late 5th century BCE."
   },
-  "oedipus_rex": {
+  {
     "textId": "oedipus_rex",
     "domain": "drama",
     "recordType": "text",
@@ -1482,7 +1024,7 @@
     ],
     "provenance": "Tragedy by Sophocles, performed c.429 BCE."
   },
-  "medea": {
+  {
     "textId": "medea",
     "domain": "drama",
     "recordType": "text",
@@ -1497,7 +1039,7 @@
     ],
     "provenance": "Tragedy by Euripides, first produced 431 BCE."
   },
-  "metamorphoses": {
+  {
     "textId": "metamorphoses",
     "domain": "literature",
     "recordType": "text",
@@ -1512,7 +1054,7 @@
     ],
     "provenance": "Narrative poem by Ovid (Publius Ovidius Naso), completed c.8 CE."
   },
-  "the_pilgrim_s_progress": {
+  {
     "textId": "the_pilgrim_s_progress",
     "domain": "literature",
     "recordType": "text",
@@ -1527,7 +1069,7 @@
     ],
     "provenance": "Allegory by John Bunyan, published 1678."
   },
-  "novum_organum": {
+  {
     "textId": "novum_organum",
     "domain": "philosophy",
     "recordType": "text",
@@ -1542,7 +1084,7 @@
     ],
     "provenance": "Philosophical work by Francis Bacon, published 1620."
   },
-  "summa_theologica": {
+  {
     "textId": "summa_theologica",
     "domain": "philosophy",
     "recordType": "text",
@@ -1557,7 +1099,7 @@
     ],
     "provenance": "Theological work by Thomas Aquinas, composed 1265-1274 (left unfinished)."
   },
-  "confessions": {
+  {
     "textId": "confessions",
     "domain": "philosophy",
     "recordType": "text",
@@ -1572,4 +1114,4 @@
     ],
     "provenance": "Autobiographical work by Augustine of Hippo, composed c.397-400 CE."
   }
-}
+]

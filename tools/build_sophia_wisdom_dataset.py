@@ -772,13 +772,17 @@ def build(check_only: bool, stats: bool, *, teacher_spec: str | None = None,
             "target": ">=10k decontaminated gate-passed rows",
             "achieved": total,
             "met": total >= 10000,
-            "honest_note": ("Volume is PROMPT-bound, not teacher-bound: the structured corpus is "
-                            "~72 records, so even a live LLM teacher (now runnable — egress open, "
-                            "see teacherRun) only raises answer quality/variety per prompt, and the "
-                            "builder dedups by normalized prompt so samples collapse to one row. "
-                            "Reaching 10-20k needs CORPUS ENRICHMENT (more attribution/religion/"
-                            "tradition/history records), not just the teacher. Pipeline complete + "
-                            "fail-closed; live-teacher path proven."),
+            "honest_note": ("Volume is CORPUS-bound (not teacher-bound): the builder dedups by "
+                            "normalized prompt, so rows scale with the number of ground-truth records. "
+                            "ENRICHMENT STARTED 2026-06-27: attributions corpus 30 -> 104 records "
+                            "(tools/enrich_corpus.py, fail-closed on accuracy: every record carries a "
+                            "provenance note; auto-decontaminated vs heldout_v1 + transfer_v1) lifted "
+                            "the dataset 880 -> 1344 gate-passed rows (+53%) and preference pairs "
+                            "233 -> 539. STILL BELOW the 10k target -> M2 stays NO-GO on absolute "
+                            "volume. Measured yield ~6.3 net rows per attribution record, so 10k needs "
+                            "~1380 MORE attribution records (or, higher-yield, also enriching "
+                            "tradition/religion/history records which feed more generators) — a "
+                            "sustained curation effort, not a one-shot. Pipeline complete + fail-closed."),
         },
         "boundary": ("Habits learned by weights; truth enforced by the EXTERNAL gate. Not an AGI "
                      "claim. General-retention pack is small — expand with a license-clean instruct "
