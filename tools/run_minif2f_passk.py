@@ -126,6 +126,18 @@ def main() -> int:
     print(f"miniF2F-v2 pass@1: {len(ids)} problems  spec={args.spec}  "
           f"project={'set' if have_project else 'MISSING -> fail-closed abstain'}")
 
+    # No-overclaim guard: a keyless dispatch (no provider secret) would make every
+    # problem error -> abstain, which must NOT be mistaken for a measured 0/N. Detect it
+    # and fail loudly (exit 2) rather than emit a misleading near-zero pass@1.
+    from agent.model import resolve_config
+    cfg = resolve_config(args.spec)
+    if cfg.kind == "mock" or not cfg.resolved_key():
+        print(f"::error::no real model resolved for spec '{args.spec}' "
+              f"(kind={cfg.kind}, key={'set' if cfg.resolved_key() else 'MISSING'}). "
+              f"Set the provider secret (e.g. OPENROUTER_API_KEY). A keyless run is NOT a "
+              f"measured pass@1 and is refused.", file=sys.stderr)
+        return 2
+
     client = default_client(args.spec)
     results, solved, cost = [], 0, 0.0
     for pid in ids:
