@@ -2094,5 +2094,51 @@ pending (a) a strong-base decay check, (b) a retrieve-then-decide mechanism test
 labeler: `tools/run_claimreview_eval.py --frame implicit`, pinned by
 `tests/test_claimreview_implicit_frame.py`.
 
+## session-consolidation-2026-06-27
+
+**Status:** HOUSEKEEPING. Ties together this session's results and reconciles the
+canonical registries so the repo's net position is readable in one place. No new
+experiment; `canClaimAGI` stays **False**.
+
+**What this session added (all on branch `claude/sophia-agi-handover-dnmstw`).**
+1. Reviewer brief for the Datalog reproducer (`docs/06-Roadmap/REVIEWER-Datalog-
+   Reproducer-Brief.md`) — Move 1 of the handover; reproducer re-verified PASS on a
+   fresh clone (957/957). Hand-off artifact for an external reviewer; no AI run moves
+   external status.
+2. Clean 3rd multi-judge run → `provenance-delta-multijudge-2family-3run-validated-
+   2026-06-27`: all 5 flags pass, `validated: true` (Δ +9.0%, CI [+4.2,+14.6], κ=0.76).
+3. ClaimReview implicit-elaboration frame → `claimreview-implicit-endorsement-frame-
+   2026-06-27`: SUBSTRATE FOUND (raw 53–87% vs 1.7–3.3% in the QA frame); reopens the
+   axis that the obscure-pack entry had closed.
+
+**Registry reconciliation (the consolidation action).**
+- `agi-proof/benchmark-results/published-results.json` (the SINGLE source of truth for
+  published Provenance-Delta numbers; `RESULTS.md` is generated from it via
+  `tools/build_results_page.py`) had `lastUpdated: 2026-06-22` and ONE `validated`
+  row. Added the 3-run multi-judge result as a SECOND validated row and bumped
+  `lastUpdated` to 2026-06-27. **Framed as corroboration, not a new claim:** the
+  +12.5% row remains the headline; the +9.0% row is an independent-judge
+  reproduction of the SAME property. RESULTS.md regenerated; `lint_claims` OK.
+- The gate's anti-fabrication effect on dolphin now has THREE independent
+  determinations recorded coherently: +12.5% (deepseek+llama, headline), +9.0%
+  (gpt-4o+claude, 3-run, this session), +9.0% (judge-free lexical). All weak-model,
+  all CI-excludes-0; Δ=0 on a strong base.
+
+**Verified-clean (no action needed).**
+- `agent/claimreview_retriever.py` is gone (retired in `2777bcb`); `GoogleFactCheckBackend`
+  in `agent/live_sources.py` is the single Fact-Check integration. No dangling imports.
+- C1–C5 (`prover_verifier`, `abstention_scoring`, `conformal_policy`/`conformal_gate`,
+  `activation_probes`, `graded_decision`) remain `candidateOnly: true` / `validated:
+  false` in code; `canClaimAGI: false` in `architecture-bets.json`.
+
+**Known gaps left OPEN (deliberately not closed here).**
+- published-results.json has no `candidateEvals` section; C1–C5 are not listed there.
+  Not added — they are candidate scaffolds, and populating the public results file
+  with unvalidated mechanisms needs a deliberate decision (flagged, not done).
+- The implicit-frame substrate needs a strong-base decay check + a retrieve-then-decide
+  mechanism test + judge/human label confirmation before it is more than candidate-grade.
+- External validation status is UNCHANGED: still no third-party reviewer run of the
+  Datalog reproducer (the one binding constraint; the brief is now ready for one).
+
 
 

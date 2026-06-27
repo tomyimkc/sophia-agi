@@ -5,7 +5,7 @@
     "hiddenEvalNote": "Hidden-eval prompts are never published; only aggregates + hashed commitments.",
     "schemaVersion": 1
   },
-  "lastUpdated": "2026-06-22",
+  "lastUpdated": "2026-06-27",
   "validated": [
     {
       "model": "ollama:dolphin-llama3:8b",
@@ -30,6 +30,32 @@
         "ciExcludesZero": true
       },
       "note": "First number to clear the no-overclaim gate: notMock + 2 judge families + Cohen's kappa>=0.40 + 3 runs + 95% bootstrap CI excludes 0. N=24 cases on the expanded benchmark; the prior N=46 single-judge run's CI straddled zero. The +gate lever cuts dolphin's hallucinated attributions 36.1%->23.6% at 0% false-positive cost."
+    },
+    {
+      "model": "ollama:dolphin-llama3:8b",
+      "modelNote": "same subject as the headline row; lever = +gate, via tools/run_unified_uplift.py. Subject served on a transient RunPod RTX 4090 pod (same ollama model/quant).",
+      "judge": "consensus: llmhub:gpt-4o (openai) + llmhub:claude-sonnet-4-6 (anthropic) (2 families)",
+      "agreement": 0.8819,
+      "runs": 3,
+      "falseCases": 48,
+      "hallucinationAlone": 0.4236,
+      "hallucinationGated": 0.3333,
+      "delta": 0.0903,
+      "deltaCI": [
+        0.0417,
+        0.1458
+      ],
+      "falsePositiveCost": 0.0,
+      "coverage": 0.2295,
+      "validatedChecks": {
+        "notMock": true,
+        "multiFamilyJudges": true,
+        "kappaAboveFloor": true,
+        "atLeast3Runs": true,
+        "ciExcludesZero": true
+      },
+      "kappa": 0.7637,
+      "note": "SECOND independent multi-judge determination of the SAME provenance-delta property, with a different judge pair (openai gpt-4o + anthropic claude, both distinct from the deepseek+llama pair above) on N=48 over 3 runs. It CORROBORATES — does not multiply — the single headline claim; the +12.5% row remains the headline number. Combined with the judge-free reproduction (+9.0%, lexical labeler), the gate's anti-fabrication effect on dolphin now has three independent determinations, all CI-excludes-0. Still a weak-model phenomenon (decays to 0 on a strong base) and self-authored pack. Ledger: provenance-delta-multijudge-2family-3run-validated-2026-06-27."
     }
   ],
   "externalEvals": [
@@ -313,8 +339,38 @@
     "claim": "Self-consistency selective prediction (the C1 conformal method) significantly lifts selective accuracy on a third-party benchmark — non-self-authored.",
     "graders": "consensus: llmhub:claude-sonnet-4-6 + llmhub:gemini-2.5-pro (2 independent families)",
     "rows": [
-      {"subject": "deepseek-chat", "dataset": "SimpleQA Verified", "n": 1000, "attempted": 940, "selfAbstain": 0.06, "signal": "self-consistency", "auroc": 0.649, "liftAt20Coverage": {"mean": 0.158, "ciLow": 0.098, "ciHigh": 0.221}, "kappa": 0.974, "date": "2026-06-26"},
-      {"subject": "qwen-2.5-72b-instruct", "dataset": "SimpleQA (original)", "n": 2000, "attempted": 786, "selfAbstain": 0.61, "signal": "self-consistency", "auroc": 0.636, "liftAt20Coverage": {"mean": 0.078, "ciLow": 0.023, "ciHigh": 0.135}, "kappa": 0.995, "date": "2026-06-26"}
+      {
+        "subject": "deepseek-chat",
+        "dataset": "SimpleQA Verified",
+        "n": 1000,
+        "attempted": 940,
+        "selfAbstain": 0.06,
+        "signal": "self-consistency",
+        "auroc": 0.649,
+        "liftAt20Coverage": {
+          "mean": 0.158,
+          "ciLow": 0.098,
+          "ciHigh": 0.221
+        },
+        "kappa": 0.974,
+        "date": "2026-06-26"
+      },
+      {
+        "subject": "qwen-2.5-72b-instruct",
+        "dataset": "SimpleQA (original)",
+        "n": 2000,
+        "attempted": 786,
+        "selfAbstain": 0.61,
+        "signal": "self-consistency",
+        "auroc": 0.636,
+        "liftAt20Coverage": {
+          "mean": 0.078,
+          "ciLow": 0.023,
+          "ciHigh": 0.135
+        },
+        "kappa": 0.995,
+        "date": "2026-06-26"
+      }
     ],
     "note": "CROSS-MODEL VALIDATED on external public data. Self-consistency selective prediction lifts selective accuracy on BOTH independent subject families, each graded by 2 independent families (Cohen kappa 0.97/0.99) with the lift's 95% CI excluding zero. The effect is base-model-dependent: larger for the overconfident DeepSeek (+15.8pts; self-abstains 6%) than the cautious Qwen (+7.8pts; self-abstains 61%). Of three confidence signals only self-consistency works; stated confidence and token-logprob are non-significant on both. This is a calibration / selective-prediction result, NOT an AGI claim; canClaimAGI stays false. Detail: agi-proof/benchmark-results/real-model/simpleqa/."
   }

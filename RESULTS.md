@@ -3,7 +3,7 @@
 <!-- GENERATED from agi-proof/benchmark-results/published-results.json by
      tools/build_results_page.py — do not edit by hand. -->
 
-_Last updated: 2026-06-22_
+_Last updated: 2026-06-27_
 
 **No-overclaim gate.** A number is **VALIDATED** only with ≥2 independent judges in consensus (judge ≠ subject), reported inter-judge agreement, ≥3 runs, and confidence intervals. Everything else is **illustrative** and labelled. Hidden-eval prompts are never published — only aggregates. See [SECURITY.md](SECURITY.md) and [methodology](docs/11-Platform/Provenance-Delta.md).
 
@@ -12,6 +12,7 @@ _Last updated: 2026-06-22_
 | Model | Judges | Agreement | Runs | Halluc. alone | Halluc. gated | Δ (95% CI) | FP cost | Coverage |
 |---|---|---|---|---|---|---|---|---|
 | ollama:dolphin-llama3:8b | consensus: openrouter:deepseek/deepseek-chat + openrouter:meta-llama/llama-3.3-70b-instruct (2 families) | — | 3 | 36.1% | 23.6% | 12.5% [5.6%, 19.4%] | 0.0% | 34.6% |
+| ollama:dolphin-llama3:8b | consensus: llmhub:gpt-4o (openai) + llmhub:claude-sonnet-4-6 (anthropic) (2 families) | 88.2% | 3 | 42.4% | 33.3% | 9.0% [4.2%, 14.6%] | 0.0% | 22.9% |
 
 ## Illustrative only (not headline-grade)
 
