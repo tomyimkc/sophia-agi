@@ -17,6 +17,7 @@ The honest conclusion up front, because it is the whole point:
 | Professional fact-check | `GoogleFactCheckBackend` | viral/general myths | **high** | 4/21 debunk-pack coverage (Great Wall, Edison…) |
 | Provenance/authorship | `LiveFactBackend` (Wikidata/Crossref) | "X wrote Y" attributions | **high** | 4/4 authorship misattributions (Dickens/Shakespeare…) |
 | **Citation existence** | `citation_existence_verifier` | fabricated *studies/citations* | **high** | 0% over-block; catches specific fake studies; 9.3% overall (model debunks; vague cites missed) |
+| **Attribution swap** | `attribution_swap_verifier` | real work, *wrong creator* | **high** | 0% over-block (3-run CI [0,0]); ~⅔ of the swap style (Wikidata-resolvable); honest misses on ambiguous works |
 | Layered core-claim | `layered_verifier` | routes to the best of the above | high→low | 19/21 verified-debunk (4 high-indep + 15 flagged) |
 | Core-claim contamination | `core_claim_source_verifier` | verbose grounded answers | depends on refs | over-block 0%; catch coverage-bounded |
 | Hybrid | `hybrid_source_verifier` | core-claim + authoritative oracles | high where covered | over-block 0%; auth-only catch 0/43 on this pack |
@@ -46,10 +47,13 @@ The honest conclusion up front, because it is the whole point:
 - [x] **Fail-closed abstention** — never vouch for an unverifiable citation/attribution — built.
 - [x] **Honest coverage reporting** — each layer's catch/miss documented, negatives in the ledger.
 - [x] **A correction discipline** — a wrong number (70.6%) was found and withdrawn this session.
-- [ ] **Multi-run CIs + answer≠judge as the default protocol** on every headline (partially done;
-      single-run live numbers remain candidates, not validated).
-- [ ] **An attribution-swap verifier** — the citation verifier confirms a study *exists* but not
-      that it says what is claimed; swaps of real works still need an entailment check.
+- [x] **An attribution-swap verifier** — `attribution_swap_verifier` checks a real work's credited
+      creator against Wikidata; 0% over-block (3-run CI), HIGH independence, fail-open on ambiguity.
+- [~] **Multi-run CIs + answer≠judge as the default protocol** — adopted and demonstrated (the
+      attribution run is 3-run + answer≠judge + bootstrap CI); not yet retrofitted to every prior
+      headline, so older single-run live numbers remain candidates.
+- [ ] **Misstated-conclusion check** — existence + correct-author still don't cover a real study
+      whose *finding* is misstated (needs an entailment check against the source); the remaining slice.
 - [ ] **Third-party replication** of the whole gate — the standing top-level gap (`canClaimAGI:false`).
 
 ## Bottom line
