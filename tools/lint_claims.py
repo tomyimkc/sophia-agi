@@ -29,6 +29,7 @@ SCAN: list[str] = [
     "SPONSORS.md",
     "agi-proof/README.md",
     "agi-proof/sophia-wisdom-4b-method-note.md",
+    "agi-proof/research-note-source-discipline.md",
     "agi-proof/measurement-thesis.md",
     "docs/00-Index/Home.md",
 ]

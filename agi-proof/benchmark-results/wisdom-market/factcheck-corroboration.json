@@ -1,0 +1,164 @@
+{
+  "source": "Google Fact Check Tools API (claims:search; ClaimReview markup)",
+  "scope": "Independent third-party corroboration for the corpus's DEBUNKABLE pop-myth slice ONLY. Published fact-checkers do not review authorship/provenance, so the source-discipline CORE is necessarily uncovered — reported, not hidden.",
+  "mythCoverage": {
+    "checked": 15,
+    "corroborated": 6,
+    "rate": 0.4
+  },
+  "coreCoverage": {
+    "checked": 3,
+    "corroborated": 0,
+    "note": "expected ~0 — fact-checkers do not cover literary attribution"
+  },
+  "myths": [
+    {
+      "claim": "The Great Wall of China is visible from space with the naked eye",
+      "covered": true,
+      "factChecks": [
+        {
+          "claimText": "The Great Wall of China is the only man-made object visible from the moon.",
+          "publisher": "Snopes.com",
+          "rating": "False",
+          "url": "https://www.snopes.com/fact-check/great-wall-from-moon/",
+          "reviewDate": "2001-11-11T21:05:06Z"
+        }
+      ]
+    },
+    {
+      "claim": "Marco Polo introduced pasta to Italy",
+      "covered": false,
+      "factChecks": []
+    },
+    {
+      "claim": "Napoleon was unusually short",
+      "covered": false,
+      "factChecks": []
+    },
+    {
+      "claim": "Medieval Europeans believed the earth was flat",
+      "covered": false,
+      "factChecks": []
+    },
+    {
+      "claim": "Vikings wore horned helmets in battle",
+      "covered": false,
+      "factChecks": []
+    },
+    {
+      "claim": "Humans only use 10 percent of their brain",
+      "covered": true,
+      "factChecks": [
+        {
+          "claimText": "Humans only use 10% of their brains.",
+          "publisher": "Snopes.com",
+          "rating": "False",
+          "url": "https://www.snopes.com/fact-check/the-ten-percent-myth/",
+          "reviewDate": "2000-02-08T04:00:00Z"
+        }
+      ]
+    },
+    {
+      "claim": "People have distinct left-brained or right-brained personalities",
+      "covered": false,
+      "factChecks": []
+    },
+    {
+      "claim": "Students learn better when taught in their preferred learning style",
+      "covered": false,
+      "factChecks": []
+    },
+    {
+      "claim": "The tongue has separate zones for different tastes",
+      "covered": false,
+      "factChecks": []
+    },
+    {
+      "claim": "Hair and fingernails keep growing after death",
+      "covered": true,
+      "factChecks": [
+        {
+          "claimText": "Human fingernails and hair continue to grow after death.",
+          "publisher": "Snopes.com",
+          "rating": "False",
+          "url": "https://www.snopes.com/fact-check/coffin-nails/",
+          "reviewDate": "2002-04-10T05:00:00Z"
+        }
+      ]
+    },
+    {
+      "claim": "Einstein failed mathematics in school",
+      "covered": false,
+      "factChecks": []
+    },
+    {
+      "claim": "Christopher Columbus proved the earth was round",
+      "covered": true,
+      "factChecks": [
+        {
+          "claimText": "The ships used in Columbus’ first voyage across the Atlantic in 1492-93 were called the Niña, the Pinta, and the Santa Maria.",
+          "publisher": "Snopes",
+          "rating": "Legend",
+          "url": "https://www.snopes.com/fact-check/columbus-ships-names/",
+          "reviewDate": "2020-10-12T05:42:48Z"
+        }
+      ]
+    },
+    {
+      "claim": "Thomas Edison invented the light bulb",
+      "covered": true,
+      "factChecks": [
+        {
+          "claimText": "“A Black man invented the light bulb, not a white guy named Edison.”",
+          "publisher": "PolitiFact",
+          "rating": "Mostly False",
+          "url": "https://www.politifact.com/factchecks/2020/sep/04/joe-biden/making-point-overlooked-black-history-biden-misses/",
+          "reviewDate": null
+        }
+      ]
+    },
+    {
+      "claim": "Bulls are enraged by the color red",
+      "covered": true,
+      "factChecks": [
+        {
+          "claimText": "Urban legends: Are bulls enraged by the colour red?",
+          "publisher": "Teyit",
+          "rating": "False",
+          "url": "https://en.teyit.org/fact-check/urban-legends-are-bulls-enraged-by-the-colour-red",
+          "reviewDate": "2024-12-26T00:00:00Z"
+        },
+        {
+          "claimText": "The color red triggers bulls, which is why they charge at a matador's red flag (muleta) in a bullfight.",
+          "publisher": "Snopes",
+          "rating": "False",
+          "url": "https://www.snopes.com/fact-check/red-triggers-bulls/",
+          "reviewDate": "2024-06-17T19:00:04Z"
+        }
+      ]
+    },
+    {
+      "claim": "Bats are blind",
+      "covered": false,
+      "factChecks": []
+    }
+  ],
+  "core": [
+    {
+      "claim": "Laozi wrote the Dao De Jing",
+      "covered": false,
+      "factChecks": []
+    },
+    {
+      "claim": "Homer wrote the Iliad",
+      "covered": false,
+      "factChecks": []
+    },
+    {
+      "claim": "The Yijing was written by a single author",
+      "covered": false,
+      "factChecks": []
+    }
+  ],
+  "boundary": "external corroboration of one slice; not a claim about the core; candidate_only"
+}
