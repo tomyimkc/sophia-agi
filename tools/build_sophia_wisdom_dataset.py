@@ -77,6 +77,7 @@ SYSTEM = MODE_PROMPTS["advisor"] + ROUTE_INSTRUCTION
 # Target mix (fractions) from the plan. Reported against actuals; not enforced by truncation.
 TARGET_MIX = {
     "source_discipline": (0.20, 0.25),
+    "settled_fact": (0.03, 0.08),
     "hard_provenance_negatives": (0.15, 0.15),
     "council": (0.10, 0.15),
     "moral_gate": (0.10, 0.10),
@@ -188,6 +189,50 @@ def gen_source_discipline(attr: dict) -> list:
                                      assistant=_route_answer("revise", 0.9, "false-attribution",
                                                              [f"attributions:{tid}"], ["false_attribution"], body, zh),
                                      source_ids=[f"attributions:{tid}"], extra={"forbidden_author": bad}))
+    return out
+
+
+_SETTLED_WHO = ["Who wrote {t}?", "Who is the author of {t}?", "Who wrote {t}, and is that settled?"]
+_SETTLED_DISPUTE = ["Is the authorship of {t} disputed or uncertain?",
+                    "Should I hedge about who wrote {t}?", "Is it contested who wrote {t}?"]
+
+
+def gen_settled_facts(settled: dict) -> list:
+    """CALIBRATION rows. The source-discipline corpus is ALL hedge-warranting (attributed/legendary/
+    compiled), so the adapter learned to hedge reflexively — over-qualifying even settled facts
+    (see agi-proof/benchmark-results/wisdom-market/calibration-check.json). These rows teach the
+    COMPLEMENT: when authorship is genuinely undisputed, answer DIRECTLY and confidently, and say so
+    when asked if it is contested. Targets carry NO hedge markers by construction."""
+    out = []
+    for rid, rec in settled.items():
+        t = rec["canonicalTitleEn"]
+        a = rec["attributedAuthor"]
+        yr = rec.get("year", "")
+        dom = rec.get("domain", "history")
+        # direct "who wrote" — confident, no hedging. Source discipline = matching confidence to
+        # the evidence; with a documented single author the correct move is a DIRECT answer.
+        for tmpl in _SETTLED_WHO:
+            body = (f"{a} wrote {t}" + (f" ({yr})" if yr else "") + ". The author is documented and "
+                    f"singular. Source discipline means matching confidence to the evidence: here the "
+                    f"evidence is settled, so a direct, confident answer is correct.")
+            zh = f"{a}著《{t}》，作者明確、來源清楚，可直接作答。"
+            out.append(_cand(family="settled_fact", domain=dom, language="en", route="allow",
+                             user=tmpl.format(t=t),
+                             assistant=_route_answer("allow", 0.97, "established-fact",
+                                                     [f"settled_facts:{rid}"], [], body, zh),
+                             source_ids=[f"settled_facts:{rid}"]))
+        # explicit "is it disputed?" — teach the NEGATIVE: a settled attribution needs NO hedge.
+        for tmpl in _SETTLED_DISPUTE:
+            body = (f"No — {a} is the documented author of {t}, and that is settled. Source discipline "
+                    f"is about matching confidence to the evidence, not hedging everything: a documented "
+                    f"single author warrants a direct answer. Save the caution for anonymous or "
+                    f"multiple-hands works where the evidence is genuinely thin.")
+            zh = f"否。《{t}》作者為{a}，來源清楚。來源紀律是讓信心配合證據，而非凡事保留；作者明確即可直接作答。"
+            out.append(_cand(family="settled_fact", domain=dom, language="en", route="allow",
+                             user=tmpl.format(t=t),
+                             assistant=_route_answer("allow", 0.96, "established-fact",
+                                                     [f"settled_facts:{rid}"], [], body, zh),
+                             source_ids=[f"settled_facts:{rid}"]))
     return out
 
 
@@ -621,7 +666,8 @@ def count_records() -> dict:
     rows scale with records, so the honest 'how big is the corpus' number is RECORDS, not rows.
     A high rows/record ratio means templating (Goodhart bait), not more ground truth."""
     files = ["attributions.json", "traditions.json", "religion_concepts.json",
-             "psychology_concepts.json", "history_events.json", "legal_authorities.json"]
+             "psychology_concepts.json", "history_events.json", "legal_authorities.json",
+             "settled_facts.json"]
     per = {}
     for f in files:
         try:
@@ -646,8 +692,10 @@ def synthesize() -> list:
     legal = _load("legal_authorities.json")
     principles = json.loads((ROOT / "moral_corpus" / "public_standard.v1.json").read_text(
         encoding="utf-8")).get("principles", [])
+    settled = _load("settled_facts.json")
     rows = []
     rows += gen_source_discipline(attr)
+    rows += gen_settled_facts(settled)        # calibration: settled -> answer directly (no hedge)
     rows += gen_tradition_separation(attr, trad)
     rows += gen_religion_discipline(rel)
     rows += gen_myth(psych, hist)

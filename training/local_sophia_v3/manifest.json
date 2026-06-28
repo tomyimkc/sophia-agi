@@ -8,16 +8,16 @@
   },
   "admission": "agent.gate.check_response (advisor) + public_standard; reject -> preference/hard-neg",
   "totals": {
-    "candidates": 3753,
-    "accepted": 3306,
-    "rejected": 340,
-    "decontaminationDrops": 90,
-    "acceptanceRate": 0.881
+    "candidates": 3969,
+    "accepted": 3510,
+    "rejected": 351,
+    "decontaminationDrops": 91,
+    "acceptanceRate": 0.884
   },
   "byFamily": {
     "council": {
       "rows": 125,
-      "pct": 3.8,
+      "pct": 3.6,
       "targetPct": [
         10.0,
         15.0
@@ -25,7 +25,7 @@
     },
     "general_retention": {
       "rows": 270,
-      "pct": 8.2,
+      "pct": 7.7,
       "targetPct": [
         25.0,
         30.0
@@ -47,9 +47,17 @@
         10.0
       ]
     },
+    "settled_fact": {
+      "rows": 204,
+      "pct": 5.8,
+      "targetPct": [
+        3.0,
+        8.0
+      ]
+    },
     "source_discipline": {
       "rows": 2857,
-      "pct": 86.4,
+      "pct": 81.4,
       "targetPct": [
         20.0,
         25.0
@@ -65,13 +73,13 @@
     }
   },
   "byLanguage": {
-    "en": 2880,
+    "en": 3084,
     "zh": 426
   },
   "preferencePairs": 1851,
   "mlx": {
-    "trainRows": 3163,
-    "validRows": 143,
+    "trainRows": 3359,
+    "validRows": 151,
     "maxTokens": 1024,
     "path": "training/local_sophia_v3/mlx"
   },
@@ -79,6 +87,10 @@
     "source_discipline": [
       0.2,
       0.25
+    ],
+    "settled_fact": [
+      0.03,
+      0.08
     ],
     "hard_provenance_negatives": [
       0.15,
@@ -116,15 +128,16 @@
     "psychology_concepts": 10,
     "history_events": 51,
     "legal_authorities": 5,
-    "_total": 476,
-    "rowsPerRecord": 6.95,
+    "settled_facts": 36,
+    "_total": 512,
+    "rowsPerRecord": 6.86,
     "ceiling": 8.0,
     "inflationFlag": false,
     "note": "Volume headline is RECORDS, not rows. rowsPerRecord above the ceiling means templating (Goodhart), not more ground truth."
   },
   "go_no_go": {
     "target": ">=10k decontaminated gate-passed rows",
-    "achieved": 3306,
+    "achieved": 3510,
     "met": false,
     "honest_note": "Volume is CORPUS-bound: rows scale with ground-truth records. ENRICHMENT 2026-06-27 (tools/enrich_corpus.py, fail-closed on accuracy + provenance; auto-decontaminated vs heldout_v1 + transfer_v1; independently fact-verified): attributions 30 -> 381, history 23 -> 51, religion 8 -> 21. Dataset 880 -> 3306 gate-passed rows (+275%, 3.75x); preference pairs 233 -> 1851 (8x); decontam drops held at 90 (zero new eval contamination). STILL BELOW 10k -> M2 stays NO-GO on absolute volume (~1030 more records at the measured ~6.5 rows/record). Sustained curation, now tooled + accuracy-disciplined + decontaminated."
   },
