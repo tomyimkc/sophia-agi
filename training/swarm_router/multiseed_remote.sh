@@ -7,7 +7,7 @@
 set +e
 mkdir -p /workspace && cd /workspace
 RESULT=/workspace/RESULT.json; echo '{}' > "$RESULT"
-BRANCH=claude/swarm-agent-model-design-a4h5te; MODEL=Qwen/Qwen2.5-7B-Instruct
+BRANCH=claude/swarm-agent-model-design-a4h5te; MODEL=${SOPHIA_MODEL:-Qwen/Qwen2.5-7B-Instruct}
 put(){ python3 - "$1" "$2" <<'PY'
 import json,sys
 try: d=json.load(open("/workspace/RESULT.json"))
@@ -33,7 +33,7 @@ from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training, Pe
 from provenance_bench.search_recall import load_pack, PACK_V2_PATH, SCORER_FAMILIES, cohens_kappa
 from provenance_bench.swarm_benchmark import _paired_bootstrap_ci
 PACK_PATH=os.environ.get("SOPHIA_PACK") or str(PACK_V2_PATH)
-MODEL="Qwen/Qwen2.5-7B-Instruct"; SEEDS=[0,1,2]
+MODEL=os.environ.get("SOPHIA_MODEL","Qwen/Qwen2.5-7B-Instruct"); SEEDS=[0,1,2]
 def put(k,v):
     d=json.load(open("/workspace/RESULT.json")); d[k]=v
     json.dump(d,open("/workspace/RESULT.json","w"),indent=2)
