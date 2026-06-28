@@ -61,7 +61,7 @@ def main() -> int:
     print(f"subject={args.subject} judge={args.judge} questions={len(tasks)} "
           f"aspects={sum(len(t.aspects) for t in tasks)} …", flush=True)
 
-    model_fn = lambda system, user: _call(args.subject, key, system, user, 320)
+    model_fn = lambda system, user: _call(args.subject, key, system, user, 512)
 
     def judge_fn(answer: str, aspect: str) -> int:
         if not answer.strip():
