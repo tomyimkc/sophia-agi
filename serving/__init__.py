@@ -64,6 +64,15 @@ from serving.lowram_eval import (
     LowRamGate,
     LowRamReport,
 )
+from serving.lowram_runtime import (
+    DEEPSEEK_V3,
+    GLM_5_2,
+    REFERENCE_SPECS,
+    SOPHIA_V1_TARGET,
+    LowRamRuntime,
+    ModelSpec,
+    plan_ram,
+)
 from serving.kv_quant import (
     dequantize_kv_block,
     kv_memory_ratio,
@@ -91,6 +100,14 @@ __all__ = [
     # low-RAM measurement gate
     "LowRamGate",
     "LowRamReport",
+    # low-RAM serving runtime + frontier RAM planner
+    "ModelSpec",
+    "LowRamRuntime",
+    "plan_ram",
+    "GLM_5_2",
+    "DEEPSEEK_V3",
+    "SOPHIA_V1_TARGET",
+    "REFERENCE_SPECS",
     # KV cache quantization
     "quantize_kv_block",
     "dequantize_kv_block",

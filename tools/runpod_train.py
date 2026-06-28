@@ -112,11 +112,12 @@ def _seed_train_cmd(args: argparse.Namespace, seed: int, out_dir: str) -> str:
     Mirrors the single-seed recipes: sealed-pack minimal (``--train-only`` + a
     pre-built ``--train-data``) vs the full source-discipline recipe.
     """
+    extra = (" " + args.extra_train_args.strip()) if getattr(args, "extra_train_args", "") else ""
     if getattr(args, "train_only", False) and args.train_data:
         return (
             'python tools/train_lora.py '
             '--model "$SOPHIA_MODEL" --train ' + shlex.quote(args.train_data) + ' --4bit '
-            '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir
+            '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir + extra
         )
     train_flag = (" --train " + shlex.quote(args.train_data)) if args.train_data else ""
     alloc_flag = " --lora-rank-alloc" if getattr(args, "lora_rank_alloc", False) else ""
@@ -124,7 +125,7 @@ def _seed_train_cmd(args: argparse.Namespace, seed: int, out_dir: str) -> str:
         'python tools/train_lora.py '
         '--model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 '
         '--scaffold --guard --eval-every 25 --patience 4' + train_flag + alloc_flag + ' '
-        '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir
+        '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir + extra
     )
 
 
@@ -361,6 +362,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                     help="seconds to wait for SSH login after port mapping")
     ap.add_argument("--gpu-type", default=",".join(DEFAULT_GPU_TYPES))
     ap.add_argument("--gpu-count", type=int, default=1)
+    ap.add_argument("--extra-train-args", default="",
+                    help="extra flags appended verbatim to the train_lora.py invocation "
+                         "(e.g. \"--qat --qat-scheme nvfp4 --shard fsdp\"). Threaded into both "
+                         "the remote pod script and the local (--local) run.")
     ap.add_argument("--cloud-type", choices=["SECURE", "COMMUNITY"], default="SECURE")
     ap.add_argument("--interruptible", action="store_true", help="use cheaper spot/interruptible pod")
     ap.add_argument("--image-name", default=DEFAULT_TRAIN_IMAGE)
@@ -428,6 +433,8 @@ def _local_seed_cmd(args: argparse.Namespace, seed: int, out_dir: str) -> list[s
         cmd.append("--4bit")
     if args.train_data:
         cmd += ["--train", args.train_data]
+    if getattr(args, "extra_train_args", ""):
+        cmd += shlex.split(args.extra_train_args)
     return cmd
 
 
