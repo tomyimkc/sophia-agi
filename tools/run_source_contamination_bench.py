@@ -213,10 +213,54 @@ def build_verifier(verifier: str, refs: "list[str]",
       fail-closed unless EVERY atomic claim is entailed by >=2 independent refs.
     - ``"core"``: ``make_core_claim_verifier`` — pass-unless the answer's CORE claim is
       CONTRADICTED by an independent ref (recovers clean-answer recall the atomic channel
-      destroys; see agi-proof/THEORY-ISSUES-RESOLUTION-2026-06-28.md)."""
+      destroys; see agi-proof/THEORY-ISSUES-RESOLUTION-2026-06-28.md).
+    - ``"hybrid"``: core-claim DIRECTION fed by AUTHORITATIVE oracles (Google Fact Check +
+      Wikidata/Crossref via ``agent.layered_verifier``) instead of the per-case refs — low
+      over-block AND high catch where the oracles have coverage, fail-open elsewhere. Ignores
+      ``refs``/``entail``; built once and cached (see ``_hybrid_verifier``)."""
+    if verifier == "hybrid":
+        return _hybrid_verifier()
     if verifier == "core":
         return make_core_claim_verifier(refs, entail)
     return make_independent_verifier(refs, entail)
+
+
+_HYBRID_CACHE: "list[Callable[[str, str], bool]]" = []
+
+
+def _hybrid_verifier() -> "Callable[[str, str], bool]":
+    """Build (once) the authoritative-oracle hybrid corroborate_fn.
+
+    Google Fact Check (needs GOOGLE_FACTCHECK_API_KEY; fail-closed empty without it) + keyless
+    Wikidata/Crossref + an optional model-knowledge tail from ``$CONTAM_HYBRID_LLM_SPEC``
+    (flagged low-independence by the layered verifier). Cached so oracles are not rebuilt
+    per case."""
+    if _HYBRID_CACHE:
+        return _HYBRID_CACHE[0]
+    from agent.hybrid_source_verifier import make_hybrid_source_verifier  # noqa: PLC0415
+    from agent.live_sources import GoogleFactCheckBackend, LiveFactBackend  # noqa: PLC0415
+
+    llm_spec = os.environ.get("CONTAM_HYBRID_LLM_SPEC")
+    llm_judge = None
+    if llm_spec:
+        from agent.model import complete  # noqa: PLC0415
+
+        def llm_judge(claim: str) -> str:  # noqa: F811
+            try:
+                r = (complete(
+                    "You are a careful fact-checker. Reply EXACTLY one word: false, true, or unknown.",
+                    f"Is this claim factually FALSE per well-established mainstream facts?\nClaim: {claim}",
+                    spec=llm_spec, max_tokens=4) or "").strip().lower()
+                return r if r in ("false", "true", "unknown") else "unknown"
+            except Exception:  # noqa: BLE001 — fail-closed
+                return "unknown"
+
+    verify = make_hybrid_source_verifier(
+        google_backend=GoogleFactCheckBackend(), live_backend=LiveFactBackend(),
+        llm_knowledge_judge=llm_judge,
+    )
+    _HYBRID_CACHE.append(verify)
+    return verify
 
 
 def run_case(case: dict[str, Any], entail: "Callable[[str, str], str]",
@@ -402,7 +446,7 @@ def main(argv: "list[str] | None" = None) -> int:
     ap.add_argument("--retrieve", action="store_true",
                     help="fetch each case's truth_refs from Wikipedia per entity (measured "
                          "independence) instead of the curated refs; fail-closed on empty.")
-    ap.add_argument("--verifier", choices=("atomic", "core"), default="atomic",
+    ap.add_argument("--verifier", choices=("atomic", "core", "hybrid"), default="atomic",
                     help="corroborate-fn mode: 'atomic' (default, all atomic claims must be "
                          "entailed by >=2 independent refs — backward-compatible) or 'core' "
                          "(reject only when the answer's CORE claim is CONTRADICTED by an "
