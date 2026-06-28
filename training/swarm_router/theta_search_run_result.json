@@ -1,0 +1,89 @@
+{
+  "phase": "done",
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "gpu": "NVIDIA RTX A5000, 24564 MiB",
+  "n_train_rows": 125,
+  "trainable_params": 29933568,
+  "total_params": 3115872256,
+  "loss_first": 3.4751,
+  "loss_last": 0.8924,
+  "loss_curve": [
+    3.4751,
+    4.4295,
+    3.8327,
+    3.0197,
+    2.9014,
+    2.9884,
+    2.3171,
+    2.3234,
+    2.1514,
+    2.0439,
+    2.0845,
+    1.7655,
+    1.6642,
+    1.7576,
+    1.3939,
+    1.7133,
+    1.2518,
+    1.3431,
+    1.2888,
+    1.2023,
+    1.2483,
+    1.1646,
+    1.2933,
+    0.9833,
+    0.9093,
+    1.2974,
+    1.2853,
+    1.0818,
+    1.1214,
+    0.8478,
+    0.7143,
+    0.6695,
+    0.5018,
+    0.7161,
+    1.0217,
+    0.4871,
+    0.4608,
+    0.6864,
+    0.9209,
+    0.6095,
+    1.2417,
+    1.0964,
+    1.0887,
+    1.0871,
+    1.1406,
+    0.5285,
+    0.703,
+    0.8924
+  ],
+  "train_steps": 48,
+  "adapter_files": {
+    "README.md": {
+      "bytes": 5202,
+      "sha256": "3581cc6c99fe8b3a"
+    },
+    "adapter_model.safetensors": {
+      "bytes": 119801528,
+      "sha256": "ad3c07be00f2f52e"
+    },
+    "adapter_config.json": {
+      "bytes": 1103,
+      "sha256": "f860a2bdf1dd76ae"
+    },
+    "chat_template.jinja": {
+      "bytes": 2507,
+      "sha256": "cd8e9439f0570856"
+    },
+    "tokenizer_config.json": {
+      "bytes": 694,
+      "sha256": "04b1682c59acbd05"
+    },
+    "tokenizer.json": {
+      "bytes": 11421991,
+      "sha256": "2f55e63353d3d978"
+    }
+  },
+  "train_stderr_tail": "\udc88\u2588\u2588\u2588\u2588\u258a| 47/48 [02:40<00:03,  3.44s/it]\r100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 48/48 [02:42<00:00,  3.07s/it]\r                                               \r\r100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 48/48 [02:42<00:00,  3.07s/it]\r                                               \r\r100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 48/48 [02:42<00:00,  3.07s/it]\r100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 48/48 [02:42<00:00,  3.39s/it]\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/tokenization_utils_base.py\", line 287, in __getattr__\n    return self.data[item]\n           ~~~~~~~~~^^^^^^\nKeyError: 'shape'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<stdin>\", line 51, in <module>\n  File \"/usr/local/lib/python3.12/dist-packages/peft/peft_model.py\", line 2122, in generate\n    outputs = self.base_model.generate(*args, **kwargs)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py\", line 120, in decorate_context\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/generation/utils.py\", line 2439, in generate\n    batch_size = inputs_tensor.shape[0]\n                 ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/tokenization_utils_base.py\", line 289, in __getattr__\n    raise AttributeError\nAttributeError\n",
+  "offline_invariants": " agent/swarm_router.py:PASS provenance_bench/swarm_rl.py:PASS agent/dual_use_adapter.py:PASS provenance_bench/swarm_benchmark.py:PASS"
+}
