@@ -110,11 +110,25 @@ python -m pretraining.architecture.rdt_pretrain --smoke       # CPU pipeline smo
 
 **Phase 1.2 — small from-scratch pretrain (1 RunPod node, cost-guarded).** Train `~0.5B` on
 FineWeb-Edu `sample-10BT` via `rdt_pretrain.py --dataset fineweb-edu` under the cost-guard
-runbook (`wisdom-gpu-prebaked` skill: pre-baked image, cheap `limit`-style validation first,
-restart-loop abort, confirm zero leaked pods). The cost-guard rule is why Phase 1.1 is
-CPU-validated first: **no GPU credit is spent on unvalidated code.** Deliverable: a base
-checkpoint **and** a looped-vs-fixed scaling-law fit at matched compute (reuse
-`scaling/fit.py`).
+runbook (`wisdom-gpu-prebaked` skill: stock-torch image, cheap validation first, restart-loop
+abort, confirm zero leaked pods). The cost-guard rule is why Phase 1.1 is CPU-validated first:
+**no GPU credit is spent on unvalidated code.** Deliverable: a base checkpoint **and** a
+looped-vs-fixed scaling-law fit at matched compute (reuse `scaling/fit.py`).
+
+*Launch (SSH-free, self-reporting, cost-guarded).* `tools/runpod_rdt_pretrain.py` + the
+`rdt-pretrain-runpod` GitHub Actions workflow rent a pod that clones the branch, runs the RDT
+self-test + the training run on the GPU, git-pushes the train report to
+`agi-proof/benchmark-results/rdt-pretrain/`, then self-deletes (the launcher also deletes the
+pod the moment a fresh report lands). **Always dispatch `mode=smoke` first** — a few hundred
+GPU steps (~minutes, cheapest GPU) that validate the CUDA path before any real spend. Only
+dispatch `mode=pretrain` after a green smoke. Requires the `RUNPOD_API_KEY` Actions secret
+(no HF token — FineWeb-Edu and the byte tokenizer are ungated). The workflow registers for
+dispatch once it lands on the default branch.
+
+```bash
+python tools/runpod_rdt_pretrain.py --dry-run --mode smoke      # inspect payload, no cost
+# then, from CI with RUNPOD_API_KEY: dispatch rdt-pretrain-runpod (mode=smoke) → mode=pretrain
+```
 
 **Phase 2 — wisdom alignment + the novel coupling.** SFT + ORPO on the Sophia corpus
 (`training/corpus.jsonl`, `moral_gate_sft.jsonl`) via the validated pilot path. Then train
