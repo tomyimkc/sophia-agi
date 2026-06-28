@@ -10,6 +10,7 @@ Wire in .cursor/mcp.json (see docs/09-Agent/MCP-Server.md).
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -214,6 +215,10 @@ def sophia_conscience_check(text: str, mode: str = "output", action: str = "", c
         return dumps({"error": f"invalid context_json: {exc}"})
     if not isinstance(context, dict):
         return dumps({"error": "context_json must be a JSON object"})
+    # In a hardened deployment, enforce the acceptable-use refusal screen at the
+    # input boundary by default (caller can still override explicitly).
+    if os.environ.get("SOPHIA_HARDENED") == "1":
+        context.setdefault("enforceAcceptableUse", True)
     return dumps(conscience_check_tool(text, mode=mode, action=action or None, context=context))
 
 

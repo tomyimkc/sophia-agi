@@ -20,9 +20,17 @@
 **Remaining manual step (cannot be done from code):** enable **branch protection**
 on `main` (require the `Security` workflow + review), turn on GitHub **secret
 scanning + push protection**, and set `SOPHIA_CANARY_SEED` in `.env` (and as a
-repo secret for live red-team runs). The runtime defenses (output guard, refusal
-screen, call budget) are **opt-in by default**; deploy behind
-`gateway.profiles.hardened_gateway(...)` to turn them on in production.
+repo secret for live red-team runs).
+
+**Activating the runtime defenses in deployment.** The MCP entrypoints
+(`gateway/server.py`, `sophia_mcp/server.py`) read **`SOPHIA_HARDENED=1`**: when
+set, the gateway is built via `gateway.profiles.hardened_gateway(...)` (egress
+output-guard + call budget + tamper-evident audit chain, with the system prompt
+wired for echo-detection and the minted canary for confirmed-leak blocks) and the
+conscience tool enforces the acceptable-use refusal screen at the input boundary.
+Unset (the default), behavior is unchanged for local/offline use. So production =
+`SOPHIA_HARDENED=1` + `SOPHIA_CANARY_SEED=<secret>`; everything stays opt-in
+otherwise.
 
 This document does three things:
 
