@@ -1,0 +1,198 @@
+{
+  "experiment": "lean-held-out-fresh-verification",
+  "date": "2026-06-28",
+  "purpose": "Rec 3: test verifier_synthesis_over_proof_kernel on HELD-OUT bespoke theorems (unlikely to be memorized named lemmas), with a semantic novelty assessor \u2014 the Issue-4 guard against recall masquerading as discovery.",
+  "leanVersion": "Lean (version 4.31.0, x86_64-unknown-linux-gnu, commit 68218e876d2a38b1985b8590fff244a83c321783, Release)",
+  "proposers": [
+    "llmhub:claude-sonnet-4-6",
+    "openrouter:deepseek/deepseek-chat"
+  ],
+  "n_candidates": 20,
+  "n_accepted": 3,
+  "byProposer": {
+    "claude": 3,
+    "deepseek": 0
+  },
+  "verdicts": [
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "hf01_quad_expand",
+      "verdict": "rejected",
+      "error": "llmhub_claude-sonnet-4-6__hf01_quad_expand.lean:2:3: error: unknown tactic\nllmhub_claude-sonnet-4-6__hf01_quad_expand.le"
+    },
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "hf02_three_n_plus_seven",
+      "verdict": "rejected",
+      "error": "llmhub_claude-sonnet-4-6__hf02_three_n_plus_seven.lean:2:3: error: unknown tactic\nllmhub_claude-sonnet-4-6__hf02_three_n"
+    },
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "hf03_succ_succ_double",
+      "verdict": "rejected",
+      "error": "llmhub_claude-sonnet-4-6__hf03_succ_succ_double.lean:2:3: error: unknown tactic\nllmhub_claude-sonnet-4-6__hf03_succ_succ"
+    },
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "hf04_six_n_even",
+      "verdict": "rejected",
+      "error": "llmhub_claude-sonnet-4-6__hf04_six_n_even.lean:2:20: error: unknown tactic\nllmhub_claude-sonnet-4-6__hf04_six_n_even.lea"
+    },
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "hf05_custom_diff_squares",
+      "verdict": "rejected",
+      "error": "llmhub_claude-sonnet-4-6__hf05_custom_diff_squares.lean:2:3: error: unknown tactic\nllmhub_claude-sonnet-4-6__hf05_custom"
+    },
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "hf06_three_n_even_iff",
+      "verdict": "rejected",
+      "error": "llmhub_claude-sonnet-4-6__hf06_three_n_even_iff.lean:4:5: error: unknown tactic\nllmhub_claude-sonnet-4-6__hf06_three_n_e"
+    },
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "hf07_weird_assoc",
+      "verdict": "accepted",
+      "error": ""
+    },
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "hf08_poly_factor",
+      "verdict": "rejected",
+      "error": "llmhub_claude-sonnet-4-6__hf08_poly_factor.lean:2:3: error: unknown tactic\nllmhub_claude-sonnet-4-6__hf08_poly_factor.le"
+    },
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "hf09_double_neg_bool",
+      "verdict": "accepted",
+      "error": ""
+    },
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "hf10_custom_recursion_sum",
+      "verdict": "accepted",
+      "error": ""
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "hf01_quad_expand",
+      "verdict": "rejected",
+      "error": "openrouter_deepseek_deepseek-chat__hf01_quad_expand.lean:8:6: error: Tactic `rewrite` failed: Did not find an occurrence"
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "hf02_three_n_plus_seven",
+      "verdict": "rejected",
+      "error": "openrouter_deepseek_deepseek-chat__hf02_three_n_plus_seven.lean:8:6: error: Tactic `rewrite` failed: Did not find an occ"
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "hf03_succ_succ_double",
+      "verdict": "rejected",
+      "error": "openrouter_deepseek_deepseek-chat__hf03_succ_succ_double.lean:3:6: error: Tactic `rewrite` failed: Did not find an occur"
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "hf04_six_n_even",
+      "verdict": "rejected",
+      "error": "openrouter_deepseek_deepseek-chat__hf04_six_n_even.lean:2:3: error: unknown tactic\nopenrouter_deepseek_deepseek-chat__hf"
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "hf05_custom_diff_squares",
+      "verdict": "rejected",
+      "error": "openrouter_deepseek_deepseek-chat__hf05_custom_diff_squares.lean:3:0: error: unexpected end of input; expected ']'\n"
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "hf06_three_n_even_iff",
+      "verdict": "rejected",
+      "error": "openrouter_deepseek_deepseek-chat__hf06_three_n_even_iff.lean:4:37: error: No goals to be solved\nopenrouter_deepseek_dee"
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "hf07_weird_assoc",
+      "verdict": "rejected",
+      "error": "openrouter_deepseek_deepseek-chat__hf07_weird_assoc.lean:5:6: error: Tactic `rewrite` failed: Did not find an occurrence"
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "hf08_poly_factor",
+      "verdict": "rejected",
+      "error": "openrouter_deepseek_deepseek-chat__hf08_poly_factor.lean:3:6: error: Tactic `rewrite` failed: Did not find an occurrence"
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "hf09_double_neg_bool",
+      "verdict": "rejected",
+      "error": "openrouter_deepseek_deepseek-chat__hf09_double_neg_bool.lean:1:59: error: unsolved goals\np q : Prop\nh1 : p \u2227 q\nh2 : q \u2227 "
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "hf10_custom_recursion_sum",
+      "verdict": "rejected",
+      "error": "openrouter_deepseek_deepseek-chat__hf10_custom_recursion_sum.lean:2:6: error: Tactic `rewrite` failed: Did not find an o"
+    }
+  ],
+  "novelty_assessment": {
+    "heldout": [
+      {
+        "name": "hf07_weird_assoc",
+        "likely_recall": true,
+        "surface_novel": true,
+        "uses_induction": false,
+        "only_closers": false
+      },
+      {
+        "name": "hf09_double_neg_bool",
+        "likely_recall": false,
+        "surface_novel": true,
+        "uses_induction": false,
+        "only_closers": false
+      },
+      {
+        "name": "hf10_custom_recursion_sum",
+        "likely_recall": false,
+        "surface_novel": true,
+        "uses_induction": false,
+        "only_closers": false
+      }
+    ],
+    "known": [
+      {
+        "name": "two_mul_nat",
+        "likely_recall": true,
+        "surface_novel": false,
+        "uses_induction": false,
+        "only_closers": false
+      },
+      {
+        "name": "reverse_reverse",
+        "likely_recall": true,
+        "surface_novel": false,
+        "uses_induction": true,
+        "only_closers": false
+      },
+      {
+        "name": "length_append",
+        "likely_recall": true,
+        "surface_novel": false,
+        "uses_induction": true,
+        "only_closers": false
+      },
+      {
+        "name": "le_add_right",
+        "likely_recall": true,
+        "surface_novel": false,
+        "uses_induction": true,
+        "only_closers": false
+      }
+    ]
+  },
+  "finding": "Held-out success COLLAPSED to 3/20 (Claude 3/10, DeepSeek 0/10) vs 8/10 on known library lemmas \u2014 direct evidence the 8/10 was RECALL. The non-trivial polynomial identities (hf01/hf05/hf08) all failed because the models reached for Mathlib's `ring`, absent in Lean core. The semantic novelty assessor flags every known-lemma proof likely_recall=True/surface_novel=False and the held-out accepts surface_novel=True (hf09/hf10 also likely_recall=False) \u2014 it reduces the memorization false-positive the plain Jaccard could not catch.",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false
+}

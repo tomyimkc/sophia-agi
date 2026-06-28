@@ -121,6 +121,7 @@ def debunk_gate(
     injected_false_claim: str,
     *,
     corroborate_fn: "Callable[[str, str], bool] | None" = None,
+    classifier: "Callable[[str, str, str], str] | None" = None,
 ) -> "dict[str, Any]":
     """Preserve-and-verify a debunk; fail closed to abstain when it cannot be verified.
 
@@ -133,6 +134,12 @@ def debunk_gate(
             ``agent.source_verifier.make_independent_verifier``) that confirms the refutation
             against truth-references independent of the answer. Independence is the
             load-bearing property — the seam cannot enforce it.
+        classifier: optional verdict classifier ``(question, answer, injected_false_claim) ->
+            "affirm"|"abstain"|"debunk"``. When provided it REPLACES the keyword
+            :func:`classify_response` for choosing the verdict (e.g. the LLM/NLI detector in
+            ``agent.llm_debunk_detector``, which a live run showed does not mislabel real
+            debunks as ``affirm`` the way the keyword heuristic does). Default ``None`` keeps
+            the keyword behavior — backward compatible.
 
     Returns:
         ``{"verdict": "affirm"|"abstain"|"debunk", "verified_debunk": bool, "surfaced": str}``
@@ -145,7 +152,10 @@ def debunk_gate(
           rejects, the gate FAILS CLOSED: verdict becomes ``abstain``, ``verified_debunk`` is
           False — an unverified debunk is never surfaced as truth.
     """
-    verdict = classify_response(answer)
+    if classifier is not None:
+        verdict = classifier(question, answer, injected_false_claim)
+    else:
+        verdict = classify_response(answer)
     if verdict != "debunk":
         return {"verdict": verdict, "verified_debunk": False, "surfaced": answer or ""}
 

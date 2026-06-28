@@ -26,7 +26,23 @@ is the load-bearing property; the pack curates that by construction and the benc
 enforce it for a production retriever. See ``tests/test_source_contamination_pack.py`` for
 the independence stress test that documents the hole.
 
+REC 2 hardening (THEORY-ISSUES-FROM-LIVE-RUNS-2026-06-28 issues 3 & 5):
+  - ``--runs N``      : repeat the whole pack N times and report each rate as a mean with a
+    pure-python bootstrap 95% CI (no scipy), plus the per-run numbers — so the 97.7% headline
+    is no longer a single sample.
+  - ``--answer-spec`` / ``--judge-spec`` : generate the answer with one model and run the
+    INDEPENDENT verifier's entailment with a DIFFERENT model, so the answerer is not also
+    its own judge. Both are recorded in the report; ``--spec``/$VERIFY_SPEC remain the
+    single-model fallback.
+  - ``--retrieve``    : instead of each case's CURATED ``truth_refs``, fetch independent
+    refs for the case's ``entity`` from Wikipedia's REST summary API
+    (``agent.wiki_truth_refs.fetch_truth_refs``). Independence from the contaminated source
+    is then REAL (open-world), not assumed. Fail-closed: empty retrieval -> no independent
+    ref -> the case abstains, and ``retrieval_status`` is recorded per case.
+
 Reproduce (live):  VERIFY_SPEC=... python3 tools/run_source_contamination_bench.py --relay
+Reproduce (split): python3 tools/run_source_contamination_bench.py --relay \\
+                     --answer-spec glm:glm-4.6 --judge-spec deepseek:deepseek-chat --runs 5
 Reproduce (CI):    python3 tools/run_source_contamination_bench.py --fake
 """
 from __future__ import annotations
@@ -34,6 +50,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import random
 import sys
 from pathlib import Path
 from typing import Any, Callable
@@ -61,6 +78,42 @@ def load_pack(path: Path = PACK_PATH) -> dict[str, Any]:
 def _is_abstain(policy: Any) -> bool:
     """Single source of truth for abstain detection (matches abstain_*, *gated_abstain)."""
     return "abstain" in str(policy).lower()
+
+
+def bootstrap_ci(values: "list[float]", *, confidence: float = 0.95,
+                 resamples: int = 2000, seed: int = 1234) -> "dict[str, float]":
+    """Pure-python bootstrap mean + percentile CI for a sample of per-run rates.
+
+    Resamples ``values`` with replacement ``resamples`` times, takes each resample's mean,
+    and returns the empirical ``confidence`` percentile interval. No scipy/numpy. Seeded so
+    the CI is deterministic for a given sample (reproducible reports). Degenerate cases
+    (0 or 1 value) return a zero-width interval at the point estimate.
+
+    Returns ``{"mean", "lo", "hi", "n", "resamples"}`` where mean is the sample mean and
+    [lo, hi] brackets it. The bracket is guaranteed to contain the mean because the
+    percentile interval of resample means is centered on the sample mean.
+    """
+    n = len(values)
+    if n == 0:
+        return {"mean": 0.0, "lo": 0.0, "hi": 0.0, "n": 0, "resamples": 0}
+    mean = sum(values) / n
+    if n == 1:
+        return {"mean": round(mean, 4), "lo": round(mean, 4), "hi": round(mean, 4),
+                "n": 1, "resamples": 0}
+    rng = random.Random(seed)
+    means: list[float] = []
+    for _ in range(resamples):
+        sample = [values[rng.randrange(n)] for _ in range(n)]
+        means.append(sum(sample) / n)
+    means.sort()
+    alpha = (1.0 - confidence) / 2.0
+    lo = means[max(0, int(alpha * resamples))]
+    hi = means[min(resamples - 1, int((1.0 - alpha) * resamples))]
+    # Clamp so the interval always brackets the point estimate even at the tails.
+    lo = min(lo, mean)
+    hi = max(hi, mean)
+    return {"mean": round(mean, 4), "lo": round(lo, 4), "hi": round(hi, 4),
+            "n": n, "resamples": resamples}
 
 
 def make_fake_entailment(false_token: str, true_token: str) -> "Callable[[str, str], str]":
@@ -127,10 +180,41 @@ def _relay_available(spec: str | None) -> bool:
     return False
 
 
+def resolve_truth_refs(case: dict[str, Any], *, retrieve: bool,
+                       fetch_fn: "Callable[..., str | None] | None" = None,
+                       n: int = 2) -> "tuple[list[str], str]":
+    """Resolve the independent truth-references for a case + a ``retrieval_status``.
+
+    - ``retrieve=False`` (default): use the case's CURATED ``truth_refs`` (independence is
+      assumed by construction). Status ``"curated"``.
+    - ``retrieve=True``: fetch refs for the case's ``entity`` from Wikipedia
+      (``agent.wiki_truth_refs.fetch_truth_refs``) so independence is REAL/open-world.
+      Status ``"retrieved"`` on success; ``"empty"`` when retrieval yields nothing (the
+      case then has NO independent ref and must abstain — fail-closed); ``"no_entity"``
+      when the case carries no entity to retrieve.
+    """
+    if not retrieve:
+        return list(case["truth_refs"]), "curated"
+    entity = (case.get("entity") or "").strip()
+    if not entity:
+        return [], "no_entity"
+    from agent.wiki_truth_refs import fetch_truth_refs  # noqa: PLC0415 — lazy/offline-friendly
+
+    refs = fetch_truth_refs(entity, n=n, fetch_fn=fetch_fn)
+    return (refs, "retrieved") if refs else ([], "empty")
+
+
 def run_case(case: dict[str, Any], entail: "Callable[[str, str], str]",
-             complete_fn: "Callable[..., str]") -> dict[str, Any]:
-    """Run one case through the gated policy with an independent verifier and classify it."""
-    verify = make_independent_verifier(case["truth_refs"], entail)
+             complete_fn: "Callable[..., str]", *, retrieve: bool = False,
+             fetch_fn: "Callable[..., str | None] | None" = None) -> dict[str, Any]:
+    """Run one case through the gated policy with an independent verifier and classify it.
+
+    The verifier's truth-references come from :func:`resolve_truth_refs` — curated, or
+    (with ``retrieve=True``) freshly fetched for the case's entity so independence from the
+    contaminated source is measured, not assumed. With NO independent ref (empty retrieval)
+    the verifier rejects every non-empty answer, so the policy fails closed (abstains)."""
+    refs, retrieval_status = resolve_truth_refs(case, retrieve=retrieve, fetch_fn=fetch_fn)
+    verify = make_independent_verifier(refs, entail)
     out = answer_with_policy(
         case["question"], case["contaminated_source"], complete_fn,
         answer_bearing=True, corroborate_fn=verify,
@@ -144,16 +228,20 @@ def run_case(case: dict[str, Any], entail: "Callable[[str, str], str]",
     return {
         "id": case["id"], "style": case["style"], "expected": expected,
         "policy": out["policy"], "abstained": abstained, "ok": ok,
+        "retrieval_status": retrieval_status, "n_refs": len(refs),
     }
 
 
 def run_bench(pack: dict[str, Any],
               entail_factory: "Callable[[dict], Callable[[str, str], str]]",
-              complete_factory: "Callable[[dict], Callable]") -> dict[str, Any]:
+              complete_factory: "Callable[[dict], Callable]",
+              *, retrieve: bool = False,
+              fetch_fn: "Callable[..., str | None] | None" = None) -> dict[str, Any]:
     """Run every case with a per-case entailment + completion; return metrics + rows."""
     rows = []
     for case in pack["cases"]:
-        rows.append(run_case(case, entail_factory(case), complete_factory(case)))
+        rows.append(run_case(case, entail_factory(case), complete_factory(case),
+                             retrieve=retrieve, fetch_fn=fetch_fn))
 
     contaminated = [r for r in rows if r["expected"] == "abstain"]
     clean = [r for r in rows if r["expected"] == "answer"]
@@ -162,6 +250,9 @@ def run_bench(pack: dict[str, Any],
 
     def _rate(num: int, den: int) -> float:
         return round(num / den, 4) if den else 0.0
+
+    from collections import Counter
+    retrieval_counts = dict(Counter(r["retrieval_status"] for r in rows))
 
     return {
         "n_cases": len(rows),
@@ -173,24 +264,78 @@ def run_bench(pack: dict[str, Any],
         "clean_not_over_blocked_rate": _rate(not_overblocked, len(clean)),
         "clean_over_blocked": len(clean) - not_overblocked,
         "clean_over_blocked_rate": _rate(len(clean) - not_overblocked, len(clean)),
+        "retrieval_status_counts": retrieval_counts,
         "rows": rows,
     }
 
 
+def run_multi(pack: dict[str, Any],
+              entail_factory: "Callable[[dict], Callable[[str, str], str]]",
+              complete_factory: "Callable[[dict], Callable]",
+              *, runs: int = 1, retrieve: bool = False,
+              fetch_fn: "Callable[..., str | None] | None" = None) -> dict[str, Any]:
+    """Run the whole pack ``runs`` times and aggregate the two headline rates with CIs.
+
+    Returns a dict carrying ``runs``, the per-run metrics (``per_run``), and a bootstrap
+    95% CI (``ci``) for both ``contamination_caught_rate`` and ``clean_over_blocked_rate``.
+    The last run's full rows are kept under ``last_run`` for inspection. A single run
+    (``runs==1``) yields a zero-width CI at the point estimate."""
+    per_run: list[dict[str, Any]] = []
+    last: dict[str, Any] = {}
+    for _ in range(max(1, runs)):
+        last = run_bench(pack, entail_factory, complete_factory,
+                         retrieve=retrieve, fetch_fn=fetch_fn)
+        per_run.append({
+            "contamination_caught_rate": last["contamination_caught_rate"],
+            "clean_over_blocked_rate": last["clean_over_blocked_rate"],
+            "contamination_caught": last["contamination_caught"],
+            "clean_over_blocked": last["clean_over_blocked"],
+        })
+    caught_rates = [r["contamination_caught_rate"] for r in per_run]
+    overblock_rates = [r["clean_over_blocked_rate"] for r in per_run]
+    return {
+        "runs": len(per_run),
+        "per_run": per_run,
+        "ci": {
+            "contamination_caught_rate": bootstrap_ci(caught_rates),
+            "clean_over_blocked_rate": bootstrap_ci(overblock_rates),
+        },
+        "n_cases": last["n_cases"],
+        "n_contaminated": last["n_contaminated"],
+        "n_clean": last["n_clean"],
+        "retrieval_status_counts": last["retrieval_status_counts"],
+        "last_run": {
+            "contamination_caught_rate": last["contamination_caught_rate"],
+            "clean_over_blocked_rate": last["clean_over_blocked_rate"],
+            "rows": last["rows"],
+        },
+    }
+
+
 def build_report(mode: str, pack: dict[str, Any] | None, metrics: dict[str, Any] | None,
-                 *, status: str) -> dict[str, Any]:
+                 *, status: str, runs: int = 1, answer_spec: str | None = None,
+                 judge_spec: str | None = None, retrieve: bool = False) -> dict[str, Any]:
     report: dict[str, Any] = {
         "schema": REPORT_SCHEMA,
         "candidateOnly": True, "validated": False, "level3Evidence": False, "canClaimAGI": False,
         "benchmark": "Source-contamination independent-verifier bench",
         "mode": mode,
         "status": status,
+        "runs": runs,
+        "answer_spec": answer_spec,
+        "judge_spec": judge_spec,
+        "answer_judge_separated": bool(answer_spec and judge_spec and answer_spec != judge_spec),
+        "retrieval_mode": "wikipedia_rest_summary" if retrieve else "curated",
         "pack": str(PACK_PATH.relative_to(ROOT)),
         "honestScope": (
             "Independence of each case's truth_refs from its contaminated_source is the "
-            "load-bearing property; the pack curates it by construction. --fake exercises "
-            "the harness plumbing only (deterministic keyword entailment, not a model). "
-            "--relay runs the real semantic entailment check."
+            "load-bearing property. By default the pack CURATES it by construction; with "
+            "--retrieve the bench fetches independent refs from Wikipedia per entity so "
+            "independence is measured (open-world), failing closed when retrieval is empty. "
+            "--fake exercises the harness plumbing only (deterministic keyword entailment, "
+            "not a model). --relay runs the real semantic entailment check; --answer-spec / "
+            "--judge-spec separate the answerer from its judge. Rates are reported with a "
+            "bootstrap 95% CI over --runs repetitions."
         ),
     }
     if pack is not None:
@@ -205,6 +350,18 @@ def write_report(report: dict[str, Any], path: Path = REPORT_PATH) -> None:
     path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
+def _print_multi(tag: str, agg: dict[str, Any]) -> None:
+    cc = agg["ci"]["contamination_caught_rate"]
+    ob = agg["ci"]["clean_over_blocked_rate"]
+    print(f"[{tag}] cases={agg['n_cases']} runs={agg['runs']} "
+          f"contamination_caught_rate={cc['mean']*100:.1f}% "
+          f"(95% CI {cc['lo']*100:.1f}-{cc['hi']*100:.1f}) "
+          f"clean_over_blocked_rate={ob['mean']*100:.1f}% "
+          f"(95% CI {ob['lo']*100:.1f}-{ob['hi']*100:.1f})")
+    if agg.get("retrieval_status_counts"):
+        print(f"       retrieval_status={agg['retrieval_status_counts']}")
+
+
 def main(argv: "list[str] | None" = None) -> int:
     ap = argparse.ArgumentParser(description="Source-contamination independent-verifier bench.")
     ap.add_argument("--relay", action="store_true",
@@ -212,9 +369,20 @@ def main(argv: "list[str] | None" = None) -> int:
     ap.add_argument("--fake", action="store_true",
                     help="deterministic keyword entailment for CI (no network/keys/torch).")
     ap.add_argument("--spec", default=None, help="model spec for --relay (else $VERIFY_SPEC).")
+    ap.add_argument("--answer-spec", default=None,
+                    help="model spec that GENERATES the answer (separates answerer from judge).")
+    ap.add_argument("--judge-spec", default=None,
+                    help="model spec for the INDEPENDENT verifier's entailment (must differ "
+                         "from --answer-spec). Defaults to --spec/$VERIFY_SPEC when omitted.")
+    ap.add_argument("--runs", type=int, default=1,
+                    help="repeat the whole pack N times; report mean + bootstrap 95%% CI.")
+    ap.add_argument("--retrieve", action="store_true",
+                    help="fetch each case's truth_refs from Wikipedia per entity (measured "
+                         "independence) instead of the curated refs; fail-closed on empty.")
     ap.add_argument("--no-write", action="store_true", help="do not write the public report.")
     args = ap.parse_args(argv)
 
+    runs = max(1, args.runs)
     pack = load_pack()
 
     if args.fake:
@@ -229,22 +397,31 @@ def main(argv: "list[str] | None" = None) -> int:
                 return answer
             return C
 
-        metrics = run_bench(pack, fake_entail_factory, fake_complete_factory)
-        report = build_report("fake", pack, metrics, status="ok_fake")
+        # --retrieve in --fake mode would need a fetch_fn; the default real fetcher hits the
+        # network, which CI forbids. Keep --fake purely offline: it always uses curated refs.
+        agg = run_multi(pack, fake_entail_factory, fake_complete_factory, runs=runs)
+        report = build_report("fake", pack, agg, status="ok_fake", runs=runs)
         if not args.no_write:
             write_report(report)
-        print(f"[fake] cases={metrics['n_cases']} "
-              f"contamination_caught={metrics['contamination_caught']}/{metrics['n_contaminated']} "
-              f"({metrics['contamination_caught_rate']*100:.1f}%) "
-              f"clean_over_blocked={metrics['clean_over_blocked']}/{metrics['n_clean']} "
-              f"({metrics['clean_over_blocked_rate']*100:.1f}%)")
+        _print_multi("fake", agg)
         if not args.no_write:
             print(f"wrote {REPORT_PATH.relative_to(ROOT)}")
         return 0
 
+    # Resolve the answerer / judge specs. Single-model fallback: --spec/$VERIFY_SPEC.
+    base_spec = args.spec or os.environ.get("VERIFY_SPEC")
+    answer_spec = args.answer_spec or base_spec
+    judge_spec = args.judge_spec or base_spec
+    if args.answer_spec and args.judge_spec and args.answer_spec == args.judge_spec:
+        print("[error] --answer-spec and --judge-spec must DIFFER (answerer must not judge "
+              "itself). Pass two distinct specs or use a single --spec.")
+        return 2
+
     # Live path requires a relay; absent one, FAIL CLOSED with a status report.
-    if not args.relay or not _relay_available(args.spec):
-        report = build_report("relay", pack, None, status="relay_unavailable")
+    if not args.relay or not _relay_available(args.judge_spec or args.spec):
+        report = build_report("relay", pack, None, status="relay_unavailable", runs=runs,
+                              answer_spec=answer_spec, judge_spec=judge_spec,
+                              retrieve=args.retrieve)
         report["reason"] = (
             "no relay/keys configured (set VERIFY_SPEC or an API key and pass --relay), "
             "or --relay not requested. Use --fake to exercise the harness in CI."
@@ -257,30 +434,28 @@ def main(argv: "list[str] | None" = None) -> int:
             print(f"wrote {REPORT_PATH.relative_to(ROOT)}")
         return 0
 
-    entail = make_relay_entailment(args.spec)
+    judge_entail = make_relay_entailment(judge_spec)
 
-    def relay_entail_factory(case: dict[str, Any]):  # noqa: ARG001 — same backend per case
-        return entail
+    def relay_entail_factory(case: dict[str, Any]):  # noqa: ARG001 — judge backend per case
+        return judge_entail
 
-    def complete_factory(case: dict[str, Any]):  # noqa: ARG001
+    def complete_factory(case: dict[str, Any]):  # noqa: ARG001 — answerer backend per case
         from agent.model import complete  # noqa: PLC0415
-        spec = args.spec or os.environ.get("VERIFY_SPEC")
         def C(system: str, user: str, *, max_tokens: int = 180) -> str:
             kwargs: dict[str, Any] = {"max_tokens": max_tokens}
-            if spec:
-                kwargs["spec"] = spec
+            if answer_spec:
+                kwargs["spec"] = answer_spec
             return complete(system, user, **kwargs) or ""
         return C
 
-    metrics = run_bench(pack, relay_entail_factory, complete_factory)
-    report = build_report("relay", pack, metrics, status="ok_relay")
+    # --retrieve uses the real (network) fetcher by default; independence is measured live.
+    agg = run_multi(pack, relay_entail_factory, complete_factory, runs=runs,
+                    retrieve=args.retrieve)
+    report = build_report("relay", pack, agg, status="ok_relay", runs=runs,
+                          answer_spec=answer_spec, judge_spec=judge_spec, retrieve=args.retrieve)
     if not args.no_write:
         write_report(report)
-    print(f"[relay] cases={metrics['n_cases']} "
-          f"contamination_caught={metrics['contamination_caught']}/{metrics['n_contaminated']} "
-          f"({metrics['contamination_caught_rate']*100:.1f}%) "
-          f"clean_over_blocked={metrics['clean_over_blocked']}/{metrics['n_clean']} "
-          f"({metrics['clean_over_blocked_rate']*100:.1f}%)")
+    _print_multi("relay", agg)
     if not args.no_write:
         print(f"wrote {REPORT_PATH.relative_to(ROOT)}")
     return 0
