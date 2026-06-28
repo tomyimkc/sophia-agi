@@ -19,16 +19,22 @@ deeper, unifying one. `canClaimAGI` stays false.
   from detection to verification. Report: `agi-proof/debunk-gate/live-llm-detector-2026-06-28.json`.
 
 ### Rec 2 — Contamination bench hardening (multi-run CI, answer≠judge, open-world retrieval)
-- **The strong original result did NOT survive rigor.** Live:
-  | Setup | Contamination caught | Clean over-blocked |
+> **CORRECTION (later clean re-run).** An earlier draft of this section reported answer≠judge
+> on *curated* refs over-blocking **70.6%**. That number was a **stale retrieve report**
+> mis-saved when a prior run hung during a git-stash race — it is **withdrawn**. A clean
+> re-run (captured directly) gives the matrix below; the true over-block driver is **open-world
+> retrieval**, not answer≠judge separation.
+
+- **Clean live matrix (answer = Claude, judge = DeepSeek, atomic verifier):**
+  | refs | Contamination caught | Clean over-blocked |
   |---|---|---|
-  | answer == judge (original) | 97.7% | **5.9%** |
-  | **answer ≠ judge** (Claude answers, DeepSeek judges), curated refs | 97.7% | **70.6%** |
-  | **open-world Wikipedia** refs (answer ≠ judge) | 100% | **64.7%** |
-  The low 5.9% over-block was an **artifact of the same model answering *and* judging**. Under
-  a genuinely independent judge — or real retrieved refs — the verifier rejects ~65–70% of
-  *clean* answers. Contamination-catching stays high; clean-answer preservation collapses.
-  Report: `agi-proof/source-verifier/live-hardened-2026-06-28.json`.
+  | curated | 97.7% | **5.9%** |
+  | **open-world Wikipedia** | 97.7% | **52.9%** (earlier retrieve runs 64.7–70.6%) |
+  So answer≠judge on curated refs keeps over-block low (~5.9%); it is **generic open-world
+  retrieval** that drives over-block to ~50–70%, because Wikipedia summaries don't entail the
+  specific clean answer. Reports: `agi-proof/source-verifier/live-hardened-2026-06-28.json`
+  (note: its 70.6%/64.7% figures are the retrieve-mode runs, not curated), and the corrected
+  matrix in `agi-proof/source-verifier/verifier-compare-2026-06-28.json`.
 
 ### Rec 3 — Held-out theorems + semantic novelty (`agent/proof_novelty.py`)
 - **Recall vs discovery, confirmed.** On held-out bespoke theorems the LLM-proposer +
@@ -92,3 +98,32 @@ could not. Google is the right *independent* oracle but is too sparse (4/21) to 
 a layered verifier (Google for viral claims · Wikidata/Crossref for provenance · a flagged
 model-knowledge tail) is required, and the independence of each verdict must be reported, not
 hidden. Report: `agi-proof/debunk-gate/core-claim-verification-2026-06-28.json`.
+
+### Layered verifier (`agent/layered_verifier.py`)
+Generalizes the above to route each claim to the most independent oracle that covers it:
+Google (viral) → Wikidata/Crossref provenance (authorship) → flagged LLM tail. Live, the
+provenance layer verified **4/4** authorship misattributions (Dickens/Shakespeare → `false`,
+Tolstoy/Twain → `true`) but fired on **0** of the debunk pack's *fabricated-study* cases (they
+aren't simple "X wrote Y" claims), so high-independence coverage on that pack stayed at 4
+(Google). Each layer works on its claim type; high-independence coverage is bounded by what the
+open oracles actually review. Report: `agi-proof/debunk-gate/layered-verification-2026-06-28.json`.
+
+### Cluster C over-block — core-claim verifier, and a fail-open/fail-closed tradeoff
+Applying core-claim verification to the contamination gate (`agent/core_claim_source_verifier.py`,
+reject only when the answer's *core* claim is contradicted) gives this clean live matrix
+(answer = Claude, judge = DeepSeek):
+| refs | verifier | caught | over-block |
+|---|---|---|---|
+| curated | atomic | 97.7% | 5.9% |
+| curated | **core** | 95.3% | **0.0%** |
+| open-world | atomic | 97.7% | 52.9% |
+| open-world | **core** | **58.1%** | **0.0%** |
+
+Core-claim verification drives over-block to **0%** in both regimes — but it is **fail-open**:
+on curated refs it keeps catch high (95.3%, −2.4pt), yet on weak open-world refs catch
+**collapses to 58.1%** because Wikipedia rarely *explicitly contradicts* the injected
+fabrication. Atomic is fail-closed (high catch, high open-world over-block); core is fail-open
+(zero over-block, low open-world catch). **Neither dominates** — the real lever is *reference
+quality*: authoritative oracles (Google/Wikidata, via the layered verifier) that genuinely
+contradict contamination, not generic retrieval. Report:
+`agi-proof/source-verifier/verifier-compare-2026-06-28.json`.
