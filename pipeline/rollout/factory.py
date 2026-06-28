@@ -28,6 +28,7 @@ from typing import Any, Callable
 
 from pipeline.rollout.cost import CostMeter
 from pipeline.rollout.session import Session, count_tokens
+from pipeline.rollout.tools import TOOL_RE, Tool
 
 # A reward fn matches provenance_bench.*_reward.reward_for_problem:
 #   (answer, gold) -> (score, detail)   with score in {-1.0, +1.0}
@@ -46,21 +47,26 @@ EXECUTOR_SYSTEM = (
 class ScriptedClient:
     """Duck-typed stand-in for ``agent.model.ModelClient`` for tests/invariants.
 
-    ``generate(system, user)`` returns a scripted answer keyed by role (detected
-    from the system prompt). Deterministic; lets an invariant drive a *correct*
-    rollout (reward = +1) without a live model.
+    ``generate(system, user)`` returns a scripted reply keyed by role (detected from
+    the system prompt). The executor side can be a *sequence* (``answers=[...]``) to
+    drive a multi-step tool loop deterministically — e.g. emit ``TOOL: calc(...)``
+    then a final ``\\boxed{}``. Deterministic; no live model.
     """
 
     def __init__(self, *, plan: str = "1. identify formula\n2. substitute\n3. solve",
-                 answer: str = "") -> None:
+                 answer: str = "", answers: "list[str] | None" = None) -> None:
         self.plan = plan
-        self.answer = answer
+        self._answers = list(answers) if answers is not None else [answer]
         self.calls = 0
+        self._exec_idx = 0
 
     def generate(self, system: str, user: str, **_: Any) -> Any:
         self.calls += 1
-        text = self.plan if "PLANNER" in system else self.answer
-        return _Result(text)
+        if "PLANNER" in system:
+            return _Result(self.plan)
+        i = min(self._exec_idx, len(self._answers) - 1)
+        self._exec_idx += 1
+        return _Result(self._answers[i])
 
 
 @dataclass
@@ -116,12 +122,18 @@ class RolloutFactory:
     # -- a single planner->executor rollout --------------------------------- #
     def rollout(self, goal: str, *, gold: str | None = None,
                 reward_for: RewardFn | None = None,
+                tools: "dict[str, Tool] | None" = None, max_executor_steps: int = 4,
                 source: str = "rollout-factory", license: str = "Apache-2.0") -> dict:
         """Run one planner→executor rollout and return a scored ``AgentTrajectory``.
 
-        Planner and executor get SEPARATE sessions (disjoint prefixes). The reward
-        is the verifiable ``reward_for(answer, gold)`` when supplied (else null).
+        Planner and executor get SEPARATE sessions (disjoint prefixes). The executor
+        runs a tool loop: while its reply emits ``TOOL: name(arg)`` and steps remain,
+        the tool's observation is appended and the executor continues — each turn
+        deepening the (cache-warm) session. The loop ends on a reply with no tool
+        call (the final answer) or at ``max_executor_steps``. The reward is the
+        verifiable ``reward_for(answer, gold)`` when supplied (else null).
         """
+        tools = tools or {}
         meter = CostMeter(cache_rate=self.cache_rate)
         planner = Session(system=PLANNER_SYSTEM, context_window=self.context_window,
                           compact_ratio=self.compact_ratio)
@@ -129,7 +141,21 @@ class RolloutFactory:
                            compact_ratio=self.compact_ratio)
 
         plan = self._turn(planner, f"Problem:\n{goal}", meter)
-        answer = self._turn(executor, f"Plan:\n{plan}\n\nProblem:\n{goal}", meter)
+        steps: list[dict] = [{"action": "plan", "observation": plan}]
+
+        reply = self._turn(executor, f"Plan:\n{plan}\n\nProblem:\n{goal}", meter)
+        answer = reply
+        for _ in range(max(0, max_executor_steps - 1)):
+            m = TOOL_RE.search(reply)
+            if not m:
+                break  # no tool call -> this reply is the final answer
+            name, arg = m.group(1), m.group(2)
+            tool = tools.get(name)
+            obs = tool(arg) if tool else f"error: unknown tool {name!r}"
+            steps.append({"action": f"tool:{name}({arg})", "observation": obs})
+            reply = self._turn(executor, f"Observation: {obs}\nContinue.", meter)
+            answer = reply
+        steps.append({"action": "execute", "observation": answer})
 
         reward: float | None = None
         verdict_detail: dict = {}
@@ -139,10 +165,7 @@ class RolloutFactory:
 
         return {
             "goal": goal,
-            "steps": [
-                {"action": "plan", "observation": plan},
-                {"action": "execute", "observation": answer},
-            ],
+            "steps": steps,
             "outcome": answer,
             "reward": reward,
             "source": source,
@@ -150,6 +173,7 @@ class RolloutFactory:
             "detail": {
                 "gold": gold,
                 "verdict": verdict_detail,
+                "executorSteps": len(steps) - 1,
                 "cost": meter.summary(),
                 "plannerExecutorDisjoint": _disjoint(planner, executor),
                 "appendOnly": planner.assert_append_only() and executor.assert_append_only(),
@@ -248,6 +272,16 @@ def offline_invariants() -> "tuple[bool, dict]":
         k: good[k] for k in ("goal", "steps", "outcome", "reward", "source", "license")
     })
 
+    # 4) A multi-step executor tool loop deepens the session and uses calc as the
+    #    arithmetic ground truth, ending in a correct \boxed answer.
+    from pipeline.rollout.tools import DEFAULT_TOOLS
+
+    tool_client = ScriptedClient(answers=["TOOL: calc(10*3)", r"\boxed{30 N}"])
+    ft = RolloutFactory(client=tool_client)
+    tool_run = ft.rollout("A 10 kg mass accelerates at 3 m/s^2; find the force.",
+                          gold="30 N", reward_for=physics_reward.reward_for_problem,
+                          tools=DEFAULT_TOOLS, max_executor_steps=4)
+
     checks = {
         "correctRewardOne": good["reward"] == 1.0,
         "wrongUnitRewardZero": bad["reward"] == 0.0,
@@ -256,10 +290,14 @@ def offline_invariants() -> "tuple[bool, dict]":
         "deterministic": good["steps"] == good2["steps"] and good["reward"] == good2["reward"],
         "cacheSaves": meter.savings_ratio() > 1.5,
         "trajectoryValid": traj_check["ok"],
+        "toolLoopRan": tool_run["detail"]["executorSteps"] >= 2,
+        "toolLoopRewarded": tool_run["reward"] == 1.0,
+        "toolLoopSaves": tool_run["detail"]["cost"]["savingsRatio"] > 1.0,
     }
     detail = {
         "checks": checks,
         "deepRolloutCost": meter.summary(),
+        "toolRolloutCost": tool_run["detail"]["cost"],
         "goodReward": good["reward"],
         "badReward": bad["reward"],
         "sampleTrajectoryErrors": traj_check["errors"],

@@ -8,12 +8,14 @@ no GPU.
 from __future__ import annotations
 
 from pipeline.rollout import (
+    DEFAULT_TOOLS,
     CostMeter,
     RolloutFactory,
     ScriptedClient,
     Session,
     count_tokens,
     offline_invariants,
+    safe_calc,
 )
 from pretraining.vertical_data.schemas import validate_agent_trajectory
 from provenance_bench import physics_reward
@@ -102,6 +104,33 @@ def test_factory_runs_on_mock_backend() -> None:
                    reward_for=physics_reward.reward_for_problem)
     assert tr["reward"] in (0.0, 1.0)
     assert len(tr["steps"]) == 2
+
+
+# --------------------------------------------------------------------------- #
+# Tools + multi-step executor loop (the cache win materializes with depth)
+# --------------------------------------------------------------------------- #
+def test_safe_calc_arithmetic() -> None:
+    assert safe_calc("10*3") == "= 30"
+    assert safe_calc("0.5 * 4 * 5**2") == "= 50"
+    assert safe_calc("196 + 98") == "= 294"
+
+
+def test_safe_calc_rejects_non_arithmetic() -> None:
+    assert safe_calc("__import__('os').system('x')").startswith("error")
+    assert safe_calc("open('f')").startswith("error")
+
+
+def test_tool_loop_deepens_and_rewards() -> None:
+    client = ScriptedClient(answers=["TOOL: calc(0.5*4*5**2)", r"\boxed{50 J}"])
+    f = RolloutFactory(client=client)
+    tr = f.rollout("4 kg at 5 m/s, find KE", gold="50 J",
+                   reward_for=physics_reward.reward_for_problem,
+                   tools=DEFAULT_TOOLS, max_executor_steps=4)
+    assert tr["detail"]["executorSteps"] >= 2      # plan-less count: tool + execute
+    assert tr["reward"] == 1.0
+    # The calc observation is recorded as a step.
+    assert any(s["action"].startswith("tool:calc") for s in tr["steps"])
+    assert tr["detail"]["cost"]["savingsRatio"] > 1.0
 
 
 def test_offline_invariants_pass() -> None:

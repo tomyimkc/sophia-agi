@@ -181,12 +181,16 @@ Each phase has an **entry/exit gate** and lands artifacts where the no-overclaim
 CI can see them. CPU/offline phases first; the single expensive GPU phase is
 isolated so it can be done in one rented-GPU burst (RunPod MCP is wired).
 
-### Phase 0 — Baseline & scaffolding (CPU, ~days)
-- Run existing harness to get *current* numbers: GSM8K/MATH-style via
-  `agent/external_eval.py --scorer symbolic`; MBPP-style via `eval/coding/`.
-- Seal these as the pre-registration baseline (`provenance_bench/holdout_seal.py`).
-- **Exit gate:** a committed baseline table (math/code accuracy, CI) in
-  `agi-proof/benchmark-results/`. No physics number yet — that's honest.
+### Phase 0 — Baseline & scaffolding (CPU) — ✅ **landed**
+- ✅ `tools/run_baseline.py`: pass@1 on the FAMILY-disjoint **sealed** eval split
+  for `math` / `physics` / `code`, scored by the same verifiable reward the RLVR
+  run optimizes (no LLM judge), with a Wilson 95% interval.
+- ✅ Pre-registration reports sealed into `agi-proof/benchmark-results/baseline-*.json`
+  (eval-split content hash recorded, so the Phase 3 "after" is provably on the
+  identical unpeeked set). 4 tests in `tests/test_run_baseline.py`.
+- ✅ **Exit gate met:** committed baseline table with sealed hashes + CIs. With the
+  offline `mock` model these are the **harness floor (~0)**, explicitly labelled
+  "NOT a capability claim" — a real subject model fills in the comparable number.
 
 ### Phase 1 — Cache-stable rollout factory (CPU + hosted API) ★A,★B — ✅ **scaffolded**
 - ✅ `pipeline/rollout/`: `session.py` (append-only prefix-stable `Session` +

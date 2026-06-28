@@ -1,0 +1,88 @@
+{
+  "benchmark": "baseline-physics",
+  "task": "physics",
+  "model": "mock",
+  "split": "eval",
+  "n": 12,
+  "passed": 0,
+  "passAt1": 0.0,
+  "ci95Wilson": [
+    0.0,
+    0.2425
+  ],
+  "evalSealed": "ecc4e309a3cfd183",
+  "trainSealed": "e164f2d38ff65064",
+  "evalFamilies": [
+    "electric_power",
+    "gravitational_pe",
+    "momentum",
+    "pendulum_period",
+    "photon_energy",
+    "wavelength"
+  ],
+  "contaminationFree": true,
+  "claim": "pre-registered baseline (NOT a capability claim)",
+  "note": "mock model => harness floor, not a capability number",
+  "perItem": [
+    {
+      "id": "pe-3-10",
+      "family": "gravitational_pe",
+      "passed": false
+    },
+    {
+      "id": "pe-5-4",
+      "family": "gravitational_pe",
+      "passed": false
+    },
+    {
+      "id": "mom-8-3",
+      "family": "momentum",
+      "passed": false
+    },
+    {
+      "id": "mom-1p5-20",
+      "family": "momentum",
+      "passed": false
+    },
+    {
+      "id": "ph-5e14",
+      "family": "photon_energy",
+      "passed": false
+    },
+    {
+      "id": "ph-2e15",
+      "family": "photon_energy",
+      "passed": false
+    },
+    {
+      "id": "pend-1",
+      "family": "pendulum_period",
+      "passed": false
+    },
+    {
+      "id": "pend-2",
+      "family": "pendulum_period",
+      "passed": false
+    },
+    {
+      "id": "ep-12-2",
+      "family": "electric_power",
+      "passed": false
+    },
+    {
+      "id": "ep-9-0p5",
+      "family": "electric_power",
+      "passed": false
+    },
+    {
+      "id": "wl-5e14",
+      "family": "wavelength",
+      "passed": false
+    },
+    {
+      "id": "wl-1e15",
+      "family": "wavelength",
+      "passed": false
+    }
+  ]
+}
