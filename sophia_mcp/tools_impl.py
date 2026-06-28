@@ -933,5 +933,103 @@ def trace_contradictions() -> dict:
     }
 
 
+def source_verify_tool(answer: str, question: str = "") -> dict:
+    """Audit an answer for FABRICATED CITATIONS and ATTRIBUTION SWAPS using keyless,
+    high-independence external records (the 2026-06-28 verification toolkit).
+
+    - fabricated-citation check (``agent.citation_existence_verifier``): a cited study/DOI that
+      Crossref cannot confirm exists -> flagged (the Mata v. Avianca failure mode);
+    - attribution-swap check (``agent.attribution_swap_verifier``): a real work credited to a
+      person who is NOT its Wikidata creator/author/discoverer -> flagged.
+
+    Trustworthy posture: HIGH independence (deterministic external records, no model judgment),
+    FAIL-OPEN and honestly coverage-bounded — an item no external record covers is NOT flagged,
+    never a fabricated contradiction. Keyless: needs only network, no API keys. For the lower-
+    independence layers (Google viral, multi-judge faithfulness) run
+    ``tools/run_source_contamination_bench.py --verifier {hybrid,faithfulness}``.
+    """
+    from urllib.parse import urlencode
+
+    from agent.attribution_swap_verifier import extract_attributions, verify_attribution
+    from agent.citation_existence_verifier import audit_citations
+    from agent.live_sources import LiveFactBackend, _get_json
+
+    live = LiveFactBackend()
+
+    def _scholarly(q: str) -> list:
+        out: list = []
+        try:
+            data = _get_json("https://api.crossref.org/works?" + urlencode(
+                {"query.bibliographic": q[:220], "rows": "3"}), timeout=15)
+            for it in (data.get("message", {}).get("items") or [])[:3]:
+                title = " ".join(it.get("title") or [])
+                year = ""
+                for k in ("published-print", "published-online", "published", "issued"):
+                    parts = (it.get(k) or {}).get("date-parts") or []
+                    if parts and parts[0]:
+                        year = str(parts[0][0]); break
+                if title:
+                    out.append({"title": title, "year": year})
+        except Exception:  # noqa: BLE001 — a search error confirms nothing
+            return []
+        return out
+
+    _ATTR_PROPS = ("P170", "P50", "P61", "P287", "P86", "P84", "P112", "P943", "P800")
+
+    def _wikidata_lookup(work: str) -> list:
+        try:
+            s = _get_json("https://www.wikidata.org/w/api.php?" + urlencode(
+                {"action": "wbsearchentities", "search": work, "language": "en",
+                 "format": "json", "limit": "1"}), timeout=20)
+            hits = s.get("search") or []
+            if not hits:
+                return []
+            qid = hits[0]["id"]
+            d = _get_json(f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json", timeout=20)
+            claims = d["entities"][qid].get("claims", {})
+            out: list = []
+            for p in _ATTR_PROPS:
+                for c in claims.get(p, []):
+                    try:
+                        pid = c["mainsnak"]["datavalue"]["value"]["id"]
+                        ld = _get_json(f"https://www.wikidata.org/wiki/Special:EntityData/{pid}.json", timeout=20)
+                        out.append(ld["entities"][pid]["labels"].get("en", {}).get("value", pid))
+                    except Exception:  # noqa: BLE001, PERF203
+                        pass
+            return out
+        except Exception:  # noqa: BLE001
+            return []
+
+    findings: list = []
+    try:
+        cit = audit_citations(answer, doi_resolver=live.doi_resolver, scholarly_search=_scholarly)
+    except Exception:  # noqa: BLE001 — fail-open
+        cit = {"n_citations": 0, "unverifiable": []}
+    for u in cit.get("unverifiable", []):
+        findings.append({"type": "unverifiable_citation", "detail": u, "independence": "high"})
+    try:
+        for work, person in extract_attributions(question, answer):
+            v = verify_attribution(work, person, wikidata_lookup=_wikidata_lookup)
+            if v["verdict"] == "swapped":
+                findings.append({"type": "attribution_swap", "work": work,
+                                 "credited": v["credited"], "true": v["true"], "independence": "high"})
+    except Exception:  # noqa: BLE001 — fail-open
+        pass
+
+    return {
+        "schema": "sophia.source_verify.v1",
+        "clean": not findings,
+        "findings": findings,
+        "nCitations": cit.get("n_citations", 0),
+        "independence": "high (Crossref existence + Wikidata attribution; no model judgment)",
+        "note": ("FAIL-OPEN and coverage-bounded: an item no external record covers is not flagged. "
+                 "For viral-claim (Google) and misstated-finding (multi-judge) checks, run the bench."),
+        "failClosed": True,
+        "canClaimAGI": False,
+        "boundary": ("Sophia is an AGI-candidate verifier-gated provenance framework; "
+                     "external-record auditing of an answer is not proof of AGI."),
+    }
+
+
 def dumps(payload: dict) -> str:
     return json.dumps(payload, ensure_ascii=False, indent=2)

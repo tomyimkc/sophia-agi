@@ -75,6 +75,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     wiki_search,
     wiki_upsert,
     wiki_validate_tool,
+    source_verify_tool,
 )
 from sophia_mcp import boundary, gateway_wiring  # noqa: E402
 
@@ -97,6 +98,16 @@ mcp = FastMCP(
 def sophia_validate() -> str:
     """Validate data/attributions.json and all training/examples/*.json."""
     return dumps(validate_corpus())
+
+
+@mcp.tool()
+def sophia_source_verify(answer: str, question: str = "") -> str:
+    """Audit an answer for fabricated citations and attribution swaps via keyless,
+    HIGH-INDEPENDENCE external records (Crossref study/DOI existence + Wikidata creator/author/
+    discoverer). Flags a cited study that does not exist (Mata v. Avianca mode) and a real work
+    credited to the wrong creator (Hamlet->Marlowe). Fail-open + coverage-bounded; no API keys.
+    The 2026-06-28 verification toolkit, surfaced as a tool. canClaimAGI stays false."""
+    return dumps(source_verify_tool(answer, question=question))
 
 
 @mcp.tool()
