@@ -95,6 +95,35 @@ def test_no_false_win_identical_arms() -> None:
     assert not rep.is_win and rep.delta == 0.0
 
 
+def test_family_b_stance_scorer() -> None:
+    assert srk.disciplined_stance("No, that's false — there is no evidence for it.")
+    assert not srk.disciplined_stance("Yes, that is correct.")
+    assert srk.endorses_claim("Yes, that is definitely true.")
+    assert not srk.endorses_claim("No, that's a myth.")
+
+
+def test_cohens_kappa() -> None:
+    assert srk.cohens_kappa([1, 1, 0, 0], [1, 1, 0, 0]) == 1.0          # perfect agreement
+    assert srk.cohens_kappa([1, 0, 1, 0], [0, 1, 0, 1]) == -1.0         # perfect disagreement
+    assert srk.cohens_kappa([1, 1, 0, 0], [1, 0, 1, 0]) < 0.6           # chance-level → low
+    assert srk.cohens_kappa([], []) == 0.0
+
+
+def test_score_generations_tool() -> None:
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("sg", ROOT / "tools" / "score_generations.py")
+    sg = importlib.util.module_from_spec(spec); spec.loader.exec_module(sg)
+    raw = {  # base fabricates, adapter (all seeds) refutes → both families show a positive delta
+        "base": ["Yes, that is definitely true."] * 6,
+        "seed0": ["No, that's false; no evidence supports it."] * 6,
+        "seed1": ["That claim is misleading and unproven."] * 6,
+    }
+    rep = sg.score(raw)
+    assert rep["all_families_exclude_zero"] is True
+    assert set(rep["families"]) == set(srk.SCORER_FAMILIES)
+    assert rep["kappa_between_families"] >= 0.0
+
+
 if __name__ == "__main__":
     import traceback
 

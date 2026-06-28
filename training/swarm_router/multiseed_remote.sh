@@ -30,7 +30,7 @@ from datasets import Dataset
 from transformers import (AutoTokenizer, AutoModelForCausalLM, TrainingArguments, Trainer,
                           DataCollatorForLanguageModeling, BitsAndBytesConfig, set_seed)
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training, PeftModel
-from provenance_bench.search_recall import load_pack, source_discipline_ok, PACK_V2_PATH
+from provenance_bench.search_recall import load_pack, PACK_V2_PATH, SCORER_FAMILIES, cohens_kappa
 from provenance_bench.swarm_benchmark import _paired_bootstrap_ci
 PACK_PATH=os.environ.get("SOPHIA_PACK") or str(PACK_V2_PATH)
 MODEL="Qwen/Qwen2.5-7B-Instruct"; SEEDS=[0,1,2]
@@ -65,7 +65,7 @@ adapters={}; last_losses={}
 for s in SEEDS:
     adapters[s], last_losses[s] = train_one(s)
 put("seed_last_loss", last_losses)
-# Phase 2: FP16 eval — base once, then each seed's adapter (one 7B fp16 resident).
+# Phase 2: FP16 eval — CAPTURE raw generations, then score with 2 independent families + κ.
 SYS="You are a source-disciplined search agent. Cite sources; abstain if you cannot ground a claim."
 traps=[t for t in load_pack(PACK_PATH) if t.trap]
 def make_gen(mdl):
@@ -78,28 +78,41 @@ def make_gen(mdl):
     return gen
 base=AutoModelForCausalLM.from_pretrained(MODEL,torch_dtype=torch.float16,device_map="auto").eval()
 gb=make_gen(base)
-base_hits=[1 if source_discipline_ok(gb(t.query)) else 0 for t in traps]
+base_gens=[gb(t.query) for t in traps]
 m=PeftModel.from_pretrained(base, adapters[SEEDS[0]], adapter_name=f"s{SEEDS[0]}").eval()
 for s in SEEDS[1:]:
     m.load_adapter(adapters[s], adapter_name=f"s{s}")
 gm=make_gen(m)
-per_seed={}; pooled_before=[]; pooled_after=[]; deltas=[]
+seed_gens={}
 for s in SEEDS:
     m.set_adapter(f"s{s}")
-    after=[1 if source_discipline_ok(gm(t.query)) else 0 for t in traps]
-    br=sum(base_hits)/len(base_hits); ar=sum(after)/len(after)
-    per_seed[s]={"before":round(br,3),"after":round(ar,3),"delta":round(ar-br,3)}
-    deltas.append(ar-br); pooled_before+=base_hits; pooled_after+=after
-mean_delta=sum(deltas)/len(deltas)
-lo,hi=_paired_bootstrap_ci(pooled_before, pooled_after, iters=4000, seed=0)
-put("graded_suite","source_discipline_rate_multiseed")
+    seed_gens[s]=[gm(t.query) for t in traps]
+# Score each independent family over the SAME generations (scoring decoupled from GPU).
+fam_results={}
+for fam,scorer in SCORER_FAMILIES.items():
+    base_hits=[1 if scorer(g) else 0 for g in base_gens]
+    per_seed={}; pb=[]; pa=[]; deltas=[]
+    for s in SEEDS:
+        after=[1 if scorer(g) else 0 for g in seed_gens[s]]
+        br=sum(base_hits)/len(base_hits); ar=sum(after)/len(after)
+        per_seed[s]={"before":round(br,3),"after":round(ar,3),"delta":round(ar-br,3)}
+        deltas.append(ar-br); pb+=base_hits; pa+=after
+    lo,hi=_paired_bootstrap_ci(pb,pa,iters=4000,seed=0)
+    fam_results[fam]={"base_rate":round(sum(base_hits)/len(base_hits),3),"per_seed":per_seed,
+                      "mean_delta":round(sum(deltas)/len(deltas),4),"ci95":[round(lo,4),round(hi,4)],
+                      "ci_excludes_zero":bool(lo>0)}
+# Cohen's κ between the two families over ALL judgments (base + every seed).
+fams=list(SCORER_FAMILIES)
+all_gens=base_gens+[g for s in SEEDS for g in seed_gens[s]]
+labA=[1 if SCORER_FAMILIES[fams[0]](g) else 0 for g in all_gens]
+labB=[1 if SCORER_FAMILIES[fams[1]](g) else 0 for g in all_gens]
+put("graded_suite","source_discipline_rate_multiseed_2family")
 put("n_traps",len(traps)); put("seeds",SEEDS); put("pack",os.path.basename(PACK_PATH))
-put("base_rate", round(sum(base_hits)/len(base_hits),3))
-put("per_seed", per_seed)
-put("mean_delta", round(mean_delta,4))
-put("ci95_pooled", [round(lo,4), round(hi,4)])
-put("ci_excludes_zero", bool(lo>0))
-put("smoke_generation", gm(traps[0].query)[:400])
+put("families",fam_results)
+put("kappa_families",fams); put("kappa_between_families",cohens_kappa(labA,labB))
+put("both_families_exclude_zero", all(fam_results[f]["ci_excludes_zero"] for f in fams))
+put("raw_generations",{"base":base_gens, **{f"seed{s}":seed_gens[s] for s in SEEDS}})
+put("smoke_generation", seed_gens[SEEDS[0]][0][:400])
 put("phase","trained_and_validated")
 PY
 cd /workspace/repo
