@@ -123,6 +123,13 @@ entities.** Caveat: single seed, but the ~0.8 effect dwarfs the ~0.32 seed noise
 (partial, authorship only, aggregate metric masked the gap), v3 (complete) — each diagnosed by the
 measurement contract rather than guessed.
 
+> **Corpus note (honesty).** The settled-row percentages above are of the *training-time* dataset
+> snapshot, which also included an exploratory world-classics attributions enrichment (attributions
+> 30→381). That enrichment was **reverted from the published corpus** because its English-heavy records
+> degraded the benchmark's bilingual balance and the RAG retrieval quality. The calibration *mechanism*
+> and the per-sub-family result (`calibration-fix-result.json`) stand as committed artifacts; only the
+> exact training dataset differs from the now-published, smaller corpus.
+
 ## How to reuse it
 
 The model is a *feasibility proof of the method*, not a product. For a larger base or corpus, carry the

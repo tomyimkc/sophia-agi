@@ -887,14 +887,15 @@ def build(check_only: bool, stats: bool, *, teacher_spec: str | None = None,
             "target": ">=10k decontaminated gate-passed rows",
             "achieved": total,
             "met": total >= 10000,
-            "honest_note": ("Volume is CORPUS-bound: rows scale with ground-truth records. ENRICHMENT "
-                            "2026-06-27 (tools/enrich_corpus.py, fail-closed on accuracy + provenance; "
-                            "auto-decontaminated vs heldout_v1 + transfer_v1; independently fact-verified): "
-                            "attributions 30 -> 381, history 23 -> 51, religion 8 -> 21. Dataset 880 -> 3306 "
-                            "gate-passed rows (+275%, 3.75x); preference pairs 233 -> 1851 (8x); decontam "
-                            "drops held at 90 (zero new eval contamination). STILL BELOW 10k -> M2 stays "
-                            "NO-GO on absolute volume (~1030 more records at the measured ~6.5 rows/record). "
-                            "Sustained curation, now tooled + accuracy-disciplined + decontaminated."),
+            "honest_note": ("Volume is CORPUS-bound: rows scale with ground-truth records. The corpus "
+                            "is the original curated set PLUS the settled-fact/event calibration corpora "
+                            "(data/settled_facts.json + data/settled_events.json) that teach direct answers "
+                            "on settled cases. NOTE: an exploratory world-classics attributions enrichment "
+                            "(attributions 30->381) was REVERTED from the published corpus because its "
+                            "English-heavy records degraded the benchmark's bilingual balance and the RAG "
+                            "retrieval quality; the calibration runs (seed8/9/10) were trained on that prior "
+                            "snapshot, and the settled-fact mechanism + per-subfamily result stand. STILL "
+                            "well below the 10k M2 target -> M2 NO-GO on absolute volume."),
         },
         "boundary": ("Habits learned by weights; truth enforced by the EXTERNAL gate. Not an AGI "
                      "claim. General-retention pack is small — expand with a license-clean instruct "

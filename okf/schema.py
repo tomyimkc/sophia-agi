@@ -27,8 +27,7 @@ PAGE_TYPES = (
     "memory",
 )
 
-DOMAINS = ("philosophy", "psychology", "history", "religion", "science", "literature",
-           "music", "poetry", "drama", "mathematics", "medicine", "law")
+DOMAINS = ("philosophy", "psychology", "history", "religion", "science")
 
 # authorConfidence enum — copied from data/schema.json so a drift is a test failure.
 AUTHOR_CONFIDENCE = (
@@ -40,7 +39,6 @@ AUTHOR_CONFIDENCE = (
     "consensus",
     "anachronism_risk",
     "layered",  # multi-hand authorship/reception (e.g. scripture layers) — see religion records
-    "pseudonymous",  # known author under a pen name (e.g. Orwell=Blair, Twain=Clemens)
 )
 
 # Ordered strength for min-over-chain confidence propagation (lower == weaker).
@@ -54,7 +52,6 @@ CONFIDENCE_RANK = {
     "compiled": 2,
     "layered": 2,
     "attributed": 3,
-    "pseudonymous": 3,  # pen name, but authorship is known — as confident as attributed
     "consensus": 4,
 }
 

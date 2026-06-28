@@ -8,16 +8,16 @@
   },
   "admission": "agent.gate.check_response (advisor) + public_standard; reject -> preference/hard-neg",
   "totals": {
-    "candidates": 4459,
-    "accepted": 3987,
+    "candidates": 2033,
+    "accepted": 1560,
     "rejected": 364,
-    "decontaminationDrops": 91,
-    "acceptanceRate": 0.894
+    "decontaminationDrops": 92,
+    "acceptanceRate": 0.767
   },
   "byFamily": {
     "council": {
-      "rows": 125,
-      "pct": 3.1,
+      "rows": 124,
+      "pct": 7.9,
       "targetPct": [
         10.0,
         15.0
@@ -25,7 +25,7 @@
     },
     "general_retention": {
       "rows": 270,
-      "pct": 6.8,
+      "pct": 17.3,
       "targetPct": [
         25.0,
         30.0
@@ -33,7 +33,7 @@
     },
     "hk_bilingual": {
       "rows": 8,
-      "pct": 0.2,
+      "pct": 0.5,
       "targetPct": [
         10.0,
         10.0
@@ -41,7 +41,7 @@
     },
     "moral_gate": {
       "rows": 37,
-      "pct": 0.9,
+      "pct": 2.4,
       "targetPct": [
         10.0,
         10.0
@@ -49,15 +49,15 @@
     },
     "settled_fact": {
       "rows": 681,
-      "pct": 17.1,
+      "pct": 43.7,
       "targetPct": [
         12.0,
         20.0
       ]
     },
     "source_discipline": {
-      "rows": 2857,
-      "pct": 71.7,
+      "rows": 431,
+      "pct": 27.6,
       "targetPct": [
         20.0,
         25.0
@@ -65,7 +65,7 @@
     },
     "tool_mcp": {
       "rows": 9,
-      "pct": 0.2,
+      "pct": 0.6,
       "targetPct": [
         10.0,
         10.0
@@ -73,13 +73,13 @@
     }
   },
   "byLanguage": {
-    "en": 3561,
-    "zh": 426
+    "en": 1400,
+    "zh": 160
   },
-  "preferencePairs": 1851,
+  "preferencePairs": 233,
   "mlx": {
-    "trainRows": 3808,
-    "validRows": 179,
+    "trainRows": 1491,
+    "validRows": 69,
     "maxTokens": 1024,
     "path": "training/local_sophia_v3/mlx"
   },
@@ -122,25 +122,25 @@
     ]
   },
   "records": {
-    "attributions": 381,
+    "attributions": 30,
     "traditions": 8,
-    "religion_concepts": 21,
+    "religion_concepts": 8,
     "psychology_concepts": 10,
-    "history_events": 51,
+    "history_events": 23,
     "legal_authorities": 5,
     "settled_facts": 76,
     "settled_events": 50,
-    "_total": 602,
-    "rowsPerRecord": 6.62,
+    "_total": 210,
+    "rowsPerRecord": 7.43,
     "ceiling": 8.0,
     "inflationFlag": false,
     "note": "Volume headline is RECORDS, not rows. rowsPerRecord above the ceiling means templating (Goodhart), not more ground truth."
   },
   "go_no_go": {
     "target": ">=10k decontaminated gate-passed rows",
-    "achieved": 3987,
+    "achieved": 1560,
     "met": false,
-    "honest_note": "Volume is CORPUS-bound: rows scale with ground-truth records. ENRICHMENT 2026-06-27 (tools/enrich_corpus.py, fail-closed on accuracy + provenance; auto-decontaminated vs heldout_v1 + transfer_v1; independently fact-verified): attributions 30 -> 381, history 23 -> 51, religion 8 -> 21. Dataset 880 -> 3306 gate-passed rows (+275%, 3.75x); preference pairs 233 -> 1851 (8x); decontam drops held at 90 (zero new eval contamination). STILL BELOW 10k -> M2 stays NO-GO on absolute volume (~1030 more records at the measured ~6.5 rows/record). Sustained curation, now tooled + accuracy-disciplined + decontaminated."
+    "honest_note": "Volume is CORPUS-bound: rows scale with ground-truth records. The corpus is the original curated set PLUS the settled-fact/event calibration corpora (data/settled_facts.json + data/settled_events.json) that teach direct answers on settled cases. NOTE: an exploratory world-classics attributions enrichment (attributions 30->381) was REVERTED from the published corpus because its English-heavy records degraded the benchmark's bilingual balance and the RAG retrieval quality; the calibration runs (seed8/9/10) were trained on that prior snapshot, and the settled-fact mechanism + per-subfamily result stand. STILL well below the 10k M2 target -> M2 NO-GO on absolute volume."
   },
   "boundary": "Habits learned by weights; truth enforced by the EXTERNAL gate. Not an AGI claim. General-retention pack is small — expand with a license-clean instruct slice before any real SFT or the model becomes a narrow refusal machine."
 }
