@@ -94,18 +94,28 @@ def collect_files(globs: "list[str]") -> "list[Path]":
     return sorted(seen)
 
 
+def _mask(value: str) -> str:
+    """Describe a finding WITHOUT echoing the secret itself.
+
+    A security scanner must never print the matched secret (clear-text logging of
+    sensitive data). We surface only the length, which is enough to locate it
+    while leaking nothing.
+    """
+    return f"<redacted: {len(value)} chars>"
+
+
 def scan_file(path: Path) -> "list[dict]":
     try:
         text = path.read_text(encoding="utf-8", errors="replace")
     except OSError as exc:
-        return [{"kind": "unreadable", "match": str(exc)}]
+        return [{"kind": "unreadable", "preview": str(exc)}]
     findings: list[dict] = []
     for f in find_secrets(text):
-        findings.append({"kind": f"secret:{f['kind']}", "match": f["match"]})
+        findings.append({"kind": f"secret:{f['kind']}", "preview": _mask(f["match"])})
     for f in find_internal(text):
-        findings.append({"kind": f"internal:{f['kind']}", "match": f["match"]})
+        findings.append({"kind": f"internal:{f['kind']}", "preview": _mask(f["match"])})
     for c in scan_for_canaries(text):
-        findings.append({"kind": "canary", "match": c})
+        findings.append({"kind": "canary", "preview": _mask(c)})
     return findings
 
 
@@ -136,7 +146,7 @@ def main(argv: "list[str] | None" = None) -> int:
         for entry in report["files_with_findings"]:
             print(f"  {entry['file']}")
             for f in entry["findings"]:
-                print(f"    - {f['kind']}: {f['match'][:40]}")
+                print(f"    - {f['kind']}: {f.get('preview', '')}")
     return 0 if report["clean"] else 1
 
 
