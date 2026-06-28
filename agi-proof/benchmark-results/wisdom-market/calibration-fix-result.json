@@ -1,0 +1,30 @@
+{
+  "experiment": "calibration fix (settled_facts corpus) — does it reduce over-qualification on clear-cut cases?",
+  "fix": "data/settled_facts.json (36 records) + gen_settled_facts -> 204 settled_fact rows (5.8% of 3510)",
+  "recalibrated_seed8": {
+    "clearcut_adapter_hedge": 0.5526,
+    "clearcut_lift": 0.3684,
+    "contested_adapter_hedge": 0.9722,
+    "benchmark": "calibration_probe.jsonl (74 cases; 38 clear-cut, 36 contested)"
+  },
+  "prefix_baselines": {
+    "seed1": {
+      "clearcut_adapter_hedge": 0.3684,
+      "clearcut_lift": 0.2368
+    },
+    "seed2": {
+      "clearcut_adapter_hedge": 0.6842,
+      "clearcut_lift": 0.6053
+    }
+  },
+  "verdict": "NO DETECTABLE IMPROVEMENT",
+  "reading": "recalibrated lift +0.368 sits INSIDE the pre-fix seed range (+0.237 to +0.605); the 5.8% settled-fact slice did not measurably reduce reflexive hedging. Contested hedging stayed high (0.972) so nothing broke.",
+  "power_caveat": "clear-cut n=38 with seed-to-seed variance 0.368->0.684 means the probe CANNOT resolve a modest fix effect — this is 'no detectable improvement', NOT 'proven no effect'. A powered verdict needs a larger clear-cut probe + multiple recalibrated seeds.",
+  "next_if_pursued": [
+    "raise settled_fact share to ~15-20%",
+    "add settled-fact PREFERENCE pairs (chosen=direct, rejected=hedged)",
+    "the admission gate warns 'missing source-discipline framing' on direct answers — it structurally favors hedging; relax it for settled facts",
+    "bigger clear-cut probe + >=2 seeds for a powered calibration verdict"
+  ],
+  "boundary": "candidate_only; canClaimAGI:false"
+}

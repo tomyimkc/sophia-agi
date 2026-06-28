@@ -86,14 +86,22 @@ a "4B beats frontier" headline.
 - **Not a general LLM.** Narrow capability, single base, single retention seed, corpus-bound.
 - **Not third-party validated, not a hallucination guarantee, not AGI.**
 
-## The calibration fix (in progress)
+## The calibration fix attempt — verified, and it DID NOT work (an honest negative)
 
 The over-qualification tax had a clean root cause: the corpus contained **zero settled records** — every
-attribution warrants hedging — so the model never learned *when not to hedge*. The fix adds a
+attribution warrants hedging — so the model never learned *when not to hedge*. The fix added a
 settled-fact corpus (`data/settled_facts.json`, 36 undisputed single-author works) + a non-hedging
-generator that teaches the discrimination (settled → answer directly; "is it disputed? — no"). Dataset
-3306 → 3510 rows. **Verification (a GPU re-train + re-run of `tools/calibration_check.py`) is the open
-step** — the data fix is committed; the proof it works is pending, and will be reported pass-or-fail.
+generator (settled → answer directly; "is it disputed? — no"), 204 rows / 5.8% of the dataset.
+
+**Re-trained and re-measured (seed 8, GPU, `calibration-fix-result.json`): no detectable improvement.**
+The recalibrated adapter still over-qualifies clear-cut cases — hedge **0.553**, lift **+0.368** — which
+sits *inside* the pre-fix seed range (+0.237 to +0.605). Contested hedging stayed high (0.972), so nothing
+broke; the fix just didn't move the tax. Two honest reads: (a) 5.8% settled rows is too small a signal, and
+the **admission gate itself warns "missing source-discipline framing" on direct answers — it structurally
+favours hedging**; (b) at clear-cut **n=38** with seed-to-seed variance 0.37→0.68, the probe **cannot
+resolve** a modest fix effect — this is "no detectable improvement," NOT "proven no effect." A powered
+verdict needs a bigger clear-cut probe + multiple recalibrated seeds, and a stronger fix (more settled rows,
+settled-fact preference pairs, relaxing the gate for settled facts). *Reported as a failure, not spun.*
 
 ## How to reuse it
 
