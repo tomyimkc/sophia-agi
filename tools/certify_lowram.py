@@ -57,10 +57,15 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-# The attn + MLP/expert projection linears NVFP4 serving quantizes and that QAT co-adapts
-# (mirrors tools/train_lora.ATTN_MLP_MODULES). Embeddings / norms / router gate / lm_head stay bf16.
+# The attn + MLP/expert projection weights NVFP4 serving quantizes and that QAT co-adapts
+# (mirrors tools/train_lora.ATTN_MLP_MODULES, plus the FUSED MoE expert layouts some
+# transformers OLMoE builds use: a single 3-D ``gate_up_proj`` / ``down_proj`` Parameter on an
+# ``OlmoeExperts``-style module instead of per-expert nn.Linear). Embeddings, norms, the MoE
+# router gate (``mlp.gate``), and ``lm_head`` are deliberately kept bf16.
 SERVED_LINEAR_SUFFIXES = ("q_proj", "k_proj", "v_proj", "o_proj",
-                          "gate_proj", "up_proj", "down_proj")
+                          "gate_proj", "up_proj", "down_proj", "gate_up_proj")
+# Names that must NEVER be quantized regardless of suffix (kept high-precision in real serving).
+_QUANT_EXCLUDE = ("embed", "lm_head", "norm")
 
 # Default no-overclaim contract — identical to serving.lowram_eval.LowRamGate defaults and the
 # certify contract wired in tools/runpod_qat_lowram.py.
@@ -223,16 +228,35 @@ def load_merged_model(base_model: str, adapter_dir: Path, *, dtype_str: str,
     return merged_model, tok, info
 
 
-# --------------------------------------------------------------------------- #
-# NVFP4 quantization of the served linears (in place) — the low-RAM deployment.
-# --------------------------------------------------------------------------- #
-def quantize_served_linears(model: Any, *, scheme: str,
-                            suffixes: "tuple[str, ...]" = SERVED_LINEAR_SUFFIXES) -> dict:
-    """Snap every served linear's weight to its serving grid in place; leave the rest bf16.
+def is_served_param(name: str, *, suffixes: "tuple[str, ...]" = SERVED_LINEAR_SUFFIXES) -> bool:
+    """True if the *parameter* ``name`` is a served attn/MLP/expert projection weight.
 
-    Uses the exact fake-quant the model trained against: ``training.qat`` torch NVFP4
-    (``_torch_nvfp4``) / per-channel INT8. Returns a report of params quantized vs kept so the
-    memory ratio is computed honestly (not a flat headline number)."""
+    Matches on parameter names (NOT module types) so it catches BOTH per-expert ``nn.Linear``
+    (``...experts.7.down_proj.weight``) AND fused MoE expert Parameters
+    (``...mlp.experts.down_proj`` / ``gate_up_proj``, which have no ``.weight`` child and are
+    invisible to a ``type=='Linear'`` scan — the bug that left OLMoE's experts in bf16). Excludes
+    embeddings, norms, lm_head, the MoE router gate (``mlp.gate``), and any LoRA tensors."""
+    if any(x in name for x in _QUANT_EXCLUDE) or "lora" in name.lower():
+        return False
+    base = name[:-len(".weight")] if name.endswith(".weight") else name
+    if base.endswith("mlp.gate"):        # MoE router gate — must stay bf16
+        return False
+    return any(base.endswith(s) for s in suffixes)
+
+
+# --------------------------------------------------------------------------- #
+# NVFP4 quantization of the served weights (in place) — the low-RAM deployment.
+# --------------------------------------------------------------------------- #
+def quantize_served_params(model: Any, *, scheme: str,
+                           suffixes: "tuple[str, ...]" = SERVED_LINEAR_SUFFIXES) -> dict:
+    """Snap every served weight (attn + MLP/expert projections, incl. fused 3-D expert tensors)
+    to its serving grid in place; leave embeddings/norms/router/lm_head bf16.
+
+    Iterates ``named_parameters`` (not modules) so fused MoE expert Parameters are quantized too.
+    Uses the exact fake-quant the model trained against (``training.qat`` torch NVFP4 / INT8); the
+    NVFP4 round-trip flattens, so a 3-D ``[experts, in, out]`` tensor quantizes per block correctly.
+    Returns counts (quantized vs kept) plus the total so the memory ratio is honest and a too-low
+    coverage (experts silently skipped) is detectable."""
     import torch
     from training.qat import _torch_nvfp4
 
@@ -240,28 +264,28 @@ def quantize_served_linears(model: Any, *, scheme: str,
         if scheme == "nvfp4":
             return _torch_nvfp4(w)
         # int8 per-channel symmetric (matches training.qat._torch_ste_quant int8 branch)
-        amax = w.abs().amax(dim=1, keepdim=True).clamp_min(1e-12)
+        amax = w.abs().amax(dim=-1, keepdim=True).clamp_min(1e-12)
         scale = amax / 127.0
         return torch.clamp(torch.round(w / scale), -127, 127) * scale
 
     q_params = 0
     kept_params = 0
-    q_modules = 0
-    for name, module in model.named_modules():
-        if not hasattr(module, "weight") or module.weight is None:
-            continue
-        is_linear = type(module).__name__ == "Linear" and module.weight.dim() == 2
-        served = any(name.endswith(s) for s in suffixes)
-        n = module.weight.numel()
-        if is_linear and served:
+    q_tensors = 0
+    served_names: list[str] = []
+    for name, p in model.named_parameters():
+        n = p.numel()
+        if p.dim() >= 2 and is_served_param(name, suffixes=suffixes):
             with torch.no_grad():
-                module.weight.copy_(fq(module.weight.float()).to(module.weight.dtype))
+                p.copy_(fq(p.float()).to(p.dtype))
             q_params += n
-            q_modules += 1
+            q_tensors += 1
+            if len(served_names) < 8:
+                served_names.append(name)
         else:
             kept_params += n
-    return {"quantized_modules": q_modules, "quantized_params": q_params,
-            "kept_params": kept_params}
+    return {"quantized_modules": q_tensors, "quantized_params": q_params,
+            "kept_params": kept_params, "total_params": q_params + kept_params,
+            "quantized_sample": served_names}
 
 
 def effective_mem_ratio(q_params: int, kept_params: int, *, scheme: str,
@@ -346,7 +370,18 @@ def run_certify(args: argparse.Namespace) -> dict:
 
     model, tok, load_info = load_merged_model(
         args.base_model, adapter_dir, dtype_str=args.dtype, attn=args.attn, device=args.device)
-    print(f"[load] {load_info.get('lora_load')}", flush=True)
+    total_params = sum(p.numel() for p in model.parameters())
+    mm = load_info.get("manual_merge", {})
+    merged_n = mm.get("merged")
+    skipped_n = len(mm.get("skipped", [])) if mm else None
+    print(f"[load] {load_info.get('lora_load')}; total_params={total_params/1e9:.3f}B"
+          + (f"; manual_merge merged {merged_n}, skipped {skipped_n} adapter modules"
+             if merged_n is not None else ""), flush=True)
+    if skipped_n:
+        # Adapter targets that did not map to a module = expert LoRA the loaded (fused?) model
+        # can't accept. The "full" path is then missing that adaptation — surface it.
+        print(f"[warn] {skipped_n} adapter modules could not be merged (e.g. "
+              f"{mm.get('skipped', [])[:3]}); the full path may be missing expert LoRA.", flush=True)
 
     # 1) full bf16 (base + LoRA) next-token distributions.
     full_probs, prot_mask, ids = collect_next_token_probs(
@@ -354,13 +389,26 @@ def run_certify(args: argparse.Namespace) -> dict:
         device=args.device, protected_ids=protected_ids)
     print(f"[full] collected {full_probs.shape[0]} next-token positions", flush=True)
 
-    # 2) quantize the served linears in place → low-RAM (NVFP4) distributions over the SAME rows.
-    qinfo = quantize_served_linears(model, scheme=args.scheme)
+    # 2) quantize the served weights (incl. fused experts) in place → low-RAM distributions.
+    qinfo = quantize_served_params(model, scheme=args.scheme)
     per_tensor_ratio, eff_ratio = effective_mem_ratio(
         qinfo["quantized_params"], qinfo["kept_params"], scheme=args.scheme)
-    print(f"[nvfp4] quantized {qinfo['quantized_modules']} linears "
-          f"({qinfo['quantized_params']/1e6:.1f}M params); per-tensor {per_tensor_ratio:.2f}x, "
-          f"whole-model {eff_ratio:.2f}x vs {args.dtype}", flush=True)
+    q_frac = qinfo["quantized_params"] / max(qinfo["total_params"], 1)
+    print(f"[nvfp4] quantized {qinfo['quantized_modules']} tensors "
+          f"({qinfo['quantized_params']/1e6:.1f}M params = {q_frac:.0%} of model); "
+          f"per-tensor {per_tensor_ratio:.2f}x, whole-model {eff_ratio:.2f}x vs {args.dtype}",
+          flush=True)
+    print(f"[nvfp4] sample quantized: {qinfo['quantized_sample']}", flush=True)
+    # An MoE whose experts were silently skipped quantizes <~30% of params and saves almost
+    # nothing — surface it loudly rather than reporting a meaningless low-degradation pass.
+    coverage_warn = None
+    if q_frac < 0.40:
+        coverage_warn = (f"LOW QUANT COVERAGE: only {q_frac:.0%} of params quantized "
+                         f"({qinfo['quantized_params']/1e6:.0f}M/{qinfo['total_params']/1e6:.0f}M). "
+                         "For an MoE this means the experts were NOT quantized — the memory claim "
+                         "is unearned and the quality read is optimistic. Check expert weight names "
+                         "with --inspect-adapter / fix is_served_param() suffixes.")
+        print(f"[warn] {coverage_warn}", flush=True)
     low_probs, _, _ = collect_next_token_probs(
         model, tok, rows, n_eval=args.n_eval, max_seq_len=args.max_seq_len,
         device=args.device, protected_ids=protected_ids)
@@ -376,12 +424,59 @@ def run_certify(args: argparse.Namespace) -> dict:
     out["base_model"] = args.base_model
     out["adapter"] = str(adapter_dir)
     out["lora_load"] = load_info.get("lora_load")
+    out["lora_modules_merged"] = merged_n
+    out["lora_modules_skipped"] = skipped_n
     out["per_tensor_mem_ratio"] = round(per_tensor_ratio, 4)
     out["quantized_modules"] = qinfo["quantized_modules"]
     out["quantized_params"] = qinfo["quantized_params"]
     out["kept_params"] = qinfo["kept_params"]
+    out["total_model_params"] = qinfo["total_params"]
+    out["quantized_fraction"] = round(q_frac, 4)
+    out["coverage_warning"] = coverage_warn
     out["n_calib_rows"] = len(rows)
     return out
+
+
+def inspect_adapter(adapter_dir: Path) -> dict:
+    """Fast, GPU-free: read adapter_model.safetensors KEYS (header only) and report what training
+    actually targeted — a per-suffix module count. If the MoE experts show up here (e.g. hundreds
+    of ``down_proj``) but certify quantizes only a handful, the merge/quant name-matching is the
+    bug, not training. Uses safetensors' header read; never materializes the tensors."""
+    from safetensors import safe_open
+
+    wpath = adapter_dir / "adapter_model.safetensors"
+    cfg_path = adapter_dir / "adapter_config.json"
+    if not wpath.exists():
+        raise FileNotFoundError(f"no adapter_model.safetensors under {adapter_dir}")
+    cfg = json.loads(cfg_path.read_text(encoding="utf-8")) if cfg_path.exists() else {}
+
+    by_suffix: dict[str, int] = {}
+    expert_targets = 0
+    n_keys = 0
+    sample: list[str] = []
+    with safe_open(str(wpath), framework="pt") as f:
+        for key in f.keys():
+            n_keys += 1
+            if ".lora_A." not in key:        # count each target once (via its A tensor)
+                continue
+            base = key.split(".lora_A.", 1)[0]
+            leaf = base.rsplit(".", 1)[-1]
+            by_suffix[leaf] = by_suffix.get(leaf, 0) + 1
+            if ".experts." in base or ".expert." in base:
+                expert_targets += 1
+            if len(sample) < 6:
+                sample.append(base)
+    info = {
+        "n_tensors": n_keys,
+        "n_lora_targets": sum(by_suffix.values()),
+        "targets_by_suffix": dict(sorted(by_suffix.items(), key=lambda kv: -kv[1])),
+        "expert_targets": expert_targets,
+        "config_target_modules": cfg.get("target_modules"),
+        "r": cfg.get("r"), "lora_alpha": cfg.get("lora_alpha"),
+        "use_rslora": cfg.get("use_rslora"),
+        "sample_targets": sample,
+    }
+    return info
 
 
 def main(argv: "list[str] | None" = None) -> int:
@@ -402,7 +497,25 @@ def main(argv: "list[str] | None" = None) -> int:
     ap.add_argument("--out", type=Path, default=None, help="write the LowRamReport JSON here")
     ap.add_argument("--selftest", action="store_true",
                     help="run GPU-free offline invariants and exit")
+    ap.add_argument("--inspect-adapter", action="store_true",
+                    help="GPU-free: report what the adapter actually targeted (per-suffix counts) and exit")
     args = ap.parse_args(argv)
+
+    if args.inspect_adapter:
+        info = inspect_adapter(Path(args.adapter))
+        print(json.dumps(info, indent=2))
+        experts = info["expert_targets"]
+        print(f"\nLoRA targeted {info['n_lora_targets']} modules; {experts} are MoE experts.")
+        if experts == 0:
+            print("=> Training did NOT adapt the experts (attention-only LoRA). The 64-module "
+                  "certify count is then EXPECTED, and a true low-RAM serve must quantize the "
+                  "frozen base experts directly (the script now does, via named_parameters).")
+        else:
+            print("=> Training DID adapt the experts. If certify still quantizes only ~64 tensors, "
+                  "the model loads experts in a FUSED layout the per-expert adapter can't merge "
+                  "into — load the model with the same impl used for training, or re-run with this "
+                  "updated script which quantizes fused expert Parameters directly.")
+        return 0
 
     if args.selftest:
         ok, detail = offline_invariants()
@@ -498,14 +611,21 @@ def offline_invariants() -> "tuple[bool, dict]":
     checks["eff_ratio_between_1_and_per_tensor"] = 1.0 < eff < per_t
     detail["eff_ratio_90pct_quantized"] = round(eff, 4)
 
-    # ---- 5. Served-suffix matching only fires on the attn/MLP projections. --------------------
-    served_names = ["model.layers.0.self_attn.q_proj", "model.layers.3.mlp.experts.7.down_proj"]
-    kept_names = ["lm_head", "model.embed_tokens", "model.layers.0.input_layernorm",
-                  "model.layers.0.mlp.gate"]  # MoE router gate stays bf16
-    checks["served_match_projections"] = all(
-        any(n.endswith(s) for s in SERVED_LINEAR_SUFFIXES) for n in served_names)
-    checks["served_skip_head_norm_router"] = not any(
-        any(n.endswith(s) for s in SERVED_LINEAR_SUFFIXES) for n in kept_names)
+    # ---- 5. is_served_param matches BOTH per-expert nn.Linear AND fused MoE expert Parameters --
+    #         (the OLMoE bug: fused experts were invisible to a type=='Linear' scan, so 6B params
+    #         stayed bf16 and mem_ratio was a meaningless 1.26x). It must still skip head/norm/router.
+    served_names = [
+        "model.layers.0.self_attn.q_proj.weight",          # attention (per-tensor)
+        "model.layers.3.mlp.experts.7.down_proj.weight",   # per-expert nn.Linear
+        "model.layers.5.mlp.experts.gate_up_proj",         # FUSED expert Parameter (no .weight)
+        "model.layers.5.mlp.experts.down_proj",            # FUSED expert Parameter
+    ]
+    kept_names = ["lm_head.weight", "model.embed_tokens.weight",
+                  "model.layers.0.input_layernorm.weight",
+                  "model.layers.0.mlp.gate.weight",        # MoE router gate stays bf16
+                  "base_model.model.model.layers.0.self_attn.q_proj.lora_A.weight"]  # stray LoRA
+    checks["served_matches_dense_and_fused_experts"] = all(is_served_param(n) for n in served_names)
+    checks["served_skips_head_norm_router_lora"] = not any(is_served_param(n) for n in kept_names)
 
     ok = all(checks.values())
     return ok, {"checks": checks, **detail}

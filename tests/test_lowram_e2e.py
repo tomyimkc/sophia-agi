@@ -113,11 +113,16 @@ def test_certify_lowram_offline_invariants() -> None:
     assert ok, detail["checks"]
     # The first-attempt bug, encoded as a regression guard: extending NVFP4 to lm_head raises KL.
     assert detail["served_only_mean_kl"] < detail["plus_lm_head_mean_kl"]
-    # The served set is exactly the attn/MLP projections — never the head, embeddings, or router.
-    assert all(any(n.endswith(s) for s in cl.SERVED_LINEAR_SUFFIXES)
-               for n in ("self_attn.q_proj", "mlp.experts.0.down_proj"))
-    assert not any(n.endswith(s) for s in cl.SERVED_LINEAR_SUFFIXES
-                   for n in ("lm_head", "model.embed_tokens", "mlp.gate"))
+    # The served matcher catches per-expert AND fused MoE expert weights (the OLMoE under-quant
+    # bug), but never the head, embeddings, norms, router gate, or stray LoRA tensors.
+    assert all(cl.is_served_param(n) for n in (
+        "model.layers.0.self_attn.q_proj.weight",
+        "model.layers.3.mlp.experts.7.down_proj.weight",
+        "model.layers.5.mlp.experts.gate_up_proj"))          # fused Parameter, no .weight
+    assert not any(cl.is_served_param(n) for n in (
+        "lm_head.weight", "model.embed_tokens.weight",
+        "model.layers.0.mlp.gate.weight",                    # router
+        "base_model.model.model.layers.0.self_attn.q_proj.lora_A.weight"))
 
 
 def test_runpod_qat_lowram_plan_is_cost_gated() -> None:
