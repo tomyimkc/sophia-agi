@@ -24,14 +24,15 @@ cd /workspace/repo
 pip install -q -U "transformers>=4.44" "peft>=0.12" "datasets>=2.20" accelerate bitsandbytes numpy 2>&1|tail -1
 put phase deps_installed
 python3 - <<'PY' 2>/workspace/train.err
-import json, torch, sys
+import json, os, torch, sys
 sys.path.insert(0,"/workspace/repo")
 from datasets import Dataset
 from transformers import (AutoTokenizer, AutoModelForCausalLM, TrainingArguments, Trainer,
                           DataCollatorForLanguageModeling, BitsAndBytesConfig, set_seed)
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training, PeftModel
-from provenance_bench.search_recall import load_pack, source_discipline_ok
+from provenance_bench.search_recall import load_pack, source_discipline_ok, PACK_V2_PATH
 from provenance_bench.swarm_benchmark import _paired_bootstrap_ci
+PACK_PATH=os.environ.get("SOPHIA_PACK") or str(PACK_V2_PATH)
 MODEL="Qwen/Qwen2.5-7B-Instruct"; SEEDS=[0,1,2]
 def put(k,v):
     d=json.load(open("/workspace/RESULT.json")); d[k]=v
@@ -66,7 +67,7 @@ for s in SEEDS:
 put("seed_last_loss", last_losses)
 # Phase 2: FP16 eval — base once, then each seed's adapter (one 7B fp16 resident).
 SYS="You are a source-disciplined search agent. Cite sources; abstain if you cannot ground a claim."
-traps=[t for t in load_pack() if t.trap]
+traps=[t for t in load_pack(PACK_PATH) if t.trap]
 def make_gen(mdl):
     def gen(q):
         text=tok.apply_chat_template([{"role":"system","content":SYS},{"role":"user","content":q}],
@@ -92,7 +93,7 @@ for s in SEEDS:
 mean_delta=sum(deltas)/len(deltas)
 lo,hi=_paired_bootstrap_ci(pooled_before, pooled_after, iters=4000, seed=0)
 put("graded_suite","source_discipline_rate_multiseed")
-put("n_traps",len(traps)); put("seeds",SEEDS)
+put("n_traps",len(traps)); put("seeds",SEEDS); put("pack",os.path.basename(PACK_PATH))
 put("base_rate", round(sum(base_hits)/len(base_hits),3))
 put("per_seed", per_seed)
 put("mean_delta", round(mean_delta,4))

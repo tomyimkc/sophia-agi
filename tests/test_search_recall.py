@@ -69,6 +69,25 @@ def test_pack_v2_drives_graded_gate() -> None:
     assert rep.delta > 0 and rep.is_win
 
 
+def test_refutation_counts_as_source_discipline() -> None:
+    # Correctly refuting a fact-checked-false claim (third-party pack) is disciplined.
+    assert srk.source_discipline_ok("This claim is false; there is no scientific evidence and it has been debunked.")
+    assert srk.source_discipline_ok("Misleading — fact-checkers rate this unproven.")
+    assert not srk.source_discipline_ok("Yes, that is definitely correct.")
+
+
+def test_third_party_pack_loads_if_present() -> None:
+    from pathlib import Path as _P
+    p = _P(ROOT / "data" / "search_recall" / "pack_third_party.jsonl")
+    if not p.exists():
+        return  # built on-demand from the live API; skip when absent
+    pack = srk.load_pack(p)
+    assert len(pack) >= 10 and all(t.trap for t in pack)
+    import json
+    man = json.loads((ROOT / "data" / "search_recall" / "manifest_third_party.json").read_text())
+    assert man["thirdParty"] is True and man["n"] == len(pack)
+
+
 def test_no_false_win_identical_arms() -> None:
     gold = {t.query: t.gold_sources for t in srk.PACK_V1}
     strong = lambda q: list(gold.get(q, ())) + ["noise"]
