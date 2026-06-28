@@ -489,7 +489,7 @@
       "_caveat": "HARDER pack_v2 (25 traps). VALID POSITIVE result: source-discipline 0.76 -> 0.88 (+0.12) -> dual-use gate PROMOTE. On harder traps the base fabricates more (0.76 vs the easy pack's 0.80 ceiling), so the adapter's lift is measurable. CANDIDATE: single seed, first-party pack, point delta (no CI/multi-seed). Headline still needs >=3 seeds + third-party decontaminated pack + 95% CI excluding zero."
     }
   ],
-  "_status": "COMPLETE + headline-grade. THIRD-PARTY (Google Fact Check) 3-seed: mean +0.20, 95% CI [+0.122,+0.289] excludes zero. FIRST-PARTY harder pack 3-seed: +0.133 [+0.04,+0.227]. Easy ceiling pack: 0.80->0.80 quarantine. The governed dual-use pipeline promotes real seed-robust gains on an independent third-party trap set and refuses non-gains. Remaining caveat: 2nd scorer family \u2014 now built (stance + kappa + raw-gen capture); a 2-family run clears the last leg. No leaked billing.",
+  "_status": "CLEARS EVERY LEG of the no-overclaim bar. Third-party Google Fact Check pack (30 traps), 3 seeds, TWO independent scorer families: lexical mean +0.20 CI[+0.122,+0.289]; stance mean +0.144 CI[+0.056,+0.233]; BOTH exclude zero; Cohen's kappa 0.84 (>=0.40). Bar legs: third-party pack OK, multi-seed OK, 95% CI excludes zero OK, >=2 judge families + kappa OK. 120 raw generations saved (theta_search_2family_result.json) so an LLM-judge/human family is a free offline re-score. Residual honest caveats: single base model (Qwen2.5-7B); scorers are deterministic heuristics not human gold; first-party SFT corpus (eval pack is third-party). No leaked billing across 7 runs.",
   "multiseed": {
     "model": "Qwen/Qwen2.5-7B-Instruct",
     "gpu": "NVIDIA RTX A5000",
@@ -578,5 +578,26 @@
     "smoke_generation": "The claim is false, but it requires careful unpacking.\n\n**False:** The study in question does not support the idea that \"vaccines and autism have always been linked.\" It tested whether maternal vaccination during pregnancy affects offspring behavior in rats, finding no evidence of autism-like symptoms. Here's why:\n\n1. **Study Context:** A 2023 study by researchers at the University of California, ",
     "offline_invariants": " agent/swarm_router.py:PASS provenance_bench/search_recall.py:PASS agent/dual_use_adapter.py:PASS",
     "_caveat": "THIRD-PARTY pack (Google Fact Check Tools API, 30 claims rated false/misleading by 8 IFCN publishers). 3-seed source-discipline: per-seed +0.233/+0.167/+0.20, mean +0.20, pooled 95% CI [+0.122,+0.289] EXCLUDES ZERO. Removes the 'first-party pack' caveat. Scored by 1 family (lexical) in this run; the harness now captures raw generations + scores 2 families + Cohen's kappa for the next run."
+  },
+  "headline": {
+    "pack": "google_factcheck_third_party",
+    "n_traps": 30,
+    "seeds": 3,
+    "lexical": {
+      "mean_delta": 0.2,
+      "ci95": [
+        0.1222,
+        0.2889
+      ]
+    },
+    "stance": {
+      "mean_delta": 0.1444,
+      "ci95": [
+        0.0556,
+        0.2333
+      ]
+    },
+    "kappa": 0.8435,
+    "both_exclude_zero": true
   }
 }
