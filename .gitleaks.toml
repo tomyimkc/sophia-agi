@@ -1,0 +1,31 @@
+# gitleaks config for sophia-agi. Extends the upstream default ruleset and adds
+# project-specific allowlists so the documented placeholders in .env.example and
+# docs don't trip the scan.
+title = "sophia-agi gitleaks"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "sophia-generic-provider-key"
+description = "Provider API key patterns used across the repo"
+regex = '''(?i)(sk-[a-z0-9]{20,}|hf_[a-z0-9]{20,}|AKIA[0-9A-Z]{16}|xai-[a-z0-9]{20,})'''
+tags = ["key", "provider"]
+
+[allowlist]
+description = "Placeholders, samples, docs, and test fixtures are not real secrets."
+paths = [
+  '''\.env\.example$''',
+  '''(^|/)docs/''',
+  '''(^|/)tests/''',          # security detector fixtures contain FAKE key-shaped strings
+  '''(^|/)eval/redteam/''',   # red-team attack corpus (encoded payloads, not secrets)
+  '''\.gitleaks\.toml$''',    # this allowlist file itself
+  '''(^|/).*\.sample\.(json|md|txt)$''',
+  '''(^|/).*\.example$''',
+]
+regexes = [
+  '''hf_your_token_here''',
+  '''your[-_]?token[-_]?here''',
+  '''sk-\.\.\.''',
+  '''(?i)dummy|placeholder|example|redacted|xxxx''',
+]

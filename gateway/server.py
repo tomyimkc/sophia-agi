@@ -15,6 +15,7 @@ stamp → audit → competence update. Raw tool output is returned only when acc
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -39,16 +40,34 @@ try:
 except ImportError as exc:  # pragma: no cover - exercised by MCP users, not unit tests
     raise SystemExit("Install MCP deps: pip install -r requirements-mcp.txt") from exc
 
-mcp = FastMCP(
-    "sophia-gateway",
-    instructions=(
-        "Sophia Gateway: a fail-closed super-MCP that gates downstream tools, "
-        "skills, knowledge, verifier synthesis, and verified consensus. Only "
-        "accepted outputs surface; rejected/held outputs are withheld."
-    ),
+_INSTRUCTIONS = (
+    "Sophia Gateway: a fail-closed super-MCP that gates downstream tools, "
+    "skills, knowledge, verifier synthesis, and verified consensus. Only "
+    "accepted outputs surface; rejected/held outputs are withheld."
 )
 
-_GW = Gateway(contract=SophiaContract())
+mcp = FastMCP("sophia-gateway", instructions=_INSTRUCTIONS)
+
+
+def _build_gateway() -> Gateway:
+    """Plain Gateway for local/offline use; the production-hardened profile
+    (egress output-guard + call budget + tamper-evident audit chain) when
+    SOPHIA_HARDENED=1. The system prompt is supplied for verbatim-echo detection,
+    and the minted canary (if SOPHIA_CANARY_SEED is set) for confirmed-leak blocks.
+    """
+    if os.environ.get("SOPHIA_HARDENED") == "1":
+        from gateway.profiles import hardened_gateway
+        canaries = None
+        try:
+            from agent.canary import make_canary
+            canaries = [make_canary("gateway_system_prompt")]
+        except Exception:  # no seed configured → fall back to shape-based detection
+            canaries = None
+        return hardened_gateway(system_prompt=_INSTRUCTIONS, canaries=canaries)
+    return Gateway(contract=SophiaContract())
+
+
+_GW = _build_gateway()
 register_knowledge_tools(_GW)
 
 

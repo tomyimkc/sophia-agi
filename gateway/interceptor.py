@@ -13,6 +13,7 @@ from __future__ import annotations
 import hashlib
 
 from gateway import firewall
+from gateway import output_guard as _output_guard
 from gateway.registry import Registry, ToolEntry
 from gateway.verify_router import verify_output
 from selfextend.competence_map import CompetenceMap
@@ -26,12 +27,28 @@ from sophia_contract.service import SophiaContract
 class Gateway:
     def __init__(self, *, contract: "SophiaContract | None" = None,
                  registry: "Registry | None" = None, scopes=ROLES_9,
-                 call_budget: "int | None" = None, hook_bus=None):
+                 call_budget: "int | None" = None, hook_bus=None,
+                 output_guard: bool = False, system_prompt: "str | None" = None,
+                 canaries: "list[str] | None" = None,
+                 audit_log: "str | None" = None):
         self.contract = contract or SophiaContract()
         self.registry = registry or Registry()
         self.scopes = scopes
         self.call_budget = call_budget
         self._calls = 0
+        # P5 tamper-evident audit trail. When a path is set, every completed
+        # call_tool decision is appended as a hash-chained record (agent.audit_chain)
+        # IN ADDITION to the contract tracer span — so the trail can be integrity-
+        # checked later (`audit_chain.verify_chain`). None => disabled (default).
+        self.audit_log = audit_log
+        # P3 egress leak guard. OFF by default (zero behavior change); the
+        # production profile (gateway.profiles) turns it on. When on, a surfaced
+        # string result is screened for secret/PII/canary/system-prompt-echo
+        # leaks: secrets are redacted in place; a canary or prompt echo holds the
+        # result (fail-closed).
+        self.output_guard = output_guard
+        self.system_prompt = system_prompt
+        self.canaries = canaries
         self.competence = CompetenceMap()
         self._synth: dict = {}   # tool_id -> synthesized Rule (P4)
         # Optional, non-breaking lifecycle hook bus (Stage A). When present,
@@ -39,6 +56,46 @@ class Gateway:
         # and POST_TOOL_USE fires after verification (observe-only). The
         # interceptor's own gates remain authoritative; hooks are additive.
         self.hook_bus = hook_bus
+
+    def _audit(self, record: dict) -> None:
+        """Append a hash-chained audit record if an audit log is configured.
+
+        Never raises into the call path — an audit-sink fault must not change a
+        verdict (mirrors the conscience verified-trace policy)."""
+        if not self.audit_log:
+            return
+        try:
+            import time
+            from agent import audit_chain
+            audit_chain.append(self.audit_log, record, ts=time.time())
+        except Exception:  # noqa: BLE001 - observer-only
+            pass
+
+    def _apply_output_guard(self, output):
+        """Screen a surfaced result for egress leaks. Returns (output, leak).
+
+        Redacts secret/PII spans in the string payload in place; a canary or
+        system-prompt echo yields ``action='block'`` and the caller withholds.
+        Only string payloads (``str`` or a dict ``answer``/``text`` field) are
+        screened; other shapes pass through untouched.
+        """
+        def screen(s: str) -> dict:
+            return _output_guard.guard_output(
+                s, system_prompt=self.system_prompt, canaries=self.canaries)
+
+        if isinstance(output, str):
+            leak = screen(output)
+            return (leak["redacted"] if leak["action"] == "redact" else output), leak
+        if isinstance(output, dict):
+            for field_name in ("answer", "text"):
+                val = output.get(field_name)
+                if isinstance(val, str):
+                    leak = screen(val)
+                    if leak["action"] == "redact":
+                        output = {**output, field_name: leak["redacted"]}
+                    if leak["findings"]:
+                        return output, leak
+        return output, {"action": "allow", "findings": []}
 
     def register(self, entry: "ToolEntry") -> "ToolEntry":
         # P1 firewall: a tool DESCRIPTION is untrusted; quarantine on injection.
@@ -242,6 +299,25 @@ class Gateway:
             "reasons": verdict.get("reasons", []), "roi_estimate": verdict.get("roi_estimate"),
             "reliability": self.competence.reliability(tool_id),
         }
+        if accepted and self.output_guard:
+            output, leak = self._apply_output_guard(output)
+            if leak.get("action") == "block":
+                # A canary or verbatim system-prompt echo leaked — withhold.
+                self.contract.tracer.span(
+                    "gateway.output_guard", input={"tool_id": tool_id},
+                    output={"action": "block", "findings": leak.get("findings")},
+                    level="WARNING")
+                self._audit({"tool_id": tool_id, "role": role, "clearance": clearance,
+                             "verdict": "held", "held_reason": "output_leak_blocked",
+                             "provenance_id": claim_id})
+                return {"tool_id": tool_id, "verdict": "held",
+                        "held_reason": "output_leak_blocked", "result": None,
+                        "provenance_id": claim_id,
+                        "leak_findings": leak.get("findings", []),
+                        "suggested_fix": "response withheld: it leaked a canary or the system prompt"}
+            if leak.get("findings"):
+                resp["output_guard"] = {"action": leak["action"],
+                                        "findings": leak["findings"]}
         if accepted:
             resp["result"] = output                       # surface ONLY when accepted
             resp["integrity"] = firewall.taint_label(tool.verifier_ref, tool.side_effects)
@@ -251,4 +327,8 @@ class Gateway:
                 resp["held_reason"] = verdict["held_reason"]
             if verdict.get("suggested_fix"):
                 resp["suggested_fix"] = verdict["suggested_fix"]
+        self._audit({"tool_id": tool_id, "role": role, "clearance": clearance,
+                     "verdict": resp["verdict"], "accepted": accepted,
+                     "provenance_id": claim_id,
+                     "held_reason": resp.get("held_reason")})
         return resp
