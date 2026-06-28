@@ -196,13 +196,19 @@ isolated so it can be done in one rented-GPU burst (RunPod MCP is wired).
 - **Exit gate:** measured cost-per-verified-trace vs. a naive baseline (target
   ≥3× cheaper), logged; ≥10k math + ≥10k code verified traces generated.
 
-### Phase 2 — Physics verifier substrate (CPU, ~2 wks) ★C
-- `agent/physics_verifier.py` (dimensional → numeric → symbolic tiers) +
-  `physics_sound` in `agent/verifiers.py` + `provenance_bench/physics_reward.py`.
-- `data/physics_problems.json` with provenance (mirror `data/math_problems.json`);
-  entity-disjoint split via `rl_dataset.py`.
-- **Exit gate:** physics verifier passes a trap-set (known-wrong answers rejected
-  at 0% false-accept on a sealed control), like the math verifier's trap controls.
+### Phase 2 — Physics verifier substrate (CPU, ~2 wks) ★C — ✅ **landed**
+- ✅ `agent/units.py` (pure-Python SI dimensional-analysis engine, no deps),
+  `agent/physics_verifier.py` (dimensional → numeric → symbolic tiers),
+  `physics_equivalent` + `physics_sound` in `agent/verifiers.py`,
+  `provenance_bench/physics_reward.py` + `physics_dataset.py`.
+- ✅ `provenance_bench/data/physics_problems.json` (20 problems, 10 families,
+  fixed train/eval family-disjoint split); `--task physics` wired into
+  `tools/run_rlvr.py`; 23 tests in `tests/test_physics_verifier.py`.
+- ✅ **Exit gate met:** offline invariants pass via `run_rlvr.py --task physics
+  --dry-run` — including the physics-specific `wrongUnitNegative` trap (right
+  number, wrong dimension → −1 reward) and `contaminationFree`.
+- **Next:** broaden the pack (more families + traps), add per-problem `rtol`, and
+  add a sealed holdout via `holdout_seal.py`.
 
 ### Phase 3 — Live GPU RLVR run (GPU burst, ~1 wk wall, isolated cost) ★E
 - `tools/run_rlvr.py --task {math,code,physics}` on rented GPU (RunPod). GRPO via

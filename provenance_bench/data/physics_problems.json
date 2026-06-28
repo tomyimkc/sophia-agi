@@ -1,0 +1,167 @@
+{
+  "_meta": {
+    "description": "Physics RLVR pack. The reward is agent.verifiers.physics_equivalent: a numeric answer must match the gold's SI DIMENSION (dimensional analysis, pure-Python) AND value within 1% relative tolerance. This makes the reward judge-free and non-gameable in a way the right-number-wrong-unit failure mode cannot exploit. Split is by FIXED held-out families (identical across seeds) so seeds are comparable; eval families (gravitational_pe, momentum, photon_energy, pendulum_period) are genuine generalizations never seen in training. Golds were hand-computed; constants g=9.8 m/s^2, h_planck=6.626e-34 J*s.",
+    "schemaVersion": 1,
+    "rtol": 0.01,
+    "trainFamilies": [
+      "freefall_velocity",
+      "newton_force",
+      "kinetic_energy",
+      "ohms_law",
+      "kinematics_velocity",
+      "power"
+    ],
+    "evalFamilies": [
+      "gravitational_pe",
+      "momentum",
+      "photon_energy",
+      "pendulum_period"
+    ],
+    "counts": {
+      "train": 12,
+      "eval": 8
+    }
+  },
+  "problems": [
+    {
+      "id": "ff-20",
+      "family": "freefall_velocity",
+      "split": "train",
+      "prompt": "An object is dropped from rest and falls 20 m. Using g = 9.8 m/s^2, find its speed just before impact (v = sqrt(2*g*h)). Put the final answer in \\boxed{} with units.",
+      "gold": "19.8 m/s"
+    },
+    {
+      "id": "ff-45",
+      "family": "freefall_velocity",
+      "split": "train",
+      "prompt": "An object is dropped from rest and falls 45 m. Using g = 9.8 m/s^2, find its speed just before impact. Put the final answer in \\boxed{} with units.",
+      "gold": "29.7 m/s"
+    },
+    {
+      "id": "nf-10-3",
+      "family": "newton_force",
+      "split": "train",
+      "prompt": "A net force accelerates a 10 kg mass at 3 m/s^2. Find the force (F = m*a). Put the final answer in \\boxed{} with units.",
+      "gold": "30 N"
+    },
+    {
+      "id": "nf-2p5-4",
+      "family": "newton_force",
+      "split": "train",
+      "prompt": "A net force accelerates a 2.5 kg mass at 4 m/s^2. Find the force. Put the final answer in \\boxed{} with units.",
+      "gold": "10 N"
+    },
+    {
+      "id": "ke-4-5",
+      "family": "kinetic_energy",
+      "split": "train",
+      "prompt": "A 4 kg object moves at 5 m/s. Find its kinetic energy (KE = 0.5*m*v^2). Put the final answer in \\boxed{} with units.",
+      "gold": "50 J"
+    },
+    {
+      "id": "ke-2-10",
+      "family": "kinetic_energy",
+      "split": "train",
+      "prompt": "A 2 kg object moves at 10 m/s. Find its kinetic energy. Put the final answer in \\boxed{} with units.",
+      "gold": "100 J"
+    },
+    {
+      "id": "ohm-2-5",
+      "family": "ohms_law",
+      "split": "train",
+      "prompt": "A current of 2 A flows through a 5 ohm resistor. Find the voltage across it (V = I*R). Put the final answer in \\boxed{} with units.",
+      "gold": "10 V"
+    },
+    {
+      "id": "ohm-0p5-100",
+      "family": "ohms_law",
+      "split": "train",
+      "prompt": "A current of 0.5 A flows through a 100 ohm resistor. Find the voltage. Put the final answer in \\boxed{} with units.",
+      "gold": "50 V"
+    },
+    {
+      "id": "kv-2-6",
+      "family": "kinematics_velocity",
+      "split": "train",
+      "prompt": "Starting from rest, an object accelerates at 2 m/s^2 for 6 s. Find its final velocity (v = a*t). Put the final answer in \\boxed{} with units.",
+      "gold": "12 m/s"
+    },
+    {
+      "id": "kv-3-4",
+      "family": "kinematics_velocity",
+      "split": "train",
+      "prompt": "Starting from rest, an object accelerates at 3 m/s^2 for 4 s. Find its final velocity. Put the final answer in \\boxed{} with units.",
+      "gold": "12 m/s"
+    },
+    {
+      "id": "pw-600-30",
+      "family": "power",
+      "split": "train",
+      "prompt": "An engine does 600 J of work in 30 s. Find the average power (P = W/t). Put the final answer in \\boxed{} with units.",
+      "gold": "20 W"
+    },
+    {
+      "id": "pw-1000-25",
+      "family": "power",
+      "split": "train",
+      "prompt": "A motor does 1000 J of work in 25 s. Find the average power. Put the final answer in \\boxed{} with units.",
+      "gold": "40 W"
+    },
+    {
+      "id": "pe-3-10",
+      "family": "gravitational_pe",
+      "split": "eval",
+      "prompt": "A 3 kg mass is raised 10 m. Using g = 9.8 m/s^2, find its gravitational potential energy (PE = m*g*h). Put the final answer in \\boxed{} with units.",
+      "gold": "294 J"
+    },
+    {
+      "id": "pe-5-4",
+      "family": "gravitational_pe",
+      "split": "eval",
+      "prompt": "A 5 kg mass is raised 4 m. Using g = 9.8 m/s^2, find its gravitational potential energy. Put the final answer in \\boxed{} with units.",
+      "gold": "196 J"
+    },
+    {
+      "id": "mom-8-3",
+      "family": "momentum",
+      "split": "eval",
+      "prompt": "An 8 kg object moves at 3 m/s. Find its momentum (p = m*v). Put the final answer in \\boxed{} with units.",
+      "gold": "24 kg*m/s"
+    },
+    {
+      "id": "mom-1p5-20",
+      "family": "momentum",
+      "split": "eval",
+      "prompt": "A 1.5 kg object moves at 20 m/s. Find its momentum. Put the final answer in \\boxed{} with units.",
+      "gold": "30 kg*m/s"
+    },
+    {
+      "id": "ph-5e14",
+      "family": "photon_energy",
+      "split": "eval",
+      "prompt": "Find the energy of a photon of frequency 5.0e14 Hz (E = h*f, h = 6.626e-34 J*s). Put the final answer in \\boxed{} with units.",
+      "gold": "3.31e-19 J"
+    },
+    {
+      "id": "ph-2e15",
+      "family": "photon_energy",
+      "split": "eval",
+      "prompt": "Find the energy of a photon of frequency 2.0e15 Hz (E = h*f, h = 6.626e-34 J*s). Put the final answer in \\boxed{} with units.",
+      "gold": "1.325e-18 J"
+    },
+    {
+      "id": "pend-1",
+      "family": "pendulum_period",
+      "split": "eval",
+      "prompt": "Find the period of a simple pendulum of length 1.0 m. Using g = 9.8 m/s^2, T = 2*pi*sqrt(L/g). Put the final answer in \\boxed{} with units.",
+      "gold": "2.01 s"
+    },
+    {
+      "id": "pend-2",
+      "family": "pendulum_period",
+      "split": "eval",
+      "prompt": "Find the period of a simple pendulum of length 2.0 m. Using g = 9.8 m/s^2, T = 2*pi*sqrt(L/g). Put the final answer in \\boxed{} with units.",
+      "gold": "2.84 s"
+    }
+  ]
+}

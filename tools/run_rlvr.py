@@ -50,6 +50,8 @@ from provenance_bench import (  # noqa: E402
     math_reward,
     ontology_rl_dataset,
     ontology_rl_reward,
+    physics_dataset,
+    physics_reward,
     rl_dataset,
     rl_reward,
 )
@@ -258,6 +260,11 @@ def _run_gpu(args: argparse.Namespace) -> int:
         # test column -> hidden-tests-pass (provenance_bench.code_exec). Judge-free;
         # the interpreter decides. No false-positive axis (every item has a test).
         reward_fn = code_reward.make_grpo_reward(timeout_sec=args.code_timeout)
+    elif args.task == "physics":
+        data = physics_dataset.build_physics_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        # gold column -> dimensional+numeric verifier (agent.units). Judge-free and
+        # pure-Python; right-number/wrong-unit cannot game it.
+        reward_fn = physics_reward.make_grpo_reward()
     else:
         data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         if args.reward == "gate":
@@ -360,7 +367,7 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     ap.add_argument("--model", default="mock", help=f'subject model (default "mock"; GPU: "{DEFAULT_MODEL}")')
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept"], default="provenance",
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "physics"], default="provenance",
                     help="reward task: provenance (provenance_faithful), math (sympy math_equivalent), "
                          "code (hidden-tests-pass via provenance_bench.code_exec), or concept "
                          "(concept-TBox gate: don't merge cross-tradition concepts)")
@@ -400,6 +407,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.model == "mock" or args.dry_run:
         if args.task == "math":
             ok, detail = math_reward.offline_invariants()
+        elif args.task == "physics":
+            ok, detail = physics_reward.offline_invariants()
         elif args.task == "code":
             ok, detail = code_reward.offline_invariants()
         elif args.task == "concept":
