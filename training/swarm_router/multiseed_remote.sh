@@ -52,7 +52,7 @@ def train_one(seed):
         target_modules=["q_proj","k_proj","v_proj","o_proj","gate_proj","up_proj","down_proj"]))
     out=f"/workspace/seed{seed}"
     args=TrainingArguments(output_dir=out,per_device_train_batch_size=1,gradient_accumulation_steps=8,
-        num_train_epochs=3,learning_rate=2e-4,logging_steps=5,bf16=True,report_to=[],save_strategy="no",
+        num_train_epochs=int(os.environ.get("SOPHIA_EPOCHS","3")),learning_rate=2e-4,logging_steps=5,bf16=True,report_to=[],save_strategy="no",
         warmup_ratio=0.03,lr_scheduler_type="cosine",seed=seed,data_seed=seed)
     tr=Trainer(model=m,args=args,train_dataset=ds,
         data_collator=DataCollatorForLanguageModeling(tok,mlm=False))

@@ -1,0 +1,13 @@
+{
+  "schema": "sophia.discipline_sft.v1",
+  "corpus": "format_robust",
+  "n": 39,
+  "sha256": "5ca6983822c4307260a7292c9680e718364c934c5968ab5bdaf38c6b0374c542",
+  "distill_model": "deepseek/deepseek-chat",
+  "format": "plain prose, no council/multi-seat scaffolding (fixes the cross-model format-overfit)",
+  "decontaminated_against": "data/search_recall/pack_third_party.jsonl (eval)",
+  "claim_sources": [
+    "pack_v2 attribution traps (first-party)",
+    "fresh Google FactCheck claims (decontaminated)"
+  ]
+}
