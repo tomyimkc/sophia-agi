@@ -39,7 +39,7 @@ def put(k,v):
     json.dump(d,open("/workspace/RESULT.json","w"),indent=2)
 tok=AutoTokenizer.from_pretrained(MODEL)
 if tok.pad_token is None: tok.pad_token=tok.eos_token
-rows=[json.loads(l) for l in open("training/council/traces.jsonl") if l.strip()]
+rows=[json.loads(l) for l in open(os.environ.get("SOPHIA_SFT","training/council/traces.jsonl")) if l.strip()]
 texts=[tok.apply_chat_template(r["messages"],tokenize=False) for r in rows if r.get("messages")]
 ds=Dataset.from_dict({"text":texts}).map(lambda b: tok(b["text"],truncation=True,max_length=1024),
                                          batched=True, remove_columns=["text"])
