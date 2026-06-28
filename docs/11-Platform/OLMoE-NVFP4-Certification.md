@@ -14,12 +14,33 @@ gate (`serving/lowram_eval.py`). Tooling: `tools/train_lora.py --qat` and `tools
 > (experts not QAT-co-adapted) is the *second-order* story; the *first-order* story is that
 > **no LoRA was applied at all** — this was a measurement of base-OLMoE NVFP4 degradation. Fixed
 > in `77a1076d` (skip the LoRA wrapper, fake-quant its inner `base_layer`; regression test
-> `tests/test_qat.py::test_attach_qat_does_not_bypass_lora_adapter`). With the fix, v3 train loss
-> drops `2.331→1.752` over 20 steps (vs v2 flat ~2.4) and QAT coverage is `3136` not the doubled
-> `6272`. **A v3 re-train + re-certify is in progress; the table below stays until v3 lands a
-> measured verdict.** See `agi-proof/failure-ledger.md` → `qat-lora-forward-bypass-2026-06-28`.
+> `tests/test_qat.py::test_attach_qat_does_not_bypass_lora_adapter`). See
+> `agi-proof/failure-ledger.md` → `qat-lora-forward-bypass-2026-06-28`.
 
-## Verdict: FAIL (honest, complete measurement) — SUPERSEDED, see UPDATE above
+## v3 result (the FIRST valid test — expert co-adaptation, fix applied)
+
+`olmoe-qat-spark-v3`: LoRA+QAT, `--target-modules attn-mlp`, 2 epochs, lr 1e-4, `--qat-lambda
+0.001`, seed 0, bf16+sdpa. **All 3072 expert `lora_B` non-zero** (mean 0.16) — the adapter
+genuinely trained; best val_loss **1.5012** (vs v1 1.766, vs v2's bypassed 2.419).
+
+| Metric | no-op artifact | **v3 (expert-co-adapted)** | Contract | Pass? |
+|---|---|---|---|---|
+| `mean_kl` (full ‖ nvfp4) | 0.0648 | **0.0451** | ≤ 0.05 | **✓** |
+| `top1_agreement` | 0.8672 | **0.9062** | ≥ 0.97 | ✗ |
+| `protected_max_kl` | 0.944 | **0.605** | ≤ 0.10 | ✗ (whole-set fallback) |
+| `mem_ratio` | 3.30× | 3.30× | reported | — |
+
+**Verdict: honest NO-GO** — but the fix moved the needle measurably. Expert co-adaptation pulled
+`mean_kl` *below* the 0.05 bound (the served-quant model is now next-token-faithful in aggregate)
+and lifted `top1` 0.867→0.906. It still misses the strict `top1 ≥ 0.97`, and `protected_*` is the
+whole-set worst-position fallback (no protected slice configured), so overall FAIL on the contract.
+This is the first measurement of a *real* expert-co-adapted adapter (priors were untrained no-ops).
+Next levers (not yet conclusive): more epochs / higher `--qat-lambda` (v4 in progress: 3 epochs,
+λ=0.01) / a deployment-justified protected slice. An NVFP4 *pass* — none yet — could claim only
+"served-quant retains BF16 next-token behavior to a measured bound." `canClaimAGI` stays false.
+Artifact: `agi-proof/benchmark-results/certify-lowram-olmoe-nvfp4-v3.json`.
+
+## Verdict: FAIL (honest, complete measurement) — original no-op-adapter artifact, see UPDATE above
 
 | Metric | Value | Contract | Pass? |
 |---|---|---|---|
