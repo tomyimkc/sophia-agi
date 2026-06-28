@@ -68,8 +68,26 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--judge-models", default="Qwen/Qwen2.5-7B-Instruct,meta-llama/Llama-3.3-8B-Instruct",
                     help="comma list; >=2 DISTINCT models satisfy the no-overclaim >=2-family gate locally")
     ap.add_argument("--dry-run", action="store_true", help="print config + recommended flags, no probe")
+    ap.add_argument("--config", default=None,
+                    help="load a two-box judge-farm config (config/inference.local.mac-judge.json): "
+                         "emit its ready --judges flag + each box's serve command. Print-only, CI-safe.")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
+
+    if args.config:
+        farm = json.loads(Path(args.config).read_text(encoding="utf-8"))
+        jf = farm["judge_farm"]
+        out = {
+            "config": args.config,
+            "judges": jf["judges"],
+            "recommended_judge_flag": jf["recommended_flag"],
+            "expected_families": jf.get("expected_families"),
+            "serve_commands": {name: box["serve"] for name, box in farm["boxes"].items()},
+            "note": ("Fill in SPARK_HOST/MAC_HOST, run each serve command on its box, then pass the "
+                     "recommended --judges flag to a judged eval (e.g. tools/judge_pilot_answers.py)."),
+        }
+        print(json.dumps(out, ensure_ascii=False, indent=2))
+        return 0
 
     base_url = args.base_url or DEFAULT_BASE_URLS[args.provider]
     models = [m.strip() for m in args.judge_models.split(",") if m.strip()]
