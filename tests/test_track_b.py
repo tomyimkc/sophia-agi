@@ -27,6 +27,23 @@ def test_qat_offline_invariants() -> None:
     assert ok, detail["checks"]
 
 
+def test_qat_target_set_and_coverage() -> None:
+    """The QAT served set covers attn + per-expert/fused experts and excludes head/norm/router/LoRA;
+    coverage accounting SEES the experts (the blind spot that hid the MoE under-quantization)."""
+    from training import qat
+    assert qat.is_qat_target_name("model.layers.0.self_attn.q_proj")
+    assert qat.is_qat_target_name("model.layers.0.mlp.experts.7.down_proj.weight")
+    assert qat.is_qat_target_name("model.layers.0.mlp.experts.gate_up_proj")   # fused
+    for n in ("lm_head", "model.embed_tokens", "model.layers.0.mlp.gate",      # router
+              "base_model.model.model.layers.0.self_attn.q_proj.lora_A.weight"):
+        assert not qat.is_qat_target_name(n)
+    cov = qat.summarize_qat_coverage([
+        "model.layers.0.self_attn.q_proj", "model.layers.0.mlp.experts.0.gate_proj",
+        "model.layers.0.mlp.experts.1.down_proj"])
+    assert cov["attn"] == 1 and cov["expert"] == 2
+    assert qat.summarize_qat_coverage(["model.layers.0.self_attn.q_proj"])["expert"] == 0
+
+
 def test_qat_fake_quant_roundtrip_tight() -> None:
     np = pytest.importorskip("numpy")
     from training import qat

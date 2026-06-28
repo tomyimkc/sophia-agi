@@ -49,6 +49,46 @@ except Exception:  # pragma: no cover
 
 SCHEMES = ("int8", "nvfp4")
 
+# Served low-bit set: attention + MLP/expert projection name suffixes. Fused MoE experts may
+# expose a combined ``gate_up_proj``. These mirror tools/certify_lowram.SERVED_LINEAR_SUFFIXES so
+# the QAT *training* set and the NVFP4 *serving/certify* set are the same weights.
+_ATTN_SUFFIXES = ("q_proj", "k_proj", "v_proj", "o_proj")
+_EXPERT_SUFFIXES = ("gate_proj", "up_proj", "down_proj", "gate_up_proj")
+# Never fake-quant these (kept high-precision in real serving): embeddings, norms, router gate,
+# the LM head. Co-adapting a layer you will NOT quantize at serve time only adds noise.
+_QAT_EXCLUDE = ("embed", "lm_head", "norm")
+
+
+def is_qat_target_name(name: str) -> bool:
+    """True if parameter/module ``name`` is in the served low-bit set QAT should fake-quant.
+
+    Matches the attn + MLP/expert projections (per-expert ``...experts.7.down_proj`` AND fused
+    ``...experts.gate_up_proj``); excludes embeddings, norms, the MoE router gate (``mlp.gate``),
+    ``lm_head``, and any LoRA tensors. Pure/string-only so it is CI-testable without torch."""
+    low = name.lower()
+    if any(x in low for x in _QAT_EXCLUDE) or "lora" in low:
+        return False
+    base = name.replace(".base_layer", "")
+    if base.endswith(".weight"):
+        base = base[: -len(".weight")]
+    if base.endswith("mlp.gate"):              # MoE router gate stays high-precision
+        return False
+    return any(base.endswith(s) for s in (_ATTN_SUFFIXES + _EXPERT_SUFFIXES))
+
+
+def summarize_qat_coverage(names: "list[str]") -> dict:
+    """Break a list of QAT-covered module/param names into attn / expert / other counts.
+
+    The number that mattered and was invisible for four certify rounds: how many MoE *experts*
+    QAT actually reached. ``expert`` counts names under an ``experts`` container; ``attn`` counts
+    the attention projections; ``other`` is anything else covered."""
+    names = list(names)
+    expert = sum(1 for n in names if "experts" in n or "expert." in n)
+    attn = sum(1 for n in names if "experts" not in n and "expert." not in n
+               and any((n[:-7] if n.endswith(".weight") else n).endswith(s) for s in _ATTN_SUFFIXES))
+    return {"total": len(names), "attn": attn, "expert": expert,
+            "other": len(names) - attn - expert}
+
 
 # ---------------------------------------------------------------------------
 # 1. Fake-quant — the deployment grid the model trains against (built on moe.quant)
@@ -185,13 +225,21 @@ def attach_qat(model: Any, *, scheme: str = "int8",
     called from ``tools/train_lora.py`` when ``--qat`` is set; call :func:`detach_qat` (or
     just save before wrapping) to restore fp forward.
     """
+    import warnings
+
     import torch.nn.functional as F
     ste = _torch_ste_quant()
-    wrapped = 0
-    for m in model.modules():
+    wrapped_names: list[str] = []
+    for name, m in model.named_modules():
         if type(m).__name__ not in module_types or not hasattr(m, "weight"):
             continue
         if getattr(m, "_qat_wrapped", False):
+            continue
+        # Only fake-quant the served set (attn + MLP/experts). Skipping lm_head / router / norms /
+        # embeddings aligns the QAT training grid with what NVFP4 serving actually quantizes
+        # (serving/lowram_eval.py + tools/certify_lowram.is_served_param), so we never co-adapt a
+        # layer that stays bf16 at serve time.
+        if not is_qat_target_name(name):
             continue
         orig_forward = m.forward
 
@@ -204,8 +252,25 @@ def attach_qat(model: Any, *, scheme: str = "int8",
         m._qat_orig_forward = orig_forward
         m.forward = qat_forward
         m._qat_wrapped = True
-        wrapped += 1
-    return wrapped
+        wrapped_names.append(name)
+
+    cov = summarize_qat_coverage(wrapped_names)
+    # If QAT reached NO experts but the model HAS expert weights, the forward-STE can't see them
+    # (fused expert Parameters, or experts simply absent from module_types). Co-adapting nothing
+    # there means NVFP4-serving the experts later will degrade — warn loudly rather than silently.
+    has_expert_params = any(
+        ("experts" in n) and getattr(p, "ndim", 0) >= 2
+        for n, p in model.named_parameters())
+    cov["model_has_expert_params"] = bool(has_expert_params)
+    model._qat_coverage = cov
+    if has_expert_params and cov["expert"] == 0:
+        warnings.warn(
+            "QAT attached to 0 expert modules but the model has expert weights: the MoE experts "
+            "will NOT be co-adapted to "
+            f"{scheme} and are expected to degrade when served quantized. Ensure experts load as "
+            "per-expert nn.Linear (so they match module_types) and are LoRA-trainable.",
+            RuntimeWarning, stacklevel=2)
+    return len(wrapped_names)
 
 
 def detach_qat(model: Any) -> int:  # pragma: no cover - torch-only
@@ -229,8 +294,8 @@ def qat_penalty(model: Any, *, scheme: str = "int8", lam: float = 1e-3,
     ste = _torch_ste_quant()                      # build the autograd Function once per call
     total = None
     device = None
-    for m in model.modules():
-        if type(m).__name__ in module_types and hasattr(m, "weight"):
+    for name, m in model.named_modules():
+        if type(m).__name__ in module_types and hasattr(m, "weight") and is_qat_target_name(name):
             w = m.weight
             if device is None:
                 device = w.device
@@ -296,6 +361,25 @@ def offline_invariants() -> "tuple[bool, dict]":
         fake_quant(W, "ternary"); checks["unknown_scheme_rejected"] = False
     except ValueError:
         checks["unknown_scheme_rejected"] = True
+
+    # 6. QAT target/coverage accounting (the visibility that was missing): the served set covers
+    #    attention AND per-expert/fused experts; it excludes head/embeddings/norms/router/LoRA. And
+    #    summarize_qat_coverage must SEE the experts (the 4-round blind spot) — a run that reaches 0
+    #    experts is the failure signature.
+    targets = ["model.layers.0.self_attn.q_proj", "model.layers.0.mlp.experts.7.down_proj",
+               "model.layers.0.mlp.experts.gate_up_proj"]
+    nontargets = ["lm_head", "model.embed_tokens", "model.layers.0.input_layernorm",
+                  "model.layers.0.mlp.gate",   # router
+                  "base_model.model.model.layers.0.self_attn.q_proj.lora_A.weight"]
+    checks["qat_targets_attn_and_experts"] = all(is_qat_target_name(n) for n in targets)
+    checks["qat_skips_head_norm_router_lora"] = not any(is_qat_target_name(n) for n in nontargets)
+    cov_full = summarize_qat_coverage([
+        "model.layers.0.self_attn.q_proj", "model.layers.0.self_attn.k_proj",
+        "model.layers.0.mlp.experts.0.gate_proj", "model.layers.0.mlp.experts.1.down_proj"])
+    checks["coverage_counts_experts"] = cov_full["expert"] == 2 and cov_full["attn"] == 2
+    cov_attn_only = summarize_qat_coverage(["model.layers.0.self_attn.q_proj"])
+    checks["coverage_flags_zero_experts"] = cov_attn_only["expert"] == 0
+    detail["coverage_full"] = cov_full
 
     ok = all(checks.values())
     return ok, {"checks": checks, **detail}
