@@ -1,0 +1,139 @@
+name: runpod-gss-probe
+
+# Manual-only RunPod launcher for the Governed Speculative Sparsity Tier-0 probe:
+# run tools/gss_probe.py --backend hf on a real MoE checkpoint (full-precision pass +
+# a 4-bit self-draft) to measure ρ, α, k and the GSS cost ratio → a real GO/NO-GO.
+# See docs/11-Platform/Real-Tensor-Movement-Thesis.md.
+#
+# Dispatch-only: never runs on push/PR/schedule. On dispatch it uses the orchestrator
+# tools/runpod_gss_probe.py to rent a GPU pod via the RunPod REST API, run the probe over
+# SSH, copy agi-proof/benchmark-results/gss-*.json back, ALWAYS delete the pod, upload the
+# report as an artifact, and commit it to the dispatched branch. RUNPOD_API_KEY is read
+# from the repo secret and never printed.
+#
+# PREREQUISITES (maintainer-only): repo secret RUNPOD_API_KEY + RunPod GPU credit.
+# A pod costs real money while it runs (~minutes here).
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to confirm you accept renting a paid GPU pod'
+        required: true
+        default: ''
+      model:
+        description: 'HF MoE checkpoint (router-logits-capable)'
+        required: false
+        default: 'allenai/OLMoE-1B-7B-0924'
+      draft:
+        description: '4-bit self-draft source'
+        required: false
+        default: 'bnb'
+        type: choice
+        options: ['bnb', 'fakequant']
+      tokens:
+        description: 'Max positions to score'
+        required: false
+        default: '128'
+      gpu_type:
+        description: 'Comma-separated RunPod GPU type preference (first available wins)'
+        required: false
+        default: 'NVIDIA A40,NVIDIA L40S,NVIDIA RTX A6000,NVIDIA GeForce RTX 4090'
+      interruptible:
+        description: 'Use cheaper spot/interruptible pod'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['true', 'false']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: runpod-gss-probe
+  cancel-in-progress: false
+
+jobs:
+  runpod:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Preflight — confirm + secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "RUN" ]; then
+            echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
+            exit 1
+          fi
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set (or empty). Add a VALID key in Settings -> Secrets and variables -> Actions. Aborting (no pod created)."
+            exit 1
+          fi
+          echo "Preflight OK: confirmed, secret present. GPU runs on the rented pod, not this runner."
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install REST client dep
+        run: pip install -q requests
+
+      - name: Dry-run remote script (no pod, no cost — sanity check the request)
+        run: |
+          python tools/runpod_gss_probe.py --dry-run \
+            --branch "${{ github.ref_name }}" \
+            --model "${{ github.event.inputs.model }}" \
+            --draft "${{ github.event.inputs.draft }}" \
+            --tokens "${{ github.event.inputs.tokens }}" \
+            --gpu-type "${{ github.event.inputs.gpu_type }}"
+
+      - name: Launch RunPod GSS probe (rents GPU, runs over SSH, deletes pod)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          INTERRUPTIBLE=""
+          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
+          python tools/runpod_gss_probe.py --yes \
+            --branch "${{ github.ref_name }}" \
+            --model "${{ github.event.inputs.model }}" \
+            --draft "${{ github.event.inputs.draft }}" \
+            --tokens "${{ github.event.inputs.tokens }}" \
+            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            $INTERRUPTIBLE
+
+      - name: Show the GSS report in the run log
+        if: always()
+        run: |
+          for f in agi-proof/benchmark-results/gss-*.json agi-proof/benchmark-results/gss-*.stdout.txt; do
+            if [ -f "$f" ]; then
+              echo "===== $f ====="
+              cat "$f"
+            fi
+          done
+
+      - name: Upload GSS report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: runpod-gss-probe-report
+          path: agi-proof/benchmark-results/gss-*
+          if-no-files-found: warn
+
+      - name: Commit report to the branch
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add agi-proof/benchmark-results/gss-*.json agi-proof/benchmark-results/gss-*.stdout.txt 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No report files to commit."
+          else
+            git commit -m "results(gss): RunPod Tier-0 probe on ${{ github.event.inputs.model }} (real MoE go/no-go)"
+            git push origin HEAD:"${{ github.ref_name }}"
+          fi
