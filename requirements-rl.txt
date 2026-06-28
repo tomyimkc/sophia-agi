@@ -1,7 +1,7 @@
 # RLVR / GRPO training deps (tools/run_rlvr.py). CUDA/NVIDIA-only — does NOT
 # run on Apple Silicon. The offline reward-wiring check (--model mock) needs
 # none of these (pure Python). Install only on the rented cloud GPU.
-torch>=2.3
+torch>=2.12.1
 transformers>=5.12.1
 trl>=0.16
 peft>=0.19.1

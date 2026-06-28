@@ -1,7 +1,7 @@
 # Spec B activation steering. The offline `--model mock` invariants + the CI
 # steering tests need NONE of these — the deterministic core is pure stdlib.
 # Install only for a REAL run (in-process Phi-3.5 on Apple Silicon MPS).
-torch>=2.3
+torch>=2.12.1
 transformers>=5.12.1   # Phi-3.5 LongRoPE needs a recent transformers (local env: 5.5.3)
 accelerate>=1.14.0
 safetensors>=0.4

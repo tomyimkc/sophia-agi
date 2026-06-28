@@ -1,6 +1,6 @@
 # Pinned to <2.9: torch 2.9+ has no prebuilt flash-attn wheel yet, and an unpinned
 # upgrade silently broke ABI on the pod (pip pulled 2.10). 2.7/2.8 have flash-attn wheels.
-torch>=2.7,<2.9
+torch>=2.12.1,<2.13
 transformers>=5.12.1,<6.0
 peft>=0.19.1,<0.20
 datasets>=2.18
