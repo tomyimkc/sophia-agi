@@ -179,20 +179,27 @@ the probe on **`allenai/OLMoE-1B-7B-0924`** (64 experts, top-8 routing, 16 layer
 rented GPU: full-precision pass vs a real **4-bit bitsandbytes** self-draft. Report in
 [`agi-proof/benchmark-results/gss-allenai-OLMoE-1B-7B-0924.json`](../../agi-proof/benchmark-results/gss-allenai-OLMoE-1B-7B-0924.json):
 
-| ρ (read-set) | α (4-bit accept) | k (γ=4) | cost_ratio | ceiling | verdict |
-|---|---|---|---|---|---|
-| **0.096** | **0.915** | **4.22** | **0.26** | **3.85×** | **GO** |
+| run | n (positions) | ρ (read-set) | α (4-bit accept) | k (γ=4) | cost_ratio | ceiling | verdict |
+|---|---|---|---|---|---|---|---|
+| short prompt | 10 | 0.0959 | 0.915 | 4.22 | 0.260 | 3.85× | GO |
+| **~120-tok prompt** | **103** | **0.0960** | **0.883** | **3.96** | **0.277** | **3.61×** | **GO** |
 
 Only ~9.6% of expert weights carry 90% of each token's output mass, and a 4-bit self-draft
-agrees with FP16 ~92% of the time — exactly the (low ρ, high α) corner where GSS wins. The
-structure GSS needs **is present in a real frontier-style MoE**, not just the toy.
+agrees with FP16 ~88% of the time — exactly the (low ρ, high α) corner where GSS wins. The
+structure GSS needs **is present in a real frontier-style MoE**, not just the toy. **ρ is
+essentially identical (0.096) across both runs** — the read-set concentration is a stable
+property of the model, not a small-sample artifact; α settles slightly lower on the larger,
+more diverse sample (the honest direction). Both runs clear the gate with a ~3.6× ceiling.
 
-**Honest caveats (this is *illustrative*, not registered):** the default-prompt run scored
-only **n=10 positions**; the numbers are directionally strong but statistically thin,
-**single run, single prompt, first-party**. The launcher now defaults to a ~120-token
-paragraph (`--prompt`) to measure ρ/α over a real sample; a registered result still needs
-**≥3 runs + CIs** per the no-overclaim gate (`RESULTS.md`). It is a feasibility GO — it
+**Honest caveats (this is *illustrative*, not registered):** still **first-party**, and the
+two runs share one model and one prompt family. A registered result needs **≥3 runs across
+varied prompts/seeds + CIs** per the no-overclaim gate (`RESULTS.md`) — and the real-bytes
+roofline win (Tier 2) is unmeasured. This is a *feasibility* GO over the cost model: it
 greenlights Tier 1, it is **not** a speedup claim. `canClaimAGI` stays `false`.
+
+(A debugging note for reproducers: the 4-bit draft must be loaded **after** the
+full-precision target is freed — holding both resident makes `device_map=auto` offload the
+quantized model to CPU and bitsandbytes aborts. `tools/gss_probe.py` frees the target first.)
 
 ---
 
