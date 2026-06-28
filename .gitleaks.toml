@@ -13,10 +13,13 @@ regex = '''(?i)(sk-[a-z0-9]{20,}|hf_[a-z0-9]{20,}|AKIA[0-9A-Z]{16}|xai-[a-z0-9]{
 tags = ["key", "provider"]
 
 [allowlist]
-description = "Placeholders, samples, and docs are not real secrets."
+description = "Placeholders, samples, docs, and test fixtures are not real secrets."
 paths = [
   '''\.env\.example$''',
   '''(^|/)docs/''',
+  '''(^|/)tests/''',          # security detector fixtures contain FAKE key-shaped strings
+  '''(^|/)eval/redteam/''',   # red-team attack corpus (encoded payloads, not secrets)
+  '''\.gitleaks\.toml$''',    # this allowlist file itself
   '''(^|/).*\.sample\.(json|md|txt)$''',
   '''(^|/).*\.example$''',
 ]
