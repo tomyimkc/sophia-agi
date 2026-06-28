@@ -91,6 +91,25 @@ class ModelSpec:
         body = max(0, self.active_params - self.embed_params)
         return max(1, body // max(1, self.n_layers))
 
+    @classmethod
+    def from_block_counts(cls, name: str, *, n_layers: int, hidden: int, vocab: int,
+                          block_total_params: int, block_active_params: int,
+                          n_routed_experts: int = 0, active_experts: int = 0) -> "ModelSpec":
+        """Build a full-model spec by stacking ``n_layers`` copies of a *trained* block.
+
+        The bridge from a trained MoE block (e.g. ``pretraining.architecture.moe.MoELM`` —
+        a single trainable MoE layer with measured loss) to the serving accounting: a real
+        N-layer model has ~``n_layers × block`` params, of which only the active experts'
+        share is touched per token. This is what closes the train→serve loop without
+        coupling ``serving/`` to the trainer (the caller passes the trained block's counts).
+        """
+        embed = 2 * vocab * hidden
+        total = n_layers * block_total_params + embed
+        active = n_layers * block_active_params + embed
+        return cls(name=name, n_layers=n_layers, hidden=hidden, vocab=vocab,
+                   total_params=total, active_params=active,
+                   n_routed_experts=n_routed_experts, active_experts=active_experts)
+
 
 # ---------------------------------------------------------------------------
 # Reference frontier specs (the targets to anchor Sophia-V1 against)

@@ -57,15 +57,16 @@ in one GPU budget and CI-checks that a full decode step stays within it.
 - **This branch:** integrated runtime + frontier RAM planner (`serving/lowram_runtime.py`) — quantifies the table above.
 
 ### ⏭ Buildable now (CI, free — no GPU)
-1. **Trainable end-to-end MoE LM** (the **Boundary-1 floor**). `moe/` is a numpy reference; connect router + experts into a small *real* torch MoE LM (CPU-runnable tiny config) so "large total params via sparsity" is a delivered artifact, not a reference. This is the keystone that unblocks every capability claim.
-2. **MLA / low-rank KV** (DeepSeek's lever) as a reference in `serving/` — shrinks the KV term in the table further.
-3. **Shared-expert + fine-grained-expert accounting** in `lowram_runtime.py` to match the DeepSeek-V3 / GLM-5.2 expert topology exactly.
-4. **End-to-end wiring test**: `shard_checkpoint` → `lowram_runtime` → `lowram_eval` on a tiny real model, proving the whole pipeline composes.
+1. ✅ **End-to-end train→account→compose→certify loop** (`tests/test_lowram_e2e.py`): train a real trainable MoE block (`pretraining/architecture/moe.py`), bridge its measured counts into a frontier `ModelSpec` (`ModelSpec.from_block_counts`), account RAM, run it through `LowRamRuntime`, and certify a quantized copy vs FP16 through `lowram_eval`. The whole stack composes on a *trained* model.
+2. ✅ **RunPod QAT + certification launcher, prepared & cost-gated** (`tools/runpod_qat_lowram.py`): emits the exact paid-run plan (QAT SFT + on-pod `lowram_eval` certification), provisions nothing, and refuses to launch until you set a base model + budget. One review away from the paid run.
+3. **Scale the trainable MoE to multi-layer top-k torch** — the nano `MoELM` is single-layer top-1; a real torch multi-layer top-k MoE LM is the remaining piece of the **Boundary-1 floor** (still CPU-runnable at tiny config; GPU for scale).
+4. **MLA / low-rank KV** (DeepSeek's lever) as a `serving/` reference — shrinks the KV term in the table further.
+5. **Shared-expert + fine-grained-expert accounting** in `lowram_runtime.py` to match the DeepSeek-V3 / GLM-5.2 expert topology exactly.
 
-### 💰 Needs real GPU compute (RunPod — costs money, needs your go-ahead)
-5. **Real QAT run** on a pretrained sparse-MoE base (`tools/train_lora.py --qat`), then **clear `lowram_eval` vs FP16** on a held-out, decontaminated set — the **Boundary-3 floor**, the first real "low-RAM, capability-retained" evidence (the P6 artifact).
-6. **Distillation onto the sparse backbone** at real scale (council/teacher → MoE student).
-7. **Headline replication** to the `RESULTS.md` bar (≥2 judge families, κ ≥ 0.40, ≥3 seeds, 95% CIs excluding zero).
+### 💰 Needs real GPU compute (RunPod — costs money, needs your go-ahead) — launcher ready (step 2)
+6. **Real QAT run** on a pretrained sparse-MoE base (`tools/train_lora.py --qat`), then **clear `lowram_eval` vs FP16** on a held-out, decontaminated set — the **Boundary-3 floor**, the first real "low-RAM, capability-retained" evidence (the P6 artifact). Launch via `tools/runpod_qat_lowram.py`.
+7. **Distillation onto the sparse backbone** at real scale (council/teacher → MoE student).
+8. **Headline replication** to the `RESULTS.md` bar (≥2 judge families, κ ≥ 0.40, ≥3 seeds, 95% CIs excluding zero).
 
 ---
 
