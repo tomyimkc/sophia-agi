@@ -93,6 +93,9 @@ def main(argv: list[str] | None = None) -> int:
         except FileNotFoundError:
             print(json.dumps({"error": "config not found", "config": args.config}, indent=2))
             return 1
+        except OSError as e:   # IsADirectoryError, PermissionError, etc. — still no traceback
+            print(json.dumps({"error": f"cannot read config: {e}", "config": args.config}, indent=2))
+            return 1
         except json.JSONDecodeError as e:
             print(json.dumps({"error": f"invalid JSON: {e}", "config": args.config}, indent=2))
             return 1
