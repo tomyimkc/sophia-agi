@@ -1,0 +1,31 @@
+{
+  "schema": "sophia.source_contamination_verifier_compare.v1",
+  "experiment": "Cluster C \u2014 atomic vs core-claim verifier x curated vs open-world refs, LIVE answer!=judge",
+  "date": "2026-06-28",
+  "answer_spec": "llmhub:claude-sonnet-4-6",
+  "judge_spec": "openrouter:deepseek/deepseek-chat",
+  "matrix": {
+    "curated_atomic": {
+      "caught_pct": 97.7,
+      "over_block_pct": 5.9
+    },
+    "curated_core": {
+      "caught_pct": 95.3,
+      "over_block_pct": 0.0
+    },
+    "openworld_atomic": {
+      "caught_pct": 97.7,
+      "over_block_pct": 52.9
+    },
+    "openworld_core": {
+      "caught_pct": 58.1,
+      "over_block_pct": 0.0
+    }
+  },
+  "correction": "CORRECTS the earlier claim that answer!=judge separation drove clean over-block to 70.6%. A clean re-run shows atomic answer!=judge on CURATED refs over-blocks only 5.9% (not 70.6%); the earlier 70.6% was a STALE RETRIEVE report mis-saved when a prior run hung during a git-stash race. The TRUE over-block driver is OPEN-WORLD retrieval (atomic+retrieve = 52.9% here; earlier retrieve runs 64.7-70.6%), because generic Wikipedia summaries do not entail the specific clean answer.",
+  "finding": "Core-claim (pass-unless-contradicted) ELIMINATES over-block (->0.0%) in both ref regimes, but it is a fail-OPEN tradeoff: on CURATED refs it keeps contamination-catching high (95.3%, only -2.4pt vs atomic), but on weak OPEN-WORLD refs contamination-catching COLLAPSES to 58.1% (vs atomic 97.7%) because Wikipedia rarely explicitly contradicts the injected fabrication. Atomic is fail-CLOSED (high catch, high open-world over-block); core is fail-OPEN (zero over-block, low open-world catch). Neither dominates \u2014 the real lever is REF QUALITY: authoritative independent oracles (Google/Wikidata, per the layered verifier) that actually contradict contamination, not generic retrieval.",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false
+}

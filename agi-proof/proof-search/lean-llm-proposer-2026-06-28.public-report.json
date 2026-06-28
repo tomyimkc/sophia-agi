@@ -1,0 +1,113 @@
+{
+  "experiment": "lean-llm-proposer-expert-iteration-round1",
+  "date": "2026-06-28",
+  "purpose": "One real round of verifier-as-reward: strong API LLMs PROPOSE Lean 4 proofs; a REAL Lean kernel on RunPod VERIFIES them. Tests the verifier_synthesis_over_proof_kernel premise end-to-end on non-trivial theorems.",
+  "compute": {
+    "provider": "RunPod",
+    "cloudType": "SECURE",
+    "gpu": "A100 (kernel is CPU-bound)",
+    "note": "proposers were API models (Claude-Sonnet via LLMHub, DeepSeek via OpenRouter); verifier was Lean 4.31.0 on the pod; results via the pod HTTPS proxy; pod deleted after."
+  },
+  "leanVersion": "Lean (version 4.31.0, x86_64-unknown-linux-gnu, commit 68218e876d2a38b1985b8590fff244a83c321783, Release)",
+  "proposers": [
+    "llmhub:claude-sonnet-4-6",
+    "openrouter:deepseek/deepseek-chat"
+  ],
+  "theorems": [
+    "two_mul_nat",
+    "reverse_reverse",
+    "length_append",
+    "le_add_right",
+    "map_map"
+  ],
+  "n_candidates": 10,
+  "n_accepted": 8,
+  "byProposer": {
+    "claude-sonnet-4-6": {
+      "accepted": 5,
+      "of": 5
+    },
+    "deepseek-chat": {
+      "accepted": 3,
+      "of": 5
+    }
+  },
+  "results": [
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "two_mul_nat",
+      "verdict": "accepted",
+      "error": "",
+      "max_jaccard_vs_other_accepted": 0.38
+    },
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "reverse_reverse",
+      "verdict": "accepted",
+      "error": "",
+      "max_jaccard_vs_other_accepted": 0.509
+    },
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "length_append",
+      "verdict": "accepted",
+      "error": "",
+      "max_jaccard_vs_other_accepted": 0.509
+    },
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "le_add_right",
+      "verdict": "accepted",
+      "error": "",
+      "max_jaccard_vs_other_accepted": 0.603
+    },
+    {
+      "spec": "llmhub:claude-sonnet-4-6",
+      "name": "map_map",
+      "verdict": "accepted",
+      "error": "",
+      "max_jaccard_vs_other_accepted": 0.948
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "two_mul_nat",
+      "verdict": "accepted",
+      "error": "",
+      "max_jaccard_vs_other_accepted": 0.434
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "reverse_reverse",
+      "verdict": "rejected",
+      "error": "openrouter_deepseek_deepseek-chat__reverse_reverse.lean:5:10: warning: Possibly looping simp theorem: `List.reverse.eq_1`\n\nNote: Possibly caused by: `List.reverseAux_eq` and `List.reverse`\n\nHint: You can disable a simp theorem from the default simp set by passing `- theoremName` to `simp`.\nopenrouter_deepseek_deepseek-chat__reverse_reverse.lean:5:4: error: Tactic `simp` failed with a nested error:"
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "length_append",
+      "verdict": "rejected",
+      "error": "openrouter_deepseek_deepseek-chat__length_append.lean:4:17: error: unsolved goals\ncase cons\na : Type\nys : List a\nx : a\nxs : List a\nih : (xs ++ ys).length = xs.length + ys.length\n\u22a2 xs.length + ys.length + 1 = xs.length + 1 + ys.length\n"
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "le_add_right",
+      "verdict": "accepted",
+      "error": "",
+      "max_jaccard_vs_other_accepted": 0.603
+    },
+    {
+      "spec": "openrouter:deepseek/deepseek-chat",
+      "name": "map_map",
+      "verdict": "accepted",
+      "error": "",
+      "max_jaccard_vs_other_accepted": 0.948
+    }
+  ],
+  "claims": {
+    "shows": "A real Lean 4.31.0 kernel verified 8/10 LLM-proposed proofs, including non-trivial induction proofs (reverse_reverse, length_append, map_map). The verifier-as-reward loop works end-to-end on real compute: propose (API LLM) -> verify (real kernel) -> keep accepted. The 2 rejections (a looping simp, an unsolved goal) were correctly caught.",
+    "doesNotShow": "This does NOT close the bet as a NOVELTY result. The 5 theorems are KNOWN library lemmas; the accepted proofs are RECALL of standard proofs, not novel discoveries. The cross-proposer Jaccard for map_map is 0.948 (both models emit the same standard proof). The repo novelty probe measures only surface overlap vs a LOCAL corpus and cannot detect training-data memorization. Closing the bet needs a HELD-OUT theorem provably outside the proposers' memorized corpus, with novelty verified semantically and reproduced across seeds under the no-overclaim gate.",
+    "candidateOnly": true,
+    "validated": false,
+    "level3Evidence": false,
+    "canClaimAGI": false
+  }
+}

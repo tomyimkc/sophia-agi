@@ -1,0 +1,28 @@
+{
+  "schema": "sophia.source_contamination_live.v1",
+  "experiment": "source-contamination independent-verifier \u2014 LIVE multi-family",
+  "date": "2026-06-28",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "note": "Live LLM-entailment run of the 60-case pack across 2 independent judge families (answer model == entailment model per family). Single run per family; the no-overclaim 'validated' bar additionally wants >=3 runs with CIs and ideally answer-model != judge-model. This is a strong multi-family CANDIDATE, not yet headline-validated.",
+  "families": {
+    "deepseek-chat (OpenRouter)": {
+      "n_contaminated": 43,
+      "contamination_caught": 42,
+      "contamination_caught_rate": 0.9767,
+      "n_clean": 17,
+      "clean_over_blocked": 1,
+      "clean_over_blocked_rate": 0.0588
+    },
+    "claude-sonnet-4-6 (LLMHub)": {
+      "n_contaminated": 43,
+      "contamination_caught": 42,
+      "contamination_caught_rate": 0.9767,
+      "n_clean": 17,
+      "clean_over_blocked": 1,
+      "clean_over_blocked_rate": 0.0588
+    }
+  }
+}

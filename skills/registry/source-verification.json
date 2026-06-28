@@ -1,0 +1,45 @@
+{
+  "name": "source-verification",
+  "whenToUse": "Audit a model answer for FABRICATED CITATIONS (a cited study/DOI that does not exist) and ATTRIBUTION SWAPS (a real work credited to the wrong creator) using HIGH-INDEPENDENCE external records (Crossref existence + Wikidata creator/author/discoverer), before the answer is trusted or published. Fail-open and coverage-bounded; no API keys. The 2026-06-28 verification toolkit.",
+  "triggers": ["cite", "citation", "fabricated study", "does this study exist", "who wrote", "who painted", "who discovered", "attribution", "misattributed", "verify source", "source check", "Mata v. Avianca", "fake reference", "provenance audit", "is this real"],
+  "requiredTools": ["source_verify_tool"],
+  "workflow": [
+    "Call the skill: source_verify_audit(answer=<text>, question=<the original question, optional>).",
+    "It runs two keyless, high-independence checks: (1) citation-existence (agent.citation_existence_verifier) confirms each cited study/DOI in Crossref; (2) attribution-swap (agent.attribution_swap_verifier) checks a credited work against its Wikidata creator/author/discoverer.",
+    "Read 'findings': type 'unverifiable_citation' = a cited study Crossref cannot confirm; type 'attribution_swap' = a real work credited to someone who is not its true creator (with the true creator listed).",
+    "verdict 'flagged' => not publishable (the answer cites a non-existent study or mis-attributes a real work). verdict 'clean' => no high-independence external record contradicts it (NOT a proof of correctness).",
+    "FAIL-OPEN and COVERAGE-BOUNDED: an item no external record covers is NOT flagged (returns clean with a note). For viral-claim coverage add GOOGLE_FACTCHECK_API_KEY and run tools/run_source_contamination_bench.py --verifier hybrid; for a real source whose FINDING is misstated run --verifier faithfulness (multi-judge, MEDIUM independence)."
+  ],
+  "ioSchema": {
+    "input": {"answer": "string", "question": "string"},
+    "output": {"verdict": "string", "publishable": "boolean", "findings": "array", "independence": "string", "canClaimAGI": "boolean"}
+  },
+  "verification": [
+    "A fabricated study ('According to a 2023 Yale study, ...') with no Crossref match => findings has an unverifiable_citation; clean=false.",
+    "A real work credited to the wrong creator ('the Mona Lisa was painted by Raphael') => findings has an attribution_swap with true=['Leonardo da Vinci']; clean=false.",
+    "A clean answer ('the author is unknown') => findings empty; clean=true.",
+    "A correct attribution ('the Mona Lisa was painted by Leonardo da Vinci') => not flagged.",
+    "An entity Wikidata cannot resolve, or a vague citation, => NOT flagged (fail-open), never a fabricated contradiction.",
+    "canClaimAGI stays false; a 'clean' verdict is the absence of a contradicting external record, not a proof of truth."
+  ],
+  "commonFailures": [
+    "Reading 'clean' as 'true/correct' — it only means no high-independence record contradicts it (coverage-bounded).",
+    "Expecting it to catch viral-myth or misstated-finding contamination — those need the Google/faithfulness layers (other independence tiers).",
+    "Treating a fail-open miss (uncovered claim) as a pass/endorsement.",
+    "Running without network: the external records are live; offline it fails open (no findings)."
+  ],
+  "examples": [
+    {
+      "input": "answer='According to a 2023 Yale study, Anthony Ascham wrote the Voynich Manuscript.'",
+      "output": "verdict=flagged, publishable=false; findings=[{type:unverifiable_citation, raw:'2023 Yale study', method:scholarly_no_match, independence:high}] (Crossref cannot confirm the cited study exists)."
+    },
+    {
+      "input": "answer='The Mona Lisa was painted by Raphael.', question='Who painted the Mona Lisa?'",
+      "output": "verdict=flagged, publishable=false; findings=[{type:attribution_swap, work:'Mona Lisa', credited:'Raphael', true:['Leonardo da Vinci'], independence:high}]."
+    },
+    {
+      "input": "answer='The author of the Voynich Manuscript is unknown.'",
+      "output": "verdict=clean, publishable=true; findings=[] (no high-independence external record contradicts it — absence of contradiction, not proof of truth)."
+    }
+  ]
+}

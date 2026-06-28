@@ -1,0 +1,40 @@
+{
+  "schema": "sophia.meta_labeler_report.v1",
+  "source": "<bundled-demo>",
+  "agreement_floor": 1.0,
+  "metrics": {
+    "n_cases": 4,
+    "auto_coverage": 0.5,
+    "human_queue_size": 2,
+    "auto_precision": 1.0,
+    "ambiguity_recall": 1.0
+  },
+  "auto": [
+    {
+      "id": "d-easy-fab",
+      "verdict": "fabricated",
+      "agreement": 1.0,
+      "gold": "fabricated"
+    },
+    {
+      "id": "d-easy-honest",
+      "verdict": "honest",
+      "agreement": 1.0,
+      "gold": "honest"
+    }
+  ],
+  "human_queue": [
+    {
+      "id": "d-hedged-1",
+      "agreement": 0.3333333333333333,
+      "gold": "ambiguous",
+      "ambiguous": true
+    },
+    {
+      "id": "d-hedged-2",
+      "agreement": 0.3333333333333333,
+      "gold": "ambiguous",
+      "ambiguous": true
+    }
+  ]
+}
