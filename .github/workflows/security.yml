@@ -71,10 +71,10 @@ jobs:
           exit $status
 
   # ── Static analysis (CodeQL, Python) ──────────────────────────────────────────
-  # Produces the "CodeQL" code-scanning results that branch protection requires.
-  # Uses the default security query suite (not security-and-quality) to avoid
-  # failing the PR check on non-security quality lints. If you enable GitHub's
-  # *default* CodeQL setup instead, delete this job (advanced + default conflict).
+  # Runs the security-AND-quality suite so CodeQL reports BOTH code-scanning
+  # (security) and code-quality results — the `main` ruleset requires both
+  # (code_scanning + code_quality gates). Test fixtures and the prompt-hygiene
+  # scanner are excluded via the config file. Only error-severity alerts block.
   codeql:
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -86,6 +86,7 @@ jobs:
       - uses: github/codeql-action/init@v3
         with:
           languages: python
+          queries: security-and-quality
           config-file: ./.github/codeql/codeql-config.yml
       - uses: github/codeql-action/analyze@v3
 
