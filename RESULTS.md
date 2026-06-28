@@ -117,6 +117,33 @@ _Representative run — 32 clients × 30,000 GETs, 100,000 keys, 256-byte values
 
 - Phase 1b request pipelining packs a batch into one flush and coalesces responses — the textbook throughput-for-latency trade (8.6× throughput at depth 16 for higher per-batch latency; depth-1 is the honest single-request baseline). Single node, in-memory only; persistence (io_uring) + replication (Raft) are Phases 2–3. Reproduce: `cd storage && cargo run --release --bin kvcache-bench -- --clients 32 --ops 30000 --pipeline 16`
 
+## Source-discipline adapter (θ_search) — swarm dual-use
+
+A LoRA adapter, spawned as a swarm 'search' team member (V3 dual-use), measured for whether it raises **source discipline** — refuting/hedging false or misattributed claims instead of affirming them. Three independent judge families score the SAME captured generations; the governed per-base **adapter registry** (`agent/adapter_registry.py`) admits a binding only if every family is positive with a 95% CI excluding zero and inter-family κ ≥ 0.40. The honest **negative** (council corpus on Mistral) is kept on purpose.
+
+_Eval pack: Google Fact Check Tools API ClaimReview — third-party, 30 false/misleading claims, 8 IFCN publishers (decontaminated)._  
+_Judges: lexical + stance (deterministic, independent operationalizations) + DeepSeek (independent LLM family; judge ≠ subject)._
+
+| Base model | SFT recipe | lexical Δ | stance Δ | LLM-judge Δ | min κ | Gate |
+|---|---|---|---|---|---|---|
+| `Qwen/Qwen2.5-7B-Instruct` | council traces | +0.200 [+0.122, +0.289] | +0.144 [+0.056, +0.233] | +0.200 [+0.122, +0.289] | 0.84 | **ACCEPTED** |
+| `mistralai/Mistral-7B-Instruct-v0.3` | council traces | -0.278 [-0.400, -0.144] | -0.367 [-0.489, -0.233] | -0.278 [-0.400, -0.144] | 0.5 | **REJECTED (format overfit)** |
+| `mistralai/Mistral-7B-Instruct-v0.3` | format-robust distill | +0.122 [+0.033, +0.211] | +0.233 [+0.111, +0.356] | +0.122 [+0.033, +0.211] | 0.5 | **ACCEPTED** |
+
+- Honest scope: the SFT corpus is first-party/distilled (eval pack is third-party); each row is one recipe on one base; scorers are 2 deterministic heuristics + 1 independent LLM judge (raw generations are saved so a human family is a free re-score). The lift is RECIPE-specific — the council corpus teaches a multi-seat *format* (Mistral overfit it 30/30, REGRESSING); a format-robust distillation corpus drops that to 0/30 and recovers transfer. Artifacts + per-judge CIs in `training/swarm_router/theta_search_run_result.json`; recipe in `docs/11-Platform/Adapter-Adoption.md`. Candidate-grade evidence that clears the multi-judge gate; not promoted to the flagship 'validated' provenance-gate set.
+
+## Swarm structure, end-to-end (live) — does fan-out beat a solo pass?
+
+Real-model test of the SWARM STRUCTURE itself (router -> per-team agents -> fail-closed synthesis) vs a single source-disciplined pass on the SAME model, scored by lexical + stance + an independent DeepSeek judge (judge != subject), paired bootstrap CIs. Eval pack: the third-party Google Fact Check claims. NEGATIVE/null result, published in the failure-ledger spirit.
+
+- **`meta-llama/llama-3.1-8b-instruct` (router-gated, n=20)** — swarm ≈ solo — ceiling (solo already disciplined: lexical 1.0, LLM 0.95) and the router correctly routes simple fact-check claims to solo (only ~4/20 fanned out). No measured benefit.
+- **`meta-llama/llama-3.2-3b-instruct` (forced fan-out, n=20)** — the 2 reliable judges (lexical, independent LLM) AGREE the structure DEGRADED an already-disciplined solo pass (0.95->0.75); the stance family is an outlier (solo base 0.30 is a scorer artifact on verbose 3B outputs). No consistent benefit.
+  - lexical -0.25 [-0.45,-0.05]; llm -0.20 [-0.40,+0.00]; stance +0.50 [+0.30,+0.70]
+- **`meta-llama/llama-3.2-3b-instruct` (decomposition/coverage (forced facets + merge, fair 512-tok), n=15)** — aspect coverage swarm == solo (0.24 == 0.24), delta 0.0, CI includes zero — even after removing the token-truncation confound. Perspective-based fan-out + synthesis adds NO coverage over a single 'answer completely' pass (75 held-out gold aspects, DeepSeek-judged).
+  - aspect-coverage +0.00 [-0.12,+0.12]
+
+**Conclusion:** Tested on BOTH task types the swarm should plausibly help — atomic false-claim assessment AND decomposition/coverage — this swarm design (router + perspective-based facet-agents + fail-closed synthesis) shows NO measured benefit over a single well-prompted pass, and can degrade it. Honest read: a MoA-style perspective swarm + synthesis does not beat a strong solo prompt on these tasks; the multi-agent value likely needs (a) true sub-question DECOMPOSITION with per-agent TOOLS (real retrieval), (b) stronger base models, or (c) tasks whose work genuinely exceeds one context — none of which this design+pack provided. The benchmark harness, packs, and multi-judge measurement are validated and reusable; the swarm-structure result is a published null/negative (failure-ledger spirit). The router's instinct to keep simple claims solo is, in this light, CORRECT — it avoids paying for a swarm that doesn't help.
+
 ## Reproduce
 
 ```bash

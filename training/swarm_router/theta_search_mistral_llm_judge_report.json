@@ -1,0 +1,37 @@
+{
+  "judge_model": "deepseek/deepseek-chat",
+  "n_traps": 30,
+  "seeds": [
+    "seed0",
+    "seed1",
+    "seed2"
+  ],
+  "llm_judge": {
+    "base_rate": 0.8,
+    "per_seed": {
+      "seed0": {
+        "before": 0.8,
+        "after": 0.667,
+        "delta": -0.133
+      },
+      "seed1": {
+        "before": 0.8,
+        "after": 0.4,
+        "delta": -0.4
+      },
+      "seed2": {
+        "before": 0.8,
+        "after": 0.5,
+        "delta": -0.3
+      }
+    },
+    "mean_delta": -0.2778,
+    "ci95": [
+      -0.4,
+      -0.1444
+    ],
+    "ci_excludes_zero": false
+  },
+  "kappa_llm_vs_lexical": 1.0,
+  "kappa_llm_vs_stance": 0.487
+}

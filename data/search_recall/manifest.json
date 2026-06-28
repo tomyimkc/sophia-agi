@@ -1,0 +1,17 @@
+{
+  "schema": "sophia.search_recall_pack.v1",
+  "pack": "pack_v2",
+  "n": 30,
+  "nTraps": 25,
+  "nControls": 5,
+  "sha256": "52dae435ce2036d12bfbd1aee8a2780208a2861ebfb1c1d869404e6ccd2c447c",
+  "firstParty": true,
+  "decontaminated": "first-party illustrative; not a third-party hidden pack",
+  "fields": [
+    "query",
+    "trap",
+    "difficulty",
+    "gold_sources",
+    "note"
+  ]
+}

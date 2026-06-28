@@ -1,0 +1,101 @@
+{
+  "schema": "sophia.adapter_registry.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "bindings": [
+    {
+      "baseModel": "Qwen/Qwen2.5-7B-Instruct",
+      "team": "search",
+      "adapterId": "theta-search-qwen-v1",
+      "accepted": true,
+      "reasons": [
+        "all judge families positive, CIs exclude zero, kappa OK"
+      ],
+      "notes": "council-trace SFT; 3 concordant judge families, CIs exclude zero",
+      "evidence": {
+        "pack": "pack_third_party.jsonl",
+        "nTraps": 30,
+        "seeds": 3,
+        "kappa": 0.8435,
+        "judges": [
+          "heuristic:lexical",
+          "heuristic:stance",
+          "llm:deepseek/deepseek-chat"
+        ],
+        "families": [
+          {
+            "name": "lexical",
+            "meanDelta": 0.2,
+            "ci95": [
+              0.1222,
+              0.2889
+            ]
+          },
+          {
+            "name": "stance",
+            "meanDelta": 0.1444,
+            "ci95": [
+              0.0556,
+              0.2333
+            ]
+          },
+          {
+            "name": "llm:deepseek/deepseek-chat",
+            "meanDelta": 0.2,
+            "ci95": [
+              0.1222,
+              0.2889
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "baseModel": "mistralai/Mistral-7B-Instruct-v0.3",
+      "team": "search",
+      "adapterId": "theta-search-mistral-robust",
+      "accepted": true,
+      "reasons": [
+        "all judge families positive, CIs exclude zero, kappa OK"
+      ],
+      "notes": "FORMAT-ROBUST distilled SFT (no council scaffolding); recovers cross-model transfer that the council corpus regressed",
+      "evidence": {
+        "pack": "pack_third_party.jsonl",
+        "nTraps": 30,
+        "seeds": 3,
+        "kappa": 0.4979,
+        "judges": [
+          "heuristic:lexical",
+          "heuristic:stance",
+          "llm:deepseek/deepseek-chat"
+        ],
+        "families": [
+          {
+            "name": "lexical",
+            "meanDelta": 0.1222,
+            "ci95": [
+              0.0333,
+              0.2111
+            ]
+          },
+          {
+            "name": "stance",
+            "meanDelta": 0.2333,
+            "ci95": [
+              0.1111,
+              0.3556
+            ]
+          },
+          {
+            "name": "llm:deepseek/deepseek-chat",
+            "meanDelta": 0.1222,
+            "ci95": [
+              0.0333,
+              0.2111
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

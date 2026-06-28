@@ -312,6 +312,48 @@ def render(doc: dict) -> str:
             if s.get("note"):
                 L += [f"- {s['note']}", ""]
 
+    da = doc.get("disciplineAdapterEvals")
+    if da:
+        L += [
+            f"## {da.get('title', 'Source-discipline adapter')}",
+            "",
+            da.get("description", ""),
+            "",
+            f"_Eval pack: {da.get('pack', '')}._  ",
+            f"_Judges: {da.get('judges', '')}._",
+            "",
+            "| Base model | SFT recipe | lexical Δ | stance Δ | LLM-judge Δ | min κ | Gate |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for r in da.get("results") or []:
+            fam = r.get("families") or {}
+
+            def _cell(key: str, _fam=None) -> str:
+                f = (_fam if _fam is not None else fam).get(key)
+                if not f:
+                    return "—"
+                ci = f.get("ci") or ["?", "?"]
+                return f"{f['delta']:+.3f} [{ci[0]:+.3f}, {ci[1]:+.3f}]"
+
+            L.append("| " + " | ".join([
+                f"`{r.get('base')}`", r.get("sft", ""),
+                _cell("lexical", fam), _cell("stance", fam), _cell("llm", fam),
+                str(r.get("kappaMin", "—")), f"**{r.get('verdict', '')}**",
+            ]) + " |")
+        L += ["", f"- {da.get('note', '')}", ""]
+
+    ssl = doc.get("swarmStructureLive")
+    if ssl:
+        L += [f"## {ssl.get('title', 'Swarm structure (live)')}", "", ssl.get("description", ""), ""]
+        for r in ssl.get("runs") or []:
+            L.append(f"- **`{r.get('subject')}` ({r.get('mode')}, n={r.get('n')})** — {r.get('finding')}")
+            d = r.get("deltas") or {}
+            if d:
+                cells = "; ".join(
+                    f"{k} {v['delta']:+.2f} [{v['ci'][0]:+.2f},{v['ci'][1]:+.2f}]" for k, v in d.items())
+                L.append(f"  - {cells}")
+        L += ["", f"**Conclusion:** {ssl.get('conclusion', '')}", ""]
+
     L += [
         "## Reproduce",
         "",

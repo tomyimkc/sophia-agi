@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sophia.aihk/schema/swarm-plan-1.0.0.json",
+  "title": "Sophia Swarm Plan",
+  "description": "Dispatch contract emitted by agent.swarm_router.SwarmRouter and consumed by agent.subagent.delegate. The agent-altitude analog of an MoE routing decision: task -> {teams, k, budgets}. Version 1.0.0 (semver): field names are the contract; the trained router head replaces how a plan is produced, NOT this shape.",
+  "x-contract-version": "1.0.0",
+  "type": "object",
+  "required": ["schema", "schemaVersion", "task", "mode", "assignments", "reduce", "signals", "rationale"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "sophia.swarm_plan.v1" },
+    "schemaVersion": { "const": "1.0.0" },
+    "task": { "type": "string", "description": "The raw task being routed." },
+    "mode": {
+      "type": "string",
+      "enum": ["solo", "swarm"],
+      "description": "solo = the backbone answers in one isolated child (no fan-out); swarm = fan out the assignments below."
+    },
+    "assignments": {
+      "type": "array",
+      "description": "Empty iff mode == 'solo'. One entry per spawned team.",
+      "items": {
+        "type": "object",
+        "required": ["team", "k", "budgetUsd", "goal"],
+        "additionalProperties": false,
+        "properties": {
+          "team": {
+            "type": "string",
+            "enum": ["search", "research", "math_verify", "legal", "ontology", "redteam"],
+            "description": "Which expert/agent-team (the catalogue in agent.swarm_router.TEAMS)."
+          },
+          "k": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8,
+            "description": "Number of independent children of this team (>=2 buys error-decorrelation)."
+          },
+          "budgetUsd": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Per-child soft cost ceiling (a child that overruns is reported over_budget and treated as not-ok)."
+          },
+          "goal": { "type": "string", "minLength": 1, "description": "The scoped goal handed to each child of this team." }
+        }
+      }
+    },
+    "reduce": {
+      "type": "string",
+      "const": "fail_closed_synthesis",
+      "description": "The only permitted reduce: synthesise ONLY from children that returned evidence; zero successful children -> ABSTAIN (agent.subagent.ABSTAIN_NO_CHILDREN). Never synthesise from failures."
+    },
+    "signals": {
+      "type": "object",
+      "description": "The auditable features behind the decision (transparency; the trained head may add fields).",
+      "required": ["difficulty", "multiHop", "quant", "legal", "contested", "entityRisk", "nSubQueries", "intent"],
+      "properties": {
+        "difficulty": { "type": "number", "minimum": 0, "maximum": 1 },
+        "multiHop": { "type": "boolean" },
+        "quant": { "type": "boolean" },
+        "legal": { "type": "boolean" },
+        "contested": { "type": "boolean" },
+        "entityRisk": { "type": "boolean" },
+        "nSubQueries": { "type": "integer", "minimum": 0 },
+        "intent": { "type": "string", "enum": ["definition", "comparison", "temporal", "navigational", "factoid"] }
+      }
+    },
+    "rationale": { "type": "string", "description": "Human-readable trace of which rule fired for each assignment." },
+    "estCostSteps": { "type": "integer", "minimum": 0, "description": "Honest upper-bound compute estimate: sum of k*max_steps over teams (solo = backbone steps). Reported so the solo-vs-swarm trade is measured, not hidden." },
+    "nAgents": { "type": "integer", "minimum": 0, "description": "Total children = sum of k over assignments." }
+  }
+}
