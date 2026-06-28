@@ -231,11 +231,16 @@ class SwarmPlan:
     def n_agents(self) -> int:
         return sum(a.k for a in self.assignments)
 
-    def to_specs(self) -> list[SubagentSpec]:
-        """Lower the plan to least-privilege subagent specs for the delegation layer."""
+    def to_specs(self, *, base_model: "str | None" = None, registry: "Any | None" = None) -> list[SubagentSpec]:
+        """Lower the plan to least-privilege subagent specs for the delegation layer.
+
+        When ``base_model`` is given, each team's adapter is resolved from the adapter
+        registry (``agent.adapter_registry``) for THAT base model — and only bound if its
+        evidence cleared the acceptance gate. Fail-closed: no accepted binding → the team
+        runs on the plain backbone (no regressing adapter is ever attached)."""
         specs: list[SubagentSpec] = []
         for a in self.assignments:
-            team = TEAMS[a.team]
+            team = _team_for(a.team, base_model, registry)
             for j in range(a.k):
                 specs.append(team.spec(a.goal, k_index=j, budget_usd=a.budget_usd))
         return specs
@@ -389,6 +394,21 @@ class SwarmRouter:
 # Batch utilisation — the bridge to the Switch load-balancing loss. Lifts
 # moe/router.load_balancing_loss from tokens-over-experts to tasks-over-teams.
 # ---------------------------------------------------------------------------
+def _team_for(team_name: str, base_model: "str | None", registry: "Any | None") -> Team:
+    """Return the catalogue team, bound to its registry adapter for ``base_model`` when an
+    accepted binding exists (V3 dual-use). No base model / no accepted binding → plain team."""
+    from dataclasses import replace
+
+    base = TEAMS[team_name]
+    if not base_model:
+        return base
+    if registry is None:
+        from agent.adapter_registry import default_registry
+        registry = default_registry()
+    adapter_id = registry.resolve(base_model, team_name)
+    return replace(base, adapter_id=adapter_id) if adapter_id else base
+
+
 def route_batch(router: SwarmRouter, tasks: "list[str]") -> dict:
     """Route a batch and report per-team utilisation. The fraction-dispatched vector
     is exactly the ``f_e`` term of the Switch aux loss; a router that collapses onto
@@ -421,9 +441,13 @@ def route_batch(router: SwarmRouter, tasks: "list[str]") -> dict:
 # fan-out + fail-closed reduce). Kept thin so the seam stays testable in isolation.
 # ---------------------------------------------------------------------------
 def run_swarm(task: str, *, client: Any | None = None, router: SwarmRouter | None = None,
-              parent_id: str = "swarm", approve_tools: bool = False):
+              parent_id: str = "swarm", approve_tools: bool = False,
+              base_model: "str | None" = None, registry: "Any | None" = None):
     """Decide a plan and execute it through :func:`agent.subagent.delegate`. A solo
-    plan delegates a single backbone child (still isolated + budgeted)."""
+    plan delegates a single backbone child (still isolated + budgeted).
+
+    ``base_model`` opts the spawned teams into their registry-validated adapters for that
+    base (V3 dual-use); fail-closed to the plain backbone when no binding is accepted."""
     from agent import subagent as sa
 
     router = router or SwarmRouter()
@@ -431,7 +455,7 @@ def run_swarm(task: str, *, client: Any | None = None, router: SwarmRouter | Non
     if plan.mode == "solo":
         specs = [SubagentSpec(goal=task, label="solo", max_steps=3)]
     else:
-        specs = plan.to_specs()
+        specs = plan.to_specs(base_model=base_model, registry=registry)
     result = sa.delegate(task, specs, client=client, parent_id=parent_id, approve_tools=approve_tools)
     return plan, result
 
