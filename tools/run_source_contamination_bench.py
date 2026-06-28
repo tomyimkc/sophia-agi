@@ -59,6 +59,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from agent.core_claim_source_verifier import make_core_claim_verifier  # noqa: E402
 from agent.grounded_answer_policy import answer_with_policy  # noqa: E402
 from agent.source_verifier import make_independent_verifier  # noqa: E402
 
@@ -204,17 +205,35 @@ def resolve_truth_refs(case: dict[str, Any], *, retrieve: bool,
     return (refs, "retrieved") if refs else ([], "empty")
 
 
+def build_verifier(verifier: str, refs: "list[str]",
+                   entail: "Callable[[str, str], str]") -> "Callable[[str, str], bool]":
+    """Construct the per-case corroborate_fn for the chosen ``--verifier`` mode.
+
+    - ``"atomic"`` (default, backward-compatible): ``make_independent_verifier`` —
+      fail-closed unless EVERY atomic claim is entailed by >=2 independent refs.
+    - ``"core"``: ``make_core_claim_verifier`` — pass-unless the answer's CORE claim is
+      CONTRADICTED by an independent ref (recovers clean-answer recall the atomic channel
+      destroys; see agi-proof/THEORY-ISSUES-RESOLUTION-2026-06-28.md)."""
+    if verifier == "core":
+        return make_core_claim_verifier(refs, entail)
+    return make_independent_verifier(refs, entail)
+
+
 def run_case(case: dict[str, Any], entail: "Callable[[str, str], str]",
              complete_fn: "Callable[..., str]", *, retrieve: bool = False,
-             fetch_fn: "Callable[..., str | None] | None" = None) -> dict[str, Any]:
+             fetch_fn: "Callable[..., str | None] | None" = None,
+             verifier: str = "atomic") -> dict[str, Any]:
     """Run one case through the gated policy with an independent verifier and classify it.
 
     The verifier's truth-references come from :func:`resolve_truth_refs` — curated, or
     (with ``retrieve=True``) freshly fetched for the case's entity so independence from the
     contaminated source is measured, not assumed. With NO independent ref (empty retrieval)
-    the verifier rejects every non-empty answer, so the policy fails closed (abstains)."""
+    the verifier rejects every non-empty answer, so the policy fails closed (abstains).
+
+    ``verifier`` selects the corroborate-fn mode: ``"atomic"`` (all-claims, default) or
+    ``"core"`` (core-claim, pass-unless-contradicted)."""
     refs, retrieval_status = resolve_truth_refs(case, retrieve=retrieve, fetch_fn=fetch_fn)
-    verify = make_independent_verifier(refs, entail)
+    verify = build_verifier(verifier, refs, entail)
     out = answer_with_policy(
         case["question"], case["contaminated_source"], complete_fn,
         answer_bearing=True, corroborate_fn=verify,
@@ -236,12 +255,13 @@ def run_bench(pack: dict[str, Any],
               entail_factory: "Callable[[dict], Callable[[str, str], str]]",
               complete_factory: "Callable[[dict], Callable]",
               *, retrieve: bool = False,
-              fetch_fn: "Callable[..., str | None] | None" = None) -> dict[str, Any]:
+              fetch_fn: "Callable[..., str | None] | None" = None,
+              verifier: str = "atomic") -> dict[str, Any]:
     """Run every case with a per-case entailment + completion; return metrics + rows."""
     rows = []
     for case in pack["cases"]:
         rows.append(run_case(case, entail_factory(case), complete_factory(case),
-                             retrieve=retrieve, fetch_fn=fetch_fn))
+                             retrieve=retrieve, fetch_fn=fetch_fn, verifier=verifier))
 
     contaminated = [r for r in rows if r["expected"] == "abstain"]
     clean = [r for r in rows if r["expected"] == "answer"]
@@ -273,7 +293,8 @@ def run_multi(pack: dict[str, Any],
               entail_factory: "Callable[[dict], Callable[[str, str], str]]",
               complete_factory: "Callable[[dict], Callable]",
               *, runs: int = 1, retrieve: bool = False,
-              fetch_fn: "Callable[..., str | None] | None" = None) -> dict[str, Any]:
+              fetch_fn: "Callable[..., str | None] | None" = None,
+              verifier: str = "atomic") -> dict[str, Any]:
     """Run the whole pack ``runs`` times and aggregate the two headline rates with CIs.
 
     Returns a dict carrying ``runs``, the per-run metrics (``per_run``), and a bootstrap
@@ -284,7 +305,7 @@ def run_multi(pack: dict[str, Any],
     last: dict[str, Any] = {}
     for _ in range(max(1, runs)):
         last = run_bench(pack, entail_factory, complete_factory,
-                         retrieve=retrieve, fetch_fn=fetch_fn)
+                         retrieve=retrieve, fetch_fn=fetch_fn, verifier=verifier)
         per_run.append({
             "contamination_caught_rate": last["contamination_caught_rate"],
             "clean_over_blocked_rate": last["clean_over_blocked_rate"],
@@ -314,13 +335,15 @@ def run_multi(pack: dict[str, Any],
 
 def build_report(mode: str, pack: dict[str, Any] | None, metrics: dict[str, Any] | None,
                  *, status: str, runs: int = 1, answer_spec: str | None = None,
-                 judge_spec: str | None = None, retrieve: bool = False) -> dict[str, Any]:
+                 judge_spec: str | None = None, retrieve: bool = False,
+                 verifier: str = "atomic") -> dict[str, Any]:
     report: dict[str, Any] = {
         "schema": REPORT_SCHEMA,
         "candidateOnly": True, "validated": False, "level3Evidence": False, "canClaimAGI": False,
         "benchmark": "Source-contamination independent-verifier bench",
         "mode": mode,
         "status": status,
+        "verifier": verifier,
         "runs": runs,
         "answer_spec": answer_spec,
         "judge_spec": judge_spec,
@@ -379,6 +402,12 @@ def main(argv: "list[str] | None" = None) -> int:
     ap.add_argument("--retrieve", action="store_true",
                     help="fetch each case's truth_refs from Wikipedia per entity (measured "
                          "independence) instead of the curated refs; fail-closed on empty.")
+    ap.add_argument("--verifier", choices=("atomic", "core"), default="atomic",
+                    help="corroborate-fn mode: 'atomic' (default, all atomic claims must be "
+                         "entailed by >=2 independent refs — backward-compatible) or 'core' "
+                         "(reject only when the answer's CORE claim is CONTRADICTED by an "
+                         "independent ref; recovers clean-answer recall the atomic channel "
+                         "destroys).")
     ap.add_argument("--no-write", action="store_true", help="do not write the public report.")
     args = ap.parse_args(argv)
 
@@ -399,8 +428,10 @@ def main(argv: "list[str] | None" = None) -> int:
 
         # --retrieve in --fake mode would need a fetch_fn; the default real fetcher hits the
         # network, which CI forbids. Keep --fake purely offline: it always uses curated refs.
-        agg = run_multi(pack, fake_entail_factory, fake_complete_factory, runs=runs)
-        report = build_report("fake", pack, agg, status="ok_fake", runs=runs)
+        agg = run_multi(pack, fake_entail_factory, fake_complete_factory, runs=runs,
+                        verifier=args.verifier)
+        report = build_report("fake", pack, agg, status="ok_fake", runs=runs,
+                              verifier=args.verifier)
         if not args.no_write:
             write_report(report)
         _print_multi("fake", agg)
@@ -421,7 +452,7 @@ def main(argv: "list[str] | None" = None) -> int:
     if not args.relay or not _relay_available(args.judge_spec or args.spec):
         report = build_report("relay", pack, None, status="relay_unavailable", runs=runs,
                               answer_spec=answer_spec, judge_spec=judge_spec,
-                              retrieve=args.retrieve)
+                              retrieve=args.retrieve, verifier=args.verifier)
         report["reason"] = (
             "no relay/keys configured (set VERIFY_SPEC or an API key and pass --relay), "
             "or --relay not requested. Use --fake to exercise the harness in CI."
@@ -450,9 +481,10 @@ def main(argv: "list[str] | None" = None) -> int:
 
     # --retrieve uses the real (network) fetcher by default; independence is measured live.
     agg = run_multi(pack, relay_entail_factory, complete_factory, runs=runs,
-                    retrieve=args.retrieve)
+                    retrieve=args.retrieve, verifier=args.verifier)
     report = build_report("relay", pack, agg, status="ok_relay", runs=runs,
-                          answer_spec=answer_spec, judge_spec=judge_spec, retrieve=args.retrieve)
+                          answer_spec=answer_spec, judge_spec=judge_spec, retrieve=args.retrieve,
+                          verifier=args.verifier)
     if not args.no_write:
         write_report(report)
     _print_multi("relay", agg)

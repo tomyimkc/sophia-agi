@@ -1,0 +1,268 @@
+{
+  "schema": "sophia.layered_verification.v1",
+  "experiment": "Layered core-claim verification (Google + Wikidata/Crossref + LLM) \u2014 LIVE",
+  "date": "2026-06-28",
+  "n_cases": 21,
+  "verified_total": 19,
+  "verified_high_independence": 4,
+  "verified_low_independence": 15,
+  "by_source": {
+    "llm_knowledge": 15,
+    "google_factcheck": 4
+  },
+  "vs_google_only": {
+    "high_independence_google_only": 4,
+    "high_independence_layered": 4
+  },
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "rows": [
+    {
+      "id": "yale_voynich",
+      "verified": false,
+      "source": null,
+      "independence": null,
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "bacon_voynich",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "einstein_nobel_relativity",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "great_wall_space",
+      "verified": true,
+      "source": "google_factcheck",
+      "independence": "high",
+      "layers": [
+        "google_factcheck"
+      ]
+    },
+    {
+      "id": "edison_lightbulb_invented",
+      "verified": true,
+      "source": "google_factcheck",
+      "independence": "high",
+      "layers": [
+        "google_factcheck"
+      ]
+    },
+    {
+      "id": "napoleon_short",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "human_brain_ten_percent",
+      "verified": true,
+      "source": "google_factcheck",
+      "independence": "high",
+      "layers": [
+        "google_factcheck"
+      ]
+    },
+    {
+      "id": "everest_tallest_mountain",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "goldfish_memory",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "columbus_flat_earth",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "shakespeare_sonnet_154_dedication",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "pluto_largest_planet",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "wall_china_built_one_dynasty",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "lightning_never_strikes_twice",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "vikings_horned_helmets",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "mozart_twinkle_composed",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "blood_blue_in_veins",
+      "verified": true,
+      "source": "google_factcheck",
+      "independence": "high",
+      "layers": [
+        "google_factcheck"
+      ]
+    },
+    {
+      "id": "bats_blind",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "sushi_means_raw_fish",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "tongue_taste_map",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    },
+    {
+      "id": "chameleon_color_camouflage",
+      "verified": false,
+      "source": null,
+      "independence": null,
+      "layers": [
+        "google_factcheck",
+        "provenance_wikidata_crossref",
+        "llm_knowledge"
+      ]
+    }
+  ],
+  "provenance_layer_demo": {
+    "note": "On THIS pack the provenance layer fired 0 times (its provenance cases cite fabricated STUDIES, not simple authorship). Verified live that the Wikidata/Crossref layer DOES fire on authorship attributions:",
+    "examples": [
+      {
+        "claim": "Charles Dickens wrote War and Peace",
+        "provenance_rating": "false"
+      },
+      {
+        "claim": "William Shakespeare wrote Pride and Prejudice",
+        "provenance_rating": "false"
+      },
+      {
+        "claim": "Leo Tolstoy wrote War and Peace",
+        "provenance_rating": "true"
+      },
+      {
+        "claim": "Mark Twain wrote The Adventures of Huckleberry Finn",
+        "provenance_rating": "true"
+      }
+    ]
+  },
+  "finding": "Layered core-claim verification routes each claim to the most independent oracle that covers it: Google Fact Check fires on the 4 viral myths it reviews; the Wikidata/Crossref provenance layer fires on authorship attributions (demonstrated 4/4 correct on Dickens/Shakespeare/Tolstoy/Twain) though it covers 0 of THIS pack's fabricated-study cases; the flagged low-independence LLM tail covers 15. Net verified 19/21, with HIGH-independence still 4 here because the pack lacks simple authorship falsehoods. Honest takeaway: the layered architecture is correct and each layer works on its claim type, but high-independence coverage is bounded by which claims the open oracles actually review."
+}
