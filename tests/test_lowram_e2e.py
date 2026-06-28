@@ -112,11 +112,29 @@ def test_runpod_qat_lowram_plan_is_cost_gated() -> None:
     # Without inputs: not launchable. With inputs: QAT flags passed through, never self-launches.
     assert rq.build_run_plan(base_model=None, gpu="A100-80G", scheme="nvfp4", budget_usd=None,
                              branch="b", epochs=1, calib="c.json", target_bits=4.5)["ready_to_launch"] is False
-    plan = rq.build_run_plan(base_model="org/base", gpu="A100-80G", scheme="nvfp4", budget_usd=10.0,
-                             branch="b", epochs=1, calib="c.json", target_bits=4.5)
+    plan = rq.build_run_plan(base_model="org/base", gpu="NVIDIA A100-SXM4-80GB", scheme="nvfp4",
+                             budget_usd=10.0, branch="b", epochs=1, calib="c.json", target_bits=4.5)
     assert plan["ready_to_launch"] is True
     allcmd = " ".join(" ".join(s.get("command", [])) for s in plan["steps"])
     assert "--qat --qat-scheme nvfp4" in allcmd and "--yes" not in allcmd
+
+
+def test_emitted_runpod_command_uses_real_runpod_train_flags() -> None:
+    """CLI-drift guard: every flag the launcher emits must exist in runpod_train.py's argparse."""
+    import re
+    sys.path.insert(0, str(ROOT / "tools"))
+    import runpod_qat_lowram as rq
+    defined = set(re.findall(r'add_argument\(\s*"(--[a-z0-9-]+)"', (ROOT / "tools" / "runpod_train.py").read_text()))
+    assert "--gpu-type" in defined and "--extra-train-args" in defined   # sanity: the passthrough exists
+    plan = rq.build_run_plan(base_model="org/MoE", gpu="NVIDIA H200", scheme="nvfp4", budget_usd=200.0,
+                             branch="b", epochs=1, calib="c.json", target_bits=4.5, gpu_count=8)
+    cmd = next(s for s in plan["steps"] if s["stage"] == "qat_train")["command"]
+    # Flag tokens targeting runpod_train.py (skip the --extra-train-args VALUE, which has spaces).
+    flags = [t for t in cmd if t.startswith("--") and " " not in t]
+    for f in flags:
+        assert f in defined, f"launcher emits {f}, not a real runpod_train.py flag"
+    # The sharding passthrough rides inside --extra-train-args, not as bare runpod_train flags.
+    assert "--gpu" not in cmd and "--extra" not in cmd
 
 
 def test_runpod_qat_lowram_spark_target_is_free_and_aarch64_safe() -> None:

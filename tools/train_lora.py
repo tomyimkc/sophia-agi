@@ -819,6 +819,13 @@ def main() -> int:
                         help="Deployment quantization grid the model co-adapts to (default: int8).")
     parser.add_argument("--qat-lambda", type=float, default=1e-3,
                         help="Weight on the quant-pushing penalty term (default: 1e-3).")
+    parser.add_argument("--shard", choices=("none", "fsdp"), default="none",
+                        help="Multi-GPU param sharding for high/top-tier MoE bases (training/sharding.py). "
+                             "'fsdp' shards the frozen base across torch.distributed ranks; launch with torchrun.")
+    parser.add_argument("--expert-parallel", dest="expert_parallel", action="store_true",
+                        help="Distribute MoE experts across ranks (expert parallelism). Requires --shard fsdp.")
+    parser.add_argument("--world-size", dest="world_size", type=int, default=0,
+                        help="Override torch.distributed world size for the shard plan (0 = auto-detect).")
     parser.add_argument("--attn", choices=("auto", "flash_attention_2", "sdpa", "eager"), default="auto",
                         help="Attention impl; flash_attention_2 is required for --pack")
     parser.add_argument("--pack", action="store_true",
@@ -975,6 +982,19 @@ def main() -> int:
             print(f"QAT enabled (scheme={args.qat_scheme}, lambda={args.qat_lambda}, "
                   f"fake-quant on {wrapped} linear module(s))", flush=True)
 
+    if args.shard == "fsdp":
+        # High/top-tier multi-GPU path: shard the frozen base across torch.distributed ranks.
+        # The per-rank memory PLAN is training/sharding.py (CI-tested); this wraps the model.
+        import torch
+        from training.sharding import wrap_model_fsdp
+
+        ws = args.world_size or (torch.distributed.get_world_size()
+                                 if torch.distributed.is_initialized() else 1)
+        model = wrap_model_fsdp(model, world_size=ws)
+        print(f"FSDP sharding enabled (world_size={ws}"
+              f"{', expert-parallel' if args.expert_parallel else ''}). Launch with torchrun.",
+              flush=True)
+
     train_records, truncated = build_records(tokenizer, rows, args.max_seq_len, mask_prompt=args.mask_prompt)
     if truncated:
         print(
@@ -1023,6 +1043,8 @@ def main() -> int:
         "qat": args.qat,
         "qatScheme": args.qat_scheme if args.qat else None,
         "qatLambda": args.qat_lambda if args.qat else None,
+        "shard": args.shard,
+        "expertParallel": args.expert_parallel if args.shard == "fsdp" else False,
     }
 
     def save_best(extra: dict[str, Any]) -> None:

@@ -35,7 +35,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-DEFAULT_GPU = "A100-80G"
+DEFAULT_GPU = "NVIDIA A100-SXM4-80GB"   # a real RunPod --gpu-type string
 DEFAULT_SCHEME = "nvfp4"
 DEFAULT_CALIB = "training/lora/calibration_datasheet.json"
 
@@ -55,10 +55,14 @@ TIER_BASES = {
 #                 NVFP4 is Blackwell-native, so the Spark is the ideal low-RAM SERVE/benchmark box.
 TARGETS = ("runpod", "local-spark")
 
+# Default GPU count per tier on 80GB cards at 4-bit (matches training/sharding.py invariants:
+# Mixtral-8x22B fits 2×80GB, DeepSeek-V3 671B fits 8×80GB). low/mid are single-GPU.
+TIER_GPU_COUNT = {"low": 1, "mid": 1, "high": 2, "top": 8}
+
 
 def build_run_plan(*, base_model: str | None, gpu: str, scheme: str, budget_usd: float | None,
                    branch: str, epochs: int, calib: str, target_bits: float,
-                   target: str = "runpod") -> dict:
+                   target: str = "runpod", gpu_count: int = 1) -> dict:
     """Assemble the (calibrate → QAT-train → certify) command plan. Pure data; nothing executes.
 
     ``target='local-spark'`` plans a FREE local run on the DGX Spark (bf16 + --qat, no
@@ -91,12 +95,19 @@ def build_run_plan(*, base_model: str | None, gpu: str, scheme: str, budget_usd:
                      "command to start. Spark numbers are for ITERATION/benchmark, not the "
                      "registered result (REPLICATION.md: headline numbers stay on x86 RunPod).")
     else:
-        # On a pod: runpod_train.py runs train_lora.py with --qat passed through.
+        # On a pod: runpod_train.py runs train_lora.py with --qat passed through. For a
+        # multi-GPU MoE base (high/top tiers), add FSDP + expert-parallel sharding.
+        extra = f"--qat --qat-scheme {scheme}"
+        if gpu_count > 1:
+            extra += f" --shard fsdp --expert-parallel --world-size {gpu_count}"
+        # Uses runpod_train.py's REAL flags: --gpu-type / --gpu-count and the --extra-train-args
+        # passthrough that forwards --qat/--shard to train_lora.py on the pod.
         train_cmd = [
             "python", "tools/runpod_train.py",
             "--model", base_model or "<SET --base-model>",
-            "--gpu", gpu, "--branch", branch, "--epochs", str(epochs), "--train-only",
-            "--extra", f"--qat --qat-scheme {scheme}",
+            "--gpu-type", gpu, "--gpu-count", str(gpu_count),
+            "--branch", branch, "--epochs", str(epochs),
+            "--extra-train-args", extra,
             "--dry-run",   # the planner never adds --yes; you add it after review
         ]
         train_where = "runpod (PAID)"
@@ -127,9 +138,10 @@ def build_run_plan(*, base_model: str | None, gpu: str, scheme: str, budget_usd:
         "target": target,
         "ready_to_launch": ready,
         "missing": missing,
-        "params": {"base_model": base_model, "gpu": gpu, "scheme": scheme,
+        "params": {"base_model": base_model, "gpu": gpu, "gpu_count": gpu_count, "scheme": scheme,
                    "budget_usd": budget_usd, "branch": branch, "epochs": epochs,
                    "target_bits": target_bits, "target": target},
+        "sharded": gpu_count > 1 and not local,
         "steps": [
             {"stage": "calibrate", "where": "local/CI (free)", "command": calib_cmd},
             {"stage": "qat_train", "where": train_where, "command": train_cmd,
@@ -156,21 +168,25 @@ def main(argv: "list[str] | None" = None) -> int:
                     help="pretrained sparse-MoE (or dense) base to QAT-adapt; REQUIRED to launch")
     ap.add_argument("--budget-usd", type=float, default=None,
                     help="cost cap for a PAID runpod run; REQUIRED to launch on runpod (free on Spark)")
-    ap.add_argument("--gpu", default=DEFAULT_GPU)
+    ap.add_argument("--gpu-type", dest="gpu", default=DEFAULT_GPU,
+                    help="RunPod --gpu-type for a PAID run (e.g. 'NVIDIA H200', 'NVIDIA A100-SXM4-80GB')")
+    ap.add_argument("--gpu-count", dest="gpu_count", type=int, default=0,
+                    help="GPUs for a PAID run (0 = tier default; >1 enables FSDP + expert-parallel)")
     ap.add_argument("--qat-scheme", dest="scheme", choices=("int8", "nvfp4"), default=DEFAULT_SCHEME)
     ap.add_argument("--branch", default="claude/sophia-v1-lowram-frontier")
     ap.add_argument("--epochs", type=int, default=1)
     ap.add_argument("--calib", default=DEFAULT_CALIB)
     ap.add_argument("--target-bits", type=float, default=4.5)
     ap.add_argument("--out", type=Path, default=None, help="write the plan JSON here")
-    ap.add_argument("--dry-run", action="store_true", default=True,
-                    help="plan only (default; this tool never launches)")
     args = ap.parse_args(argv)
+    # This tool only ever PLANS — it never launches; no dry-run toggle needed.
 
     base_model = args.base_model or (TIER_BASES[args.tier] if args.tier else None)
+    gpu_count = args.gpu_count or (TIER_GPU_COUNT.get(args.tier, 1) if args.tier else 1)
     plan = build_run_plan(base_model=base_model, gpu=args.gpu, scheme=args.scheme,
                           budget_usd=args.budget_usd, branch=args.branch, epochs=args.epochs,
-                          calib=args.calib, target_bits=args.target_bits, target=args.target)
+                          calib=args.calib, target_bits=args.target_bits, target=args.target,
+                          gpu_count=gpu_count)
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(plan, indent=2) + "\n", encoding="utf-8")
@@ -213,6 +229,19 @@ def offline_invariants() -> "tuple[bool, dict]":
     joined = " ".join(qat_step["command"])
     checks["qat_flags_passthrough"] = "--qat --qat-scheme nvfp4" in joined
     checks["train_is_dry_by_default"] = "--dry-run" in qat_step["command"] and "--yes" not in joined
+    # The emitted command must use runpod_train.py's REAL flags (--gpu-type/--extra-train-args),
+    # not the invented --gpu/--extra that would fail argparse.
+    checks["uses_real_runpod_flags"] = ("--gpu-type" in qat_step["command"]
+                                        and "--extra-train-args" in qat_step["command"])
+    checks["no_invented_flags"] = ("--gpu" not in qat_step["command"]
+                                   and "--extra" not in qat_step["command"])
+
+    # Multi-GPU (high/top tier): the plan adds FSDP + expert-parallel sharding.
+    pmg = build_run_plan(base_model="org/MoE", gpu="NVIDIA H200", scheme="nvfp4", budget_usd=200.0,
+                         branch="b", epochs=1, calib=DEFAULT_CALIB, target_bits=4.5, gpu_count=8)
+    mg = " ".join(next(s for s in pmg["steps"] if s["stage"] == "qat_train")["command"])
+    checks["sharded_multi_gpu"] = (pmg["sharded"] and "--gpu-count 8" in mg
+                                   and "--shard fsdp --expert-parallel --world-size 8" in mg)
 
     # 3. The plan never self-launches: no --yes anywhere; cost note present.
     all_cmds = " ".join(" ".join(s.get("command", [])) for s in p1["steps"])

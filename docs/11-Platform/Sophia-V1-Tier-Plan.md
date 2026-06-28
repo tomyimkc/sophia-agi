@@ -71,11 +71,18 @@ python tools/train_lora.py --model allenai/OLMoE-1B-7B-0924-Instruct --qat --qat
 **On RunPod (registered numbers), once you set a budget:**
 ```
 python tools/runpod_qat_lowram.py --target runpod --tier low --budget-usd 10
-# review, then re-run the emitted runpod_train.py WITHOUT --dry-run and WITH --yes
+# emits a runnable runpod_train.py command using its REAL flags, e.g.:
+#   python tools/runpod_train.py --model allenai/OLMoE-1B-7B-0924-Instruct \
+#       --gpu-type "NVIDIA A100-SXM4-80GB" --gpu-count 1 --epochs 1 \
+#       --extra-train-args "--qat --qat-scheme nvfp4" --dry-run
+# review, then re-run WITHOUT --dry-run and WITH --yes to spend.
 ```
 
-The launcher provisions nothing on its own; the Spark path is free; the RunPod path is gated on an
-explicit budget + `--yes`.
+`--extra-train-args` is a real passthrough on `runpod_train.py` that forwards `--qat` (and, for
+high/top tiers, `--shard fsdp --expert-parallel`) to `train_lora.py` on the pod — so QAT actually
+reaches training. The launcher provisions nothing on its own; the Spark path is free; the RunPod
+path is gated on an explicit budget + `--yes`. High/top tiers auto-set `--gpu-count` (Mixtral-8x22B
+→ 2, DeepSeek-V3 → 8) and add the sharding flags.
 
 ---
 

@@ -59,7 +59,7 @@ class ModelSpec:
 
     ``total_params`` / ``active_params`` are authoritative (from the model card); the per-layer
     and expert breakdown is derived to size the streaming/offload composition. For a dense
-    model set ``n_experts=0`` and ``active_params == total_params``.
+    model set ``n_routed_experts=0`` and ``active_params == total_params``.
     """
 
     name: str
@@ -223,8 +223,14 @@ class LowRamRuntime:
         # fractional width (NVFP4 4.5 -> 5 bits here, an over-estimate, never an under-estimate).
         qbits = _quant_bits(weight_bits)
 
-        # Dense trunk: per-layer active-minus-experts params, at the quant width.
-        per_layer_dense_fp16 = max(1, int(spec.active_params_per_layer * FP16_BYTES))
+        # Dense trunk = per-layer ACTIVE params MINUS the active experts. The experts are modeled
+        # separately in the TieredExpertStore below, so including them here too would double-count
+        # them in the composed peak/budget.
+        dense_per_layer = spec.active_params_per_layer
+        if spec.is_moe:
+            expert_count_per = _expert_param_bytes(spec) / FP16_BYTES   # param count of one expert
+            dense_per_layer = max(1.0, dense_per_layer - spec.active_experts * expert_count_per)
+        per_layer_dense_fp16 = max(1, int(dense_per_layer * FP16_BYTES))
         self.trunk = StreamingLayerStore(gpu_budget_bytes=trunk_budget, prefetch_depth=prefetch_depth)
         for i in range(spec.n_layers):
             self.trunk.register(i, fp16_bytes=per_layer_dense_fp16, bits=qbits, tier=LayerTier.DISK)
@@ -241,6 +247,9 @@ class LowRamRuntime:
             expert_q = resident_bytes_for(expert_fp16, qbits)
             for e in range(n_experts_total):
                 self.experts.register(e, size_bytes=expert_q, tier=ExpertTier.DISK)
+        # High-water mark of expert GPU residency across a decode step (residency varies by
+        # layer as the active set churns, so the *current* value under-reports the true peak).
+        self._peak_expert_bytes = self.experts.stats.gpu_resident_bytes
 
     def decode_step(self, *, seed: int = 0) -> None:
         """Route one token through all layers: stream each layer, promote its active experts."""
@@ -253,9 +262,12 @@ class LowRamRuntime:
                 base = i * n
                 routed = [base + ((i * k + j) % n) for j in range(k)]
                 self.experts.route_select(routed)
+                self._peak_expert_bytes = max(self._peak_expert_bytes,
+                                              self.experts.stats.gpu_resident_bytes)
 
     def peak_resident_bytes(self) -> int:
-        return self.trunk.stats.peak_gpu_bytes + self.experts.stats.gpu_resident_bytes
+        # Both peaks are upper bounds; their sum bounds the composition's peak resident bytes.
+        return self.trunk.stats.peak_gpu_bytes + self._peak_expert_bytes
 
     def gpu_budget_bytes(self) -> int:
         return self.trunk.gpu_budget_bytes + self.experts.gpu_budget_bytes
