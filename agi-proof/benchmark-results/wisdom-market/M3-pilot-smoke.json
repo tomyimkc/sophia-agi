@@ -83,14 +83,14 @@
           "values": []
         },
         "over_abstention_rate": {
-          "mean": 0.5,
+          "mean": 0.0,
           "ci": [
-            0.5,
-            0.5
+            0.0,
+            0.0
           ],
           "runs": 1,
           "values": [
-            0.5
+            0.0
           ]
         },
         "useful_correctness": {
