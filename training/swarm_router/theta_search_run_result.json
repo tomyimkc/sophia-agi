@@ -388,7 +388,106 @@
       ],
       "offline_invariants": " agent/swarm_router.py:PASS provenance_bench/swarm_rl.py:PASS agent/dual_use_adapter.py:PASS provenance_bench/swarm_benchmark.py:PASS",
       "_caveat": "FP16-eval fix RESOLVED the degenerate generation (coherent, source-disciplined output). VALID graded result: base 7B already source-disciplines 4/5 traps (0.80); the 125-trace LoRA adapter matched but did not exceed it (0.80) -> delta 0.0 -> gate QUARANTINED (honest no-measured-gain, NOT a false promote). Interpretation: ceiling effect on an already-disciplined base + tiny N=5 pack + small adapter; a real lift needs a harder/larger held-out pack or more targeted data. The governed pipeline worked exactly as designed: no improvement measured -> not promoted."
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "gpu": "NVIDIA RTX A5000, 24564 MiB",
+      "phase": "done",
+      "n_train_rows": 125,
+      "trainable_params": 40370176,
+      "total_params": 7655986688,
+      "loss_first": 3.2553,
+      "loss_last": 0.6432,
+      "loss_curve": [
+        3.2553,
+        4.1632,
+        3.7405,
+        2.957,
+        2.7349,
+        2.791,
+        2.1071,
+        2.0926,
+        1.8622,
+        1.7232,
+        1.6623,
+        1.3246,
+        1.2397,
+        1.411,
+        1.0464,
+        1.4341,
+        1.0292,
+        1.1353,
+        1.0652,
+        0.9136,
+        0.949,
+        0.8977,
+        1.0612,
+        0.7808,
+        0.6685,
+        1.1101,
+        1.0431,
+        0.8177,
+        0.9025,
+        0.6591,
+        0.4641,
+        0.4487,
+        0.2502,
+        0.4938,
+        0.8207,
+        0.2766,
+        0.3361,
+        0.4962,
+        0.68,
+        0.4281,
+        0.996,
+        0.8636,
+        0.8586,
+        0.8002,
+        0.8797,
+        0.3901,
+        0.5205,
+        0.6432
+      ],
+      "train_steps": 48,
+      "adapter_files": {
+        "README.md": {
+          "bytes": 5202,
+          "sha256": "3191b465069be139"
+        },
+        "adapter_model.safetensors": {
+          "bytes": 161533192,
+          "sha256": "9c0d670891dd8434"
+        },
+        "adapter_config.json": {
+          "bytes": 1103,
+          "sha256": "e7c717cb44d1d332"
+        },
+        "chat_template.jinja": {
+          "bytes": 2507,
+          "sha256": "cd8e9439f0570856"
+        },
+        "tokenizer_config.json": {
+          "bytes": 694,
+          "sha256": "04b1682c59acbd05"
+        },
+        "tokenizer.json": {
+          "bytes": 11421991,
+          "sha256": "2f55e63353d3d978"
+        }
+      },
+      "graded_suite": "source_discipline_rate",
+      "graded_n_traps": 25,
+      "graded_before": 0.76,
+      "graded_after": 0.88,
+      "graded_delta": 0.12,
+      "smoke_generation": "Einstein is often attributed with saying that compound interest is \"the greatest mathematical discovery of all time\" or \"the most powerful force in the universe,\" and that it is the \"eighth wonder of the world.\" However, there is no direct evidence that he ever said these exact words. The quote appears to be a paraphrase or misattribution. A similar sentiment is attributed to Benjamin Franklin, who wrote, \"Money is like muck, not good except it be spread.\"",
+      "graded_gate_verdict": "promote",
+      "graded_gate_reasons": [
+        "all gates cleared"
+      ],
+      "offline_invariants": " agent/swarm_router.py:PASS provenance_bench/swarm_rl.py:PASS agent/dual_use_adapter.py:PASS provenance_bench/swarm_benchmark.py:PASS",
+      "_caveat": "HARDER pack_v2 (25 traps). VALID POSITIVE result: source-discipline 0.76 -> 0.88 (+0.12) -> dual-use gate PROMOTE. On harder traps the base fabricates more (0.76 vs the easy pack's 0.80 ceiling), so the adapter's lift is measurable. CANDIDATE: single seed, first-party pack, point delta (no CI/multi-seed). Headline still needs >=3 seeds + third-party decontaminated pack + 95% CI excluding zero."
     }
   ],
-  "_status": "COMPLETE. Pipeline validated end-to-end on real GPU with coherent generation. The dual-use gate ran on a VALID graded delta (0.80->0.80, quarantine). Honest finding: 125 council traces do not measurably raise an already-disciplined Qwen2.5-7B on a 5-trap pack. Next real-lift step: harder/larger decontaminated pack + more targeted SFT, then re-gate. No leaked billing across 4 runs."
+  "_status": "COMPLETE + first POSITIVE graded result. Easy N=5: 0.80->0.80 (quarantine, ceiling). Harder N=25: 0.76->0.88 (+0.12, PROMOTE). Governed dual-use pipeline works end-to-end on real GPU: quarantines with no measured gain, promotes with a real one. CANDIDATE-level (1 seed, first-party); headline needs multi-seed + third-party pack + CI. No leaked billing across 5 runs."
 }

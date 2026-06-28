@@ -191,13 +191,21 @@ def _http_get(url: str, timeout: int = 20) -> tuple[int, str]:
         with urllib.request.urlopen(url, timeout=timeout) as r:
             return r.status, r.read().decode("utf-8", "replace")
     except Exception:  # noqa: BLE001
-        rc, out = _curl(["--max-time", str(timeout), "-o", "/dev/stdout", "-w", "\n%{http_code}", url])
-        if rc != 0 or not out:
-            return 0, ""
-        nl = out.rfind("\n")
-        body, code = out[:nl], out[nl + 1:].strip()
+        # Proven pattern: body → temp file, %{http_code} → stdout (clean separation; the
+        # earlier -o /dev/stdout form mixed body+code and broke parsing in proxy sessions).
+        import os
+        import tempfile
+        fd, tmp = tempfile.mkstemp()
+        os.close(fd)
         try:
-            return int(code), body
+            rc, code_str = _curl(["--max-time", str(timeout), "-o", tmp, "-w", "%{http_code}", url])
+            body = open(tmp, encoding="utf-8", errors="replace").read()
+        finally:
+            os.unlink(tmp)
+        if rc != 0:
+            return 0, ""
+        try:
+            return int((code_str or "0").strip()), body
         except ValueError:
             return 0, body
 
