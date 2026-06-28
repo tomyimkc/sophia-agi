@@ -1,0 +1,265 @@
+{
+  "benchmark": "baseline-code",
+  "task": "code",
+  "model": "mock",
+  "split": "eval",
+  "n": 48,
+  "passed": 0,
+  "passAt1": 0.0,
+  "ci95Wilson": [
+    0.0,
+    0.0741
+  ],
+  "evalSealed": "6e00893842b15a2f",
+  "trainSealed": "754ab46a0add7317",
+  "evalFamilies": [
+    "dedupe_order",
+    "is_palindrome",
+    "merge_sorted"
+  ],
+  "contaminationFree": true,
+  "claim": "pre-registered baseline (NOT a capability claim)",
+  "note": "mock model => harness floor, not a capability number; SOPHIA_ALLOW_CODE_EXEC unset => code items cannot pass",
+  "perItem": [
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "is_palindrome",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "dedupe_order",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    },
+    {
+      "id": null,
+      "family": "merge_sorted",
+      "passed": false
+    }
+  ]
+}

@@ -1,0 +1,325 @@
+{
+  "benchmark": "baseline-math",
+  "task": "math",
+  "model": "mock",
+  "split": "eval",
+  "n": 60,
+  "passed": 0,
+  "passAt1": 0.0,
+  "ci95Wilson": [
+    0.0,
+    0.0602
+  ],
+  "evalSealed": "d4f2f56ae0e5ae00",
+  "trainSealed": "aef7296970bada5c",
+  "evalFamilies": [
+    "derivative_chain",
+    "integrate_func",
+    "second_derivative"
+  ],
+  "contaminationFree": true,
+  "claim": "pre-registered baseline (NOT a capability claim)",
+  "note": "mock model => harness floor, not a capability number",
+  "perItem": [
+    {
+      "id": "dchain-0",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-1",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-2",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-3",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-4",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-5",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-6",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-7",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-8",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-9",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-10",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-11",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-12",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-13",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-14",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-15",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-16",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-17",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-18",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "dchain-19",
+      "family": "derivative_chain",
+      "passed": false
+    },
+    {
+      "id": "ifunc-0",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-1",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-2",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-3",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-4",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-5",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-6",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-7",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-8",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-9",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-10",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-11",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-12",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-13",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-14",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-15",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-16",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-17",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-18",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "ifunc-19",
+      "family": "integrate_func",
+      "passed": false
+    },
+    {
+      "id": "d2-4-6-0-2",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-5-1-3-3",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-6-2-6-5",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-1-3-2-5",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-2-3-5-5",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-6-2-0-5",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-6-4-1-2",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-5-4-3-4",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-2-1-6-5",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-5-1-2-4",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-3-4-6-4",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-5-2-3-5",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-5-2-6-5",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-2-2-2-4",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-5-3-3-3",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-1-5-5-2",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-4-1-4-5",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-2-4-5-5",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-1-6-3-2",
+      "family": "second_derivative",
+      "passed": false
+    },
+    {
+      "id": "d2-2-5-5-4",
+      "family": "second_derivative",
+      "passed": false
+    }
+  ]
+}
