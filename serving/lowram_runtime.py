@@ -218,22 +218,28 @@ class LowRamRuntime:
         expert_budget = max(1, int(gpu_budget_bytes * expert_budget_frac))
         trunk_budget = max(1, gpu_budget_bytes - expert_budget)
 
+        # Integer quant width for the byte-counting stores. ceil (not round) so the runtime is
+        # conservative — never under-counts resident bytes — and consistent with plan_ram's
+        # fractional width (NVFP4 4.5 -> 5 bits here, an over-estimate, never an under-estimate).
+        qbits = _quant_bits(weight_bits)
+
         # Dense trunk: per-layer active-minus-experts params, at the quant width.
         per_layer_dense_fp16 = max(1, int(spec.active_params_per_layer * FP16_BYTES))
         self.trunk = StreamingLayerStore(gpu_budget_bytes=trunk_budget, prefetch_depth=prefetch_depth)
         for i in range(spec.n_layers):
-            self.trunk.register(i, fp16_bytes=per_layer_dense_fp16,
-                                bits=int(round(weight_bits)) if weight_bits >= 1 else 1,
-                                tier=LayerTier.DISK)
+            self.trunk.register(i, fp16_bytes=per_layer_dense_fp16, bits=qbits, tier=LayerTier.DISK)
 
-        # Experts: total routed experts, each sized at the quant width; GPU holds the active set.
+        # Experts: the FULL per-layer expert set (n_layers × n_routed_experts), each sized at the
+        # quant width — so the store's total expert bytes match the spec, and routing targets the
+        # correct layer's experts. GPU holds only the active set at any instant.
+        n_experts_total = spec.n_routed_experts * spec.n_layers
         self.experts = TieredExpertStore(gpu_budget_bytes=expert_budget,
                                          cpu_capacity=max(8, spec.active_experts * 4),
-                                         disk_capacity=max(spec.n_routed_experts, 16))
+                                         disk_capacity=max(n_experts_total, 16))
         if spec.is_moe:
             expert_fp16 = max(1, int(_expert_param_bytes(spec)))
-            expert_q = resident_bytes_for(expert_fp16, int(round(weight_bits)) if weight_bits >= 1 else 1)
-            for e in range(spec.n_routed_experts * spec.n_layers if False else spec.n_routed_experts):
+            expert_q = resident_bytes_for(expert_fp16, qbits)
+            for e in range(n_experts_total):
                 self.experts.register(e, size_bytes=expert_q, tier=ExpertTier.DISK)
 
     def decode_step(self, *, seed: int = 0) -> None:
@@ -243,8 +249,9 @@ class LowRamRuntime:
         for i in range(self.spec.n_layers):
             self.trunk.step(i)
             if self.spec.is_moe and n:
-                # deterministic per-layer active set (varies by layer so offload churns)
-                routed = [((i * k + j) % n) for j in range(k)]
+                # Each layer owns experts [i·n, (i+1)·n); pick this layer's active-k from its block.
+                base = i * n
+                routed = [base + ((i * k + j) % n) for j in range(k)]
                 self.experts.route_select(routed)
 
     def peak_resident_bytes(self) -> int:
@@ -252,6 +259,11 @@ class LowRamRuntime:
 
     def gpu_budget_bytes(self) -> int:
         return self.trunk.gpu_budget_bytes + self.experts.gpu_budget_bytes
+
+
+def _quant_bits(weight_bits: float) -> int:
+    """Integer width for the byte-counting stores: ceil into [1, 16] (conservative)."""
+    return max(1, min(16, math.ceil(weight_bits)))
 
 
 def _expert_param_bytes(spec: ModelSpec) -> float:
