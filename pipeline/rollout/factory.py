@@ -180,6 +180,90 @@ class RolloutFactory:
             },
         }
 
+    # -- cache-shared best-of-N (Reasonix /branch) -------------------------- #
+    def best_of_n(self, goal: str, *, gold: str, reward_for: RewardFn, n: int = 4,
+                  source: str = "rollout-factory-bon") -> dict:
+        """Sample N executor solutions that all branch from ONE planner checkpoint.
+
+        The plan prefix is built once and **shared** across the N branches (a cache
+        hit per branch), so best-of-N costs N fresh tails over one cached prefix —
+        not N full re-reads. Returns the best-scoring trace plus the pass count; the
+        verifier-passing branches are ideal expert-iteration / RLVR SFT data.
+        """
+        meter = CostMeter(cache_rate=self.cache_rate)
+        planner = Session(system=PLANNER_SYSTEM, context_window=self.context_window,
+                          compact_ratio=self.compact_ratio)
+        plan = self._turn(planner, f"Problem:\n{goal}", meter)
+
+        # Build the executor checkpoint once (the cache-warm shared prefix).
+        base = Session(system=EXECUTOR_SYSTEM, context_window=self.context_window,
+                       compact_ratio=self.compact_ratio)
+        base.append("user", f"Plan:\n{plan}\n\nProblem:\n{goal}")
+        base.mark_sent()
+
+        candidates: list[dict] = []
+        for _ in range(max(1, n)):
+            branch = base.branch()  # shares the cached plan prefix
+            cached_prefix = branch.cached_prefix_tokens
+            result = self.client.generate(branch.system, _render(branch))
+            answer = getattr(result, "text", "") or ""
+            branch.append("assistant", answer)
+            meter.record_turn(cached_prefix_tokens=cached_prefix, fresh_input_tokens=0,
+                              completion_tokens=count_tokens(answer))
+            score, detail = reward_for(answer, gold)
+            candidates.append({"answer": answer, "reward": 1.0 if score > 0 else 0.0,
+                               "verdict": detail})
+
+        best = max(candidates, key=lambda c: c["reward"])
+        passes = sum(int(c["reward"] == 1.0) for c in candidates)
+        return {
+            "goal": goal,
+            "steps": [{"action": "plan", "observation": plan},
+                      {"action": "execute(best-of-%d)" % n, "observation": best["answer"]}],
+            "outcome": best["answer"],
+            "reward": best["reward"],
+            "source": source,
+            "license": "Apache-2.0",
+            "detail": {
+                "gold": gold, "n": n, "passes": passes,
+                "passAtN": round(passes / max(1, n), 4),
+                "candidates": candidates,
+                "cost": meter.summary(),
+                "branchPrefixShared": all(c is not None for c in candidates),
+            },
+        }
+
+    # -- stale-count repair loop (Reasonix AutoResearch) -------------------- #
+    def generate_until(self, goal: str, *, gold: str, reward_for: RewardFn,
+                       max_attempts: int = 6, stale_cap: int = 3,
+                       tools: "dict[str, Tool] | None" = None) -> dict:
+        """Re-attempt until the verifier passes or progress stalls.
+
+        Ports Reasonix's AutoResearch ``stale_count``: track the best reward; each
+        attempt that fails to improve it increments ``stale``. Stop on success
+        (reward 1.0), at ``stale_cap`` consecutive non-improving attempts (pivot
+        rather than grind), or at ``max_attempts``. Avoids burning rollouts on a
+        problem the model cannot currently solve.
+        """
+        best: dict | None = None
+        stale = 0
+        attempts = 0
+        for _ in range(max(1, max_attempts)):
+            attempts += 1
+            tr = self.rollout(goal, gold=gold, reward_for=reward_for, tools=tools)
+            if best is None or (tr["reward"] or 0) > (best["reward"] or 0):
+                best = tr
+                stale = 0
+            else:
+                stale += 1
+            if (best["reward"] or 0) >= 1.0 or stale >= stale_cap:
+                break
+        best = best or {}
+        best.setdefault("detail", {})["loop"] = {
+            "attempts": attempts, "stale": stale, "solved": (best.get("reward") or 0) >= 1.0,
+        }
+        return best
+
     # -- batch generation over a problem pack ------------------------------- #
     def generate_traces(self, problems: list[dict], *, reward_for: RewardFn | None = None) -> dict:
         """Run a rollout per problem ({prompt|goal, gold}); aggregate reward + cost."""
@@ -282,6 +366,22 @@ def offline_invariants() -> "tuple[bool, dict]":
                           gold="30 N", reward_for=physics_reward.reward_for_problem,
                           tools=DEFAULT_TOOLS, max_executor_steps=4)
 
+    # 5) Cache-shared best-of-N: N branches off one plan; the cached prefix is reused.
+    bon_client = ScriptedClient(answers=[r"\boxed{31 N}", r"\boxed{30 J}",
+                                         r"\boxed{30 N}", r"\boxed{99 N}"])
+    fb = RolloutFactory(client=bon_client)
+    bon = fb.best_of_n("A 10 kg mass accelerates at 3 m/s^2; find the force.",
+                       gold="30 N", reward_for=physics_reward.reward_for_problem, n=4)
+
+    # 6) Stale-count loop: an unsolvable (wrong-unit) client stops at stale_cap.
+    stuck = RolloutFactory(client=ScriptedClient(answer=r"\boxed{30 J}"))
+    loop_bad = stuck.generate_until("find the force", gold="30 N",
+                                    reward_for=physics_reward.reward_for_problem,
+                                    max_attempts=6, stale_cap=3)
+    solver = RolloutFactory(client=ScriptedClient(answer=r"\boxed{30 N}"))
+    loop_good = solver.generate_until("find the force", gold="30 N",
+                                      reward_for=physics_reward.reward_for_problem)
+
     checks = {
         "correctRewardOne": good["reward"] == 1.0,
         "wrongUnitRewardZero": bad["reward"] == 0.0,
@@ -293,11 +393,16 @@ def offline_invariants() -> "tuple[bool, dict]":
         "toolLoopRan": tool_run["detail"]["executorSteps"] >= 2,
         "toolLoopRewarded": tool_run["reward"] == 1.0,
         "toolLoopSaves": tool_run["detail"]["cost"]["savingsRatio"] > 1.0,
+        "bestOfNFindsPass": bon["reward"] == 1.0 and bon["detail"]["passes"] == 1,
+        "bestOfNShareSaves": bon["detail"]["cost"]["savingsRatio"] > 1.5,
+        "loopStopsWhenStale": loop_bad["detail"]["loop"]["stale"] >= 3 and not loop_bad["detail"]["loop"]["solved"],
+        "loopStopsWhenSolved": loop_good["detail"]["loop"]["solved"] and loop_good["detail"]["loop"]["attempts"] == 1,
     }
     detail = {
         "checks": checks,
         "deepRolloutCost": meter.summary(),
         "toolRolloutCost": tool_run["detail"]["cost"],
+        "bestOfNCost": bon["detail"]["cost"],
         "goodReward": good["reward"],
         "badReward": bad["reward"],
         "sampleTrajectoryErrors": traj_check["errors"],

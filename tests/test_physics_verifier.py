@@ -125,6 +125,18 @@ def test_verify_rejected_dimension() -> None:
     assert pv.verify(r"\boxed{50 N}", "50 J")["verdict"] == "rejected"
 
 
+def test_verify_lean_abstains_when_unavailable() -> None:
+    # Opt-in Lean path mirrors the math verifier: abstain fail-closed (no lean-dojo).
+    r = pv.verify("", "theorem t : True := by", use_lean=True, lean_proof="trivial")
+    assert r["verdict"] == "abstain"
+    assert "lean_unavailable" in r["reasons"][0]
+
+
+def test_verify_lean_requires_proof() -> None:
+    r = pv.verify("", "theorem t : True := by", use_lean=True)
+    assert r["verdict"] == "abstain"
+
+
 # --------------------------------------------------------------------------- #
 # Reward + dataset
 # --------------------------------------------------------------------------- #

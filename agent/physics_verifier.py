@@ -36,14 +36,39 @@ def verify(
     *,
     rtol: float = 1e-2,
     extract: bool = True,
+    use_lean: bool = False,
+    lean_proof: str | None = None,
 ) -> dict[str, Any]:
-    """Compare ``answer`` to ``gold`` with the dimensional/numeric oracle.
+    """Compare ``answer`` to ``gold`` with the dimensional/numeric oracle, or — when
+    ``use_lean=True`` — verify a Lean 4 proof of ``gold`` via ``lean_backend``.
 
     Returns ``{verdict, reasons, detail}`` where verdict is one of ``accepted``,
-    ``rejected``, ``abstain``. ``abstain`` arises only for a *symbolic* gold when
-    sympy is absent (the algebra cannot be checked) — fail-closed, never a guess.
-    A dimension mismatch or an out-of-tolerance value is a hard ``rejected``.
+    ``rejected``, ``abstain``. ``abstain`` arises for a *symbolic* gold when sympy is
+    absent, or on the Lean path when lean-dojo is not installed — fail-closed, never
+    a guess. A dimension mismatch or an out-of-tolerance value is a hard ``rejected``.
+
+    Lean path (the formal-physics on-ramp: PhysLib / Lean4Physics / LeanPhysBench):
+    when ``use_lean`` and ``lean_proof`` is supplied, delegate to
+    ``agent.lean_backend.verify_proof``. When lean-dojo is absent (the CI/default),
+    this abstains with ``lean_unavailable`` — the exact opt-in/abstain contract the
+    math verifier uses, so a physics theorem can be *formally* checked once a Lean
+    physics library is wired, with no behavior change until then.
     """
+    if use_lean:
+        from agent import lean_backend
+
+        if not lean_backend.lean_available():
+            return {"verdict": "abstain",
+                    "reasons": ["lean_unavailable: lean-dojo not installed (opt-in extra)"],
+                    "detail": {"backend": "lean", "lean": False}}
+        if not lean_proof:
+            return {"verdict": "abstain",
+                    "reasons": ["lean_unavailable: use_lean=True requires lean_proof"],
+                    "detail": {"backend": "lean", "lean": True, "lean_proof_supplied": False}}
+        out = lean_backend.verify_proof(theorem=gold, proof=lean_proof).to_dict()
+        # to_dict() already yields {verdict, reasons, detail}; pass it through.
+        return {"verdict": out["verdict"], "reasons": out["reasons"], "detail": out["detail"]}
+
     res = physics_equivalent(gold, rtol=rtol, extract=extract)(answer or "", None, {})
     detail = dict(res.get("detail") or {})
     reasons = list(res.get("reasons") or [])

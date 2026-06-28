@@ -173,6 +173,41 @@ contamination/hallucination leaks in.
 tiny deterministic simulator (pure Python) and reward answers that match the
 simulated trajectory. Verifiable reward for problems with no closed form.
 
+### Addendum — mined from latest Reasonix content (v1.13, GUIDE/SPEC)
+
+**★ L. Cache-shared best-of-N via branching** *(built — `Session.branch` +
+`best_of_n`).* Reasonix `/branch <turn>`: fork from the plan checkpoint so N sampled
+solutions reuse the cached prefix. Keep verifier-passing branches = expert-iteration
+SFT data at a fraction of naive best-of-N cost (measured 4.5×).
+
+**★ M. Stale-count repair loop** *(built — `generate_until`).* Reasonix AutoResearch
+tracks `stale_count` and *pivots* instead of grinding. Stops re-rolling a problem the
+model can't currently solve — saves rollout budget, surfaces the hard tail.
+
+**★ N. User-preserving compaction + archive** *(built — `Session.compact`).* Keep user
+turns verbatim, fold only assistant/tool work, archive dropped messages. Honest
+context management that never loses the task intent or the trace.
+
+**☆ O. Guardian subagent.** Reasonix v1.12 added a safety-oversight subagent. Wire
+Sophia's `conscience.py` / `constitutional_gate.py` as a guardian pass over each
+rollout's tool calls — reject reward-hacking or unsafe actions before they score.
+
+**☆ P. Permission-gated tool execution.** Reasonix's `deny > ask > allow` policy with
+arg-specifier matching (`Bash(npm run test:*)`). For the rollout factory's tool loop,
+classify tools read-only vs. mutating (Sophia already has `dataflow/firewall.py`,
+`security/labels.py`) so generated trajectories teach *safe* tool autonomy.
+
+**☆ Q. Memory-v5 execution contract.** Reasonix compiles prior-turn outcomes into an
+"execution contract" injected into the next turn *only when outcomes create actionable
+constraints*, never mutating the cache-stable prefix. Maps onto Sophia's
+`sophia_contract/` + `CONTRACT.md` — a cache-safe way to carry verified constraints
+across rollout turns.
+
+**☆ R. Requirement-by-requirement evidence audit.** Reasonix's multi-phase goal
+evaluation checks each requirement against evidence. A natural rubric for the
+`provenance_bench` runner on multi-step problems (partial credit per sub-goal), and a
+dense-reward source for ☆F.
+
 ---
 
 ## 4. Feasible roadmap (phased, gated, falsifiable)
@@ -205,9 +240,15 @@ isolated so it can be done in one rented-GPU burst (RunPod MCP is wired).
   *Caveat (honest):* the win scales with **session depth** — a 2-turn planner/
   executor QA shows ~1.0× because there is no deep prefix yet. The savings are real
   in long "leave-it-running" sessions, which is the Reasonix regime.
-- **Next (live):** point `RolloutFactory` at a real DeepSeek/vLLM endpoint, add a
-  multi-step executor tool-loop (so sessions actually deepen), and bulk-generate
-  ≥10k math + ≥10k code + physics verified traces for Phase 3.
+- ✅ **Mined from latest Reasonix content (v1.13):** `Session.branch()` → cache-shared
+  **best-of-N** (`RolloutFactory.best_of_n`, 4.5× savings sharing one plan prefix);
+  AutoResearch **`stale_count`** → `generate_until` (stop on pass or stalled progress);
+  smarter **compaction** (keep user turns verbatim, summarize assistant/tool work,
+  archive dropped). `tools/gen_rollouts.py` writes **verifier-gated SFT traces** (keep
+  only reward==1, R1 cold-start data) — offline via mock, live via any `agent/model.py`
+  provider.
+- **Next (live):** point `gen_rollouts --model vllm` at the served Spark model to
+  bulk-generate ≥10k math + ≥10k code + physics verified traces for Phase 3.
 
 ### Phase 2 — Physics verifier substrate (CPU, ~2 wks) ★C — ✅ **landed**
 - ✅ `agent/units.py` (pure-Python SI dimensional-analysis engine, no deps),
@@ -240,18 +281,26 @@ aarch64) — not rented cloud. Full step-by-step in
   holdout for ≥1 domain → moves the failure-ledger "no live RL run" item toward
   closed (full closure needs the multi-seed, second-judge gated run).
 
-### Phase 4 — Lean formal physics/math (optional, parallel, research) ★D,☆F
-- Stand up `formal_proofs/eval/` against PhysLib/Lean4Physics; formal reward for a
-  problem subset. Optionally synthesize PRM data from formal verification (☆F).
+### Phase 4 — Lean formal physics/math (optional, parallel, research) ★D,☆F — 🟡 **on-ramp wired**
+- ✅ `agent/physics_verifier.verify(..., use_lean=True, lean_proof=...)` delegates to
+  `agent.lean_backend` exactly like the math verifier — abstains fail-closed when
+  lean-dojo is absent (CI default), so a physics theorem can be *formally* checked
+  the moment a Lean physics library is wired, with zero behavior change until then.
+- **Next:** stand up `formal_proofs/eval/` against PhysLib/Lean4Physics; formal reward
+  for a problem subset. Optionally synthesize PRM data from formal verification (☆F).
 - **Exit gate:** N formally-verified physics theorems passing in CI; reported as
   *coverage*, not a capability claim.
 
-### Phase 5 — External benchmarking + publication (CPU, ~1–2 wks)
-- Run the trained adapter on **external** suites: MATH-500, GSM8K, AIME-style,
-  MBPP/HumanEval, SWE-bench-lite (subset), and a physics set (e.g.
-  LeanPhysBench / GPQA-physics / SciBench-physics).
-- Score through `provenance_bench/runner.py` + `score.py` (≥2 judge families, κ).
-- Decontaminate with `eval/contamination.py`; seal with hidden-reviewer packs.
+### Phase 5 — External benchmarking + publication (CPU, ~1–2 wks) — 🟡 **physics harness in**
+- ✅ Physics external scorer + pack: `agent/external_eval.score_item_physics`
+  (dimensional + numeric, judge-free) and `eval/external/physics-style-sample.jsonl`
+  (10 items, units-bearing golds, self-consistent). Joins the existing MATH-style /
+  MBPP-style sample packs.
+- **Next:** run the trained adapter on **external** suites: MATH-500, GSM8K, AIME-style,
+  MBPP/HumanEval, SWE-bench-lite (subset), and a real physics set (LeanPhysBench /
+  GPQA-physics / SciBench-physics) via the scorer above.
+- Score through `provenance_bench/runner.py` + `score.py` (≥2 judge families, κ);
+  decontaminate with `eval/contamination.py`; seal with hidden-reviewer packs.
 - **Exit gate:** numbers that pass the no-overclaim gate land in
   `agi-proof/benchmark-results/` + `RESULTS.md` with CIs. *These are the
   "benchmarkable, top-notch" numbers you asked for.*

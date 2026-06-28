@@ -1,0 +1,10 @@
+{"id": "p1", "question": "A 6 kg object accelerates at 2 m/s^2. What net force acts on it? Give the answer with units.", "answer": "12 N", "source": "sophia-style-sample (physics dimensional; NOT an official set)"}
+{"id": "p2", "question": "An object falls from rest for 3 s under g = 9.8 m/s^2. What is its speed? Give units.", "answer": "29.4 m/s", "source": "sophia-style-sample (physics dimensional; NOT an official set)"}
+{"id": "p3", "question": "A 3 kg mass moves at 4 m/s. What is its kinetic energy? Give units.", "answer": "24 J", "source": "sophia-style-sample (physics dimensional; NOT an official set)"}
+{"id": "p4", "question": "A current of 3 A passes through a 4 ohm resistor. What is the voltage? Give units.", "answer": "12 V", "source": "sophia-style-sample (physics dimensional; NOT an official set)"}
+{"id": "p5", "question": "A 2 kg mass is lifted 5 m (g = 9.8 m/s^2). What is its gravitational potential energy? Give units.", "answer": "98 J", "source": "sophia-style-sample (physics dimensional; NOT an official set)"}
+{"id": "p6", "question": "A force of 150 N acts over an area of 0.3 m^2. What is the pressure? Give units.", "answer": "500 Pa", "source": "sophia-style-sample (physics dimensional; NOT an official set)"}
+{"id": "p7", "question": "A 5 kg object moves at 6 m/s. What is its momentum? Give units.", "answer": "30 kg*m/s", "source": "sophia-style-sample (physics dimensional; NOT an official set)"}
+{"id": "p8", "question": "A photon has frequency 4.0e14 Hz (h = 6.626e-34 J*s). What is its energy? Give units.", "answer": "2.65e-19 J", "source": "sophia-style-sample (physics dimensional; NOT an official set)", "rtol": 0.02}
+{"id": "p9", "question": "A device draws 0.4 A at 230 V. What electrical power does it use? Give units.", "answer": "92 W", "source": "sophia-style-sample (physics dimensional; NOT an official set)"}
+{"id": "p10", "question": "Light has frequency 6.0e14 Hz (c = 3.0e8 m/s). What is its wavelength? Give units.", "answer": "5.0e-7 m", "source": "sophia-style-sample (physics dimensional; NOT an official set)"}

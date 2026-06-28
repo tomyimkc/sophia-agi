@@ -17,6 +17,7 @@ in CI rather than asserted about a provider's billing.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Callable
 
 
 def count_tokens(text: str) -> int:
@@ -86,19 +87,42 @@ class Session:
         invariant). A drop is only legal immediately after a ``compact()``."""
         return all(b >= a for a, b in zip(self._prefix_history, self._prefix_history[1:]))
 
-    def compact(self, summary: str) -> None:
-        """The single sanctioned prefix reset: replace history with a summary.
+    def compact(self, summary: str, *, archive: "Callable[[list[Message]], None] | None" = None) -> None:
+        """The single sanctioned prefix reset: fold assistant/tool work into a digest.
 
-        Low-frequency by design — only when ``needs_compaction()`` — because each
-        compaction throws away the warm prefix cache (the summary must be read
-        fresh once). Mirrors Reasonix's compact-once-at-0.8 policy.
+        Following Reasonix's compaction: **user turns survive verbatim** (they carry
+        the task intent), only assistant/tool messages are summarized into one digest
+        message. Dropped messages are handed to ``archive`` (a sink callback) so the
+        full trace is never lost — the pure-Python analogue of Reasonix's
+        ``archive/<ts>.jsonl``. Low-frequency by design (only at ``needs_compaction``)
+        because each compaction throws away the warm prefix cache.
         """
-        kept_system = self.system
-        self.messages = [Message(role="system", content=f"[compacted context]\n{summary}")]
-        self.system = kept_system
+        kept_users = [m for m in self.messages if m.role == "user"]
+        dropped = [m for m in self.messages if m.role != "user"]
+        if archive is not None and dropped:
+            archive(dropped)
+        digest = Message(role="system", content=f"[compacted context]\n{summary}")
+        # User turns kept verbatim, after the digest (intent preserved, work folded).
+        self.messages = [digest, *kept_users]
         self.compactions += 1
         self.cached_prefix_tokens = 0  # cache is cold after a compaction
         self._prefix_history.append(self.prefix_tokens())
+
+    def branch(self) -> "Session":
+        """Fork this session (Reasonix ``/branch``): a copy that shares the prefix.
+
+        The parent's already-sent prefix is a **cache hit** for the branch's first
+        turn, so N branches sampled from a checkpoint cost N fresh tails over ONE
+        cached prefix — cache-efficient best-of-N / tree search, the natural shape
+        for expert-iteration RLVR data (keep the verifier-passing branches).
+        """
+        b = Session(system=self.system, context_window=self.context_window,
+                    compact_ratio=self.compact_ratio)
+        b.messages = [Message(m.role, m.content) for m in self.messages]
+        b.cached_prefix_tokens = self.cached_prefix_tokens  # parent prefix pre-cached
+        b.compactions = self.compactions
+        b._prefix_history = list(self._prefix_history)
+        return b
 
     def mark_sent(self) -> None:
         """Record that the current prefix has now been seen by the provider, so the

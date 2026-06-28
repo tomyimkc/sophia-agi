@@ -36,12 +36,13 @@ def test_session_is_append_only() -> None:
 
 def test_compaction_resets_cold_prefix() -> None:
     s = Session(system="sys", context_window=40, compact_ratio=0.5)
-    s.append("user", "x " * 50)  # blow past 0.5*40 tokens
+    s.append("user", "go")
+    s.append("assistant", "work " * 50)  # foldable bloat past 0.5*40 tokens
     assert s.needs_compaction()
     s.compact(summary="short summary")
     assert s.compactions == 1
     assert s.cached_prefix_tokens == 0  # cache cold after compaction
-    assert not s.needs_compaction()
+    assert not s.needs_compaction()     # assistant bloat folded; small user turn kept
 
 
 # --------------------------------------------------------------------------- #
@@ -131,6 +132,62 @@ def test_tool_loop_deepens_and_rewards() -> None:
     # The calc observation is recorded as a step.
     assert any(s["action"].startswith("tool:calc") for s in tr["steps"])
     assert tr["detail"]["cost"]["savingsRatio"] > 1.0
+
+
+# --------------------------------------------------------------------------- #
+# Branching, best-of-N, stale-count loop, compaction archive (Reasonix ideas)
+# --------------------------------------------------------------------------- #
+def test_branch_shares_prefix() -> None:
+    s = Session(system="sys")
+    s.append("user", "plan")
+    s.mark_sent()
+    b = s.branch()
+    assert b.cached_prefix_tokens == s.cached_prefix_tokens
+    assert [m.content for m in b.messages] == [m.content for m in s.messages]
+    # Diverging the branch must not touch the parent (no shared message objects).
+    b.append("assistant", "branch-only")
+    assert len(b.messages) == len(s.messages) + 1
+
+
+def test_best_of_n_picks_passing_branch() -> None:
+    client = ScriptedClient(answers=[r"\boxed{30 J}", r"\boxed{30 N}", r"\boxed{99 N}"])
+    f = RolloutFactory(client=client)
+    out = f.best_of_n("10 kg at 3 m/s^2, find force", gold="30 N",
+                      reward_for=physics_reward.reward_for_problem, n=3)
+    assert out["reward"] == 1.0
+    assert out["detail"]["passes"] == 1
+    assert out["detail"]["cost"]["savingsRatio"] > 1.5  # shared cached plan prefix
+
+
+def test_generate_until_stops_when_solved() -> None:
+    f = RolloutFactory(client=ScriptedClient(answer=r"\boxed{30 N}"))
+    out = f.generate_until("find force", gold="30 N",
+                           reward_for=physics_reward.reward_for_problem)
+    assert out["detail"]["loop"]["solved"]
+    assert out["detail"]["loop"]["attempts"] == 1
+
+
+def test_generate_until_stops_when_stale() -> None:
+    f = RolloutFactory(client=ScriptedClient(answer=r"\boxed{30 J}"))  # never right
+    out = f.generate_until("find force", gold="30 N",
+                           reward_for=physics_reward.reward_for_problem,
+                           max_attempts=6, stale_cap=2)
+    assert not out["detail"]["loop"]["solved"]
+    assert out["detail"]["loop"]["stale"] >= 2
+    assert out["detail"]["loop"]["attempts"] <= 6
+
+
+def test_compaction_preserves_users_and_archives() -> None:
+    s = Session(system="sys", context_window=40, compact_ratio=0.5)
+    s.append("user", "the task")
+    s.append("assistant", "work " * 50)
+    archived: list = []
+    s.compact(summary="digest", archive=lambda msgs: archived.extend(msgs))
+    # User turn kept verbatim; assistant work archived, not kept.
+    contents = [m.content for m in s.messages]
+    assert "the task" in contents
+    assert any(a.role == "assistant" for a in archived)
+    assert all(m.role != "assistant" for m in s.messages)
 
 
 def test_offline_invariants_pass() -> None:
