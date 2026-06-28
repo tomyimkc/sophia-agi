@@ -644,6 +644,97 @@ def math_sound() -> Verifier:
     return _verify
 
 
+# --------------------------------------------------------------------------- #
+# Physics (pure-Python SI units, no optional backend) — the physics analogue of
+# math_equivalent: dimensional analysis + numeric tolerance is the ground truth.
+# "9.8 J" is NOT "9.8 m/s^2"; right number, wrong units => rejected.
+# --------------------------------------------------------------------------- #
+_QTY = re.compile(r"[+-]?\d[\d.]*(?:[eE][+-]?\d+)?\s*[A-Za-zΩµμ][A-Za-zΩµμ0-9.^*/·\-]*")
+
+
+def physics_equivalent(expected: str, *, rtol: float = 1e-2, extract: bool = True) -> Verifier:
+    """Pass iff the answer is the same PHYSICAL quantity as ``expected``: identical
+    SI dimension AND value within relative tolerance ``rtol`` (default 1%).
+
+    The physics analogue of ``math_equivalent``. Dimensional analysis is the seam:
+    ``30 N`` ≡ ``30 kg*m/s**2`` (accepted), but ``30 J`` is a dimension mismatch
+    (rejected) and ``31 N`` is off by >1% (rejected). When ``expected`` carries no
+    number (a symbolic gold like ``sqrt(2*g*h)``) it falls back to
+    ``math_equivalent`` (sympy). **Fail-closed:** an unparseable candidate FAILS
+    (a held verdict), never a silent pass. Units are pure-Python — no GPU, no
+    optional dependency — so this is the math/code RLVR pattern extended to physics.
+    """
+    from agent import units
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        cand = extract_math_answer(text) if extract else (text or "").strip()
+        if not cand:
+            return _fail(["no answer found in response"], {"expected": expected})
+        ok_g, gval, gdim = units.parse_quantity(expected)
+        if not ok_g:
+            # Symbolic gold (no number) — defer to the algebraic oracle.
+            return math_equivalent(expected, extract=False)(cand, task, step)
+        ok_c, cval, cdim = units.parse_quantity(cand)
+        if not ok_c:
+            return _fail([f"unparseable quantity: {cand!r}"], {"expected": expected, "got": cand})
+        if not units.same_dim(gdim, cdim):
+            return _fail(
+                [f"dimension mismatch: got {units.format_dim(cdim)}, expected {units.format_dim(gdim)}"],
+                {"expected": expected, "got": cand,
+                 "expectedDim": units.format_dim(gdim), "gotDim": units.format_dim(cdim)},
+            )
+        denom = abs(gval) if gval != 0 else 1.0
+        rel = abs(cval - gval) / denom
+        if rel <= rtol:
+            return _ok({"expected": expected, "got": cand, "relErr": rel, "dim": units.format_dim(gdim)})
+        return _fail([f"value off by {rel:.3g} (rtol {rtol:g})"],
+                     {"expected": expected, "got": cand, "relErr": rel})
+
+    return _verify
+
+
+def physics_sound(*, rtol: float = 1e-2) -> Verifier:
+    """Fail if the text states a dimensionally-false unit equality (e.g. ``1 J = 1
+    kg*m/s^2`` — energy is ``kg*m^2/s^2``, so the units don't balance).
+
+    The unit-bearing analogue of ``arithmetic_sound``: it only fires on stated
+    equalities where BOTH sides parse as a quantity and at least one carries a real
+    dimension (pure-number equalities belong to ``arithmetic_sound``; prose is
+    skipped). Catches the classic physics error of a wrong unit conversion or a
+    dimensionally-inconsistent step, with no model and no false-positive on plain
+    text. Pure-Python, always available.
+    """
+    from agent import units
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        wrong: list[str] = []
+        checked = 0
+        for left, right in _split_equalities(text or ""):
+            lm = list(_QTY.finditer(left))
+            rm = list(_QTY.finditer(right))
+            if not lm or not rm:
+                continue
+            ls, rs = lm[-1].group(0).strip(), rm[0].group(0).strip()
+            okl, lv, ld = units.parse_quantity(ls)
+            okr, rv, rd = units.parse_quantity(rs)
+            if not (okl and okr):
+                continue
+            if ld == units.ZERO and rd == units.ZERO:
+                continue  # arithmetic_sound owns pure-number equalities
+            checked += 1
+            if not units.same_dim(ld, rd):
+                wrong.append(f"{ls} = {rs} (dimension mismatch)")
+                continue
+            denom = abs(lv) if lv != 0 else 1.0
+            if abs(lv - rv) / denom > rtol:
+                wrong.append(f"{ls} = {rs} (value mismatch)")
+        if wrong:
+            return _fail([f"false physics: {w}" for w in wrong], {"wrong": wrong, "checked": checked})
+        return _ok({"checked": checked})
+
+    return _verify
+
+
 def no_secret_leak(secrets: "list[str]", *, mask: bool = True) -> Verifier:
     """Fail if any classified/canary value appears verbatim in the text.
 

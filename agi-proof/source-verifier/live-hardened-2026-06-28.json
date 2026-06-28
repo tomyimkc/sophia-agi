@@ -1,0 +1,27 @@
+{
+  "schema": "sophia.source_contamination_live.v2",
+  "experiment": "Rec 2 \u2014 contamination bench hardened, LIVE",
+  "date": "2026-06-28",
+  "answer_judge_separated_curated": {
+    "answer_spec": "llmhub:claude-sonnet-4-6",
+    "judge_spec": "openrouter:deepseek/deepseek-chat",
+    "contamination_caught_rate": 0.9767,
+    "clean_over_blocked_rate": 0.7059
+  },
+  "open_world_wikipedia_retrieval": {
+    "answer_spec": "llmhub:claude-sonnet-4-6",
+    "judge_spec": "openrouter:deepseek/deepseek-chat",
+    "retrieval_mode": "wikipedia_rest_summary",
+    "contamination_caught_rate": 1.0,
+    "clean_over_blocked_rate": 0.6471
+  },
+  "prior_single_model_run": {
+    "note": "answer==judge (same model)",
+    "clean_over_blocked_rate": 0.059
+  },
+  "finding": "Two independent rigor upgrades each COLLAPSE clean-answer preservation: (1) separating the answer model (Claude) from the entailment judge (DeepSeek) on CURATED refs drives clean over-block from 5.9% (self-judged) to 70.6%; (2) replacing curated refs with REAL Wikipedia retrieval drives it to 64.7%. Contamination-caught stays high (97.7-100%). The original strong '5.9% over-block' was an artifact of the same model answering AND judging. The independent-verifier catches contamination but, under a truly independent judge or open-world refs, rejects most CLEAN answers too \u2014 the verification layer is too strict for real verbose answers (same root cause as the Cluster A verification gap).",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false
+}

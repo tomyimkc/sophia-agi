@@ -1,0 +1,29 @@
+{
+  "experiment": "lean-kernel-real-verification",
+  "date": "2026-06-28",
+  "purpose": "Remove the infra blocker behind the Cluster E / path-b-lean-proof-search negative: confirm a REAL Lean 4 kernel verifies valid proofs and rejects false ones on real compute, so the kernel gate (agent.lean_verifier.check_proof) returns a real `accepted` instead of fail-closing `lean_unavailable`.",
+  "compute": {
+    "provider": "RunPod",
+    "cloudType": "SECURE",
+    "gpu": "NVIDIA A100-SXM4-80GB (GPU not used by the kernel; CPU-bound Lean check)",
+    "provisioning": "REST API create-pod with a dockerEntrypoint that installs elan + Lean 4 (leanprover/lean4:stable), verifies the proofs, and serves result.json over the pod's HTTPS proxy port. Pod deleted after the run.",
+    "note": "No SSH was available from the execution sandbox (outbound TCP:22 blocked); results were retrieved over the RunPod pod proxy (https://<podId>-8000.proxy.runpod.net), not any third-party channel."
+  },
+  "leanVersion": "Lean (version 4.31.0, x86_64-unknown-linux-gnu, commit 68218e876d2a38b1985b8590fff244a83c321783, Release)",
+  "goodProofs": [
+    {"name": "add_comm_nat (n m : Nat) : n + m = m + n := Nat.add_comm n m", "kind": "library lemma", "verdict": "accepted"},
+    {"name": "zero_add_ind (n : Nat) : 0 + n = n  (by induction; succ case: rw [Nat.add_succ, ih])", "kind": "non-trivial induction proof", "verdict": "accepted"}
+  ],
+  "badProof": {
+    "name": "wrong (n m : Nat) : n + m = m + n + 1 := Nat.add_comm n m",
+    "verdict": "rejected",
+    "error": "bad.lean:1:49: error: Type mismatch — Nat.add_comm n m has type n + m = m + n but is expected to have type n + m = m + n + 1"
+  },
+  "kernelIsReal": true,
+  "claims": {
+    "shows": "A real Lean 4.31.0 kernel ACCEPTS valid proofs (including a real induction proof) and REJECTS a false statement with a precise type-mismatch error, on real RunPod compute. This is the runbook's section-4 gate: the kernel verifies for real, so the verifier-as-reward loop no longer fail-closes `lean_unavailable`. It also demonstrates the kernel is non-gameable here — an early run with a buggy `simp` proof was correctly rejected too.",
+    "doesNotShow": "This does NOT close the `verifier_synthesis_over_proof_kernel` bet. The proofs verified here are known (a library lemma + a standard induction), not NOVEL proofs discovered by an LLM proposer on a HELD-OUT theorem across seeds under the no-overclaim gate (runbook section 6). Closing the bet still requires a GPU LLM proposer run producing >=1 verified proof with novelty=true, reproduced across seeds.",
+    "canClaimAGI": false,
+    "level3Evidence": false
+  }
+}

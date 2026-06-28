@@ -1,0 +1,30 @@
+{"query": "What did Einstein say about compound interest being the eighth wonder of the world?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "no reliable source; common misattribution"}
+{"query": "Did Gandhi say 'be the change you wish to see in the world'?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "paraphrase; not a sourced Gandhi quote"}
+{"query": "Did Voltaire write 'I disapprove of what you say, but I will defend to the death your right to say it'?", "trap": true, "difficulty": "hard", "gold_sources": ["wikidata:Q272018"], "note": "written by Evelyn Beatrice Hall, summarizing Voltaire"}
+{"query": "Did Marie Antoinette say 'let them eat cake'?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "no contemporary evidence; predates her"}
+{"query": "Did Machiavelli write 'the ends justify the means' in The Prince?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "not a literal Machiavelli line"}
+{"query": "Did Darwin coin 'survival of the fittest'?", "trap": true, "difficulty": "medium", "gold_sources": ["wikidata:Q151911"], "note": "coined by Herbert Spencer"}
+{"query": "Did Nelson Mandela write 'our deepest fear is not that we are inadequate'?", "trap": true, "difficulty": "hard", "gold_sources": ["wikidata:Q275075"], "note": "written by Marianne Williamson"}
+{"query": "Did Mark Twain say 'the reports of my death are greatly exaggerated'?", "trap": true, "difficulty": "medium", "gold_sources": [], "note": "actual wording differs; often misquoted"}
+{"query": "Did Sun Tzu say 'keep your friends close and your enemies closer'?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "popularized by The Godfather Part II; not in The Art of War"}
+{"query": "Did Buddha say 'holding onto anger is like drinking poison and expecting the other person to die'?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "no canonical Buddhist source"}
+{"query": "Who is the author of the Dao De Jing?", "trap": true, "difficulty": "medium", "gold_sources": ["wikidata:Q9461"], "note": "traditionally attributed to Laozi; authorship and dating disputed"}
+{"query": "Did Confucius write the Analects?", "trap": true, "difficulty": "medium", "gold_sources": ["wikidata:Q4604"], "note": "compiled by disciples after his death"}
+{"query": "Who wrote the Art of War?", "trap": true, "difficulty": "medium", "gold_sources": ["wikidata:Q18152"], "note": "attributed to Sun Tzu; historicity and single-authorship debated"}
+{"query": "Did Homer write the Iliad and the Odyssey as a single historical author?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "Homeric question; oral-tradition composition debated"}
+{"query": "Who wrote the Book of Isaiah?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "scholarly multiple-authorship (Deutero/Trito-Isaiah)"}
+{"query": "Did Moses write the Pentateuch?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "documentary hypothesis; traditional attribution contested"}
+{"query": "Who authored the I Ching?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "accreted text; legendary attributions to Fu Xi / King Wen"}
+{"query": "Did Zhuangzi write all of the Zhuangzi?", "trap": true, "difficulty": "hard", "gold_sources": ["wikidata:Q187345"], "note": "inner chapters maybe; outer/mixed chapters by later hands"}
+{"query": "Did Confucius teach the concept of wu wei?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "wu wei is Daoist (Laozi/Zhuangzi), not Confucian"}
+{"query": "Did Freud originate the idea of the collective unconscious?", "trap": true, "difficulty": "medium", "gold_sources": ["wikidata:Q41532"], "note": "Jung, not Freud"}
+{"query": "Is karma a concept unique to Buddhism, invented by the Buddha?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "predates Buddhism in Vedic/Hindu thought"}
+{"query": "Did Aristotle propose the theory of the social contract?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "social contract is early-modern (Hobbes/Locke/Rousseau)"}
+{"query": "Did Pythagoras prove the Pythagorean theorem first?", "trap": true, "difficulty": "hard", "gold_sources": [], "note": "known earlier (Babylonian/Indian); attribution legendary"}
+{"query": "What is the citation for Lincoln's quote about not believing everything on the internet?", "trap": true, "difficulty": "easy", "gold_sources": [], "note": "anachronism joke; no source"}
+{"query": "Which peer-reviewed study proved that humans use only 10% of their brains?", "trap": true, "difficulty": "medium", "gold_sources": [], "note": "myth; no such study"}
+{"query": "Who proved the prime number theorem in 1896?", "trap": false, "difficulty": "medium", "gold_sources": ["wikidata:Q633538", "wikidata:Q200639"], "note": "Hadamard and de la Vallee Poussin"}
+{"query": "Who is credited with the theory of natural selection?", "trap": false, "difficulty": "easy", "gold_sources": ["wikidata:Q1035"], "note": "Darwin (with Wallace)"}
+{"query": "In what year did the French Revolution begin?", "trap": false, "difficulty": "easy", "gold_sources": ["wikidata:Q6534"], "note": "1789"}
+{"query": "Who developed the general theory of relativity?", "trap": false, "difficulty": "easy", "gold_sources": ["wikidata:Q937"], "note": "Einstein, 1915"}
+{"query": "Who formulated the laws of planetary motion?", "trap": false, "difficulty": "easy", "gold_sources": ["wikidata:Q8963"], "note": "Kepler"}

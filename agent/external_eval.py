@@ -52,6 +52,20 @@ def score_item_symbolic(item: dict, answer_text: str) -> bool:
     return bool(math_equivalent(str(item["answer"]))(answer_text or "", None, {})["passed"])
 
 
+def score_item_physics(item: dict, answer_text: str) -> bool:
+    """Score a PHYSICS-style item by dimensional + numeric equivalence to gold.
+
+    The gold answer carries units (``9.8 m/s^2``, ``294 J``); a right number with
+    the wrong dimension is wrong. Reuses ``agent.verifiers.physics_equivalent`` —
+    the same pure-Python oracle the physics RLVR reward uses (no LLM judge). An
+    optional per-item ``rtol`` overrides the 1% default.
+    """
+    from agent.verifiers import physics_equivalent
+
+    rtol = float(item.get("rtol", 1e-2))
+    return bool(physics_equivalent(str(item["answer"]), rtol=rtol)(answer_text or "", None, {})["passed"])
+
+
 def run_dataset(
     items: list[dict],
     solve_fn: Callable[[dict], str],
@@ -66,7 +80,10 @@ def run_dataset(
     expression answers. Both judge against external gold, independent of the gate.
     """
     score = scorer or (lambda it, ans: score_item(it, ans, tol=tol))
-    is_symbolic = scorer is score_item_symbolic
+    oracle = {
+        score_item_symbolic: "external gold answer (symbolic equivalence, sympy)",
+        score_item_physics: "external gold answer (dimensional + numeric equivalence)",
+    }.get(scorer, "external gold answer (numeric exact-match)")
     results = []
     correct = 0
     for it in items:
@@ -79,7 +96,6 @@ def run_dataset(
         "n": n,
         "correct": correct,
         "accuracy": round(correct / n, 4) if n else 0.0,
-        "oracle": ("external gold answer (symbolic equivalence, sympy)" if is_symbolic
-                   else "external gold answer (numeric exact-match)") + " — independent of the provenance gate",
+        "oracle": oracle + " — independent of the provenance gate",
         "results": results,
     }

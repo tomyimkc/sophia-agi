@@ -1,0 +1,16 @@
+{
+  "subject": "meta-llama/llama-3.2-3b-instruct",
+  "nQuestions": 15,
+  "nPairs": 75,
+  "soloCoverage": 0.24,
+  "swarmCoverage": 0.24,
+  "delta": 0.0,
+  "ci95": [
+    -0.12,
+    0.12
+  ],
+  "ciExcludesZero": false,
+  "calls": 75,
+  "verdict": "no_coverage_advantage",
+  "note": "win = paired CI on (swarm-solo) aspect coverage over all (question,aspect) pairs excludes zero."
+}

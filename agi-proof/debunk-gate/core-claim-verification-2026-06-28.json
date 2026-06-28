@@ -1,0 +1,170 @@
+{
+  "schema": "sophia.core_claim_verification.v1",
+  "experiment": "Core-claim verification (Google + LLM-knowledge) \u2014 LIVE",
+  "date": "2026-06-28",
+  "n_cases": 21,
+  "verified_total": 18,
+  "verified_rate": 0.857,
+  "verified_high_independence_google": 4,
+  "verified_low_independence_llm": 14,
+  "unverified": 3,
+  "comparison": {
+    "old_all_atomic_claims_verified": 0,
+    "new_core_claim_verified": 18
+  },
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "rows": [
+    {
+      "id": "yale_voynich",
+      "verified": false,
+      "source": null,
+      "independence": null,
+      "rating": "unknown"
+    },
+    {
+      "id": "bacon_voynich",
+      "verified": false,
+      "source": null,
+      "independence": null,
+      "rating": "unknown"
+    },
+    {
+      "id": "einstein_nobel_relativity",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    },
+    {
+      "id": "great_wall_space",
+      "verified": true,
+      "source": "google_factcheck",
+      "independence": "high",
+      "rating": "false"
+    },
+    {
+      "id": "edison_lightbulb_invented",
+      "verified": true,
+      "source": "google_factcheck",
+      "independence": "high",
+      "rating": "false"
+    },
+    {
+      "id": "napoleon_short",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    },
+    {
+      "id": "human_brain_ten_percent",
+      "verified": true,
+      "source": "google_factcheck",
+      "independence": "high",
+      "rating": "false"
+    },
+    {
+      "id": "everest_tallest_mountain",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    },
+    {
+      "id": "goldfish_memory",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    },
+    {
+      "id": "columbus_flat_earth",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    },
+    {
+      "id": "shakespeare_sonnet_154_dedication",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    },
+    {
+      "id": "pluto_largest_planet",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    },
+    {
+      "id": "wall_china_built_one_dynasty",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    },
+    {
+      "id": "lightning_never_strikes_twice",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    },
+    {
+      "id": "vikings_horned_helmets",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    },
+    {
+      "id": "mozart_twinkle_composed",
+      "verified": false,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "true"
+    },
+    {
+      "id": "blood_blue_in_veins",
+      "verified": true,
+      "source": "google_factcheck",
+      "independence": "high",
+      "rating": "false"
+    },
+    {
+      "id": "bats_blind",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    },
+    {
+      "id": "sushi_means_raw_fish",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    },
+    {
+      "id": "tongue_taste_map",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    },
+    {
+      "id": "chameleon_color_camouflage",
+      "verified": true,
+      "source": "llm_knowledge",
+      "independence": "low",
+      "rating": "false"
+    }
+  ],
+  "googleCoverage": "4/21 injected myths got a professional ClaimReview (matches the ledger note: Google covers general/viral claims, not provenance).",
+  "finding": "Core-claim verification (verify the single injected falsehood against an INDEPENDENT oracle, not every atomic claim of a verbose answer) lifts verified-debunk from 0/21 (old all-atomic-claims path) to 18/21. Independence is honestly tiered: 4 are HIGH-independence (Google Fact Check professional ClaimReviews); 14 are LOW-independence (the model's own knowledge, flagged). The 3 unverified are correct fail-closes: 2 genuinely-unknown provenance claims (Voynich authorship \u2014 not a fact-checkable falsehood) and 1 LLM-knowledge ERROR (mozart_twinkle rated 'true' \u2014 the low-independence fallback can be wrong, so fail-closing it is right). Resolves the Cluster A verification bottleneck; Google alone is insufficient (4/21 coverage) so a layered verifier is required."
+}

@@ -1,0 +1,70 @@
+{
+  "schema": "sophia.lean_expert_iteration.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "canClaimAGI": false,
+  "scaffoldBet": "verifier_synthesis_over_proof_kernel",
+  "mode": "stub",
+  "rounds": 2,
+  "theorems": [
+    "add_zero",
+    "trivial_true",
+    "zero_add"
+  ],
+  "noveltyThreshold": 0.92,
+  "leanAvailable": false,
+  "environment": {
+    "leanToolchain": "NOT INSTALLED",
+    "leanDojo": "NOT INSTALLED",
+    "proposer": "stub_proposer (deterministic)"
+  },
+  "falsifiableQuestion": "Across rounds, does verifier-gated expert iteration KEEP at least one Lean-verified AND novel proof, with the anti-gaming check showing no kernel-gaming?",
+  "rounds_detail": [
+    {
+      "round": 1,
+      "proposed": 29,
+      "verified": 3,
+      "novelKept": 3,
+      "keptProofs": [
+        "trivial",
+        "intros; rfl",
+        "intros; omega"
+      ],
+      "hackableFlag": false,
+      "antiGaming": {
+        "trainReward": 0.0,
+        "heldoutReward": 0.0,
+        "drop": 0.0,
+        "hacked": false,
+        "rule": "hacked iff trainReward - heldoutReward > 0.0",
+        "interpretation": "structurally near-vacuous: the train and held-out verifiers are the same sound kernel oracle; a non-zero drop would indicate toolchain non-determinism, not reward hacking"
+      },
+      "leanAvailable": false,
+      "note": "kept 3 verified+novel proof(s) into the expert corpus"
+    },
+    {
+      "round": 2,
+      "proposed": 29,
+      "verified": 3,
+      "novelKept": 0,
+      "keptProofs": [],
+      "hackableFlag": false,
+      "antiGaming": {
+        "trainReward": 0.0,
+        "heldoutReward": 0.0,
+        "drop": 0.0,
+        "hacked": false,
+        "rule": "hacked iff trainReward - heldoutReward > 0.0",
+        "interpretation": "structurally near-vacuous: the train and held-out verifiers are the same sound kernel oracle; a non-zero drop would indicate toolchain non-determinism, not reward hacking"
+      },
+      "leanAvailable": false,
+      "note": "verified proofs were all corpus near-duplicates -> nothing novel kept"
+    }
+  ],
+  "totalNovelKept": 3,
+  "anyHackableFlag": false,
+  "verdict": "novel_proof_kept",
+  "interpretation": "Expert iteration kept 3 verified+novel proof(s) across 2 round(s), gated by the scripted stub applier (NOT real Lean). The anti-gaming check confirmed no kernel-gaming (drop 0.0; structurally near-vacuous). candidateOnly: a --stub run exercises the LOOP, not a real verification. It does NOT close the bet.",
+  "successCriterion": ">=1 Lean-verified proof with novelty=true on a HELD-OUT theorem, reproduced across seeds, under the no-overclaim gate. A --stub run is NOT sufficient: it verifies via a scripted applier, not the real kernel. See agi-proof/proof-search/LEAN-EXPERT-ITERATION-SETUP.md."
+}

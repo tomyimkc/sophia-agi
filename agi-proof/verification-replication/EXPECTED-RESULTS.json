@@ -1,0 +1,186 @@
+{
+  "schema": "sophia.verification_replication.expected_results.v1",
+  "date": "2026-06-28",
+  "purpose": "Machine-readable map of the 2026-06-28 verification-toolkit results so an independent party can clone the repo, supply their own keys, and check each committed live report against its expected headline. Built by READING the committed report JSONs (not transcribed from memory). Use tools/verify_replication_manifest.py to confirm every referenced file exists on disk and that every report has canClaimAGI=false.",
+  "canClaimAGI": false,
+  "level3Evidence": false,
+  "notes": [
+    "ALL numbers below are CANDIDATES, not validated headlines: candidateOnly=true / validated=false in every source report. The no-overclaim bar wants >=3 runs with bootstrap CIs and (ideally) answer-spec != judge-spec before a number is called validated.",
+    "The single 3-run + answer!=judge + CI result in this set is attribution-swap (runs=3). Everything else is single-run candidate.",
+    "Independence is reported per-verdict, not assumed: 'high' = deterministic/professional oracle (Crossref existence, Wikidata structured record, Google ClaimReview); 'low' = the model's own knowledge (flagged, can err).",
+    "Open-oracle coverage is domain-bounded: Google Fact Check covered 4/21 of the debunk pack; Wikidata/Crossref authoritative oracles covered 0/43 of THIS source-contamination pack's fabricated-study cases.",
+    "live-hardened-2026-06-28.json reports a 70.6% curated answer!=judge over-block that verifier-compare-2026-06-28.json EXPLICITLY WITHDRAWS as a stale mis-saved retrieve report; the corrected curated answer!=judge over-block is 5.9%. The true over-block driver is OPEN-WORLD retrieval (52.9%)."
+  ],
+  "modules": [
+    "agent/llm_debunk_detector.py",
+    "agent/meta_labeler.py",
+    "agent/source_verifier.py",
+    "agent/core_claim_verifier.py",
+    "agent/layered_verifier.py",
+    "agent/core_claim_source_verifier.py",
+    "agent/hybrid_source_verifier.py",
+    "agent/citation_existence_verifier.py",
+    "agent/attribution_swap_verifier.py",
+    "agent/wiki_truth_refs.py",
+    "agent/proof_novelty.py",
+    "agent/retrieval_transition_model.py",
+    "agent/llm_world_model.py"
+  ],
+  "tests": [
+    "tests/test_llm_debunk_detector.py",
+    "tests/test_meta_labeler.py",
+    "tests/test_source_verifier.py",
+    "tests/test_core_claim_verifier.py",
+    "tests/test_layered_verifier.py",
+    "tests/test_core_claim_source_verifier.py",
+    "tests/test_hybrid_source_verifier.py",
+    "tests/test_citation_existence_verifier.py",
+    "tests/test_attribution_swap_verifier.py",
+    "tests/test_wiki_truth_refs.py",
+    "tests/test_proof_novelty.py",
+    "tests/test_retrieval_transition_model.py",
+    "tests/test_llm_world_model.py"
+  ],
+  "bench_tools": [
+    "tools/run_source_contamination_bench.py",
+    "tools/run_debunk_gate_bench.py",
+    "tools/run_meta_labeler_bench.py",
+    "tools/run_world_model_baselines.py",
+    "tools/run_lean_expert_iteration.py"
+  ],
+  "synthetic_packs": [
+    "agi-proof/debunk-gate/overconfident-regime-pack.json",
+    "agi-proof/source-verifier/source-contamination-pack.json"
+  ],
+  "experiments": {
+    "citation_existence": {
+      "report_path": "agi-proof/source-verifier/citation-existence-2026-06-28.json",
+      "headline_metric": "contamination_caught_pct / clean_over_blocked_pct",
+      "value": {"contamination_caught_pct": 9.3, "clean_over_blocked_pct": 0.0},
+      "runs": 1,
+      "independence": "high (deterministic Crossref existence check; no model judgment)",
+      "candidate_or_validated": "candidate",
+      "command": "python3 tools/run_source_contamination_bench.py --verifier citation --relay --answer-spec llmhub:claude-sonnet-4-6"
+    },
+    "attribution_swap": {
+      "report_path": "agi-proof/source-verifier/attribution-swap-2026-06-28.json",
+      "headline_metric": "contamination_caught mean_pct [ci95] / clean_over_blocked mean_pct [ci95]",
+      "value": {
+        "contamination_caught_mean_pct": 10.8,
+        "contamination_caught_ci95_pct": [9.3, 11.6],
+        "clean_over_blocked_mean_pct": 0.0,
+        "clean_over_blocked_ci95_pct": [0.0, 0.0]
+      },
+      "runs": 3,
+      "independence": "high (Wikidata structured creator/author/discoverer record; no model judgment)",
+      "candidate_or_validated": "candidate (most rigorous: 3-run + answer!=judge + bootstrap CI)",
+      "command": "python3 tools/run_source_contamination_bench.py --verifier attribution --relay --answer-spec llmhub:claude-sonnet-4-6 --judge-spec openrouter:deepseek/deepseek-chat --runs 3"
+    },
+    "hybrid_cluster_c_matrix": {
+      "report_path": "agi-proof/source-verifier/hybrid-verifier-2026-06-28.json",
+      "headline_metric": "full_matrix_caught_overblock_pct (caught%, over-block%)",
+      "value": {
+        "curated_atomic": [97.7, 5.9],
+        "curated_core": [95.3, 0.0],
+        "openworld_atomic": [97.7, 52.9],
+        "openworld_core": [58.1, 0.0],
+        "hybrid_authoritative_only": [0.0, 0.0],
+        "hybrid_plus_llm_tail": [58.1, 0.0]
+      },
+      "runs": 1,
+      "independence": "high where an authoritative oracle covers the claim; 0/43 coverage on this pack so hybrid catch comes from the flagged low-independence LLM tail",
+      "candidate_or_validated": "candidate",
+      "command": "python3 tools/run_source_contamination_bench.py --verifier hybrid --relay --answer-spec llmhub:claude-sonnet-4-6"
+    },
+    "verifier_compare_matrix": {
+      "report_path": "agi-proof/source-verifier/verifier-compare-2026-06-28.json",
+      "headline_metric": "matrix (atomic vs core) x (curated vs open-world refs): caught%/over-block%",
+      "value": {
+        "curated_atomic": {"caught_pct": 97.7, "over_block_pct": 5.9},
+        "curated_core": {"caught_pct": 95.3, "over_block_pct": 0.0},
+        "openworld_atomic": {"caught_pct": 97.7, "over_block_pct": 52.9},
+        "openworld_core": {"caught_pct": 58.1, "over_block_pct": 0.0}
+      },
+      "runs": 1,
+      "independence": "answer-spec != judge-spec (Claude answers, DeepSeek judges)",
+      "candidate_or_validated": "candidate; CORRECTS the withdrawn 70.6% over-block to 5.9% on curated refs",
+      "command": "python3 tools/run_source_contamination_bench.py --verifier atomic --relay --answer-spec llmhub:claude-sonnet-4-6 --judge-spec openrouter:deepseek/deepseek-chat   (then --verifier core, and add --retrieve for open-world)"
+    },
+    "source_contamination_live_multifamily": {
+      "report_path": "agi-proof/source-verifier/live-multifamily-2026-06-28.json",
+      "headline_metric": "per-family contamination_caught_rate / clean_over_blocked_rate (answer==judge)",
+      "value": {
+        "deepseek-chat": {"contamination_caught_rate": 0.9767, "clean_over_blocked_rate": 0.0588},
+        "claude-sonnet-4-6": {"contamination_caught_rate": 0.9767, "clean_over_blocked_rate": 0.0588}
+      },
+      "runs": 1,
+      "independence": "answer==judge per family (same model answers and judges); NOT the rigorous protocol",
+      "candidate_or_validated": "candidate (multi-family, single-run, self-judged)",
+      "command": "python3 tools/run_source_contamination_bench.py --verifier atomic --relay --answer-spec llmhub:claude-sonnet-4-6   (repeat with --answer-spec openrouter:deepseek/deepseek-chat)"
+    },
+    "source_contamination_live_hardened": {
+      "report_path": "agi-proof/source-verifier/live-hardened-2026-06-28.json",
+      "headline_metric": "answer!=judge curated + open-world retrieval over-block (PARTLY WITHDRAWN)",
+      "value": {
+        "curated_answer_neq_judge_over_block_rate": 0.7059,
+        "openworld_retrieve_over_block_rate": 0.6471,
+        "prior_self_judged_over_block_rate": 0.059
+      },
+      "runs": 1,
+      "independence": "answer!=judge / open-world retrieval",
+      "candidate_or_validated": "candidate; the 0.7059 curated figure is WITHDRAWN by verifier-compare-2026-06-28.json (stale mis-saved retrieve report); corrected curated over-block is 0.059, real open-world driver ~0.529",
+      "command": "python3 tools/run_source_contamination_bench.py --verifier atomic --relay --retrieve --answer-spec llmhub:claude-sonnet-4-6 --judge-spec openrouter:deepseek/deepseek-chat"
+    },
+    "core_claim_verification": {
+      "report_path": "agi-proof/debunk-gate/core-claim-verification-2026-06-28.json",
+      "headline_metric": "verified_total / n_cases (high-independence Google vs low-independence LLM split)",
+      "value": {
+        "verified_total": 18,
+        "n_cases": 21,
+        "verified_high_independence_google": 4,
+        "verified_low_independence_llm": 14,
+        "unverified": 3
+      },
+      "runs": 1,
+      "independence": "tiered: 4 high (Google Fact Check ClaimReview), 14 low (flagged LLM knowledge)",
+      "candidate_or_validated": "candidate",
+      "command": "GOOGLE_FACTCHECK_API_KEY=... python3 tools/run_debunk_gate_bench.py --relay --detector llm   (core-claim verification path; needs answer + judge keys)"
+    },
+    "layered_verification": {
+      "report_path": "agi-proof/debunk-gate/layered-verification-2026-06-28.json",
+      "headline_metric": "verified_total / n_cases (routes to best oracle per claim)",
+      "value": {
+        "verified_total": 19,
+        "n_cases": 21,
+        "verified_high_independence": 4,
+        "verified_low_independence": 15,
+        "by_source": {"llm_knowledge": 15, "google_factcheck": 4}
+      },
+      "runs": 1,
+      "independence": "tiered: 4 high (Google), 15 low (flagged LLM); provenance Wikidata/Crossref layer fired 0x on this pack but verified 4/4 on a Dickens/Shakespeare/Tolstoy/Twain authorship demo",
+      "candidate_or_validated": "candidate",
+      "command": "GOOGLE_FACTCHECK_API_KEY=... python3 tools/run_debunk_gate_bench.py --relay --detector llm   (layered routing path; needs answer + judge keys)"
+    },
+    "debunk_detector_live": {
+      "report_path": "agi-proof/debunk-gate/live-llm-detector-2026-06-28.json",
+      "headline_metric": "detection_debunk_rate vs verified_debunk_rate",
+      "value": {"detection_debunk_rate": 1.0, "verified_debunk_rate": 0.0, "n_cases": 21},
+      "runs": 1,
+      "independence": "subject llmhub:claude-sonnet-4-6, judge openrouter:deepseek/deepseek-chat",
+      "candidate_or_validated": "candidate; shows detection solved (0->100%), verification is the new bottleneck (0/21)",
+      "command": "OPENAI_API_KEY=<relay-key> python3 tools/run_debunk_gate_bench.py --relay --detector llm"
+    },
+    "debunk_gate_live_multifamily": {
+      "report_path": "agi-proof/debunk-gate/live-multifamily-2026-06-28.json",
+      "headline_metric": "per-family debunk_recall (keyword detector)",
+      "value": {
+        "claude-sonnet-4-6": {"debunk_recall": 0.0, "verified_debunks": 0},
+        "deepseek-chat": {"debunk_recall": 0.0, "verified_debunks": 0}
+      },
+      "runs": 1,
+      "independence": "multi-family; keyword classify_response detector (the broken baseline)",
+      "candidate_or_validated": "candidate; models DO debunk but the KEYWORD detector tags 100% as 'affirm' -> motivates the LLM detector",
+      "command": "OPENAI_API_KEY=<relay-key> python3 tools/run_debunk_gate_bench.py --relay --detector keyword"
+    }
+  }
+}
