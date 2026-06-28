@@ -86,13 +86,20 @@ def extract_attributions(question: str, answer: str) -> "list[tuple[str, str]]":
     return [(work, p) for p in persons] if work else []
 
 
+_SUBJ_LEADIN = re.compile(
+    rf"\b(?:who|what)\b.*?\b(?:credited\s+(?:with|to|as)|attributed\s+(?:with|to)|"
+    rf"responsible\s+for|behind|the\s+(?:author|creator|composer|inventor|discoverer|"
+    rf"painter|architect|designer)\s+of|{_ATTR_VERB})\s+(?:the\s+)?(?P<work>.+)$",
+    re.IGNORECASE)
+
+
 def _question_subject(question: str) -> str:
     q = (question or "").strip().rstrip("?").strip()
-    # Drop a leading "who/what (first|originally) <verb> the" stem to expose the work.
-    m = re.search(rf"\b(?:who|what)\b.*?\b{_ATTR_VERB}\s+(?:the\s+)?(?P<work>.+)$", q, re.IGNORECASE)
+    # Drop a leading "who/what ... (credited with|wrote|painted|...) the" stem to expose the work.
+    m = _SUBJ_LEADIN.search(q)
     if m:
         return m.group("work").strip()
-    # Fallback: a quoted or Capitalized work phrase.
+    # Fallback: a quoted work phrase, else the whole question.
     m = re.search(r"[\"“](?P<w>[^\"”]+)[\"”]", q)
     if m:
         return m.group("w").strip()
