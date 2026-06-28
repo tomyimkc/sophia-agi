@@ -1,0 +1,1727 @@
+{
+  "schema": "minif2f-passk-report/v1",
+  "benchmark": "miniF2F-v2 (Lean 4) test",
+  "preregistration": "agi-proof/formal-proofs/minif2f-passk.preregistration.json",
+  "sealedSplit": "minif2f-v2-test.manifest.json",
+  "pinnedCommit": "5746b7d6c47855ce1294bed87329618ff7f1bc31",
+  "n": 244,
+  "solved": 12,
+  "passAt1": 0.0492,
+  "modelSpec": "openrouter:deepseek/deepseek-chat",
+  "verifier": "lake env lean (Mathlib v4.24.0)",
+  "estCostUsd": 0.1363,
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "contaminationNote": "public benchmark; suggestive, not contamination-free.",
+  "results": [
+    {
+      "id": "aime_1983_p1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1983_p1.lean:9:84: error: unsolved goals\nx y z w : ℕ\nht : 1 < x ∧ 1 < y ∧ 1 < z\nhw : 0 ≤ w\nh0 : Real.log ↑w / Real.log ↑x = 24\nh1 : Real.log ↑w / Real.log ↑y = 40\nh2 : Real.log",
+      "proof": "have hx : 0 < x := zero_lt_one.trans ht.1\nhave hy : 0 < y := zero_lt_one.trans ht.2.1\nhave hz : 0 < z := zero_lt_one.trans ht.2.2\nhave hxy : 0 < x * y * z := mul_pos (mul_pos hx hy) hz\nhave hw' : 0 < w := by\n  rw [← Real.log_pos_iff (Real.log_pos hx)]\n  rw [h0]\n  exact mul_pos (by norm_num) (Real.log_pos hx)\n\nlet a := Real.log w\nhave h0' : Real.log x = a / 24 := by rw [h0, eq_div_iff]; exact (mul_",
+      "sec": 16.4
+    },
+    {
+      "id": "aime_1983_p2",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1983_p2.lean:15:39: error: Application type mismatch: The argument\n  h₁.right\nhas type\n  x ≤ 15\nbut is expected to have type\n  15 ≤ 15\nin the application\n  le_trans (LT.lt.le h",
+      "proof": "by\n  rw [h₂]\n  have h₃ : p ≤ 15 := le_trans h₀.2.le h₁.2\n  have h₄ : x - p ≥ 0 := sub_nonneg.mpr h₁.1\n  have h₅ : x - 15 ≤ 0 := sub_nonpos.mpr h₁.2\n  have h₆ : x - p - 15 ≤ 0 := by linarith\n  rw [abs_of_nonneg h₄, abs_of_nonpos h₅, abs_of_nonpos h₆]\n  linarith",
+      "sec": 12.0
+    },
+    {
+      "id": "aime_1983_p3",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1983_p3.lean:12:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  f ?x\nin the target expression\n  ∏ x ∈ (f ⁻¹' {0}).toFinset, x = 20\n\nf : ℝ → ℝ\nh₀ ",
+      "proof": "rw [h₀]\nsimp only [mem_preimage, mem_singleton_iff, sub_eq_zero]\nhave h : ∀ x, x^2 + 18 * x + 30 = 2 * Real.sqrt (x^2 + 18 * x + 45) ↔ f x = 0 := by\n  intro x; simp [h₀]\nrw [←Finset.prod_image]\n· have h2 : ∀ x ∈ (f⁻¹' {0}).toFinset, x^2 + 18 * x + 30 = 2 * Real.sqrt (x^2 + 18 * x + 45) := by\n    intro x hx; rw [←h]; exact hx\n  have h3 : ∀ x ∈ (f⁻¹' {0}).toFinset, x^2 + 18 * x + 45 = (Real.sqrt (x^",
+      "sec": 30.9
+    },
+    {
+      "id": "aime_1984_p1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1984_p1.lean:18:15: error: unexpected token 'in'; expected ','\nMiniF2F/Test/aime_1984_p1.lean:16:29: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n ",
+      "proof": "have h₂ : ∀ n, u n = u 0 + n := by\n    intro n\n    induction' n with n ih\n    · simp\n    · rw [h₀, ih, add_assoc, add_comm 1 n]\n  simp_rw [h₂] at h₁ ⊢\n  have h₃ : ∑ k in Finset.range 98, (u 0 + k + 1) = 137 := by\n    simp_rw [add_assoc]\n    exact h₁\n  have h₄ : 98 * u 0 + ∑ k in Finset.range 98, (k + 1) = 137 := by\n    simp_rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_range, smul_eq_m",
+      "sec": 17.6
+    },
+    {
+      "id": "aime_1984_p7",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1984_p7.lean:11:16: error: unsolved goals\ncase pos\nf : ℤ → ℤ\nh₀ : ∀ (n : ℤ), 1000 ≤ n → f n = n - 3\nh₁ : ∀ n < 1000, f n = f (f (n + 5))\nh : 84 < 1000\n⊢ f 84 = 997\n\ncase neg\nf ",
+      "proof": "by_cases h : 84 < 1000\n· have h₁' := h₁ 84 h\n  rw [h₁']\n  have h₁'' := h₁ (84 + 5) (by linarith)\n  rw [h₁'']\n  have h₁''' := h₁ (84 + 5 + 5) (by linarith)\n  rw [h₁''']\n  have h₁'''' := h₁ (84 + 5 + 5 + 5) (by linarith)\n  rw [h₁'''']\n  have h₁''''' := h₁ (84 + 5 + 5 + 5 + 5) (by linarith)\n  rw [h₁''''']\n  have h₁'''''' := h₁ (84 + 5 + 5 + 5 + 5 + 5) (by linarith)\n  rw [h₁'''''']\n  have h₁''''''' :=",
+      "sec": 38.2
+    },
+    {
+      "id": "aime_1987_p5",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1987_p5.lean:11:52: error: Type mismatch\n  h₀\nhas type\n  y ^ 2 + 3 * (x ^ 2 * y ^ 2) = 30 * x ^ 2 + 517\nbut is expected to have type\n  y ^ 2 + 3 * x ^ 2 * y ^ 2 = 30 * x ^ 2 + ",
+      "proof": "have h₁ : y^2 + 3 * x^2 * y^2 = 30 * x^2 + 517 := h₀\nhave h₂ : y^2 * (1 + 3 * x^2) = 30 * x^2 + 517 := by rw [← mul_add, h₁]\nhave h₃ : (1 + 3 * x^2) * y^2 = 30 * x^2 + 517 := by rw [mul_comm, h₂]\nhave h₄ : 3 * x^2 * y^2 = 30 * x^2 + 517 - y^2 := by linear_combination h₀\nhave h₅ : 3 * x^2 * y^2 + y^2 = 30 * x^2 + 517 := by linear_combination h₀\nhave h₆ : y^2 * (3 * x^2 + 1) = 30 * x^2 + 517 := by r",
+      "sec": 25.1
+    },
+    {
+      "id": "aime_1988_p8",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1988_p8.lean:13:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  f 14 14\nin the target expression\n  f 14 52 = 364\n\nf : ℕ → ℕ → ℝ\nh₀ : ∀ (x : ℕ), 0",
+      "proof": "rw [h₀ 14 (by norm_num)]\nhave h : ∀ k, 1 ≤ k → f (14 * k) (52 * k) = 364 * k := by\n  intro k hk\n  have hk' : 0 < k := Nat.pos_of_ne_zero (by linarith)\n  induction' k using Nat.strong_induction_on with k ih\n  rcases k with _|k\n  · linarith\n  rcases k with _|k\n  · simp [h₀ _ (by norm_num)]\n  have hk1 : 1 ≤ k + 1 := Nat.le_add_left 1 k\n  have h14 : 0 < 14 * (k + 1) := mul_pos (by norm_num) hk'\n  have",
+      "sec": 61.8
+    },
+    {
+      "id": "aime_1989_p8",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1989_p8.lean:13:13: error: Application type mismatch: The argument\n  h₀\nhas type\n  a + 4 * b + 9 * c + 16 * d + 25 * e + 36 * f + 49 * g = 1\nof sort `Prop` but is expected to h",
+      "proof": "have h₃ := h₂ - 2 * h₁ + h₀\nhave h₄ := h₁ - 2 * h₀\nhave h₅ := h₀\nrw [show 16 * a + 25 * b + 36 * c + 49 * d + 64 * e + 81 * f + 100 * g = \n    (h₂ - 3 * h₁ + 3 * h₀) + 3 * (h₁ - 2 * h₀) + h₀ by ring]\nrw [h₀, h₁, h₂]\nnorm_num",
+      "sec": 9.8
+    },
+    {
+      "id": "aime_1990_p15",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1990_p15.lean:13:28: error: unsolved goals\na b x y : ℝ\nh₀ : a * x + b * y = 3\nh₁ : a * x ^ 2 + b * y ^ 2 = 7\nh₂ : a * x ^ 3 + b * y ^ 3 = 16\nh₃ : a * x ^ 4 + b * y ^ 4 = 42\nS :",
+      "proof": "let S n := a * x^n + b * y^n\nhave hxy : x * y = -1 := by\n  have h1 : (x + y) * S 1 = S 2 + x * y * S 0 := by\n    rw [S, S, S]\n    simp only [pow_zero, mul_one]\n    ring\n  have h2 : (x + y) * S 2 = S 3 + x * y * S 1 := by\n    rw [S, S, S]\n    ring\n  have h3 : (x + y) * S 3 = S 4 + x * y * S 2 := by\n    rw [S, S, S]\n    ring\n  rw [h₀, h₁, h₂, h₃] at h1 h2 h3\n  simp only [S] at h1 h2 h3\n  have h₁ : S",
+      "sec": 17.1
+    },
+    {
+      "id": "aime_1990_p4",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1990_p4.lean:14:12: error: unsolved goals\nx : ℝ\nh₀ : 0 < x\nh₁ : x ^ 2 - 10 * x - 29 ≠ 0\nh₂ : x ^ 2 - 10 * x - 45 ≠ 0\nh₃ : x ^ 2 - 10 * x - 69 ≠ 0\nh₄ : 1 / (x ^ 2 - 10 * x - 29)",
+      "proof": "let y := x^2 - 10 * x\nhave h5 : y - 29 ≠ 0 := by rwa [← sub_eq_zero]\nhave h6 : y - 45 ≠ 0 := by rwa [← sub_eq_zero]\nhave h7 : y - 69 ≠ 0 := by rwa [← sub_eq_zero]\nhave h8 : 1 / (y - 29) + 1 / (y - 45) = 2 / (y - 69) := by rwa [← sub_eq_zero] at h₄\nhave h9 : (y - 45 + y - 29) / ((y - 29) * (y - 45)) = 2 / (y - 69) := by\n  rw [add_div' _ _ _ h5, add_div' _ _ _ h6]\n  simp [h5, h6]\nhave h10 : (2 * y -",
+      "sec": 24.2
+    },
+    {
+      "id": "aime_1991_p9",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1991_p9.lean:15:21: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  0 / ?a\nin the target expression\n  1 / 0 + (Complex.tan ↑x).re = 22 / 7\n\nx : ℝ\nm ",
+      "proof": "by\n  have hcos : Real.cos x ≠ 0 := by\n    intro h\n    rw [h, Real.tan, zero_div] at h₀\n    simp at h₀\n    norm_num at h₀\n  have hsin : Real.sin x ≠ 0 := by\n    intro h\n    rw [h, Real.tan, div_zero] at h₁\n    simp at h₁\n  have htan : Real.tan x ≠ 0 := by\n    intro h\n    rw [h] at h₀\n    norm_num at h₀\n\n  let s := Real.sin x\n  let c := Real.cos x\n  let t := Real.tan x\n\n  have ht : t = s / c := by r",
+      "sec": 22.5
+    },
+    {
+      "id": "aime_1994_p3",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1994_p3.lean:11:23: error: unsolved goals\nf : ℤ → ℤ\nh0 : ∀ (x : ℤ), f x + f (x - 1) = x ^ 2\nh1 : f 19 = 94\n⊢ f (f 19) % 1000 = 561\nMiniF2F/Test/aime_1994_p3.lean:13:0: error: u",
+      "proof": "rw [← h1]\nhave key : ∀ n, f (n + 19) = f 19 + ∑ k in Finset.range n, ((19 + k + 1)^2 - (19 + k)^2) := by\n  intro n\n  induction' n with n ih\n  · simp\n  · rw [Finset.sum_range_succ, ← ih, Nat.succ_eq_add_one, add_assoc, add_comm 19 n, ← add_assoc]\n    rw [h0 (19 + n + 1), add_sub_cancel]\n    ring\nhave h94 : f 94 = f (19 + 75) := by norm_num\nrw [h94, key 75]\nsimp only [h1]\nhave sum_eq : ∑ k in Finset",
+      "sec": 16.9
+    },
+    {
+      "id": "aime_1995_p7",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1995_p7.lean:15:8: error: failed to synthesize\n  AddGroup ℕ\n\nHint: Additional diagnostic information may be available using the `set_option diagnostics true` command.\nMiniF2F/T",
+      "proof": "rw [← sub_eq_zero, ← sub_add_sub_cancel (k + m + n) 27 0, zero_add]\nrefine' eq_zero_of_sq_eq_zero _ (by norm_num)\nhave : (1 + sin t) * (1 + cos t) + (1 - sin t) * (1 - cos t) = 5/4 + (m/n - sqrt k) := by rw [h₂, h₃]\nsimp only [add_sub, add_left_inj] at this\nhave : (1 + sin t) * (1 + cos t) - (1 - sin t) * (1 - cos t) = 5/4 - (m/n - sqrt k) := by rw [h₂, h₃]\nsimp only [sub_sub, add_left_inj] at thi",
+      "sec": 56.4
+    },
+    {
+      "id": "aime_1997_p9",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1997_p9.lean:15:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/aime_1997_p9.lean:14:51: error: unsolved goals\na : ℝ\nh₀ : 0 < a\nh₁ : 1 / a - ↑⌊1 / a⌋ = a ^ 2 - ",
+      "proof": "have h₄ : 1 / a - Int.floor (1 / a) = a^2 - 2 := by\n  have : Int.floor (a^2) = 2 := by\n    rw [Int.floor_eq_iff]\n    exact ⟨h₂, h₃⟩\n  rw [h₁, this]\n\nhave h₅ : Int.floor (1 / a) = (1 / a) - (a^2 - 2) := by linarith\nhave h₆ : (1 / a) - (a^2 - 2) ∈ Ioc (0 : ℝ) 1 := by\n  rw [mem_Ioc]\n  constructor\n  · refine div_pos one_pos (by positivity)\n  · have : a^2 - 2 ∈ Ioo (0 : ℝ) 1 := by\n      rw [mem_Ioo]\n  ",
+      "sec": 51.9
+    },
+    {
+      "id": "aime_1999_p11",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/aime_1999_p11.lean:14:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/aime_1999_p11.lean:13:112: error: unsolved goals\nm : ℚ\nh₀ : 0 < m\nh₁ : ∑ k ∈ Finset.Icc 1 35, s",
+      "proof": "have h₃ : ∑ k ∈ Finset.Icc (1 : ℕ) 35, sin (5 * k * π / 180) = sin (5 * π / 180) / (2 * sin (5 * π / 360)) := by\n  have : ∀ k ∈ Finset.Icc (1 : ℕ) 35, 5 * k * π / 180 = π / 36 * k := by\n    intro k _\n    field_simp\n    ring\n  simp_rw [this]\n  have := sum_sin_pi_mul_Ico 1 36\n  simp only [Finset.Ico_succ_right, Finset.card_Icc, Nat.cast_sub, Nat.cast_one, Nat.sub_sub_self] at this\n  rw [← this]\n  co",
+      "sec": 31.0
+    },
+    {
+      "id": "algebra_2varlineareq_fp3zeq11_3tfm1m5zeqn68_feqn10_zeq7",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_2varlineareq_fp3zeq11_3tfm1m5zeqn68_feqn10_zeq7.lean:11:21: error: unsolved goals\nf z : ℂ\nh₀ : f + 3 * z = 11\nh₁ : 3 * (f - 1) - 5 * z = -68\nh₂ : 3 * f - 3 - 5 * z = -68\n⊢ f",
+      "proof": "have h₂ : 3*f - 3 - 5*z = -68 := by rw [mul_sub, mul_one] at h₁; exact h₁\nhave h₃ : 3*f - 5*z = -65 := by linarith\nhave h₄ : 3*f + 9*z = 33 := by linarith [h₀]\nhave h₅ : 14*z = 98 := by linarith [h₃, h₄]\nhave h₆ : z = 7 := by linarith\nhave h₇ : f = -10 := by linarith [h₀, h₆]\nexact ⟨h₇, h₆⟩",
+      "sec": 8.6
+    },
+    {
+      "id": "algebra_9onxpypzleqsum2onxpy",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_9onxpypzleqsum2onxpy.lean:10:63: error: unsolved goals\ncase pos\nx y z : ℝ\nh₀ : 0 < x ∧ 0 < y ∧ 0 < z\nh₁ : x = y ∧ y = z\n⊢ 9 / (x + y + z) ≤ 2 / (x + y) + 2 / (y + z) + 2 / (",
+      "proof": "by_cases h₁ : x = y ∧ y = z\n· simp [h₁.1, h₁.2]\n  ring\n· have h₂ : 0 < x + y := add_pos h₀.1 h₀.2.1\n  have h₃ : 0 < y + z := add_pos h₀.2.1 h₀.2.2\n  have h₄ : 0 < z + x := add_pos h₀.2.2 h₀.1\n  have h₅ : (x + y + z) * (1 / (x + y) + 1 / (y + z) + 1 / (z + x)) = 3 + x / (y + z) + y / (z + x) + z / (x + y) := by\n    ring\n  have h₆ : 3 + x / (y + z) + y / (z + x) + z / (x + y) ≥ 9 / 2 := by\n    have ",
+      "sec": 21.4
+    },
+    {
+      "id": "algebra_abpbcpcageq3_sumaonsqrtapbgeq3onsqrt2",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_abpbcpcageq3_sumaonsqrtapbgeq3onsqrt2.lean:97:7: error: unexpected end of input\nMiniF2F/Test/algebra_abpbcpcageq3_sumaonsqrtapbgeq3onsqrt2.lean:12:8: error(lean.unknownIdent",
+      "proof": "rw [← div_le_div_right (Real.sqrt_pos.2 (by positivity)), div_eq_inv_mul, ← mul_inv, mul_comm _ (Real.sqrt _), ←\n    mul_assoc, Real.sq_sqrt (by positivity), ← mul_assoc, inv_mul_cancel (by positivity), one_mul, mul_one]\n  refine' (le_trans _ (Cauchy_Schwarz_inequality _ _ _)).trans _\n  · simp_rw [← Real.sqrt_mul (by positivity), ← Real.sqrt_mul (by positivity), ← Real.sqrt_mul (by positivity),\n  ",
+      "sec": 61.6
+    },
+    {
+      "id": "algebra_absapbon1pabsapbleqsumabsaon1pabsa",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_absapbon1pabsapbleqsumabsaon1pabsa.lean:11:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/algebra_absapbon1pabsapbleqsumabsaon1pabsa.lean:10:39: error: unso",
+      "proof": "have h₀ (x : ℝ) : 0 ≤ x / (1 + x) := by\n  rcases le_or_lt x (-1) with hx | hx\n  · have : 1 + x ≤ 0 := by linarith\n    simp [div_nonpos_of_nonpos_of_nonneg hx this]\n  · have hx' : 0 ≤ x := by linarith [hx]\n    have : 0 < 1 + x := by linarith\n    exact div_nonneg hx' this.le\n\nhave h₁ (x : ℝ) : x / (1 + x) ≤ 1 := by\n  rcases le_or_lt x (-1) with hx | hx\n  · have : 1 + x ≤ 0 := by linarith\n    simp [d",
+      "sec": 18.2
+    },
+    {
+      "id": "algebra_absxm1pabsxpabsxp1eqxp2_0leqxleq1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_absxm1pabsxpabsxp1eqxp2_0leqxleq1.lean:12:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/algebra_absxm1pabsxpabsxp1eqxp2_0leqxleq1.lean:11:35: error: unsolv",
+      "proof": "have h1 : abs (x - 1) = 1 - x := by\n  rw [abs_of_nonpos]\n  linarith\n  linarith\nhave h2 : abs x = x := by\n  rw [abs_of_nonneg]\n  linarith\nhave h3 : abs (x + 1) = x + 1 := by\n  rw [abs_of_nonneg]\n  linarith\nrw [h1, h2, h3] at h₀\nlinarith",
+      "sec": 12.8
+    },
+    {
+      "id": "algebra_amgm_sum1toneqn_prod1tonleq1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_amgm_sum1toneqn_prod1tonleq1.lean:13:110: error(lean.unknownIdentifier): Unknown identifier `sum_const`\nMiniF2F/Test/algebra_amgm_sum1toneqn_prod1tonleq1.lean:13:4: error: `",
+      "proof": "by\n  have h₁ : ∑ x ∈ Finset.range n, (a x - 1) = 0 := by\n    simp only [NNReal.coe_sum, NNReal.coe_sub, NNReal.coe_one, Finset.sum_sub_distrib, h₀, Finset.card_range, sum_const, nsmul_eq_mul, mul_one, sub_self]\n  have h₂ : ∏ x ∈ Finset.range n, a x ≤ ∏ x ∈ Finset.range n, 1 := by\n    refine Finset.prod_le_prod ?_ ?_\n    · intro x _; exact zero_le (a x)\n    · intro x hx\n      have : a x = 1 + (a x ",
+      "sec": 11.1
+    },
+    {
+      "id": "algebra_amgm_sumasqdivbgeqsuma",
+      "verdict": "rejected",
+      "reason": "lean: Try this:\n  ring_nf\n  \n  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.\n    \n  Note that `ring` works primarily in *commutative* rings. If you have a noncommu",
+      "proof": "calc\n  a^2 / b + b^2 / c + c^2 / d + d^2 / a\n    = (a^2 / b + b) + (b^2 / c + c) + (c^2 / d + d) + (d^2 / a + a) - (a + b + c + d) := by ring\n  _ ≥ 2 * a + 2 * b + 2 * c + 2 * d - (a + b + c + d) := by\n      gcongr\n      · apply le_of_eq; rw [div_eq_mul_inv]; ring\n      · apply le_of_eq; rw [div_eq_mul_inv]; ring\n      · apply le_of_eq; rw [div_eq_mul_inv]; ring\n      · apply le_of_eq; rw [div_eq_",
+      "sec": 12.3
+    },
+    {
+      "id": "algebra_apbmpcneq0_aeq0anbeq0anceq0",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_apbmpcneq0_aeq0anbeq0anceq0.lean:14:27: error: unsolved goals\na b c : ℚ\nm n : ℝ\nh₀ : 0 < m ∧ 0 < n\nh₁ : m ^ 3 = 2\nh₂ : n ^ 3 = 4\nh₃ : ↑a + ↑b * m + ↑c * n = 0\nh : ¬(a = 0 ∧ ",
+      "proof": "by_contra h\npush_neg at h\nobtain ⟨ha, hb, hc⟩ := h\nhave h₄ : (b * m + c * n) ^ 3 = (-a) ^ 3 := by rw [← add_eq_zero_iff_eq_neg.mp h₃]; ring\nrw [pow_three, pow_three] at h₄\nhave h₅ : b^3 * m^3 + c^3 * n^3 + 3 * b^2 * c * m^2 * n + 3 * b * c^2 * m * n^2 = -a^3 := by\n  linear_combination h₄\nrw [h₁, h₂] at h₅\nhave h₆ : b^3 * 2 + c^3 * 4 + 3 * b^2 * c * m^2 * n + 3 * b * c^2 * m * n^2 = -a^3 := h₅\nhave",
+      "sec": 66.6
+    },
+    {
+      "id": "algebra_apbon2pownleqapownpbpowon2",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_apbon2pownleqapownpbpowon2.lean:12:39: error: unsolved goals\ncase pos\na b : ℝ\nn : ℕ\nh₀ : 0 < a ∧ 0 < b\nh₁ : 0 < n\nhab : a = b\n⊢ ((a + b) / 2) ^ n ≤ (a ^ n + b ^ n) / 2\n\ncase",
+      "proof": "by_cases hab : a = b\n· simp [hab]\n· have h : 0 < (a - b)^2 := sq_pos_of_ne_zero (a - b) (sub_ne_zero_of_ne hab)\n  have h' : 0 < (a - b)^2 * ∑ k in Finset.range n, a^(n - 1 - k) * b^k := \n    mul_pos h (Finset.sum_pos (fun k _ => mul_pos (pow_pos h₀.1 _) (pow_pos h₀.2 _)) \n      (Finset.nonempty_range_iff.mpr h₁))\n  rw [←sub_nonneg, ←mul_two, ←div_le_iff' (zero_lt_two' ℝ), ←add_sub, add_div, \n     ",
+      "sec": 13.2
+    },
+    {
+      "id": "algebra_apbpceq2_abpbcpcaeq1_aleq1on3anbleq1ancleq4on3",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_apbpceq2_abpbcpcaeq1_aleq1on3anbleq1ancleq4on3.lean:12:63: error: unsolved goals\na b c : ℝ\nh₀ : a ≤ b ∧ b ≤ c\nh₁ : a + b + c = 2\nh₂ : a * b + b * c + c * a = 1\nh₀₁ : a ≤ c\n⊢",
+      "proof": "have h₀₁ : a ≤ c := le_trans h₀.1 h₀.2\nhave h₀₂ : b ≤ c := h₀.2\n\nhave h₃ : (a + b + c)^2 = a^2 + b^2 + c^2 + 2*(a*b + b*c + c*a) := by ring\nrw [h₁, h₂] at h₃\nhave h₄ : a^2 + b^2 + c^2 = 2 := by linarith\n\nhave h₅ : (a + b)^2 + c^2 + 2*c*(a + b) = 4 := by rw [←h₁]; ring\nhave h₆ : (a + b)^2 + c^2 = 4 - 2*c*(2 - c) := by rw [←h₁]; ring\nhave h₇ : a^2 + b^2 + c^2 = 4 - 4*c + 2*c^2 - 2*a*b := by ring\nrw ",
+      "sec": 64.2
+    },
+    {
+      "id": "algebra_bleqa_apbon2msqrtableqambsqon8b",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_bleqa_apbon2msqrtableqambsqon8b.lean:22:10: error: expected '{' or indented tactic sequence\nMiniF2F/Test/algebra_bleqa_apbon2msqrtableqambsqon8b.lean:15:8: error(lean.unknow",
+      "proof": "calc (a + b) / 2 - Real.sqrt (a * b)\n    = (a + b - 2 * Real.sqrt (a * b)) / 2 := by ring\n  _ ≤ ((a - b)^2) / (8 * b) := by\n    rw [div_le_div_iff (by positivity) (by positivity)]\n    ring_nf\n    rw [mul_assoc, mul_comm _ (a - b)^2, ← mul_assoc]\n    apply mul_le_mul_of_nonneg_left\n    · rw [← sub_nonneg]\n      calc a + b - 2 * Real.sqrt (a * b)\n        = (Real.sqrt a)^2 + (Real.sqrt b)^2 - 2 * Rea",
+      "sec": 11.2
+    },
+    {
+      "id": "algebra_cubrtrp1oncubrtreq3_rcubp1onrcubeq5778",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_cubrtrp1oncubrtreq3_rcubp1onrcubeq5778.lean:10:26: error: unsolved goals\nr : ℝ\nh₀ : r ^ (1 / 3) + 1 / r ^ (1 / 3) = 3\nx : ℝ := r ^ (1 / 3)\n⊢ r ^ 3 + 1 / r ^ 3 = 5778\nMiniF2F",
+      "proof": "let x := r^(1/3:ℝ)\nhave hx : x + 1/x = 3 := h₀\nhave hx_ne_zero : x ≠ 0 := by\n  intro h\n  rw [h, zero_add, inv_zero] at hx\n  norm_num at hx\n\nhave h1 : (x + 1/x)^2 = 9 := by rw [hx]; norm_num\nhave h2 : x^2 + 1/x^2 + 2 = 9 := by\n  rw [← h1]\n  ring\nhave h3 : x^2 + 1/x^2 = 7 := by linarith [h2]\n\nhave h4 : (x + 1/x)^3 = 27 := by rw [hx]; norm_num\nhave h5 : x^3 + 1/x^3 + 3*(x + 1/x) = 27 := by\n  rw [← h4",
+      "sec": 26.2
+    },
+    {
+      "id": "algebra_ineq_nto1onlt2m1on",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_ineq_nto1onlt2m1on.lean:9:39: error: unsolved goals\ncase pos\nn : ℕ\nhn : n = 0\n⊢ ↑n ^ (1 / ↑n) ≤ 2 - 1 / ↑n\n\ncase neg\nn : ℕ\nhn : ¬n = 0\n⊢ ↑n ^ (1 / ↑n) ≤ 2 - 1 / ↑n\nMiniF2F/T",
+      "proof": "by_cases hn : n = 0\n· simp [hn]\nhave n_pos : 0 < n := Nat.pos_of_ne_zero hn\nhave n_ge_one : 1 ≤ n := n_pos\nrw [←Real.rpow_nat_cast]\nrefine Real.rpow_le_one_of_one_le_of_nonpos ?_ ?_ ?_\n· exact_mod_cast n_ge_one\n· rw [one_div_nonpos]\n  exact_mod_cast n_pos\n· rw [div_nonpos_iff]\n  left\n  constructor\n  · norm_num\n  · exact_mod_cast n_pos",
+      "sec": 8.4
+    },
+    {
+      "id": "algebra_others_exirrpowirrrat",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_others_exirrpowirrrat.lean:13:10: error(lean.unknownIdentifier): Unknown identifier `irrational_div_log_three_log_two`\nMiniF2F/Test/algebra_others_exirrpowirrrat.lean:15:8: ",
+      "proof": "by\n  let a := Real.sqrt 2\n  let b := Real.log 2 / Real.log 3\n  have ha : Irrational a := irrational_sqrt_two\n  have hb : Irrational b := by\n    apply irrational_div_log_three_log_two\n  have hab : ¬Irrational (a^b) := by\n    rw [← Real.rpow_def_of_pos (by norm_num), Real.rpow_logb (by norm_num) (by norm_num)]\n    norm_num\n    exact Rat.not_irrational 2\n  exact ⟨a, b, ha, hb, hab⟩",
+      "sec": 8.8
+    },
+    {
+      "id": "algebra_sqineq_at2malt1",
+      "verdict": "accepted",
+      "reason": "elaborated clean under Mathlib",
+      "proof": "calc a * (2 - a) = 2 * a - a^2 := by ring\n  _ = 1 - (a^2 - 2 * a + 1) := by ring\n  _ = 1 - (a - 1)^2 := by ring\n  _ ≤ 1 := by simp [sq_nonneg]",
+      "sec": 6.5
+    },
+    {
+      "id": "algebra_sqineq_unitcircatbpabsamblt1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_sqineq_unitcircatbpabsamblt1.lean:10:25: error: unsolved goals\ncase pos\na b : ℝ\nh₀ : a ^ 2 + b ^ 2 = 1\nhab : a ≥ b\n⊢ a * b + |a - b| ≤ 1\n\ncase neg\na b : ℝ\nh₀ : a ^ 2 + b ^ 2",
+      "proof": "by_cases hab : a ≥ b\n· rw [abs_of_nonneg (sub_nonneg.mpr hab)]\n  have h1 : (a + b)^2 ≤ 2 := by\n    rw [sq_add, h₀]\n    linarith\n  have h2 : a + b ≤ sqrt 2 := by\n    apply le_sqrt_of_sq_le\n    exact h1\n  have h3 : a * b ≤ 1/2 := by\n    apply le_of_sub_nonneg\n    calc 1/2 - a * b = (a^2 + b^2)/2 - a * b := by rw [h₀]\n      _ = (a - b)^2 / 2 := by ring\n      _ ≥ 0 := by apply div_nonneg; nlinarith\n  ",
+      "sec": 13.3
+    },
+    {
+      "id": "algebra_sqineq_unitcircatbpamblt1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_sqineq_unitcircatbpamblt1.lean:16:8: error(lean.unknownIdentifier): Unknown identifier `sq_add`\nMiniF2F/Test/algebra_sqineq_unitcircatbpamblt1.lean:18:20: error: Ambiguous t",
+      "proof": "by\n  have h₁ : (a - b)^2 ≥ 0 := sq_nonneg (a - b)\n  have h₂ : a^2 + b^2 - 2*a*b ≥ 0 := by linarith [h₁]\n  have h₃ : 1 - 2*a*b ≥ 0 := by rwa [h₀] at h₂\n  have h₄ : a*b ≤ 1/2 := by linarith\n  have h₅ : (a + b)^2 ≤ 2 := by\n    rw [sq_add, h₀]\n    linarith [h₄]\n  have h₆ : a + b ≤ sqrt 2 := by\n    exact Real.sqrt_le_sqrt_iff.mpr h₅\n  have h₇ : a - b ≤ sqrt 2 := by\n    rw [←abs_le]\n    exact abs_le'.mp",
+      "sec": 13.0
+    },
+    {
+      "id": "algebra_sum1onsqrt2to1onsqrt10000lt198",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/algebra_sum1onsqrt2to1onsqrt10000lt198.lean:10:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/algebra_sum1onsqrt2to1onsqrt10000lt198.lean:9:17: error: failed to syn",
+      "proof": "have h : ∀ k ∈ Finset.Icc 2 10000, 1 / Real.sqrt k ≤ 1 / Real.sqrt (k - 1) - 1 / Real.sqrt k := by\n  intro k hk\n  rw [one_div, one_div, one_div]\n  refine sub_le_sub_left ?_ (1 / Real.sqrt k)\n  rw [← inv_le_inv (Real.sqrt_pos.mpr (Nat.cast_pos.mpr (Nat.succ_pos (k - 1)))) (Real.sqrt_pos.mpr (Nat.cast_pos.mpr (Nat.succ_pos k)))]\n  refine Real.sqrt_le_sqrt (Nat.cast_le.mpr ?_)\n  exact Nat.sub_le_sub_",
+      "sec": 12.8
+    },
+    {
+      "id": "amc12_2000_p1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12_2000_p1.lean:15:12: error: typeclass instance problem is stuck, it is often due to metavariables\n  Insert ℕ ?m.111",
+      "proof": "by\n  have h₂ : 2001 = 3 * 23 * 29 := by norm_num\n  rw [h₂] at h₁\n  have h₃ : i * m * o = 3 * 23 * 29 := by assumption\n  have h₄ : {i, m, o} = {3, 23, 29} := by\n    apply multiset.eq_of_le_of_le_of_card_eq'\n    · simp [h₃, insert_eq_cons]\n      repeat' apply Multiset.dvd_prod; simp\n    · simp [h₃, insert_eq_cons]\n      repeat' apply Multiset.dvd_prod; simp\n    · simp\n  have h₅ : i + m + o = 3 + 23 ",
+      "sec": 11.3
+    },
+    {
+      "id": "amc12_2000_p12",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12_2000_p12.lean:12:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  a * m * c + a * m + m * c + c * a\nin the target expression\n  a * m * c + a * m ",
+      "proof": "by\n  have h1 : a * m * c + a * m + m * c + c * a = a * m * c + (a * m + m * c + c * a) := by ring\n  rw [h1]\n  have h2 : a * m + m * c + c * a ≤ 3 * 4 * 4 := by\n    have h3 : ∀ {x y z : ℕ}, x + y + z = 12 → x * y + y * z + z * x ≤ 3 * 4 * 4 := by\n      intro x y z h\n      have h4 : x ≤ 4 ∨ y ≤ 4 ∨ z ≤ 4 := by\n        contrapose! h\n        simp only [not_or, not_le] at h\n        have h5 : x ≥ 5 := h",
+      "sec": 25.9
+    },
+    {
+      "id": "amc12_2000_p20",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12_2000_p20.lean:13:15: error: unsolved goals\nx y z : ℝ\nh₀ : 0 < x ∧ 0 < y ∧ 0 < z\nh₁ : x + 1 / y = 4\nh₂ : y + 1 / z = 1\nh₃ : z + 1 / x = 7 / 3\nhx : x = 4 - 1 / y\n⊢ x * y * z = 1",
+      "proof": "have hx : x = 4 - 1/y := by linarith [h₁]\nhave hy : y = 1 - 1/z := by linarith [h₂]\nhave hz : z = 7/3 - 1/x := by linarith [h₃]\n\nhave hxy : x = 4 - 1/(1 - 1/z) := by rw [hy, hx]\nhave hxyz : x = 4 - z/(z - 1) := by rw [div_sub_div_same, one_mul, sub_self, add_zero, div_one]\n\nhave eq1 : x = (4*z - 4 - z)/(z - 1) := by\n  rw [hxyz]\n  ring\n\nhave eq2 : x = (3*z - 4)/(z - 1) := by\n  rw [eq1]\n  ring\n\nhave",
+      "sec": 20.6
+    },
+    {
+      "id": "amc12_2000_p6",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12_2000_p6.lean:14:12: error: typeclass instance problem is stuck, it is often due to metavariables\n  Membership ℕ ?m.59",
+      "proof": "by\n  intro h\n  have hp : p ∈ {5, 7, 11, 13, 17} := by\n    simp [Nat.Prime, Nat.prime_iff]\n    exact ⟨h₀.1, h₁.1, h₁.2⟩\n  have hq : q ∈ {5, 7, 11, 13, 17} := by\n    simp [Nat.Prime, Nat.prime_iff]\n    exact ⟨h₀.2, h₂.1, h₂.2⟩\n  have hpq : p * q - (p + q) = 194 := h\n  simp [hpq] at hp hq\n  revert hp hq\n  decide",
+      "sec": 6.1
+    },
+    {
+      "id": "amc12_2001_p21",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12_2001_p21.lean:15:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/amc12_2001_p21.lean:14:22: error: unsolved goals\na b c d : ℕ\nh₀ : a * b * c * d = 8!\nh₁ : a * ",
+      "proof": "have hb : b = 11 := by\n  have := Nat.succ_mul_succ_eq (b + 1) (c + 1)\n  rw [← h₂, add_assoc, add_comm _ c, ← add_assoc, add_comm _ c, ← add_assoc] at this\n  simp only [Nat.succ_eq_add_one, add_mul, one_mul, mul_add, mul_one, add_assoc] at this\n  rw [← this]\n  norm_num\n  rw [Nat.mul_eq_mul_right_iff] at this\n  cases this with\n  | inl h => exact (Nat.succ.inj h).symm\n  | inr h =>\n    have := Nat.suc",
+      "sec": 23.6
+    },
+    {
+      "id": "amc12_2001_p5",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12_2001_p5.lean:9:63: error(lean.unknownIdentifier): Unknown constant `Nat.mul_factorial_pow_two_div_factorial`\nMiniF2F/Test/amc12_2001_p5.lean:8:119: error: unsolved goals\n⊢ {x ",
+      "proof": "rw [← Nat.mul_div_mul_left _ _ (pow_pos zero_lt_two 5000), ← Nat.mul_factorial_pow_two_div_factorial (2*5000)]\nsimp only [Nat.mul_div_left, mul_comm 2 5000, gt_iff_lt, pow_pos_iff, zero_lt_two, Nat.factorial_ne_zero, mul_eq_zero,\n  OfNat.ofNat_ne_zero, or_self, not_false_eq_true]\nrw [← Finset.prod_filter_mul_prod_filter_not (Finset.range 10000) Even (id : ℕ → ℕ)]\nsimp only [Finset.prod_id_eq_facto",
+      "sec": 11.2
+    },
+    {
+      "id": "amc12a_2002_p13",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2002_p13.lean:13:25: error: unsolved goals\ncase pos\na b : ℝ\nh₀ : 0 < a ∧ 0 < b\nh₁ : a ≠ b\nh₂ : |a - 1 / a| = 1\nh₃ : |b - 1 / b| = 1\nha : a - 1 / a = 1\n⊢ a + b = √5\n\ncase neg\n",
+      "proof": "by_cases ha : a - 1 / a = 1\n· have hb : b - 1 / b = -1 := by\n    have := h₃\n    rw [abs_eq_neg_self] at this\n    · exact this\n    · rw [sub_neg]\n      refine' lt_of_le_of_ne _ (Ne.symm _)\n      · rw [← abs_of_nonneg]\n        exact h₃.le\n        rw [sub_nonneg]\n        exact (le_div_iff (h₀.2)).2 (le_of_lt h₀.2)\n      · intro h\n        rw [h] at h₁\n        exact h₁ rfl\n  rw [← sub_eq_zero] at ha hb",
+      "sec": 31.7
+    },
+    {
+      "id": "amc12a_2002_p6",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2002_p6.lean:10:39: error: unsolved goals\ncase pos\nn : ℕ\nh₀ : 0 < n\nhn : n = 1\n⊢ ∃ m > n, ∃ p, m * p ≤ m + p\n\ncase neg\nn : ℕ\nh₀ : 0 < n\nhn : ¬n = 1\n⊢ ∃ m > n, ∃ p, m * p ≤ m ",
+      "proof": "by_cases hn : n = 1\n· use 2\n  constructor\n  · simp [hn]\n  · use 2\n    norm_num\n· use n\n  constructor\n  · exact lt_of_le_of_ne (by simp) hn.symm\n  · use 1\n    simp",
+      "sec": 7.6
+    },
+    {
+      "id": "amc12a_2003_p23",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2003_p23.lean:11:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  9 + 1 - 1\nin the target expression\n  S.card = 672\n\nS : Finset ℕ\nh₀ : ∀ (k : ℕ)",
+      "proof": "rw [← Nat.card_Icc 1 9]\n  have h₁ : ∀ k ∈ S, k ∣ ∏ i ∈ Finset.Icc 1 9, i ! := by\n    intro k hk\n    rw [h₀] at hk\n    exact hk.2\n  have h₂ : ∀ k ∈ S, k ≤ ∏ i ∈ Finset.Icc 1 9, i ! := by\n    intro k hk\n    exact Nat.le_of_dvd (Nat.factorial_pos _) (h₁ k hk)\n  have h₃ : ∏ i ∈ Finset.Icc 1 9, i ! = 672 := by\n    calc ∏ i ∈ Finset.Icc 1 9, i ! = ∏ i ∈ Finset.Icc 1 9, i ! := rfl\n    _ = 672 := by norm_",
+      "sec": 10.8
+    },
+    {
+      "id": "amc12a_2003_p5",
+      "verdict": "rejected",
+      "reason": "lean: Try this:\n  ring_nf\n  \n  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.\n    \n  Note that `ring` works primarily in *commutative* rings. If you have a noncommu",
+      "proof": "by\n  simp only [Nat.ofDigits, List.foldr_cons, List.foldr_nil, zero_add, add_zero] at h₁\n  have h₁' : 10000 * C + 1000 * M + 100 * A + 21 + 10000 * C + 1000 * M + 100 * A + 12 = 123422 := by\n    rw [← h₁]; ring\n  simp only [mul_comm _ 10000, mul_comm _ 1000, mul_comm _ 100] at h₁'\n  have h₁'' : 20000 * C + 2000 * M + 200 * A + 33 = 123422 := by\n    rw [← h₁']; ring\n  have h₁''' : 20000 * C + 2000 ",
+      "sec": 27.1
+    },
+    {
+      "id": "amc12a_2008_p25",
+      "verdict": "rejected",
+      "reason": "proof still contains sorry/admit",
+      "proof": "have h : ∀ n, (a n, b n) = (2^(2 - n) * Real.sin (n * π / 6), 2^(2 - n) * Real.cos (n * π / 6)) := by\n  intro n\n  induction n using Nat.case_strong_induction_on with\n  | hz =>\n    simp\n    have h0 : a 0 = 0 := by\n      have := h₀ 0\n      have := h₁ 0\n      simp at this\n      sorry -- missing base case\n    simp [h0]\n    sorry -- missing base case\n  | hi n ih =>\n    rw [← ih n (Nat.le_refl n), ← ih ",
+      "sec": 17.7
+    },
+    {
+      "id": "amc12a_2009_p6",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2009_p6.lean:12:16: error(lean.unknownIdentifier): Unknown constant `Real.rpow_nat_cast`\nMiniF2F/Test/amc12a_2009_p6.lean:11:36: error: unsolved goals\nm n p q : ℝ\nh₀ : p = 2 ",
+      "proof": "rw [h₀, h₁, ← Real.rpow_nat_cast, ← Real.rpow_nat_cast, ← Real.rpow_mul, ← Real.rpow_mul, mul_comm m n]\nsimp only [Nat.cast_ofNat, Real.rpow_nat_cast]\nrw [← mul_rpow, ← rpow_mul, ← rpow_mul]\nnorm_num\nring",
+      "sec": 7.5
+    },
+    {
+      "id": "amc12a_2009_p7",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2009_p7.lean:18:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/amc12a_2009_p7.lean:17:55: error: unsolved goals\nx : ℝ\nn : ℕ\na : ℕ → ℝ\nh₁ : ∀ (m : ℕ), a (m + ",
+      "proof": "have h : ∀ m, a (m + 2) - 2 * a (m + 1) + a m = 0 := by\n  intro m\n  rw [← h₁ m, sub_add_cancel]\n\nhave h_arith : ∀ m, a (m + 1) = a m + (a 2 - a 1) := by\n  intro m\n  induction m with\n  | zero => simp\n  | succ m ih =>\n    rw [ih, ← h₁ m, add_assoc, add_comm (a (m + 1) - a m), ← add_assoc, add_sub_cancel]\n\nhave h_diff : a 2 - a 1 = 3 * x - 8 := by\n  rw [h₂, h₃]\n  ring\n\nhave h_arith' : ∀ m, a m = a 1 ",
+      "sec": 47.3
+    },
+    {
+      "id": "amc12a_2013_p4",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2013_p4.lean:9:42: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?a ^ ?m * ?a ^ ?n\nin the target expression\n  2 ^ 2014 = 4 * 2 ^ 2012\n\n⊢ 2 ^ 201",
+      "proof": "by\n  have h1 : 2^2014 = 4 * 2^2012 := by rw [←pow_add, add_comm]; norm_num\n  rw [h1]\n  have h2 : 4 * 2^2012 + 2^2012 = (4 + 1) * 2^2012 := by ring\n  have h3 : 4 * 2^2012 - 2^2012 = (4 - 1) * 2^2012 := by ring\n  rw [h2, h3]\n  field_simp\n  norm_num",
+      "sec": 8.7
+    },
+    {
+      "id": "amc12a_2019_p12",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2019_p12.lean:10:8: error(lean.unknownIdentifier): Unknown constant `Real.log_div_log_eq_log_div_log`\nMiniF2F/Test/amc12a_2019_p12.lean:9:48: error: unsolved goals\nx y : ℝ\nh ",
+      "proof": "rw [← Real.log_div_log_eq_log_div_log, h₁, Real.log_rpow, Real.log_div, Real.log_rpow, Real.log_rpow, mul_comm (Real.log 16), \n    ← div_div, div_eq_mul_inv, mul_comm _ (Real.log y), ← div_eq_mul_inv, ← Real.log_div_log_eq_log_div_log, \n    ← Real.log_div_log_eq_log_div_log, ← Real.log_div_log_eq_log_div_log, ← Real.log_div_log_eq_log_div_log] at h₁\nrw [← Real.log_div_log_eq_log_div_log, Real.log_",
+      "sec": 61.2
+    },
+    {
+      "id": "amc12a_2020_p10",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2020_p10.lean:270:16: error: unexpected end of input; expected ']'\nMiniF2F/Test/amc12a_2020_p10.lean:14:30: error: Failed to rewrite using equation theorems for `logb`\nMiniF2",
+      "proof": "by\n  have h₂ : Real.logb 2 (Real.logb 16 n) = Real.logb 4 (Real.logb 4 n) := h₁\n  have h₃ : Real.logb 16 n = (Real.logb 4 n) ^ 2 := by\n    rw [Real.logb, Real.logb, Real.logb, Real.logb]\n    simp only [Real.log, Real.log_base, Real.log_base, Real.log_base, Real.log_base]\n    rw [Real.log_eq_log]\n    rw [Real.log_eq_log]\n    rw [Real.log_eq_log]\n    rw [Real.log_eq_log]\n    rw [Real.log_eq_log]\n   ",
+      "sec": 50.9
+    },
+    {
+      "id": "amc12a_2020_p15",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2020_p15.lean:11:32: error: unsolved goals\na b : ℂ\nh₀ : a ^ 3 - 8 = 0\nh₁ : b ^ 3 - 8 * b ^ 2 - 8 * b + 64 = 0\na_root : ℂ := a\n⊢ ‖a - b‖ ≤ 2 * √21\nMiniF2F/Test/amc12a_2020_p15",
+      "proof": "let a_root := a\nlet b_root := b\n\nhave h₀' : a_root^3 = 8 := by rw [← h₀, sub_self]\nhave h₁' : b_root^3 - 8 * b_root^2 - 8 * b_root + 64 = 0 := h₁\n\nlet a_norm := ‖a_root‖\nlet b_norm := ‖b_root‖\n\nhave a_norm_eq : a_norm = 2 := by\n  rw [← norm_pow, h₀', norm_of_real, Real.norm_eq_abs, abs_of_nonneg (by norm_num)]\n\nhave b_norm_bound : b_norm ≤ 6 := by\n  have h₁_norm := congr_arg norm h₁'\n  simp only [",
+      "sec": 45.6
+    },
+    {
+      "id": "amc12a_2020_p25",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2020_p25.lean:12:26: error: unsolved goals\ncase pos\na : ℚ\nS : Finset ℝ\nh₀ : ∀ (x : ℝ), x ∈ S ↔ ↑⌊x⌋ * (x - ↑⌊x⌋) = ↑a * x ^ 2\nh₁ : ∑ k ∈ S, k = 420\nhS : S.Nonempty\n⊢ ↑a.den +",
+      "proof": "by_cases hS : S.Nonempty\n· let T := S.image fun x => ⌊x⌋\n  have hT : T.Nonempty := hS.image _\n  let N := T.max' hT\n  have hN : N ∈ T := T.max'_mem hT\n  rcases hN with ⟨x, hxS, rfl⟩\n  have hx := (h₀ x).1 hxS\n  rw [Rat.floor_cast] at hx\n  replace hx := eq_of_sub_eq_zero hx\n  have hx' : x ≠ 0 := by\n    intro h; rw [h, zero_pow two_pos, mul_zero] at hx\n    exact a.ne_zero hx\n  have hx'' : x = N / (1 -",
+      "sec": 17.7
+    },
+    {
+      "id": "amc12a_2020_p4",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2020_p4.lean:10:18: error: unsolved goals\nS : Finset ℕ\nh₀ : ∀ (n : ℕ), n ∈ S ↔ 1000 ≤ n ∧ n ≤ 9999 ∧ (∀ d ∈ Nat.digits 10 n, Even d) ∧ 5 ∣ n\ndigits : List (List ℕ) := List.ma",
+      "proof": "let digits := List.map (Nat.digits 10) (List.range 10000)\nlet validDigits := List.filter (fun ds => ∀ d ∈ ds, Even d) digits\nlet validNumbers := List.filter (fun n => 5 ∣ n) (List.map (Nat.ofDigits 10) validDigits)\nlet filteredNumbers := List.filter (fun n => 1000 ≤ n ∧ n ≤ 9999) validNumbers\nhave h₁ : S = Finset.mk (List.toFinset filteredNumbers) := by\n  ext n\n  simp [h₀]\n  constructor\n  · intro ",
+      "sec": 12.0
+    },
+    {
+      "id": "amc12a_2020_p7",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2020_p7.lean:17:32: error: Function expected at\n  Nat.pow_left_inj ?m.201\nbut this term has type\n  ?m.198 ^ ?m.200 = ?m.199 ^ ?m.200 ↔ ?m.198 = ?m.199\n\nNote: Expected a funct",
+      "proof": "by\n  have h₆ : a 6 = 7 := by rw [← Nat.pow_left_inj (by norm_num) (by norm_num), h₆]; norm_num\n  have h₅ : a 5 = 6 := by rw [← Nat.pow_left_inj (by norm_num) (by norm_num), h₅]; norm_num\n  have h₄ : a 4 = 5 := by rw [← Nat.pow_left_inj (by norm_num) (by norm_num), h₄]; norm_num\n  have h₃ : a 3 = 4 := by rw [← Nat.pow_left_inj (by norm_num) (by norm_num), h₃]; norm_num\n  have h₂ : a 2 = 3 := by rw ",
+      "sec": 12.7
+    },
+    {
+      "id": "amc12a_2020_p9",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2020_p9.lean:12:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/amc12a_2020_p9.lean:11:92: error: unsolved goals\nS : Finset ℝ\nh₀ : ∀ (x : ℝ), x ∈ S ↔ 0 ≤ x ∧ ",
+      "proof": "have h1 : ∀ x : ℝ, tan (2 * x) = cos (x / 2) ↔ sin (2 * x) = cos (x / 2) * cos (2 * x) := by\n  intro x\n  rw [tan_eq_sin_div_cos, div_eq_iff (cos_ne_zero_of_eq_mul_cos _ _)]\n  ring\n  intro h\n  rw [h, mul_zero]\n\nhave h2 : ∀ x : ℝ, sin (2 * x) = cos (x / 2) * cos (2 * x) ↔ sin (2 * x) - cos (x / 2) * cos (2 * x) = 0 := by\n  intro x\n  rw [sub_eq_zero]\n\nhave h3 : ∀ x : ℝ, sin (2 * x) - cos (x / 2) * co",
+      "sec": 32.3
+    },
+    {
+      "id": "amc12a_2021_p12",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2021_p12.lean:12:13: error: unsolved goals\ncase neg\na b c d : ℝ\nf : ℂ → ℂ\nh₀ : ∀ (z : ℂ), f z = z ^ 6 - 10 * z ^ 5 + ↑a * z ^ 4 + ↑b * z ^ 3 + ↑c * z ^ 2 + ↑d * z + 16\nh₁ : ∀",
+      "proof": "by_cases hc : (1 : ℂ) = 0; · simp at hc\nhave key : ∀ (k : ℕ), f k = 0 → k ∈ ({1, 2, 4, 8} : Finset ℕ) := by\n  intro k hk\n  have := h₁ k hk\n  simp at this\n  exact_mod_cast this.2.2\nhave h1 : f 1 = 0 := by\n  have := key 1\n  simp [h₀] at this\n  exact this (by norm_num)\nhave h2 : f 2 = 0 := by\n  have := key 2\n  simp [h₀] at this\n  exact this (by norm_num)\nhave h4 : f 4 = 0 := by\n  have := key 4\n  simp",
+      "sec": 16.4
+    },
+    {
+      "id": "amc12a_2021_p14",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2021_p14.lean:15:15: error: unexpected token 'in'; expected ','\nMiniF2F/Test/amc12a_2021_p14.lean:10:23: error: Tactic `rewrite` failed: Did not find an occurrence of the pat",
+      "proof": "by\n  have h1 (k : ℕ) (hk : k ∈ Finset.Icc 1 20) : Real.logb (5^k) (3^(k^2)) = k^2 / k * (Real.log 3 / Real.log 5) := by\n    rw [Real.logb_pow, Real.log_pow, mul_comm, ←mul_div_assoc, mul_div_right_comm]\n  have h2 (k : ℕ) (hk : k ∈ Finset.Icc 1 100) : Real.logb (9^k) (25^k) = k / k * (Real.log 25 / Real.log 9) := by\n    rw [Real.logb_pow, Real.log_pow, mul_comm, ←mul_div_assoc, mul_div_right_comm]\n",
+      "sec": 16.2
+    },
+    {
+      "id": "amc12a_2021_p18",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2021_p18.lean:14:18: warning: `add_left_eq_self` has been deprecated: Use `add_eq_right` instead\nMiniF2F/Test/amc12a_2021_p18.lean:14:18: error: Tactic `rewrite` failed: Did ",
+      "proof": "by\n  have h2 : f 1 = 0 := by\n    have := h₀ 1 one_pos 1 one_pos\n    rwa [mul_one, add_left_eq_self] at this\n  have h3 : ∀ x > 0, f (1 / x) = -f x := by\n    intro x hx\n    have := h₀ x hx (1 / x) (one_div_pos.mpr hx)\n    rw [mul_div_cancel' _ (ne_of_gt hx), h2] at this\n    exact eq_neg_of_add_eq_zero_left this\n  have h4 : ∀ p, Nat.Prime p → f (1 / p) = -p := by\n    intro p hp\n    rw [h3 p (Nat.cast",
+      "sec": 11.9
+    },
+    {
+      "id": "amc12a_2021_p19",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2021_p19.lean:10:16: error: unsolved goals\ncase pos\nS : Finset ℝ\nh₀ : ∀ (x : ℝ), x ∈ S ↔ 0 ≤ x ∧ x ≤ π ∧ sin (π / 2 * cos x) = cos (π / 2 * sin x)\nh : S.Nonempty\n⊢ S.card = 2",
+      "proof": "by_cases h : S.Nonempty\n· obtain ⟨x, hx⟩ := h\n  have hx' := h₀ x |>.mp hx\n  have h1 : Real.sin (Real.pi / 2 * Real.cos x) = Real.cos (Real.pi / 2 * Real.sin x) := h₀ x |>.mp hx |>.right.right\n  have h2 : Real.sin (Real.pi / 2 * Real.cos x) = Real.sin (Real.pi / 2 - Real.pi / 2 * Real.sin x)\n  · rw [h1, Real.cos_eq_sin (Real.pi / 2 - Real.pi / 2 * Real.sin x)]\n    ring_nf\n  have h3 : ∃ k : ℤ, Real.",
+      "sec": 64.3
+    },
+    {
+      "id": "amc12a_2021_p22",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2021_p22.lean:17:34: error: unexpected token 'in'; expected ','",
+      "proof": "by\n  have h₂ : f = fun x ↦ (x - Real.cos (2 * Real.pi / 7)) * (x - Real.cos (4 * Real.pi / 7)) * (x - Real.cos (6 * Real.pi / 7))\n  · ext x\n    rw [h₀]\n    simp [h₁]\n  have h₃ : f = fun x ↦ x^3 - (∑ x in {Real.cos (2 * Real.pi / 7), Real.cos (4 * Real.pi / 7), Real.cos (6 * Real.pi / 7)}).toFinset, x) * x^2\n    + (∑ x in {Real.cos (2 * Real.pi / 7), Real.cos (4 * Real.pi / 7), Real.cos (6 * Real.p",
+      "sec": 23.1
+    },
+    {
+      "id": "amc12a_2021_p25",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2021_p25.lean:13:31: error: unsolved goals\ncase pos\nN : ℕ\nhN : N > 0\nf : ℕ → ℝ\nh₀ : ∀ (n : ℕ), 0 < n → f n = ↑n.divisors.card / ↑n ^ (1 / 3)\nh₁ : ∀ (n : ℕ), n ≠ N → 0 < n → f",
+      "proof": "by_cases hN1 : N = 1\n· rw [hN1, Nat.digits_one, List.sum_singleton]\n· have hN1' : 1 < N := Nat.one_lt_iff_ne_zero_and_ne_one.2 ⟨hN.ne', hN1⟩\n  have hN2 : N ≤ 8 := by\n    by_contra' h\n    have h9 : f 8 < f 9 := by\n      rw [h₀ _ (by norm_num), h₀ _ (by norm_num), Nat.divisors_card_eq, Nat.divisors_card_eq]\n      norm_num\n      rw [div_lt_div_iff (by norm_num) (by norm_num)]\n      norm_num\n    have ",
+      "sec": 32.5
+    },
+    {
+      "id": "amc12a_2021_p3",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2021_p3.lean:13:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  x / 10\nin the target expression\n  ↑x - ↑y = 14238\n\nx y : ℕ\nh₀ : x + y = 17402\nh",
+      "proof": "rw [h₂, ← Nat.cast_mul, Nat.cast_mul, Nat.cast_div h₁ (Nat.cast_ne_zero.2 (by linarith)), Nat.cast_sub (Nat.le_mul_of_pos_left (by linarith) h₁)]\nsimp [h₀, mul_comm]\nnorm_num",
+      "sec": 7.7
+    },
+    {
+      "id": "amc12a_2021_p8",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2021_p8.lean:14:6: error(lean.unknownIdentifier): Unknown constant `Nat.modEq_zero_iff_even`\nMiniF2F/Test/amc12a_2021_p8.lean:13:50: error: unsolved goals\nd : ℕ → ℕ\nh₀ : d 0 ",
+      "proof": "rw [Nat.modEq_zero_iff_even, Nat.modEq_one_iff_odd]\nhave h : ∀ n, d n % 2 = n % 3 % 2 := by\n  intro n\n  induction n using Nat.strong_induction_on with\n  | h n ih =>\n    cases n with\n    | zero => exact h₀.symm\n    | succ n =>\n      cases n with\n      | zero => exact h₁.symm\n      | succ n =>\n        cases n with\n        | zero => exact h₂.symm\n        | succ n =>\n          have hn3 : n ≥ 3 := by o",
+      "sec": 12.5
+    },
+    {
+      "id": "amc12a_2021_p9",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12a_2021_p9.lean:9:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  (∏ x ∈ Finset.range 6, (2 ^ 2 ^ x + 3 ^ 2 ^ x)) * (2 ^ 2 ^ 6 + 3 ^ 2 ^ 6)\nin the",
+      "proof": "rw [← Finset.prod_range_succ (fun k => 2^(2^k) + 3^(2^k)) 6]\nhave h : ∀ k ∈ Finset.range 7, 2^(2^k) + 3^(2^k) = (3^(2^(k+1)) - 2^(2^(k+1))) / (3^(2^k) - 2^(2^k)) := by\n  intro k hk\n  have h1 : 3^(2^k) - 2^(2^k) ≠ 0 := by\n    apply ne_of_gt\n    exact sub_pos.mpr (pow_lt_pow_of_lt_left (by norm_num) (by norm_num) (pow_pos (by norm_num) _))\n  rw [div_eq_iff h1]\n  ring_nf\n  rw [← pow_mul, mul_comm, po",
+      "sec": 22.4
+    },
+    {
+      "id": "amc12b_2002_p19",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2002_p19.lean:17:2: error: `simp` made no progress",
+      "proof": "by\n  have h₄ : a * b + b * c + c * a = (a * (b + c) + b * (c + a) + c * (a + b)) / 2 := by\n    ring\n  rw [h₁, h₂, h₃] at h₄\n  simp at h₄\n  norm_num at h₄\n  have h₅ : (a + b + c)^2 = a^2 + b^2 + c^2 + 2*(a*b + b*c + c*a) := by ring\n  have h₆ : a + b + c = sqrt (a^2 + b^2 + c^2 + 2*242) := by\n    rw [← h₅, sqrt_eq_iff_sq_eq]\n    · ring\n    · positivity\n  have h₇ : a^2 + b^2 + c^2 = (a + b + c)^2 - 2",
+      "sec": 18.5
+    },
+    {
+      "id": "amc12b_2002_p2",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2002_p2.lean:10:64: error: unsolved goals\nx : ℤ\nh₀ : x = 4\n⊢ (3 * 4 - 2) * (4 * 4 + 1) - (3 * 4 - 2) * (4 * 4) + 1 = 11\nMiniF2F/Test/amc12b_2002_p2.lean:12:0: error: unexpect",
+      "proof": "rw [h₀]\nnorm_num",
+      "sec": 6.0
+    },
+    {
+      "id": "amc12b_2002_p4",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2002_p4.lean:14:17: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  1 / 2 + 1 / 3 + 1 / 7\nin the target expression\n  (1 / 2 + 1 / 3 + (1 / 7 + 1 /",
+      "proof": "by\n  have h2 : ((1 / 2 + 1 / 3 + 1 / 7 + 1 / n) : ℚ).den = 1 := h₁\n  have sum : (1 / 2 + 1 / 3 + 1 / 7 : ℚ) = 41 / 42 := by norm_num\n  rw [add_assoc, sum] at h2\n  have h3 : (41 / 42 + 1 / n : ℚ).den = 1 := h2\n  rw [Rat.add_def, Rat.normalize_eq_iff] at h3\n  simp only [Rat.normalize_eq_iff, Rat.reduce, Nat.cast_ofNat] at h3\n  have hn : n ∣ 42 := by\n    rw [← Rat.den_div_eq_of_coprime] at h3\n    · e",
+      "sec": 16.1
+    },
+    {
+      "id": "amc12b_2002_p7",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2002_p7.lean:13:28: error: unsolved goals\na b c : ℕ\nh₀ : 0 < a ∧ 0 < b ∧ 0 < c\nh₁ : b = a + 1\nh₂ : c = b + 1\nh₃ : a * b * c = 8 * (a + b + c)\nh₄ : c = a + 2\n⊢ a ^ 2 + (b ^ 2 ",
+      "proof": "have h₄ : c = a + 2 := by rw [h₂, h₁]\nhave h₅ : a * b * c = 8 * (a + b + c) := h₃\nrw [h₁, h₄] at h₅\nhave h₆ : a * (a + 1) * (a + 2) = 8 * (a + (a + 1) + (a + 2)) := by rw [h₁, h₄] at h₅; exact h₅\nhave h₇ : a * (a + 1) * (a + 2) = 8 * (3 * a + 3) := by rw [add_assoc, add_assoc] at h₆; exact h₆\nhave h₈ : a * (a + 1) * (a + 2) = 24 * (a + 1) := by rw [mul_add, mul_one, ← mul_assoc] at h₇; exact h₇\nha",
+      "sec": 20.1
+    },
+    {
+      "id": "amc12b_2020_p13",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2020_p13.lean:9:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  logb ?m.43 ?m.44\nin the target expression\n  √(Real.log 6 / Real.log 2 + Real.lo",
+      "proof": "rw [← Real.log_div_log, ← Real.log_div_log, ← Real.log_div_log, ← Real.log_div_log]\nsimp only [Real.log_pow, Real.log_mul, Real.log_one, zero_add, add_zero]\nrw [← Real.sqrt_mul, ← Real.sqrt_add, ← Real.sqrt_mul, ← Real.sqrt_add]\nsimp only [mul_one, one_mul, add_left_inj, add_right_inj]\nrw [Real.sqrt_div, Real.sqrt_div, Real.sqrt_one, div_one, div_one]\nsimp only [Real.sqrt_mul_self_eq_abs, Real.abs",
+      "sec": 9.8
+    },
+    {
+      "id": "amc12b_2020_p2",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2020_p2.lean:9:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  (?a - ?b) ^ 2\nin the target expression\n  (100 ^ 2 - 7 ^ 2) / (70 ^ 2 - 11 ^ 2) *",
+      "proof": "by\n  rw [sub_sq, sub_sq, sub_sq, sub_sq]\n  simp only [mul_div_mul_left, mul_one, div_self, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true]",
+      "sec": 7.2
+    },
+    {
+      "id": "amc12b_2020_p21",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2020_p21.lean:17:55: error: unsolved goals\nS : Finset ℕ\nh₀ : ∀ (n : ℕ), n ∈ S ↔ 0 < n ∧ (↑n + 1000) / 70 = ↑⌊√↑n⌋\nn : ℕ\nhnpos : 0 < n\nhn : (↑n + 1000) / 70 = ↑⌊√↑n⌋\nthis : (↑",
+      "proof": "by\n  have h₁ : ∀ n ∈ S, n < 1000 := by\n    intro n hn\n    rw [h₀] at hn\n    obtain ⟨hnpos, hn⟩ := hn\n    have := Int.floor_le (Real.sqrt n)\n    rw [← hn] at this\n    apply lt_of_le_of_lt (le_of_mul_le_mul_right this (by norm_num))\n    rw [← sub_lt_iff_lt_add', mul_div_cancel' _ (by norm_num)]\n    refine lt_of_le_of_lt (le_of_eq ?_) (Real.sqrt_lt.2 ⟨hnpos, ?_⟩)\n    · rw [pow_two, Real.sqrt_mul_self",
+      "sec": 19.5
+    },
+    {
+      "id": "amc12b_2020_p22",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2020_p22.lean:9:42: error: unsolved goals\ncase pos\nt : ℝ\nht : t = 0\n⊢ (2 ^ t - 3 * t) * t / 4 ^ t ≤ 1 / 12\n\ncase neg\nt : ℝ\nht : ¬t = 0\n⊢ (2 ^ t - 3 * t) * t / 4 ^ t ≤ 1 / 12\n",
+      "proof": "by_cases ht : t = 0\n· simp [ht]\n· have h4t : 4^t = (2^t)^2 := by rw [← rpow_nat_cast, ← rpow_mul]; norm_num\n  rw [h4t, div_pow, mul_div_assoc, div_le_div_iff]\n  rotate_left\n  · positivity\n  · positivity\n  rw [mul_comm (2^t - 3 * t), ← sub_mul, ← mul_sub, mul_one]\n  refine (sub_le_sub_right ?_ (3 * t * 2^t)).trans ?_\n  · rw [← mul_assoc, ← pow_succ]\n    exact pow_mul_pow_le (succ_mul_le_succ_mul (b",
+      "sec": 15.7
+    },
+    {
+      "id": "amc12b_2020_p6",
+      "verdict": "rejected",
+      "reason": "lean: Try this:\n  ring_nf\n  \n  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.\n    \n  Note that `ring` works primarily in *commutative* rings. If you have a noncommu",
+      "proof": "by\n  use n + 1\n  rw [Nat.factorial_succ, Nat.factorial_succ, Nat.cast_mul, Nat.cast_mul, Nat.cast_add, Nat.cast_one]\n  field_simp [Nat.factorial_ne_zero n]\n  ring",
+      "sec": 8.2
+    },
+    {
+      "id": "amc12b_2021_p1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2021_p1.lean:13:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  |↑?m.43|\nin the target expression\n  ↑|x| < 3 * π ↔ |x| ≤ 9\n\nS : Finset ℤ\nh₀ : ",
+      "proof": "by\n  have h₁ : ∀ (x : ℤ), x ∈ S ↔ abs x ≤ 9 := by\n    intro x\n    rw [h₀, ← Int.cast_abs, Int.cast_lt, abs_lt]\n    constructor\n    · intro h\n      exact (abs_le.mpr ⟨by linarith [pi_gt_three], by linarith [pi_lt_four]⟩).1\n    · intro h\n      exact lt_of_le_of_lt h (by linarith [pi_gt_three])\n  simp_rw [h₁]\n  exact card_Icc (-9) 9",
+      "sec": 9.8
+    },
+    {
+      "id": "amc12b_2021_p13",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2021_p13.lean:11:16: error(lean.unknownIdentifier): Unknown identifier `x`\nMiniF2F/Test/amc12b_2021_p13.lean:10:16: error: unsolved goals\ncase pos\nS : Finset ℝ\nh₀ : ∀ (x : ℝ)",
+      "proof": "by_cases hx : x ∈ S\n· rw [h₀] at hx\n  rcases hx with ⟨hx₁, hx₂, hx₃⟩\n  have h₁ : Real.cos (3 * x) = (3 * Real.sin x - 1) / 5 := by\n    rw [← sub_eq_zero, ← hx₃]\n    ring\n  have h₂ : Real.sin x = (1 + 5 * Real.cos (3 * x)) / 3 := by\n    rw [← sub_eq_zero, ← hx₃]\n    ring\n  have h₃ : Real.sin x ^ 2 + Real.cos x ^ 2 = 1 := by exact Real.sin_sq_add_cos_sq x\n  have h₄ : Real.cos (3 * x) = 4 * Real.cos ",
+      "sec": 61.7
+    },
+    {
+      "id": "amc12b_2021_p18",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2021_p18.lean:12:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/amc12b_2021_p18.lean:11:70: error: Invalid field `conj`: The environment does not contain `Co",
+      "proof": "have h₁ : (z + 2) * (z + 2) + (z^2 + 1) * (z^2 + 1) + 31 = 12 * z * z.conj := by\n  rw [← Complex.normSq_eq_conj_mul_self, ← Complex.normSq_eq_conj_mul_self, ← Complex.normSq_eq_conj_mul_self] at h₀\n  simp only [Complex.normSq_add, Complex.normSq_pow] at h₀\n  rw [mul_comm (12 : ℂ) _, ← h₀]\n  ring\n\nhave h₂ : 2 * z^4 + 4 * z^3 + 15 * z^2 + 4 * z + 2 = 0 := by\n  rw [← sub_eq_zero, ← h₁]\n  ring\n\nhave h",
+      "sec": 18.0
+    },
+    {
+      "id": "amc12b_2021_p3",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2021_p3.lean:12:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/amc12b_2021_p3.lean:11:51: error: unsolved goals\nx : ℝ\nh₀ : 2 + 1 / (1 + 1 / (2 + 2 / (3 + x))",
+      "proof": "have h₁ : 1 + 1 / (2 + 2 / (3 + x)) = 53 / 37 := by\n  have : 2 + 1 / (1 + 1 / (2 + 2 / (3 + x))) = 144 / 53 := h₀\n  rw [← sub_eq_zero] at this\n  have : 1 / (1 + 1 / (2 + 2 / (3 + x))) = 144 / 53 - 2 := by linarith\n  simp at this\n  rw [one_div_eq_inv] at this\n  have : (1 + 1 / (2 + 2 / (3 + x)))⁻¹ = 38 / 53 := by linarith\n  rw [inv_eq_one_div] at this\n  have : 1 + 1 / (2 + 2 / (3 + x)) = 53 / 38 :=",
+      "sec": 19.4
+    },
+    {
+      "id": "amc12b_2021_p4",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2021_p4.lean:13:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/amc12b_2021_p4.lean:12:27: error: unsolved goals\nm a : ℕ\nh₀ : 0 < m ∧ 0 < a\nh₁ : ↑m / ↑a = 3 /",
+      "proof": "have h₂ : m = (3/4)*a := by\n  rw [div_eq_iff] at h₁\n  · simp [← h₁]\n    ring\n  · exact cast_ne_zero.mpr (ne_of_gt h₀.right)\n\nrw [h₂]\nfield_simp [cast_ne_zero.mpr (ne_of_gt h₀.right)]\nnorm_cast\nring",
+      "sec": 9.0
+    },
+    {
+      "id": "amc12b_2021_p9",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/amc12b_2021_p9.lean:9:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  logb ?m.49 ?m.50\nin the target expression\n  Real.log 80 / Real.log 2 / (Real.log",
+      "proof": "by\n  rw [← Real.log_div_log, ← Real.log_div_log, ← Real.log_div_log, ← Real.log_div_log]\n  simp only [Real.log_pow, Real.log_mul, Real.log_div, Real.log_two]\n  ring",
+      "sec": 6.9
+    },
+    {
+      "id": "imo_1959_p1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1959_p1.lean:12:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/imo_1959_p1.lean:11:76: error: unsolved goals\nn : ℕ\nh₀ : 0 < n\n⊢ (21 * n + 4).gcd (14 * n + 3) = ",
+      "proof": "have h₁ : Nat.gcd (21*n + 4) (14*n + 3) = Nat.gcd (14*n + 3) (7*n + 1) := by\n  rw [Nat.gcd_rec, Nat.gcd_rec]\n  congr\n  ring\nhave h₂ : Nat.gcd (14*n + 3) (7*n + 1) = Nat.gcd (7*n + 1) 1 := by\n  rw [Nat.gcd_rec, Nat.gcd_rec]\n  congr\n  ring\nrw [h₁, h₂, Nat.gcd_one_right]",
+      "sec": 6.5
+    },
+    {
+      "id": "imo_1960_p2",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1960_p2.lean:17:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?a + ?b\nin the target expression\n  0 ≤ x - -(1 / 2)\n\ncase left\nx : ℝ\nh₀ : 0 ≤ 1 + ",
+      "proof": "by\n  constructor\n  · rw [← sub_nonneg]\n    have h₄ : 1 + 2 * x ≥ 0 := h₀\n    rw [add_comm, ← sub_eq_add_neg, sub_nonneg]\n    exact le_of_lt (lt_of_not_ge (mt (eq_zero_of_sub_eq_zero ∘ sq_eq_zero_iff.mp) h₁))\n  · have h₅ : 0 < (1 - Real.sqrt (1 + 2 * x))^2 := sq_pos_of_ne_zero (1 - Real.sqrt (1 + 2 * x)) h₁\n    rw [div_lt_iff h₅, mul_comm] at h₂\n    have h₆ : 0 < 2 * x + 9 := lt_trans (by positivit",
+      "sec": 14.6
+    },
+    {
+      "id": "imo_1962_p2",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1962_p2.lean:12:39: error: unsolved goals\ncase left\nx : ℝ\nh₀ : 0 ≤ 3 - x\nh₁ : 0 ≤ x + 1\nh₂ : 1 / 2 < √(3 - x) - √(x + 1)\n⊢ -1 ≤ x\n\ncase right\nx : ℝ\nh₀ : 0 ≤ 3 - x\nh₁ : 0 ≤ x + 1",
+      "proof": "constructor\n· linarith [h₁]\n· have h₃ : 0 ≤ 3 - x := h₀\n  have h₄ : 0 ≤ x + 1 := h₁\n  have h₅ : Real.sqrt (3 - x) - Real.sqrt (x + 1) > 1 / 2 := h₂\n  have h₆ : Real.sqrt (3 - x) > Real.sqrt (x + 1) + 1 / 2 := by linarith\n  have h₇ : 3 - x > (Real.sqrt (x + 1) + 1 / 2) ^ 2 := by\n    apply (Real.sqrt_lt_sqrt_iff h₃).mp\n    rw [Real.sq_sqrt h₄]\n    exact h₆\n  have h₈ : 3 - x > (x + 1) + Real.sqrt (x ",
+      "sec": 19.7
+    },
+    {
+      "id": "imo_1963_p5",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1963_p5.lean:10:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/imo_1963_p5.lean:9:56: error: unsolved goals\n⊢ cos (π / 7) = -cos (6 * π / 7)\nMiniF2F/Test/imo_19",
+      "proof": "have h1 : Real.cos (π / 7) = -Real.cos (6 * π / 7) := by\n  rw [← cos_sub_pi, sub_self_div_seven]\n  ring_nf\nhave h2 : Real.cos (3 * π / 7) = -Real.cos (4 * π / 7) := by\n  rw [← cos_sub_pi, sub_three_div_seven]\n  ring_nf\nrw [h1, h2]\nsimp only [two_mul, neg_add_rev, add_neg_eq_sub, sub_eq_add_neg, neg_neg]\nhave h3 : Real.cos (2 * π / 7) + Real.cos (4 * π / 7) + Real.cos (6 * π / 7) = -1/2 := by\n  hav",
+      "sec": 15.2
+    },
+    {
+      "id": "imo_1964_p2",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1964_p2.lean:13:79: error: unsolved goals\ncase pos\na b c : ℝ\nh₀ : 0 < a ∧ 0 < b ∧ 0 < c\nh₁ : c < a + b\nh₂ : b < a + c\nh₃ : a < b + c\nha : a = b\n⊢ a ^ 2 * (b + c - a) + b ^ 2 * (",
+      "proof": "by_cases ha : a = b\n· by_cases hb : b = c\n  · rw [ha, hb]; ring_nf; simp\n  · set a := b with ha'\n    have h₃' : b < b + c := by rwa [ha]\n    have hc : 0 < c := by linarith\n    have h₁' : c < 2 * b := by rwa [ha]\n    have h₂' : b < b + c := by rwa [ha]\n    have : c < 2 * b := by linarith\n    have : b < 2 * c := by linarith [h₃, ha]\n    simp [ha]\n    ring_nf\n    rw [← mul_assoc, mul_comm c b, mul_as",
+      "sec": 18.8
+    },
+    {
+      "id": "imo_1965_p2",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1965_p2.lean:22:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/imo_1965_p2.lean:21:21: error: unsolved goals\nx y z : ℝ\na : ℕ → ℝ\nh₀ : 0 < a 0 ∧ 0 < a 4 ∧ 0 < a ",
+      "proof": "have hx : x = 0 := by\n  have h₁' := h₇\n  have h₂' := h₈\n  have h₃' := h₉\n  rw [← add_assoc, ← add_assoc, ← add_assoc] at h₄ h₅ h₆\n  have h₁'' := congr_arg (fun t => t / (a 0 + a 1 + a 2)) h₁'\n  have h₂'' := congr_arg (fun t => t / (a 3 + a 4 + a 5)) h₂'\n  have h₃'' := congr_arg (fun t => t / (a 6 + a 7 + a 8)) h₃'\n  simp only [zero_div, div_self (ne_of_gt h₄), div_self (ne_of_gt h₅), div_self (ne_",
+      "sec": 31.4
+    },
+    {
+      "id": "imo_1968_p5_1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1968_p5_1.lean:13:3: error: unknown tactic\nMiniF2F/Test/imo_1968_p5_1.lean:12:35: error: unsolved goals\na : ℝ\nf : ℝ → ℝ\nh₀ : 0 < a\nh₁ : ∀ (x : ℝ), f (x + a) = 1 / 2 + √(f x - f ",
+      "proof": "Here's the proof:\n\nexists a, ⟨h₀, fun x => by\n  have h₂ : ∀ x, f (x + a) - 1/2 = Real.sqrt (f x - (f x)^2) := fun x => by rw [← sub_eq_iff_eq_add', h₁]\n  have h₃ : ∀ x, (f (x + a) - 1/2)^2 = f x - (f x)^2 := fun x => by rw [h₂ x, sq_sqrt (by linarith [show f x - (f x)^2 ≥ 0 from (sq_sqrt _).symm ▸ (h₂ x).symm ▸ sq_nonneg _])]\n  have h₄ : ∀ x, f (x + a) = f x ∨ f (x + a) = 1 - f x := by\n    intro x",
+      "sec": 17.6
+    },
+    {
+      "id": "imo_1969_p2",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1969_p2.lean:16:28: error: unsolved goals\ncase pos\nm n : ℝ\nk : ℕ\na : ℕ → ℝ\ny : ℝ → ℝ\nh₀ : 0 < k\nh₁ : ∀ (x : ℝ), y x = ∑ i ∈ Finset.range k, cos (a i + x) / 2 ^ i\nh₂ : y m = 0\nh₃",
+      "proof": "by_cases hk : k = 0\n· exfalso; exact h₀.ne' hk\nhave hk_pos : 0 < k := Nat.pos_of_ne_zero hk\n\nlet f (x : ℝ) := ∑ i in Finset.range k, cos (a i + x) / 2^i\nhave hf : y = f := funext h₁\nrw [hf] at h₂ h₃\nclear h₁ y hf\n\nhave h_period : ∀ x, f (x + 2 * π) = f x := by\n  intro x\n  simp [f]\n  congr 1\n  ext i\n  rw [add_assoc, cos_add_period, add_zero]\n\nhave h_antiperiod : ∀ x, f (x + π) = -f x := by\n  intro ",
+      "sec": 32.1
+    },
+    {
+      "id": "imo_1974_p3",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1974_p3.lean:9:88: error: unsolved goals\ncase pos\nn : ℕ\nhn : n = 0\n⊢ ¬5 ∣ ∑ k ∈ Finset.range (n + 1), (2 * n + 1).choose (2 * k + 1) * 2 ^ (3 * k)\n\ncase neg\nn : ℕ\nhn : ¬n = 0\n⊢ ",
+      "proof": "by_cases hn : n = 0\n· simp [hn]\npush_neg\nintro h\nhave h2 : 2 ^ (3 * n) ∣ ∑ k in Finset.range (n + 1), Nat.choose (2 * n + 1) (2 * k + 1) * 2 ^ (3 * k)\n· refine' Finset.dvd_sum _ fun k hk => _\n  have : k ≤ n := Finset.mem_range.1 hk\n  rw [← Nat.pow_sub_mul_pow (Nat.le_of_lt (Nat.lt_succ_of_le this))]\n  exact Nat.dvd_mul_right _ _\nhave h3 : 5 ∣ (∑ k in Finset.range (n + 1), Nat.choose (2 * n + 1) (2",
+      "sec": 19.8
+    },
+    {
+      "id": "imo_1977_p6",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1977_p6.lean:12:16: error(lean.unknownIdentifier): Unknown identifier `n`\nMiniF2F/Test/imo_1977_p6.lean:11:26: error: unsolved goals\ncase pos\nf : ℕ → ℕ\nh₀ : ∀ (n : ℕ), 0 < f n\nh",
+      "proof": "by_cases hn : n = 1\n· simp [hn]\n· have h2 : 2 ≤ n := Nat.succ_le_of_lt (Nat.pos_iff_ne_zero.mp h)\n  have h_mono : StrictMono f := by\n    apply strictMono_nat_of_lt_succ\n    intro m\n    by_cases hm : m = 0\n    · simp [hm, h₀]\n    · exact Nat.lt_of_le_of_lt (Nat.le_succ _) (h₁ _ hm)\n  have h_fixed : ∀ k, f k ≤ k := by\n    apply Nat.strong_induction_on\n    intro k hk\n    by_cases hk0 : k = 0\n    · si",
+      "sec": 13.4
+    },
+    {
+      "id": "imo_1981_p6",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1981_p6.lean:17:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/imo_1981_p6.lean:16:31: error: unsolved goals\nf : ℕ → ℕ → ℕ\ng : ℕ → ℕ\nh₀ : ∀ (y : ℕ), f 0 y = y +",
+      "proof": "have h : ∀ x, f x 1 = g x := by\n  intro x\n  induction x with\n  | zero => simp [h₀, h₃]\n  | succ x ih =>\n    simp [h₁, ih, h₄]\n\nhave hf4 : ∀ y, f 4 y = g (y + 3) - 3 := by\n  intro y\n  induction y with\n  | zero =>\n    simp [h₁, h]\n    rw [h₄, h₄]\n    norm_num\n  | succ y ih =>\n    simp [h₂, ih, h₄]\n    rw [Nat.sub_add_cancel]\n    exact Nat.le_of_lt (Nat.lt_add_of_pos_left (by norm_num))\n\nrw [hf4]\nsim",
+      "sec": 7.0
+    },
+    {
+      "id": "imo_1982_p1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1982_p1.lean:15:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/imo_1982_p1.lean:14:70: error: unsolved goals\nf : ℕ → ℕ\nh₀ : ∀ (m n : ℕ), 0 < m ∧ 0 < n → ↑(f (m ",
+      "proof": "have h₄ : ∀ n, f (n + 1) = f n + f 1 ∨ f (n + 1) = f n + f 1 + 1 := by\n  intro n\n  have := h₀ 1 n (by simp)\n  simpa using this\n\nhave h₅ : f 1 = 1 := by\n  have := h₀ 1 1 (by simp)\n  cases this with\n  | inl h => \n    have := h₀ 1 2 (by simp)\n    rw [h₁, h] at this\n    cases this with\n    | inl h' => simp at h'\n    | inr h' => \n      have := h₀ 1 3 (by simp)\n      rw [h'] at this\n      cases this wit",
+      "sec": 62.9
+    },
+    {
+      "id": "imo_1983_p6",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1983_p6.lean:24:4: error: linarith failed to find a contradiction\ncase h\na b c : ℝ\nh₀ : 0 < a ∧ 0 < b ∧ 0 < c\nh₁ : c < a + b\nh₂ : b < a + c\nh₃ : a < b + c\nh₄ : a + b - c > 0\nh₅ ",
+      "proof": "by\n  have h₄ : a + b - c > 0 := by linarith\n  have h₅ : b + c - a > 0 := by linarith\n  have h₆ : c + a - b > 0 := by linarith\n  have h₇ : a * b * c > 0 := mul_pos (mul_pos h₀.1 h₀.2.1) h₀.2.2\n  have h₈ : (a + b - c) * (b + c - a) * (c + a - b) > 0 :=\n    mul_pos (mul_pos h₄ h₅) h₆\n  have h₉ : (a + b - c) * (b + c - a) * (c + a - b) ≤ a * b * c := by\n    have := (mul_pos h₄ h₅).le\n    have := (mul_",
+      "sec": 62.9
+    },
+    {
+      "id": "imo_1984_p6",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1984_p6.lean:16:3: error: unknown tactic\nMiniF2F/Test/imo_1984_p6.lean:15:11: error: unsolved goals\na b c d k m : ℕ\nh₀ : 0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < d\nh₁ : Odd a ∧ Odd b ∧ Odd c",
+      "proof": "Here's the proof:\n\nhave h₆ : a ≤ d := by\n  by_contra h\n  push_neg at h\n  have : a * d < d * d := mul_lt_mul_of_pos_right h h₀.2.2.2\n  rw [h₃] at this\n  have : b * c < d * d := this\n  have : b < d := by\n    by_contra h'\n    push_neg at h'\n    have : b * c ≥ d * c := mul_le_mul_of_nonneg_right h' (Nat.cast_nonneg c)\n    rw [←mul_comm] at this\n    exact lt_irrefl _ (this.trans_lt (mul_lt_mul_of_pos_l",
+      "sec": 29.9
+    },
+    {
+      "id": "imo_1985_p6",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1985_p6.lean:11:74: error: unsolved goals\ncase refine_1\nf : ℕ → NNReal → ℝ\nh₀ : ∀ (x : NNReal), f 1 x = ↑x\nh₁ : ∀ (x : NNReal) (n : ℕ), f (n + 1) x = f n x * (f n x + 1 / ↑n)\n⊢ ",
+      "proof": "refine ⟨1, ?_, ?_⟩\n· intro n hn\n  induction n with\n  | zero => contradiction\n  | succ k ih =>\n    rw [h₁, h₀]\n    have hk : 0 < k := Nat.pos_of_ne_zero (fun h => by cases h; exact hn (by decide))\n    specialize ih hk\n    constructor\n    · exact mul_pos ih.1 (add_pos ih.2.2 (div_pos zero_lt_one (Nat.cast_pos.mpr hk)))\n    · constructor\n      · rw [← mul_lt_mul_right (inv_pos.mpr (Nat.cast_pos.mpr h",
+      "sec": 18.2
+    },
+    {
+      "id": "imo_1992_p1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1992_p1.lean:11:52: error: unsolved goals\ncase pos\np q r : ℤ\nh₀ : 1 < p ∧ p < q ∧ q < r\nh₁ : (p - 1) * (q - 1) * (r - 1) ∣ p * q * r - 1\nhp : p = 2\n⊢ (p, q, r) = (2, 4, 8) ∨ (p,",
+      "proof": "by_cases hp : p = 2\n· have hq : q = 4 := by\n    have hpq : (2 - 1) * (q - 1) * (r - 1) ∣ 2 * q * r - 1 := by rwa [hp]\n    simp at hpq\n    have h2 : q - 1 ∣ 2 * q * r - 1 := dvd_trans (dvd_mul_right _ _) hpq\n    have h3 : q - 1 ∣ 2 * q * r - 1 - (2 * r) * (q - 1) := by\n      exact dvd_sub h2 (dvd_mul_left (q - 1) (2 * r))\n    simp at h3\n    have hq' : q - 1 ∣ 2 * r - 1 := h3\n    have hq1 : 2 < q :=",
+      "sec": 29.1
+    },
+    {
+      "id": "imo_1997_p5",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_1997_p5.lean:11:59: error: unsolved goals\ncase pos\nx y : ℕ\nh₀ : 0 < x ∧ 0 < y\nh₁ : x ^ y ^ 2 = y ^ x\nhx : x = 1\n⊢ (x, y) = (1, 1) ∨ (x, y) = (16, 2) ∨ (x, y) = (27, 3)\n\ncase neg",
+      "proof": "by_cases hx : x = 1\n· left; simp [hx, h₀.2]\n· right; by_cases hy : y = 1\n  · left; simp [hy, h₀.1]\n  · right\n    have hx1 : 1 < x := Nat.one_lt_iff_ne_zero_and_ne_one.2 ⟨Nat.pos_iff_ne_zero.1 h₀.1, hx⟩\n    have hy1 : 1 < y := Nat.one_lt_iff_ne_zero_and_ne_one.2 ⟨Nat.pos_iff_ne_zero.1 h₀.2, hy⟩\n    obtain ⟨k, hk⟩ : ∃ k, y = k + 2 := ⟨y - 2, by omega⟩\n    subst y\n    have hk0 : 0 < k + 2 := by omega",
+      "sec": 24.0
+    },
+    {
+      "id": "imo_2001_p6",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_2001_p6.lean:14:33: error: unsolved goals\na b c d : ℕ\nh₀ : 0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < d\nh₁ : d < c\nh₂ : c < b\nh₃ : b < a\nh₄ : a * c + b * d = (b + d + a - c) * (b + d + c - a)\n",
+      "proof": "have h₅ : b + d + a - c = a + b - c + d := by omega\nhave h₆ : b + d + c - a = b + c - a + d := by omega\nrw [h₅, h₆, add_mul, mul_add, mul_add] at h₄\nrw [add_assoc, add_assoc, add_assoc, add_assoc] at h₄\nsimp only [mul_comm _ d, add_comm _ (a * c), add_comm _ (b * d)] at h₄\nrw [← add_assoc (a * c), ← add_assoc (b * d)] at h₄\nsimp only [add_left_inj] at h₄\nrw [← sub_eq_zero, ← add_sub_assoc, ← add_s",
+      "sec": 53.1
+    },
+    {
+      "id": "imo_2019_p1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imo_2019_p1.lean:14:30: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?a * 0\nin the target expression\n  f 0 + 2 * f 0 = f (f 0)\n\nf : ℤ → ℤ\nh : f 0 + 2 ",
+      "proof": "by\n  constructor\n  · intro h\n    have h0 : f (f 0) = 0 := by\n      specialize h 0 0\n      rw [mul_zero, zero_add, mul_zero, add_zero] at h\n      exact h\n    have h1 : ∀ a, f (2 * a) = f (f a) := by\n      intro a\n      specialize h a 0\n      rw [add_zero, mul_zero, add_zero] at h\n      exact h\n    have h2 : ∀ a b, f (f (a + b)) = f (2 * a) + 2 * f b := by\n      intros a b\n      rw [← h a b]\n    hav",
+      "sec": 59.7
+    },
+    {
+      "id": "imosl_2007_algebra_p6",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/imosl_2007_algebra_p6.lean:11:3: error: unknown tactic\nMiniF2F/Test/imosl_2007_algebra_p6.lean:10:84: error: unsolved goals\na : ℕ → NNReal\nh₀ : ∑ x ∈ Finset.range 100, a (x + 1) ^ 2",
+      "proof": "Here's the proof:\n\nby\n  have h₁ : ∀ x ∈ Finset.range 99, (a (x + 1))^2 * a (x + 2) ≤ (a (x + 1))^3 + (a (x + 2))^3 / 3 := by\n    intro x _\n    have := pow_add_mul_le_pow_add_pow (a (x + 1)) (a (x + 2)) 3\n    simp only [NNReal.rpow_two, NNReal.rpow_one, NNReal.rpow_nat_cast] at this\n    linarith [this]\n  \n  have h₂ : ∑ x ∈ Finset.range 99, (a (x + 1))^2 * a (x + 2) ≤ \n      ∑ x ∈ Finset.range 99, (",
+      "sec": 23.9
+    },
+    {
+      "id": "induction_11div10tonmn1ton",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/induction_11div10tonmn1ton.lean:12:8: error(lean.unknownIdentifier): Unknown constant `ZMod.nat_cast_zmod_eq_zero_iff_dvd`\nMiniF2F/Test/induction_11div10tonmn1ton.lean:14:26: error:",
+      "proof": "induction n with\n| zero =>\n  simp [ZMod.nat_cast_zmod_eq_zero_iff_dvd]\n| succ n ih =>\n  rw [pow_succ, pow_succ, ← sub_sub, sub_eq_add_neg, neg_mul, ← mul_neg, ← mul_add]\n  apply dvd_add\n  · exact dvd_mul_of_dvd_right ih 10\n  · exact dvd_mul_of_dvd_right (dvd_refl _) (-1)",
+      "sec": 6.4
+    },
+    {
+      "id": "induction_12dvd4expnp1p20",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/induction_12dvd4expnp1p20.lean:13:4: error: Type mismatch\n  dvd_refl 12\nhas type\n  12 ∣ 12\nbut is expected to have type\n  12 ∣ 4 + 20\nMiniF2F/Test/induction_12dvd4expnp1p20.lean:15:",
+      "proof": "by\n  induction n with\n  | zero =>\n    simp only [Nat.zero_eq, zero_add, pow_one, add_left_inj]\n    exact dvd_refl 12\n  | succ k ih =>\n    rw [Nat.succ_eq_add_one, add_assoc, pow_add, pow_one]\n    rw [← add_assoc, mul_add]\n    apply dvd_add\n    · exact dvd_mul_of_dvd_left (dvd_mul_right 12 4) _\n    · exact ih",
+      "sec": 8.3
+    },
+    {
+      "id": "induction_1pxpownlt1pnx",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/induction_1pxpownlt1pnx.lean:17:10: error: No goals to be solved\nMiniF2F/Test/induction_1pxpownlt1pnx.lean:20:11: error: invalid 'calc' step, left-hand side is\n  1 + (↑n + 1) * x : ",
+      "proof": "by\n  induction' n with n ih\n  · simp at h₁\n  · rcases n with _ | n\n    · simp\n      rw [Nat.cast_one, mul_one]\n    · have hx : 0 ≤ 1 + x := by linarith\n      rw [Nat.cast_succ, pow_succ, mul_add, mul_one]\n      calc (1 + (↑n + 1) * x) = (1 + ↑n * x) + x := by ring\n      _ ≤ (1 + x)^n * (1 + x) := by\n        rw [mul_comm (1 + x)]\n        apply add_le_mul\n        · exact ih (Nat.succ_pos n)\n        ",
+      "sec": 9.9
+    },
+    {
+      "id": "induction_nfactltnexpnm1ngt3",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/induction_nfactltnexpnm1ngt3.lean:19:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?a * 1\nin the target expression\n  n + 3 ≤ (n + 3) * (n + 3)\n\nn :",
+      "proof": "by\n  induction n using Nat.strong_induction_on with\n  | h n ih =>\n    rcases n with _ | _ | _ | n\n    · simp at h₀\n    · simp at h₀\n    · simp at h₀\n    · have hn : 3 ≤ n + 3 := by omega\n      have h_le : (n + 3) ≤ (n + 3) * (n + 3) := by\n        rw [mul_one]\n        exact Nat.le_mul_self _\n      calc\n        (n + 3 + 1)! = (n + 4) * (n + 3)! := by rw [Nat.factorial_succ]\n        _ ≤ (n + 4) * (n ",
+      "sec": 28.6
+    },
+    {
+      "id": "induction_pord1p1on2powklt5on2",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/induction_pord1p1on2powklt5on2.lean:14:12: error(lean.unknownIdentifier): Unknown constant `Finset.Icc_succ_top`\nMiniF2F/Test/induction_pord1p1on2powklt5on2.lean:16:10: error: Tacti",
+      "proof": "by\n  induction' n with n hn\n  · exact (lt_irrefl _ h₀).elim\n  · rcases n with _ | n\n    · simp [Finset.Icc_succ_top, Finset.Icc_self, Finset.prod_singleton]\n      norm_num\n    · rw [Finset.prod_Icc_succ_top _ (Nat.succ_pos n), mul_lt_iff_lt_one_right]\n      · refine' (hn n.succ_pos).trans_le _\n        norm_num\n      · refine' mul_pos _ _\n        · refine' Finset.prod_pos (fun k _ => _)\n          h",
+      "sec": 10.4
+    },
+    {
+      "id": "induction_pprime_pdvdapowpma",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/induction_pprime_pdvdapowpma.lean:13:9: error(lean.unknownIdentifier): Unknown constant `Nat.Prime.induction_on`\nMiniF2F/Test/induction_pprime_pdvdapowpma.lean:14:2: error: No goals",
+      "proof": "revert a\n  refine Nat.Prime.induction_on p ?_ ?_\n  · intro p hp a ha\n    rw [pow_one]\n    exact Nat.dvd_sub ha (Nat.dvd_refl a)\n  · intro p hp h a ha\n    by_cases hpa : p ∣ a\n    · rw [pow_succ, mul_comm, Nat.mul_sub_left_distrib]\n      exact Nat.dvd_mul_of_dvd_left hpa p\n    · have h1 : p ∣ a ^ p - a := h ha\n      have h2 : p ∣ (a ^ p - a) * a := Nat.dvd_mul_of_dvd_right h1 a\n      have h3 : p ∣ ",
+      "sec": 12.1
+    },
+    {
+      "id": "induction_prod1p1onk3le3m1onn",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/induction_prod1p1onk3le3m1onn.lean:14:4: error: unsolved goals\ncase succ.zero\nhn : 0 < 0 → ∏ k ∈ Finset.Icc 1 0, (1 + 1 / ↑k ^ 3) ≤ 3 - 1 / ↑0\nh₀ : 0 < 0 + 1\n⊢ 1 + 1 ≤ 3 - 1\nMiniF2F",
+      "proof": "by\n  induction' n with n hn\n  · simp at h₀\n  · rcases n with _ | n\n    · simp\n    have h₁ : 0 < (n + 1 : ℝ) := by exact_mod_cast Nat.succ_pos n\n    rw [Finset.prod_Icc_succ, mul_comm, ← mul_assoc]\n    have h₂ : 1 + 1 / (n + 1 : ℝ) ^ 3 ≤ (3 - 1 / (n + 1 : ℝ)) / (3 - 1 / (n + 1 : ℝ) - 1 / (n + 1 : ℝ) ^ 2) := by\n      field_simp\n      rw [div_le_div_iff]\n      · ring_nf\n        simp only [add_mul, su",
+      "sec": 22.6
+    },
+    {
+      "id": "induction_sumkexp3eqsumksq",
+      "verdict": "rejected",
+      "reason": "lean: Try this:\n  ring_nf\n  \n  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.\n    \n  Note that `ring` works primarily in *commutative* rings. If you have a noncommu",
+      "proof": "induction n with\n| zero => simp\n| succ n ih =>\n  rw [Finset.sum_range_succ, Finset.sum_range_succ, ih]\n  simp [Nat.succ_eq_add_one, add_pow_two]\n  ring",
+      "sec": 6.0
+    },
+    {
+      "id": "mathd_algebra_107",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_107.lean:13:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  y ^ 2 - 6 * y\nin the target expression\n  (x + 4) ^ 2 - 16 + y ^ 2 - 6 * y =",
+      "proof": "by\n  have h₁ : x^2 + 8*x = (x + 4)^2 - 16 := by ring\n  have h₂ : y^2 - 6*y = (y - 3)^2 - 9 := by ring\n  rw [h₁, h₂] at h₀\n  simp at h₀\n  rw [add_assoc, ←h₀]\n  ring",
+      "sec": 7.6
+    },
+    {
+      "id": "mathd_algebra_113",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_113.lean:12:16: error: `simp` made no progress",
+      "proof": "calc x^2 - 14 * x + 3 = (x - 7)^2 - 49 + 3 := by ring\n  _ = (x - 7)^2 - 46 := by ring\n  _ ≥ -46 := by simp only [sq_nonneg, sub_le_self_iff]\n  _ = 7^2 - 14 * 7 + 3 := by ring",
+      "sec": 7.4
+    },
+    {
+      "id": "mathd_algebra_114",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_114.lean:10:50: error: unsolved goals\na : ℝ\nh₀ : a = 8\n⊢ (16 * (8 ^ 2) ^ (1 / 3)) ^ (1 / 3) = 4\nMiniF2F/Test/mathd_algebra_114.lean:12:0: error: unexpected identifier;",
+      "proof": "rw [h₀]\nsimp only [Nat.cast_ofNat]\nnorm_num\nrw [← rpow_mul, ← rpow_mul]\nnorm_num\nfield_simp\nnorm_num",
+      "sec": 5.3
+    },
+    {
+      "id": "mathd_algebra_125",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_125.lean:13:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  5 * x\nin the target expression\n  ↑x - 3 + (↑y - 3) = 30\n\nx y : ℕ\nh₀ : 0 < x ",
+      "proof": "by\n  rw [h₁] at h₂\n  simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat] at h₂\n  have h₃ : (5 * x - 3) + (x - 3) = 30 := by\n    rw [← Int.ofNat_add, ← Int.ofNat_sub (Nat.mul_pos (by norm_num) h₀.1), ← Int.ofNat_sub h₀.2, h₂]\n    norm_cast\n  have h₄ : 6 * x - 6 = 30 := by linarith\n  have h₅ : 6 * x = 36 := by linarith\n  exact (Nat.mul_right_inj (by norm_num)).1 h₅",
+      "sec": 9.7
+    },
+    {
+      "id": "mathd_algebra_129",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_129.lean:12:12: error: failed to synthesize\n  Inv ℕ\n\nHint: Additional diagnostic information may be available using the `set_option diagnostics true` command.\nMiniF2F/",
+      "proof": "have h2 : 8⁻¹ / 4⁻¹ = (1/8) / (1/4) := by simp\nhave h3 : (1/8) / (1/4) = (1/8) * 4 := by simp [div_eq_mul_inv]\nhave h4 : (1/8) * 4 = 1/2 := by norm_num\nhave h5 : 1/2 - a⁻¹ = 1 := by rwa [h2, h3, h4] at h₁\nhave h6 : a⁻¹ = 1/2 - 1 := by linarith [h5]\nhave h7 : a⁻¹ = -1/2 := by linarith [h6]\nhave h8 : a = (-1/2)⁻¹ := by rw [← inv_inv a]; rw [inv_eq_iff_eq_inv]; exact h7\nhave h9 : (-1/2)⁻¹ = -2 := by ",
+      "sec": 12.1
+    },
+    {
+      "id": "mathd_algebra_137",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_137.lean:11:8: error(lean.unknownIdentifier): Unknown constant `Rat.cast_coe_nat`\nMiniF2F/Test/mathd_algebra_137.lean:10:13: error: unsolved goals\nx : ℕ\nh₀ : ↑x + 4 / ",
+      "proof": "rw [← Rat.cast_coe_nat x, ← Rat.cast_mul, ← Rat.cast_add, Rat.cast_inj] at h₀\nsimp only [Rat.cast_coe_nat, Rat.cast_div, Rat.cast_ofNat, Rat.cast_mul, Rat.cast_ofNat] at h₀\nhave : (104 * x) / 100 = 598 := by rw [← h₀, add_div]\nrw [← mul_div_assoc, mul_comm] at this\nhave : 104 * x = 598 * 100 := by rw [← Rat.div_eq_iff, this]; norm_num\nrw [mul_comm] at this\nhave : x = (598 * 100) / 104 := by rw [← ",
+      "sec": 7.5
+    },
+    {
+      "id": "mathd_algebra_139",
+      "verdict": "accepted",
+      "reason": "elaborated clean under Mathlib",
+      "proof": "by\n  have h := h₀ 3 11 (by norm_num) (by norm_num)\n  simp only [one_div] at h\n  rw [h]\n  field_simp\n  norm_num",
+      "sec": 8.7
+    },
+    {
+      "id": "mathd_algebra_141",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_141.lean:12:2: error: 'calc' expression has type\n  (a ^ 2 + b ^ 2 = (a + b) ^ 2 - 2 * a * b) = (a ^ 2 + b ^ 2 = (a + b) ^ 2 - 2 * a * b)\nbut is expected to have type\n ",
+      "proof": "calc a^2 + b^2 = (a + b)^2 - 2 * a * b : by ring\n  ... = (27)^2 - 2 * 180 : by rw [← h₂, h₁]; simp\n  ... = 729 - 360 : by norm_num\n  ... = 369 : by norm_num",
+      "sec": 6.0
+    },
+    {
+      "id": "mathd_algebra_142",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_142.lean:15:23: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?a - (?b + ?c)\nin the target expression\n  8 * m - -8 = 0\n\nm b : ℝ\nh₀ : m * ",
+      "proof": "have h₀' : 7 * m + b = -1 := by rwa [mul_comm] at h₀\n  have h₁' : -1 * m + b = 7 := by rwa [mul_comm] at h₁\n  have h : 8 * m = -8 := by\n    rw [← sub_eq_zero, ← sub_sub, sub_eq_add_neg, sub_eq_add_neg, h₀', h₁']\n    ring\n  have hm : m = -1 := by\n    rw [← neg_eq_neg_one_mul, ← eq_neg_iff_add_eq_zero, ← h, mul_comm]\n    simp\n  rw [hm] at h₁'\n  simp at h₁'\n  rw [hm, h₁']\n  norm_num",
+      "sec": 9.7
+    },
+    {
+      "id": "mathd_algebra_143",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_143.lean:11:17: error: unsolved goals\nf g : ℝ → ℝ\nh₀ : ∀ (x : ℝ), f x = x + 1\nh₁ : ∀ (x : ℝ), g x = x ^ 2 + 3\n⊢ 2 ^ 2 + 3 + 1 = 8\nMiniF2F/Test/mathd_algebra_143.lean:1",
+      "proof": "rw [h₀, h₁]\nnorm_num",
+      "sec": 5.8
+    },
+    {
+      "id": "mathd_algebra_148",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_148.lean:12:11: error: unsolved goals\nc : ℝ\nf : ℝ → ℝ\nh₀ : ∀ (x : ℝ), f x = c * x ^ 3 - 9 * x + 3\nh₁ : c * 2 ^ 3 - 9 * 2 + 3 = 9\n⊢ c = 3\nMiniF2F/Test/mathd_algebra_148",
+      "proof": "rw [h₀] at h₁\nsimp at h₁\nrw [← h₁]\nring",
+      "sec": 7.2
+    },
+    {
+      "id": "mathd_algebra_153",
+      "verdict": "rejected",
+      "reason": "lean: Try this:\n  ring_nf\n  \n  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.\n    \n  Note that `ring` works primarily in *commutative* rings. If you have a noncommu",
+      "proof": "by\n  rw [h₀]\n  have h1 : (10 * (1 / 3)) = 10 / 3 := by ring\n  have h2 : (100 * (1 / 3)) = 100 / 3 := by ring\n  have h3 : (1000 * (1 / 3)) = 1000 / 3 := by ring\n  have h4 : (10000 * (1 / 3)) = 10000 / 3 := by ring\n  rw [h1, h2, h3, h4]\n  have f1 : Int.floor (10 / 3) = 3 := by exact Int.floor_eq_iff.mpr ⟨by norm_num, by norm_num⟩\n  have f2 : Int.floor (100 / 3) = 33 := by exact Int.floor_eq_iff.mpr ",
+      "sec": 12.7
+    },
+    {
+      "id": "mathd_algebra_156",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_156.lean:20:23: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?m.284 = 0 ∨ ?m.283 = 0\nin the target expression\n  x ^ 4 - 5 * x ^ 2 + 6 - ",
+      "proof": "by\n  simp_rw [h₀, h₁] at h₂ h₃\n  have hx : x^4 - 5 * x^2 + 6 = 0 := by linear_combination h₂\n  have hy : y^4 - 5 * y^2 + 6 = 0 := by linear_combination h₃\n  have hx' : x^2 = 2 ∨ x^2 = 3 := by\n    rw [← sub_eq_zero, ← mul_eq_zero] at hx\n    convert hx using 1\n    ring\n    simp [sub_eq_add_neg, add_comm, mul_comm, mul_assoc, mul_left_comm]\n  have hy' : y^2 = 2 ∨ y^2 = 3 := by\n    rw [← sub_eq_zero, ",
+      "sec": 13.7
+    },
+    {
+      "id": "mathd_algebra_158",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_158.lean:12:15: error: unexpected token 'in'; expected ','\nMiniF2F/Test/mathd_algebra_158.lean:12:12: error: failed to synthesize\n  AddCommMonoid (Sort ?u.1924)\n\nHint:",
+      "proof": "have h1 : ∑ k in Finset.range 8, (2 * k + 1) = 8^2 := by\n  simp [Finset.sum_range_succ, mul_comm]\n  norm_num\nhave h2 : ∑ k in Finset.range 5, (a + 2 * k) = 5 * a + 2 * ∑ k in Finset.range 5, k := by\n  simp [Finset.sum_add_distrib, Finset.mul_sum]\nhave h3 : ∑ k in Finset.range 5, k = 10 := by norm_num\nrw [h1, h2, h3] at h₁\nsimp at h₁\nnorm_num at h₁\nrw [← Int.ofNat_inj] at h₁\nrw [h₁]\nexact h₀.even_m",
+      "sec": 10.3
+    },
+    {
+      "id": "mathd_algebra_160",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_160.lean:12:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  97\nin the target expression\n  n + 5 * x = 265\n\nn x : ℝ\nh₀ : n + x = 97\nh₁ : ",
+      "proof": "by\n  rw [← h₀] at h₁\n  linarith",
+      "sec": 6.0
+    },
+    {
+      "id": "mathd_algebra_17",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_17.lean:15:10: error(lean.unknownIdentifier): Unknown constant `Real.sqrt_eq_iff_sq_eq`\nMiniF2F/Test/mathd_algebra_17.lean:18:6: error: Tactic `rfl` failed: The left-h",
+      "proof": "by\n  let x := Real.sqrt (1 + Real.sqrt (1 + a))\n  have hx : x + Real.sqrt (4 + 4 * x) = 6 := by\n    rw [← h₀]\n    congr 1\n    · rw [Real.sqrt_eq_iff_sq_eq]\n      · ring\n      · positivity\n    · rfl\n  have hx_nonneg : 0 ≤ x := Real.sqrt_nonneg _\n  have hx_le : x ≤ 6 := by linarith [hx]\n  have hx_eq : x = 2 := by\n    have := calc\n      Real.sqrt (4 + 4 * x) = 6 - x := by rw [← hx, add_sub_cancel_lef",
+      "sec": 15.1
+    },
+    {
+      "id": "mathd_algebra_170",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_170.lean:11:32: error: failed to synthesize\n  OfScientific ℤ\n\nHint: Additional diagnostic information may be available using the `set_option diagnostics true` command.",
+      "proof": "by\n  have h₁ : ∀ (n : ℤ), n ∈ S ↔ -3.6 ≤ n ∧ n ≤ 7.6 := by\n    intro n\n    rw [h₀, abs_le]\n    constructor\n    · intro h\n      constructor\n      · linarith\n      · linarith\n    · intro h\n      constructor\n      · linarith\n      · linarith\n  have h₂ : S = (Finset.Icc (-4 : ℤ) 7) := by\n    ext n\n    rw [Finset.mem_Icc, h₁]\n    constructor\n    · intro ⟨h₃, h₄⟩\n      exact ⟨Int.ceil_le.mpr h₃, Int.flo",
+      "sec": 11.3
+    },
+    {
+      "id": "mathd_algebra_171",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_171.lean:10:13: error: unsolved goals\nf : ℝ → ℝ\nh₀ : ∀ (x : ℝ), f x = 5 * x + 4\n⊢ 5 * 1 + 4 = 9\nMiniF2F/Test/mathd_algebra_171.lean:12:0: error: unexpected identifier;",
+      "proof": "rw [h₀]\nnorm_num",
+      "sec": 5.8
+    },
+    {
+      "id": "mathd_algebra_176",
+      "verdict": "accepted",
+      "reason": "elaborated clean under Mathlib",
+      "proof": "ring",
+      "sec": 7.4
+    },
+    {
+      "id": "mathd_algebra_184",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_184.lean:15:42: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  54 / b\nin the target expression\n  b * b ^ 2 = b * 9\n\na b : NNReal\nh₀ : 0 < ",
+      "proof": "by\n  have h₃ : 6 * b = 54 / b := by rw [← h₁, h₂]\n  have h₄ : b ^ 2 = 9 := by\n    rw [← mul_right_inj' (ne_of_gt h₀.2), ← h₃]\n    ring\n  have h₅ : b = 3 := by\n    rw [← sqrt_eq_iff_sq_eq (le_of_lt h₀.2) (le_of_lt (by norm_num))]\n    rw [h₄]\n    norm_num\n  rw [h₁, h₅]\n  norm_num\n  rw [NNReal.sqrt_eq_rpow, ← rpow_mul (by norm_num)]\n  norm_num",
+      "sec": 10.4
+    },
+    {
+      "id": "mathd_algebra_188",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_188.lean:11:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  σ.invFun 2\nin the target expression\n  σ.toFun (σ.toFun 2) = 2\n\nσ : ℝ ≃ ℝ\nh :",
+      "proof": "rw [← h]\nsimp [Equiv.symm_apply_apply]",
+      "sec": 5.7
+    },
+    {
+      "id": "mathd_algebra_196",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_196.lean:15:8: error(lean.unknownIdentifier): Unknown identifier `abs_eq_iff`",
+      "proof": "by\n  have h₁ : S = {-1, 5} := by\n    ext x\n    rw [h₀]\n    simp only [Finset.mem_insert, Finset.mem_singleton]\n    rw [abs_eq_iff]\n    constructor\n    · intro h\n      cases' h with h h\n      · left\n        linarith\n      · right\n        linarith\n    · intro h\n      cases' h with h h\n      · left\n        linarith\n      · right\n        linarith\n  rw [h₁]\n  norm_num",
+      "sec": 10.0
+    },
+    {
+      "id": "mathd_algebra_208",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_208.lean:9:25: error(lean.unknownIdentifier): Unknown constant `Real.rpow_nat_cast`\nMiniF2F/Test/mathd_algebra_208.lean:8:45: error: unsolved goals\n⊢ 1000000 ^ (1 / 2)",
+      "proof": "by\n  rw [Real.sqrt_eq_rpow, Real.rpow_nat_cast]\n  norm_num\n  rw [Real.rpow_one_div]\n  norm_num\n  rw [sub_eq_iff_eq_add]\n  norm_num",
+      "sec": 6.6
+    },
+    {
+      "id": "mathd_algebra_209",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_209.lean:14:33: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  σ.invFun 10\nin the target expression\n  σ.toFun (σ.toFun 10) = σ.toFun 1\n\nσ ",
+      "proof": "calc\n  σ.1 (σ.1 10) = σ.1 1 := by rw [h₁]\n  _ = 2 := by rw [h₂]\n  _ = σ.2 2 := by rw [h₀]\n  _ = 10 := by rw [h₁]\n  _ = σ.2 10 := by rw [h₁]\n  _ = 1 := by rw [h₁]",
+      "sec": 8.4
+    },
+    {
+      "id": "mathd_algebra_215",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_215.lean:11:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ∑ x ∈ {?m.48, ?m.49}, ?m.46 x\nin the target expression\n  ∑ k ∈ S, k = -6\n\nS ",
+      "proof": "rw [Finset.sum_pair]\nsimp_rw [h₀]\nhave h1 : (x + 3)^2 = 121 ↔ x + 3 = 11 ∨ x + 3 = -11 := by\n  rw [pow_two, ← sub_eq_zero, sq_eq_iff_eq_or_eq_neg]\n  norm_num\nsimp_rw [h1]\nhave h2 : {x | x + 3 = 11 ∨ x + 3 = -11} = {8, -14} := by\n  ext x\n  simp only [Set.mem_insert_iff, Set.mem_singleton_iff]\n  constructor\n  · intro h\n    cases h with\n    | inl h => simp [h]\n    | inr h => simp [h]\n  · intro h\n    ",
+      "sec": 10.7
+    },
+    {
+      "id": "mathd_algebra_24",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_24.lean:11:8: error(lean.unknownIdentifier): Unknown identifier `mul_50`\nMiniF2F/Test/mathd_algebra_24.lean:10:14: error: unsolved goals\nx : ℝ\nh₀ : x / 50 = 40\n⊢ x = 2",
+      "proof": "rw [← mul_50] at h₀\nsimp [h₀]",
+      "sec": 5.3
+    },
+    {
+      "id": "mathd_algebra_246",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_246.lean:15:2: error: `simp` made no progress",
+      "proof": "by\n  rw [h₀] at h₂ ⊢\n  simp at h₂\n  simp\n  linarith [h₂]",
+      "sec": 6.2
+    },
+    {
+      "id": "mathd_algebra_263",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_263.lean:12:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  7\nin the target expression\n  0 ≤ 19 + 3 * y\n\ny : ℝ\nh₀ : 0 ≤ 19 + 3 * y\nh₁ : ",
+      "proof": "by\n  rw [← h₁, Real.sqrt_eq_iff_sq_eq] at h₀\n  · simp only [sq] at h₀\n    linarith\n  · linarith",
+      "sec": 6.3
+    },
+    {
+      "id": "mathd_algebra_270",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_270.lean:12:38: error: Application type mismatch: The argument\n  h1\nhas type\n  (1 : ℤ) ≠ -2\nbut is expected to have type\n  (1 : ℝ) ≠ -2\nin the application\n  h₀ 1 h1\nMi",
+      "proof": "by\n  have h1 : 1 ≠ -2 := by norm_num\n  have h2 : f 1 = 1 / (1 + 2) := h₀ 1 h1\n  rw [h2]\n  have h3 : (1/3 : ℝ) ≠ -2 := by norm_num\n  have h4 : f (1/3) = 1 / ((1/3) + 2) := h₀ (1/3) h3\n  rw [h4]\n  norm_num",
+      "sec": 8.9
+    },
+    {
+      "id": "mathd_algebra_275",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_275.lean:11:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  (?m.94 ^ ?y) ^ ?z\nin the target expression\n  (11 ^ (1 / 4)) ^ (6 * x + 2) = ",
+      "proof": "rw [← rpow_mul, ← rpow_mul]\nsimp only [one_div, mul_div_cancel_left, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, rpow_nat_cast]\nrw [← rpow_add, ← rpow_add]\nsimp only [Nat.cast_ofNat, add_left_neg, add_zero, rpow_zero, one_div, inv_inv]\nrw [h, inv_pow]\nnorm_num\nfield_simp\nring",
+      "sec": 8.5
+    },
+    {
+      "id": "mathd_algebra_276",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_276.lean:11:36: error: Invalid argument name `R` for function `Int.cast_inj`\n\nHint: Perhaps you meant one of the following parameter names:\n  • `α`: R̵α̲\n  • `m`: R̵m̲",
+      "proof": "rw [← sub_eq_zero, ← Int.cast_inj (R := ℝ)]\n  have h₁ : (a * (1 : ℝ) - 8) * (b * (1 : ℝ) + 3) = 10 * (1 : ℝ)^2 - 1 - 24 := by rw [h₀ 1]\n  have h₂ : (a * (2 : ℝ) - 8) * (b * (2 : ℝ) + 3) = 10 * (2 : ℝ)^2 - 2 - 24 := by rw [h₀ 2]\n  simp only [one_pow, mul_one, ofNat_eq_coe, Int.cast_sub, Int.cast_mul, Int.cast_ofNat, Int.cast_add,\n    Int.cast_pow, sub_sub] at h₁ h₂\n  simp only [mul_add, add_mul, mu",
+      "sec": 16.7
+    },
+    {
+      "id": "mathd_algebra_288",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_288.lean:15:2: error: 'calc' expression has type\n  ↑n = 52\nbut is expected to have type\n  n = 52",
+      "proof": "calc n\n    = (Real.sqrt n)^2 := by rw [Real.sq_sqrt (NNReal.coe_nonneg n)]\n    _ = (Real.sqrt (x^2 + y^2))^2 := by rw [h₃]\n    _ = x^2 + y^2 := by rw [Real.sq_sqrt (add_nonneg (pow_two_nonneg x) (pow_two_nonneg y))]\n    _ = (-10)^2 + (-6)^2 := by\n        have hx : x = -10 := by\n          have h₁' : y = -6 := by\n            rw [abs_eq_neg_iff.mpr h₀.2, ← h₁]\n          rw [h₁', h₂]\n          simp on",
+      "sec": 9.7
+    },
+    {
+      "id": "mathd_algebra_289",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_289.lean:13:32: error: unsolved goals\ncase pos\nk t m n : ℕ\nh₀ : Nat.Prime m ∧ Nat.Prime n\nh₁ : t < k\nh₂ : k ^ 2 - m * k + n = 0\nh₃ : t ^ 2 - m * t + n = 0\nhk : k = 1\n⊢",
+      "proof": "by_cases hk : k = 1\n· have ht : t = 0 := by linarith [h₁]\n  simp [hk, ht] at h₂ h₃\n  have h₃' : n = 0 := by simp [ht] at h₃; assumption\n  simp [h₃'] at h₀\n  contradiction\n· have hk' : k = 2 := by\n    have hk1 : 1 < k := by\n      cases k\n      · simp at h₁\n      · cases k\n        · simp [hk] at h₁\n        · exact Nat.succ_le_succ (Nat.succ_le_succ Nat.zero_le)\n    have hk2 : k ≤ 2 := by\n      have ",
+      "sec": 38.1
+    },
+    {
+      "id": "mathd_algebra_293",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_293.lean:12:52: error: unsolved goals\nx : NNReal\n⊢ √60 * √↑x * (√12 * √↑x) * √(63 * ↑x) = √(60 * ↑x * (12 * ↑x) * (63 * ↑x))\n\ncase hx\nx : NNReal\n⊢ 0 ≤ 12\n\ncase hx\nx : ",
+      "proof": "calc\n  Real.sqrt (60 * x) * Real.sqrt (12 * x) * Real.sqrt (63 * x)\n    = Real.sqrt ((60 * x) * (12 * x) * (63 * x)) := by rw [Real.sqrt_mul, Real.sqrt_mul]\n  _ = Real.sqrt (60 * 12 * 63 * x^3) := by ring\n  _ = Real.sqrt (36^2 * 35 * x^3) := by norm_num\n  _ = 36 * Real.sqrt (35 * x^3) := by rw [Real.sqrt_mul, Real.sqrt_sq]\n  _ = 36 * x * Real.sqrt (35 * x) := by rw [Real.sqrt_mul, Real.sqrt_sq, mu",
+      "sec": 9.5
+    },
+    {
+      "id": "mathd_algebra_296",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_296.lean:10:47: error(lean.unknownIdentifier): Unknown identifier `sub_mul_add`\nMiniF2F/Test/mathd_algebra_296.lean:10:40: error: unsolved goals\n⊢ |(3491 - 60) * (3491",
+      "proof": "calc abs (((3491 - 60) * (3491 + 60) - 3491^2):ℤ)\n    = abs ((3491^2 - 60^2) - 3491^2) := by rw [sub_mul_add]\n  _ = abs (-60^2) := by simp\n  _ = 60^2 := abs_of_nonneg (by norm_num)\n  _ = 3600 := by norm_num",
+      "sec": 7.0
+    },
+    {
+      "id": "mathd_algebra_302",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_302.lean:8:34: error: unsolved goals\n⊢ (Complex.I / 2) ^ 2 = -4⁻¹\nMiniF2F/Test/mathd_algebra_302.lean:8:48: warning: This simp argument is unused:\n  Complex.I_mul_I\n\nH",
+      "proof": "by simp only [Complex.I_mul_I, one_div, mul_div, mul_one, neg_div]",
+      "sec": 6.4
+    },
+    {
+      "id": "mathd_algebra_304",
+      "verdict": "accepted",
+      "reason": "elaborated clean under Mathlib",
+      "proof": "by norm_num",
+      "sec": 5.3
+    },
+    {
+      "id": "mathd_algebra_313",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_313.lean:13:68: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?m.386 * ?m.386⁻¹\nin the target expression\n  i = z * (i * z⁻¹)\n\nv i z : ℂ\nh",
+      "proof": "calc i = v / z := by rw [h₀, mul_comm, div_eq_mul_inv, mul_assoc, mul_inv_cancel (by norm_num : z ≠ 0), mul_one]\n    _ = (1 + Complex.I) / (2 - Complex.I) := by rw [h₁, h₂]\n    _ = ((1 + Complex.I) * (2 + Complex.I)) / ((2 - Complex.I) * (2 + Complex.I)) := by rw [div_mul_div_comm, mul_comm (2 + Complex.I), mul_assoc, mul_inv_cancel (by norm_num : (2 - Complex.I) * (2 + Complex.I) ≠ 0), mul_one]\n ",
+      "sec": 14.8
+    },
+    {
+      "id": "mathd_algebra_314",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_314.lean:11:30: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  (?a ^ ?m) ^ ?n\nin the target expression\n  2 ^ (2 * 11) * ((1 / 4) ^ 11 * (1",
+      "proof": "rw [h₀, pow_succ, mul_comm, ← pow_mul, ← mul_pow, one_div, inv_mul_cancel, one_pow, mul_one]\n· norm_num\n· norm_num",
+      "sec": 6.6
+    },
+    {
+      "id": "mathd_algebra_320",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_320.lean:15:3: error: unknown tactic\nMiniF2F/Test/mathd_algebra_320.lean:14:20: error: unsolved goals\nx : ℝ\na b c : ℕ\nh₀ : 0 < a ∧ 0 < b ∧ 0 < c ∧ 0 ≤ x\nh₁ : 2 * x ^ 2",
+      "proof": "To solve this problem, we'll follow these steps:\n1. Solve the quadratic equation for x\n2. Express the solution in the required form (a + √b)/c\n3. Extract the values of a, b, c\n4. Verify their sum equals 26\n\nHere's the proof:\n\nby\n  have h₁' : 2 * x^2 - 4 * x - 9 = 0 := by linear_combination h₁\n  have x_pos : 0 < x := by linarith [h₀.2.2.2]\n  have sol : x = (2 + Real.sqrt 22) / 2 := by\n    rw [← mul",
+      "sec": 13.2
+    },
+    {
+      "id": "mathd_algebra_329",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_329.lean:11:15: error: unsolved goals\nx y : ℝ\nh₀ : 3 * y = x\nh₁ : 2 * x + 5 * y = 11\nhx : x = 3 * y\n⊢ x + y = 4\nMiniF2F/Test/mathd_algebra_329.lean:13:0: error: unexpe",
+      "proof": "have hx : x = 3 * y := by rw [← h₀]\nrw [hx] at h₁\nhave hy : y = 1 := by linarith\nrw [hy, hx]\nnorm_num",
+      "sec": 7.9
+    },
+    {
+      "id": "mathd_algebra_33",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_33.lean:13:26: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?m.57 / ?m.56 * (?m.56 / ?m.55)\nin the target expression\n  z / x = 7 / 25 * ",
+      "proof": "by\n  rw [← mul_one (7 / 25), div_mul_div, mul_comm, ← h₂, ← h₁]\n  field_simp [h₀]\n  norm_num",
+      "sec": 6.6
+    },
+    {
+      "id": "mathd_algebra_332",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_332.lean:12:21: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?a ^ 2 - 2 * ?a * ?b + ?b ^ 2\nin the target expression\n  x ^ 2 + y ^ 2 - 15",
+      "proof": "rw [← sub_eq_zero, ← sub_sq, add_sq, sub_eq_add_neg, mul_assoc, ← mul_add]\nrw [← mul_two, ← div_eq_inv_mul, h₀, two_mul]\nrw [mul_add, add_mul, mul_comm y x, ← add_assoc, ← add_assoc]\nrw [← Real.sqrt_mul_self_eq_abs, ← Real.sqrt_mul, h₁, Real.sqrt_sq_eq_abs, abs_eq_self.mpr (le_of_lt (by norm_num))]\nrw [← sub_eq_zero, ← Real.sqrt_inj (mul_self_nonneg _) (mul_self_nonneg _), Real.sqrt_mul_self_eq_ab",
+      "sec": 14.7
+    },
+    {
+      "id": "mathd_algebra_338",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_338.lean:17:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?n + ?n\nin the target expression\n  3 * a - (a + b + c) + b + c = -3 - (a + b",
+      "proof": "by\n  have h₃ := congr_arg (· - (a + b + c)) h₀\n  have h₄ := congr_arg (· - (a + b + c)) h₁\n  have h₅ := congr_arg (· - (a + b + c)) h₂\n  simp only [add_sub_right_comm, sub_self, zero_add] at h₃ h₄ h₅\n  rw [← two_mul, mul_eq_zero, sub_eq_zero] at h₃ h₄ h₅\n  have : a + b + c = 1 := by linarith [h₃, h₄, h₅]\n  rw [this] at h₀ h₁ h₂\n  simp only [add_sub_cancel'] at h₀ h₁ h₂\n  linarith [h₀, h₁, h₂]",
+      "sec": 10.8
+    },
+    {
+      "id": "mathd_algebra_342",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_342.lean:13:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/mathd_algebra_342.lean:12:35: error: unsolved goals\na d : ℝ\nh₀ : ∑ k ∈ Finset.range 5, (a +",
+      "proof": "have h5 : 5 * a + 10 * d = 70 := by\n  rw [← h₀]\n  simp [Finset.sum_range_succ, mul_add]\n  ring\n\nhave h10 : 10 * a + 45 * d = 210 := by\n  rw [← h₁]\n  simp [Finset.sum_range_succ, mul_add]\n  ring\n\nhave hd : d = 14/5 := by\n  linarith [h5, h10]\n\nlinarith [h5, hd]",
+      "sec": 9.8
+    },
+    {
+      "id": "mathd_algebra_346",
+      "verdict": "accepted",
+      "reason": "elaborated clean under Mathlib",
+      "proof": "by\n  rw [h₀, h₁]\n  norm_num",
+      "sec": 5.8
+    },
+    {
+      "id": "mathd_algebra_354",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_354.lean:11:22: error: unsolved goals\na d : ℝ\nh₀ : a + 6 * d = 30\nh₁ : a + 10 * d = 60\nh : 4 * d = 30\n⊢ a + 20 * d = 135\nMiniF2F/Test/mathd_algebra_354.lean:13:0: erro",
+      "proof": "have h : 4 * d = 30 := by linarith [h₁, h₀]\nhave h₂ : d = 30 / 4 := by linarith\nhave h₃ : a = 30 - 6 * d := by linarith [h₀]\nrw [h₂, h₃]\nfield_simp\nring",
+      "sec": 7.2
+    },
+    {
+      "id": "mathd_algebra_359",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_359.lean:13:2: error: `simp` made no progress",
+      "proof": "by\n  rw [two_mul] at h₀\n  rw [add_assoc] at h₀\n  simp only at h₀\n  linarith",
+      "sec": 6.7
+    },
+    {
+      "id": "mathd_algebra_362",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_362.lean:12:42: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  27 / 4\nin the target expression\n  a ^ 2 * b ^ 3 = 32 / 27\n\na b : ℝ\nh₀ : a ^",
+      "proof": "by\n  have h₂ : a = (27 / 4) * b^3 := by rwa [← h₁, mul_comm] at h₀\n  rw [h₂] at h₀\n  have h₃ : (27 / 4)^2 * b^3 * b^3 = 32 / 27 := by simp [h₂, h₀, pow_succ]\n  have h₄ : b^6 = (32 / 27) / (27 / 4)^2 := by\n    rw [← mul_div_right_comm, ← h₃]\n    ring\n  have h₅ : b^6 = (2^5 / 3^3) / (3^6 / 2^4) := by\n    norm_num at h₄\n    norm_cast\n    rw [h₄]\n    simp only [Rat.div_num_den, Rat.num_den]\n    norm_n",
+      "sec": 18.1
+    },
+    {
+      "id": "mathd_algebra_388",
+      "verdict": "accepted",
+      "reason": "elaborated clean under Mathlib",
+      "proof": "by\n  have h₂ : x + y - 3 * z = 6 := by linarith [h₀, h₁]\n  have h₃ : y - 3 * z = -8 := by linarith [h₂, h₁]\n  linarith [h₂, h₃]",
+      "sec": 7.5
+    },
+    {
+      "id": "mathd_algebra_392",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_392.lean:12:38: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?n * ?m / ?n\nin the target expression\n  n = 2 * (n / 2)\n\nn : ℕ\nh₀ : Even n\n",
+      "proof": "by\n  have h₂ : n = 2 * (n / 2) := by rw [Nat.mul_div_cancel_left]; exact h₀\n  rw [h₂] at h₁\n  simp only [Nat.cast_mul, Nat.cast_ofNat] at h₁\n  have h₃ : (2 * (n / 2) : ℤ) = ↑n := by simp [h₂]\n  rw [h₃] at h₁\n  simp only [mul_sub, mul_add, sub_add_add_cancel, add_mul, mul_assoc] at h₁\n  ring_nf at h₁\n  rw [← mul_assoc] at h₁\n  have h₄ : 3 * n^2 + 8 = 12296 := by linarith\n  have h₅ : 3 * n^2 = 12288",
+      "sec": 11.8
+    },
+    {
+      "id": "mathd_algebra_398",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_398.lean:13:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?a * (?b * ?c)\nin the target expression\n  63 * a = 80 * c\n\na b c : ℝ\nh₀ : 0 ",
+      "proof": "rw [← mul_assoc, h₂, h₁, mul_assoc, mul_assoc]\nfield_simp [h₀.left, h₀.right.left, h₀.right.right]",
+      "sec": 6.7
+    },
+    {
+      "id": "mathd_algebra_400",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_400.lean:11:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ↑(?p / ?q)\nin the target expression\n  5 + 500 / 100 * 10 = 110 / 100 * x\n\nx ",
+      "proof": "rw [Rat.cast_div, Rat.cast_ofNat, Rat.cast_ofNat, div_eq_mul_inv, mul_comm _ (10 : ℝ), ←mul_assoc] at h₀\nrw [Rat.cast_div, Rat.cast_ofNat, Rat.cast_ofNat, div_eq_mul_inv] at h₀\nsimp only [Rat.cast_ofNat, Nat.cast_ofNat] at h₀\nfield_simp at h₀\nlinarith",
+      "sec": 7.9
+    },
+    {
+      "id": "mathd_algebra_412",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_412.lean:12:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?a - ?c + ?b\nin the target expression\n  x + y = 25\n\nx y : ℝ\nh₀ : x + y = 25\n",
+      "proof": "rw [← add_sub_right_comm, h₀, h₁, add_sub_cancel] at h₀\nlinarith",
+      "sec": 6.1
+    },
+    {
+      "id": "mathd_algebra_419",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_419.lean:11:34: error: unsolved goals\na b : ℝ\nh₀ : a = -1\nh₁ : b = 5\n⊢ - -1 - 5 ^ 2 + 3 * (-1 * 5) = -39\nMiniF2F/Test/mathd_algebra_419.lean:13:0: error: unexpected id",
+      "proof": "rw [h₀, h₁]\nsimp\nring",
+      "sec": 5.6
+    },
+    {
+      "id": "mathd_algebra_427",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_427.lean:14:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?a + ?b + ?c\nin the target expression\n  (fun x => x + 14) (3 * x + y) = (fu",
+      "proof": "by\n  have h₃ := congrArg (· + (5 * y + z)) h₀\n  rw [h₁, add_assoc, ← mul_add, add_comm (3 * x) y, h₀] at h₃\n  have h₄ := congrArg (· + (3 * x)) h₁\n  rw [h₂, add_assoc, ← mul_add, add_comm (5 * y) z, h₁] at h₄\n  have h₅ : 15 * y = 30 := by\n    rw [← h₄, ← h₃]\n    ring\n  have h₆ : y = 2 := by\n    rw [← mul_right_inj' (show (15 : ℝ) ≠ 0 by norm_num), h₅]\n    norm_num\n  rw [h₆] at h₀ h₁\n  simp at h₀ h",
+      "sec": 11.5
+    },
+    {
+      "id": "mathd_algebra_432",
+      "verdict": "accepted",
+      "reason": "elaborated clean under Mathlib",
+      "proof": "calc\n  (x + 3) * (2 * x - 6) = (x + 3) * 2 * (x - 3) := by ring\n  _ = 2 * (x + 3) * (x - 3) := by ring\n  _ = 2 * (x^2 - 9) := by ring\n  _ = 2 * x^2 - 18 := by ring",
+      "sec": 6.1
+    },
+    {
+      "id": "mathd_algebra_44",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_44.lean:202:15: error: unexpected end of input; expected ']'",
+      "proof": "by\n  rw [h₀] at h₁\n  rw [mul_add] at h₁\n  rw [mul_sub] at h₁\n  rw [mul_one] at h₁\n  simp at h₁\n  rw [← sub_eq_zero] at h₁\n  rw [add_comm] at h₁\n  rw [← sub_add] at h₁\n  rw [add_assoc] at h₁\n  rw [← add_assoc] at h₁\n  rw [add_right_neg] at h₁\n  rw [zero_add] at h₁\n  rw [add_comm] at h₁\n  rw [← sub_eq_zero] at h₁\n  rw [← mul_assoc] at h₁\n  rw [mul_comm] at h₁\n  rw [mul_assoc] at h₁\n  rw [mul_div_can",
+      "sec": 62.8
+    },
+    {
+      "id": "mathd_algebra_440",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_440.lean:10:11: error: unsolved goals\nx : ℝ\nh₀ : 3 * (1 / (2 * 3)) = x / 10\n⊢ x = 5\nMiniF2F/Test/mathd_algebra_440.lean:12:0: error: unexpected identifier; expected co",
+      "proof": "rw [div_div, ←mul_one_div] at h₀\nsimp only [one_div, inv_inv] at h₀\nrw [mul_inv_cancel_left₀] at h₀\nnorm_num at h₀\nlinarith",
+      "sec": 6.6
+    },
+    {
+      "id": "mathd_algebra_441",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_441.lean:13:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?m.77 / ?m.78 * (?m.79 / ?m.80)\nin the target expression\n  12 / (x * x) * (x",
+      "proof": "by\n  rw [mul_assoc]\n  rw [← mul_div_assoc, ← mul_div_assoc]\n  rw [div_mul_div_comm, div_mul_div_comm]\n  rw [mul_one_div, mul_one_div]\n  simp only [mul_comm, mul_assoc]\n  rw [div_self (pow_ne_zero 2 h₀), one_mul]\n  norm_num",
+      "sec": 8.8
+    },
+    {
+      "id": "mathd_algebra_452",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_452.lean:14:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/mathd_algebra_452.lean:13:49: error: unsolved goals\na : ℕ → ℝ\nh₀ : ∀ (n : ℕ), a (n + 2) - a",
+      "proof": "have h : ∀ n, a (n + 1) = a n + (a 1 - a 0) := by\n  intro n\n  induction n with\n  | zero => simp\n  | succ n ih =>\n    rw [Nat.succ_eq_add_one, h₀ n, ih]\n    ring\nhave h' : ∀ n, a n = a 0 + n * (a 1 - a 0) := by\n  intro n\n  induction n with\n  | zero => simp\n  | succ n ih =>\n    rw [Nat.succ_eq_add_one, h n, ih]\n    ring\nhave h₁' : a 0 + 1 * (a 1 - a 0) = 2 / 3 := by rw [h₁]; simp\nhave h₂' : a 0 + 9 ",
+      "sec": 9.1
+    },
+    {
+      "id": "mathd_algebra_459",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_459.lean:15:23: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  b + c + d\nin the target expression\n  a - b = 0\n\na b c d : ℚ\nh₀ : 3 * a = b ",
+      "proof": "by\n  have h₄ : a = b := by\n    rw [← sub_eq_zero, ← h₀, ← h₁]\n    ring\n  have h₅ : c = 2 * b := by\n    rw [← sub_eq_zero, ← h₂, h₄]\n    ring\n  have h₆ : d = 0 := by\n    rw [← sub_eq_zero, ← h₀, h₄, h₅]\n    ring\n  rw [h₄, h₅, h₆] at h₃\n  have h₇ : b = 1 := by\n    rw [← sub_eq_zero, ← h₃]\n    ring\n  rw [h₇, h₅, h₆]\n  norm_num",
+      "sec": 10.8
+    },
+    {
+      "id": "mathd_algebra_478",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_478.lean:13:12: error: unsolved goals\nb h v : ℝ\nh₀ : 0 < b ∧ 0 < h ∧ 0 < v\nh₁ : v = 1 / 3 * (b * h)\nh₂ : b = 30\nh₃ : h = 13 / 2\n⊢ 1 / 3 * (30 * (13 / 2)) = 65\nMiniF2F/",
+      "proof": "rw [h₁, h₂, h₃]\nfield_simp\nnorm_num",
+      "sec": 5.7
+    },
+    {
+      "id": "mathd_algebra_484",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_484.lean:9:8: error(lean.unknownIdentifier): Unknown constant `Real.logb_eq_log_div_log`\nMiniF2F/Test/mathd_algebra_484.lean:8:34: error: unsolved goals\n⊢ Real.log 27 ",
+      "proof": "by\n  rw [← Real.logb_eq_log_div_log]\n  rw [Real.logb_pow]\n  simp [Real.logb_self_eq_one]",
+      "sec": 6.3
+    },
+    {
+      "id": "mathd_algebra_487",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_487.lean:15:3: error: unknown tactic\nMiniF2F/Test/mathd_algebra_487.lean:14:53: error: unsolved goals\na b c d : ℝ\nh₀ : b = a ^ 2\nh₁ : a + b = 1\nh₂ : d = c ^ 2\nh₃ : c +",
+      "proof": "Here's the proof:\n\ncalc\n  Real.sqrt ((a - c)^2 + (b - d)^2) = Real.sqrt ((a - c)^2 + (a^2 - c^2)^2) := by rw [h₀, h₂]\n  _ = Real.sqrt ((a - c)^2 + ((a - c) * (a + c))^2) := by ring\n  _ = Real.sqrt ((a - c)^2 * (1 + (a + c)^2)) := by ring\n  _ = Real.sqrt ((a - c)^2) * Real.sqrt (1 + (a + c)^2) := by rw [Real.sqrt_mul (by nlinarith) _]\n  _ = |a - c| * Real.sqrt (1 + (a + c)^2) := by rw [Real.sqrt_sq",
+      "sec": 18.9
+    },
+    {
+      "id": "mathd_algebra_513",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_513.lean:11:19: error: unsolved goals\na b : ℝ\nh₀ : 3 * a + 2 * b = 5\nh₁ : a + b = 2\nh₂ : a = 2 - b\n⊢ a = 1 ∧ b = 1\nMiniF2F/Test/mathd_algebra_513.lean:13:0: error: une",
+      "proof": "have h₂ : a = 2 - b := by rw [← h₁]; ring\nrw [h₂] at h₀\nsimp at h₀\nhave h₃ : b = 1 := by linarith\nrw [h₃] at h₂\nsimp at h₂\nexact ⟨h₂, h₃⟩",
+      "sec": 7.7
+    },
+    {
+      "id": "mathd_algebra_598",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_598.lean:14:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  5\nin the target expression\n  a * b * c * d = 3 / 2\n\na b c d : ℝ\nh₁ : 4 ^ a =",
+      "proof": "rw [← h₁, ← h₂, ← h₃, ← h₄]\nsimp_rw [← rpow_mul]\nhave h5 : (4 : ℝ) ≠ 0 := by norm_num\nhave h6 : (5 : ℝ) ≠ 0 := by norm_num\nhave h7 : (6 : ℝ) ≠ 0 := by norm_num\nhave h8 : (7 : ℝ) ≠ 0 := by norm_num\nrw [← rpow_eq_rpow_iff h5 h8]\nfield_simp\nnorm_num",
+      "sec": 9.3
+    },
+    {
+      "id": "mathd_algebra_756",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_756.lean:12:8: error(lean.unknownIdentifier): Unknown constant `Real.rpow_nat_cast`\nMiniF2F/Test/mathd_algebra_756.lean:11:15: error: unsolved goals\na b : ℝ\nh₀ : 2 ^ a",
+      "proof": "by\n  rw [← Real.rpow_nat_cast] at h₀\n  have h₂ : (2 : ℝ) ^ a = 2 ^ 5 := by rw [h₀, Nat.cast_ofNat]\n  rw [Real.rpow_left_injOn two_ne_zero (by norm_num) (by norm_num)] at h₂\n  rw [h₂] at h₁\n  have h₃ : (5 : ℝ) ^ b = 5 ^ 3 := by rw [h₁, Nat.cast_ofNat]\n  rw [Real.rpow_left_injOn (by norm_num) (by norm_num) (by norm_num)] at h₃\n  rw [h₃]\n  norm_num",
+      "sec": 9.4
+    },
+    {
+      "id": "mathd_algebra_76",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_76.lean:11:14: error: unsolved goals\nf : ℤ → ℤ\nh₀ : ∀ (n : ℤ), Odd n → f n = n ^ 2\nh₁ : ∀ (n : ℤ), Even n → f n = n ^ 2 - 4 * n - 1\n⊢ 4 ^ 2 - 4 * 4 - 1 = -1\nMiniF2F/Te",
+      "proof": "rw [h₁ 4 (by decide)]\nnorm_num",
+      "sec": 5.6
+    },
+    {
+      "id": "mathd_algebra_80",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_algebra_80.lean:14:23: error: Ambiguous term\n  ne_of_lt\nPossible interpretations:\n  _root_.ne_of_lt ?m.83 : ?m.62 ≠ 0\n  \n  Nat.ne_of_lt ?m.81 : ?m.60 ≠ 0\nMiniF2F/Test/mathd_al",
+      "proof": "by\n  have h₂ : x - 9 = 2 * (x + 1) := by\n    rw [← h₁]\n    exact (div_eq_iff (ne_of_lt (add_lt_add_left (neg_lt_zero.mpr zero_lt_one) x))).mp rfl\n  rw [mul_add, mul_one] at h₂\n  linarith",
+      "sec": 7.0
+    },
+    {
+      "id": "mathd_numbertheory_100",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_100.lean:14:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?m.26 ∣ ?m.28 ∧ ?m.27 ∣ ?m.28\nin the target expression\n  n ∣ 280\n\nn : ℕ",
+      "proof": "by\n  have h₃ : n ∣ 280 := by\n    rw [← Nat.lcm_dvd_iff]\n    exact ⟨dvd_refl n, h₂.symm ▸ dvd_refl _⟩\n  have h₄ : 10 ∣ n := by\n    rw [← h₁]\n    exact Nat.gcd_dvd_left n 40\n  obtain ⟨k, rfl⟩ := h₄\n  have h₅ : k ∣ 28 := by\n    rw [← Nat.dvd_div_iff h₄]\n    exact h₃\n    simp\n  have h₆ : Nat.gcd k 4 = 1 := by\n    rw [← Nat.coprime_iff_gcd_eq_one, Nat.coprime_comm, ← h₁]\n    simp [Nat.gcd_mul_left]\n   ",
+      "sec": 15.2
+    },
+    {
+      "id": "mathd_numbertheory_1124",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_1124.lean:14:30: error: unsolved goals\nn : ℕ\nh₀ : n ≤ 9\nh₁ : 18 ∣ 3740 + n\nh₂ : 374 * 10 + n = 3740 + n\n⊢ False\nMiniF2F/Test/mathd_numbertheory_1124.lean:15:47: e",
+      "proof": "by\n  have h₂ : 374 * 10 + n = 3740 + n := by rfl\n  rw [h₂] at h₁\n  have h₃ : 3740 % 18 = 16 := by norm_num\n  have h₄ : (3740 + n) % 18 = (16 + n) % 18 := by rw [Nat.add_mod, h₃]\n  rw [Nat.dvd_iff_mod_eq_zero] at h₁\n  rw [h₄] at h₁\n  have h₅ : (16 + n) % 18 = 0 := h₁\n  have h₆ : 16 + n < 18 + 9 := by linarith\n  have h₇ : 16 + n < 27 := h₆\n  have h₈ : 16 + n = 18 := by\n    apply Nat.mod_eq_zero_of_l",
+      "sec": 8.9
+    },
+    {
+      "id": "mathd_numbertheory_12",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_12.lean:9:6: error(lean.unknownIdentifier): Unknown constant `Finset.card_eq_card_of_eq_on`\nMiniF2F/Test/mathd_numbertheory_12.lean:8:70: error: unsolved goals\n⊢ ",
+      "proof": "rw [Finset.card_eq_card_of_eq_on (f := fun x => x / 20) (g := fun x => x / 20)]\n· simp only [Finset.card_Icc, Nat.card_Icc, Nat.cast_sub, Nat.cast_add, Nat.cast_one, ge_iff_le]\n  rw [Nat.sub_add_cancel (by norm_num), Nat.sub_add_cancel (by norm_num)]\n  norm_num\n· intro x hx\n  simp only [Finset.mem_filter, Finset.mem_Icc] at hx\n  rw [Nat.div_eq_iff_eq_mul_left (by norm_num) (by linarith [hx.1, hx.2",
+      "sec": 11.2
+    },
+    {
+      "id": "mathd_numbertheory_127",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_127.lean:9:2: error: 'calc' expression has type\n  ((∑ k ∈ Finset.range 101, 2 ^ k) % 7 = (2 ^ 101 - 1) % 7) = ((∑ k ∈ Finset.range 101, 2 ^ k) % 7 = (2 ^ 101 - 1)",
+      "proof": "calc (∑ k ∈ (Finset.range 101), 2^k) % 7\n    = (2^101 - 1) % 7 : by rw [geom_sum_eq, Nat.sub_one]; norm_num\n  ... = (2^(6 * 16 + 5) - 1) % 7 : by rw [Nat.mod_eq_of_lt (Nat.lt_succ_of_le (Nat.le_of_lt_succ (Nat.lt_succ_self 100)))]\n  ... = (2^5 - 1) % 7 : by rw [pow_mul, pow_mod, Nat.mod_eq_of_lt (Nat.lt_succ_of_le (Nat.le_of_lt_succ (Nat.lt_succ_self 6)))]; norm_num\n  ... = 31 % 7 : by norm_num\n  ",
+      "sec": 8.2
+    },
+    {
+      "id": "mathd_numbertheory_135",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_135.lean:16:32: error: unsolved goals\nn A B C : ℕ\nh₀ : n = 3 ^ 17 + 3 ^ 10\nh₁ : 11 ∣ 3 ^ 17 + 3 ^ 10 + 1\nh₂ : List.Pairwise (fun x1 x2 => x1 ≠ x2) [A, B, C]\nh₃ : ",
+      "proof": "rw [h₀] at h₁\nhave h₇ : 3^10 * (3^7 + 1) + 1 ≡ 0 [MOD 11] := by\n  rw [← h₁, Nat.modEq_zero_iff_dvd]\n  simp [h₀, pow_add]\nhave h₈ : (3^7 + 1) ≡ 0 [MOD 11] := by\n  have : 3^5 ≡ 1 [MOD 11] := by norm_num\n  calc (3^7 + 1) ≡ 3^(5+2) + 1 [MOD 11] := by rfl\n    _ ≡ 3^5 * 3^2 + 1 [MOD 11] := by rw [pow_add]\n    _ ≡ 1 * 9 + 1 [MOD 11] := by simp [this]\n    _ ≡ 10 [MOD 11] := by norm_num\n    _ ≡ 0 [MOD 11] ",
+      "sec": 20.7
+    },
+    {
+      "id": "mathd_numbertheory_150",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_150.lean:10:11: error: unsolved goals\nn : ℕ\nh₀ : ¬Nat.Prime (7 + 30 * n)\nh : ¬6 ≤ n\n⊢ False\nMiniF2F/Test/mathd_numbertheory_150.lean:12:0: error: unexpected ident",
+      "proof": "by_contra h\npush_neg at h\nhave h1 : n ≤ 5 := by omega\nhave h2 : n ∈ [0, 1, 2, 3, 4, 5] := by omega\nsimp only [mem_singleton, mem_insert] at h2\nrcases h2 with rfl | rfl | rfl | rfl | rfl | rfl\n· simp [Nat.prime_def_lt, Nat.lt_succ] at h₀\n· simp [Nat.prime_def_lt, Nat.lt_succ] at h₀\n· simp [Nat.prime_def_lt, Nat.lt_succ] at h₀\n· simp [Nat.prime_def_lt, Nat.lt_succ] at h₀\n· simp [Nat.prime_def_lt, Na",
+      "sec": 10.3
+    },
+    {
+      "id": "mathd_numbertheory_175",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_175.lean:10:39: error(lean.unknownIdentifier): Unknown constant `Nat.mul_add_div_of_lt`\nMiniF2F/Test/mathd_numbertheory_175.lean:10:32: error: unsolved goals\n⊢ 2 ",
+      "proof": "calc (2^2010) % 10\n    = (2^(4 * 502 + 2)) % 10 := by rw [Nat.mul_add_div_of_lt (Nat.lt_succ_self 3) 502]\n  _ = (2^2 * (2^4)^502) % 10 := by rw [pow_add, pow_mul]\n  _ = (4 * 16^502) % 10 := by norm_num\n  _ = (4 * (16 % 10)^502) % 10 := by rw [Nat.pow_mod]\n  _ = (4 * 6^502) % 10 := by norm_num\n  _ = (4 * 6) % 10 := by rw [pow_mod_two 6 502]\n  _ = 24 % 10 := by norm_num\n  _ = 4 := by norm_num",
+      "sec": 6.9
+    },
+    {
+      "id": "mathd_numbertheory_185",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_185.lean:12:2: error: No goals to be solved",
+      "proof": "by\n  rw [Nat.mul_mod, h₀]\n  norm_num",
+      "sec": 5.7
+    },
+    {
+      "id": "mathd_numbertheory_207",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_207.lean:8:31: error: unsolved goals\n⊢ 8 * (9 * 9) + 5 * 9 + 2 = 695\nMiniF2F/Test/mathd_numbertheory_207.lean:10:0: error: unexpected identifier; expected command",
+      "proof": "rw [pow_two]\nnorm_num",
+      "sec": 5.5
+    },
+    {
+      "id": "mathd_numbertheory_212",
+      "verdict": "accepted",
+      "reason": "elaborated clean under Mathlib",
+      "proof": "by\n  rw [← Nat.mod_mod_of_dvd _ (by norm_num : 10 ∣ 16^17 * 10^18)]\n  simp only [Nat.pow_eq, Nat.mul_mod, Nat.mod_mod]\n  norm_num",
+      "sec": 6.8
+    },
+    {
+      "id": "mathd_numbertheory_222",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_222.lean:14:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  3720\nin the target expression\n  (8 * 15).gcd b = 8\n\nb : ℕ\nh₀ : (8 * 15",
+      "proof": "by\n  have h120 : 120 = 8 * 15 := by norm_num\n  have h3720 : 3720 = 8 * 465 := by norm_num\n  rw [h120, h3720] at h₀ h₁\n  rw [Nat.gcd_mul_left 8 15 b] at h₁\n  have hgcd : Nat.gcd 15 b = 1 := by\n    apply Nat.eq_of_mul_eq_mul_left (by norm_num) h₁\n  rw [Nat.lcm_mul_left 8 15 b, hgcd, mul_one] at h₀\n  rw [Nat.mul_lcm_eq_mul_gcd 15 b, hgcd, mul_one] at h₀\n  norm_num at h₀\n  rw [← Nat.mul_right_inj (by ",
+      "sec": 11.6
+    },
+    {
+      "id": "mathd_numbertheory_227",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_227.lean:11:35: error: failed to synthesize\n  HDiv ℕ+ ℕ+ ?m.60\n\nHint: Additional diagnostic information may be available using the `set_option diagnostics true` c",
+      "proof": "by\n  have h₁ : (6 * x + 4 * y) / 24 = (x + y) / n := by\n    rw [← add_div, div_eq_div_iff] <;> norm_cast\n    · ring\n    · exact mul_ne_zero (by norm_num) (by norm_num)\n    · exact Nat.cast_ne_zero.mpr (PNat.ne_zero n)\n  have h₂ : n * (6 * x + 4 * y) = 24 * (x + y) := by\n    rw [← eq_div_iff (Nat.cast_ne_zero.mpr (PNat.ne_zero n)), ← h₁]\n    ring\n  have h₃ : 6 * x + 4 * y = 6 * (x + y) - 2 * y := b",
+      "sec": 61.9
+    },
+    {
+      "id": "mathd_numbertheory_229",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_229.lean:9:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ↑?m.27 ∣ ↑?m.29 - ↑?m.28\nin the target expression\n  5 ^ 30 % 7 = 1\n\n⊢ 5 ",
+      "proof": "rw [← Nat.modEq_iff_dvd]\nhave h : 5 ≡ (-2) [MOD 7] := by norm_num\nhave hpow : 5^30 ≡ (-2)^30 [MOD 7] := Nat.ModEq.pow h 30\nrw [hpow]\nhave h2 : (-2 : ℤ)^30 = (2^30) := by norm_num\nrw [h2]\nhave h3 : 2^3 ≡ 1 [MOD 7] := by norm_num\nhave h6 : 2^6 ≡ (2^3)^2 ≡ 1^2 ≡ 1 [MOD 7] := Nat.ModEq.pow h3 2\nhave h30 : 2^30 ≡ (2^6)^5 ≡ 1^5 ≡ 1 [MOD 7] := Nat.ModEq.pow h6 5\nexact h30",
+      "sec": 10.5
+    },
+    {
+      "id": "mathd_numbertheory_233",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_233.lean:10:13: error: unsolved goals\nb : ZMod (11 ^ 2)\nh₀ : b = 24⁻¹\n⊢ 24⁻¹ = 116\nMiniF2F/Test/mathd_numbertheory_233.lean:12:0: error: unexpected token 'have'; ",
+      "proof": "rw [h₀]\nhave h1 : (24 : ZMod (11^2)).natAbs = 24 := rfl\nhave h2 : (116 : ZMod (11^2)).natAbs = 116 := rfl\nhave h3 : 24 * 116 = 2784 := rfl\nhave h4 : 2784 % (11^2) = 1 := by norm_num\nrw [ZMod.val_inv_eq_inv_val, ZMod.val_nat_cast, h1, ZMod.val_nat_cast, h2, h3, h4]\nnorm_num",
+      "sec": 9.2
+    },
+    {
+      "id": "mathd_numbertheory_234",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_234.lean:14:24: error(lean.unknownIdentifier): Unknown constant `Nat.cbrt`\nMiniF2F/Test/mathd_numbertheory_234.lean:14:52: error(lean.unknownIdentifier): Unknown ",
+      "proof": "by\n  have h₂ : 10 * a + b = 97 := by\n    have : (10 * a + b)^3 = 912673 := h₁\n    have : 10 * a + b = Nat.cbrt 912673 := by rw [← Nat.cbrt_pow, this]\n    rw [this, Nat.cbrt_912673]\n  rw [← h₂] at h₁\n  simp at h₂\n  have h₃ : a = 9 := by linarith\n  rw [h₃] at h₂\n  simp at h₂\n  rw [h₂, h₃]\n  norm_num",
+      "sec": 8.9
+    },
+    {
+      "id": "mathd_numbertheory_235",
+      "verdict": "accepted",
+      "reason": "elaborated clean under Mathlib",
+      "proof": "by rfl",
+      "sec": 6.0
+    },
+    {
+      "id": "mathd_numbertheory_237",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_237.lean:9:18: error: unexpected token 'in'; expected ','\nMiniF2F/Test/mathd_numbertheory_237.lean:9:15: error: failed to synthesize\n  AddCommMonoid (Sort ?u.124)",
+      "proof": "by\n  have h_sum : ∑ k in Finset.range 101, k = 100 * 101 / 2 := by\n    rw [Finset.sum_range_id, Nat.sum_range_id]\n  rw [h_sum]\n  norm_num\n  rw [Nat.mod_eq_of_lt]\n  · norm_num\n  · norm_num",
+      "sec": 7.9
+    },
+    {
+      "id": "mathd_numbertheory_239",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_239.lean:9:6: error(lean.unknownIdentifier): Unknown constant `Finset.sum_Icc_eq_sum_range`\nMiniF2F/Test/mathd_numbertheory_239.lean:8:40: error: unsolved goals\n⊢",
+      "proof": "rw [Finset.sum_Icc_eq_sum_range]\nsimp only [Finset.range_val, List.range_eq_range', List.map_append, List.sum_append, List.map_map, Function.comp_def, Nat.cast_id]\nnorm_num",
+      "sec": 7.8
+    },
+    {
+      "id": "mathd_numbertheory_247",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_247.lean:13:46: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  3 * 8 % 11\nin the target expression\n  3 * n ≡ 2 [MOD 11]\n\nn : ℕ\nh₀ : 3",
+      "proof": "by\n  have h₁ : (3 * n) ≡ 2 [MOD 11] := h₀\n  have h₂ : 3 * 8 ≡ 2 [MOD 11] := by norm_num\n  have h₃ : 3 * n ≡ 3 * 8 [MOD 11] := by rwa [h₂] at h₁\n  have h₄ : 3.Coprime 11 := by norm_num\n  exact (Int.ModEq.mul_left_cancel' h₄ h₃).symm",
+      "sec": 8.3
+    },
+    {
+      "id": "mathd_numbertheory_254",
+      "verdict": "accepted",
+      "reason": "elaborated clean under Mathlib",
+      "proof": "by rfl",
+      "sec": 6.1
+    },
+    {
+      "id": "mathd_numbertheory_277",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_277.lean:12:49: error: Type mismatch\n  Nat.gcd_mul_lcm m n\nhas type\n  m.gcd n * m.lcm n = m * n\nbut is expected to have type\n  m * n = m.gcd n * m.lcm n\nMiniF2F/T",
+      "proof": "by\n  have h2 : m * n = Nat.gcd m n * Nat.lcm m n := Nat.gcd_mul_lcm m n\n  rw [h₀, h₁] at h2\n  simp at h2\n  have h3 : m * n = 756 := by linarith\n  have h4 : 6 ∣ m ∧ 6 ∣ n := by\n    rw [← h₀]\n    exact ⟨Nat.gcd_dvd_left m n, Nat.gcd_dvd_right m n⟩\n  rcases h4 with ⟨⟨a, ha⟩, ⟨b, hb⟩⟩\n  rw [ha, hb] at h3 h₀\n  simp at h₀\n  have h5 : a * b = 21 := by\n    rw [ha, hb] at h3\n    simp at h3\n    rw [mul_mul_",
+      "sec": 15.6
+    },
+    {
+      "id": "mathd_numbertheory_293",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_293.lean:12:35: error: Type mismatch: After simplification, term\n  h₁\n has type\n  11 ∣ 7 + (10 * n + 2000)\nbut is expected to have type\n  11 ∣ 9 + 10 * n\nMiniF2F/",
+      "proof": "by\n  have h : 11 ∣ 207 + 10 * n := by simpa [Nat.add_comm] using h₁\n  rw [Nat.dvd_iff_mod_eq_zero] at h\n  have h₂ : 207 % 11 = 9 := by norm_num\n  have h₃ : (10 * n) % 11 = (10 * n % 11) % 11 := by rfl\n  rw [Nat.add_mod, h₂, h₃] at h\n  simp at h\n  have h₄ : 10 * n % 11 = 2 := by linarith\n  have h₅ : ∀ k : ℕ, k ≤ 9 → (10 * k % 11 = 2 ↔ k = 5) := by\n    intro k hk\n    have : k ≤ 9 := hk\n    interval_",
+      "sec": 11.5
+    },
+    {
+      "id": "mathd_numbertheory_296",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_296.lean:12:14: error: unsolved goals\ncase pos\nn : ℕ\nh₀ : 2 ≤ n\nh₁ : ∃ x, x ^ 3 = n\nh₂ : ∃ t, t ^ 4 = n\nh₃ : n = 0\n⊢ 4096 ≤ n\n\ncase neg\nn : ℕ\nh₀ : 2 ≤ n\nh₁ : ∃ x,",
+      "proof": "by_cases h₃ : n = 0\n· simp [h₃] at h₀\n  contradiction\n· obtain ⟨k, hk⟩ := h₁\n  obtain ⟨m, hm⟩ := h₂\n  have h₄ : m = k^(3/4) := by\n    rw [← hm, hk]\n    exact (rpow_nat_cast m 4).symm ▸ (rpow_nat_cast k 3).symm ▸ rpow_left_inj (by positivity) (by positivity) (by norm_num)\n  have h₅ : k^3 = m^4 := by rw [hk, hm]\n  have h₆ : k = m^(4/3) := by\n    rw [← h₅]\n    exact (rpow_nat_cast k 3).symm ▸ (rpow_n",
+      "sec": 17.6
+    },
+    {
+      "id": "mathd_numbertheory_299",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_299.lean:10:0: error: unexpected identifier; expected command",
+      "proof": "rw [← Nat.mod_mod_of_dvd (1 * 3 * 5 * 7 * 9 * 11 * 13) (by norm_num : 10 ∣ 1 * 3 * 5 * 7 * 9 * 11 * 13 * 10)]\nsimp [Nat.mul_mod]",
+      "sec": 7.1
+    },
+    {
+      "id": "mathd_numbertheory_3",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_3.lean:10:0: error: unexpected identifier; expected command",
+      "proof": "simp [Finset.sum_range_succ]\nnorm_num",
+      "sec": 6.2
+    },
+    {
+      "id": "mathd_numbertheory_314",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_314.lean:17:25: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  (?x + ?y * ?z) % ?y\nin the target expression\n  r = 3 + 13 * 103\n\nr n :",
+      "proof": "by\n  have h₀' : r = 1342 % 13 := h₀\n  rw [Nat.mod_eq_of_lt] at h₀'\n  · have h1342 : 1342 = 13 * 103 + 3 := by norm_num\n    rw [h1342, add_comm, Nat.add_mul_mod_self_left] at h₀'\n    norm_num at h₀'\n    rw [h₀'] at h₃\n    have h1342_dvd : 1342 ∣ n := h₂\n    obtain ⟨k, hk⟩ := h1342_dvd\n    have hk_pos : 0 < k := by\n      apply Nat.pos_of_ne_zero\n      intro hk_zero\n      rw [hk_zero, mul_zero] at hk",
+      "sec": 14.9
+    },
+    {
+      "id": "mathd_numbertheory_320",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_320.lean:12:39: error: maximum recursion depth has been reached\nuse `set_option maxRecDepth <num>` to increase limit\nuse `set_option diagnostics true` to get diag",
+      "proof": "by\n  have h₂ : 123456 ≡ n [MOD 101] := by rwa [Nat.modEq_iff_dvd']\n  have h₃ : 123456 % 101 = n % 101 := Nat.modEq_iff_dvd'.1 h₂\n  have h₄ : n % 101 = 34 := by\n    rw [← h₃]\n    norm_num\n  rw [← h₄] at h₀\n  exact (Nat.mod_lt n (by norm_num)).antisymm' h₀",
+      "sec": 9.0
+    },
+    {
+      "id": "mathd_numbertheory_321",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_321.lean:11:44: error: unsolved goals\nn : ZMod 1399\nh₁ : n = 160⁻¹\n⊢ 169280 = 1\nMiniF2F/Test/mathd_numbertheory_321.lean:10:14: error: unsolved goals\nn : ZMod 139",
+      "proof": "have h₂ : (160 : ZMod 1399) * 1058 = 1 := by norm_num\nrw [← h₂] at h₁\nexact (mul_left_inj' (by norm_num : (160 : ZMod 1399) ≠ 0)).1 h₁",
+      "sec": 7.9
+    },
+    {
+      "id": "mathd_numbertheory_328",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_328.lean:9:15: error: failed to synthesize\n  Neg ℕ\n\nHint: Additional diagnostic information may be available using the `set_option diagnostics true` command.\nMini",
+      "proof": "by\n  have h : 5 ≡ -2 [MOD 7] := by norm_num\n  have hpow : 5^999999 ≡ (-2)^999999 [MOD 7] := ModEq.pow h 999999\n  have hcycle : ∀ n, (-2)^(6*n + 3) ≡ 6 [MOD 7] := by\n    intro n\n    induction' n with n ih\n    · norm_num\n    · rw [Nat.succ_eq_add_one, add_assoc, pow_add, pow_one]\n      have h6 : (-2)^6 ≡ 1 [MOD 7] := by norm_num\n      rw [ModEq.pow h6 n, one_pow, mul_one]\n      exact ih\n  have hex :",
+      "sec": 11.3
+    },
+    {
+      "id": "mathd_numbertheory_34",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_34.lean:13:16: error: failed to synthesize\n  Inv ℕ\n\nHint: Additional diagnostic information may be available using the `set_option diagnostics true` command.\nMini",
+      "proof": "by\n  have h₂ : x*9 ≡ 1 [MOD 100] := h₁\n  have h₃ : x ≡ 9⁻¹ [MOD 100] := by\n    rw [← Nat.modEq_iff_dvd' (Nat.pos_of_ne_zero (by norm_num)), Nat.modEq_comm]\n    exact Nat.modEq_mul_inv_of_modEq h₂\n  have h₄ : x ≡ 89 [MOD 100] := by\n    rw [h₃]\n    norm_num\n  rcases Nat.mod_eq_of_lt h₀ with ⟨k, hk⟩\n  rw [hk] at h₄\n  have h₅ : k = 0 := by\n    contrapose! h₀\n    rw [hk]\n    exact Nat.le_add_left 100 k",
+      "sec": 10.5
+    },
+    {
+      "id": "mathd_numbertheory_341",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_341.lean:13:10: error(lean.unknownIdentifier): Unknown identifier `Euler_theorem`\nMiniF2F/Test/mathd_numbertheory_341.lean:14:4: error: No goals to be solved\nMini",
+      "proof": "by\n  have hpow : 5^100 ≡ 1 [MOD 125] := by\n    apply Euler_theorem\n    · norm_num\n    · rw [Nat.coprime_comm, Nat.coprime_iff_gcd_eq_one]\n      norm_num\n  have hmod8 : 5^100 ≡ 1 [MOD 8] := by\n    have : 5 ≡ 1 [MOD 8] := by norm_num\n    exact this.pow 100\n  have hmod1000 : 5^100 ≡ 625 [MOD 1000] := by\n    apply Nat.ModEq.of_mul_left 8\n    rw [mul_comm, ← Nat.ModEq.add (Nat.ModEq.mul_right 125 hmod8",
+      "sec": 14.0
+    },
+    {
+      "id": "mathd_numbertheory_342",
+      "verdict": "accepted",
+      "reason": "elaborated clean under Mathlib",
+      "proof": "rfl",
+      "sec": 4.8
+    },
+    {
+      "id": "mathd_numbertheory_343",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_343.lean:12:2: error: No goals to be solved\nMiniF2F/Test/mathd_numbertheory_343.lean:11:8: warning: This simp argument is unused:\n  Nat.ModEq\n\nHint: Omit it from ",
+      "proof": "by\n  have : Finset.range 6 = {0, 1, 2, 3, 4, 5} := by decide\n  rw [this]\n  simp [Nat.ModEq]\n  norm_num",
+      "sec": 6.7
+    },
+    {
+      "id": "mathd_numbertheory_345",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_345.lean:9:27: error: unsolved goals\n⊢ False\nMiniF2F/Test/mathd_numbertheory_345.lean:10:6: error: Tactic `rewrite` failed: Did not find an occurrence of the patt",
+      "proof": "by\n  have h : 2000 % 7 = 6 := by norm_num\n  rw [← h]\n  have : 2000 + 2001 + 2002 + 2003 + 2004 + 2005 + 2006 =\n    7 * 2000 + (0 + 1 + 2 + 3 + 4 + 5 + 6) := by\n    rw [show 2001 = 2000 + 1 from rfl, show 2002 = 2000 + 2 from rfl,\n        show 2003 = 2000 + 3 from rfl, show 2004 = 2000 + 4 from rfl,\n        show 2005 = 2000 + 5 from rfl, show 2006 = 2000 + 6 from rfl]\n    ring\n  rw [this, add_mul, ",
+      "sec": 10.7
+    },
+    {
+      "id": "mathd_numbertheory_353",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_353.lean:13:8: error(lean.unknownIdentifier): Unknown constant `Finset.sum_mod_eq_zero`\nMiniF2F/Test/mathd_numbertheory_353.lean:14:8: error: No goals to be solve",
+      "proof": "by\n  have h₁ : 2009 = 7 * 7 * 41 := by norm_num\n  rw [h₁]\n  apply Finset.sum_mod_eq_zero\n  intro k hk\n  rw [Finset.mem_Icc] at hk\n  have h₂ : k ≡ (k - 2009) [MOD 2009] := by\n    rw [Nat.modEq_iff_dvd]\n    exact ⟨1, by ring⟩\n  refine Nat.ModEq.trans ?_ h₂\n  rw [Nat.modEq_iff_dvd]\n  use 1\n  ring",
+      "sec": 9.0
+    },
+    {
+      "id": "mathd_numbertheory_427",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_427.lean:10:71: error: unsolved goals\na : ℕ\nh₀ : a = ∑ k ∈ divisors 500, k\n⊢ ∑ k ∈ (∑ k ∈ divisors 500, k).divisors with Nat.Prime k, k = 25\nMiniF2F/Test/mathd_nu",
+      "proof": "rw [h₀]\nsimp_rw [Nat.divisors_prime_pow (by norm_num : Nat.Prime 5) 3]\nsimp_rw [Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ]\nsimp_rw [pow_zero, pow_one, pow_two, pow_three]\nsimp_rw [Nat.divisors_eq_properDivisors_insert_self_of_pos (by norm_num)]\nsimp_rw [Nat.properDivisors_eq_singleton_one (by norm_num)]\nsimp_rw [Finset.sum_singleton]\nsimp_rw [Finset",
+      "sec": 10.8
+    },
+    {
+      "id": "mathd_numbertheory_430",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_430.lean:19:34: error: unsolved goals\na b c : ℕ\nh₀ : 1 ≤ a ∧ a ≤ 9\nh₁ : 1 ≤ b ∧ b ≤ 9\nh₂ : 1 ≤ c ∧ c ≤ 9\nh₃ : a ≠ b\nh₄ : a ≠ c\nh₅ : b ≠ c\nh₆ : a + b = c\nh₇ : 10 *",
+      "proof": "have h₉ : 11 * a - b = 2 * c := by rw [← h₇, Nat.mul_comm]\nhave h₁₀ : c * b = 12 * a := by rw [← h₈, Nat.mul_comm]\nhave h₁₁ : c = a + b := by rw [← h₆]\nhave h₁₂ : 11 * a - b = 2 * (a + b) := by rw [h₁₁, h₉]\nhave h₁₃ : 11 * a - b = 2 * a + 2 * b := by rw [h₁₂, Nat.mul_add]\nhave h₁₄ : 11 * a - b - 2 * a = 2 * b := by rw [h₁₃, Nat.sub_sub]\nhave h₁₅ : 9 * a - b = 2 * b := by rw [h₁₄, Nat.mul_sub_left_",
+      "sec": 20.1
+    },
+    {
+      "id": "mathd_numbertheory_435",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_435.lean:13:11: error: unsolved goals\nk : ℕ\nh₀ : 0 < k\nh₁ : ∀ (n : ℕ), (6 * n + k).gcd (6 * n + 3) = 1\nh₂ : ∀ (n : ℕ), (6 * n + k).gcd (6 * n + 2) = 1\nh₃ : ∀ (n :",
+      "proof": "by_contra h\npush_neg at h\nhave hk : k ≤ 4 := by omega\nhave hk' : 1 ≤ k := Nat.pos_iff.1 h₀\ninterval_cases k\n· specialize h₁ 0\n  simp at h₁\n  contradiction\n· specialize h₂ 0\n  simp at h₂\n  contradiction\n· specialize h₃ 0\n  simp at h₃\n  contradiction\n· specialize h₁ 0\n  simp at h₁\n  contradiction\n· specialize h₂ 0\n  simp at h₂\n  contradiction",
+      "sec": 8.4
+    },
+    {
+      "id": "mathd_numbertheory_447",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_447.lean:11:6: error: expected '{' or indented tactic sequence\nMiniF2F/Test/mathd_numbertheory_447.lean:10:51: error: unsolved goals\n⊢ ∑ k ∈ Finset.Icc 1 49 with ",
+      "proof": "calc ∑ k ∈ Finset.filter (λ x => 3∣x) (Finset.Icc 1 49), (k % 10)\n    = ∑ k ∈ Finset.range 16, (3 * (k + 1) % 10) := by\n      simp [Finset.filter_eq, Finset.sum_range, Nat.mod_eq_of_lt (by norm_num)]\n    = ∑ k ∈ Finset.range 16, (3 * (k + 1) % 10) := rfl\n    = ∑ k ∈ Finset.range 16, (3 * (k + 1) % 10) := rfl\n    = ∑ k ∈ Finset.range 16, (3 * (k + 1) % 10) := rfl\n    = ∑ k ∈ Finset.range 16, (3 * (",
+      "sec": 53.3
+    },
+    {
+      "id": "mathd_numbertheory_451",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_451.lean:16:29: error: Invalid field notation: Function `Nat.card` does not have a usable parameter of type `Nat` for which to substitute `m`\n\nNote: Such a parame",
+      "proof": "by\n  have h : ∀ n ∈ S, n = 2016 := by\n    intro n hn\n    rw [h₀] at hn\n    obtain ⟨h₁, h₂, m, hm₁, hm₂⟩ := hn\n    have h₃ : Nat.divisors m = {1, m, 2, m / 2} := by\n      have h₄ : Nat.divisors m.card = 4 := hm₁\n      have h₅ : ∑ p ∈ Nat.divisors m, p = n := hm₂\n      have h₆ : m % 2 = 0 := by\n        by_contra h\n        have h₇ : Nat.divisors m = {1, m} := Nat.divisors_prime h\n        rw [h₇] at h",
+      "sec": 23.1
+    },
+    {
+      "id": "mathd_numbertheory_457",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_457.lean:11:12: error: unsolved goals\nn : ℕ\nh₀ : 0 < n\nh₁ : 80325 ∣ n !\nh : ¬17 ≤ n\n⊢ False\nMiniF2F/Test/mathd_numbertheory_457.lean:13:0: error: unexpected ident",
+      "proof": "by_contra h\npush_neg at h\nhave h17 : n < 17 := by omega\nhave h5 : 5 ≤ n := by\n  apply Nat.le_of_dvd h₀\n  apply Nat.dvd_trans (dvd_of_mul_right_dvd h₁)\n  exact Nat.dvd_factorial (by norm_num) h₀\nhave h80325 : 80325 = 3^2 * 5^2 * 7 * 17 * 3 := by norm_num\nrw [h80325] at h₁\nhave dvd : (3^2 * 5^2 * 7 * 17 * 3) ∣ n ! := h₁\nhave dvd17 : 17 ∣ n ! := Nat.dvd_trans (by norm_num) dvd\nhave p17 : Nat.Prime 17",
+      "sec": 11.0
+    },
+    {
+      "id": "mathd_numbertheory_483",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_483.lean:17:2: error: Tactic `clear` failed: variable 'f' depends on 'a'\n\na : ℕ → ℕ\nf : ℕ → ZMod 4 := fun n => ↑(a n)\nhf₀ : f 1 = 1\nhf₁ : f 2 = 1\nhf₂ : ∀ (n : ℕ),",
+      "proof": "by\n  let f : ℕ → ZMod 4 := fun n => (a n : ZMod 4)\n  have hf₀ : f 1 = 1 := by simp [f, h₀]\n  have hf₁ : f 2 = 1 := by simp [f, h₁]\n  have hf₂ : ∀ n, f (n + 2) = f (n + 1) + f n := by simp [f, h₂]\n  clear h₀ h₁ h₂ a\n  have fib_periodic : ∀ n, f (n + 24) = f n := by\n    intro n\n    induction' n with n ih\n    · simp [hf₀, hf₁, hf₂]\n      decide\n    · rw [Nat.add_succ, hf₂, ih, ← hf₂]\n  rw [← fib_peri",
+      "sec": 14.2
+    },
+    {
+      "id": "mathd_numbertheory_495",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_495.lean:14:59: error: Type mismatch\n  Nat.gcd_dvd_left a b\nhas type\n  a.gcd b ∣ a\nbut is expected to have type\n  a % a.gcd b = 0\nMiniF2F/Test/mathd_numbertheory_",
+      "proof": "have h₄ : 6 ∣ a := Nat.dvd_of_mod_eq_zero (by rw [← h₃]; exact Nat.gcd_dvd_left a b)\nhave h₅ : 6 ∣ b := Nat.dvd_of_mod_eq_zero (by rw [← h₃]; exact Nat.gcd_dvd_right a b)\nobtain ⟨m, hm⟩ := h₄\nobtain ⟨n, hn⟩ := h₅\nrw [hm, hn] at h₁ h₂\nhave h₆ : m % 5 = 1 := by\n  rw [Nat.mul_mod, h₁, Nat.mul_mod_right 6 m, Nat.mod_mod m 5]\n  norm_num\nhave h₇ : n % 5 = 4 := by\n  rw [Nat.mul_mod, h₂, Nat.mul_mod_right",
+      "sec": 12.6
+    },
+    {
+      "id": "mathd_numbertheory_5",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_5.lean:12:12: error: unsolved goals\nx : ℕ\nh₀ : 10 ≤ x ^ 2\nh₂ : ∃ t, t ^ 3 = x ^ 2\n⊢ 64 ≤ x ^ 2\nMiniF2F/Test/mathd_numbertheory_5.lean:14:0: error: unexpected iden",
+      "proof": "obtain ⟨x, rfl⟩ := h₁\nobtain ⟨t, rfl⟩ := h₂\nhave hx : 4 ≤ x := by\n  rw [← Nat.le_sqrt]\n  exact h₀\nhave ht : 4 ≤ t := by\n  rw [← Nat.le_cbrt]\n  exact h₀\ncalc\n  n = t^3 := rfl\n  _ ≥ 4^3 := pow_le_pow_right ht\n  _ = 64 := by norm_num",
+      "sec": 6.1
+    },
+    {
+      "id": "mathd_numbertheory_517",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_517.lean:10:0: error: unexpected identifier; expected command",
+      "proof": "rw [Nat.mul_mod, Nat.mul_mod]\nsimp only [Nat.mod_mod]\nnorm_num",
+      "sec": 5.5
+    },
+    {
+      "id": "mathd_numbertheory_521",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_521.lean:15:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/mathd_numbertheory_521.lean:14:28: error: unsolved goals\nm n : ℕ\nh₀ : Even m\nh₁ : Even",
+      "proof": "have h₄ : Even (m + n) := by\n  rw [← Nat.even_add, Nat.even_sub h₂] at h₀ h₁\n  exact Nat.Even.add h₀ h₁\n\nhave h₅ : 2 ∣ (m + n) ∧ 2 ∣ (m - n) := ⟨h₄, Nat.dvd_of_sub_eq h₂⟩\n\nhave h₆ : 4 ∣ (m^2 - n^2) := by\n  rw [← Nat.mul_sub_mul, Nat.mul_comm]\n  exact Nat.dvd_mul_of_dvd_right h₅.1 _\n\nhave h₇ : m^2 - n^2 = (m + n) * (m - n) := by ring\n\nhave h₈ : m^2 - n^2 = 2 * (m + n) := by rw [h₇, h₂, mul_comm]\n\nh",
+      "sec": 20.4
+    },
+    {
+      "id": "mathd_numbertheory_541",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_541.lean:12:17: error: unsolved goals\nm n : ℕ\nh₀ : 1 < m\nh₁ : 1 < n\nh₂ : m * n = 2005\nh₃ : 2005 = 5 * 401\n⊢ m + n = 406\nMiniF2F/Test/mathd_numbertheory_541.lean:1",
+      "proof": "have h₃ : 2005 = 5 * 401 := by norm_num\nrw [h₃] at h₂\nhave h₄ : Nat.Prime 5 := by norm_num\nhave h₅ : Nat.Prime 401 := by norm_num\nhave h₆ : m ∣ 5 * 401 := by rw [← h₂]\nhave h₇ : n ∣ 5 * 401 := by rw [← h₂, mul_comm]\nhave h₈ : m = 5 ∨ m = 401 := by\n  apply Nat.prime.dvd_mul h₄\n  rwa [mul_comm] at h₆\nhave h₉ : n = 5 ∨ n = 401 := by\n  apply Nat.prime.dvd_mul h₄\n  rwa [mul_comm] at h₇\nrcases h₈ with h",
+      "sec": 14.6
+    },
+    {
+      "id": "mathd_numbertheory_551",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_551.lean:10:0: error: unexpected identifier; expected command",
+      "proof": "rw [show 1529 = 6 * 254 + 5 by norm_num]\nsimp only [add_mul, one_mul, add_comm]\nrw [Nat.add_mul_mod_self_left]\nnorm_num",
+      "sec": 6.4
+    },
+    {
+      "id": "mathd_numbertheory_552",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_552.lean:16:20: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ↑(Nat.gcd ?x ?y)\nin the target expression\n  (12 * ↑x + 7).gcd (5 * ↑x ",
+      "proof": "by\n  have h₄ : ∀ x, h x = 1 := by\n    intro x\n    rw [h₂, h₀, h₁, Nat.gcd_eq_gcd_ab]\n    have : 12 * x + 7 - 2 * (5 * x + 2) = 3 := by ring\n    rw [this, Nat.gcd_comm, Nat.gcd_one_right]\n  have h₅ : Set.range h = {1} := by\n    ext x\n    constructor\n    · intro hx\n      obtain ⟨y, hy⟩ := hx\n      rw [← hy, h₄]\n      exact Set.mem_singleton 1\n    · intro hx\n      rw [Set.mem_singleton_iff] at hx\n   ",
+      "sec": 7.7
+    },
+    {
+      "id": "mathd_numbertheory_559",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_559.lean:20:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  x % 3\nin the target expression\n  x % 6 = 2 ∨ x % 6 = 5\n\nx y : ℕ\nh₀ : x ",
+      "proof": "by\n  have h₃ : x % 10 = y % 10 := h₂\n  have h₄ : y % 5 = 4 := h₁\n  have h₅ : y % 2 = (y % 10) % 2 := by rw [Nat.mod_mod_of_dvd y (by norm_num : 2 ∣ 10)]\n  have h₆ : (y % 10) % 2 = (x % 10) % 2 := by rw [←h₃]\n  have h₇ : x % 2 = (x % 10) % 2 := by rw [Nat.mod_mod_of_dvd x (by norm_num : 2 ∣ 10)]\n  have h₈ : x % 2 = y % 2 := by rw [h₅, h₆, ←h₇]\n  have h₉ : x % 6 = 2 ∨ x % 6 = 5 := by\n    rw [←Nat.mo",
+      "sec": 38.4
+    },
+    {
+      "id": "mathd_numbertheory_582",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_582.lean:15:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ?a + ?b + ?c\nin the target expression\n  (((3 * k).succ.succ.succ.succ +",
+      "proof": "by\n  obtain ⟨k, hk⟩ := h₁\n  rw [hk]\n  simp only [Nat.add_succ, Nat.add_zero, add_mul]\n  rw [add_assoc, add_assoc, add_assoc, add_assoc, add_assoc, add_assoc, add_assoc, add_assoc, add_assoc]\n  rw [← add_assoc (3 * k), ← add_assoc (3 * k), ← add_assoc (3 * k)]\n  rw [Nat.add_mod, Nat.add_mod, Nat.add_mod, Nat.add_mod, Nat.add_mod, Nat.add_mod, Nat.add_mod, Nat.add_mod, Nat.add_mod]\n  simp only [Nat.",
+      "sec": 10.1
+    },
+    {
+      "id": "mathd_numbertheory_618",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_618.lean:18:4: error: `simp` made no progress\nMiniF2F/Test/mathd_numbertheory_618.lean:27:8: error: Function expected at\n  h₁\nbut this term has type\n  1 < (p n).g",
+      "proof": "by_contra h\n  push_neg at h\n  have h₁' : Nat.gcd (p n) (p (n + 1)) = 1 := by\n    rw [h₀, h₀]\n    simp only [Nat.gcd_add_self_right, Nat.gcd_one_right]\n    apply Nat.gcd_eq_one_of_dvd_one\n    rw [Nat.dvd_sub']\n    · rw [Nat.add_sub_cancel]\n      exact Nat.dvd_refl _\n    · rw [Nat.add_sub_cancel]\n      exact Nat.dvd_refl _\n    · rw [Nat.add_sub_cancel]\n      exact Nat.dvd_refl _\n  exact h₁ h₁'",
+      "sec": 8.3
+    },
+    {
+      "id": "mathd_numbertheory_66",
+      "verdict": "accepted",
+      "reason": "elaborated clean under Mathlib",
+      "proof": "by simp only [show 194 = 11 * 17 + 7 by norm_num]",
+      "sec": 5.6
+    },
+    {
+      "id": "mathd_numbertheory_711",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_711.lean:13:3: error: unknown tactic\nMiniF2F/Test/mathd_numbertheory_711.lean:12:16: error: unsolved goals\nm n : ℕ\nh₀ : 0 < m ∧ 0 < n\nh₁ : m.gcd n = 8\nh₂ : m.lcm ",
+      "proof": "Here's the proof:\n\nobtain ⟨a, b, h₃, h₄, h₅⟩ := Nat.exists_coprime h₀ h₁\nhave h₆ : 8 * a * b = 112 := by\n  rw [← h₂, h₅, Nat.lcm_mul_left, Nat.mul_div_cancel_left _ (by linarith), mul_comm]\n  exact Nat.gcd_dvd_left m n\nhave h₇ : a * b = 14 := by linarith [h₆]\nhave h₈ : (a = 1 ∧ b = 14) ∨ (a = 2 ∧ b = 7) ∨ (a = 7 ∧ b = 2) ∨ (a = 14 ∧ b = 1) := by\n  rcases h₇ with ⟨ha, hb⟩\n  interval_cases a\n  · lef",
+      "sec": 13.8
+    },
+    {
+      "id": "mathd_numbertheory_728",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_728.lean:8:28: error: unsolved goals\n⊢ (29 ^ 13 - 5 ^ 13) % 28 % 7 = 3\nMiniF2F/Test/mathd_numbertheory_728.lean:10:0: error: unexpected identifier; expected comma",
+      "proof": "rw [← Nat.mod_mod_of_dvd (29^13 - 5^13) (by norm_num : 7 ∣ 28)]\nrw [show 29 ≡ 1 [MOD 7] by norm_num, show 5 ≡ 5 [MOD 7] by norm_num]\nsimp [Nat.ModEq, Nat.sub_mod]",
+      "sec": 7.2
+    },
+    {
+      "id": "mathd_numbertheory_764",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_764.lean:30:7: error: unexpected token 'in'; expected ','\nMiniF2F/Test/mathd_numbertheory_764.lean:16:46: error(lean.unknownIdentifier): Unknown constant `ZMod.na",
+      "proof": "by\n  have h₂ : p ≥ 7 := h₁\n  have h₃ : p ≥ 2 := Nat.Prime.two_le h₀\n  have h₄ : p - 2 ≥ 1 := by omega\n  have h₅ : p - 1 ≠ 0 := by omega\n  have h₆ : (p - 1 : ZMod p) = -1 := by simp [ZMod.nat_cast_self]\n  \n  let S := Finset.Icc 1 (p-2)\n  have hS : ∀ k ∈ S, (k : ZMod p) ≠ 0 ∧ (k + 1 : ZMod p) ≠ 0 := by\n    intro k hk\n    constructor\n    · apply ZMod.nat_cast_ne_zero.2\n      rw [Finset.mem_Icc] at hk",
+      "sec": 19.7
+    },
+    {
+      "id": "mathd_numbertheory_765",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_765.lean:12:39: error(lean.unknownIdentifier): Unknown constant `Int.modEq_iff_modEq_nat_abs`\nMiniF2F/Test/mathd_numbertheory_765.lean:14:63: error: Application t",
+      "proof": "by\n  have h2 : 24 * x ≡ 15 [ZMOD 1199] := Int.modEq_iff_modEq_nat_abs.1 h₁\n  have h3 : 24 * x ≡ 15 [ZMOD 1199] := h2\n  have h4 : 24 * x - 15 ≡ 0 [ZMOD 1199] := Int.ModEq.sub_right h3 15\n  have h5 : 1199 ∣ (24 * x - 15) := Int.ModEq.dvd h4\n  obtain ⟨k, hk⟩ := h5\n  have h6 : 24 * x = 1199 * k + 15 := by rw [← hk]; ring\n  have h7 : x = (1199 * k + 15) / 24 := by\n    rw [← h6]\n    exact (mul_div_cance",
+      "sec": 40.2
+    },
+    {
+      "id": "mathd_numbertheory_769",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_769.lean:9:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  (?a % ?n + ?b % ?n) % ?n\nin the target expression\n  (129 ^ 34 + 96 ^ 38)",
+      "proof": "by\n  rw [← add_mod]\n  have h129 : 129 % 11 = 8 := by norm_num\n  have h96 : 96 % 11 = 8 := by norm_num\n  rw [pow_mod, pow_mod, h129, h96]\n  have h8pow34 : 8^34 % 11 = (8^2)^17 % 11 := by rw [← pow_mul, mul_comm]\n  rw [h8pow34]\n  have h64 : 8^2 % 11 = 9 := by norm_num\n  rw [pow_mod, h64]\n  have h9pow17 : 9^17 % 11 = (9^2)^8 * 9 % 11 := by rw [← pow_succ, ← pow_mul, mul_comm]\n  rw [h9pow17]\n  have h8",
+      "sec": 20.2
+    },
+    {
+      "id": "mathd_numbertheory_85",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_85.lean:10:32: error: unsolved goals\n⊢ 1 * (3 ^ 0 * 3 * 3 * 3) + 2 * (3 ^ 0 * 3 * 3) + 2 * 3 + 2 = 1 * 27 + 2 * 9 + 6 + 2",
+      "proof": "calc 1 * 3^3 + 2 * 3^2 + 2*3 + 2\n    = 1 * 27 + 2 * 9 + 6 + 2 := by rw [pow_succ, pow_succ, pow_succ]\n  _ = 27 + 18 + 6 + 2 := by norm_num\n  _ = 53 := by norm_num",
+      "sec": 7.4
+    },
+    {
+      "id": "mathd_numbertheory_99",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/mathd_numbertheory_99.lean:11:45: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  ↑?m.50 ∣ ↑?m.52 - ↑?m.51\nin the target expression\n  (2 * n - 15) % 47 =",
+      "proof": "by\n  have h₁ : (2 * n - 15) % 47 = 0 := by rwa [← Nat.modEq_iff_dvd, Nat.modEq_sub_iff h₀]\n  have h₂ : 2 * n ≡ 15 [MOD 47] := Nat.modEq_iff_dvd.mpr h₁\n  have h₃ : n ≡ 31 * 15 [MOD 47] := by\n    rw [← Nat.modEq_iff_dvd]\n    have : 31 * 2 ≡ 1 [MOD 47] := by norm_num\n    exact (Nat.ModEq.mul_right' h₂ this).symm\n  have h₄ : 31 * 15 % 47 = 31 := by norm_num\n  rwa [← h₄, ← Nat.modEq_iff_dvd] at h₃",
+      "sec": 10.1
+    },
+    {
+      "id": "numbertheory_2pownm1prime_nprime",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/numbertheory_2pownm1prime_nprime.lean:11:17: error: unsolved goals\nn : ℕ\nh₀ : 0 < n\nh₁ : Nat.Prime (2 ^ n - 1)\nh : ¬Nat.Prime n\n⊢ False\nMiniF2F/Test/numbertheory_2pownm1prime_nprime",
+      "proof": "by_contra h\nobtain ⟨p, hp, hpn⟩ := Nat.exists_prime_and_dvd (Nat.not_prime_iff.mp h)\nhave hpow : 2 ^ n ≡ 1 [MOD 2 ^ p - 1] := by\n  rw [Nat.modEq_iff_dvd']\n  exact Nat.dvd_trans (Nat.pow_sub_pow_dvd_pow_sub_pow p n hpn) (Nat.dvd_sub_mod (2 ^ p - 1))\nhave hmod : 2 ^ p ≡ 1 [MOD 2 ^ p - 1] := by\n  rw [Nat.modEq_iff_dvd']\n  exact Nat.dvd_sub_mod (2 ^ p - 1)\nhave hdiv : 2 ^ p - 1 ∣ 2 ^ n - 1 := Nat.modE",
+      "sec": 10.0
+    },
+    {
+      "id": "numbertheory_3pow2pownm1mod2pownp3eq2pownp2",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/numbertheory_3pow2pownm1mod2pownp3eq2pownp2.lean:11:8: error(lean.unknownIdentifier): Unknown constant `Nat.modEq_iff_mod_eq`\nMiniF2F/Test/numbertheory_3pow2pownm1mod2pownp3eq2pownp",
+      "proof": "rw [← Nat.modEq_iff_mod_eq]\napply Nat.ModEq.pow_of_modEq_of_modEq\n· have h : 3 ≡ -1 [MOD 4] := by decide\n  apply Nat.ModEq.pow_of_modEq h\n· have h : 2 ^ n + 1 ≡ 1 [MOD 2] := by\n    rw [Nat.add_mod]\n    simp [Nat.pow_mod]\n  apply Nat.ModEq.pow_of_modEq h\n· have h : 2 ^ (n + 3) = 8 * 2 ^ n := by\n    rw [← pow_add, add_comm]\n    norm_num\n  rw [h]\n  apply Nat.ModEq.pow_two_sub_of_modEq\n  have h₁ : 3 ≡",
+      "sec": 12.6
+    },
+    {
+      "id": "numbertheory_4x3m7y3neq2003",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/numbertheory_4x3m7y3neq2003.lean:9:30: error: unsolved goals\nx y : ℤ\nh2003 : 2003 % 7 = 1\n⊢ 4 * x ^ 3 - 7 * y ^ 3 ≠ 2003\nMiniF2F/Test/numbertheory_4x3m7y3neq2003.lean:11:0: error: u",
+      "proof": "have h2003 : 2003 % 7 = 1 := by norm_num\nintro h\nhave h1 : 4 * x^3 ≡ 2003 [ZMOD 7] := by\n  rw [← h]\n  ring_nf\n  apply Int.ModEq.add_right\n  exact (Int.modEq_zero_iff_dvd.mpr (dvd_mul_left _ _)).symm\nrw [Int.modEq_comm, Int.modEq_iff_modEq_natAbs] at h1\nnorm_cast at h1\nhave h2 : 4 * x^3 ≡ 1 [MOD 7] := by\n  rwa [Nat.ModEq] at h1\nhave h3 : x^3 ≡ 2 [MOD 7] := by\n  have := (Nat.modEq_mul_inv_of_coprime",
+      "sec": 16.3
+    },
+    {
+      "id": "numbertheory_aoddbdiv4asqpbsqmod8eq1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/numbertheory_aoddbdiv4asqpbsqmod8eq1.lean:14:20: error(lean.unknownIdentifier): Unknown constant `Int.pow_emod`\nMiniF2F/Test/numbertheory_aoddbdiv4asqpbsqmod8eq1.lean:13:25: error: ",
+      "proof": "rw [Int.add_emod, Int.pow_emod, Int.pow_emod]\nhave hb : b % 8 = 0 ∨ b % 8 = 4 := by\n  rcases h₁ with ⟨k, hk⟩\n  have hk0 : k ≥ 0 := by linarith [h₂, hk]\n  rcases Int.emod_two_eq_zero_or_one k with h | h\n  · left\n    rw [hk, Int.mul_emod, h, zero_mul, zero_mul]\n  · right\n    rw [hk, Int.mul_emod, h, (by norm_num : (1 % 2) * 4 % 8 = 4)]\nrcases h₀ with ⟨c, hc⟩\nhave ha : a % 2 = 1 := by rw [hc, Int.add",
+      "sec": 18.1
+    },
+    {
+      "id": "numbertheory_exk2powkeqapb2mulbpa2_aeq1",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/numbertheory_exk2powkeqapb2mulbpa2_aeq1.lean:11:11: error: unsolved goals\na b : ℕ\nh₀ : 0 < a ∧ 0 < b\nh₁ : ∃ k > 0, 2 ^ k = (a + b ^ 2) * (b + a ^ 2)\nh : ¬a = 1\n⊢ False\nMiniF2F/Test/",
+      "proof": "by_contra h\npush_neg at h\nhave h₁' : ∃ k > 0, 2^k = (a + b^2) * (b + a^2) := h₁\nobtain ⟨k, hk, hk'⟩ := h₁'\nhave h₂ : (a + b^2) * (b + a^2) = 2^k := by rw [hk']\nhave h₃ : a + b^2 = 2^m ∧ b + a^2 = 2^n ∧ m + n = k := by\n  apply eq_pow_of_mul_eq_pow (Nat.prime_two) (a + b^2) (b + a^2) k\n  · rw [← h₂]\n    exact mul_pos (add_pos h₀.1 (pow_pos h₀.2 2)) (add_pos h₀.2 (pow_pos h₀.1 2))\n  · rw [← h₂]\n    e",
+      "sec": 44.1
+    },
+    {
+      "id": "numbertheory_fxeq4powxp6powxp9powx_f2powmdvdf2pown",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/numbertheory_fxeq4powxp6powxp9powx_f2powmdvdf2pown.lean:13:21: error: unsolved goals\nm n : ℕ\nf : ℕ → ℕ\nh₀ : ∀ (x : ℕ), f x = 4 ^ x + 6 ^ x + 9 ^ x\nh₁ : 0 < m ∧ 0 < n\nh₂ : m ≤ n\n⊢ 4 ",
+      "proof": "rw [h₀, h₀]\nsimp only [Nat.add_assoc, pow_add, pow_mul]\nhave h : ∀ k, 4^(2^k) + 6^(2^k) + 9^(2^k) = (2^(2^k) + 3^(2^k))^2 := by\n  intro k\n  simp [pow_add, mul_add, add_mul, add_assoc, add_comm, add_left_comm, mul_comm, mul_assoc, mul_left_comm]\n  ring\nsimp_rw [h]\nrw [← Nat.pow_mul, mul_comm, Nat.pow_mul]\napply Dvd.intro (3^(2^n - 2^m) + 2^(2^n - 2^m))^2\nring_exp",
+      "sec": 9.7
+    },
+    {
+      "id": "numbertheory_notEquiv2i2jasqbsqdiv8",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/numbertheory_notEquiv2i2jasqbsqdiv8.lean:13:2: error: Failed: (∃ k, 2 ^ 2 + 2 ^ 2 = 8 * k) ↔ ∃ i j, 2 = 2 * i ∧ 2 = 2 * j is not the type of a function.",
+      "proof": "by\n  intro h\n  have h1 := h 2 2\n  rw [Iff.comm] at h1\n  have h2 : ∃ i j : ℤ, 2 = 2 * i ∧ 2 = 2 * j := ⟨1, 1, by simp, by simp⟩\n  apply h1 at h2\n  obtain ⟨k, hk⟩ := h2\n  have : (2:ℤ)^2 + (2:ℤ)^2 = 8 := by norm_num\n  rw [this] at hk\n  have hk' : 8 = 8 * k := by rw [← hk]\n  rw [mul_right_inj' (by norm_num : (8:ℤ) ≠ 0)] at hk'\n  norm_num at hk'",
+      "sec": 9.7
+    },
+    {
+      "id": "numbertheory_x5neqy2p4",
+      "verdict": "rejected",
+      "reason": "lean: MiniF2F/Test/numbertheory_x5neqy2p4.lean:11:2: error: expected '{' or indented tactic sequence\nMiniF2F/Test/numbertheory_x5neqy2p4.lean:10:57: error: unsolved goals\nx y : ℤ\n⊢ ∀ (x y : ℤ), x ^ 5 ",
+      "proof": "have h : ∀ x y : ℤ, x^5 ≡ y^2 + 4 [ZMOD 11] → False := by\n  intro x y\n  simp only [Int.modEq_iff_add_fac]\n  intro h\n  have hx := Int.modEq_zero_iff_dvd.mpr (h.sub (y^2 + 4))\n  simp only [pow_succ, mul_assoc] at hx\n  have h11 : (11 : ℤ).Prime := by norm_num\n  have hdvd : 11 ∣ x^5 := by\n    rw [← Int.modEq_zero_iff_dvd]\n    exact hx\n  have hx11 : 11 ∣ x := h11.dvd_of_dvd_pow hdvd\n  obtain ⟨k, rfl⟩ :",
+      "sec": 20.4
+    }
+  ]
+}
