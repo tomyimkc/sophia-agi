@@ -38,6 +38,7 @@ _LEAK_PATTERNS = {
     "generic_bearer": r"(?i)bearer\s+[A-Za-z0-9._\-]{20,}",
     "private_key_block": r"-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----",
     "private_ip": r"\b(?:10\.\d{1,3}|192\.168|172\.(?:1[6-9]|2\d|3[01]))\.\d{1,3}\.\d{1,3}\b",
+    "localhost_url_with_cred": r"https?://[^\s/@]+:[^\s/@]+@",
     "home_path": r"/(?:home|Users)/[A-Za-z0-9._-]+/",
     "internal_tld": r"\b[a-z0-9.-]+\.(?:internal|local|corp|intranet)\b",
     # ReDoS-safe email (non-overlapping domain labels); mirrors agent.secret_patterns.

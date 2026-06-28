@@ -51,18 +51,24 @@ jobs:
             echo "::endgroup::"
           done
           exit $status
-      - name: cargo-audit (Rust crates under storage/ and services/)
+      - name: cargo-audit (BLOCKING; Rust crates under storage/ and services/)
         run: |
           if ! command -v cargo >/dev/null 2>&1; then
             rustup show >/dev/null 2>&1 || curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
             source "$HOME/.cargo/env"
           fi
-          cargo install cargo-audit --locked || true
+          cargo install cargo-audit --locked
+          # Ratchet (mirrors pip-audit): a NEW RustSec advisory fails the build.
+          # Grandfather a triaged baseline by adding `--ignore RUSTSEC-YYYY-NNNN`
+          # here with a written justification; the list is empty today.
+          IGNORE=""
+          status=0
           for lock in $(git ls-files '*Cargo.lock'); do
             echo "::group::cargo-audit $lock"
-            cargo audit -f "$lock" || true
+            cargo audit -f "$lock" $IGNORE || status=1
             echo "::endgroup::"
           done
+          exit $status
 
   # ── Static analysis (CodeQL, Python) ──────────────────────────────────────────
   # Produces the "CodeQL" code-scanning results that branch protection requires.

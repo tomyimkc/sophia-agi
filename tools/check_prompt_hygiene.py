@@ -126,10 +126,19 @@ def scan_file(path: Path) -> "list[dict]":
     return findings
 
 
-def run(globs: "list[str]") -> dict:
+def run(globs: "list[str]", *, explicit: "list[str] | None" = None) -> dict:
+    """Scan ``globs`` (default surfaces; tracked files only) plus ``explicit``
+    paths (always scanned, even if untracked — for pre-push checks of new files).
+    """
+    explicit_resolved = {Path(p).resolve() for p in (explicit or []) if Path(p).exists()}
     results: list[dict] = []
-    for path in collect_files(globs):
-        if not _tracked(path) or _git_crypt_encrypted(path):
+    for path in collect_files(list(globs) + list(explicit or [])):
+        forced = path.resolve() in explicit_resolved
+        # Default-surface files are gated on being git-tracked; explicitly passed
+        # files are always scanned. git-crypt blobs are skipped (ciphertext).
+        if not forced and not _tracked(path):
+            continue
+        if _git_crypt_encrypted(path):
             continue
         hits = scan_file(path)
         if hits:
@@ -139,11 +148,11 @@ def run(globs: "list[str]") -> dict:
 
 def main(argv: "list[str] | None" = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("paths", nargs="*", help="extra files/globs to scan (added to defaults)")
+    ap.add_argument("paths", nargs="*", help="extra files/globs to scan (always scanned, even if untracked)")
     ap.add_argument("--json", action="store_true", help="machine-readable output")
     args = ap.parse_args(argv)
 
-    report = run(DEFAULT_GLOBS + list(args.paths))
+    report = run(DEFAULT_GLOBS, explicit=list(args.paths))
     if args.json:
         print(json.dumps(report, ensure_ascii=False, indent=2))
     elif report["clean"]:
