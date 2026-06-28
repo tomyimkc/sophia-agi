@@ -223,9 +223,32 @@ passes) before any number leaves *illustrative* status.
   claimed here; `canClaimAGI` stays `false`. The deliverable is the certificate that
   any speed it *does* find cost no output fidelity — the repo's signature.
 
+### Getting a real go/no-go on a checkpoint — `tools/gss_probe.py`
+
+The feasibility meter consumes arrays; the probe harness extracts them from an actual
+forward pass and calls the gate.
+
+```bash
+# Toy MoE, pure-numpy, no GPU — proves the extraction→gate pipeline (runs in CI):
+python tools/gss_probe.py --backend moelm --experts 16 --tokens 64
+#   → ρ=0.06  α=0.99  k=4.9  cost_ratio=0.21  ceiling=4.65×  → GO
+
+# A real checkpoint (MoE → router contribs; dense → MLP-activation contribs):
+python tools/gss_probe.py --backend hf --model Qwen/Qwen2-57B-A14B \
+    --prompt "…" --draft bnb --out agi-proof/benchmark-results/gss-<model>.json
+```
+
+The `hf` backend uses `output_router_logits` for MoE read-sets and a 4-bit self-draft
+(`--draft bnb` = `bitsandbytes` `load_in_4bit`, the `tools/train_lora.py` path; or
+`fakequant` = device-agnostic int4 round-trip). It **skips cleanly (exit 0)** without
+torch/transformers, like `kernels/src/nvfp4_gemm.py`. The verdict is *feasibility*, never
+a speedup — a GO greenlights Tier 1, nothing more.
+
 ### Suggested build order
 1. **Tier 0** `serving/gss_feasibility.py` — measure (ρ, k); cheapest possible go/no-go.
-   ✅ **Built** — pure-numpy, CI-gated (`tests/test_gss_feasibility.py`), fail-closed.
+   ✅ **Built** — pure-numpy meter, CI-gated (`tests/test_gss_feasibility.py`), fail-closed;
+   `tools/gss_probe.py` extracts (contribs, target, draft) from a real forward pass
+   (numpy `MoELM` now; HF/bitsandbytes for real checkpoints).
 2. **Tier 1** `serving/gss.py` + `serving/gss_eval.py` — the lossless invariant (CI).
 3. **Tier 2** gather-on-read-set kernel in `kernels/src/` — the rooflined bandwidth win.
 4. Fold the acceptance-rate meter back into `moe/adapt.py` as the online bit-depth loop.
