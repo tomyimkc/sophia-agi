@@ -220,9 +220,51 @@ def build_verifier(verifier: str, refs: "list[str]",
       ``refs``/``entail``; built once and cached (see ``_hybrid_verifier``)."""
     if verifier == "hybrid":
         return _hybrid_verifier()
+    if verifier == "citation":
+        return _citation_verifier()
     if verifier == "core":
         return make_core_claim_verifier(refs, entail)
     return make_independent_verifier(refs, entail)
+
+
+_CITATION_CACHE: "list[Callable[[str, str], bool]]" = []
+
+
+def _citation_verifier() -> "Callable[[str, str], bool]":
+    """Build (once) the citation-existence corroborate_fn: reject an answer that cites a study
+    the system cannot independently confirm exists (Crossref DOI lookup + Crossref bibliographic
+    search). HIGH independence (deterministic external existence check). See
+    ``agent.citation_existence_verifier``."""
+    if _CITATION_CACHE:
+        return _CITATION_CACHE[0]
+    from agent.citation_existence_verifier import make_citation_corroborate_fn  # noqa: PLC0415
+    from agent.live_sources import LiveFactBackend, _get_json  # noqa: PLC0415
+
+    live = LiveFactBackend()
+
+    def scholarly_search(query: str) -> "list[dict]":
+        out: "list[dict]" = []
+        try:
+            from urllib.parse import urlencode  # noqa: PLC0415
+            data = _get_json(
+                "https://api.crossref.org/works?" + urlencode({"query.bibliographic": query[:220], "rows": "3"}),
+                timeout=15)
+            for it in (data.get("message", {}).get("items") or [])[:3]:
+                title = " ".join(it.get("title") or [])
+                year = ""
+                for k in ("published-print", "published-online", "published", "issued"):
+                    parts = (it.get(k) or {}).get("date-parts") or []
+                    if parts and parts[0]:
+                        year = str(parts[0][0]); break
+                if title:
+                    out.append({"title": title, "year": year})
+        except Exception:  # noqa: BLE001 — fail-closed: a search error confirms nothing
+            return []
+        return out
+
+    verify = make_citation_corroborate_fn(doi_resolver=live.doi_resolver, scholarly_search=scholarly_search)
+    _CITATION_CACHE.append(verify)
+    return verify
 
 
 _HYBRID_CACHE: "list[Callable[[str, str], bool]]" = []
@@ -446,7 +488,7 @@ def main(argv: "list[str] | None" = None) -> int:
     ap.add_argument("--retrieve", action="store_true",
                     help="fetch each case's truth_refs from Wikipedia per entity (measured "
                          "independence) instead of the curated refs; fail-closed on empty.")
-    ap.add_argument("--verifier", choices=("atomic", "core", "hybrid"), default="atomic",
+    ap.add_argument("--verifier", choices=("atomic", "core", "hybrid", "citation"), default="atomic",
                     help="corroborate-fn mode: 'atomic' (default, all atomic claims must be "
                          "entailed by >=2 independent refs — backward-compatible) or 'core' "
                          "(reject only when the answer's CORE claim is CONTRADICTED by an "
