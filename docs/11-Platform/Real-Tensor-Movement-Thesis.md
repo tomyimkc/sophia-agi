@@ -144,19 +144,33 @@ metal — it instantiates all four governors at once:
 ### 4.3 The cost model that decides if it wins (roofline-first)
 
 On the Spark, decode time per token ≈ `bytes_read / 273 GB/s`. Let the target read
-`B` bytes/token dense. GSS pays:
+`B` bytes/token dense, with block size γ (drafted tokens per verify). GSS pays, per
+**block**:
 
 ```
-draft pass:        ~0.25·B   (4-bit self-pass, full read)
-target verify:      ρ·B      (ρ = pruned read fraction, full precision)
-amortized over:     k        (accepted tokens per block)
+draft:   γ · 0.25·B   (γ *autoregressive* 4-bit self-passes; weights re-read each
+                       token — drafting can't batch)
+verify:      ρ·B      (ONE parallel target pass over the γ-token block; weights
+                       amortized across the batch dimension)
+over:        k        (tokens produced per block, k = (1−α^(γ+1))/(1−α))
 ```
 
-Per accepted token ≈ `(0.25·B + ρ·B) / k`. It **wins iff `(0.25 + ρ)/k < 1`** — e.g.
-ρ≈0.3 read-set, k≈3 accepted ⇒ ~0.18·B/token ≈ a **5–6× bandwidth reduction** at the
-roofline, *at certified-equal output*. The knee is entirely (ρ, k), both directly
-measurable offline before any GPU spend. If ρ or k are poor, GSS provably can't beat
-dense and you don't ship it — the cost model is itself fail-closed.
+Per produced token ≈ `B·(γ·0.25 + ρ)/k`, so GSS **wins iff `(γ·0.25 + ρ)/k < 1`**.
+(An earlier sketch wrote `(0.25+ρ)/k`, collapsing the γ draft passes to one — that is
+optimistic; the γ-aware form above is what `serving/gss_feasibility.py` computes and
+the number to trust.) Worked example: ρ≈0.3, γ=4, α≈0.85 ⇒ k≈3.4 ⇒
+`(1.0+0.3)/3.4 ≈ 0.38` → a **~2.6× bandwidth reduction** at the roofline, *at
+certified-equal output*. Honest range with good structure is **~2–3×**, not 5–6×. The
+knee is entirely (ρ, k, γ), all measurable offline before any GPU spend. If they are
+poor, GSS provably can't beat dense and you don't ship it — the cost model is itself
+fail-closed.
+
+**This is now built (Tier 0): [`serving/gss_feasibility.py`](../../serving/gss_feasibility.py).**
+Its CI invariants demonstrate both regimes on synthetic activations: a concentrated
+read-set + faithful draft → GO (ρ=0.06, k=3.8, cost_ratio=0.28, **3.6× ceiling**); a
+diffuse read-set + poor draft → NO-GO (cost_ratio=1.66, the kill switch fires). Feed it
+real `(contribs, target_probs, draft_probs)` arrays from a forward pass to get the
+go/no-go for *your* model.
 
 ---
 
@@ -211,6 +225,7 @@ passes) before any number leaves *illustrative* status.
 
 ### Suggested build order
 1. **Tier 0** `serving/gss_feasibility.py` — measure (ρ, k); cheapest possible go/no-go.
+   ✅ **Built** — pure-numpy, CI-gated (`tests/test_gss_feasibility.py`), fail-closed.
 2. **Tier 1** `serving/gss.py` + `serving/gss_eval.py` — the lossless invariant (CI).
 3. **Tier 2** gather-on-read-set kernel in `kernels/src/` — the rooflined bandwidth win.
 4. Fold the acceptance-rate meter back into `moe/adapt.py` as the online bit-depth loop.

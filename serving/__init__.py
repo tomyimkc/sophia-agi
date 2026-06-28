@@ -70,6 +70,14 @@ from serving.kv_quant import (
     quantize_kv_block,
 )
 from serving.load_balancer import CacheAwareRouter, RouteDecision
+from serving.gss_feasibility import (
+    GSSFeasibilityGate,
+    GSSFeasibilityReport,
+    acceptance_rate,
+    expected_accepted,
+    read_set_fraction,
+    read_set_temporal_stability,
+)
 
 __all__ = [
     "BlockTier",
@@ -95,4 +103,11 @@ __all__ = [
     "quantize_kv_block",
     "dequantize_kv_block",
     "kv_memory_ratio",
+    # Governed Speculative Sparsity — Tier-0 feasibility meter
+    "GSSFeasibilityGate",
+    "GSSFeasibilityReport",
+    "read_set_fraction",
+    "read_set_temporal_stability",
+    "acceptance_rate",
+    "expected_accepted",
 ]
