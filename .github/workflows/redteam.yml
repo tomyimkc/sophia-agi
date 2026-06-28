@@ -1,0 +1,61 @@
+name: Red-Team
+
+on:
+  # Pre-release gate.
+  push:
+    tags: ["v*"]
+  # Nightly drift check.
+  schedule:
+    - cron: "37 3 * * *"
+  # Manual / opt-in live run.
+  workflow_dispatch:
+    inputs:
+      live:
+        description: "Probe the real configured model (requires secrets)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: redteam-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  redteam:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Deterministic offline gate — always runs, no secrets. Fails the build if
+      # the DEPLOYED system (model + output guard) leaks or is hijacked.
+      - name: Red-team (mock, defense on) — release gate
+        run: |
+          python tools/redteam_runner.py --gate --out redteam-report.mock.json
+          echo "---- aggregate ----"
+          python -c "import json;r=json.load(open('redteam-report.mock.json'));print({k:r[k] for k in ('mode','worst_severity','extraction_resisted','injection_resisted','passed')})"
+
+      # Optional live run — only on manual dispatch with the flag, using repo
+      # secrets. Publishes the AGGREGATE only (never raw exploits), per SECURITY.md.
+      - name: Red-team (live) — drift measurement
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.live }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SOPHIA_MODEL_PROVIDER: ${{ vars.SOPHIA_MODEL_PROVIDER }}
+        run: |
+          python tools/redteam_runner.py --live --out redteam-report.live.json || true
+          python -c "import json;r=json.load(open('redteam-report.live.json'));print({k:r[k] for k in ('mode','worst_severity','passed')})"
+
+      - name: Upload aggregate reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: redteam-reports
+          path: redteam-report.*.json
+          if-no-files-found: ignore

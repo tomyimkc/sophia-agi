@@ -1,9 +1,28 @@
 # Security Hardening Plan — Repo + Trained LLM
 
-> Status: **proposal / adoption roadmap** (not yet enforced).
+> Status: **implemented** (Phases 0–5 landed; one manual repo-settings step remains).
 > Scope: protecting this repo and any **published Sophia model** against misuse,
 > prompt injection, and system-prompt / training-data leakage.
 > Audience: maintainer (`tomyimkc`) + contributors.
+
+## Implementation map (what shipped)
+
+| Phase | Deliverable | Files |
+| --- | --- | --- |
+| P0 | Acceptable Use Policy; SECURITY.md disclosure + no-secrets-in-prompt | `USAGE-POLICY.md`, `SECURITY.md` |
+| P1 | CI security scans + Rust dep coverage + gitleaks config | `.github/workflows/security.yml`, `.github/dependabot.yml`, `.gitleaks.toml` |
+| P2 | Prompt-hygiene gate, canaries, corpus scrub | `tools/check_prompt_hygiene.py`, `agent/secret_patterns.py`, `agent/canary.py`, `agent/corpus_scrub.py` |
+| P3 | Egress output guard, refusal screen, prod profile | `gateway/output_guard.py`, `agent/refusal.py`, `gateway/profiles.py`, `gateway/interceptor.py`, `agent/conscience.py` |
+| P4 | ZeroLeaks-style red-team corpus + harness + release gate | `eval/redteam/attacks.jsonl`, `tools/redteam_runner.py`, `.github/workflows/redteam.yml` |
+| P5 | Artifact signing + SBOM, tamper-evident audit chain, safety model card | `tools/sign_artifacts.py`, `agent/audit_chain.py`, `models/hf-model-card/README.md` |
+| tests | 35 unit tests across the layers | `tests/test_security_*.py`, `tests/test_redteam.py` |
+
+**Remaining manual step (cannot be done from code):** enable **branch protection**
+on `main` (require the `Security` workflow + review), turn on GitHub **secret
+scanning + push protection**, and set `SOPHIA_CANARY_SEED` in `.env` (and as a
+repo secret for live red-team runs). The runtime defenses (output guard, refusal
+screen, call budget) are **opt-in by default**; deploy behind
+`gateway.profiles.hardened_gateway(...)` to turn them on in production.
 
 This document does three things:
 
@@ -247,21 +266,21 @@ highest-leverage, lowest-effort protections land first.
   the prompt) + **P2.3 canaries** + **P3.1 output leakage filter** + **P4** to
   measure it. The strategic point: **design so a leaked prompt is harmless.**
 
-**Adoption order (do top to bottom):**
+**Adoption status:**
 
-- [ ] P0.1 `USAGE-POLICY.md` (Acceptable Use) — *highest leverage, 1 hour*
-- [ ] P0.2 expand `SECURITY.md` (disclosure + no-secrets-in-prompt)
-- [ ] P1.1 `security.yml`: pip-audit, cargo-audit, CodeQL, gitleaks
-- [ ] P1.2 `dependabot.yml`; P1.3 branch protection
-- [ ] P2.1 `tools/check_prompt_hygiene.py` (CI gate)
-- [ ] P2.2 corpus PII/secret scrub + canary test
-- [ ] P3.1 `gateway/output_guard.py` (leakage/PII output filter)
-- [ ] P3.2 prod profile: approval + rate limit default-on
-- [ ] P3.3 refusal screen wired into conscience gate
-- [ ] P4.1–P4.3 ZeroLeaks-style red-team corpus + runner + release gate
-- [ ] P5.1 sign + checksum + SBOM model artifacts
-- [ ] P5.2 hash-chain the audit log
-- [ ] P5.3 safety-aware, gated model card
+- [x] P0.1 `USAGE-POLICY.md` (Acceptable Use)
+- [x] P0.2 expand `SECURITY.md` (disclosure + no-secrets-in-prompt)
+- [x] P1.1 `security.yml`: pip-audit, cargo-audit, CodeQL, gitleaks
+- [x] P1.2 `dependabot.yml` (+ cargo); **P1.3 branch protection — manual repo setting**
+- [x] P2.1 `tools/check_prompt_hygiene.py` (CI gate)
+- [x] P2.2 corpus PII/secret scrub + canary test
+- [x] P3.1 `gateway/output_guard.py` (leakage/PII output filter)
+- [x] P3.2 prod profile (`gateway/profiles.py`): guard + budget default-on in `hardened_gateway()`
+- [x] P3.3 refusal screen wired into conscience gate (opt-in via `enforceAcceptableUse`)
+- [x] P4.1–P4.3 ZeroLeaks-style red-team corpus + runner + release gate
+- [x] P5.1 sign + checksum + SBOM model artifacts
+- [x] P5.2 hash-chain the audit log
+- [x] P5.3 safety-aware model card
 
 **Guiding principles (keep these even if you skip steps):**
 

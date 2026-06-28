@@ -31,6 +31,7 @@ from agent.metacognition import assess_uncertainty
 from agent.moral_aggregator import moral_parliament
 from agent.public_sanitize import sanitize_public_artifact
 from agent.public_standard_gate import check_public_standard
+from agent.refusal import refusal_screen
 
 
 @dataclass(frozen=True)
@@ -198,8 +199,16 @@ def conscience_check(
         agenda = build_active_agenda({"cases": [{"id": "conscience", "claim": text, "verdict": fact.get("verdict"), "confidence": meta.get("confidence", 0.0), "risk": "high" if high else "normal", "reason": fact.get("reason", ""), "claims": fact.get("claims", [])}]}, limit=5)
         agenda_actions = agenda.get("plans", [])
 
+    # Acceptable-use refusal (opt-in at the input boundary). OFF by default so
+    # epistemic behavior is unchanged; the serving profile sets
+    # context["enforceAcceptableUse"]=True to enforce USAGE-POLICY.md prohibitions.
+    refusal = (refusal_screen(text) if context.get("enforceAcceptableUse")
+               else {"block": False, "category": None})
+
     # Hard gates first.
-    if deontic.get("verdict") == "rejected":
+    if refusal.get("block"):
+        verdict, reason = "block", f"acceptable-use refusal ({refusal['category']}): {refusal.get('reason','')}"
+    elif deontic.get("verdict") == "rejected":
         verdict, reason = "block", "deontic hard prohibition triggered"
     elif constitution.get("verdict") == "rejected":
         verdict, reason = "block", "constitutional critical prohibition triggered"
