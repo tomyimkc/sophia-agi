@@ -77,7 +77,7 @@ SYSTEM = MODE_PROMPTS["advisor"] + ROUTE_INSTRUCTION
 # Target mix (fractions) from the plan. Reported against actuals; not enforced by truncation.
 TARGET_MIX = {
     "source_discipline": (0.20, 0.25),
-    "settled_fact": (0.08, 0.14),
+    "settled_fact": (0.12, 0.20),
     "hard_provenance_negatives": (0.15, 0.15),
     "council": (0.10, 0.15),
     "moral_gate": (0.10, 0.10),
@@ -233,6 +233,46 @@ def gen_settled_facts(settled: dict) -> list:
                              assistant=_route_answer("allow", 0.96, "established-fact",
                                                      [f"settled_facts:{rid}"], [], body, zh),
                              source_ids=[f"settled_facts:{rid}"]))
+    return out
+
+
+_EVENT_WHAT = ["Briefly state what happened: {e} ({y}).", "What happened in {y}: {e}?",
+               "Tell me about this event: {e}."]
+_EVENT_DISPUTE = ["Is it disputed or uncertain that {e} happened?",
+                  "Should I hedge about whether {e} occurred?"]
+
+
+def gen_settled_events(events: dict) -> list:
+    """CALIBRATION (history). The calibration fix v2 transferred to settled AUTHORSHIP but NOT to
+    settled HISTORICAL EVENTS (protected_history stayed at 0.806 over-hedging) because the corpus was
+    all book-authorship. These rows teach the same discrimination for EVENTS: a well-documented event
+    warrants a direct factual answer, not abstention or hedging. Hedge-free by construction."""
+    out = []
+    for rid, rec in events.items():
+        e = rec["canonicalTitleEn"]
+        y = rec.get("year", "")
+        for tmpl in _EVENT_WHAT:
+            body = (f"{e[0].upper()}{e[1:]} occurred" + (f" in {y}" if y else "") + ". This is a "
+                    f"well-documented historical event. Source discipline means matching confidence to "
+                    f"the evidence: the record here is settled, so a direct factual answer is correct — "
+                    f"no abstention or qualification is warranted.")
+            zh = f"{e}（{y}）為有充分史料的事件，可直接作答，無須保留或迴避。"
+            out.append(_cand(family="settled_fact", domain="history", language="en", route="allow",
+                             user=tmpl.format(e=e, y=y),
+                             assistant=_route_answer("allow", 0.96, "established-event",
+                                                     [f"settled_events:{rid}"], [], body, zh),
+                             source_ids=[f"settled_events:{rid}"]))
+        for tmpl in _EVENT_DISPUTE:
+            body = (f"No — {e} is a well-documented historical event and is not in dispute. Source "
+                    f"discipline is about matching confidence to the evidence, not hedging everything; a "
+                    f"settled event warrants a direct answer. Reserve caution for genuinely contested or "
+                    f"poorly-evidenced claims.")
+            zh = f"否。{e}有充分史料佐證，並無爭議；來源紀律是讓信心配合證據，settled 事件可直接作答。"
+            out.append(_cand(family="settled_fact", domain="history", language="en", route="allow",
+                             user=tmpl.format(e=e, y=y),
+                             assistant=_route_answer("allow", 0.95, "established-event",
+                                                     [f"settled_events:{rid}"], [], body, zh),
+                             source_ids=[f"settled_events:{rid}"]))
     return out
 
 
@@ -667,7 +707,7 @@ def count_records() -> dict:
     A high rows/record ratio means templating (Goodhart bait), not more ground truth."""
     files = ["attributions.json", "traditions.json", "religion_concepts.json",
              "psychology_concepts.json", "history_events.json", "legal_authorities.json",
-             "settled_facts.json"]
+             "settled_facts.json", "settled_events.json"]
     per = {}
     for f in files:
         try:
@@ -696,6 +736,7 @@ def synthesize() -> list:
     rows = []
     rows += gen_source_discipline(attr)
     rows += gen_settled_facts(settled)        # calibration: settled -> answer directly (no hedge)
+    rows += gen_settled_events(_load("settled_events.json"))  # calibration: settled EVENTS -> direct
     rows += gen_tradition_separation(attr, trad)
     rows += gen_religion_discipline(rel)
     rows += gen_myth(psych, hist)
