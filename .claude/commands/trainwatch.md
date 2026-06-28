@@ -1,12 +1,13 @@
 ---
-description: View TrainWatch training stats — time/ETA/progress/loss at a glance
+description: View TrainWatch training stats — time/ETA/progress/loss (works locally + remote)
 argument-hint: "[run-name-or-id]  (blank = all runs)"
 allowed-tools: Bash(python3:*)
 ---
-Current TrainWatch state (DB: ~/.trainwatch/runs.db):
+Current TrainWatch state:
 
-!`python3 /home/tomyimkc/sophia-agi/tools/trainwatch_stats.py $ARGUMENTS`
+!`python3 "$HOME/.claude/trainwatch_stats.py" $ARGUMENTS`
 
-Relay the stats above to the user concisely. Lead with **time/ETA and progress**, then
-loss/val_loss trends, and call out anything **stalled or anomalous**. If a specific run was
-named, focus on its detail view. Don't re-run unless asked.
+Relay the stats above concisely. Lead with **time/ETA and progress**, then loss/val_loss
+trends; flag anything **stalled/anomalous**. On a remote machine with no local TrainWatch DB,
+the script auto-targets the Spark dashboard (spark-2f2d:8420) over Tailscale; override with
+$TRAINWATCH_URL. Don't re-run unless asked.
