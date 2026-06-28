@@ -1,0 +1,46 @@
+{
+  "schema": "sophia.source_faithfulness_verifier.v1",
+  "experiment": "Source-faithfulness verifier (misstated-conclusion) \u2014 LIVE multi-judge demo",
+  "date": "2026-06-28",
+  "judges": [
+    "openrouter:deepseek/deepseek-chat",
+    "llmhub:claude-sonnet-4-6"
+  ],
+  "independence": "medium (independent retrieved source + multi-judge entailment; the support verdict is model-based, flagged)",
+  "consensus_rule": "reject only on a STRICT MAJORITY 'contradicts' (avoids a single over-strict judge over-blocking a correct claim)",
+  "live_demo": [
+    {
+      "claim": "Water boils at 90 C at sea level",
+      "source": "Wikipedia: Boiling point",
+      "verdict": "contradicts",
+      "expected": "MISSTATED",
+      "correct": true
+    },
+    {
+      "claim": "Water boils at 100 C at sea level",
+      "source": "Wikipedia: Boiling point",
+      "verdict": "insufficient->pass",
+      "expected": "CORRECT",
+      "correct": true
+    },
+    {
+      "claim": "Speed of light ~250,000 km/s",
+      "source": "Wikipedia: Speed of light",
+      "verdict": "contradicts",
+      "expected": "MISSTATED",
+      "correct": true
+    },
+    {
+      "claim": "Speed of light ~300,000 km/s",
+      "source": "Wikipedia: Speed of light",
+      "verdict": "supports",
+      "expected": "CORRECT",
+      "correct": true
+    }
+  ],
+  "finding": "The semantic frontier \u2014 a REAL, correctly-attributed source whose FINDING is misstated \u2014 is irreducibly a model judgment, so this verifier is held to the no-overclaim posture: an INDEPENDENT retrieved source (Wikipedia, independent of the answer model) judged by a MULTI-JUDGE panel (DeepSeek + Claude), acting only on STRICT-MAJORITY consensus, fail-OPEN on insufficiency. Live demo 4/4 correct: misstated facts -> contradicts (caught), correct facts -> supports/insufficient (passed, no false positive). Independence is MEDIUM and labelled as such \u2014 it complements the high-independence layers, it does not replace them. Honest bound: coverage is retrieval-bounded (resolving the right source/title is the bottleneck, as throughout this session) and the verdict is model-based; a full-pack run is gated by source-title resolution.",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false
+}

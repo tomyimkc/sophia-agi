@@ -224,6 +224,8 @@ def build_verifier(verifier: str, refs: "list[str]",
         return _citation_verifier()
     if verifier == "attribution":
         return _attribution_verifier()
+    if verifier == "faithfulness":
+        return _faithfulness_verifier()
     if verifier == "core":
         return make_core_claim_verifier(refs, entail)
     return make_independent_verifier(refs, entail)
@@ -330,6 +332,42 @@ def _attribution_verifier() -> "Callable[[str, str], bool]":
 
     verify = make_attribution_corroborate_fn(wikidata_lookup=wikidata_lookup)
     _ATTRIBUTION_CACHE.append(verify)
+    return verify
+
+
+_FAITHFULNESS_CACHE: "list[Callable[[str, str], bool]]" = []
+
+
+def _faithfulness_verifier() -> "Callable[[str, str], bool]":
+    """Build (once) the source-faithfulness corroborate_fn: reject an answer whose CORE claim a
+    multi-judge panel finds CONTRADICTED by an INDEPENDENT retrieved source (the misstated-
+    conclusion check). MEDIUM independence (independent source + multi-judge entailment; the
+    support verdict is model-based). Judges from $FAITHFULNESS_JUDGE_SPECS. See
+    ``agent.source_faithfulness_verifier``."""
+    if _FAITHFULNESS_CACHE:
+        return _FAITHFULNESS_CACHE[0]
+    import os as _os, re as _re  # noqa: PLC0415
+    from agent.source_faithfulness_verifier import (  # noqa: PLC0415
+        make_faithfulness_corroborate_fn, make_llm_support_judge)
+    from agent.wiki_truth_refs import fetch_truth_refs, default_fetch_fn  # noqa: PLC0415
+
+    specs = (_os.environ.get("FAITHFULNESS_JUDGE_SPECS")
+             or "openrouter:deepseek/deepseek-chat,llmhub:claude-sonnet-4-6").split(",")
+    judges = [make_llm_support_judge(s.strip()) for s in specs if s.strip()]
+
+    def retrieve(question: str, answer: str) -> str:
+        topic = _re.sub(r"^(?:who|what|how|when|where|why|which|is|are|was|were|the)\b\s*",
+                        "", (question or "").strip(), flags=_re.IGNORECASE).rstrip("?").strip()
+        for t in (topic, (answer or "").split(".")[0]):
+            if not t:
+                continue
+            refs = fetch_truth_refs(t, n=4, fetch_fn=default_fetch_fn)
+            if refs:
+                return " ".join(refs)
+        return ""
+
+    verify = make_faithfulness_corroborate_fn(retrieve, judges)
+    _FAITHFULNESS_CACHE.append(verify)
     return verify
 
 
@@ -554,7 +592,7 @@ def main(argv: "list[str] | None" = None) -> int:
     ap.add_argument("--retrieve", action="store_true",
                     help="fetch each case's truth_refs from Wikipedia per entity (measured "
                          "independence) instead of the curated refs; fail-closed on empty.")
-    ap.add_argument("--verifier", choices=("atomic", "core", "hybrid", "citation", "attribution"), default="atomic",
+    ap.add_argument("--verifier", choices=("atomic", "core", "hybrid", "citation", "attribution", "faithfulness"), default="atomic",
                     help="corroborate-fn mode: 'atomic' (default, all atomic claims must be "
                          "entailed by >=2 independent refs — backward-compatible) or 'core' "
                          "(reject only when the answer's CORE claim is CONTRADICTED by an "

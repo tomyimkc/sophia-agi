@@ -18,6 +18,7 @@ The honest conclusion up front, because it is the whole point:
 | Provenance/authorship | `LiveFactBackend` (Wikidata/Crossref) | "X wrote Y" attributions | **high** | 4/4 authorship misattributions (Dickens/Shakespeare…) |
 | **Citation existence** | `citation_existence_verifier` | fabricated *studies/citations* | **high** | 0% over-block; catches specific fake studies; 9.3% overall (model debunks; vague cites missed) |
 | **Attribution swap** | `attribution_swap_verifier` | real work, *wrong creator* | **high** | 0% over-block (3-run CI [0,0]); ~⅔ of the swap style (Wikidata-resolvable); honest misses on ambiguous works |
+| **Source faithfulness** | `source_faithfulness_verifier` | real source, *misstated finding* | **medium** | multi-judge consensus over an independent source; demo 4/4; retrieval-bounded |
 | Layered core-claim | `layered_verifier` | routes to the best of the above | high→low | 19/21 verified-debunk (4 high-indep + 15 flagged) |
 | Core-claim contamination | `core_claim_source_verifier` | verbose grounded answers | depends on refs | over-block 0%; catch coverage-bounded |
 | Hybrid | `hybrid_source_verifier` | core-claim + authoritative oracles | high where covered | over-block 0%; auth-only catch 0/43 on this pack |
@@ -52,9 +53,14 @@ The honest conclusion up front, because it is the whole point:
 - [~] **Multi-run CIs + answer≠judge as the default protocol** — adopted and demonstrated (the
       attribution run is 3-run + answer≠judge + bootstrap CI); not yet retrofitted to every prior
       headline, so older single-run live numbers remain candidates.
-- [ ] **Misstated-conclusion check** — existence + correct-author still don't cover a real study
-      whose *finding* is misstated (needs an entailment check against the source); the remaining slice.
-- [ ] **Third-party replication** of the whole gate — the standing top-level gap (`canClaimAGI:false`).
+- [x] **Misstated-conclusion check** — `source_faithfulness_verifier` judges a claim against an
+      independent retrieved source with a multi-judge strict-majority panel (MEDIUM independence,
+      flagged); fail-open on insufficiency. Live demo 4/4; honestly retrieval-bounded.
+- [~] **Third-party replication** of the whole gate — a self-contained replication pack now exists
+      (`agi-proof/verification-replication/`: REPRODUCE.md, EXPECTED-RESULTS.json, a
+      DECONTAMINATION-CHECKLIST, and `tools/verify_replication_manifest.py`, 54 checks). The
+      *infrastructure* for replication is in place; an actual INDEPENDENT party running it on a
+      freshly-authored pack is the remaining step that keeps `canClaimAGI:false`.
 
 ## Bottom line
 The repo is *more* trustworthy than at the start of this session: it now has a labelled, layered,
