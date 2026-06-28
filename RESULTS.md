@@ -132,6 +132,16 @@ _Judges: lexical + stance (deterministic, independent operationalizations) + Dee
 
 - Honest scope: the SFT corpus is first-party/distilled (eval pack is third-party); each row is one recipe on one base; scorers are 2 deterministic heuristics + 1 independent LLM judge (raw generations are saved so a human family is a free re-score). The lift is RECIPE-specific — the council corpus teaches a multi-seat *format* (Mistral overfit it 30/30, REGRESSING); a format-robust distillation corpus drops that to 0/30 and recovers transfer. Artifacts + per-judge CIs in `training/swarm_router/theta_search_run_result.json`; recipe in `docs/11-Platform/Adapter-Adoption.md`. Candidate-grade evidence that clears the multi-judge gate; not promoted to the flagship 'validated' provenance-gate set.
 
+## Swarm structure, end-to-end (live) — does fan-out beat a solo pass?
+
+Real-model test of the SWARM STRUCTURE itself (router -> per-team agents -> fail-closed synthesis) vs a single source-disciplined pass on the SAME model, scored by lexical + stance + an independent DeepSeek judge (judge != subject), paired bootstrap CIs. Eval pack: the third-party Google Fact Check claims. NEGATIVE/null result, published in the failure-ledger spirit.
+
+- **`meta-llama/llama-3.1-8b-instruct` (router-gated, n=20)** — swarm ≈ solo — ceiling (solo already disciplined: lexical 1.0, LLM 0.95) and the router correctly routes simple fact-check claims to solo (only ~4/20 fanned out). No measured benefit.
+- **`meta-llama/llama-3.2-3b-instruct` (forced fan-out, n=20)** — the 2 reliable judges (lexical, independent LLM) AGREE the structure DEGRADED an already-disciplined solo pass (0.95->0.75); the stance family is an outlier (solo base 0.30 is a scorer artifact on verbose 3B outputs). No consistent benefit.
+  - lexical -0.25 [-0.45,-0.05]; llm -0.20 [-0.40,+0.00]; stance +0.50 [+0.30,+0.70]
+
+**Conclusion:** On ATOMIC false-claim assessment, the multi-agent swarm provides no source-discipline benefit over a single disciplined pass — and can degrade it (synthesis dilutes a direct refutation). This is the expected nuance: multi-agent helps tasks that need DECOMPOSITION (multi-hop research, broad coverage), not tasks a single pass already nails. A fair positive test needs a decomposition-heavy pack (untested here). The benchmark + measurement are validated; the result for this task type is an honest null/negative.
+
 ## Reproduce
 
 ```bash

@@ -342,6 +342,18 @@ def render(doc: dict) -> str:
             ]) + " |")
         L += ["", f"- {da.get('note', '')}", ""]
 
+    ssl = doc.get("swarmStructureLive")
+    if ssl:
+        L += [f"## {ssl.get('title', 'Swarm structure (live)')}", "", ssl.get("description", ""), ""]
+        for r in ssl.get("runs") or []:
+            L.append(f"- **`{r.get('subject')}` ({r.get('mode')}, n={r.get('n')})** — {r.get('finding')}")
+            d = r.get("deltas") or {}
+            if d:
+                cells = "; ".join(
+                    f"{k} {v['delta']:+.2f} [{v['ci'][0]:+.2f},{v['ci'][1]:+.2f}]" for k, v in d.items())
+                L.append(f"  - {cells}")
+        L += ["", f"**Conclusion:** {ssl.get('conclusion', '')}", ""]
+
     L += [
         "## Reproduce",
         "",
