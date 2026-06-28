@@ -46,14 +46,23 @@ def solo_answer(model_fn: ModelFn, claim: str) -> str:
     return model_fn(DISCIPLINE_SYS, f'Assess this claim with source discipline: "{claim}"')
 
 
-def swarm_answer(model_fn: ModelFn, claim: str, router: SwarmRouter) -> str:
-    """Router → per-team role calls → fail-closed synthesis."""
-    plan = router.decide(claim)
-    if plan.mode == "solo":
-        return solo_answer(model_fn, claim)
+def swarm_answer(model_fn: ModelFn, claim: str, router: SwarmRouter,
+                 force_teams: "tuple[str, ...] | None" = None) -> str:
+    """Router → per-team role calls → fail-closed synthesis.
+
+    ``force_teams`` overrides the router's gating and always fans out the given roster — use
+    it to isolate the *structure's* effect from the router's solo/swarm decision (the router
+    correctly routes most simple claims to solo, which would otherwise mask the structure)."""
+    if force_teams:
+        team_names = list(force_teams)
+    else:
+        plan = router.decide(claim)
+        if plan.mode == "solo":
+            return solo_answer(model_fn, claim)
+        team_names = [a.team for a in plan.assignments]
     findings: list[tuple[str, str]] = []
-    for a in plan.assignments:
-        team = TEAMS[a.team]
+    for tn in team_names:
+        team = TEAMS[tn]
         sys = f"You are the '{team.name}' specialist. {team.role}"
         out = model_fn(sys, f'Claim: "{claim}"\n\nYour finding (concise):')
         findings.append((team.name, (out or "").strip()))
@@ -96,7 +105,8 @@ class SwarmLiveReport:
 
 
 def run_live(claims: "list[str]", model_fn: ModelFn, *, subject: str = "subject",
-             router: SwarmRouter | None = None, families: dict | None = None) -> SwarmLiveReport:
+             router: SwarmRouter | None = None, families: dict | None = None,
+             force_teams: "tuple[str, ...] | None" = None) -> SwarmLiveReport:
     router = router or SwarmRouter()
     families = families or SCORER_FAMILIES
     calls = {"n": 0}
@@ -106,7 +116,7 @@ def run_live(claims: "list[str]", model_fn: ModelFn, *, subject: str = "subject"
         return model_fn(sys, user)
 
     solo_gens = [solo_answer(counted, c) for c in claims]
-    swarm_gens = [swarm_answer(counted, c, router) for c in claims]
+    swarm_gens = [swarm_answer(counted, c, router, force_teams=force_teams) for c in claims]
 
     solo_rate: dict = {}
     swarm_rate: dict = {}

@@ -81,6 +81,7 @@ def main() -> int:
     ap.add_argument("--judge", default="deepseek/deepseek-chat")
     ap.add_argument("--pack", type=Path, default=ROOT / "data" / "search_recall" / "pack_third_party.jsonl")
     ap.add_argument("--n", type=int, default=25)
+    ap.add_argument("--force", action="store_true", help="force fan-out (search,research,redteam) to isolate the structure from router gating")
     ap.add_argument("--out", type=Path, default=None)
     args = ap.parse_args()
     key = os.environ.get("OPENROUTER_API_KEY", "")
@@ -94,9 +95,10 @@ def main() -> int:
 
     model_fn = _openrouter(args.subject, key)
     # solo + swarm generations via the live module (2 deterministic families scored inside).
-    rep = sle.run_live(claims, model_fn, subject=args.subject)
+    force = ("search", "research", "redteam") if args.force else None
+    rep = sle.run_live(claims, model_fn, subject=args.subject, force_teams=force)
     solo_gens = [sle.solo_answer(model_fn, c) for c in claims]  # re-materialise for the LLM judge
-    swarm_gens = [sle.swarm_answer(model_fn, c, sle.SwarmRouter()) for c in claims]
+    swarm_gens = [sle.swarm_answer(model_fn, c, sle.SwarmRouter(), force_teams=force) for c in claims]
 
     # Independent LLM-judge family (judge != subject).
     js = [_llm_judge(args.judge, key, c, g) for c, g in zip(claims, solo_gens)]
@@ -109,7 +111,7 @@ def main() -> int:
     rep.solo[f"llm:{args.judge}"] = round(sum(js) / len(js), 3)
     rep.swarm[f"llm:{args.judge}"] = round(sum(jw) / len(jw), 3)
 
-    out = rep.to_dict()
+    out = rep.to_dict(); out["forced"] = bool(args.force)
     print(json.dumps(out, indent=2))
     if args.out:
         args.out.write_text(json.dumps(out, indent=2) + "\n")
