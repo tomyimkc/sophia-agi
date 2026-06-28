@@ -107,11 +107,13 @@ put("adapter_files",files)
 # --- graded search-recall A/B: base (adapter disabled) vs adapter, on the sealed pack ---
 import sys; sys.path.insert(0,"/workspace/repo")
 SYS="You are a source-disciplined search agent. Cite sources; abstain if you cannot ground a claim."
+model.config.use_cache=True   # kbit-training prep disables cache; greedy decode degenerates without it
 def gen(q):
     text=tok.apply_chat_template([{"role":"system","content":SYS},{"role":"user","content":q}],
                                  tokenize=False,add_generation_prompt=True)
-    enc=tok(text,return_tensors="pt").to(model.device)
-    out=model.generate(**enc,max_new_tokens=110,do_sample=False)
+    enc=tok(text,return_tensors="pt",add_special_tokens=False).to(model.device)
+    out=model.generate(**enc,max_new_tokens=110,do_sample=False,repetition_penalty=1.3,
+                       no_repeat_ngram_size=3,pad_token_id=tok.eos_token_id)
     return tok.decode(out[0][enc["input_ids"].shape[1]:],skip_special_tokens=True)
 try:
     from provenance_bench.search_recall import PACK_V1, source_discipline_ok

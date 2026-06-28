@@ -1,89 +1,195 @@
 {
-  "phase": "done",
-  "model": "Qwen/Qwen2.5-3B-Instruct",
-  "gpu": "NVIDIA RTX A5000, 24564 MiB",
-  "n_train_rows": 125,
-  "trainable_params": 29933568,
-  "total_params": 3115872256,
-  "loss_first": 3.4751,
-  "loss_last": 0.8924,
-  "loss_curve": [
-    3.4751,
-    4.4295,
-    3.8327,
-    3.0197,
-    2.9014,
-    2.9884,
-    2.3171,
-    2.3234,
-    2.1514,
-    2.0439,
-    2.0845,
-    1.7655,
-    1.6642,
-    1.7576,
-    1.3939,
-    1.7133,
-    1.2518,
-    1.3431,
-    1.2888,
-    1.2023,
-    1.2483,
-    1.1646,
-    1.2933,
-    0.9833,
-    0.9093,
-    1.2974,
-    1.2853,
-    1.0818,
-    1.1214,
-    0.8478,
-    0.7143,
-    0.6695,
-    0.5018,
-    0.7161,
-    1.0217,
-    0.4871,
-    0.4608,
-    0.6864,
-    0.9209,
-    0.6095,
-    1.2417,
-    1.0964,
-    1.0887,
-    1.0871,
-    1.1406,
-    0.5285,
-    0.703,
-    0.8924
-  ],
-  "train_steps": 48,
-  "adapter_files": {
-    "README.md": {
-      "bytes": 5202,
-      "sha256": "3581cc6c99fe8b3a"
+  "schema": "sophia.theta_search_validation.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "runs": [
+    {
+      "phase": "done",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "gpu": "NVIDIA RTX A5000, 24564 MiB",
+      "n_train_rows": 125,
+      "trainable_params": 29933568,
+      "total_params": 3115872256,
+      "loss_first": 3.4751,
+      "loss_last": 0.8924,
+      "loss_curve": [
+        3.4751,
+        4.4295,
+        3.8327,
+        3.0197,
+        2.9014,
+        2.9884,
+        2.3171,
+        2.3234,
+        2.1514,
+        2.0439,
+        2.0845,
+        1.7655,
+        1.6642,
+        1.7576,
+        1.3939,
+        1.7133,
+        1.2518,
+        1.3431,
+        1.2888,
+        1.2023,
+        1.2483,
+        1.1646,
+        1.2933,
+        0.9833,
+        0.9093,
+        1.2974,
+        1.2853,
+        1.0818,
+        1.1214,
+        0.8478,
+        0.7143,
+        0.6695,
+        0.5018,
+        0.7161,
+        1.0217,
+        0.4871,
+        0.4608,
+        0.6864,
+        0.9209,
+        0.6095,
+        1.2417,
+        1.0964,
+        1.0887,
+        1.0871,
+        1.1406,
+        0.5285,
+        0.703,
+        0.8924
+      ],
+      "train_steps": 48,
+      "adapter_files": {
+        "README.md": {
+          "bytes": 5202,
+          "sha256": "3581cc6c99fe8b3a"
+        },
+        "adapter_model.safetensors": {
+          "bytes": 119801528,
+          "sha256": "ad3c07be00f2f52e"
+        },
+        "adapter_config.json": {
+          "bytes": 1103,
+          "sha256": "f860a2bdf1dd76ae"
+        },
+        "chat_template.jinja": {
+          "bytes": 2507,
+          "sha256": "cd8e9439f0570856"
+        },
+        "tokenizer_config.json": {
+          "bytes": 694,
+          "sha256": "04b1682c59acbd05"
+        },
+        "tokenizer.json": {
+          "bytes": 11421991,
+          "sha256": "2f55e63353d3d978"
+        }
+      },
+      "train_stderr_tail": "\udc88\u2588\u2588\u2588\u2588\u258a| 47/48 [02:40<00:03,  3.44s/it]\r100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 48/48 [02:42<00:00,  3.07s/it]\r                                               \r\r100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 48/48 [02:42<00:00,  3.07s/it]\r                                               \r\r100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 48/48 [02:42<00:00,  3.07s/it]\r100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 48/48 [02:42<00:00,  3.39s/it]\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/tokenization_utils_base.py\", line 287, in __getattr__\n    return self.data[item]\n           ~~~~~~~~~^^^^^^\nKeyError: 'shape'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<stdin>\", line 51, in <module>\n  File \"/usr/local/lib/python3.12/dist-packages/peft/peft_model.py\", line 2122, in generate\n    outputs = self.base_model.generate(*args, **kwargs)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py\", line 120, in decorate_context\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/generation/utils.py\", line 2439, in generate\n    batch_size = inputs_tensor.shape[0]\n                 ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/tokenization_utils_base.py\", line 289, in __getattr__\n    raise AttributeError\nAttributeError\n",
+      "offline_invariants": " agent/swarm_router.py:PASS provenance_bench/swarm_rl.py:PASS agent/dual_use_adapter.py:PASS provenance_bench/swarm_benchmark.py:PASS"
     },
-    "adapter_model.safetensors": {
-      "bytes": 119801528,
-      "sha256": "ad3c07be00f2f52e"
-    },
-    "adapter_config.json": {
-      "bytes": 1103,
-      "sha256": "f860a2bdf1dd76ae"
-    },
-    "chat_template.jinja": {
-      "bytes": 2507,
-      "sha256": "cd8e9439f0570856"
-    },
-    "tokenizer_config.json": {
-      "bytes": 694,
-      "sha256": "04b1682c59acbd05"
-    },
-    "tokenizer.json": {
-      "bytes": 11421991,
-      "sha256": "2f55e63353d3d978"
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "gpu": "NVIDIA RTX A5000, 24564 MiB",
+      "phase": "done",
+      "n_train_rows": 125,
+      "trainable_params": 40370176,
+      "total_params": 7655986688,
+      "loss_first": 3.2553,
+      "loss_last": 0.6538,
+      "loss_curve": [
+        3.2553,
+        4.1632,
+        3.7415,
+        2.9614,
+        2.7371,
+        2.792,
+        2.1085,
+        2.0909,
+        1.8646,
+        1.7242,
+        1.6611,
+        1.3164,
+        1.2433,
+        1.408,
+        1.0412,
+        1.4373,
+        1.0306,
+        1.1413,
+        1.0672,
+        0.9146,
+        0.9523,
+        0.9073,
+        1.0674,
+        0.7852,
+        0.6732,
+        1.1163,
+        1.0485,
+        0.8263,
+        0.9,
+        0.6652,
+        0.4726,
+        0.4554,
+        0.2583,
+        0.4966,
+        0.8298,
+        0.2786,
+        0.3389,
+        0.5029,
+        0.6869,
+        0.4369,
+        1.0004,
+        0.8759,
+        0.8653,
+        0.8124,
+        0.8968,
+        0.397,
+        0.5268,
+        0.6538
+      ],
+      "train_steps": 48,
+      "adapter_files": {
+        "README.md": {
+          "bytes": 5202,
+          "sha256": "3191b465069be139"
+        },
+        "adapter_model.safetensors": {
+          "bytes": 161533192,
+          "sha256": "8e7a60cf1b29fc3c"
+        },
+        "adapter_config.json": {
+          "bytes": 1103,
+          "sha256": "4a3d812d7858d15d"
+        },
+        "chat_template.jinja": {
+          "bytes": 2507,
+          "sha256": "cd8e9439f0570856"
+        },
+        "tokenizer_config.json": {
+          "bytes": 694,
+          "sha256": "04b1682c59acbd05"
+        },
+        "tokenizer.json": {
+          "bytes": 11421991,
+          "sha256": "2f55e63353d3d978"
+        }
+      },
+      "graded_suite": "source_discipline_rate",
+      "graded_n_traps": 5,
+      "graded_before": 0.0,
+      "graded_after": 0.0,
+      "graded_delta": 0.0,
+      "smoke_generation": "The followingYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYouYou",
+      "graded_gate_verdict": "quarantine",
+      "graded_gate_reasons": [
+        "target improvement below floor: 0.0000 < 0.0300"
+      ],
+      "offline_invariants": " agent/swarm_router.py:PASS provenance_bench/swarm_rl.py:PASS agent/dual_use_adapter.py:PASS provenance_bench/swarm_benchmark.py:PASS",
+      "_caveat": "On-pod greedy decode under 4-bit degenerated (repetition) for BOTH arms, so the source-discipline A/B was 0.0/0.0 and the gate correctly QUARANTINED (delta below floor). This is a generation-config artifact, not a true negative; fixed in runpod_theta_search.py (use_cache=True, repetition_penalty, no_repeat_ngram). Training itself validated: loss 3.255->0.654."
     }
-  },
-  "train_stderr_tail": "\udc88\u2588\u2588\u2588\u2588\u258a| 47/48 [02:40<00:03,  3.44s/it]\r100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 48/48 [02:42<00:00,  3.07s/it]\r                                               \r\r100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 48/48 [02:42<00:00,  3.07s/it]\r                                               \r\r100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 48/48 [02:42<00:00,  3.07s/it]\r100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 48/48 [02:42<00:00,  3.39s/it]\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/tokenization_utils_base.py\", line 287, in __getattr__\n    return self.data[item]\n           ~~~~~~~~~^^^^^^\nKeyError: 'shape'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<stdin>\", line 51, in <module>\n  File \"/usr/local/lib/python3.12/dist-packages/peft/peft_model.py\", line 2122, in generate\n    outputs = self.base_model.generate(*args, **kwargs)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py\", line 120, in decorate_context\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/generation/utils.py\", line 2439, in generate\n    batch_size = inputs_tensor.shape[0]\n                 ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/tokenization_utils_base.py\", line 289, in __getattr__\n    raise AttributeError\nAttributeError\n",
-  "offline_invariants": " agent/swarm_router.py:PASS provenance_bench/swarm_rl.py:PASS agent/dual_use_adapter.py:PASS provenance_bench/swarm_benchmark.py:PASS"
+  ]
 }
