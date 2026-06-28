@@ -75,17 +75,33 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     if args.config:
-        farm = json.loads(Path(args.config).read_text(encoding="utf-8"))
-        jf = farm["judge_farm"]
-        out = {
-            "config": args.config,
-            "judges": jf["judges"],
-            "recommended_judge_flag": jf["recommended_flag"],
-            "expected_families": jf.get("expected_families"),
-            "serve_commands": {name: box["serve"] for name, box in farm["boxes"].items()},
-            "note": ("Fill in SPARK_HOST/MAC_HOST, run each serve command on its box, then pass the "
-                     "recommended --judges flag to a judged eval (e.g. tools/judge_pilot_answers.py)."),
-        }
+        # Fail gracefully (structured error + non-zero exit) on missing file / bad JSON /
+        # missing keys — this path is print-only and must never crash with a traceback.
+        try:
+            farm = json.loads(Path(args.config).read_text(encoding="utf-8"))
+            jf = farm["judge_farm"]
+            boxes = farm["boxes"]
+            out = {
+                "config": args.config,
+                "judges": jf["judges"],
+                "recommended_judge_flag": jf["recommended_flag"],
+                "expected_families": jf.get("expected_families"),
+                "serve_commands": {name: box["serve"] for name, box in boxes.items()},
+                "note": ("Fill in SPARK_HOST/MAC_HOST, run each serve command on its box, then pass the "
+                         "recommended --judges flag to a judged eval (e.g. tools/judge_pilot_answers.py)."),
+            }
+        except FileNotFoundError:
+            print(json.dumps({"error": "config not found", "config": args.config}, indent=2))
+            return 1
+        except json.JSONDecodeError as e:
+            print(json.dumps({"error": f"invalid JSON: {e}", "config": args.config}, indent=2))
+            return 1
+        except (KeyError, TypeError) as e:
+            print(json.dumps({"error": f"missing/invalid judge-farm key: {e}",
+                              "config": args.config,
+                              "expected": "judge_farm.{judges,recommended_flag}, boxes.<name>.serve"},
+                             indent=2))
+            return 1
         print(json.dumps(out, ensure_ascii=False, indent=2))
         return 0
 

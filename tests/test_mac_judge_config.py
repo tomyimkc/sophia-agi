@@ -73,6 +73,23 @@ def test_recommended_flag_matches_judges() -> None:
     assert set(flag[len("--judges "):].split(",")) == set(farm["judges"])
 
 
+def test_config_loader_emits_judges_and_fails_gracefully(tmp_path, capsys) -> None:
+    """tools/run_local_judge_eval.py --config: valid → judges; bad input → structured error, exit 1."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import run_local_judge_eval as rlje
+    # valid config → exit 0, emits the recommended flag
+    assert rlje.main(["--config", str(CONFIG)]) == 0
+    assert "recommended_judge_flag" in capsys.readouterr().out
+    # missing file → exit 1, structured error (no traceback)
+    assert rlje.main(["--config", str(tmp_path / "nope.json")]) == 1
+    assert "error" in json.loads(capsys.readouterr().out)
+    # valid JSON but missing keys → exit 1, structured error
+    bad = tmp_path / "bad.json"
+    bad.write_text('{"schema": "x"}', encoding="utf-8")
+    assert rlje.main(["--config", str(bad)]) == 1
+    assert "error" in json.loads(capsys.readouterr().out)
+
+
 def test_judges_are_distinct_from_subject() -> None:
     """judge != subject: the OLMoE/Sophia-V1 subject lineage must not be a judge lineage."""
     cfg = _load()

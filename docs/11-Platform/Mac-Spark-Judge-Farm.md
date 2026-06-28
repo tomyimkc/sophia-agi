@@ -18,8 +18,10 @@
 Consequences (both matter):
 - ✅ Two **different-vendor** models even on **one** vLLM port already count as 2 families
   (`qwen` + `meta-llama`). So a second box is **not required** to clear the bar.
-- ❌ Two **same-vendor** judges collapse to **1** family (`vllm:Qwen-7B` + `vllm:Qwen-14B` → just
-  `qwen`). This is the real pitfall — the test guards it.
+- ❌ Two **same-vendor** judges collapse to **1** family
+  (`vllm:Qwen/Qwen2.5-7B-Instruct` + `vllm:Qwen/Qwen2.5-14B-Instruct` → just `qwen`). This is the
+  real pitfall — the test guards it. (The vendor keying needs the `vendor/model` slash; a bare
+  `vllm:Qwen-7B` with no slash keys to the provider `vllm` instead, so always use slash-qualified ids.)
 
 This config keys to **`qwen`** (Spark vLLM) + **`mlx`** (Mac) = 2 families.
 
@@ -59,5 +61,8 @@ backend — see the chat notes).
 ## judge ≠ subject
 
 The subject under test is OLMoE / Sophia-V1 (lineage `allenai`/`olmoe`) — distinct from both judge
-lineages (`qwen`, `meta-llama`). The config lists `subject_lineages_to_avoid: [qwen, meta-llama]`
-so you never accidentally judge a Qwen/Llama subject with these judges. The test enforces it.
+lineages (`qwen`, `meta-llama`). The config lists `subject_lineages_to_avoid: [qwen, meta-llama]` as
+an **informational guardrail** — a reminder not to judge a Qwen/Llama subject with these judges. No
+runtime code in this PR consumes that field to *block* a run; the actual `judge != subject` check at
+eval time lives in `tools/run_lora_uplift_validation.py` (`_family_key` / `_subject_family`). The
+test here only asserts the field stays in sync with the configured judge lineages.
