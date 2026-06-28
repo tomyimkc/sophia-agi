@@ -238,24 +238,32 @@ def probe_hf(*, model_id: str, prompt: str, draft: str = "fakequant",
     n = min(max_positions, logits.shape[0])
     target = softmax_np(logits[:n], axis=1)
 
-    # Draft: a cheap 4-bit self-pass.
+    # Draft: a cheap 4-bit self-pass. The target's outputs are now captured as numpy, so
+    # we must NOT keep two full models resident — that is what made bitsandbytes offload
+    # to CPU and fail. For bnb, free the target first; for fakequant, mutate the resident
+    # model in place (no second copy) since we no longer need the FP weights.
+    import gc
     if draft == "bnb":
         try:
             from transformers import BitsAndBytesConfig
         except Exception as e:  # pragma: no cover
             raise RuntimeError(f"--draft bnb needs bitsandbytes ({e})")
+        del out, model
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
         dmodel = _load(quantization_config=BitsAndBytesConfig(load_in_4bit=True))
         dout = dmodel(ids.to(dmodel.device), use_cache=False)
         dl = dout.logits[0].detach().float().cpu().numpy()
-    else:  # fakequant: int4 round-trip every 2-D Linear weight on a CPU copy
-        dmodel = copy.deepcopy(model).to("cpu")
+    else:  # fakequant: int4 round-trip every 2-D Linear weight in place on the resident model
+        del out
         with torch.no_grad():
-            for mod in dmodel.modules():
+            for mod in model.modules():
                 w = getattr(mod, "weight", None)
                 if w is not None and w.dim() == 2:
-                    q = int4_group_quant_roundtrip(w.detach().float().numpy(), group=group)
-                    w.copy_(torch.tensor(q, dtype=w.dtype))
-        dout = dmodel(ids.to("cpu"), use_cache=False)
+                    q = int4_group_quant_roundtrip(w.detach().float().cpu().numpy(), group=group)
+                    w.copy_(torch.tensor(q, dtype=w.dtype, device=w.device))
+        dout = model(ids, use_cache=False)
         dl = dout.logits[0].detach().float().cpu().numpy()
     dn = min(n, dl.shape[0])
     draft_probs = softmax_np(dl[:dn], axis=1)
