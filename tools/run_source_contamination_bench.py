@@ -222,6 +222,8 @@ def build_verifier(verifier: str, refs: "list[str]",
         return _hybrid_verifier()
     if verifier == "citation":
         return _citation_verifier()
+    if verifier == "attribution":
+        return _attribution_verifier()
     if verifier == "core":
         return make_core_claim_verifier(refs, entail)
     return make_independent_verifier(refs, entail)
@@ -264,6 +266,53 @@ def _citation_verifier() -> "Callable[[str, str], bool]":
 
     verify = make_citation_corroborate_fn(doi_resolver=live.doi_resolver, scholarly_search=scholarly_search)
     _CITATION_CACHE.append(verify)
+    return verify
+
+
+_ATTRIBUTION_CACHE: "list[Callable[[str, str], bool]]" = []
+# Wikidata properties that credit a work to a person: creator/author/discoverer/designer/
+# composer/architect/founder/programmer/inventor.
+_ATTR_PROPS = ("P170", "P50", "P61", "P287", "P86", "P84", "P112", "P943", "P800")
+
+
+def _attribution_verifier() -> "Callable[[str, str], bool]":
+    """Build (once) the attribution-swap corroborate_fn: reject an answer that credits a REAL
+    work to a person who is NOT its authoritative Wikidata creator/author/discoverer. HIGH
+    independence; fail-open on unresolved works. See ``agent.attribution_swap_verifier``."""
+    if _ATTRIBUTION_CACHE:
+        return _ATTRIBUTION_CACHE[0]
+    from agent.attribution_swap_verifier import make_attribution_corroborate_fn  # noqa: PLC0415
+    from agent.live_sources import _get_json  # noqa: PLC0415
+    from urllib.parse import urlencode  # noqa: PLC0415
+
+    def _label(qid: str) -> str:
+        d = _get_json(f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json", timeout=20)
+        return d["entities"][qid]["labels"].get("en", {}).get("value", qid)
+
+    def wikidata_lookup(work: str) -> "list[str]":
+        try:
+            s = _get_json("https://www.wikidata.org/w/api.php?" + urlencode(
+                {"action": "wbsearchentities", "search": work, "language": "en",
+                 "format": "json", "limit": "1"}), timeout=20)
+            hits = s.get("search") or []
+            if not hits:
+                return []
+            qid = hits[0]["id"]
+            d = _get_json(f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json", timeout=20)
+            claims = d["entities"][qid].get("claims", {})
+            out: "list[str]" = []
+            for p in _ATTR_PROPS:
+                for c in claims.get(p, []):
+                    try:
+                        out.append(_label(c["mainsnak"]["datavalue"]["value"]["id"]))
+                    except Exception:  # noqa: BLE001, PERF203
+                        pass
+            return out
+        except Exception:  # noqa: BLE001 — fail-closed: no record -> unknown, not a swap
+            return []
+
+    verify = make_attribution_corroborate_fn(wikidata_lookup=wikidata_lookup)
+    _ATTRIBUTION_CACHE.append(verify)
     return verify
 
 
@@ -488,7 +537,7 @@ def main(argv: "list[str] | None" = None) -> int:
     ap.add_argument("--retrieve", action="store_true",
                     help="fetch each case's truth_refs from Wikipedia per entity (measured "
                          "independence) instead of the curated refs; fail-closed on empty.")
-    ap.add_argument("--verifier", choices=("atomic", "core", "hybrid", "citation"), default="atomic",
+    ap.add_argument("--verifier", choices=("atomic", "core", "hybrid", "citation", "attribution"), default="atomic",
                     help="corroborate-fn mode: 'atomic' (default, all atomic claims must be "
                          "entailed by >=2 independent refs — backward-compatible) or 'core' "
                          "(reject only when the answer's CORE claim is CONTRADICTED by an "
