@@ -83,9 +83,14 @@ def summarize_qat_coverage(names: "list[str]") -> dict:
     QAT actually reached. ``expert`` counts names under an ``experts`` container; ``attn`` counts
     the attention projections; ``other`` is anything else covered."""
     names = list(names)
+
+    def _base(n: str) -> str:
+        b = n.replace(".base_layer", "")        # we wrap the inner base_layer; classify by leaf
+        return b[: -len(".weight")] if b.endswith(".weight") else b
+
     expert = sum(1 for n in names if "experts" in n or "expert." in n)
     attn = sum(1 for n in names if "experts" not in n and "expert." not in n
-               and any((n[:-7] if n.endswith(".weight") else n).endswith(s) for s in _ATTN_SUFFIXES))
+               and any(_base(n).endswith(s) for s in _ATTN_SUFFIXES))
     return {"total": len(names), "attn": attn, "expert": expert,
             "other": len(names) - attn - expert}
 
@@ -235,6 +240,15 @@ def attach_qat(model: Any, *, scheme: str = "int8",
             continue
         if getattr(m, "_qat_wrapped", False):
             continue
+        # CRITICAL (QAT+LoRA): never wrap a PEFT LoRA WRAPPER module. In recent peft its class is
+        # also named ``Linear``, so it matches module_types; overriding its forward with a plain
+        # ``F.linear(x, fake_quant(weight))`` would BYPASS the lora_A/lora_B path, the adapters
+        # would get no gradient, and training would not learn (the symptom: loss stops improving,
+        # the saved adapter is ~init). We skip the wrapper and wrap its inner ``base_layer`` below,
+        # so the forward becomes ``lora(x)`` on top of ``fake_quant(base)`` — the adapter co-adapts
+        # to the quantized base, which is the whole point of QAT-aware LoRA.
+        if hasattr(m, "lora_A") or hasattr(m, "lora_B") or hasattr(m, "lora_embedding_A"):
+            continue
         # Only fake-quant the served set (attn + MLP/experts). Skipping lm_head / router / norms /
         # embeddings aligns the QAT training grid with what NVFP4 serving actually quantizes
         # (serving/lowram_eval.py + tools/certify_lowram.is_served_param), so we never co-adapt a
@@ -295,6 +309,8 @@ def qat_penalty(model: Any, *, scheme: str = "int8", lam: float = 1e-3,
     total = None
     device = None
     for name, m in model.named_modules():
+        if hasattr(m, "lora_A") or hasattr(m, "lora_B"):
+            continue                              # skip LoRA wrappers (wrap their base_layer)
         if type(m).__name__ in module_types and hasattr(m, "weight") and is_qat_target_name(name):
             w = m.weight
             if device is None:
@@ -373,9 +389,12 @@ def offline_invariants() -> "tuple[bool, dict]":
                   "base_model.model.model.layers.0.self_attn.q_proj.lora_A.weight"]
     checks["qat_targets_attn_and_experts"] = all(is_qat_target_name(n) for n in targets)
     checks["qat_skips_head_norm_router_lora"] = not any(is_qat_target_name(n) for n in nontargets)
+    # Use the names attach_qat now wraps: the inner ``base_layer`` modules (we skip LoRA wrappers
+    # so the adapter trains). Classification must strip ``.base_layer`` to read attn vs expert.
     cov_full = summarize_qat_coverage([
-        "model.layers.0.self_attn.q_proj", "model.layers.0.self_attn.k_proj",
-        "model.layers.0.mlp.experts.0.gate_proj", "model.layers.0.mlp.experts.1.down_proj"])
+        "model.layers.0.self_attn.q_proj.base_layer", "model.layers.0.self_attn.k_proj.base_layer",
+        "model.layers.0.mlp.experts.0.gate_proj.base_layer",
+        "model.layers.0.mlp.experts.1.down_proj.base_layer"])
     checks["coverage_counts_experts"] = cov_full["expert"] == 2 and cov_full["attn"] == 2
     cov_attn_only = summarize_qat_coverage(["model.layers.0.self_attn.q_proj"])
     checks["coverage_flags_zero_experts"] = cov_attn_only["expert"] == 0
