@@ -40,9 +40,13 @@ INTERNAL_PATTERNS: dict[str, str] = {
 # PII shapes for the corpus scrubber. Email is intentionally broad; the others are
 # precise. We do NOT try to catch names — that needs NER and is out of scope here.
 PII_PATTERNS: dict[str, str] = {
-    "email": r"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b",
+    # ReDoS-safe email: domain is non-overlapping labels separated by literal
+    # dots (the label class excludes '.'), so there is no ambiguous '+' vs '\.'.
+    "email": r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+",
     "us_ssn": r"\b\d{3}-\d{2}-\d{4}\b",
-    "credit_card": r"\b(?:\d[ -]?){13,16}\b",
+    # Linear form: one leading digit then 12–15 (sep? + digit) groups; each step
+    # consumes a digit, so no catastrophic backtracking.
+    "credit_card": r"\b\d(?:[ -]?\d){12,15}\b",
     "us_phone": r"\b(?:\+?1[ \-.]?)?\(?\d{3}\)?[ \-.]\d{3}[ \-.]\d{4}\b",
 }
 

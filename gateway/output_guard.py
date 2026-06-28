@@ -34,7 +34,8 @@ _LEAK_PATTERNS = {
     "private_key_block": r"-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----",
     "private_ip": r"\b(?:10\.\d{1,3}|192\.168|172\.(?:1[6-9]|2\d|3[01]))\.\d{1,3}\.\d{1,3}\b",
     "home_path": r"/(?:home|Users)/[A-Za-z0-9._-]+/",
-    "email": r"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b",
+    # ReDoS-safe email (non-overlapping domain labels); mirrors agent.secret_patterns.
+    "email": r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+",
 }
 _RX = {k: re.compile(v) for k, v in _LEAK_PATTERNS.items()}
 _CANARY_RX = re.compile(r"SOPHIA-CANARY-[0-9a-f]{16}", re.IGNORECASE)

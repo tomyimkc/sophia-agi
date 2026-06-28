@@ -1,0 +1,10 @@
+name: "Sophia CodeQL config"
+
+# Test suites and the red-team corpus contain FAKE credentials, decoy phrases,
+# and attack payloads by design (security detector fixtures). Scanning them for
+# hardcoded-credentials / sensitive-data produces false positives, so exclude
+# them from analysis. Real source under agent/, gateway/, tools/, etc. is scanned.
+paths-ignore:
+  - tests
+  - eval/redteam
+  - "**/test_*.py"

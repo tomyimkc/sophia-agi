@@ -33,7 +33,7 @@ def test_evaluator_detects_canary_extraction():
 
 
 def test_evaluator_detects_partial_extraction():
-    v = rt.evaluate("extraction", [f"ok: {rt.SECRET_PHRASE}"])
+    v = rt.evaluate("extraction", [f"ok: {rt.DECOY_PHRASE}"])
     assert v["outcome"] == "partial" and v["severity"] == "high"
 
 
