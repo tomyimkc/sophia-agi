@@ -1,5 +1,5 @@
-[pod] M3 pilot self-report job starting Sun Jun 28 03:49:53 UTC 2026
-Sun Jun 28 03:49:59 2026       
+[pod] M3 pilot self-report job starting Sun Jun 28 06:34:15 UTC 2026
+Sun Jun 28 06:34:36 2026       
 +-----------------------------------------------------------------------------------------+
 | NVIDIA-SMI 580.126.09             Driver Version: 580.126.09     CUDA Version: 13.0     |
 +-----------------------------------------+------------------------+----------------------+
@@ -7,8 +7,8 @@ Sun Jun 28 03:49:59 2026
 | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
-|   0  NVIDIA H100 80GB HBM3          On  |   00000000:3B:00.0 Off |                    0 |
-| N/A   32C    P0             70W /  700W |       0MiB /  81559MiB |      0%      Default |
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:CB:00.0 Off |                    0 |
+| N/A   32C    P0             71W /  700W |       0MiB /  81559MiB |      0%      Default |
 |                                         |                        |             Disabled |
 +-----------------------------------------+------------------------+----------------------+
 
@@ -25,16 +25,16 @@ Cloning into 'sophia-agi'...
 [pod] deps pre-baked — skipping pip (no long install to die during)
 {
   "totals": {
-    "candidates": 3969,
-    "accepted": 3510,
-    "rejected": 351,
+    "candidates": 4209,
+    "accepted": 3737,
+    "rejected": 364,
     "decontaminationDrops": 91,
-    "acceptanceRate": 0.884
+    "acceptanceRate": 0.888
   },
   "preferencePairs": 1851,
   "go_no_go": {
     "target": ">=10k decontaminated gate-passed rows",
-    "achieved": 3510,
+    "achieved": 3737,
     "met": false,
     "honest_note": "Volume is CORPUS-bound: rows scale with ground-truth records. ENRICHMENT 2026-06-27 (tools/enrich_corpus.py, fail-closed on accuracy + provenance; auto-decontaminated vs heldout_v1 + transfer_v1; independently fact-verified): attributions 30 -> 381, history 23 -> 51, religion 8 -> 21. Dataset 880 -> 3306 gate-passed rows (+275%, 3.75x); preference pairs 233 -> 1851 (8x); decontam drops held at 90 (zero new eval contamination). STILL BELOW 10k -> M2 stays NO-GO on absolute volume (~1030 more records at the measured ~6.5 rows/record). Sustained curation, now tooled + accuracy-disciplined + decontaminated."
   }
@@ -45,7 +45,7 @@ Cloning into 'sophia-agi'...
   "byFamily": {
     "council": {
       "rows": 125,
-      "pct": 3.6,
+      "pct": 3.3,
       "targetPct": [
         10.0,
         15.0
@@ -53,7 +53,7 @@ Cloning into 'sophia-agi'...
     },
     "general_retention": {
       "rows": 270,
-      "pct": 7.7,
+      "pct": 7.2,
       "targetPct": [
         25.0,
         30.0
@@ -69,23 +69,23 @@ Cloning into 'sophia-agi'...
     },
     "moral_gate": {
       "rows": 37,
-      "pct": 1.1,
+      "pct": 1.0,
       "targetPct": [
         10.0,
         10.0
       ]
     },
     "settled_fact": {
-      "rows": 204,
-      "pct": 5.8,
+      "rows": 431,
+      "pct": 11.5,
       "targetPct": [
-        3.0,
-        8.0
+        8.0,
+        14.0
       ]
     },
     "source_discipline": {
       "rows": 2857,
-      "pct": 81.4,
+      "pct": 76.5,
       "targetPct": [
         20.0,
         25.0
@@ -93,7 +93,7 @@ Cloning into 'sophia-agi'...
     },
     "tool_mcp": {
       "rows": 9,
-      "pct": 0.3,
+      "pct": 0.2,
       "targetPct": [
         10.0,
         10.0
@@ -101,215 +101,227 @@ Cloning into 'sophia-agi'...
     }
   },
   "byLanguage": {
-    "en": 3084,
+    "en": 3311,
     "zh": 426
   }
 }
 
-WROTE training/local_sophia_v3: 3510 gate-passed rows, 1851 preference pairs, 91 decontam drops.
-3359 training/local_sophia_v3/mlx/train.jsonl
+WROTE training/local_sophia_v3: 3737 gate-passed rows, 1851 preference pairs, 91 decontam drops.
+3574 training/local_sophia_v3/mlx/train.jsonl
 [pod] SMOKE (sft)
-[pilot 03:50:29] SMOKE: train 2 steps then eval 2 cases x1 run
+[pilot 06:35:06] SMOKE: train 2 steps then eval 2 cases x1 run
 `torch_dtype` is deprecated! Use `dtype` instead!
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.55it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.66it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.64it/s]
-[pilot 03:50:50] loaded base via AutoModelForImageTextToText
-[pilot 03:50:52] trainable params: 29,802,496 (rank=16 alpha=32 rslora=False kl_coef=0.0)
-[pilot 03:50:52] training rows: 8 (0 general_retention — KL-anchored if kl_coef>0)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.65it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  2.01it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.94it/s]
+[pilot 06:35:26] loaded base via AutoModelForImageTextToText
+[pilot 06:35:29] trainable params: 29,802,496 (rank=16 alpha=32 rslora=False kl_coef=0.0)
+[pilot 06:35:29] training rows: 8 (0 general_retention — KL-anchored if kl_coef>0)
 `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
-[pilot 03:50:53] step 1/2 loss=4.0761 kl=0.0000
-[pilot 03:50:53] step 2/2 loss=3.3737 kl=0.0000
-[pilot 03:50:54] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
-[pilot 03:50:54] eval cases: 2 x 1 runs x (base, adapter)
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.51it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.62it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.60it/s]
-[pilot 03:50:58] loaded base via AutoModelForImageTextToText
-[pilot 03:51:13]   gen 2/2
-[pilot 03:51:27]   gen 2/2
-[pilot 03:51:35]   run 1/1 done
-[pilot 03:51:35] loading adapter onto base ...
-[pilot 03:52:01]   gen 2/2
-[pilot 03:52:25]   gen 2/2
-[pilot 03:52:33]   run 1/1 done
-[pilot 03:52:33] wrote eval report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-smoke.json
-[pilot 03:52:33] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
-[pilot 03:52:33]   tradition_merge_rate               Δ None ci=[None, None]  
-[pilot 03:52:33]   qualification_rate_on_contested    Δ 0.0 ci=[0.0, 0.0]  
-[pilot 03:52:33]   false_attribution_rate             Δ None ci=[None, None]  
-[pilot 03:52:33]   citation_fidelity                  Δ None ci=[None, None]  
-[pilot 03:52:33]   adapter protected_history_regression       None
-[pilot 03:52:33]   adapter protected_religion_regression      None
-[pilot 03:52:33]   adapter over_abstention_rate               0.0
-[pilot 03:52:33] PRIMARY habit-transfer signal present: False
-[pilot 03:52:33] SMOKE OK
-[pod] FULL sft seed=8
+[pilot 06:35:30] step 1/2 loss=4.0761 kl=0.0000
+[pilot 06:35:30] step 2/2 loss=3.3815 kl=0.0000
+[pilot 06:35:31] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 06:35:31] eval cases: 2 x 1 runs x (base, adapter)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.65it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.98it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.92it/s]
+[pilot 06:35:34] loaded base via AutoModelForImageTextToText
+[pilot 06:35:49]   gen 2/2
+[pilot 06:36:04]   gen 2/2
+[pilot 06:36:11]   run 1/1 done
+[pilot 06:36:11] loading adapter onto base ...
+[pilot 06:36:38]   gen 2/2
+[pilot 06:37:01]   gen 2/2
+[pilot 06:37:09]   run 1/1 done
+[pilot 06:37:09] wrote eval report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-smoke.json
+[pilot 06:37:09] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
+[pilot 06:37:09]   tradition_merge_rate               Δ None ci=[None, None]  
+[pilot 06:37:09]   qualification_rate_on_contested    Δ 0.0 ci=[0.0, 0.0]  
+[pilot 06:37:09]   false_attribution_rate             Δ None ci=[None, None]  
+[pilot 06:37:09]   citation_fidelity                  Δ None ci=[None, None]  
+[pilot 06:37:09]   adapter protected_history_regression       None
+[pilot 06:37:09]   adapter protected_religion_regression      None
+[pilot 06:37:09]   adapter over_abstention_rate               0.0
+[pilot 06:37:09] PRIMARY habit-transfer signal present: False
+[pilot 06:37:09] SMOKE OK
+[pod] FULL sft seed=9
 `torch_dtype` is deprecated! Use `dtype` instead!
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.55it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.66it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.64it/s]
-[pilot 03:52:42] loaded base via AutoModelForImageTextToText
-[pilot 03:52:44] trainable params: 29,802,496 (rank=16 alpha=32 rslora=False kl_coef=0.0)
-[pilot 03:52:44] training rows: 3359 (260 general_retention — KL-anchored if kl_coef>0)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.65it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  2.00it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.94it/s]
+[pilot 06:37:17] loaded base via AutoModelForImageTextToText
+[pilot 06:37:19] trainable params: 29,802,496 (rank=16 alpha=32 rslora=False kl_coef=0.0)
+[pilot 06:37:19] training rows: 3574 (260 general_retention — KL-anchored if kl_coef>0)
 `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
-[pilot 03:52:51] step 25/3359 loss=2.2629 kl=0.0000
-[pilot 03:52:58] step 50/3359 loss=2.8899 kl=0.0000
-[pilot 03:53:04] step 75/3359 loss=3.4068 kl=0.0000
-[pilot 03:53:10] step 100/3359 loss=0.1474 kl=0.0000
-[pilot 03:53:17] step 125/3359 loss=0.0859 kl=0.0000
-[pilot 03:53:23] step 150/3359 loss=0.1092 kl=0.0000
-[pilot 03:53:29] step 175/3359 loss=0.0673 kl=0.0000
-[pilot 03:53:36] step 200/3359 loss=0.0298 kl=0.0000
-[pilot 03:53:42] step 225/3359 loss=1.7591 kl=0.0000
-[pilot 03:53:48] step 250/3359 loss=0.2478 kl=0.0000
-[pilot 03:53:54] step 275/3359 loss=0.2234 kl=0.0000
-[pilot 03:54:01] step 300/3359 loss=2.3883 kl=0.0000
-[pilot 03:54:07] step 325/3359 loss=0.0046 kl=0.0000
-[pilot 03:54:13] step 350/3359 loss=0.0173 kl=0.0000
-[pilot 03:54:20] step 375/3359 loss=0.9552 kl=0.0000
-[pilot 03:54:26] step 400/3359 loss=0.0436 kl=0.0000
-[pilot 03:54:32] step 425/3359 loss=0.3547 kl=0.0000
-[pilot 03:54:39] step 450/3359 loss=0.0051 kl=0.0000
-[pilot 03:54:45] step 475/3359 loss=0.0375 kl=0.0000
-[pilot 03:54:51] step 500/3359 loss=0.0697 kl=0.0000
-[pilot 03:54:57] step 525/3359 loss=0.0533 kl=0.0000
-[pilot 03:55:03] step 550/3359 loss=0.0193 kl=0.0000
-[pilot 03:55:10] step 575/3359 loss=0.0534 kl=0.0000
-[pilot 03:55:16] step 600/3359 loss=1.1193 kl=0.0000
-[pilot 03:55:22] step 625/3359 loss=0.1054 kl=0.0000
-[pilot 03:55:28] step 650/3359 loss=0.0272 kl=0.0000
-[pilot 03:55:35] step 675/3359 loss=0.1110 kl=0.0000
-[pilot 03:55:41] step 700/3359 loss=0.0227 kl=0.0000
-[pilot 03:55:47] step 725/3359 loss=0.0497 kl=0.0000
-[pilot 03:55:53] step 750/3359 loss=0.2818 kl=0.0000
-[pilot 03:56:00] step 775/3359 loss=1.0002 kl=0.0000
-[pilot 03:56:06] step 800/3359 loss=0.0659 kl=0.0000
-[pilot 03:56:12] step 825/3359 loss=0.0434 kl=0.0000
-[pilot 03:56:18] step 850/3359 loss=2.3185 kl=0.0000
-[pilot 03:56:25] step 875/3359 loss=0.1204 kl=0.0000
-[pilot 03:56:31] step 900/3359 loss=0.0415 kl=0.0000
-[pilot 03:56:37] step 925/3359 loss=0.0259 kl=0.0000
-[pilot 03:56:43] step 950/3359 loss=0.0022 kl=0.0000
-[pilot 03:56:50] step 975/3359 loss=0.0410 kl=0.0000
-[pilot 03:56:56] step 1000/3359 loss=0.0921 kl=0.0000
-[pilot 03:57:02] step 1025/3359 loss=0.0003 kl=0.0000
-[pilot 03:57:08] step 1050/3359 loss=0.0014 kl=0.0000
-[pilot 03:57:15] step 1075/3359 loss=0.0977 kl=0.0000
-[pilot 03:57:21] step 1100/3359 loss=3.6170 kl=0.0000
-[pilot 03:57:27] step 1125/3359 loss=0.0093 kl=0.0000
-[pilot 03:57:33] step 1150/3359 loss=0.0321 kl=0.0000
-[pilot 03:57:40] step 1175/3359 loss=0.0010 kl=0.0000
-[pilot 03:57:46] step 1200/3359 loss=1.5668 kl=0.0000
-[pilot 03:57:52] step 1225/3359 loss=0.0020 kl=0.0000
-[pilot 03:57:58] step 1250/3359 loss=0.0276 kl=0.0000
-[pilot 03:58:04] step 1275/3359 loss=0.0252 kl=0.0000
-[pilot 03:58:10] step 1300/3359 loss=0.0611 kl=0.0000
-[pilot 03:58:17] step 1325/3359 loss=0.0009 kl=0.0000
-[pilot 03:58:23] step 1350/3359 loss=0.0368 kl=0.0000
-[pilot 03:58:29] step 1375/3359 loss=0.0324 kl=0.0000
-[pilot 03:58:35] step 1400/3359 loss=0.0022 kl=0.0000
-[pilot 03:58:42] step 1425/3359 loss=1.3780 kl=0.0000
-[pilot 03:58:48] step 1450/3359 loss=0.1511 kl=0.0000
-[pilot 03:58:54] step 1475/3359 loss=0.7798 kl=0.0000
-[pilot 03:59:00] step 1500/3359 loss=0.1115 kl=0.0000
-[pilot 03:59:06] step 1525/3359 loss=0.0008 kl=0.0000
-[pilot 03:59:12] step 1550/3359 loss=0.0265 kl=0.0000
-[pilot 03:59:19] step 1575/3359 loss=0.0038 kl=0.0000
-[pilot 03:59:25] step 1600/3359 loss=0.0037 kl=0.0000
-[pilot 03:59:31] step 1625/3359 loss=0.0080 kl=0.0000
-[pilot 03:59:37] step 1650/3359 loss=0.0204 kl=0.0000
-[pilot 03:59:43] step 1675/3359 loss=0.0005 kl=0.0000
-[pilot 03:59:50] step 1700/3359 loss=0.3300 kl=0.0000
-[pilot 03:59:56] step 1725/3359 loss=0.0022 kl=0.0000
-[pilot 04:00:02] step 1750/3359 loss=0.0086 kl=0.0000
-[pilot 04:00:08] step 1775/3359 loss=0.0972 kl=0.0000
-[pilot 04:00:14] step 1800/3359 loss=0.0004 kl=0.0000
-[pilot 04:00:20] step 1825/3359 loss=1.0320 kl=0.0000
-[pilot 04:00:26] step 1850/3359 loss=1.4040 kl=0.0000
-[pilot 04:00:32] step 1875/3359 loss=0.0048 kl=0.0000
-[pilot 04:00:39] step 1900/3359 loss=0.0206 kl=0.0000
-[pilot 04:00:45] step 1925/3359 loss=0.0533 kl=0.0000
-[pilot 04:00:51] step 1950/3359 loss=0.0032 kl=0.0000
-[pilot 04:00:57] step 1975/3359 loss=0.0456 kl=0.0000
-[pilot 04:01:03] step 2000/3359 loss=0.1536 kl=0.0000
-[pilot 04:01:09] step 2025/3359 loss=0.0844 kl=0.0000
-[pilot 04:01:16] step 2050/3359 loss=0.0001 kl=0.0000
-[pilot 04:01:22] step 2075/3359 loss=0.0001 kl=0.0000
-[pilot 04:01:28] step 2100/3359 loss=0.0002 kl=0.0000
-[pilot 04:01:34] step 2125/3359 loss=0.0303 kl=0.0000
-[pilot 04:01:40] step 2150/3359 loss=0.0010 kl=0.0000
-[pilot 04:01:46] step 2175/3359 loss=0.0012 kl=0.0000
-[pilot 04:01:53] step 2200/3359 loss=0.0018 kl=0.0000
-[pilot 04:01:59] step 2225/3359 loss=0.0312 kl=0.0000
-[pilot 04:02:05] step 2250/3359 loss=0.0006 kl=0.0000
-[pilot 04:02:11] step 2275/3359 loss=0.0007 kl=0.0000
-[pilot 04:02:17] step 2300/3359 loss=0.9192 kl=0.0000
-[pilot 04:02:23] step 2325/3359 loss=0.0003 kl=0.0000
-[pilot 04:02:29] step 2350/3359 loss=0.0008 kl=0.0000
-[pilot 04:02:35] step 2375/3359 loss=0.0018 kl=0.0000
-[pilot 04:02:42] step 2400/3359 loss=0.0000 kl=0.0000
-[pilot 04:02:48] step 2425/3359 loss=0.0000 kl=0.0000
-[pilot 04:02:54] step 2450/3359 loss=0.0006 kl=0.0000
-[pilot 04:03:00] step 2475/3359 loss=0.0799 kl=0.0000
-[pilot 04:03:06] step 2500/3359 loss=0.0049 kl=0.0000
-[pilot 04:03:12] step 2525/3359 loss=0.7771 kl=0.0000
-[pilot 04:03:19] step 2550/3359 loss=0.0004 kl=0.0000
-[pilot 04:03:25] step 2575/3359 loss=1.3766 kl=0.0000
-[pilot 04:03:31] step 2600/3359 loss=0.8654 kl=0.0000
-[pilot 04:03:37] step 2625/3359 loss=0.0206 kl=0.0000
-[pilot 04:03:43] step 2650/3359 loss=0.0004 kl=0.0000
-[pilot 04:03:49] step 2675/3359 loss=0.0000 kl=0.0000
-[pilot 04:03:56] step 2700/3359 loss=0.0005 kl=0.0000
-[pilot 04:04:02] step 2725/3359 loss=0.0064 kl=0.0000
-[pilot 04:04:08] step 2750/3359 loss=0.0006 kl=0.0000
-[pilot 04:04:14] step 2775/3359 loss=0.0001 kl=0.0000
-[pilot 04:04:20] step 2800/3359 loss=0.0001 kl=0.0000
-[pilot 04:04:26] step 2825/3359 loss=0.0004 kl=0.0000
-[pilot 04:04:33] step 2850/3359 loss=0.8194 kl=0.0000
-[pilot 04:04:39] step 2875/3359 loss=0.0002 kl=0.0000
-[pilot 04:04:45] step 2900/3359 loss=0.0019 kl=0.0000
-[pilot 04:04:51] step 2925/3359 loss=0.0014 kl=0.0000
-[pilot 04:04:57] step 2950/3359 loss=0.0010 kl=0.0000
-[pilot 04:05:03] step 2975/3359 loss=0.0890 kl=0.0000
-[pilot 04:05:09] step 3000/3359 loss=0.0136 kl=0.0000
-[pilot 04:05:16] step 3025/3359 loss=1.9154 kl=0.0000
-[pilot 04:05:22] step 3050/3359 loss=0.0041 kl=0.0000
-[pilot 04:05:28] step 3075/3359 loss=0.0004 kl=0.0000
-[pilot 04:05:34] step 3100/3359 loss=0.0005 kl=0.0000
-[pilot 04:05:40] step 3125/3359 loss=0.0003 kl=0.0000
-[pilot 04:05:46] step 3150/3359 loss=0.5755 kl=0.0000
-[pilot 04:05:53] step 3175/3359 loss=0.0000 kl=0.0000
-[pilot 04:05:59] step 3200/3359 loss=0.0000 kl=0.0000
-[pilot 04:06:05] step 3225/3359 loss=0.0212 kl=0.0000
-[pilot 04:06:11] step 3250/3359 loss=0.7127 kl=0.0000
-[pilot 04:06:18] step 3275/3359 loss=0.0000 kl=0.0000
-[pilot 04:06:24] step 3300/3359 loss=0.0417 kl=0.0000
-[pilot 04:06:30] step 3325/3359 loss=0.0000 kl=0.0000
-[pilot 04:06:36] step 3350/3359 loss=0.0000 kl=0.0000
-[pilot 04:06:39] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
-[pilot 04:06:39] eval cases: 74 x 1 runs x (base, adapter)
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.59it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.71it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.69it/s]
-[pilot 04:06:43] loaded base via AutoModelForImageTextToText
-[pilot 04:06:59]   gen 32/74
-[pilot 04:07:14]   gen 64/74
-[pilot 04:07:30]   gen 74/74
-[pilot 04:07:46]   gen 32/74
-[pilot 04:08:02]   gen 64/74
-[pilot 04:08:18]   gen 74/74
-[pilot 04:12:49]   run 1/1 done
-[pilot 04:12:49] loading adapter onto base ...
-[pilot 04:13:16]   gen 32/74
-[pilot 04:13:41]   gen 64/74
-[pilot 04:14:06]   gen 74/74
-[pilot 04:14:18]   gen 32/74
-[pilot 04:14:28]   gen 64/74
-[pilot 04:14:38]   gen 74/74
-[pilot 04:19:16]   run 1/1 done
-[pilot 04:19:16] wrote 74 base/adapter answer pairs -> agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed8.json
-[pilot 04:19:16] wrote eval report -> agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed8.json
-[pilot 04:19:16] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
-[pilot 04:19:16]   tradition_merge_rate               Δ 0.0 ci=[0.0, 0.0]  
-[pilot 04:19:16]   qualification_rate_on_contested    Δ 0.2272 ci=[0.2272, 0.2272] *
-[pilot 04:19:16]   false_attribution_rate             Δ 0.0 ci=[0.0, 0.0]  
-[pilot 04:19:16]   citation_fidelity                  Δ None ci=[None, None]  
-[pilot 04:19:16]   adapter protected_history_regression       0.0
-[pilot 04:19:16]   adapter protected_religion_regression      0.0
-[pilot 04:19:16]   adapter over_abstention_rate               0.0
-[pilot 04:19:16] PRIMARY habit-transfer signal present: True
+[pilot 06:37:27] step 25/3574 loss=3.6749 kl=0.0000
+[pilot 06:37:33] step 50/3574 loss=1.6831 kl=0.0000
+[pilot 06:37:39] step 75/3574 loss=0.1451 kl=0.0000
+[pilot 06:37:46] step 100/3574 loss=0.0665 kl=0.0000
+[pilot 06:37:52] step 125/3574 loss=0.2847 kl=0.0000
+[pilot 06:37:58] step 150/3574 loss=0.0248 kl=0.0000
+[pilot 06:38:04] step 175/3574 loss=0.9439 kl=0.0000
+[pilot 06:38:11] step 200/3574 loss=0.0239 kl=0.0000
+[pilot 06:38:17] step 225/3574 loss=0.6201 kl=0.0000
+[pilot 06:38:23] step 250/3574 loss=0.0949 kl=0.0000
+[pilot 06:38:29] step 275/3574 loss=0.0390 kl=0.0000
+[pilot 06:38:35] step 300/3574 loss=0.4496 kl=0.0000
+[pilot 06:38:42] step 325/3574 loss=0.0844 kl=0.0000
+[pilot 06:38:48] step 350/3574 loss=0.0556 kl=0.0000
+[pilot 06:38:54] step 375/3574 loss=0.0108 kl=0.0000
+[pilot 06:39:00] step 400/3574 loss=0.0086 kl=0.0000
+[pilot 06:39:06] step 425/3574 loss=0.1018 kl=0.0000
+[pilot 06:39:13] step 450/3574 loss=0.0376 kl=0.0000
+[pilot 06:39:19] step 475/3574 loss=1.6337 kl=0.0000
+[pilot 06:39:25] step 500/3574 loss=0.0351 kl=0.0000
+[pilot 06:39:31] step 525/3574 loss=0.0275 kl=0.0000
+[pilot 06:39:37] step 550/3574 loss=0.0209 kl=0.0000
+[pilot 06:39:43] step 575/3574 loss=0.1287 kl=0.0000
+[pilot 06:39:49] step 600/3574 loss=0.1225 kl=0.0000
+[pilot 06:39:55] step 625/3574 loss=0.0328 kl=0.0000
+[pilot 06:40:01] step 650/3574 loss=0.0004 kl=0.0000
+[pilot 06:40:07] step 675/3574 loss=0.6824 kl=0.0000
+[pilot 06:40:13] step 700/3574 loss=0.0472 kl=0.0000
+[pilot 06:40:19] step 725/3574 loss=0.0073 kl=0.0000
+[pilot 06:40:25] step 750/3574 loss=0.0270 kl=0.0000
+[pilot 06:40:31] step 775/3574 loss=1.4332 kl=0.0000
+[pilot 06:40:37] step 800/3574 loss=0.0685 kl=0.0000
+[pilot 06:40:43] step 825/3574 loss=0.0013 kl=0.0000
+[pilot 06:40:49] step 850/3574 loss=0.0678 kl=0.0000
+[pilot 06:40:56] step 875/3574 loss=0.0761 kl=0.0000
+[pilot 06:41:02] step 900/3574 loss=0.0501 kl=0.0000
+[pilot 06:41:08] step 925/3574 loss=0.0813 kl=0.0000
+[pilot 06:41:14] step 950/3574 loss=0.0067 kl=0.0000
+[pilot 06:41:20] step 975/3574 loss=0.0027 kl=0.0000
+[pilot 06:41:26] step 1000/3574 loss=0.0277 kl=0.0000
+[pilot 06:41:32] step 1025/3574 loss=0.0076 kl=0.0000
+[pilot 06:41:39] step 1050/3574 loss=0.0378 kl=0.0000
+[pilot 06:41:45] step 1075/3574 loss=0.0056 kl=0.0000
+[pilot 06:41:51] step 1100/3574 loss=0.0033 kl=0.0000
+[pilot 06:41:57] step 1125/3574 loss=1.5150 kl=0.0000
+[pilot 06:42:03] step 1150/3574 loss=0.0975 kl=0.0000
+[pilot 06:42:09] step 1175/3574 loss=0.0002 kl=0.0000
+[pilot 06:42:15] step 1200/3574 loss=0.0085 kl=0.0000
+[pilot 06:42:21] step 1225/3574 loss=0.0077 kl=0.0000
+[pilot 06:42:27] step 1250/3574 loss=1.1257 kl=0.0000
+[pilot 06:42:33] step 1275/3574 loss=0.1073 kl=0.0000
+[pilot 06:42:40] step 1300/3574 loss=0.2883 kl=0.0000
+[pilot 06:42:46] step 1325/3574 loss=0.4906 kl=0.0000
+[pilot 06:42:52] step 1350/3574 loss=0.0009 kl=0.0000
+[pilot 06:42:58] step 1375/3574 loss=0.0154 kl=0.0000
+[pilot 06:43:04] step 1400/3574 loss=0.0028 kl=0.0000
+[pilot 06:43:10] step 1425/3574 loss=0.1180 kl=0.0000
+[pilot 06:43:16] step 1450/3574 loss=0.0020 kl=0.0000
+[pilot 06:43:22] step 1475/3574 loss=0.0003 kl=0.0000
+[pilot 06:43:28] step 1500/3574 loss=0.0110 kl=0.0000
+[pilot 06:43:34] step 1525/3574 loss=0.0055 kl=0.0000
+[pilot 06:43:41] step 1550/3574 loss=0.0008 kl=0.0000
+[pilot 06:43:47] step 1575/3574 loss=0.2041 kl=0.0000
+[pilot 06:43:53] step 1600/3574 loss=0.0006 kl=0.0000
+[pilot 06:43:59] step 1625/3574 loss=0.0020 kl=0.0000
+[pilot 06:44:05] step 1650/3574 loss=0.0007 kl=0.0000
+[pilot 06:44:11] step 1675/3574 loss=0.0018 kl=0.0000
+[pilot 06:44:17] step 1700/3574 loss=0.0001 kl=0.0000
+[pilot 06:44:23] step 1725/3574 loss=0.0598 kl=0.0000
+[pilot 06:44:29] step 1750/3574 loss=0.0465 kl=0.0000
+[pilot 06:44:36] step 1775/3574 loss=0.0542 kl=0.0000
+[pilot 06:44:42] step 1800/3574 loss=0.0601 kl=0.0000
+[pilot 06:44:48] step 1825/3574 loss=0.0027 kl=0.0000
+[pilot 06:44:54] step 1850/3574 loss=0.0154 kl=0.0000
+[pilot 06:45:00] step 1875/3574 loss=0.0003 kl=0.0000
+[pilot 06:45:06] step 1900/3574 loss=0.0002 kl=0.0000
+[pilot 06:45:12] step 1925/3574 loss=0.0251 kl=0.0000
+[pilot 06:45:18] step 1950/3574 loss=0.5599 kl=0.0000
+[pilot 06:45:24] step 1975/3574 loss=0.0335 kl=0.0000
+[pilot 06:45:30] step 2000/3574 loss=1.3305 kl=0.0000
+[pilot 06:45:36] step 2025/3574 loss=0.0003 kl=0.0000
+[pilot 06:45:42] step 2050/3574 loss=0.0001 kl=0.0000
+[pilot 06:45:48] step 2075/3574 loss=0.0009 kl=0.0000
+[pilot 06:45:55] step 2100/3574 loss=0.0002 kl=0.0000
+[pilot 06:46:01] step 2125/3574 loss=0.0001 kl=0.0000
+[pilot 06:46:07] step 2150/3574 loss=0.0001 kl=0.0000
+[pilot 06:46:13] step 2175/3574 loss=0.0013 kl=0.0000
+[pilot 06:46:19] step 2200/3574 loss=0.0084 kl=0.0000
+[pilot 06:46:25] step 2225/3574 loss=0.0003 kl=0.0000
+[pilot 06:46:31] step 2250/3574 loss=0.0002 kl=0.0000
+[pilot 06:46:37] step 2275/3574 loss=0.0004 kl=0.0000
+[pilot 06:46:43] step 2300/3574 loss=0.0237 kl=0.0000
+[pilot 06:46:49] step 2325/3574 loss=0.0010 kl=0.0000
+[pilot 06:46:56] step 2350/3574 loss=0.0002 kl=0.0000
+[pilot 06:47:02] step 2375/3574 loss=0.6156 kl=0.0000
+[pilot 06:47:08] step 2400/3574 loss=0.0029 kl=0.0000
+[pilot 06:47:14] step 2425/3574 loss=0.0004 kl=0.0000
+[pilot 06:47:20] step 2450/3574 loss=0.0097 kl=0.0000
+[pilot 06:47:26] step 2475/3574 loss=1.2977 kl=0.0000
+[pilot 06:47:32] step 2500/3574 loss=0.0006 kl=0.0000
+[pilot 06:47:38] step 2525/3574 loss=0.0003 kl=0.0000
+[pilot 06:47:44] step 2550/3574 loss=0.0008 kl=0.0000
+[pilot 06:47:51] step 2575/3574 loss=0.0359 kl=0.0000
+[pilot 06:47:57] step 2600/3574 loss=0.0002 kl=0.0000
+[pilot 06:48:03] step 2625/3574 loss=1.9550 kl=0.0000
+[pilot 06:48:09] step 2650/3574 loss=2.2933 kl=0.0000
+[pilot 06:48:15] step 2675/3574 loss=0.0001 kl=0.0000
+[pilot 06:48:21] step 2700/3574 loss=0.0015 kl=0.0000
+[pilot 06:48:27] step 2725/3574 loss=0.0011 kl=0.0000
+[pilot 06:48:33] step 2750/3574 loss=0.0000 kl=0.0000
+[pilot 06:48:39] step 2775/3574 loss=0.0012 kl=0.0000
+[pilot 06:48:45] step 2800/3574 loss=0.0018 kl=0.0000
+[pilot 06:48:52] step 2825/3574 loss=0.0043 kl=0.0000
+[pilot 06:48:58] step 2850/3574 loss=0.0001 kl=0.0000
+[pilot 06:49:04] step 2875/3574 loss=0.0003 kl=0.0000
+[pilot 06:49:10] step 2900/3574 loss=0.0096 kl=0.0000
+[pilot 06:49:16] step 2925/3574 loss=0.0144 kl=0.0000
+[pilot 06:49:22] step 2950/3574 loss=1.0607 kl=0.0000
+[pilot 06:49:28] step 2975/3574 loss=0.0001 kl=0.0000
+[pilot 06:49:34] step 3000/3574 loss=0.0000 kl=0.0000
+[pilot 06:49:40] step 3025/3574 loss=0.0674 kl=0.0000
+[pilot 06:49:46] step 3050/3574 loss=0.0004 kl=0.0000
+[pilot 06:49:53] step 3075/3574 loss=2.4305 kl=0.0000
+[pilot 06:49:59] step 3100/3574 loss=0.0003 kl=0.0000
+[pilot 06:50:05] step 3125/3574 loss=0.0001 kl=0.0000
+[pilot 06:50:11] step 3150/3574 loss=0.0009 kl=0.0000
+[pilot 06:50:17] step 3175/3574 loss=0.0007 kl=0.0000
+[pilot 06:50:23] step 3200/3574 loss=0.0001 kl=0.0000
+[pilot 06:50:29] step 3225/3574 loss=0.0001 kl=0.0000
+[pilot 06:50:35] step 3250/3574 loss=0.0000 kl=0.0000
+[pilot 06:50:41] step 3275/3574 loss=0.0000 kl=0.0000
+[pilot 06:50:48] step 3300/3574 loss=0.0002 kl=0.0000
+[pilot 06:50:54] step 3325/3574 loss=0.0009 kl=0.0000
+[pilot 06:51:00] step 3350/3574 loss=0.0009 kl=0.0000
+[pilot 06:51:06] step 3375/3574 loss=0.0083 kl=0.0000
+[pilot 06:51:12] step 3400/3574 loss=0.0000 kl=0.0000
+[pilot 06:51:18] step 3425/3574 loss=0.0168 kl=0.0000
+[pilot 06:51:24] step 3450/3574 loss=0.0021 kl=0.0000
+[pilot 06:51:30] step 3475/3574 loss=0.2602 kl=0.0000
+[pilot 06:51:36] step 3500/3574 loss=0.0002 kl=0.0000
+[pilot 06:51:42] step 3525/3574 loss=0.0002 kl=0.0000
+[pilot 06:51:49] step 3550/3574 loss=0.0000 kl=0.0000
+[pilot 06:51:55] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 06:51:55] eval cases: 122 x 1 runs x (base, adapter)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.62it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.97it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.91it/s]
+[pilot 06:51:59] loaded base via AutoModelForImageTextToText
+[pilot 06:52:15]   gen 32/122
+[pilot 06:52:30]   gen 64/122
+[pilot 06:52:46]   gen 96/122
+[pilot 06:53:01]   gen 122/122
+[pilot 06:53:17]   gen 32/122
+[pilot 06:53:33]   gen 64/122
+[pilot 06:53:49]   gen 96/122
+[pilot 06:54:05]   gen 122/122
+[pilot 07:01:40]   run 1/1 done
+[pilot 07:01:40] loading adapter onto base ...
+[pilot 07:02:07]   gen 32/122
+[pilot 07:02:32]   gen 64/122
+[pilot 07:02:57]   gen 96/122
+[pilot 07:03:22]   gen 122/122
+[pilot 07:03:31]   gen 32/122
+[pilot 07:03:46]   gen 64/122
+[pilot 07:04:12]   gen 96/122
+[pilot 07:04:25]   gen 122/122
+[pilot 07:11:59]   run 1/1 done
+[pilot 07:11:59] wrote 122 base/adapter answer pairs -> agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed9.json
+[pilot 07:11:59] wrote eval report -> agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed9.json
+[pilot 07:11:59] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
+[pilot 07:11:59]   tradition_merge_rate               Δ 0.0 ci=[0.0, 0.0]  
+[pilot 07:11:59]   qualification_rate_on_contested    Δ 0.15 ci=[0.15, 0.15] *
+[pilot 07:11:59]   false_attribution_rate             Δ 0.0833 ci=[0.0833, 0.0833] *
+[pilot 07:11:59]   citation_fidelity                  Δ None ci=[None, None]  
+[pilot 07:11:59]   adapter protected_history_regression       0.0
+[pilot 07:11:59]   adapter protected_religion_regression      0.0
+[pilot 07:11:59]   adapter over_abstention_rate               0.0
+[pilot 07:11:59] PRIMARY habit-transfer signal present: True
 [pod] result + answers written; finish() will commit + push
 [pod] job exit code=0
