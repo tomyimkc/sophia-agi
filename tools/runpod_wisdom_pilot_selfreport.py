@@ -72,6 +72,9 @@ def _artifact_paths(args: argparse.Namespace):
 
 def _job_script(args: argparse.Namespace) -> str:
     eval_flags = f"--runs {int(args.runs)}" + (f" --limit {int(args.limit)}" if args.limit else "")
+    bench = getattr(args, "bench_path", "") or ""
+    if bench:
+        eval_flags += f" --benchmark {bench}"
     seed = int(args.seed)
     mode = getattr(args, "mode", "sft")
     prefix, script, mode_flags = _mode_spec(mode)
@@ -262,6 +265,8 @@ def parse_args(argv=None):
     ap.add_argument("--branch", default="claude/sophia-wisdom-4b-roadmap-jyesip")
     ap.add_argument("--runs", type=int, default=3)
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--bench-path", default="", help="repo-relative benchmark jsonl for --eval "
+                    "(default: the script's heldout_v1); used for a small targeted probe")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--mode", choices=["sft", "orpo", "orpo_sft", "retention", "sft_stable", "transfer"], default="sft")
     ap.add_argument("--registry-auth-id", default=os.environ.get("RUNPOD_REGISTRY_AUTH_ID", ""),

@@ -44,6 +44,10 @@ on:
         description: 'RunPod container-registry-auth id (to pull a PRIVATE image without making it public)'
         required: false
         default: ''
+      benchmark:
+        description: 'Optional benchmark jsonl for --eval (blank = full heldout_v1; e.g. a small calibration probe)'
+        required: false
+        default: ''
 
 permissions:
   contents: write   # the pod pushes the eval result back with this run's GITHUB_TOKEN
@@ -92,11 +96,13 @@ jobs:
           if [ -n "${{ github.event.inputs.limit }}" ]; then LIMIT="--limit ${{ github.event.inputs.limit }}"; fi
           IMAGE=""
           if [ -n "${{ github.event.inputs.image }}" ]; then IMAGE="--image-name ${{ github.event.inputs.image }}"; fi
+          BENCH=""
+          if [ -n "${{ github.event.inputs.benchmark }}" ]; then BENCH="--bench-path ${{ github.event.inputs.benchmark }}"; fi
           python tools/runpod_wisdom_pilot_selfreport.py --yes --wait \
             --branch "${{ github.ref_name }}" \
             --seed "${{ github.event.inputs.seed }}" \
             --mode "${{ github.event.inputs.mode }}" \
-            --runs "${{ github.event.inputs.runs }}" $LIMIT $IMAGE
+            --runs "${{ github.event.inputs.runs }}" $LIMIT $IMAGE $BENCH
 
       - name: Surface the pushed eval result (pull what the pod committed)
         if: always()
