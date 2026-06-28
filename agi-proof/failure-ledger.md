@@ -626,3 +626,24 @@ not AGI, not a Gödel machine. canClaimAGI stays False.
 **Claim impact:** z3 solver-checked promotion is now explicit policy; CONTENT channel is the ladder pass gate;
 religion FORMAT is prompt-structurable at inference; religion-repair LoRA path remains falsified.
 `canClaimAGI: false`.
+
+---
+
+## Sophia-Wisdom-4B — market reality-check + calibration arc (2026-06-28)
+
+**Market reality-check (`reality-check.json`).** First comparison of the trained adapter vs strong large
+models (Grok 4.3, DeepSeek V3.1, Mistral Large) on the same held-out cases. On deterministic markers the
+4B adapter looked dominant (qualification 0.978 vs 0.38–0.42); two stress tests cut it down honestly:
+(1) giving frontier the SAME scaffold narrowed but did not close the gap (so it is the LoRA, not a prompt);
+(2) a 3-family blind semantic judge preferred the adapter only **0.646** (much marker lead was vocabulary).
+Net: a modest, genuine, scaffold-independent narrow edge — NOT "4B beats frontier." First-party frontier
+(GPT/Claude/Gemini) egress-blocked from the test env (documented gap). `canClaimAGI: false`.
+
+**Over-qualification tax — found, then fixed in 3 honest iterations (`calibration-fix-result.json`).** The
+adapter over-hedged *clear-cut settled* cases (protected_history 0.806 vs base 0.14). v1 (5.8% settled
+rows): no effect, and the n=38 probe was underpowered. v2 (11.5% + a powered 90-case probe): partial — the
+fix transferred to settled AUTHORSHIP (novel works 0.558→0.000) but NOT to settled HISTORY, and the
+aggregate metric *masked* that until disaggregated by sub-family. v3 (added 50 settled-EVENT records, 17.1%):
+**protected_history 0.806→0.000**, novel works+events 0.429→0.000 (generalizes to unseen entities),
+contested hedging intact (0.81). The calibration tax is resolved across both settled sub-domains. Each step
+was diagnosed by the measurement contract, not guessed — a case study in disaggregate-before-you-conclude.
