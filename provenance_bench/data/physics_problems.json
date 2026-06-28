@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "description": "Physics RLVR pack. The reward is agent.verifiers.physics_equivalent: a numeric answer must match the gold's SI DIMENSION (dimensional analysis, pure-Python) AND value within 1% relative tolerance. This makes the reward judge-free and non-gameable in a way the right-number-wrong-unit failure mode cannot exploit. Split is by FIXED held-out families (identical across seeds) so seeds are comparable; eval families (gravitational_pe, momentum, photon_energy, pendulum_period) are genuine generalizations never seen in training. Golds were hand-computed; constants g=9.8 m/s^2, h_planck=6.626e-34 J*s.",
-    "schemaVersion": 1,
+    "description": "Physics RLVR pack. The reward is agent.verifiers.physics_equivalent: a numeric answer must match the gold's SI DIMENSION (dimensional analysis, pure-Python) AND value within a relative tolerance (default 1%, override per-problem with an 'rtol' field). This makes the reward judge-free and non-gameable in a way the right-number-wrong-unit failure mode cannot exploit (e.g. answering a work problem '100 J' with '100 N' is rejected on dimension). Split is by FIXED held-out families (identical across seeds) so seeds are comparable; eval families are genuine generalizations never seen in training. Golds hand-computed; constants g=9.8 m/s^2, h_planck=6.626e-34 J*s, c=3.0e8 m/s.",
+    "schemaVersion": 2,
     "rtol": 0.01,
     "trainFamilies": [
       "freefall_velocity",
@@ -9,17 +9,22 @@
       "kinetic_energy",
       "ohms_law",
       "kinematics_velocity",
-      "power"
+      "power",
+      "spring_force",
+      "work_done",
+      "pressure"
     ],
     "evalFamilies": [
       "gravitational_pe",
       "momentum",
       "photon_energy",
-      "pendulum_period"
+      "pendulum_period",
+      "electric_power",
+      "wavelength"
     ],
     "counts": {
-      "train": 12,
-      "eval": 8
+      "train": 18,
+      "eval": 12
     }
   },
   "problems": [
@@ -108,6 +113,48 @@
       "gold": "40 W"
     },
     {
+      "id": "spr-200-0p05",
+      "family": "spring_force",
+      "split": "train",
+      "prompt": "A spring with constant k = 200 N/m is stretched 0.05 m. Find the restoring force (F = k*x). Put the final answer in \\boxed{} with units.",
+      "gold": "10 N"
+    },
+    {
+      "id": "spr-300-0p04",
+      "family": "spring_force",
+      "split": "train",
+      "prompt": "A spring with constant k = 300 N/m is stretched 0.04 m. Find the restoring force. Put the final answer in \\boxed{} with units.",
+      "gold": "12 N"
+    },
+    {
+      "id": "wd-25-4",
+      "family": "work_done",
+      "split": "train",
+      "prompt": "A constant force of 25 N pushes a box 4 m in the direction of the force. Find the work done (W = F*d). Put the final answer in \\boxed{} with units.",
+      "gold": "100 J"
+    },
+    {
+      "id": "wd-12-2p5",
+      "family": "work_done",
+      "split": "train",
+      "prompt": "A constant force of 12 N pushes a box 2.5 m in the direction of the force. Find the work done. Put the final answer in \\boxed{} with units.",
+      "gold": "30 J"
+    },
+    {
+      "id": "pr-200-0p5",
+      "family": "pressure",
+      "split": "train",
+      "prompt": "A force of 200 N is applied over an area of 0.5 m^2. Find the pressure (P = F/A). Put the final answer in \\boxed{} with units.",
+      "gold": "400 Pa"
+    },
+    {
+      "id": "pr-50-0p25",
+      "family": "pressure",
+      "split": "train",
+      "prompt": "A force of 50 N is applied over an area of 0.25 m^2. Find the pressure. Put the final answer in \\boxed{} with units.",
+      "gold": "200 Pa"
+    },
+    {
       "id": "pe-3-10",
       "family": "gravitational_pe",
       "split": "eval",
@@ -162,6 +209,34 @@
       "split": "eval",
       "prompt": "Find the period of a simple pendulum of length 2.0 m. Using g = 9.8 m/s^2, T = 2*pi*sqrt(L/g). Put the final answer in \\boxed{} with units.",
       "gold": "2.84 s"
+    },
+    {
+      "id": "ep-12-2",
+      "family": "electric_power",
+      "split": "eval",
+      "prompt": "A 12 V source drives 2 A through a device. Find the electrical power dissipated (P = V*I). Put the final answer in \\boxed{} with units.",
+      "gold": "24 W"
+    },
+    {
+      "id": "ep-9-0p5",
+      "family": "electric_power",
+      "split": "eval",
+      "prompt": "A 9 V source drives 0.5 A through a device. Find the electrical power dissipated. Put the final answer in \\boxed{} with units.",
+      "gold": "4.5 W"
+    },
+    {
+      "id": "wl-5e14",
+      "family": "wavelength",
+      "split": "eval",
+      "prompt": "Find the wavelength of light of frequency 5.0e14 Hz (lambda = c/f, c = 3.0e8 m/s). Put the final answer in \\boxed{} with units.",
+      "gold": "6.0e-7 m"
+    },
+    {
+      "id": "wl-1e15",
+      "family": "wavelength",
+      "split": "eval",
+      "prompt": "Find the wavelength of light of frequency 1.0e15 Hz (lambda = c/f, c = 3.0e8 m/s). Put the final answer in \\boxed{} with units.",
+      "gold": "3.0e-7 m"
     }
   ]
 }

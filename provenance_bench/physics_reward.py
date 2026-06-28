@@ -75,17 +75,24 @@ def _completion_text(completion: Any) -> str:
 def make_grpo_reward(*, rtol: float = 1e-2, extract: bool = True) -> Callable:
     """TRL ``GRPOTrainer``-compatible physics reward.
 
-    Signature: ``reward_fn(prompts, completions, *, gold=None, **kwargs) -> list[float]``.
+    Signature: ``reward_fn(prompts, completions, *, gold=None, rtol=None, **kwargs) -> list[float]``.
     The dataset must carry a ``gold`` column (the physical-quantity gold per problem)
-    so it arrives here via ``**kwargs`` aligned with completions.
+    so it arrives here via ``**kwargs`` aligned with completions; an optional ``rtol``
+    column overrides the default tolerance per problem.
     """
-    def reward_fn(prompts: list, completions: list, *, gold: Any = None, **kwargs: Any) -> list[float]:
+    _default_rtol = rtol
+    def reward_fn(prompts: list, completions: list, *, gold: Any = None,
+                  rtol: Any = None, **kwargs: Any) -> list[float]:
         n = len(completions)
         golds = _as_list(gold, n)
+        # Per-row tolerance override (the dataset 'rtol' column) falls back to the
+        # factory default when a row carries none.
+        rtols = _as_list(rtol, n) if rtol is not None else [_default_rtol] * n
         out: list[float] = []
         for i, comp in enumerate(completions):
             g = golds[i] if i < len(golds) else ""
-            score, _ = reward_for_problem(_completion_text(comp), g or "", rtol=rtol, extract=extract)
+            rt = rtols[i] if i < len(rtols) and rtols[i] is not None else _default_rtol
+            score, _ = reward_for_problem(_completion_text(comp), g or "", rtol=rt, extract=extract)
             out.append(score)
         return out
 

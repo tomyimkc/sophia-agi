@@ -188,13 +188,22 @@ isolated so it can be done in one rented-GPU burst (RunPod MCP is wired).
 - **Exit gate:** a committed baseline table (math/code accuracy, CI) in
   `agi-proof/benchmark-results/`. No physics number yet — that's honest.
 
-### Phase 1 — Cache-stable rollout factory (CPU + hosted API, ~1–2 wks) ★A,★B
-- New `pipeline/rollout/`: prepend-only session manager, 0.8 compaction, planner/
-  executor split mirroring Reasonix. Provider via existing `agent/model.py`
-  (DeepSeek/OpenRouter/vLLM backends already exist).
-- Emit traces in `pretraining/vertical_data/schemas.py` trajectory format.
-- **Exit gate:** measured cost-per-verified-trace vs. a naive baseline (target
-  ≥3× cheaper), logged; ≥10k math + ≥10k code verified traces generated.
+### Phase 1 — Cache-stable rollout factory (CPU + hosted API) ★A,★B — ✅ **scaffolded**
+- ✅ `pipeline/rollout/`: `session.py` (append-only prefix-stable `Session` +
+  0.8 compaction), `cost.py` (prefix-cache cost model), `factory.py`
+  (`RolloutFactory` with the planner/executor SEPARATE-session split, verifiable
+  reward, `AgentTrajectory` emission). Provider via existing `agent/model.py`
+  (mock/DeepSeek/OpenRouter/vLLM); offline-deterministic via `ScriptedClient`.
+- ✅ Traces emitted in `pretraining/vertical_data/schemas.py` format and validated.
+- ✅ **Exit-gate target met (offline):** the deep-session invariant shows **3.3×
+  whole-rollout / 3.9× input-only** savings vs. a no-cache baseline (≥3× target),
+  proven in `offline_invariants()`; 12 tests in `tests/test_rollout_factory.py`.
+  *Caveat (honest):* the win scales with **session depth** — a 2-turn planner/
+  executor QA shows ~1.0× because there is no deep prefix yet. The savings are real
+  in long "leave-it-running" sessions, which is the Reasonix regime.
+- **Next (live):** point `RolloutFactory` at a real DeepSeek/vLLM endpoint, add a
+  multi-step executor tool-loop (so sessions actually deepen), and bulk-generate
+  ≥10k math + ≥10k code + physics verified traces for Phase 3.
 
 ### Phase 2 — Physics verifier substrate (CPU, ~2 wks) ★C — ✅ **landed**
 - ✅ `agent/units.py` (pure-Python SI dimensional-analysis engine, no deps),

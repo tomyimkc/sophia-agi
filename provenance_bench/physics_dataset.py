@@ -38,12 +38,15 @@ def problem_to_row(prob: dict) -> dict:
     ``remove_unused_columns=False`` must stay set (as in run_rlvr) so ``gold`` /
     ``family`` survive to the reward call via ``**kwargs``.
     """
-    return {
+    row = {
         "prompt": prob["prompt"],
         "gold": prob["gold"],
         "family": prob["family"],
         "problem_id": prob["id"],
     }
+    if "rtol" in prob:  # optional per-problem tolerance override
+        row["rtol"] = prob["rtol"]
+    return row
 
 
 def family_key(prob: dict) -> str:
