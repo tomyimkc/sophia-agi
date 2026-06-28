@@ -4,7 +4,22 @@ Boundary-3 evidence run (cf. `Cheap-Compute-Boundary.md`): QAT-train a LoRA adap
 sparse-MoE base, then certify the NVFP4-served artifact against full bf16 with the no-overclaim
 gate (`serving/lowram_eval.py`). Tooling: `tools/train_lora.py --qat` and `tools/certify_lowram.py`.
 
-## Verdict: FAIL (honest, complete measurement)
+> **UPDATE 2026-06-28 — the FAIL below was an INSTRUMENT artifact, not a model limit.** The
+> `0.0648 / 0.867` numbers in this report were measured on an adapter that **never trained**:
+> `training/qat.attach_qat` wrapped PEFT's `lora.Linear` (also class-named `Linear`), replacing
+> its forward with a base-only `F.linear(x, fake_quant(weight))` and silently bypassing the
+> `lora_A`/`lora_B` path — so the adapter got **zero gradient** and every `lora_B` stayed at its
+> zero init. Direct check: `olmoe-qat-spark-v2` has **all 3136 `lora_B` == 0.0**, and its certify
+> is **bit-identical** to the no-adapter base. So the "Why it fails — root cause" section below
+> (experts not QAT-co-adapted) is the *second-order* story; the *first-order* story is that
+> **no LoRA was applied at all** — this was a measurement of base-OLMoE NVFP4 degradation. Fixed
+> in `77a1076d` (skip the LoRA wrapper, fake-quant its inner `base_layer`; regression test
+> `tests/test_qat.py::test_attach_qat_does_not_bypass_lora_adapter`). With the fix, v3 train loss
+> drops `2.331→1.752` over 20 steps (vs v2 flat ~2.4) and QAT coverage is `3136` not the doubled
+> `6272`. **A v3 re-train + re-certify is in progress; the table below stays until v3 lands a
+> measured verdict.** See `agi-proof/failure-ledger.md` → `qat-lora-forward-bypass-2026-06-28`.
+
+## Verdict: FAIL (honest, complete measurement) — SUPERSEDED, see UPDATE above
 
 | Metric | Value | Contract | Pass? |
 |---|---|---|---|
