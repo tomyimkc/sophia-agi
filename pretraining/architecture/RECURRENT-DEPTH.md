@@ -90,13 +90,31 @@ image + cost-guard runbook (`docker/wisdom-pilot`, the `wisdom-gpu-prebaked` ski
 validated SFT/ORPO pilot (`tools/runpod_wisdom_pilot_selfreport.py`), the scaling-law
 fitter (`pretraining/scaling/fit.py`), and the no-overclaim eval harness.
 
-**Phase 1 — small from-scratch pretrain (1 RunPod node, cost-guarded).** Implement the RDT
-block in PyTorch (re-derive the LTI injection from the cited papers — do **not** import
-OpenMythos's stability code blind; it's the part most likely to be subtly wrong and it's the
-headline). Train `~0.5B` on FineWeb-Edu `sample-10BT` under the cost-guard runbook (the
-pre-baked image exists precisely so the pod reaches the job without a pip death-loop).
-Deliverable: a base checkpoint **and** a looped-vs-fixed scaling-law fit at matched compute
-(reuse `scaling/fit.py`).
+**Phase 1.1 — PyTorch RDT + local CPU validation (DONE, $0).** `rdt_torch.py` is the
+GPU-trainable RDT, re-derived (not imported from OpenMythos): prelude → `[LTI-inject(e) →
+shared block] × n_loop` → coda, with RMSNorm + GQA + RoPE + SwiGLU/MoE blocks, a halting
+head, and tied LM head. The LTI gate is the S4/Mamba zero-order-hold discretization
+`a = exp(-(softplus(A_log)·softplus(log_dt)) - min_decay)`, so the state pole is **strictly
+< 1 for every parameter value** (max 0.9999 over 200 hostile random inits — the stability
+guarantee is structural, not a training outcome). Validated on CPU for $0 by `self_test()`:
+dense+MoE forward/backward with finite gradients, depth-changes-output (the loop is
+load-bearing), and a tiny-batch overfit that drives loss **4.14 → 0.007** (the recurrence
+learns). `rdt_pretrain.py` runs the full data→loss→optimizer→checkpoint pipeline as a
+hermetic CPU smoke (loss below uniform + checkpoint round-trip), and the *same code path*
+scales to GPU by config.
+
+```bash
+python -m pretraining.architecture.rdt_torch --self-test     # CPU, seconds, $0
+python -m pretraining.architecture.rdt_pretrain --smoke       # CPU pipeline smoke, $0
+```
+
+**Phase 1.2 — small from-scratch pretrain (1 RunPod node, cost-guarded).** Train `~0.5B` on
+FineWeb-Edu `sample-10BT` via `rdt_pretrain.py --dataset fineweb-edu` under the cost-guard
+runbook (`wisdom-gpu-prebaked` skill: pre-baked image, cheap `limit`-style validation first,
+restart-loop abort, confirm zero leaked pods). The cost-guard rule is why Phase 1.1 is
+CPU-validated first: **no GPU credit is spent on unvalidated code.** Deliverable: a base
+checkpoint **and** a looped-vs-fixed scaling-law fit at matched compute (reuse
+`scaling/fit.py`).
 
 **Phase 2 — wisdom alignment + the novel coupling.** SFT + ORPO on the Sophia corpus
 (`training/corpus.jsonl`, `moral_gate_sft.jsonl`) via the validated pilot path. Then train
