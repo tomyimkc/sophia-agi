@@ -628,7 +628,7 @@ def _run_local(args: argparse.Namespace) -> int:
     out_path = args.artifacts_dir / "local.rlvr.public-report.json"
     cmd = [
         sys.executable, str(ROOT / "tools" / "run_rlvr.py"),
-        "--task", args.task, "--model", args.model, "--quant", args.quant,
+        "--task", args.task, "--reward", args.reward, "--model", args.model, "--quant", args.quant,
         "--vllm", args.vllm, "--epochs", str(args.epochs), "--seed", str(args.seed),
         "--out", str(out_path),
     ]
