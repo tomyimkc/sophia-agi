@@ -19,6 +19,15 @@ Modules
                       promote-on-route governance — only the active expert set is
                       resident in fast memory (the weight-space analog of the KV
                       tiering). The low-RAM mechanism for serving a large MoE.
+- ``layer_stream``   : layer-by-layer (GPU→CPU→disk) dense-weight streaming with a
+                      prefetch window and quant-aware sizing — the dense analog of
+                      ``expert_offload`` and the AirLLM technique (run a model larger
+                      than fast memory; ``tools/shard_checkpoint.py`` produces the
+                      on-disk shards it streams).
+- ``lowram_eval``    : the no-overclaim gate for a low-RAM deployment — measures the
+                      streamed+quantized model against FP16 on a held-out set
+                      (bounded KL / top-1 agreement, protected floor) so byte savings
+                      never silently cost unmeasured quality.
 - ``kv_quant``       : INT8/INT4 KV-cache quantization with a content-deterministic
                       per-block scale, so prefix sharing survives quantization;
                       round-trip error bounded.
@@ -44,6 +53,17 @@ from serving.kv_cache import (
     TieredKVCache,
     block_hashes,
 )
+from serving.layer_stream import (
+    LayerStreamStats,
+    LayerTier,
+    StreamingLayerStore,
+    plan_layer_bits,
+    resident_bytes_for,
+)
+from serving.lowram_eval import (
+    LowRamGate,
+    LowRamReport,
+)
 from serving.kv_quant import (
     dequantize_kv_block,
     kv_memory_ratio,
@@ -62,6 +82,15 @@ __all__ = [
     "ExpertTier",
     "ExpertOffloadStats",
     "TieredExpertStore",
+    # layer-by-layer weight streaming (AirLLM-style)
+    "LayerTier",
+    "LayerStreamStats",
+    "StreamingLayerStore",
+    "plan_layer_bits",
+    "resident_bytes_for",
+    # low-RAM measurement gate
+    "LowRamGate",
+    "LowRamReport",
     # KV cache quantization
     "quantize_kv_block",
     "dequantize_kv_block",
