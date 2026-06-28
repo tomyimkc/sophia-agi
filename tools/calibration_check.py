@@ -26,7 +26,7 @@ HEDGE = ["legendary", "traditionally attributed", "compiled", "disputed", "uncer
 CONTESTED = {"authorship_boundary", "contested_religion", "provenance_qa", "tradition_boundary",
              "false_attribution"}
 # Settled, gold_route=allow -> hedging is MISCALIBRATION (the answer is not contested).
-CLEARCUT = {"protected_history", "protected_religion"}
+CLEARCUT = {"protected_history", "protected_religion", "settled_clearcut"}
 
 
 def _hedges(t: str) -> bool:

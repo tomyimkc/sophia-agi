@@ -77,7 +77,7 @@ SYSTEM = MODE_PROMPTS["advisor"] + ROUTE_INSTRUCTION
 # Target mix (fractions) from the plan. Reported against actuals; not enforced by truncation.
 TARGET_MIX = {
     "source_discipline": (0.20, 0.25),
-    "settled_fact": (0.03, 0.08),
+    "settled_fact": (0.08, 0.14),
     "hard_provenance_negatives": (0.15, 0.15),
     "council": (0.10, 0.15),
     "moral_gate": (0.10, 0.10),
