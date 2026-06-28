@@ -252,6 +252,45 @@ class RLVRConfig:
 
 
 @dataclass(frozen=True)
+class CalibrateConfig:
+    """Low-RAM quantization calibration stage (disabled by default).
+
+    Wires tools/run_calibration.py: build a deployment-distribution calibration set,
+    prove it is disjoint from eval, and emit a datasheet to ship with a quantized
+    artifact. Opt-in (enabled=False) so it never alters the default training plan.
+    """
+
+    enabled: bool = False
+    script: str = "tools/run_calibration.py"
+    sources: tuple[str, ...] = field(default_factory=tuple)
+    out: str = "training/lora/calibration_datasheet.json"
+    target_bits: float = 4.5
+    extra_args: tuple[str, ...] = field(default_factory=tuple)
+
+    @classmethod
+    def from_dict(cls, payload: dict[str, Any] | None) -> "CalibrateConfig":
+        data = _as_mapping(payload, "calibrate")
+        return cls(
+            enabled=_as_bool(data.get("enabled"), cls.enabled),
+            script=str(data.get("script", cls.script)),
+            sources=_as_args(data.get("sources"), "calibrate.sources"),
+            out=str(data.get("out", cls.out)),
+            target_bits=float(data.get("targetBits", data.get("target_bits", cls.target_bits))),
+            extra_args=_as_args(data.get("extraArgs", data.get("extra_args")), "calibrate.extraArgs"),
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "enabled": self.enabled,
+            "script": self.script,
+            "sources": list(self.sources),
+            "out": self.out,
+            "targetBits": self.target_bits,
+            "extraArgs": list(self.extra_args),
+        }
+
+
+@dataclass(frozen=True)
 class EvalConfig:
     enabled: bool = True
     script: str = "tools/eval_ladder.py"
@@ -328,6 +367,7 @@ class ExperimentConfig:
     sft: SFTConfig = field(default_factory=SFTConfig)
     dpo: DPOConfig = field(default_factory=DPOConfig)
     rlvr: RLVRConfig = field(default_factory=RLVRConfig)
+    calibrate: CalibrateConfig = field(default_factory=CalibrateConfig)
     eval: EvalConfig = field(default_factory=EvalConfig)
     promotion: PromotionConfig = field(default_factory=PromotionConfig)
 
@@ -353,6 +393,7 @@ class ExperimentConfig:
             sft=SFTConfig.from_dict(payload.get("sft")),
             dpo=DPOConfig.from_dict(payload.get("dpo")),
             rlvr=RLVRConfig.from_dict(payload.get("rlvr")),
+            calibrate=CalibrateConfig.from_dict(payload.get("calibrate")),
             eval=EvalConfig.from_dict(payload.get("eval")),
             promotion=PromotionConfig.from_dict(payload.get("promotion")),
         )
@@ -368,6 +409,7 @@ class ExperimentConfig:
             "sft": self.sft.to_dict(),
             "dpo": self.dpo.to_dict(),
             "rlvr": self.rlvr.to_dict(),
+            "calibrate": self.calibrate.to_dict(),
             "eval": self.eval.to_dict(),
             "promotion": self.promotion.to_dict(),
         }
