@@ -211,10 +211,24 @@ def load_merged_model(base_model: str, adapter_dir: Path, *, dtype_str: str,
     merged_model = None
     peft_model = None
     try:
+        import warnings as _warnings
+
         from peft import PeftModel
-        peft_model = PeftModel.from_pretrained(base, str(adapter_dir), is_trainable=False)
-        merged_model = peft_model.merge_and_unload()
+        # Capture peft's load/merge warnings — notably "target_parameters=[...] were set but no
+        # parameter was matched", which means part of the adapter (e.g. fused-name expert LoRA on a
+        # split-expert model) SILENTLY did not apply. Without this, lora_load='peft.merge_and_unload'
+        # would falsely imply a complete merge.
+        with _warnings.catch_warnings(record=True) as caught:
+            _warnings.simplefilter("always")
+            peft_model = PeftModel.from_pretrained(base, str(adapter_dir), is_trainable=False)
+            merged_model = peft_model.merge_and_unload()
+        msgs = [str(w.message) for w in caught]
+        unmatched = [m for m in msgs if "no parameter was matched" in m or "not be matched" in m
+                     or "were set but no" in m]
         info["lora_load"] = "peft.merge_and_unload"
+        if unmatched:
+            info["merge_warnings"] = unmatched
+            info["incomplete_merge"] = True
     except Exception as exc:  # noqa: BLE001 - version skew is the documented failure
         info["lora_load"] = f"manual_merge (peft path failed: {type(exc).__name__}: {exc})"
         # CRITICAL: PeftModel.from_pretrained mutates `base` IN PLACE before it raises, leaving a
@@ -401,6 +415,11 @@ def run_certify(args: argparse.Namespace) -> dict:
         # can't accept. The "full" path is then missing that adaptation — surface it.
         print(f"[warn] {skipped_n} adapter modules could not be merged (e.g. "
               f"{mm.get('skipped', [])[:3]}); the full path may be missing expert LoRA.", flush=True)
+    if load_info.get("incomplete_merge"):
+        # Native peft merged, but part of the adapter silently did not match (e.g. fused-name
+        # expert LoRA on a split-expert model). The full path is then missing that adaptation.
+        for w in load_info.get("merge_warnings", []):
+            print(f"[warn] incomplete merge: {w}", flush=True)
 
     # 1) full bf16 (base + LoRA) next-token distributions.
     full_probs, prot_mask, ids = collect_next_token_probs(
@@ -445,6 +464,8 @@ def run_certify(args: argparse.Namespace) -> dict:
     out["lora_load"] = load_info.get("lora_load")
     out["lora_modules_merged"] = merged_n
     out["lora_modules_skipped"] = skipped_n
+    out["incomplete_merge"] = bool(load_info.get("incomplete_merge"))
+    out["merge_warnings"] = load_info.get("merge_warnings", [])
     out["per_tensor_mem_ratio"] = round(per_tensor_ratio, 4)
     out["quantized_modules"] = qinfo["quantized_modules"]
     out["quantized_params"] = qinfo["quantized_params"]
