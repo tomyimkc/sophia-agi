@@ -289,27 +289,44 @@ def _attribution_verifier() -> "Callable[[str, str], bool]":
         d = _get_json(f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json", timeout=20)
         return d["entities"][qid]["labels"].get("en", {}).get("value", qid)
 
-    def wikidata_lookup(work: str) -> "list[str]":
-        try:
-            s = _get_json("https://www.wikidata.org/w/api.php?" + urlencode(
-                {"action": "wbsearchentities", "search": work, "language": "en",
-                 "format": "json", "limit": "1"}), timeout=20)
-            hits = s.get("search") or []
-            if not hits:
-                return []
-            qid = hits[0]["id"]
-            d = _get_json(f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json", timeout=20)
-            claims = d["entities"][qid].get("claims", {})
-            out: "list[str]" = []
-            for p in _ATTR_PROPS:
-                for c in claims.get(p, []):
-                    try:
-                        out.append(_label(c["mainsnak"]["datavalue"]["value"]["id"]))
-                    except Exception:  # noqa: BLE001, PERF203
-                        pass
-            return out
-        except Exception:  # noqa: BLE001 — fail-closed: no record -> unknown, not a swap
+    import re as _re  # noqa: PLC0415
+
+    def _attributees_for(query: str) -> "list[str]":
+        s = _get_json("https://www.wikidata.org/w/api.php?" + urlencode(
+            {"action": "wbsearchentities", "search": query, "language": "en",
+             "format": "json", "limit": "1"}), timeout=20)
+        hits = s.get("search") or []
+        if not hits:
             return []
+        qid = hits[0]["id"]
+        d = _get_json(f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json", timeout=20)
+        claims = d["entities"][qid].get("claims", {})
+        out: "list[str]" = []
+        for p in _ATTR_PROPS:
+            for c in claims.get(p, []):
+                try:
+                    out.append(_label(c["mainsnak"]["datavalue"]["value"]["id"]))
+                except Exception:  # noqa: BLE001, PERF203
+                    pass
+        return out
+
+    def wikidata_lookup(work: str) -> "list[str]":
+        # Try the work, then a cleaned variant (strip leading filler like "the theory of",
+        # "the play", "the structure of") so e.g. "theory of general relativity" -> "general
+        # relativity" resolves. Fail-open on no record (unknown, not a swap).
+        candidates = [work]
+        cleaned = _re.sub(r"^(?:the\s+)?(?:play|novel|painting|theory|structure|discovery|"
+                          r"invention|concept|idea)\s+(?:of\s+)?", "", work, flags=_re.IGNORECASE).strip()
+        if cleaned and cleaned.lower() != work.lower():
+            candidates.append(cleaned)
+        for q in candidates:
+            try:
+                res = _attributees_for(q)
+            except Exception:  # noqa: BLE001
+                res = []
+            if res:
+                return res
+        return []
 
     verify = make_attribution_corroborate_fn(wikidata_lookup=wikidata_lookup)
     _ATTRIBUTION_CACHE.append(verify)

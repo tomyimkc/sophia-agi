@@ -31,10 +31,14 @@ __all__ = [
 _ATTR_VERB = (r"(?:painted|wrote|authored|composed|created|designed|built|sculpted|directed|"
               r"discovered|invented|developed|formulated|proposed|devised|founded|programmed)")
 _PERSON = r"[A-Z][A-Za-z.'-]+(?:\s+[A-Z][A-Za-z.'-]+){0,3}"
-# "... by <Person>"  and  "<Person> <verb> ..."
+# "... by <Person>", "<Person> <verb> ...", "(attributed|credited) to/with <Person>",
+# "<Person> is credited ...".
 _BY_RE = re.compile(rf"\bby\s+(?P<who>{_PERSON})")
 _VERB_RE = re.compile(rf"\b(?P<who>{_PERSON})\s+{_ATTR_VERB}\b")
-_ATTRIB_TO_RE = re.compile(rf"\battribut\w+\s+(?:the\s+)?.*?\bto\s+(?P<who>{_PERSON})", re.IGNORECASE)
+_ATTRIB_TO_RE = re.compile(
+    rf"\b(?:attribut\w+|credit\w+)\s+(?:to|with)\s+(?:the\s+)?(?P<who>{_PERSON})", re.IGNORECASE)
+_IS_CREDITED_RE = re.compile(rf"\b(?P<who>{_PERSON})\s+(?:is|are|was|were)\s+credit\w+", re.IGNORECASE)
+_MARKDOWN_RE = re.compile(r"[*_`]+")
 _STOPNAMES = {"The", "A", "An", "This", "That", "It", "Based", "According", "Source", "However",
               "Although", "While", "Both", "He", "She", "They", "Dr", "Professor"}
 
@@ -64,11 +68,18 @@ def extract_attributions(question: str, answer: str) -> "list[tuple[str, str]]":
     proper-name strings the answer attaches via "by X" / "X <verb>" / "attributed to X".
     """
     work = _question_subject(question)
+    answer = _MARKDOWN_RE.sub("", answer or "")  # strip **bold**/_italics_ so names start clean
     persons: "list[str]" = []
-    for rx in (_BY_RE, _VERB_RE, _ATTRIB_TO_RE):
-        for m in rx.finditer(answer or ""):
-            who = re.sub(r"[.,;:'\"\s]+$", "", m.group("who").strip())
+    work_tokens = {w for w in re.split(r"[^a-z]+", work.lower()) if len(w) >= 4}
+    for rx in (_BY_RE, _VERB_RE, _ATTRIB_TO_RE, _IS_CREDITED_RE):
+        for m in rx.finditer(answer):
+            who = re.sub(r"\s+(?:alone|himself|herself|themselves)$", "",
+                         re.sub(r"[.,;:'\"\s]+$", "", m.group("who").strip()), flags=re.IGNORECASE)
             if not who or who.split()[0] in _STOPNAMES:
+                continue
+            # Drop a candidate that is really the WORK phrase, not a person.
+            who_tokens = {w for w in re.split(r"[^a-z]+", who.lower()) if len(w) >= 4}
+            if who_tokens and who_tokens <= work_tokens:
                 continue
             if who not in persons:
                 persons.append(who)
