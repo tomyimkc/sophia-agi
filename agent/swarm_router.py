@@ -59,11 +59,17 @@ class Team:
     allowed_tools: "frozenset[str] | None"  # None = pure reasoning child, no tools
     default_k: int = 1            # how many independent children by default
     max_steps: int = 3
+    adapter_id: "str | None" = None  # V3 (Branch-Train-MiX): the LoRA adapter that is
+    # ALSO this team's in-weights MoE expert. None = use the un-adapted backbone.
+    # See docs/11-Platform/Swarm-Variants-V3-V4-Spec.md and agent/dual_use_adapter.py.
 
     def spec(self, goal: str, *, k_index: int, budget_usd: float | None) -> SubagentSpec:
-        """Build one least-privilege child spec for this team."""
+        """Build one least-privilege child spec for this team. When the team is bound to
+        a V3 adapter, the adapter id is carried in ``skill`` so a real harness can load
+        it into the child (the loader hook); the mock/offline path ignores it."""
         label = self.name if self.default_k == 1 else f"{self.name}-{k_index + 1}"
         scoped_goal = f"[{self.name}] {self.role}\n\nTask: {goal}"
+        skill = {"adapter_id": self.adapter_id, "team": self.name} if self.adapter_id else None
         return SubagentSpec(
             goal=scoped_goal,
             mode="advisor",
@@ -71,6 +77,7 @@ class Team:
             max_steps=self.max_steps,
             max_retries=1,
             cost_budget_usd=budget_usd,
+            skill=skill,
             label=label,
         )
 
