@@ -1,0 +1,50 @@
+{
+  "schema": "sophia.judge_farm.local.v1",
+  "_comment": "Two-box LOCAL judge farm for the no-overclaim >=2-family certification gate (RESULTS.md). Box A = DGX Spark serving a Qwen judge via vLLM (CUDA); Box B = Mac Studio serving a Llama judge via MLX (Apple Silicon). Copy to config/inference.local.judge.json and fill in SPARK_HOST / MAC_HOST. Consumed by tools/run_local_judge_eval.py --config and the judge tools' --judges flag.",
+  "why_two_boxes": "Honest rationale: the >=2-family gate (provenance_bench.aggregate._distinct_families) keys local vLLM/sglang/llamacpp judges by the MODEL vendor, so even two different-vendor models on ONE Spark vLLM port already count as 2 families (qwen + meta-llama). So a second box is NOT required to clear the bar. What the Mac box BUYS: (1) grader INDEPENDENCE — a Metal/MLX runtime is a different numerical + serving stack from CUDA/vLLM, so the two graders' errors are less correlated than two models on the same engine; (2) it OFFLOADS judge compute from the Spark, which is busy training + NVFP4-serving the subject under test; (3) it uses the otherwise-idle Mac. NOTE: do NOT use two SAME-vendor judges (e.g. vllm:Qwen/Qwen2.5-7B-Instruct + vllm:Qwen/Qwen2.5-14B-Instruct) — both key to 'qwen' = 1 family. (The vendor keying needs the 'vendor/model' slash; a bare 'vllm:Qwen-7B' with no slash would key to 'vllm' instead.)",
+  "boxes": {
+    "spark": {
+      "machine": "NVIDIA DGX Spark (GB10 Grace Blackwell, aarch64, 128GB unified)",
+      "role": "judge family A (CUDA, vLLM)",
+      "engine": "vllm",
+      "base_url": "http://SPARK_HOST:8000/v1",
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "judge_spec": "vllm:Qwen/Qwen2.5-7B-Instruct@http://SPARK_HOST:8000/v1",
+      "family": "qwen",
+      "model_lineage": "qwen",
+      "serve": "vllm serve Qwen/Qwen2.5-7B-Instruct --port 8000   # on the Spark (aarch64+sm_100 build)",
+      "notes": "vLLM is an AGGREGATOR provider, so this keys to vendor family 'qwen' (not 'vllm'). The Spark also runs the SUBJECT (OLMoE adapter) and the NVFP4 low-RAM serve; keep the judge a DIFFERENT vendor from the subject so judge != subject."
+    },
+    "mac": {
+      "machine": "Mac Studio (Apple Silicon, Metal/MLX)",
+      "role": "judge family B (Apple Silicon, MLX)",
+      "engine": "mlx",
+      "base_url": "http://MAC_HOST:8080/v1",
+      "model": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+      "judge_spec": "mlx:mlx-community/Meta-Llama-3.1-8B-Instruct-4bit@http://MAC_HOST:8080/v1",
+      "family": "mlx",
+      "model_lineage": "meta-llama",
+      "serve": "mlx_lm.server --model mlx-community/Meta-Llama-3.1-8B-Instruct-4bit --port 8080   # on the Mac Studio",
+      "notes": "mlx is NOT an aggregator provider, so it keys to family 'mlx' (the engine), regardless of model. Distinct from the Spark judge's 'qwen' family. MLX is Apple-Silicon-only (not usable on the Spark). The Mac is also your control plane: SSH/Remote-SSH into the Spark over Cat 6."
+    }
+  },
+  "judge_farm": {
+    "judges": [
+      "vllm:Qwen/Qwen2.5-7B-Instruct@http://SPARK_HOST:8000/v1",
+      "mlx:mlx-community/Meta-Llama-3.1-8B-Instruct-4bit@http://MAC_HOST:8080/v1"
+    ],
+    "recommended_flag": "--judges vllm:Qwen/Qwen2.5-7B-Instruct@http://SPARK_HOST:8000/v1,mlx:mlx-community/Meta-Llama-3.1-8B-Instruct-4bit@http://MAC_HOST:8080/v1",
+    "distinct_families_expected": 2,
+    "expected_families": ["qwen", "mlx"],
+    "subject_lineages_to_avoid": ["qwen", "meta-llama"],
+    "_comment": "expected_families: how the gate keys these (vLLM->vendor 'qwen', mlx->engine 'mlx'). subject_lineages_to_avoid: do NOT use Qwen or Llama as the SUBJECT under test with these judges (judge != subject). The OLMoE/Sophia-V1 subject (lineage 'allenai'/'olmoe') is clear of both."
+  },
+  "gate": {
+    "min_judge_families": 2,
+    "kappa_floor": 0.40,
+    "min_seeds": 3,
+    "ci_excludes_zero": true,
+    "source": "RESULTS.md / provenance_bench.aggregate",
+    "notes": "These judges supply the >=2-family + kappa>=0.40 inputs; >=3 seeds and CI-excludes-zero are properties of the RUN, not this config."
+  }
+}
