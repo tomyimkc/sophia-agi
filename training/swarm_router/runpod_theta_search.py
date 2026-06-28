@@ -119,9 +119,9 @@ def make_gen(mdl):
         return tok.decode(out[0][enc["input_ids"].shape[1]:],skip_special_tokens=True)
     return gen
 try:
-    from provenance_bench.search_recall import PACK_V1, source_discipline_ok
+    from provenance_bench.search_recall import load_pack, source_discipline_ok
     from peft import PeftModel
-    traps=[t for t in PACK_V1 if t.trap]
+    traps=[t for t in load_pack() if t.trap]   # harder pack_v2 (25 traps) for power
     del model; gc.collect(); torch.cuda.empty_cache()
     base=AutoModelForCausalLM.from_pretrained(MODEL,torch_dtype=torch.float16,device_map="auto").eval()
     gb=make_gen(base)
@@ -163,20 +163,43 @@ fi
 """
 
 
+def _curl(args: "list[str]") -> tuple[int, str]:
+    """Shell out to curl. Some egress proxies (e.g. sandboxed/web sessions) return 403 to
+    Python-urllib but allow curl, and curl honours HTTPS_PROXY + the CA bundle transparently."""
+    import subprocess
+    p = subprocess.run(["curl", "-sS", *args], capture_output=True, text=True, timeout=120)
+    return p.returncode, p.stdout
+
+
 def _gql(api_key: str, query: str, variables: dict | None = None) -> dict:
-    body = json.dumps({"query": query, "variables": variables or {}}).encode()
-    req = urllib.request.Request(f"{GQL}?api_key={api_key}", data=body,
-                                 headers={"content-type": "application/json"})
-    with urllib.request.urlopen(req, timeout=90) as r:
-        return json.loads(r.read())
+    body = json.dumps({"query": query, "variables": variables or {}})
+    url = f"{GQL}?api_key={api_key}"
+    # Prefer urllib; on ANY failure (e.g. proxy 403 in web sessions) fall back to curl.
+    try:
+        req = urllib.request.Request(url, data=body.encode(), headers={"content-type": "application/json"})
+        with urllib.request.urlopen(req, timeout=90) as r:
+            return json.loads(r.read())
+    except Exception:  # noqa: BLE001
+        rc, out = _curl(["-X", "POST", "--url", url, "-H", "content-type: application/json", "--data", body])
+        if rc != 0 or not out:
+            raise RuntimeError(f"curl GraphQL fallback failed (rc={rc})")
+        return json.loads(out)
 
 
 def _http_get(url: str, timeout: int = 20) -> tuple[int, str]:
     try:
         with urllib.request.urlopen(url, timeout=timeout) as r:
             return r.status, r.read().decode("utf-8", "replace")
-    except Exception as exc:  # noqa: BLE001
-        return 0, str(exc)
+    except Exception:  # noqa: BLE001
+        rc, out = _curl(["--max-time", str(timeout), "-o", "/dev/stdout", "-w", "\n%{http_code}", url])
+        if rc != 0 or not out:
+            return 0, ""
+        nl = out.rfind("\n")
+        body, code = out[:nl], out[nl + 1:].strip()
+        try:
+            return int(code), body
+        except ValueError:
+            return 0, body
 
 
 def main() -> int:

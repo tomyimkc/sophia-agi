@@ -24,11 +24,16 @@ promotion decision is now backed by a graded measurement, not a placeholder.
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Callable
 
 from provenance_bench.swarm_benchmark import _paired_bootstrap_ci
+
+_ROOT = Path(__file__).resolve().parents[1]
+PACK_V2_PATH = _ROOT / "data" / "search_recall" / "pack_v2.jsonl"
 
 Retrieve = Callable[[str], "list[str]"]
 Answer = Callable[[str], str]
@@ -71,6 +76,24 @@ _DISCIPLINE = (
     r"\bcredited\b", r"\bdebat", r"\baccording\s+to", r"据", r"出自", r"存疑",
 )
 _FABRICATION = (r"\bdefinitely\b", r"\bcertainly\s+wrote\b", r"\bwithout\s+doubt\b")
+
+
+def load_pack(path: "str | Path" = PACK_V2_PATH) -> "tuple[RecallTask, ...]":
+    """Load a sealed pack from JSONL (e.g. the harder ``data/search_recall/pack_v2.jsonl``,
+    30 items / 25 traps — bigger N for statistical power than the inline PACK_V1). Falls
+    back to PACK_V1 if the file is absent so the offline path never breaks."""
+    p = Path(path)
+    if not p.exists():
+        return PACK_V1
+    tasks = []
+    for line in p.read_text().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        r = json.loads(line)
+        tasks.append(RecallTask(query=r["query"], gold_sources=tuple(r.get("gold_sources") or ()),
+                                trap=bool(r.get("trap")), note=r.get("note", "")))
+    return tuple(tasks)
 
 
 def recall_at_k(retrieved: "list[str]", gold: "tuple[str, ...]", k: int) -> float:

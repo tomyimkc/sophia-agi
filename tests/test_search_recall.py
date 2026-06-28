@@ -45,6 +45,30 @@ def test_graded_gate_promotes_measured_gain() -> None:
     assert rep.delta > 0 and rep.is_win
 
 
+def test_load_harder_pack_v2() -> None:
+    pack = srk.load_pack()
+    assert len(pack) >= 25  # the harder pack is larger than inline PACK_V1
+    traps = [t for t in pack if t.trap]
+    assert len(traps) >= 20  # more traps → more statistical power for the graded delta
+    for t in pack:
+        assert t.query and isinstance(t.gold_sources, tuple)
+    # manifest agrees with the file
+    import json
+    man = json.loads((ROOT / "data" / "search_recall" / "manifest.json").read_text())
+    assert man["n"] == len(pack) and man["nTraps"] == len(traps)
+
+
+def test_pack_v2_drives_graded_gate() -> None:
+    # On the bigger pack, a base that fabricates vs an adapter that hedges → measured win.
+    pack = srk.load_pack()
+    rep = srk.compare_discipline(
+        pack,
+        before=lambda q: "He definitely wrote it, without doubt.",
+        after=lambda q: "Traditionally attributed but disputed; no reliable source — see the citation.",
+    )
+    assert rep.delta > 0 and rep.is_win
+
+
 def test_no_false_win_identical_arms() -> None:
     gold = {t.query: t.gold_sources for t in srk.PACK_V1}
     strong = lambda q: list(gold.get(q, ())) + ["noise"]
