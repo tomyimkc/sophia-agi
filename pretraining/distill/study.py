@@ -43,12 +43,6 @@ claim the *effect is measurable* against a known floor.
 from __future__ import annotations
 
 import math
-import sys
-from pathlib import Path
-
-_ROOT = Path(__file__).resolve().parents[2]
-if str(_ROOT) not in sys.path:
-    sys.path.insert(0, str(_ROOT))
 
 from pretraining.architecture.moe import MoELM
 from pretraining.nano.data import (

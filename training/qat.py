@@ -39,13 +39,7 @@ mechanism, not the measurement.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
 from typing import Any
-
-_ROOT = Path(__file__).resolve().parents[1]
-if str(_ROOT) not in sys.path:
-    sys.path.insert(0, str(_ROOT))
 
 try:
     import numpy as np
@@ -232,15 +226,22 @@ def qat_penalty(model: Any, *, scheme: str = "int8", lam: float = 1e-3,
     Add to the task loss in the training loop: ``loss = loss + qat_penalty(model, ...)``.
     """
     import torch  # pragma: no cover - torch-only path
+    ste = _torch_ste_quant()                      # build the autograd Function once per call
     total = None
+    device = None
     for m in model.modules():
         if type(m).__name__ in module_types and hasattr(m, "weight"):
             w = m.weight
-            dq = _torch_ste_quant().apply(w, scheme)
+            if device is None:
+                device = w.device
+            dq = ste.apply(w, scheme)
             term = torch.mean((w - dq) ** 2)
             total = term if total is None else total + term
     if total is None:
-        return torch.zeros((), requires_grad=True)
+        # No matching modules: a zero on the model's own device, so adding it to a GPU
+        # loss never triggers a device mismatch.
+        dev = device or next(model.parameters()).device
+        return torch.zeros((), requires_grad=True, device=dev)
     return lam * total
 
 
@@ -301,6 +302,16 @@ def offline_invariants() -> "tuple[bool, dict]":
 
 
 if __name__ == "__main__":
+    # Script execution only: put the repo root on the path so the lazy ``moe.quant`` import
+    # resolves. As a library (pytest / installed package) this side effect never runs — the
+    # importer is responsible for the path, matching serving/ and moe/.
+    import sys
+    from pathlib import Path
+
+    _root = str(Path(__file__).resolve().parents[1])
+    if _root not in sys.path:
+        sys.path.insert(0, _root)
+
     ok, detail = offline_invariants()
     print("QAT-training offline invariants:", "PASS" if ok else "FAIL")
     for k, v in detail["checks"].items():
