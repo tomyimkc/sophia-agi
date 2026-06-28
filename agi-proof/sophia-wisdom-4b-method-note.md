@@ -61,19 +61,39 @@ Every pillar is a deterministic check that runs in CI (`tools/claim_gate.py`, `t
 | It is a **transferable habit** | transfer probe on **160 novel entities**: qualification **+0.432**, `claim_gate` GO | single seed; corpus-bound |
 | **No catastrophic forgetting** | **powered N=970** probe: Δ **−0.001**, fixed-n CI [−0.020,+0.018]; **anytime-valid** CS [−0.030,+0.028] | single seed |
 | **ORPO does not beat SFT** | from-base ≈ coin-flip; on-SFT loses ~19% of the primary | small preference corpus |
+| **Modestly beats strong large models** on source-discipline | vs Grok 4.3 / DeepSeek V3.1 / Mistral-large on the same N=354×3; edge **survives** giving them the same scaffold; **3-family blind judge majority 0.646** (173–95) vs scaffolded Mistral-large | markers OVERSTATE it; modest on substance; first-party frontier egress-blocked |
+| **…at a measurable calibration cost** | over-qualifies *clear-cut* settled cases: hedges **0.37/0.68** vs base 0.13/0.08 (+0.24–0.61) | clear-cut n≈38, noisy magnitude |
 
 **The instructive failure:** the forgetting verdict matured **N=34 → 70 → 970**. At N=34 the probe's
 MDE was ~0.34 — it could not resolve a 5-point criterion — yet it produced a scary **−0.118**. Powering
 the probe (not changing the model) showed Δ−0.001. *The fix was a better instrument.*
 
+**The market reality-check, in full (the part most people skip):** against three strong large models on
+the same cases, the 4B adapter looked dominant on deterministic markers (qualification 0.978 vs
+0.38–0.42). Two stress tests cut that down honestly: (1) giving frontier the **same scaffold** narrowed
+but did not close the gap (Mistral 0.41→0.79) — so the edge is the LoRA, not just a prompt; (2) a
+**3-family blind semantic judge** preferred the adapter only **~0.65** of the time, revealing that much
+of the marker lead was hedge-phrase *vocabulary*, not substance. And the adapter pays a **calibration
+tax** — it over-hedges settled facts. Net: a **modest, genuine, scaffold-independent narrow edge**, not
+a "4B beats frontier" headline.
+
 ## What this is **not** (the ceiling)
 
-- **Not market-beating.** The adapter is already *saturated* on its trained axis (qualification 0.978,
-  false-attribution 0.000), so there is no headroom to "beat" frontier models that do source-discipline
-  natively — the realistic head-to-head is **parity**, and that comparison is still pending
-  (`tools/reality_check.py`).
+- **Not market-beating in general.** The adapter is *modestly* more source-disciplined than strong large
+  models on contested cases (judge ~0.65), and that edge is real and not just a prompt — but the
+  deterministic markers overstate it, it carries an over-qualification cost, and it is **not** validated
+  against first-party frontier (GPT/Claude/Gemini are egress-blocked from the test environment).
 - **Not a general LLM.** Narrow capability, single base, single retention seed, corpus-bound.
 - **Not third-party validated, not a hallucination guarantee, not AGI.**
+
+## The calibration fix (in progress)
+
+The over-qualification tax had a clean root cause: the corpus contained **zero settled records** — every
+attribution warrants hedging — so the model never learned *when not to hedge*. The fix adds a
+settled-fact corpus (`data/settled_facts.json`, 36 undisputed single-author works) + a non-hedging
+generator that teaches the discrimination (settled → answer directly; "is it disputed? — no"). Dataset
+3306 → 3510 rows. **Verification (a GPU re-train + re-run of `tools/calibration_check.py`) is the open
+step** — the data fix is committed; the proof it works is pending, and will be reported pass-or-fail.
 
 ## How to reuse it
 
