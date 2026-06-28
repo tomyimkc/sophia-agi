@@ -26,19 +26,31 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: pip-audit (advisory; aggregates all requirements*.txt)
+      - name: pip-audit (BLOCKING; triaged baseline grandfathered)
         run: |
           python -m pip install --upgrade pip pip-audit
+          # Ratchet: a NEW, untriaged CVE fails the build. The IDs below are the
+          # baseline triaged on 2026-06-28 — heavy ML deps (torch/transformers/
+          # vllm/diskcache) with no safe in-place bump yet. Remove an ID here the
+          # moment its dependency is upgraded; do NOT add to this list without a
+          # written justification in the PR.
+          IGNORE=""
+          for id in \
+            PYSEC-2025-206 PYSEC-2025-204 PYSEC-2026-139 PYSEC-2025-203 \
+            CVE-2025-2999 CVE-2025-3000 CVE-2025-3001 \
+            PYSEC-2025-217 CVE-2026-1839 \
+            CVE-2026-53923 CVE-2026-54236 CVE-2026-12491 CVE-2026-54235 CVE-2026-54233 \
+            CVE-2025-69872 ; do
+            IGNORE="$IGNORE --ignore-vuln $id"
+          done
           shopt -s nullglob
           status=0
           for req in requirements*.txt; do
             echo "::group::pip-audit $req"
-            pip-audit -r "$req" --progress-spinner off || status=1
+            pip-audit -r "$req" --progress-spinner off $IGNORE || status=1
             echo "::endgroup::"
           done
-          # Non-blocking for now (advisory). Flip `exit $status` on once the
-          # baseline is clean to make a new CVE fail the build.
-          exit 0
+          exit $status
       - name: cargo-audit (Rust crates under storage/ and services/)
         run: |
           if ! command -v cargo >/dev/null 2>&1; then

@@ -29,12 +29,18 @@ class Gateway:
                  registry: "Registry | None" = None, scopes=ROLES_9,
                  call_budget: "int | None" = None, hook_bus=None,
                  output_guard: bool = False, system_prompt: "str | None" = None,
-                 canaries: "list[str] | None" = None):
+                 canaries: "list[str] | None" = None,
+                 audit_log: "str | None" = None):
         self.contract = contract or SophiaContract()
         self.registry = registry or Registry()
         self.scopes = scopes
         self.call_budget = call_budget
         self._calls = 0
+        # P5 tamper-evident audit trail. When a path is set, every completed
+        # call_tool decision is appended as a hash-chained record (agent.audit_chain)
+        # IN ADDITION to the contract tracer span — so the trail can be integrity-
+        # checked later (`audit_chain.verify_chain`). None => disabled (default).
+        self.audit_log = audit_log
         # P3 egress leak guard. OFF by default (zero behavior change); the
         # production profile (gateway.profiles) turns it on. When on, a surfaced
         # string result is screened for secret/PII/canary/system-prompt-echo
@@ -50,6 +56,20 @@ class Gateway:
         # and POST_TOOL_USE fires after verification (observe-only). The
         # interceptor's own gates remain authoritative; hooks are additive.
         self.hook_bus = hook_bus
+
+    def _audit(self, record: dict) -> None:
+        """Append a hash-chained audit record if an audit log is configured.
+
+        Never raises into the call path — an audit-sink fault must not change a
+        verdict (mirrors the conscience verified-trace policy)."""
+        if not self.audit_log:
+            return
+        try:
+            import time
+            from agent import audit_chain
+            audit_chain.append(self.audit_log, record, ts=time.time())
+        except Exception:  # noqa: BLE001 - observer-only
+            pass
 
     def _apply_output_guard(self, output):
         """Screen a surfaced result for egress leaks. Returns (output, leak).
@@ -287,6 +307,9 @@ class Gateway:
                     "gateway.output_guard", input={"tool_id": tool_id},
                     output={"action": "block", "findings": leak.get("findings")},
                     level="WARNING")
+                self._audit({"tool_id": tool_id, "role": role, "clearance": clearance,
+                             "verdict": "held", "held_reason": "output_leak_blocked",
+                             "provenance_id": claim_id})
                 return {"tool_id": tool_id, "verdict": "held",
                         "held_reason": "output_leak_blocked", "result": None,
                         "provenance_id": claim_id,
@@ -304,4 +327,8 @@ class Gateway:
                 resp["held_reason"] = verdict["held_reason"]
             if verdict.get("suggested_fix"):
                 resp["suggested_fix"] = verdict["suggested_fix"]
+        self._audit({"tool_id": tool_id, "role": role, "clearance": clearance,
+                     "verdict": resp["verdict"], "accepted": accepted,
+                     "provenance_id": claim_id,
+                     "held_reason": resp.get("held_reason")})
         return resp

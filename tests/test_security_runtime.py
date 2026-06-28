@@ -99,3 +99,28 @@ def test_conscience_aup_on_blocks():
                          context=enforce_acceptable_use()).to_dict()
     assert d["verdict"] == "block"
     assert "acceptable-use refusal" in d["reason"]
+
+
+# ── gateway audit hash-chain integration ──────────────────────────────────────
+def test_gateway_writes_verifiable_audit_chain(tmp_path):
+    from agent import audit_chain
+    log = tmp_path / "audit.jsonl"
+    gw = hardened_gateway(audit_log=str(log))
+    _register_echo_tool(gw, "a clean, well-sourced answer")
+    gw.call_tool("echo")
+    gw.call_tool("echo")
+    rep = audit_chain.verify_chain(log)
+    assert rep["ok"] and rep["length"] == 2
+    # Tampering with a record is detectable.
+    lines = log.read_text().splitlines()
+    lines[0] = lines[0].replace("echo", "ECHO_TAMPERED")
+    log.write_text("\n".join(lines) + "\n")
+    assert audit_chain.verify_chain(log)["ok"] is False
+
+
+def test_default_gateway_writes_no_audit_log(tmp_path):
+    from gateway.interceptor import Gateway
+    gw = Gateway()  # audit disabled by default
+    _register_echo_tool(gw, "answer")
+    gw.call_tool("echo")
+    assert gw.audit_log is None
