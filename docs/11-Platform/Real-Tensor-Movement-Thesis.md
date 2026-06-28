@@ -192,23 +192,29 @@ the probe on **`allenai/OLMoE-1B-7B-0924`** (64 experts, top-8 routing, 16 layer
 rented GPU: full-precision pass vs a real **4-bit bitsandbytes** self-draft. Report in
 [`agi-proof/benchmark-results/gss-allenai-OLMoE-1B-7B-0924.json`](../../agi-proof/benchmark-results/gss-allenai-OLMoE-1B-7B-0924.json):
 
-| run | n (positions) | ρ (read-set) | α (4-bit accept) | k (γ=4) | cost_ratio | ceiling | verdict |
-|---|---|---|---|---|---|---|---|
-| short prompt | 10 | 0.0959 | 0.915 | 4.22 | 0.260 | 3.85× | GO |
-| **~120-tok prompt** | **103** | **0.0960** | **0.883** | **3.96** | **0.277** | **3.61×** | **GO** |
+**5-prompt CI campaign (one model load; science / code / narrative / dialogue / legal).**
+Across-prompt **95% CIs that exclude 1** — the no-overclaim bar for a registered feasibility
+result:
 
-Only ~9.6% of expert weights carry 90% of each token's output mass, and a 4-bit self-draft
-agrees with FP16 ~88% of the time — exactly the (low ρ, high α) corner where GSS wins. The
-structure GSS needs **is present in a real frontier-style MoE**, not just the toy. **ρ is
-essentially identical (0.096) across both runs** — the read-set concentration is a stable
-property of the model, not a small-sample artifact; α settles slightly lower on the larger,
-more diverse sample (the honest direction). Both runs clear the gate with a ~3.6× ceiling.
+| metric | mean | 95% CI |
+|---|---|---|
+| ρ (read-set fraction) | **0.0985** | [0.097, 0.100] |
+| α (4-bit self-draft accept) | **0.931** | [0.906, 0.955] |
+| k (tokens / verify, γ=4) | **4.36** | [4.14, 4.57] |
+| **cost_ratio** | **0.253** | **[0.241, 0.265]** |
 
-**Honest caveats (this is *illustrative*, not registered):** still **first-party**, and the
-two runs share one model and one prompt family. A registered result needs **≥3 runs across
-varied prompts/seeds + CIs** per the no-overclaim gate (`RESULTS.md`) — and the real-bytes
-roofline win (Tier 2) is unmeasured. This is a *feasibility* GO over the cost model: it
-greenlights Tier 1, it is **not** a speedup claim. `canClaimAGI` stays `false`.
+Per-prompt cost_ratio spans only **0.231–0.265** across five very different text domains, and
+**ρ is ~0.099 on every prompt** — the read-set concentration is a stable property of the
+model, not a prompt artifact; α varies mildly by domain (code drafts best, ~0.975). The
+aggressive-verify ceiling is **~3.9×** (1/0.253); the **guaranteed-lossless** number
+(dense verify, `(γ·0.25+1)/k`) is **~2.0×**. Earlier single runs agree: n=10 → cost 0.260,
+n=103 → cost 0.277.
+
+**Honest scope:** still **first-party** and one model (OLMoE-1B-7B); the CI is across prompts,
+not across independent model trainings, and the real-bytes roofline win (Tier 2) is still
+unmeasured. This is a *feasibility* result over the cost model — a CI-backed **GO** that
+greenlights the Tier-1 mechanism (now built), **not** a measured speedup. `canClaimAGI` stays
+`false`.
 
 (A debugging note for reproducers: the 4-bit draft must be loaded **after** the
 full-precision target is freed — holding both resident makes `device_map=auto` offload the
