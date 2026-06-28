@@ -107,9 +107,21 @@ the mechanism is validated, but it is domain-specific.** Disaggregating the prob
 
 The **aggregate** verdict (lift −0.033, "calibrated") is a **measurement artifact** — 52 fixed novel cases
 diluting 36 still-broken `protected_history` cases. *This is itself the contract's lesson: a headline
-metric hid a regression; only disaggregation by sub-family revealed it.* Net: the calibration fix is a
-demonstrated, generalizing mechanism on its trained sub-domain, with a clear, scoped remaining gap
-(extend the settled corpus to historical events) rather than a mysterious failure.
+metric hid a regression; only disaggregation by sub-family revealed it.*
+
+**Attempt v3 (seed 10, 17.1% settled rows incl. 50 historical-EVENT records): the calibration tax is
+RESOLVED.** Extending the settled corpus to historical events closed the gap v2 left:
+- **`protected_history` (settled events): 0.806 → 0.000** over-hedging — the held-out canonical case the
+  model never trains on.
+- **settled_clearcut (70 novel works + events): base 0.429 → adapter 0.000** — generalizes to unseen
+  entities (a learned discrimination, not memorization).
+- contested hedging stays high (0.81) — the core source-discipline habit is intact.
+
+Net: the over-qualification tax is **fixed across both settled sub-domains, generalizing to novel
+entities.** Caveat: single seed, but the ~0.8 effect dwarfs the ~0.32 seed noise; protected_religion
+(n=2) is too small to read. The fix took three honest iterations — v1 (no effect, underpowered), v2
+(partial, authorship only, aggregate metric masked the gap), v3 (complete) — each diagnosed by the
+measurement contract rather than guessed.
 
 ## How to reuse it
 

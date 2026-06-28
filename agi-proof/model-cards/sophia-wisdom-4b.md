@@ -123,12 +123,16 @@ Two framings, both reported:
    0.48–0.55 (κ 0.19–0.30, prevalence-deflated). So the semantic edge is REAL and corroborated, but
    ~0.65 — **far below the marker gap**: much of the +0.19–0.49 marker lead was *vocabulary* (the adapter
    emits the exact hedge phrases; Mistral qualifies in substance with words the markers miss).
-2. **Over-qualification / calibration — RESOLVED, and it is a real COST** (`calibration-check.json`,
-   `tools/calibration_check.py`). On *clear-cut* settled cases (protected_history/religion, where hedging
-   is miscalibration) the adapter hedges **0.37 / 0.68** (two seeds) vs base **0.13 / 0.08** — a **+0.24
-   to +0.61 over-qualification lift**. It still ANSWERS them (over_abstention 0.0, no refusals), so the
-   failure is unnecessary hedging, not refusal; clear-cut n≈38 so magnitude is noisy but the direction is
-   robust across seeds. The contested-case strength is **not free** — it comes with a reflexive-hedging tax.
+2. **Over-qualification / calibration — found, then FIXED in 3 iterations** (`calibration-fix-result.json`,
+   `tools/calibration_check.py`). The original adapter over-hedged *clear-cut* settled cases
+   (protected_history 0.81, vs base 0.14) — the contested-case strength came with a reflexive-hedging tax.
+   The fix added a settled-fact + settled-event corpus (`data/settled_facts.json` + `data/settled_events.json`)
+   teaching "match confidence to the evidence; answer settled facts directly." On a powered 140-case probe
+   (seed 10, `M3-pilot-answers-seed10`): **protected_history over-hedging 0.806 → 0.000**, novel
+   works+events **0.429 → 0.000** (generalizes to unseen entities), while contested hedging stays high
+   (0.81). The tax is resolved across both settled sub-domains. Caveat: single seed (effect ~0.8 ≫ seed
+   noise ~0.32); protected_religion n=2 too small to read. *The 3-iteration arc (v1 no effect → v2
+   authorship-only, aggregate metric masked the gap → v3 complete) is itself a measurement-contract case study.*
 
 Honest net (final): against three strong large models, the 4B adapter is **modestly but genuinely more
 consistent at source-discipline on contested cases — judge-confirmed ~0.65 win-rate vs a scaffolded
