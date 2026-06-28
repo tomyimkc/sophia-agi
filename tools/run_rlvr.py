@@ -69,6 +69,23 @@ DEFAULT_MODEL = "zai-org/glm-4-9b-chat-hf"
 # (query_key_value/dense/...), but the published HF weights use these suffixes:
 #   self_attn.{q,k,v,o}_proj, mlp.gate_up_proj, mlp.down_proj
 GLM_TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_up_proj", "down_proj"]
+# Qwen2.5 / Llama-3 / Mistral expose a SPLIT gate/up MLP (gate_proj + up_proj),
+# unlike GLM-4's fused gate_up_proj. Pointing LoRA at the wrong names silently
+# adapts nothing (or errors), so the target set must follow the model family.
+STD_TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+
+
+def resolve_target_modules(model_spec: str, override: str | None = None) -> list[str]:
+    """Pick LoRA target modules for the model family (override wins).
+
+    ``--lora-target-modules q_proj,v_proj`` forces an explicit set; otherwise GLM
+    models get the fused ``gate_up_proj`` set and everything else (Qwen/Llama/
+    Mistral) gets the split ``gate_proj``/``up_proj`` set. This is what lets a true
+    ≤8B base (e.g. ``Qwen/Qwen2.5-7B-Instruct``) train without hand-editing.
+    """
+    if override:
+        return [m.strip() for m in override.split(",") if m.strip()]
+    return GLM_TARGET_MODULES if "glm" in (model_spec or "").lower() else STD_TARGET_MODULES
 
 # Synthetic case set for the offline reward-machinery check (decoupled from any
 # corpus quirks, so the invariants are about the code, not the data).
@@ -299,6 +316,7 @@ def _run_gpu(args: argparse.Namespace) -> int:
         max_prompt_length=args.max_prompt_len,
         max_completion_length=args.max_completion_len,
         num_train_epochs=args.epochs,
+        max_steps=args.max_steps,  # >0 bounds a smoke run (overrides epochs)
         beta=args.beta,
         logging_steps=5,
         save_strategy="no",
@@ -321,9 +339,10 @@ def _run_gpu(args: argparse.Namespace) -> int:
             grpo_kwargs["vllm_max_model_len"] = args.max_prompt_len + args.max_completion_len
     cfg = GRPOConfig(**grpo_kwargs)
 
+    target_modules = resolve_target_modules(args.model, args.lora_target_modules)
     peft_cfg = LoraConfig(
         r=args.lora_r, lora_alpha=args.lora_alpha, lora_dropout=0.05,
-        bias="none", task_type="CAUSAL_LM", target_modules=GLM_TARGET_MODULES,
+        bias="none", task_type="CAUSAL_LM", target_modules=target_modules,
     )
     tokenizer = AutoTokenizer.from_pretrained(args.model)
     if tokenizer.pad_token is None:
@@ -349,7 +368,7 @@ def _run_gpu(args: argparse.Namespace) -> int:
         "config": {
             "vllm": args.vllm, "quant": args.quant, "epochs": args.epochs, "lr": args.lr,
             "beta": args.beta, "num_generations": args.num_generations,
-            "target_modules": GLM_TARGET_MODULES,
+            "target_modules": target_modules,
         },
         "trainCases": n_train,
         "evalCases": n_eval,
@@ -378,6 +397,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--vllm", default="colocate", choices=["colocate", "server", "none"])
     ap.add_argument("--quant", default="4bit", choices=["4bit", "bf16"])
     ap.add_argument("--epochs", type=float, default=1.0)
+    ap.add_argument("--max-steps", type=int, default=-1,
+                    help="cap GRPO optimizer steps (>0 bounds a smoke run; overrides --epochs)")
     ap.add_argument("--lr", type=float, default=1e-5)
     ap.add_argument("--beta", type=float, default=0.04)
     ap.add_argument("--batch-size", type=int, default=8)
@@ -388,6 +409,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--vllm-mem-util", type=float, default=0.4)
     ap.add_argument("--lora-r", type=int, default=16)
     ap.add_argument("--lora-alpha", type=int, default=32)
+    ap.add_argument("--lora-target-modules", default=None,
+                    help="comma-separated LoRA target modules (default: auto by model "
+                         "family — GLM fused gate_up_proj vs Qwen/Llama split gate/up)")
     ap.add_argument("--eval-frac", type=float, default=0.3)
     ap.add_argument("--code-timeout", type=int, default=15,
                     help="code-task only: wall-clock seconds for the hidden-test executor")

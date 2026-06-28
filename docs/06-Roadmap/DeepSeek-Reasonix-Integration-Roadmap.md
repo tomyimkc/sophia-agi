@@ -223,14 +223,22 @@ isolated so it can be done in one rented-GPU burst (RunPod MCP is wired).
 - **Next:** broaden the pack (more families + traps), add per-problem `rtol`, and
   add a sealed holdout via `holdout_seal.py`.
 
-### Phase 3 — Live GPU RLVR run (GPU burst, ~1 wk wall, isolated cost) ★E
-- `tools/run_rlvr.py --task {math,code,physics}` on rented GPU (RunPod). GRPO via
-  TRL + vLLM rollouts + QLoRA; layered reward (verifier + format + calibration).
-- Curriculum-ordered (☆I) + R1-style cold-start SFT on gate-filtered distilled
-  traces (☆J) *before* RL.
-- **Exit gate:** `provenance_bench/improvement.py` shows a positive, CI-excludes-
-  zero delta on the *sealed* holdout for ≥1 domain. This closes the
-  failure-ledger's "no live RL run" OPEN item.
+### Phase 3 — Live RLVR run — **decided: ≤8B, smoke-first, on DGX Spark** ★E
+**Plan locked** (author, 2026-06): target **≤8B** (`Qwen/Qwen2.5-7B-Instruct`,
+Apache-2.0), **smoke run first** on the author's **DGX Spark** (GB10, 128 GB unified,
+aarch64) — not rented cloud. Full step-by-step in
+[DGX-Spark-Smoke-Run-Runbook.md](./DGX-Spark-Smoke-Run-Runbook.md).
+- ✅ **Repo readied for ≤8B non-GLM:** `tools/run_rlvr.py` now resolves LoRA target
+  modules by model family (`resolve_target_modules` — Qwen/Llama split gate/up vs
+  GLM fused), and adds `--max-steps` to bound a smoke run. Spark guidance: **bf16
+  (skip 4-bit), `--vllm none`, no flash-attn** (aarch64/Blackwell dep hygiene).
+- **Tier A (smoke):** `run_rlvr --task math --model Qwen/Qwen2.5-7B-Instruct
+  --quant bf16 --vllm none --max-steps 30 …` → mean reward must trend up.
+- **Tier B (first delta):** serve base vs. merged adapter, `run_baseline` before/
+  after on the **same sealed eval hash** (Phase 0 artifacts).
+- **Exit gate:** `passAt1` after > before with separated Wilson CIs on the sealed
+  holdout for ≥1 domain → moves the failure-ledger "no live RL run" item toward
+  closed (full closure needs the multi-seed, second-judge gated run).
 
 ### Phase 4 — Lean formal physics/math (optional, parallel, research) ★D,☆F
 - Stand up `formal_proofs/eval/` against PhysLib/Lean4Physics; formal reward for a
