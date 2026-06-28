@@ -64,12 +64,23 @@ jobs:
             echo "::endgroup::"
           done
 
-  # NOTE: CodeQL static analysis is handled by GitHub's **default setup**
-  # (Settings → Code security → Code scanning). An advanced CodeQL job here would
-  # conflict with default setup (duplicate analyses), so it is intentionally
-  # omitted. If you switch to advanced setup, re-add an init/analyze job and
-  # disable default setup. Branch protection should require the "CodeQL" check
-  # produced by default setup.
+  # ── Static analysis (CodeQL, Python) ──────────────────────────────────────────
+  # Produces the "CodeQL" code-scanning results that branch protection requires.
+  # Uses the default security query suite (not security-and-quality) to avoid
+  # failing the PR check on non-security quality lints. If you enable GitHub's
+  # *default* CodeQL setup instead, delete this job (advanced + default conflict).
+  codeql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: python
+      - uses: github/codeql-action/analyze@v3
 
   # ── Secret scanning (gitleaks over full history) ──────────────────────────────
   secret-scan:
