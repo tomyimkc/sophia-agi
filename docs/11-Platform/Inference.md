@@ -29,7 +29,14 @@ Verify any of them: `python tools/agent_harness.py models --provider <preset>` t
   cache is reused across the agent loop's repeated calls.
 - **Speculative decoding / draft model** — pair the student with a tiny draft
   model: vLLM `--speculative-model <small> --num-speculative-tokens 5`. Best for
-  the harness's many short tool/critic calls.
+  the harness's many short tool/critic calls. **Synergy with low-RAM serving:**
+  `serving/layer_stream.py` re-streams every layer from disk *per token*, so the
+  forward pass is I/O-bound; speculative decoding amortizes one streamed pass over
+  *k* accepted tokens (stream once to verify *k*, not *k* times), so the two levers
+  multiply. Because it is distribution-preserving it is **neutral** to the Sophia
+  gate's accept/abstain/block verdicts — a speedup at unchanged quality, not a
+  quality change. Plan + benchmark contract: [DSpark-Applicability.md](DSpark-Applicability.md)
+  (DeepSeek DSpark / DeepSpec).
 - **Batching / concurrency** — vLLM/SGLang continuous-batch; run eval suites and
   ablation sweeps concurrently to amortize. The adapter is stateless per call, so
   parallelism is safe.
