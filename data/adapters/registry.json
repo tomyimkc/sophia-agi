@@ -53,19 +53,17 @@
     {
       "baseModel": "mistralai/Mistral-7B-Instruct-v0.3",
       "team": "search",
-      "adapterId": "theta-search-mistral-council",
-      "accepted": false,
+      "adapterId": "theta-search-mistral-robust",
+      "accepted": true,
       "reasons": [
-        "family 'lexical' not positive-with-CI-excluding-zero (delta=-0.2778, ci=[-0.4,-0.1444])",
-        "family 'stance' not positive-with-CI-excluding-zero (delta=-0.3667, ci=[-0.4889,-0.2333])",
-        "family 'llm:deepseek/deepseek-chat' not positive-with-CI-excluding-zero (delta=-0.2778, ci=[-0.4,-0.1444])"
+        "all judge families positive, CIs exclude zero, kappa OK"
       ],
-      "notes": "council-trace SFT; overfit multi-seat format, source-discipline REGRESSED",
+      "notes": "FORMAT-ROBUST distilled SFT (no council scaffolding); recovers cross-model transfer that the council corpus regressed",
       "evidence": {
         "pack": "pack_third_party.jsonl",
         "nTraps": 30,
         "seeds": 3,
-        "kappa": 0.487,
+        "kappa": 0.4979,
         "judges": [
           "heuristic:lexical",
           "heuristic:stance",
@@ -74,26 +72,26 @@
         "families": [
           {
             "name": "lexical",
-            "meanDelta": -0.2778,
+            "meanDelta": 0.1222,
             "ci95": [
-              -0.4,
-              -0.1444
+              0.0333,
+              0.2111
             ]
           },
           {
             "name": "stance",
-            "meanDelta": -0.3667,
+            "meanDelta": 0.2333,
             "ci95": [
-              -0.4889,
-              -0.2333
+              0.1111,
+              0.3556
             ]
           },
           {
             "name": "llm:deepseek/deepseek-chat",
-            "meanDelta": -0.2778,
+            "meanDelta": 0.1222,
             "ci95": [
-              -0.4,
-              -0.1444
+              0.0333,
+              0.2111
             ]
           }
         ]

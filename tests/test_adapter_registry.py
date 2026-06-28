@@ -27,12 +27,13 @@ def test_registry_offline_invariants() -> None:
 
 def test_committed_registry_reflects_real_results() -> None:
     reg = ar.default_registry()
-    # Qwen θ_search cleared the bar → accepted + resolves; Mistral council regressed → rejected.
+    # Both bases cleared the bar: Qwen via council SFT, Mistral via the FORMAT-ROBUST corpus
+    # (the council corpus regressed Mistral; the robust corpus recovered the transfer).
     assert reg.resolve(QWEN, "search") == "theta-search-qwen-v1"
-    assert reg.resolve(MISTRAL, "search") is None        # fail-closed on a rejected binding
+    assert reg.resolve(MISTRAL, "search") == "theta-search-mistral-robust"
+    # Fail-closed on an unbound base model.
     assert reg.resolve("unknown/model", "search") is None
-    mistral = reg.status(MISTRAL, "search")
-    assert mistral is not None and mistral.accepted is False
+    assert reg.resolve(QWEN, "no_such_team") is None
 
 
 def test_acceptance_gate_requires_two_positive_families() -> None:
@@ -49,14 +50,14 @@ def test_acceptance_gate_requires_two_positive_families() -> None:
 def test_swarm_router_binds_accepted_adapter_only() -> None:
     plan = sr.SwarmRouter().decide("Which quote is misattributed to Einstein?")
     assert any(a.team == "search" for a in plan.assignments)
-    # On Qwen, the search team's spawned child carries the accepted adapter id in skill.
-    specs_q = plan.to_specs(base_model=QWEN)
-    search_q = [s for s in specs_q if s.label.startswith("search")]
+    # Each base binds its OWN accepted adapter in the spawned child's skill.
+    search_q = [s for s in plan.to_specs(base_model=QWEN) if s.label.startswith("search")]
     assert search_q and all(s.skill and s.skill["adapter_id"] == "theta-search-qwen-v1" for s in search_q)
-    # On Mistral, fail-closed: no adapter bound (rejected) → plain backbone (skill is None).
-    specs_m = plan.to_specs(base_model=MISTRAL)
-    search_m = [s for s in specs_m if s.label.startswith("search")]
-    assert search_m and all(s.skill is None for s in search_m)
+    search_m = [s for s in plan.to_specs(base_model=MISTRAL) if s.label.startswith("search")]
+    assert search_m and all(s.skill and s.skill["adapter_id"] == "theta-search-mistral-robust" for s in search_m)
+    # Fail-closed: an unbound base model → plain backbone (skill is None).
+    search_u = [s for s in plan.to_specs(base_model="unknown/model") if s.label.startswith("search")]
+    assert search_u and all(s.skill is None for s in search_u)
     # With no base model, behaviour is unchanged (no binding).
     assert all(s.skill is None for s in plan.to_specs() if s.label.startswith("search"))
 

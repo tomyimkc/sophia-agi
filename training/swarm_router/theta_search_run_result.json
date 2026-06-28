@@ -489,7 +489,7 @@
       "_caveat": "HARDER pack_v2 (25 traps). VALID POSITIVE result: source-discipline 0.76 -> 0.88 (+0.12) -> dual-use gate PROMOTE. On harder traps the base fabricates more (0.76 vs the easy pack's 0.80 ceiling), so the adapter's lift is measurable. CANDIDATE: single seed, first-party pack, point delta (no CI/multi-seed). Headline still needs >=3 seeds + third-party decontaminated pack + 95% CI excluding zero."
     }
   ],
-  "_status": "FINAL. Qwen2.5-7B: ROBUST POSITIVE \u2014 third-party Google-FactCheck pack (30), 3 seeds, THREE concordant judge families (lexical +0.20, stance +0.144, DeepSeek-LLM +0.20), all CIs exclude zero, kappa(LLM,lexical)=1.0. Mistral-7B: ROBUST NEGATIVE \u2014 same recipe reduces discipline (lexical -0.278, DeepSeek-LLM -0.278 with kappa(LLM,lexical)=1.0, stance -0.367; all CIs exclude zero negative); the adapter overfit the council multi-seat format. CONCLUSION (honest): the \u03b8_search source-discipline gain is BASE-MODEL- and RECIPE-SPECIFIC, not general; the SAME multi-family+LLM-judge apparatus confirmed both the positive (Qwen) and the negative (Mistral), so the measurement is trustworthy in both directions. The governed dual-use gate would PROMOTE the Qwen adapter and REJECT the Mistral one. Remaining caveat: first-party SFT corpus (council traces) \u2014 and the negative shows that corpus is format-overfit-prone off-Qwen. 8 GPU runs, no leaked billing.",
+  "_status": "FINAL \u2014 adoption implemented AND cross-model fix validated. Qwen2.5-7B (council SFT): +0.20, 3 concordant families, ACCEPTED. Mistral-7B (council SFT): -0.28, REJECTED (format overfit). Mistral-7B (FORMAT-ROBUST SFT): +0.122/+0.233/+0.122 (lexical/stance/DeepSeek), all CIs exclude zero, council-format 0/30 (was 30/30) -> ACCEPTED. Diagnosis->fix loop CLOSED: the negative was council-FORMAT overfitting; the format-robust distillation corpus recovers cross-model transfer. ADOPTION: agent/adapter_registry.py (per-base acceptance-gated registry) + swarm_router.to_specs(base_model=) wiring; data/adapters/registry.json now resolves BOTH Qwen and Mistral search adapters, fail-closed elsewhere. Recommended recipe going forward: format-robust distillation (transfers cross-model). 10 GPU runs, no leaked billing.",
   "multiseed": {
     "model": "Qwen/Qwen2.5-7B-Instruct",
     "gpu": "NVIDIA RTX A5000",
@@ -894,5 +894,114 @@
     },
     "kappa_llm_vs_lexical": 1.0,
     "kappa_llm_vs_stance": 0.487
+  },
+  "cross_model_mistral_robust": {
+    "result": {
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "pack": "pack_third_party.jsonl",
+      "n_traps": 30,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "families": {
+        "lexical": {
+          "base_rate": 0.8,
+          "per_seed": {
+            "0": {
+              "before": 0.8,
+              "after": 0.967,
+              "delta": 0.167
+            },
+            "1": {
+              "before": 0.8,
+              "after": 0.9,
+              "delta": 0.1
+            },
+            "2": {
+              "before": 0.8,
+              "after": 0.9,
+              "delta": 0.1
+            }
+          },
+          "mean_delta": 0.1222,
+          "ci95": [
+            0.0333,
+            0.2111
+          ],
+          "ci_excludes_zero": true
+        },
+        "stance": {
+          "base_rate": 0.667,
+          "per_seed": {
+            "0": {
+              "before": 0.667,
+              "after": 0.867,
+              "delta": 0.2
+            },
+            "1": {
+              "before": 0.667,
+              "after": 0.933,
+              "delta": 0.267
+            },
+            "2": {
+              "before": 0.667,
+              "after": 0.9,
+              "delta": 0.233
+            }
+          },
+          "mean_delta": 0.2333,
+          "ci95": [
+            0.1111,
+            0.3556
+          ],
+          "ci_excludes_zero": true
+        }
+      },
+      "kappa_between_families": 0.4979,
+      "seed_last_loss": {
+        "0": 0.1961,
+        "1": 0.1923,
+        "2": 0.1881
+      }
+    },
+    "llm_judge": {
+      "judge_model": "deepseek/deepseek-chat",
+      "n_traps": 30,
+      "seeds": [
+        "seed0",
+        "seed1",
+        "seed2"
+      ],
+      "llm_judge": {
+        "base_rate": 0.8,
+        "per_seed": {
+          "seed0": {
+            "before": 0.8,
+            "after": 0.967,
+            "delta": 0.167
+          },
+          "seed1": {
+            "before": 0.8,
+            "after": 0.9,
+            "delta": 0.1
+          },
+          "seed2": {
+            "before": 0.8,
+            "after": 0.9,
+            "delta": 0.1
+          }
+        },
+        "mean_delta": 0.1222,
+        "ci95": [
+          0.0333,
+          0.2111
+        ],
+        "ci_excludes_zero": true
+      },
+      "kappa_llm_vs_lexical": 1.0,
+      "kappa_llm_vs_stance": 0.4979
+    }
   }
 }

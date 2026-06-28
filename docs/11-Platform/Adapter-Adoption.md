@@ -9,11 +9,19 @@
 |---|---|---|---|
 | **Qwen2.5-7B** | council traces | **+0.20** · CIs [+0.12,+0.29] · κ→1.0 | **PROMOTE** |
 | **Mistral-7B** | council traces | **−0.28** · CIs [−0.40,−0.14] · κ→1.0 | **REJECT** |
+| **Mistral-7B** | **format-robust** | **+0.12 / +0.23 / +0.12** (lex/stance/LLM) · CIs exclude 0 | **PROMOTE** |
 
-The lift is **base-model- and recipe-specific** (root cause: the council corpus teaches a
-verbose multi-seat *format* that Qwen resists but Mistral overfits 30/30, losing the direct
-refutation). The same multi-judge apparatus confirmed **both** the positive and the
-negative — so the measurement is trustworthy in both directions.
+The lift is **recipe-specific**, and the recipe matters more than the base: the council
+corpus teaches a verbose multi-seat *format* that Qwen resists but Mistral overfits 30/30
+(losing the direct refutation → −0.28). Swapping to a **format-robust** corpus (plain
+refutations, no scaffolding) drops the council-format to **0/30** and **recovers** the
+transfer on Mistral (+0.12 to +0.23, all CIs exclude zero, confirmed by an independent
+DeepSeek judge at κ=1.0). The same multi-judge apparatus confirmed the positive, the
+negative, AND the fix — so the measurement is trustworthy in all three.
+
+**Recommended recipe going forward:** format-robust distillation
+(`tools/build_discipline_sft.py`), which transfers across model families; council-trace SFT
+happened to work on Qwen but is format-overfit-prone off-Qwen.
 
 **Consequence for adoption:** you cannot "train once, bind everywhere." The safe pattern is
 a **registry keyed by `(base_model, team)`** where a binding is admitted only if its
@@ -62,18 +70,19 @@ SwarmRouter / SwarmPlan.to_specs(base_model=…)  ──►  registry.resolve(ba
 4. **Ship**: nothing else changes. `run_swarm(task, base_model=…)` now binds the adapter
    for that base only.
 
-## The cross-model fix (in progress)
+## The cross-model fix (validated)
 
-The negative was diagnosed as *format* overfitting, so the fix is a **format-robust
-corpus** — plain `claim → direct disciplined answer` pairs, distilled with
-`tools/build_discipline_sft.py` (no council scaffolding; decontaminated from the eval).
-Re-running Mistral on that corpus tests whether the lift then transfers:
-- **transfers** → a more general recipe; add the accepted Mistral binding.
-- **still flat/negative** → transfer is genuinely base-specific; the registry already makes
-  that safe (per-base bindings, backbone fallback).
+The negative was diagnosed as *format* overfitting, and the fix — a **format-robust
+corpus** (plain `claim → direct disciplined answer` pairs, distilled with
+`tools/build_discipline_sft.py`, no council scaffolding, decontaminated from the eval) —
+**worked**: on Mistral it dropped council-format outputs from 30/30 to 0/30 and flipped the
+result from −0.28 to **+0.12/+0.23/+0.12** across three judge families, all CIs excluding
+zero. So `data/adapters/registry.json` now carries an **accepted** `(Mistral, search)`
+binding (`theta-search-mistral-robust`) alongside the Qwen one.
 
-Either outcome is *handled* by the mechanism above — which is exactly why this is the
-feasible adoption path: correctness does not depend on every base transferring.
+Crucially, the adoption mechanism did not depend on this success — had the fix failed, the
+registry would simply keep Mistral fail-closed. That independence is what makes it the
+feasible path: **correctness never depends on every base transferring.**
 
 *See also: `agent/adapter_registry.py`, `agent/swarm_router.py` (`to_specs(base_model=…)`),
 `Swarm-Variants-V3-V4-Spec.md` (V3 dual-use), `Governed-Scaling.md`.*
