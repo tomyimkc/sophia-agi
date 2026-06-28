@@ -63,6 +63,7 @@ def _remote_script(args: argparse.Namespace) -> str:
     branch_q = shlex.quote(args.branch)
     model_q = shlex.quote(args.model)
     draft_q = shlex.quote(args.draft)
+    prompt_q = shlex.quote(args.prompt)
     slug = _safe_slug(args.model)
     report = f"{REMOTE_REPORT_DIR}/gss-{slug}.json"
     stdout = f"{REMOTE_REPORT_DIR}/gss-{slug}.stdout.txt"
@@ -91,7 +92,7 @@ python -c "import bitsandbytes" 2>/dev/null || pip install -q bitsandbytes
 
 echo "== GSS probe: {model_q} (draft={draft_q}, tokens={tokens}) =="
 python tools/gss_probe.py --backend hf \\
-  --model {model_q} --draft {draft_q} \\
+  --model {model_q} --draft {draft_q} --prompt {prompt_q} \\
   --tokens {tokens} --gamma {gamma} --coverage {coverage} \\
   --out {shlex.quote(report)} 2>&1 | tee {shlex.quote(stdout)}
 
@@ -115,6 +116,17 @@ def parse_args(argv: "list[str] | None" = None) -> argparse.Namespace:
                    help="HF MoE checkpoint (router-logits-capable)")
     p.add_argument("--draft", choices=["bnb", "fakequant"], default="bnb",
                    help="4-bit self-draft source")
+    p.add_argument("--prompt", default=(
+        "The mitochondrion is a double membrane bound organelle found in most "
+        "eukaryotic cells. It generates most of the chemical energy needed to power "
+        "the biochemical reactions of the cell, storing that energy in adenosine "
+        "triphosphate. Mitochondria contain their own genome that is distinct from the "
+        "nuclear genome of the cell, and in most species they are inherited from the "
+        "mother. The number of mitochondria in a cell varies widely by organism, "
+        "tissue, and cell type, ranging from a single large mitochondrion to many "
+        "thousands of them."),
+        help="prompt text (a ~120-token paragraph by default, so ρ/α are measured over "
+             "a real sample rather than a handful of positions)")
     p.add_argument("--tokens", type=int, default=128, help="max positions to score")
     p.add_argument("--gamma", type=int, default=4, help="speculative block size")
     p.add_argument("--coverage", type=float, default=0.9, help="read-set mass coverage")

@@ -172,6 +172,28 @@ diffuse read-set + poor draft → NO-GO (cost_ratio=1.66, the kill switch fires)
 real `(contribs, target_probs, draft_probs)` arrays from a forward pass to get the
 go/no-go for *your* model.
 
+### First real-checkpoint measurement — OLMoE-1B-7B on a RunPod GPU
+
+`tools/runpod_gss_probe.py` (dispatched via `.github/workflows/runpod-gss-probe.yml`) ran
+the probe on **`allenai/OLMoE-1B-7B-0924`** (64 experts, top-8 routing, 16 layers) on a
+rented GPU: full-precision pass vs a real **4-bit bitsandbytes** self-draft. Report in
+[`agi-proof/benchmark-results/gss-allenai-OLMoE-1B-7B-0924.json`](../../agi-proof/benchmark-results/gss-allenai-OLMoE-1B-7B-0924.json):
+
+| ρ (read-set) | α (4-bit accept) | k (γ=4) | cost_ratio | ceiling | verdict |
+|---|---|---|---|---|---|
+| **0.096** | **0.915** | **4.22** | **0.26** | **3.85×** | **GO** |
+
+Only ~9.6% of expert weights carry 90% of each token's output mass, and a 4-bit self-draft
+agrees with FP16 ~92% of the time — exactly the (low ρ, high α) corner where GSS wins. The
+structure GSS needs **is present in a real frontier-style MoE**, not just the toy.
+
+**Honest caveats (this is *illustrative*, not registered):** the default-prompt run scored
+only **n=10 positions**; the numbers are directionally strong but statistically thin,
+**single run, single prompt, first-party**. The launcher now defaults to a ~120-token
+paragraph (`--prompt`) to measure ρ/α over a real sample; a registered result still needs
+**≥3 runs + CIs** per the no-overclaim gate (`RESULTS.md`). It is a feasibility GO — it
+greenlights Tier 1, it is **not** a speedup claim. `canClaimAGI` stays `false`.
+
 ---
 
 ## 5. Test plan (falsifiable, weakest-cheapest first; mirrors the repo)

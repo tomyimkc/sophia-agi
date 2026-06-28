@@ -31,6 +31,10 @@ on:
         default: 'bnb'
         type: choice
         options: ['bnb', 'fakequant']
+      prompt:
+        description: 'Prompt text (blank = launcher default ~120-token paragraph)'
+        required: false
+        default: ''
       tokens:
         description: 'Max positions to score'
         required: false
@@ -96,16 +100,17 @@ jobs:
       - name: Launch RunPod GSS probe (rents GPU, runs over SSH, deletes pod)
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          GSS_PROMPT: ${{ github.event.inputs.prompt }}
         run: |
-          INTERRUPTIBLE=""
-          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
-          python tools/runpod_gss_probe.py --yes \
-            --branch "${{ github.ref_name }}" \
-            --model "${{ github.event.inputs.model }}" \
-            --draft "${{ github.event.inputs.draft }}" \
-            --tokens "${{ github.event.inputs.tokens }}" \
-            --gpu-type "${{ github.event.inputs.gpu_type }}" \
-            $INTERRUPTIBLE
+          ARGS=(--yes
+            --branch "${{ github.ref_name }}"
+            --model "${{ github.event.inputs.model }}"
+            --draft "${{ github.event.inputs.draft }}"
+            --tokens "${{ github.event.inputs.tokens }}"
+            --gpu-type "${{ github.event.inputs.gpu_type }}")
+          if [ -n "$GSS_PROMPT" ]; then ARGS+=(--prompt "$GSS_PROMPT"); fi
+          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then ARGS+=(--interruptible); fi
+          python tools/runpod_gss_probe.py "${ARGS[@]}"
 
       - name: Show the GSS report in the run log
         if: always()
