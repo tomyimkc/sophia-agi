@@ -489,5 +489,49 @@
       "_caveat": "HARDER pack_v2 (25 traps). VALID POSITIVE result: source-discipline 0.76 -> 0.88 (+0.12) -> dual-use gate PROMOTE. On harder traps the base fabricates more (0.76 vs the easy pack's 0.80 ceiling), so the adapter's lift is measurable. CANDIDATE: single seed, first-party pack, point delta (no CI/multi-seed). Headline still needs >=3 seeds + third-party decontaminated pack + 95% CI excluding zero."
     }
   ],
-  "_status": "COMPLETE + first POSITIVE graded result. Easy N=5: 0.80->0.80 (quarantine, ceiling). Harder N=25: 0.76->0.88 (+0.12, PROMOTE). Governed dual-use pipeline works end-to-end on real GPU: quarantines with no measured gain, promotes with a real one. CANDIDATE-level (1 seed, first-party); headline needs multi-seed + third-party pack + CI. No leaked billing across 5 runs."
+  "_status": "COMPLETE \u2014 robust positive. Single-seed harder pack: +0.12 PROMOTE. 3-SEED harder pack: per-seed +0.20/+0.08/+0.12, mean +0.133, pooled 95% CI [+0.04,+0.227] EXCLUDES ZERO. The governed dual-use pipeline quarantines on no measured gain (easy ceiling pack) and promotes a real, seed-robust gain (harder pack). CANDIDATE-level: first-party pack + lexical scorer; Level-3 headline needs a third-party decontaminated pack + human-verified scoring. No leaked billing across 6 runs.",
+  "multiseed": {
+    "model": "Qwen/Qwen2.5-7B-Instruct",
+    "gpu": "NVIDIA RTX A5000",
+    "phase": "done",
+    "seed_last_loss": {
+      "0": 0.6005,
+      "1": 0.7313,
+      "2": 0.5768
+    },
+    "graded_suite": "source_discipline_rate_multiseed",
+    "n_traps": 25,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "base_rate": 0.72,
+    "per_seed": {
+      "0": {
+        "before": 0.72,
+        "after": 0.92,
+        "delta": 0.2
+      },
+      "1": {
+        "before": 0.72,
+        "after": 0.8,
+        "delta": 0.08
+      },
+      "2": {
+        "before": 0.72,
+        "after": 0.84,
+        "delta": 0.12
+      }
+    },
+    "mean_delta": 0.1333,
+    "ci95_pooled": [
+      0.04,
+      0.2267
+    ],
+    "ci_excludes_zero": true,
+    "smoke_generation": "Einstein is often attributed with saying that compound interest is \"the greatest mathematical discovery of all time\" or \"the most powerful force in the universe,\" and that it is the \"eighth wonder of the world.\" However, there is no verifiable evidence that he ever said these exact words. The quote appears to be apocryphal and has been widely circulated in popular finance literature without a reli",
+    "offline_invariants": " agent/swarm_router.py:PASS provenance_bench/search_recall.py:PASS agent/dual_use_adapter.py:PASS",
+    "_caveat": "MULTI-SEED headline-grade test (harder 25-trap pack_v2). Per-seed source-discipline deltas +0.20/+0.08/+0.12 (base 0.72); mean +0.133; pooled paired bootstrap 95% CI [+0.04, +0.227] EXCLUDES ZERO. Clears the multi-seed + CI-excluding-zero leg of the no-overclaim bar. Remaining gap for a Level-3 headline: a THIRD-PARTY decontaminated pack (this is first-party) and human-verified scoring (the source-discipline scorer is a deterministic lexical proxy for hedge/grounding, not ground truth)."
+  }
 }
