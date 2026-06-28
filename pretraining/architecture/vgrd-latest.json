@@ -1,0 +1,56 @@
+{
+  "study": "Verification-Gated Recurrent Depth (VGRD) \u2014 depth-confidence \u2192 Sophia gate",
+  "config": {
+    "vocab": 12,
+    "loops": 12,
+    "n_answerable": 60,
+    "n_unanswerable": 60,
+    "seed": 0,
+    "quick": false
+  },
+  "selective_prediction": {
+    "n": 120,
+    "n_unanswerable": 60,
+    "rows": [
+      {
+        "coverage": 1.0,
+        "answered": 120,
+        "selective_accuracy": 0.5,
+        "fabrications": 60,
+        "fabrication_rate_on_unanswerable": 1.0
+      },
+      {
+        "coverage": 0.8,
+        "answered": 96,
+        "selective_accuracy": 0.625,
+        "fabrications": 36,
+        "fabrication_rate_on_unanswerable": 0.6
+      },
+      {
+        "coverage": 0.5,
+        "answered": 60,
+        "selective_accuracy": 1.0,
+        "fabrications": 0,
+        "fabrication_rate_on_unanswerable": 0.0
+      },
+      {
+        "coverage": 0.2,
+        "answered": 24,
+        "selective_accuracy": 1.0,
+        "fabrications": 0,
+        "fabrication_rate_on_unanswerable": 0.0
+      }
+    ]
+  },
+  "selective_accuracy_lift_low_minus_full": 0.5,
+  "decision_breakdown": {
+    "accept": 56,
+    "abstain": 60,
+    "block": 4
+  },
+  "accepted_fabrications_on_unanswerable": 0,
+  "block_path_exercised": true,
+  "abstains_on_unanswerable": true,
+  "interpretation": "Depth-confidence (latent self-consistency across loops) ranks answerable cases above unanswerable ones, so abstaining on the low-confidence tail lifts selective accuracy and drives accepted fabrications on the unanswerable set to ~0 \u2014 the Sophia property (abstain instead of fabricate), now sourced from the recurrence's own loop trajectory and gated fail-closed through verify_fn.",
+  "honest_scope": "A methodology study of the coupling: the VGRD policy + selective-prediction metric validated on a controlled convergent/oscillating substrate where ground truth is known. NOT a capability claim. The signal-quality of depth-confidence on REAL data needs the trained RDT checkpoint (Phase 1.2) scored by >=2 judge families with CIs excluding zero (Phase 3), exactly as the SimpleQA selective-prediction result was."
+}

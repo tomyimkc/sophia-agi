@@ -93,6 +93,20 @@ def test_halt_head_shape() -> None:
     assert halt.shape == (2, 5, 7)
 
 
+def test_loop_trajectory_feeds_vgrd() -> None:
+    """The bridge from the trained RDT to the Phase-2 gate: loop_trajectory() emits a plain
+    per-loop logit list that vgrd_decide consumes to produce a fail-closed verdict."""
+    from pretraining.architecture.vgrd import vgrd_decide
+    cfg = RDTConfig(vocab_size=32, d_model=64, n_heads=4, n_kv_heads=2, d_ff=128,
+                    n_prelude=1, n_coda=1, n_loop=8, max_seq_len=16)
+    model = RDT(cfg)
+    idx = torch.randint(0, cfg.vocab_size, (1, 6))
+    traj = model.loop_trajectory(idx, pos=-1, n_loop=8)
+    assert len(traj) == 8 and len(traj[0]) == cfg.vocab_size
+    d = vgrd_decide(traj, verify_fn=lambda a: True)
+    assert d["verdict"] in {"accept", "abstain", "block"}
+
+
 def test_pretrain_smoke_reduces_loss_and_roundtrips(tmp_path) -> None:
     """The end-to-end pretrain pipeline (data→loss→optimizer→checkpoint) drives loss
     below uniform on the hermetic synthetic stream and writes a loadable checkpoint."""

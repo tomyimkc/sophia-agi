@@ -274,7 +274,8 @@ class RDT(nn.Module):
         return sum(p.numel() for p in self.parameters())
 
     def forward(self, idx: torch.Tensor, targets: torch.Tensor | None = None,
-                n_loop: int | None = None, return_halt: bool = False):
+                n_loop: int | None = None, return_halt: bool = False,
+                return_trajectory: bool = False):
         B, S = idx.shape
         cfg = self.cfg
         T = n_loop if n_loop is not None else cfg.n_loop
@@ -287,12 +288,17 @@ class RDT(nn.Module):
         e = x                                              # injected each loop
         h = e
         halts = []
+        traj = []
         for _ in range(T):
             h = self.lti(h, e)                             # a⊙h + B·e
             h, aux = self.recurrent(h, cos, sin)           # + shared transformer block
             aux_total = aux_total + aux
             if self.halt_head is not None:
                 halts.append(self.halt_head(self.norm_f(h)).squeeze(-1))
+            if return_trajectory:
+                # "what would the model say if it halted now" — early-exit readout via the
+                # shared head (the per-loop signal VGRD's depth-confidence consumes).
+                traj.append(self.lm_head(self.norm_f(h)))
         for blk in self.coda:
             h, _ = blk(h, cos, sin)
         h = self.norm_f(h)
@@ -303,10 +309,21 @@ class RDT(nn.Module):
                                    targets.reshape(-1), ignore_index=-100)
             if cfg.use_moe:
                 loss = loss + 1e-2 * aux_total / max(1, T)
+        if return_trajectory:
+            return logits, loss, torch.stack(traj, 1)        # [B, T, S, V]
         if return_halt:
             halt = torch.stack(halts, 1) if halts else None  # [B, T, S]
             return logits, loss, halt
         return logits, loss
+
+    @torch.no_grad()
+    def loop_trajectory(self, idx: torch.Tensor, pos: int = -1,
+                        n_loop: int | None = None) -> "list[list[float]]":
+        """Per-loop logit vectors at sequence position ``pos`` for the first batch row, as a
+        plain Python list — the exact input ``vgrd.depth_confidence`` / ``vgrd_decide`` expect.
+        This is the bridge from the trained RDT to the fail-closed VGRD gate."""
+        _, _, traj = self.forward(idx, n_loop=n_loop, return_trajectory=True)
+        return [row.tolist() for row in traj[0, :, pos, :]]
 
     @torch.no_grad()
     def generate(self, idx: torch.Tensor, max_new_tokens: int, n_loop: int | None = None,

@@ -136,6 +136,24 @@ the **halting head** so the model spends *extra loops* on claims the provenance 
 would reject, and learns to emit the abstain token instead of fabricating — making
 "compute = verification depth" a learned behavior, not a wrapper.
 
+*Phase 2.1 — VGRD coupling (DONE, $0).* `vgrd.py` is the **Verification-Gated Recurrent
+Depth** policy: it reads the RDT's per-loop prediction trajectory, computes **latent
+self-consistency across depth** (an answerable query settles to a stable prediction; an
+unanswerable one keeps drifting), and gates fail-closed — `accept` only a settled, verified
+answer; `abstain` on an unsettled one; `block` when the provenance check (`verify_fn`, i.e.
+Sophia `verify_claim`) rejects it. The torch RDT exposes the bridge via
+`RDT.loop_trajectory()`. Validated $0 on a controlled convergent/oscillating substrate:
+abstaining lifts selective accuracy **0.50 → 1.00** and drives fabrication on the
+unanswerable set **1.0 → 0.0** — the Sophia "abstain instead of fabricate" property, now
+sourced from the recurrence's own loops and the same *shape* as the validated SimpleQA
+selective-prediction result. Honest scope: this validates the **policy + metric machinery**;
+depth-confidence's signal-quality on real data is Phase 3 (needs the trained checkpoint, the
+≥2-judge / CI-excludes-zero gate).
+
+```bash
+python -m pretraining.architecture.vgrd --quick    # CPU, the coupling + selective-prediction
+```
+
 **Phase 3 — measure under the no-overclaim gate.** Run it through the existing harness:
 attribution-hallucination delta, SimpleQA-Verified selective-prediction lift, the
 legal-citation verifier. **Headline only what clears ≥2 judge families + CI-excludes-zero**;
