@@ -113,6 +113,24 @@ def test_writes_json_report(tmp_path) -> None:
     assert d["backend"] == "moelm" and "cost_ratio" in d
 
 
+def test_moelm_campaign_reports_across_run_ci(tmp_path) -> None:
+    out = tmp_path / "campaign.json"
+    rc = gss_probe.main(["--backend", "moelm", "--campaign", "3", "--experts", "16",
+                         "--tokens", "32", "--train-steps", "40", "--out", str(out)])
+    assert rc == 0 and out.exists()
+    import json
+    d = json.loads(out.read_text())
+    assert d["n_runs"] == 3 and len(d["per_run"]) == 3
+    agg = d["aggregate"]
+    assert agg["go"] and "cost_ratio_ci95" in agg
+    assert agg["cost_ratio_ci95"][0] <= agg["cost_ratio"] <= agg["cost_ratio_ci95"][1]
+
+
+def test_campaign_prompts_are_diverse() -> None:
+    assert len(gss_probe.CAMPAIGN_PROMPTS) >= 4
+    assert len(set(gss_probe.CAMPAIGN_PROMPTS)) == len(gss_probe.CAMPAIGN_PROMPTS)
+
+
 def _has_torch() -> bool:
     try:
         import torch  # noqa: F401

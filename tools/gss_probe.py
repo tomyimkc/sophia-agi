@@ -172,6 +172,45 @@ def probe_moelm(*, n_experts: int, tokens: int, vocab: int = 32, context: int = 
 # Backend: HuggingFace checkpoint (gated — skips cleanly without torch).
 # ===========================================================================
 
+def _contribs_and_logits(model, ids):
+    """One forward pass → (contribs [T,U], logits [T,V]) for a loaded HF model.
+
+    MoE models expose ``router_logits`` (top-k-masked → the true read-set); dense models
+    fall back to per-channel |activation| at the MLP down-projection. Shared by the single
+    probe and the campaign so both extract the read-set the same way.
+    """
+    rl_out = None
+    try:
+        rl_out = model(ids, output_router_logits=True, use_cache=False)
+        rl = getattr(rl_out, "router_logits", None)
+    except TypeError:
+        rl = None
+    if rl:
+        top_k = getattr(model.config, "num_experts_per_tok", None)
+        mats = [r.detach().float().cpu().numpy() for r in rl if r is not None]
+        contribs = np.concatenate([gate_probs_to_contribs(mt, top_k=top_k) for mt in mats], axis=1)
+        logits = rl_out.logits[0].detach().float().cpu().numpy()
+        return contribs, logits
+    # Dense fallback: hook the second MLP projection's input → per-channel |activation|.
+    captured: list = []
+    handles = []
+
+    def hook(_m, inp, _o):
+        captured.append(inp[0].detach().float().abs().mean(dim=0).cpu().numpy())
+    for name, mod in model.named_modules():
+        if any(kk in name for kk in ("down_proj", "fc2", "c_proj", "wo")) and hasattr(mod, "weight"):
+            handles.append(mod.register_forward_hook(hook))
+    out = model(ids, use_cache=False)
+    for h in handles:
+        h.remove()
+    if not captured:
+        raise RuntimeError("no MLP projections matched for dense contribs; unsupported arch")
+    T = ids.shape[1]
+    contribs = np.concatenate([np.tile(c, (T, 1)) for c in captured], axis=1)
+    logits = out.logits[0].detach().float().cpu().numpy()
+    return contribs, logits
+
+
 def probe_hf(*, model_id: str, prompt: str, draft: str = "fakequant",
              device: str = "auto", max_positions: int = 256, group: int = 32):
     """Real HF forward pass → (contribs, target_probs, draft_probs). Heavy; GPU-friendly.
@@ -197,44 +236,7 @@ def probe_hf(*, model_id: str, prompt: str, draft: str = "fakequant",
     model = _load()
     ids = ids.to(model.device)
 
-    # Try MoE router logits; fall back to dense MLP-activation hooks.
-    captured: list = []
-    handles = []
-    is_moe = False
-    try:
-        out = model(ids, output_router_logits=True, use_cache=False)
-        rl = getattr(out, "router_logits", None)
-        if rl:
-            is_moe = True
-            # rl: tuple over layers of (tokens, experts); stack → (T, L*E).
-            # Zero the non-top-k experts so contribs reflect the TRUE read-set of a
-            # top-k MoE (else every expert looks "read" and ρ is overcounted).
-            top_k = getattr(model.config, "num_experts_per_tok", None)
-            mats = [r.detach().float().cpu().numpy() for r in rl if r is not None]
-            contribs = np.concatenate(
-                [gate_probs_to_contribs(mt, top_k=top_k) for mt in mats], axis=1
-            )
-    except TypeError:
-        out = None
-
-    if not is_moe:
-        # Dense: hook the second MLP projection's input → per-channel |activation|.
-        def hook(_m, inp, _o):
-            a = inp[0].detach().float().abs().mean(dim=0)   # (channels,)
-            captured.append(a.cpu().numpy())
-        for name, mod in model.named_modules():
-            if any(k in name for k in ("down_proj", "fc2", "c_proj", "wo")) and hasattr(mod, "weight"):
-                handles.append(mod.register_forward_hook(hook))
-        out = model(ids, use_cache=False)
-        for h in handles:
-            h.remove()
-        if not captured:
-            raise RuntimeError("no MLP projections matched for dense contribs; unsupported arch")
-        # Broadcast per-layer channel magnitudes across tokens → (T, sum C).
-        T = ids.shape[1]
-        contribs = np.concatenate([np.tile(c, (T, 1)) for c in captured], axis=1)
-
-    logits = out.logits[0].detach().float().cpu().numpy()   # (T, V)
+    contribs, logits = _contribs_and_logits(model, ids)
     n = min(max_positions, logits.shape[0])
     target = softmax_np(logits[:n], axis=1)
 
@@ -248,7 +250,7 @@ def probe_hf(*, model_id: str, prompt: str, draft: str = "fakequant",
             from transformers import BitsAndBytesConfig
         except Exception as e:  # pragma: no cover
             raise RuntimeError(f"--draft bnb needs bitsandbytes ({e})")
-        del out, model
+        del model
         gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
@@ -256,7 +258,6 @@ def probe_hf(*, model_id: str, prompt: str, draft: str = "fakequant",
         dout = dmodel(ids.to(dmodel.device), use_cache=False)
         dl = dout.logits[0].detach().float().cpu().numpy()
     else:  # fakequant: int4 round-trip every 2-D Linear weight in place on the resident model
-        del out
         with torch.no_grad():
             for mod in model.modules():
                 w = getattr(mod, "weight", None)
@@ -268,6 +269,98 @@ def probe_hf(*, model_id: str, prompt: str, draft: str = "fakequant",
     dn = min(n, dl.shape[0])
     draft_probs = softmax_np(dl[:dn], axis=1)
     return contribs[:n], target[:dn], draft_probs[:dn]
+
+
+# Diverse prompts for the across-prompt CI campaign (science / code / narrative / dialogue
+# / legal) — variety is what makes the run-to-run CI meaningful.
+CAMPAIGN_PROMPTS = [
+    "The mitochondrion is a double membrane bound organelle found in most eukaryotic cells. "
+    "It generates most of the chemical energy needed to power the biochemical reactions of "
+    "the cell, storing that energy in adenosine triphosphate. The number of mitochondria in "
+    "a cell varies widely by organism, tissue, and cell type.",
+    "def quicksort(items):\n    if len(items) <= 1:\n        return items\n    pivot = items[len(items)//2]\n"
+    "    left = [x for x in items if x < pivot]\n    mid = [x for x in items if x == pivot]\n"
+    "    right = [x for x in items if x > pivot]\n    return quicksort(left) + mid + quicksort(right)",
+    "The old lighthouse keeper climbed the spiral stairs one last time. Below him the storm "
+    "threw the sea against the rocks as it had for forty years, and he wondered who would "
+    "tend the lamp when winter came and his hands could no longer hold the rail.",
+    "Q: What is the capital of Australia, and why is it not Sydney? A: The capital is "
+    "Canberra. It was chosen as a compromise between the rivals Sydney and Melbourne, and "
+    "purpose-built in the early twentieth century to serve as the seat of federal government.",
+    "Pursuant to the agreement, the party of the first part shall indemnify and hold harmless "
+    "the party of the second part against any and all claims, losses, and liabilities arising "
+    "from a breach of the warranties set forth in Section 4, except to the extent caused by "
+    "the gross negligence of the indemnified party.",
+]
+
+
+def campaign_hf(*, model_id: str, prompts: "list[str]", draft: str = "bnb",
+                device: str = "auto", gamma: int = 4, coverage: float = 0.9,
+                max_positions: int = 256, group: int = 32):
+    """Score K prompts on ONE model load → per-prompt GSS reports + an across-prompt CI.
+
+    Loads the full-precision target once (scores every prompt's contribs+logits), frees it,
+    loads the 4-bit draft once (scores every prompt), then builds a `GSSFeasibilityReport`
+    per prompt and an `aggregate_runs` across-prompt 95% CI — the registered-result
+    statement. One boot, one download: far cheaper than K separate pods.
+    """
+    try:
+        import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+    except Exception as e:  # pragma: no cover
+        raise RuntimeError(f"hf backend needs torch+transformers ({type(e).__name__}: {e})")
+    import gc
+    from serving.gss_feasibility import GSSFeasibilityGate, aggregate_runs
+
+    tok = AutoTokenizer.from_pretrained(model_id)
+    dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+
+    def _load(**extra):
+        return AutoModelForCausalLM.from_pretrained(
+            model_id, torch_dtype=dtype, device_map=device, **extra).eval()
+
+    id_list = [tok(p, return_tensors="pt")["input_ids"] for p in prompts]
+
+    # Pass 1: full-precision target — contribs + logits per prompt.
+    model = _load()
+    per: list = []
+    for ids in id_list:
+        ids = ids.to(model.device)
+        contribs, logits = _contribs_and_logits(model, ids)
+        n = min(max_positions, logits.shape[0])
+        per.append({"contribs": contribs[:n], "target": softmax_np(logits[:n], axis=1), "n": n})
+
+    # Pass 2: the 4-bit draft (one model resident at a time — the load-order fix).
+    if draft == "bnb":
+        from transformers import BitsAndBytesConfig
+        del model
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        dmodel = _load(quantization_config=BitsAndBytesConfig(load_in_4bit=True))
+        for i, ids in enumerate(id_list):
+            dl = dmodel(ids.to(dmodel.device), use_cache=False).logits[0].detach().float().cpu().numpy()
+            per[i]["dl"] = dl
+    else:  # fakequant in place
+        with torch.no_grad():
+            for mod in model.modules():
+                w = getattr(mod, "weight", None)
+                if w is not None and w.dim() == 2:
+                    q = int4_group_quant_roundtrip(w.detach().float().cpu().numpy(), group=group)
+                    w.copy_(torch.tensor(q, dtype=w.dtype, device=w.device))
+        for i, ids in enumerate(id_list):
+            dl = model(ids.to(model.device), use_cache=False).logits[0].detach().float().cpu().numpy()
+            per[i]["dl"] = dl
+
+    gate = GSSFeasibilityGate(gamma=gamma, coverage=coverage)
+    reports = []
+    for i, d in enumerate(per):
+        dn = min(d["n"], d["dl"].shape[0])
+        rep = gate.evaluate(d["contribs"][:dn], d["target"][:dn],
+                            softmax_np(d["dl"][:dn], axis=1)).as_dict()
+        rep["prompt_index"] = i
+        reports.append(rep)
+    return reports, aggregate_runs(reports)
 
 
 # ===========================================================================
@@ -283,6 +376,47 @@ def _run(args) -> "tuple[object, object, object]":
         return probe_hf(model_id=args.model, prompt=args.prompt, draft=args.draft,
                         device=args.device, max_positions=args.tokens, group=args.group)
     raise ValueError(f"unknown backend {args.backend!r}")
+
+
+def _run_campaign(args) -> int:
+    """≥N-run campaign → per-run reports + an across-run 95% CI (registered statement)."""
+    from serving.gss_feasibility import GSSFeasibilityGate, aggregate_runs
+    n = int(args.campaign)
+    try:
+        if args.backend == "hf":
+            prompts = [CAMPAIGN_PROMPTS[i % len(CAMPAIGN_PROMPTS)] for i in range(n)]
+            reports, agg = campaign_hf(model_id=args.model, prompts=prompts, draft=args.draft,
+                                       device=args.device, gamma=args.gamma, coverage=args.coverage,
+                                       max_positions=args.tokens, group=args.group)
+            model_name = args.model
+        else:  # moelm: N independent seeds
+            gate = GSSFeasibilityGate(gamma=args.gamma, coverage=args.coverage,
+                                      draft_byte_frac=args.draft_byte_frac)
+            reports = []
+            for s in range(n):
+                c, t, d = probe_moelm(n_experts=args.experts, tokens=args.tokens, vocab=args.vocab,
+                                      context=args.context, hidden=args.hidden,
+                                      train_steps=args.train_steps, group=args.group, seed=args.seed + s)
+                rep = gate.evaluate(c, t, d).as_dict(); rep["seed"] = args.seed + s
+                reports.append(rep)
+            agg = aggregate_runs(reports)
+            model_name = "MoELM(toy)"
+    except RuntimeError as e:
+        print(f"[gss_probe] skipped: {e}")
+        return 0
+
+    out = {"backend": args.backend, "model": model_name, "n_runs": len(reports),
+           "per_run": reports, "aggregate": agg}
+    print(f"\n[gss_probe] CAMPAIGN — {model_name} via {args.backend} ({len(reports)} runs)")
+    for key in ("rho", "alpha", "k", "cost_ratio"):
+        lo, hi = agg[f"{key}_ci95"]
+        print(f"  {key:11s}= {agg[key]:.4f}  95% CI [{lo:.4f}, {hi:.4f}]")
+    print(f"  → {'GO (CI excludes 1)' if agg['go_ci_excludes_1'] else 'GO (point)' if agg['go'] else 'NO-GO'}")
+    if args.out:
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.out).write_text(json.dumps(out, indent=2))
+        print(f"  wrote {args.out}")
+    return 0
 
 
 def main(argv: "list[str] | None" = None) -> int:
@@ -309,6 +443,9 @@ def main(argv: "list[str] | None" = None) -> int:
     p.add_argument("--train-steps", type=int, default=200)
     p.add_argument("--group", type=int, default=8)
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--campaign", type=int, default=0,
+                   help="run N>0 trials (hf: N diverse prompts; moelm: N seeds) and report an "
+                        "across-run 95%% CI — the registered-result statement")
     p.add_argument("--out", default=None, help="write the JSON report here")
     args = p.parse_args(argv)
 
@@ -318,6 +455,9 @@ def main(argv: "list[str] | None" = None) -> int:
     if args.backend == "hf" and not args.model:
         print("[gss_probe] --backend hf requires --model <hf-id>.")
         return 2
+
+    if args.campaign and args.campaign > 0:
+        return _run_campaign(args)
 
     try:
         contribs, target, draft = _run(args)

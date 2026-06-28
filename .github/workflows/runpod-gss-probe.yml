@@ -39,6 +39,10 @@ on:
         description: 'Max positions to score'
         required: false
         default: '128'
+      campaign:
+        description: 'N diverse prompts on one model load → across-prompt 95% CI (0 = single run)'
+        required: false
+        default: '5'
       gpu_type:
         description: 'Comma-separated RunPod GPU type preference (first available wins)'
         required: false
@@ -107,6 +111,7 @@ jobs:
             --model "${{ github.event.inputs.model }}"
             --draft "${{ github.event.inputs.draft }}"
             --tokens "${{ github.event.inputs.tokens }}"
+            --campaign "${{ github.event.inputs.campaign || '5' }}"
             --gpu-type "${{ github.event.inputs.gpu_type }}")
           if [ -n "$GSS_PROMPT" ]; then ARGS+=(--prompt "$GSS_PROMPT"); fi
           if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then ARGS+=(--interruptible); fi

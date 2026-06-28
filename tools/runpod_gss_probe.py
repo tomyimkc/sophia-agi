@@ -69,6 +69,7 @@ def _remote_script(args: argparse.Namespace) -> str:
     stdout = f"{REMOTE_REPORT_DIR}/gss-{slug}.stdout.txt"
     tokens, gamma = args.tokens, args.gamma
     coverage = args.coverage
+    campaign_arg = f"--campaign {int(args.campaign)}" if args.campaign and args.campaign > 0 else ""
     return f"""
 set -Eeuo pipefail
 BRANCH={branch_q}
@@ -90,9 +91,9 @@ python -c "import numpy" 2>/dev/null || pip install -q numpy
 python -c "import transformers" 2>/dev/null || pip install -q "transformers>=4.45" accelerate
 python -c "import bitsandbytes" 2>/dev/null || pip install -q bitsandbytes
 
-echo "== GSS probe: {model_q} (draft={draft_q}, tokens={tokens}) =="
+echo "== GSS probe: {model_q} (draft={draft_q}, tokens={tokens}, campaign={campaign_arg or 'off'}) =="
 python tools/gss_probe.py --backend hf \\
-  --model {model_q} --draft {draft_q} --prompt {prompt_q} \\
+  --model {model_q} --draft {draft_q} --prompt {prompt_q} {campaign_arg} \\
   --tokens {tokens} --gamma {gamma} --coverage {coverage} \\
   --out {shlex.quote(report)} 2>&1 | tee {shlex.quote(stdout)}
 
@@ -128,6 +129,9 @@ def parse_args(argv: "list[str] | None" = None) -> argparse.Namespace:
         help="prompt text (a ~120-token paragraph by default, so ρ/α are measured over "
              "a real sample rather than a handful of positions)")
     p.add_argument("--tokens", type=int, default=128, help="max positions to score")
+    p.add_argument("--campaign", type=int, default=0,
+                   help="N>0 → run N diverse prompts on one model load and report an "
+                        "across-prompt 95%% CI (the registered-result statement)")
     p.add_argument("--gamma", type=int, default=4, help="speculative block size")
     p.add_argument("--coverage", type=float, default=0.9, help="read-set mass coverage")
     # pod shape (same namespace fields _build_create_payload expects)
