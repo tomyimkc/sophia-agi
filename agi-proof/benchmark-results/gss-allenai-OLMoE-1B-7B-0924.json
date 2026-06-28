@@ -1,17 +1,112 @@
 {
-  "go": true,
-  "rho": 0.095978,
-  "alpha": 0.883292,
-  "k": 3.961365,
-  "cost_ratio": 0.276667,
-  "speedup_ceiling": 3.6145,
-  "gamma": 4,
-  "draft_byte_frac": 0.25,
-  "coverage": 0.9,
-  "temporal_stability": 0.239,
-  "n_tokens": 103,
-  "n_positions": 103,
-  "reasons": [],
   "backend": "hf",
-  "model": "allenai/OLMoE-1B-7B-0924"
+  "model": "allenai/OLMoE-1B-7B-0924",
+  "n_runs": 5,
+  "per_run": [
+    {
+      "go": true,
+      "rho": 0.096175,
+      "alpha": 0.905599,
+      "k": 4.140977,
+      "cost_ratio": 0.264714,
+      "speedup_ceiling": 3.7777,
+      "gamma": 4,
+      "draft_byte_frac": 0.25,
+      "coverage": 0.9,
+      "temporal_stability": 0.2315,
+      "n_tokens": 60,
+      "n_positions": 60,
+      "reasons": [],
+      "prompt_index": 0
+    },
+    {
+      "go": true,
+      "rho": 0.098583,
+      "alpha": 0.974511,
+      "k": 4.75152,
+      "cost_ratio": 0.231207,
+      "speedup_ceiling": 4.3251,
+      "gamma": 4,
+      "draft_byte_frac": 0.25,
+      "coverage": 0.9,
+      "temporal_stability": 0.3207,
+      "n_tokens": 98,
+      "n_positions": 98,
+      "reasons": [],
+      "prompt_index": 1
+    },
+    {
+      "go": true,
+      "rho": 0.099743,
+      "alpha": 0.93092,
+      "k": 4.355294,
+      "cost_ratio": 0.252507,
+      "speedup_ceiling": 3.9603,
+      "gamma": 4,
+      "draft_byte_frac": 0.25,
+      "coverage": 0.9,
+      "temporal_stability": 0.2115,
+      "n_tokens": 51,
+      "n_positions": 51,
+      "reasons": [],
+      "prompt_index": 2
+    },
+    {
+      "go": true,
+      "rho": 0.099086,
+      "alpha": 0.908602,
+      "k": 4.165811,
+      "cost_ratio": 0.263835,
+      "speedup_ceiling": 3.7902,
+      "gamma": 4,
+      "draft_byte_frac": 0.25,
+      "coverage": 0.9,
+      "temporal_stability": 0.2083,
+      "n_tokens": 56,
+      "n_positions": 56,
+      "reasons": [],
+      "prompt_index": 3
+    },
+    {
+      "go": true,
+      "rho": 0.098896,
+      "alpha": 0.932747,
+      "k": 4.371201,
+      "cost_ratio": 0.251395,
+      "speedup_ceiling": 3.9778,
+      "gamma": 4,
+      "draft_byte_frac": 0.25,
+      "coverage": 0.9,
+      "temporal_stability": 0.2241,
+      "n_tokens": 63,
+      "n_positions": 63,
+      "reasons": [],
+      "prompt_index": 4
+    }
+  ],
+  "aggregate": {
+    "n_runs": 5,
+    "rho": 0.0984966,
+    "rho_ci95": [
+      0.0972997381367192,
+      0.0996934618632808
+    ],
+    "alpha": 0.9304758,
+    "alpha_ci95": [
+      0.9063042522479394,
+      0.9546473477520605
+    ],
+    "k": 4.356960599999999,
+    "k_ci95": [
+      4.142669858825826,
+      4.571251341174172
+    ],
+    "cost_ratio": 0.2527316,
+    "cost_ratio_ci95": [
+      0.24087393408589633,
+      0.26458926591410364
+    ],
+    "go": true,
+    "go_ci_excludes_1": true
+  }
 }
