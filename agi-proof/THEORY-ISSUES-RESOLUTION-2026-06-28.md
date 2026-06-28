@@ -70,3 +70,25 @@ live runs surface, and it was previously hidden by (a) curated narrow refs and (
    the self-judged / curated numbers are upper bounds, not headlines.
 4. **Lean:** only claim `verifier_synthesis_over_proof_kernel` progress on the held-out set with
    the semantic novelty guard; the known-lemma 8/10 is recall.
+
+## 5th cycle (done) — core-claim verification via Google Fact Check
+
+Implemented recommendation #1 (`agent/core_claim_verifier.py`): verify the *single* injected
+falsehood against an **independent oracle** — Google Fact Check Tools (professional
+ClaimReviews) — instead of decomposing the verbose answer into atomic claims. Layered with a
+flagged low-independence LLM-knowledge fallback for the long tail.
+
+**Live result:** verified-debunk rises from **0/21 → 18/21**.
+- **4 high-independence** via Google Fact Check (the viral myths it reviews: Great Wall from
+  space, Edison, 10%-brain, blue blood). Google coverage is **4/21** — matching the ledger's
+  long-standing note that it covers general/viral claims, not provenance.
+- **14 low-independence** via the model's own knowledge (transparently flagged).
+- **3 fail-closed (correctly):** 2 genuinely-unknown provenance claims (Voynich authorship —
+  not a fact-checkable falsehood) and 1 LLM-knowledge *error* (it rated the Mozart/Twinkle
+  myth "true"), which the fail-closed design correctly refuses to count.
+
+**Takeaway:** core-claim verification fixes the verbose-debunk gap the all-atomic-claims path
+could not. Google is the right *independent* oracle but is too sparse (4/21) to stand alone;
+a layered verifier (Google for viral claims · Wikidata/Crossref for provenance · a flagged
+model-knowledge tail) is required, and the independence of each verdict must be reported, not
+hidden. Report: `agi-proof/debunk-gate/core-claim-verification-2026-06-28.json`.
