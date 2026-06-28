@@ -158,12 +158,25 @@ over:        k        (tokens produced per block, k = (1−α^(γ+1))/(1−α))
 Per produced token ≈ `B·(γ·0.25 + ρ)/k`, so GSS **wins iff `(γ·0.25 + ρ)/k < 1`**.
 (An earlier sketch wrote `(0.25+ρ)/k`, collapsing the γ draft passes to one — that is
 optimistic; the γ-aware form above is what `serving/gss_feasibility.py` computes and
-the number to trust.) Worked example: ρ≈0.3, γ=4, α≈0.85 ⇒ k≈3.4 ⇒
-`(1.0+0.3)/3.4 ≈ 0.38` → a **~2.6× bandwidth reduction** at the roofline, *at
-certified-equal output*. Honest range with good structure is **~2–3×**, not 5–6×. The
-knee is entirely (ρ, k, γ), all measurable offline before any GPU spend. If they are
-poor, GSS provably can't beat dense and you don't ship it — the cost model is itself
-fail-closed.
+the number to trust.) The knee is entirely (ρ, k, γ), all measurable offline before any
+GPU spend. If they are poor, GSS provably can't beat dense and you don't ship it — the
+cost model is itself fail-closed.
+
+> **Lossless vs. aggressive — the distinction Tier 1 forces (`serving/gss.py`).** The
+> `verify: ρ·B` term above is the *aggressive* version: it reads only the predicted
+> read-set. Building the mechanism proved (to machine epsilon) that speculative
+> accept/reject is exactly lossless **only when it verifies against the *dense* target**
+> — verifying against a pruned target drifts the output by exactly `KL(dense ‖ pruned)`
+> (`verify_drift`). So there are two honest numbers:
+> - **Lossless GSS** = cheap 4-bit draft + **dense** verify ⇒ cost `(γ·0.25 + 1)/k`. On
+>   the OLMoE result (γ=4, k≈4) that is **~2×**, *certified bit-exact*.
+> - **Aggressive GSS** = pruned verify ⇒ cost `(γ·0.25 + ρ)/k`, the **~3.6× ceiling** —
+>   but it carries a bounded error `KL(dense ‖ pruned)` and needs a periodic dense
+>   correction to stay honest. Tier 0's ceiling is this aggressive bound.
+>
+> So: **~2× is the guaranteed-lossless win; ~3.6× is the aggressive ceiling with a
+> measured error budget.** The mechanism makes the gap falsifiable instead of letting a
+> headline hide it — exactly the `Governed-Scaling` equivalence bar.
 
 **This is now built (Tier 0): [`serving/gss_feasibility.py`](../../serving/gss_feasibility.py).**
 Its CI invariants demonstrate both regimes on synthetic activations: a concentrated
@@ -278,6 +291,10 @@ a speedup — a GO greenlights Tier 1, nothing more.
    ✅ **Built** — pure-numpy meter, CI-gated (`tests/test_gss_feasibility.py`), fail-closed;
    `tools/gss_probe.py` extracts (contribs, target, draft) from a real forward pass
    (numpy `MoELM` now; HF/bitsandbytes for real checkpoints).
-2. **Tier 1** `serving/gss.py` + `serving/gss_eval.py` — the lossless invariant (CI).
+2. **Tier 1** `serving/gss.py` — the prune + speculative accept/reject + equivalence gate.
+   ✅ **Built** — the lossless core is proven exact (`speculative_realized == dense` to
+   1e-12) and `verify_drift` makes the pruned-verify error falsifiable; CI-gated
+   (`tests/test_gss.py`). Within/across-run CIs in `serving/gss_feasibility.py`
+   (`feasibility_with_ci`, `aggregate_runs`).
 3. **Tier 2** gather-on-read-set kernel in `kernels/src/` — the rooflined bandwidth win.
 4. Fold the acceptance-rate meter back into `moe/adapt.py` as the online bit-depth loop.

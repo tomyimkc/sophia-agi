@@ -294,6 +294,95 @@ class GSSFeasibilityGate:
 
 
 # ---------------------------------------------------------------------------
+# Confidence intervals — within-run (bootstrap over positions) and across-run
+# ---------------------------------------------------------------------------
+
+def bootstrap_ci(values, *, n_boot: int = 2000, ci: float = 0.95, seed: int = 0):
+    """Percentile bootstrap ``(lo, hi)`` for the mean of ``values``.
+
+    A cheap honesty upgrade: turns a point estimate into an interval over the sample it was
+    computed on. Returns ``(lo, hi)`` at the central ``ci`` mass (default 95%).
+    """
+    if not _HAVE_NUMPY:
+        raise RuntimeError("numpy required")
+    v = np.asarray(values, dtype=np.float64).ravel()
+    if v.size == 0:
+        raise ValueError("values must be non-empty")
+    if not (0.0 < ci < 1.0):
+        raise ValueError("ci must be in (0, 1)")
+    rng = np.random.default_rng(seed)
+    means = v[rng.integers(0, v.size, size=(n_boot, v.size))].mean(axis=1)
+    lo = float(np.quantile(means, (1 - ci) / 2))
+    hi = float(np.quantile(means, 1 - (1 - ci) / 2))
+    return lo, hi
+
+
+def feasibility_with_ci(contribs, target_probs, draft_probs, *, gamma: int = 4,
+                        coverage: float = 0.9, draft_byte_frac: float = 0.25,
+                        n_boot: int = 2000, seed: int = 0) -> dict:
+    """Point estimates **and** within-run bootstrap 95% CIs for ρ, α, k, and cost_ratio.
+
+    Resamples positions jointly (the ρ read-fraction and the α acceptance share the index),
+    recomputing the whole cost model per bootstrap draw, so the cost_ratio CI is honest about
+    the (ρ, α) covariance. Caveat: a *within-run* CI captures sampling over positions, not
+    run-to-run variance — a registered result still needs ≥3 runs (use ``aggregate_runs``).
+    """
+    if not _HAVE_NUMPY:
+        raise RuntimeError("numpy required")
+    _, rho_per = read_set_fraction(contribs, coverage=coverage)
+    _, alpha_per = acceptance_rate(target_probs, draft_probs)
+    n = min(rho_per.size, alpha_per.size)
+    rho_per, alpha_per = rho_per[:n], alpha_per[:n]
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, n, size=(n_boot, n))
+    rho_b = rho_per[idx].mean(axis=1)
+    alpha_b = np.clip(alpha_per[idx].mean(axis=1), 0.0, 1.0)
+    k_b = np.where(alpha_b >= 1.0, gamma + 1.0,
+                   (1.0 - alpha_b ** (gamma + 1)) / (1.0 - np.minimum(alpha_b, 1 - 1e-12)))
+    cost_b = (gamma * draft_byte_frac + rho_b) / k_b
+
+    def _q(a):
+        return [float(np.quantile(a, 0.025)), float(np.quantile(a, 0.975))]
+    rho, k = float(rho_per.mean()), expected_accepted(float(alpha_per.mean()), gamma)
+    alpha = float(alpha_per.mean())
+    cost = (gamma * draft_byte_frac + rho) / k
+    return {
+        "n": int(n), "gamma": gamma, "coverage": coverage, "draft_byte_frac": draft_byte_frac,
+        "rho": rho, "rho_ci95": _q(rho_b),
+        "alpha": alpha, "alpha_ci95": _q(alpha_b),
+        "k": k, "k_ci95": _q(k_b),
+        "cost_ratio": cost, "cost_ratio_ci95": _q(cost_b),
+        "go": bool(cost < 1.0), "go_ci_excludes_1": bool(_q(cost_b)[1] < 1.0),
+    }
+
+
+def aggregate_runs(reports, *, draft_byte_frac: float = 0.25) -> dict:
+    """Across-run aggregate for a ≥3-run campaign — the *registered* confidence statement.
+
+    ``reports`` is a list of per-run dicts (each a ``GSSFeasibilityReport.as_dict()`` or
+    ``feasibility_with_ci`` result). Returns mean and a normal 95% CI (mean ± 1.96·SE) for
+    ρ, α, k, cost_ratio across runs, and whether the cost_ratio CI upper bound stays < 1
+    (the no-overclaim "GO excludes 1" bar). Run-to-run variance is what the within-run
+    bootstrap cannot see, so this is the statement that licenses a registered result.
+    """
+    if not _HAVE_NUMPY:
+        raise RuntimeError("numpy required")
+    rows = [r for r in reports if r]
+    if len(rows) < 2:
+        raise ValueError("need >=2 runs to estimate run-to-run variance")
+    out: dict = {"n_runs": len(rows)}
+    for key in ("rho", "alpha", "k", "cost_ratio"):
+        vals = np.array([float(r[key]) for r in rows], dtype=np.float64)
+        mean = float(vals.mean())
+        se = float(vals.std(ddof=1) / np.sqrt(vals.size))
+        out[key] = mean
+        out[f"{key}_ci95"] = [mean - 1.96 * se, mean + 1.96 * se]
+    out["go"] = bool(out["cost_ratio"] < 1.0)
+    out["go_ci_excludes_1"] = bool(out["cost_ratio_ci95"][1] < 1.0)
+    return out
+
+
+# ---------------------------------------------------------------------------
 # Offline invariants
 # ---------------------------------------------------------------------------
 

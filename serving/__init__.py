@@ -74,9 +74,19 @@ from serving.gss_feasibility import (
     GSSFeasibilityGate,
     GSSFeasibilityReport,
     acceptance_rate,
+    aggregate_runs,
+    bootstrap_ci,
     expected_accepted,
+    feasibility_with_ci,
     read_set_fraction,
     read_set_temporal_stability,
+)
+from serving.gss import (
+    GSSEquivalenceGate,
+    GSSEquivalenceReport,
+    read_set_mask,
+    speculative_realized,
+    verify_drift,
 )
 
 __all__ = [
@@ -103,11 +113,20 @@ __all__ = [
     "quantize_kv_block",
     "dequantize_kv_block",
     "kv_memory_ratio",
-    # Governed Speculative Sparsity — Tier-0 feasibility meter
+    # Governed Speculative Sparsity — Tier-0 feasibility meter + CIs
     "GSSFeasibilityGate",
     "GSSFeasibilityReport",
     "read_set_fraction",
     "read_set_temporal_stability",
     "acceptance_rate",
     "expected_accepted",
+    "bootstrap_ci",
+    "feasibility_with_ci",
+    "aggregate_runs",
+    # Governed Speculative Sparsity — Tier-1 mechanism + equivalence gate
+    "speculative_realized",
+    "verify_drift",
+    "read_set_mask",
+    "GSSEquivalenceGate",
+    "GSSEquivalenceReport",
 ]
