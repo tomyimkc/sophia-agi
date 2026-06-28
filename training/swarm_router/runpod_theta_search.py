@@ -104,13 +104,35 @@ for f in glob.glob(OUT+"/*"):
     if os.path.isfile(f):
         b=open(f,"rb").read(); files[os.path.basename(f)]={"bytes":len(b),"sha256":hashlib.sha256(b).hexdigest()[:16]}
 put("adapter_files",files)
-# inference smoke on REAL trained weights (correct two-step tokenize)
-msgs=[{"role":"system","content":"You are a source-disciplined search agent. Cite sources; abstain if you cannot ground a claim."},
-      {"role":"user","content":"Who is the author of the Dao De Jing? Answer with source discipline."}]
-text=tok.apply_chat_template(msgs,tokenize=False,add_generation_prompt=True)
-enc=tok(text,return_tensors="pt").to(model.device)
-out=model.generate(**enc,max_new_tokens=120,do_sample=False)
-put("smoke_generation",tok.decode(out[0][enc["input_ids"].shape[1]:],skip_special_tokens=True)[:600])
+# --- graded search-recall A/B: base (adapter disabled) vs adapter, on the sealed pack ---
+import sys; sys.path.insert(0,"/workspace/repo")
+SYS="You are a source-disciplined search agent. Cite sources; abstain if you cannot ground a claim."
+def gen(q):
+    text=tok.apply_chat_template([{"role":"system","content":SYS},{"role":"user","content":q}],
+                                 tokenize=False,add_generation_prompt=True)
+    enc=tok(text,return_tensors="pt").to(model.device)
+    out=model.generate(**enc,max_new_tokens=110,do_sample=False)
+    return tok.decode(out[0][enc["input_ids"].shape[1]:],skip_special_tokens=True)
+try:
+    from provenance_bench.search_recall import PACK_V1, source_discipline_ok
+    traps=[t for t in PACK_V1 if t.trap]
+    with model.disable_adapter():
+        before=[1.0 if source_discipline_ok(gen(t.query)) else 0.0 for t in traps]
+    after=[1.0 if source_discipline_ok(gen(t.query)) else 0.0 for t in traps]
+    br=sum(before)/len(before); ar=sum(after)/len(after)
+    put("graded_suite","source_discipline_rate"); put("graded_n_traps",len(traps))
+    put("graded_before",round(br,3)); put("graded_after",round(ar,3)); put("graded_delta",round(ar-br,3))
+    put("smoke_generation",gen(traps[0].query)[:600])
+    try:
+        from agent.dual_use_adapter import DualUseAdapter
+        ad=DualUseAdapter(id="theta-search-v1",team_name="search",gain=1.0)
+        dec=ad.gate(target_suite="source_discipline_rate",before=br,after=ar,
+                    verifier_artifacts=("recall_eval.json","decontam.json"))
+        put("graded_gate_verdict",dec.verdict); put("graded_gate_reasons",list(dec.reasons))
+    except Exception as e:
+        put("graded_gate_error",repr(e)[:300])
+except Exception as e:
+    put("graded_eval_error",repr(e)[:300])
 put("phase","trained_and_validated")
 PY
 cd /workspace/repo
@@ -151,7 +173,7 @@ def main() -> int:
     ap.add_argument("--yes", action="store_true", help="actually create the pod (incurs cost)")
     ap.add_argument("--dry-run", action="store_true", help="print the plan; do not spend")
     ap.add_argument("--branch", default=DEFAULT_BRANCH)
-    ap.add_argument("--model", default="Qwen/Qwen2.5-3B-Instruct")
+    ap.add_argument("--model", default="Qwen/Qwen2.5-7B-Instruct")
     ap.add_argument("--gpu", default=DEFAULT_GPU)
     ap.add_argument("--image", default=DEFAULT_IMAGE)
     ap.add_argument("--cloud", default="SECURE", choices=["SECURE", "COMMUNITY"])
@@ -176,7 +198,7 @@ def main() -> int:
 
     var = {"in": {"cloudType": args.cloud, "gpuCount": 1, "gpuTypeId": args.gpu,
                   "name": "sophia-theta-search-lora", "imageName": args.image,
-                  "dockerArgs": docker_args, "ports": "8000/http", "containerDiskInGb": 45,
+                  "dockerArgs": docker_args, "ports": "8000/http", "containerDiskInGb": 60,
                   "volumeInGb": 0, "minMemoryInGb": 24, "minVcpuCount": 4,
                   "startSsh": False, "supportPublicIp": True,
                   "env": [{"key": "RUNPOD_API_KEY", "value": api_key}]}}
