@@ -93,15 +93,23 @@ attribution warrants hedging — so the model never learned *when not to hedge*.
 settled-fact corpus (`data/settled_facts.json`, 36 undisputed single-author works) + a non-hedging
 generator (settled → answer directly; "is it disputed? — no"), 204 rows / 5.8% of the dataset.
 
-**Re-trained and re-measured (seed 8, GPU, `calibration-fix-result.json`): no detectable improvement.**
-The recalibrated adapter still over-qualifies clear-cut cases — hedge **0.553**, lift **+0.368** — which
-sits *inside* the pre-fix seed range (+0.237 to +0.605). Contested hedging stayed high (0.972), so nothing
-broke; the fix just didn't move the tax. Two honest reads: (a) 5.8% settled rows is too small a signal, and
-the **admission gate itself warns "missing source-discipline framing" on direct answers — it structurally
-favours hedging**; (b) at clear-cut **n=38** with seed-to-seed variance 0.37→0.68, the probe **cannot
-resolve** a modest fix effect — this is "no detectable improvement," NOT "proven no effect." A powered
-verdict needs a bigger clear-cut probe + multiple recalibrated seeds, and a stronger fix (more settled rows,
-settled-fact preference pairs, relaxing the gate for settled facts). *Reported as a failure, not spun.*
+**Attempt v1 (seed 8, 5.8% settled rows): no detectable improvement** — clear-cut hedge 0.553, lift
++0.368, inside the noisy pre-fix range; underpowered (n=38, seed variance 0.37→0.68).
+
+**Attempt v2 (seed 9, 11.5% settled rows, on a POWERED 90-case clear-cut probe): PARTIAL SUCCESS —
+the mechanism is validated, but it is domain-specific.** Disaggregating the probe is the whole story:
+- **settled authorship (52 NOVEL works, the trained pattern): base 0.558 → adapter 0.000** over-hedging.
+  The fix works *and generalizes to works it never saw* — a real external-validity win.
+- **settled history (`protected_history`, 36 events): base 0.139 → adapter 0.806.** The fix does NOT
+  transfer — the `settled_facts` corpus is all book-authorship, so the model never learned to answer a
+  settled *historical event* directly. Over-hedging persists there.
+- contested cases stay high (≈1.0) — the fix doesn't break the core habit.
+
+The **aggregate** verdict (lift −0.033, "calibrated") is a **measurement artifact** — 52 fixed novel cases
+diluting 36 still-broken `protected_history` cases. *This is itself the contract's lesson: a headline
+metric hid a regression; only disaggregation by sub-family revealed it.* Net: the calibration fix is a
+demonstrated, generalizing mechanism on its trained sub-domain, with a clear, scoped remaining gap
+(extend the settled corpus to historical events) rather than a mysterious failure.
 
 ## How to reuse it
 
