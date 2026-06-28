@@ -202,10 +202,14 @@ def load_merged_model(base_model: str, adapter_dir: Path, *, dtype_str: str,
         load_kwargs["attn_implementation"] = attn
     if device == "cuda":
         load_kwargs["device_map"] = "auto"
-    base = AutoModelForCausalLM.from_pretrained(base_model, **load_kwargs)
 
+    def _fresh_base():
+        return AutoModelForCausalLM.from_pretrained(base_model, **load_kwargs)
+
+    base = _fresh_base()
     info: dict[str, Any] = {"adapter": str(adapter_dir)}
     merged_model = None
+    peft_model = None
     try:
         from peft import PeftModel
         peft_model = PeftModel.from_pretrained(base, str(adapter_dir), is_trainable=False)
@@ -213,6 +217,17 @@ def load_merged_model(base_model: str, adapter_dir: Path, *, dtype_str: str,
         info["lora_load"] = "peft.merge_and_unload"
     except Exception as exc:  # noqa: BLE001 - version skew is the documented failure
         info["lora_load"] = f"manual_merge (peft path failed: {type(exc).__name__}: {exc})"
+        # CRITICAL: PeftModel.from_pretrained mutates `base` IN PLACE before it raises, leaving a
+        # half-wrapped model (weights relocated under `.base_layer`, stray zero-init LoRA adapters
+        # still attached). Quantizing/forwarding that contaminated model gives garbage (attention
+        # silently skipped, etc.). Discard it and manual-merge a CLEAN reload instead.
+        import gc
+        base = None
+        peft_model = None
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        base = _fresh_base()
         n, mi = _manual_merge_lora(base, adapter_dir)
         info["manual_merge"] = mi
         if n == 0:
@@ -238,7 +253,11 @@ def is_served_param(name: str, *, suffixes: "tuple[str, ...]" = SERVED_LINEAR_SU
     embeddings, norms, lm_head, the MoE router gate (``mlp.gate``), and any LoRA tensors."""
     if any(x in name for x in _QUANT_EXCLUDE) or "lora" in name.lower():
         return False
-    base = name[:-len(".weight")] if name.endswith(".weight") else name
+    # Strip PEFT wrapper segments (a half-wrapped model relocates weights under `.base_layer`),
+    # so matching works whether or not any wrapping survived the load.
+    base = name.replace(".base_layer", "")
+    if base.endswith(".weight"):
+        base = base[:-len(".weight")]
     if base.endswith("mlp.gate"):        # MoE router gate — must stay bf16
         return False
     return any(base.endswith(s) for s in suffixes)
@@ -619,6 +638,8 @@ def offline_invariants() -> "tuple[bool, dict]":
         "model.layers.3.mlp.experts.7.down_proj.weight",   # per-expert nn.Linear
         "model.layers.5.mlp.experts.gate_up_proj",         # FUSED expert Parameter (no .weight)
         "model.layers.5.mlp.experts.down_proj",            # FUSED expert Parameter
+        "model.layers.0.self_attn.q_proj.base_layer.weight",         # half-PEFT-wrapped attention
+        "model.layers.5.mlp.experts.base_layer.base_layer.gate_up_proj",  # half-wrapped fused expert
     ]
     kept_names = ["lm_head.weight", "model.embed_tokens.weight",
                   "model.layers.0.input_layernorm.weight",
