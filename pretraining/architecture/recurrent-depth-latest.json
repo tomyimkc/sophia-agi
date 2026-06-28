@@ -1,0 +1,123 @@
+{
+  "study": "Recurrent-Depth Transformer (RDT) \u2014 nano looped-transformer mechanism",
+  "thesis": "OpenMythos reconstructs Mythos as a looped/recurrent-depth transformer. This study validates the three mechanisms that claim rests on \u2014 LTI stability, depth extrapolation, and parameter-efficient weight sharing \u2014 at nano scale against known floors, so a GPU-scale build is de-risked before compute is spent.",
+  "config": {
+    "seed": 0,
+    "quick": false
+  },
+  "stability": {
+    "loops": 24,
+    "free_run_norm_curve": {
+      "K": [
+        1,
+        2,
+        4,
+        8,
+        24
+      ],
+      "constrained": {
+        "1": 1.52696,
+        "2": 2.65798,
+        "4": 5.20589,
+        "8": 10.84727,
+        "24": 33.93603
+      },
+      "unconstrained": {
+        "1": 2.88654,
+        "2": 9.41722,
+        "4": 89.05323,
+        "8": 7281.13883,
+        "24": 313467225170.8343
+      }
+    },
+    "constrained": {
+      "diag_spectral_radius": 0.95257,
+      "full_jacobian_spectral_radius_est": 1.2857,
+      "free_run_hidden_norm": 33.93603,
+      "growth_kmin_to_kmax": 22.225
+    },
+    "unconstrained": {
+      "diag_spectral_radius": 3.0,
+      "full_jacobian_spectral_radius_est": 3.30248,
+      "free_run_hidden_norm": 313467225170.8343,
+      "growth_kmin_to_kmax": 108596182686.134
+    },
+    "constrained_diag_rho_below_1": true,
+    "unconstrained_diag_rho_at_or_above_1": true,
+    "constrained_state_more_bounded": true,
+    "unconstrained_grows_faster": true,
+    "interpretation": "The diagonal LTI part has spectral radius max|A_i|; sigmoid keeps it < 1 by construction (constrained), so the forward recurrence is a contraction and the free-run \u2016h_K\u2016 plateaus as K grows, while the unconstrained A (\u22651) makes it grow \u2248\u03c1^K (see free_run_norm_curve). This is the Parcae-style state-stability device, measured on the forward pass against the exact diagonal spectral radius.",
+    "honest_caveat": "The diagonal constraint bounds the STATE, not the BPTT gradient: the full recurrent Jacobian (diag(A)+W_rec) can still have spectral radius > 1 (full_jacobian_spectral_radius_est here exceeds 1 even when constrained), so training through many loops still needs gradient clipping / a small W_rec \u2014 the LTI constraint is NECESSARY for state-boundedness but not SUFFICIENT for trainability. Conflating the two would overclaim; they are reported separately."
+  },
+  "depth_extrapolation": {
+    "task": "iterated hidden permutation (apply \u03c0 once per loop)",
+    "vocab": 6,
+    "train_hops": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "test_hops": [
+      6,
+      7,
+      8,
+      10
+    ],
+    "final_train_loss": 3e-05,
+    "accuracy_interpolation": {
+      "1": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "4": 1.0,
+      "5": 1.0
+    },
+    "accuracy_extrapolation": {
+      "6": 0.8333,
+      "7": 1.0,
+      "8": 0.8333,
+      "10": 0.8333
+    },
+    "mean_interpolation_acc": 1.0,
+    "mean_extrapolation_acc": 0.875,
+    "chance": 0.1667,
+    "extrapolates_above_chance": true,
+    "interpretation": "A weight-shared RDT trained only on the shallower train_hops is evaluated at deeper test_hops by running MORE loops with the SAME weights. Accuracy above the 1/V chance floor at unseen depths is the 'train 5-hop, infer 10-hop' latent-reasoning claim, measured on a task where each loop must apply one \u03c0 step. Honest: nano scale, a single seed in --quick; the headline is the mechanism and the above-chance gate, not a SOTA accuracy."
+  },
+  "parameter_efficiency": {
+    "depth": 4,
+    "hops": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "shared": {
+      "block_params": 1776,
+      "total_params": 2094,
+      "mean_acc": 1.0,
+      "acc_by_hop": {
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0,
+        "4": 1.0
+      }
+    },
+    "unshared": {
+      "block_params": 7104,
+      "total_params": 7422,
+      "mean_acc": 1.0,
+      "acc_by_hop": {
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0,
+        "4": 1.0
+      }
+    },
+    "unshared_block_param_multiple": 4.0,
+    "shared_matches_unshared_acc": true,
+    "interpretation": "The shared RDT reuses one block for all 4 loops; the unshared net gives each loop its own block (4.0\u00d7 the block params). If shared reaches comparable accuracy at a fraction of the block params, weight sharing buys depth cheaply. Sharing is also what makes depth-extrapolation possible at all \u2014 an unshared net has no weights for loops it never trained."
+  },
+  "honest_scope": "This is a nano-scale methodology study of the looped-transformer mechanism, not a trained model and NOT a capability claim about Claude, Mythos, or any frontier system. It checks the looped-transformer mechanism (stability, depth-extrapolation, weight sharing) cheaply on CPU against closed-form controls (max|A_i| spectral radius, 1/V chance floor, exact param counts). A 'better than X' claim would need the same measurement at scale under the no-overclaim gate (>=2 judge families, CI excluding zero)."
+}

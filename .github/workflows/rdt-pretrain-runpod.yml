@@ -1,0 +1,106 @@
+name: rdt-pretrain-runpod
+
+# Manual-only launcher for the Recurrent-Depth Transformer (RDT) pretrain — Phase 1.2 of the
+# OpenMythos plan (see pretraining/architecture/RECURRENT-DEPTH.md). The GPU work runs on a
+# rented RunPod pod, NOT this runner.
+#
+# SSH-FREE + cost-guarded: tools/runpod_rdt_pretrain.py creates the pod via the RunPod HTTPS
+# API; the pod clones the branch, runs the RDT self-test + pretraining.architecture.rdt_pretrain
+# on the GPU, GIT-PUSHES the train report + log back to the branch with this run's GITHUB_TOKEN,
+# then self-deletes and holds the container open (defeating RunPod's exit->restart loop). The
+# launcher runs with --wait and deletes the pod the moment a FRESH report lands (authoritative),
+# with a restart-count fallback. See the wisdom-gpu-prebaked skill for the anti-wastage runbook.
+#
+# DO THE CHEAP SMOKE FIRST: dispatch with mode=smoke (default) — a few hundred GPU steps on the
+# cheapest available GPU (~minutes) that validate the CUDA training path + spectral-radius
+# invariant + checkpoint round-trip BEFORE spending on a real pretrain. Only dispatch
+# mode=pretrain after a green smoke.
+#
+# Secret required: RUNPOD_API_KEY. No HF_TOKEN (FineWeb-Edu + the byte tokenizer are ungated).
+#
+# NOTE: workflow_dispatch only registers once this file is on the DEFAULT branch. Until merged
+# to main, dispatch it from the Actions UI against this feature branch after it lands on main,
+# or merge first. (Same constraint as wisdom-pilot-runpod.yml.)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to confirm renting a paid GPU pod'
+        required: true
+        default: ''
+      mode:
+        description: 'smoke (cheap validation FIRST) or pretrain (real run)'
+        required: false
+        default: 'smoke'
+      train_args:
+        description: 'Optional full passthrough of rdt_pretrain CLI args (overrides the mode default)'
+        required: false
+        default: ''
+      gpu_type:
+        description: 'Optional comma-separated RunPod GPU type ids (blank = cheap/available default)'
+        required: false
+        default: ''
+      image:
+        description: 'Optional pod image (blank = stock runpod/pytorch with torch)'
+        required: false
+        default: ''
+      registry_auth_id:
+        description: 'RunPod container-registry-auth id (to pull a PRIVATE image)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write   # the pod pushes the train report back with this run's GITHUB_TOKEN
+
+concurrency:
+  group: rdt-pretrain-runpod
+  cancel-in-progress: false
+
+jobs:
+  pretrain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — confirm + secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          [ "$CONFIRM" = "RUN" ] || { echo "::error::input 'confirm' must be exactly RUN. Aborting (no pod)."; exit 1; }
+          [ -n "$RUNPOD_API_KEY" ] || { echo "::error::secret RUNPOD_API_KEY missing."; exit 1; }
+          echo "Preflight OK. GPU runs on the rented pod, not this runner. mode=${{ github.event.inputs.mode }}"
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Dry-run payload (no pod, no cost)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          GH_PILOT_PAT: ${{ github.token }}
+        run: python tools/runpod_rdt_pretrain.py --dry-run --branch "${{ github.ref_name }}" --mode "${{ github.event.inputs.mode }}"
+
+      - name: Launch SSH-free RDT pretrain on RunPod (pod self-reports; waits until done)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          GH_PILOT_PAT: ${{ github.token }}
+          RUNPOD_REGISTRY_AUTH_ID: ${{ github.event.inputs.registry_auth_id }}
+        run: |
+          ARGS=""
+          if [ -n "${{ github.event.inputs.train_args }}" ]; then ARGS="--train-args \"${{ github.event.inputs.train_args }}\""; fi
+          GPU=""
+          if [ -n "${{ github.event.inputs.gpu_type }}" ]; then GPU="--gpu-type \"${{ github.event.inputs.gpu_type }}\""; fi
+          IMAGE=""
+          if [ -n "${{ github.event.inputs.image }}" ]; then IMAGE="--image-name ${{ github.event.inputs.image }}"; fi
+          eval python tools/runpod_rdt_pretrain.py --yes --wait \
+            --branch "${{ github.ref_name }}" \
+            --mode "${{ github.event.inputs.mode }}" $ARGS $GPU $IMAGE
+
+      - name: Surface the pushed train report
+        if: always()
+        run: |
+          git pull --no-edit origin "${{ github.ref_name }}" || true
+          echo "Report (if pushed) is on the branch under agi-proof/benchmark-results/rdt-pretrain/"
