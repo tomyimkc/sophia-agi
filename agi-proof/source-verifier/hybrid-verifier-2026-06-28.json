@@ -1,0 +1,38 @@
+{
+  "schema": "sophia.hybrid_contamination_verifier.v1",
+  "experiment": "Cluster C \u2014 HYBRID verifier (core-claim direction + authoritative oracles), LIVE",
+  "date": "2026-06-28",
+  "answer_spec": "llmhub:claude-sonnet-4-6",
+  "full_matrix_caught_overblock_pct": {
+    "curated_atomic": [
+      97.7,
+      5.9
+    ],
+    "curated_core": [
+      95.3,
+      0.0
+    ],
+    "openworld_atomic": [
+      97.7,
+      52.9
+    ],
+    "openworld_core": [
+      58.1,
+      0.0
+    ],
+    "hybrid_authoritative_only": [
+      0.0,
+      0.0
+    ],
+    "hybrid_plus_llm_tail": [
+      58.1,
+      0.0
+    ]
+  },
+  "authoritative_coverage": "0/43 contaminated cases \u2014 Google + Wikidata/Crossref cover NONE of this pack's 'fabricated study attributes X to Y' claims (not viral myths, not simple authorship facts).",
+  "finding": "The hybrid (core-claim DIRECTION fed by AUTHORITATIVE oracles) achieves 0% over-block as designed, but on THIS pack the authoritative oracles have ZERO coverage (0/43), so authoritative-only catches 0% and the hybrid's catch comes entirely from the flagged LOW-independence LLM tail (58.1%, == core-on-openworld). The hoped-for 'high catch AND low over-block' did NOT materialize here: it is bounded by whether an independent oracle actually covers the contamination domain. NO FREE LUNCH \u2014 catching contamination needs EITHER an oracle that covers the claim (sparse), OR fail-closed strictness (over-blocks), OR model knowledge (low independence). This pack's provenance-fabrications ('a fabricated 2023 study attributes...') are an existence-check problem (does the cited study exist in Crossref?), NOT a claim-rating problem \u2014 so a CITATION-EXISTENCE verifier (the repo's legal_citation_exists / crossref doi_resolver pattern) is the right high-independence tool for this domain, not a rating oracle.",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false
+}
