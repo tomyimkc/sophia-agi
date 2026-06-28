@@ -220,6 +220,53 @@ def _write_report(detail: dict, out: Path) -> None:
     print(f"wrote {out}")
 
 
+def _wrap_collapse_logger(reward_fn, *, num_generations: int):
+    """Wrap a GRPO reward fn to record within-group reward std per step.
+
+    GRPO computes advantages from the spread of rewards across the ``num_generations``
+    completions of each prompt. If that within-group std collapses to ~0, every
+    completion gets the same reward, the advantage is zero, and the policy stops
+    learning (reward collapse). We log the mean within-group std at each call so the
+    M1 report can show single-axis collapsing where multi-axis does not.
+    """
+    import statistics
+
+    log: dict = {"stepGroupStd": [], "n_calls": 0}
+
+    def _fn(*a, **kw):
+        rewards = reward_fn(*a, **kw)
+        try:
+            g = max(1, int(num_generations))
+            groups = [rewards[i : i + g] for i in range(0, len(rewards), g)]
+            stds = [statistics.pstdev(grp) for grp in groups if len(grp) > 1]
+            if stds:
+                log["stepGroupStd"].append(round(sum(stds) / len(stds), 6))
+            log["n_calls"] += 1
+        except Exception:  # noqa: BLE001 - logging must never break training
+            pass
+        return rewards
+
+    return _fn, log
+
+
+def _collapse_summary(log: dict) -> dict:
+    """Summarise the collapse log: mean within-group std + a collapse flag."""
+    import statistics
+
+    series = log.get("stepGroupStd", [])
+    if not series:
+        return {"steps": 0, "meanGroupStd": None, "finalGroupStd": None, "collapsed": None}
+    tail = series[-5:] if len(series) >= 5 else series
+    final = sum(tail) / len(tail)
+    return {
+        "steps": len(series),
+        "meanGroupStd": round(statistics.fmean(series), 6),
+        "finalGroupStd": round(final, 6),
+        # Heuristic: a near-zero tail std means the within-group signal vanished.
+        "collapsed": final < 1e-3,
+    }
+
+
 def _run_gpu(args: argparse.Namespace) -> int:
     """Live GRPO on a rented CUDA GPU. Validated by structure; not run in CI."""
     try:
@@ -291,8 +338,22 @@ def _run_gpu(args: argparse.Namespace) -> int:
             from agent import gate_reward
 
             reward_fn = gate_reward.make_grpo_reward()
+        elif args.reward == "multiaxis":
+            # Thesis D: dense deterministic multi-axis reward. Same fail-closed
+            # provenance dominator as the gate, but decomposed so within-group reward
+            # variance does not vanish (the anti-reward-collapse property). The reward
+            # rows carry their case via the kept dataset columns; make_grpo_reward maps
+            # them through to the answerability/provenance axes when present.
+            from agent import multiaxis_reward as _mar
+
+            reward_fn = _mar.make_grpo_reward()
         else:
             reward_fn = rl_reward.make_grpo_reward(records=data["train_gate_records"])
+
+    # Collapse logger: wrap whatever reward we chose to record within-group reward std
+    # per GRPO step. Reward collapse == within-group std -> 0 (constant reward => zero
+    # advantage => no learning signal). This is the headline M1 measurement.
+    reward_fn, _collapse_log = _wrap_collapse_logger(reward_fn, num_generations=args.num_generations)
     train_rows = data["train_rows"]
     if args.curriculum:
         train_rows = _gate_curriculum_order(train_rows, samples=args.curriculum_samples)
@@ -375,6 +436,10 @@ def _run_gpu(args: argparse.Namespace) -> int:
         "trainSealed": data["train_sealed"],
         "evalSealed": data["eval_sealed"],
         "baseModelLicense": "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)",
+        "rewardSelected": args.reward,
+        # M1 headline measurement: within-group reward std over training. A single-axis
+        # run is expected to collapse (final std -> 0); multiaxis should stay > 0.
+        "collapse": _collapse_summary(_collapse_log),
     }
     _write_report(report, args.out)
     print("Live GRPO complete. Held-out pass@1 eval + gating is a separate step.")
@@ -417,9 +482,10 @@ def main(argv: list[str] | None = None) -> int:
                     help="code-task only: wall-clock seconds for the hidden-test executor")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument(
-        "--reward", default="verifier", choices=["verifier", "gate"],
-        help='reward signal: "verifier" (gold/forbidden verifier-as-reward, default) '
-             'or "gate" (intrinsic fail-closed gate, reward-positive abstention)',
+        "--reward", default="verifier", choices=["verifier", "gate", "multiaxis"],
+        help='reward signal: "verifier" (gold/forbidden verifier-as-reward, default), '
+             '"gate" (single-axis intrinsic fail-closed gate, reward-positive abstention), '
+             'or "multiaxis" (Thesis D: dense deterministic multi-axis reward, anti-collapse)',
     )
     ap.add_argument(
         "--curriculum", action="store_true",
@@ -452,6 +518,22 @@ def main(argv: list[str] | None = None) -> int:
             ok = ok and gate_ok
             detail["checks"]["gateRewardInvariants"] = gate_ok
             detail["gateReward"] = gate_detail
+            # Thesis D: prove the multi-axis reward's invariants offline (fail-closed,
+            # ordering, reward-positive abstention, density-beats-single-axis). This is
+            # the CPU-side validation that the M1 GPU run's reward is sound before spend.
+            if args.reward == "multiaxis":
+                from agent import multiaxis_reward as _mar
+
+                mar_detail = _mar.self_check()
+                mar_ok = (
+                    mar_detail["fabrication"] == -1.0
+                    and mar_detail["clean"] > mar_detail["abstain"] > 0
+                    and mar_detail["distinctMultiAxisValues"] > mar_detail["distinctSingleAxisValues"]
+                    and mar_detail["weightsSumToOne"]
+                )
+                ok = ok and mar_ok
+                detail["checks"]["multiAxisRewardInvariants"] = mar_ok
+                detail["multiAxisReward"] = mar_detail
         detail["benchmark"] = f"rlvr-{args.task}"
         detail["task"] = args.task
         detail["mode"] = "mock-offline"

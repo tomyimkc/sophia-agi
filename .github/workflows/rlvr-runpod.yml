@@ -38,6 +38,12 @@ on:
         default: 'provenance'
         type: choice
         options: [provenance, math, code, concept]
+      reward:
+        description: 'Reward signal (provenance task): verifier / gate (single-axis) / multiaxis (Thesis D dense — M1 collapse arm)'
+        required: true
+        default: 'verifier'
+        type: choice
+        options: [verifier, gate, multiaxis]
       epochs:
         description: 'Training epochs (live mode)'
         required: false
@@ -104,6 +110,7 @@ jobs:
             --source git --branch "${{ github.ref_name }}" \
             --remote-mode "${{ github.event.inputs.remote_mode }}" \
             --task "${{ github.event.inputs.task }}" \
+            --reward "${{ github.event.inputs.reward }}" \
             --gpu-type "${{ github.event.inputs.gpu_type }}"
 
       - name: Launch RunPod RLVR (rents GPU, runs over SSH, deletes pod)
@@ -116,6 +123,7 @@ jobs:
             --source git --branch "${{ github.ref_name }}" \
             --remote-mode "${{ github.event.inputs.remote_mode }}" \
             --task "${{ github.event.inputs.task }}" \
+            --reward "${{ github.event.inputs.reward }}" \
             --epochs "${{ github.event.inputs.epochs }}" \
             --seed "${{ github.event.inputs.seed }}" \
             --quant bf16 --vllm colocate \
