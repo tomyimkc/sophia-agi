@@ -119,6 +119,18 @@ def test_runpod_qat_lowram_plan_is_cost_gated() -> None:
     assert "--qat --qat-scheme nvfp4" in allcmd and "--yes" not in allcmd
 
 
+def test_runpod_qat_lowram_spark_target_is_free_and_aarch64_safe() -> None:
+    sys.path.insert(0, str(ROOT / "tools"))
+    import runpod_qat_lowram as rq
+    # local-spark: ready with just a base model (no budget), bf16 + --qat, no aarch64-blocked deps.
+    sp = rq.build_run_plan(base_model=rq.TIER_BASES["low"], gpu="-", scheme="nvfp4", budget_usd=None,
+                           branch="b", epochs=1, calib="c.json", target_bits=4.5, target="local-spark")
+    assert sp["ready_to_launch"] is True and sp["missing"] == []
+    train = " ".join(next(s for s in sp["steps"] if s["stage"] == "qat_train")["command"])
+    assert "tools/train_lora.py" in train and "--qat" in train and "--dtype bf16" in train
+    assert not any(x in train for x in ("--4bit", "unsloth", "flash_attention_2", "--yes"))
+
+
 def test_spec_from_block_counts_scales_with_layers() -> None:
     one = ModelSpec.from_block_counts("a", n_layers=1, hidden=128, vocab=1000,
                                       block_total_params=1_000_000, block_active_params=200_000,

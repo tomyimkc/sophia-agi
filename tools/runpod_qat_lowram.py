@@ -40,60 +40,104 @@ DEFAULT_SCHEME = "nvfp4"
 DEFAULT_CALIB = "training/lora/calibration_datasheet.json"
 
 
-def build_run_plan(*, base_model: str | None, gpu: str, scheme: str, budget_usd: float | None,
-                   branch: str, epochs: int, calib: str, target_bits: float) -> dict:
-    """Assemble the (training + certification) command plan. Pure data; nothing executes."""
-    ready = bool(base_model) and (budget_usd is not None and budget_usd > 0)
+# Suggested open base models per tier (the "similar params via sparsity" lever).
+TIER_BASES = {
+    "low":  "allenai/OLMoE-1B-7B-0924-Instruct",   # 7B total / 1B active, fully open, Apache-2.0
+    "mid":  "mistralai/Mixtral-8x7B-Instruct-v0.1",  # 47B / 13B
+    "high": "mistralai/Mixtral-8x22B-Instruct-v0.1", # 141B / 39B
+    "top":  "deepseek-ai/DeepSeek-V3",               # 671B / 37B (adapt + serve, NOT pretrain)
+}
 
-    # Step 1: QAT training on a pod (runpod_train.py runs train_lora.py with --qat passthrough).
-    train_cmd = [
-        "python", "tools/runpod_train.py",
-        "--model", base_model or "<SET --base-model>",
-        "--gpu", gpu,
-        "--branch", branch,
-        "--epochs", str(epochs),
-        "--train-only",
-        # passthrough to train_lora.py on the pod:
-        "--extra", f"--qat --qat-scheme {scheme}",
-        # cost gate — the planner never adds --yes; you add it after review:
-        "--dry-run",
-    ]
+# A run target: where training + certification execute.
+#   runpod      — paid x86 pods (registered/headline numbers; REPLICATION.md discipline)
+#   local-spark — your DGX Spark (GB10 Blackwell, aarch64, 128GB unified, native FP4). FREE.
+#                 bf16 LoRA + QAT only (NO bitsandbytes/--4bit, NO unsloth/flash-attn on aarch64);
+#                 NVFP4 is Blackwell-native, so the Spark is the ideal low-RAM SERVE/benchmark box.
+TARGETS = ("runpod", "local-spark")
+
+
+def build_run_plan(*, base_model: str | None, gpu: str, scheme: str, budget_usd: float | None,
+                   branch: str, epochs: int, calib: str, target_bits: float,
+                   target: str = "runpod") -> dict:
+    """Assemble the (calibrate → QAT-train → certify) command plan. Pure data; nothing executes.
+
+    ``target='local-spark'`` plans a FREE local run on the DGX Spark (bf16 + --qat, no
+    bitsandbytes/unsloth/flash-attn — all aarch64-blocked); no budget required. ``target='runpod'``
+    plans a PAID pod run and requires a budget cap. Either way the planner only *plans*.
+    """
+    if target not in TARGETS:
+        raise ValueError(f"unknown target {target!r}; expected one of {TARGETS}")
+    local = target == "local-spark"
+    # local-spark needs only a base model (free); runpod also needs a budget cap.
+    ready = bool(base_model) and (local or (budget_usd is not None and budget_usd > 0))
 
     # Step 0 (free, local/CI): build the decontaminated calibration datasheet first.
-    calib_cmd = [
-        "python", "tools/run_calibration.py",
-        "--out", calib, "--target-bits", str(target_bits), "--dry-run",
-    ]
+    calib_cmd = ["python", "tools/run_calibration.py",
+                 "--out", calib, "--target-bits", str(target_bits), "--dry-run"]
 
-    # Step 2: on-pod certification after training (GPU-only logit extraction + the gate).
+    if local:
+        # On the Spark: bf16 LoRA + QAT directly (aarch64-safe — no --4bit/bitsandbytes,
+        # sdpa attention not flash-attn). NVFP4 is the Blackwell-native serving grid.
+        train_cmd = [
+            "python", "tools/train_lora.py",
+            "--model", base_model or "<SET --base-model>",
+            "--qat", "--qat-scheme", scheme,
+            "--epochs", str(epochs), "--dtype", "bf16", "--attn", "sdpa",
+            "--dry-run",   # drop --dry-run to actually train on the Spark
+        ]
+        train_where = "local DGX Spark (FREE — your hardware, bf16, aarch64-safe)"
+        certify_where = "local DGX Spark (FREE, after train — NVFP4 native)"
+        cost_note = ("Runs on your DGX Spark — FREE (your hardware). Drop --dry-run on the train "
+                     "command to start. Spark numbers are for ITERATION/benchmark, not the "
+                     "registered result (REPLICATION.md: headline numbers stay on x86 RunPod).")
+    else:
+        # On a pod: runpod_train.py runs train_lora.py with --qat passed through.
+        train_cmd = [
+            "python", "tools/runpod_train.py",
+            "--model", base_model or "<SET --base-model>",
+            "--gpu", gpu, "--branch", branch, "--epochs", str(epochs), "--train-only",
+            "--extra", f"--qat --qat-scheme {scheme}",
+            "--dry-run",   # the planner never adds --yes; you add it after review
+        ]
+        train_where = "runpod (PAID)"
+        certify_where = "runpod (PAID, after train)"
+        cost_note = ("This planner provisions nothing. Launching requires you to add --yes to the "
+                     "qat_train command and set a real budget cap on RunPod.")
+
     certify = {
-        "description": "After training, on the pod: emit FP16 vs quantized next-token "
-                       "distributions over the calibration set and run the no-overclaim gate.",
+        "description": "After training: emit FP16 vs quantized next-token distributions over the "
+                       "calibration set and run the no-overclaim gate.",
         "gate": "serving.lowram_eval.LowRamGate",
         "contract": {"max_mean_kl": 0.05, "min_top1_agreement": 0.97,
                      "protected_max_kl": 0.10, "protected_min_agreement": 0.95},
         "inputs": {"full_probs": "fp16 base+adapter logits", "lowram_probs": f"{scheme} served logits",
                    "calibration": calib},
-        "gpu_only_glue": "the logit extraction is the on-pod tensor work; the gate itself is CI-tested",
+        "gpu_only_glue": "logit extraction is the on-device tensor work; the gate itself is CI-tested",
         "pass_means": "quantized artifact retained quality within the bound -> Boundary-3 evidence",
     }
 
+    missing = []
+    if not base_model:
+        missing.append("base_model")
+    if not local and not (budget_usd is not None and budget_usd > 0):
+        missing.append("budget_usd")
+
     return {
-        "schema": "sophia.runpod_qat_lowram.v1",
+        "schema": "sophia.runpod_qat_lowram.v2",
+        "target": target,
         "ready_to_launch": ready,
-        "missing": [m for m, ok in (("base_model", bool(base_model)),
-                                    ("budget_usd", budget_usd is not None and budget_usd > 0)) if not ok],
+        "missing": missing,
         "params": {"base_model": base_model, "gpu": gpu, "scheme": scheme,
                    "budget_usd": budget_usd, "branch": branch, "epochs": epochs,
-                   "target_bits": target_bits},
+                   "target_bits": target_bits, "target": target},
         "steps": [
             {"stage": "calibrate", "where": "local/CI (free)", "command": calib_cmd},
-            {"stage": "qat_train", "where": "runpod (PAID)", "command": train_cmd,
-             "launch_note": "review, then re-run WITHOUT --dry-run and WITH --yes to spend"},
-            {"stage": "certify", "where": "runpod (PAID, after train)", **certify},
+            {"stage": "qat_train", "where": train_where, "command": train_cmd,
+             "launch_note": ("drop --dry-run to train on the Spark" if local else
+                             "review, then re-run WITHOUT --dry-run and WITH --yes to spend")},
+            {"stage": "certify", "where": certify_where, **certify},
         ],
-        "cost_note": "This planner provisions nothing. Launching requires you to add --yes to the "
-                     "qat_train command and set a real budget cap on RunPod.",
+        "cost_note": cost_note,
         "honest_scope": (
             "Prepares the Boundary-3 evidence run. A 'low-RAM, capability-retained' claim is only "
             "earned if the certify step passes to the RESULTS.md bar (>=2 judge families, k>=0.40, "
@@ -104,10 +148,14 @@ def build_run_plan(*, base_model: str | None, gpu: str, scheme: str, budget_usd:
 
 def main(argv: "list[str] | None" = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
+    ap.add_argument("--target", choices=TARGETS, default="runpod",
+                    help="where to run: 'local-spark' (FREE, your DGX Spark, bf16) or 'runpod' (PAID x86)")
+    ap.add_argument("--tier", choices=tuple(TIER_BASES), default=None,
+                    help="fill --base-model with the suggested open base for this tier (low/mid/high/top)")
     ap.add_argument("--base-model", default=None,
                     help="pretrained sparse-MoE (or dense) base to QAT-adapt; REQUIRED to launch")
     ap.add_argument("--budget-usd", type=float, default=None,
-                    help="cost cap you accept for the paid run; REQUIRED to launch")
+                    help="cost cap for a PAID runpod run; REQUIRED to launch on runpod (free on Spark)")
     ap.add_argument("--gpu", default=DEFAULT_GPU)
     ap.add_argument("--qat-scheme", dest="scheme", choices=("int8", "nvfp4"), default=DEFAULT_SCHEME)
     ap.add_argument("--branch", default="claude/sophia-v1-lowram-frontier")
@@ -119,17 +167,22 @@ def main(argv: "list[str] | None" = None) -> int:
                     help="plan only (default; this tool never launches)")
     args = ap.parse_args(argv)
 
-    plan = build_run_plan(base_model=args.base_model, gpu=args.gpu, scheme=args.scheme,
+    base_model = args.base_model or (TIER_BASES[args.tier] if args.tier else None)
+    plan = build_run_plan(base_model=base_model, gpu=args.gpu, scheme=args.scheme,
                           budget_usd=args.budget_usd, branch=args.branch, epochs=args.epochs,
-                          calib=args.calib, target_bits=args.target_bits)
+                          calib=args.calib, target_bits=args.target_bits, target=args.target)
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(plan, indent=2) + "\n", encoding="utf-8")
 
-    print(f"RunPod QAT + low-RAM certification plan (ready_to_launch={plan['ready_to_launch']})")
+    print(f"QAT + low-RAM certification plan [target={plan['target']}] "
+          f"(ready_to_launch={plan['ready_to_launch']})")
+    if base_model:
+        print(f"  base model: {base_model}")
     if not plan["ready_to_launch"]:
-        print(f"  missing to launch: {', '.join(plan['missing'])} "
-              f"(set --base-model and --budget-usd)")
+        hint = "set --base-model (or --tier)" + ("" if args.target == "local-spark"
+                                                 else " and --budget-usd")
+        print(f"  missing to launch: {', '.join(plan['missing'])} ({hint})")
     for step in plan["steps"]:
         cmd = step.get("command")
         line = " ".join(cmd) if cmd else step.get("description", "")
@@ -174,6 +227,28 @@ def offline_invariants() -> "tuple[bool, dict]":
 
     # 5. A calibration step precedes training (decontamination before quant).
     checks["calibrate_first"] = p1["steps"][0]["stage"] == "calibrate"
+
+    # 6. local-spark target: FREE (ready with base model, NO budget needed), bf16 + --qat,
+    #    aarch64-safe (no --4bit/bitsandbytes/unsloth/flash-attn), never self-launches.
+    sp = build_run_plan(base_model="allenai/OLMoE-1B-7B-0924-Instruct", gpu="-", scheme="nvfp4",
+                        budget_usd=None, branch="b", epochs=1, calib=DEFAULT_CALIB,
+                        target_bits=4.5, target="local-spark")
+    checks["spark_free_no_budget"] = sp["ready_to_launch"] is True and sp["missing"] == []
+    spark_train = " ".join(next(s for s in sp["steps"] if s["stage"] == "qat_train")["command"])
+    checks["spark_uses_train_lora"] = "tools/train_lora.py" in spark_train
+    checks["spark_is_bf16_qat"] = "--qat" in spark_train and "--dtype bf16" in spark_train
+    checks["spark_aarch64_safe"] = not any(x in spark_train for x in ("--4bit", "unsloth", "flash_attention_2"))
+    checks["spark_dry_by_default"] = "--dry-run" in spark_train and "--yes" not in spark_train
+    detail["spark_train_cmd"] = spark_train
+
+    # 7. --tier fills a base model; unknown target rejected.
+    checks["tier_base_known"] = TIER_BASES["low"].startswith("allenai/OLMoE")
+    try:
+        build_run_plan(base_model="x", gpu="-", scheme="nvfp4", budget_usd=1.0, branch="b",
+                       epochs=1, calib=DEFAULT_CALIB, target_bits=4.5, target="moon")
+        checks["bad_target_rejected"] = False
+    except ValueError:
+        checks["bad_target_rejected"] = True
 
     ok = all(checks.values())
     return ok, {"checks": checks, **detail}
