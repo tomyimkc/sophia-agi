@@ -190,6 +190,106 @@
       ],
       "offline_invariants": " agent/swarm_router.py:PASS provenance_bench/swarm_rl.py:PASS agent/dual_use_adapter.py:PASS provenance_bench/swarm_benchmark.py:PASS",
       "_caveat": "On-pod greedy decode under 4-bit degenerated (repetition) for BOTH arms, so the source-discipline A/B was 0.0/0.0 and the gate correctly QUARANTINED (delta below floor). This is a generation-config artifact, not a true negative; fixed in runpod_theta_search.py (use_cache=True, repetition_penalty, no_repeat_ngram). Training itself validated: loss 3.255->0.654."
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "gpu": "NVIDIA RTX A5000, 24564 MiB",
+      "phase": "done",
+      "n_train_rows": 125,
+      "trainable_params": 40370176,
+      "total_params": 7655986688,
+      "loss_first": 3.2553,
+      "loss_last": 0.6434,
+      "loss_curve": [
+        3.2553,
+        4.1632,
+        3.7368,
+        2.9628,
+        2.7372,
+        2.7869,
+        2.1049,
+        2.0874,
+        1.8615,
+        1.7187,
+        1.6552,
+        1.3381,
+        1.2395,
+        1.4049,
+        1.0391,
+        1.4291,
+        1.0286,
+        1.1354,
+        1.0652,
+        0.9147,
+        0.9501,
+        0.9006,
+        1.0632,
+        0.7798,
+        0.6651,
+        1.1079,
+        1.0445,
+        0.8129,
+        0.8926,
+        0.6557,
+        0.459,
+        0.4425,
+        0.2418,
+        0.4936,
+        0.8202,
+        0.2781,
+        0.3346,
+        0.4941,
+        0.6826,
+        0.4272,
+        0.9942,
+        0.8619,
+        0.8575,
+        0.7965,
+        0.8791,
+        0.3889,
+        0.5208,
+        0.6434
+      ],
+      "train_steps": 48,
+      "adapter_files": {
+        "README.md": {
+          "bytes": 5202,
+          "sha256": "3191b465069be139"
+        },
+        "adapter_model.safetensors": {
+          "bytes": 161533192,
+          "sha256": "534c6f10ea426fa2"
+        },
+        "adapter_config.json": {
+          "bytes": 1103,
+          "sha256": "f8308f02274b6210"
+        },
+        "chat_template.jinja": {
+          "bytes": 2507,
+          "sha256": "cd8e9439f0570856"
+        },
+        "tokenizer_config.json": {
+          "bytes": 694,
+          "sha256": "04b1682c59acbd05"
+        },
+        "tokenizer.json": {
+          "bytes": 11421991,
+          "sha256": "2f55e63353d3d978"
+        }
+      },
+      "graded_suite": "source_discipline_rate",
+      "graded_n_traps": 5,
+      "graded_before": 0.0,
+      "graded_after": 0.0,
+      "graded_delta": 0.0,
+      "smoke_generation": "The following YouYouYouYou haveYouYouIn 1924358000,YouYou YouYou You YouYouWeYouYouYourYouYou\u00a0YouYouThis functionYouYou areYouYou'reYouYou youYouYou Have youYou YouHow canYouYouIf $YouYou shouldYouYouHaveYouYou start =YouYouyouYouYouI'mYouYouIt'sYouYouAn angleYouYouAreYouYou ChallengeYouYou AreYouYou ownYouYouCan youYou you youYou are twoYouYou",
+      "graded_gate_verdict": "quarantine",
+      "graded_gate_reasons": [
+        "target improvement below floor: 0.0000 < 0.0300"
+      ],
+      "offline_invariants": " agent/swarm_router.py:PASS provenance_bench/swarm_rl.py:PASS agent/dual_use_adapter.py:PASS provenance_bench/swarm_benchmark.py:PASS",
+      "_caveat": "Decoding-param fix (use_cache/repetition_penalty/no_repeat_ngram) did NOT resolve the degenerate generation -> root cause is the 4-bit+active-LoRA INFERENCE path, not decoding. Graded A/B again 0.0/0.0 -> gate correctly QUARANTINED. Proper fix committed: run the A/B in FP16 (reload base fp16 for 'before', attach adapter for 'after'), not through the quantized stack. Training remains validated: loss 3.255->0.643."
     }
-  ]
+  ],
+  "_status": "Training pipeline validated 3x (healthy loss). Graded source-discipline delta still PENDING a run with the FP16-eval fix; the dual-use gate is wired and fires correctly (quarantine on the null signal). No leaked billing."
 }

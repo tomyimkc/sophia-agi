@@ -104,23 +104,32 @@ for f in glob.glob(OUT+"/*"):
     if os.path.isfile(f):
         b=open(f,"rb").read(); files[os.path.basename(f)]={"bytes":len(b),"sha256":hashlib.sha256(b).hexdigest()[:16]}
 put("adapter_files",files)
-# --- graded search-recall A/B: base (adapter disabled) vs adapter, on the sealed pack ---
-import sys; sys.path.insert(0,"/workspace/repo")
+# --- graded search-recall A/B in FP16 (NOT through the 4-bit+LoRA stack, which decodes
+# to garbage). Free the quantized trainer, reload base fp16 for the 'before' arm, then
+# attach the adapter for 'after'. Sequential single-model loads fit a 24GB card. ---
+import sys, gc; sys.path.insert(0,"/workspace/repo")
 SYS="You are a source-disciplined search agent. Cite sources; abstain if you cannot ground a claim."
-model.config.use_cache=True   # kbit-training prep disables cache; greedy decode degenerates without it
-def gen(q):
-    text=tok.apply_chat_template([{"role":"system","content":SYS},{"role":"user","content":q}],
-                                 tokenize=False,add_generation_prompt=True)
-    enc=tok(text,return_tensors="pt",add_special_tokens=False).to(model.device)
-    out=model.generate(**enc,max_new_tokens=110,do_sample=False,repetition_penalty=1.3,
-                       no_repeat_ngram_size=3,pad_token_id=tok.eos_token_id)
-    return tok.decode(out[0][enc["input_ids"].shape[1]:],skip_special_tokens=True)
+def make_gen(mdl):
+    def gen(q):
+        text=tok.apply_chat_template([{"role":"system","content":SYS},{"role":"user","content":q}],
+                                     tokenize=False,add_generation_prompt=True)
+        enc=tok(text,return_tensors="pt").to(mdl.device)
+        out=mdl.generate(**enc,max_new_tokens=110,do_sample=False,
+                         pad_token_id=tok.eos_token_id)
+        return tok.decode(out[0][enc["input_ids"].shape[1]:],skip_special_tokens=True)
+    return gen
 try:
     from provenance_bench.search_recall import PACK_V1, source_discipline_ok
+    from peft import PeftModel
     traps=[t for t in PACK_V1 if t.trap]
-    with model.disable_adapter():
-        before=[1.0 if source_discipline_ok(gen(t.query)) else 0.0 for t in traps]
-    after=[1.0 if source_discipline_ok(gen(t.query)) else 0.0 for t in traps]
+    del model; gc.collect(); torch.cuda.empty_cache()
+    base=AutoModelForCausalLM.from_pretrained(MODEL,torch_dtype=torch.float16,device_map="auto").eval()
+    gb=make_gen(base)
+    before=[1.0 if source_discipline_ok(gb(t.query)) else 0.0 for t in traps]
+    ada=PeftModel.from_pretrained(base,OUT).eval()
+    ga=make_gen(ada)
+    after=[1.0 if source_discipline_ok(ga(t.query)) else 0.0 for t in traps]
+    def gen(q): return ga(q)
     br=sum(before)/len(before); ar=sum(after)/len(after)
     put("graded_suite","source_discipline_rate"); put("graded_n_traps",len(traps))
     put("graded_before",round(br,3)); put("graded_after",round(ar,3)); put("graded_delta",round(ar-br,3))
