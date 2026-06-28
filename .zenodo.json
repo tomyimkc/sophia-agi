@@ -1,10 +1,10 @@
 {
   "title": "Sophia — the Wisdom Gate: a provenance-aware, verifier-gated reasoning layer that abstains instead of fabricating",
-  "description": "<p>Sophia is a provenance-aware, verifier-gated reasoning layer for large language models that abstains instead of fabricating. Given a claim, it verifies the claim against machine-readable sources and then accepts, abstains, or blocks. The system targets attribution hallucination and is evaluated under a pre-registered no-overclaim measurement gate (&ge;2 independent judge families, reported inter-judge agreement, &ge;3 runs, and confidence intervals). Archiving this release on Zenodo mints a permanent DOI and a fixed authorship + date record as part of the project's defensive-publication / provenance strategy.</p>",
+  "description": "<p>Sophia is a provenance-aware, verifier-gated reasoning layer for large language models that abstains instead of fabricating. Given a claim, it verifies the claim against machine-readable sources and then accepts, abstains, or blocks. The system targets attribution hallucination and is evaluated under a pre-registered no-overclaim measurement gate (&ge;2 independent judge families, reported inter-judge agreement, &ge;3 runs, and confidence intervals). This release (0.11.0) adds a layered, independence-labelled independent-verification toolkit: viral-claim fact-check (Google ClaimReview), authorship and wrong-creator attribution checks (Wikidata), fabricated-citation existence (Crossref, the Mata v. Avianca mode), and a multi-judge source-faithfulness check for misstated findings &mdash; each verdict tagged with its independence tier, fail-open on ignorance, with a self-contained third-party replication pack. An honest finding is recorded as part of the method: catching open-world contamination requires an oracle that covers the claim, fail-closed strictness, or model knowledge &mdash; there is no free lunch &mdash; and one earlier over-block figure was found to be a stale-report artifact and withdrawn. Archiving this release on Zenodo mints a permanent DOI and a fixed authorship + date record as part of the project's defensive-publication / provenance strategy. canClaimAGI remains false.</p>",
   "upload_type": "software",
   "access_right": "open",
   "license": "Apache-2.0",
-  "version": "0.9.1",
+  "version": "0.11.0",
   "keywords": [
     "large language models",
     "hallucination",
@@ -14,7 +14,11 @@
     "provenance",
     "retrieval-augmented generation",
     "verifier-gated reasoning",
-    "trustworthy AI"
+    "trustworthy AI",
+    "fact-checking",
+    "citation verification",
+    "source faithfulness",
+    "defensive publication"
   ],
   "creators": [
     {

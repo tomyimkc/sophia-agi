@@ -5,7 +5,7 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20930874.svg)](https://doi.org/10.5281/zenodo.20930874)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.10.0-blue)
+![Version](https://img.shields.io/badge/version-0.11.0-blue)
 ![Corpus](https://img.shields.io/badge/corpus-528_bilingual_examples-green)
 ![Scope](https://img.shields.io/badge/scope-AGI--candidate%2C_not_proven_AGI-lightgrey)
 [![Thesis site](https://img.shields.io/badge/live-thesis_site-9a7b4f)](https://tomyimkc.github.io/sophia-agi/)

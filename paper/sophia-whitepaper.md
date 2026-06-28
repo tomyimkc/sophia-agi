@@ -117,6 +117,28 @@ A fail-closed gateway enforces authorization → dataflow firewall → kill-swit
 classification (Bell-LaPadula-style) → taint-labeling on side-effecting/external tools,
 with optional re-verification of served output before it reaches the caller.
 
+### 3.6 Independent-verification toolkit (layered, independence-labelled)
+
+The gate's verification step is a **layer of independent oracles**, each routed to the
+fabrication mode it covers and each verdict tagged with its **independence tier**:
+
+- **viral/general claims** → professional fact-check verdicts (Google Fact Check ClaimReviews) — *high*;
+- **authorship attribution** → Wikidata creator/author/discoverer records — *high*;
+- **fabricated citations** → study/DOI existence in Crossref (the *Mata v. Avianca* mode) — *high*;
+- **wrong-creator attribution swaps** → the Wikidata record vs the credited person — *high*;
+- **misstated findings of a real source** → a multi-judge entailment panel over an *independent*
+  retrieved source, acting only on strict-majority consensus — *medium* (model-based, flagged);
+- everything else → **fail-closed abstention**: the system never vouches for what no independent
+  oracle can confirm.
+
+Two design commitments make this trustworthy rather than merely plausible. First, **fail-open on
+ignorance**: a claim no oracle covers is *not* flagged — the toolkit never fabricates a
+contradiction. Second, **honest coverage accounting**: each oracle's reach is bounded and
+reported (e.g. professional fact-checkers review only a minority of everyday myths), so a *clean*
+verdict means "no independent record contradicts this," not "true." The result is a precision/
+recall trade governed by *reference quality*, not a silver bullet — there is no free lunch in
+open-world verification.
+
 ## 4. Measurement discipline: the no-overclaim gate
 
 Every public number must clear a **pre-registered** bar:
@@ -156,8 +178,22 @@ grounding scores **1.0 vs 0.0** on attribution-traps/retractions but collapses t
 trap-safety at a recall cost. A typed-gate + graph-neighborhood hybrid recovers recall
 to ≈0.68 while keeping all traps on the hard-abstain path.
 
+**Independent-verification toolkit (live, candidate).** Across the toolkit's layers, the
+high-independence verifiers hold **0% clean over-block** with no model judgment: the
+attribution-swap verifier (Wikidata) was run with separated answer/judge models over **3 runs**
+with a bootstrap CI (caught **10.8% [9.3%, 11.6%]** of a mixed pack — ≈⅔ of the swap cases it
+targets — at **0.0% [0,0]** over-block); the citation-existence verifier (Crossref) and the
+multi-judge source-faithfulness verifier behave the same way on their target modes. The honest
+finding is a *law*, not a defect: catching open-world contamination requires **either** an oracle
+that covers the claim (sparse), **or** fail-closed strictness (which over-blocks), **or** model
+knowledge (low independence) — so trustworthiness comes from *composing* labelled-independence
+layers and abstaining, not from any single catcher. In the course of this work one earlier
+headline (a 70.6% over-block figure) was found to be a stale-report artifact and **withdrawn**
+in favour of the corrected 5.9%; we record the correction as part of the method.
+
 See [RESULTS.md](../RESULTS.md) for the complete, caveated tables and reproduction
-commands.
+commands, and [agi-proof/TRUSTWORTHINESS-CAPSTONE-2026-06-28.md](../agi-proof/TRUSTWORTHINESS-CAPSTONE-2026-06-28.md)
+for the toolkit's full per-layer coverage/independence accounting.
 
 ## 6. Related work
 
@@ -205,7 +241,14 @@ python scripts/demo_gate.py                                   # offline gate dem
 python tools/run_provenance_delta.py --models mock            # offline plumbing
 python tools/run_provenance_delta.py --models <subject> \
     --judges <judgeA>,<judgeB> --runs 3                       # validated-grade run
+python3 tools/verify_replication_manifest.py                  # check the verification toolkit manifest (no keys)
 ```
+
+A self-contained third-party replication pack for the verification toolkit lives at
+[agi-proof/verification-replication/](../agi-proof/verification-replication/) — a keyless +
+live two-tier runbook (`REPRODUCE.md`), machine-readable `EXPECTED-RESULTS.json`, a
+decontamination checklist, and a manifest checker. An independent run by a party other than the
+author, on an independently-authored pack, remains the outstanding step.
 
 ## How to cite
 
