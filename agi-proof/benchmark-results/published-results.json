@@ -55,12 +55,12 @@
         "ciExcludesZero": true
       },
       "kappa": 0.7637,
-      "note": "SECOND independent multi-judge determination of the SAME provenance-delta property, with a different judge pair (openai gpt-4o + anthropic claude, both distinct from the deepseek+llama pair above) on N=48 over 3 runs. It CORROBORATES — does not multiply — the single headline claim; the +12.5% row remains the headline number. Combined with the judge-free reproduction (+9.0%, lexical labeler), the gate's anti-fabrication effect on dolphin now has three independent determinations, all CI-excludes-0. Still a weak-model phenomenon (decays to 0 on a strong base) and self-authored pack. Ledger: provenance-delta-multijudge-2family-3run-validated-2026-06-27."
+      "note": "SECOND independent multi-judge determination of the SAME provenance-delta property, with a different judge pair (openai gpt-4o + anthropic claude, both distinct from the deepseek+llama pair above) on N=48 over 3 runs. It CORROBORATES \u2014 does not multiply \u2014 the single headline claim; the +12.5% row remains the headline number. Combined with the judge-free reproduction (+9.0%, lexical labeler), the gate's anti-fabrication effect on dolphin now has three independent determinations, all CI-excludes-0. Still a weak-model phenomenon (decays to 0 on a strong base) and self-authored pack. Ledger: provenance-delta-multijudge-2family-3run-validated-2026-06-27."
     }
   ],
   "externalEvals": [
     {
-      "harness": "agent/external_eval.py — exact-match vs external gold (no LLM judge)",
+      "harness": "agent/external_eval.py \u2014 exact-match vs external gold (no LLM judge)",
       "dataset": "GSM8K test (openai/grade-school-math, MIT)",
       "model": "deepseek-chat",
       "n": 100,
@@ -85,11 +85,11 @@
       },
       "date": "2026-06-21",
       "scoring": "objective exact-match vs ground-truth expectPass; deterministic verifier, no LLM judge.",
-      "note": "Measures the VERIFIER's accuracy at catching fabricated legal citations (the Mata v. Avianca failure mode) across federated sources (HK e-Legislation/HKLII, UK National Archives, US CourtListener), not any model's. Includes the actual Mata fabrication, Varghese v. China Southern Airlines 925 F.3d 1339, which is flagged. Honest bounds: tiny, constructed benchmark (N=14) and the result is capped by the bundled register's completeness, so this validates the extraction + fail-closed gate logic end-to-end — it is NOT a headline capability claim. Reproduce: python tools/run_legal_citation_bench.py."
+      "note": "Measures the VERIFIER's accuracy at catching fabricated legal citations (the Mata v. Avianca failure mode) across federated sources (HK e-Legislation/HKLII, UK National Archives, US CourtListener), not any model's. Includes the actual Mata fabrication, Varghese v. China Southern Airlines 925 F.3d 1339, which is flagged. Honest bounds: tiny, constructed benchmark (N=14) and the result is capped by the bundled register's completeness, so this validates the extraction + fail-closed gate logic end-to-end \u2014 it is NOT a headline capability claim. Reproduce: python tools/run_legal_citation_bench.py."
     }
   ],
   "semanticEvals": {
-    "benchmark": "legal_holding_faithful (does a real authority's holding SUPPORT the cited proposition? — the Ayinde misstated-authority failure)",
+    "benchmark": "legal_holding_faithful (does a real authority's holding SUPPORT the cited proposition? \u2014 the Ayinde misstated-authority failure)",
     "gate": "validated = >=2 independent judges (>=2 provider families, no mock) + mean pairwise Cohen's kappa >= 0.40 + >=3 runs + bootstrap 95% CI lower bound above chance (0.5).",
     "validated": true,
     "result": {
@@ -113,7 +113,7 @@
       "meanPairwiseKappa": 1.0,
       "date": "2026-06-21"
     },
-    "note": "Clears the pre-registered no-overclaim gate (3 independent provider families via OpenRouter, kappa=1.0, 3 runs, CI above chance). HONEST CAVEAT: N=8 and the cases are clear-cut (a clearly-supported vs a clearly-misstated proposition for each real authority), so unanimous agreement (kappa=1.0) and the degenerate CI [1.0,1.0] are expected — this validates the tier + harness end-to-end and shows three frontier-class judges reliably catch blatant misstatement, but it does NOT measure subtle ratio-vs-obiter discrimination or performance on a large, adversarial set. Reproduce: OPENROUTER_API_KEY set; python tools/run_legal_faithfulness_bench.py --judges openrouter:deepseek/deepseek-chat,openrouter:meta-llama/llama-3.3-70b-instruct,openrouter:qwen/qwen-2.5-72b-instruct --runs 3."
+    "note": "Clears the pre-registered no-overclaim gate (3 independent provider families via OpenRouter, kappa=1.0, 3 runs, CI above chance). HONEST CAVEAT: N=8 and the cases are clear-cut (a clearly-supported vs a clearly-misstated proposition for each real authority), so unanimous agreement (kappa=1.0) and the degenerate CI [1.0,1.0] are expected \u2014 this validates the tier + harness end-to-end and shows three frontier-class judges reliably catch blatant misstatement, but it does NOT measure subtle ratio-vs-obiter discrimination or performance on a large, adversarial set. Reproduce: OPENROUTER_API_KEY set; python tools/run_legal_faithfulness_bench.py --judges openrouter:deepseek/deepseek-chat,openrouter:meta-llama/llama-3.3-70b-instruct,openrouter:qwen/qwen-2.5-72b-instruct --runs 3."
   },
   "illustrative": [
     {
@@ -160,7 +160,7 @@
       },
       "methodFabricationRate": 0.0,
       "date": "2026-06-22",
-      "note": "DeepSeek subject. sophia-full fabricates 0% (deterministic scorer) on the unknown-author/quote cases in all 3 runs; raw-model 16.7-25%. Keyword/regex scoring is blind to this; the calibration scorer reveals it. vs raw-model-plus-tools the gap is larger (calibration Δ 28.3% [24.5%, 32.2%]). CORROBORATED by two INDEPENDENT judge families (gpt-4o + claude-sonnet, distinct from the deepseek subject): all three methods rank sophia-full lowest fabrication; inter-judge κ=0.74, scorer-vs-judge κ=0.48/0.40 (both ≥0.40). Meets the multi-judge bar. Residual caveat: the pack is self-authored — a third-party pack + human review remain for full independence. (A 3rd family, qwen3.7-max, was tested and found non-discriminating — 0% fabrication everywhere, κ=0 — so it is excluded as an uninformative judge; the 2-family OpenAI+Anthropic corroboration stands.)",
+      "note": "DeepSeek subject. sophia-full fabricates 0% (deterministic scorer) on the unknown-author/quote cases in all 3 runs; raw-model 16.7-25%. Keyword/regex scoring is blind to this; the calibration scorer reveals it. vs raw-model-plus-tools the gap is larger (calibration \u0394 28.3% [24.5%, 32.2%]). CORROBORATED by two INDEPENDENT judge families (gpt-4o + claude-sonnet, distinct from the deepseek subject): all three methods rank sophia-full lowest fabrication; inter-judge \u03ba=0.74, scorer-vs-judge \u03ba=0.48/0.40 (both \u22650.40). Meets the multi-judge bar. Residual caveat: the pack is self-authored \u2014 a third-party pack + human review remain for full independence. (A 3rd family, qwen3.7-max, was tested and found non-discriminating \u2014 0% fabrication everywhere, \u03ba=0 \u2014 so it is excluded as an uninformative judge; the 2-family OpenAI+Anthropic corroboration stands.)",
       "judgeCorroboration": {
         "method": "two INDEPENDENT judge families (openai:gpt-4o + openai:claude-sonnet-4-6) re-scoring the same 108 abstain answers across 3 runs; subject is deepseek-chat (distinct families)",
         "fabricationRate": {
@@ -189,15 +189,15 @@
         "verdict": "All three methods rank sophia-full LOWEST fabrication. Two distinct judge families agree with each other (kappa 0.74, substantial) and each with the deterministic scorer (kappa 0.48 / 0.40, both >=0.40). Meets the multi-judge + inter-judge-agreement + >=3-runs bar. Residual: the PACK is self-authored -> a third-party pack + human review remain for full independence.",
         "thirdFamilyAttempt": {
           "added": "openai:qwen3.7-max (Alibaba, distinct family)",
-          "result": "NON-DISCRIMINATING: Qwen labeled 0% fabrication across all modes; κ with every method = 0.0. It never flags fabrication, so it adds no signal and the strict 3-way consensus collapses to 0.",
-          "conclusion": "Headline corroboration stays the gpt-4o + claude pair (inter-judge κ=0.74, both ≥0.40 vs scorer, both rank sophia-full lowest). Judge COMPETENCE matters: not every distinct family is a usable fabrication judge.",
+          "result": "NON-DISCRIMINATING: Qwen labeled 0% fabrication across all modes; \u03ba with every method = 0.0. It never flags fabrication, so it adds no signal and the strict 3-way consensus collapses to 0.",
+          "conclusion": "Headline corroboration stays the gpt-4o + claude pair (inter-judge \u03ba=0.74, both \u22650.40 vs scorer, both rank sophia-full lowest). Judge COMPETENCE matters: not every distinct family is a usable fabrication judge.",
           "artifact": "agi-proof/baseline-ablation/calibration-3family-judge-2026-06-22.json"
         }
       }
     }
   ],
   "continualGroundedEvals": {
-    "benchmark": "Continual Provenance QA (CPQA) — grounded vs raw answers over the 92-page wiki corpus",
+    "benchmark": "Continual Provenance QA (CPQA) \u2014 grounded vs raw answers over the 92-page wiki corpus",
     "validated": false,
     "status": "candidate",
     "answerModel": "gpt-4o-mini (OpenAI, via LLMHub)",
@@ -205,7 +205,7 @@
       "openrouter:deepseek/deepseek-chat (DeepSeek)",
       "openrouter:meta-llama/llama-3.3-70b-instruct (Meta)"
     ],
-    "gateway": "judges via OpenRouter; answers via LLMHub — independent gateways",
+    "gateway": "judges via OpenRouter; answers via LLMHub \u2014 independent gateways",
     "runs": 3,
     "queryCount": 92,
     "grounded": {
@@ -294,15 +294,15 @@
         "grounded_strict": 237,
         "grounded_fallback": 24
       },
-      "note": "3-FAMILY VALIDATION (DeepSeek+Meta+Qwen, full-92, 3 runs). The grounded-vs-raw finding is robust across three independent families: mean pairwise kappa 0.88 (grounded) / 0.81 (raw), per-judge spread tight. Key behavioral result: vs the thin-corpus hybrid (141 parametric fallbacks), enrichment shifts the hybrid to 237 strict / 24 fallback — SAME recall (~0.67) with ~6x LESS parametric reliance (more grounded, not just more accurate). Traps behaviorally 1.0 (all 15 took the hard-abstain policy; the 0.933 score is judge noise on the fixed abstention string). raw still wins overall (0.895) — the residual gap is corpus coverage (terse field-derived summaries), not method."
+      "note": "3-FAMILY VALIDATION (DeepSeek+Meta+Qwen, full-92, 3 runs). The grounded-vs-raw finding is robust across three independent families: mean pairwise kappa 0.88 (grounded) / 0.81 (raw), per-judge spread tight. Key behavioral result: vs the thin-corpus hybrid (141 parametric fallbacks), enrichment shifts the hybrid to 237 strict / 24 fallback \u2014 SAME recall (~0.67) with ~6x LESS parametric reliance (more grounded, not just more accurate). Traps behaviorally 1.0 (all 15 took the hard-abstain policy; the 0.933 score is judge noise on the fixed abstention string). raw still wins overall (0.895) \u2014 the residual gap is corpus coverage (terse field-derived summaries), not method."
     }
   },
   "systemsBenchmarks": [
     {
       "name": "kvcache (Phase 1)",
       "component": "storage/kvcache",
-      "description": "Sharded async in-memory KV cache (Rust/Tokio). kvcache-bench measures the full loopback TCP round trip (client→server→client), not the bare in-memory map. Numbers vary by host.",
-      "config": "32 clients × 30,000 GETs, 100,000 keys, 256-byte values, 16 shards, 100% read, no evictions (all hits)",
+      "description": "Sharded async in-memory KV cache (Rust/Tokio). kvcache-bench measures the full loopback TCP round trip (client\u2192server\u2192client), not the bare in-memory map. Numbers vary by host.",
+      "config": "32 clients \u00d7 30,000 GETs, 100,000 keys, 256-byte values, 16 shards, 100% read, no evictions (all hits)",
       "columns": [
         "pipeline depth",
         "throughput",
@@ -313,30 +313,30 @@
         [
           "1 (no pipelining)",
           "~186k ops/sec",
-          "~168 µs (per-op)",
-          "~300 µs (per-op)"
+          "~168 \u00b5s (per-op)",
+          "~300 \u00b5s (per-op)"
         ],
         [
           "16",
           "~1.60M ops/sec",
-          "~306 µs (per-batch)",
-          "~546 µs (per-batch)"
+          "~306 \u00b5s (per-batch)",
+          "~546 \u00b5s (per-batch)"
         ],
         [
           "64",
           "~2.13M ops/sec",
-          "~920 µs (per-batch)",
-          "~1602 µs (per-batch)"
+          "~920 \u00b5s (per-batch)",
+          "~1602 \u00b5s (per-batch)"
         ]
       ],
-      "note": "Phase 1b request pipelining packs a batch into one flush and coalesces responses — the textbook throughput-for-latency trade (8.6× throughput at depth 16 for higher per-batch latency; depth-1 is the honest single-request baseline). Single node, in-memory only; persistence (io_uring) + replication (Raft) are Phases 2–3. Reproduce: `cd storage && cargo run --release --bin kvcache-bench -- --clients 32 --ops 30000 --pipeline 16`",
+      "note": "Phase 1b request pipelining packs a batch into one flush and coalesces responses \u2014 the textbook throughput-for-latency trade (8.6\u00d7 throughput at depth 16 for higher per-batch latency; depth-1 is the honest single-request baseline). Single node, in-memory only; persistence (io_uring) + replication (Raft) are Phases 2\u20133. Reproduce: `cd storage && cargo run --release --bin kvcache-bench -- --clients 32 --ops 30000 --pipeline 16`",
       "candidate": true
     }
   ],
   "externalBenchmarkCalibration": {
     "validated": true,
-    "benchmark": "SimpleQA / SimpleQA Verified (OpenAI + Google DeepMind) — public, human-authored, external",
-    "claim": "Self-consistency selective prediction (the C1 conformal method) significantly lifts selective accuracy on a third-party benchmark — non-self-authored.",
+    "benchmark": "SimpleQA / SimpleQA Verified (OpenAI + Google DeepMind) \u2014 public, human-authored, external",
+    "claim": "Self-consistency selective prediction (the C1 conformal method) significantly lifts selective accuracy on a third-party benchmark \u2014 non-self-authored.",
     "graders": "consensus: llmhub:claude-sonnet-4-6 + llmhub:gemini-2.5-pro (2 independent families)",
     "rows": [
       {
@@ -373,5 +373,111 @@
       }
     ],
     "note": "CROSS-MODEL VALIDATED on external public data. Self-consistency selective prediction lifts selective accuracy on BOTH independent subject families, each graded by 2 independent families (Cohen kappa 0.97/0.99) with the lift's 95% CI excluding zero. The effect is base-model-dependent: larger for the overconfident DeepSeek (+15.8pts; self-abstains 6%) than the cautious Qwen (+7.8pts; self-abstains 61%). Of three confidence signals only self-consistency works; stated confidence and token-logprob are non-significant on both. This is a calibration / selective-prediction result, NOT an AGI claim; canClaimAGI stays false. Detail: agi-proof/benchmark-results/real-model/simpleqa/."
+  },
+  "disciplineAdapterEvals": {
+    "title": "Source-discipline adapter (\u03b8_search) \u2014 swarm dual-use",
+    "description": "A LoRA adapter, spawned as a swarm 'search' team member (V3 dual-use), measured for whether it raises **source discipline** \u2014 refuting/hedging false or misattributed claims instead of affirming them. Three independent judge families score the SAME captured generations; the governed per-base **adapter registry** (`agent/adapter_registry.py`) admits a binding only if every family is positive with a 95% CI excluding zero and inter-family \u03ba \u2265 0.40. The honest **negative** (council corpus on Mistral) is kept on purpose.",
+    "pack": "Google Fact Check Tools API ClaimReview \u2014 third-party, 30 false/misleading claims, 8 IFCN publishers (decontaminated)",
+    "judges": "lexical + stance (deterministic, independent operationalizations) + DeepSeek (independent LLM family; judge \u2260 subject)",
+    "validatedChecks": {
+      "notMock": true,
+      "multiFamilyJudges": true,
+      "kappaAboveFloor": true,
+      "atLeast3Runs": true,
+      "ciExcludesZero": true
+    },
+    "results": [
+      {
+        "base": "Qwen/Qwen2.5-7B-Instruct",
+        "sft": "council traces",
+        "seeds": 3,
+        "kappaMin": 0.84,
+        "families": {
+          "lexical": {
+            "delta": 0.2,
+            "ci": [
+              0.122,
+              0.289
+            ]
+          },
+          "stance": {
+            "delta": 0.144,
+            "ci": [
+              0.056,
+              0.233
+            ]
+          },
+          "llm": {
+            "delta": 0.2,
+            "ci": [
+              0.122,
+              0.289
+            ]
+          }
+        },
+        "verdict": "ACCEPTED"
+      },
+      {
+        "base": "mistralai/Mistral-7B-Instruct-v0.3",
+        "sft": "council traces",
+        "seeds": 3,
+        "kappaMin": 0.5,
+        "families": {
+          "lexical": {
+            "delta": -0.278,
+            "ci": [
+              -0.4,
+              -0.144
+            ]
+          },
+          "stance": {
+            "delta": -0.367,
+            "ci": [
+              -0.489,
+              -0.233
+            ]
+          },
+          "llm": {
+            "delta": -0.278,
+            "ci": [
+              -0.4,
+              -0.144
+            ]
+          }
+        },
+        "verdict": "REJECTED (format overfit)"
+      },
+      {
+        "base": "mistralai/Mistral-7B-Instruct-v0.3",
+        "sft": "format-robust distill",
+        "seeds": 3,
+        "kappaMin": 0.5,
+        "families": {
+          "lexical": {
+            "delta": 0.122,
+            "ci": [
+              0.033,
+              0.211
+            ]
+          },
+          "stance": {
+            "delta": 0.233,
+            "ci": [
+              0.111,
+              0.356
+            ]
+          },
+          "llm": {
+            "delta": 0.122,
+            "ci": [
+              0.033,
+              0.211
+            ]
+          }
+        },
+        "verdict": "ACCEPTED"
+      }
+    ],
+    "note": "Honest scope: the SFT corpus is first-party/distilled (eval pack is third-party); each row is one recipe on one base; scorers are 2 deterministic heuristics + 1 independent LLM judge (raw generations are saved so a human family is a free re-score). The lift is RECIPE-specific \u2014 the council corpus teaches a multi-seat *format* (Mistral overfit it 30/30, REGRESSING); a format-robust distillation corpus drops that to 0/30 and recovers transfer. Artifacts + per-judge CIs in `training/swarm_router/theta_search_run_result.json`; recipe in `docs/11-Platform/Adapter-Adoption.md`. Candidate-grade evidence that clears the multi-judge gate; not promoted to the flagship 'validated' provenance-gate set."
   }
 }

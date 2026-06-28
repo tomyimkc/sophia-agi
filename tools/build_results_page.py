@@ -312,6 +312,36 @@ def render(doc: dict) -> str:
             if s.get("note"):
                 L += [f"- {s['note']}", ""]
 
+    da = doc.get("disciplineAdapterEvals")
+    if da:
+        L += [
+            f"## {da.get('title', 'Source-discipline adapter')}",
+            "",
+            da.get("description", ""),
+            "",
+            f"_Eval pack: {da.get('pack', '')}._  ",
+            f"_Judges: {da.get('judges', '')}._",
+            "",
+            "| Base model | SFT recipe | lexical Δ | stance Δ | LLM-judge Δ | min κ | Gate |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for r in da.get("results") or []:
+            fam = r.get("families") or {}
+
+            def _cell(key: str, _fam=None) -> str:
+                f = (_fam if _fam is not None else fam).get(key)
+                if not f:
+                    return "—"
+                ci = f.get("ci") or ["?", "?"]
+                return f"{f['delta']:+.3f} [{ci[0]:+.3f}, {ci[1]:+.3f}]"
+
+            L.append("| " + " | ".join([
+                f"`{r.get('base')}`", r.get("sft", ""),
+                _cell("lexical", fam), _cell("stance", fam), _cell("llm", fam),
+                str(r.get("kappaMin", "—")), f"**{r.get('verdict', '')}**",
+            ]) + " |")
+        L += ["", f"- {da.get('note', '')}", ""]
+
     L += [
         "## Reproduce",
         "",

@@ -117,6 +117,21 @@ _Representative run — 32 clients × 30,000 GETs, 100,000 keys, 256-byte values
 
 - Phase 1b request pipelining packs a batch into one flush and coalesces responses — the textbook throughput-for-latency trade (8.6× throughput at depth 16 for higher per-batch latency; depth-1 is the honest single-request baseline). Single node, in-memory only; persistence (io_uring) + replication (Raft) are Phases 2–3. Reproduce: `cd storage && cargo run --release --bin kvcache-bench -- --clients 32 --ops 30000 --pipeline 16`
 
+## Source-discipline adapter (θ_search) — swarm dual-use
+
+A LoRA adapter, spawned as a swarm 'search' team member (V3 dual-use), measured for whether it raises **source discipline** — refuting/hedging false or misattributed claims instead of affirming them. Three independent judge families score the SAME captured generations; the governed per-base **adapter registry** (`agent/adapter_registry.py`) admits a binding only if every family is positive with a 95% CI excluding zero and inter-family κ ≥ 0.40. The honest **negative** (council corpus on Mistral) is kept on purpose.
+
+_Eval pack: Google Fact Check Tools API ClaimReview — third-party, 30 false/misleading claims, 8 IFCN publishers (decontaminated)._  
+_Judges: lexical + stance (deterministic, independent operationalizations) + DeepSeek (independent LLM family; judge ≠ subject)._
+
+| Base model | SFT recipe | lexical Δ | stance Δ | LLM-judge Δ | min κ | Gate |
+|---|---|---|---|---|---|---|
+| `Qwen/Qwen2.5-7B-Instruct` | council traces | +0.200 [+0.122, +0.289] | +0.144 [+0.056, +0.233] | +0.200 [+0.122, +0.289] | 0.84 | **ACCEPTED** |
+| `mistralai/Mistral-7B-Instruct-v0.3` | council traces | -0.278 [-0.400, -0.144] | -0.367 [-0.489, -0.233] | -0.278 [-0.400, -0.144] | 0.5 | **REJECTED (format overfit)** |
+| `mistralai/Mistral-7B-Instruct-v0.3` | format-robust distill | +0.122 [+0.033, +0.211] | +0.233 [+0.111, +0.356] | +0.122 [+0.033, +0.211] | 0.5 | **ACCEPTED** |
+
+- Honest scope: the SFT corpus is first-party/distilled (eval pack is third-party); each row is one recipe on one base; scorers are 2 deterministic heuristics + 1 independent LLM judge (raw generations are saved so a human family is a free re-score). The lift is RECIPE-specific — the council corpus teaches a multi-seat *format* (Mistral overfit it 30/30, REGRESSING); a format-robust distillation corpus drops that to 0/30 and recovers transfer. Artifacts + per-judge CIs in `training/swarm_router/theta_search_run_result.json`; recipe in `docs/11-Platform/Adapter-Adoption.md`. Candidate-grade evidence that clears the multi-judge gate; not promoted to the flagship 'validated' provenance-gate set.
+
 ## Reproduce
 
 ```bash
